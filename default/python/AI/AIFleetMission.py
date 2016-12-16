@@ -10,6 +10,7 @@ import InvasionAI
 import CombatRatingsAI
 from universe_object import System, Fleet, Planet
 from EnumsAI import MissionType
+from AIDependencies import INVALID_ID
 
 ORDERS_FOR_MISSION = {
     MissionType.EXPLORATION: OrderMove,
@@ -115,7 +116,7 @@ class AIFleetMission(object):
         fleet_id = self.fleet.id
         main_fleet = universe.getFleet(fleet_id)
         system_id = main_fleet.systemID
-        if system_id == -1:
+        if system_id == INVALID_ID:
             return  # can't merge fleets in middle of starlane
         system_status = foAI.foAIstate.systemStatus[system_id]
         destroyed_list = list(universe.destroyedObjectIDs(empire_id))
@@ -244,14 +245,14 @@ class AIFleetMission(object):
         empire_id = fo.empireID()
         fleet_id = self.fleet.id
         fleet = universe.getFleet(fleet_id)
-        if fleet.systemID == -1:
+        if fleet.systemID == INVALID_ID:
             # next_loc = fleet.nextSystemID
             return  # TODO: still check
         system = universe.getSystem(fleet.systemID)
         if not system:
             return
         orders = self.orders
-        last_sys_target = -1
+        last_sys_target = INVALID_ID
         if orders:
             last_sys_target = orders[-1].target.id
         if last_sys_target == fleet.systemID:
@@ -269,7 +270,7 @@ class AIFleetMission(object):
         if not open_targets:
             return
         troops_in_fleet = FleetUtilsAI.count_troops_in_fleet(fleet_id)
-        target_id = -1
+        target_id = INVALID_ID
         best_score = -1
         target_troops = 0
         #
@@ -281,7 +282,7 @@ class AIFleetMission(object):
                 best_score = p_score
                 target_id = pid
                 target_troops = p_troops
-        if target_id == -1:
+        if target_id == INVALID_ID:
             return
 
         print "\t AIFleetMission._check_retarget_invasion: splitting and retargetting fleet %d" % fleet_id
@@ -377,7 +378,7 @@ class AIFleetMission(object):
                             print "        source target validity: %s; target target validity: %s " % (bool(source_target), bool(target_target))
                         return  # colonize order must not have completed yet
                 clear_all = True
-                last_sys_target = -1
+                last_sys_target = INVALID_ID
                 if last_order and isinstance(last_order, OrderMilitary):
                     last_sys_target = last_order.target.id
                     # if (MissionType.SECURE == self.type) or # not doing this until decide a way to release from a SECURE mission

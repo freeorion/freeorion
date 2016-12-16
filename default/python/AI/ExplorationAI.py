@@ -6,6 +6,7 @@ import universe_object
 import MoveUtilsAI
 import PlanetUtilsAI
 from freeorion_tools import dict_from_map
+from AIDependencies import INVALID_ID
 
 
 TARGET_POP = 'targetPop'
@@ -42,7 +43,7 @@ def assign_scouts_to_explore_systems():
     capital_sys_id = PlanetUtilsAI.get_capital_sys_id()
     # order fleets to explore
     explorable_system_ids = list(borderUnexploredSystemIDs)
-    if not explorable_system_ids or (capital_sys_id == -1):
+    if not explorable_system_ids or (capital_sys_id == INVALID_ID):
         return
     exp_systems_by_dist = sorted((universe.linearDistance(capital_sys_id, x), x) for x in explorable_system_ids)
     print "Exploration system considering following system-distance pairs:\n  %s" % ("\n  ".join("%3d: %5.1f" % info for info in exp_systems_by_dist))
@@ -57,7 +58,7 @@ def assign_scouts_to_explore_systems():
     needs_coverage = [sys_id for sys_id in check_list if sys_id not in already_covered]  # emergency coverage can be due to invasion detection trouble, etc.
     print "Needs coverage: %s" % needs_coverage
 
-    print "Available scouts & AIstate locs: %s" % [(x, foAI.foAIstate.fleetStatus.get(x, {}).get('sysID', -1)) for x in available_scouts]
+    print "Available scouts & AIstate locs: %s" % [(x, foAI.foAIstate.fleetStatus.get(x, {}).get('sysID', INVALID_ID)) for x in available_scouts]
     print "Available scouts & universe locs: %s" % [(x, universe.getFleet(x).systemID) for x in available_scouts]
     if not needs_coverage or not available_scouts:
         return

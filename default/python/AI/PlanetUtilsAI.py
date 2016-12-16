@@ -2,7 +2,7 @@ import sys
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
 from freeorion_tools import print_error
-
+from AIDependencies import INVALID_ID
 
 def safe_name(univ_object):
     return (univ_object and univ_object.name) or "?"
@@ -39,7 +39,7 @@ def get_capital():
     empire = fo.getEmpire()
     if empire is None:
         print >> sys.stderr, "Danger Danger! FO can't find an empire for me!!!!"
-        return -1
+        return INVALID_ID
     empire_id = empire.empireID
     capital_id = empire.capitalID
     homeworld = universe.getPlanet(capital_id)
@@ -55,7 +55,7 @@ def get_capital():
         if empire_owned_planet_ids:
             return empire_owned_planet_ids[0]
         else:
-            return -1
+            return INVALID_ID
     try:
         for spec_list in [ColonisationAI.empire_colonizers, ColonisationAI.empire_ship_builders, None]:
             population_id_pairs = []
@@ -67,7 +67,7 @@ def get_capital():
                 return max(population_id_pairs)[-1]
     except Exception as e:
         print_error(e)
-    return -1  # shouldn't ever reach here
+    return INVALID_ID  # shouldn't ever reach here
 
 
 def get_capital_sys_id():
@@ -76,8 +76,8 @@ def get_capital_sys_id():
     :return: system id
     """
     cap_id = get_capital()
-    if cap_id == -1:
-        return -1
+    if cap_id == INVALID_ID:
+        return INVALID_ID
     else:
         return fo.getUniverse().getPlanet(cap_id).systemID
 

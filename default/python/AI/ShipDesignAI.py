@@ -52,7 +52,7 @@ import math
 import AIstate
 import CombatRatingsAI
 from collections import Counter, defaultdict
-
+from AIDependencies import INVALID_ID
 from EnumsAI import ShipDesignTypes
 from freeorion_tools import print_error, UserString, tech_is_complete
 
@@ -713,7 +713,7 @@ class ShipDesigner(object):
         self.colonisation = -1      # -1 since 0 indicates an outpost (capacity = 0)
         self.production_cost = 9999
         self.production_time = 1
-        self.pid = -1               # planetID for checks on production cost if not LocationInvariant.
+        self.pid = INVALID_ID               # planetID for checks on production cost if not LocationInvariant.
         self.additional_specifications = AdditionalSpecifications()
         self.design_name_dict = {k: v for k, v in zip(self.NAME_THRESHOLDS,
                                                       UserString(self.NAMETABLE, self.basename).splitlines())}

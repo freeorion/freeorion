@@ -1,6 +1,6 @@
 import sys
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-
+from AIDependencies import INVALID_ID
 
 class UniverseObject(object):
     """Stores information about AI target - its id and type."""
@@ -59,12 +59,11 @@ class Fleet(UniverseObject):
     object_name = 'fleet'
 
     def get_system(self):
-        # Fleet systemID is where is fleet going.
-        # If fleet is going nowhere, then it is location of fleet
+        """Get current fleet location or target system if currently on starlane."""
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.id)
         system_id = fleet.nextSystemID
-        if system_id == -1:
+        if system_id == INVALID_ID:  # fleet is not moving
             system_id = fleet.systemID
         return System(system_id)
 

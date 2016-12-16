@@ -18,6 +18,7 @@ from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_prior
 from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error, Timer
 from TechsListsAI import EXOBOT_TECH_NAME
 from common.print_utils import Table, Sequence, Text
+from AIDependencies import INVALID_ID
 
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 _design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
@@ -80,7 +81,7 @@ def get_design_cost(design, pid):  # TODO: Use new framework
         _design_cost_cache[cur_turn] = cost_cache
     loc_invariant = design.costTimeLocationInvariant
     if loc_invariant:
-        loc = -1
+        loc = INVALID_ID
     else:
         loc = pid
     return cost_cache.setdefault((design.id, loc), design.productionCost(fo.empireID(), pid))
@@ -186,7 +187,7 @@ def generate_production_orders():
     _print_production_queue()
     universe = fo.getUniverse()
     capital_id = PlanetUtilsAI.get_capital()
-    if capital_id is None or capital_id == -1:
+    if capital_id is None or capital_id == INVALID_ID:
         homeworld = None
         capital_system_id = None
     else:
@@ -477,15 +478,15 @@ def generate_production_orders():
 
     pop_ctrs = list(AIstate.popCtrIDs)
     red_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
-                          if colony_systems.get(pid, -1) in AIstate.empireStars.get(fo.starType.red, [])],
+                          if colony_systems.get(pid, INVALID_ID) in AIstate.empireStars.get(fo.starType.red, [])],
                          reverse=True)
     red_pilots = [pid for _, pid in red_popctrs if _ == state.best_pilot_rating]
     blue_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
-                           if colony_systems.get(pid, -1) in AIstate.empireStars.get(fo.starType.blue, [])],
+                           if colony_systems.get(pid, INVALID_ID) in AIstate.empireStars.get(fo.starType.blue, [])],
                           reverse=True)
     blue_pilots = [pid for _, pid in blue_popctrs if _ == state.best_pilot_rating]
     bh_popctrs = sorted([(ColonisationAI.pilot_ratings.get(pid, 0), pid) for pid in pop_ctrs
-                         if colony_systems.get(pid, -1) in AIstate.empireStars.get(fo.starType.blackHole, [])],
+                         if colony_systems.get(pid, INVALID_ID) in AIstate.empireStars.get(fo.starType.blackHole, [])],
                         reverse=True)
     bh_pilots = [pid for _, pid in bh_popctrs if _ == state.best_pilot_rating]
     enrgy_shipyard_locs = {}
@@ -710,14 +711,14 @@ def generate_production_orders():
                 else:
                     distance_map = {}
                     for sys_id in best_locs:  # want to build close to capital for defense
-                        if sys_id == -1:
+                        if sys_id == INVALID_ID:
                             continue
                         try:
                             distance_map[sys_id] = universe.jumpDistance(homeworld.systemID, sys_id)
                         except:
                             pass
-                    use_sys = ([(-1, -1)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
-                if use_sys != -1:
+                    use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
+                if use_sys != INVALID_ID:
                     try:
                         use_loc = AIstate.colonizedSystems[use_sys][0]
                         res = fo.issueEnqueueBuildingProductionOrder(building_name, use_loc)
@@ -749,7 +750,7 @@ def generate_production_orders():
                 (red_pilots + AIstate.colonizedSystems[AIstate.empireStars[fo.starType.red][0]])[0])
             distance_map = {}
             for sys_id in AIstate.empireStars.get(fo.starType.red, []):
-                if sys_id == -1:
+                if sys_id == INVALID_ID:
                     continue
                 try:
                     distance_map[sys_id] = universe.jumpDistance(nominal_home.systemID, sys_id)
@@ -796,14 +797,14 @@ def generate_production_orders():
             else:
                 distance_map = {}
                 for sys_id in AIstate.empireStars.get(fo.starType.blackHole, []):
-                    if sys_id == -1:
+                    if sys_id == INVALID_ID:
                         continue
                     try:
                         distance_map[sys_id] = universe.jumpDistance(homeworld.systemID, sys_id)
                     except:
                         pass
-                use_sys = ([(-1, -1)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
-            if use_sys != -1:
+                use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
+            if use_sys != INVALID_ID:
                 try:
                     use_loc = AIstate.colonizedSystems[use_sys][0]
                     res = fo.issueEnqueueBuildingProductionOrder(building_name, use_loc)
@@ -874,15 +875,15 @@ def generate_production_orders():
             else:
                 distance_map = {}
                 for sys_id in AIstate.empireStars.get(fo.starType.neutron, []):
-                    if sys_id == -1:
+                    if sys_id == INVALID_ID:
                         continue
                     try:
                         distance_map[sys_id] = universe.jumpDistance(homeworld.systemID, sys_id)
                     except Exception as e:
                         print_error(e, location="ProductionAI.generateProductionOrders")
-                print ([-1] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))
-                use_sys = ([(-1, -1)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
-            if use_sys != -1:
+                print ([INVALID_ID] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))
+                use_sys = ([(-1, INVALID_ID)] + sorted([(dist, sys_id) for sys_id, dist in distance_map.items()]))[:2][-1][-1]  # kinda messy, but ensures a value
+            if use_sys != INVALID_ID:
                 try:
                     use_loc = AIstate.colonizedSystems[use_sys][0]
                     res = fo.issueEnqueueBuildingProductionOrder(building_name, use_loc)

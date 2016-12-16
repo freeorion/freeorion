@@ -7,7 +7,7 @@ import FleetUtilsAI
 from EnumsAI import MissionType
 from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_by_session
 from ShipDesignAI import get_part_type
-
+from AIDependencies import INVALID_ID
 
 def get_empire_standard_fighter():
     """Get the current empire standard fighter stats, i.e. the most common shiptype within the empire.
@@ -94,7 +94,7 @@ class ShipCombatStats(object):
             """
             return self.capacity, self.launch_rate, self.damage
 
-    def __init__(self, ship_id=-1, consider_refuel=False, stats=None):
+    def __init__(self, ship_id=INVALID_ID, consider_refuel=False, stats=None):
         self.__ship_id = ship_id
         self._consider_refuel = consider_refuel
         if stats:
@@ -219,7 +219,7 @@ class ShipCombatStats(object):
 
 class FleetCombatStats(object):
     """Stores combat related stats of the fleet."""
-    def __init__(self, fleet_id=-1, consider_refuel=False):
+    def __init__(self, fleet_id=INVALID_ID, consider_refuel=False):
         self.__fleet_id = fleet_id
         self._consider_refuel = consider_refuel
         self.__ship_stats = []

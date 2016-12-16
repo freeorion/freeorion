@@ -17,6 +17,7 @@ import MilitaryAI
 from EnumsAI import MissionType, PriorityType
 import CombatRatingsAI
 from freeorion_tools import tech_is_complete, Timer
+from AIDependencies import INVALID_ID
 
 invasion_timer = Timer('get_invasion_fleets()', write_log=False)
 
@@ -33,9 +34,9 @@ def get_invasion_fleets():
     home_system_id = PlanetUtilsAI.get_capital_sys_id()
     visible_system_ids = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
 
-    if home_system_id != -1:
+    if home_system_id != INVALID_ID:
         accessible_system_ids = [sys_id for sys_id in visible_system_ids
-                                 if (sys_id != -1) and universe.systemsConnected(sys_id, home_system_id, empire_id)]
+                                 if (sys_id != INVALID_ID) and universe.systemsConnected(sys_id, home_system_id, empire_id)]
     else:
         print "Warning: Empire has no identifiable homeworld; will treat all visible planets as accessible."
         accessible_system_ids = visible_system_ids  # TODO: check if any troop ships owned, use their system as home system
@@ -83,7 +84,7 @@ def get_invasion_fleets():
                 if not planet2:
                     continue
                 if pid not in foAI.foAIstate.qualifyingTroopBaseTargets and planet2.speciesName in ColonisationAI.empire_ship_builders:
-                    foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [pid2, -1])
+                    foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [pid2, INVALID_ID])
                     break
 
         for pid in list(foAI.foAIstate.qualifyingTroopBaseTargets):
@@ -293,7 +294,7 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
         if homeworld:
             home_system_id = homeworld.systemID
             eval_system_id = planet.systemID
-            if (home_system_id != -1) and (eval_system_id != -1):
+            if (home_system_id != INVALID_ID) and (eval_system_id != INVALID_ID):
                 least_jumps_path = list(universe.leastJumpsPath(home_system_id, eval_system_id, empire_id))
                 max_jumps = len(least_jumps_path)
     system_status = foAI.foAIstate.systemStatus.get(p_sys_id, {})
@@ -450,7 +451,7 @@ def assign_invasion_fleets_to_invade():
         for fid2 in local_base_troops:
             troop_capacity_tally += FleetUtilsAI.count_troops_in_fleet(fid2)
 
-        target_id = -1
+        target_id = INVALID_ID
         best_score = -1
         target_troops = 0
         for pid, rating in assign_invasion_values(targets, empire).items():
@@ -459,7 +460,7 @@ def assign_invasion_fleets_to_invade():
                 best_score = p_score
                 target_id = pid
                 target_troops = p_troops
-        if target_id != -1:
+        if target_id != INVALID_ID:
             local_base_troops.discard(fid)
             found_fleets = []
             troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fid))
