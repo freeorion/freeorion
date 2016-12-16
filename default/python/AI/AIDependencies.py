@@ -62,7 +62,10 @@ supply_by_size = {
     fo.planetSize.gasGiant: -1,
 }
 
-# C++ code details
+# Drydock repair details
+DRYDOCK_HAPPINESS_THRESHOLD = 5
+
+# Constants defined by the C++ game engine
 INVALID_ID = -1
 
 # </editor-fold>

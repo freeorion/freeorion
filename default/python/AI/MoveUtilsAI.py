@@ -8,7 +8,7 @@ import ColonisationAI
 import FleetUtilsAI
 import PlanetUtilsAI
 from freeorion_tools import ppstring
-from AIDependencies import INVALID_ID
+from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
 
 
 def get_fleet_orders_from_system_targets(fleet_target, targets):  # TODO consider to change targets to single target
@@ -181,8 +181,6 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
         print >> sys.stderr, "get_best_drydock_system_id passed bad fleet id."
         return None
 
-    HAPPINESS_THRESHOLD = 5
-
     universe = fo.getUniverse()
     start_sys = universe.getSystem(start_system_id)
     drydock_system_ids = set()
@@ -193,8 +191,8 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
         for pid in pids:
             planet = universe.getPlanet(pid)
             if (planet
-                  and planet.currentMeterValue(fo.meterType.happiness) >= HAPPINESS_THRESHOLD
-                  and planet.currentMeterValue(fo.meterType.targetHappiness) >= HAPPINESS_THRESHOLD):
+                  and planet.currentMeterValue(fo.meterType.happiness) >= DRYDOCK_HAPPINESS_THRESHOLD
+                  and planet.currentMeterValue(fo.meterType.targetHappiness) >= DRYDOCK_HAPPINESS_THRESHOLD):
                 drydock_system_ids.add(sys_id)
                 break
 
