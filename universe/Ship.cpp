@@ -517,16 +517,23 @@ namespace {
         if (!include_fighters || fighter_damage <= 0.0f || available_fighters <= 0 || fighter_launch_capacity <= 0)
             return retval;
 
-        // assuming 3 combat "bouts"
         int fighter_shots = std::min(available_fighters, fighter_launch_capacity);  // how many fighters launched in bout 1
         available_fighters -= fighter_shots;
-        fighter_shots *= 2;                                                         // first-bout-launched fighters attack in bouts 2 and 3
-        fighter_shots += std::min(available_fighters, fighter_launch_capacity);     // second-bout-launched fighters attack only in bout 3
+        int launched_fighters = fighter_shots;
+        int num_bouts = GetUniverse().GetNumCombatRounds();
+        int remaining_bouts = num_bouts - 2;  // no attack for first round, second round already added
+        while (remaining_bouts > 0) {
+            int fighters_launched_this_bout = std::min(available_fighters, fighter_launch_capacity);
+            available_fighters -= fighters_launched_this_bout;
+            launched_fighters += fighters_launched_this_bout;
+            fighter_shots += launched_fighters;
+            --remaining_bouts;
+        }
 
         // how much damage does a fighter shot do?
         fighter_damage = std::max(0.0f, fighter_damage);
 
-        retval.push_back(fighter_damage * fighter_shots / 3.0f);    // divide by 3 because fighter calculation is for a full combat, but direct firefor one attack
+        retval.push_back(fighter_damage * fighter_shots / num_bouts);    // divide by bouts because fighter calculation is for a full combat, but direct firefor one attack
 
         return retval;
     }
