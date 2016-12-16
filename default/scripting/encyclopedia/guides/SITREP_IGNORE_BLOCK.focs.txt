@@ -4,4 +4,3 @@ Article
     short_description = "SITREP_IGNORE_BLOCK_SHORT_DESC"
     description = "SITREP_IGNORE_BLOCK_TEXT"
     icon = "icons/sitrep/generic.png"
-

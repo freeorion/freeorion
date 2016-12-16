@@ -1,6 +1,0 @@
-Article
-    name = "PEACE_TITLE"
-    category = "CATEGORY_GAME_CONCEPTS"
-    short_description = "DIPLOMACY_ARTICLE_SHORT_DESC"
-    description = "PEACE_TEXT"
-    icon = "icons/peace.png"

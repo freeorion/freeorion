@@ -1,6 +1,6 @@
 Article
-    name = "AI_LEVELS_TITLE"
+    name = "DIPLOMACY_TITLE"
     category = "CATEGORY_GAME_CONCEPTS"
     short_description = "DIPLOMACY_ARTICLE_SHORT_DESC"
-    description = "AI_LEVELS_TEXT"
+    description = "DIPLOMACY_TEXT"
     icon = "icons/ai.png"

@@ -1,0 +1,6 @@
+Article
+    name = "AI_LEVELS_TITLE"
+    category = "DIPLOMACY_TITLE"
+    short_description = "AI_LEVELS_TITLE"
+    description = "AI_LEVELS_TEXT"
+    icon = "icons/combat.png"
