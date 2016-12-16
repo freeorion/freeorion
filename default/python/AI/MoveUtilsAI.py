@@ -5,6 +5,7 @@ import AIstate
 import universe_object
 import fleet_orders
 import ColonisationAI
+import FleetUtilsAI
 import PlanetUtilsAI
 from freeorion_tools import ppstring
 from AIDependencies import INVALID_ID
@@ -67,8 +68,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
     fleet_supplyable_system_ids = set(empire.fleetSupplyableSystemIDs)
     # get current fuel and max fuel
     universe = fo.getUniverse()
-    fleet = universe.getFleet(fleet_id)
-    fuel = int(fleet.fuel)
+    fuel = int(FleetUtilsAI.get_fuel(fleet_id))  # round down to get actually number of jumps
     if fuel < 1.0 or from_system_target.id == to_system_target.id:
         return []
     if foAI.foAIstate.aggression <= fo.aggression.typical or True:  # TODO: sort out if shortestPath leaves off some intermediate destinations
@@ -122,17 +122,9 @@ def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to
     """
     system_targets = []
     if not from_system_target.id == to_system_target.id:
-        # get supplyable systems
-        empire = fo.getEmpire()
-        fleet_supplyable_system_ids = empire.fleetSupplyableSystemIDs
-        # get current fuel and max fuel
-        universe = fo.getUniverse()
-        fleet = universe.getFleet(fleet_id)
-        max_fuel = int(fleet.maxFuel)
-        fuel = int(fleet.fuel)
-        # if verbose:
-        # print "   fleet ID %d has %.1f fuel to get from %s to %s"%(fleetID, fuel, fromSystemAITarget, toSystemAITarget )
-
+        fleet_supplyable_system_ids = fo.getEmpire().fleetSupplyableSystemIDs
+        fuel = int(FleetUtilsAI.get_fuel(fleet_id))  # int to get actual number of jumps
+        max_fuel = int(FleetUtilsAI.get_max_fuel(fleet_id))
         # try to find path without going resupply first
         supply_system_target = get_nearest_supplied_system(to_system_target.id)
         system_targets = __find_path_with_fuel_to_system_with_possible_return(from_system_target, to_system_target, system_targets, fleet_supplyable_system_ids, max_fuel, fuel, supply_system_target)

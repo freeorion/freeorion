@@ -554,3 +554,27 @@ def get_fighter_capacity_of_fleet(fleet_id):
                 cur_capacity += ship.currentPartMeterValue(fo.meterType.capacity, partname)
                 max_capacity += ship.currentPartMeterValue(fo.meterType.maxCapacity, partname)
     return cur_capacity, max_capacity
+
+
+def get_fuel(fleet_id):
+    """Get fuel of fleet.
+
+    :param fleet_id: Queried fleet
+    :type fleet_id: int
+    :return: fuel of fleet
+    :rtype: float
+    """
+    fleet = fo.getUniverse().getFleet(fleet_id)
+    return fleet and fleet.fuel or 0.0
+
+
+def get_max_fuel(fleet_id):
+    """Get maximum fuel capacity of fleet.
+
+    :param fleet_id: Queried fleet
+    :type fleet_id: int
+    :return: max fuel of fleet
+    :rtype: float
+    """
+    fleet = fo.getUniverse().getFleet(fleet_id)
+    return fleet and fleet.maxFuel or 0.0
