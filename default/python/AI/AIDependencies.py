@@ -71,6 +71,31 @@ INVALID_ID = -1
 # </editor-fold>
 
 
+# <editor-fold desc="Environmental population modifiers">
+#  Population modifiers that are based on environment
+
+# boni that scale with planet size
+POP_SIZE_MOD_MAP = {
+    # "Effect": [uninhab, hostile, poor, adequate, good]
+    "environment_bonus": [0,-4,-2, 0, 3],
+    "GRO_SUBTER_HAB":    [0, 1, 1, 1, 1],
+    "GRO_SYMBIOTIC_BIO": [0, 0, 1, 1, 1],
+    "GRO_XENO_GENETICS": [0, 1, 2, 2, 0],
+    "GRO_XENO_HYBRID":   [0, 2, 1, 0, 0],
+    "GRO_CYBORG":        [0, 2, 0, 0, 0],
+    "CON_NDIM_STRUC":    [0, 2, 2, 2, 2],
+    "CON_ORBITAL_HAB":   [0, 1, 1, 1, 1],
+}
+
+# flat boni not dependent on size
+POP_CONST_MOD_MAP = {
+    # "Source": [uninhab, hostile, poor, adequate, good]
+    "GRO_PLANET_ECOL":   [0, 0, 0, 1, 1],
+    "GRO_SYMBIOTIC_BIO": [0, 0, 0,-1,-1],
+}
+# </editor-fold>
+
+
 # <editor-fold desc="Species">
 # Species modifiers
 SPECIES_RESEARCH_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 'ULTIMATE': 3.0}
@@ -155,9 +180,7 @@ for metab, boosts in metabolismBoostMap.items():
 # Regardless of whether the sub-dictionary here has PlanetSize keys, the final
 # value will be applied as a *fixed-size mod* to the max population
 POP_FIXED_MOD_SPECIALS = {
-    'DIM_RIFT_MASTER_SPECIAL': {
-        -1: -4,
-    },
+    'DIM_RIFT_MASTER_SPECIAL': {-1: -4},
 }
 
 # Please see the Note at top of this file regarding PlanetSize-Dependent-Lookup
