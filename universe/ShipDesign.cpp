@@ -694,7 +694,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
             if (part_attack > shield)
                 direct_attack += (part_attack - shield)*part->SecondaryStat();  // here, secondary stat is number of shots per round
         } else if (part_class == PC_FIGHTER_HANGAR) {
-            available_fighters += part->Capacity();
+            available_fighters = part->Capacity();                              // stacked meter
         } else if (part_class == PC_FIGHTER_BAY) {
             fighter_launch_capacity += part->Capacity();
             fighter_damage = part->SecondaryStat();                             // here, secondary stat is fighter damage per shot
