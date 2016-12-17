@@ -379,8 +379,8 @@ TechManager::TechManager() {
     // fill in the unlocked techs data for each loaded tech
     for (const Tech* tech : m_techs) {
         for (const std::string& prereq : tech->Prerequisites()) {
-            if (Tech* tech = const_cast<Tech*>(GetTech(prereq)))
-                tech->m_unlocked_techs.insert(tech->Name());
+            if (Tech* prereq_tech = const_cast<Tech*>(GetTech(prereq)))
+                prereq_tech->m_unlocked_techs.insert(tech->Name());
         }
     }
 
@@ -521,6 +521,11 @@ std::string TechManager::FindRedundantDependency() {
 
 void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::string>& children) {
     for (const std::string& unlocked_tech : tech->UnlockedTechs()) {
+        if (unlocked_tech == tech->Name()) {
+            // infinite loop
+            FatalLogger() << "Tech " << unlocked_tech << " unlocks itself";
+            continue;
+        }
         children[unlocked_tech] = tech->Name();
         AllChildren(GetTech(unlocked_tech), children);
     }
