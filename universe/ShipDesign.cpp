@@ -694,7 +694,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
             if (part_attack > shield)
                 direct_attack += (part_attack - shield)*part->SecondaryStat();  // here, secondary stat is number of shots per round
         } else if (part_class == PC_FIGHTER_HANGAR) {
-            available_fighters += part->Capacity();
+            available_fighters = part->Capacity();                              // stacked meter
         } else if (part_class == PC_FIGHTER_BAY) {
             fighter_launch_capacity += part->Capacity();
             fighter_damage = part->SecondaryStat();                             // here, secondary stat is fighter damage per shot
@@ -708,7 +708,7 @@ float ShipDesign::AdjustedAttack(float shield) const {
     fighter_shots += std::min(available_fighters, fighter_launch_capacity);     // second-bout-launched fighters attack only in bout 3
 
     // how much damage does a fighter shot do?
-    fighter_damage = std::max(0.0f, fighter_damage - shield);
+    fighter_damage = std::max(0.0f, fighter_damage);
 
     return direct_attack + fighter_shots*fighter_damage/3.0f;   // divide by 3 because fighter calculation is for a full combat, but direct firefor one attack
 }
