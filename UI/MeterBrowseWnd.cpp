@@ -834,8 +834,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     if (!m_show_all_bouts) {
         // Show damage for first wave (2nd combat round)
-        std::pair<int, float> first_wave = FightersDamageForBout(bay_total_capacity, hangar_current_fighters,
-                                                                    fighter_damage, 2);
+        std::pair<int, float> first_wave = FightersDamageForBout(bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
         std::string launch_text = ColourWrappedtext(boost::lexical_cast<std::string>(first_wave.first), HIGHLIGHT_COLOR);
         std::string damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
                                                        % launch_text % fighter_damage_text);
@@ -895,10 +894,10 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         // Damage summary labels
         float total_dmg = FightersDamageForBout(bay_total_capacity, hangar_current_fighters, fighter_damage).second;
-        std::string detail_avg_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_AVERAGE"))
-            % ColourWrappedtext(DoubleToString(total_dmg / NUM_COMBAT_BOUTS, 3, false), DAMAGE_COLOR));
-        std::string detail_value_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_TOTAL"))
-            % ColourWrappedtext(DoubleToString(total_dmg, 3, false), DAMAGE_COLOR));
+        std::string avg_val =  ColourWrappedtext(DoubleToString(total_dmg / NUM_COMBAT_BOUTS, 3, false), DAMAGE_COLOR);
+        std::string detail_avg_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_AVERAGE")) % avg_val);
+        std::string total_val = ColourWrappedtext(DoubleToString(total_dmg, 3, false), DAMAGE_COLOR);
+        std::string detail_value_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_TOTAL")) % total_val);
 
         GG::Label* detail_summary_avg = new CUILabel(detail_avg_text, GG::FORMAT_RIGHT);
         detail_summary_avg->MoveTo(GG::Pt(GG::X0, top));
