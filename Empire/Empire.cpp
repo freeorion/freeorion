@@ -1175,7 +1175,7 @@ void ProductionQueue::Update() {
             max_turns *= 2;  // double the turns for simulations, because of uncertainties around frontloading
 
             max_turns = std::min(max_turns, int(DP_TURNS - first_turn_pp_available + 1));
-            //DebugLogger() << "     max turns simulated: "<< max_turns << "first turn pp avail: "<<(first_turn_pp_available-1);
+            //DebugLogger() << "     max turns simulated: "<< max_turns << "first turn pp avail: " << (first_turn_pp_available-1);
 
             float allocation;
             float element_this_turn_limit;
