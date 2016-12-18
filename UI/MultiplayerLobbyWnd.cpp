@@ -260,6 +260,16 @@ namespace {
                 species_selector->Disable();
             else
                 GG::Connect(species_selector->SpeciesChangedSignal, &NewGamePlayerRow::SpeciesChanged,      this);
+
+            // ready check box
+            CUIStateButton* ready_checkbox = new CUIStateButton("", GG::FORMAT_NONE, boost::make_shared<CUICheckBoxRepresenter>());
+            ready_checkbox->SetCheck(false);
+            ready_checkbox->Resize(GG::Pt(GG::X(40), PlayerRowHeight()));
+            push_back(ready_checkbox);
+            if (disabled)
+                ready_checkbox->Disable();
+            else
+                GG::Connect(ready_checkbox->CheckedSignal,          &NewGamePlayerRow::ReadyChanged,        this);
         }
 
     private:
@@ -277,6 +287,10 @@ namespace {
         }
         void SpeciesChanged(const std::string& str) {
             m_player_data.m_starting_species_name = str;
+            DataChangedSignal();
+        }
+        void ReadyChanged(bool ready) {
+            m_player_data.m_player_ready = ready;
             DataChangedSignal();
         }
     };
@@ -342,6 +356,16 @@ namespace {
                 m_empire_list->Disable();
             else
                 Connect(m_empire_list->SelChangedSignal, &LoadGamePlayerRow::EmpireChanged, this);
+
+            // ready check box
+            CUIStateButton* ready_checkbox = new CUIStateButton("", GG::FORMAT_NONE, boost::make_shared<CUICheckBoxRepresenter>());
+            ready_checkbox->SetCheck(false);
+            ready_checkbox->Resize(GG::Pt(GG::X(40), PlayerRowHeight()));
+            push_back(ready_checkbox);
+            if (disabled)
+                ready_checkbox->Disable();
+            else
+                GG::Connect(ready_checkbox->CheckedSignal,          &LoadGamePlayerRow::ReadyChanged,        this);            
         }
 
     private:
@@ -367,6 +391,10 @@ namespace {
 
             DataChangedSignal();
         }
+        void ReadyChanged(bool ready) {
+            m_player_data.m_player_ready = ready;
+            DataChangedSignal();
+        }
 
         EmpireColorSelector*                     m_color_selector;
         GG::DropDownList*                        m_empire_list;
@@ -382,6 +410,7 @@ namespace {
             push_back(type_drop);
             GG::Connect(type_drop->TypeChangedSignal,       &EmptyPlayerRow::PlayerTypeChanged,   this);
             // extra entries to make layout consistent
+            push_back(new CUILabel(""));
             push_back(new CUILabel(""));
             push_back(new CUILabel(""));
             push_back(new CUILabel(""));
@@ -420,6 +449,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_players_lb_empire_name_column_label(0),
     m_players_lb_empire_colour_column_label(0),
     m_players_lb_species_or_original_player_label(0),
+    m_players_lb_player_ready_label(0),
     m_players_lb(0),
     m_start_game_bn(0),
     m_cancel_bn(0),
@@ -450,12 +480,13 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_players_lb_empire_name_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"), GG::FORMAT_LEFT);
     m_players_lb_empire_colour_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_LEFT);
     m_players_lb_species_or_original_player_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_LEFT);
+    m_players_lb_player_ready_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_PLAYER_READY"), GG::FORMAT_LEFT);
 
     m_players_lb = new CUIListBox();
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_players_lb->ManuallyManageColProps();
     m_players_lb->NormalizeRowsOnInsert(true);
-    m_players_lb->SetNumCols(5);
+    m_players_lb->SetNumCols(6);
 
     m_start_game_bn = new CUIButton(UserString("START_GAME_BN"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));
@@ -475,6 +506,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     AttachChild(m_players_lb_empire_name_column_label);
     AttachChild(m_players_lb_empire_colour_column_label);
     AttachChild(m_players_lb_species_or_original_player_label);
+    AttachChild(m_players_lb_player_ready_label);
     AttachChild(m_start_game_bn);
     AttachChild(m_cancel_bn);
     AttachChild(m_start_conditions_text);
@@ -668,6 +700,9 @@ void MultiPlayerLobbyWnd::DoLayout() {
     players_lb_labels_ul += players_lb_labels_advance;
     players_lb_labels_lr += players_lb_labels_advance;
     m_players_lb_species_or_original_player_label->SizeMove(players_lb_labels_ul, players_lb_labels_lr);
+    players_lb_labels_ul += players_lb_labels_advance;
+    players_lb_labels_lr += players_lb_labels_advance;
+    m_players_lb_player_ready_label->SizeMove(players_lb_labels_ul, players_lb_labels_lr);
 
     y += TEXT_HEIGHT + CONTROL_MARGIN;
     x = CHAT_WIDTH + CONTROL_MARGIN;
