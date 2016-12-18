@@ -176,8 +176,7 @@ namespace {
       * empire with the indicated \a empire_id this turn at their build location. */
     void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp,
                                      const std::vector<std::set<int> >& queue_element_resource_sharing_object_groups,
-                                     ProductionQueue::QueueType& queue,
-                                     std::map<std::set<int>, float>& allocated_pp,
+                                     ProductionQueue::QueueType& queue, std::map<std::set<int>, float>& allocated_pp,
                                      int& projects_in_progress, int empire_id)
     {
         //DebugLogger() << "========SetProdQueueElementSpending========";
@@ -765,6 +764,15 @@ std::map<MeterType, std::map<int, float> > ProductionQueue::ProductionItem::Comp
     return retval;
 }
 
+std::string ProductionQueue::ProductionItem::Dump() const {
+    std::string retval = "ProductionItem: " + boost::lexical_cast<std::string>(build_type) + " ";
+    if (!name.empty())
+        retval += "name: " + name;
+    if (design_id != ShipDesign::INVALID_DESIGN_ID)
+        retval += "id: " + design_id;
+    return retval;
+}
+
 
 //////////////////////////////
 // ProductionQueue::Element //
@@ -838,6 +846,14 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int empir
     rally_point_id(INVALID_OBJECT_ID),
     paused(paused_)
 {}
+
+std::string ProductionQueue::Element::Dump() const {
+    std::string retval = "ProductionQueue::Element (" + item.Dump() + ") (" +
+        boost::lexical_cast<std::string>(blocksize) + ") x" + boost::lexical_cast<std::string>(ordered) + " ";
+    retval += " (remaining: " + boost::lexical_cast<std::string>(remaining) + ") ";
+    return retval;
+}
+
 
 /////////////////////
 // ProductionQueue //
@@ -1159,7 +1175,7 @@ void ProductionQueue::Update() {
             boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             float total_item_cost = item_cost * element.blocksize;
 
-            float additional_pp_to_complete_element = total_item_cost * element.remaining - element.progress*total_item_cost; // additional PP, beyond already-accumulated PP, to build all items in this element
+            float additional_pp_to_complete_element = total_item_cost * (1.0f - element.progress); // additional PP, beyond already-accumulated PP to finish this element once
             //DebugLogger()  << " element total cost: " << element_total_cost << "; progress: " << element.progress;
             if (additional_pp_to_complete_element < EPSILON) {
                 //DebugLogger()  << "     will complete next turn";
@@ -1174,25 +1190,27 @@ void ProductionQueue::Update() {
                                      std::max(pp_still_available[first_turn_pp_available-1], 0.01f)));
             max_turns *= 2;  // double the turns for simulations, because of uncertainties around frontloading
 
-            max_turns = std::min(max_turns, int(DP_TURNS - first_turn_pp_available + 1));
+            max_turns = std::min(max_turns, static_cast<int>(DP_TURNS - first_turn_pp_available + 1));
             //DebugLogger() << "     max turns simulated: "<< max_turns << "first turn pp avail: " << (first_turn_pp_available-1);
 
             float allocation;
             float element_this_turn_limit;
             //DebugLogger() << "ProductionQueue::Update Queue index   Queue Item: " << element.item.name;
 
-            for (int j = 0; j < max_turns; j++) {  // iterate over the turns necessary to complete item
+            // iterate over the turns necessary to complete item
+            for (int j = 0; j < max_turns; j++) {
                 // determine how many pp to allocate to this queue element this turn.  allocation is limited by the
                 // item cost, which is the max number of PP per turn that can be put towards this item, and by the
                 // total cost remaining to complete the last item in the queue element (eg. the element has all but
                 // the last item complete already) and by the total pp available in this element's production location's
                 // resource sharing group
+
                 //DebugLogger()  << "     turn: " << j << "; max_pp_needed: " << additional_pp_to_complete_element << "; per turn limit: " << element_per_turn_limit << "; pp stil avail: " << pp_still_available[first_turn_pp_available+j-1];
                 element_this_turn_limit = CalculateProductionPerTurnLimit(element, item_cost, build_turns);
                 allocation = std::max(0.0f, std::min(element_this_turn_limit, pp_still_available[first_turn_pp_available+j-1]));
-                element.progress += allocation / std::max(EPSILON, total_item_cost);    // add turn's allocation
+                element.progress += allocation / std::max(EPSILON, total_item_cost);    // add turn's progress due to allocation
                 additional_pp_to_complete_element -= allocation;
-                float item_cost_remaining = total_item_cost - element.progress*total_item_cost;
+                float item_cost_remaining = total_item_cost*(1.0f - element.progress);
                 //DebugLogger()  << "     allocation: " << allocation << "; new progress: "<< element.progress << " with " << item_cost_remaining << " remaining";
                 pp_still_available[first_turn_pp_available+j-1] -= allocation;
                 if (pp_still_available[first_turn_pp_available+j-1] <= 0 ) {
@@ -1207,7 +1225,7 @@ void ProductionQueue::Update() {
                     // deduct cost of one item from accumulated PP.  don't set
                     // accumulation to zero, as this would eliminate any partial
                     // completion of the next item
-                    element.progress = std::max(0.0f, (element.progress*total_item_cost - total_item_cost) / std::max(EPSILON, total_item_cost));
+                    element.progress = std::max(0.0f, element.progress - 1.0f);
                     --element.remaining;  //pretty sure this just effects the dp version & should do even if also doing ORIG_SIMULATOR
 
                     //DebugLogger() << "ProductionQueue::Recording DP sim results for item " << element.item.name;
@@ -1215,7 +1233,7 @@ void ProductionQueue::Update() {
                     // if this was the first item in the element to be completed in
                     // this simuation, update the original queue element with the
                     // turns required to complete the next item in the element
-                    if (element.remaining +1 == m_queue[sim_queue_original_indices[i]].remaining) //had already decremented element.remaining above
+                    if (element.remaining + 1 == m_queue[sim_queue_original_indices[i]].remaining) //had already decremented element.remaining above
                         m_queue[sim_queue_original_indices[i]].turns_left_to_next_item = first_turn_pp_available+j;
                     if (!element.remaining) {
                         m_queue[sim_queue_original_indices[i]].turns_left_to_completion = first_turn_pp_available+j;    // record the (estimated) turns to complete the whole element on the original queue
@@ -1231,12 +1249,13 @@ void ProductionQueue::Update() {
 
     dp_time_end = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
     dp_time = (dp_time_end - dp_time_start).total_microseconds();
-    if ((dp_time * 1e-6) >= DP_TOO_LONG_TIME)
-        DebugLogger()  << "ProductionQueue::Update: Projections timed out after " << dp_time 
+    if ((dp_time * 1e-6) >= DP_TOO_LONG_TIME) {
+        DebugLogger()  << "ProductionQueue::Update: Projections timed out after " << dp_time
                        << " microseconds; all remaining items in queue marked completing 'Never'.";
-    DebugLogger()  << "ProductionQueue::Update: Projections took " 
-                   << ((dp_time_end - dp_time_start).total_microseconds()) << " microseconds with "
-                   << empire->ProductionPoints() << " total Production Points";
+    }
+    DebugLogger() << "ProductionQueue::Update: Projections took "
+                  << ((dp_time_end - dp_time_start).total_microseconds()) << " microseconds with "
+                  << empire->ProductionPoints() << " total Production Points";
     ProductionQueueChangedSignal();
 }
 
@@ -1736,7 +1755,7 @@ float Empire::ProductionStatus(int i) const {
     float item_cost;
     int item_time;
     boost::tie(item_cost, item_time) = this->ProductionCostAndTime(m_production_queue[i]);
-    return item_progress * item_cost;
+    return item_progress * item_cost * m_production_queue[i].blocksize;
 }
 
 std::pair<float, int> Empire::ProductionCostAndTime(const ProductionQueue::Element& element) const
@@ -2410,13 +2429,19 @@ void Empire::SetProductionQuantityAndBlocksize(int index, int quantity, int bloc
     if (m_production_queue[index].item.build_type == BT_BUILDING && ((1 < quantity) || ( 1 < blocksize) ))
         throw std::runtime_error("Empire::SetProductionQuantity() : Attempted to build more than one instance of a building in the same build run.");
     int original_quantity = m_production_queue[index].remaining;
-    int original_blocksize = m_production_queue[index].blocksize;
+    //int original_blocksize = m_production_queue[index].blocksize;
     blocksize = std::max(1, blocksize);
     m_production_queue[index].remaining = quantity;
     m_production_queue[index].ordered += quantity - original_quantity;
     m_production_queue[index].blocksize = blocksize;
-    if (blocksize != original_blocksize) // if reducing, may lose the progress from the excess former blocksize, or min-turns-to-build could be bypassed; if increasing, may be able to claim credit if undoing a recent decrease
-        m_production_queue[index].progress = (m_production_queue[index].progress_memory / m_production_queue[index].blocksize_memory) * std::min( m_production_queue[index].blocksize_memory, blocksize);
+    //std::cout << "original block size: " << original_blocksize << "  new blocksize: " << blocksize << "  memory blocksize: " << m_production_queue[index].blocksize_memory << std::endl;
+    if (blocksize <= m_production_queue[index].blocksize_memory) {
+        // if reducing block size, progress on retained portion is unchanged.
+        // if increasing block size, progress is reset to 0, unless this is undoing a recent reduction in block size
+        m_production_queue[index].progress = m_production_queue[index].progress_memory;
+    } else {
+        m_production_queue[index].progress = 0.0f;
+    }
 }
 
 void Empire::SetProductionRallyPoint(int index, int rally_point_id) {
@@ -2899,9 +2924,17 @@ void Empire::CheckProductionProgress() {
         }
 
         item_cost *= elem.blocksize;
+
+        DebugLogger() << "elem: " << elem.Dump();
+        DebugLogger() << "   allocated: " << elem.allocated_pp;
+        DebugLogger() << "   initial progress: " << elem.progress;
+
         elem.progress += elem.allocated_pp / std::max(EPSILON, item_cost);  // add progress for allocated PP to queue item
         elem.progress_memory = elem.progress;
         elem.blocksize_memory = elem.blocksize;
+
+        DebugLogger() << "   updated progress: " << elem.progress;
+        DebugLogger() << " ";
 
         std::string build_description;
         switch (elem.item.build_type) {

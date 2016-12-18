@@ -155,6 +155,8 @@ struct FO_COMMON_API ProductionQueue {
         std::map<std::string, std::map<int, float> >    CompletionSpecialConsumption(int location_id) const;// for each special name, what object ids have those special capacities reduced by what amount
         std::map<MeterType, std::map<int, float> >      CompletionMeterConsumption(int location_id) const;  // for each meter type, what object ids have those meters reduced by what amount
 
+        std::string Dump() const;
+
         BuildType   build_type;
         // only one of these may be valid, depending on BuildType
         std::string name;
@@ -187,6 +189,8 @@ struct FO_COMMON_API ProductionQueue {
         int             turns_left_to_completion;
         int             rally_point_id;
         bool            paused;
+
+        std::string Dump() const;
 
     private:
         friend class boost::serialization::access;
