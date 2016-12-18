@@ -1,5 +1,6 @@
 #!/usr/bin/env python2
 
+
 import sys
 import os
 from string import Template
@@ -65,14 +66,14 @@ class Generator(object):
 class NsisInstScriptGenerator(Generator):
     def compile_dll_list(self):
         all_dll_files = glob("*.dll")
-        accepted_dll_files = []
+        accepted_dll_files = set(["GiGi.dll", "GiGiSDL.dll"])
         for dll_file in all_dll_files:
             if dll_file.startswith("boost_"):
                 if dll_file.partition("-")[0] in required_boost_libraries:
-                    accepted_dll_files.append(dll_file)
+                    accepted_dll_files.add(dll_file)
             else:
-                accepted_dll_files.append(dll_file)
-        return accepted_dll_files
+                accepted_dll_files.add(dll_file)
+        return sorted(accepted_dll_files)
 
     def compile_output(self, template, version, branch, build_no, build_sys):
         dll_files = self.compile_dll_list()
