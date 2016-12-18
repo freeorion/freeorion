@@ -591,6 +591,11 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 namespace {
     class ShipFightersBrowseRow : public GG::ListBox::Row {
     public:
+        /** Ctor
+         * @param [in] label text for the descriptive label, aligned to right
+         * @param [in] value value for label positioned to left of @p label, colored if @p base_value is unspecified
+         * @param [in] base_value optional; If greater than 0.0f: the value label is formatted to "value of base_value"
+         */
         ShipFightersBrowseRow(const std::string& label, double value, double base_value = 0.0f) :
                 GG::ListBox::Row(FighterBrowseLabelWidth() + MeterBrowseValueWidth(), GG::Y1, "")
         {
@@ -648,6 +653,7 @@ void ShipFightersBrowseWnd::Initialize() {
 
     top += m_row_height;
 
+    // initialize formatting for list of bay part labels
     m_bay_list = new CUIListBox();
     m_bay_list->SetColor(BG_COLOR);
     m_bay_list->SetInteriorColor(BG_COLOR);
@@ -658,6 +664,7 @@ void ShipFightersBrowseWnd::Initialize() {
     m_bay_list->MoveTo(GG::Pt(GG::X0, top));
     AttachChild(m_bay_list);
 
+    // initialize formatting for list of hangar part labels
     m_hangar_list = new CUIListBox();
     m_hangar_list->SetColor(BG_COLOR);
     m_hangar_list->SetInteriorColor(BG_COLOR);
@@ -750,11 +757,13 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (parts.empty())
         return;
 
+    // colors used, these could be moved to OptionsDB if other controls utilize similar value types
     const GG::Clr DAMAGE_COLOR = GG::CLR_ORANGE;
     const GG::Clr HIGHLIGHT_COLOR = GG::CLR_YELLOW;
-    const GG::X LABEL_WIDTH = FighterBrowseLabelWidth();
-    const GG::X VALUE_WIDTH = MeterBrowseValueWidth();
-    const GG::X ROW_WIDTH = LABEL_WIDTH + EDGE_PAD + VALUE_WIDTH;
+
+    const GG::X LABEL_WIDTH = FighterBrowseLabelWidth();  // width of the descriptive label in a listbox
+    const GG::X VALUE_WIDTH = MeterBrowseValueWidth();  // width of the value label in a listbox
+    const GG::X ROW_WIDTH = LABEL_WIDTH + EDGE_PAD + VALUE_WIDTH;  // width of a listbox row, spacing between columns
 
     float fighter_damage = 0.0f;
     std::pair<std::string, int> hangar_part;  // name, count
@@ -797,12 +806,13 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (hangar_part.second <= 0)
         return;
 
-    // Add list summary labels
+    // Add labels for sum of bay and hangar capacities
+
     std::string bay_value_text = boost::lexical_cast<std::string>(bay_total_capacity);
     std::string hangar_current_text = boost::lexical_cast<std::string>(hangar_current_fighters);
-
-    // highlight the lower value if not showing all bouts
+    // No highlight used when showing all bouts
     if (!m_show_all_bouts) {
+        // highlight the lower value, to show which is the limiting factor
         if (hangar_current_fighters <= bay_total_capacity)
             hangar_current_text = ColourWrappedtext(hangar_current_text, HIGHLIGHT_COLOR);
         else
@@ -812,7 +822,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     std::string hangar_total_text = boost::lexical_cast<std::string>(hangar_total_capacity);
     std::string hangar_value_text = boost::io::str(FlexibleFormat(UserString("TT_N_OF_N"))
                                                    % hangar_current_text % hangar_total_text);
-
+    // summary of bay capacity
     GG::Label* bay_summary = new CUILabel(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
                                                          % UserString("SHIP_FIGHTER_BAY_SUMMARY") % bay_value_text));
     bay_summary->SetFont(ClientUI::GetBoldFont());
@@ -820,6 +830,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     bay_summary->Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, m_row_height));
     AttachChild(bay_summary);
 
+    // summary of hangar capacity
     GG::Label* hangar_summary = new CUILabel(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
                                                             % UserString("SHIP_FIGHTER_HANGAR_SUMMARY") % hangar_value_text));
     hangar_summary->SetFont(ClientUI::GetBoldFont());
@@ -830,20 +841,24 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     top += m_row_height;
 
+    // text for display of fighter damage
     std::string fighter_damage_text = ColourWrappedtext(DoubleToString(fighter_damage, 3, false), DAMAGE_COLOR);
 
     if (!m_show_all_bouts) {
         // Show damage for first wave (2nd combat round)
+
         std::pair<int, float> first_wave = FightersDamageForBout(bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
         std::string launch_text = ColourWrappedtext(boost::lexical_cast<std::string>(first_wave.first), HIGHLIGHT_COLOR);
         std::string damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
                                                        % launch_text % fighter_damage_text);
+        // damage formula label
         GG::Label* damage_label = new CUILabel(damage_label_text, GG::FORMAT_RIGHT);
         damage_label->MoveTo(GG::Pt(GG::X0, top));
         damage_label->Resize(GG::Pt(LABEL_WIDTH * 2 + EDGE_PAD, m_row_height));
         AttachChild(damage_label);
 
         std::string damage_value_text = DoubleToString(first_wave.second, 3, false);
+        // sum of damage formula label
         GG::Label* damage_value = new CUILabel(ColourWrappedtext(damage_value_text, DAMAGE_COLOR));
         damage_value->MoveTo(GG::Pt(LABEL_WIDTH * 2, top));
         damage_value->Resize(GG::Pt(VALUE_WIDTH * 2, m_row_height));
@@ -853,12 +868,15 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         top += m_row_height;
     } else {
+        // Show each effect for part capacity summaries
+
         // add labels for bay parts
         for (std::multimap<std::string, int>::value_type& bay_part : bay_parts) {
             const std::string& part_name = UserString(bay_part.first);
             int fighter_total = bay_part.second;
             m_bay_list->Insert(new ShipFightersBrowseRow(part_name, fighter_total));
         }
+        // TODO Append other potential effects for bay capacities
 
         // add a label for each hangar part, distributing the total fighters equally
         int unaccounted_current_fighters = hangar_current_fighters;
@@ -880,11 +898,14 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
                           << " Total: " << unaccounted_total_fighters << "/" << hangar_total_capacity
                           << "  For ship " << ship->ID() << " with design: \n" << design->Dump();
         }
+        // TODO Append other potential effects for hangar capacities
 
+        // calculate the required height to align both listboxes
         int max_rows = static_cast<int>(std::max(m_bay_list->NumRows(), m_hangar_list->NumRows()));
         int list_vpad = max_rows > 0 ? 10 : 0;
         const GG::Y LIST_HEIGHT = (m_row_height * max_rows) + list_vpad;
 
+        // properly size and position the listboxes
         m_bay_list->MoveTo(GG::Pt(GG::X0, top));
         m_bay_list->Resize(GG::Pt(ROW_WIDTH, LIST_HEIGHT));
         m_hangar_list->MoveTo(GG::Pt(ROW_WIDTH + EDGE_PAD, top));
@@ -893,17 +914,21 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         top += LIST_HEIGHT;
 
         // Damage summary labels
+        // TODO Add list of effects on hangar(fighter) damage
+
         float total_dmg = FightersDamageForBout(bay_total_capacity, hangar_current_fighters, fighter_damage).second;
         std::string avg_val =  ColourWrappedtext(DoubleToString(total_dmg / NUM_COMBAT_BOUTS, 3, false), DAMAGE_COLOR);
         std::string detail_avg_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_AVERAGE")) % avg_val);
         std::string total_val = ColourWrappedtext(DoubleToString(total_dmg, 3, false), DAMAGE_COLOR);
         std::string detail_value_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_TOTAL")) % total_val);
 
+        // average damage label
         GG::Label* detail_summary_avg = new CUILabel(detail_avg_text, GG::FORMAT_RIGHT);
         detail_summary_avg->MoveTo(GG::Pt(GG::X0, top));
         detail_summary_avg->Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, m_row_height));
         AttachChild(detail_summary_avg);
 
+        // total damage label
         GG::Label* detail_summary_total = new CUILabel(detail_value_text, GG::FORMAT_RIGHT);
         detail_summary_total->MoveTo(GG::Pt(ROW_WIDTH, top));
         detail_summary_total->Resize(GG::Pt(LABEL_WIDTH + VALUE_WIDTH, m_row_height));
@@ -925,11 +950,13 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
                                                % bout_text % damage_label_text);
 
+            // damage formula label
             GG::Label* bout_label = new CUILabel(damage_label_text, GG::FORMAT_RIGHT);
             bout_label->MoveTo(GG::Pt(GG::X0, top));
             bout_label->Resize(GG::Pt(LABEL_WIDTH * 2 + EDGE_PAD, m_row_height));
             AttachChild(bout_label);
 
+            // sum of damage formula label
             std::string bout_value_text = DoubleToString(current_bout.second, 3, false);
             GG::Label* bout_value = new CUILabel(ColourWrappedtext(bout_value_text, DAMAGE_COLOR));
             bout_value->MoveTo(GG::Pt(LABEL_WIDTH * 2, top));
