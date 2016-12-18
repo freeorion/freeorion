@@ -338,15 +338,17 @@ namespace {
             if (empire)
                 boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
             total_cost *= elem.blocksize;
+
             float per_turn_cost = total_cost / std::max(1, minimum_turns);
-            float progress = empire ? empire->ProductionStatus(queue_index) : 0.0f;
-            if (progress == -1.0f)
-                progress = 0.0f;
+
+            float pp_accumulated = empire ? empire->ProductionStatus(queue_index) : 0.0f; // returns as PP
+            if (pp_accumulated == -1.0f)
+                pp_accumulated = 0.0f;
 
             panel = new QueueProductionItemPanel(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
                                                  elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                 static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
-                                                 std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
+                                                 static_cast<int>(pp_accumulated / std::max(1e-6f, per_turn_cost)),
+                                                 std::fmod(pp_accumulated, per_turn_cost) / std::max(1e-6f, per_turn_cost));
             push_back(panel);
 
             // Since this is only called during PreRender force panel to PreRender()
