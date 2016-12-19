@@ -3379,6 +3379,20 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             unfueled_ship_ids.push_back(*it);
     }
 
+    // find ships that can carry fighters but dont have a full complement of them
+    std::vector<int> not_full_fighters_ship_ids;
+    not_full_fighters_ship_ids.reserve(ship_ids_set.size());
+    for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
+        TemporaryPtr<const Ship> ship = GetShip(*it);
+        if (!ship)
+            continue;
+        if (!ship->HasFighters())
+            continue;
+        if (ship->FighterCount() < ship->FighterMax())
+            not_full_fighters_ship_ids.push_back(*it);
+    }
+
+
     // determine which other empires are at peace with client empire and have
     // an owned object in this fleet's system
     std::set<int> peaceful_empires_in_system;
@@ -3450,10 +3464,21 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         && unfueled_ship_ids.size() < ship_ids_set.size()
         && fleet->OwnedBy(client_empire_id)
         && !ClientPlayerIsModerator()
-
        )
     {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_UNFUELED_FLEET"),    3, false, false));
+    }
+
+    // Split ships with not as many fighters as they could contain
+    if (system
+        && ship_ids_set.size() > 1
+        && not_full_fighters_ship_ids.size() > 0
+        && not_full_fighters_ship_ids.size() < ship_ids_set.size()
+        && fleet->OwnedBy(client_empire_id)
+        && !ClientPlayerIsModerator()
+       )
+    {
+        menu_contents.next_level.push_back(GG::MenuItem(UserString("FW_SPLIT_NOT_FULL_FIGHTERS_FLEET"), 11, false, false));
     }
 
     // Split fleet - can't split fleets without more than one ship, or which are not in a system
@@ -3571,6 +3596,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         case 3: { // split unfueled
             NewFleetAggression nfa = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
             CreateNewFleetFromShips(unfueled_ship_ids, nfa);
+            break;
+        }
+
+        case 11: { // split not full of fighters
+            NewFleetAggression nfa = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
+            CreateNewFleetFromShips(not_full_fighters_ship_ids, nfa);
             break;
         }
 

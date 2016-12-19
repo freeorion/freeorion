@@ -3248,6 +3248,9 @@ Split Damaged Ships From Fleet
 FW_SPLIT_UNFUELED_FLEET
 Split Unfueled Ships From Fleet
 
+FW_SPLIT_NOT_FULL_FIGHTERS_FLEET
+Split Ships Without All Fighters From Fleet
+
 FW_SPLIT_FLEET
 Split Fleet
 
