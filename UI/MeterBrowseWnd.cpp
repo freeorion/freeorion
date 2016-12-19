@@ -733,7 +733,7 @@ namespace {
     std::pair<int, float> FightersDamageForBout(int total_bay_capacity, int current_docked_fighters,
                                                 float fighter_damage, int bout = -1)
     {
-        int last_bout = bout < 1 ? ShipFightersBrowseWnd::NUM_COMBAT_BOUTS : bout;
+        int last_bout = bout < 1 ? GetUniverse().GetNumCombatRounds() : bout;
         std::pair<int, float> retval = { 0, 0.0f };
         int fighters_next_bout = 0;
         int remaining_docked_fighters = current_docked_fighters;
@@ -922,6 +922,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         // Damage summary labels
         // TODO Add list of effects on hangar(fighter) damage
 
+        const int NUM_COMBAT_BOUTS = GetUniverse().GetNumCombatRounds();
         float total_dmg = FightersDamageForBout(bay_total_capacity, hangar_current_fighters, fighter_damage).second;
         std::string avg_val =  ColourWrappedtext(DoubleToString(total_dmg / NUM_COMBAT_BOUTS, 3, false), DAMAGE_COLOR);
         std::string detail_avg_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_AVERAGE")) % avg_val);

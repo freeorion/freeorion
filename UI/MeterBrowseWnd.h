@@ -73,7 +73,6 @@ private:
 class ShipFightersBrowseWnd : public MeterBrowseWnd {
 public:
     ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts = false);
-    static const int NUM_COMBAT_BOUTS = 3;
 
 private:
     void            Initialize();
