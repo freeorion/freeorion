@@ -1098,6 +1098,9 @@ int Universe::NearestSystemTo(double x, double y) const {
     return min_dist2_sys_id;
 }
 
+const int Universe::GetNumCombatRounds() const
+{ return 3; }
+
 int Universe::GenerateObjectID() {
     if (m_last_allocated_object_id + 1 < MAX_ID)
         return ++m_last_allocated_object_id;

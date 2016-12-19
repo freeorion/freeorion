@@ -237,6 +237,11 @@ public:
     const std::map<std::string, std::map<int, std::map<int, double> > >&
                                             GetStatRecords() const { return m_stat_records; }
 
+    /** Number of combat rounds
+     * TODO make into a configurable game rule
+     */
+    const int                               GetNumCombatRounds() const;
+
     mutable UniverseObjectDeleteSignalType UniverseObjectDeleteSignal; ///< the state changed signal object for this UniverseObject
     //@}
 
