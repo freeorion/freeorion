@@ -446,6 +446,21 @@ float Ship::FighterCount() const {
     return retval;
 }
 
+float Ship::FighterMax() const {
+    float retval = 0.0f;
+    for (const PartMeterMap::value_type& entry : m_part_meters) {
+        //std::map<std::pair<MeterType, std::string>, Meter>
+        if (entry.first.first != METER_MAX_CAPACITY)
+            continue;
+        const PartType* part_type = GetPartType(entry.first.second);
+        if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
+            continue;
+        retval += entry.second.Current();
+    }
+
+    return retval;
+}
+
 float Ship::TotalWeaponsDamage(float shield_DR, bool include_fighters) const {
     // sum up all individual weapons' attack strengths
     float total_attack = 0.0f;
