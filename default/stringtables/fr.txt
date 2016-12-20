@@ -3248,6 +3248,9 @@ Retirer de la Flotte les astronefs endommagés
 FW_SPLIT_UNFUELED_FLEET
 Retirer de la Flotte les astronefs en panne de carburant
 
+FW_SPLIT_NOT_FULL_FIGHTERS_FLEET
+Retirer de la Flotte les astronefs sans le maximum de Chasseurs
+
 FW_SPLIT_FLEET
 Diviser la Flotte
 
