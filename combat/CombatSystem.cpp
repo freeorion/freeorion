@@ -291,7 +291,7 @@ void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 namespace {
     // Each combat "bout" all attackers attack one target with each available
     // weapon, and launch fighters from each bay (if any are available)
-    static const int NUM_COMBAT_BOUTS = 3;  // TODO: make into a configurable game rule
+    const int NUM_COMBAT_BOUTS = GetUniverse().GetNumCombatRounds();
 
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_, float part_attack_) :
