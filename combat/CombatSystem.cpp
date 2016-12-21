@@ -289,10 +289,6 @@ void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 // AutoResolveCombat
 ////////////////////////////////////////////////
 namespace {
-    // Each combat "bout" all attackers attack one target with each available
-    // weapon, and launch fighters from each bay (if any are available)
-    const int NUM_COMBAT_BOUTS = GetUniverse().GetNumCombatRounds();
-
     struct PartAttackInfo {
         PartAttackInfo(ShipPartClass part_class_, const std::string& part_name_, float part_attack_) :
             part_class(part_class_),
@@ -1646,7 +1642,7 @@ namespace {
         // now launch fighters (which can attack in any subsequent combat bouts)
         // no point is launching fighters during the last bout, as they will not
         // get any chance to attack during this combat
-        if (bout <= NUM_COMBAT_BOUTS - 1) {
+        if (bout <= GetUniverse().GetNumCombatRounds() - 1) {
             FighterLaunchesEventPtr launches_event = boost::make_shared<FighterLaunchesEvent>();
             combat_info.combat_events.push_back(launches_event);
 
@@ -1758,7 +1754,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     // run multiple combat "bouts" during which each combat object can take
     // action(s) such as shooting at target(s) or launching fighters
     int last_bout = 1;
-    for (int bout = 1; bout <= NUM_COMBAT_BOUTS; ++bout) {
+    for (int bout = 1; bout <= GetUniverse().GetNumCombatRounds(); ++bout) {
         Seed(base_seed + bout);    // ensure each combat bout produces different results
 
         // empires may have valid targets, but nothing to attack with.  If all
