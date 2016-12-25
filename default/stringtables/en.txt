@@ -3024,10 +3024,13 @@ Species <i>%2%</i>
 TT_FIELD
 <i>%2%</i>
 
+TT_FIGHTER_LAUNCH
+Launching
+
 # %1% number of fighters
 # %2% damage per fighter
 TT_FIGHTER_DAMAGE
-%1% Fighters * %2% Damage
+%1% Attacking * %2% Damage
 
 # Represent a value out of a possible total value
 # %1% number
@@ -3037,7 +3040,7 @@ TT_N_OF_N
 
 # %1% combat round
 TT_COMBAT_ROUND
-Round %1%
+Round %1%:
 
 TT_UNKNOWN
 Unknown
@@ -3218,13 +3221,8 @@ Launch Capacity
 SHIP_FIGHTER_HANGAR_SUMMARY
 Current Fighters
 
-# %1% average damage
-SHIP_FIGHTERS_DAMAGE_AVERAGE
-Average per Round: %1%
-
-# %1% total damage
 SHIP_FIGHTERS_DAMAGE_TOTAL
-Total Damage: %1%
+Total Damage
 
 SHIP_FIGHTERS_STAT
 Total fighters in this ship.
