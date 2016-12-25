@@ -18,14 +18,14 @@ Special
                 OwnedBy affiliation = AnyEmpire
                 WithinDistance distance = 100 condition = Source
             ]
-        stackinggroup = "HEAD_ON_A_SPIKE_SPECIAL_EFFECT"
-        effects = [
-            SetMaxShield value = Value - 1
-            SetMaxStructure value = Value -1 
-            SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
-            SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - 1
-            SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - 1
-            SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - 1
-        ]
+            stackinggroup = "HEAD_ON_A_SPIKE_SPECIAL_EFFECT"
+            effects = [
+                SetMaxShield value = Value - 1
+                SetMaxStructure value = Value - 1 
+                SetMaxDamage partname = "SR_WEAPON_1_1" value = Value - 1
+                SetMaxDamage partname = "SR_WEAPON_2_1" value = Value - 1
+                SetMaxDamage partname = "SR_WEAPON_3_1" value = Value - 1
+                SetMaxDamage partname = "SR_WEAPON_4_1" value = Value - 1
+            ]
     ]
     graphic = "icons/sitrep/empire_eliminated.png"
