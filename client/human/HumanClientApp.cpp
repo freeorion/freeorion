@@ -505,13 +505,15 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         if (human_player_setup_data.m_starting_species_name == "1")
             human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 
-        if (!GetSpecies(human_player_setup_data.m_starting_species_name)) {
+        if (human_player_setup_data.m_starting_species_name != "RANDOM" &&
+            !GetSpecies(human_player_setup_data.m_starting_species_name))
+        {
             const SpeciesManager& sm = GetSpeciesManager();
             if (sm.NumPlayableSpecies() < 1)
                 human_player_setup_data.m_starting_species_name.clear();
             else
                 human_player_setup_data.m_starting_species_name = sm.playable_begin()->first;
-            }
+        }
 
         human_player_setup_data.m_save_game_empire_id = ALL_EMPIRES; // not used for new games
         human_player_setup_data.m_client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;

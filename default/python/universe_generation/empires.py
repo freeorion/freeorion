@@ -381,8 +381,8 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
     print "Empire name for player", player_name, "is", empire_name
 
     # check starting species, if no one is given, pick one randomly
-    if not starting_species:
-        print "No starting species set for player", player_name, ", picking one randomly"
+    if starting_species == "RANDOM" or not starting_species:
+        print "Picking random starting species for player", player_name
         starting_species = next(starting_species_pool)
     print "Starting species for player", player_name, "is", starting_species
     statistics.empire_species[starting_species] += 1

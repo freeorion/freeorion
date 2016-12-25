@@ -1434,25 +1434,36 @@ namespace {
         {
             if (!species)
                 return;
-            GG::Wnd::SetName(species->Name());
-            GG::StaticGraphic* icon = new GG::StaticGraphic(
-                ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
-            icon->Resize(GG::Pt(GG::X(Value(h - 5)), h - 5));
+            const std::string& species_name = species->Name();
+            Init(species_name, UserString(species_name), species->GameplayDescription(), w, h,
+                 ClientUI::SpeciesIcon(species_name));
+        };
+
+        SpeciesRow(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
+                   GG::X w, GG::Y h, boost::shared_ptr<GG::Texture> species_icon) :
+            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
+        { Init(species_name, localized_name, species_desc, w, h, species_icon); };
+
+    private:
+        void Init(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
+                  GG::X width, GG::Y height, boost::shared_ptr<GG::Texture> species_icon)
+        {
+            GG::Wnd::SetName(species_name);
+            GG::StaticGraphic* icon = new GG::StaticGraphic(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             push_back(icon);
-            GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            push_back(species_name);
-            GG::X first_col_width(Value(h));
+            GG::Label* species_label = new CUILabel(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            push_back(species_label);
+            GG::X first_col_width(Value(height));
             SetColWidth(0, first_col_width);
-            SetColWidth(1, w - first_col_width);
+            SetColWidth(1, width - first_col_width);
             GetLayout()->SetColumnStretch(0, 0.0);
             GetLayout()->SetColumnStretch(1, 1.0);
-            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-                new IconTextBrowseWnd(ClientUI::SpeciesIcon(species->Name()),
-                                      UserString(species->Name()),
-                                      species->GameplayDescription())
-                                     )
-                            );
+            if (!species_desc.empty()) {
+                SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(species_icon, localized_name,
+                                                                                            species_desc)));
+            }
         }
     };
 }
@@ -1469,8 +1480,12 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     const SpeciesManager& sm = GetSpeciesManager();
     for (SpeciesManager::playable_iterator it = sm.playable_begin(); it != sm.playable_end(); ++it)
         Insert(new SpeciesRow(it->second, w, h - 4));
-    if (!this->Empty())
+    if (!this->Empty()) {
+        // Add an option for random selection
+        Insert(new SpeciesRow("RANDOM", UserString("GSETUP_RANDOM"), UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
+                              ClientUI::GetTexture("default/data/art/icons/unknown.png")));
         Select(this->begin());
+    }
     GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
 }
 
