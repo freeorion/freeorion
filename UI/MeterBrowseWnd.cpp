@@ -36,6 +36,28 @@ namespace {
         return ColourWrappedtext(DoubleToString(number, 3, true), clr);
     }
 
+    /** Cast int to string, prepend sign if requested */
+    std::string IntToString(int number, bool prepend = false) {
+        std::string prepend_text = "";
+        if (prepend) {
+            if (number >= 0)
+                prepend_text = "+";
+            else if (number < 0)
+                prepend_text = "-";
+        }
+        return prepend_text + boost::lexical_cast<std::string>(number);
+    }
+
+    /** Returns a string representation of @p number wrapped in GG RGBA tags for @p clr.
+     *  If @p number is less than 0, wraps with @p neg_clr instead. */
+    std::string ColouredInt(int number, bool prepend = true, GG::Clr clr = ClientUI::StatIncrColor(),
+                            GG::Clr neg_clr = ClientUI::StatDecrColor())
+    {
+        if (number < 0)
+            clr = neg_clr;
+        return ColourWrappedtext(IntToString(number, prepend), clr);
+    }
+
     const int       EDGE_PAD(3);
 
     GG::X MeterBrowseLabelWidth()
@@ -51,10 +73,10 @@ namespace {
     { return GG::Y(ClientUI::Pts()*3/2); }
 
     GG::X FighterBrowseLabelWidth()
-    { return GG::X(9*ClientUI::Pts()); }
+    { return GG::X(10*ClientUI::Pts()); }
 
     GG::X FighterBrowseListWidth()
-    { return FighterBrowseLabelWidth() + EDGE_PAD + MeterBrowseQtyWidth() + EDGE_PAD + MeterBrowseValueWidth(); }
+    { return FighterBrowseLabelWidth() + MeterBrowseQtyWidth() + MeterBrowseValueWidth() + (EDGE_PAD * 4); }
 }
 
 MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type/* = INVALID_METER_TYPE*/) :
@@ -601,12 +623,13 @@ namespace {
         /** Ctor
          * @param [in] label text for the descriptive label, aligned to right
          * @param [in] qty quantity of source effect in @p label, not displayed when less or equal to 1.
-         * @param [in] value value for label positioned to right of @p qty, colored if @p base_value is unspecified
+         * @param [in] value value for label positioned to right of @p qty
          * @param [in] base_value optional; If greater than 0.0f: the value label is formatted to "value of base_value"
          */
         ShipFightersBrowseRow(const std::string& label, int qty, double value, double base_value = 0.0f) :
             GG::ListBox::Row(FighterBrowseListWidth(), MeterBrowseRowHeight(), "")
         {
+            SetMargin(EDGE_PAD);
             const GG::Clr QTY_COLOR = GG::CLR_GRAY;
 
             CUILabel* label_control = new CUILabel(label, GG::FORMAT_RIGHT);
@@ -615,25 +638,23 @@ namespace {
 
             std::string qty_text;
             if (qty > 1)
-                qty_text = ColourWrappedtext("* " + boost::lexical_cast<std::string>(qty), QTY_COLOR);
+                qty_text = ColourWrappedtext("* " + IntToString(qty), QTY_COLOR);
             CUILabel* qty_control = new CUILabel(qty_text);
             push_back(qty_control);
             qty_control->Resize(GG::Pt(MeterBrowseQtyWidth(), MeterBrowseRowHeight()));
 
             std::string value_text;
             if (base_value > 0.0f) {
-                std::string base_value_text = ColourWrappedtext(boost::lexical_cast<std::string>(base_value),
-                                                                ClientUI::StatIncrColor());
                 value_text = boost::io::str(FlexibleFormat(UserString("TT_N_OF_N"))
-                                            % boost::lexical_cast<std::string>(value) % base_value_text);
+                                            % IntToString(value) % IntToString(base_value));
             } else {
-                value_text = ColourWrappedtext(boost::lexical_cast<std::string>(value), ClientUI::StatIncrColor());
+                value_text = IntToString(value);
             }
-            CUILabel* value_control = new CUILabel(value_text);
+            CUILabel* value_control = new CUILabel(value_text, GG::FORMAT_RIGHT);
             push_back(value_control);
             value_control->Resize(GG::Pt(MeterBrowseValueWidth(), MeterBrowseRowHeight()));
 
-            // Resize(GG::Pt(FighterBrowseListWidth(), FighterBrowseRowHeight()));
+            // Resize(GG::Pt(FighterBrowseListWidth(), MeterBrowseRowHeight()));
         }
     };
 }
@@ -665,7 +686,7 @@ void ShipFightersBrowseWnd::Initialize() {
     // create controls and do layout
     m_meter_title = new CUILabel("", GG::FORMAT_RIGHT);
     m_meter_title->MoveTo(GG::Pt(GG::X0, top));
-    m_meter_title->Resize(GG::Pt(TOTAL_WIDTH, m_row_height));
+    m_meter_title->Resize(GG::Pt(TOTAL_WIDTH + EDGE_PAD, m_row_height));
     m_meter_title->SetFont(ClientUI::GetBoldFont());
     AttachChild(m_meter_title);
 
@@ -673,14 +694,14 @@ void ShipFightersBrowseWnd::Initialize() {
 
     // initialize formatting for list of bay part labels
     m_bay_list = new CUIListBox();
-    m_bay_list->SetColor(BG_COLOR);
-    m_bay_list->SetInteriorColor(BG_COLOR);
+    m_bay_list->SetColor(BG_COLOR);  // border
+    m_bay_list->SetInteriorColor(BG_COLOR);  // background
     m_bay_list->ManuallyManageColProps();
     m_bay_list->SetNumCols(3);
     m_bay_list->SetColWidth(0, LABEL_WIDTH);
     m_bay_list->SetColWidth(1, QTY_WIDTH);
     m_bay_list->SetColWidth(2, VALUE_WIDTH);
-    m_bay_list->MoveTo(GG::Pt(GG::X0, top));
+    m_bay_list->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
     AttachChild(m_bay_list);
 
     // initialize formatting for list of hangar part labels
@@ -692,14 +713,14 @@ void ShipFightersBrowseWnd::Initialize() {
     m_hangar_list->SetColWidth(0, LABEL_WIDTH);
     m_hangar_list->SetColWidth(1, QTY_WIDTH);
     m_hangar_list->SetColWidth(2, VALUE_WIDTH);
-    m_hangar_list->MoveTo(GG::Pt(ROW_WIDTH + EDGE_PAD, top));
+    m_hangar_list->MoveTo(GG::Pt(ROW_WIDTH + (EDGE_PAD * 2), top));
     AttachChild(m_hangar_list);
 
     UpdateSummary();
 
     UpdateEffectLabelsAndValues(top);
 
-    Resize(GG::Pt(TOTAL_WIDTH + EDGE_PAD, top + EDGE_PAD));
+    Resize(GG::Pt(TOTAL_WIDTH + (EDGE_PAD * 2), top + EDGE_PAD));
 
     m_initialized = true;
 }
@@ -727,29 +748,46 @@ void ShipFightersBrowseWnd::UpdateSummary() {
 }
 
 namespace {
-    /** Number of fighters that participated for @p bout and total damage inflicted
-     *  If @p bout is less than 1 (or unassigned), total damage is summed for all rounds
-     */
-    std::pair<int, float> FightersDamageForBout(int total_bay_capacity, int current_docked_fighters,
-                                                float fighter_damage, int bout = -1)
+    /** Container for return values of ResolveFighterBouts */
+    struct FighterBoutInfo {
+        struct StateQty {
+            int         docked;
+            int         attacking;
+            int         launched;       // transitioning between docked and attacking
+        };
+        float           damage;
+        float           total_damage;   // damage from all previous bouts, including this bout
+        StateQty        qty;
+    };
+
+    /** Populate fighter state quantities and damages for each combat round until @p limit_to_bout */
+    std::map<int, FighterBoutInfo> ResolveFighterBouts(int bay_capacity, int current_docked,
+                                                       float fighter_damage, int limit_to_bout = -1)
     {
-        int last_bout = bout < 1 ? GetUniverse().GetNumCombatRounds() : bout;
-        std::pair<int, float> retval = { 0, 0.0f };
-        int fighters_next_bout = 0;
-        int remaining_docked_fighters = current_docked_fighters;
-
-        for (int i = 1; i <= last_bout; ++i) {
-            retval.first += fighters_next_bout;
-            if (bout == last_bout)
-                retval.second = retval.first * fighter_damage;
-            else 
-                retval.second += retval.first * fighter_damage;
-
+        std::map<int, FighterBoutInfo> retval;
+        const int NUM_BOUTS = GetUniverse().GetNumCombatRounds();
+        int target_bout = limit_to_bout < 1 ? NUM_BOUTS : limit_to_bout;
+        for (int bout = 1; bout <= target_bout; ++bout) {
+            // init current fighters
+            if (bout == 1) {
+                retval[bout].qty.docked = current_docked;
+                retval[bout].qty.attacking = 0;
+                retval[bout].qty.launched = 0;
+            } else {
+                retval[bout].qty = retval[bout - 1].qty;
+                retval[bout].qty.attacking += retval[bout].qty.launched;
+                retval[bout].qty.launched = 0;
+                retval[bout].total_damage = retval[bout - 1].total_damage;
+            }
+            // calc damage this bout, apply to total
+            retval[bout].damage = retval[bout].qty.attacking * fighter_damage;
+            retval[bout].total_damage += retval[bout].damage;
             // launch fighters
-            fighters_next_bout = std::min(total_bay_capacity, remaining_docked_fighters);
-            remaining_docked_fighters -= fighters_next_bout;
+            if (bout < NUM_BOUTS) {
+                retval[bout].qty.launched = std::min(bay_capacity, retval[bout].qty.docked);
+                retval[bout].qty.docked -= retval[bout].qty.launched;
+            }
         }
-
         return retval;
     }
 }
@@ -779,7 +817,8 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // colors used, these could be moved to OptionsDB if other controls utilize similar value types
     const GG::Clr DAMAGE_COLOR = GG::CLR_ORANGE;
-    const GG::Clr HIGHLIGHT_COLOR = GG::CLR_YELLOW;
+    const GG::Clr BAY_COLOR = GG::Clr(0, 160, 255, 255);
+    const GG::Clr HANGAR_COLOR = GG::CLR_YELLOW;
 
     const GG::X LABEL_WIDTH = FighterBrowseLabelWidth();
     const GG::X QTY_WIDTH = MeterBrowseQtyWidth();
@@ -828,33 +867,23 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     if (hangar_part.second <= 0)
         return;
 
-    // Add labels for sum of bay and hangar capacities
-
-    std::string bay_value_text = boost::lexical_cast<std::string>(bay_total_capacity);
-    std::string hangar_current_text = boost::lexical_cast<std::string>(hangar_current_fighters);
-    // No highlight used when showing all bouts
-    if (!m_show_all_bouts) {
-        // highlight the lower value, to show which is the limiting factor
-        if (hangar_current_fighters <= bay_total_capacity)
-            hangar_current_text = ColourWrappedtext(hangar_current_text, HIGHLIGHT_COLOR);
-        else
-            bay_value_text = ColourWrappedtext(bay_value_text, HIGHLIGHT_COLOR);
-    }
-
-    std::string hangar_value_text = boost::io::str(FlexibleFormat(UserString("TT_N_OF_N"))
-                                                   % hangar_current_text
-                                                   % boost::lexical_cast<std::string>(hangar_total_capacity));
     // summary of bay capacity
-    GG::Label* bay_summary = new CUILabel(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
-                                                         % UserString("SHIP_FIGHTER_BAY_SUMMARY") % bay_value_text));
+    std::string bay_text = boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
+                                          % UserString("SHIP_FIGHTER_BAY_SUMMARY")
+                                          % ColouredInt(bay_total_capacity, false, BAY_COLOR));
+    GG::Label* bay_summary = new CUILabel(bay_text, GG::FORMAT_RIGHT);
     bay_summary->SetFont(ClientUI::GetBoldFont());
-    bay_summary->MoveTo(GG::Pt(GG::X0, top));
+    bay_summary->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
     bay_summary->Resize(GG::Pt(ROW_WIDTH, m_row_height));
     AttachChild(bay_summary);
 
     // summary of hangar capacity
-    GG::Label* hangar_summary = new CUILabel(boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
-                                                            % UserString("SHIP_FIGHTER_HANGAR_SUMMARY") % hangar_value_text));
+    std::string hangar_text = boost::io::str(FlexibleFormat(UserString("TT_N_OF_N"))
+                                             % ColouredInt(hangar_current_fighters, false, HANGAR_COLOR)
+                                             % ColouredInt(hangar_total_capacity, false, HANGAR_COLOR));
+    hangar_text = boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
+                                 % UserString("SHIP_FIGHTER_HANGAR_SUMMARY") % hangar_text);
+    GG::Label* hangar_summary = new CUILabel(hangar_text, GG::FORMAT_RIGHT);
     hangar_summary->SetFont(ClientUI::GetBoldFont());
     hangar_summary->MoveTo(GG::Pt(ROW_WIDTH + EDGE_PAD, top));
     hangar_summary->Resize(GG::Pt(ROW_WIDTH, m_row_height));
@@ -868,22 +897,24 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     if (!m_show_all_bouts) {
         // Show damage for first wave (2nd combat round)
-
-        std::pair<int, float> first_wave = FightersDamageForBout(bay_total_capacity, hangar_current_fighters, fighter_damage, 2);
-        std::string launch_text = ColourWrappedtext(boost::lexical_cast<std::string>(first_wave.first), HIGHLIGHT_COLOR);
+        std::map<int, FighterBoutInfo> bout_info = ResolveFighterBouts(bay_total_capacity, hangar_current_fighters,
+                                                                       fighter_damage, 2);
+        FighterBoutInfo first_wave = bout_info.rbegin()->second;
+        GG::Clr highlight_clr = bout_info[1].qty.launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
+        std::string launch_text = ColouredInt(first_wave.qty.attacking, false, highlight_clr);
         std::string damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
                                                        % launch_text % fighter_damage_text);
         // damage formula label
         GG::Label* damage_label = new CUILabel(damage_label_text, GG::FORMAT_RIGHT);
-        damage_label->MoveTo(GG::Pt(GG::X0, top));
-        damage_label->Resize(GG::Pt((LABEL_WIDTH + QTY_WIDTH) * 2, m_row_height));
+        damage_label->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
+        damage_label->Resize(GG::Pt(LABEL_WIDTH + (QTY_WIDTH * 2) + (LABEL_WIDTH / 2) + (EDGE_PAD * 3), m_row_height));
         AttachChild(damage_label);
 
-        std::string damage_value_text = DoubleToString(first_wave.second, 3, false);
+        std::string damage_value_text = DoubleToString(first_wave.damage, 3, false);
         // sum of damage formula label
-        GG::Label* damage_value = new CUILabel(ColourWrappedtext(damage_value_text, DAMAGE_COLOR));
-        damage_value->MoveTo(GG::Pt((LABEL_WIDTH + QTY_WIDTH) * 2 + EDGE_PAD, top));
-        damage_value->Resize(GG::Pt(VALUE_WIDTH * 2 + EDGE_PAD * 4, m_row_height));
+        GG::Label* damage_value = new CUILabel(ColourWrappedtext(damage_value_text, DAMAGE_COLOR), GG::FORMAT_RIGHT);
+        damage_value->MoveTo(GG::Pt(LABEL_WIDTH + (QTY_WIDTH * 2) + (LABEL_WIDTH / 2) + (EDGE_PAD * 4), top));
+        damage_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
         damage_value->SetFont(ClientUI::GetBoldFont());
         AttachChild(damage_value);
         m_effect_labels_and_values.push_back(std::make_pair(damage_label, damage_value));
@@ -912,7 +943,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         const GG::Y LIST_HEIGHT = (m_row_height * max_rows) + list_vpad;
 
         // properly size and position the listboxes
-        m_bay_list->MoveTo(GG::Pt(GG::X0, top));
+        m_bay_list->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
         m_bay_list->Resize(GG::Pt(ROW_WIDTH, LIST_HEIGHT));
         m_hangar_list->MoveTo(GG::Pt(ROW_WIDTH + EDGE_PAD, top));
         m_hangar_list->Resize(GG::Pt(ROW_WIDTH, LIST_HEIGHT));
@@ -922,56 +953,84 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         // Damage summary labels
         // TODO Add list of effects on hangar(fighter) damage
 
-        const int NUM_COMBAT_BOUTS = GetUniverse().GetNumCombatRounds();
-        float total_dmg = FightersDamageForBout(bay_total_capacity, hangar_current_fighters, fighter_damage).second;
-        std::string avg_val =  ColourWrappedtext(DoubleToString(total_dmg / NUM_COMBAT_BOUTS, 3, false), DAMAGE_COLOR);
-        std::string detail_avg_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_AVERAGE")) % avg_val);
-        std::string total_val = ColourWrappedtext(DoubleToString(total_dmg, 3, false), DAMAGE_COLOR);
-        std::string detail_value_text = boost::io::str(FlexibleFormat(UserString("SHIP_FIGHTERS_DAMAGE_TOTAL")) % total_val);
+        std::map<int, FighterBoutInfo> bout_info = ResolveFighterBouts(bay_total_capacity, hangar_current_fighters,
+                                                                       fighter_damage);
+        const FighterBoutInfo& last_bout = bout_info.rbegin()->second;
 
-        // average damage label
-        GG::Label* detail_summary_avg = new CUILabel(detail_avg_text, GG::FORMAT_RIGHT);
-        detail_summary_avg->MoveTo(GG::Pt(GG::X0, top));
-        detail_summary_avg->Resize(GG::Pt(ROW_WIDTH, m_row_height));
-        AttachChild(detail_summary_avg);
+        // damage summary text
+        std::string detail_label_text = UserString("SHIP_FIGHTERS_DAMAGE_TOTAL");
+        std::string detail_value_text = ColourWrappedtext(DoubleToString(last_bout.total_damage, 3, false), DAMAGE_COLOR);
+        detail_label_text = boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
+                                           % detail_label_text % detail_value_text);
+        GG::Label* detail_summary_damage = new CUILabel(detail_label_text, GG::FORMAT_RIGHT);
+        detail_summary_damage->MoveTo(GG::Pt(GG::X(EDGE_PAD), top));
+        detail_summary_damage->Resize(GG::Pt(ROW_WIDTH + QTY_WIDTH + (LABEL_WIDTH / 2) + EDGE_PAD, m_row_height));
+        detail_summary_damage->SetFont(ClientUI::GetBoldFont());
+        AttachChild(detail_summary_damage);
 
-        // total damage label
-        GG::Label* detail_summary_total = new CUILabel(detail_value_text, GG::FORMAT_RIGHT);
-        detail_summary_total->MoveTo(GG::Pt(ROW_WIDTH + EDGE_PAD, top));
-        detail_summary_total->Resize(GG::Pt(ROW_WIDTH, m_row_height));
-        detail_summary_total->SetFont(ClientUI::GetBoldFont());
-        AttachChild(detail_summary_total);
-        m_effect_labels_and_values.push_back(std::make_pair(detail_summary_avg, detail_summary_total));
+        // empty space
+        GG::Label* detail_summary_launch = new CUILabel("", GG::FORMAT_RIGHT);
+        detail_summary_launch->MoveTo(GG::Pt(ROW_WIDTH + QTY_WIDTH + (LABEL_WIDTH / 2) + (EDGE_PAD * 2), top));
+        detail_summary_launch->Resize(GG::Pt(VALUE_WIDTH + EDGE_PAD + (LABEL_WIDTH / 2), m_row_height));
+        detail_summary_launch->SetFont(ClientUI::GetBoldFont());
+        AttachChild(detail_summary_launch);
+        m_effect_labels_and_values.push_back(std::make_pair(detail_summary_damage, detail_summary_launch));
 
         top += m_row_height;
 
         // Damage labels for each combat round
-        for (int i = 2; i <= NUM_COMBAT_BOUTS; ++i) {
-            std::pair<int, float> current_bout = FightersDamageForBout(bay_total_capacity, hangar_current_fighters,
-                                                                       fighter_damage, i);
-            std::string damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
-                                                           % boost::lexical_cast<std::string>(current_bout.first)
-                                                           % fighter_damage_text);
+        GG::X left = GG::X0;
+        int previous_docked = hangar_current_fighters;
+        for (std::map<int, FighterBoutInfo>::value_type& current_bout : bout_info) {
+            const FighterBoutInfo& bout = current_bout.second;
+            // combat round label
             std::string bout_text = boost::io::str(FlexibleFormat(UserString("TT_COMBAT_ROUND"))
-                                                   % boost::lexical_cast<std::string>(i));
-            damage_label_text = boost::io::str(FlexibleFormat(UserString("TT_BREAKDOWN_SUMMARY"))
-                                               % bout_text % damage_label_text);
+                                                   % IntToString(current_bout.first));
+            GG::Label* bout_label = new CUILabel(bout_text, GG::FORMAT_RIGHT);
+            bout_label->MoveTo(GG::Pt(left, top));
+            bout_label->Resize(GG::Pt((QTY_WIDTH * 2) + (EDGE_PAD * 3), m_row_height));
+            AttachChild(bout_label);
+            left += (QTY_WIDTH * 2) + (EDGE_PAD * 4);
 
             // damage formula label
-            GG::Label* bout_label = new CUILabel(damage_label_text, GG::FORMAT_RIGHT);
-            bout_label->MoveTo(GG::Pt(GG::X0, top));
-            bout_label->Resize(GG::Pt((LABEL_WIDTH + QTY_WIDTH) * 2, m_row_height));
-            AttachChild(bout_label);
+            std::string formula_label_text = boost::io::str(FlexibleFormat(UserString("TT_FIGHTER_DAMAGE"))
+                                                            % IntToString(bout.qty.attacking)
+                                                            % fighter_damage_text);
+            GG::Label* formula_label = new CUILabel(formula_label_text, GG::FORMAT_RIGHT);
+            formula_label->MoveTo(GG::Pt(left, top));
+            formula_label->Resize(GG::Pt(LABEL_WIDTH + (LABEL_WIDTH / 2), m_row_height));
+            AttachChild(formula_label);
+            left += LABEL_WIDTH + (LABEL_WIDTH / 2) + EDGE_PAD;
 
             // sum of damage formula label
-            std::string bout_value_text = DoubleToString(current_bout.second, 3, false);
-            GG::Label* bout_value = new CUILabel(ColourWrappedtext(bout_value_text, DAMAGE_COLOR));
-            bout_value->MoveTo(GG::Pt((LABEL_WIDTH + QTY_WIDTH) * 2 + EDGE_PAD, top));
-            bout_value->Resize(GG::Pt(VALUE_WIDTH * 2 + EDGE_PAD * 4, m_row_height));
-            AttachChild(bout_value);
-            m_effect_labels_and_values.push_back(std::make_pair(bout_label, bout_value));
+            std::string formula_value_text = DoubleToString(bout.damage, 3, false);
+            GG::Label* formula_value = new CUILabel(ColourWrappedtext(formula_value_text, DAMAGE_COLOR), GG::FORMAT_RIGHT);
+            formula_value->MoveTo(GG::Pt(left, top));
+            formula_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
+            AttachChild(formula_value);
+            m_effect_labels_and_values.push_back(std::make_pair(formula_label, formula_value));
+            left += VALUE_WIDTH + EDGE_PAD;
+
+            // launched fighters label
+            GG::Label* launch_label = new CUILabel(UserString("TT_FIGHTER_LAUNCH"), GG::FORMAT_RIGHT);
+            launch_label->MoveTo(GG::Pt(left, top));
+            launch_label->Resize(GG::Pt((LABEL_WIDTH / 2) + EDGE_PAD, m_row_height));
+            AttachChild(launch_label);
+            left += (LABEL_WIDTH / 2) + EDGE_PAD + EDGE_PAD;
+
+            GG::Clr launch_clr = bout.qty.launched < bay_total_capacity ? HANGAR_COLOR : BAY_COLOR;
+            std::string launch_text = boost::io::str(FlexibleFormat(UserString("TT_N_OF_N"))
+                                                     % ColouredInt(bout.qty.launched, false, launch_clr)
+                                                     % ColouredInt(previous_docked, false, HANGAR_COLOR));
+            GG::Label* launch_value = new CUILabel(launch_text, GG::FORMAT_RIGHT);
+            launch_value->MoveTo(GG::Pt(left, top));
+            launch_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
+            AttachChild(launch_value);
+            m_effect_labels_and_values.push_back(std::make_pair(launch_label, launch_value));
 
             top += m_row_height;
+            left = GG::X0;
+            previous_docked = bout.qty.docked;
         }
     }
 }
