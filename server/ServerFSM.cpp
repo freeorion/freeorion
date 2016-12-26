@@ -723,10 +723,30 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     }
 
     if (is_drop_ready) {
-        for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players) {
+        for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players)
             player.second.m_player_ready = false;
-        }
     } else {
+        bool is_all_ready = true;
+        for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players) {
+            if ((player.first >= 0) && (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
+                player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)) {
+                if (! player.second.m_player_ready)
+                    is_all_ready = false;
+            }
+        }
+
+        if (is_all_ready) {
+            // start game
+            
+            // copy locally stored data to common server fsm context so it can be
+            // retreived in WaitingForMPGameJoiners
+            context<ServerFSM>().m_lobby_data = m_lobby_data;
+            context<ServerFSM>().m_player_save_game_data = m_player_save_game_data;
+            context<ServerFSM>().m_server_save_game_data = m_server_save_game_data;
+
+            return transit<WaitingForMPGameJoiners>();            
+        }
     }
 
     // propagate lobby changes to players, so everyone has the latest updated
@@ -741,9 +761,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // to players who didn't send the message that this function is
         // responding to.  TODO: check for add/drop
         if (new_save_file_selected || player_setup_data_changed ||
-            player_id != message.SendingPlayer() || is_drop_ready ) {
+            player_id != message.SendingPlayer() || is_drop_ready )
             player_connection->SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
-        }
     }
 
     return discard_event();
