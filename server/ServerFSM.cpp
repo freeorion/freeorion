@@ -445,12 +445,11 @@ namespace {
         return empire_colour;
     }
 
+    // return true if player has important changes.
     bool IsPlayerChanged(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
         return (lhs.m_client_type != rhs.m_client_type) ||
             (lhs.m_starting_species_name != rhs.m_starting_species_name) ||
-            (lhs.m_player_name != rhs.m_player_name) ||
-            (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id) ||
-            (lhs.m_client_type != rhs.m_client_type);
+            (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id);
     }
 }
 
@@ -491,10 +490,9 @@ sc::result MPLobby::react(const JoinGame& msg) {
     // after setting all details, push into lobby data
     m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
 
-    for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
-        // drop ready player flag
+    // drop ready player flag at new player
+    for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players)
         plrs.second.m_player_ready = false;
-    }
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
@@ -526,7 +524,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // own details.  non-hosts should not be able to edit other players' info
     // or the galaxy setup.
     
-    // check if important data changed
+    // check if galaxy setup data changed
     is_drop_ready = is_drop_ready || (m_lobby_data->m_seed != incoming_lobby_data.m_seed) ||
         (m_lobby_data->m_size != incoming_lobby_data.m_size) ||
         (m_lobby_data->m_shape != incoming_lobby_data.m_shape) ||
@@ -541,7 +539,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
     if (player_setup_data_changed) {
         if (m_lobby_data->m_players.size() != incoming_lobby_data.m_players.size()) {
-            is_drop_ready = true; // drop readiness is number of players changed
+            is_drop_ready = true; // drop ready at number of players changed
         } else {
             for (std::pair<int, PlayerSetupData>& i_player : m_lobby_data->m_players) {
                 if (i_player.first < 0) // ignore changes in AI.
@@ -726,6 +724,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players)
             player.second.m_player_ready = false;
     } else {
+        // check if all established human players ready to play
         bool is_all_ready = true;
         for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players) {
             if ((player.first >= 0) && (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
