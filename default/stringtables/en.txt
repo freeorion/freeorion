@@ -1452,6 +1452,9 @@ Sets size of system icons below which the fixed-size tiny icons will be shown.
 OPTIONS_DB_UI_TOOLTIP_DELAY
 Sets UI tooltip pop-up delay, in ms.
 
+OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
+Sets UI tooltip pop-up delay for alternate pop-ups, in ms.
+
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
 When searching the pedia, check for matches in article contents.
 
@@ -3024,6 +3027,24 @@ Species <i>%2%</i>
 TT_FIELD
 <i>%2%</i>
 
+TT_FIGHTER_LAUNCH
+Launching
+
+# %1% number of fighters
+# %2% damage per fighter
+TT_FIGHTER_DAMAGE
+%1% Attacking * %2% Damage
+
+# Represent a value out of a possible total value
+# %1% number
+# %2% number
+TT_N_OF_N
+%1% of %2%
+
+# %1% combat round
+TT_COMBAT_ROUND
+Round %1%:
+
 TT_UNKNOWN
 Unknown
 
@@ -3196,6 +3217,15 @@ Total troop capacity of this ship.
 
 SHIP_FIGHTERS_TITLE
 Fighters
+
+SHIP_FIGHTER_BAY_SUMMARY
+Launch Capacity
+
+SHIP_FIGHTER_HANGAR_SUMMARY
+Current Fighters
+
+SHIP_FIGHTERS_DAMAGE_TOTAL
+Total Damage
 
 SHIP_FIGHTERS_STAT
 Total fighters in this ship.

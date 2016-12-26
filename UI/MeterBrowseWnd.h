@@ -70,4 +70,21 @@ private:
 
 };
 
+class ShipFightersBrowseWnd : public MeterBrowseWnd {
+public:
+    ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts = false);
+
+private:
+    void            Initialize();
+
+    virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
+    void            UpdateSummary();
+    void            UpdateEffectLabelsAndValues(GG::Y& top);
+
+    GG::ListBox*    m_bay_list;
+    GG::ListBox*    m_hangar_list;
+    bool            m_show_all_bouts;
+
+};
+
 #endif

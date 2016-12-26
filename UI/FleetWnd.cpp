@@ -925,10 +925,13 @@ void ShipDataPanel::Refresh() {
             it->second->SetBrowseInfoWnd(browse_wnd);
 
         } else if (it->first == METER_SECONDARY_STAT) {
-            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                FightersIcon(), UserString("SHIP_FIGHTERS_TITLE"),
-                UserString("SHIP_FIGHTERS_STAT")));
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new ShipFightersBrowseWnd(
+                m_ship_id, it->first));
             it->second->SetBrowseInfoWnd(browse_wnd);
+            boost::shared_ptr<GG::BrowseInfoWnd> detailed_wnd(new ShipFightersBrowseWnd(
+                m_ship_id, it->first, true));
+            it->second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
+            it->second->SetBrowseInfoWnd(detailed_wnd, 1);
 
         } else if (it->first == METER_POPULATION) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
