@@ -107,6 +107,7 @@ namespace {
             default:                                        ss << "<invalid client type>, ";
             }
             ss << entry.second.m_starting_species_name;
+            if (it->second.m_player_ready) { ss << ", Ready"; }
             DebugLogger() << " ... " << ss.str();
         }
     }
@@ -396,7 +397,12 @@ sc::result MPLobby::react(const Disconnection& d) {
             break;
         }
     }
-    if (!player_was_in_lobby) {
+    if (player_was_in_lobby) {
+        // drop ready flag as player list changed
+        for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
+            plrs.second.m_player_ready = false;
+        }
+    } else {
         DebugLogger() << "MPLobby.Disconnection : Disconnecting player (" << id << ") was not in lobby";
         return discard_event();
     }
@@ -438,6 +444,14 @@ namespace {
         }
         return empire_colour;
     }
+
+    bool IsPlayerChanged(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
+        return (lhs.m_client_type != rhs.m_client_type) ||
+            (lhs.m_starting_species_name != rhs.m_starting_species_name) ||
+            (lhs.m_player_name != rhs.m_player_name) ||
+            (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id) ||
+            (lhs.m_client_type != rhs.m_client_type);
+    }
 }
 
 sc::result MPLobby::react(const JoinGame& msg) {
@@ -477,6 +491,11 @@ sc::result MPLobby::react(const JoinGame& msg) {
     // after setting all details, push into lobby data
     m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
 
+    for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
+        // drop ready player flag
+        plrs.second.m_player_ready = false;
+    }
+
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     { (*it)->SendMessage(ServerLobbyUpdateMessage((*it)->PlayerID(), *m_lobby_data)); }
@@ -495,6 +514,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // check if new lobby data changed player setup data.  if so, need to echo
     // back to sender with updated lobby details.
     bool player_setup_data_changed = (incoming_lobby_data.m_players != m_lobby_data->m_players);
+    bool is_drop_ready = false;
 
     // store incoming lobby data.  clients can only change some of
     // this information (galaxy setup data, whether it is a new game and what
@@ -505,6 +525,40 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // TODO: ensure only the host can change anything other than a player's
     // own details.  non-hosts should not be able to edit other players' info
     // or the galaxy setup.
+    
+    // check if important data changed
+    is_drop_ready = is_drop_ready || (m_lobby_data->m_seed != incoming_lobby_data.m_seed) ||
+        (m_lobby_data->m_size != incoming_lobby_data.m_size) ||
+        (m_lobby_data->m_shape != incoming_lobby_data.m_shape) ||
+        (m_lobby_data->m_age != incoming_lobby_data.m_age) ||
+        (m_lobby_data->m_starlane_freq != incoming_lobby_data.m_starlane_freq) ||
+        (m_lobby_data->m_planet_density != incoming_lobby_data.m_planet_density) ||
+        (m_lobby_data->m_specials_freq != incoming_lobby_data.m_specials_freq) ||
+        (m_lobby_data->m_monster_freq != incoming_lobby_data.m_monster_freq) ||
+        (m_lobby_data->m_native_freq != incoming_lobby_data.m_native_freq) ||
+        (m_lobby_data->m_ai_aggr != incoming_lobby_data.m_ai_aggr) ||
+        (m_lobby_data->m_new_game != incoming_lobby_data.m_new_game);
+
+    if (player_setup_data_changed) {
+        if (m_lobby_data->m_players.size() != incoming_lobby_data.m_players.size()) {
+            is_drop_ready = true; // drop readiness is number of players changed
+        } else {
+            for (std::pair<int, PlayerSetupData>& i_player : m_lobby_data->m_players) {
+                if (i_player.first < 0) // ignore changes in AI.
+                    continue;
+                int player_id = i_player.first;
+                bool is_found_player = false;
+                for (std::pair<int, PlayerSetupData>& j_player : incoming_lobby_data.m_players) {
+                    if (player_id == j_player.first) {
+                        is_drop_ready = is_drop_ready || IsPlayerChanged(i_player.second, j_player.second);
+                        is_found_player = true;
+                        break;
+                    }
+                }
+                is_drop_ready = is_drop_ready || (! is_found_player);
+            }
+        }
+    }
 
     // GalaxySetupData
     m_lobby_data->m_seed =          incoming_lobby_data.m_seed;
@@ -668,6 +722,13 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         }
     }
 
+    if (is_drop_ready) {
+        for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players) {
+            player.second.m_player_ready = false;
+        }
+    } else {
+    }
+
     // propagate lobby changes to players, so everyone has the latest updated
     // version of the lobby data
     for (ServerNetworking::const_established_iterator player_connection_it = server.m_networking.established_begin();
@@ -679,8 +740,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // after a player is added or dropped.  otherwise, messages can just go
         // to players who didn't send the message that this function is
         // responding to.  TODO: check for add/drop
-        if (new_save_file_selected || player_setup_data_changed || player_id != message.SendingPlayer())
+        if (new_save_file_selected || player_setup_data_changed ||
+            player_id != message.SendingPlayer() || is_drop_ready ) {
             player_connection->SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
+        }
     }
 
     return discard_event();
