@@ -40,6 +40,7 @@ namespace {
 
     const GG::X EMPIRE_NAME_WIDTH(150);
     const GG::X BROWSE_BTN_WIDTH(50);
+    const GG::X READY_CHKBOX_WIDTH(40);
 
     // Shows information about a single player in the mulitplayer lobby.
     // This inclues whether the player is a human or AI player, or an observer,
@@ -229,6 +230,15 @@ namespace {
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
+
+                CUIStateButton* ready_checkbox = new CUIStateButton("", GG::FORMAT_NONE, boost::make_shared<CUICheckBoxRepresenter>());
+                ready_checkbox->SetCheck(m_player_data.m_player_ready);
+                ready_checkbox->Resize(GG::Pt(READY_CHKBOX_WIDTH, PlayerRowHeight()));
+                push_back(ready_checkbox);
+                if (disabled)
+                    ready_checkbox->Disable();
+                else
+                    GG::Connect(ready_checkbox->CheckedSignal,      &NewGamePlayerRow::ReadyChanged,        this);
                 return;
             }
 
@@ -261,15 +271,19 @@ namespace {
             else
                 GG::Connect(species_selector->SpeciesChangedSignal, &NewGamePlayerRow::SpeciesChanged,      this);
 
-            // ready check box
-            CUIStateButton* ready_checkbox = new CUIStateButton("", GG::FORMAT_NONE, boost::make_shared<CUICheckBoxRepresenter>());
-            ready_checkbox->SetCheck(false);
-            ready_checkbox->Resize(GG::Pt(GG::X(40), PlayerRowHeight()));
-            push_back(ready_checkbox);
-            if (disabled)
-                ready_checkbox->Disable();
-            else
-                GG::Connect(ready_checkbox->CheckedSignal,          &NewGamePlayerRow::ReadyChanged,        this);
+            // ready check box or empty label for AI
+            if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                push_back(new CUILabel(""));
+            } else {
+                CUIStateButton* ready_checkbox = new CUIStateButton("", GG::FORMAT_NONE, boost::make_shared<CUICheckBoxRepresenter>());
+                ready_checkbox->SetCheck(m_player_data.m_player_ready);
+                ready_checkbox->Resize(GG::Pt(READY_CHKBOX_WIDTH, PlayerRowHeight()));
+                push_back(ready_checkbox);
+                if (disabled)
+                    ready_checkbox->Disable();
+                else
+                    GG::Connect(ready_checkbox->CheckedSignal,      &NewGamePlayerRow::ReadyChanged,        this);
+            }
         }
 
     private:
@@ -357,15 +371,19 @@ namespace {
             else
                 Connect(m_empire_list->SelChangedSignal, &LoadGamePlayerRow::EmpireChanged, this);
 
-            // ready check box
-            CUIStateButton* ready_checkbox = new CUIStateButton("", GG::FORMAT_NONE, boost::make_shared<CUICheckBoxRepresenter>());
-            ready_checkbox->SetCheck(false);
-            ready_checkbox->Resize(GG::Pt(GG::X(40), PlayerRowHeight()));
-            push_back(ready_checkbox);
-            if (disabled)
-                ready_checkbox->Disable();
-            else
-                GG::Connect(ready_checkbox->CheckedSignal,          &LoadGamePlayerRow::ReadyChanged,        this);            
+            // ready check box or empty label for AI
+            if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                push_back(new CUILabel(""));
+            } else {
+                CUIStateButton* ready_checkbox = new CUIStateButton("", GG::FORMAT_NONE, boost::make_shared<CUICheckBoxRepresenter>());
+                ready_checkbox->SetCheck(m_player_data.m_player_ready);
+                ready_checkbox->Resize(GG::Pt(READY_CHKBOX_WIDTH, PlayerRowHeight()));
+                push_back(ready_checkbox);
+                if (disabled)
+                    ready_checkbox->Disable();
+                else
+                    GG::Connect(ready_checkbox->CheckedSignal, &LoadGamePlayerRow::ReadyChanged, this);
+            }
         }
 
     private:
@@ -605,7 +623,8 @@ namespace {
             DebugLogger() << boost::lexical_cast<std::string>(entry.first) << " : "
                                    << entry.second.m_player_name << ", "
                                    << entry.second.m_client_type << ", "
-                                   << entry.second.m_starting_species_name;
+                                   << entry.second.m_starting_species_name
+                                   << (entry.second.m_player_ready ? ", Ready" : "");
     }
 }
 
