@@ -2064,6 +2064,9 @@ Agressif
 GSETUP_MANIACAL
 Maniaque
 
+# Random species selection description
+GSETUP_SPECIES_RANDOM_DESC
+Sélectionne au hasard une espèce parmi celles jouables.
 
 ##
 ## About dialog
