@@ -17,12 +17,12 @@ BASIC_INDUSTRY
             scope = Source
             activation = And [
                 Planet
-                Human
+                Human     // human player, not human species
                 (GalaxyMaxAIAggression = 0)
             ]
             accountinglabel = "DIFFICULTY"
             priority = [[VERY_LATE_PRIORITY]]
-            effects = SetTargetIndustry value = Value * 4
+            effects = SetTargetIndustry value = Value * 2
 
         EffectsGroup                    // removes residual production from a dead planet
             scope = Source

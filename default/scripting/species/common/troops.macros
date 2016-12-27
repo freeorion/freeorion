@@ -29,12 +29,12 @@ EffectsGroup
 EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
             scope = Source
             activation = And [
-                Human
+                Human     // human player, not human species
                 (GalaxyMaxAIAggression = 0)
             ]
             accountinglabel = "DIFFICULTY"
             priority = [[DEFAULT_PRIORITY]]
-            effects = SetMaxTroops value = Value * 4
+            effects = SetMaxTroops value = Value * 2
 '''
 
 AFTER_SPECIES_MULTIPLICATOR_TROOPS

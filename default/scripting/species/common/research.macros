@@ -13,12 +13,12 @@ BASIC_RESEARCH
             scope = Source
             activation = And [
                 Planet
-                Human
+                Human     // human player, not human species
                 (GalaxyMaxAIAggression = 0)
             ]
             accountinglabel = "DIFFICULTY"
             priority = [[LATE_PRIORITY]]
-            effects = SetTargetResearch value = Value * 4
+            effects = SetTargetResearch value = Value * 2
 
         EffectsGroup      // removes residual production from a dead planet
             scope = Source
