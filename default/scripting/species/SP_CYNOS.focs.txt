@@ -27,6 +27,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[BROAD_EP]]
+        [[STANDARD_SHIP_SHIELDS]]
     ]
 
     [[SWAMP_BROAD_EP]]

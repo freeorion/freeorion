@@ -32,6 +32,7 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
         [[NARROW_EP]]
+        [[STANDARD_SHIP_SHIELDS]]
     ]
 
     [[INFERNO_NARROW_EP]]

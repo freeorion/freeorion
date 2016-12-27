@@ -28,6 +28,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[HUGE_PLANET]]
+        [[STANDARD_SHIP_SHIELDS]]
     ]
 
     [[BARREN_STANDARD_EP]]

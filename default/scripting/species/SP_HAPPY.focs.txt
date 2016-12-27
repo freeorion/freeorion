@@ -35,6 +35,7 @@ Species
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[NARROW_EP]]
+        [[STANDARD_SHIP_SHIELDS]]
     ]
 
     [[OCEAN_NARROW_EP]]

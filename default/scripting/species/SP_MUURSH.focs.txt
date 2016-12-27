@@ -28,6 +28,7 @@ Species
 
         [[NATIVE_PLANETARY_DEFENSE]]
         [[NATIVE_PLANETARY_SHIELDS]]
+        [[STANDARD_SHIP_SHIELDS]]
     ]
 
     [[DESERT_STANDARD_EP]]
