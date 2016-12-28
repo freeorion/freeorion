@@ -274,18 +274,14 @@ namespace DualMeter {
             if (boost::optional<const std::vector<Effect::AccountingInfo>&>
                 maybe_info_vec = GetAccountingInfo(obj.ID(), actual_meter_type))
             {
-                const std::vector<Effect::AccountingInfo>& info_vec = *maybe_info_vec;
-
                 projected -= current;
-                for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin();
-                     info_it != info_vec.end(); ++info_it)
-                {
-                    if ((info_it->cause_type == ECT_UNKNOWN_CAUSE)
-                        || (info_it->cause_type == INVALID_EFFECTS_GROUP_CAUSE_TYPE))
+                for (const Effect::AccountingInfo& info : *maybe_info_vec) {
+                    if ((info.cause_type == ECT_UNKNOWN_CAUSE)
+                        || (info.cause_type == INVALID_EFFECTS_GROUP_CAUSE_TYPE))
                     {
                         continue;
                     }
-                    projected += info_it->meter_change;
+                    projected += info.meter_change;
                 }
             }
         }
@@ -360,9 +356,9 @@ void MeterBrowseWnd::UpdateSummary() {
 
 void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // clear existing labels
-    for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
-        DeleteChild(m_effect_labels_and_values[i].first);
-        DeleteChild(m_effect_labels_and_values[i].second);
+    for (const std::pair<GG::Label*, GG::Label*>& effect_label : m_effect_labels_and_values) {
+        DeleteChild(effect_label.first);
+        DeleteChild(effect_label.second);
     }
     m_effect_labels_and_values.clear();
 
@@ -383,11 +379,10 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         maybe_info_vec = GetAccountingInfo(m_object_id, accounting_displayed_for_meter);
     if (!maybe_info_vec)
         return;
-    const std::vector<Effect::AccountingInfo>& info_vec = *maybe_info_vec;
 
     // add label-value pairs for each alteration recorded for this meter
-    for (std::vector<Effect::AccountingInfo>::const_iterator info_it = info_vec.begin(); info_it != info_vec.end(); ++info_it) {
-        TemporaryPtr<const UniverseObject> source = GetUniverseObject(info_it->source_id);
+    for (const Effect::AccountingInfo& info : *maybe_info_vec) {
+        TemporaryPtr<const UniverseObject> source = GetUniverseObject(info.source_id);
 
         const Empire*   empire = 0;
         TemporaryPtr<const Building> building;
@@ -398,17 +393,17 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         if (source)
             name = source->Name();
 
-        switch (info_it->cause_type) {
+        switch (info.cause_type) {
         case ECT_TECH: {
             name.clear();
             if ((empire = GetEmpire(source->Owner())))
                 name = empire->Name();
-            const std::string& label_template = (info_it->custom_label.empty()
+            const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_TECH")
-                : UserString(info_it->custom_label));
+                : UserString(info.custom_label));
             text += boost::io::str(FlexibleFormat(label_template)
                 % name
-                % UserString(info_it->specific_cause));
+                % UserString(info.specific_cause));
             break;
         }
         case ECT_BUILDING: {
@@ -416,58 +411,58 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             if (building = boost::dynamic_pointer_cast<const Building>(source))
                 if (planet = GetPlanet(building->PlanetID()))
                     name = planet->Name();
-            const std::string& label_template = (info_it->custom_label.empty()
+            const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_BUILDING")
-                : UserString(info_it->custom_label));
+                : UserString(info.custom_label));
             text += boost::io::str(FlexibleFormat(label_template)
                 % name
-                % UserString(info_it->specific_cause));
+                % UserString(info.specific_cause));
             break;
         }
         case ECT_FIELD: {
-            const std::string& label_template = (info_it->custom_label.empty()
+            const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_FIELD")
-                : UserString(info_it->custom_label));
+                : UserString(info.custom_label));
             text += boost::io::str(FlexibleFormat(label_template)
                 % name
-                % UserString(info_it->specific_cause));
+                % UserString(info.specific_cause));
             break;
         }
         case ECT_SPECIAL: {
-            const std::string& label_template = (info_it->custom_label.empty()
+            const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_SPECIAL")
-                : UserString(info_it->custom_label));
+                : UserString(info.custom_label));
             text += boost::io::str(FlexibleFormat(label_template)
                 % name
-                % UserString(info_it->specific_cause));
+                % UserString(info.specific_cause));
             break;
         }
         case ECT_SPECIES: {
-            //DebugLogger() << "Effect Species Meter Browse Wnd effect cause " << info_it->specific_cause << " custom label: " << info_it->custom_label;
-            const std::string& label_template = (info_it->custom_label.empty()
+            //DebugLogger() << "Effect Species Meter Browse Wnd effect cause " << info.specific_cause << " custom label: " << info.custom_label;
+            const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_SPECIES")
-                : UserString(info_it->custom_label));
+                : UserString(info.custom_label));
             text += boost::io::str(FlexibleFormat(label_template)
                 % name
-                % UserString(info_it->specific_cause));
+                % UserString(info.specific_cause));
             break;
         }
         case ECT_SHIP_HULL: {
-            const std::string& label_template = (info_it->custom_label.empty()
+            const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_SHIP_HULL")
-                : UserString(info_it->custom_label));
+                : UserString(info.custom_label));
             text += boost::io::str(FlexibleFormat(label_template)
                 % name
-                % UserString(info_it->specific_cause));
+                % UserString(info.specific_cause));
             break;
         }
         case ECT_SHIP_PART: {
-            const std::string& label_template = (info_it->custom_label.empty()
+            const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_SHIP_PART")
-                : UserString(info_it->custom_label));
+                : UserString(info.custom_label));
             text += boost::io::str(FlexibleFormat(label_template)
                 % name
-                % UserString(info_it->specific_cause));
+                % UserString(info.specific_cause));
             break;
         }
         case ECT_INHERENT:
@@ -476,9 +471,9 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
         case ECT_UNKNOWN_CAUSE:
         default:
-            const std::string& label_template = (info_it->custom_label.empty()
+            const std::string& label_template = (info.custom_label.empty()
                 ? UserString("TT_UNKNOWN")
-                : UserString(info_it->custom_label));
+                : UserString(info.custom_label));
             text += label_template;
         }
 
@@ -487,7 +482,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         label->Resize(GG::Pt(MeterBrowseLabelWidth(), m_row_height));
         AttachChild(label);
 
-        GG::Label* value = new CUILabel(ColouredNumber(info_it->meter_change));
+        GG::Label* value = new CUILabel(ColouredNumber(info.meter_change));
         value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
         value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
@@ -563,9 +558,9 @@ void ShipDamageBrowseWnd::UpdateSummary() {
 
 void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     // clear existing labels
-    for (unsigned int i = 0; i < m_effect_labels_and_values.size(); ++i) {
-        DeleteChild(m_effect_labels_and_values[i].first);
-        DeleteChild(m_effect_labels_and_values[i].second);
+    for (const std::pair<GG::Label*, GG::Label*>& effect_label : m_effect_labels_and_values) {
+        DeleteChild(effect_label.first);
+        DeleteChild(effect_label.second);
     }
     m_effect_labels_and_values.clear();
 
@@ -579,16 +574,12 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     const ShipDesign* design = GetShipDesign(ship->DesignID());
     if (!design)
         return;
-    const std::vector<std::string>& parts = design->Parts();
 
     std::string     name = ship->Name();
     const std::string& label_template = UserString("TT_SHIP_PART");
 
     // for each weapon part, get its damage meter value
-    for (std::vector<std::string>::const_iterator part_it = parts.begin();
-         part_it != parts.end(); ++part_it)
-    {
-        const std::string& part_name = *part_it;
+    for (const std::string& part_name : design->Parts()) {
         const PartType* part = GetPartType(part_name);
         if (!part)
             continue;
