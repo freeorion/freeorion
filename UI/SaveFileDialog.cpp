@@ -135,10 +135,9 @@ namespace {
         if (!list)
             return false;
 
-        for (unsigned i = 0; i < list->NumRows(); ++i) {
-            const GG::DropDownList::Row& row = list->GetRow(i);
-            for (unsigned j = 0; j < row.size(); ++j) {
-                const GG::Control* control = row.at(j);
+        for (const GG::DropDownList::Row* row : *list) {
+            for (unsigned j = 0; j < row->size(); ++j) {
+                const GG::Control* control = row->at(j);
                 const GG::Label* text = dynamic_cast<const GG::Label*>(control);
                 if (text) {
                     if (text->Text() == str || text->Text() + "/" == str) {
@@ -385,8 +384,8 @@ public:
     {
         SetMargin(ROW_MARGIN);
 
-        for (std::vector<SaveFileColumn>::const_iterator it = m_columns->begin(); it != m_columns->end(); ++it)
-        { push_back(SaveFileColumn::TitleForColumn(*it)); }
+        for (const SaveFileColumn& column : *m_columns)
+        { push_back(SaveFileColumn::TitleForColumn(column)); }
         AdjustColumns();
     }
 
@@ -431,8 +430,7 @@ public:
 
         // Give the directory label at least all the room that the other columns demand anyway
         GG::X sum(0);
-        for (unsigned int i = 0; i < m_columns->size(); ++i) {
-            const SaveFileColumn& column = (*m_columns)[i];
+        for (const SaveFileColumn& column : *m_columns) {
             sum += column.FixedWidth();
         }
         return sum;
@@ -458,16 +456,12 @@ public:
         SaveFileRow::Init();
         VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
-        for (std::vector<SaveFileColumn>::const_iterator it = m_columns->begin();
-             it != m_columns->end(); ++it)
-        {
-            GG::Control* cfc = SaveFileColumn::CellForColumn(*it, m_full_preview, ClientWidth());
+        for (const SaveFileColumn& column : *m_columns) {
+            GG::Control* cfc = SaveFileColumn::CellForColumn(column, m_full_preview, ClientWidth());
             push_back(cfc);
         }
-        for (std::vector<SaveFileColumn>::const_iterator it = m_all_columns->begin();
-             it != m_all_columns->end(); ++it)
-        {
-            browse_text.AddVariable(it->Name(), ColumnInPreview(m_full_preview, it->Name(), false));
+        for (const SaveFileColumn& column : *m_all_columns) {
+            browse_text.AddVariable(column.Name(), ColumnInPreview(m_full_preview, column.Name(), false));
         }
         AdjustColumns();
         SetBrowseText(browse_text.GetText());
@@ -535,8 +529,8 @@ public:
         int tooltip_delay = GetOptionsDB().Get<int>("UI.save-file-dialog.tooltip-delay");
 
         std::vector<Row*> rows;
-        for (vector<FullPreview>::const_iterator it = previews.begin(); it != previews.end(); ++it) {
-            rows.push_back(new SaveFileFileRow(*it, m_visible_columns, m_columns, tooltip_delay));
+        for (const FullPreview& preview : previews) {
+            rows.push_back(new SaveFileFileRow(preview, m_visible_columns, m_columns, tooltip_delay));
         }
 
         // Insert rows enmasse to avoid per insertion vector sort costs.
@@ -568,9 +562,9 @@ public:
     }
 
     bool HasFile(const std::string& filename) {
-        for (GG::ListBox::iterator it = begin(); it != end(); ++it) {
-            SaveFileRow* row = dynamic_cast<SaveFileRow*>(*it);
-            if (row && row->Filename() == filename)
+        for (GG::ListBox::Row* row : *this) {
+            SaveFileRow* srow = dynamic_cast<SaveFileRow*>(row);
+            if (srow && srow->Filename() == filename)
                 return true;
         }
         return false;
@@ -585,21 +579,17 @@ private:
     {
         std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string> >("UI.save-file-dialog.columns");
         boost::shared_ptr<std::vector<SaveFileColumn> > columns(new std::vector<SaveFileColumn>);
-        for (std::vector<std::string>::const_iterator it = names.begin();
-             it != names.end(); ++it)
-        {
+        for (const std::string& column_name : names) {
             bool found_col = false;
-            for (std::vector<SaveFileColumn>::const_iterator jt = all_cols->begin();
-                 jt != all_cols->end(); ++jt)
-            {
-                if (jt->Name() == *it) {
-                    columns->push_back(*jt);
+            for (const SaveFileColumn& column : *all_cols) {
+                if (column.Name() == column_name) {
+                    columns->push_back(column);
                     found_col = true;
                     break;
                 }
             }
             if (!found_col)
-                ErrorLogger() << "SaveFileListBox::FilterColumns: Column not found: " << *it;
+                ErrorLogger() << "SaveFileListBox::FilterColumns: Column not found: " << column_name;
         }
         DebugLogger() << "SaveFileDialog::FilterColumns: Visible columns: " << columns->size();
         return columns;
@@ -954,16 +944,14 @@ void SaveFileDialog::UpdatePreviewList() {
         row->push_back(new CUILabel(SERVER_LABEL));
         m_remote_dir_dropdown->Insert(row);
 
-        for (std::vector<std::string>::const_iterator it = preview_information.subdirectories.begin();
-             it != preview_information.subdirectories.end(); ++it)
-        {
+        for (const std::string& subdir : preview_information.subdirectories) {
             GG::DropDownList::Row* row = new GG::DropDownList::Row();
-            if (it->find("/") == 0) {
-                row->push_back(new CUILabel(SERVER_LABEL + *it));
-            } else if(it->find("./") == 0) {
-                row->push_back(new CUILabel(SERVER_LABEL + it->substr(1)));
+            if (subdir.find("/") == 0) {
+                row->push_back(new CUILabel(SERVER_LABEL + subdir));
+            } else if(subdir.find("./") == 0) {
+                row->push_back(new CUILabel(SERVER_LABEL + subdir.substr(1)));
             } else {
-                row->push_back(new CUILabel(SERVER_LABEL + "/" + *it));
+                row->push_back(new CUILabel(SERVER_LABEL + "/" + subdir));
             }
 
             m_remote_dir_dropdown->Insert(row);
