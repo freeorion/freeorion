@@ -86,19 +86,17 @@ namespace AIInterface {
     { return AIClientApp::GetApp()->EmpireID(); }
 
     int PlayerEmpireID(int player_id) {
-        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
-        for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it) {
-            if (it->first == player_id)
-                return it->second.empire_id;
+        for (std::map<int, PlayerInfo>::value_type& entry : AIClientApp::GetApp()->Players()) {
+            if (entry.first == player_id)
+                return entry.second.empire_id;
         }
         return ALL_EMPIRES; // default invalid value
     }
 
     std::vector<int>  AllEmpireIDs() {
-        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
         std::vector<int> empire_ids;
-        for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it)
-            empire_ids.push_back(it->second.empire_id);
+        for (std::map<int, PlayerInfo>::value_type& entry : AIClientApp::GetApp()->Players())
+            empire_ids.push_back(entry.second.empire_id);
         return empire_ids;
     }
 
@@ -116,10 +114,9 @@ namespace AIInterface {
     }
 
     std::vector<int> AllPlayerIDs() {
-        const std::map<int, PlayerInfo>& players = AIClientApp::GetApp()->Players();
         std::vector<int> player_ids;
-        for (std::map<int, PlayerInfo>::const_iterator it = players.begin(); it != players.end(); ++it)
-            player_ids.push_back(it->first);
+        for (std::map<int, PlayerInfo>::value_type& entry : AIClientApp::GetApp()->Players())
+            player_ids.push_back(entry.first);
         return player_ids;
     }
 
@@ -187,10 +184,8 @@ namespace AIInterface {
             // (aren't owned by anyone).  Add this the current player's
             // ownership to all, while remembering which planets this is done
             // to.
-            std::vector<TemporaryPtr<Planet> > all_planets = universe.Objects().FindObjects<Planet>();
             universe.InhibitUniverseObjectSignals(true);
-            for (std::vector<TemporaryPtr<Planet> >::iterator it = all_planets.begin(); it != all_planets.end(); ++it) {
-                 TemporaryPtr<Planet> planet = *it;
+            for (TemporaryPtr<Planet> planet : universe.Objects().FindObjects<Planet>()) {
                  if (planet->Unowned()) {
                      unowned_planets.push_back(planet);
                      planet->SetOwner(player_id);
@@ -203,16 +198,15 @@ namespace AIInterface {
 
         if (pretend_to_own_unowned_planets) {
             // remove temporary ownership added above
-            for (std::vector<TemporaryPtr<Planet> >::iterator it = unowned_planets.begin(); it != unowned_planets.end(); ++it)
-                (*it)->SetOwner(ALL_EMPIRES);
+            for (TemporaryPtr<Planet> planet : unowned_planets)
+                planet->SetOwner(ALL_EMPIRES);
             universe.InhibitUniverseObjectSignals(false);
         }
     }
 
     void UpdateResourcePools() {
-        EmpireManager& manager = AIClientApp::GetApp()->Empires();
-        for (EmpireManager::iterator it = manager.begin(); it != manager.end(); ++it)
-            it->second->UpdateResourcePools();
+        for (std::map<int, Empire*>::value_type& entry : AIClientApp::GetApp()->Empires())
+            entry.second->UpdateResourcePools();
     }
 
     void UpdateResearchQueue() {
@@ -292,8 +286,8 @@ namespace AIInterface {
             int empire_id = AIClientApp::GetApp()->EmpireID();
 
             // make sure all objects exist and are owned just by this player
-            for (std::vector<int>::const_iterator it = object_ids.begin(); it != object_ids.end(); ++it) {
-                TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*it);
+            for (int object_id : object_ids) {
+                TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
 
                 if (!obj) {
                     ErrorLogger() << "IssueScrapOrder : passed an invalid object_id";
@@ -305,7 +299,7 @@ namespace AIInterface {
                     return 0;
                 }
 
-                AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ScrapOrder(empire_id, *it)));
+                AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ScrapOrder(empire_id, object_id)));
             }
 
             return 1;
@@ -332,8 +326,8 @@ namespace AIInterface {
         TemporaryPtr<const Ship> ship = TemporaryPtr<Ship>();
 
         // make sure all ships exist and are owned just by this player
-        for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-            ship = GetShip(*it);
+        for (int ship_id : ship_ids) {
+            ship = GetShip(ship_id);
             if (!ship) {
                 ErrorLogger() << "IssueNewFleetOrder : passed an invalid ship_id";
                 return 0;
@@ -658,10 +652,7 @@ namespace AIInterface {
         bool recipient_has_something_here = false;
         std::vector<TemporaryPtr<const UniverseObject> > system_objects =
             Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
-        for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = system_objects.begin();
-                it != system_objects.end(); ++it)
-        {
-            TemporaryPtr<const UniverseObject> obj = *it;
+        for (TemporaryPtr<const UniverseObject> obj : system_objects) {
             if (obj->Owner() == recipient_id) {
                 recipient_has_something_here = true;
                 break;
