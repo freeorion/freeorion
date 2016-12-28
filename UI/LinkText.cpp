@@ -220,9 +220,9 @@ void TextLinker::Render_() {
     FlatRectangle(bounds.ul, bounds.lr, GG::CLR_ZERO, GG::CLR_YELLOW, 1);
 
     // draw red box around individual linkified bits of text within block
-    for (unsigned int i = 0; i < m_links.size(); ++i) {
-        for (unsigned int j = 0; j < m_links[i].rects.size(); ++j) {
-            GG::Rect r = TextUpperLeft() + m_links[i].rects[j];
+    for (const Link& link : m_links) {
+        for (const GG::Rect& rect : link.rects) {
+            GG::Rect r = TextUpperLeft() + rect;
             FlatRectangle(r.ul, r.lr, GG::CLR_ZERO, GG::CLR_RED, 1);
         }
     }
@@ -315,19 +315,12 @@ const std::string& TextLinker::RawText() const {
 void TextLinker::FindLinks() {
     m_links.clear();
 
-    const std::vector<GG::Font::LineData>& line_data = GetLineData();
-
     GG::Y y_posn(0); // y-coordinate of the top of the current line
     Link link;
 
-    for (std::vector<GG::Font::LineData>::const_iterator it = line_data.begin(); 
-         it != line_data.end(); ++it)
-    {
-        const GG::Font::LineData& curr_line = *it;
-
-        for (unsigned int i = 0; i < curr_line.char_data.size(); ++i) {
-            for (unsigned int j = 0; j < curr_line.char_data[i].tags.size(); ++j) {
-                const boost::shared_ptr<GG::Font::FormattingTag>& tag = curr_line.char_data[i].tags[j];
+    for (const GG::Font::LineData& curr_line : GetLineData()) {
+        for (const GG::Font::LineData::CharData& curr_char : curr_line.char_data) {
+            for (const boost::shared_ptr<GG::Font::FormattingTag>& tag : curr_char.tags) {
                 if (tag->tag_name == VarText::PLANET_ID_TAG ||
                     tag->tag_name == VarText::SYSTEM_ID_TAG ||
                     tag->tag_name == VarText::SHIP_ID_TAG ||
@@ -351,14 +344,14 @@ void TextLinker::FindLinks() {
                 {
                     link.type = tag->tag_name;
                     if (tag->close_tag) {
-                        link.text_posn.second = Value(curr_line.char_data[i].string_index);
+                        link.text_posn.second = Value(curr_char.string_index);
                         m_links.push_back(link);
                         link = Link();
                     } else {
                         link.data = tag->params[0];
-                        link.text_posn.first = Value(curr_line.char_data[i].string_index);
-                        for (unsigned int k = 0; k < curr_line.char_data[i].tags.size(); ++k) {
-                            link.text_posn.first -= Value(curr_line.char_data[i].tags[k]->StringSize());
+                        link.text_posn.first = Value(curr_char.string_index);
+                        for (boost::shared_ptr<GG::Font::FormattingTag> itag : curr_char.tags) {
+                            link.text_posn.first -= Value(itag->StringSize());
                         }
                     }
                     // Before decoration, the real positions are the same as the raw ones
@@ -372,7 +365,6 @@ void TextLinker::FindLinks() {
 }
 
 void TextLinker::LocateLinks() {
-    const std::vector<GG::Font::LineData>& line_data = GetLineData();
     const boost::shared_ptr<GG::Font>& font = GetFont();
 
     if (m_links.empty())
@@ -385,11 +377,7 @@ void TextLinker::LocateLinks() {
     std::vector<Link>::iterator current_link = m_links.begin();
     bool inside_link = false;
 
-    for (std::vector<GG::Font::LineData>::const_iterator it = line_data.begin(); 
-         it != line_data.end(); ++it, y_posn += font->Lineskip())
-    {
-        const GG::Font::LineData& curr_line = *it;
-
+    for (const GG::Font::LineData& curr_line : GetLineData()) {
         // if the last line ended without the current tag ending
         if (inside_link)
             current_link->rects.push_back(GG::Rect(GG::X0, y_posn, GG::X0, y_posn + font->Height()));
@@ -412,6 +400,8 @@ void TextLinker::LocateLinks() {
                 if (current_link == m_links.end())
                     return;
             }
+
+            y_posn += font->Lineskip();
         }
 
         // if a line is ending without the current tag ending
@@ -434,8 +424,7 @@ int TextLinker::GetLinkUnderPt(const GG::Pt& pt) {
     for (unsigned int i = 0; i < links.size(); ++i) {
         const Link& link = links[i];
 
-        for (unsigned int j = 0; j < link.rects.size(); ++j) {
-            GG::Rect link_rect = link.rects[j];
+        for (const GG::Rect& link_rect : link.rects) {
             GG::Rect r = tex_ul + link_rect;
             if (r.Contains(pt))
                 return i;
