@@ -424,8 +424,8 @@ namespace {
             CUIListBox::SizeMove(ul, lr);
             if (old_size != Size()) {
                 const GG::X row_width = ListRowWidth();
-                for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-                    (*it)->Resize(GG::Pt(row_width, (*it)->Height()));
+                for (GG::ListBox::Row* row : *this)
+                    row->Resize(GG::Pt(row_width, row->Height()));
             }
         }
 
@@ -1075,9 +1075,10 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     // find which index in list, if any, represents current fullscreen resolution selection
     int current_resolution_index = -1, loop_res_index = 0;
-    for (std::vector<std::string>::const_iterator res_it = resolutions.begin(); res_it != resolutions.end(); ++res_it, ++loop_res_index) {
-        if (*res_it == current_video_mode_str)
+    for (const std::string& resolution : resolutions) {
+        if (resolution == current_video_mode_str)
             current_resolution_index = loop_res_index;
+        ++loop_res_index;
     }
 
 
@@ -1105,9 +1106,9 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
 
     // selectable rows in video modes list box...
-    for (std::vector<std::string>::const_iterator it = resolutions.begin(); it != resolutions.end(); ++it) {
-        GG::ListBox::Row* video_mode_row = new CUISimpleDropDownListRow(*it);
-        video_mode_row->SetName(*it);
+    for (const std::string& resolution : resolutions) {
+        GG::ListBox::Row* video_mode_row = new CUISimpleDropDownListRow(resolution);
+        video_mode_row->SetName(resolution);
         drop_list->Insert(video_mode_row);
     }
 
@@ -1169,13 +1170,10 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 void OptionsWnd::HotkeysPage()
 {
     GG::ListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
-    std::map<std::string, std::set<std::string> > hotkeys = Hotkey::ClassifyHotkeys();
-    for (std::map<std::string, std::set<std::string> >::iterator i = hotkeys.begin();
-         i != hotkeys.end(); ++i)
-    {
-        CreateSectionHeader(page, 0, UserString(i->first));
-        for (std::set<std::string>::iterator j = i->second.begin(); j != i->second.end(); ++j)
-            HotkeyOption(page, 0, *j);
+    for (const std::map<std::string, std::set<std::string>>::value_type& class_hotkeys : Hotkey::ClassifyHotkeys()) {
+        CreateSectionHeader(page, 0, UserString(class_hotkeys.first));
+        for (const std::string& hotkey : class_hotkeys.second)
+            HotkeyOption(page, 0, hotkey);
     }
     m_tabs->SetCurrentWnd(0);
 }
