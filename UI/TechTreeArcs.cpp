@@ -83,18 +83,16 @@ public:
         // We highlight lines that lead to techs that are queued for research
         if (const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID())) {
             const ResearchQueue& queue = empire->GetResearchQueue();
-            for(std::map<std::string, std::set<std::string> >::const_iterator set_it = m_edges_to_show.begin();
-                set_it != m_edges_to_show.end(); ++set_it) {
+            for(std::map<std::string, std::set<std::string>>::value_type& edge : m_edges_to_show) {
+                std::string tech1 = edge.first;
+                const std::set<std::string>& heads = edge.second;
 
-                std::string tech1 = set_it->first;
-                const std::set<std::string>& heads = set_it->second;
-
-                for (std::set<std::string>::const_iterator it = heads.begin(); it != heads.end(); ++it) {
-                    if (queue.InQueue(*it) && (queue.InQueue(tech1) || empire->GetTechStatus(tech1) == TS_COMPLETE)) {
+                for (const std::string& head : heads) {
+                    if (queue.InQueue(head) && (queue.InQueue(tech1) || empire->GetTechStatus(tech1) == TS_COMPLETE)) {
                         // FillArcBuffer will put lines whose both ends are in highlights
                         // into the buffer
                         highlights.insert(tech1);
-                        highlights.insert(*it);
+                        highlights.insert(head);
                     }
                 }
             }
@@ -112,16 +110,13 @@ private:
     /// Fills \a buffer with the ends points for the lines that connect
     /// technologies in \a techs
     void FillArcBuffer(GG::GL2DVertexBuffer& buffer, const std::set<std::string>& techs) {
-        for (std::set<std::string>::const_iterator it = techs.begin(); it != techs.end(); ++it) {
-
-            const std::vector<TechTreeLayout::Edge*> edges = m_layout.GetOutEdges(*it);
+        for (const std::string& tech_name : techs) {
+            const std::vector<TechTreeLayout::Edge*> edges = m_layout.GetOutEdges(tech_name);
             //prerequisite edge
-            for (std::vector<TechTreeLayout::Edge*>::const_iterator edge = edges.begin();
-                 edge != edges.end(); ++edge)
-            {
+            for (TechTreeLayout::Edge* edge : edges) {
                 std::vector<std::pair<double, double> > points;
-                const std::string& from = (*edge)->GetTechFrom();
-                const std::string& to   = (*edge)->GetTechTo();
+                const std::string& from = edge->GetTechFrom();
+                const std::string& to   = edge->GetTechTo();
                 // Do not show lines leading to techs
                 // we are not showing
                 if (techs.find(to) == techs.end()) {
@@ -134,7 +129,7 @@ private:
                     ErrorLogger() << "TechTreeArcs::FillArcBuffer missing arc endpoint tech " << from << "->" << to;
                     continue;
                 }
-                (*edge)->ReadPoints(points);
+                edge->ReadPoints(points);
                 // To be able to draw all the lines in one call,
                 // we will draw the with GL_LINES, which means all
                 // vertices except the first and the last must occur twice
