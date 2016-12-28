@@ -324,8 +324,8 @@ void ModeratorActionsWnd::Refresh() {
     // todo: get currently selected empire, if any, reselect after refresh
 
     m_empire_drop->Clear();
-    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        const Empire* empire = it->second;
+    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
+        const Empire* empire = entry.second;
         GG::DropDownList::Row* row = new GG::DropDownList::Row();
         GG::Label* label = new CUILabel(empire->Name(), GG::FORMAT_NOWRAP);
         label->SetTextColor(empire->Color());
