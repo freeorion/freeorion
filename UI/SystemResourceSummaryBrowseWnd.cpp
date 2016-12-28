@@ -49,19 +49,17 @@ namespace {
             // PP (equal to mineral and industry) cost of objects on production queue at this object's location
             if (empire) {
                 // add allocated PP for all production items at this location for this empire
-                const ProductionQueue& queue = empire->GetProductionQueue();
-                for (ProductionQueue::const_iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it)
-                    if (queue_it->location == obj->ID())
-                        prod_queue_allocation_sum += queue_it->allocated_pp;
+                for (const ProductionQueue::Element& elem : empire->GetProductionQueue())
+                    if (elem.location == obj->ID())
+                        prod_queue_allocation_sum += elem.allocated_pp;
 
             } else {
                 // add allocated PP for all production items at this location for all empires
-                for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-                    empire = it->second;
-                    const ProductionQueue& queue = empire->GetProductionQueue();
-                    for (ProductionQueue::const_iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it)
-                        if (queue_it->location == obj->ID())
-                            prod_queue_allocation_sum += queue_it->allocated_pp;
+                for (std::map<int, Empire*>::value_type& entry : Empires()) {
+                    empire = entry.second;
+                    for (const ProductionQueue::Element& elem : empire->GetProductionQueue())
+                        if (elem.location == obj->ID())
+                            prod_queue_allocation_sum += elem.allocated_pp;
                 }
             }
             return prod_queue_allocation_sum;
@@ -172,9 +170,9 @@ void SystemResourceSummaryBrowseWnd::Initialize() {
 void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top
     // and updates \a top to the vertical position after the last entry
-    for (unsigned int i = 0; i < m_production_labels_and_amounts.size(); ++i) {
-        DeleteChild(m_production_labels_and_amounts[i].first);
-        DeleteChild(m_production_labels_and_amounts[i].second);
+    for (const std::pair<GG::Label*, GG::Label*>& label_pair : m_production_labels_and_amounts) {
+        DeleteChild(label_pair.first);
+        DeleteChild(label_pair.second);
     }
     m_production_labels_and_amounts.clear();
 
@@ -190,11 +188,7 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
     std::vector<TemporaryPtr<const UniverseObject> > objects =
         Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs());
 
-    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = objects.begin();
-         it != objects.end(); ++it)
-    {
-        TemporaryPtr<const UniverseObject> obj = *it;
-
+    for (TemporaryPtr<const UniverseObject> obj : objects) {
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
             continue;   // if m_empire_id == -1, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
@@ -266,9 +260,9 @@ void SystemResourceSummaryBrowseWnd::UpdateProduction(GG::Y& top) {
 void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
     // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and
     // updates \a top to be the vertical position after the last entry
-    for (unsigned int i = 0; i < m_allocation_labels_and_amounts.size(); ++i) {
-        DeleteChild(m_allocation_labels_and_amounts[i].first);
-        DeleteChild(m_allocation_labels_and_amounts[i].second);
+    for (const std::pair<GG::Label*, GG::Label*>& label_pair : m_allocation_labels_and_amounts) {
+        DeleteChild(label_pair.first);
+        DeleteChild(label_pair.second);
     }
     m_allocation_labels_and_amounts.clear();
 
@@ -281,14 +275,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 
 
     // add label-value pair for each resource-consuming object in system to indicate amount of resource consumed
-    std::vector<TemporaryPtr<const UniverseObject> > objects =
-        Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs());
-
-    for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = objects.begin();
-         it != objects.end(); ++it)
-    {
-        TemporaryPtr<const UniverseObject> obj = *it;
-
+    for (TemporaryPtr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
         // display information only for the requested player
         if (m_empire_id != ALL_EMPIRES && !obj->OwnedBy(m_empire_id))
             continue;   // if m_empire_id == ALL_EMPIRES, display resource production for all empires.  otherwise, skip this resource production if it's not owned by the requested player
@@ -452,21 +439,21 @@ void SystemResourceSummaryBrowseWnd::Clear() {
     DeleteChild(m_allocation_label);
     DeleteChild(m_import_export_label);
 
-    for (std::vector<std::pair<GG::Label*, GG::Label*> >::iterator it = m_production_labels_and_amounts.begin(); it != m_production_labels_and_amounts.end(); ++it) {
-        DeleteChild(it->first);
-        DeleteChild(it->second);
+    for (const std::pair<GG::Label*, GG::Label*>& label_pair : m_production_labels_and_amounts) {
+        DeleteChild(label_pair.first);
+        DeleteChild(label_pair.second);
     }
     m_production_labels_and_amounts.clear();
 
-    for (std::vector<std::pair<GG::Label*, GG::Label*> >::iterator it = m_allocation_labels_and_amounts.begin(); it != m_allocation_labels_and_amounts.end(); ++it) {
-        DeleteChild(it->first);
-        DeleteChild(it->second);
+    for (const std::pair<GG::Label*, GG::Label*>& label_pair : m_allocation_labels_and_amounts) {
+        DeleteChild(label_pair.first);
+        DeleteChild(label_pair.second);
     }
     m_allocation_labels_and_amounts.clear();
 
-    for (std::vector<std::pair<GG::Label*, GG::Label*> >::iterator it = m_import_export_labels_and_amounts.begin(); it != m_import_export_labels_and_amounts.end(); ++it) {
-        DeleteChild(it->first);
-        DeleteChild(it->second);
+    for (const std::pair<GG::Label*, GG::Label*>& label_pair : m_import_export_labels_and_amounts) {
+        DeleteChild(label_pair.first);
+        DeleteChild(label_pair.second);
     }
     m_import_export_labels_and_amounts.clear();
 }
