@@ -145,70 +145,56 @@ void MessageWndEdit::KeyPress(GG::Key key, boost::uint32_t key_code_point,
 
 void MessageWndEdit::FindGameWords() {
      // add player and empire names
-    for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-        m_game_words.insert(it->second->Name());
-        m_game_words.insert(it->second->PlayerName());
+    for (std::map<int, Empire*>::value_type& entry : Empires()) {
+        m_game_words.insert(entry.second->Name());
+        m_game_words.insert(entry.second->PlayerName());
     }
     // add system names
-    std::vector<TemporaryPtr<System> > systems = GetUniverse().Objects().FindObjects<System>();
-    for (unsigned int i = 0; i < systems.size(); ++i) {
-        if (systems[i]->Name() != "")
-            m_game_words.insert(systems[i]->Name());
+    for (TemporaryPtr<System> system : GetUniverse().Objects().FindObjects<System>()) {
+        if (system->Name() != "")
+            m_game_words.insert(system->Name());
     }
      // add ship names
-    std::vector<TemporaryPtr<Ship> > ships = GetUniverse().Objects().FindObjects<Ship>();
-    for (unsigned int i = 0; i < ships.size(); ++i) {
-        if (ships[i]->Name() != "")
-            m_game_words.insert(ships[i]->Name());
+    for (TemporaryPtr<Ship> ship : GetUniverse().Objects().FindObjects<Ship>()) {
+        if (ship->Name() != "")
+            m_game_words.insert(ship->Name());
     }
      // add ship design names
-    for (PredefinedShipDesignManager::iterator it = GetPredefinedShipDesignManager().begin();
-         it != GetPredefinedShipDesignManager().end(); ++it)
-    {
-        if (it->second->Name() != "")
-            m_game_words.insert(UserString(it->second->Name()));
+
+    for (const std::map<std::string, ShipDesign*>::value_type& entry : GetPredefinedShipDesignManager()) {
+        if (entry.second->Name() != "")
+            m_game_words.insert(UserString(entry.second->Name()));
     }
      // add specials names
-    std::vector<std::string> specials =  SpecialNames();
-    for (unsigned int i = 0; i < specials.size(); ++i) {
-        if (specials[i] != "")
-            m_game_words.insert(UserString(specials[i]));
+    for (const std::string& special_name : SpecialNames()) {
+        if (special_name != "")
+            m_game_words.insert(UserString(special_name));
     }
      // add species names
-    for (SpeciesManager::iterator it = GetSpeciesManager().begin();
-         it != GetSpeciesManager().end(); ++it)
-    {
-        if (it->second->Name() != "")
-            m_game_words.insert(UserString(it->second->Name()));
+    for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+        if (entry.second->Name() != "")
+            m_game_words.insert(UserString(entry.second->Name()));
     }
      // add techs names
-    std::vector<std::string> techs = GetTechManager().TechNames();
-    for (unsigned int i = 0; i < techs.size(); ++i) {
-        if (techs[i] != "")
-            m_game_words.insert(UserString(techs[i]));
+    for (const std::string& tech_name : GetTechManager().TechNames()) {
+        if (tech_name != "")
+            m_game_words.insert(UserString(tech_name));
     }
     // add building type names
-    for (BuildingTypeManager::iterator it = GetBuildingTypeManager().begin();
-         it != GetBuildingTypeManager().end(); ++it)
-    {
-        if (it->second->Name() != "")
-            m_game_words.insert(UserString(it->second->Name()));
+    for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
+        if (entry.second->Name() != "")
+            m_game_words.insert(UserString(entry.second->Name()));
     }
     // add ship hulls
-    for (PredefinedShipDesignManager::iterator it = GetPredefinedShipDesignManager().begin();
-         it != GetPredefinedShipDesignManager().end(); ++it)
-    {
-        if (it->second->Hull() != "")
-            m_game_words.insert(UserString(it->second->Hull()));
+    for (const std::map<std::string, ShipDesign*>::value_type& entry : GetPredefinedShipDesignManager()) {
+        if (entry.second->Hull() != "")
+            m_game_words.insert(UserString(entry.second->Hull()));
     }
     // add ship parts
-    for (PredefinedShipDesignManager::iterator it = GetPredefinedShipDesignManager().begin();
-         it != GetPredefinedShipDesignManager().end(); ++it)
-    {
-        const std::vector<std::string>& parts = it->second->Parts();
-        for (std::vector<std::string>::const_iterator it1 = parts.begin(); it1 != parts.end(); ++it1) {
-            if (*it1 != "")
-                m_game_words.insert(UserString(*it1));
+    for (const std::map<std::string, ShipDesign*>::value_type& entry : GetPredefinedShipDesignManager()) {
+        for (const std::string& part_name : entry.second->Parts()) {
+            if (part_name != "")
+                m_game_words.insert(UserString(part_name));
         }
     }
  }
@@ -255,8 +241,8 @@ void MessageWndEdit::AutoComplete() {
             FindGameWords();
 
             // See if word is an exact match with a game word
-            for (std::set<std::string>::const_iterator it = m_game_words.begin(); it != m_game_words.end(); ++it) {
-                if (boost::iequals(*it, partial_word)) { // if there's an exact match, just add a space
+            for (const std::string& word : m_game_words) {
+                if (boost::iequals(word, partial_word)) { // if there's an exact match, just add a space
                     full_line.insert(Value(cursor_pos.first), " ");
                     this->SetText(full_line);
                     this->SelectRange(cursor_pos.first + 1, cursor_pos.first + 1);
@@ -283,9 +269,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
     std::string game_word;
 
     // Check if the partial_word is contained in any game words
-    for (std::set<std::string>::const_iterator it = names.begin(); it != names.end(); ++it) {
-        std::string temp_game_word = *it;
-
+    for (const std::string& temp_game_word : names) {
         if (temp_game_word.size() >= partial_word.size()) {
             std::string game_word_partial = temp_game_word.substr(0, partial_word.size());
 
@@ -472,8 +456,8 @@ namespace {
             net.SendMessage(GlobalChatMessage(sender_id, text));
         } else {
             recipients.insert(sender_id);   // ensure recipient sees own sent message
-            for (std::set<int>::const_iterator it = recipients.begin(); it != recipients.end(); ++it)
-                net.SendMessage(SingleRecipientChatMessage(sender_id, *it, text));
+            for (int recipient_id : recipients)
+                net.SendMessage(SingleRecipientChatMessage(sender_id, recipient_id, text));
         }
     }
 
