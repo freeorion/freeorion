@@ -433,8 +433,8 @@ void GalaxySetupPanel::DoLayout() {
 }
 
 void GalaxySetupPanel::Disable(bool b/* = true*/) {
-    for (std::list<GG::Wnd*>::const_iterator it = Children().begin(); it != Children().end(); ++it)
-        static_cast<GG::Control*>(*it)->Disable(b);
+    for (GG::Wnd* child : Children())
+        static_cast<GG::Control*>(child)->Disable(b);
 }
 
 void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
@@ -542,11 +542,9 @@ GalaxySetupWnd::GalaxySetupWnd() :
         // if no previously-stored species selection, need to pick a default
         std::vector<std::string> selector_avail_species = m_starting_secies_selector->AvailableSpeciesNames();
         if (!selector_avail_species.empty()) {
-            for (std::vector<std::string>::const_iterator it = selector_avail_species.begin();
-                 it != selector_avail_species.end(); ++it)
-            {
+            for (const std::string& species_name : selector_avail_species) {
                 // special case: see if humans are available.
-                if ("SP_HUMAN" == *it) {
+                if ("SP_HUMAN" == species_name) {
                     default_starting_species = "SP_HUMAN";
                     break;
                 }
