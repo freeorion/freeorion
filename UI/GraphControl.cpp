@@ -101,21 +101,16 @@ void GraphControl::AutoSetRange() {
     double x_max = -99999999.9;
     double y_max = -99999999.9;
 
-    for (std::vector<std::pair<std::vector<std::pair<double, double> >, GG::Clr> >::const_iterator
-         it = m_data.begin(); it != m_data.end(); ++it)
-    {
-        const std::vector<std::pair<double, double> >& curve_pts = it->first;
-        for (std::vector<std::pair<double, double> >::const_iterator curve_it = curve_pts.begin();
-             curve_it != curve_pts.end(); ++curve_it)
-        {
-            if (curve_it->first < x_min)
-                x_min = curve_it->first;
-            if (curve_it->first > x_max)
-                x_max = curve_it->first;
-            if (curve_it->second < y_min)
-                y_min = curve_it->second;
-            if (curve_it->second > y_max)
-                y_max = curve_it->second;
+    for (const std::pair<std::vector<std::pair<double, double>>, GG::Clr>& curve : m_data) {
+        for (const std::pair<double, double>& curve_pt : curve.first) {
+            if (curve_pt.first < x_min)
+                x_min = curve_pt.first;
+            if (curve_pt.first > x_max)
+                x_max = curve_pt.first;
+            if (curve_pt.second < y_min)
+                y_min = curve_pt.second;
+            if (curve_pt.second > y_max)
+                y_max = curve_pt.second;
         }
     }
 
@@ -204,14 +199,12 @@ void GraphControl::DoLayout() {
     m_colour_buf.clear();
 
 
-    for (std::vector<std::pair<std::vector<std::pair<double, double> >, GG::Clr> >::const_iterator
-         it = m_data.begin(); it != m_data.end(); ++it)
-    {
-        const std::vector<std::pair<double, double> >& curve_pts = it->first;
+    for (const std::pair<std::vector<std::pair<double, double>>, GG::Clr>& curve : m_data) {
+        const std::vector<std::pair<double, double> >& curve_pts = curve.first;
         if (curve_pts.empty())
             continue;
 
-        GG::Clr curve_colour = it->second;
+        GG::Clr curve_colour = curve.second;
         double curve_x, curve_y;
         float screen_x, screen_y;
 
