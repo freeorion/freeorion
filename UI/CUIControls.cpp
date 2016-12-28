@@ -1407,9 +1407,8 @@ CUIToolBar::CUIToolBar() :
 {}
 
 bool CUIToolBar::InWindow(const GG::Pt& pt) const {
-    const std::list<GG::Wnd*>& children = Children();
-    for (std::list<GG::Wnd*>::const_iterator it = children.begin(); it != children.end(); ++it)
-        if ((*it)->InWindow(pt))
+    for (GG::Wnd* wnd : Children())
+        if (wnd->InWindow(pt))
             return true;
     return GG::Wnd::InWindow(pt);
 }
@@ -1503,8 +1502,8 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const {
 
 std::vector<std::string> SpeciesSelector::AvailableSpeciesNames() const {
     std::vector<std::string> retval;
-    for (CUIDropDownList::const_iterator row_it = this->begin(); row_it != this->end(); ++row_it)
-        if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(*row_it))
+    for (CUIDropDownList::Row* row : *this)
+        if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(row))
             retval.push_back(species_row->Name());
     return retval;
 }
@@ -1571,9 +1570,8 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
     CUIDropDownList(6)
 {
     Resize(GG::Pt(COLOR_SELECTOR_WIDTH, h - 8));
-    const std::vector<GG::Clr>& colors = EmpireColors();
-    for (unsigned int i = 0; i < colors.size(); ++i) {
-        Insert(new ColorRow(colors[i], h - 4));
+    for (const GG::Clr& color : EmpireColors()) {
+        Insert(new ColorRow(color, h - 4));
     }
     GG::Connect(SelChangedSignal, &EmpireColorSelector::SelectionChanged, this);
 }
@@ -2044,8 +2042,8 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<boost::sh
     m_graphics(),
     m_styles(styles)
 {
-    for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it)
-        m_graphics.push_back(GG::SubTexture(*it, GG::X0, GG::Y0, (*it)->DefaultWidth(), (*it)->DefaultHeight()));
+    for (boost::shared_ptr<GG::Texture> texture : textures)
+        m_graphics.push_back(GG::SubTexture(texture, GG::X0, GG::Y0, texture->DefaultWidth(), texture->DefaultHeight()));
     Init();
 }
 
@@ -2135,9 +2133,7 @@ void MultiTextureStaticGraphic::ValidateStyles() {
     unsigned int num_graphics = m_graphics.size();
     m_styles.resize(num_graphics, GG::GRAPHIC_CENTER);
 
-    for (std::vector<GG::Flags<GG::GraphicStyle> >::iterator it = m_styles.begin(); it != m_styles.end(); ++it) {
-        GG::Flags<GG::GraphicStyle>& style = *it;
-
+    for (GG::Flags<GG::GraphicStyle>& style : m_styles) {
         int dup_ct = 0;   // duplication count
         if (style & GG::GRAPHIC_LEFT) ++dup_ct;
         if (style & GG::GRAPHIC_RIGHT) ++dup_ct;

@@ -825,13 +825,13 @@ void CUIWnd::InvalidateUnusedOptions() {
     // instantiated so they fall back on defaults when they are re-constructed.
     std::set<std::string> window_options;
     db.FindOptions(window_options, prefix);
-    for (std::set<std::string>::iterator it = window_options.begin(); it != window_options.end(); ++it) {
+    for (const std::string& option : window_options) {
         // If the ".left" option is registered, the rest are implied to be
         // there.
-        if (it->rfind(suffix_exist) == it->length() - suffix_exist.length() &&
-            db.OptionExists(*it))
+        if (option.rfind(suffix_exist) == option.length() - suffix_exist.length() &&
+            db.OptionExists(option))
         {
-            std::string name = it->substr(prefix.length(), it->length() - prefix.length() - suffix_exist.length());
+            std::string name = option.substr(prefix.length(), option.length() - prefix.length() - suffix_exist.length());
             // If the ".initialized" option isn't present under this name,
             // remove the options.
             if (window_options.find(prefix + name + suffix_used) == window_options.end()) {
