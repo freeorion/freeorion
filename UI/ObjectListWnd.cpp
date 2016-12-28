@@ -161,13 +161,9 @@ namespace {
     }
 
     const ValueRef::ValueRefBase<std::string>* GetValueRefByName(const std::string& name) {
-        const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>&
-            named_refs = AvailableColumnTypes();
-        for (std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>::const_iterator
-             it = named_refs.begin(); it != named_refs.end(); ++it)
-        {
-            if (it->first.first == name)
-                return it->second;
+        for (const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>::value_type& entry : AvailableColumnTypes()) {
+            if (entry.first.first == name)
+                return entry.second;
         }
         return 0;
     }
@@ -321,8 +317,8 @@ namespace {
     template <typename enumT>
     std::vector<std::string> StringsFromEnums(const std::vector<enumT>& enum_vals) {
         std::vector<std::string> retval;
-        for (typename std::vector<enumT>::const_iterator it = enum_vals.begin(); it != enum_vals.end(); ++it)
-            retval.push_back(boost::lexical_cast<std::string>(*it));
+        for (const enumT& enum_val : enum_vals)
+            retval.push_back(boost::lexical_cast<std::string>(enum_val));
         return retval;
     }
 }
@@ -379,10 +375,9 @@ public:
 
             // get id of empire matching name
             int empire_id = ALL_EMPIRES;
-            const EmpireManager& empires = Empires();
-            for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
-                if (it->second->Name() == empire_name) {
-                    empire_id = it->first;
+            for (std::map<int, Empire*>::value_type& entry : Empires()) {
+                if (entry.second->Name() == empire_name) {
+                    empire_id = entry.first;
                     break;
                 }
             }
@@ -653,10 +648,7 @@ private:
         const std::string& init_condition_key = ConditionClassName(init_condition);
 
         // fill droplist with rows for the available condition classes to be selected
-        for (std::vector<std::string>::const_iterator key_it = row_keys.begin();
-             key_it != row_keys.end(); ++key_it)
-        {
-            const std::string& key = *key_it;
+        for (const std::string& key : row_keys) {
             GG::ListBox::iterator row_it = m_class_drop->Insert(new ConditionRow(key,  GG::Y(ClientUI::Pts())));
             if (init_condition_key == key)
                 select_row_it = row_it;
@@ -726,9 +718,8 @@ private:
             GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
-            const SpeciesManager& sm = GetSpeciesManager();
-            for (SpeciesManager::iterator sp_it = sm.begin(); sp_it != sm.end(); ++sp_it) {
-                const std::string species_name = sp_it->first;
+            for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+                const std::string& species_name = entry.first;
                 row_it = m_string_drop->Insert(new StringRow(species_name, GG::Y(ClientUI::Pts())));
             }
 
@@ -745,9 +736,7 @@ private:
             GG::ListBox::iterator row_it = m_string_drop->Insert(new StringRow("", GG::Y(ClientUI::Pts())));
             m_string_drop->Select(row_it);
 
-            std::vector<std::string> special_names = SpecialNames();
-            for (std::vector<std::string>::iterator sp_it = special_names.begin(); sp_it != special_names.end(); ++sp_it) {
-                const std::string special_name = *sp_it;
+            for (const std::string& special_name : SpecialNames()) {
                 row_it = m_string_drop->Insert(new StringRow(special_name, GG::Y(ClientUI::Pts())));
             }
 
@@ -771,10 +760,7 @@ private:
             }
 
             GG::ListBox::iterator row_it = m_string_drop->end();
-            for (std::set<std::string>::iterator tag_it = all_tags.begin();
-                 tag_it != all_tags.end(); ++tag_it)
-            {
-                const std::string& tag = *tag_it;
+            for (const std::string& tag : all_tags) {
                 row_it = m_string_drop->Insert(new StringRow(tag, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
@@ -792,13 +778,9 @@ private:
             std::vector< ::PlanetSize> planet_sizes;
             for (::PlanetSize size = SZ_TINY; size != NUM_PLANET_SIZES; size = ::PlanetSize(size + 1))
                 planet_sizes.push_back(size);
-            std::vector<std::string> size_strings = StringsFromEnums(planet_sizes);
 
             GG::ListBox::iterator row_it = m_string_drop->end();
-            for (std::vector<std::string>::iterator string_it = size_strings.begin();
-                 string_it != size_strings.end(); ++string_it)
-            {
-                const std::string& text = *string_it;
+            for (const std::string& text : StringsFromEnums(planet_sizes)) {
                 row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
@@ -816,15 +798,11 @@ private:
             std::vector< ::PlanetType> planet_types;
             for (::PlanetType type = PT_SWAMP; type != NUM_PLANET_TYPES; type = ::PlanetType(type + 1))
                 planet_types.push_back(type);
-            std::vector<std::string> type_strings = StringsFromEnums(planet_types);
 
             GG::ListBox::iterator row_it = m_string_drop->end();
             if (condition_key == GGWITHPTYPE_CONDITION || condition_key == ASTWITHPTYPE_CONDITION )
                 row_it = m_string_drop->Insert(new StringRow(UserString("CONDITION_ANY"), GG::Y(ClientUI::Pts()), false));
-            for (std::vector<std::string>::iterator string_it = type_strings.begin();
-                 string_it != type_strings.end(); ++string_it)
-            {
-                const std::string& text = *string_it;
+            for (const std::string& text : StringsFromEnums(planet_types)) {
                 row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
@@ -842,13 +820,9 @@ private:
             std::vector< ::StarType> star_types;
             for (::StarType type = STAR_BLUE; type != NUM_STAR_TYPES; type = ::StarType(type + 1))
                 star_types.push_back(type);
-            std::vector<std::string> type_strings = StringsFromEnums(star_types);
 
             GG::ListBox::iterator row_it = m_string_drop->end();
-            for (std::vector<std::string>::iterator string_it = type_strings.begin();
-                 string_it != type_strings.end(); ++string_it)
-            {
-                const std::string& text = *string_it;
+            for (const std::string& text : StringsFromEnums(star_types)) {
                 row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
@@ -873,10 +847,7 @@ private:
             }
 
             GG::ListBox::iterator row_it = m_string_drop->end();
-            for (std::set<std::string>::iterator focus_it = all_foci.begin();
-                 focus_it != all_foci.end(); ++focus_it)
-            {
-                const std::string& focus = *focus_it;
+            for (const std::string& focus : all_foci) {
                 row_it = m_string_drop->Insert(new StringRow(focus, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
@@ -894,13 +865,9 @@ private:
             std::vector< ::MeterType> meter_types;
             for (::MeterType type = METER_TARGET_POPULATION; type != NUM_METER_TYPES; type = ::MeterType(type + 1))
                 meter_types.push_back(type);
-            std::vector<std::string> type_strings = StringsFromEnums(meter_types);
 
             GG::ListBox::iterator row_it = m_string_drop->end();
-            for (std::vector<std::string>::iterator string_it = type_strings.begin();
-                 string_it != type_strings.end(); ++string_it)
-            {
-                const std::string& text = *string_it;
+            for (const std::string& text : StringsFromEnums(meter_types)) {
                 row_it = m_string_drop->Insert(new StringRow(text, GG::Y(ClientUI::Pts())));
             }
             if (!m_string_drop->Empty())
@@ -929,9 +896,8 @@ private:
 
             // add rows for empire names
             GG::ListBox::iterator row_it = m_string_drop->end();
-            const EmpireManager& empires = Empires();
-            for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it) {
-                const std::string& empire_name = it->second->Name();
+            for (const std::map<int, Empire*>::value_type& entry : Empires()) {
+                const std::string& empire_name = entry.second->Name();
                 row_it = m_string_drop->Insert(new StringRow(empire_name, GG::Y(ClientUI::Pts()), false));
             }
             if (!m_string_drop->Empty())
@@ -1017,11 +983,9 @@ private:
         m_filters_layout->SetMinimumRowHeight(3, label->MinUsableSize().y);
 
         int col = 1;
-        for (std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::const_iterator uot_it = m_vis_filters.begin();
-             uot_it != m_vis_filters.end(); ++uot_it, ++col)
-        {
-            const UniverseObjectType& uot = uot_it->first;
-            const std::set<VIS_DISPLAY>& vis_display = uot_it->second;
+        for (std::map<UniverseObjectType, std::set<VIS_DISPLAY>>::value_type& entry : m_vis_filters) {
+            const UniverseObjectType& uot = entry.first;
+            const std::set<VIS_DISPLAY>& vis_display = entry.second;
 
             m_filters_layout->SetColumnStretch(col, 1.0);
 
@@ -1047,6 +1011,8 @@ private:
             m_filters_layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
             GG::Connect(button->CheckedSignal,  &FilterDialog::UpdateVisFiltersFromStateButtons,    this);
             m_filter_buttons[uot][SHOW_DESTROYED] = button;
+
+            ++col;
         }
 
 
@@ -1084,23 +1050,18 @@ private:
 
     void    UpdateStateButtonsFromVisFilters() {
         // set state button checks to match current visibility filter settings
-        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*> >::iterator it =
-             m_filter_buttons.begin(); it != m_filter_buttons.end(); ++it)
-        {
-            UniverseObjectType uot = it->first;
-            std::map<VIS_DISPLAY, GG::StateButton*>& buttons = it->second;
+        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*>>::value_type& entry : m_filter_buttons) {
+            UniverseObjectType uot = entry.first;
 
             // find visibilities for this object type
             std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::iterator uot_it = m_vis_filters.find(uot);
             const std::set<VIS_DISPLAY>& shown_vis = (uot_it != m_vis_filters.end() ? uot_it->second : std::set<VIS_DISPLAY>());
 
             // set all button checks depending on whether that buttons visibility is to be shown
-            for (std::map<VIS_DISPLAY, GG::StateButton*>::const_iterator button_it = buttons.begin();
-                 button_it != buttons.end(); ++button_it)
-            {
-                if (!button_it->second)
+            for (std::map<VIS_DISPLAY, GG::StateButton*>::value_type& button : entry.second) {
+                if (!button.second)
                     continue;
-                button_it->second->SetCheck(shown_vis.find(button_it->first) != shown_vis.end());
+                button.second->SetCheck(shown_vis.find(button.first) != shown_vis.end());
             }
         }
     }
@@ -1108,19 +1069,14 @@ private:
     void    UpdateVisFiltersFromStateButtons(bool button_checked) {
         m_vis_filters.clear();
         // set all filters based on state button settings
-        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*> >::iterator it =
-             m_filter_buttons.begin(); it != m_filter_buttons.end(); ++it)
-        {
-            UniverseObjectType uot = it->first;
-            std::map<VIS_DISPLAY, GG::StateButton*>& buttons = it->second;
+        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*>>::value_type& entry : m_filter_buttons) {
+            UniverseObjectType uot = entry.first;
 
-            for (std::map<VIS_DISPLAY, GG::StateButton*>::const_iterator button_it = buttons.begin();
-                 button_it != buttons.end(); ++button_it)
-            {
-                if (!button_it->second)
+            for (std::map<VIS_DISPLAY, GG::StateButton*>::value_type& button : entry.second) {
+                if (!button.second)
                     continue;
-                if (button_it->second->Checked())
-                    m_vis_filters[uot].insert(button_it->first);
+                if (button.second->Checked())
+                    m_vis_filters[uot].insert(button.first);
             }
         }
     }
@@ -1145,20 +1101,16 @@ private:
 
         // determine if all types are already on for requested visibility
         bool all_on = true;
-        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*> >::iterator it =
-             m_filter_buttons.begin(); it != m_filter_buttons.end(); ++it)
-        {
-            std::set<VIS_DISPLAY>& type_vis = m_vis_filters[it->first];
+        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*>>::value_type& entry : m_filter_buttons) {
+            std::set<VIS_DISPLAY>& type_vis = m_vis_filters[entry.first];
             if (type_vis.find(vis) == type_vis.end()) {
                 all_on = false;
                 break;
             }
         }
         // if all on, turn all off. otherwise, turn all on
-        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*> >::iterator it =
-             m_filter_buttons.begin(); it != m_filter_buttons.end(); ++it)
-        {
-            std::set<VIS_DISPLAY>& type_vis = m_vis_filters[it->first];
+        for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*>>::value_type& entry : m_filter_buttons) {
+            std::set<VIS_DISPLAY>& type_vis = m_vis_filters[entry.first];
             if (!all_on)
                 type_vis.insert(vis);
             else
@@ -1340,17 +1292,13 @@ public:
                                                std::vector<GG::Flags<GG::GraphicStyle> >(textures.size(), style));
         AttachChild(m_icon);
 
-        for (std::vector<GG::Control*>::iterator it = m_controls.begin();
-             it != m_controls.end(); ++it)
-        { DeleteChild(*it); }
+        for (GG::Control* control : m_controls)
+        { DeleteChild(control); }
         m_controls.clear();
 
-        std::vector<GG::Control*> controls = GetControls();
-        for (std::vector<GG::Control*>::iterator it = controls.begin();
-             it != controls.end(); ++it)
-        {
-            m_controls.push_back(*it);
-            AttachChild(*it);
+        for (GG::Control* control : GetControls()) {
+            m_controls.push_back(control);
+            AttachChild(control);
         }
 
         DoLayout();
@@ -1563,9 +1511,8 @@ public:
     {}
 
     void            Refresh() {
-        for (std::vector<GG::Button*>::iterator it = m_controls.begin();
-             it != m_controls.end(); ++it)
-        { DeleteChild(*it); }
+        for (GG::Button* button : m_controls)
+        { DeleteChild(button); }
         m_controls.clear();
 
         std::vector<GG::Button*> controls = GetControls();
@@ -1628,21 +1575,20 @@ private:
         GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"),-2, false, false);
         GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),  -3, false, false);
 
-        for (std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>::const_iterator it =
-             available_column_types.begin(); it != available_column_types.end(); ++it, ++index)
-        {
-            menu_index_templates[index] = it->first.first;
-            bool check = (current_column_type == it->first.first);
-            const std::string& menu_label = UserString(it->first.first);
+        for (const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>::value_type& entry : available_column_types) {
+            menu_index_templates[index] = entry.first.first;
+            bool check = (current_column_type == entry.first.first);
+            const std::string& menu_label = UserString(entry.first.first);
             // put meters into root or submenus...
-            if (it->first.second.empty())
+            if (entry.first.second.empty())
                 menu_contents.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
-            else if (it->first.second == "METERS_SUBMENU")
+            else if (entry.first.second == "METERS_SUBMENU")
                 meters_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
-            else if (it->first.second == "PLANETS_SUBMENU")
+            else if (entry.first.second == "PLANETS_SUBMENU")
                 planets_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
-            else if (it->first.second == "FLEETS_SUBMENU")
+            else if (entry.first.second == "FLEETS_SUBMENU")
                 fleets_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
+            ++index;
         }
         menu_contents.next_level.push_back(meters_submenu);
         menu_contents.next_level.push_back(planets_submenu);
@@ -1795,8 +1741,8 @@ public:
         Wnd::SizeMove(ul, lr);
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
-            for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-                (*it)->Resize(row_size);
+            for (GG::ListBox::Row* row : *this)
+                row->Resize(row_size);
             m_header_row->Resize(row_size);
             ListBox::AdjustScrolls(true);
         }
@@ -1816,8 +1762,8 @@ public:
 
     void            CollapseObject(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID) {
-            for (GG::ListBox::iterator row_it = this->begin(); row_it != this->end(); ++row_it)
-                if (const ObjectRow* object_row = dynamic_cast<const ObjectRow*>(*row_it))
+            for (GG::ListBox::Row* row : *this)
+                if (const ObjectRow* object_row = dynamic_cast<const ObjectRow*>(row))
                     m_collapsed_objects.insert(object_row->ObjectID());
         } else {
             m_collapsed_objects.insert(object_id);
@@ -1858,9 +1804,8 @@ public:
 
     void            ClearContents() {
         Clear();
-        for (std::map<int, boost::signals2::connection>::iterator it = m_object_change_connections.begin();
-             it != m_object_change_connections.end(); ++it)
-        { it->second.disconnect(); }
+        for (std::map<int, boost::signals2::connection>::value_type& entry : m_object_change_connections)
+        { entry.second.disconnect(); }
         m_object_change_connections.clear();
     }
 
@@ -1926,9 +1871,7 @@ public:
 
 
         // add system rows
-        for (std::set<int>::const_iterator sys_it = systems.begin(); sys_it != systems.end(); ++sys_it) {
-            int system_id = *sys_it;
-
+        for (int system_id : systems) {
             std::map<int, std::set<int> >::iterator sp_it = system_planets.find(system_id);
             std::map<int, std::set<int> >::iterator sf_it = system_fleets.find(system_id);
             std::set<int> system_contents;
@@ -1942,10 +1885,7 @@ public:
 
             // add planet rows in this system
             if (sp_it != system_planets.end()) {
-                const std::set<int>& planets = sp_it->second;
-                for (std::set<int>::const_iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
-                    int planet_id = *planet_it;
-
+                for (int planet_id : sp_it->second) {
                     std::map<int, std::set<int> >::iterator pb_it = planet_buildings.find(planet_id);
 
                     if (!ObjectCollapsed(system_id)) {
@@ -1958,9 +1898,8 @@ public:
                     // add building rows on this planet
                     if (pb_it != planet_buildings.end()) {
                         if (!ObjectCollapsed(planet_id) && !ObjectCollapsed(system_id)) {
-                            const std::set<int>& buildings = pb_it->second;
-                            for (std::set<int>::iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                                AddObjectRow(*building_it, planet_id, std::set<int>(), indent);
+                            for (int building_id : pb_it->second) {
+                                AddObjectRow(building_id, planet_id, std::set<int>(), indent);
                             }
                         }
                         planet_buildings.erase(pb_it);
@@ -1974,10 +1913,7 @@ public:
 
             // add fleet rows in this system
             if (sf_it != system_fleets.end()) {
-                const std::set<int>& fleets = sf_it->second;
-                for (std::set<int>::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
-                    int fleet_id = *fleet_it;
-
+                for (int fleet_id : sf_it->second) {
                     std::map<int, std::set<int> >::iterator fs_it = fleet_ships.find(fleet_id);
 
                     if (!ObjectCollapsed(system_id)) {
@@ -1990,9 +1926,8 @@ public:
                     // add ship rows in this fleet
                     if (fs_it != fleet_ships.end()) {
                         if (!ObjectCollapsed(fleet_id) && !ObjectCollapsed(system_id)) {
-                            const std::set<int>& ships = fs_it->second;
-                            for (std::set<int>::const_iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-                                AddObjectRow(*ship_it, fleet_id, std::set<int>(), indent);
+                            for (int ship_id : fs_it->second) {
+                                AddObjectRow(ship_id, fleet_id, std::set<int>(), indent);
                             }
                         }
                         fleet_ships.erase(fs_it);
@@ -2009,13 +1944,8 @@ public:
 
 
         // add planets not in shown systems
-        for (std::map<int, std::set<int> >::iterator sp_it = system_planets.begin();
-             sp_it != system_planets.end(); ++sp_it)
-        {
-            const std::set<int>& planets = sp_it->second;
-            for (std::set<int>::iterator planet_it = planets.begin(); planet_it != planets.end(); ++planet_it) {
-                int planet_id = *planet_it;
-
+        for (const std::map<int, std::set<int>>::value_type& sp : system_planets) {
+            for (int planet_id : sp.second) {
                 std::map<int, std::set<int> >::iterator pb_it = planet_buildings.find(planet_id);
 
                 AddObjectRow(planet_id, INVALID_OBJECT_ID,
@@ -2026,9 +1956,8 @@ public:
                 // add building rows on this planet
                 if (pb_it != planet_buildings.end()) {
                     if (!ObjectCollapsed(planet_id)) {
-                        const std::set<int>& buildings = pb_it->second;
-                        for (std::set<int>::iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                            AddObjectRow(*building_it, planet_id, std::set<int>(), indent);
+                        for (int building_id : pb_it->second) {
+                            AddObjectRow(building_id, planet_id, std::set<int>(), indent);
                         }
                     }
                     planet_buildings.erase(pb_it);
@@ -2041,25 +1970,17 @@ public:
 
 
         // add buildings not in a shown planet
-        for (std::map<int, std::set<int> >::iterator pb_it = planet_buildings.begin();
-             pb_it != planet_buildings.end(); ++pb_it)
-        {
-            const std::set<int>& buildings = pb_it->second;
-            for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-                AddObjectRow(*building_it, INVALID_OBJECT_ID, std::set<int>(), indent);
+        for (const std::map<int, std::set<int>>::value_type& pb : planet_buildings) {
+            for (int building_id : pb.second) {
+                AddObjectRow(building_id, INVALID_OBJECT_ID, std::set<int>(), indent);
             }
         }
         planet_buildings.clear();
 
 
         // add fleets not in shown systems
-        for (std::map<int, std::set<int> >::iterator sf_it = system_fleets.begin();
-             sf_it != system_fleets.end(); ++sf_it)
-        {
-            const std::set<int>& fleets = sf_it->second;
-            for (std::set<int>::iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
-                int fleet_id = *fleet_it;
-
+        for (const std::map<int, std::set<int>>::value_type& sf : system_fleets) {
+            for (int fleet_id : sf.second) {
                 std::map<int, std::set<int> >::iterator fs_it = fleet_ships.find(fleet_id);
 
                 AddObjectRow(fleet_id, INVALID_OBJECT_ID,
@@ -2070,9 +1991,8 @@ public:
                 // add ship rows on this fleet
                 if (fs_it != fleet_ships.end()) {
                     if (!ObjectCollapsed(fleet_id)) {
-                        const std::set<int>& ships = fs_it->second;
-                        for (std::set<int>::iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-                            AddObjectRow(*ship_it, fleet_id, std::set<int>(), indent);
+                        for (int ship_id : fs_it->second) {
+                            AddObjectRow(ship_id, fleet_id, std::set<int>(), indent);
                         }
                     }
                     fleet_ships.erase(fs_it);
@@ -2084,18 +2004,15 @@ public:
 
 
         // add any remaining ships not in shown fleets
-        for (std::map<int, std::set<int> >::iterator fs_it = fleet_ships.begin();
-             fs_it != fleet_ships.end(); ++fs_it)
-        {
-            const std::set<int>& ships = fs_it->second;
-            for (std::set<int>::iterator ship_it = ships.begin(); ship_it != ships.end(); ++ship_it) {
-                AddObjectRow(*ship_it, INVALID_OBJECT_ID, std::set<int>(), indent);
+        for (const std::map<int, std::set<int>>::value_type& fs : fleet_ships) {
+            for (int ship_id : fs.second) {
+                AddObjectRow(ship_id, INVALID_OBJECT_ID, std::set<int>(), indent);
             }
         }
         fleet_ships.clear();
 
-        for (std::set<int>::iterator fld_it = fields.begin(); fld_it != fields.end(); ++fld_it)
-            AddObjectRow(*fld_it, INVALID_OBJECT_ID, std::set<int>(), indent);
+        for (int field_id : fields)
+            AddObjectRow(field_id, INVALID_OBJECT_ID, std::set<int>(), indent);
 
         if (!this->Empty())
             this->BringRowIntoView(--this->end());
@@ -2106,9 +2023,9 @@ public:
     void            UpdateObjectPanel(int object_id = INVALID_OBJECT_ID) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
-            if (ObjectRow* row = dynamic_cast<ObjectRow*>(*it)) {
-                row->Update();
+        for (GG::ListBox::Row* row : *this) {
+            if (ObjectRow* orow = dynamic_cast<ObjectRow*>(row)) {
+                orow->Update();
                 return;
             }
         }
@@ -2188,16 +2105,13 @@ private:
             return;
 
         // remove this row from parent row's contents
-        for (GG::ListBox::iterator it = this->begin(); it != this->end(); ++it) {
-            if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(*it)) {
+        for (GG::ListBox::Row* row : *this) {
+            if (ObjectRow* object_row = dynamic_cast<ObjectRow*>(row)) {
                 if (object_row->ObjectID() == container_object_id) {
-                    const std::set<int>& contents = object_row->ContainedPanels();
                     std::set<int> new_contents;
-                    for (std::set<int>::const_iterator contents_it = contents.begin();
-                         contents_it != contents.end(); ++contents_it)
-                    {
-                        if (*contents_it != object_id)
-                            new_contents.insert(*contents_it);
+                    for (int content_id : object_row->ContainedPanels()) {
+                        if (content_id != object_id)
+                            new_contents.insert(content_id);
                     }
                     object_row->SetContainedPanels(new_contents);
                     object_row->Update();
@@ -2378,8 +2292,8 @@ void ObjectListWnd::ObjectDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
 std::set<int> ObjectListWnd::SelectedObjectIDs() const {
     std::set<int> sel_ids;
     const GG::ListBox::SelectionSet sel = m_list_box->Selections();
-    for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
-        ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+    for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
+        ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
         if (row) {
             int selected_object_id = row->ObjectID();
             if (selected_object_id != INVALID_OBJECT_ID)
@@ -2438,40 +2352,34 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     if (type == OBJ_PLANET) {
         menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
 
-        const GG::ListBox::SelectionSet sel = m_list_box->Selections();
-        for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
-            ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+        for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
+            ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
             if (row) {
                 TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
                 if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
-                    std::vector<std::string> planet_foci = one_planet->AvailableFoci();
-                    for (std::vector<std::string>::iterator it = planet_foci.begin(); it != planet_foci.end(); ++it)
-                        all_foci[*it]++;
+                    for (const std::string& planet_focus : one_planet->AvailableFoci())
+                        all_foci[planet_focus]++;
 
-                    std::set<int> ship_designs = cur_empire->AvailableShipDesigns();
-                    for (std::set<int>::iterator sd_it = ship_designs.begin(); sd_it != ship_designs.end(); ++sd_it) {
-                        if (cur_empire->ProducibleItem(BT_SHIP, *sd_it, row->ObjectID()))
-                            avail_designs[*sd_it]++;
+                    for (int ship_design : cur_empire->AvailableShipDesigns()) {
+                        if (cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
+                            avail_designs[ship_design]++;
                     }
 
-                    const std::set<std::string>& building_types = cur_empire->AvailableBuildingTypes();
-                    for (std::set<std::string>::const_iterator bld_it = building_types.begin();
-                         bld_it != building_types.end(); ++bld_it)
-                    {
-                        if (cur_empire->EnqueuableItem(BT_BUILDING, *bld_it, row->ObjectID()) &&
-                            cur_empire->ProducibleItem(BT_BUILDING, *bld_it, row->ObjectID()))
+                    for (const std::string& building_type : cur_empire->AvailableBuildingTypes()) {
+                        if (cur_empire->EnqueuableItem(BT_BUILDING, building_type, row->ObjectID()) &&
+                            cur_empire->ProducibleItem(BT_BUILDING, building_type, row->ObjectID()))
                         {
-                            avail_blds[*bld_it]++;
+                            avail_blds[building_type]++;
                         }
                     }
                 }
             }
         }
         GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), 3, false, false);
-        for (std::map<std::string, int>::iterator it = all_foci.begin(); it != all_foci.end(); ++it) {
+        for (std::map<std::string, int>::value_type& entry : all_foci) {
             menuitem_id++;
             std::stringstream out;
-            out << UserString(it->first) << " (" << it->second << ")";
+            out << UserString(entry.first) << " (" << entry.second << ")";
             focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), menuitem_id, false, false));
         }
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
@@ -2491,10 +2399,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             menu_contents.next_level.push_back(ship_menu_item);
 
         GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), 5, false, false);
-        for (std::map<std::string, int>::iterator it = avail_blds.begin(); it != avail_blds.end(); ++it) {
+        for (std::map<std::string, int>::value_type& entry : avail_blds) {
             bld_menuitem_id++;
             std::stringstream out;
-            out << UserString(it->first) << " (" << it->second << ")";
+            out << UserString(entry.first) << " (" << entry.second << ")";
             building_menu_item.next_level.push_back(GG::MenuItem(out.str(), bld_menuitem_id, false, false));
         }
 
@@ -2537,9 +2445,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 std::map<std::string, int>::iterator it = all_foci.begin();
                 std::advance(it, id - MENUITEM_SET_FOCUS_BASE - 1);
                 std::string focus = it->first;
-                const GG::ListBox::SelectionSet sel = m_list_box->Selections();
-                for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+                for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
                     if (row) {
                         TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
                         if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
@@ -2553,9 +2460,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 std::advance(it, id - MENUITEM_SET_SHIP_BASE - 1);
                 int ship_design = it->first;
                 bool needs_queue_update(false);
-                const GG::ListBox::SelectionSet sel = m_list_box->Selections();
-                for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+                for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
                     if (!row)
                         continue;
                     TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
@@ -2572,9 +2478,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 std::advance(it, id - MENUITEM_SET_BUILDING_BASE - 1);
                 std::string bld = it->first;
                 bool needs_queue_update(false);
-                const GG::ListBox::SelectionSet sel = m_list_box->Selections();
-                for (GG::ListBox::SelectionSet::const_iterator it = sel.begin(); it != sel.end(); ++it) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(**it);
+                for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
+                    ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
                     if (!row)
                         continue;
                     TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
