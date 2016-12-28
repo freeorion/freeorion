@@ -736,14 +736,11 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
         // check status of all non-mod non-obs players: are they all done their turns?
         bool all_participants_waiting = true;
         const std::map<int, Message::PlayerStatus>& player_status = Client().PlayerStatus();
-        const std::map<int, PlayerInfo>& players = Client().Players();
-        for (std::map<int, PlayerInfo>::const_iterator it = players.begin();
-                it != players.end(); ++it)
-        {
-            int player_id = it->first;
+        for (std::map<int, PlayerInfo>::value_type& entry : Client().Players()) {
+            int player_id = entry.first;
 
-            if (it->second.client_type != Networking::CLIENT_TYPE_AI_PLAYER &&
-                it->second.client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER)
+            if (entry.second.client_type != Networking::CLIENT_TYPE_AI_PLAYER &&
+                entry.second.client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER)
             { continue; }   // only active participants matter...
 
             std::map<int, Message::PlayerStatus>::const_iterator status_it = player_status.find(player_id);

@@ -75,9 +75,9 @@ const ClientNetworking& ClientApp::Networking() const
 { return m_networking; }
 
 int ClientApp::EmpirePlayerID(int empire_id) const {
-    for (std::map<int, PlayerInfo>::const_iterator it = m_player_info.begin(); it != m_player_info.end(); ++it)
-        if (it->second.empire_id == empire_id)
-            return it->first;
+    for (const std::map<int, PlayerInfo>::value_type& entry : m_player_info)
+        if (entry.second.empire_id == empire_id)
+            return entry.first;
     return Networking::INVALID_PLAYER_ID;
 }
 
