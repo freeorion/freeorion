@@ -62,10 +62,10 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType> > meters;
 
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
-        it->second->InstallEventFilter(this);
-        AttachChild(it->second);
-        meters.push_back(std::make_pair(it->first, AssociatedMeterType(it->first)));
+    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+        meter_stat.second->InstallEventFilter(this);
+        AttachChild(meter_stat.second);
+        meters.push_back(std::make_pair(meter_stat.first, AssociatedMeterType(meter_stat.first)));
     }
 
     // attach and show meter bars and large resource indicators
@@ -85,8 +85,8 @@ ResourcePanel::~ResourcePanel() {
     delete m_multi_icon_value_indicator;
     delete m_multi_meter_status_bar;
 
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
-        delete it->second;
+    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+        delete meter_stat.second;
     }
 }
 
@@ -103,11 +103,9 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     const GG::Pt& pt = event.Point();
 
     MeterType meter_type = INVALID_METER_TYPE;
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator stat_it = m_meter_stats.begin();
-         stat_it != m_meter_stats.end(); ++stat_it)
-    {
-        if ((*stat_it).second == w) {
-            meter_type = (*stat_it).first;
+    for (const std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+        if (meter_stat.second == w) {
+            meter_type = meter_stat.first;
             break;
         }
     }
@@ -165,9 +163,9 @@ namespace {
 
 void ResourcePanel::Update() {
     // remove any old browse wnds
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
-        it->second->ClearBrowseInfoWnd();
-        m_multi_icon_value_indicator->ClearToolTip(it->first);
+    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+        meter_stat.second->ClearBrowseInfoWnd();
+        m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
     }
 
     TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
@@ -183,12 +181,12 @@ void ResourcePanel::Update() {
     // tooltips
     boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
 
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
-        it->second->SetValue(obj->InitialMeterValue(it->first));
+    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+        meter_stat.second->SetValue(obj->InitialMeterValue(meter_stat.first));
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, it->first, AssociatedMeterType(it->first)));
-        it->second->SetBrowseInfoWnd(browse_wnd);
-        m_multi_icon_value_indicator->SetToolTip(it->first, browse_wnd);
+        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_rescenter_id, meter_stat.first, AssociatedMeterType(meter_stat.first)));
+        meter_stat.second->SetBrowseInfoWnd(browse_wnd);
+        m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }
 
     std::sort(m_meter_stats.begin(), m_meter_stats.end(), sortByMeterValue);
@@ -205,8 +203,8 @@ void ResourcePanel::ExpandCollapseButtonPressed()
 void ResourcePanel::DoLayout() {
     AccordionPanel::DoLayout();
 
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
-        DetachChild(it->second);
+    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
+        DetachChild(meter_stat.second);
     }
 
     // detach / hide meter bars and large resource indicators
@@ -217,12 +215,12 @@ void ResourcePanel::DoLayout() {
     if (!s_expanded_map[m_rescenter_id]) {
         // position and reattach icons to be shown
         int n = 0;
-        for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_meter_stats.begin(); it != m_meter_stats.end(); ++it) {
+        for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
             GG::X x = MeterIconSize().x*n*7/2;
 
             if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
 
-            StatisticIcon* icon = it->second;
+            StatisticIcon* icon = meter_stat.second;
             AttachChild(icon);
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
