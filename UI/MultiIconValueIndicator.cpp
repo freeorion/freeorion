@@ -54,8 +54,8 @@ void MultiIconValueIndicator::Init() {
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
-    for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = m_meter_types.begin(); it != m_meter_types.end(); ++it) {
-        const MeterType PRIMARY_METER_TYPE = it->first;
+    for (const std::pair<MeterType, MeterType>& meter_type : m_meter_types) {
+        const MeterType PRIMARY_METER_TYPE = meter_type.first;
         // get icon texture.
         boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
 
@@ -104,8 +104,7 @@ void MultiIconValueIndicator::Update() {
     for (std::size_t i = 0; i < m_icons.size(); ++i) {
         assert(m_icons[i]);
         double sum = 0.0;
-        for (std::size_t j = 0; j < m_object_ids.size(); ++j) {
-            int object_id = m_object_ids[j];
+        for (int object_id : m_object_ids) {
             TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
             if (!obj) {
                 ErrorLogger() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
