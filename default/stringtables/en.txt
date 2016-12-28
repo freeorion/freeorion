@@ -1761,6 +1761,11 @@ Load game
 START_GAME_BN
 Start game
 
+READY_BN
+Ready
+
+NOT_READY_BN
+Not ready
 
 ##
 ## Galaxy Setup Screen
