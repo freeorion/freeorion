@@ -512,8 +512,8 @@ public:
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
             //std::cout << "PlayerListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
-            for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-                (*it)->Resize(row_size);
+            for (GG::ListBox::Row* row : *this)
+                row->Resize(row_size);
         }
     }
 
@@ -564,8 +564,7 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
 }
 
 void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id) {
-    for (CUIListBox::iterator row_it = m_player_list->begin(); row_it != m_player_list->end(); ++row_it) {
-        CUIListBox::Row* row = *row_it;
+    for (CUIListBox::Row* row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row)) {
             if (about_player_id == Networking::INVALID_PLAYER_ID) {
                 player_row->SetStatus(player_status);
@@ -578,8 +577,7 @@ void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status
 }
 
 void PlayerListWnd::Update() {
-    for (CUIListBox::iterator row_it = m_player_list->begin(); row_it != m_player_list->end(); ++row_it) {
-        CUIListBox::Row* row = *row_it;
+    for (CUIListBox::Row* row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row))
             player_row->Update();
     }
@@ -599,10 +597,8 @@ void PlayerListWnd::Refresh() {
 
     const GG::Pt row_size = m_player_list->ListRowSize();
 
-    for (std::map<int, PlayerInfo>::const_iterator player_it = players.begin();
-         player_it != players.end(); ++player_it)
-    {
-        int player_id = player_it->first;
+    for (const std::map<int, PlayerInfo>::value_type& player : players) {
+        int player_id = player.first;
         PlayerRow* player_row = new PlayerRow(row_size.x, row_size.y, player_id);
         m_player_list->Insert(player_row);
         player_row->Resize(row_size);
