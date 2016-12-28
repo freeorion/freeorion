@@ -129,9 +129,8 @@ namespace {
         }
 
         void ClearDesigns() {
-            for (std::map<std::string, ShipDesign*>::iterator it = m_saved_designs.begin();
-                 it != m_saved_designs.end(); ++it)
-            { delete it->second; }
+            for (std::map<std::string, ShipDesign*>::value_type& entry : m_saved_designs)
+            { delete entry.second; }
         }
 
         void RefreshDesigns() {
@@ -155,25 +154,21 @@ namespace {
                 design_files.push_back(file_path);
             }
 
-            for (std::vector<path>::iterator it = design_files.begin();
-                 it != design_files.end(); ++it)
-            {
+            for (const path& design_path : design_files) {
                 try {
                     std::map<std::string, ShipDesign*> file_designs;
-                    parse::ship_designs(*it, file_designs);
+                    parse::ship_designs(design_path, file_designs);
 
-                    for (std::map<std::string, ShipDesign*>::iterator d_it = file_designs.begin();
-                         d_it != file_designs.end(); ++d_it)
-                    {
-                        if (m_saved_designs.find(d_it->first) == m_saved_designs.end()) {
-                            m_saved_designs[d_it->first] = d_it->second;
+                    for (std::map<std::string, ShipDesign*>::value_type& design_entry : file_designs) {
+                        if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {
+                            m_saved_designs[design_entry.first] = design_entry.second;
                         } else {
                             // duplicate design name!
-                            delete d_it->second;
+                            delete design_entry.second;
                         }
                     }
                 } catch (...) {
-                    ErrorLogger() << "Failed to parse designs in " << PathString(*it);
+                    ErrorLogger() << "Failed to parse designs in " << PathString(design_path);
                     continue;
                 }
             }
@@ -194,26 +189,24 @@ namespace {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
             if (const Empire* empire = GetEmpire(empire_id)) {
                 DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
-                for (std::map<std::string, ShipDesign*>::iterator savedit = begin();
-                    savedit != end(); ++savedit)
-                {
+                for (std::map<std::string, ShipDesign*>::value_type& entry : *this) {
                     bool already_got = false;
                     for (Empire::ShipDesignItr it = empire->ShipDesignBegin();
                         it != empire->ShipDesignEnd(); ++it)
                     {
                         const ShipDesign& ship_design = *GetShipDesign(*it);
-                        if (ship_design == *(savedit->second)) {
+                        if (ship_design == *(entry.second)) {
                             already_got = true;
                             break;
                         }
                     }
                     if (!already_got) {
-                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << savedit->second->Name();
+                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << entry.second->Name();
                         int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
                         HumanClientApp::GetApp()->Orders().IssueOrder(
-                            OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *(savedit->second))));
+                            OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *(entry.second))));
                     } else {
-                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << savedit->second->Name();
+                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << entry.second->Name();
                     }
                 }
             } else {
@@ -536,11 +529,10 @@ void PartsListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
 }
 
 PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire) {
-    const PartTypeManager& manager = GetPartTypeManager();
     PartGroupsType part_groups;
     // loop through all possible parts
-    for (PartTypeManager::iterator part_it = manager.begin(); part_it != manager.end(); ++part_it) {
-        const PartType* part = part_it->second;
+    for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager()) {
+        const PartType* part = entry.second;
         if (!part->Producible())
             continue;
 
@@ -558,10 +550,8 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
             continue;
         }
 
-        const std::vector<ShipSlotType>& slot_types = part->MountableSlotTypes();
-        for (std::vector<ShipSlotType>::const_iterator it = slot_types.begin();
-             it != slot_types.end(); ++it)
-        { part_groups[std::make_pair(part_class, *it)].push_back(part); }
+        for (ShipSlotType slot_type : part->MountableSlotTypes())
+        { part_groups[std::make_pair(part_class, slot_type)].push_back(part); }
     }
     return part_groups;
 }
@@ -656,10 +646,7 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
          part_it != this_group.end(); ++part_it)
     {
         const PartType* checkPart = *part_it;
-        for (std::vector<const PartType* >::iterator check_it = this_group.begin();
-             check_it != this_group.end(); ++check_it )
-        {
-            const PartType* ref_part = *check_it;
+        for (const PartType* ref_part : this_group) {
             float cap_check = GetMainStat(checkPart);
             float cap_ref = GetMainStat(ref_part);
             if ((cap_check < 0.0f) || (cap_ref < 0.0f))
@@ -735,12 +722,10 @@ void PartsListBox::Populate() {
 
     // if showing parts for a particular empire, cull redundant parts (if enabled)
     if (empire) {
-        for (PartGroupsType::iterator group_it=part_groups.begin();
-             group_it != part_groups.end(); ++group_it)
-        {
-            ShipPartClass pclass = group_it->first.first;
+        for (PartGroupsType::value_type& part_group : part_groups) {
+            ShipPartClass pclass = part_group.first.first;
             if (!m_show_superfluous_parts)
-                CullSuperfluousParts(group_it->second, pclass, empire_id, loc_id);
+                CullSuperfluousParts(part_group.second, pclass, empire_id, loc_id);
         }
     }
 
@@ -748,15 +733,9 @@ void PartsListBox::Populate() {
     // sorting in a multimap also, if a part was in multiple groups due to being
     // compatible with multiple slot types, ensure it is only displayed once
     std::set<const PartType* > already_added;
-    for (PartGroupsType::iterator group_it=part_groups.begin();
-         group_it != part_groups.end(); ++group_it)
-    {
-        std::vector<const PartType* > this_group = group_it->second;
+    for (PartGroupsType::value_type& part_group : part_groups) {
         std::multimap<double, const PartType*> sorted_group;
-        for (std::vector<const PartType* >::iterator part_it = this_group.begin();
-             part_it != this_group.end(); ++part_it)
-        {
-            const PartType* part = *part_it;
+        for (const PartType* part : part_group.second) {
             if (already_added.find(part) != already_added.end())
                 continue;
             already_added.insert(part);
@@ -764,10 +743,8 @@ void PartsListBox::Populate() {
         }
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox
-        for (std::multimap<double, const PartType*>::iterator sorted_it = sorted_group.begin();
-             sorted_it != sorted_group.end(); ++sorted_it)
-        {
-            const PartType* part = sorted_it->second;
+        for (std::multimap<double, const PartType*>::value_type& group : sorted_group) {
+            const PartType* part = group.second;
             // check if current row is full, and make a new row if necessary
             if (cur_col >= NUM_COLUMNS) {
                 if (cur_row)
@@ -937,8 +914,8 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
     for (ShipPartClass part_class = ShipPartClass(0); part_class != NUM_SHIP_PART_CLASSES; part_class = ShipPartClass(part_class + 1)) {
         // are there any parts of this class?
         bool part_of_this_class_exists = false;
-        for (PartTypeManager::iterator part_it = part_manager.begin(); part_it != part_manager.end(); ++part_it) {
-            if (const PartType* part = part_it->second) {
+        for (const std::map<std::string, PartType*>::value_type& entry : part_manager) {
+            if (const PartType* part = entry.second) {
                 if (part->Class() == part_class) {
                     part_of_this_class_exists = true;
                     break;
@@ -1024,16 +1001,14 @@ void DesignWnd::PartPalette::DoLayout() {
     // place class buttons
     int col = NUM_CLASS_BUTTONS_PER_ROW;
     int row = -1;
-    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin();
-         it != m_class_buttons.end(); ++it)
-    {
+    for (std::map<ShipPartClass, CUIStateButton*>::value_type& entry : m_class_buttons) {
         if (col >= NUM_CLASS_BUTTONS_PER_ROW) {
             col = 0;
             ++row;
         }
         GG::Pt ul(BUTTON_EDGE_PAD + col*COL_OFFSET, BUTTON_EDGE_PAD + row*ROW_OFFSET);
         GG::Pt lr = ul + GG::Pt(BUTTON_WIDTH, BUTTON_HEIGHT);
-        it->second->SizeMove(ul, lr);
+        entry.second->SizeMove(ul, lr);
         ++col;
     }
 
@@ -1107,8 +1082,8 @@ void DesignWnd::PartPalette::ShowClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::ShowAllClasses(bool refresh_list) {
     m_parts_list->ShowAllClasses(refresh_list);
-    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
-        it->second->SetCheck();
+    for (std::map<ShipPartClass, CUIStateButton*>::value_type& entry : m_class_buttons)
+        entry.second->SetCheck();
 }
 
 void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_list) {
@@ -1122,8 +1097,8 @@ void DesignWnd::PartPalette::HideClass(ShipPartClass part_class, bool refresh_li
 
 void DesignWnd::PartPalette::HideAllClasses(bool refresh_list) {
     m_parts_list->HideAllClasses(refresh_list);
-    for (std::map<ShipPartClass, CUIStateButton*>::iterator it = m_class_buttons.begin(); it != m_class_buttons.end(); ++it)
-        it->second->SetCheck(false);
+    for (std::map<ShipPartClass, CUIStateButton*>::value_type& entry : m_class_buttons)
+        entry.second->SetCheck(false);
 }
 
 void DesignWnd::PartPalette::ToggleClass(ShipPartClass part_class, bool refresh_list) {
@@ -1489,8 +1464,8 @@ void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size()) {
         const GG::Pt row_size = ListRowSize();
-        for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-            (*it)->Resize(row_size);
+        for (GG::ListBox::Row* row : *this)
+            row->Resize(row_size);
     }
 }
 
@@ -1642,16 +1617,16 @@ void BasesListBox::PopulateWithEmptyHulls() {
     DebugLogger() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
 
     //DebugLogger() << "... hulls in list: ";
-    //for (std::set<std::string>::const_iterator it = m_hulls_in_list.begin(); it != m_hulls_in_list.end(); ++it)
-    //    DebugLogger() << "... ... hull: " << *it;
+    //for (const std::string& hull : m_hulls_in_list)
+    //    DebugLogger() << "... ... hull: " << hull;
 
     // loop through all hulls, determining if they need to be added to list
     std::set<std::string> hulls_to_add;
     std::set<std::string> hulls_to_remove;
 
     const HullTypeManager& manager = GetHullTypeManager();
-    for (HullTypeManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-        const std::string& hull_name = it->first;
+    for (const std::map<std::string, HullType*>::value_type& entry : manager) {
+        const std::string& hull_name = entry.first;
 
         const HullType* hull_type = manager.GetHullType(hull_name);
         if (!hull_type || !hull_type->Producible())
@@ -1674,11 +1649,11 @@ void BasesListBox::PopulateWithEmptyHulls() {
     }
 
     //DebugLogger() << "... hulls to remove from list: ";
-    //for (std::set<std::string>::const_iterator it = hulls_to_remove.begin(); it != hulls_to_remove.end(); ++it)
-    //    DebugLogger() << "... ... hull: " << *it;
+    //for (const std::string& hull_name : hulls_to_remove)
+    //    DebugLogger() << "... ... hull: " << hull_name;
     //DebugLogger() << "... hulls to add to list: ";
-    //for (std::set<std::string>::const_iterator it = hulls_to_add.begin(); it != hulls_to_add.end(); ++it)
-    //    DebugLogger() << "... ... hull: " << *it;
+    //for (const std::string& hull_name : hulls_to_add)
+    //    DebugLogger() << "... ... hull: " << hull_name;
 
 
     // loop through list, removing rows as appropriate
@@ -1699,8 +1674,7 @@ void BasesListBox::PopulateWithEmptyHulls() {
     // loop through hulls to add, adding to list
     std::vector<std::string> empty_parts_vec;
     const GG::Pt row_size = ListRowSize();
-    for (std::set<std::string>::const_iterator it = hulls_to_add.begin(); it != hulls_to_add.end(); ++it) {
-        const std::string& hull_name = *it;
+    for (const std::string& hull_name : hulls_to_add) {
         HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
         Insert(row);
         row->Resize(row_size);
@@ -1762,11 +1736,8 @@ void BasesListBox::PopulateWithSavedDesigns() {
     Clear();
     const GG::Pt row_size = ListRowSize();
 
-    SavedDesignsManager& manager = GetSavedDesignsManager();
-    for (std::map<std::string, ShipDesign*>::iterator it = manager.begin();
-         it != manager.end(); ++it)
-    {
-        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, it->first);
+    for (std::map<std::string, ShipDesign*>::value_type& entry : GetSavedDesignsManager()) {
+        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, entry.first);
         Insert(row);
         row->Resize(row_size);
     }
@@ -2442,8 +2413,8 @@ void SlotControl::CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnd
     if (!m_part_control)
         return;
 
-    for (std::vector<const GG::Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
-        const PartControl* control = dynamic_cast<const PartControl*>(*it);
+    for (const GG::Wnd* wnd : wnds) {
+        const PartControl* control = dynamic_cast<const PartControl*>(wnd);
         if (!control)
             continue;
 
@@ -2765,8 +2736,8 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
 
 const std::vector<std::string> DesignWnd::MainPanel::Parts() const {
     std::vector<std::string> retval;
-    for (std::vector<SlotControl*>::const_iterator it = m_slots.begin(); it != m_slots.end(); ++it) {
-        const PartType* part_type = (*it)->GetPart();
+    for (const SlotControl* slot : m_slots) {
+        const PartType* part_type = slot->GetPart();
         if (part_type)
             retval.push_back(part_type->Name());
         else
@@ -2933,8 +2904,8 @@ int DesignWnd::MainPanel::FindEmptySlotForPart(const PartType* part) {
     if (part->Class() == PC_FIGHTER_HANGAR) {
         // give up if part is a hangar and there is already a hangar of another type
         std::string already_seen_hangar_name;
-        for (unsigned int i = 0; i < m_slots.size(); ++i) {             // scan through slots for other hangar types
-            const PartType* part_type = m_slots[i]->GetPart();          // check if this slot has a hangar part
+        for (const SlotControl* slot : m_slots) {
+            const PartType* part_type = slot->GetPart();
             if (!part_type || part_type->Class() != PC_FIGHTER_HANGAR)
                 continue;
             if (part_type->Name() != part->Name())
@@ -2967,8 +2938,8 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
 
     // check if adding the part would cause the design to have multiple different types of hangar (which is not allowed)
     if (part->Class() == PC_FIGHTER_HANGAR) {
-        for (unsigned int j = 0; j < m_slots.size(); ++j) {
-            const PartType* existing_part = m_slots[j]->GetPart();
+        for (const SlotControl* slot : m_slots) {
+            const PartType* existing_part = slot->GetPart();
             if (!existing_part || existing_part->Class() != PC_FIGHTER_HANGAR)
                 continue;
             if (existing_part->Name() != part->Name())
@@ -2977,11 +2948,11 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
     }
 
     // first search for an empty compatible slot for the new part
-    for (unsigned int i = 0; i < m_slots.size(); ++i) {
-        if (!part->CanMountInSlotType(m_slots[i]->SlotType()))
+    for (const SlotControl* slot : m_slots) {
+        if (!part->CanMountInSlotType(slot->SlotType()))
             continue;   // skip incompatible slots
 
-        if (!m_slots[i]->GetPart())
+        if (!slot->GetPart())
             return std::make_pair(-1, -1);  // empty slot that can hold part. no swapping needed.
     }
 
@@ -3009,8 +2980,8 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
 }
 
 void DesignWnd::MainPanel::ClearParts() {
-    for (unsigned int i = 0; i < m_slots.size(); ++i)
-        m_slots[i]->SetPart(0);
+    for (SlotControl* slot : m_slots)
+        slot->SetPart(0);
     DesignChangedSignal();
 }
 
@@ -3078,8 +3049,7 @@ void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
 }
 
 void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_types) {
-    for (std::vector<SlotControl*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it) {
-        SlotControl* control = *it;
+    for (SlotControl* control : m_slots) {
         ShipSlotType slot_type = control->SlotType();
         if (std::find(slot_types.begin(), slot_types.end(), slot_type) != slot_types.end())
             control->Highlight(true);
@@ -3089,8 +3059,8 @@ void DesignWnd::MainPanel::HighlightSlotType(std::vector<ShipSlotType>& slot_typ
 }
 
 void DesignWnd::MainPanel::Populate(){
-    for (std::vector<SlotControl*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it)
-        delete *it;
+    for (SlotControl* control : m_slots)
+        delete control;
     m_slots.clear();
 
     if (!m_hull)
@@ -3168,8 +3138,7 @@ void DesignWnd::MainPanel::DoLayout() {
     }
 
     // place slot controls over image of hull
-    for (std::vector<SlotControl*>::iterator it = m_slots.begin(); it != m_slots.end(); ++it) {
-        SlotControl* slot = *it;
+    for (SlotControl* slot : m_slots) {
         GG::X x(background_rect.Left() - slot->Width()/2 - ClientUpperLeft().x + slot->XPositionFraction() * background_rect.Width());
         GG::Y y(background_rect.Top() - slot->Height()/2 - ClientUpperLeft().y + slot->YPositionFraction() * background_rect.Height());
         slot->MoveTo(GG::Pt(x, y));
@@ -3218,36 +3187,34 @@ void DesignWnd::MainPanel::DesignChanged() {
 
         // check hull exclusions against all parts...
         const std::set<std::string>& hull_exclusions = m_hull->Exclusions();
-        std::vector<std::string> parts = Parts();
-        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
-            if (part_it->empty())
+        for (const std::string& part_name : Parts()) {
+            if (part_name.empty())
                 continue;
-            if (hull_exclusions.find(*part_it) != hull_exclusions.end()) {
+            if (hull_exclusions.find(part_name) != hull_exclusions.end()) {
                 m_disabled_by_part_conflict = true;
                 problematic_components.first = m_hull->Name();
-                problematic_components.second = *part_it;
+                problematic_components.second = part_name;
             }
         }
 
         // check part exclusions against other parts and hull
         std::set<std::string> already_seen_component_names;
         already_seen_component_names.insert(m_hull->Name());
-        for (std::vector<std::string>::const_iterator part_it = parts.begin(); part_it != parts.end(); ++part_it) {
+        for (const std::string& part_name : Parts()) {
             if (m_disabled_by_part_conflict)
                 break;
-            const PartType* part_type = GetPartType(*part_it);
+            const PartType* part_type = GetPartType(part_name);
             if (!part_type)
                 continue;
-            const std::set<std::string>& part_exclusions = part_type->Exclusions();
-            for (std::set<std::string>::const_iterator ex_it = part_exclusions.begin(); ex_it != part_exclusions.end(); ++ex_it) {
-                if (already_seen_component_names.find(*ex_it) != already_seen_component_names.end()) {
+            for (const std::string& excluded_part : part_type->Exclusions()) {
+                if (already_seen_component_names.find(excluded_part) != already_seen_component_names.end()) {
                     m_disabled_by_part_conflict = true;
-                    problematic_components.first = *part_it;
-                    problematic_components.second = *ex_it;
+                    problematic_components.first = part_name;
+                    problematic_components.second = excluded_part;
                     break;
                 }
             }
-            already_seen_component_names.insert(*part_it);
+            already_seen_component_names.insert(part_name);
         }
 
 
@@ -3308,9 +3275,8 @@ std::string DesignWnd::MainPanel::GetCleanDesignDump(const ShipDesign* ship_desi
     std::string retval = "ShipDesign\n";
     retval += ship_design->Name() + "\"\n";
     retval += ship_design->Hull() + "\"\n";
-    const std::vector<std::string> part_list = ship_design->Parts();
-    for (std::vector<std::string>::const_iterator it = part_list.begin(); it != part_list.end(); ++it) {
-        retval += "\"" + *it + "\"\n";
+    for (const std::string& part_name : ship_design->Parts()) {
+        retval += "\"" + part_name + "\"\n";
     }
     return retval;
 }
