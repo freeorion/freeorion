@@ -96,8 +96,8 @@ void CombatLogManager::serialize(Archive& ar, const unsigned int version)
 
     if (Archive::is_loading::value) {
         // copy new logs, but don't erase old ones
-        for (std::map<int, CombatLog>::const_iterator it = logs.begin(); it != logs.end(); ++it)
-            this->SetLog(it->first, it->second);
+        for (std::map<int, CombatLog>::value_type& log : logs)
+            this->SetLog(log.first, log.second);
     }
 }
 
