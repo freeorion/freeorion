@@ -353,8 +353,8 @@ void Sound::SoundImpl::ShutdownOpenAL() {
         alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
 
         alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
-        for (std::map<std::string, ALuint>::iterator itr = m_buffers.begin(); itr != m_buffers.end(); ++itr)
-            alDeleteBuffers(1, &itr->second );
+        for (std::map<std::string, ALuint>::value_type& buffer : m_buffers)
+            alDeleteBuffers(1, &(buffer.second));
     }
 
     ALCcontext* context = alcGetCurrentContext();
