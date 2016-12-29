@@ -608,6 +608,7 @@ void SupplyManager::Update() {
 
             graph_id_to_sys_id.push_back(sys_id);
             sys_id_to_graph_id[sys_id] = graph_id;
+            ++graph_id;
         }
 
         // add edges for all direct connections between systems
@@ -630,9 +631,9 @@ void SupplyManager::Update() {
 
         // first, sort into a map from component id to set of system ids in component
         std::map<int, std::set<int> > component_sets_map;
-        for (std::size_t graph_id = 0; graph_id != components.size(); ++graph_id) {
-            int label = components[graph_id];
-            int sys_id = graph_id_to_sys_id[graph_id];
+        for (std::size_t comp_graph_id = 0; comp_graph_id != components.size(); ++comp_graph_id) {
+            int label = components[comp_graph_id];
+            int sys_id = graph_id_to_sys_id[comp_graph_id];
             component_sets_map[label].insert(sys_id);
         }
 
