@@ -572,6 +572,8 @@ public:
     ProductionQueueOrder(int empire, int index);
 
     ProductionQueueOrder(int empire, int index, bool pause, float dummy);
+
+    ProductionQueueOrder(int empire, int index, bool allow_use_imperial_pp, float dummy, float dummy2);
     //@}
 
 private:
@@ -586,12 +588,16 @@ private:
     int m_new_index;
     int m_rally_point_id;
     int m_pause;
+    int m_use_imperial_pp;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
     static const int PAUSE = 1;
     static const int RESUME = 2;
     static const int INVALID_PAUSE_RESUME = -1;
+    static const int USE_IMPERIAL_PP = 4;
+    static const int DONT_USE_IMPERIAL_PP = 8;
+    static const int INVALID_USE_IMPERIAL_PP = -4;
 
     friend class boost::serialization::access;
     template <class Archive>

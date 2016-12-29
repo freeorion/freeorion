@@ -174,11 +174,9 @@ struct FO_COMMON_API ProductionQueue {
     struct Element {
         Element();
 
-        Element(ProductionItem item_, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
-
-        Element(BuildType build_type, std::string name, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
-
-        Element(BuildType build_type, int design_id, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
+        Element(ProductionItem item_, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false, bool allowed_imperial_stockpile_use_ = false);
+        Element(BuildType build_type, std::string name, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false, bool allowed_imperial_stockpile_use_ = false);
+        Element(BuildType build_type, int design_id, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false, bool allowed_imperial_stockpile_use_ = false);
 
         ProductionItem  item;
         int             empire_id;
@@ -194,6 +192,7 @@ struct FO_COMMON_API ProductionQueue {
         int             turns_left_to_completion;
         int             rally_point_id;
         bool            paused;
+        bool            allowed_imperial_stockpile_use;
 
         std::string Dump() const;
 
@@ -460,6 +459,7 @@ public:
     void        RemoveProductionFromQueue(int index);                ///< Removes the build at position \a index in the production queue, if such an index exists.
     void        PauseProduction(int index);
     void        ResumeProduction(int index);
+    void        AllowUseImperialPP(int index, bool allow);  ///< Allows or disallows the use of the imperial stockpile for production
 
     void        AddTech(const std::string& name);           ///< Inserts the given Tech into the Empire's list of available technologies.
     void        UnlockItem(const ItemSpec& item);           ///< Adds a given producible item (Building, Ship Hull, Ship part) to the list of available items.

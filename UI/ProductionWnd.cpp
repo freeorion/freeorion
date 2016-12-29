@@ -288,6 +288,8 @@ namespace {
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION"))
                                         % location->Name()) + "\n";
 
+        // TODO add info if uses imperial reserve
+
         if (location_ok)
             main_text += UserString("PRODUCTION_LOCATION_OK") + "\n";
         else
@@ -642,6 +644,7 @@ namespace {
         boost::signals2::signal<void (GG::ListBox::iterator, int)>  QueueItemRalliedToSignal;
         boost::signals2::signal<void ()>                            ShowPediaSignal;
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
+        boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemUseImperialPPSignal;
 
     protected:
         void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
@@ -671,6 +674,11 @@ namespace {
                 menu_contents.next_level.push_back(GG::MenuItem(UserString("PAUSE"),            8, false, false));
             }
 
+            if (queue_row && queue_row->elem.allowed_imperial_stockpile_use) {
+                menu_contents.next_level.push_back(GG::MenuItem(UserString("DISALLOW_IMPERIAL_PP_RESERVE"), 9, false, false));
+            } else {
+                menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLOW_IMPERIAL_PP_RESERVE"), 10, false, false));
+            }
             // pedia lookup
             std::string item_name = "";
             if (build_type == BT_BUILDING) {
@@ -724,7 +732,14 @@ namespace {
                     this->QueueItemPausedSignal(it, true);
                     break;
                 }
-
+                case 9: { // disallow imperial stockpile use
+                    this->QueueItemUseImperialPPSignal(it, false);
+                    break;
+                }
+                case 10: { // allow imperial stockpile use
+                    this->QueueItemUseImperialPPSignal(it, true);
+                    break;
+                }
                 default:
                     break;
                 }
@@ -821,6 +836,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemRalliedToSignal,   &ProductionWnd::QueueItemRallied, this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->ShowPediaSignal,            &ProductionWnd::ShowPedia, this);
     GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal,      &ProductionWnd::QueueItemPaused, this);
+    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemUseImperialPPSignal,&ProductionWnd::QueueItemUseImperialPP, this);
 
     AttachChild(m_production_info_panel);
     AttachChild(m_queue_wnd);
@@ -1177,6 +1193,21 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
     HumanClientApp::GetApp()->Orders().IssueOrder(
         OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
                                           pause, -1.0f)));
+
+    empire->UpdateProductionQueue();
+}
+
+void ProductionWnd::QueueItemUseImperialPP(GG::ListBox::iterator it, bool allow) {
+    if (!m_order_issuing_enabled)
+        return;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    Empire* empire = GetEmpire(client_empire_id);
+    if (!empire)
+        return;
+
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                          allow, -1.0f, -1.0f)));
 
     empire->UpdateProductionQueue();
 }
