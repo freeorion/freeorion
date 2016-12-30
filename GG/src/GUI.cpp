@@ -575,13 +575,11 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                 // put dragged Wnds into containers depending on whether they were accepted by the drop target
                 std::vector<Wnd*> accepted_wnds;
                 std::vector<const Wnd*> unaccepted_wnds;
-                for (std::map<const Wnd*, bool>::iterator it = m_drag_drop_wnds_acceptable.begin();
-                     it != m_drag_drop_wnds_acceptable.end(); ++it)
-                {
-                    if (it->second)
-                        accepted_wnds.push_back(const_cast<Wnd*>(it->first));
+                for (std::map<const Wnd*, bool>::value_type& drop_wnd : m_drag_drop_wnds_acceptable) {
+                    if (drop_wnd.second)
+                        accepted_wnds.push_back(const_cast<Wnd*>(drop_wnd.first));
                     else
-                        unaccepted_wnds.push_back(it->first);
+                        unaccepted_wnds.push_back(drop_wnd.first);
                 }
                 // if dragged Wnds came from somehwere, inform originating
                  // Wnd its children are or are not being dragged away
@@ -1229,13 +1227,13 @@ void GUI::WndDying(Wnd* wnd)
     Remove(wnd);
     if (MatchesOrContains(wnd, s_impl->m_focus_wnd))
         s_impl->m_focus_wnd = 0;
-    for (std::list<std::pair<Wnd*, Wnd*> >::iterator it = s_impl->m_modal_wnds.begin(); it != s_impl->m_modal_wnds.end(); ++it) {
-        if (MatchesOrContains(wnd, it->second)) {
-            if (MatchesOrContains(wnd, it->first)) {
-                it->second = 0;
+    for (std::pair<Wnd*, Wnd*>& modal_wnd : s_impl->m_modal_wnds) {
+        if (MatchesOrContains(wnd, modal_wnd.second)) {
+            if (MatchesOrContains(wnd, modal_wnd.first)) {
+                modal_wnd.second = 0;
             } else { // if the modal window for the removed window's focus level is available, revert focus to the modal window
-                if ((it->second = it->first))
-                    it->first->HandleEvent(WndEvent(WndEvent::GainingFocus));
+                if ((modal_wnd.second = modal_wnd.first))
+                    modal_wnd.first->HandleEvent(WndEvent(WndEvent::GainingFocus));
             }
         }
     }
@@ -1558,8 +1556,8 @@ void GUI::PreRenderWindow(Wnd* wnd)
     if (!wnd || !wnd->Visible())
         return;
 
-    for (std::list<Wnd*>::iterator it = wnd->m_children.begin(); it != wnd->m_children.end(); ++it) {
-        PreRenderWindow(*it);
+    for (Wnd* child_wnd : wnd->m_children) {
+        PreRenderWindow(child_wnd);
     }
 
     if (wnd->PreRenderRequired())
@@ -1580,9 +1578,9 @@ void GUI::RenderWindow(Wnd* wnd)
             bool clip = clip_mode != Wnd::DontClip;
             if (clip)
                 wnd->BeginClipping();
-            for (std::list<Wnd*>::iterator it = wnd->m_children.begin(); it != wnd->m_children.end(); ++it) {
-                if ((*it) && (*it)->Visible())
-                    RenderWindow(*it);
+            for (Wnd* child_wnd : wnd->m_children) {
+                if (child_wnd && child_wnd->Visible())
+                    RenderWindow(child_wnd);
             }
             if (clip)
                 wnd->EndClipping();
@@ -1623,17 +1621,17 @@ void GUI::RenderDragDropWnds()
 {
     // render drag-and-drop windows in arbitrary order (sorted by pointer value)
     s_impl->m_rendering_drag_drop_wnds = true;
-    for (std::map<Wnd*, Pt>::const_iterator it = s_impl->m_drag_drop_wnds.begin(); it != s_impl->m_drag_drop_wnds.end(); ++it) {
-        bool old_visible = it->first->Visible();
+    for (const std::map<Wnd*, Pt>::value_type& drop_wnd : s_impl->m_drag_drop_wnds) {
+        bool old_visible = drop_wnd.first->Visible();
         if (!old_visible)
-            it->first->Show();
-        Pt parent_offset = it->first->Parent() ? it->first->Parent()->ClientUpperLeft() : Pt();
-        Pt old_pos = it->first->UpperLeft() - parent_offset;
-        it->first->MoveTo(s_impl->m_mouse_pos - parent_offset - it->second);
-        RenderWindow(it->first);
-        it->first->MoveTo(old_pos);
+            drop_wnd.first->Show();
+        Pt parent_offset = drop_wnd.first->Parent() ? drop_wnd.first->Parent()->ClientUpperLeft() : Pt();
+        Pt old_pos = drop_wnd.first->UpperLeft() - parent_offset;
+        drop_wnd.first->MoveTo(s_impl->m_mouse_pos - parent_offset - drop_wnd.second);
+        RenderWindow(drop_wnd.first);
+        drop_wnd.first->MoveTo(old_pos);
         if (!old_visible)
-            it->first->Hide();
+            drop_wnd.first->Hide();
     }
     s_impl->m_rendering_drag_drop_wnds = false;
 }
@@ -1660,10 +1658,8 @@ void GUI::PreRender()
     }
 
     // pre-render modal windows back-to-front (on top of non-modal Wnds rendered above)
-    for (std::list<std::pair<Wnd*, Wnd*> >::iterator it = s_impl->m_modal_wnds.begin();
-         it != s_impl->m_modal_wnds.end(); ++it)
-    {
-        PreRenderWindow(it->first);
+    for (const std::pair<Wnd*, Wnd*>& modal_wnd : s_impl->m_modal_wnds) {
+        PreRenderWindow(modal_wnd.first);
     }
 
     // pre-render the active browse info window, if any
@@ -1672,8 +1668,8 @@ void GUI::PreRender()
         PreRenderWindow(s_impl->m_browse_info_wnd.get());
     }
 
-    for (std::map<Wnd*, Pt>::const_iterator it = s_impl->m_drag_drop_wnds.begin(); it != s_impl->m_drag_drop_wnds.end(); ++it) {
-        PreRenderWindow(it->first);
+    for (const std::map<Wnd*, Pt>::value_type& drag_drop_wnd : s_impl->m_drag_drop_wnds) {
+        PreRenderWindow(drag_drop_wnd.first);
     }
 }
 
@@ -1681,8 +1677,8 @@ void GUI::Render()
 {
     // update timers
     int ticks = Ticks();
-    for (std::set<Timer*>::iterator it = s_impl->m_timers.begin(); it != s_impl->m_timers.end(); ++it) {
-        (*it)->Update(ticks);
+    for (Timer* timer : s_impl->m_timers) {
+        timer->Update(ticks);
     }
 
     Enter2DMode();
@@ -1693,11 +1689,9 @@ void GUI::Render()
     }
 
     // render modal windows back-to-front (on top of non-modal Wnds rendered above)
-    for (std::list<std::pair<Wnd*, Wnd*> >::iterator it = s_impl->m_modal_wnds.begin();
-         it != s_impl->m_modal_wnds.end(); ++it)
-    {
-        if (it->first)
-            RenderWindow(it->first);
+    for (const std::pair<Wnd*, Wnd*>& modal_wnd : s_impl->m_modal_wnds) {
+        if (modal_wnd.first)
+            RenderWindow(modal_wnd.first);
     }
 
     // render the active browse info window, if any
@@ -1783,9 +1777,8 @@ Wnd* GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys)
 
         } else if (registered_drag_drop) {
             s_impl->m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
-            for (std::map<const Wnd*, bool>::iterator it = s_impl->m_drag_drop_wnds_acceptable.begin();
-                 it != s_impl->m_drag_drop_wnds_acceptable.end(); ++it)
-            { it->second = false; }
+            for (std::map<const Wnd*, bool>::value_type& acceptable_wnd : s_impl->m_drag_drop_wnds_acceptable)
+            { acceptable_wnd.second = false; }
             s_impl->m_curr_drag_drop_here_wnd = 0;
 
         } else {
