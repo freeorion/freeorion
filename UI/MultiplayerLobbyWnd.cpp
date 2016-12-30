@@ -229,7 +229,7 @@ namespace {
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
-                push_back(new CUILabel(UserString(player_data.m_player_ready ? "YES" : "NO")));
+                push_back(new CUILabel(player_data.m_player_ready ? UserString("YES") : UserString("NO")));
 
                 return;
             }
@@ -267,7 +267,7 @@ namespace {
             if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
                 push_back(new CUILabel(""));
             else
-                push_back(new CUILabel(UserString(player_data.m_player_ready ? "YES" : "NO")));
+                push_back(new CUILabel(player_data.m_player_ready ? UserString("YES") : UserString("NO")));
         }
 
     private:
@@ -355,7 +355,7 @@ namespace {
             if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
                 push_back(new CUILabel(""));
             else
-                push_back(new CUILabel(UserString(player_data.m_player_ready ? "YES" : "NO")));
+                push_back(new CUILabel(player_data.m_player_ready ? UserString("YES") : UserString("NO")));
         }
 
     private:
