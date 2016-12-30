@@ -394,20 +394,19 @@ void FileDlg::OkHandler(bool double_click)
         if (files.empty() || (m_select_directories && double_click)) {
             OpenDirectory();
         } else { // ensure the file(s) are valid before returning them
-            for (std::vector<std::string>::iterator it = files.begin(); it != files.end(); ++it) {
+            for (const std::string& file_name : files) {
 #if defined(_WIN32)
                 // convert UTF-8 file name to UTF-16
-                const std::string& file_name = *it;
                 boost::filesystem::path::string_type file_name_native;
                 utf8::utf8to16(file_name.begin(), file_name.end(), std::back_inserter(file_name_native));
                 fs::path p = s_working_dir / fs::path(file_name_native);
 #else
-                fs::path p = s_working_dir / fs::path(*it);
+                fs::path p = s_working_dir / fs::path(file_name);
 #endif
                 if (fs::exists(p)) {
                     bool p_is_directory = fs::is_directory(p);
                     if (!m_select_directories && p_is_directory) {
-                        std::string msg_str = boost::str(boost::format(style->Translate("\"%1%\"\nis a directory.")) % (*it));
+                        std::string msg_str = boost::str(boost::format(style->Translate("\"%1%\"\nis a directory.")) % file_name);
                         boost::shared_ptr<ThreeButtonDlg> dlg(
                             style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
                                                      m_text_color, 1, style->Translate("Ok")));
@@ -426,7 +425,7 @@ void FileDlg::OkHandler(bool double_click)
 #endif
                     results_valid = true; // indicate validity only if at least one good file was found
                 } else {
-                    std::string msg_str = boost::str(boost::format(style->Translate("File \"%1%\"\ndoes not exist.")) % (*it));
+                    std::string msg_str = boost::str(boost::format(style->Translate("File \"%1%\"\ndoes not exist.")) % file_name);
                     boost::shared_ptr<ThreeButtonDlg> dlg(
                         style->NewThreeButtonDlg(X(300), Y(125), msg_str, m_font, m_color, m_border_color, m_color,
                                                  m_text_color, 1, style->Translate("Ok")));
@@ -451,8 +450,8 @@ void FileDlg::FileSetChanged(const ListBox::SelectionSet& files)
 {
     std::string all_files;
     bool dir_selected = false;
-    for (ListBox::SelectionSet::const_iterator it = files.begin(); it != files.end(); ++it) {
-        std::string filename = !(***it).empty() ? boost::polymorphic_downcast<TextControl*>((***it).at(0))->Text() : "";
+    for (const ListBox::SelectionSet::value_type& file : files) {
+        std::string filename = !(**file).empty() ? boost::polymorphic_downcast<TextControl*>((**file).at(0))->Text() : "";
         if (filename[0] != '[') {
             if (!all_files.empty())
                 all_files += " ";
@@ -506,9 +505,9 @@ void FileDlg::PopulateFilters()
         m_file_types_label->Disable();
         m_filter_list->Disable();
     } else {
-        for (std::size_t i = 0; i < m_file_filters.size(); ++i) {
+        for (std::pair<std::string, std::string>& file_filter : m_file_filters) {
             ListBox::Row* row = new ListBox::Row();
-            row->push_back(GetStyleFactory()->NewTextControl(m_file_filters[i].first, m_font, m_text_color, FORMAT_NOWRAP));
+            row->push_back(GetStyleFactory()->NewTextControl(file_filter.first, m_font, m_text_color, FORMAT_NOWRAP));
             m_filter_list->Insert(row);
         }
         m_filter_list->Select(m_filter_list->begin());
@@ -608,9 +607,8 @@ void FileDlg::UpdateList()
 
         std::vector<ListBox::Row*> rows;
         rows.reserve(sorted_rows.size());
-        for (std::multimap<std::string, ListBox::Row*>::const_iterator it = sorted_rows.begin();
-             it != sorted_rows.end(); ++it)
-        { rows.push_back(it->second); }
+        for (std::multimap<std::string, ListBox::Row*>::value_type& row : sorted_rows)
+        { rows.push_back(row.second); }
         m_files_list->Insert(rows, false);
 
         if (!m_select_directories) {
@@ -632,8 +630,8 @@ void FileDlg::UpdateList()
                 } catch (const fs::filesystem_error&) {
                 }
             }
-            for (std::multimap<std::string, ListBox::Row*>::const_iterator it = sorted_rows.begin(); it != sorted_rows.end(); ++it) {
-                m_files_list->Insert(it->second);
+            for (const std::multimap<std::string, ListBox::Row*>::value_type& row : sorted_rows) {
+                m_files_list->Insert(row.second);
             }
         }
     } else {
