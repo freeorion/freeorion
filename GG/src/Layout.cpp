@@ -143,9 +143,9 @@ std::vector<std::vector<const Wnd*> > Layout::Cells() const
 std::vector<std::vector<Rect> > Layout::CellRects() const
 {
     std::vector<std::vector<Rect> > retval = RelativeCellRects();
-    for (std::size_t i = 0; i < retval.size(); ++i) {
-        for (std::size_t j = 0; j < retval[i].size(); ++j) {
-            retval[i][j] += ClientUpperLeft();
+    for (std::vector<Rect>& column : retval) {
+        for (Rect& cell : column) {
+            cell += ClientUpperLeft();
         }
     }
     return retval;
@@ -331,12 +331,12 @@ void Layout::DoLayout(Pt ul, Pt lr)
 
     //TODO Determine min usable size before stretching to fit space requested
     m_min_usable_size.x = X(2 * m_border_margin);
-    for (std::size_t i = 0; i < column_effective_min_usable_sizes.size(); ++i) {
-        m_min_usable_size.x += static_cast<int>(column_effective_min_usable_sizes[i]);
+    for (unsigned int column_size : column_effective_min_usable_sizes) {
+        m_min_usable_size.x += static_cast<int>(column_size);
     }
     m_min_usable_size.y = Y(2 * m_border_margin);
-    for (std::size_t i = 0; i < row_effective_min_usable_sizes.size(); ++i) {
-        m_min_usable_size.y += static_cast<int>(row_effective_min_usable_sizes[i]);
+    for (unsigned int row_size : row_effective_min_usable_sizes) {
+        m_min_usable_size.y += static_cast<int>(row_size);
     }
 
     bool size_or_min_size_changed = false;
@@ -432,72 +432,72 @@ void Layout::DoLayout(Pt ul, Pt lr)
 
     // resize cells and their contents
     m_ignore_child_resize = true;
-    for (std::map<Wnd*, WndPosition>::iterator it = m_wnd_positions.begin(); it != m_wnd_positions.end(); ++it) {
-        Pt ul(X(m_column_params[it->second.first_column].current_origin),
-              Y(m_row_params[it->second.first_row].current_origin));
-        Pt lr(X(m_column_params[it->second.last_column - 1].current_origin + m_column_params[it->second.last_column - 1].current_width),
-              Y(m_row_params[it->second.last_row - 1].current_origin + m_row_params[it->second.last_row - 1].current_width));
+    for (std::map<Wnd*, WndPosition>::value_type& wnd_position : m_wnd_positions) {
+        Pt ul(X(m_column_params[wnd_position.second.first_column].current_origin),
+              Y(m_row_params[wnd_position.second.first_row].current_origin));
+        Pt lr(X(m_column_params[wnd_position.second.last_column - 1].current_origin + m_column_params[wnd_position.second.last_column - 1].current_width),
+              Y(m_row_params[wnd_position.second.last_row - 1].current_origin + m_row_params[wnd_position.second.last_row - 1].current_width));
         Pt ul_margin(X0, Y0);
         Pt lr_margin(X0, Y0);
-        if (0 < it->second.first_row)
+        if (0 < wnd_position.second.first_row)
             ul_margin.y += static_cast<int>(m_cell_margin / 2);
-        if (0 < it->second.first_column)
+        if (0 < wnd_position.second.first_column)
             ul_margin.x += static_cast<int>(m_cell_margin / 2);
-        if (it->second.last_row < m_row_params.size())
+        if (wnd_position.second.last_row < m_row_params.size())
             lr_margin.y += static_cast<int>(m_cell_margin / 2.0 + 0.5);
-        if (it->second.last_column < m_column_params.size())
+        if (wnd_position.second.last_column < m_column_params.size())
             lr_margin.x += static_cast<int>(m_cell_margin / 2.0 + 0.5);
 
         ul += ul_margin;
         lr -= lr_margin;
 
-        if (it->second.alignment == ALIGN_NONE) { // expand to fill available space
-            it->first->SizeMove(ul, lr);
+        if (wnd_position.second.alignment == ALIGN_NONE) { // expand to fill available space
+            wnd_position.first->SizeMove(ul, lr);
         } else { // align as appropriate
             Pt available_space = lr - ul;
-            Pt min_usable_size = it->first->MinUsableSize();
-            Pt min_size = it->first->MinSize();
+            Pt min_usable_size = wnd_position.first->MinUsableSize();
+            Pt min_size = wnd_position.first->MinSize();
 
             // HACK! This is put here so that TextControl, which is currently GG's
             // only height-for-width Wnd type, doesn't get vertically squashed
             // down to 0-height cells.  Note that they can still get horizontally
             // squashed.
-            if (TextControl *text_control = dynamic_cast<TextControl*>(it->first)) {
+            if (TextControl *text_control = dynamic_cast<TextControl*>(wnd_position.first)) {
                 X text_width = (lr.x - ul.x);
                 min_usable_size = text_control->MinUsableSize(text_width);
                 min_size = min_usable_size;
             }
 
-            Pt window_size(std::min(available_space.x, std::max(it->second.original_size.x, std::max(min_size.x, min_usable_size.x))),
-                           std::min(available_space.y, std::max(it->second.original_size.y, std::max(min_size.y, min_usable_size.y))));
+            Pt window_size(std::min(available_space.x, std::max(wnd_position.second.original_size.x, std::max(min_size.x, min_usable_size.x))),
+                           std::min(available_space.y, std::max(wnd_position.second.original_size.y, std::max(min_size.y, min_usable_size.y))));
             Pt resize_ul, resize_lr;
-            if (it->second.alignment & ALIGN_LEFT) {
+            if (wnd_position.second.alignment & ALIGN_LEFT) {
                 resize_ul.x = ul.x;
                 resize_lr.x = resize_ul.x + window_size.x;
-            } else if (it->second.alignment & ALIGN_CENTER) {
+            } else if (wnd_position.second.alignment & ALIGN_CENTER) {
                 resize_ul.x = ul.x + (available_space.x - window_size.x) / 2;
                 resize_lr.x = resize_ul.x + window_size.x;
-            } else if (it->second.alignment & ALIGN_RIGHT) {
+            } else if (wnd_position.second.alignment & ALIGN_RIGHT) {
                 resize_lr.x = lr.x;
                 resize_ul.x = resize_lr.x - window_size.x;
             } else {
                 resize_ul.x = ul.x;
                 resize_lr.x = lr.x;
             }
-            if (it->second.alignment & ALIGN_TOP) {
+            if (wnd_position.second.alignment & ALIGN_TOP) {
                 resize_ul.y = ul.y;
                 resize_lr.y = resize_ul.y + window_size.y;
-            } else if (it->second.alignment & ALIGN_VCENTER) {
+            } else if (wnd_position.second.alignment & ALIGN_VCENTER) {
                 resize_ul.y = ul.y + (available_space.y - window_size.y) / 2;
                 resize_lr.y = resize_ul.y + window_size.y;
-            } else if (it->second.alignment & ALIGN_BOTTOM) {
+            } else if (wnd_position.second.alignment & ALIGN_BOTTOM) {
                 resize_lr.y = lr.y;
                 resize_ul.y = resize_lr.y - window_size.y;
             } else {
                 resize_ul.y = ul.y;
                 resize_lr.y = lr.y;
             }
-            it->first->SizeMove(resize_ul, resize_lr);
+            wnd_position.first->SizeMove(resize_ul, resize_lr);
         }
     }
     m_ignore_child_resize = false;
@@ -511,10 +511,9 @@ void Layout::Render()
     if (m_render_outline) {
         Pt ul = UpperLeft(), lr = LowerRight();
         FlatRectangle(ul, lr, CLR_ZERO, m_outline_color, 1);
-        std::vector<std::vector<Rect> > rects = CellRects();
-        for (std::size_t i = 0; i < rects.size(); ++i) {
-            for (std::size_t j = 0; j < rects[i].size(); ++j) {
-                FlatRectangle(rects[i][j].ul, rects[i][j].lr, CLR_ZERO, m_outline_color, 1);
+        for (const std::vector<Rect>& columns : CellRects()) {
+            for (const Rect& cell : columns) {
+                FlatRectangle(cell.ul, cell.lr, CLR_ZERO, m_outline_color, 1);
             }
         }
     }
@@ -572,8 +571,8 @@ void Layout::DetachAndResetChildren()
 {
     std::map<Wnd*, WndPosition> wnd_positions = m_wnd_positions;
     DetachChildren();
-    for (std::map<Wnd*, WndPosition>::iterator it = wnd_positions.begin(); it != wnd_positions.end(); ++it) {
-        it->first->SizeMove(it->second.original_ul, it->second.original_ul + it->second.original_size);
+    for (std::map<Wnd*, WndPosition>::value_type& wnd_position : wnd_positions) {
+        wnd_position.first->SizeMove(wnd_position.second.original_ul, wnd_position.second.original_ul + wnd_position.second.original_size);
     }
     m_wnd_positions.clear();
 }
@@ -584,21 +583,21 @@ void Layout::ResizeLayout(std::size_t rows, std::size_t columns)
     assert(0 < columns);
     if (static_cast<std::size_t>(rows) < m_cells.size()) {
         for (std::size_t i = static_cast<std::size_t>(rows); i < m_cells.size(); ++i) {
-            for (std::size_t j = 0; j < m_cells[i].size(); ++j) {
-                DeleteChild(m_cells[i][j]);
-                m_wnd_positions.erase(m_cells[i][j]);
+            for (Wnd* cell : m_cells[i]) {
+                DeleteChild(cell);
+                m_wnd_positions.erase(cell);
             }
         }
     }
     m_cells.resize(rows);
-    for (std::size_t i = 0; i < m_cells.size(); ++i) {
-        if (static_cast<std::size_t>(columns) < m_cells[i].size()) {
-            for (std::size_t j = static_cast<std::size_t>(columns); j < m_cells[i].size(); ++j) {
-                DeleteChild(m_cells[i][j]);
-                m_wnd_positions.erase(m_cells[i][j]);
+    for (std::vector<Wnd*>& row : m_cells) {
+        if (static_cast<std::size_t>(columns) < row.size()) {
+            for (std::size_t j = static_cast<std::size_t>(columns); j < row.size(); ++j) {
+                DeleteChild(row[j]);
+                m_wnd_positions.erase(row[j]);
             }
         }
-        m_cells[i].resize(columns);
+        row.resize(columns);
     }
     m_row_params.resize(rows);
     m_column_params.resize(columns);
@@ -673,8 +672,8 @@ void Layout::KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> m
 double Layout::TotalStretch(const std::vector<RowColParams>& params_vec) const
 {
     double retval = 0.0;
-    for (std::size_t i = 0; i < params_vec.size(); ++i) {
-        retval += params_vec[i].stretch;
+    for (const RowColParams& param : params_vec) {
+        retval += param.stretch;
     }
     return retval;
 }
@@ -682,8 +681,8 @@ double Layout::TotalStretch(const std::vector<RowColParams>& params_vec) const
 X Layout::TotalMinWidth() const
 {
     X retval = X(2 * m_border_margin);
-    for (std::size_t i = 0; i < m_column_params.size(); ++i) {
-        retval += static_cast<int>(m_column_params[i].effective_min);
+    for (const RowColParams& column_param : m_column_params) {
+        retval += static_cast<int>(column_param.effective_min);
     }
     return retval;
 }
@@ -691,8 +690,8 @@ X Layout::TotalMinWidth() const
 Y Layout::TotalMinHeight() const
 {
     Y retval = Y(2 * m_border_margin);
-    for (std::size_t i = 0; i < m_row_params.size(); ++i) {
-        retval += static_cast<int>(m_row_params[i].effective_min);
+    for (const RowColParams& row_param : m_row_params) {
+        retval += static_cast<int>(row_param.effective_min);
     }
     return retval;
 }
