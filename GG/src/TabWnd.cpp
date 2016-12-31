@@ -58,16 +58,16 @@ OverlayWnd::OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags) :
 
 OverlayWnd::~OverlayWnd()
 {
-    for (std::size_t i = 0; i < m_wnds.size(); ++i) {
-        delete m_wnds[i];
+    for (Wnd* wnd : m_wnds) {
+        delete wnd;
     }
 }
 
 Pt OverlayWnd::MinUsableSize() const
 {
     Pt retval;
-    for (std::size_t i = 0; i < m_wnds.size(); ++i) {
-        Pt min_usable_size = m_wnds[i]->MinUsableSize();
+    for (Wnd* wnd : m_wnds) {
+        Pt min_usable_size = wnd->MinUsableSize();
         retval.x = std::max(retval.x, min_usable_size.x);
         retval.y = std::max(retval.y, min_usable_size.y);
     }
@@ -316,8 +316,8 @@ TabBar::TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* 
 Pt TabBar::MinUsableSize() const
 {
     Y y(0);
-    for (std::size_t i = 0; i < m_tab_buttons.size(); ++i) {
-        Y button_min_y = m_tab_buttons[i]->MinUsableSize().y;
+    for (StateButton* button : m_tab_buttons) {
+        Y button_min_y = button->MinUsableSize().y;
         if (y < button_min_y)
             y = button_min_y;
     }
