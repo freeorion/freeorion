@@ -125,8 +125,8 @@ WndEvent::WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_
     m_text(0)
 {
     // initialize storage for acceptable Wnds
-    for (std::map<Wnd*, Pt>::const_iterator it = m_drag_drop_wnds.begin(); it != m_drag_drop_wnds.end(); ++it)
-    { m_acceptable_drop_wnds[it->first] = false; }
+    for (const std::map<Wnd*, Pt>::value_type& drag_drop_wnd : m_drag_drop_wnds)
+    { m_acceptable_drop_wnds[drag_drop_wnd.first] = false; }
 }
 
 WndEvent::WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_drop_wnds, Flags<ModKey> mod_keys) :
