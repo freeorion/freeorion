@@ -221,11 +221,11 @@ const UnicodeCharset* GG::CharsetContaining(boost::uint32_t c)
     static std::vector<const UnicodeCharset*> s_charset_blocks;
     if (s_charset_blocks.empty()) {
         s_charset_blocks.resize(AllUnicodeCharsets().back().m_last_char / BLOCK_SIZE);
-        for (std::size_t i = 0; i < AllUnicodeCharsets().size(); ++i) {
-            std::size_t first_block = AllUnicodeCharsets()[i].m_first_char / BLOCK_SIZE;
-            std::size_t last_block = AllUnicodeCharsets()[i].m_last_char / BLOCK_SIZE;
+        for (const UnicodeCharset& uchs : AllUnicodeCharsets()) {
+            std::size_t first_block = uchs.m_first_char / BLOCK_SIZE;
+            std::size_t last_block = uchs.m_last_char / BLOCK_SIZE;
             for (std::size_t j = first_block; j != last_block; ++j) {
-                s_charset_blocks[j] = &AllUnicodeCharsets()[i];
+                s_charset_blocks[j] = &uchs;
             }
         }
     }
@@ -237,8 +237,8 @@ const UnicodeCharset* GG::CharsetWithName(const std::string& name)
 {
     static std::map<std::string, const UnicodeCharset*> s_name_map;
     if (s_name_map.empty()) {
-        for (std::size_t i = 0; i < AllUnicodeCharsets().size(); ++i) {
-            s_name_map[AllUnicodeCharsets()[i].m_script_name] = &AllUnicodeCharsets()[i];
+        for (const UnicodeCharset& uchs : AllUnicodeCharsets()) {
+            s_name_map[uchs.m_script_name] = &uchs;
         }
     }
     std::map<std::string, const UnicodeCharset*>::const_iterator it = s_name_map.find(name);
