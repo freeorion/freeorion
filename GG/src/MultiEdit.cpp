@@ -528,8 +528,8 @@ CPSize MultiEdit::CharIndexOf(std::size_t row, CPSize char_idx,
     // "rewind" the first position to encompass all tag text that is
     // associated with that position
     CPSize retval = line.char_data[Value(char_idx)].code_point_index;
-    for (std::size_t i = 0; i < line.char_data[Value(char_idx)].tags.size(); ++i)
-        retval -= line.char_data[Value(char_idx)].tags[i]->CodePointSize();
+    for (const boost::shared_ptr<Font::FormattingTag>& tag : line.char_data[Value(char_idx)].tags)
+        retval -= tag->CodePointSize();
 
     return retval;
 }
