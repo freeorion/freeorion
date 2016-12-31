@@ -206,11 +206,9 @@ public:
         GG::FlagSpec::UnknownString if an unknown string is provided. */
     FlagType FromString(const std::string& str) const
     {
-        for (typename std::map<FlagType, std::string>::const_iterator it = m_strings.begin();
-             it != m_strings.end(); ++it)
-        {
-            if (it->second == str)
-                return it->first;
+        for (const typename std::map<FlagType, std::string>::value_type& string : m_strings) {
+            if (string.second == str)
+                return string.first;
         }
         throw UnknownString("Could not find flag corresponding to unknown string");
         return FlagType(0);
@@ -474,10 +472,9 @@ template <class FlagType>
 Flags<FlagType> operator~(Flags<FlagType> flags)
 {
     Flags<FlagType> retval;
-    const FlagSpec<FlagType>& spec = FlagSpec<FlagType>::instance();
-    for (typename FlagSpec<FlagType>::const_iterator it = spec.begin(); it != spec.end(); ++it) {
-        if (!(*it & flags))
-            retval |= *it;
+    for (const FlagType& flag : FlagSpec<FlagType>::instance()) {
+        if (!(flag & flags))
+            retval |= flag;
     }
     return retval;
 }
