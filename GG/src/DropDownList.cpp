@@ -706,9 +706,8 @@ DropDownList::iterator DropDownList::Insert(Row* row, bool signal/* = true*/)
 
 void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signal/* = true*/)
 {
-    for (std::vector<Row*>::const_iterator rows_it = rows.begin();
-         rows_it != rows.end(); ++rows_it)
-    { (*rows_it)->SetDragDropDataType(""); }
+    for (Row* row : rows)
+    { row->SetDragDropDataType(""); }
     LB()->Insert(rows, it, signal);
     Resize(Size());
     RequirePreRender();
@@ -716,9 +715,8 @@ void DropDownList::Insert(const std::vector<Row*>& rows, iterator it, bool signa
 
 void DropDownList::Insert(const std::vector<Row*>& rows, bool signal/* = true*/)
 {
-    for (std::vector<Row*>::const_iterator rows_it = rows.begin();
-         rows_it != rows.end(); ++rows_it)
-    { (*rows_it)->SetDragDropDataType(""); }
+    for (Row* row : rows)
+    { row->SetDragDropDataType(""); }
     LB()->Insert(rows, signal);
     Resize(Size());
     RequirePreRender();
