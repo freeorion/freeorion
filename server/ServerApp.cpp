@@ -24,6 +24,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
+#include "../util/Random.h"
 #include "../util/SaveGamePreviewUtils.h"
 #include "../util/SitRepEntry.h"
 #include "../util/ScopedTimer.h"
