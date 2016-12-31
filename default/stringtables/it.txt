@@ -2015,43 +2015,6 @@ PR
 ENC_COST_AND_TURNS_STR
 %1% %2% e %3% Turni
 
-# FIXME
-# Displays the ship design properties inside a Pedia article in detail.
-# %1% description.
-# %2% hull name.
-# %3% list of builtin parts.
-# %4% number of builtin weapon parts.
-# %5% number of builtin rocket parts.
-# %6% number of builtin fighter bays.
-# %7% number of builtin point defense weapon bays.
-# %8% amount of structure points.
-# %9% amount of shield points.
-# %10% amount of detection points.
-# %11% amount of stealth points.
-# %12% battle speed.
-# %13% starlane speed.
-# %14% fuel capacity.
-# %15% number of settlers.
-# %16% number of troops.
-# %17% total damage done by weapons.
-# %18% species that mans the ship.
-ENC_SHIP_DESIGN_DESCRIPTION_STR
-'''%1%
-
-Scafo: %2%
-Parti: %3%
-
-Totale Danni Attacco: %17%
-Strutture: %8%
-[[metertype METER_SHIELD]]: %9%
-[[metertype METER_DETECTION]]: %10%
-[[metertype METER_STEALTH]]: %11%
-Capacità Carburante: %14%
-Capacità Colonizzazione: %15%
-Truppe: %16%
-Velocità Stellare: %13%
-'''
-
 ENC_UNLOCKED_BY
 '''<u>Sbloccato dalle Tecnologie:</u>
 

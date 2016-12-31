@@ -3938,41 +3938,6 @@ ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
 '''
 At location %1%, the cost and time are %2% %3% over %4% turns.'''
 
-# FIXME
-# Displays the ship design properties inside a Pedia article in detail.
-# %1% description.
-# %2% hull name.
-# %3% list of builtin parts.
-# %4% number of builtin weapon parts.
-# %5% number of builtin rocket parts.
-# %6% number of builtin fighter bays.
-# %7% number of builtin point defense weapon bays.
-# %8% amount of structure points.
-# %9% amount of shield points.
-# %10% amount of detection points.
-# %11% amount of stealth points.
-# %12% battle speed.
-# %13% starlane speed.
-# %14% fuel capacity.
-# %15% number of settlers.
-# %16% number of troops.
-# %17% total damage done by weapons.
-# %18% species that mans the ship.
-ENC_SHIP_DESIGN_DESCRIPTION_STR
-'''%1%
-
-Hull: %2%
-Parts: %3%
-
-Total [[encyclopedia DAMAGE_TITLE]]: %17%    [[metertype METER_STRUCTURE]]: %8%    [[metertype METER_SHIELD]]: %9%
-[[metertype METER_SPEED]]: %13%    [[metertype METER_FUEL]] Capacity: %14%
-[[metertype METER_DETECTION]]: %10%    [[metertype METER_STEALTH]]: %11%
-Colonization Capacity: %15%    [[metertype METER_TROOPS]]: %16%
-
-Estimated combat strength (ignoring shields): %19$.f (%20$.2f per PP)
-Against likely enemy weapons and shields: %21$.f (%22$.2f per PP)
-'''
-
 # Displays a ship design inside the Pedia with the basic informations.
 # %1% description.
 # %2% hull name.

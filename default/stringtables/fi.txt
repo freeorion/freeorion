@@ -1396,43 +1396,6 @@ TP
 ENC_COST_AND_TURNS_STR
 %3% Turns @ %1% %2% / Turn
 
-# FIXME
-# Displays the ship design properties inside a Pedia article in detail.
-# %1% description.
-# %2% hull name.
-# %3% list of builtin parts.
-# %4% number of builtin weapon parts.
-# %5% number of builtin rocket parts.
-# %6% number of builtin fighter bays.
-# %7% number of builtin point defense weapon bays.
-# %8% amount of structure points.
-# %9% amount of shield points.
-# %10% amount of detection points.
-# %11% amount of stealth points.
-# %12% battle speed.
-# %13% starlane speed.
-# %14% fuel capacity.
-# %15% number of settlers.
-# %16% number of troops.
-# %17% total damage done by weapons.
-# %18% species that mans the ship.
-ENC_SHIP_DESIGN_DESCRIPTION_STR
-'''%1%
-
-Suoratuliosat: %2%
-Ohjusosat: %3%
-Hävittäjähangaarit: %4%
-Lähipuolustusosat: %5%
-Runko: %6%
-Suojat: %7%
-Havainnointi: %8%
-Taistelunopeus: %9%
-Tähtilinjanopeus: %10%
-Polttoainekapasiteetti: %11%
-Kolonisaatiokapasiteetti: %12%
-Häivetaso: %13%
-'''
-
 
 ##
 ## Combat report
