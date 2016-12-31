@@ -170,8 +170,8 @@ MenuBar::MenuBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, const MenuI
 Pt MenuBar::MinUsableSize() const
 {
     Pt retval;
-    for (std::size_t i = 0; i < m_menu_labels.size(); ++i) {
-        Pt min_size = m_menu_labels[i]->MinUsableSize();
+    for (TextControl* menu_label : m_menu_labels) {
+        Pt min_size = menu_label->MinUsableSize();
         retval.y = std::max(retval.y, min_size.y);
         retval.x += min_size.x;
     }
@@ -184,8 +184,8 @@ const MenuItem& MenuBar::AllMenus() const
 bool MenuBar::ContainsMenu(const std::string& str) const
 {
     bool retval = false;
-    for (std::vector<MenuItem>::const_iterator it = m_menu_data.next_level.begin(); it != m_menu_data.next_level.end(); ++it) {
-        if (it->label == str) {
+    for (const MenuItem& submenu : m_menu_data.next_level) {
+        if (submenu.label == str) {
             retval = true;
             break;
         }
@@ -198,12 +198,11 @@ std::size_t MenuBar::NumMenus() const
 
 const MenuItem& MenuBar::GetMenu(const std::string& str) const
 {
-    std::vector<MenuItem>::const_iterator it = m_menu_data.next_level.begin();
-    for (; it != m_menu_data.next_level.end(); ++it) {
-        if (it->label == str)
-            break;
+    for (const MenuItem& submenu : m_menu_data.next_level) {
+        if (submenu.label == str)
+            return submenu;
     }
-    return *it;
+    return m_menu_data.next_level.front();
 }
 
 const MenuItem& MenuBar::GetMenu(std::size_t n) const
@@ -291,12 +290,11 @@ MenuItem& MenuBar::AllMenus()
 
 MenuItem& MenuBar::GetMenu(const std::string& str)
 {
-    std::vector<MenuItem>::iterator it = m_menu_data.next_level.begin();
-    for (; it != m_menu_data.next_level.end(); ++it) {
-        if (it->label == str)
-            break;
+    for (MenuItem& submenu : m_menu_data.next_level) {
+        if (submenu.label == str)
+            return submenu;
     }
-    return *it;
+    return m_menu_data.next_level.front();
 }
 
 MenuItem& MenuBar::GetMenu(int n)
@@ -561,9 +559,9 @@ void PopupMenu::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (m_caret[0] != INVALID_CARET) {
         MenuItem* menu_ptr = &m_menu_data;
-        for (std::size_t i = 0; i < m_caret.size(); ++i) {
-            if (m_caret[i] != INVALID_CARET) {
-                menu_ptr = &menu_ptr->next_level[m_caret[i]];
+        for (std::size_t caret : m_caret) {
+            if (caret != INVALID_CARET) {
+                menu_ptr = &menu_ptr->next_level[caret];
             }
         }
         if (!menu_ptr->disabled && !menu_ptr->separator) {
@@ -615,8 +613,8 @@ void PopupMenu::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     int update_ID = 0;
     if (m_caret[0] != INVALID_CARET) {
         MenuItem* menu_ptr = &m_menu_data;
-        for (std::size_t i = 0; i < m_caret.size(); ++i)
-            menu_ptr = &menu_ptr->next_level[m_caret[i]];
+        for (std::size_t caret : m_caret)
+            menu_ptr = &menu_ptr->next_level[caret];
         update_ID = menu_ptr->item_ID;
     }
     BrowsedSignal(update_ID);
