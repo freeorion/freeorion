@@ -727,10 +727,8 @@ void Font::FormattingTag::Bind(const std::string& whole_text)
 {
     TextElement::Bind(whole_text);
     tag_name.Bind(whole_text);
-    for (std::vector<Substring>::iterator it = params.begin();
-         it != params.end(); ++it)
-    {
-        it->Bind(whole_text);
+    for (Substring& substring : params) {
+        substring.Bind(whole_text);
     }
 }
 
@@ -792,12 +790,10 @@ public:
 
         // If there are params add them, like this: "<tag param1 param2"
         if (params) {
-            for (std::vector<std::string>::const_iterator it = params->begin();
-                 it != params->end(); ++it)
-            {
+            for (const std::string& param : *params) {
                 m_text.append(" ");
                 size_t param_begin = m_text.size();
-                size_t param_end = m_text.append(*it).size();
+                size_t param_end = m_text.append(param).size();
 
                 element->params.push_back(Substring(m_text,
                                                     boost::next(m_text.begin(), param_begin),
@@ -1046,8 +1042,8 @@ Font::LineData::CharData::CharData(X extent_, StrSize str_index, StrSize str_siz
     code_point_index(cp_index),
     tags()
 {
-    for (std::size_t i = 0; i < tags_.size(); ++i) {
-        tags.push_back(boost::dynamic_pointer_cast<FormattingTag>(tags_[i]));
+    for (boost::shared_ptr<TextElement> tag : tags_) {
+        tags.push_back(boost::dynamic_pointer_cast<FormattingTag>(tag));
     }
 }
 
@@ -1255,8 +1251,8 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
         std::string::const_iterator string_end_it = text.end();
         for (CPSize j = start; j < end; ++j) {
             const LineData::CharData& char_data = line.char_data[Value(j)];
-            for (std::size_t k = 0; k < char_data.tags.size(); ++k) {
-                HandleTag(char_data.tags[k], orig_color, render_state);
+            for (boost::shared_ptr<FormattingTag> tag : char_data.tags) {
+                HandleTag(tag, orig_color, render_state);
             }
             boost::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
             assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
@@ -1311,8 +1307,8 @@ void Font::ProcessTagsBefore(const std::vector<LineData>& line_data, RenderState
         for (CPSize j = CP0;
              j < ((i == begin_line) ? begin_char : CPSize(line.char_data.size()));
              ++j) {
-            for (std::size_t k = 0; k < line.char_data[Value(j)].tags.size(); ++k) {
-                HandleTag(line.char_data[Value(j)].tags[k], orig_color, render_state);
+            for (boost::shared_ptr<Font::FormattingTag> tag : line.char_data[Value(j)].tags) {
+                HandleTag(tag, orig_color, render_state);
             }
         }
     }
@@ -1352,9 +1348,9 @@ std::string Font::StripTags(const std::string& text, bool strip_unpaired_tags)
 Pt Font::TextExtent(const std::vector<LineData>& line_data) const
 {
     Pt retval;
-    for (std::size_t i = 0; i < line_data.size(); ++i) {
-        if (retval.x < line_data[i].Width())
-            retval.x = line_data[i].Width();
+    for (const LineData& line : line_data) {
+        if (retval.x < line.Width())
+            retval.x = line.Width();
     }
     bool is_empty = line_data.empty()
         || (line_data.size() == 1 && line_data.front().Empty());
@@ -1385,28 +1381,27 @@ void Font::ThrowBadGlyph(const std::string& format_str, boost::uint32_t c)
 namespace DebugOutput {
     void PrintParseResults(const std::vector<boost::shared_ptr<Font::TextElement> >& text_elements) {
         std::cout << "results of parse:\n";
-        for (std::size_t i = 0; i < text_elements.size(); ++i) {
-            if (boost::shared_ptr<Font::FormattingTag> tag_elem = boost::dynamic_pointer_cast<Font::FormattingTag>(text_elements[i])) {
+        for (boost::shared_ptr<Font::TextElement> elem : text_elements) {
+            if (boost::shared_ptr<Font::FormattingTag> tag_elem = boost::dynamic_pointer_cast<Font::FormattingTag>(elem)) {
                 std::cout << "FormattingTag\n    text=\"" << tag_elem->text << "\" (@ "
                           << static_cast<const void*>(&*tag_elem->text.begin()) << ")\n    widths=";
-                for (std::size_t j = 0; j < tag_elem->widths.size(); ++j) {
-                    std::cout << tag_elem->widths[j] << " ";
+                for (const X& width : tag_elem->widths) {
+                    std::cout << width << " ";
                 }
                 std::cout << "\n    whitespace=" << tag_elem->whitespace << "\n    newline=" << tag_elem->newline << "\n    params=\n";
-                for (std::size_t j = 0; j < tag_elem->params.size(); ++j) {
-                    std::cout << "        \"" << tag_elem->params[j] << "\"\n";
+                for (const Font::Substring& param : tag_elem->params) {
+                    std::cout << "        \"" << param << "\"\n";
                 }
                 std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag=" << tag_elem->close_tag << "\n";
             } else {
-                boost::shared_ptr<Font::TextElement> elem = text_elements[i];
                 std::cout << "TextElement\n    text=\"" << elem->text << "\" (@ "
                           << static_cast<const void*>(&*elem->text.begin()) << ")\n    widths=";
-                for (std::size_t j = 0; j < elem->widths.size(); ++j) {
-                    std::cout << elem->widths[j] << " ";
+                for (const X& width : elem->widths) {
+                    std::cout << width << " ";
                 }
                 std::cout << "\n    whitespace=" << elem->whitespace << "\n    newline=" << elem->newline << "\n";
             }
-            std::cout << "    string_size=" << text_elements[i]->StringSize() << "\n";
+            std::cout << "    string_size=" << elem->StringSize() << "\n";
             std::cout << "\n";
         }
         std::cout << std::endl;
@@ -1424,33 +1419,33 @@ namespace DebugOutput {
         std::cout << "Line breakdown:\n";
         for (std::size_t i = 0; i < line_data.size(); ++i) {
             std::cout << "Line " << i << ":\n    extents=";
-            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-                std::cout << line_data[i].char_data[j].extent << " ";
+            for (const Font::LineData::CharData& character : line_data[i].char_data) {
+                std::cout << character.extent << " ";
             }
             std::cout << "\n    string indices=";
-            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-                std::cout << line_data[i].char_data[j].string_index << " ";
+            for (const Font::LineData::CharData& character : line_data[i].char_data) {
+                std::cout << character.string_index << " ";
             }
             std::cout << "\n    code point indices=";
-            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-                std::cout << line_data[i].char_data[j].code_point_index << " ";
+            for (const Font::LineData::CharData& character : line_data[i].char_data) {
+                std::cout << character.code_point_index << " ";
             }
             std::cout << "\n    chars on line: \"";
-            for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-                std::cout << text[Value(line_data[i].char_data[j].string_index)];
+            for (const Font::LineData::CharData& character : line_data[i].char_data) {
+                std::cout << text[Value(character.string_index)];
             }
             std::cout << "\"" << std::endl;
             for (std::size_t j = 0; j < line_data[i].char_data.size(); ++j) {
-                for (std::size_t k = 0; k < line_data[i].char_data[j].tags.size(); ++k) {
-                    if (boost::shared_ptr<Font::FormattingTag> tag_elem = line_data[i].char_data[j].tags[k]) {
+                for (boost::shared_ptr<Font::FormattingTag> tag_elem : line_data[i].char_data[j].tags) {
+                    if (tag_elem) {
                         std::cout << "FormattingTag @" << j << "\n    text=\"" << tag_elem->text << "\"\n    widths=";
-                        for (std::size_t j = 0; j < tag_elem->widths.size(); ++j) {
-                            std::cout << tag_elem->widths[j] << " ";
+                        for (const X& width : tag_elem->widths) {
+                            std::cout << width << " ";
                         }
                         std::cout << "\n    whitespace=" << tag_elem->whitespace
                                   << "\n    newline=" << tag_elem->newline << "\n    params=\n";
-                        for (std::size_t l = 0; l < tag_elem->params.size(); ++l) {
-                            std::cout << "        \"" << tag_elem->params[l] << "\"\n";
+                        for (const Font::Substring& param : tag_elem->params) {
+                            std::cout << "        \"" << param << "\"\n";
                         }
                         std::cout << "    tag_name=\"" << tag_elem->tag_name << "\"\n    close_tag="
                                   << tag_elem->close_tag << std::endl;
@@ -2012,8 +2007,8 @@ void Font::Init(FT_Face& face)
                     (unsigned char*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
     // create Glyph objects from temp glyph data
-    for (std::map<boost::uint32_t, TempGlyphData>::iterator it = temp_glyph_data.begin(); it != temp_glyph_data.end(); ++it)
-        m_glyphs[it->first] = Glyph(m_texture, it->second.ul, it->second.lr, it->second.y_offset, it->second.left_b, it->second.adv);
+    for (const std::map<boost::uint32_t, TempGlyphData>::value_type& glyph_data : temp_glyph_data)
+        m_glyphs[glyph_data.first] = Glyph(m_texture, glyph_data.second.ul, glyph_data.second.lr, glyph_data.second.y_offset, glyph_data.second.left_b, glyph_data.second.adv);
 
     // record the width of the space character
     GlyphMap::const_iterator glyph_it = m_glyphs.find(WIDE_SPACE);
