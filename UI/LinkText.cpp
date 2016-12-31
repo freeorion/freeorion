@@ -400,13 +400,13 @@ void TextLinker::LocateLinks() {
                 if (current_link == m_links.end())
                     return;
             }
-
-            y_posn += font->Lineskip();
         }
 
         // if a line is ending without the current tag ending
         if (inside_link)
             current_link->rects.back().lr.x = curr_line.char_data.empty() ? GG::X0 : curr_line.char_data.back().extent;
+
+        y_posn += font->Lineskip();
     }
 }
 
