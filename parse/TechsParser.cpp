@@ -240,19 +240,13 @@ namespace parse {
     {
         bool result = true;
 
-        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/techs");
-
         g_categories_seen = &categories_seen;
         g_categories = &categories;
 
         result &= detail::parse_file<rules, TechManager::TechContainer>(GetResourceDir() / "scripting/techs/Categories.inf", techs_);
 
-        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
-             file_it != file_list.end(); ++file_it)
-        {
-            boost::filesystem::path path = *file_it;
-
-            result &= detail::parse_file<rules, TechManager::TechContainer>(path, techs_);
+        for (const boost::filesystem::path& file : ListScripts("scripting/techs")) {
+            result &= detail::parse_file<rules, TechManager::TechContainer>(file, techs_);
         }
 
         return result;

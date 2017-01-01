@@ -92,10 +92,8 @@ namespace parse {
 
         std::vector<boost::filesystem::path> file_list = ListScripts("scripting/encyclopedia");
 
-        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
-             file_it != file_list.end(); ++file_it) 
-        {
-            result &= detail::parse_file<rules, Encyclopedia>(*file_it, enc);
+        for (const boost::filesystem::path& file : file_list) {
+            result &= detail::parse_file<rules, Encyclopedia>(file, enc);
         }
 
         return result;

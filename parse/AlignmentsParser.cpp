@@ -85,14 +85,10 @@ namespace parse {
     {
         bool result = true;
 
-        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/alignments");
-
         g_effects_groups = &effects_groups;
 
-        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
-             file_it != file_list.end(); ++file_it)
-        {
-            result &= detail::parse_file<rules, std::vector<Alignment> >(*file_it, alignments_);
+        for (const boost::filesystem::path& file : ListScripts("scripting/alignments")) {
+            result &= detail::parse_file<rules, std::vector<Alignment> >(file, alignments_);
         }
 
         return result;
