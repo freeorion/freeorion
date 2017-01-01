@@ -331,7 +331,7 @@ namespace {
 
         // note that this will cause a UI update for each call to CreateNewFleetFromShips
         // we can re-evaluate this code if it presents a noticable performance problem
-        for (const std::map<int, std::vector<int> >::value_type& entry : designs_ship_ids)
+        for (const std::map<int, std::vector<int>>::value_type& entry : designs_ship_ids)
         { CreateNewFleetFromShips(entry.second, aggression); }
     }
 
@@ -1207,8 +1207,8 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, boo
     DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
     // scan through wnds, looking for one that isn't dropable
-    for (DropsAcceptableIter it = drop_wnds_acceptable.begin(); it != drop_wnds_acceptable.end(); ++it) {
-        if (!it->second) {
+    for (const std::map<const Wnd*, bool>::value_type& drop_wnd_acceptable : drop_wnds_acceptable) {
+        if (!drop_wnd_acceptable.second) {
             // wnd can't be dropped
             Select(false);
             break;
@@ -1980,11 +1980,11 @@ public:
         bool fleets_seen = false;
         bool ships_seen = false;
 
-        for (DropsAcceptableIter it = drop_wnds_acceptable.begin(); it != drop_wnds_acceptable.end(); ++it) {
-            if (!it->second)
+        for (std::map<const Wnd*, bool>::value_type& drop_wnd_acceptable : drop_wnds_acceptable) {
+            if (!drop_wnd_acceptable.second)
                 return; // a row was an invalid drop. abort without highlighting drop target.
 
-            const GG::Wnd* dropped_wnd = it->first;
+            const GG::Wnd* dropped_wnd = drop_wnd_acceptable.first;
             if (dropped_wnd->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 fleets_seen = true;
                 if (ships_seen)
@@ -2473,16 +2473,10 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
     //std::cout << "FleetDetailPanel::SelectedShipIDs()" << std::endl;
     std::set<int> retval;
 
-    const GG::ListBox::SelectionSet& selections = m_ships_lb->Selections();
-    //std::cout << " selections size: " << selections.size() << std::endl;
-    for (GG::ListBox::SelectionSet::const_iterator sel_it = selections.begin();
-         sel_it != selections.end(); ++sel_it)
-    {
-        std::list<GG::ListBox::Row*>::iterator starRow_it = *sel_it;
+    for (const GG::ListBox::SelectionSet::value_type& selection : m_ships_lb->Selections()) {
         bool hasRow = false;
-        for (std::list<GG::ListBox::Row*>::iterator lb_it = m_ships_lb->begin(); lb_it != m_ships_lb->end(); ++lb_it)
-        {
-            if (lb_it == starRow_it) {
+        for (GG::ListBox::Row* lb_row : *m_ships_lb) {
+            if (lb_row == *selection) {
                 hasRow=true;
                 break;
             }
@@ -2491,7 +2485,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
             ErrorLogger() << "FleetDetailPanel::SelectedShipIDs tried to get invalid ship row selection;";
             continue;
         }
-        GG::ListBox::Row* row = **sel_it;
+        GG::ListBox::Row* row = *selection;
         ShipRow* ship_row = dynamic_cast<ShipRow*>(row);
         if (ship_row && (ship_row->ShipID() != INVALID_OBJECT_ID))
             retval.insert(ship_row->ShipID());
