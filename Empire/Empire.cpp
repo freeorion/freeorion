@@ -218,10 +218,8 @@ namespace {
 
 
         int i = 0;
-        for (ProductionQueue::iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
-            ProductionQueue::Element& queue_element = *it;
-
-            if (it->paused) {
+        for (ProductionQueue::Element& queue_element : queue) {
+            if (queue_element.paused) {
                 queue_element.allocated_pp = 0.0f;
                 continue;
             }
@@ -296,6 +294,8 @@ namespace {
 
             if (allocation > 0.0f)
                 ++projects_in_progress;
+
+            ++i;
         }
     }
 }
@@ -378,13 +378,10 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
     const Empire* empire = GetEmpire(m_empire_id);
     if (!empire)
         return;
-    TechManager& tech_manager = GetTechManager();
-
-
 
     std::map<std::string, TechStatus> sim_tech_status_map;
-    for (TechManager::iterator tech_it = tech_manager.begin(); tech_it != tech_manager.end(); ++tech_it) {
-        std::string tech_name = (*tech_it)->Name();
+    for (const Tech* tech : GetTechManager()) {
+        std::string tech_name = tech->Name();
         sim_tech_status_map[tech_name] = empire->GetTechStatus(tech_name);
     }
 
@@ -1566,23 +1563,22 @@ const std::string& Empire::MostExpensiveEnqueuedTech() const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
     float biggest_cost = -99999.9f; // arbitrary small number
-    ResearchQueue::const_iterator best_it = m_research_queue.end();
 
-    for (ResearchQueue::const_iterator it = m_research_queue.begin();
-         it != m_research_queue.end(); ++it)
-    {
-        const Tech* tech = GetTech(it->name);
+    const ResearchQueue::Element* best_elem = 0;
+
+    for (const ResearchQueue::Element& elem : m_research_queue) {
+        const Tech* tech = GetTech(elem.name);
         if (!tech)
             continue;
         float tech_cost = tech->ResearchCost(m_id);
         if (tech_cost > biggest_cost) {
             biggest_cost = tech_cost;
-            best_it = it;
+            best_elem = &elem;
         }
     }
 
-    if (best_it != m_research_queue.end())
-        return best_it->name;
+    if (best_elem)
+        return best_elem->name;
     return EMPTY_STRING;
 }
 
@@ -1590,56 +1586,51 @@ const std::string& Empire::LeastExpensiveEnqueuedTech() const {
     if (m_research_queue.empty())
         return EMPTY_STRING;
     float smallest_cost = 999999.9f; // arbitrary large number
-    ResearchQueue::const_iterator best_it = m_research_queue.end();
 
-    for (ResearchQueue::const_iterator it = m_research_queue.begin();
-         it != m_research_queue.end(); ++it)
-    {
-        const Tech* tech = GetTech(it->name);
+    const ResearchQueue::Element* best_elem = 0;
+
+    for (const ResearchQueue::Element& elem : m_research_queue) {
+        const Tech* tech = GetTech(elem.name);
         if (!tech)
             continue;
         float tech_cost = tech->ResearchCost(m_id);
         if (tech_cost < smallest_cost) {
             smallest_cost = tech_cost;
-            best_it = it;
+            best_elem = &elem;
         }
     }
 
-    if (best_it != m_research_queue.end())
-        return best_it->name;
+    if (best_elem)
+        return best_elem->name;
     return EMPTY_STRING;
 }
 
 const std::string& Empire::MostRPSpentEnqueuedTech() const {
     float most_spent = -999999.9f;  // arbitrary small number
-    std::map<std::string, float>::const_iterator best_it = m_research_progress.end();
+    const std::map<std::string, float>::value_type* best_progress = 0;
 
-    for (std::map<std::string, float>::const_iterator it = m_research_progress.begin();
-         it != m_research_progress.end(); ++it)
-    {
-        const std::string& tech_name = it->first;
+    for (const std::map<std::string, float>::value_type& progress : m_research_progress) {
+        const std::string& tech_name = progress.first;
         if (m_research_queue.find(tech_name) == m_research_queue.end())
             continue;
-        float rp_spent = it->second;
+        float rp_spent = progress.second;
         if (rp_spent > most_spent) {
-            best_it = it;
+            best_progress = &progress;
             most_spent = rp_spent;
         }
     }
 
-    if (best_it != m_research_progress.end())
-        return best_it->first;
+    if (best_progress)
+        return best_progress->first;
     return EMPTY_STRING;
 }
 
 const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
     float most_left = -999999.9f;  // arbitrary small number
-    std::map<std::string, float>::const_iterator best_it = m_research_progress.end();
+    const std::map<std::string, float>::value_type* best_progress = 0;
 
-    for (std::map<std::string, float>::const_iterator it = m_research_progress.begin();
-         it != m_research_progress.end(); ++it)
-    {
-        const std::string& tech_name = it->first;
+    for (const std::map<std::string, float>::value_type& progress : m_research_progress) {
+        const std::string& tech_name = progress.first;
         const Tech* tech = GetTech(tech_name);
         if (!tech)
             continue;
@@ -1647,18 +1638,18 @@ const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
         if (m_research_queue.find(tech_name) == m_research_queue.end())
             continue;
 
-        float rp_spent = it->second;
+        float rp_spent = progress.second;
         float rp_total_cost = tech->ResearchCost(m_id);
         float rp_left = std::max(0.0f, rp_total_cost - rp_spent);
 
         if (rp_left > most_left) {
-            best_it = it;
+            best_progress = &progress;
             most_left = rp_left;
         }
     }
 
-    if (best_it != m_research_progress.end())
-        return best_it->first;
+    if (best_progress)
+        return best_progress->first;
     return EMPTY_STRING;
 }
 
@@ -1876,8 +1867,8 @@ int Empire::NumSitRepEntries(int turn/* = INVALID_GAME_TURN*/) const {
     if (turn == INVALID_GAME_TURN)
         return m_sitrep_entries.size();
     int count = 0;
-    for (SitRepItr it = SitRepBegin(); it != SitRepEnd(); ++it)
-        if (it->GetTurn() == turn)
+    for (const SitRepEntry& sitrep : m_sitrep_entries)
+        if (sitrep.GetTurn() == turn)
             count++;
     return count;
 }
