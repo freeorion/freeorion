@@ -179,8 +179,8 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, boo
         for (int i = 0; i < indent; ++i)
             os << INDENT_STR;
     os << '<' << m_tag;
-    for (std::map<std::string, std::string>::const_iterator it = m_attributes.begin(); it != m_attributes.end(); ++it)
-        os << ' ' << it->first << "=\"" << it->second << "\"";
+    for (const std::map<std::string, std::string>::value_type& attribute : m_attributes)
+        os << ' ' << attribute.first << "=\"" << attribute.second << "\"";
     if (m_children.empty() && m_text.empty() && !m_root) {
         os << "/>";
         if (whitespace)
@@ -194,8 +194,8 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, boo
         }
         if (whitespace && !m_children.empty())
             os << "\n";
-        for (unsigned int i = 0; i < m_children.size(); ++i)
-            m_children[i].WriteElement(os, indent + 1, whitespace);
+        for (const XMLElement& child : m_children)
+            child.WriteElement(os, indent + 1, whitespace);
         if (whitespace && !m_children.empty()) {
             for (int i = 0; i < indent; ++i) {
                 os << INDENT_STR;
