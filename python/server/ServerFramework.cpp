@@ -101,8 +101,8 @@ bool PythonServer::CreateUniverse(std::map<int, PlayerSetupData>& player_setup_d
     // so set the ErrorReport member function to use it
     SetErrorModule(m_python_module_universe_generator);
 
-    for (std::map<int, PlayerSetupData>::iterator it = player_setup_data.begin(); it != player_setup_data.end(); ++it) {
-        py_player_setup_data[it->first] = object(it->second);
+    for (std::map<int, PlayerSetupData>::value_type& psd : player_setup_data) {
+        py_player_setup_data[psd.first] = object(psd.second);
     }
 
     object f = m_python_module_universe_generator.attr("create_universe");
