@@ -88,8 +88,8 @@ namespace {
         const std::set<IntPair>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
         std::vector<IntPair> retval;
         try {
-            for (std::set<std::pair<int, int> >::const_iterator it = laneset.begin(); it != laneset.end(); ++it)
-            {retval.push_back(*it); }
+            for (const std::pair<int, int>& lane : laneset)
+            { retval.push_back(lane); }
         } catch (...) {
         }
         return retval;
@@ -98,15 +98,12 @@ namespace {
 
     std::map<int, int> jumpsToSuppliedSystemP(const Empire& empire) {
         std::map<int, int> retval;
-        const std::set<int>& empire_supplyable_system_ids = GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID());
         const std::map<int, std::set<int> >& empire_starlanes = empire.KnownStarlanes();
         std::list<int> propagating_list;
 
-        for (std::set<int>::const_iterator sys_it = empire_supplyable_system_ids.begin();
-             sys_it != empire_supplyable_system_ids.end(); ++sys_it)
-        {
-            retval[*sys_it] = 0;
-            propagating_list.push_back(*sys_it);
+        for (int system_id : GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID())) {
+            retval[system_id] = 0;
+            propagating_list.push_back(system_id);
         }
 
         // iteratively propagate supply out from supplied systems, to determine
@@ -124,19 +121,19 @@ namespace {
             const std::set<int>& lane_ends = lane_set_it->second;
 
             // propagate to any not-already-counted adjacent system
-            for (std::set<int>::const_iterator lane_it = lane_ends.begin(); lane_it != lane_ends.end(); ++lane_it) {
-                if (retval.find(*lane_it) != retval.end())
+            for (int lane_end_system_id : lane_ends) {
+                if (retval.find(lane_end_system_id) != retval.end())
                     continue;   // system already processed
                 // system not yet processed; add it to list to propagate from, and set its range to one more than this system
-                propagating_list.push_back(*lane_it);
-                retval[*lane_it] = from_sys_dist - 1;   // negative values used to indicate jumps to nearest supply for historical compatibility reasons
+                propagating_list.push_back(lane_end_system_id);
+                retval[lane_end_system_id] = from_sys_dist - 1;   // negative values used to indicate jumps to nearest supply for historical compatibility reasons
             }
         }
 
         //// DEBUG
         //DebugLogger() << "jumpsToSuppliedSystemP results for empire, " << empire.Name() << " (" << empire.EmpireID() << ") :";
-        //for (std::map<int, int>::const_iterator it = retval.begin(); it != retval.end(); ++it) {
-        //    DebugLogger() << "sys " << it->first << "  range: " << it->second;
+        //for (const std::map<int, int>::value_type& system_jumps : retval) {
+        //    DebugLogger() << "sys " << system_jumps.first << "  range: " << system_jumps.second;
         //}
         //// END DEBUG
 
@@ -166,20 +163,15 @@ namespace {
         const boost::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planetsWithAvailablePP;
-        std::map<std::set<int>, float> objectsWithAvailablePP = prodQueue.AvailablePP(industry_pool);
-        for (std::map<std::set<int>, float>::iterator map_it = objectsWithAvailablePP.begin(); 
-             map_it != objectsWithAvailablePP.end(); ++map_it)
-        {
+        for (const std::map<std::set<int>, float>::value_type& objects_pp : prodQueue.AvailablePP(industry_pool)) {
             std::set<int> planetSet;
-            std::set<int> objSet = map_it->first;
-            for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); ++obj_it)
-            {
-                TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
+            for (int object_id : objects_pp.first) {
+                TemporaryPtr<UniverseObject> location = GetUniverseObject(object_id);
                 if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
-                    planetSet.insert(*obj_it);
+                    planetSet.insert(object_id);
             }
             if (!planetSet.empty())
-                planetsWithAvailablePP[planetSet] = map_it->second;
+                planetsWithAvailablePP[planetSet] = objects_pp.second;
         }
         return planetsWithAvailablePP;
     }
@@ -189,19 +181,15 @@ namespace {
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planetsWithAllocatedPP;
         std::map<std::set<int>, float> objectsWithAllocatedPP = prodQueue.AllocatedPP();
-        for (std::map<std::set<int>, float>::iterator map_it = objectsWithAllocatedPP.begin(); 
-             map_it != objectsWithAllocatedPP.end(); ++map_it)
-        {
+        for (const std::map<std::set<int>, float>::value_type& objects_pp : objectsWithAllocatedPP) {
             std::set<int> planetSet;
-            std::set<int> objSet = map_it->first;
-            for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); ++obj_it)
-            {
-                TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
+            for (int object_id : objects_pp.first) {
+                TemporaryPtr<UniverseObject> location = GetUniverseObject(object_id);
                 if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
-                    planetSet.insert(*obj_it);
+                    planetSet.insert(object_id);
             }
             if (!planetSet.empty())
-                planetsWithAllocatedPP[planetSet] = map_it->second;
+                planetsWithAllocatedPP[planetSet] = objects_pp.second;
         }
         return planetsWithAllocatedPP;
     }
@@ -212,16 +200,12 @@ namespace {
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::set<std::set<int> > planetsWithWastedPP;
         std::set<std::set<int> > objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
-        for (std::set<std::set<int> >::iterator sets_it = objectsWithWastedPP.begin(); 
-             sets_it != objectsWithWastedPP.end(); ++sets_it)
-             {
+        for (const std::set<int>&  objects : objectsWithWastedPP) {
                  std::set<int> planetSet;
-                 std::set<int> objSet = *sets_it;
-                 for (std::set<int>::iterator obj_it = objSet.begin(); obj_it != objSet.end(); ++obj_it)
-                 {
-                     TemporaryPtr<UniverseObject> location = GetUniverseObject(*obj_it);
+                 for (int object_id : objects) {
+                     TemporaryPtr<UniverseObject> location = GetUniverseObject(object_id);
                      if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
-                         planetSet.insert(*obj_it);
+                         planetSet.insert(object_id);
                  }
                  if (!planetSet.empty())
                      planetsWithWastedPP.insert(planetSet);
