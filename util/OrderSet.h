@@ -38,8 +38,8 @@ public:
     OrderVec FindOrders(Pred pred) const
     {
         OrderVec retval;
-        for (OrderMap::const_iterator it = m_orders.begin(); it != m_orders.end(); ++it) {
-            OrderPtr o = it->second;
+        for (const OrderMap::value_type& order : m_orders) {
+            OrderPtr o = order.second;
             if (pred(o))
                 retval.push_back(o);
         }

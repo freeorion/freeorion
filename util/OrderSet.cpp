@@ -26,8 +26,8 @@ int OrderSet::IssueOrder(OrderPtr order) {
 
 void OrderSet::ApplyOrders() {
     DebugLogger() << "OrderSet::ApplyOrders() executing " << m_orders.size() << " orders";
-    for (OrderMap::iterator it = m_orders.begin(); it != m_orders.end(); ++it)
-        it->second->Execute();
+    for (OrderMap::value_type& order : m_orders)
+        order.second->Execute();
 }
 
 bool OrderSet::RescindOrder(int order) {
