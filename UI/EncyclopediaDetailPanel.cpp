@@ -206,12 +206,12 @@ namespace {
                                              tech_name.second}});
             }
 
-            } else if (dir_name == "ENC_BUILDING_TYPE") {
-                for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
-                    sorted_entries_list.insert({UserString(entry.first),
-                                                {LinkTaggedText(VarText::BUILDING_TYPE_TAG, entry.first) + "\n",
-                                                 entry.first}});
-                }
+        } else if (dir_name == "ENC_BUILDING_TYPE") {
+            for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
+                sorted_entries_list.insert({UserString(entry.first),
+                                            {LinkTaggedText(VarText::BUILDING_TYPE_TAG, entry.first) + "\n",
+                                             entry.first}});
+            }
 
         } else if (dir_name == "ENC_SPECIAL") {
             for (const std::string& special_name : SpecialNames()) {
