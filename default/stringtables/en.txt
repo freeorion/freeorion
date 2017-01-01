@@ -3600,7 +3600,7 @@ PRODUCTION_QUEUE_REPETITIONS
 # %3% production points used per turn.
 # %4% production points available per turn.
 PRODUCTION_WND_PROGRESS
-'''%1% / %2% PP
+'''%1%%% complete
 + %3% / %4% target PP/turn'''
 
 # %1% location where the item is produced.

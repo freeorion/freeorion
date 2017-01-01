@@ -296,7 +296,7 @@ namespace {
 
         // %1% / %2%  +  %3% / %4% PP/turn
         main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_PROGRESS"))
-                        % DoubleToString(progress, 3, false)
+                        % DoubleToString(progress*100.0f, 3, false)
                         % DoubleToString(total_cost, 3, false)
                         % DoubleToString(allocation, 3, false)
                         % DoubleToString(max_allocation, 3, false)) + "\n";
