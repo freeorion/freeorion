@@ -78,12 +78,9 @@ std::map<std::string, std::string> DependencyVersions() {
 }
 
 void LogDependencyVersions() {
-    std::map<std::string, std::string> vers = DependencyVersions();
     InfoLogger() << "Dependency versions from headers:";
-    for (std::map<std::string, std::string>::const_iterator it = vers.begin();
-         it != vers.end(); ++it)
-    {
-        if (!it->second.empty())
-            InfoLogger() << it->first << ": " << it->second;
+    for (const std::map<std::string, std::string>::value_type& version : DependencyVersions()) {
+        if (!version.second.empty())
+            InfoLogger() << version.first << ": " << version.second;
     }
 }
