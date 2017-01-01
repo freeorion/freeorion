@@ -91,8 +91,8 @@ namespace {
     // Wrapper for getting empire objects
     list GetAllEmpires() {
         list empire_list;
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it)
-            empire_list.append(it->second->EmpireID());
+        for (const std::map<int, Empire*>::value_type& entry : Empires())
+            empire_list.append(entry.second->EmpireID());
         return empire_list;
     }
 
@@ -113,8 +113,8 @@ namespace {
         }
 
         if (empire_id == ALL_EMPIRES) {
-            for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-                it->second->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));
+            for (const std::map<int, Empire*>::value_type& entry : Empires()) {
+                entry.second->AddSitRepEntry(CreateSitRep(template_string, sitrep_turn, icon, params));
             }
         } else {
             Empire* empire = GetEmpire(empire_id);
@@ -179,9 +179,8 @@ namespace {
 
     list GetAllSpecies() {
         list            species_list;
-        SpeciesManager& species_manager = GetSpeciesManager();
-        for (SpeciesManager::iterator it = species_manager.begin(); it != species_manager.end(); ++it) {
-            species_list.append(object(it->first));
+        for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+            species_list.append(object(entry.first));
         }
         return species_list;
     }
@@ -256,9 +255,8 @@ namespace {
 
     list GetAllSpecials() {
         list py_specials;
-        const std::vector<std::string> special_names = SpecialNames();
-        for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it) {
-            py_specials.append(object(*it));
+        for (const std::string& special_name : SpecialNames()) {
+            py_specials.append(object(special_name));
         }
         return py_specials;
     }
@@ -317,8 +315,8 @@ namespace {
         list py_items;
         std::vector<ItemSpec> items;
         parse::items(items);
-        for (unsigned int i = 0; i < items.size(); i++) {
-            py_items.append(object(items[i]));
+        for (const ItemSpec& item : items) {
+            py_items.append(object(item));
         }
         return py_items;
     }
@@ -371,9 +369,8 @@ namespace {
 
     list ShipDesignGetPremadeList() {
         list py_ship_designs;
-        const PredefinedShipDesignManager& manager = GetPredefinedShipDesignManager();
-        for (PredefinedShipDesignManager::iterator it = manager.begin(); it != manager.end(); ++it) {
-            py_ship_designs.append(object(it->first));
+        for (const std::map<std::string, ShipDesign*>::value_type& entry : GetPredefinedShipDesignManager()) {
+            py_ship_designs.append(object(entry.first));
         }
         return list(py_ship_designs);
     }
@@ -413,9 +410,8 @@ namespace {
 
         list ShipDesigns() {
             list py_designs;
-            const std::vector<std::string>& designs = m_fleet_plan->ShipDesigns();
-            for (unsigned int i = 0; i < designs.size(); i++) {
-                py_designs.append(object(designs[i]));
+            for (const std::string& design_name : m_fleet_plan->ShipDesigns()) {
+                py_designs.append(object(design_name));
             }
             return list(py_designs);
         }
@@ -431,8 +427,8 @@ namespace {
         list py_fleet_plans;
         std::vector<FleetPlan*> fleet_plans;
         parse::fleet_plans(fleet_plans);
-        for (unsigned int i = 0; i < fleet_plans.size(); i++) {
-            py_fleet_plans.append(new FleetPlanWrapper(fleet_plans[i]));
+        for (FleetPlan* fleet_plan : fleet_plans) {
+            py_fleet_plans.append(new FleetPlanWrapper(fleet_plan));
         }
         return list(py_fleet_plans);
     }
@@ -467,9 +463,8 @@ namespace {
 
         list ShipDesigns() {
             list py_designs;
-            const std::vector<std::string>& designs = m_monster_fleet_plan->ShipDesigns();
-            for (unsigned int i = 0; i < designs.size(); i++) {
-                py_designs.append(object(designs[i]));
+            for (const std::string& design_name : m_monster_fleet_plan->ShipDesigns()) {
+                py_designs.append(object(design_name));
             }
             return list(py_designs);
         }
@@ -505,8 +500,8 @@ namespace {
         list py_monster_fleet_plans;
         std::vector<MonsterFleetPlan*> monster_fleet_plans;
         parse::monster_fleet_plans(monster_fleet_plans);
-        for (unsigned int i = 0; i < monster_fleet_plans.size(); i++) {
-            py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(monster_fleet_plans[i]));
+        for (MonsterFleetPlan* fleet_plan : monster_fleet_plans) {
+            py_monster_fleet_plans.append(new MonsterFleetPlanWrapper(fleet_plan));
         }
         return list(py_monster_fleet_plans);
     }
@@ -621,18 +616,16 @@ namespace {
 
     list GetAllObjects() {
         list py_all_objects;
-        std::vector<int> all_objects = Objects().FindObjectIDs();
-        for (std::vector<int>::iterator it = all_objects.begin(); it != all_objects.end(); ++it) {
-            py_all_objects.append(*it);
+        for (int object_id : Objects().FindObjectIDs()) {
+            py_all_objects.append(object_id);
         }
         return py_all_objects;
     }
 
     list GetSystems() {
         list py_systems;
-        std::vector<int> systems = Objects().FindObjectIDs<System>();
-        for (std::vector<int>::iterator it = systems.begin(); it != systems.end(); ++it) {
-            py_systems.append(*it);
+        for (int system_id : Objects().FindObjectIDs<System>()) {
+            py_systems.append(system_id);
         }
         return py_systems;
     }
@@ -955,10 +948,8 @@ namespace {
             ErrorLogger() << "SystemFreeOrbits : Couldn't get system with ID " << system_id;
             return py_orbits;
         }
-        const std::set<int>& orbits = system->FreeOrbits();
-        for (std::set<int>::const_iterator it = orbits.begin();
-             it != orbits.end(); ++it)
-        { py_orbits.append(*it); }
+        for (int orbit_idx : system->FreeOrbits())
+        { py_orbits.append(orbit_idx); }
         return py_orbits;
     }
 
@@ -987,10 +978,8 @@ namespace {
             ErrorLogger() << "SystemGetPlanets : Couldn't get system with ID " << system_id;
             return py_planets;
         }
-        const std::set<int>& planets = system->PlanetIDs();
-        for (std::set<int>::const_iterator it = planets.begin();
-             it != planets.end(); ++it)
-        { py_planets.append(*it); }
+        for (int planet_id : system->PlanetIDs())
+        { py_planets.append(planet_id); }
         return py_planets;
     }
 
@@ -1001,10 +990,8 @@ namespace {
             ErrorLogger() << "SystemGetFleets : Couldn't get system with ID " << system_id;
             return py_fleets;
         }
-        const std::set<int>& fleets = system->FleetIDs();
-        for (std::set<int>::const_iterator it = fleets.begin();
-             it != fleets.end(); ++it)
-        { py_fleets.append(*it); }
+        for (int fleet_id : system->FleetIDs())
+        { py_fleets.append(fleet_id); }
         return py_fleets;
     }
 
@@ -1018,14 +1005,12 @@ namespace {
         }
         // get list of systems the source system has starlanes to
         // we actually get a map of ids and a bool indicating if the entry is a starlane (false) or wormhole (true)
-        const std::map<int, bool>& starlanes = system->StarlanesWormholes();
         // iterate over the map we got, only copy starlanes to the python list object we are going to return
-        for (std::map<int, bool>::const_iterator it = starlanes.begin();
-             it != starlanes.end(); ++it) {
+        for (const std::map<int, bool>::value_type& lane : system->StarlanesWormholes()) {
             // if the bool value is false, we have a starlane
             // in this case copy the destination system id to our starlane list
-            if (!(it->second)) {
-                py_starlanes.append(it->first);
+            if (!(lane.second)) {
+                py_starlanes.append(lane.first);
             }
         }
         return py_starlanes;
@@ -1161,9 +1146,8 @@ namespace {
             ErrorLogger() << "PlanetAvailableFoci: Couldn't get planet with ID " << planet_id;
             return py_foci;
         }
-        std::vector<std::string> foci = planet->AvailableFoci();
-        for (unsigned int i = 0; i < foci.size(); i++) {
-            py_foci.append(object(foci[i]));
+        for (const std::string& focus : planet->AvailableFoci()) {
+            py_foci.append(object(focus));
         }
         return py_foci;
     }
