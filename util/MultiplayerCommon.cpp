@@ -212,21 +212,19 @@ bool operator!=(const PlayerSetupData& lhs, const PlayerSetupData& rhs)
 /////////////////////////////////////////////////////
 std::string MultiplayerLobbyData::Dump() const {
     std::stringstream stream;
-    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_players.begin();
-         it != m_players.end(); ++it)
-    {
-        stream << it->first << ": " << (it->second.m_player_name.empty() ? "NO NAME" : it->second.m_player_name) << "  ";
-        if (it->second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+    for (const std::pair<int, PlayerSetupData>& psd : m_players) {
+        stream << psd.first << ": " << (psd.second.m_player_name.empty() ? "NO NAME" : psd.second.m_player_name) << "  ";
+        if (psd.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             stream << "AI PLAYER";
-        else if (it->second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+        else if (psd.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
             stream << "HUMAN PLAYER";
-        else if (it->second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+        else if (psd.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
             stream << "HUMAN OBSERVER";
-        else if (it->second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        else if (psd.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
             stream << "HUMAN MODERATOR";
         else
             stream << "UNKNOWN CLIENT TPYE";
-        stream << "  " << (it->second.m_empire_name.empty() ? "NO EMPIRE NAME" : it->second.m_empire_name) << std::endl;
+        stream << "  " << (psd.second.m_empire_name.empty() ? "NO EMPIRE NAME" : psd.second.m_empire_name) << std::endl;
     }
     return stream.str();
 }
