@@ -145,18 +145,14 @@ public:
 
         // Find the longest name to right align the times.
         size_t longest_section_name(0);
-        for (std::vector<std::string>::const_iterator it = m_sections->m_section_names.begin();
-             it != m_sections->m_section_names.end(); ++it)
-        {
-            longest_section_name = std::max(longest_section_name, it->size());
+        for (const std::string& section_name : m_sections->m_section_names) {
+            longest_section_name = std::max(longest_section_name, section_name.size());
         }
 
-        for (std::vector<std::string>::const_iterator it = m_sections->m_section_names.begin();
-             it != m_sections->m_section_names.end(); ++it)
-       {
-            Sections::SectionTable::const_iterator jt = m_sections->m_table.find(*it);
+        for (const std::string& section_name : m_sections->m_section_names) {
+            Sections::SectionTable::const_iterator jt = m_sections->m_table.find(section_name);
             if (jt == m_sections->m_table.end()) {
-                ErrorLogger() << "Missing section " << *it << " in section table.";
+                ErrorLogger() << "Missing section " << section_name << " in section table.";
                 continue;
             }
 
@@ -167,7 +163,7 @@ public:
             std::stringstream header, tail;
             FormatDuration(tail, jt->second);
             header << m_name << " - "
-                   << std::setw(longest_section_name) << std::left << *it
+                   << std::setw(longest_section_name) << std::left << section_name
                    << std::right << " time: "
                    << tail.str();
             DebugLogger() << header.str();
