@@ -300,6 +300,7 @@ namespace {
                 if (meter_type > INVALID_METER_TYPE && meter_type < NUM_METER_TYPES)
                     MeterTypeDirEntry(meter_type, sorted_entries_list);
             }
+
         } else if (dir_name == "ENC_EMPIRE") {
             for (std::map<int, Empire*>::value_type& entry : Empires()) {
                 sorted_entries_list.insert({UserString(entry.second->Name()),
@@ -404,16 +405,18 @@ namespace {
             // TODO: show all stringable keys and values
             //for (auto str : GetStringTable().
 
-        } else {
-            // list categories
-            std::map<std::string, std::vector<EncyclopediaArticle> >::const_iterator category_it =
-                encyclopedia.articles.find(dir_name);
-            if (category_it != encyclopedia.articles.end()) {
-                for (const EncyclopediaArticle& article : category_it->second) {
-                    sorted_entries_list.insert({UserString(article.name),
-                                                {LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article.name) + "\n",
-                                                 article.name}});
-                }
+        }
+
+        // Add any defined entries for this directory
+        std::map<std::string, std::vector<EncyclopediaArticle>>::const_iterator category_it =
+            encyclopedia.articles.find(dir_name);
+        if (category_it != encyclopedia.articles.end()) {
+            for (const EncyclopediaArticle& article : category_it->second) {
+                // Prevent duplicate addition of hard-coded directories that also have a content definition
+                if (article.name == dir_name)
+                    continue;
+                sorted_entries_list.insert({UserString(article.name),
+                    {LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, article.name) + "\n", article.name}});
             }
         }
     }
