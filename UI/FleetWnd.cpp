@@ -542,9 +542,11 @@ void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
 
 bool FleetUIManager::CloseAll() {
     bool retval = !m_fleet_wnds.empty();
+
+    // closing a fleet window removes it from m_fleet_wnds
     std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
 
-    for (FleetWnd* wnd : m_fleet_wnds)
+    for (FleetWnd* wnd : vec)
         wnd->CloseClicked();
 
     m_active_fleet_wnd = 0;
