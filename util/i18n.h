@@ -77,8 +77,8 @@ FO_COMMON_API boost::format FlexibleFormatList(
 
     boost::format header_fmt = FlexibleFormat(header_template) % boost::lexical_cast<std::string>(words.size());
 
-    for (typename HeaderContainer::const_iterator it = header_words.begin(); it != header_words.end(); ++it) {
-        header_fmt % *it;
+    for (const typename HeaderContainer::value_type& word : header_words) {
+        header_fmt % word;
     }
 
     std::string template_str;
@@ -124,8 +124,8 @@ FO_COMMON_API boost::format FlexibleFormatList(
 
     boost::format fmt = FlexibleFormat(template_str) % header_fmt.str();
 
-    for (typename ListContainer::const_iterator it = words.begin(); it != words.end(); ++it) {
-        fmt % *it;
+    for (const typename ListContainer::value_type& word : words) {
+        fmt % word;
     }
 
     return fmt;
