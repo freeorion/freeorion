@@ -45,8 +45,8 @@ const std::string& SitRepEntry::GetDataString(const std::string& tag) const {
 
 std::string SitRepEntry::Dump() const {
     std::string retval = "SitRep template_string = \"" + m_template_string + "\"";
-    for (std::map<std::string, std::string>::const_iterator it = m_variables.begin(); it != m_variables.end(); ++it)
-        retval += " " + it->first + " = " + it->second;
+    for (const std::map<std::string, std::string>::value_type& variable : m_variables)
+        retval += " " + variable.first + " = " + variable.second;
     retval += " turn = " + boost::lexical_cast<std::string>(m_turn);
     retval += " icon = " + m_icon;
     retval += " label = " + m_label;
@@ -372,11 +372,8 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
 
     //bool system_contains_recipient_empire_planets = false;
     //if (const System* system = GetSystem(system_id)) {
-    //    std::vector<int> system_planets = system->FindObjectIDs<Planet>();
-    //    for (std::vector<int>::const_iterator planet_it = system_planets.begin();
-    //         planet_it != system_planets.end(); ++planet_it)
-    //    {
-    //        const Planet* planet = GetPlanet(*planet_it);
+    //    for (int planet_id : system->FindObjectIDs<Planet>()) {
+    //        const Planet* planet = GetPlanet(planet_id);
     //        if (!planet || planet->Unowned())
     //            continue;
     //        if (planet->OwnedBy(recipient_empire_id)) {
@@ -512,8 +509,7 @@ SitRepEntry CreateSitRep(const std::string& template_string, int turn, const std
                          const std::string label, bool stringtable_lookup)
 {
     SitRepEntry sitrep(template_string, turn, icon, label, stringtable_lookup);
-    for (std::vector<std::pair<std::string, std::string> >::const_iterator it = parameters.begin();
-         it != parameters.end(); ++it)
-    { sitrep.AddVariable(it->first, it->second); }
+    for (const std::pair<std::string, std::string>& parameter : parameters)
+    { sitrep.AddVariable(parameter.first, parameter.second); }
     return sitrep;
 }
