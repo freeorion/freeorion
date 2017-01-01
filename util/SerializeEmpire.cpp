@@ -69,7 +69,8 @@ void ProductionQueue::Element::serialize(Archive& ar, const unsigned int version
         & BOOST_SERIALIZATION_NVP(turns_left_to_next_item)
         & BOOST_SERIALIZATION_NVP(turns_left_to_completion)
         & BOOST_SERIALIZATION_NVP(rally_point_id)
-        & BOOST_SERIALIZATION_NVP(paused);
+        & BOOST_SERIALIZATION_NVP(paused)
+        & BOOST_SERIALIZATION_NVP(allowed_imperial_stockpile_use);
 }
 
 template void ProductionQueue::Element::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
