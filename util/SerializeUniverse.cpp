@@ -123,21 +123,18 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         DebugLogger() << "Universe::serialize : Cleaning up temporary data";
         // clean up temporary objects in temporary ObjectMaps
         objects.Clear();
-        for (EmpireObjectMap::iterator it = empire_latest_known_objects.begin();
-             it != empire_latest_known_objects.end(); ++it)
-        { it->second.Clear(); }
+        for (std::map<int, ObjectMap>::value_type& elko : empire_latest_known_objects)
+        { elko.second.Clear(); }
     }
 
     if (Archive::is_loading::value) {
         DebugLogger() << "Universe::serialize : updating empires' latest known object destruction states";
         // update known destroyed objects state in each empire's latest known objects
-        for (EmpireObjectMap::iterator it = m_empire_latest_known_objects.begin();
-             it != m_empire_latest_known_objects.end(); ++it)
-        {
+        for (std::map<int, ObjectMap>::value_type& elko : m_empire_latest_known_objects) {
             std::map< int, std::set< int > >::iterator destroyed_ids_it =
-                m_empire_known_destroyed_object_ids.find(it->first);
+                m_empire_known_destroyed_object_ids.find(elko.first);
             if (destroyed_ids_it != m_empire_known_destroyed_object_ids.end())
-                it->second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
+                elko.second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
         }
     }
     DebugLogger() << "Universe::serialize done";
