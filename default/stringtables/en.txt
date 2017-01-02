@@ -8876,7 +8876,52 @@ ROBOTIC_HULL_TECHS_DESC
 Technologies related to the Robotic line of ship hulls.
 
 SHIP_PARTS_CATEGORY
-Engineering
+Ship Engineering
+
+SHIP_PARTS_CATEGORY_DESC
+Technologies related to ship engineering.
+
+SHIELD_PART_TECHS
+Shields
+
+SHIELD_PART_TECHS_DESC
+Technologies related to ship shield parts.
+
+ENGINE_PART_TECHS
+Engines
+
+ENGINE_PART_TECHS_DESC
+Technologies related to ship engine parts.
+
+FUEL_PART_TECHS
+Fuel
+
+FUEL_PART_TECHS_DESC
+Technologies related to ship fuel parts.
+
+ARMOR_PART_TECHS
+Armor
+
+ARMOR_PART_TECHS_DESC
+Technologies related to ship armor parts.
+
+STEALTH_PART_TECHS
+Stealth
+
+STEALTH_PART_TECHS_DESC
+Technologies related to ship stealth parts.
+
+DETECTION_PART_TECHS
+Detection
+
+DETECTION_PART_TECHS_DESC
+Technologies related to ship detection parts.
+
+DAMAGE_CONTROL_PART_TECHS
+Damage Control
+
+DAMAGE_CONTROL_PART_TECHS_DESC
+Technologies related to ship damage control.
 
 SHIP_WEAPONS_CATEGORY
 Ship Weapons

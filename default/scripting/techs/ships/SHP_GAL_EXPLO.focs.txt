@@ -5,7 +5,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 1
-    tags = "THEORY"
+    tags = [ "PEDIA_SHIP_PARTS_CATEGORY" "THEORY" ]
     effectsgroups = [
         EffectsGroup
             scope = And [
