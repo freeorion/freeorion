@@ -1,0 +1,6 @@
+Article
+    name = "SPY_CATEGORY"
+    category = "ENC_TECH"
+    short_description = "SPY_CATEGORY"
+    description = "SPY_CATEGORY_DESC"
+    icon = "icons/tech/categories/spy.png"

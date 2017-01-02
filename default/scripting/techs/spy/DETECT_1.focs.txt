@@ -6,6 +6,7 @@ Tech
     researchcost = 1
     researchturns = 1
     Unresearchable
+    tags = [ "PEDIA_SPY_CATEGORY" ]
     effectsgroups = [
         EffectsGroup
             scope = And [
@@ -30,5 +31,3 @@ Tech
             ]
             effects = SetEmpireMeter empire = Source.Owner meter = "METER_DETECTION_STRENGTH" value = Value + 10
     ]
-
-

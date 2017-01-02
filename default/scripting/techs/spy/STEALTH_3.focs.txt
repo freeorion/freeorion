@@ -5,6 +5,7 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]] - (250 * [[TECH_COST_MULTIPLIER]] * If condition = OwnerHasTech name = "SPY_STEALTH_PART_3" )
     researchturns = 7
+    tags = [ "PEDIA_SPY_CATEGORY" ]
     prerequisites = "SPY_STEALTH_2"
     effectsgroups =
         EffectsGroup
