@@ -8839,6 +8839,9 @@ Learning
 PRODUCTION_CATEGORY
 Production
 
+PRODUCTION_CATEGORY_DESC
+Technologies related to production.
+
 CONSTRUCTION_CATEGORY
 Construction
 
