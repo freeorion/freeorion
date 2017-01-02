@@ -1,0 +1,6 @@
+Article
+    name = "ENGINE_PART_TECHS"
+    category = "SHIP_PARTS_CATEGORY"
+    short_description = "ENGINE_PART_TECHS"
+    description = "ENGINE_PART_TECHS_DESC"
+    icon = "icons/ship_parts/engine-1.png"

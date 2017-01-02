@@ -5,10 +5,11 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 24 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_ENGINE_PART_TECHS" ]
     prerequisites = "SHP_GAL_EXPLO"
     unlock = Item type = ShipPart name = "FU_IMPROVED_ENGINE_COUPLINGS"
     graphic = "icons/ship_parts/engine-1.png"
-    
+
 Tech
     name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX"
     description = "SHP_N_DIMENSIONAL_ENGINE_MATRIX_DESC"
@@ -16,13 +17,14 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_ENGINE_PART_TECHS" ]
     prerequisites = [
         "SHP_IMPROVED_ENGINE_COUPLINGS"
         "LRN_NDIM_SUBSPACE"
     ]
     unlock = Item type = ShipPart name = "FU_N_DIMENSIONAL_ENGINE_MATRIX"
     graphic = "icons/ship_parts/engine-2.png"
-    
+
 Tech
     name = "SHP_SINGULARITY_ENGINE_CORE"
     description = "SHP_SINGULARITY_ENGINE_CORE_DESC"
@@ -30,13 +32,14 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
+    tags = [ "PEDIA_ENGINE_PART_TECHS" ]
     prerequisites = [
         "SHP_N_DIMENSIONAL_ENGINE_MATRIX"
         "PRO_SINGULAR_GEN"
     ]
     unlock = Item type = ShipPart name = "FU_SINGULARITY_ENGINE_CORE"
     graphic = "icons/ship_parts/engine-3.png"
-    
+
 Tech
     name = "SHP_DEUTERIUM_TANK"
     description = "SHP_DEUTERIUM_TANK_DESC"
@@ -44,6 +47,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 24 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_FUEL_PART_TECHS" ]
     prerequisites = [
         "SHP_GAL_EXPLO"
         "PRO_FUSION_GEN"
@@ -61,6 +65,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 175 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_FUEL_PART_TECHS" ]
     prerequisites = [
         "SHP_DEUTERIUM_TANK"
         "LRN_FORCE_FIELD"
@@ -75,6 +80,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 175 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_FUEL_PART_TECHS" ]
     prerequisites = [
         "SHP_ANTIMATTER_TANK"
         "PRO_ZERO_GEN"

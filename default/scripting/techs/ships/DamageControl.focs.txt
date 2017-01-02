@@ -5,6 +5,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 36 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
     prerequisites = "CON_ARCH_MONOFILS"
     effectsgroups =
         EffectsGroup
@@ -22,6 +23,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 40 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
     prerequisites = "SHP_MIL_ROBO_CONT"
     effectsgroups =
         EffectsGroup
@@ -46,6 +48,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
+    tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
     prerequisites = [
         "SHP_INTSTEL_LOG"
         "SHP_BASIC_DAM_CONT"
@@ -70,6 +73,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_DAMAGE_CONTROL_PART_TECHS" ]
     prerequisites = [
         "SHP_FLEET_REPAIR"
         "CON_GAL_INFRA"

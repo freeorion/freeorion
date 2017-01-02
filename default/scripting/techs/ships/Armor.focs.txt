@@ -5,6 +5,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 1
     researchturns = 1
+    tags = [ "PEDIA_ARMOR_PART_TECHS" ]
     unlock = Item type = ShipPart name = "AR_STD_PLATE"
     graphic = "icons/tech/armor_plating.png"
 
@@ -15,6 +16,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_ARMOR_PART_TECHS" ]
     prerequisites = "SHP_ROOT_ARMOR"
     unlock = Item type = ShipPart name = "AR_ZORTRIUM_PLATE"
     graphic = "icons/tech/armor_plating.png"
@@ -26,6 +28,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = [ "PEDIA_ARMOR_PART_TECHS" ]
     prerequisites = "SHP_ZORTRIUM_PLATE"
     unlock = Item type = ShipPart name = "AR_DIAMOND_PLATE"
     graphic = "icons/tech/armor_plating.png"
@@ -37,6 +40,7 @@ Tech
     category = "SHIP_PARTS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
+    tags = [ "PEDIA_ARMOR_PART_TECHS" ]
     prerequisites = "SHP_DIAMOND_PLATE"
     unlock = Item type = ShipPart name = "AR_XENTRONIUM_PLATE"
     graphic = "icons/tech/armor_plating.png"
