@@ -8953,6 +8953,8 @@ Defense
 SPY_CATEGORY
 Intelligence
 
+SPY_CATEGORY_DESC
+Technologies related to intelligence.
 
 ##
 ## Technology theories
