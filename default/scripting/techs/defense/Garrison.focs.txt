@@ -5,6 +5,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 5 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_ROOT_DEFENSE"
     effectsgroups = [
         EffectsGroup
@@ -17,7 +18,7 @@ Tech
             effects = SetMaxTroops value = Value + 10 accountinglabel = "DEF_GARRISON_1"
     ]
     graphic = "icons/tech/troops.png"
-    
+
 Tech
     name = "DEF_GARRISON_2"
     description = "DEF_GARRISON_2_DESC"
@@ -25,6 +26,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 15 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_GARRISON_1"
     effectsgroups = [
         EffectsGroup
@@ -54,6 +56,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_GARRISON_2"
     effectsgroups = [
         EffectsGroup
@@ -82,6 +85,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 9
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_GARRISON_3"
     effectsgroups = [
         EffectsGroup

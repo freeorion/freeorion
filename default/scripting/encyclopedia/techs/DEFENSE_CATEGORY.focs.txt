@@ -1,0 +1,6 @@
+Article
+    name = "DEFENSE_CATEGORY"
+    category = "ENC_TECH"
+    short_description = "DEFENSE_CATEGORY"
+    description = "DEFENSE_CATEGORY_DESC"
+    icon = "icons/tech/categories/defense.png"

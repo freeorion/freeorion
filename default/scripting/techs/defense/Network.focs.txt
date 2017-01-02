@@ -5,6 +5,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 16 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_ROOT_DEFENSE"
     effectsgroups = [
         [[EG_DEFENSE_NET(5,1)]]
@@ -18,6 +19,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_DEFENSE_NET_1"
     effectsgroups = [
         [[EG_DEFENSE_NET(15,2)]]
@@ -31,6 +33,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 160 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_DEFENSE_NET_2"
     effectsgroups = [
         [[EG_DEFENSE_NET(25,3)]]
@@ -44,6 +47,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 60 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_DEFENSE_NET_2"
     effectsgroups =
         EffectsGroup
@@ -61,6 +65,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 160 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_DEFENSE_NET_REGEN_1"
     effectsgroups =
         EffectsGroup
