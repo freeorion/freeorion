@@ -8848,6 +8848,9 @@ Technologies related to production.
 CONSTRUCTION_CATEGORY
 Construction
 
+CONSTRUCTION_CATEGORY_DESC
+Technologies related to construction.
+
 GROWTH_CATEGORY
 Growth
 
