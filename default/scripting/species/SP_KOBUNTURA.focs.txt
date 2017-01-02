@@ -30,6 +30,7 @@ Species
         // not for description
         [[NATIVE_PLANETARY_DEFENSE]]
         [[NATIVE_PLANETARY_SHIELDS]]
+        [[STANDARD_SHIP_SHIELDS]]
     ]
 
     [[BARREN_STANDARD_EP]]

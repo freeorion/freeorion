@@ -133,6 +133,9 @@ Paused
 RESUME
 Resume
 
+DIFFICULTY
+Difficulty
+
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
 NEW_FLEET_NAME

@@ -28,6 +28,7 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[STANDARD_SHIP_SHIELDS]]
 
         // Start the game with Volcanic Ash stealth special
         EffectsGroup

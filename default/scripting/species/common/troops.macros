@@ -25,6 +25,17 @@ EffectsGroup
             stackinggroup = "POPULATION_TROOPS_STACK"
             priority = [[VERY_EARLY_PRIORITY]]
             effects = SetMaxTroops Value = Value + Target.Population * [[TROOPS_PER_POP]] accountinglabel = "DEF_ROOT_DEFENSE"
+            
+EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
+            scope = Source
+            activation = And [
+                Human     // human player, not human species
+                (GalaxyMaxAIAggression = 0)
+                Planet
+            ]
+            accountinglabel = "DIFFICULTY"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxTroops value = max(6, Value * 2)
 '''
 
 AFTER_SPECIES_MULTIPLICATOR_TROOPS

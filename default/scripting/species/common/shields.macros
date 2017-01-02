@@ -1,0 +1,24 @@
+STANDARD_SHIP_SHIELDS
+'''EffectsGroup      // gives human bonuses when AI Aggression set to Beginner
+            scope = Source
+            activation = And [
+                Human     // human player, not human species
+                (GalaxyMaxAIAggression = 0)
+                Ship
+            ]
+            accountinglabel = "DIFFICULTY"
+            priority = [[DEFAULT_PRIORITY]]
+            effects = SetMaxShield value = Value + 1
+'''
+
+GOOD_SHIP_SHIELDS
+'''[[STANDARD_SHIP_SHIELDS]]
+
+EffectsGroup
+            description = "GOOD_SHIP_SHIELD_DESC"
+            scope = And [
+                Source
+                Ship
+            ]
+            effects = SetMaxShield value = Value + 1
+'''

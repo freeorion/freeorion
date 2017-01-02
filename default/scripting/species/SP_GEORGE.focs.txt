@@ -31,6 +31,7 @@ Species
         [[AVERAGE_PLANETARY_DEFENSE]]
         [[LARGE_PLANET]]
         [[BROAD_EP]]
+        [[STANDARD_SHIP_SHIELDS]]
 
         [[COMMUNAL_VISION(SP_GEORGE)]]
     ]
