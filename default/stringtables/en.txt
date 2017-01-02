@@ -8851,6 +8851,33 @@ Growth
 SHIP_HULLS_CATEGORY
 Ship Hulls
 
+SHIP_HULLS_CATEGORY_DESC
+Technologies related to Ship Hulls
+
+ASTEROID_HULL_TECHS
+Asteroid Line
+
+ASTEROID_HULL_TECHS_DESC
+Technologies related to the Asteroid line of ship hulls.
+
+ENERGY_HULL_TECHS
+Energy Line
+
+ENERGY_HULL_TECHS_DESC
+Technologies related to the Energy line of ship hulls.
+
+ORGANIC_HULL_TECHS
+Organic Line
+
+ORGANIC_HULL_TECHS_DESC
+Technologies related to the Organic line of ship hulls.
+
+ROBOTIC_HULL_TECHS
+Robotic Line
+
+ROBOTIC_HULL_TECHS_DESC
+Technologies related to the Robotic line of ship hulls.
+
 SHIP_PARTS_CATEGORY
 Engineering
 
