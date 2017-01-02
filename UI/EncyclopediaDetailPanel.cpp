@@ -71,9 +71,23 @@ namespace {
     const std::string TAG_ALWAYS_REPORT = "CTRL_ALWAYS_REPORT";
     /** @content_tag{CTRL_EXTINCT} Added to both a species and their colony building.  Handles display in planet suitability report. **/
     const std::string TAG_EXTINCT = "CTRL_EXTINCT";
+    /** @content_tag{PEDIA_} Prefix to define a category for the article of the containing content definition. **/
+    const std::string TAG_PEDIA_PREFIX = "PEDIA_";
 }
 
 namespace {
+    /** Checks content tags for pedia category, returns category of first match */
+    std::string TaggedCategory(const std::set<std::string>& tags) {
+        if (tags.empty())
+            return EMPTY_STRING;
+
+        for (const std::string& tag : tags)
+            if (boost::starts_with(tag, TAG_PEDIA_PREFIX))
+                return boost::replace_first_copy(tag, TAG_PEDIA_PREFIX, EMPTY_STRING);
+
+        return EMPTY_STRING;
+    }
+
     /** Retreive a value label and general string representation for @a meter_type */
     std::pair<std::string, std::string> MeterValueLabelAndString(const MeterType& meter_type) {
         std::pair<std::string, std::string> retval;
@@ -182,16 +196,22 @@ namespace {
 
         } else if (dir_name == "ENC_SHIP_PART") {
             for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager()) {
-                sorted_entries_list.insert({UserString(entry.first),
-                                            {LinkTaggedText(VarText::SHIP_PART_TAG, entry.first) + "\n",
-                                             entry.first}});
+                std::string custom_category = TaggedCategory(entry.second->Tags());
+                if (custom_category.empty()) {
+                    sorted_entries_list.insert({UserString(entry.first),
+                                                {LinkTaggedText(VarText::SHIP_PART_TAG, entry.first) + "\n",
+                                                 entry.first}});
+                }
             }
 
         } else if (dir_name == "ENC_SHIP_HULL") {
             for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager()) {
-                sorted_entries_list.insert({UserString(entry.first),
-                                            {LinkTaggedText(VarText::SHIP_HULL_TAG, entry.first) + "\n",
-                                             entry.first}});
+                std::string custom_category = TaggedCategory(entry.second->Tags());
+                if (custom_category.empty()) {
+                    sorted_entries_list.insert({UserString(entry.first),
+                                                {LinkTaggedText(VarText::SHIP_HULL_TAG, entry.first) + "\n",
+                                                 entry.first}});
+                }
             }
 
         } else if (dir_name == "ENC_TECH") {
@@ -201,16 +221,23 @@ namespace {
                 userstring_tech_names[UserString(tech_name)] = tech_name;
             }
             for (std::map<std::string, std::string>::value_type& tech_name : userstring_tech_names) {
-                sorted_entries_list.insert({tech_name.first,    // already iterating over userstring-looked-up names, so don't need to re-look-up-here
-                                            {LinkTaggedText(VarText::TECH_TAG, tech_name.second) + "\n",
-                                             tech_name.second}});
+                std::string custom_category = TaggedCategory(GetTech(tech_name.second)->Tags());
+                if (custom_category.empty()) {
+                    // already iterating over userstring-looked-up names, so don't need to re-look-up-here
+                    sorted_entries_list.insert({tech_name.first,
+                                                {LinkTaggedText(VarText::TECH_TAG, tech_name.second) + "\n",
+                                                 tech_name.second}});
+                }
             }
 
         } else if (dir_name == "ENC_BUILDING_TYPE") {
             for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
-                sorted_entries_list.insert({UserString(entry.first),
-                                            {LinkTaggedText(VarText::BUILDING_TYPE_TAG, entry.first) + "\n",
-                                             entry.first}});
+                std::string custom_category = TaggedCategory(entry.second->Tags());
+                if (custom_category.empty()) {
+                    sorted_entries_list.insert({UserString(entry.first),
+                                                {LinkTaggedText(VarText::BUILDING_TYPE_TAG, entry.first) + "\n",
+                                                 entry.first}});
+                }
             }
 
         } else if (dir_name == "ENC_SPECIAL") {
@@ -222,9 +249,12 @@ namespace {
 
         } else if (dir_name == "ENC_SPECIES") {
             for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
-                sorted_entries_list.insert({UserString(entry.first),
-                                            {LinkTaggedText(VarText::SPECIES_TAG, entry.first) + "\n",
-                                             entry.first}});
+                std::string custom_category = TaggedCategory(entry.second->Tags());
+                if (custom_category.empty()) {
+                    sorted_entries_list.insert({UserString(entry.first),
+                                                {LinkTaggedText(VarText::SPECIES_TAG, entry.first) + "\n",
+                                                 entry.first}});
+                }
             }
 
         } else if (dir_name == "ENC_HOMEWORLDS") {
@@ -287,9 +317,12 @@ namespace {
 
         } else if (dir_name == "ENC_FIELD_TYPE") {
             for (const std::map<std::string, FieldType*>::value_type& entry : GetFieldTypeManager()) {
-                sorted_entries_list.insert({UserString(entry.first),
-                                            {LinkTaggedText(VarText::FIELD_TYPE_TAG, entry.first) + "\n",
-                                             entry.first}});
+                std::string custom_category = TaggedCategory(entry.second->Tags());
+                if (custom_category.empty()) {
+                    sorted_entries_list.insert({UserString(entry.first),
+                                                {LinkTaggedText(VarText::FIELD_TYPE_TAG, entry.first) + "\n",
+                                                 entry.first}});
+                }
             }
 
         } else if (dir_name == "ENC_METER_TYPE") {
@@ -404,6 +437,47 @@ namespace {
         } else if (dir_name == "ENC_STRINGS") {
             // TODO: show all stringable keys and values
             //for (auto str : GetStringTable().
+
+        } else {
+            // Add articles for content tagged definitions
+            std::map<std::string, std::pair<std::string, std::string>> dir_entries;
+
+            // part types
+            for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager())
+                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                    dir_entries[UserString(entry.first)] = {VarText::SHIP_PART_TAG, entry.first};
+
+            // hull types
+            for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager())
+                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                    dir_entries[UserString(entry.first)] = {VarText::SHIP_HULL_TAG, entry.first};
+
+            // techs
+            for (const std::string& tech_name : GetTechManager().TechNames())
+                if (TaggedCategory(GetTech(tech_name)->Tags()) == dir_name)
+                    dir_entries[UserString(tech_name)] = {VarText::TECH_TAG, tech_name};
+
+            // building types
+            for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager())
+                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                    dir_entries[UserString(entry.first)] = {VarText::BUILDING_TYPE_TAG, entry.first};
+
+            // species
+            for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager())
+                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                    dir_entries[UserString(entry.first)] = {VarText::SPECIES_TAG, entry.first};
+
+            // field types
+            for (const std::map<std::string, FieldType*>::value_type& entry : GetFieldTypeManager())
+                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                    dir_entries[UserString(entry.first)] = {VarText::FIELD_TYPE_TAG, entry.first};
+
+            // Add sorted entries
+            for (std::map<std::string, std::pair<std::string, std::string>>::value_type& entry : dir_entries) {
+                sorted_entries_list.insert({entry.first,
+                                            {LinkTaggedText(entry.second.first, entry.second.second) + "\n",
+                                             entry.second.second}});
+            }
 
         }
 
