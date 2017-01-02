@@ -3762,6 +3762,14 @@ Ship Hull
 ENC_TECH
 Technologies
 
+ENC_TECH_DESC
+'''New effects, improved planetary stats, buildings, and ship parts can be unlocked by researching the associated technologies.
+
+Completing [[metertype METER_RESEARCH]] on a technology that unlocks an item will only give an empire the knowledge of how to construct that item. Actually constructing such an item may have other requirements, such as access to a certain resource.
+If an item has been unlocked and is not available to build, the additional requirements can be checked by displaying the hover text on the items listing in the Production window (with [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] selected).
+
+Generally, an item unlocked by a newly researched technology does not require [[metertype METER_SUPPLY]] line connections to be available or active (e.g. a building or a planetary meter improvement). However, if a tech which improves a ship part is researched (e.g. a weapon), the already-existing ships must be in supply range, stationary, and not in combat, in order to receive the upgrade during the following turn.'''
+
 ENC_SPECIAL
 Special
 
@@ -4643,17 +4651,6 @@ Protection Focus
 
 PROTECTION_FOCUS_TEXT
 The Protection focus represents a planet wholly focused on defending itself. [[metertype METER_TROOPS]], Planetary [[metertype METER_DEFENSE]], and Planetary [[metertype METER_SHIELD]] are doubled.
-
-TECHNOLOGIES_TITLE
-Technologies
-
-TECHNOLOGIES_TEXT
-'''New effects, improved planetary stats, buildings, and ship parts can be unlocked by researching the associated technologies.
-
-Completing [[metertype METER_RESEARCH]] on a technology that unlocks an item will only give an empire the knowledge of how to construct that item. Actually constructing such an item may have other requirements, such as access to a certain resource.
-If an item has been unlocked and is not available to build, the additional requirements can be checked by displaying the hover text on the items listing in the Production window (with [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] selected).
-
-Generally, an item unlocked by a newly researched technology does not require [[metertype METER_SUPPLY]] line connections to be available or active (e.g. a building or a planetary meter improvement). However, if a tech which improves a ship part is researched (e.g. a weapon), the already-existing ships must be in supply range, stationary, and not in combat, in order to receive the upgrade during the following turn.'''
 
 ARMOR_TITLE
 Armor Plating
