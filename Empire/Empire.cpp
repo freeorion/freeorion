@@ -221,6 +221,7 @@ namespace {
         for (ProductionQueue::Element& queue_element : queue) {
             if (queue_element.paused) {
                 queue_element.allocated_pp = 0.0f;
+                ++i;
                 continue;
             }
 
@@ -229,6 +230,7 @@ namespace {
             if (group.empty()) {
                 //DebugLogger() << "resource sharing group for queue element is empty.  not allocating any resources to element";
                 queue_element.allocated_pp = 0.0f;
+                ++i;
                 continue;
             }
 
@@ -237,6 +239,7 @@ namespace {
                 // item is not being built at an object that has access to resources, so it can't be produced.
                 //DebugLogger() << "no resource sharing group for production queue element";
                 queue_element.allocated_pp = 0.0f;
+                ++i;
                 continue;
             }
 
@@ -247,6 +250,7 @@ namespace {
             if (group_pp_available <= 0.0f) {
                 //DebugLogger() << "no pp available in group";
                 queue_element.allocated_pp = 0.0f;
+                ++i;
                 continue;
             }
             //DebugLogger() << "group has " << group_pp_available << " PP available";
@@ -256,6 +260,7 @@ namespace {
                 // can't be produced at this location this turn.
                 queue_element.allocated_pp = 0.0f;
                 //DebugLogger() << "item can't be produced at location this turn";
+                ++i;
                 continue;
             }
 
