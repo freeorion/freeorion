@@ -8851,6 +8851,9 @@ Construction
 GROWTH_CATEGORY
 Growth
 
+GROWTH_CATEGORY_DESC
+Technologies related to growth.
+
 SHIP_HULLS_CATEGORY
 Ship Hulls
 
