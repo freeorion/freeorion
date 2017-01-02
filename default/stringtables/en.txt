@@ -7637,9 +7637,22 @@ Direct Weapon
 PC_FIGHTER_HANGAR
 Hangar
 
+PC_FIGHTER_HANGAR_DESC
+'''Hangars are the storage, maintenance, and resupply areas for fighters.
+Since each hangar is built in support of other hangars on the ship, a ship is limited to one specific hangar type.
+
+After combat, fighters need to return to a hangar for repairs, fuel, and rearmament.
+Any fighter that is unable to dock at a hangar will likely be lost to the cold realities of space.
+'''
+
 # Ship part classes
 PC_FIGHTER_BAY
 Launch Bay
+
+PC_FIGHTER_BAY_DESC
+'''Launch bays are the access point for fighters to enter or exit a ship.
+Each launch bay allows a certain number of fighters to launch each combat round.
+'''
 
 # Ship part classes
 PC_SHIELD
