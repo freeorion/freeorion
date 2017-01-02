@@ -8971,6 +8971,12 @@ Intelligence
 SPY_CATEGORY_DESC
 Technologies related to intelligence.
 
+EXTINCT_SPECIES_TECHS
+Extinct Species
+
+EXTINCT_SPECIES_TECHS_DESC
+Technologies related to extinct species.
+
 ##
 ## Technology theories
 ##
