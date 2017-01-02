@@ -5,7 +5,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 10 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
-    tags = "THEORY"
+    tags = [ "PEDIA_CONSTRUCTION_CATEGORY" "THEORY" ]
     graphic = "icons/tech/asymptotic_materials.png"
 
 #include "/scripting/common/base_prod.macros"

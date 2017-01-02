@@ -5,6 +5,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
+    tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = "CON_CONTGRAV_ARCH"
     unlock = Item type = Building name = "BLD_ART_MOON"
     graphic = "icons/tech/artificial_heavenly_bodies.png"

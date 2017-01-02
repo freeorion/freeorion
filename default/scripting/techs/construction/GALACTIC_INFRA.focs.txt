@@ -5,6 +5,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
+    tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = "SHP_INTSTEL_LOG"
     effectsgroups =
         EffectsGroup
