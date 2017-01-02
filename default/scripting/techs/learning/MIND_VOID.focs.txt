@@ -5,7 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
-    tags = "THEORY"
+    tags = [ "PEDIA_LEARNING_CATEGORY" "THEORY" ]
     prerequisites = "LRN_XENOARCH"
     graphic = "icons/tech/mind_of_the_void.png"
 

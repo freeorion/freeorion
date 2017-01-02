@@ -5,6 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = "LRN_FORCE_FIELD"
     unlock = [
         Item type = Building name = "BLD_STARLANE_BORE"

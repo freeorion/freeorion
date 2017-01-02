@@ -5,7 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 16 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
-    tags = "THEORY"
+    tags = [ "PEDIA_LEARNING_CATEGORY" "THEORY" ]
     prerequisites = [
         "LRN_PHYS_BRAIN"
         "LRN_ALGO_ELEGANCE"
