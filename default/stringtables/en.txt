@@ -8881,6 +8881,27 @@ Engineering
 SHIP_WEAPONS_CATEGORY
 Ship Weapons
 
+SHIP_WEAPONS_CATEGORY_DESC
+Technologies related to ship weapons.
+
+SR_WEAPON_TECHS
+Short-Range Weapons
+
+SR_WEAPON_TECHS_DESC
+Technologies related to short-range ship weapons.
+
+FIGHTER_TECHS
+Fighters
+
+FIGHTER_TECHS_DESC
+Technologies related to ship based fighters.
+
+BOMBARD_WEAPON_TECHS
+Bombardment
+
+BOMBARD_WEAPON_TECHS_DESC
+Technologies related to ship weapons for bombardment.
+
 DEFENSE_CATEGORY
 Defense
 
