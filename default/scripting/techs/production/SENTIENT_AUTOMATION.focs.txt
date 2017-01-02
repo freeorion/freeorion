@@ -5,6 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 125 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "LRN_ARTIF_MINDS"
         "PRO_NANOTECH_PROD"

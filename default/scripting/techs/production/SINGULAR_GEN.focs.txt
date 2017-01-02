@@ -5,6 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = [
         "LRN_GRAVITONICS"
         "PRO_SOL_ORB_GEN"
