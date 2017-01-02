@@ -5,6 +5,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 200 * [[TECH_COST_MULTIPLIER]]
     researchturns = 15
+    tags = [ "PEDIA_GROWTH_CATEGORY" ]
     prerequisites = [
         "GRO_CYBORG"
         "LRN_EVERYTHING"

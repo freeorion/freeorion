@@ -5,6 +5,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
+    tags = [ "PEDIA_GROWTH_CATEGORY" ]
     prerequisites = "GRO_XENO_GENETICS"
     effectsgroups = [
         EffectsGroup
