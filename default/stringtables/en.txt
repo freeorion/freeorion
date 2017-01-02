@@ -8836,6 +8836,9 @@ DESC_HAS_TAG_NOT
 LEARNING_CATEGORY
 Learning
 
+LEARNING_CATEGORY_DESC
+Technologies related to learning.
+
 PRODUCTION_CATEGORY
 Production
 
