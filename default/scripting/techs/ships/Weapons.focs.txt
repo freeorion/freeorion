@@ -5,6 +5,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 1
     researchturns = 1
+    tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
     unlock = [
         Item type = ShipPart name = "SR_WEAPON_1_1"
         Item type = ShipPart name = "GT_TROOP_POD"
@@ -19,6 +20,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_BOMBARD_WEAPON_TECHS" ]
     prerequisites = "SHP_ROOT_AGGRESSION"
     graphic = ""
 
@@ -29,6 +31,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_ROOT_AGGRESSION"
     effectsgroups =
         EffectsGroup
@@ -48,6 +51,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 6 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_1_2"
     effectsgroups =
         EffectsGroup
@@ -67,6 +71,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 10 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_1_3"
     effectsgroups =
         EffectsGroup
@@ -86,6 +91,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = Item type = ShipPart name = "SR_WEAPON_2_1"
     graphic = "icons/ship_parts/laser-1.png"
@@ -97,6 +103,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_2_1"
     effectsgroups =
         EffectsGroup
@@ -116,6 +123,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_2_2"
     effectsgroups =
         EffectsGroup
@@ -135,6 +143,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_2_3"
     effectsgroups =
         EffectsGroup
@@ -154,6 +163,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_2_1"
     unlock = Item type = ShipPart name = "SR_WEAPON_3_1"
     graphic = "icons/ship_parts/plasma-1.png"
@@ -165,6 +175,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_3_1"
     effectsgroups =
         EffectsGroup
@@ -184,6 +195,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_3_2"
     effectsgroups =
         EffectsGroup
@@ -203,6 +215,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_3_3"
     effectsgroups =
         EffectsGroup
@@ -222,6 +235,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_3_1"
     unlock = Item type = ShipPart name = "SR_WEAPON_4_1"
     graphic = "icons/ship_parts/death-ray-1.png"
@@ -233,6 +247,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_4_1"
     effectsgroups =
         EffectsGroup
@@ -252,6 +267,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 750 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_4_2"
     effectsgroups =
         EffectsGroup
@@ -271,6 +287,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 1250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_WEAPON_4_3"
     effectsgroups =
         EffectsGroup
@@ -290,6 +307,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = [
         "SHP_WEAPON_2_2"
         "SHP_ORG_HULL"
@@ -304,6 +322,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = [ "PEDIA_SR_WEAPON_TECHS" ]
     prerequisites = "SHP_ORGANIC_WAR_ADAPTION"
     graphic = "icons/ship_parts/solarcollector.png"
 
@@ -315,6 +334,7 @@ Tech
     researchcost = 9999
     researchturns = 9999
     Unresearchable
+    tags = [ "PEDIA_SHIP_WEAPONS_CATEGORY" ]
     unlock = Item type = ShipPart name = "SP_KRILL_SPAWNER"
 
 #include "/scripting/common/base_prod.macros"
