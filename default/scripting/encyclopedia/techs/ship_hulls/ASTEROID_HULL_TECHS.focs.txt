@@ -1,0 +1,6 @@
+Article
+    name = "ASTEROID_HULL_TECHS"
+    category = "SHIP_HULLS_CATEGORY"
+    short_description = "ASTEROID_HULL_TECHS"
+    description = "ASTEROID_HULL_TECHS_DESC"
+    icon = "icons//ship_hulls/asteroid_hull_small.png"

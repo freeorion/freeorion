@@ -5,6 +5,7 @@ Tech
     category = "SHIP_HULLS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_SHIP_HULLS_CATEGORY" ]
     prerequisites = "SHP_XENTRONIUM_PLATE"
     unlock = [
         Item type = ShipHull name = "SH_XENTRONIUM"
