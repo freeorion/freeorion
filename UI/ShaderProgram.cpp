@@ -55,9 +55,8 @@ bool ReadFile(const boost::filesystem::path& path, std::string& file_contents) {
         return false;
 
     // skip byte order mark (BOM)
-    static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
-    for (int i = 0; i < 3; i++) {
-        if (UTF8_BOM[i] != ifs.get()) {
+    for (int BOM : {0xEF, 0xBB, 0xBF}) {
+        if (BOM != ifs.get()) {
             // no header set stream back to start of file
             ifs.seekg(0, std::ios::beg);
             // and continue
