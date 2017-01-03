@@ -1,6 +1,6 @@
 Article
-    name = "FIELDS_TITLE"
-    category = "CATEGORY_GAME_CONCEPTS"
+    name = "ENC_FIELD_TYPE"
+    category = "ENC_FIELD_TYPE"
     short_description = "FIELDS_TITLE"
     description = "FIELDS_TEXT"
     icon = "icons/tech/galactic_exploration.png"

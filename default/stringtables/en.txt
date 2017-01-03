@@ -3823,7 +3823,7 @@ ENC_SHIP_HULL
 Ship Hull
 
 ENC_TECH
-Technology
+Technologies
 
 ENC_SPECIAL
 Special
@@ -4532,7 +4532,7 @@ METER_RESEARCH_VALUE_LABEL
 Research
 
 METER_RESEARCH_VALUE_DESC
-'''The Research (or RP "Research Points") of all planets in the empire is combined to discover new [[encyclopedia TECHNOLOGIES_TITLE]].
+'''The Research (or RP "Research Points") of all planets in the empire is combined to discover new [[encyclopedia ENC_TECH]].
 
 Any Research that cannot be spent on a tech is lost each turn. Each tech has a minimum number of turns required to research it. For example, if a tech that cost 15 RPs, and had a minimum time of 3 turns, 5 RPs is the maximum that could be put towards its completion per turn.
 The tech at the top of the queue is given RPs first. Any remaining RP are then given to the next tech in the queue, and if there is still more remaining to the next-- and so on. You can re-prioritize the items in the queue by dragging the most important items closer to the top.
@@ -4890,7 +4890,7 @@ Right click [[DESIGN_WND_SAVED_DESIGNS]] designs and copy a single or all saved 
 
 [[DESIGN_WND_PART_PALETTE_TITLE]] displays parts. Parts whose associated technology has been researched may be used in current designs.  Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
 
-The "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" and "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" filters on [[DESIGN_WND_STARTS]] and [[DESIGN_WND_PART_PALETTE_TITLE]] toggle the display of parts that the empire can currently use or that are restricted.  Some unavailable parts may be unlocked by researching associated [[encyclopedia TECHNOLOGIES_TITLE]].
+The "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" and "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" filters on [[DESIGN_WND_STARTS]] and [[DESIGN_WND_PART_PALETTE_TITLE]] toggle the display of parts that the empire can currently use or that are restricted.  Some unavailable parts may be unlocked by researching associated [[encyclopedia ENC_TECH]].
 
 The [[DESIGN_WND_PART_PALETTE_TITLE]] window has filters to display/hide entire categories of parts.
 
@@ -4938,7 +4938,7 @@ FIELDS_TITLE
 Interstellar Fields
 
 FIELDS_TEXT
-There are several [[encyclopedia ENC_FIELD_TYPE]]s.  They each have a distinctive, somewhat diffuse, appearance.  Right-clicking on them in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] brings up a small popup menu identifying their type and providing an option to look up their details.
+There are several Field Types, each having a distinctive, somewhat diffuse, appearance.  Right-clicking on them in the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] brings up a small popup menu identifying their type and providing an option to look up their details.
 
 
 ##
@@ -6043,7 +6043,7 @@ BEGINNER_HINT_17
 17: [[metertype METER_SHIELD]] on ships defend against every shot that hits the ship, reducing the damage by the amount of the shield value. Ship shield values can be affected by various factors including space storms, what type of star system you are in, or if you are close to a captured empire capital planet.
 
 BEGINNER_HINT_18
-18: [[encyclopedia FOCUS_TITLE]] - pay attention to the focus setting of new planets that are added to your empire, either from settling them or from conquering them. This setting controls if the planet focuses on industrial production or on research or on defense. Later in the game, more focus options may unlock as new [[encyclopedia TECHNOLOGIES_TITLE]] are researched, and different species may have different focus options available.
+18: [[encyclopedia FOCUS_TITLE]] - pay attention to the focus setting of new planets that are added to your empire, either from settling them or from conquering them. This setting controls if the planet focuses on industrial production or on research or on defense. Later in the game, more focus options may unlock as new [[encyclopedia ENC_TECH]] are researched, and different species may have different focus options available.
 
 BEGINNER_HINT_19
 19: A colony can be established on an [[encyclopedia OUTPOSTS_TITLE]] by constructing a colony building or by using a [[predefinedshipdesign SD_COLONY_SHIP]]. Most colony buildings require a [[metertype METER_SUPPLY]] connection to a planet with at least 5 [[metertype METER_HAPPINESS]], and 3 population. When a species is unlocked, such as when researching [[tech PRO_EXOBOTS]], this requirement for their colony building does not apply.
