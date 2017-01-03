@@ -41,12 +41,11 @@ Wnd* ZList::Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore/* = 0*/)
             modal->InWindow(pt) ?
             PickWithinWindow(pt, modal, ignore) : 0;
     } else { // otherwise, look in the z-list
-        const_iterator end_it = end();
-        for (const_iterator it = begin(); it != end_it; ++it) {
+        for (Wnd* wnd : *this) {
             Wnd* temp = 0;
-            if ((*it)->Visible() &&
-                (*it)->InWindow(pt) &&
-                (temp = PickWithinWindow(pt, *it, ignore))) {
+            if (wnd->Visible() &&
+                wnd->InWindow(pt) &&
+                (temp = PickWithinWindow(pt, wnd, ignore))) {
                 retval = temp;
                 break;
             }
