@@ -1685,8 +1685,7 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
     // the index of the first code point of the current TextElement
     CPSize code_point_offset(0);
     std::vector<boost::shared_ptr<TextElement> > pending_formatting_tags;
-    for (std::size_t i = 0; i < text_elements.size(); ++i) {
-        const boost::shared_ptr<TextElement>& elem = text_elements[i];
+    for (const boost::shared_ptr<TextElement>& elem : text_elements) {
         // if a newline is explicitly requested, start a new one
         if (elem->Type() == TextElement::NEWLINE) {
             line_data.push_back(LineData());
@@ -1765,12 +1764,12 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
                 }
                 std::string::const_iterator it = elem->text.begin();
                 std::string::const_iterator end_it = elem->text.end();
-                std::size_t i = 0;
+                std::size_t j = 0;
                 while (it != end_it) {
                     StrSize char_index(std::distance(elem->text.begin(), it));
                     utf8::next(it, end_it);
                     StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
-                    x += elem->widths[i];
+                    x += elem->widths[j];
                     line_data.back().char_data.push_back(
                         LineData::CharData(x,
                                            original_string_offset + char_index,
@@ -1778,22 +1777,22 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
                                            code_point_offset,
                                            pending_formatting_tags));
                     pending_formatting_tags.clear();
-                    ++i;
+                    ++j;
                     ++code_point_offset;
                 }
             } else {
                 std::string::const_iterator it = elem->text.begin();
                 std::string::const_iterator end_it = elem->text.end();
-                std::size_t i = 0;
+                std::size_t j = 0;
                 while (it != end_it) {
                     StrSize char_index(std::distance(elem->text.begin(), it));
                     utf8::next(it, end_it);
                     StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
                     // if the char overruns this line, and isn't alone on this
                     // line, move it down to the next line
-                    if ((format & FORMAT_LINEWRAP) && box_width < x + elem->widths[i] && x) {
+                    if ((format & FORMAT_LINEWRAP) && box_width < x + elem->widths[j] && x) {
                         line_data.push_back(LineData());
-                        x = elem->widths[i];
+                        x = elem->widths[j];
                         line_data.back().char_data.push_back(
                             LineData::CharData(x,
                                                original_string_offset + char_index,
@@ -1808,7 +1807,7 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
                     } else {
                         // there's room for this char on this line, or there's
                         // no wrapping in use
-                        x += elem->widths[i];
+                        x += elem->widths[j];
                         line_data.back().char_data.push_back(
                             LineData::CharData(x,
                                                original_string_offset + char_index, 
@@ -1817,7 +1816,7 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
                                                pending_formatting_tags));
                         pending_formatting_tags.clear();
                     }
-                    ++i;
+                    ++j;
                     ++code_point_offset;
                 }
             }
@@ -1944,9 +1943,9 @@ void Font::Init(FT_Face& face)
     Y y = Y0;
     X max_x = X0;
     Y max_y = Y0;
-    for (std::size_t i = 0; i < range_vec.size(); ++i) {
-        boost::uint32_t low = range_vec[i].first;
-        boost::uint32_t high = range_vec[i].second;
+    for (const std::pair<boost::uint32_t, boost::uint32_t>& range : range_vec) {
+        boost::uint32_t low = range.first;
+        boost::uint32_t high = range.second;
 
         // copy glyph images
         for (boost::uint32_t c = low; c < high; ++c) {
