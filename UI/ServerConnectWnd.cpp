@@ -24,8 +24,8 @@ namespace {
 
     bool NameOK(const std::string& name)
     {
-        for (unsigned int i = 0; i < name.size(); ++i) {
-            if (!std::isalnum(name[i]) && name[i] != '_' && name[i] != '-')
+        for (const std::string::value_type& character : name) {
+            if (!std::isalnum(character) && character != '_' && character != '-')
                 return false;
         }
         return !name.empty();
@@ -146,9 +146,9 @@ void ServerConnectWnd::Init() {
 void ServerConnectWnd::PopulateServerList()
 {
     m_servers_lb->Clear();
-    for (ClientNetworking::ServerList::iterator it = m_LAN_servers.begin(); it != m_LAN_servers.end(); ++it) {
+    for (const ClientNetworking::ServerList::value_type& server : m_LAN_servers) {
         GG::ListBox::Row* row = new GG::ListBox::Row;
-        row->push_back(new CUILabel(it->second));
+        row->push_back(new CUILabel(server.second));
         m_servers_lb->Insert(row);
     }
 }
