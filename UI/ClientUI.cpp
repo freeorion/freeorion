@@ -686,10 +686,9 @@ void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { GetMapWndConst()->GetSaveGameUIData(data); }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
-    const ObjectMap& objects = GetUniverse().Objects();
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        if (boost::iequals(it->Name(), name))
-            return ZoomToObject(it->ID());
+    for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>())
+        if (boost::iequals(obj->Name(), name))
+            return ZoomToObject(obj->ID());
     return false;
 }
 
