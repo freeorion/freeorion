@@ -121,16 +121,15 @@ namespace {
             else
                 myQuantSet.insert(quantity);
 
-            for (std::set<int>::iterator it = myQuantSet.begin(); it != myQuantSet.end(); ++it)
-            {
-                QuantRow* row =  new QuantRow(*it, build.item.design_id, nwidth, h, inProgress, amBlockType);
+            for (int quantity : myQuantSet) {
+                QuantRow* row =  new QuantRow(quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 GG::DropDownList::iterator latest_it = Insert(row);
 
                 if (amBlockType) {
-                    if (build.blocksize == *it)
+                    if (build.blocksize == quantity)
                         Select(latest_it);
                 } else {
-                    if (build.remaining == *it)
+                    if (build.remaining == quantity)
                         Select(latest_it);
                 }
             }
@@ -374,10 +373,7 @@ namespace {
         virtual void Disable(bool b) {
             GG::ListBox::Row::Disable(b);
 
-            for (std::vector<GG::Control*>::iterator it = this->m_cells.begin();
-                 it != this->m_cells.end(); ++it)
-            {
-                GG::Control* ctrl = *it;
+            for (GG::Control* ctrl : m_cells) {
                 if (ctrl)
                     ctrl->Disable(this->Disabled());
             }
@@ -1001,13 +997,12 @@ void ProductionWnd::UpdateQueue() {
     if (!empire)
         return;
 
-    const ProductionQueue& queue = empire->GetProductionQueue();
-
     int i = 0;
-    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
-        QueueRow* row = new QueueRow(queue_lb->RowWidth(), *it, i);
+    for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
+        QueueRow* row = new QueueRow(queue_lb->RowWidth(), elem, i);
         GG::Connect(row->RowQuantChangedSignal,     &ProductionWnd::ChangeBuildQuantityBlockSlot, this);
         queue_lb->Insert(row);
+        ++i;
     }
 
     // Restore the list scroll state
@@ -1052,19 +1047,16 @@ void ProductionWnd::UpdateInfoPanel() {
 
         float available_pp_at_loc = 0.0f, allocated_pp_at_loc = 0.0f;   // for the resource sharing group containing the selected production location
 
-        for (std::map<std::set<int>, float>::const_iterator map_it = available_pp.begin();
-             map_it != available_pp.end(); ++map_it)
-        {
-            if (map_it->first.find(prod_loc_id) != map_it->first.end()) {
-                available_pp_at_loc = map_it->second;
+        for (const std::map<std::set<int>, float>::value_type& map : available_pp) {
+            if (map.first.find(prod_loc_id) != map.first.end()) {
+                available_pp_at_loc = map.second;
                 break;
             }
         }
-                for (std::map<std::set<int>, float>::const_iterator map_it = allocated_pp.begin();
-             map_it != allocated_pp.end(); ++map_it)
-        {
-            if (map_it->first.find(prod_loc_id) != map_it->first.end()) {
-                allocated_pp_at_loc = map_it->second;
+
+        for (const std::map<std::set<int>, float>::value_type& map : allocated_pp) {
+            if (map.first.find(prod_loc_id) != map.first.end()) {
+                allocated_pp_at_loc = map.second;
                 break;
             }
         }
