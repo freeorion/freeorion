@@ -182,10 +182,9 @@ namespace {
             return source;
 
         // not a valid source?!  scan through all objects to find one owned by this empire
-        const ObjectMap& objects = GetUniverse().Objects();
-        for (ObjectMap::const_iterator<> obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
-            if (obj_it->OwnedBy(empire_id)) {
-                source = *obj_it;
+        for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects()) {
+            if (obj->OwnedBy(empire_id)) {
+                source = obj;
                 break;
             }
         }
