@@ -386,10 +386,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_SHIP") {
-            for (ObjectMap::const_iterator<Ship> ship_it = Objects().const_begin<Ship>();
-                 ship_it != Objects().const_end<Ship>(); ++ship_it)
-            {
-                TemporaryPtr<const Ship> ship = *ship_it;
+            for (TemporaryPtr<const Ship> ship : Objects().FindObjects<Ship>()) {
                 const std::string& ship_name = ship->PublicName(client_empire_id);
                 sorted_entries_list.insert(std::make_pair(ship_name,
                     std::make_pair(LinkTaggedIDText(VarText::SHIP_ID_TAG, ship->ID(), ship_name) + "  ",
@@ -397,10 +394,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_MONSTER") {
-            for (ObjectMap::const_iterator<Ship> ship_it = Objects().const_begin<Ship>();
-                 ship_it != Objects().const_end<Ship>(); ++ship_it)
-            {
-                TemporaryPtr<const Ship> ship = *ship_it;
+            for (TemporaryPtr<const Ship> ship : Objects().FindObjects<Ship>()) {
                 if (!ship->IsMonster())
                     continue;
                 const std::string& ship_name = ship->PublicName(client_empire_id);
@@ -417,10 +411,7 @@ namespace {
                                        boost::lexical_cast<std::string>(it->first))));
 
         } else if (dir_name == "ENC_FLEET") {
-            for (ObjectMap::const_iterator<Fleet> fleet_it = Objects().const_begin<Fleet>();
-                 fleet_it != Objects().const_end<Fleet>(); ++fleet_it)
-            {
-                TemporaryPtr<const Fleet> fleet = *fleet_it;
+            for (TemporaryPtr<const Fleet> fleet : Objects().FindObjects<Fleet>()) {
                 const std::string& flt_name = fleet->PublicName(client_empire_id);
                 sorted_entries_list.insert(std::make_pair(flt_name,
                     std::make_pair(LinkTaggedIDText(VarText::FLEET_ID_TAG, fleet->ID(), flt_name) + "  ",
@@ -428,10 +419,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_PLANET") {
-            for (ObjectMap::const_iterator<Planet> planet_it = Objects().const_begin<Planet>();
-                 planet_it != Objects().const_end<Planet>(); ++planet_it)
-            {
-                TemporaryPtr<const Planet> planet = *planet_it;
+            for (TemporaryPtr<const Planet> planet : Objects().FindObjects<Planet>()) {
                 const std::string& plt_name = planet->PublicName(client_empire_id);
                 sorted_entries_list.insert(std::make_pair(plt_name,
                     std::make_pair(LinkTaggedIDText(VarText::PLANET_ID_TAG, planet->ID(), plt_name) + "  ",
@@ -439,10 +427,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_BUILDING") {
-            for (ObjectMap::const_iterator<Building> building_it = Objects().const_begin<Building>();
-                 building_it != Objects().const_end<Building>(); ++building_it)
-            {
-                TemporaryPtr<const Building> building = *building_it;
+            for (TemporaryPtr<const Building> building : Objects().FindObjects<Building>()) {
                 const std::string& bld_name = building->PublicName(client_empire_id);
                 sorted_entries_list.insert(std::make_pair(bld_name,
                     std::make_pair(LinkTaggedIDText(VarText::BUILDING_ID_TAG, building->ID(), bld_name) + "  ",
@@ -450,10 +435,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_SYSTEM") {
-            for (ObjectMap::const_iterator<System> system_it = Objects().const_begin<System>();
-                 system_it != Objects().const_end<System>(); ++system_it)
-            {
-                TemporaryPtr<const System> system = *system_it;
+            for (TemporaryPtr<const System> system : Objects().FindObjects<System>()) {
                 const std::string& sys_name = system->ApparentName(client_empire_id);
                 sorted_entries_list.insert(std::make_pair(sys_name,
                     std::make_pair(LinkTaggedIDText(VarText::SYSTEM_ID_TAG, system->ID(), sys_name) + "  ",
@@ -461,10 +443,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_FIELD") {
-            for (ObjectMap::const_iterator<Field> field_it = Objects().const_begin<Field>();
-                 field_it != Objects().const_end<Field>(); ++field_it)
-            {
-                TemporaryPtr<const Field> field = *field_it;
+            for (TemporaryPtr<const Field> field : Objects().FindObjects<Field>()) {
                 const std::string& field_name = field->Name();
                 sorted_entries_list.insert(std::make_pair(field_name,
                     std::make_pair(LinkTaggedIDText(VarText::FIELD_ID_TAG, field->ID(), field_name) + "  ",
@@ -1041,9 +1020,9 @@ namespace {
         // TODO: only loop over planets?
         // TODO: pass in a location condition, and pick a location that matches it if possible
         if (!location) {
-            for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
-                if (obj_it->OwnedBy(empire_id)) {
-                    location = *obj_it;
+            for (TemporaryPtr<const UniverseObject> obj : Objects()) {
+                if (obj->OwnedBy(empire_id)) {
+                    location = obj;
                     break;
                 }
             }
@@ -1438,9 +1417,9 @@ namespace {
 
         // objects that have special
         std::vector<TemporaryPtr<const UniverseObject> > objects_with_special;
-        for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it)
-            if (obj_it->Specials().find(item_name) != obj_it->Specials().end())
-                objects_with_special.push_back(*obj_it);
+        for (TemporaryPtr<const UniverseObject> obj : Objects())
+            if (obj->Specials().find(item_name) != obj->Specials().end())
+                objects_with_special.push_back(obj);
 
         if (!objects_with_special.empty()) {
             detailed_description += "\n\n" + UserString("OBJECTS_WITH_SPECIAL");
