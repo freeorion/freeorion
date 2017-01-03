@@ -2286,8 +2286,7 @@ std::string Operation<std::string>::Eval(const ScriptingContext& context) const
 
         boost::format formatter = FlexibleFormat(template_str);
 
-        for (unsigned int idx = 1; idx < m_operands.size(); ++idx) {
-            ValueRefBase<std::string>* op = m_operands[idx];
+        for (ValueRefBase<std::string>* op : m_operands) {
             if (!op) {
                 formatter % "";
                 continue;
