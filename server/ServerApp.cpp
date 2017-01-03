@@ -330,8 +330,7 @@ void ServerApp::CleanupAIs() {
 
     bool ai_connection_lingering = false;
     try {
-        for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
-            PlayerConnectionPtr player = *it;
+        for (PlayerConnectionPtr player : m_networking) {
             if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                 player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
                 ai_connection_lingering = true;
@@ -477,9 +476,9 @@ void ServerApp::SelectNewHost() {
     m_networking.SetHostPlayerID(new_host_id);
 
     // inform players.
-    for (ServerNetworking::const_iterator it = m_networking.begin(); it != m_networking.end(); ++it) {
-        if ((*it)->PlayerID() != old_host_id)
-            (*it)->SendMessage(HostIDMessage(new_host_id));
+    for (PlayerConnectionPtr player : m_networking) {
+        if (player->PlayerID() != old_host_id)
+            player->SendMessage(HostIDMessage(new_host_id));
     }
 }
 
@@ -2463,8 +2462,7 @@ namespace {
     /** Destroys suitable objects that have been ordered scrapped.*/
     void HandleScrapping() {
         //// debug
-        //for (ObjectMap::iterator<Ship> it = Objects().begin<Ship>(); it != Objects().end<Ship>(); ++it) {
-        //    TemporaryPtr<Ship> ship = *it;
+        //for (TemporaryPtr<Ship> ship : Objects().FindObjects<Ship>()) {
         //    if (!ship->OrderedScrapped())
         //        continue;
         //    DebugLogger() << "... ship: " << ship->ID() << " ordered scrapped";
@@ -2539,25 +2537,20 @@ namespace {
     /** Removes bombardment state info from objects. Actual effects of
       * bombardment are handled during */
     void CleanUpBombardmentStateInfo() {
-        for (ObjectMap::iterator<Ship> it = GetUniverse().Objects().begin<Ship>();
-             it != GetUniverse().Objects().end<Ship>(); ++it)
-        { it->ClearBombardPlanet(); }
-        for (ObjectMap::iterator<Planet> it = GetUniverse().Objects().begin<Planet>();
-             it != GetUniverse().Objects().end<Planet>(); ++it)
-        {
-            if (it->IsAboutToBeBombarded()) {
-                //DebugLogger() << "CleanUpBombardmentStateInfo: " << it->Name() << " was about to be bombarded";
-                it->ResetIsAboutToBeBombarded();
+        for (TemporaryPtr<Ship> ship : GetUniverse().Objects().FindObjects<Ship>())
+        { ship->ClearBombardPlanet(); }
+        for (TemporaryPtr<Planet> planet : GetUniverse().Objects().FindObjects<Planet>()) {
+            if (planet->IsAboutToBeBombarded()) {
+                //DebugLogger() << "CleanUpBombardmentStateInfo: " << planet->Name() << " was about to be bombarded";
+                planet->ResetIsAboutToBeBombarded();
             }
         }
     }
 
     /** Causes ResourceCenters (Planets) to update their focus records */
     void UpdateResourceCenterFocusHistoryInfo() {
-        for (ObjectMap::iterator<Planet> it = GetUniverse().Objects().begin<Planet>();
-             it != GetUniverse().Objects().end<Planet>(); ++it)
-        {
-            it->UpdateFocusHistory();
+        for (TemporaryPtr<Planet> planet : GetUniverse().Objects().FindObjects<Planet>()) {
+            planet->UpdateFocusHistory();
         }
     }
 
@@ -2746,17 +2739,11 @@ void ServerApp::ProcessCombats() {
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
     //std::vector<Fleet*> all_fleets =  m_universe.Objects().FindObjects<Fleet>;
-    for (ObjectMap::const_iterator<System> sys_it = m_universe.Objects().const_begin<System>();
-         sys_it != m_universe.Objects().const_end<System>(); ++sys_it)
-    {
-        TemporaryPtr<const System> system = *sys_it;
+    for (TemporaryPtr<const System> system : m_universe.Objects().FindObjects<System>()) {
         bool unrestricted_monsters_present = false;
         bool unrestricted_empires_present = false;
         std::vector<int> restricted_monsters;
-        for (ObjectMap::const_iterator<Fleet> fleet_it = m_universe.Objects().const_begin<Fleet>();
-             fleet_it != m_universe.Objects().const_begin<Fleet>(); ++fleet_it)
-        {
-            TemporaryPtr<const Fleet> fleet = *fleet_it;
+        for (TemporaryPtr<const Fleet> fleet : m_universe.Objects().FindObjects<Fleet>()) {
             // will not require visibility for empires to block clearing of monster travel restrictions
             // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for 
             // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
