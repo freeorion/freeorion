@@ -293,12 +293,12 @@ void ListBox::Row::resize(std::size_t n)
     if (n == m_cells.size())
         return;
 
-    std::size_t old_size = m_cells.size();
-
     Layout* layout = GetLayout();
-    for (std::size_t ii = 0; ii < old_size; ++ii) {
-        layout->Remove(m_cells[ii]);
+    for (Control* cell : m_cells) {
+        layout->Remove(cell);
     }
+
+    std::size_t old_size = m_cells.size();
 
     for (std::size_t ii = n; ii < old_size; ++ii) {
         delete m_cells[ii];
@@ -763,19 +763,15 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
     }
 
     Y vertical_offset = offset.y;
-    for (std::map<GG::Y, SelectionSet::iterator>::iterator sorted_sel_it = selections_Y_sorted.begin();
-         sorted_sel_it != selections_Y_sorted.end(); ++sorted_sel_it)
-    {
-        Wnd* row_wnd = **(sorted_sel_it->second);
+    for (const std::map<GG::Y, SelectionSet::iterator>::value_type& sorted_sel : selections_Y_sorted) {
+        Wnd* row_wnd = **(sorted_sel.second);
         if (row_wnd == wnd)
             break;
         vertical_offset += row_wnd->Height();
     }
 
-    for (std::map<GG::Y, SelectionSet::iterator>::iterator sorted_sel_it = selections_Y_sorted.begin();
-         sorted_sel_it != selections_Y_sorted.end(); ++sorted_sel_it)
-    {
-        Wnd* row_wnd = **(sorted_sel_it->second);
+    for (const std::map<GG::Y, SelectionSet::iterator>::value_type& sorted_sel : selections_Y_sorted) {
+        Wnd* row_wnd = **(sorted_sel.second);
         if (row_wnd != wnd) {
             GUI::GetGUI()->RegisterDragDropWnd(row_wnd, Pt(offset.x, vertical_offset), this);
             vertical_offset -= row_wnd->Height();
