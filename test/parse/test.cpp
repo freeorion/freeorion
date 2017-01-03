@@ -105,8 +105,7 @@ int main(int argc, char* argv[])
     default: break;
     }
 
-    for (std::size_t i = 0; i < strings.size(); ++i) {
-        const std::string& string = strings[i];
+    for (const std::string& string : strings) {
         if (string.empty())
             continue;
 
@@ -189,9 +188,8 @@ int main(int argc, char* argv[])
     if(test == lexer && !lexer_test_rules::unchecked_tokens.empty())
     {
         std::cout << "There were unhandled tokens: " << std::endl;
-        for(std::set<const char*>::iterator it = lexer_test_rules::unchecked_tokens.begin(); it != lexer_test_rules::unchecked_tokens.end(); ++it)
-        {
-            std::cout << *it << std::endl;
+        for (const char* token : lexer_test_rules::unchecked_tokens) {
+            std::cout << token << std::endl;
             ++failures;
         }
     }
