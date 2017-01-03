@@ -1470,11 +1470,9 @@ std::string Empire::Dump() const {
                          " ID: "+ boost::lexical_cast<std::string>(m_id) +
                          " Capital ID: " + boost::lexical_cast<std::string>(m_capital_id);
     retval += " meters:\n";
-    for (std::map<std::string, Meter>::const_iterator meter_it = meter_begin();
-            meter_it != meter_end(); ++meter_it)
-    {
-        retval += UserString(meter_it->first) + ": " +
-                  boost::lexical_cast<std::string>(meter_it->second.Initial()) + "\n";
+    for (const std::map<std::string, Meter>::value_type& meter : m_meters) {
+        retval += UserString(meter.first) + ": " +
+                  boost::lexical_cast<std::string>(meter.second.Initial()) + "\n";
     }
     return retval;
 }
@@ -2027,7 +2025,6 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     }
 
     // get all fleets, or just those visible to this client's empire
-    const std::vector<TemporaryPtr<Fleet> > fleets = GetUniverse().Objects().FindObjects<Fleet>();
     const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     // get empire supply ranges
@@ -2052,7 +2049,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
     std::set<int> unrestricted_obstruction_systems;
-    for (TemporaryPtr<const Fleet> fleet : fleets) {
+    for (TemporaryPtr<const Fleet> fleet : GetUniverse().Objects().FindObjects<Fleet>()) {
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
