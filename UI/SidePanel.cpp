@@ -3014,12 +3014,10 @@ void SidePanel::RefreshSystemNames() {
     // maintaing the list by incrementally inserting/deleting system
     // names, then this approach should also be dropped.
     std::set<std::pair<std::string, int> > sorted_systems;
-    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-         sys_it != Objects().const_end<System>(); ++sys_it)
-    {
+    for (TemporaryPtr<const System> system : Objects().FindObjects<System>()) {
         // Skip rows for systems that aren't known to this client, except the selected system
-        if (!sys_it->Name().empty() || sys_it->ID() == s_system_id)
-            sorted_systems.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+        if (!system->Name().empty() || system->ID() == s_system_id)
+            sorted_systems.insert(std::make_pair(system->Name(), system->ID()));
     }
 
     boost::shared_ptr<GG::Font> system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));
