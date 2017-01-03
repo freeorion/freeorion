@@ -751,10 +751,8 @@ private:
 
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
-            const ObjectMap& objects = GetUniverse().Objects();
 
-            for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-                TemporaryPtr<const UniverseObject> obj = *it;
+            for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>()) {
                 std::set<std::string> tags = obj->Tags();
                 all_tags.insert(tags.begin(), tags.end());
             }
@@ -839,10 +837,8 @@ private:
 
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
-            for (ObjectMap::const_iterator<Planet> planet_it = Objects().const_begin<Planet>();
-                 planet_it != Objects().const_end<Planet>(); ++planet_it)
-            {
-                std::vector<std::string> obj_foci = planet_it->AvailableFoci();
+            for (TemporaryPtr<const Planet> planet : Objects().FindObjects<Planet>()) {
+                std::vector<std::string> obj_foci = planet->AvailableFoci();
                 std::copy(obj_foci.begin(), obj_foci.end(), std::inserter(all_foci, all_foci.end()));
             }
 
@@ -1835,8 +1831,6 @@ public:
 
         m_header_row->Update();
 
-        const ObjectMap& objects = GetUniverse().Objects();
-
         // sort objects by containment associations
         std::set<int>                   systems;
         std::map<int, std::set<int> >   system_fleets;
@@ -1845,12 +1839,11 @@ public:
         std::map<int, std::set<int> >   planet_buildings;
         std::set<int>                   fields;
 
-        for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-            TemporaryPtr<const UniverseObject> obj = *it;
+        for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects()) {
             if (!ObjectShown(obj))
                 continue;
 
-            int object_id = it->ID();
+            int object_id = obj->ID();
 
             if (obj->ObjectType() == OBJ_SYSTEM) {
                 systems.insert(object_id);
