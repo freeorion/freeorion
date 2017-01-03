@@ -3444,16 +3444,14 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float> >, float> empire_position_max_detection_ranges;
 
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-        int object_id = it->ID();
+    for (TemporaryPtr<const UniverseObject> obj : objects.FindObjects<UniverseObject>()) {
+        int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
             continue;
         // skip stale objects
         if (stale_object_ids.find(object_id) != stale_object_ids.end())
             continue;
-
-        TemporaryPtr<const UniverseObject> obj = *it;
 
         // skip unowned objects
         if (obj->Unowned())
@@ -5963,10 +5961,8 @@ namespace {
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-            sys_it != Objects().const_end<System>(); ++sys_it)
-        {
-            system_names_ids.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+        for (TemporaryPtr<const System> system : Objects().FindObjects<System>()) {
+            system_names_ids.insert(std::make_pair(system->Name(), system->ID()));
         }
         return system_names_ids;
     }
