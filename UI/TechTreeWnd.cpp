@@ -1548,6 +1548,7 @@ public:
     /** \name Accessors */ //@{
     std::set<std::string>   GetCategoriesShown() const;
     std::set<TechStatus>    GetTechStatusesShown() const;
+    bool TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column);
     //@}
 
     //! \name Mutators //@{
@@ -1587,11 +1588,13 @@ private:
     void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechPediaDisplay(const std::string& tech_name);
+    void    ToggleSortCol(unsigned int col);
 
     std::set<std::string>                   m_categories_shown;
     std::set<TechStatus>                    m_tech_statuses_shown;
     std::multimap<std::string, TechRow*>    m_all_tech_rows;
     GG::ListBox::Row*                       m_header_row;
+    size_t                                  m_previous_sort_col;
 };
 
 void TechTreeWnd::TechListBox::TechRow::Render() {
@@ -1684,6 +1687,28 @@ std::vector<GG::Alignment> TechTreeWnd::TechListBox::TechRow::ColAlignments() {
     return retval;
 }
 
+bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) {
+    bool retval = false;
+    const std::string lhs_key = boost::trim_copy(lhs.SortKey(column));
+    const std::string rhs_key = boost::trim_copy(rhs.SortKey(column));
+
+    // When equal, sort by previous sorted column
+    if ((lhs_key == rhs_key) && (m_previous_sort_col != column)) {
+        retval = TechRowCmp(lhs, rhs, m_previous_sort_col);
+    } else if (column == 2 || column == 3) {
+        try {  // compare by int
+            retval = boost::lexical_cast<int>(lhs_key) < boost::lexical_cast<int>(rhs_key);
+        } catch (boost::bad_lexical_cast& e) {
+            DebugLogger() << "Unable to cast sort keys to int, lhs:" << lhs_key << " rhs:" << rhs_key << ". " << e.what();
+            retval = lhs_key < rhs_key;
+        }
+    } else {
+        retval = lhs_key < rhs_key;
+    }
+
+    return retval;
+}
+
 TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name) :
     CUIListBox::Row(w, GG::Y(ClientUI::Pts() * 2 + 5), "TechListBox::TechRow"),
     m_tech(tech_name)
@@ -1752,6 +1777,15 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
         time_btn->SetText(time_str + just_pad + just_pad);
 }
 
+void TechTreeWnd::TechListBox::ToggleSortCol(unsigned int col) {
+    if (SortCol() != col) {
+        m_previous_sort_col = SortCol();
+        SetSortCol(col);
+    } else {  // toggle the sort direction
+        SetStyle(Style() ^ GG::LIST_SORTDESCENDING);
+    }
+}
+
 TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     CUIListBox()
 {
@@ -1787,26 +1821,31 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     CUIButton* name_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_NAME"));
     name_col->Resize(GG::Pt(col_widths[1], HEIGHT));
     name_col->SetChildClippingMode(ClipToWindow);
+    name_col->LeftClickedSignal.connect([this]() { ToggleSortCol(1); });
     m_header_row->push_back(name_col);
 
     CUIButton* cost_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_COST"));
     cost_col->Resize(GG::Pt(col_widths[2], HEIGHT));
     cost_col->SetChildClippingMode(ClipToWindow);
+    cost_col->LeftClickedSignal.connect([this]() { ToggleSortCol(2); });
     m_header_row->push_back(cost_col);
 
     CUIButton* time_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_TIME"));
     time_col->Resize(GG::Pt(col_widths[3], HEIGHT));
     time_col->SetChildClippingMode(ClipToWindow);
+    time_col->LeftClickedSignal.connect([this]() { ToggleSortCol(3); });
     m_header_row->push_back(time_col);
 
     CUIButton* category_col = new CUIButton( UserString("TECH_WND_LIST_COLUMN_CATEGORY"));
     category_col->Resize(GG::Pt(col_widths[4], HEIGHT));
     category_col->SetChildClippingMode(ClipToWindow);
+    category_col->LeftClickedSignal.connect([this]() { ToggleSortCol(4); });
     m_header_row->push_back(category_col);
 
     CUIButton* descr_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_DESCRIPTION"));
     descr_col->Resize(GG::Pt(col_widths[5], HEIGHT));
     descr_col->SetChildClippingMode(ClipToWindow);
+    descr_col->LeftClickedSignal.connect([this]() { ToggleSortCol(5); });
     m_header_row->push_back(descr_col);
 
     m_header_row->Resize(GG::Pt(row_width, HEIGHT));
@@ -1822,6 +1861,11 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
 
     SetColHeaders(m_header_row);
     LockColWidths();
+
+    // Initialize sorting
+    SetSortCol(2);
+    m_previous_sort_col = 3;
+    SetSortCmp([&](const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t col) { return TechRowCmp(lhs, rhs, col); });
 }
 
 TechTreeWnd::TechListBox::~TechListBox() {
@@ -1895,6 +1939,11 @@ void TechTreeWnd::TechListBox::Populate() {
     int num_cols = static_cast<int>(col_widths.size());
     for (int i = 0; i < num_cols; ++i)
         SetColWidth(i, col_widths[i]);
+    if (SortCol() < 1)
+        SetSortCol(2);
+    // TODO workaround for header rendering excessively high and overlapping some rows
+    if (begin() != end())
+        BringRowIntoView(begin());
 
     DebugLogger() << "Tech List Box Done Populating";
     DebugLogger() << "    Creation time=" << (creation_elapsed * 1000) << "ms";
