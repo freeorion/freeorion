@@ -1754,6 +1754,12 @@ void TechTreeWnd::TechListBox::Populate() {
         }
     }
 
+    // set attributes after clear and insert, cached rows may have incorrect widths
+    std::vector<GG::X> col_widths = TechRow::ColWidths(Width());
+    int num_cols = static_cast<int>(col_widths.size());
+    for (int i = 0; i < num_cols; ++i)
+        SetColWidth(i, col_widths[i]);
+
     DebugLogger() << "Tech List Box Done Populating";
     DebugLogger() << "    Creation time=" << (creation_elapsed * 1000) << "ms";
     DebugLogger() << "    Insertion time=" << (insertion_elapsed * 1000) << "ms";
