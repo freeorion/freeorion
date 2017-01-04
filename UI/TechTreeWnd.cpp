@@ -33,6 +33,9 @@
 namespace {
     const std::string RES_PEDIA_WND_NAME = "research.pedia";
     const std::string RES_CONTROLS_WND_NAME = "research.tech-controls";
+    const std::string RES_LISTBOX_VIEW_NAME = "research.listbox";
+    const std::string TECHROW_COL_XML_PREFIX = "UI." + RES_LISTBOX_VIEW_NAME + ".column-widths";
+    const std::string TECHROW_COL_ST_PREFIX = "OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH";
 
     // command-line options
     void AddOptions(OptionsDB& db) {
@@ -41,6 +44,19 @@ namespace {
         db.Add("UI.tech-layout-zoom-scale",     UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
         db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
         db.Add("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
+
+        // TechListBox::TechRow column widths
+        int default_pts = 16;
+        db.Add(TECHROW_COL_XML_PREFIX + ".graphic",         UserStringNop(TECHROW_COL_ST_PREFIX + "_GRAPHIC"),
+               default_pts * 2,         StepValidator<int>(1));
+        db.Add(TECHROW_COL_XML_PREFIX + ".name",            UserStringNop(TECHROW_COL_ST_PREFIX + "_NAME"),
+               default_pts * 18,        StepValidator<int>(1));
+        db.Add(TECHROW_COL_XML_PREFIX + ".cost",            UserStringNop(TECHROW_COL_ST_PREFIX + "_COST"),
+               default_pts * 8,         StepValidator<int>(1));
+        db.Add(TECHROW_COL_XML_PREFIX + ".time",            UserStringNop(TECHROW_COL_ST_PREFIX + "_TIME"),
+               default_pts * 6,         StepValidator<int>(1));
+        db.Add(TECHROW_COL_XML_PREFIX + ".category",        UserStringNop(TECHROW_COL_ST_PREFIX + "_CATEGORY"),
+               default_pts * 12,        StepValidator<int>(1));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -1585,20 +1601,72 @@ void TechTreeWnd::TechListBox::TechRow::Render() {
 }
 
 std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_width) {
-    const GG::X GRAPHIC_WIDTH(ClientUI::Pts() * 2);
-    const GG::X NAME_WIDTH(ClientUI::Pts() * 18);
-    const GG::X COST_WIDTH(ClientUI::Pts() * 4);
-    const GG::X TIME_WIDTH(ClientUI::Pts() * 4);
-    const GG::X CATEGORY_WIDTH(ClientUI::Pts() * 8);
-
-    const GG::X DESC_WIDTH = std::max(GG::X1, total_width - GRAPHIC_WIDTH - NAME_WIDTH - COST_WIDTH - TIME_WIDTH - CATEGORY_WIDTH);
     std::vector<GG::X> retval;
-    retval.push_back(GRAPHIC_WIDTH);
-    retval.push_back(NAME_WIDTH);
-    retval.push_back(COST_WIDTH);
-    retval.push_back(TIME_WIDTH);
-    retval.push_back(CATEGORY_WIDTH);
-    retval.push_back(DESC_WIDTH);
+    // Early return for very small screen
+    if (total_width < (6 * 4 * ClientUI::Pts())) {
+        ErrorLogger() << "Not enough room for reasonable column space";
+        retval = {GG::X1, GG::X1, GG::X1, GG::X1, GG::X1, GG::X1};
+        return retval;
+    }
+
+    // Attempt to utilize user defined widths
+    // If not enough width to fit, attempt default widths
+    // Failing both cases, proportionally assign the available width
+
+    GG::X graphic_width(    GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".graphic"));
+    GG::X name_width(       GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".name"));
+    GG::X cost_width(       GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".cost"));
+    GG::X time_width(       GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".time"));
+    GG::X category_width(   GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".category"));
+
+    GG::X cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
+
+    GG::X desc_width(std::max(GG::X1, total_width - cols_width_sum));
+
+    if (cols_width_sum > total_width) {
+        // config values did not fit, attempt default values
+        graphic_width   = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".graphic"));
+        name_width      = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".name"));
+        cost_width      = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".cost"));
+        time_width      = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".time"));
+        category_width  = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".category"));
+
+        GG::X default_cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
+        desc_width = std::max(GG::X1, total_width - default_cols_width_sum);
+
+        if (default_cols_width_sum > total_width) {
+            // default values do not fit
+            GG::X prop_width = total_width / 12;
+            DebugLogger() << "default config values for TechRow columns exceeded requested width: "
+                          << Value(default_cols_width_sum + desc_width) << "/" << Value(total_width)
+                          << ", setting to proportional widths";
+            graphic_width   = prop_width;
+            name_width      = prop_width * 3;
+            cost_width      = prop_width;
+            time_width      = prop_width;
+            category_width  = prop_width * 2;
+            desc_width      = prop_width * 4;
+        } else {
+            DebugLogger() << "config values for TechRow columns exceeded requested width: "
+                          << Value(cols_width_sum + desc_width) << "/" << Value(total_width)
+                          << ", set to default values";
+        }
+        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".graphic",     Value(graphic_width));
+        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".name",        Value(name_width));
+        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".cost",        Value(cost_width));
+        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".time",        Value(time_width));
+        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".category",    Value(category_width));
+
+        GetOptionsDB().Commit();
+
+    }
+
+    retval.push_back(graphic_width);
+    retval.push_back(name_width);
+    retval.push_back(cost_width);
+    retval.push_back(time_width);
+    retval.push_back(category_width);
+    retval.push_back(desc_width);
 
     return retval;
 }
