@@ -74,6 +74,10 @@ if (WIN32)
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
         set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+        add_definitions(
+            -DUNICODE
+            -D_UNICODE
+        )
     endif ()
 elseif (APPLE)
     add_definitions(-DFREEORION_MACOSX)
