@@ -561,8 +561,7 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
         // put message just sent in chat box (local echo)
         *m_chat_box += player_name + ": " + text + "\n";
 
-    } else if (m_ready_bn && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER))
-    {
+    } else if (m_ready_bn && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) {
         m_ready_bn->LeftClickedSignal();
     } else if (key == GG::GGK_ESCAPE) {
         m_cancel_bn->LeftClickedSignal();
@@ -697,9 +696,10 @@ void MultiPlayerLobbyWnd::DoLayout() {
 
     m_ready_bn->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
     m_cancel_bn->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
-    m_cancel_bn->MoveTo(GG::Pt(ClientWidth() - m_cancel_bn->Width() - CONTROL_MARGIN, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
+    m_cancel_bn->MoveTo(GG::Pt(ClientWidth() - m_cancel_bn->Width() - CONTROL_MARGIN,
+                               ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
     m_ready_bn->MoveTo(GG::Pt(m_cancel_bn->RelativeUpperLeft().x - CONTROL_MARGIN - m_ready_bn->Width(),
-                                   ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
+                              ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN));
 
     GG::Pt start_conditions_text_ul(x, ClientHeight() - m_cancel_bn->Height() - CONTROL_MARGIN);
     GG::Pt start_conditions_text_lr = start_conditions_text_ul + GG::Pt(m_cancel_bn->RelativeUpperLeft().x - x, TEXT_HEIGHT);
@@ -814,9 +814,8 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
             is_client_ready = psd.m_player_ready;
         else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
             psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
-            is_other_ready = is_other_ready && psd.m_player_ready;
-        }
+            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        { is_other_ready = is_other_ready && psd.m_player_ready; }
     }
 
     // on host, add extra empty row, which the host can use to select

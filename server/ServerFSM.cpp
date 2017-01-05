@@ -107,7 +107,8 @@ namespace {
             default:                                        ss << "<invalid client type>, ";
             }
             ss << entry.second.m_starting_species_name;
-            if (it->second.m_player_ready) { ss << ", Ready"; }
+            if (it->second.m_player_ready)
+                ss << ", Ready";
             DebugLogger() << " ... " << ss.str();
         }
     }
@@ -512,7 +513,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // check if new lobby data changed player setup data.  if so, need to echo
     // back to sender with updated lobby details.
     bool player_setup_data_changed = (incoming_lobby_data.m_players != m_lobby_data->m_players);
-    bool is_drop_ready = false;
+    // if got important lobby changes so players shoul reset their ready status
+    bool has_important_changes = false;
 
     // store incoming lobby data.  clients can only change some of
     // this information (galaxy setup data, whether it is a new game and what
@@ -525,7 +527,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // or the galaxy setup.
     
     // check if galaxy setup data changed
-    is_drop_ready = is_drop_ready || (m_lobby_data->m_seed != incoming_lobby_data.m_seed) ||
+    has_important_changes = has_important_changes || (m_lobby_data->m_seed != incoming_lobby_data.m_seed) ||
         (m_lobby_data->m_size != incoming_lobby_data.m_size) ||
         (m_lobby_data->m_shape != incoming_lobby_data.m_shape) ||
         (m_lobby_data->m_age != incoming_lobby_data.m_age) ||
@@ -539,7 +541,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
     if (player_setup_data_changed) {
         if (m_lobby_data->m_players.size() != incoming_lobby_data.m_players.size()) {
-            is_drop_ready = true; // drop ready at number of players changed
+            has_important_changes = true; // drop ready at number of players changed
         } else {
             for (std::pair<int, PlayerSetupData>& i_player : m_lobby_data->m_players) {
                 if (i_player.first < 0) // ignore changes in AI.
@@ -548,12 +550,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 bool is_found_player = false;
                 for (std::pair<int, PlayerSetupData>& j_player : incoming_lobby_data.m_players) {
                     if (player_id == j_player.first) {
-                        is_drop_ready = is_drop_ready || IsPlayerChanged(i_player.second, j_player.second);
+                        has_important_changes = has_important_changes || IsPlayerChanged(i_player.second, j_player.second);
                         is_found_player = true;
                         break;
                     }
                 }
-                is_drop_ready = is_drop_ready || (! is_found_player);
+                has_important_changes = has_important_changes || (! is_found_player);
             }
         }
     }
@@ -720,7 +722,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         }
     }
 
-    if (is_drop_ready) {
+    if (has_important_changes) {
         for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players)
             player.second.m_player_ready = false;
     } else {
@@ -729,7 +731,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players) {
             if ((player.first >= 0) && (player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
                 player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR ||
-                player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)) {
+                player.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER))
+            {
                 if (! player.second.m_player_ready)
                     is_all_ready = false;
             }
@@ -760,7 +763,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         // to players who didn't send the message that this function is
         // responding to.  TODO: check for add/drop
         if (new_save_file_selected || player_setup_data_changed ||
-            player_id != message.SendingPlayer() || is_drop_ready )
+            player_id != message.SendingPlayer() || has_important_changes )
             player_connection->SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
     }
 
