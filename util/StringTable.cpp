@@ -104,20 +104,22 @@ void StringTable_::Load(const StringTable_* lookups_fallback_table /* = 0 */) {
             it = end - matches.suffix().length();
 
             if (well_formed) {
-                for (smatch::nested_results_type::const_reference match : matches.nested_results()) {
-                    if (match.regex_id() == KEY.regex_id()) {
-                        key = match.str();
-                    } else if (match.regex_id() == SINGLE_LINE_VALUE.regex_id() ||
-                               match.regex_id() == MULTI_LINE_VALUE.regex_id())
+                for (smatch::nested_results_type::const_iterator match_it = matches.nested_results().begin();
+                     match_it != matches.nested_results().end(); ++match_it)
+                {
+                    if (match_it->regex_id() == KEY.regex_id()) {
+                        key = match_it->str();
+                    } else if (match_it->regex_id() == SINGLE_LINE_VALUE.regex_id() ||
+                               match_it->regex_id() == MULTI_LINE_VALUE.regex_id())
                     {
                         assert(key != "");
                         if (m_strings.find(key) == m_strings.end()) {
-                            m_strings[key] = match.str();
+                            m_strings[key] = match_it->str();
                             boost::algorithm::replace_all(m_strings[key], "\\n", "\n");
                         } else {
                             ErrorLogger() << "Duplicate string ID found: '" << key
-                                                   << "' in file: '" << m_filename
-                                                   << "'.  Ignoring duplicate.";
+                                          << "' in file: '" << m_filename
+                                          << "'.  Ignoring duplicate.";
                         }
                         prev_key = key;
                         key.clear();
