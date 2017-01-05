@@ -107,7 +107,7 @@ namespace {
             default:                                        ss << "<invalid client type>, ";
             }
             ss << entry.second.m_starting_species_name;
-            if (it->second.m_player_ready)
+            if (entry.second.m_player_ready)
                 ss << ", Ready";
             DebugLogger() << " ... " << ss.str();
         }
@@ -739,7 +739,36 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         }
 
         if (is_all_ready) {
+            // TODO: merge this code with MPLobby::react(const StartMPGame& msg)
             // start game
+            
+            if (! m_lobby_data->m_new_game) {
+                // Load game ...
+                std::string save_filename = (GetSaveDir() / m_lobby_data->m_save_game).string();
+
+                try {
+                    LoadGame(save_filename,             *m_server_save_game_data,
+                             m_player_save_game_data,   GetUniverse(),
+                             Empires(),                 GetSpeciesManager(),
+                             GetCombatLogManager(),     server.m_galaxy_setup_data);
+                    int seed = 0;
+                    try {
+                        DebugLogger() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed;
+                        seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
+                    } catch (...) {
+                        try {
+                            boost::hash<std::string> string_hash;
+                            std::size_t h = string_hash(server.m_galaxy_setup_data.m_seed);
+                            seed = static_cast<unsigned int>(h);
+                        } catch (...) {}
+                    }
+                    Seed(seed);
+                    
+                } catch (const std::exception&) {
+                    SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
+                    return discard_event();
+                }
+            }
             
             // copy locally stored data to common server fsm context so it can be
             // retreived in WaitingForMPGameJoiners
