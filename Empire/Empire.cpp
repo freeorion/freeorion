@@ -771,7 +771,7 @@ std::string ProductionQueue::ProductionItem::Dump() const {
     if (!name.empty())
         retval += "name: " + name;
     if (design_id != ShipDesign::INVALID_DESIGN_ID)
-        retval += "id: " + design_id;
+        retval += "id: " + boost::lexical_cast<std::string>(design_id);
     return retval;
 }
 
