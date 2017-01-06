@@ -409,6 +409,20 @@ namespace {
         }
     };
 
+    std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X(580)) {
+        std::vector<GG::X> retval;
+        GG::X color_width(75);
+        GG::X ready_width(ClientUI::Pts() * 5);
+        GG::X prop_width = (width - color_width - ready_width) / 4;
+        retval.push_back(prop_width); // type
+        retval.push_back(prop_width); // player name
+        retval.push_back(prop_width); // empire name
+        retval.push_back(color_width); // color
+        retval.push_back(prop_width); // species/original player
+        retval.push_back(ready_width); // player ready
+        return retval;
+    }
+
     const GG::X     LOBBY_WND_WIDTH(840);
     const GG::Y     LOBBY_WND_HEIGHT(720);
     const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
@@ -431,12 +445,8 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_galaxy_setup_panel(0),
     m_browse_saves_btn(0),
     m_preview_image(0),
-    m_players_lb_player_name_column_label(0),
-    m_players_lb_empire_name_column_label(0),
-    m_players_lb_empire_colour_column_label(0),
-    m_players_lb_species_or_original_player_label(0),
-    m_players_lb_player_ready_label(0),
     m_players_lb(0),
+    m_players_lb_headers(0),
     m_ready_bn(0),
     m_cancel_bn(0),
     m_start_conditions_text(0)
@@ -461,18 +471,20 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image = new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC);
 
-    m_players_lb_player_type_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_TYPES"), GG::FORMAT_LEFT);
-    m_players_lb_player_name_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_NAMES"), GG::FORMAT_LEFT);
-    m_players_lb_empire_name_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"), GG::FORMAT_LEFT);
-    m_players_lb_empire_colour_column_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_LEFT);
-    m_players_lb_species_or_original_player_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_LEFT);
-    m_players_lb_player_ready_label = new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_PLAYER_READY"), GG::FORMAT_LEFT);
+    m_players_lb_headers = new PlayerLabelRow();
+    m_players_lb_headers->SetMinSize(GG::Pt(GG::X(0), PlayerRowHeight() + PlayerFontHeight()));
 
     m_players_lb = new CUIListBox();
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+    m_players_lb->LockColWidths();
     m_players_lb->ManuallyManageColProps();
-    m_players_lb->NormalizeRowsOnInsert(true);
     m_players_lb->SetNumCols(6);
+    std::vector<GG::X> col_widths = PlayerRowColWidths();
+    for (unsigned int i = 0; i < m_players_lb->NumCols(); ++i) {
+        m_players_lb->SetColWidth(i, col_widths[i]);
+        m_players_lb->SetColAlignment(i, GG::ALIGN_VCENTER);
+    }
+    m_players_lb->SetColHeaders(m_players_lb_headers);
 
     m_ready_bn = new CUIButton(UserString("READY_BN"));
     m_cancel_bn = new CUIButton(UserString("CANCEL"));
@@ -487,12 +499,6 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     AttachChild(m_browse_saves_btn);
     AttachChild(m_preview_image);
     AttachChild(m_players_lb);
-    AttachChild(m_players_lb_player_type_label);
-    AttachChild(m_players_lb_player_name_column_label);
-    AttachChild(m_players_lb_empire_name_column_label);
-    AttachChild(m_players_lb_empire_colour_column_label);
-    AttachChild(m_players_lb_species_or_original_player_label);
-    AttachChild(m_players_lb_player_ready_label);
     AttachChild(m_ready_bn);
     AttachChild(m_cancel_bn);
     AttachChild(m_start_conditions_text);
@@ -515,6 +521,51 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     GG::Connect(m_cancel_bn->LeftClickedSignal,                 &MultiPlayerLobbyWnd::CancelClicked,            this);
 
     Refresh();
+}
+
+MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*/) :
+    GG::ListBox::Row(width, PlayerRowHeight(), "")
+{
+    push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_TYPES"), GG::FORMAT_BOTTOM));
+    push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_NAMES"), GG::FORMAT_BOTTOM));
+    push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"), GG::FORMAT_BOTTOM));
+    push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_BOTTOM | GG::FORMAT_WORDBREAK));
+    push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_BOTTOM | GG::FORMAT_WORDBREAK));
+    push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_PLAYER_READY"), GG::FORMAT_BOTTOM));
+    std::vector<GG::X> col_widths = PlayerRowColWidths(width);
+    unsigned int i = 0;
+    for (GG::Control* control : m_cells) {
+        control->SetChildClippingMode(ClipToWindow);
+        if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(control)) {
+            tc->SetFont(ClientUI::GetBoldFont());
+            tc->Resize(GG::Pt(col_widths[i], PlayerRowHeight() + PlayerFontHeight()));
+        }
+        ++i;
+    }
+    SetColWidths(col_widths);
+    RequirePreRender();
+}
+
+void MultiPlayerLobbyWnd::PlayerLabelRow::SetText(size_t column, const std::string& str) {
+    if (m_cells.size() < column) {
+        ErrorLogger() << "Invalid column " << column << " for row with " << m_cells.size() << " columns";
+        return;
+    }
+    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(m_cells.at(column)))
+        tc->SetText(str);
+    else
+        ErrorLogger() << "Unable to set text " << str << " for column " << column;
+}
+
+void MultiPlayerLobbyWnd::PlayerLabelRow::Render() {
+    const GG::Clr& BG_CLR = ClientUI::WndOuterBorderColor();
+    const GG::Clr& BORDER_CLR = ClientUI::WndInnerBorderColor();
+    GG::Pt ul(UpperLeft().x + CONTROL_MARGIN, UpperLeft().y + CONTROL_MARGIN);
+    GG::Pt lr(LowerRight().x - CONTROL_MARGIN, LowerRight().y - CONTROL_MARGIN);
+
+    // background fill and border for each cell
+    for (GG::Control* cell : m_cells)
+        GG::FlatRectangle(GG::Pt(cell->UpperLeft().x, ul.y), GG::Pt(cell->LowerRight().x, lr.y), BG_CLR, BORDER_CLR, 1);
 }
 
 void MultiPlayerLobbyWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -665,34 +716,14 @@ void MultiPlayerLobbyWnd::DoLayout() {
     GG::Y y = std::max(m_save_file_text->RelativeLowerRight().y, m_preview_image->RelativeLowerRight().y) + 5*CONTROL_MARGIN;
     const GG::Y TEXT_HEIGHT = GG::Y(ClientUI::Pts() * 3/2);
 
-
-    GG::Pt players_lb_labels_ul(x + CONTROL_MARGIN, y);
-    GG::Pt players_lb_labels_lr= players_lb_labels_ul + GG::Pt(EMPIRE_NAME_WIDTH, TEXT_HEIGHT);
-    GG::Pt players_lb_labels_advance(EMPIRE_NAME_WIDTH - 45, GG::Y0);
-
-    m_players_lb_player_type_label->SizeMove(players_lb_labels_ul, players_lb_labels_lr);
-    players_lb_labels_ul += players_lb_labels_advance;
-    players_lb_labels_lr += players_lb_labels_advance;
-    m_players_lb_player_name_column_label->SizeMove(players_lb_labels_ul, players_lb_labels_lr);
-    players_lb_labels_ul += players_lb_labels_advance;
-    players_lb_labels_lr += players_lb_labels_advance;
-    m_players_lb_empire_name_column_label->SizeMove(players_lb_labels_ul, players_lb_labels_lr);
-    players_lb_labels_ul += players_lb_labels_advance;
-    players_lb_labels_lr += players_lb_labels_advance;
-    m_players_lb_empire_colour_column_label->SizeMove(players_lb_labels_ul, players_lb_labels_lr);
-    players_lb_labels_ul += players_lb_labels_advance;
-    players_lb_labels_lr += players_lb_labels_advance;
-    m_players_lb_species_or_original_player_label->SizeMove(players_lb_labels_ul, players_lb_labels_lr);
-    players_lb_labels_ul += players_lb_labels_advance;
-    players_lb_labels_lr += players_lb_labels_advance;
-    m_players_lb_player_ready_label->SizeMove(players_lb_labels_ul, players_lb_labels_lr);
-
-    y += TEXT_HEIGHT + CONTROL_MARGIN;
-    x = CHAT_WIDTH + CONTROL_MARGIN;
-
     GG::Pt players_lb_ul(x, y);
     GG::Pt players_lb_lr = players_lb_ul + GG::Pt(ClientWidth() - CONTROL_MARGIN - x, m_chat_input_edit->RelativeUpperLeft().y - CONTROL_MARGIN - y);
     m_players_lb->SizeMove(players_lb_ul, players_lb_lr);
+    std::vector<GG::X> players_lb_col_widths = PlayerRowColWidths(players_lb_lr.x - players_lb_ul.x);
+    m_players_lb_headers->SetColWidths(players_lb_col_widths);
+    for (unsigned int i = 0; i < players_lb_col_widths.size(); ++i)
+        m_players_lb->SetColWidth(i, players_lb_col_widths[i]);
+    m_players_lb->RequirePreRender();
 
     m_ready_bn->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
     m_cancel_bn->SizeMove(GG::Pt(GG::X0, GG::Y0), GG::Pt(GG::X(125), m_ready_bn->MinUsableSize().y));
@@ -772,11 +803,15 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
 
 bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     bool send_update_back_retval = false;
+    std::vector<GG::X> col_widths = PlayerRowColWidths();
 
     // store list position to restore after update
     int initial_list_scroll_pos = std::distance(m_players_lb->begin(), m_players_lb->FirstRowShown());
 
     m_players_lb->Clear();
+    m_players_lb_headers->SetColWidths(col_widths);
+    for (unsigned int i = 0; i < col_widths.size(); ++i)
+        m_players_lb->SetColWidth(i, col_widths[i]);
 
     bool is_client_ready = false;
     bool is_other_ready = true;
@@ -828,9 +863,9 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     }
 
     if (m_lobby_data.m_new_game) {
-        m_players_lb_species_or_original_player_label->SetText(UserString("MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES"));
+        m_players_lb_headers->SetText(4, UserString("MULTIPLAYER_PLAYER_LIST_STARTING_SPECIES"));
     } else {
-        m_players_lb_species_or_original_player_label->SetText(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"));
+        m_players_lb_headers->SetText(4, UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"));
     }
 
     // restore list scroll position

@@ -9,6 +9,7 @@
 #include "../util/MultiplayerCommon.h"
 
 class Message;
+struct PlayerLabelRow;
 
 
 /** multiplayer lobby window */
@@ -35,6 +36,12 @@ public:
 
 protected:
     virtual GG::Rect CalculatePosition() const;
+    struct PlayerLabelRow : GG::ListBox::Row {
+        PlayerLabelRow(GG::X width = GG::X(580));
+        /** Set text of control at @p column to @p str */
+        void SetText(size_t column, const std::string& str);
+        virtual void Render();
+    };
 
 private:
     void            DoLayout();
@@ -60,13 +67,8 @@ private:
     GG::Label*              m_save_file_text;
     GG::Button*             m_browse_saves_btn;
     GG::StaticGraphic*      m_preview_image;
-    GG::Label*              m_players_lb_player_type_label;
-    GG::Label*              m_players_lb_player_name_column_label;
-    GG::Label*              m_players_lb_empire_name_column_label;
-    GG::Label*              m_players_lb_empire_colour_column_label;
-    GG::Label*              m_players_lb_species_or_original_player_label;
-    GG::Label*              m_players_lb_player_ready_label;
     GG::ListBox*            m_players_lb;
+    PlayerLabelRow*         m_players_lb_headers;
     GG::Button*             m_ready_bn;
     GG::Button*             m_cancel_bn;
     GG::Label*              m_start_conditions_text;
