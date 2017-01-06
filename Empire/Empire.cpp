@@ -33,51 +33,55 @@ namespace {
     const float EPSILON = 0.01f;
     const std::string EMPTY_STRING;
 
-    float GetQueueFrontloadFactor() {
-        static float front_load_factor = -1.0;
-        if (front_load_factor == -1.0) {
-            front_load_factor = 0.0;
-            try {
-                if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
-                    float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
-                    if (new_front_factor > 0.0f && new_front_factor <= 0.3f)
-                        front_load_factor = new_front_factor;
-                }
-            } catch (...) {}
-        }
-        return front_load_factor;
+    void AddOptions(OptionsDB& db) {
+        db.Add<float>("production.queue.frontload-factor",
+                      UserStringNop("OPTIONS_DB_PRODUCTION_QUEUE_FRONTLOAD_FACTOR"),
+                      0.0f,     RangedStepValidator<float>(0.025f, 0.0f, 0.3f));
+        db.Add<float>("production.queue.topping-up-factor",
+                      UserStringNop("OPTIONS_DB_PRODUCTION_QUEUE_TOPPING_UP_FACTOR"),
+                      0.0f,     RangedStepValidator<float>(0.025f, 0.0f, 0.3f));
     }
+    bool temp_bool = RegisterOptions(&AddOptions);
 
-    float GetQueueToppingFactor() {
-        static float topping_up_factor = -1.0;
-        if (topping_up_factor == -1.0) {
-            topping_up_factor = 0.0;
-            try {
-                if (UserStringExists("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR")) {
-                    float new_front_factor = std::atof(UserString("FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR").c_str());
-                    if (new_front_factor > 0.0f && new_front_factor <= 0.3f)
-                        topping_up_factor = new_front_factor;
-                }
-            } catch (...) {}
-        }
-        return topping_up_factor;
-    }
+    float GetQueueFrontloadFactor()
+    { return GetOptionsDB().Get<float>("production.queue.frontload-factor"); }
 
-// FUNCTIONAL_PRODUCTION_QUEUE_FRONTLOAD_FACTOR and FUNCTIONAL_PRODUCTION_QUEUE_TOPPING_UP_FACTOR specify global_settings.txt values that affect how the ProductionQueue will limit
-// allocation towards building a given item on a given turn.  The base amount of maximum allocation per turn (if the player has enough PP available) is the item's total
-// cost, divided over its minimum build time.  Sometimes complications arise, though, which unexpectedly delay the completion even if the item had been fully-funded 
-// every turn, because costs have risen partway through (such as due to increasing ship costs resulting from recent ship constructoin completion and ensuing increase 
-// of Fleet Maintenance costs.  These two settings provide a mechanism for some allocation leeway to deal with mid-build cost increases without causing the project 
-// completion to take an extra turn because of the small bit of increased cost.  The settings differ in the timing of the extra allocation allowed.
-// Both factors have a minimum value of 0.0 and a maximum value of 0.3.
+    float GetQueueToppingFactor()
+    { return GetOptionsDB().Get<float>("production.queue.topping-up-factor"); }
 
-// Making the frontloaded factor greater than zero increases the per-turn allocation cap by the specified percentage (so it always spreads the extra allocation across all turns).
-// Making the topping-up option nonzero allows the final turn allocation cap to be increased by the specified percentage of the total cost, if needed (and then subject to 
-// availability of course). They can both be nonzero, although to avoid that introducing too much interaction complexity into the minimum build time safeguard for topping-up, 
-// the topping-up percentage will be reduced by the frontloading setting. 
-
-// Note that for very small values of the options (less than 5%), when dealing with very low cost items the effect/protection may be noticeably less than expected because of
-// interactions with the ProductionQueue Epsilon value (0.01)
+    /** The Frontload Factor and Topping-Up Factor affect how the
+     * ProductionQueue will limit allocation towards building a given item on a
+     * given turn.
+     * The base amount of maximum allocation per turn (if the player has enough
+     * PP available) is the item's total cost, divided over its minimum build
+     * time.  Sometimes complications arise, though, which unexpectedly delay
+     * the completion even if the item had been fully-funded every turn, because
+     * costs have risen partway through (such as due to increasing ship costs
+     * resulting from recent ship construction completion and ensuing increase
+     * of Fleet Maintenance costs.
+     * These two settings provide a mechanism for some allocation leeway to deal
+     * with mid-build cost increases without causing the project completion to
+     * take an extra turn because of the small bit of increased cost.  The
+     * settings differ in the timing of the extra allocation allowed.
+     * 
+     * Both factors have a minimum value of 0.0 and a maximum value of 0.3.
+     * 
+     * Making the frontloaded factor greater than zero increases the per-turn
+     * allocation cap by the specified percentage (so it always spreads the
+     * extra allocation across all turns).
+     * Making the topping-up option nonzero allows the final turn allocation cap
+     * to be increased by the specified percentage of the total cost, if needed
+     * (and then subject to availability of course).
+     * They can both be nonzero, although to avoid that introducing too much
+     * interaction complexity into the minimum build time safeguard for
+     * topping-up, the topping-up percentage will be reduced by the frontloading
+     * setting.
+     * 
+     * Note that for very small values of the options (less than 5%), when
+     * dealing with very low cost items the effect/protection may be noticeably
+     * less than expected because of interactions with the ProductionQueue
+     * Epsilon value (0.01)
+     */
 
     float CalculateProductionPerTurnLimit(const ProductionQueue::Element& queue_element, float item_cost, int build_turns) {
         const float frontload_limit_factor = GetQueueFrontloadFactor();
