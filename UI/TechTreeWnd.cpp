@@ -29,13 +29,11 @@
 #include <algorithm>
 
 #include <boost/timer.hpp>
+#include <boost/locale.hpp>
 
 namespace {
     const std::string RES_PEDIA_WND_NAME = "research.pedia";
     const std::string RES_CONTROLS_WND_NAME = "research.tech-controls";
-    const std::string RES_LISTBOX_VIEW_NAME = "research.listbox";
-    const std::string TECHROW_COL_XML_PREFIX = "UI." + RES_LISTBOX_VIEW_NAME + ".column-widths";
-    const std::string TECHROW_COL_ST_PREFIX = "OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH";
 
     // command-line options
     void AddOptions(OptionsDB& db) {
@@ -47,16 +45,18 @@ namespace {
 
         // TechListBox::TechRow column widths
         int default_pts = 16;
-        db.Add(TECHROW_COL_XML_PREFIX + ".graphic",         UserStringNop(TECHROW_COL_ST_PREFIX + "_GRAPHIC"),
+        db.Add("UI.research.listbox.column-widths.graphic",     UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_GRAPHIC"),
                default_pts * 2,         StepValidator<int>(1));
-        db.Add(TECHROW_COL_XML_PREFIX + ".name",            UserStringNop(TECHROW_COL_ST_PREFIX + "_NAME"),
+        db.Add("UI.research.listbox.column-widths.name",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_NAME"),
                default_pts * 18,        StepValidator<int>(1));
-        db.Add(TECHROW_COL_XML_PREFIX + ".cost",            UserStringNop(TECHROW_COL_ST_PREFIX + "_COST"),
+        db.Add("UI.research.listbox.column-widths.cost",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_COST"),
                default_pts * 8,         StepValidator<int>(1));
-        db.Add(TECHROW_COL_XML_PREFIX + ".time",            UserStringNop(TECHROW_COL_ST_PREFIX + "_TIME"),
+        db.Add("UI.research.listbox.column-widths.time",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_TIME"),
                default_pts * 6,         StepValidator<int>(1));
-        db.Add(TECHROW_COL_XML_PREFIX + ".category",        UserStringNop(TECHROW_COL_ST_PREFIX + "_CATEGORY"),
+        db.Add("UI.research.listbox.column-widths.category",    UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
                default_pts * 12,        StepValidator<int>(1));
+        db.Add("UI.research.listbox.column-widths.description", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
+               default_pts * 18,        StepValidator<int>(1));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -136,6 +136,13 @@ namespace {
         TechTreeWnd* const m_tree_wnd;
         const TechStatus m_status;
     };
+
+    // Duplicated in MapWnd.cpp/ObjectListWnd.cpp
+    const std::locale& GetLocale() {
+        static boost::locale::generator gen;
+        static const std::locale& loc = gen("en_US.UTF-8");  // manually sets locale
+        return loc;
+    }
 }
 
 ///////////////////////////
@@ -1605,64 +1612,17 @@ void TechTreeWnd::TechListBox::TechRow::Render() {
 
 std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_width) {
     std::vector<GG::X> retval;
-    // Early return for very small screen
-    if (total_width < (6 * 4 * ClientUI::Pts())) {
-        ErrorLogger() << "Not enough room for reasonable column space";
-        retval = {GG::X1, GG::X1, GG::X1, GG::X1, GG::X1, GG::X1};
-        return retval;
-    }
 
-    // Attempt to utilize user defined widths
-    // If not enough width to fit, attempt default widths
-    // Failing both cases, proportionally assign the available width
-
-    GG::X graphic_width(    GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".graphic"));
-    GG::X name_width(       GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".name"));
-    GG::X cost_width(       GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".cost"));
-    GG::X time_width(       GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".time"));
-    GG::X category_width(   GetOptionsDB().Get<int>(TECHROW_COL_XML_PREFIX + ".category"));
+    GG::X graphic_width(    GetOptionsDB().Get<int>("UI.research.listbox.column-widths.graphic"));
+    GG::X name_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.name"));
+    GG::X cost_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.cost"));
+    GG::X time_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.time"));
+    GG::X category_width(   GetOptionsDB().Get<int>("UI.research.listbox.column-widths.category"));
 
     GG::X cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
 
-    GG::X desc_width(std::max(GG::X1, total_width - cols_width_sum));
-
-    if (cols_width_sum > total_width) {
-        // config values did not fit, attempt default values
-        graphic_width   = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".graphic"));
-        name_width      = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".name"));
-        cost_width      = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".cost"));
-        time_width      = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".time"));
-        category_width  = GG::X(GetOptionsDB().GetDefault<int>(TECHROW_COL_XML_PREFIX + ".category"));
-
-        GG::X default_cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
-        desc_width = std::max(GG::X1, total_width - default_cols_width_sum);
-
-        if (default_cols_width_sum > total_width) {
-            // default values do not fit
-            GG::X prop_width = total_width / 12;
-            DebugLogger() << "default config values for TechRow columns exceeded requested width: "
-                          << Value(default_cols_width_sum + desc_width) << "/" << Value(total_width)
-                          << ", setting to proportional widths";
-            graphic_width   = prop_width;
-            name_width      = prop_width * 3;
-            cost_width      = prop_width;
-            time_width      = prop_width;
-            category_width  = prop_width * 2;
-            desc_width      = prop_width * 4;
-        } else {
-            DebugLogger() << "config values for TechRow columns exceeded requested width: "
-                          << Value(cols_width_sum + desc_width) << "/" << Value(total_width)
-                          << ", set to default values";
-        }
-        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".graphic",     Value(graphic_width));
-        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".name",        Value(name_width));
-        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".cost",        Value(cost_width));
-        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".time",        Value(time_width));
-        GetOptionsDB().Set(TECHROW_COL_XML_PREFIX + ".category",    Value(category_width));
-
-        GetOptionsDB().Commit();
-
-    }
+    GG::X desc_width(std::max(GetOptionsDB().Get<int>("UI.research.listbox.column-widths.description"),
+                              Value(total_width - cols_width_sum)));
 
     retval.push_back(graphic_width);
     retval.push_back(name_width);
@@ -1695,15 +1655,12 @@ bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG:
     // When equal, sort by previous sorted column
     if ((lhs_key == rhs_key) && (m_previous_sort_col != column)) {
         retval = TechRowCmp(lhs, rhs, m_previous_sort_col);
-    } else if (column == 2 || column == 3) {
-        try {  // compare by int
-            retval = boost::lexical_cast<int>(lhs_key) < boost::lexical_cast<int>(rhs_key);
-        } catch (boost::bad_lexical_cast& e) {
-            DebugLogger() << "Unable to cast sort keys to int, lhs:" << lhs_key << " rhs:" << rhs_key << ". " << e.what();
-            retval = lhs_key < rhs_key;
-        }
     } else {
-        retval = lhs_key < rhs_key;
+        try {  // attempt compare by int
+            retval = boost::lexical_cast<int>(lhs_key) < boost::lexical_cast<int>(rhs_key);
+        } catch (const boost::bad_lexical_cast& e) {
+            retval = GetLocale().operator()(lhs_key, rhs_key);
+        }
     }
 
     return retval;
