@@ -37,6 +37,14 @@ namespace {
     { return ClientUI::GetFont(ClientUI::Pts())->Height(); }
     GG::Y PlayerRowHeight()
     { return PlayerFontHeight() + 2 * PlayerRowMargin(); }
+    GG::X PlayerReadyBrowseWidth()
+    { return GG::X(ClientUI::Pts() * 11); }
+
+    const boost::shared_ptr<GG::Texture> GetReadyTexture(bool ready) {
+        if (ready)
+            return GG::GetTextureManager().GetTexture(ClientUI::ArtDir() / "icons/ready.png");
+        return GG::GetTextureManager().GetTexture(ClientUI::ArtDir() / "icons/not_ready.png");
+    }
 
     const GG::X EMPIRE_NAME_WIDTH(150);
     const GG::X BROWSE_BTN_WIDTH(50);
@@ -229,7 +237,13 @@ namespace {
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
-                push_back(new CUILabel(player_data.m_player_ready ? UserString("YES") : UserString("NO")));
+                push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
+                                                GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+                at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
+                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                    m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
+                    "", PlayerReadyBrowseWidth())));
 
                 return;
             }
@@ -263,11 +277,19 @@ namespace {
             else
                 GG::Connect(species_selector->SpeciesChangedSignal, &NewGamePlayerRow::SpeciesChanged,      this);
 
-            // ready check box or empty label for AI
-            if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            // ready state
+            if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
                 push_back(new CUILabel(""));
-            else
-                push_back(new CUILabel(player_data.m_player_ready ? UserString("YES") : UserString("NO")));
+                at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
+            } else {
+                push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
+                                                GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+                at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
+                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                    m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
+                    "", PlayerReadyBrowseWidth())));
+            }
         }
 
     private:
@@ -351,11 +373,19 @@ namespace {
             else
                 Connect(m_empire_list->SelChangedSignal, &LoadGamePlayerRow::EmpireChanged, this);
 
-            // ready check box or empty label for AI
-            if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            // ready state
+            if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
                 push_back(new CUILabel(""));
-            else
-                push_back(new CUILabel(player_data.m_player_ready ? UserString("YES") : UserString("NO")));
+                at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
+            } else {
+                push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
+                                                GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                    m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
+                    "", PlayerReadyBrowseWidth())));
+                at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
+            }
         }
 
     private:
@@ -409,20 +439,6 @@ namespace {
         }
     };
 
-    std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X(580)) {
-        std::vector<GG::X> retval;
-        GG::X color_width(75);
-        GG::X ready_width(ClientUI::Pts() * 5);
-        GG::X prop_width = (width - color_width - ready_width) / 4;
-        retval.push_back(prop_width); // type
-        retval.push_back(prop_width); // player name
-        retval.push_back(prop_width); // empire name
-        retval.push_back(color_width); // color
-        retval.push_back(prop_width); // species/original player
-        retval.push_back(ready_width); // player ready
-        return retval;
-    }
-
     const GG::X     LOBBY_WND_WIDTH(840);
     const GG::Y     LOBBY_WND_HEIGHT(720);
     const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
@@ -434,6 +450,20 @@ namespace {
     GG::Pt          g_preview_ul;
     const GG::Pt    PREVIEW_SZ(GG::X(248), GG::Y(186));
     const int       PREVIEW_MARGIN = 3;
+
+    std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X(580)) {
+        std::vector<GG::X> retval;
+        GG::X color_width(75);
+        GG::X ready_width((ClientUI::Pts() / 2) * 5);
+        GG::X prop_width = ((width - color_width - ready_width) / 4) - CONTROL_MARGIN;
+        retval.push_back(prop_width); // type
+        retval.push_back(prop_width); // player name
+        retval.push_back(prop_width); // empire name
+        retval.push_back(color_width); // color
+        retval.push_back(prop_width); // species/original player
+        retval.push_back(ready_width); // player ready
+        return retval;
+    }
 }
 
 MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
@@ -531,15 +561,16 @@ MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*
     push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_EMPIRES"), GG::FORMAT_BOTTOM));
     push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_BOTTOM | GG::FORMAT_WORDBREAK));
     push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_BOTTOM | GG::FORMAT_WORDBREAK));
-    push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_PLAYER_READY"), GG::FORMAT_BOTTOM));
+    push_back(new GG::StaticGraphic(GetReadyTexture(true), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+    // restrict height of ready state icon
+    at(5)->SetMaxSize(GG::Pt(GG::X(400), PlayerFontHeight()));
     std::vector<GG::X> col_widths = PlayerRowColWidths(width);
     unsigned int i = 0;
     for (GG::Control* control : m_cells) {
         control->SetChildClippingMode(ClipToWindow);
-        if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(control)) {
+        if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>(control))
             tc->SetFont(ClientUI::GetBoldFont());
-            tc->Resize(GG::Pt(col_widths[i], PlayerRowHeight() + PlayerFontHeight()));
-        }
+        control->Resize(GG::Pt(col_widths[i], PlayerRowHeight() + PlayerFontHeight()));
         ++i;
     }
     SetColWidths(col_widths);
