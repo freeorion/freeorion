@@ -3385,6 +3385,23 @@ void Empire::UpdateOwnedObjectCounters() {
         m_ship_designs_owned[ship->DesignID()]++;
     }
 
+    // update ship part counts
+    m_ship_part_types_owned.clear();
+    m_ship_part_class_owned.clear();
+    for (const std::map<int, int>::value_type& design_count : m_ship_designs_owned) {
+        const ShipDesign* design = GetShipDesign(design_count.first);
+        if (!design)
+            continue;
+
+        // update count of PartTypes
+        for (const std::map<std::string, int>::value_type& part_type : design->PartTypeCount())
+            m_ship_part_types_owned[part_type.first] += part_type.second * design_count.second;
+
+        // update count of ShipPartClasses
+        for (const std::map<ShipPartClass, int>::value_type& part_class : design->PartClassCount())
+            m_ship_part_class_owned[part_class.first] += part_class.second * design_count.second;
+    }
+
     // colonies of each species, and unspecified outposts
     m_species_colonies_owned.clear();
     m_outposts_owned = 0;
@@ -3424,6 +3441,16 @@ int Empire::TotalShipsOwned() const {
     for (const std::map<int, int>::value_type& entry : m_ship_designs_owned)
     { counter += entry.second; }
     return counter;
+}
+
+int Empire::TotalShipPartsOwned() const {
+    // sum counts of all ship parts owned by this empire
+    int retval = 0;
+
+    for (const std::map<ShipPartClass, int>::value_type& part_class : m_ship_part_class_owned)
+        retval += part_class.second;
+
+    return retval;
 }
 
 int Empire::TotalBuildingsOwned() const {
