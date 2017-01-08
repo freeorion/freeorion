@@ -138,8 +138,10 @@ void BuildingsPanel::Update() {
     if (!empire)
         return;
 
-    int queue_index = 0;
+    int queue_index = -1;
     for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
+        ++queue_index;
+        //std::cout << "queue index: " << queue_index << " elem: " << elem.Dump() << std::endl;
         if (elem.item.build_type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...
         if (elem.location != m_planet_id) continue;         // don't show buildings located elsewhere
 
@@ -149,12 +151,11 @@ void BuildingsPanel::Update() {
         boost::tie(total_cost, total_turns) = empire->ProductionCostAndTime(elem);
 
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
-        double turns_completed = total_turns * std::min<double>(1.0, progress / total_cost);
+        double turns_completed = progress / std::max(total_cost, 1.0);
         BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
                                                        turns_completed, total_turns, total_cost, turn_spending);
 
         m_building_indicators.push_back(ind);
-        ++queue_index;
     }
 }
 
