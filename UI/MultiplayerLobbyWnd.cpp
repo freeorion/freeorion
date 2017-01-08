@@ -42,8 +42,8 @@ namespace {
 
     const boost::shared_ptr<GG::Texture> GetReadyTexture(bool ready) {
         if (ready)
-            return GG::GetTextureManager().GetTexture(ClientUI::ArtDir() / "icons/ready.png");
-        return GG::GetTextureManager().GetTexture(ClientUI::ArtDir() / "icons/not_ready.png");
+            return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/ready.png");
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/not_ready.png");
     }
 
     const GG::X EMPIRE_NAME_WIDTH(150);
