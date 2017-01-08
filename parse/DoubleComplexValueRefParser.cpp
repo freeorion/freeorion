@@ -48,7 +48,7 @@ namespace parse {
 
             species_empire_opinion
                 = (
-                    (  tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesEmpireOpinion") ]
+                    (  tok.SpeciesOpinion_ [ _a = construct<std::string>(std::string("SpeciesEmpireOpinion")) ]
                        >  parse::label(Species_token) >  string_value_ref [ _d = _1 ]
                     )
                   >> parse::label(Empire_token)  >  simple_int [ _b = _1 ]
@@ -57,7 +57,7 @@ namespace parse {
 
             species_species_opinion
                 = (
-                    (   tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesSpeciesOpinion") ]
+                    (   tok.SpeciesOpinion_ [ _a = construct<std::string>(std::string("SpeciesSpeciesOpinion")) ]
                       >  parse::label(Species_token) >  string_value_ref [ _d = _1 ]
                     )
                   >> parse::label(Species_token) >  string_value_ref [ _e = _1 ]
