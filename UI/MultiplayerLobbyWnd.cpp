@@ -238,7 +238,7 @@ namespace {
                 push_back(new CUILabel(""));
                 push_back(new CUILabel(""));
                 push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
-                                                GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
                 at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
@@ -283,7 +283,7 @@ namespace {
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
                 push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
-                                                GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
                 at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
@@ -379,7 +379,7 @@ namespace {
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             } else {
                 push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
-                                                GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
                 at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
