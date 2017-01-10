@@ -6,7 +6,7 @@ ShipDesign
         "SR_WEAPON_0_1"
         "SR_WEAPON_1_1"
         "SR_WEAPON_1_1"
-        "AR_ZORTRIUM_PLATE"
+        "AR_STD_PLATE"
         "SH_DEFENSE_GRID"
     ]
     model = "mark1"

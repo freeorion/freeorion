@@ -4,7 +4,7 @@ ShipDesign
     hull = "SH_STANDARD"
     parts = [
         "SR_WEAPON_0_1"
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
         "FU_BASIC_TANK"
     ]

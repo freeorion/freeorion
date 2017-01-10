@@ -313,28 +313,22 @@ FORMAT_LIST_MANY_ITEMS
 ##
 
 SD_CARRIER
-Prototype Carrier
+Escort Carrier
 
 SD_CARRIER_DESC
-Prototype design that launches fighters in battle instead of using direct-fire weapons.
+Carrier designed to defend other armed vessels by launching interceptor squadrons.
 
-SD_FLAK
-Prototype Flak Ship
+SD_CARRIER_2
+Fleet Carrier
 
-SD_FLAK_DESC
-Prototype design that uses flak cannons as a cheap fighter countermeasure.
+SD_CARRIER_2_DESC
+Carrier designed for offensive fleet action with attack bomber squadrons and mass drivers.
 
 SD_SCOUT
 Scout
 
 SD_SCOUT_DESC
 Small and cheap unarmed vessel designed for recon and exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_AST_SCOUT
-Asteroid Scout
-
-SD_AST_SCOUT_DESC
-Small and cheap unarmed vessel made from a hollowed-out asteroid, designed for recon and exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_SCOUT_2
 Radar Scout
@@ -361,82 +355,46 @@ SD_ENG_SCOUT_DESC
 Small and fast unarmed vessel designed for recon and exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_SMALL_MARK_1
-Corvette (M)
+Corvette M
 
 SD_SMALL_MARK1_DESC
 Small and cheap mass-driver ship. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
-SD_SMALL_MARK_2
-Corvette (L)
-
-SD_SMALL_MARK2_DESC
-Small and cheap laser ship. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
 SD_MARK_1
-Frigate (M1)
+Frigate Ms
 
 SD_MARK1_DESC
 Basic mass-driver frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
-SD_MARK_2
-Frigate (M2)
-
-SD_MARK2_DESC
-Improved mass-driver frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_MARK_3
-Frigate (L1)
-
-SD_MARK3_DESC
-Basic laser frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_MARK_4
-Frigate (L2)
-
-SD_MARK4_DESC
-Improved laser frigate. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
 SD_LARGE_MARK_1
-Destroyer (M1)
+Cruiser Ms
 
 SD_LARGE_MARK1_DESC
-Basic mass-driver fighter. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Cruiser equipped for long range independent action with improved lasers and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
-Destroyer (M2)
+Cruiser Lz
 
 SD_LARGE_MARK2_DESC
-Improved mass-driver fighter. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Cruiser equipped for long range independent action . [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3
-Cruiser (L1)
+Destroyer Ms
 
 SD_LARGE_MARK3_DESC
-Improved fighter with lasers. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Destroyer equipped for fleet actions. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_4
-Cruiser (L2)
+Destroyer Lz
 
 SD_LARGE_MARK4_DESC
-Improved fighter with heavy lasers and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Destroyer equipped for fleet actions with improved lasers and armor. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ROBOTIC_OUTPOST
 Robotic Outpost
 
 SD_ROBOTIC_OUTPOST_DESC
 Can establish outposts on faraway worlds.
-
-SD_ROBOTIC_COLONY
-Robotic Colony
-
-SD_ROBOTIC_COLONY_DESC
-Can establish colonies on faraway worlds.
-
-SD_ROBOTIC_CRYOCOL
-Robotic CryoColony
-
-SD_ROBOTIC_CRYOCOL_DESC
-Can establish advanced colonies on faraway worlds.
 
 SD_ROBO_FLUX_SCOUT
 Flux Scout
@@ -457,40 +415,34 @@ SD_ROBO_FLUX_TROOPS_HVY_DESC
 Fast advanced troop carrier
 
 SD_ROBOTIC1
-Robocruiser (M1)
+Robocruiser Mfs
 
 SD_ROBOTIC1_DESC
-Robotic mass-driver fighter. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Cruiser designed for fleet and independent action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC2
-Robocruiser (M2)
+Destroyer Mfs-DG
 
 SD_ROBOTIC2_DESC
-Robotic fighter heavy armor. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Robotic hull equipped for fleet actions. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC3
-Robocruiser (L)
+Robocruiser Lzi
 
 SD_ROBOTIC3_DESC
-Improved robotic fighter with lasers. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
-
-SD_NANOROBOTIC1
-Nanobot Battlecruiser
-
-SD_NANOROBOTIC1_DESC
-Advanced heavy cruiser capable of self repair
+Robotic ship equipped for long range independent action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_GRAVITATING1
-Gravitic Battleship (P)
+Battleship Pfd-DS
 
 SD_GRAVITATING1_DESC
-Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+Self-gravitating battleship equipped for large fleet actions. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_GRAVITATING2
-Gravitic Battleship (D)
+Battleship Dfx-BS
 
 SD_GRAVITATING2_DESC
-Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+Large state-of-art battleship armed and protected with top technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_ROBO_TITAN1
 Dreadnaught
@@ -498,101 +450,11 @@ Dreadnaught
 SD_ROBO_TITAN1_DESC
 Large state-of-art battleship armed and protected with the latest technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
-SD_ORGANIC1
-Organic Frigate (M1)
-
-SD_ORGANIC1_DESC
-Organic fighter with preliminary weaponry and defence technology. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_ORGANIC2
-Organic Frigate (M2)
-
-SD_ORGANIC2_DESC
-Organic fighter with improved armour. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_ORGANIC3
-Organic Frigate (L)
-
-SD_ORGANIC3_DESC
-Organic fighter with heavy lasers and armor. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_SHIELD_BUG_1
-Organic Heavy Frigate (M)
-
-SD_SHIELD_BUG_1_DESC
-Organic fighter with [[metertype METER_SHIELD]]. Effective against enemies with poor weapons. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_SHIELD_BUG_2
-Organic Heavy Frigate (L)
-
-SD_SHIELD_BUG_2_DESC
-Organic fighter with [[metertype METER_SHIELD]]. Effective against enemies with poor weapons. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
 SD_AST_1
 Rock Destroyer (L)
 
 SD_AST_1_DESC
-A hollowed-out asteroid armed with lasers. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
-
-SD_AST_2
-Rock Destroyer (P1)
-
-SD_AST_2_DESC
-A hollowed-out asteroid armed with plasma cannons. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
-
-SD_AST_3
-Rock Destroyer (P2)
-
-SD_AST_3_DESC
-A hollowed-out asteroid armed with heavy plasma cannons and reformed rock armor. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM]]
-
-SD_HEAVY_AST_1
-Rock Battleship (L)
-
-SD_HEAVY_AST_1_DESC
-A large hollowed-out asteroid armed with lasers. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
-
-SD_HEAVY_AST_2
-Rock Battleship (P)
-
-SD_HEAVY_AST_2_DESC
-A large hollowed-out asteroid armed with heavy plasma cannons and reformed rock plate. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM]]
-
-SD_CRYSTAL
-Crystal Destroyer (P)
-
-SD_CRYSTAL_DESC
-A crystallized asteroid armed with heavy plasma cannons and crystal rock armor. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]
-
-SD_ENDO_1
-Endomorphic Cruiser (L)
-
-SD_ENDO_1_DESC
-Advanced endomorphic fighter with heavy weaponry and armor. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
-
-SD_ENDO_2
-Endomorphic Cruiser (P1)
-
-SD_ENDO_2_DESC
-Advanced endomorphic fighter with heavy weaponry and armor. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
-
-SD_ENDO_3
-Endomorphic Cruiser (P2)
-
-SD_ENDO_3_DESC
-Advanced endomorphic fighter with heavy weaponry and diamond armor. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
-
-SD_FRACTAL_1
-Fractal Battleship (P)
-
-SD_FRACTAL_1_DESC
-An exotic warship made of fractal energy. [[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]
-
-SD_FRACTAL_2
-Fractal Battleship (D)
-
-SD_FRACTAL_2_DESC
-An exotic warship made of fractal energy. [[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]
+Asteroid hull designed for fleet action. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_COLONY_SHIP
 Colony Ship
@@ -600,29 +462,11 @@ Colony Ship
 SD_COLONY_SHIP_DESC
 Unarmed vessel [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
 
-SD_ORG_COLONY_SHIP
-Organic Colony Ship
-
-SD_ORG_COLONY_SHIP_DESC
-Unarmed organic vessel [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
-
 SD_CRYONIC_COLONY_SHIP
 Cryonic Colony Ship
 
 SD_CRYONIC_COLONY_SHIP_DESC
 Unarmed vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]].
-
-SD_ORG_CRYOCOL_SHIP
-Organic Cryonic Colony Ship
-
-SD_ORG_CRYOCOL_SHIP_DESC
-Unarmed organic vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]] and an [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
-
-SD_AST_CRYOCOL_SHIP
-Cryonic Colony Asteroid
-
-SD_AST_CRYOCOL_SHIP_DESC
-Unarmed asteroid vessel [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], with a [[buildingtype BLD_SHIPYARD_BASE]], in a system with an asteroid belt and an [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_OUTPOST_SHIP
 Outpost Ship
@@ -683,30 +527,6 @@ Troop Ship
 
 SD_TROOP_SHIP_DESC
 Carries 3 brigades of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_ORG_TROOP_SHIP
-Organic Troop Ship
-
-SD_ORG_TROOP_SHIP_DESC
-Carries 4 brigades of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_ENG_TROOP_SHIP
-Energy Troop Ship
-
-SD_ENG_TROOP_SHIP_DESC
-Carries a brigade of ground [[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
-
-SD_ENG1
-Energy Corvette (L)
-
-SD_ENG1_DESC
-Small fast combat vessel. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
-
-SD_ENG2
-Energy Corvette (P)
-
-SD_ENG2_DESC
-Small fast combat vessel, with improved weaponry. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_DRAGON_TOOTH
 Dragon Tooth

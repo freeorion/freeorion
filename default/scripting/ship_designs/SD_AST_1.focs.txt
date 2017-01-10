@@ -6,8 +6,8 @@ ShipDesign
         "AR_ZORTRIUM_PLATE"
         "SR_WEAPON_2_1"
         "SR_WEAPON_2_1"
-        "AR_ZORTRIUM_PLATE"
+        "SR_WEAPON_0_1"
         "FU_BASIC_TANK"
-        "FU_BASIC_TANK"
+        "SH_DEFENSE_GRID"
     ]
     model = "mark1"
