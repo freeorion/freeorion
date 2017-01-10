@@ -3,10 +3,10 @@ ShipDesign
     description = "SD_ROBOTIC2_DESC"
     hull = "SH_ROBOTIC"
     parts = [
-        "SR_WEAPON_1_1"
+        "SR_WEAPON_0_1"
         "SR_WEAPON_1_1"
         "SR_WEAPON_1_1"
         "AR_ZORTRIUM_PLATE"
-        "FU_BASIC_TANK"
+        "SH_DEFENSE_GRID"
     ]
     model = "mark1"

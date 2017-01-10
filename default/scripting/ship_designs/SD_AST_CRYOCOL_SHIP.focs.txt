@@ -1,9 +1,0 @@
-ShipDesign
-    name = "SD_AST_CRYOCOL_SHIP"
-    description = "SD_AST_CRYOCOL_SHIP_DESC"
-    hull = "SH_SMALL_ASTEROID"
-    parts = [
-        ""
-        "CO_SUSPEND_ANIM_POD"
-    ]
-    model = "seed"

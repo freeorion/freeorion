@@ -1,9 +1,0 @@
-ShipDesign
-    name = "SD_AST_SCOUT"
-    description = "SD_AST_SCOUT_DESC"
-    hull = "SH_SMALL_ASTEROID"
-    parts = [
-        "DT_DETECTOR_2"
-        "FU_BASIC_TANK"
-    ]
-    model = "fighter"

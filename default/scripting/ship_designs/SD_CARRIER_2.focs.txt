@@ -1,11 +1,11 @@
 ShipDesign
-    name = "SD_LARGE_MARK_1"
-    description = "SD_LARGE_MARK1_DESC"
+    name = "SD_CARRIER_2"
+    description = "SD_CARRIER_2_DESC"
     hull = "SH_STANDARD"
     parts = [
-        "SR_WEAPON_0_1"
+        "FT_BAY_1"
         "SR_WEAPON_1_1"
         "AR_STD_PLATE"
-        "FU_BASIC_TANK"
+        "FT_HANGAR_3"
     ]
     model = "mark1"
