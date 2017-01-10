@@ -218,6 +218,7 @@ namespace {
 
 
         float imperial_pp_available = 0.0f;
+        float imperial_pp_allocations = 0.0f;
         if (empire->GetResourcePool(RE_INDUSTRY)) {
             imperial_pp_available = empire->GetResourcePool(RE_INDUSTRY)->Stockpile();
             empire->GetResourcePool(RE_INDUSTRY)->SetStockpileAssigned(0.0f);
@@ -291,8 +292,13 @@ namespace {
             float group_allocation = std::max(0.0f, std::min(element_this_turn_limit, group_pp_available));
             float imperial_allocation = 0.0f;
             if (queue_element.allowed_imperial_stockpile_use) {
-                imperial_allocation = std::max(0.0f, std::min(element_this_turn_limit - group_allocation, imperial_pp_available));
-                DebugLogger() << "... allocating from imperial PP stockpile" << imperial_allocation;
+                float requested_allocation = std::min(element_this_turn_limit - group_allocation, imperial_pp_available);
+                // Limit use of imperial stockpile to the current extraction limit
+                float max_imperial_pp_allocations = empire->GetMeter("METER_IMPERIAL_PP_EXTRACT_LIMIT")->Current();
+                float max_imperial_allocation = std::max(0.0f, max_imperial_pp_allocations - imperial_pp_allocations);
+                imperial_allocation = std::max(0.0f, std::min(requested_allocation, max_imperial_pp_allocations));
+                imperial_pp_allocations += imperial_allocation;
+                DebugLogger() << "... allocating from imperial PP stockpile" << imperial_allocation << " (Sum of allocations " << imperial_pp_allocations << "/" << max_imperial_pp_allocations << ")";
             }
             //DebugLogger() << "element accumulated " << element_accumulated_PP << " of total cost "
             //                       << element_total_cost << " and needs " << additional_pp_to_complete_element
@@ -1465,6 +1471,7 @@ void Empire::Init() {
     //}
 
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
+    m_meters[UserStringNop("METER_IMPERIAL_PP_EXTRACT_LIMIT")];
     m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
     m_meters[UserStringNop("METER_SHIP_COST_FACTOR")];
     m_meters[UserStringNop("METER_TECH_COST_FACTOR")];
