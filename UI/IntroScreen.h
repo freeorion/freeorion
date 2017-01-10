@@ -25,6 +25,7 @@ public:
     void            OnMultiPlayer();   //!< ...
     void            OnLoadGame();
     void            OnOptions();
+    void            OnPedia();
     void            OnAbout();
     void            OnWebsite();
     void            OnCredits();
@@ -42,6 +43,7 @@ private:
     GG::Button*         m_multi_player; //!< opens up the multi player game dialog
     GG::Button*         m_load_game;    //!< loads a saved single player game
     GG::Button*         m_options;      //!< opens the options dialog
+    GG::Button*         m_pedia;        //!< shows the pedia window
     GG::Button*         m_about;        //!< opens a dialog to choose to see credits or license
     GG::Button*         m_website;      //!< opens web browser (or however system handles urls) to http://freeorion.org
     GG::Button*         m_credits;      //!< displays credits

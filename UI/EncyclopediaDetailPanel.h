@@ -26,7 +26,8 @@ template <class T> class TemporaryPtr;
 class EncyclopediaDetailPanel : public CUIWnd {
 public:
     //! \name Structors //!@{
-    EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags = GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
+    EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags = GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE |
+                                                           GG::RESIZABLE | CLOSABLE | PINABLE,
                             const std::string& config_name = "");
     virtual ~EncyclopediaDetailPanel();
     //!@}
