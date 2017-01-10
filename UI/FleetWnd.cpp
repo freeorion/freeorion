@@ -512,11 +512,15 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
 }
 
 void FleetUIManager::CullEmptyWnds() {
+    std::vector<FleetWnd*> to_be_closed;
     // scan through FleetWnds, deleting those that have no fleets
     for (FleetWnd* cur_wnd : m_fleet_wnds) {
         if (cur_wnd->FleetIDs().empty())
-            delete cur_wnd;
+            to_be_closed.push_back(cur_wnd);
     }
+
+    for (auto &close : to_be_closed)
+        close->CloseClicked();
 }
 
 void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
