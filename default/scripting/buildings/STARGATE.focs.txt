@@ -2,7 +2,7 @@ BuildingType
     name = "BLD_STARGATE"
     description = "BLD_STARGATE_DESC"
     buildcost = 500
-    buildtime = 10
+    buildtime = 8
     tags = "ORBITAL"
     location = AND [
         TargetPopulation low = 1
