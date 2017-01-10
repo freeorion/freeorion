@@ -3980,15 +3980,15 @@ Total [[encyclopedia DAMAGE_TITLE]]: %2%    [[PC_DIRECT_WEAPON]] Shots: %3%
 [[metertype METER_SPEED]]: %8%    [[metertype METER_FUEL]] [[METER_CAPACITY]]: %9%
 Colonization [[METER_CAPACITY]]: %10%    [[metertype METER_TROOPS]]: %11%
 [[OBJ_FIGHTER]] [[encyclopedia DAMAGE_TITLE]]: %13%    [[ENC_SDD_HANGAR]]: %12%    [[ENC_SDD_BAY]]: %14%
-Estimated combat strength (ignoring shields):  %15$.f   (%16$.2f per PP)
-Against enemy attack %17$.1f and shields %18$.1f:       %19$.f   (%20$.2f per PP)
+Estimated combat strength   (<i>ignoring shields</i>):  %15$.f   (%16$.2f per PP)
+            (<i>enemy with attack %17$.1f and shields %18$.1f</i>):  %19$.f   (%20$.2f per PP)
 '''
 
 ENC_SDD_HANGAR
-<encyclopedia PC_FIGHTER_HANGAR>[[SHIP_FIGHTER_HANGAR_SUMMARY]]</encyclopedia>
+[[encyclopedia PC_FIGHTER_HANGAR]] [[METER_CAPACITY]]
 
 ENC_SDD_BAY
-<encyclopedia PC_FIGHTER_BAY>[[SHIP_FIGHTER_BAY_SUMMARY]]</encyclopedia>
+[[encyclopedia PC_FIGHTER_BAY]] [[METER_CAPACITY]]
 
 ENC_UNLOCKED_BY
 '''<u>Unlocked By Techs:</u>
@@ -7639,10 +7639,10 @@ Hangar
 
 PC_FIGHTER_HANGAR_DESC
 '''Hangars are the storage, maintenance, and resupply areas for fighters.
-Since each hangar is built in support of other hangars on the ship, a ship is limited to one specific hangar type.
+A ship can not have more than one type of hangar.
 
-After combat, fighters need to return to a hangar for repairs, fuel, and rearmament.
-Any fighter that is unable to dock at a hangar will likely be lost to the cold realities of space.
+After combat, fighters return to a hangar for repairs, fuel, and rearmament.
+If a carrier is destroyed in combat, any of its fighters that survive the battle will be unable to dock after combat, and will also be lost.
 '''
 
 # Ship part classes
@@ -7651,7 +7651,7 @@ Launch Bay
 
 PC_FIGHTER_BAY_DESC
 '''Launch bays are the access point for fighters to enter or exit a ship.
-Each launch bay allows a certain number of fighters to launch each combat round.
+Each launch bay allows a number of fighters to launch each combat round.
 '''
 
 # Ship part classes
