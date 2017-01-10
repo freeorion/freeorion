@@ -526,6 +526,12 @@ public:
     const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
     bool                            LookupInStringtable() const { return m_name_desc_in_stringtable; }
 
+    /** returns number of parts in this ship design, indexed by PartType name */
+    const std::map<std::string, int>&     PartTypeCount() const { return m_num_part_types; }
+
+    /** returns number of parts in this ship design, indexed by ShipPartClass */
+    const std::map<ShipPartClass, int>&   PartClassCount() const { return m_num_part_classes; }
+
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
 
     friend bool operator ==(const ShipDesign& first, const ShipDesign& second);
@@ -586,6 +592,8 @@ private:
     float   m_industry_generation;
     float   m_trade_generation;
     bool    m_is_production_location;
+    std::map<std::string, int>      m_num_part_types;
+    std::map<ShipPartClass, int>    m_num_part_classes;
 
     bool    m_producible;
 

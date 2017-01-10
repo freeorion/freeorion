@@ -906,7 +906,9 @@ void ShipDesign::BuildStatCaches() {
         if (!part->Producible())
             m_producible = false;
 
-        switch (part->Class()) {
+        ShipPartClass part_class = part->Class();
+
+        switch (part_class) {
         case PC_DIRECT_WEAPON:
             m_is_armed = true;
             break;
@@ -956,6 +958,10 @@ void ShipDesign::BuildStatCaches() {
         default:
             break;
         }
+
+        m_num_part_types[part_name]++;
+        if (part_class > INVALID_SHIP_PART_CLASS && part_class < NUM_SHIP_PART_CLASSES)
+            m_num_part_classes[part_class]++;
     }
 }
 
