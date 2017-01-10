@@ -1982,7 +1982,7 @@ namespace {
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
             % species
             % attack
-            % ship->CurrentPartClassMeterValue(METER_MAX_SECONDARY_STAT, PC_DIRECT_WEAPON)
+            % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_SECONDARY_STAT, PC_DIRECT_WEAPON)
             % structure
             % shield
             % ship->CurrentMeterValue(METER_DETECTION)
@@ -1993,7 +1993,7 @@ namespace {
             % ship->TroopCapacity()
             % ship->FighterMax()
             % (attack - ship->TotalWeaponsDamage(0.0f, false))
-            % ship->CurrentPartClassMeterValue(METER_MAX_CAPACITY, PC_FIGHTER_BAY)
+            % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_CAPACITY, PC_FIGHTER_BAY)
             % strength
             % (strength / cost)
             % typical_shot

@@ -431,7 +431,7 @@ float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) 
     return 0.0f;
 }
 
-float Ship::CurrentPartClassMeterValue(MeterType type, ShipPartClass part_class) const {
+float Ship::SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const {
     float retval = 0.0f;
 
     const ShipDesign* design = GetShipDesign(m_design_id);
