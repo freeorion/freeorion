@@ -1506,8 +1506,8 @@ namespace {
 
         // Fleets
         std::vector<TemporaryPtr<const UniverseObject> > nonempty_empire_fleets;
-        for (TemporaryPtr<UniverseObject> fleet : Objects().FindObjects(OwnedVisitor<Fleet>(empire_id))) {
-            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(fleet))
+        for (TemporaryPtr<UniverseObject> maybe_fleet : Objects().FindObjects(OwnedVisitor<Fleet>(empire_id))) {
+            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(maybe_fleet))
                 if (!fleet->Empty())
                     nonempty_empire_fleets.push_back(fleet);
         }
