@@ -314,11 +314,8 @@ namespace {
             group_pp_available = std::max(group_pp_available, 0.0f);    // safety clamp
 
             //DebugLogger() << "... leaving " << group_pp_available << " PP available to group";
-            // allocated_pp[group] += imperial_allocation;  // assuming the float indexed by group will be default initialized to 0.0f if that entry doesn't already exist in the map
             imperial_pp_available -= imperial_allocation;
             imperial_pp_available = std::max(imperial_pp_available, 0.0f);    // safety clamp
-            // TODO probably this is bad and doesnt work:
-//            empire->GetResourcePool(RE_INDUSTRY)->SetStockpile(empire->GetResourcePool(RE_INDUSTRY)->Stockpile() - imperial_allocation);
             empire->GetResourcePool(RE_INDUSTRY)->SetStockpileAssigned(empire->GetResourcePool(RE_INDUSTRY)->StockpileAssigned() + imperial_allocation);
 
             DebugLogger() << "... leaving " << imperial_pp_available << " PP available in imperial reserve";
