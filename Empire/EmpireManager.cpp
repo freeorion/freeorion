@@ -294,8 +294,10 @@ const std::vector<GG::Clr>& EmpireColors() {
             return colors;
         }
 
-        for (int i = 0; i < doc.root_node.NumChildren(); ++i) {
-            colors.push_back(XMLToClr(doc.root_node.Child(i)));
+        for (XMLElement::const_child_iterator it = doc.root_node.child_begin();
+                it != doc.root_node.child_end(); ++it)
+        {
+            colors.push_back(XMLToClr(*it));
         }
     }
     if (colors.empty()) {

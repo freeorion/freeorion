@@ -114,23 +114,25 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
     glColor(GG::Clr(transparency, transparency, transparency, 255));
 
     std::string credit;
-    for (int i = 0; i < m_credits.NumChildren(); i++) {
-        if (0 == m_credits.Child(i).Tag().compare("GROUP")) {
-            XMLElement group = m_credits.Child(i);
-            for (int j = 0; j < group.NumChildren(); j++) {
-                if (0 == group.Child(j).Tag().compare("PERSON")) {
-                    XMLElement person = group.Child(j);
+    for (XMLElement::const_child_iterator group_it = m_credits.child_begin();
+            group_it != m_credits.child_end(); ++group_it)
+    {
+        if (0 == group_it->Tag().compare("GROUP")) {
+            for (XMLElement::const_child_iterator person_it = group_it->child_begin();
+                    person_it != group_it->child_end(); ++person_it)
+            {
+                if (0 == person_it->Tag().compare("PERSON")) {
                     credit = "";
-                    if (person.ContainsAttribute("name"))
-                        credit += person.Attribute("name");
-                    if (person.ContainsAttribute("nick") && person.Attribute("nick").length() > 0) {
+                    if (person_it->ContainsAttribute("name"))
+                        credit += person_it->Attribute("name");
+                    if (person_it->ContainsAttribute("nick") && person_it->Attribute("nick").length() > 0) {
                         credit += " <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
-                        credit += person.Attribute("nick");
+                        credit += person_it->Attribute("nick");
                         credit += ")</rgba>";
                     }
-                    if (person.ContainsAttribute("task") && person.Attribute("task").length() > 0) {
+                    if (person_it->ContainsAttribute("task") && person_it->Attribute("task").length() > 0) {
                         credit += " - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
-                        credit += person.Attribute("task");
+                        credit += person_it->Attribute("task");
                         credit += "</rgba>";
                     }
                     std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =

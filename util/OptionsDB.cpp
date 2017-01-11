@@ -438,16 +438,18 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 }
 
 void OptionsDB::SetFromXML(const XMLDoc& doc) {
-    for (int i = 0; i < doc.root_node.NumChildren(); ++i)
-    { SetFromXMLRecursive(doc.root_node.Child(i), ""); }
+    for (XMLElement::const_child_iterator it = doc.root_node.child_begin();
+            it != doc.root_node.child_end(); ++it)
+    { SetFromXMLRecursive(*it, ""); }
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
     if (elem.NumChildren()) {
-        for (int i = 0; i < elem.NumChildren(); ++i)
-            SetFromXMLRecursive(elem.Child(i), option_name);
+        for (XMLElement::const_child_iterator it = elem.child_begin();
+                it != elem.child_end(); ++it)
+            SetFromXMLRecursive(*it, option_name);
 
     } else {
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
