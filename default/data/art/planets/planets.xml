@@ -6,75 +6,35 @@
   <GLStars>
     <StarLightData>
       <star_type>STAR_BLUE</star_type>
-      <GG::Clr>
-        <red>192</red>
-        <green>192</green>
-        <blue>255</blue>
-        <alpha>255</alpha>
-      </GG::Clr>
+      <GG::Clr hex="C0C0FF"/>
     </StarLightData>
     <StarLightData>
       <star_type>STAR_WHITE</star_type>
-      <GG::Clr>
-        <red>255</red>
-        <green>255</green>
-        <blue>255</blue>
-        <alpha>255</alpha>
-      </GG::Clr>
+      <GG::Clr hex="FFFFFF"/>
     </StarLightData>
     <StarLightData>
       <star_type>STAR_YELLOW</star_type>
-      <GG::Clr>
-        <red>255</red>
-        <green>255</green>
-        <blue>192</blue>
-        <alpha>255</alpha>
-      </GG::Clr>
+      <GG::Clr hex="FFFFC0"/>
     </StarLightData>
     <StarLightData>
       <star_type>STAR_ORANGE</star_type>
-      <GG::Clr>
-        <red>255</red>
-        <green>192</green>
-        <blue>160</blue>
-        <alpha>255</alpha>
-      </GG::Clr>
+      <GG::Clr hex="FFC0A0"/>
     </StarLightData>
     <StarLightData>
       <star_type>STAR_RED</star_type>
-      <GG::Clr>
-        <red>255</red>
-        <green>192</green>
-        <blue>192</blue>
-        <alpha>255</alpha>
-      </GG::Clr>
+      <GG::Clr hex="FFC0C0"/>
     </StarLightData>
     <StarLightData>
       <star_type>STAR_NEUTRON</star_type>
-      <GG::Clr>
-        <red>160</red>
-        <green>208</green>
-        <blue>192</blue>
-        <alpha>255</alpha>
-      </GG::Clr>
+      <GG::Clr hex="A0D0C0"/>
     </StarLightData>
     <StarLightData>
       <star_type>STAR_BLACK</star_type>
-      <GG::Clr>
-        <red>96</red>
-        <green>160</green>
-        <blue>160</blue>
-        <alpha>255</alpha>
-      </GG::Clr>
+      <GG::Clr hex="60A0A0"/>
     </StarLightData>
     <StarLightData>
       <star_type>STAR_NONE</star_type>
-      <GG::Clr>
-        <red>32</red>
-        <green>32</green>
-        <blue>32</blue>
-        <alpha>255</alpha>
-      </GG::Clr>
+      <GG::Clr hex="202020"/>
     </StarLightData>
   </GLStars>
 

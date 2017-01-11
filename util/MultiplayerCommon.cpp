@@ -93,23 +93,13 @@ GG::Clr XMLToClr(const XMLElement& clr) {
 #ifdef DEBUG_XML_TO_CLR
             std::cout << "hex colour: " << hex_colour << " int: " << rgba << " RGBA: " << ClrToString(retval) << std::endl;
 #endif
-        } else {
-            std::cerr << "XMLToClr could not interpret hex colour string \"" << hex_colour << "\"" << std::endl;
+
+            return retval;
         }
-    } else {
-        // get colours listed as RGBA components ranging 0 to 255 as integers
-        if (clr.ContainsChild("red"))
-            retval.r = boost::lexical_cast<int>(clr.Child("red").Text());
-        if (clr.ContainsChild("green"))
-            retval.g = boost::lexical_cast<int>(clr.Child("green").Text());
-        if (clr.ContainsChild("blue"))
-            retval.b = boost::lexical_cast<int>(clr.Child("blue").Text());
-        if (clr.ContainsChild("alpha"))
-            retval.a = boost::lexical_cast<int>(clr.Child("alpha").Text());
-#ifdef DEBUG_XML_TO_CLR
-        std::cout << "non hex colour RGBA: " << ClrToString(retval) << std::endl;
-#endif
+
+        std::cerr << "XMLToClr could not interpret hex colour string \"" << hex_colour << "\"" << std::endl;
     }
+
     return retval;
 }
 
