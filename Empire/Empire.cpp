@@ -1467,6 +1467,7 @@ void Empire::Init() {
     //    m_meters[alignment.Name()];
     //}
 
+    m_meters[UserStringNop("METER_IMPERIAL_PP_STORAGE_YIELD")];
     m_meters[UserStringNop("METER_DETECTION_STRENGTH")];
     m_meters[UserStringNop("METER_IMPERIAL_PP_EXTRACT_LIMIT")];
     m_meters[UserStringNop("METER_BUILDING_COST_FACTOR")];
@@ -2953,13 +2954,15 @@ void Empire::CheckProductionProgress() {
     float stockpile_difference = GetResourcePool(RE_INDUSTRY)->TotalAvailable() - m_production_queue.TotalPPsSpent() - stockpile_before;
     float stockpile_now;
     if (stockpile_difference > 0.0f) {
-        stockpile_now = stockpile_before + (stockpile_difference * 0.8f); // 20% overhead
-        DebugLogger() << "Had " << stockpile_difference << " PP overproduction. Adding " << (stockpile_difference * 0.8f) << " PP to stockpile.";
+        float storage_yield = std::max(0.0f, GetMeter("METER_IMPERIAL_PP_STORAGE_YIELD")->Current());
+        float additional_stockpile = stockpile_difference * storage_yield;
+        stockpile_now = stockpile_before + additional_stockpile; 
+        DebugLogger() << "Had " << stockpile_difference << " PP overproduction. Adding " << additional_stockpile << " PP to stockpile (" << stockpile_before << " -> " << stockpile_now << ".";
     } else {
         stockpile_now = stockpile_before - stockpile_assigned;
     }
-    if (true || stockpile_now < 0.0f) {
-        DebugLogger() << "Warning: calculated negative stockpile  " << stockpile_before << "-" << stockpile_assigned << " == " << stockpile_now << "  ";
+    if (stockpile_now < 0.0f) {
+        DebugLogger() << "Warning: calculated negative stockpile:  " << stockpile_before << " - " << stockpile_assigned << " == " << stockpile_now << "  ";
     }
     GetResourcePool(RE_INDUSTRY)->SetStockpile(std::max(0.0f, stockpile_now));
     GetResourcePool(RE_INDUSTRY)->SetStockpileAssigned(0.0f);

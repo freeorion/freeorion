@@ -9,5 +9,8 @@ Tech
     effectsgroups = [
         EffectsGroup
             scope = Source
-            effects = SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_EXTRACT_LIMIT" value = Value + 10
+            effects = [
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_EXTRACT_LIMIT" value = Value + 10
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_STORAGE_YIELD" value = 0.2
+            ]
     ]
