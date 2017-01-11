@@ -59,6 +59,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/spirit/include/classic.hpp>
 
+#include <algorithm>
 #include <stdexcept>
 
 /** @file
@@ -114,38 +115,23 @@ int XMLElement::NumAttributes() const
 { return m_attributes.size(); }
 
 bool XMLElement::ContainsChild(const std::string& tag) const
-{ return ChildIndex(tag) != -1; }
+{
+    return m_children.end() != std::find_if(m_children.begin(), m_children.end(),
+        [&tag] (const XMLElement& e) { return e.m_tag == tag; });
+}
 
 bool XMLElement::ContainsAttribute(const std::string& key) const
 { return m_attributes.find(key) != m_attributes.end(); }
 
-int XMLElement::ChildIndex(const std::string& key) const
-{
-    int retval = -1;
-    for (unsigned int i = 0; i < m_children.size(); ++i) {
-        if (m_children[i].m_tag == key) {
-            retval = i;
-            break;
-        }
-    }
-    return retval;
-}
-
-const XMLElement& XMLElement::Child(unsigned int index) const
-{ return m_children.at(index); }
-
 const XMLElement& XMLElement::Child(const std::string& tag) const
 {
-    unsigned int i = 0;
-    for (; i < m_children.size(); ++i) {
-        if (m_children[i].m_tag == tag)
-            break;
-    }
+    auto match = std::find_if(m_children.begin(), m_children.end(),
+        [&tag] (const XMLElement& e) { return e.m_tag == tag; });
 
-    if (i == m_children.size())
+    if (match == m_children.end())
         throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 
-    return m_children[i];
+    return *match;
 }
 
 const XMLElement& XMLElement::LastChild() const
@@ -219,21 +205,15 @@ XMLElement::const_attr_iterator XMLElement::attr_begin() const
 XMLElement::const_attr_iterator XMLElement::attr_end() const
 { return m_attributes.end(); }
 
-XMLElement& XMLElement::Child(unsigned int index)
-{ return m_children.at(index); }
-
 XMLElement& XMLElement::Child(const std::string& tag)
 {
-    unsigned int i = 0;
-    for (; i < m_children.size(); ++i) {
-        if (m_children[i].m_tag == tag)
-            break;
-    }
+    auto match = std::find_if(m_children.begin(), m_children.end(),
+        [&tag] (const XMLElement& e) { return e.m_tag == tag; });
 
-    if (i == m_children.size())
+    if (match == m_children.end())
         throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 
-    return m_children[i];
+    return *match;
 }
 
 XMLElement& XMLElement::LastChild()
@@ -261,38 +241,6 @@ void XMLElement::RemoveAttributes()
 
 void XMLElement::AppendChild(const XMLElement& child)
 { m_children.push_back(child); }
-
-void XMLElement::AppendChild(const std::string& tag)
-{ m_children.push_back(XMLElement(tag)); }
-
-void XMLElement::AddChildBefore(const XMLElement& child, unsigned int index)
-{
-    if (m_children.size() <= index)
-        throw NoSuchIndex("XMLElement::AddChildBefore(): Index " + boost::lexical_cast<std::string>(index) + " is out of range for XMLElement \"" + Tag() + "\".");
-
-    m_children.insert(m_children.begin() + index, child);
-}
-
-void XMLElement::RemoveChild(unsigned int index)
-{
-    if (m_children.size() <= index)
-        throw NoSuchIndex("XMLElement::RemoveChild(): Index " + boost::lexical_cast<std::string>(index) + " is out of range for XMLElement \"" + Tag() + "\".");
-
-    m_children.erase(m_children.begin() + index);
-}
-
-void XMLElement::RemoveChild(const std::string& tag)
-{
-    int index = ChildIndex(tag);
-
-    if (index == -1)
-        throw NoSuchChild("XMLElement::RemoveChild(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
-
-    m_children.erase(m_children.begin() + index);
-}
-
-void XMLElement::RemoveChildren()
-{ m_children.clear(); }
 
 XMLElement::child_iterator XMLElement::child_begin()
 { return m_children.begin(); }

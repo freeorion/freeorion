@@ -272,27 +272,6 @@ public:
      */
     bool ContainsAttribute(const std::string& key) const;
 
-    /** @brief  Returns the index of the first child XMLElement with @p tag as
-     *      tag-name or -1 if none found.
-     *
-     * @param[in] tag  The tag-name of the searched child XMLElement.
-     * @return  The index of the first found child XMLElement with @p tag as
-     *      tag-name or -1 of no such child XMLElement can be found.
-     */
-    int ChildIndex(const std::string& tag) const;
-
-    /** @brief  Returns the XMLElement child at the @p index%ed position of the
-     *      child list of this XMLElement.
-     *
-     * @param[in] index  The index of the child XMLElement requested. The passed
-     *      value must be between 0 and NumChildren() - 1.
-     * @return  A reference to the XMLElement child at the @p index%ed position
-     *      of this XMLElement child list.
-     * @throw XMLElement::NoSuchIndex  When @p index is out of range in this
-     *      XMLElement child list.
-     */
-    const XMLElement& Child(unsigned int index) const;
-
     /** @brief  Returns the first XMLElement child that has @p tag as tag-name.
      *
      * @param[in] tag  The tag-name of the child XMLElement requested.
@@ -362,9 +341,6 @@ public:
     //@}
 
     /** @name  Mutators */ //@{
-    /** @copydoc XMLElement::Child(unsigned int) const */
-    XMLElement& Child(unsigned int index);
-
     /** @copydoc XMLElement::Child(const std::string&) const */
     XMLElement& Child(const std::string& tag);
 
@@ -409,47 +385,6 @@ public:
      * @param[in] child  The XMLElement to be appended to the child list.
      */
     void AppendChild(const XMLElement& child);
-
-    /** @brief  Creates an new empty XMLElement with the tag-name @p tag and
-     *      appends it to the child list of this XMLElement.
-     *
-     * @param[in] tag  The tag of the created XMLElement.
-     */
-    void AppendChild(const std::string& tag);
-
-    /** @brief  Adds a given child XMLElement @p child before the child element
-     *      at the @p index%ed position in the child list of this XMLElement.
-     *
-     * @param[in] child  The XMLElement to be inserted into the child list.
-     * @param[in] index  The index of the child XMLElement where the @p child
-     *      put be in front of. The passed value must be between 0 and
-     *      NumChildren() - 1.
-     * @throw XMLElement::NoSuchIndex  When @p index is out of range in this
-     *      XMLElement child list.
-     */
-    void AddChildBefore(const XMLElement& child, unsigned int index);
-
-    /** @brief  Removes the XMLElement child at the @p index%ed position of the
-     *      child list of this XMLElement.
-     *
-     * @param[in] index  The index of the child XMLElement that should be
-     *      removed.  The passed value must be between 0 and NumChildren() - 1.
-     * @throw XMLElement::NoSuchIndex  When @p index is out of range in this
-     *      XMLElement child list.
-     */
-    void RemoveChild(unsigned int index);
-
-    /** @brief  Removes the XMLElement child with the tag-name @p tag from this
-     *      XMLElement.
-     *
-     * @param[in] tag  The tag-name of the child XMLElement to be deleted.
-     * @throw XMLElement::NoSuchChild  When no child with a tag-name @p tag
-     *      exists.
-     */
-    void RemoveChild(const std::string& tag);
-
-    /** @brief Removes all children from this XMLElement. */
-    void RemoveChildren();
 
     /** @copydoc XMLElement::child_begin() const */
     child_iterator child_begin();
