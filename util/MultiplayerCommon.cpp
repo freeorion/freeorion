@@ -5,7 +5,6 @@
 #include "Logger.h"
 #include "OptionsDB.h"
 #include "Random.h"
-#include "XMLDoc.h"
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
@@ -42,36 +41,6 @@ namespace {
         db.Add<std::string>("ai-config",            UserStringNop("OPTIONS_DB_AI_CONFIG"),             "",       Validator<std::string>(), false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
-}
-
-/////////////////////////////////////////////////////
-// Free Function(s)
-/////////////////////////////////////////////////////
-XMLElement ClrToXML(const GG::Clr& clr) {
-    XMLElement retval("GG::Clr");
-    retval.AppendChild(XMLElement("red", boost::lexical_cast<std::string>(static_cast<int>(clr.r))));
-    retval.AppendChild(XMLElement("green", boost::lexical_cast<std::string>(static_cast<int>(clr.g))));
-    retval.AppendChild(XMLElement("blue", boost::lexical_cast<std::string>(static_cast<int>(clr.b))));
-    retval.AppendChild(XMLElement("alpha", boost::lexical_cast<std::string>(static_cast<int>(clr.a))));
-    return retval;
-}
-
-GG::Clr XMLToClr(const XMLElement& clr) {
-    GG::Clr retval = GG::Clr(0, 0, 0, 255);
-    if (clr.ContainsAttribute("hex")) {
-        // get colour components as a single string representing three pairs of hex digits
-        // from 00 to FF and an optional fourth hex digit pair for alpha
-        std::string hex_colour("#");
-        hex_colour.append(clr.Attribute("hex"));
-
-        try {
-            retval = GG::HexClr(hex_colour);
-        } catch(const std::exception& e) {
-            std::cerr << e.what() << " value:\"" << hex_colour << "\"" << std::endl;
-        }
-    }
-
-    return retval;
 }
 
 

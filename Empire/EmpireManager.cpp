@@ -297,7 +297,18 @@ const std::vector<GG::Clr>& EmpireColors() {
         for (XMLElement::const_child_iterator it = doc.root_node.child_begin();
                 it != doc.root_node.child_end(); ++it)
         {
-            colors.push_back(XMLToClr(*it));
+            if (!it->ContainsAttribute("hex")) {
+                std::cerr << "empire_colors.xml: Color element without value" << std::endl;
+                continue;
+            }
+
+            try {
+                std::string hex_colour("#");
+                hex_colour.append(it->Attribute("hex"));
+                colors.push_back(GG::HexClr(hex_colour));
+            } catch(const std::exception& e) {
+                std::cerr << "empire_colors.xml: " << e.what() << std::endl;
+            }
         }
     }
     if (colors.empty()) {

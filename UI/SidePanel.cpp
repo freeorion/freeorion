@@ -284,11 +284,25 @@ namespace {
             if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").NumChildren()) {
                 for (XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
                     std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(it->Child("star_type").Text())];
-                    GG::Clr color(XMLToClr(it->Child("GG::Clr")));
-                    color_vec.push_back(color.r / 255.0f);
-                    color_vec.push_back(color.g / 255.0f);
-                    color_vec.push_back(color.b / 255.0f);
-                    color_vec.push_back(color.a / 255.0f);
+                    const XMLElement& clr_elem = it->Child("GG::Clr");
+
+                    if (!clr_elem.ContainsAttribute("hex")) {
+                        std::cerr << "planets.xml: star color without value" << std::endl;
+                        continue;
+                    }
+
+                    try {
+                        std::string hex_colour("#");
+                        hex_colour.append(clr_elem.Attribute("hex"));
+                        GG::Clr color = GG::HexClr(hex_colour);
+
+                        color_vec.push_back(color.r / 255.0f);
+                        color_vec.push_back(color.g / 255.0f);
+                        color_vec.push_back(color.b / 255.0f);
+                        color_vec.push_back(color.a / 255.0f);
+                    } catch(const std::exception& e) {
+                        std::cerr << "planets.xml: " << e.what() << std::endl;
+                    }
                 }
             } else {
                 for (int i = STAR_BLUE; i < NUM_STAR_TYPES; ++i) {
