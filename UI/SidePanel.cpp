@@ -66,9 +66,9 @@ namespace {
             if (elem.Tag() != "RotatingPlanetData")
                 throw std::invalid_argument("Attempted to construct a RotatingPlanetData from an XMLElement that had a tag other than \"RotatingPlanetData\"");
 
-            planet_type = boost::lexical_cast<PlanetType>(elem.Child("planet_type").Text());
-            filename = elem.Child("filename").Text();
-            shininess = boost::lexical_cast<double>(elem.Child("shininess").Text());
+            planet_type = boost::lexical_cast<PlanetType>(elem.attributes.at("planet_type"));
+            filename = elem.attributes.at("filename");
+            shininess = boost::lexical_cast<double>(elem.attributes.at("shininess"));
 
             // ensure proper bounds
             shininess = std::max(0.0, std::min(shininess, 128.0));
@@ -125,8 +125,12 @@ namespace {
                 const XMLElement& elem = doc.root_node.Child("GLPlanets");
                 for (const XMLElement& planet_definition : elem.children) {
                     if (planet_definition.Tag() == "RotatingPlanetData") {
-                        RotatingPlanetData current_data(planet_definition);
-                        data[current_data.planet_type].push_back(current_data);
+                        try {
+                            RotatingPlanetData current_data(planet_definition);
+                            data[current_data.planet_type].push_back(current_data);
+                        } catch(const std::exception& e) {
+                            ErrorLogger() << "GetRotatingPlanetData: unable to load entry: " << e.what();
+                        }
                     }
                 }
             }
