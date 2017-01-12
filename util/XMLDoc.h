@@ -145,21 +145,6 @@ public:
         virtual const char* type() const throw()
         { return "XMLElement::NoSuchChild"; }
     };
-
-    /** @brief  Thrown when a request for an indexed child element cannot be
-     *      fulfilled.
-     */
-    class NoSuchIndex : public Exception
-    {
-    public:
-        /** @copydoc Exception::Exception(const std::string&) */
-        NoSuchIndex (const std::string& message) :
-            Exception (message)
-        {}
-
-        virtual const char* type() const throw()
-        { return "XMLElement::NoSuchIndex"; }
-    };
     //@}
 
     /** @name  Iterators */ //@{
