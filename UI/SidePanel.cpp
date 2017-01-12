@@ -74,14 +74,6 @@ namespace {
             shininess = std::max(0.0, std::min(shininess, 128.0));
         }
 
-        XMLElement  XMLEncode() const {
-            XMLElement retval("RotatingPlanetData");
-            retval.children.push_back(XMLElement("planet_type", boost::lexical_cast<std::string>(planet_type)));
-            retval.children.push_back(XMLElement("filename", filename));
-            retval.children.push_back(XMLElement("shininess", boost::lexical_cast<std::string>(shininess)));
-            return retval;
-        }
-
         PlanetType  planet_type;    ///< the type of planet for which this data may be used
         std::string filename;       ///< the filename of the image used to texture a rotating image
         double      shininess;      ///< the exponent of specular (shiny) reflection off of the planet; must be in [0.0, 128.0]
