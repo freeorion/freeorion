@@ -85,8 +85,8 @@ namespace {
             Atmosphere(const XMLElement& elem) {
                 if (elem.Tag() != "Atmosphere")
                     throw std::invalid_argument("Attempted to construct an Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
-                filename = elem.Child("filename").Text();
-                alpha = boost::lexical_cast<int>(elem.Child("alpha").Text());
+                filename = elem.attributes.at("filename");
+                alpha = boost::lexical_cast<int>(elem.attributes.at("alpha"));
                 alpha = std::max(0, std::min(alpha, 255));
             }
 
@@ -98,7 +98,7 @@ namespace {
         PlanetAtmosphereData(const XMLElement& elem) {
             if (elem.Tag() != "PlanetAtmosphereData")
                 throw std::invalid_argument("Attempted to construct a PlanetAtmosphereData from an XMLElement that had a tag other than \"PlanetAtmosphereData\"");
-            planet_filename = elem.Child("planet_filename").Text();
+            planet_filename = elem.attributes.at("planet_filename");
             for (const XMLElement& atmosphere : elem.Child("atmospheres").children) {
                 atmospheres.push_back(Atmosphere(atmosphere));
             }
@@ -148,8 +148,12 @@ namespace {
 
             for (const XMLElement& atmosphere_definition : doc.root_node.children) {
                 if (atmosphere_definition.Tag() == "PlanetAtmosphereData") {
-                    PlanetAtmosphereData current_data(atmosphere_definition);
-                    data[current_data.planet_filename] = current_data;
+                    try {
+                        PlanetAtmosphereData current_data(atmosphere_definition);
+                        data[current_data.planet_filename] = current_data;
+                    } catch (const std::exception& e) {
+                        ErrorLogger() << "GetPlanetAtmosphereData: " << e.what();
+                    }
                 }
             }
         }
