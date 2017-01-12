@@ -111,17 +111,11 @@ const std::string& XMLElement::Text() const
 int XMLElement::NumChildren() const
 { return m_children.size(); }
 
-int XMLElement::NumAttributes() const
-{ return attributes.size(); }
-
 bool XMLElement::ContainsChild(const std::string& tag) const
 {
     return m_children.end() != std::find_if(m_children.begin(), m_children.end(),
         [&tag] (const XMLElement& e) { return e.m_tag == tag; });
 }
-
-bool XMLElement::ContainsAttribute(const std::string& key) const
-{ return attributes.find(key) != attributes.end(); }
 
 const XMLElement& XMLElement::Child(const std::string& tag) const
 {
@@ -140,16 +134,6 @@ const XMLElement& XMLElement::LastChild() const
         throw NoSuchChild("XMLElement::LastChild(): LastChild() was called on empty XMLElement \"" + Tag() + "\".");
 
     return m_children.back();
-}
-
-const std::string& XMLElement::Attribute(const std::string& key) const
-{
-    static const std::string empty_str("");
-    std::map<std::string, std::string>::const_iterator it = attributes.find(key);
-    if (it != attributes.end())
-        return it->second;
-    else
-        return empty_str;
 }
 
 std::string XMLElement::WriteElement(int indent/* = 0*/, bool whitespace/* = true*/) const
@@ -199,12 +183,6 @@ XMLElement::const_child_iterator XMLElement::child_begin() const
 XMLElement::const_child_iterator XMLElement::child_end() const
 { return m_children.end(); }
 
-XMLElement::const_attr_iterator XMLElement::attr_begin() const
-{ return attributes.begin(); }
-
-XMLElement::const_attr_iterator XMLElement::attr_end() const
-{ return attributes.end(); }
-
 XMLElement& XMLElement::Child(const std::string& tag)
 {
     auto match = std::find_if(m_children.begin(), m_children.end(),
@@ -224,20 +202,11 @@ XMLElement& XMLElement::LastChild()
     return m_children.back();
 }
 
-void XMLElement::SetAttribute(const std::string& key, const std::string& value)
-{ attributes[key] = value; }
-
 void XMLElement::SetTag(const std::string& tag)
 { m_tag = tag; }
 
 void XMLElement::SetText(const std::string& text)
 { m_text = text; }
-
-void XMLElement::RemoveAttribute(const std::string& key)
-{ attributes.erase(key); }
-
-void XMLElement::RemoveAttributes()
-{ attributes.clear(); }
 
 void XMLElement::AppendChild(const XMLElement& child)
 { m_children.push_back(child); }
@@ -247,12 +216,6 @@ XMLElement::child_iterator XMLElement::child_begin()
 
 XMLElement::child_iterator XMLElement::child_end()
 { return m_children.end(); }
-
-XMLElement::attr_iterator XMLElement::attr_begin()
-{ return attributes.begin(); }
-
-XMLElement::attr_iterator XMLElement::attr_end()
-{ return attributes.end(); }
 
 
 ////////////////////////////////////////////////

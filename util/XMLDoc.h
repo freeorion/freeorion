@@ -168,11 +168,6 @@ public:
     typedef std::vector<XMLElement>::iterator       child_iterator;
     typedef std::vector<XMLElement>::const_iterator const_child_iterator;
     //@}
-    //@{
-    /** @brief Iterator to iterate over a XMLElement attributes. */
-    typedef std::map<std::string, std::string>::iterator       attr_iterator;
-    typedef std::map<std::string, std::string>::const_iterator const_attr_iterator;
-    //@}
     //@}
 
     /** @name  Structors */ //@{
@@ -248,13 +243,6 @@ public:
      */
     int NumChildren() const;
 
-    /** @brief  Returns the number of attributes attached to this XMLElement.
-     *
-     * @return  The number of attributes attached to this XMLElement.  Is always
-     *      positive.
-     */
-    int NumAttributes() const;
-
     /** @brief  Returns if this XMLElement contains a child with @p tag as
      *      tag-name.
      *
@@ -263,14 +251,6 @@ public:
      *      false if not.
      */
     bool ContainsChild(const std::string& tag) const;
-
-    /** @brief  Returns if this XMLElement contains an attribute with the
-     *      attribute key @p key.
-     *
-     * @param[in] key  The attribute key of the searched attribute.
-     * @return  True if there is an attribute with a @p key, false if not.
-     */
-    bool ContainsAttribute(const std::string& key) const;
 
     /** @brief  Returns the first XMLElement child that has @p tag as tag-name.
      *
@@ -288,15 +268,6 @@ public:
      * @throw XMLElement:NoSuchIndex  When there are no child XMLElement%s.
      */
     const XMLElement& LastChild() const;
-
-    /** @brief  Returns the value of the attribute with name @p key or an empty
-     *      string if there is no with attribute with this key.
-     *
-     * @param[in] key  The attribute key of the searched attribute.
-     * @return  The value of the attribute with the @p key or an empty string if
-     *      there is no such attribute.
-     */
-    const std::string& Attribute(const std::string& key) const;
 
     /** @brief  Write this XMLElement XML formatted into the given output
      *      stream @p os with indentation level @p indent when @p whitespace
@@ -330,14 +301,6 @@ public:
      * XMLElement.
      */
     const_child_iterator child_end() const;
-
-    /** @brief  Return an iterator to the first attribute in this XMLElement. */
-    const_attr_iterator attr_begin() const;
-
-    /** @brief  Return an iterator to the one beyond last attribute in this
-     * XMLElement.
-     */
-    const_attr_iterator attr_end() const;
     //@}
 
     /** @name  Mutators */ //@{
@@ -346,16 +309,6 @@ public:
 
     /** @copydoc XMLElement::LastChild() const */
     XMLElement& LastChild();
-
-    /** @brief  Sets the @p value of the attribute @p key in this XMLElement.
-     *
-     * When the attribute @p key already has a value set it will be overwritten
-     * with the new @p value.
-     *
-     * @param[in] key  The key of the attribute to set.
-     * @param[in] value  The new value the attribute should be set to.
-     */
-    void SetAttribute(const std::string& key, const std::string& value);
 
     /** @brief  Sets the tag-name of this XMLElement to @p tag.
      *
@@ -369,16 +322,6 @@ public:
      */
     void SetText(const std::string& text);
 
-    /** @brief  Removes the attribute with @p key from this XMLElement.
-     *
-     * @param[in] key  The key of the attribute to be deleted.  If no such
-     *      attribute exist no action is taken.
-     */
-    void RemoveAttribute(const std::string& key);
-
-    /** @brief  Removes all attributes from this XMLElement. */
-    void RemoveAttributes();
-
     /** @brief  Adds a given child XMLElement @p child to the end of the child
      *      list of this XMLElement.
      *
@@ -391,12 +334,6 @@ public:
 
     /** @copydoc XMLElement::child_end() const */
     child_iterator child_end();
-
-    /** @copydoc XMLElement::attr_begin() const */
-    attr_iterator attr_begin();
-
-    /** @copydoc XMLElement::attr_end() const */
-    attr_iterator attr_end();
     //@}
 
     /** @brief  The attributes associated to this XMLElement by key name
