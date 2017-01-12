@@ -2630,10 +2630,13 @@ MAP_PROD_WASTED_TITLE
 Unused Production
 
 # %1% number of production points generated.
-# %2% number of production points currently not used for production.
+# %2% number of production points currently neither used for production nor for stockpile.
+# %3% number of production points transferred to the imperial stockpile.
 MAP_PROD_WASTED_TEXT
 '''Total Production : %1%
+Transfer to Stockpile: %3%
 Wasted Production : %2%
+
 
 Click here to open the production menu'''
 

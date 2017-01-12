@@ -5852,12 +5852,13 @@ void MapWnd::RefreshIndustryResourceIndicator() {
 
     double total_PP_spent = empire->GetProductionQueue().TotalPPsSpent();
     double total_PP_output = empire->GetResourcePool(RE_INDUSTRY)->Output();
-    double total_PP_wasted = total_PP_output - total_PP_spent;
+    double total_PP_to_stockpile = empire->GetMeter("METER_IMPERIAL_PP_STORAGE_YIELD")->Current() * (total_PP_output - total_PP_spent);
+    double total_PP_wasted = total_PP_output - total_PP_spent - total_PP_to_stockpile;
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
 
     m_industry->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
         new ResourceBrowseWnd(UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
-                              total_PP_spent, total_PP_output, total_PP_target_output)));
+                              total_PP_spent, total_PP_output, total_PP_target_output )));
 
     if (total_PP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
@@ -5869,7 +5870,8 @@ void MapWnd::RefreshIndustryResourceIndicator() {
             new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
                               boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
                                 % DoubleToString(total_PP_output, 3, false)
-                                % DoubleToString(total_PP_wasted, 3, false)))));
+                                % DoubleToString(total_PP_wasted, 3, false)
+                                % DoubleToString(total_PP_to_stockpile, 3, false)))));
     } else {
         m_industry_wasted->Hide();
     }
