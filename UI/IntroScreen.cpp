@@ -114,25 +114,21 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
     glColor(GG::Clr(transparency, transparency, transparency, 255));
 
     std::string credit;
-    for (XMLElement::const_child_iterator group_it = m_credits.child_begin();
-            group_it != m_credits.child_end(); ++group_it)
-    {
-        if (0 == group_it->Tag().compare("GROUP")) {
-            for (XMLElement::const_child_iterator person_it = group_it->child_begin();
-                    person_it != group_it->child_end(); ++person_it)
-            {
-                if (0 == person_it->Tag().compare("PERSON")) {
+    for (const XMLElement& group : m_credits.children) {
+        if (0 == group.Tag().compare("GROUP")) {
+            for (const XMLElement& person : group.children) {
+                if (0 == person.Tag().compare("PERSON")) {
                     credit = "";
-                    if (person_it->attributes.count("name"))
-                        credit += person_it->attributes.at("name");
-                    if (person_it->attributes.count("nick") && person_it->attributes.at("nick").length() > 0) {
+                    if (person.attributes.count("name"))
+                        credit += person.attributes.at("name");
+                    if (person.attributes.count("nick") && person.attributes.at("nick").length() > 0) {
                         credit += " <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
-                        credit += person_it->attributes.at("nick");
+                        credit += person.attributes.at("nick");
                         credit += ")</rgba>";
                     }
-                    if (person_it->attributes.count("task") && person_it->attributes.at("task").length() > 0) {
+                    if (person.attributes.count("task") && person.attributes.at("task").length() > 0) {
                         credit += " - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
-                        credit += person_it->attributes.at("task");
+                        credit += person.attributes.at("task");
                         credit += "</rgba>";
                     }
                     std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =

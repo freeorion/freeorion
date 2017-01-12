@@ -203,8 +203,9 @@ public:
      *      element.
      */
     XMLElement(const std::string& tag, const XMLElement& body) :
+        children(std::vector<XMLElement>(1, body)),
         m_tag(tag),
-        m_children(std::vector<XMLElement>(1, body)), m_root(false)
+        m_root(false)
     {}
     //@}
 
@@ -326,6 +327,14 @@ public:
      */
     std::map<std::string, std::string> attributes;
 
+    /** @brief  Stores a list of the child XMLElement%s associated to this
+     *      XMLElement.
+     *
+     * This list can be empty when this XMLElement has no associated child
+     * elements.
+     */
+    std::vector<XMLElement> children;
+
 private:
     /** @name  Structors */ //@{
     /** @brief  Creates a new XMLElement with the given @p tag tag-name and
@@ -349,14 +358,6 @@ private:
 
     /** @brief  Stores the text content associated to this XMLElement. */
     std::string m_text;
-
-    /** @brief  Stores a list of the child XMLElement%s associated to this
-     *      XMLElement.
-     *
-     * This list can be empty when this XMLElement has no associated child
-     * elements.
-     */
-    std::vector<XMLElement> m_children;
 
     /** @brief  Set to true if this XMLElement is the root element of an XMLDoc
      *      document.

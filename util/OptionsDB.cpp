@@ -285,12 +285,12 @@ void OptionsDB::GetXML(XMLDoc& doc) const {
             std::string::size_type pos = 0;
             while ((pos = section_name.find('.', last_pos)) != std::string::npos) {
                 XMLElement temp(section_name.substr(last_pos, pos - last_pos));
-                elem_stack.back()->AppendChild(temp);
+                elem_stack.back()->children.push_back(temp);
                 elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
                 last_pos = pos + 1;
             }
             XMLElement temp(section_name.substr(last_pos));
-            elem_stack.back()->AppendChild(temp);
+            elem_stack.back()->children.push_back(temp);
             elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
         }
 
@@ -301,7 +301,7 @@ void OptionsDB::GetXML(XMLDoc& doc) const {
             if (!boost::any_cast<bool>(option.second.value))
                 continue;
         }
-        elem_stack.back()->AppendChild(temp);
+        elem_stack.back()->children.push_back(temp);
         elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
     }
 }
@@ -438,18 +438,16 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 }
 
 void OptionsDB::SetFromXML(const XMLDoc& doc) {
-    for (XMLElement::const_child_iterator it = doc.root_node.child_begin();
-            it != doc.root_node.child_end(); ++it)
-    { SetFromXMLRecursive(*it, ""); }
+    for (const XMLElement& child : doc.root_node.children)
+    { SetFromXMLRecursive(child, ""); }
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
-    if (elem.NumChildren()) {
-        for (XMLElement::const_child_iterator it = elem.child_begin();
-                it != elem.child_end(); ++it)
-            SetFromXMLRecursive(*it, option_name);
+    if (!elem.children.empty()) {
+        for (const XMLElement& child : elem.children)
+            SetFromXMLRecursive(child, option_name);
 
     } else {
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
