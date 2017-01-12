@@ -399,6 +399,11 @@ public:
     attr_iterator attr_end();
     //@}
 
+    /** @brief  The attributes associated to this XMLElement by key name
+     *      mapping.
+     */
+    std::map<std::string, std::string> attributes;
+
 private:
     /** @name  Structors */ //@{
     /** @brief  Creates a new XMLElement with the given @p tag tag-name and
@@ -422,11 +427,6 @@ private:
 
     /** @brief  Stores the text content associated to this XMLElement. */
     std::string m_text;
-
-    /** @brief  Stores the attributes associated to this XMLElement by key name
-     *      mapping.
-     */
-    std::map<std::string, std::string> m_attributes;
 
     /** @brief  Stores a list of the child XMLElement%s associated to this
      *      XMLElement.

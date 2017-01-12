@@ -112,7 +112,7 @@ int XMLElement::NumChildren() const
 { return m_children.size(); }
 
 int XMLElement::NumAttributes() const
-{ return m_attributes.size(); }
+{ return attributes.size(); }
 
 bool XMLElement::ContainsChild(const std::string& tag) const
 {
@@ -121,7 +121,7 @@ bool XMLElement::ContainsChild(const std::string& tag) const
 }
 
 bool XMLElement::ContainsAttribute(const std::string& key) const
-{ return m_attributes.find(key) != m_attributes.end(); }
+{ return attributes.find(key) != attributes.end(); }
 
 const XMLElement& XMLElement::Child(const std::string& tag) const
 {
@@ -145,8 +145,8 @@ const XMLElement& XMLElement::LastChild() const
 const std::string& XMLElement::Attribute(const std::string& key) const
 {
     static const std::string empty_str("");
-    std::map<std::string, std::string>::const_iterator it = m_attributes.find(key);
-    if (it != m_attributes.end())
+    std::map<std::string, std::string>::const_iterator it = attributes.find(key);
+    if (it != attributes.end())
         return it->second;
     else
         return empty_str;
@@ -165,7 +165,7 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, boo
         for (int i = 0; i < indent; ++i)
             os << INDENT_STR;
     os << '<' << m_tag;
-    for (const std::map<std::string, std::string>::value_type& attribute : m_attributes)
+    for (const std::map<std::string, std::string>::value_type& attribute : attributes)
         os << ' ' << attribute.first << "=\"" << attribute.second << "\"";
     if (m_children.empty() && m_text.empty() && !m_root) {
         os << "/>";
@@ -200,10 +200,10 @@ XMLElement::const_child_iterator XMLElement::child_end() const
 { return m_children.end(); }
 
 XMLElement::const_attr_iterator XMLElement::attr_begin() const
-{ return m_attributes.begin(); }
+{ return attributes.begin(); }
 
 XMLElement::const_attr_iterator XMLElement::attr_end() const
-{ return m_attributes.end(); }
+{ return attributes.end(); }
 
 XMLElement& XMLElement::Child(const std::string& tag)
 {
@@ -225,7 +225,7 @@ XMLElement& XMLElement::LastChild()
 }
 
 void XMLElement::SetAttribute(const std::string& key, const std::string& value)
-{ m_attributes[key] = value; }
+{ attributes[key] = value; }
 
 void XMLElement::SetTag(const std::string& tag)
 { m_tag = tag; }
@@ -234,10 +234,10 @@ void XMLElement::SetText(const std::string& text)
 { m_text = text; }
 
 void XMLElement::RemoveAttribute(const std::string& key)
-{ m_attributes.erase(key); }
+{ attributes.erase(key); }
 
 void XMLElement::RemoveAttributes()
-{ m_attributes.clear(); }
+{ attributes.clear(); }
 
 void XMLElement::AppendChild(const XMLElement& child)
 { m_children.push_back(child); }
@@ -249,10 +249,10 @@ XMLElement::child_iterator XMLElement::child_end()
 { return m_children.end(); }
 
 XMLElement::attr_iterator XMLElement::attr_begin()
-{ return m_attributes.begin(); }
+{ return attributes.begin(); }
 
 XMLElement::attr_iterator XMLElement::attr_end()
-{ return m_attributes.end(); }
+{ return attributes.end(); }
 
 
 ////////////////////////////////////////////////
@@ -309,7 +309,7 @@ void XMLDoc::SetAttributeName(const char* first, const char* last)
 { s_temp_attr_name = std::string(first, last); }
 
 void XMLDoc::AddAttribute(const char* first, const char* last)
-{ s_temp_elem.SetAttribute(s_temp_attr_name, std::string(first, last)); }
+{ s_temp_elem.attributes[s_temp_attr_name] = std::string(first, last); }
 
 void XMLDoc::PushElem1(const char* first, const char* last)
 {

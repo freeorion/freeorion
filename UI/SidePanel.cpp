@@ -286,14 +286,9 @@ namespace {
                     std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(it->Child("star_type").Text())];
                     const XMLElement& clr_elem = it->Child("GG::Clr");
 
-                    if (!clr_elem.ContainsAttribute("hex")) {
-                        std::cerr << "planets.xml: star color without value" << std::endl;
-                        continue;
-                    }
-
                     try {
                         std::string hex_colour("#");
-                        hex_colour.append(clr_elem.Attribute("hex"));
+                        hex_colour.append(clr_elem.attributes.at("hex"));
                         GG::Clr color = GG::HexClr(hex_colour);
 
                         color_vec.push_back(color.r / 255.0f);
