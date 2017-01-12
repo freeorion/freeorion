@@ -147,14 +147,6 @@ public:
     };
     //@}
 
-    /** @name  Iterators */ //@{
-    //@{
-    /** @brief Iterator to iterate over child XMLElement%s. */
-    typedef std::vector<XMLElement>::iterator       child_iterator;
-    typedef std::vector<XMLElement>::const_iterator const_child_iterator;
-    //@}
-    //@}
-
     /** @name  Structors */ //@{
     /** @brief  Creates a new XMLElement with an empty tag-name assigned.
      *
@@ -222,13 +214,6 @@ public:
      */
     const std::string& Text() const;
 
-    /** @brief  Returns the number of child nodes inside this XMLElement.
-     *
-     * @return  The number of child XMLElement%s contained by this this
-     *      XMLElement.  Is always positive.
-     */
-    int NumChildren() const;
-
     /** @brief  Returns if this XMLElement contains a child with @p tag as
      *      tag-name.
      *
@@ -247,13 +232,6 @@ public:
      *      exists.
      */
     const XMLElement& Child(const std::string& tag) const;
-
-    /** @brief  Returns the last XMLElement child of this XMLElement.
-     *
-     * @return  A reference to the last XMLElement child.
-     * @throw XMLElement:NoSuchIndex  When there are no child XMLElement%s.
-     */
-    const XMLElement& LastChild() const;
 
     /** @brief  Write this XMLElement XML formatted into the given output
      *      stream @p os with indentation level @p indent when @p whitespace
@@ -279,22 +257,11 @@ public:
      *      XMLElement.
      */
     std::string WriteElement(int indent = 0, bool whitespace = true) const;
-
-    /** @brief  Return an iterator to the first child in this XMLElement. */
-    const_child_iterator child_begin() const;
-
-    /** @brief  Return an iterator to the one beyond last child in this
-     * XMLElement.
-     */
-    const_child_iterator child_end() const;
     //@}
 
     /** @name  Mutators */ //@{
     /** @copydoc XMLElement::Child(const std::string&) const */
     XMLElement& Child(const std::string& tag);
-
-    /** @copydoc XMLElement::LastChild() const */
-    XMLElement& LastChild();
 
     /** @brief  Sets the tag-name of this XMLElement to @p tag.
      *
@@ -307,19 +274,6 @@ public:
      * @param[in] text  The new text content this XMLElement should have.
      */
     void SetText(const std::string& text);
-
-    /** @brief  Adds a given child XMLElement @p child to the end of the child
-     *      list of this XMLElement.
-     *
-     * @param[in] child  The XMLElement to be appended to the child list.
-     */
-    void AppendChild(const XMLElement& child);
-
-    /** @copydoc XMLElement::child_begin() const */
-    child_iterator child_begin();
-
-    /** @copydoc XMLElement::child_end() const */
-    child_iterator child_end();
     //@}
 
     /** @brief  The attributes associated to this XMLElement by key name

@@ -108,9 +108,6 @@ const std::string& XMLElement::Tag() const
 const std::string& XMLElement::Text() const
 { return m_text; }
 
-int XMLElement::NumChildren() const
-{ return children.size(); }
-
 bool XMLElement::ContainsChild(const std::string& tag) const
 {
     return children.end() != std::find_if(children.begin(), children.end(),
@@ -126,14 +123,6 @@ const XMLElement& XMLElement::Child(const std::string& tag) const
         throw NoSuchChild("XMLElement::Child(): The XMLElement \"" + Tag() + "\" contains no child \"" + tag + "\".");
 
     return *match;
-}
-
-const XMLElement& XMLElement::LastChild() const
-{
-    if (children.empty())
-        throw NoSuchChild("XMLElement::LastChild(): LastChild() was called on empty XMLElement \"" + Tag() + "\".");
-
-    return children.back();
 }
 
 std::string XMLElement::WriteElement(int indent/* = 0*/, bool whitespace/* = true*/) const
@@ -177,12 +166,6 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, boo
     return os;
 }
 
-XMLElement::const_child_iterator XMLElement::child_begin() const
-{ return children.begin(); }
-
-XMLElement::const_child_iterator XMLElement::child_end() const
-{ return children.end(); }
-
 XMLElement& XMLElement::Child(const std::string& tag)
 {
     auto match = std::find_if(children.begin(), children.end(),
@@ -194,28 +177,11 @@ XMLElement& XMLElement::Child(const std::string& tag)
     return *match;
 }
 
-XMLElement& XMLElement::LastChild()
-{
-    if (children.empty())
-        throw NoSuchChild("XMLElement::LastChild(): LastChild() was called on empty XMLElement \"" + Tag() + "\".");
-
-    return children.back();
-}
-
 void XMLElement::SetTag(const std::string& tag)
 { m_tag = tag; }
 
 void XMLElement::SetText(const std::string& text)
 { m_text = text; }
-
-void XMLElement::AppendChild(const XMLElement& child)
-{ children.push_back(child); }
-
-XMLElement::child_iterator XMLElement::child_begin()
-{ return children.begin(); }
-
-XMLElement::child_iterator XMLElement::child_end()
-{ return children.end(); }
 
 
 ////////////////////////////////////////////////
