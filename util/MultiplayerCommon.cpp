@@ -42,20 +42,6 @@ namespace {
         db.Add<std::string>("ai-config",            UserStringNop("OPTIONS_DB_AI_CONFIG"),             "",       Validator<std::string>(), false);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
-
-#ifdef DEBUG_XML_TO_CLR
-    std::string ClrToString(GG::Clr clr) {
-        unsigned int r = static_cast<int>(clr.r);
-        unsigned int g = static_cast<int>(clr.g);
-        unsigned int b = static_cast<int>(clr.b);
-        unsigned int a = static_cast<int>(clr.a);
-        std::string retval = "(" + boost::lexical_cast<std::string>(r) + ", " +
-            boost::lexical_cast<std::string>(g) + ", " +
-            boost::lexical_cast<std::string>(b) + ", " +
-            boost::lexical_cast<std::string>(a) + ")";
-        return retval;
-    }
-#endif
 }
 
 /////////////////////////////////////////////////////
@@ -75,29 +61,14 @@ GG::Clr XMLToClr(const XMLElement& clr) {
     if (clr.ContainsAttribute("hex")) {
         // get colour components as a single string representing three pairs of hex digits
         // from 00 to FF and an optional fourth hex digit pair for alpha
-        const std::string& hex_colour = clr.Attribute("hex");
-        std::istringstream iss(hex_colour);
-        unsigned long rgba = 0;
-        if (!(iss >> std::hex >> rgba).fail()) {
-            if (hex_colour.size() == 6) {
-                retval.r = (rgba >> 16) & 0xFF;
-                retval.g = (rgba >> 8)  & 0xFF;
-                retval.b = rgba         & 0xFF;
-                retval.a = 255;
-            } else {
-                retval.r = (rgba >> 24) & 0xFF;
-                retval.g = (rgba >> 16) & 0xFF;
-                retval.b = (rgba >> 8)  & 0xFF;
-                retval.a = rgba         & 0xFF;
-            }
-#ifdef DEBUG_XML_TO_CLR
-            std::cout << "hex colour: " << hex_colour << " int: " << rgba << " RGBA: " << ClrToString(retval) << std::endl;
-#endif
+        std::string hex_colour("#");
+        hex_colour.append(clr.Attribute("hex"));
 
-            return retval;
+        try {
+            retval = GG::HexClr(hex_colour);
+        } catch(const std::exception& e) {
+            std::cerr << e.what() << " value:\"" << hex_colour << "\"" << std::endl;
         }
-
-        std::cerr << "XMLToClr could not interpret hex colour string \"" << hex_colour << "\"" << std::endl;
     }
 
     return retval;
