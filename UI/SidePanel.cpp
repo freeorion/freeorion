@@ -282,12 +282,10 @@ namespace {
 
             if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").children.size()) {
                 for (const XMLElement& star_definition : doc.root_node.Child("GLStars").children) {
-                    std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(star_definition.Child("star_type").Text())];
-                    const XMLElement& clr_elem = star_definition.Child("GG::Clr");
-
                     try {
                         std::string hex_colour("#");
-                        hex_colour.append(clr_elem.attributes.at("hex"));
+                        hex_colour.append(star_definition.attributes.at("color"));
+                        std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(star_definition.attributes.at("star_type"))];
                         GG::Clr color = GG::HexClr(hex_colour);
 
                         color_vec.push_back(color.r / 255.0f);
