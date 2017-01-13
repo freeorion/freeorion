@@ -1354,7 +1354,7 @@ void StatisticIcon::DoLayout() {
         text_elements
             .AddText(" (")
             .AddOpenTag(ValueColor(1))
-            .AddText("Pi"+DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) )
+            .AddText(DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) )
             .AddCloseTag("rgba")
             .AddText(")");
 
