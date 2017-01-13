@@ -54,6 +54,8 @@ public:
 
     virtual int CurrentTurn() const = 0;        ///< returns the current game turn
 
+    static int MAX_AI_PLAYERS(); ///<Maximum number of AIs
+
     virtual const GalaxySetupData& GetGalaxySetupData() const = 0;
 
     virtual Networking::ClientType GetEmpireClientType(int empire_id) const = 0;///< returns the networking client type for the given empire_id

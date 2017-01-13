@@ -136,7 +136,11 @@ namespace FreeOrionPython {
 
         def("currentTurn",              AIInterface::CurrentTurn, "Returns the current game turn (int).");
 
-        def("getAIConfigStr",           AIInterface::GetAIConfigStr,    return_value_policy<return_by_value>());
+        def("getOptionsDBOptionStr", AIInterface::GetOptionsDBOptionStr, return_value_policy<return_by_value>(), "Returns the string value of option in OptionsDB or None if the option does not exist.");
+        def("getOptionsDBOptionInt", AIInterface::GetOptionsDBOptionInt, return_value_policy<return_by_value>(), "Returns the integer value of option in OptionsDB or None if the option does not exist.");
+        def("getOptionsDBOptionBool", AIInterface::GetOptionsDBOptionBool, return_value_policy<return_by_value>(), "Returns the bool value of option in OptionsDB or None if the option does not exist.");
+        def("getOptionsDBOptionDouble", AIInterface::GetOptionsDBOptionDouble, return_value_policy<return_by_value>(), "Returns the double value of option in OptionsDB or None if the option does not exist.");
+
         def("getAIDir",                 AIInterface::GetAIDir,          return_value_policy<return_by_value>());
         def("getUserConfigDir",         GetUserConfigDirWrapper,        /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific configuration.");
         def("getUserDataDir",           GetUserDataDirWrapper,          /* no return value policy, */ "Returns path to directory where FreeOrion stores user specific data (saves, etc.).");

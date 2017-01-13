@@ -71,7 +71,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
     fuel = int(FleetUtilsAI.get_fuel(fleet_id))  # round down to get actually number of jumps
     if fuel < 1.0 or from_system_target.id == to_system_target.id:
         return []
-    if foAI.foAIstate.aggression <= fo.aggression.typical or True:  # TODO: sort out if shortestPath leaves off some intermediate destinations
+    if True:  # TODO: sort out if shortestPath leaves off some intermediate destinations
         path_func = universe.leastJumpsPath
     else:
         path_func = universe.shortestPath
@@ -92,15 +92,15 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
             print "target has FleetSupply"
         elif target_sys_id in ColonisationAI.annexable_ring1:
             print "target in Ring 1"
-        elif target_sys_id in ColonisationAI.annexable_ring2:
-            print "target in Ring 2, has enough aggression is ", foAI.foAIstate.aggression >= fo.aggression.typical
-        elif target_sys_id in ColonisationAI.annexable_ring3:
-            print "target in Ring 2, has enough aggression is ", foAI.foAIstate.aggression >= fo.aggression.aggressive
+        elif target_sys_id in ColonisationAI.annexable_ring2 and foAI.foAIstate.character.may_travel_beyond_supply(2):
+            print "target in Ring 2, has enough aggression"
+        elif target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3):
+            print "target in Ring 2, has enough aggression"
     if (not unsupplied_stops or not ensure_return or
-                target_sys_id in fleet_supplyable_system_ids and len(unsupplied_stops) <= fuel or
-                target_sys_id in ColonisationAI.annexable_ring1 and len(unsupplied_stops) < fuel or
-                foAI.foAIstate.aggression >= fo.aggression.typical and target_sys_id in ColonisationAI.annexable_ring2 and len(unsupplied_stops) < fuel - 1 or
-                foAI.foAIstate.aggression >= fo.aggression.aggressive and target_sys_id in ColonisationAI.annexable_ring3 and len(unsupplied_stops) < fuel - 2):
+        target_sys_id in fleet_supplyable_system_ids and len(unsupplied_stops) <= fuel
+        or target_sys_id in ColonisationAI.annexable_ring1 and len(unsupplied_stops) < fuel
+        or target_sys_id in ColonisationAI.annexable_ring2 and foAI.foAIstate.character.may_travel_beyond_supply(2) and len(unsupplied_stops) < fuel - 1
+        or target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3) and len(unsupplied_stops) < fuel - 2):
         return [universe_object.System(sid) for sid in short_path]
     else:
         # print " getting path from 'can_travel_to_system_and_return_to_resupply' ",

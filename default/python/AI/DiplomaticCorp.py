@@ -3,6 +3,8 @@
 import random
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
+from character.character_module import Aggression
+from character.character_strings_module import possible_greetings
 from freeorion_tools import UserStringList, chat_on_error
 
 
@@ -36,9 +38,10 @@ class DiplomaticCorp(object):
         if message.type == fo.diplomaticMessageType.peaceProposal:
             foAI.foAIstate.log_peace_request(message.sender, message.recipient)
             proposal_sender_player = fo.empirePlayerID(message.sender)
-            attitude = self.evaluate_diplomatic_attitude(message.sender)
+            attitude = foAI.foAIstate.character.attitude_to_empire(message.sender, foAI.foAIstate.diplomatic_logs)
             possible_acknowledgments = []
-            if foAI.foAIstate.aggression <= fo.aggression.typical:
+            aggression = foAI.foAIstate.character.get_trait(Aggression)
+            if aggression.key <= fo.aggression.typical:
                 possible_acknowledgments = UserStringList("AI_PEACE_PROPOSAL_ACKNOWLEDGEMENTS_MILD_LIST")
                 if attitude > 0:
                     possible_replies = UserStringList("AI_PEACE_PROPOSAL_RESPONSES_YES_MILD_LIST")
@@ -70,24 +73,10 @@ class DiplomaticCorp(object):
 
     @staticmethod
     def get_first_turn_greet_message():
-        greet_lists = {
-            fo.aggression.beginner:
-                UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER"),
-            fo.aggression.turtle:
-                UserStringList("AI_FIRST_TURN_GREETING_LIST_TURTLE"),
-            fo.aggression.cautious:
-                UserStringList("AI_FIRST_TURN_GREETING_LIST_CAUTIOUS"),
-            fo.aggression.typical:
-                UserStringList("AI_FIRST_TURN_GREETING_LIST_TYPICAL"),
-            fo.aggression.aggressive:
-                UserStringList("AI_FIRST_TURN_GREETING_LIST_AGGRESSIVE"),
-            fo.aggression.maniacal:
-                UserStringList("AI_FIRST_TURN_GREETING_LIST_MANIACAL"),
-        }
-        greets = greet_lists.get(foAI.foAIstate.aggression, UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER"))
+        greets = possible_greetings(foAI.foAIstate.character)
         # no such entry
-        if len(greets) == 1 and greets[0] == 'ERROR: %s' % key:
-            greets = UserStringList("AI_FIRST_TURN_GREETING_LIST_BEGINNER")
+        if len(greets) == 1 and greets[0] == '?':
+            greets = UserStringList("AI_FIRST_TURN_GREETING_BEGINNER")
         return random.choice(greets)
 
     @chat_on_error
@@ -98,23 +87,6 @@ class DiplomaticCorp(object):
             status_update.status, status_update.empire1, status_update.empire2)
         if status_update.empire2 == fo.empireID() and status_update.status == fo.diplomaticStatus.war:
             foAI.foAIstate.log_war_declaration(status_update.empire1, status_update.empire2)
-
-    @chat_on_error
-    def evaluate_diplomatic_attitude(self, other_empire_id):
-        """Evaluate this empire's diplomatic attitude regarding the other empire.
-        :param other_empire_id: integer
-        :return: a numeric rating, currently in the range [-10 : 10]
-        """
-
-        # TODO: consider proximity, competitive needs, relations with other empires, past history with this empire, etc.
-        # in the meantime, somewhat random
-        log_index = (other_empire_id, fo.empireID())
-        num_peace_requests = len(foAI.foAIstate.diplomatic_logs.get('peace_requests', {}).get(log_index, []))
-        num_war_declarations = len(foAI.foAIstate.diplomatic_logs.get('war_declarations', {}).get(log_index, []))
-        # Too many requests for peace irritate the AI, as do any war declarations
-        irritation = (foAI.foAIstate.aggression * (2.0 + num_peace_requests / 10.0 + 2.0 * num_war_declarations) + 0.5)
-        attitude = 10 * random.random() - irritation
-        return min(10, max(-10, attitude))
 
     def handle_midgame_chat(self, sender_player_id, message_txt):
         print "Midgame chat received from player %d, message: %s" % (sender_player_id, message_txt)
@@ -139,14 +111,10 @@ class DiplomaticCorp(object):
 
 
 class BeginnerDiplomaticCorp(DiplomaticCorp):
-    def evaluate_diplomatic_attitude(self, other_empire_id):
-        return 9
-
+    pass
 
 class ManiacalDiplomaticCorp(DiplomaticCorp):
     def __init__(self):
         DiplomaticCorp.__init__(self)
         self.be_chatty = False
 
-    def evaluate_diplomatic_attitude(self, other_empire_id):
-        return -9

@@ -22,10 +22,14 @@
 
 #include <boost/timer.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/python/str.hpp>
 
 #include <stdexcept>
 #include <string>
 #include <map>
+
+using boost::python::object;
+using boost::python::str;
 
 //////////////////////////////////
 //          AI Base             //
@@ -140,8 +144,17 @@ namespace AIInterface {
     int CurrentTurn()
     { return AIClientApp::GetApp()->CurrentTurn(); }
 
-    std::string GetAIConfigStr()
-    { return GetOptionsDB().Get<std::string>("ai-config"); }
+    object GetOptionsDBOptionStr(std::string const &option)
+    { return GetOptionsDB().OptionExists(option) ? str(GetOptionsDB().Get<std::string>(option)) : str(); }
+
+    object GetOptionsDBOptionInt(std::string const &option)
+    { return GetOptionsDB().OptionExists(option) ? object(GetOptionsDB().Get<int>(option)) : object(); }
+
+    object GetOptionsDBOptionBool(std::string const &option)
+    { return GetOptionsDB().OptionExists(option) ? object(GetOptionsDB().Get<bool>(option)) : object(); }
+
+    object GetOptionsDBOptionDouble(std::string const &option)
+    { return GetOptionsDB().OptionExists(option) ? object(GetOptionsDB().Get<double>(option)) : object(); }
 
     std::string GetAIDir()
     { return (GetResourceDir() / GetOptionsDB().Get<std::string>("ai-path")).string(); }

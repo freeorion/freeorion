@@ -7,6 +7,7 @@
 #include "../../util/Directories.h"
 #include "../../util/Serialize.h"
 #include "../../util/i18n.h"
+#include "../util/AppInterface.h"
 #include "../../network/Message.h"
 #include "../util/Random.h"
 
@@ -23,6 +24,48 @@
 
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
+
+
+namespace {
+
+    /** AddTraitBypassOption creates a set of options for debugging of
+        the form:
+        AI.config.trait.<trait name>.force  -- If true use the following options to bypass the trait
+        AI.config.trait.<trait name>.all    -- If present use this value for all of the AIs not individually set
+        AI.config.trait.<trait name>.AI_1   -- Use for AI_1
+        .
+        .
+        .
+        AI.config.trait.<trait name>.AI_40  -- Use for AI_40
+     */
+    template <typename T>
+    void AddTraitBypassOption(OptionsDB& db, std::string const & root, std::string ROOT,
+                                 T def, ValidatorBase const & validator) {
+        std::string option_root = "AI.config.trait." + root +".";
+        std::string user_string_root = "OPTIONS_DB_AI_CONFIG_TRAIT_"+ROOT;
+        db.Add<bool>(option_root + "force", UserStringNop(user_string_root + "_FORCE"), false, Validator<bool>());
+        db.Add<T>(option_root + "all", UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
+
+        for (int ii = 1; ii <= IApp::MAX_AI_PLAYERS(); ++ii) {
+            std::stringstream ss;
+            ss << option_root << "AI_" << boost::lexical_cast<int>(ii);
+            db.Add<T>(ss.str(), UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
+        }
+    }
+
+    void AddOptions(OptionsDB& db) {
+        // Create options to allow bypassing the traits of the AI
+        // character and forcing them all to one value for testing
+        // purposes.
+
+        const int max_aggression = 5;
+        const int no_value = -1;
+        AddTraitBypassOption<int>(db, "aggression", "AGGRESSION", no_value, RangedValidator<int>(0, max_aggression));
+        AddTraitBypassOption<int>(db, "empire-id", "EMPIREID", no_value, RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
+    }
+    bool temp_bool = RegisterOptions(&AddOptions);
+
+}
 
 // static member(s)
 AIClientApp::AIClientApp(const std::vector<std::string>& args) :
