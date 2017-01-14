@@ -9,6 +9,7 @@ class Timer(object):
         """
         self.timer_name = timer_name
         self.start_time = None
+        self.end_time = None
         self.section_name = None
         self.timers = []
         self.log_name = None
@@ -42,7 +43,7 @@ class Timer(object):
         max_header = max(len(x[0]) for x in self.timers)
         line_max_size = max_header + 14
         print
-        print ('Timing for %s:' % self.timer_name)
+        print 'Timing for %s:' % self.timer_name
         print '=' * line_max_size
         for name, val in self.timers:
             print "%-*s %8d msec" % (max_header, name, val)
