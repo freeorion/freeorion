@@ -288,7 +288,10 @@ namespace {
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION"))
                                         % location->Name()) + "\n";
 
-        // TODO add info if uses imperial reserve
+        if (elem.allowed_imperial_stockpile_use)
+            main_text += UserString("PRODUCTION_QUEUE_ALLOWED_IMPERIAL_STOCKPILE_USE") + "\n";
+        else 
+            main_text += UserString("PRODUCTION_QUEUE_DISALLOWED_IMPERIAL_STOCKPILE_USE") + "\n";
 
         if (location_ok)
             main_text += UserString("PRODUCTION_LOCATION_OK") + "\n";

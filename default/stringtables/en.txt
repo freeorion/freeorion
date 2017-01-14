@@ -3476,6 +3476,12 @@ At %1%
 PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION
 Enqueued at %1%
 
+PRODUCTION_QUEUE_ALLOWED_IMPERIAL_STOCKPILE_USE
+May use imperial PP reserve for production
+
+PRODUCTION_QUEUE_DISALLOWED_IMPERIAL_STOCKPILE_USE
+May not use imperial PP reserve for production
+
 PRODUCTION_LOCATION_OK
 Can be produced here
 
