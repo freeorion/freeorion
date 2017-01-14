@@ -134,7 +134,7 @@ void AIClientApp::Run() {
                     Networking().GetMessage(msg);
                     HandleMessage(msg);
                 } else {
-                    boost::this_thread::sleep_for(boost::chrono::milliseconds(250));
+                    boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
                 }
 
             } catch (boost::python::error_already_set) {
