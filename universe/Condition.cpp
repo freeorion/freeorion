@@ -1532,8 +1532,8 @@ bool Homeworld::Match(const ScriptingContext& local_context) const {
 
     if (m_names.empty()) {
         // match homeworlds for any species
-        for (SpeciesManager::iterator species_it = manager.begin(); species_it != manager.end(); ++species_it) {
-            if (const ::Species* species = species_it->second) {
+        for (const std::map<std::string, ::Species*>::value_type& entry : manager) {
+            if (const ::Species* species = entry.second) {
                 const std::set<int>& homeworld_ids = species->Homeworlds();
                 if (homeworld_ids.find(planet_id) != homeworld_ids.end())   // is this planet the homeworld for this species?
                     return true;
@@ -1591,9 +1591,8 @@ bool Capital::Match(const ScriptingContext& local_context) const {
 
     // check if any empire's capital's ID is that candidate object's id.
     // if it is, the candidate object is a capital.
-    const EmpireManager& empires = Empires();
-    for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
-        if (it->second->CapitalID() == candidate_id)
+    for (const std::map<int, Empire*>::value_type& entry : Empires())
+        if (entry.second->CapitalID() == candidate_id)
             return true;
     return false;
 }
@@ -4339,8 +4338,8 @@ std::string FocusType::Dump() const {
         retval += m_names[0]->Dump() + "\n";
     } else {
         retval += "[ ";
-        for (unsigned int i = 0; i < m_names.size(); ++i) {
-            retval += m_names[i]->Dump() + " ";
+        for (ValueRef::ValueRefBase<std::string>* name : m_names) {
+            retval += name->Dump() + " ";
         }
         retval += "]\n";
     }

@@ -10,6 +10,7 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
+#include "../util/AppInterface.h"
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -31,7 +32,6 @@ namespace {
     }
     const GG::Pt PREVIEW_SZ(GG::X(248), GG::Y(186));
     const bool ALLOW_NO_STARLANES = false;
-    const int MAX_AI_PLAYERS = 40;
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
@@ -48,7 +48,7 @@ namespace {
         db.Add("GameSetup.player-name",         UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),             std::string(""),    Validator<std::string>());
         db.Add("GameSetup.empire-color",        UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),            9,                  RangedValidator<int>(0, 100));
         db.Add("GameSetup.starting-species",    UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),   std::string("SP_HUMAN"),    Validator<std::string>());
-        db.Add("GameSetup.ai-players",          UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),          6,                  RangedValidator<int>(0, MAX_AI_PLAYERS));
+        db.Add("GameSetup.ai-players",          UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),          6,                  RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
         db.Add("GameSetup.ai-aggression",       UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),       MANIACAL,           RangedValidator<Aggression>(BEGINNER, MANIACAL));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -433,8 +433,8 @@ void GalaxySetupPanel::DoLayout() {
 }
 
 void GalaxySetupPanel::Disable(bool b/* = true*/) {
-    for (std::list<GG::Wnd*>::const_iterator it = Children().begin(); it != Children().end(); ++it)
-        static_cast<GG::Control*>(*it)->Disable(b);
+    for (GG::Wnd* child : Children())
+        static_cast<GG::Control*>(child)->Disable(b);
 }
 
 void GalaxySetupPanel::SetFromSetupData(const GalaxySetupData& setup_data) {
@@ -542,11 +542,9 @@ GalaxySetupWnd::GalaxySetupWnd() :
         // if no previously-stored species selection, need to pick a default
         std::vector<std::string> selector_avail_species = m_starting_secies_selector->AvailableSpeciesNames();
         if (!selector_avail_species.empty()) {
-            for (std::vector<std::string>::const_iterator it = selector_avail_species.begin();
-                 it != selector_avail_species.end(); ++it)
-            {
+            for (const std::string& species_name : selector_avail_species) {
                 // special case: see if humans are available.
-                if ("SP_HUMAN" == *it) {
+                if ("SP_HUMAN" == species_name) {
                     default_starting_species = "SP_HUMAN";
                     break;
                 }
@@ -562,7 +560,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_number_ais_label = new CUILabel(UserString("GSETUP_NUMBER_AIS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
-    m_number_ais_spin = new CUISpin<int>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, MAX_AI_PLAYERS, true);
+    m_number_ais_spin = new CUISpin<int>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
 
     // create a temporary texture and static graphic
     static boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());

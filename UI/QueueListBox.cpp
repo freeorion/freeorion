@@ -147,8 +147,8 @@ void QueueListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     CUIListBox::SizeMove(ul, lr);
     if (old_size != Size() && !Empty()) {
         const GG::Pt row_size(RowWidth(), (*begin())->Height());
-        for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-            (*it)->Resize(row_size);
+        for (GG::ListBox::Row* row : *this)
+            row->Resize(row_size);
     }
 }
 
@@ -176,8 +176,8 @@ void QueueListBox::DragDropLeave() {
 
 void QueueListBox::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
-    for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-        (*it)->Disable(!enable);
+    for (GG::ListBox::Row* row : *this)
+        row->Disable(!enable);
 }
 
 bool QueueListBox::DisplayingValidQueueItems()

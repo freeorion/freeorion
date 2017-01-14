@@ -181,9 +181,9 @@ void NewFleetOrder::ExecuteImpl() const {
         // validate specified ships
         std::vector<TemporaryPtr<Ship> >    validated_ships;
         std::vector<int>                    validated_ships_ids;
-        for (unsigned int i = 0; i < ship_ids.size(); ++i) {
+        for (int ship_id : ship_ids) {
             // verify that empire is not trying to take ships from somebody else's fleet
-            TemporaryPtr<Ship> ship = GetShip(ship_ids[i]);
+            TemporaryPtr<Ship> ship = GetShip(ship_id);
             if (!ship) {
                 ErrorLogger() << "Empire attempted to create a new fleet with an invalid ship";
                 continue;
@@ -220,10 +220,7 @@ void NewFleetOrder::ExecuteImpl() const {
             fleet->SetArrivalStarlane(firstFleet->ArrivalStarlane());
 
         // remove ships from old fleet(s) and add to new
-        for (std::vector<TemporaryPtr<Ship> >::iterator ship_it = validated_ships.begin();
-             ship_it != validated_ships.end(); ++ship_it)
-        {
-            TemporaryPtr<Ship> ship = *ship_it;
+        for (TemporaryPtr<Ship> ship : validated_ships) {
             if (TemporaryPtr<Fleet> old_fleet = GetFleet(ship->FleetID()))
                 old_fleet->RemoveShip(ship->ID());
             ship->SetFleetID(fleet->ID());
@@ -371,8 +368,8 @@ void FleetMoveOrder::ExecuteImpl() const {
     }
 
     std::string waypoints;
-    for (std::list<int>::iterator it = route_list.begin(); it != route_list.end(); ++it) {
-        waypoints += std::string(" ") + boost::lexical_cast<std::string>(*it);
+    for (int waypoint : route_list) {
+        waypoints += std::string(" ") + boost::lexical_cast<std::string>(waypoint);
     }
     DebugLogger() << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " to " << waypoints;
 
@@ -421,10 +418,7 @@ void FleetTransferOrder::ExecuteImpl() const {
     std::vector<int>                 validated_ship_ids;
     validated_ship_ids.reserve(m_add_ships.size());
 
-    for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
-         it != ships.end(); ++it)
-    {
-        TemporaryPtr<Ship> ship = *it;
+    for (TemporaryPtr<Ship> ship : ships) {
         if (!ship->OwnedBy(EmpireID()))
             continue;
         if (ship->SystemID() != target_fleet->SystemID())
@@ -441,10 +435,7 @@ void FleetTransferOrder::ExecuteImpl() const {
 
     // remove from old fleet(s)
     std::set<TemporaryPtr<Fleet> > modified_fleets;
-    for (std::vector<TemporaryPtr<Ship> >::iterator it = validated_ships.begin();
-         it != validated_ships.end(); ++it)
-    {
-        TemporaryPtr<Ship> ship = *it;
+    for (TemporaryPtr<Ship> ship : validated_ships) {
         if (TemporaryPtr<Fleet> source_fleet = GetFleet(ship->FleetID())) {
             source_fleet->RemoveShip(ship->ID());
             modified_fleets.insert(source_fleet);
@@ -460,10 +451,7 @@ void FleetTransferOrder::ExecuteImpl() const {
     // signal change to fleet states
     modified_fleets.insert(target_fleet);
 
-    for (std::set<TemporaryPtr<Fleet> >::iterator it = modified_fleets.begin();
-         it != modified_fleets.end(); ++it)
-    {
-        TemporaryPtr<Fleet> modified_fleet = *it;
+    for (TemporaryPtr<Fleet> modified_fleet : modified_fleets) {
         if (!modified_fleet->Empty())
             modified_fleet->StateChangedSignal();
         // if modified fleet is empty, it should be immently destroyed, so that updating it now is redundant

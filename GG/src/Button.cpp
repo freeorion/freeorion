@@ -589,8 +589,8 @@ RadioButtonGroup::RadioButtonGroup(Orientation orientation) :
 Pt RadioButtonGroup::MinUsableSize() const
 {
     Pt retval;
-    for (std::size_t i = 0; i < m_button_slots.size(); ++i) {
-        Pt min_usable_size = m_button_slots[i].button->MinUsableSize();
+    for (const ButtonSlot& button_slot : m_button_slots) {
+        Pt min_usable_size = button_slot.button->MinUsableSize();
         if (m_orientation == VERTICAL) {
             retval.x = std::max(retval.x, min_usable_size.x);
             retval.y += min_usable_size.y;
@@ -768,8 +768,8 @@ void RadioButtonGroup::ExpandButtons(bool expand)
             RemoveButton(button);
         }
         m_expand_buttons = expand;
-        for (std::size_t i = 0; i < buttons.size(); ++i) {
-            AddButton(buttons[i]);
+        for (StateButton* button : buttons) {
+            AddButton(button);
         }
         SetCheck(old_checked_button);
     }
@@ -786,8 +786,8 @@ void RadioButtonGroup::ExpandButtonsProportionally(bool proportional)
             RemoveButton(button);
         }
         m_expand_buttons_proportionally = proportional;
-        for (std::size_t i = 0; i < buttons.size(); ++i) {
-            AddButton(buttons[i]);
+        for (StateButton* button : buttons) {
+            AddButton(button);
         }
         SetCheck(old_checked_button);
     }
@@ -823,8 +823,8 @@ void RadioButtonGroup::SetCheckImpl(std::size_t index, bool signal)
 
 void RadioButtonGroup::Reconnect()
 {
-    for (std::size_t i = 0; i < m_button_slots.size(); ++i) {
-        m_button_slots[i].connection.disconnect();
+    for (ButtonSlot& button_slot : m_button_slots) {
+        button_slot.connection.disconnect();
     }
     ConnectSignals();
 }

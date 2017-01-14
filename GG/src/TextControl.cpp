@@ -91,10 +91,8 @@ TextControl::TextControl(const TextControl& that) :
     m_cached_minusable_size_width(that.m_cached_minusable_size_width),
     m_cached_minusable_size(that.m_cached_minusable_size)
 {
-    for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
-         it != m_text_elements.end(); ++it)
-    {
-        (*it)->Bind(m_text);
+    for (boost::shared_ptr<Font::TextElement> elem : m_text_elements) {
+        elem->Bind(m_text);
     }
 }
 
@@ -118,10 +116,8 @@ TextControl& TextControl::operator=(const TextControl& that)
     m_cached_minusable_size_width = that.m_cached_minusable_size_width;
     m_cached_minusable_size = that.m_cached_minusable_size;
 
-    for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
-         it != m_text_elements.end(); ++it)
-    {
-        (*it)->Bind(m_text);
+    for (boost::shared_ptr<Font::TextElement> elem : m_text_elements) {
+        elem->Bind(m_text);
     }
 
     return *this;
@@ -264,10 +260,8 @@ void TextControl::SetText(const std::string& str,
         return;
 
     std::size_t expected_length(0);
-    for (std::vector<boost::shared_ptr<Font::TextElement> >::const_iterator it = text_elements.begin();
-         it != text_elements.end(); ++it)
-    {
-        expected_length +=(*it)->text.size();
+    for (boost::shared_ptr<Font::TextElement> elem : text_elements) {
+        expected_length += elem->text.size();
     }
 
     if (expected_length > str.size())
@@ -276,10 +270,8 @@ void TextControl::SetText(const std::string& str,
     m_text = str;
 
     m_text_elements = text_elements;
-    for (std::vector<boost::shared_ptr<Font::TextElement> >::iterator it = m_text_elements.begin();
-         it != m_text_elements.end(); ++it)
-    {
-        (*it)->Bind(m_text);
+    for (boost::shared_ptr<Font::TextElement> elem : m_text_elements) {
+        elem->Bind(m_text);
     }
 
     RecomputeLineData();

@@ -1594,12 +1594,7 @@ class WarShipDesigner(ShipDesigner):
     def _adjusted_production_cost(self):
         # as military ships are grouped up in fleets, their power rating scales quadratic in numbers.
         # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
-        if foAI.foAIstate.aggression == fo.aggression.maniacal:
-            exponent = 2
-        elif foAI.foAIstate.aggression == fo.aggression.aggressive:
-            exponent = 1.5
-        else:
-            exponent = 1
+        exponent = foAI.foAIstate.character.warship_adjusted_production_cost_exponent()
         return super(WarShipDesigner, self)._adjusted_production_cost()**exponent
 
     def _effective_structure(self):

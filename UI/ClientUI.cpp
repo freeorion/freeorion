@@ -455,9 +455,8 @@ namespace {
                            std::back_inserter(retval));
 
             std::string message_text = "Loading " + boost::lexical_cast<std::string>(retval.size()) + " Unicode charsets: ";
-            for (std::vector<GG::UnicodeCharset>::const_iterator it = retval.begin();
-                 it != retval.end(); ++it)
-            { message_text += it->m_script_name + ", "; }
+            for (const GG::UnicodeCharset& cs : retval)
+            { message_text += cs.m_script_name + ", "; }
 
             DebugLogger() << message_text;
         }
@@ -538,6 +537,7 @@ namespace {
 
         // UI behavior
         db.Add("UI.tooltip-delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
+        db.Add("UI.tooltip.extended-delay",     UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),         3500,       RangedValidator<int>(0, 30000));
         db.Add("UI.multiple-fleet-windows",     UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),     false);
         db.Add("UI.window-quickclose",          UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),          true);
         db.Add("UI.auto-reposition-windows",    UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),    true);
@@ -686,10 +686,9 @@ void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { GetMapWndConst()->GetSaveGameUIData(data); }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
-    const ObjectMap& objects = GetUniverse().Objects();
-    for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it)
-        if (boost::iequals(it->Name(), name))
-            return ZoomToObject(it->ID());
+    for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>())
+        if (boost::iequals(obj->Name(), name))
+            return ZoomToObject(obj->ID());
     return false;
 }
 
@@ -779,34 +778,30 @@ void ClientUI::ZoomToFleet(TemporaryPtr<const Fleet> fleet) {
 
 bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = false*/) {
     if (reverse_lookup) {
-        for (TechManager::iterator it = GetTechManager().begin(); it != GetTechManager().end(); ++it) {
-            const Tech* tech = *it;
+        for (const Tech* tech : GetTechManager()) {
             if (boost::iequals(name, UserString(tech->Name())))
                 return ZoomToTech(tech->Name());
         }
 
-        for (BuildingTypeManager::iterator it = GetBuildingTypeManager().begin(); it != GetBuildingTypeManager().end(); ++it)
-            if (boost::iequals(name, UserString(it->first)))
-                return ZoomToBuildingType(it->first);
+        for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager())
+            if (boost::iequals(name, UserString(entry.first)))
+                return ZoomToBuildingType(entry.first);
 
-        {
-            std::vector<std::string> special_names = SpecialNames();
-            for (std::vector<std::string>::const_iterator it = special_names.begin(); it != special_names.end(); ++it)
-                if (boost::iequals(name, UserString(*it)))
-                    return ZoomToSpecial(*it);
-        }
+        for (const std::string& special_name : SpecialNames())
+            if (boost::iequals(name, UserString(special_name)))
+                return ZoomToSpecial(special_name);
 
-        for (HullTypeManager::iterator it = GetHullTypeManager().begin(); it != GetHullTypeManager().end(); ++it)
-            if (boost::iequals(name, UserString(it->first)))
-                return ZoomToShipHull(it->first);
+        for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager())
+            if (boost::iequals(name, UserString(entry.first)))
+                return ZoomToShipHull(entry.first);
 
-        for (PartTypeManager::iterator it = GetPartTypeManager().begin(); it != GetPartTypeManager().end(); ++it)
-            if (boost::iequals(name, UserString(it->first)))
-                return ZoomToShipPart(it->first);
+        for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager())
+            if (boost::iequals(name, UserString(entry.first)))
+                return ZoomToShipPart(entry.first);
 
-        for (SpeciesManager::iterator it = GetSpeciesManager().begin(); it != GetSpeciesManager().end(); ++it)
-            if (boost::iequals(name, UserString(it->first)))
-                return ZoomToSpecies(it->first);
+        for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager())
+            if (boost::iequals(name, UserString(entry.first)))
+                return ZoomToSpecies(entry.first);
 
         return false;
     } else {

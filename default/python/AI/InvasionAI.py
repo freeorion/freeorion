@@ -60,9 +60,8 @@ def get_invasion_fleets():
     print "Invasion Fleets Without Missions: %s" % num_invasion_fleets
 
     invasion_timer.start("planning troop base production")
-    # only do base invasions if aggression is typical or above
     reserved_troop_base_targets = []
-    if foAI.foAIstate.aggression > fo.aggression.typical:
+    if foAI.foAIstate.character.may_invade_with_bases():
         available_pp = {}
         for el in empire.planetsWithAvailablePP:  # keys are sets of ints; data is doubles
             avail_pp = el.data()

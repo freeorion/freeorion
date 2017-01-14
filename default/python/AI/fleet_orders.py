@@ -113,7 +113,7 @@ class OrderMove(AIFleetOrder):
         m_threat = target_sys_status.get('monsterThreat', 0)
         p_threat = target_sys_status.get('planetThreat', 0)
         threat = f_threat + m_threat + p_threat
-        safety_factor = MilitaryAI.get_safety_factor()
+        safety_factor = foAI.foAIstate.character.military_safety_factor()
         universe = fo.getUniverse()
         if fleet_rating >= safety_factor * threat:
             return True

@@ -212,15 +212,15 @@ Wnd::Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags/* = INTERACTIVE | DRAGABLE*/) 
 Wnd::~Wnd()
 {
     // remove this-references from Wnds that this Wnd filters
-    for (std::set<Wnd*>::iterator it1 = m_filtering.begin(); it1 != m_filtering.end(); ++it1) {
-        std::vector<Wnd*>::iterator it2 = std::find((*it1)->m_filters.begin(), (*it1)->m_filters.end(), this);
-        if (it2 != (*it1)->m_filters.end())
-            (*it1)->m_filters.erase(it2);
+    for (Wnd* filtering_wnd : m_filtering) {
+        std::vector<Wnd*>::iterator it2 = std::find(filtering_wnd->m_filters.begin(), filtering_wnd->m_filters.end(), this);
+        if (it2 != filtering_wnd->m_filters.end())
+            filtering_wnd->m_filters.erase(it2);
     }
 
     // remove this-references from Wnds that filter this Wnd
-    for (std::vector<Wnd*>::iterator it1 = m_filters.begin(); it1 != m_filters.end(); ++it1) {
-        (*it1)->m_filtering.erase(this);
+    for (Wnd* filter_wnd : m_filters) {
+        filter_wnd->m_filtering.erase(this);
     }
 
     if (Wnd* parent = Parent())
@@ -458,8 +458,8 @@ void Wnd::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey>
     if (!Interactive() && Parent())
         ForwardEventToParent();
     // if dropped Wnds were accepted, but no handler or parent exists to handle them, delete them
-    for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it)
-        delete *it;
+    for (Wnd* wnd : wnds)
+        delete wnd;
 }
 
 void Wnd::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds)
@@ -467,8 +467,8 @@ void Wnd::CancellingChildDragDrop(const std::vector<const Wnd*>& wnds)
 
 void Wnd::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination)
 {
-    for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
-        DetachChild(*it);
+    for (Wnd* wnd : wnds) {
+        DetachChild(wnd);
     }
 }
 
@@ -479,9 +479,8 @@ void Wnd::Hide(bool children/* = true*/)
 {
     m_visible = false;
     if (children) {
-        std::list<Wnd*>::iterator it = m_children.begin();
-        for (; it != m_children.end(); ++it)
-            (*it)->Hide(children);
+        for (Wnd* child : m_children)
+            child->Hide(children);
     }
 }
 
@@ -489,9 +488,8 @@ void Wnd::Show(bool children/* = true*/)
 {
     m_visible = true;
     if (children) {
-        std::list<Wnd*>::iterator it = m_children.begin();
-        for (; it != m_children.end(); ++it)
-            (*it)->Show(children);
+        for (Wnd* child : m_children)
+            child->Show(children);
     }
 }
 
@@ -660,11 +658,11 @@ void Wnd::HorizontalLayout()
 
     std::multiset<Wnd*, WndHorizontalLess> wnds;
     Pt client_sz = ClientSize();
-    for (std::list<Wnd*>::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
-        Pt wnd_ul = (*it)->RelativeUpperLeft(), wnd_lr = (*it)->RelativeLowerRight();
+    for (Wnd* child : m_children) {
+        Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
-        wnds.insert(*it);
+        wnds.insert(child);
     }
 
     m_layout = new Layout(X0, Y0, ClientSize().x, ClientSize().y,
@@ -673,8 +671,8 @@ void Wnd::HorizontalLayout()
     AttachChild(m_layout);
 
     int i = 0;
-    for (std::multiset<Wnd*, WndHorizontalLess>::iterator it = wnds.begin(); it != wnds.end(); ++it) {
-        m_layout->Add(*it, 0, i++);
+    for (const std::multiset<Wnd*, WndHorizontalLess>::value_type& wnd : wnds) {
+        m_layout->Add(wnd, 0, i++);
     }
 }
 
@@ -684,11 +682,11 @@ void Wnd::VerticalLayout()
 
     std::multiset<Wnd*, WndVerticalLess> wnds;
     Pt client_sz = ClientSize();
-    for (std::list<Wnd*>::const_iterator it = m_children.begin(); it != m_children.end(); ++it) {
-        Pt wnd_ul = (*it)->RelativeUpperLeft(), wnd_lr = (*it)->RelativeLowerRight();
+    for (Wnd* child : m_children) {
+        Pt wnd_ul = child->RelativeUpperLeft(), wnd_lr = child->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
             continue;
-        wnds.insert(*it);
+        wnds.insert(child);
     }
 
     m_layout = new Layout(X0, Y0, ClientSize().x, ClientSize().y,
@@ -697,8 +695,8 @@ void Wnd::VerticalLayout()
     AttachChild(m_layout);
 
     int i = 0;
-    for (std::multiset<Wnd*, WndVerticalLess>::iterator it = wnds.begin(); it != wnds.end(); ++it) {
-        m_layout->Add(*it, i++, 0);
+    for (const std::multiset<Wnd*, WndVerticalLess>::value_type& wnd : wnds) {
+        m_layout->Add(wnd, i++, 0);
     }
 }
 
@@ -794,11 +792,11 @@ void Wnd::GridLayout()
     // create an actual layout with a more reasonable number of cells from the pixel-grid layout
     std::set<X> unique_lefts;
     std::set<Y> unique_tops;
-    for (LeftIter it = grid_layout.get<LayoutLeft>().begin(); it != grid_layout.get<LayoutLeft>().end(); ++it) {
-        unique_lefts.insert(it->ul.x);
+    for (const GridLayoutWnd& layout_wnd : grid_layout.get<LayoutLeft>()) {
+        unique_lefts.insert(layout_wnd.ul.x);
     }
-    for (TopIter it = grid_layout.get<LayoutTop>().begin(); it != grid_layout.get<LayoutTop>().end(); ++it) {
-        unique_tops.insert(it->ul.y);
+    for (const GridLayoutWnd& layout_wnd : grid_layout.get<LayoutTop>()) {
+        unique_tops.insert(layout_wnd.ul.y);
     }
 
     if (unique_lefts.empty() || unique_tops.empty())
@@ -810,10 +808,10 @@ void Wnd::GridLayout()
     AttachChild(m_layout);
 
     // populate this new layout with the child windows, based on their placements in the pixel-grid layout
-    for (PointerIter it = grid_layout.get<Pointer>().begin(); it != grid_layout.get<Pointer>().end(); ++it) {
-        Wnd* wnd = it->wnd;
-        Pt ul = it->ul;
-        Pt lr = it->lr;
+    for (const GridLayoutWnd& layout_wnd : grid_layout.get<Pointer>()) {
+        Wnd* wnd = layout_wnd.wnd;
+        Pt ul = layout_wnd.ul;
+        Pt lr = layout_wnd.lr;
         int left = std::distance(unique_lefts.begin(), unique_lefts.find(ul.x));
         int top = std::distance(unique_tops.begin(), unique_tops.find(ul.y));
         int right = std::distance(unique_lefts.begin(), unique_lefts.lower_bound(lr.x));
@@ -830,12 +828,12 @@ void Wnd::SetLayout(Layout* layout)
     std::list<Wnd*> children = m_children;
     DetachChildren();
     Pt client_sz = ClientSize();
-    for (std::list<Wnd*>::const_iterator it = children.begin(); it != children.end(); ++it) {
-        Pt wnd_ul = (*it)->RelativeUpperLeft(), wnd_lr = (*it)->RelativeLowerRight();
+    for (Wnd* wnd : children) {
+        Pt wnd_ul = wnd->RelativeUpperLeft(), wnd_lr = wnd->RelativeLowerRight();
         if (wnd_ul.x < 0 || wnd_ul.y < 0 || client_sz.x < wnd_lr.x || client_sz.y < wnd_lr.y)
-            AttachChild(*it);
+            AttachChild(wnd);
         else
-            delete *it;
+            delete wnd;
     }
     AttachChild(layout);
     m_layout = layout;
@@ -847,8 +845,8 @@ void Wnd::RemoveLayout()
     if (m_layout) {
         std::list<Wnd*> layout_children = m_layout->Children();
         m_layout->DetachAndResetChildren();
-        for (std::list<Wnd*>::iterator it = layout_children.begin(); it != layout_children.end(); ++it) {
-            AttachChild(*it);
+        for (Wnd* wnd : layout_children) {
+            AttachChild(wnd);
         }
         // prevent DeleteChild from recursively calling RemoveLayout
         GG::Layout* temp_layout = m_layout;

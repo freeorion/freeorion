@@ -66,20 +66,12 @@ namespace {
             if (elem.Tag() != "RotatingPlanetData")
                 throw std::invalid_argument("Attempted to construct a RotatingPlanetData from an XMLElement that had a tag other than \"RotatingPlanetData\"");
 
-            planet_type = boost::lexical_cast<PlanetType>(elem.Child("planet_type").Text());
-            filename = elem.Child("filename").Text();
-            shininess = boost::lexical_cast<double>(elem.Child("shininess").Text());
+            planet_type = boost::lexical_cast<PlanetType>(elem.attributes.at("planet_type"));
+            filename = elem.attributes.at("filename");
+            shininess = boost::lexical_cast<double>(elem.attributes.at("shininess"));
 
             // ensure proper bounds
             shininess = std::max(0.0, std::min(shininess, 128.0));
-        }
-
-        XMLElement  XMLEncode() const {
-            XMLElement retval("RotatingPlanetData");
-            retval.AppendChild(XMLElement("planet_type", boost::lexical_cast<std::string>(planet_type)));
-            retval.AppendChild(XMLElement("filename", filename));
-            retval.AppendChild(XMLElement("shininess", boost::lexical_cast<std::string>(shininess)));
-            return retval;
         }
 
         PlanetType  planet_type;    ///< the type of planet for which this data may be used
@@ -93,8 +85,8 @@ namespace {
             Atmosphere(const XMLElement& elem) {
                 if (elem.Tag() != "Atmosphere")
                     throw std::invalid_argument("Attempted to construct an Atmosphere from an XMLElement that had a tag other than \"Atmosphere\"");
-                filename = elem.Child("filename").Text();
-                alpha = boost::lexical_cast<int>(elem.Child("alpha").Text());
+                filename = elem.attributes.at("filename");
+                alpha = boost::lexical_cast<int>(elem.attributes.at("alpha"));
                 alpha = std::max(0, std::min(alpha, 255));
             }
 
@@ -106,10 +98,9 @@ namespace {
         PlanetAtmosphereData(const XMLElement& elem) {
             if (elem.Tag() != "PlanetAtmosphereData")
                 throw std::invalid_argument("Attempted to construct a PlanetAtmosphereData from an XMLElement that had a tag other than \"PlanetAtmosphereData\"");
-            planet_filename = elem.Child("planet_filename").Text();
-            const XMLElement& atmospheres_elem = elem.Child("atmospheres");
-            for (XMLElement::const_child_iterator it = atmospheres_elem.child_begin(); it != atmospheres_elem.child_end(); ++it) {
-                atmospheres.push_back(Atmosphere(*it));
+            planet_filename = elem.attributes.at("planet_filename");
+            for (const XMLElement& atmosphere : elem.Child("atmospheres").children) {
+                atmospheres.push_back(Atmosphere(atmosphere));
             }
         }
 
@@ -132,10 +123,14 @@ namespace {
 
             if (doc.root_node.ContainsChild("GLPlanets")) {
                 const XMLElement& elem = doc.root_node.Child("GLPlanets");
-                for (XMLElement::const_child_iterator it = elem.child_begin(); it != elem.child_end(); ++it) {
-                    if (it->Tag() == "RotatingPlanetData") {
-                        RotatingPlanetData current_data(*it);
-                        data[current_data.planet_type].push_back(current_data);
+                for (const XMLElement& planet_definition : elem.children) {
+                    if (planet_definition.Tag() == "RotatingPlanetData") {
+                        try {
+                            RotatingPlanetData current_data(planet_definition);
+                            data[current_data.planet_type].push_back(current_data);
+                        } catch(const std::exception& e) {
+                            ErrorLogger() << "GetRotatingPlanetData: unable to load entry: " << e.what();
+                        }
                     }
                 }
             }
@@ -151,10 +146,14 @@ namespace {
             doc.ReadDoc(ifs);
             ifs.close();
 
-            for (XMLElement::const_child_iterator it = doc.root_node.child_begin(); it != doc.root_node.child_end(); ++it) {
-                if (it->Tag() == "PlanetAtmosphereData") {
-                    PlanetAtmosphereData current_data(*it);
-                    data[current_data.planet_filename] = current_data;
+            for (const XMLElement& atmosphere_definition : doc.root_node.children) {
+                if (atmosphere_definition.Tag() == "PlanetAtmosphereData") {
+                    try {
+                        PlanetAtmosphereData current_data(atmosphere_definition);
+                        data[current_data.planet_filename] = current_data;
+                    } catch (const std::exception& e) {
+                        ErrorLogger() << "GetPlanetAtmosphereData: " << e.what();
+                    }
                 }
             }
         }
@@ -281,14 +280,21 @@ namespace {
             doc.ReadDoc(ifs);
             ifs.close();
 
-            if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").NumChildren()) {
-                for (XMLElement::child_iterator it = doc.root_node.Child("GLStars").child_begin(); it != doc.root_node.Child("GLStars").child_end(); ++it) {
-                    std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(it->Child("star_type").Text())];
-                    GG::Clr color(XMLToClr(it->Child("GG::Clr")));
-                    color_vec.push_back(color.r / 255.0f);
-                    color_vec.push_back(color.g / 255.0f);
-                    color_vec.push_back(color.b / 255.0f);
-                    color_vec.push_back(color.a / 255.0f);
+            if (doc.root_node.ContainsChild("GLStars") && 0 < doc.root_node.Child("GLStars").children.size()) {
+                for (const XMLElement& star_definition : doc.root_node.Child("GLStars").children) {
+                    try {
+                        std::string hex_colour("#");
+                        hex_colour.append(star_definition.attributes.at("color"));
+                        std::vector<float>& color_vec = light_colors[boost::lexical_cast<StarType>(star_definition.attributes.at("star_type"))];
+                        GG::Clr color = GG::HexClr(hex_colour);
+
+                        color_vec.push_back(color.r / 255.0f);
+                        color_vec.push_back(color.g / 255.0f);
+                        color_vec.push_back(color.b / 255.0f);
+                        color_vec.push_back(color.a / 255.0f);
+                    } catch(const std::exception& e) {
+                        std::cerr << "planets.xml: " << e.what() << std::endl;
+                    }
                 }
             } else {
                 for (int i = STAR_BLUE; i < NUM_STAR_TYPES; ++i) {
@@ -413,10 +419,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        const OrderSet& orders = app->Orders();
-        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-            if (boost::shared_ptr<ColonizeOrder> order = boost::dynamic_pointer_cast<ColonizeOrder>(it->second)) {
-                retval[order->PlanetID()] = it->first;
+        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
+            if (boost::shared_ptr<ColonizeOrder> order = boost::dynamic_pointer_cast<ColonizeOrder>(entry.second)) {
+                retval[order->PlanetID()] = entry.first;
             }
         }
         return retval;
@@ -429,10 +434,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        const OrderSet& orders = app->Orders();
-        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-            if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(it->second)) {
-                retval[order->PlanetID()].insert(it->first);
+        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
+            if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(entry.second)) {
+                retval[order->PlanetID()].insert(entry.first);
             }
         }
         return retval;
@@ -445,10 +449,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        const OrderSet& orders = app->Orders();
-        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-            if (boost::shared_ptr<BombardOrder> order = boost::dynamic_pointer_cast<BombardOrder>(it->second)) {
-                retval[order->PlanetID()].insert(it->first);
+        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
+            if (boost::shared_ptr<BombardOrder> order = boost::dynamic_pointer_cast<BombardOrder>(entry.second)) {
+                retval[order->PlanetID()].insert(entry.first);
             }
         }
         return retval;
@@ -900,11 +903,10 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     bool capital = false;
 
     // need to check all empires for capitals
-    const EmpireManager& empire_manager = Empires();
-    for (EmpireManager::const_iterator empire_it = empire_manager.begin(); empire_it != empire_manager.end(); ++empire_it) {
-        const Empire* empire = empire_it->second;
+    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
+        const Empire* empire = entry.second;
         if (!empire) {
-            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << empire_it->first;
+            ErrorLogger() << "PlanetPanel::PlanetPanel got null empire pointer for id " << entry.first;
             continue;
         }
         if (empire->CapitalID() == m_planet_id) {
@@ -1183,15 +1185,14 @@ namespace {
         std::vector<std::string> retval;
         if (!ship)
             return retval;
-        std::set<std::string> tags = ship->Tags();
-        for (std::set<std::string>::iterator tag_it = tags.begin(); tag_it != tags.end(); ++tag_it) {
-            if (*tag_it == TAG_BOMBARD_ALWAYS) {
+        for (const std::string& tag : ship->Tags()) {
+            if (tag == TAG_BOMBARD_ALWAYS) {
                 retval.clear();
-                retval.push_back(*tag_it);
+                retval.push_back(tag);
                 break;
-            } else if ((tag_it->length() > TAG_BOMBARD_PREFIX.length()) &&
-                       (tag_it->substr(0, TAG_BOMBARD_PREFIX.length()) == TAG_BOMBARD_PREFIX))
-            { retval.push_back(tag_it->substr(TAG_BOMBARD_PREFIX.length())); }
+            } else if ((tag.length() > TAG_BOMBARD_PREFIX.length()) &&
+                       (tag.substr(0, TAG_BOMBARD_PREFIX.length()) == TAG_BOMBARD_PREFIX))
+            { retval.push_back(tag.substr(TAG_BOMBARD_PREFIX.length())); }
         }
         return retval;
     }
@@ -1233,9 +1234,8 @@ namespace {
             return retval;
 
         // is there a valid single selected ship in the active FleetWnd?
-        std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
-        for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-            if (TemporaryPtr<Ship> ship = GetUniverse().Objects().Object<Ship>(*ss_it))
+        for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs())
+            if (TemporaryPtr<Ship> ship = GetUniverse().Objects().Object<Ship>(ship_id))
                 if (ship->SystemID() == system_id && ship->HasTroops() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                     retval.insert(ship);
 
@@ -1250,11 +1250,8 @@ namespace {
             return retval;
 
         // is there a valid single selected ship in the active FleetWnd?
-        std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
-        for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin();
-             ss_it != selected_ship_ids.end(); ++ss_it)
-        {
-            TemporaryPtr<Ship> ship = GetShip(*ss_it);
+        for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs()) {
+            TemporaryPtr<Ship> ship = GetShip(ship_id);
             if (!ship || ship->SystemID() != system_id)
                 continue;
             if (!ship->CanBombard() || !ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
@@ -1272,9 +1269,8 @@ TemporaryPtr<const Ship> ValidSelectedColonyShip(int system_id) {
         return TemporaryPtr<const Ship>();
 
     // is there a valid selected ship in the active FleetWnd?
-    std::set<int> selected_ship_ids = FleetUIManager::GetFleetUIManager().SelectedShipIDs();
-    for (std::set<int>::const_iterator ss_it = selected_ship_ids.begin(); ss_it != selected_ship_ids.end(); ++ss_it)
-        if (TemporaryPtr<const Ship> ship = GetShip(*ss_it))
+    for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs())
+        if (TemporaryPtr<const Ship> ship = GetShip(ship_id))
             if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                 return ship;
     return TemporaryPtr<const Ship>();
@@ -1307,10 +1303,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
 
     // get all ships that can colonize and that are free to do so in the
     // specified planet'ssystem and that can colonize the requested planet
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin();
-         it != ships.end(); ++it)
-    {
-        TemporaryPtr<const Ship> ship = *it;
+    for (TemporaryPtr<const Ship> ship : ships) {
         if (!AvailableToColonize(ship, system_id, empire_id))
             continue;
         if (!CanColonizePlanetType(ship, target_planet_type))
@@ -1334,11 +1327,7 @@ int AutomaticallyChosenColonyShip(int target_planet_id) {
     bool changed_planet = false;
 
     GetUniverse().InhibitUniverseObjectSignals(true);
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator
-         ship_it = capable_and_available_colony_ships.begin();
-         ship_it != capable_and_available_colony_ships.end(); ++ship_it)
-    {
-        TemporaryPtr<const Ship> ship = *ship_it;
+    for (TemporaryPtr<const Ship> ship : capable_and_available_colony_ships) {
         if (!ship)
             continue;
         int ship_id = ship->ID();
@@ -1419,12 +1408,8 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenInvasionShips(int target_
     // get "just enough" ships that can invade and that are free to do so
     double defending_troops = target_planet->NextTurnCurrentMeterValue(METER_TROOPS);
 
-    const ObjectMap& objects = Objects();
-    std::vector<TemporaryPtr<const Ship> > ships = objects.FindObjects<Ship>();
-
     double invasion_troops = 0;
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        TemporaryPtr<const Ship> ship = *it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<Ship>()) {
         if (!AvailableToInvade(ship, system_id, empire_id))
             continue;
 
@@ -1461,19 +1446,14 @@ std::set<TemporaryPtr<const Ship> > AutomaticallyChosenBombardShips(int target_p
     if (target_planet->OwnedBy(empire_id))
         return retval;
 
-    const ObjectMap& objects = Objects();
-    std::vector<TemporaryPtr<const Ship> > ships = objects.FindObjects<Ship>();
-
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin(); it != ships.end(); ++it) {
-        TemporaryPtr<const Ship> ship = *it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<Ship>()) {
         // owned ship is capable of bombarding a planet in this system
         if (!AvailableToBombard(ship, system_id, empire_id))
             continue;
 
         // Select ship if the planet contains a content tag specified by the ship, or ship is tagged to always be selected
-        std::vector<std::string> bombard_tags = BombardTagsForShip(ship);
-        for (std::vector<std::string>::iterator tag_it = bombard_tags.begin(); tag_it != bombard_tags.end(); ++tag_it) {
-            if ((*tag_it == TAG_BOMBARD_ALWAYS) || (target_planet->HasTag(*tag_it))) {
+        for (const std::string& tag : BombardTagsForShip(ship)) {
+            if ((tag == TAG_BOMBARD_ALWAYS) || (target_planet->HasTag(tag))) {
                 retval.insert(ship);
                 break;
             }
@@ -1537,9 +1517,8 @@ void SidePanel::PlanetPanel::Refresh() {
     bool homeworld = false, has_shipyard = false;
 
     // need to check all species for homeworlds
-    const SpeciesManager& species_manager = GetSpeciesManager();
-    for (SpeciesManager::iterator species_it = species_manager.begin(); species_it != species_manager.end(); ++species_it) {
-        if (const Species* species = species_it->second) {
+    for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
+        if (const Species* species = entry.second) {
             const std::set<int>& homeworld_ids = species->Homeworlds();
             if (homeworld_ids.find(m_planet_id) != homeworld_ids.end()) {
                 homeworld = true;
@@ -1550,12 +1529,11 @@ void SidePanel::PlanetPanel::Refresh() {
 
     // check for shipyard
     const std::set<int>& known_destroyed_object_ids = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const std::set<int>& buildings = planet->BuildingIDs();
-    for (std::set<int>::const_iterator building_it = buildings.begin(); building_it != buildings.end(); ++building_it) {
-        TemporaryPtr<const Building> building = GetBuilding(*building_it);
+    for (int building_id : planet->BuildingIDs()) {
+        TemporaryPtr<const Building> building = GetBuilding(building_id);
         if (!building)
             continue;
-        if (known_destroyed_object_ids.find(*building_it) != known_destroyed_object_ids.end())
+        if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
             continue;
         if (building->HasTag(TAG_SHIPYARD)) {
             has_shipyard = true;
@@ -1756,10 +1734,7 @@ void SidePanel::PlanetPanel::Refresh() {
         // show invade button
         AttachChild(m_invade_button);
         float invasion_troops = 0.0f;
-        for (std::set<TemporaryPtr<const Ship> >::const_iterator ship_it = invasion_ships.begin();
-             ship_it != invasion_ships.end(); ++ship_it)
-        {
-            TemporaryPtr<const Ship> invasion_ship = *ship_it;
+        for (TemporaryPtr<const Ship> invasion_ship : invasion_ships) {
             invasion_troops += invasion_ship->TroopCapacity();
         }
         std::string invasion_troops_text = DoubleToString(invasion_troops, 2, false);
@@ -1798,11 +1773,9 @@ void SidePanel::PlanetPanel::Refresh() {
         m_focus_drop->Clear();
         std::vector<GG::DropDownList::Row*> rows;
         rows.reserve(available_foci.size());
-        for (std::vector<std::string>::const_iterator it = available_foci.begin();
-             it != available_foci.end(); ++it)
-        {
+        for (const std::string& focus_name : available_foci) {
             boost::shared_ptr<GG::Texture> texture = ClientUI::GetTexture(
-                ClientUI::ArtDir() / planet->FocusIcon(*it), true);
+                ClientUI::ArtDir() / planet->FocusIcon(focus_name), true);
             GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
             GG::DropDownList::Row* row = new GG::DropDownList::Row(graphic->Width(), graphic->Height(), "FOCUS");
@@ -1993,10 +1966,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     if (system) {
         std::vector<TemporaryPtr<const UniverseObject> > system_objects =
             Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
-        for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = system_objects.begin();
-             it != system_objects.end(); ++it)
-        {
-            TemporaryPtr<const UniverseObject> obj = *it;
+        for (TemporaryPtr<const UniverseObject> obj : system_objects) {
             if (obj->GetVisibility(client_empire_id) < VIS_PARTIAL_VISIBILITY)
                 continue;
             if (obj->Owner() == client_empire_id || obj->Unowned())
@@ -2033,13 +2003,11 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
         // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), -1, false, false);
-        for (EmpireManager::const_iterator it = Empires().begin();
-             it != Empires().end(); ++it)
-        {
-            int other_empire_id = it->first;
+        for (std::map<int, Empire*>::value_type& entry : Empires()) {
+            int other_empire_id = entry.first;
             if (peaceful_empires_in_system.find(other_empire_id) == peaceful_empires_in_system.end())
                 continue;
-            give_away_menu.next_level.push_back(GG::MenuItem(it->second->Name(), 100 + other_empire_id, false, false));
+            give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), 100 + other_empire_id, false, false));
         }
         menu_contents.next_level.push_back(give_away_menu);
 
@@ -2074,12 +2042,12 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
 
         case 12: { // cancel give away order for this fleet
             const OrderSet orders = HumanClientApp::GetApp()->Orders();
-            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
                 if (boost::shared_ptr<GiveObjectToEmpireOrder> order =
-                    boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(it->second))
+                    boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(entry.second))
                 {
                     if (order->ObjectID() == planet->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2203,10 +2171,10 @@ namespace {
 
         // is selected ship already ordered to colonize?  If so, recind that order.
         if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
-            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-                if (boost::shared_ptr<ColonizeOrder> order = boost::dynamic_pointer_cast<ColonizeOrder>(it->second)) {
+            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
+                if (boost::shared_ptr<ColonizeOrder> order = boost::dynamic_pointer_cast<ColonizeOrder>(entry.second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2215,10 +2183,10 @@ namespace {
 
         // is selected ship ordered to invade?  If so, recind that order
         if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
-            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-               if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(it->second)) {
+            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
+               if (boost::shared_ptr<InvadeOrder> order = boost::dynamic_pointer_cast<InvadeOrder>(entry.second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2227,10 +2195,10 @@ namespace {
 
         // is selected ship ordered scrapped?  If so, recind that order
         if (ship->OrderedScrapped()) {
-            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-                if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
+                if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
                     if (order->ObjectID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2239,10 +2207,10 @@ namespace {
 
         // is selected ship order to bombard?  If so, recind that order
         if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
-            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-               if (boost::shared_ptr<BombardOrder> order = boost::dynamic_pointer_cast<BombardOrder>(it->second)) {
+            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
+               if (boost::shared_ptr<BombardOrder> order = boost::dynamic_pointer_cast<BombardOrder>(entry.second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2312,9 +2280,8 @@ void SidePanel::PlanetPanel::ClickInvade() {
     if (it != pending_invade_orders.end()) {
         const std::set<int>& planet_invade_orders = it->second;
         // cancel previous invasion orders for this planet
-        for (std::set<int>::const_iterator o_it = planet_invade_orders.begin();
-             o_it != planet_invade_orders.end(); ++o_it)
-        { HumanClientApp::GetApp()->Orders().RescindOrder(*o_it); }
+        for (int order_id : planet_invade_orders)
+        { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
         // order selected invasion ships to invade planet
@@ -2325,10 +2292,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
             invasion_ships.insert(autoselected_invasion_ships.begin(), autoselected_invasion_ships.end());
         }
 
-        for (std::set<TemporaryPtr<const Ship> >::const_iterator ship_it = invasion_ships.begin();
-             ship_it != invasion_ships.end(); ++ship_it)
-        {
-            TemporaryPtr<const Ship> ship = *ship_it;
+        for (TemporaryPtr<const Ship> ship : invasion_ships) {
             if (!ship)
                 continue;
 
@@ -2360,9 +2324,8 @@ void SidePanel::PlanetPanel::ClickBombard() {
     if (it != pending_bombard_orders.end()) {
         const std::set<int>& planet_bombard_orders = it->second;
         // cancel previous bombard orders for this planet
-        for (std::set<int>::const_iterator o_it = planet_bombard_orders.begin();
-             o_it != planet_bombard_orders.end(); ++o_it)
-        { HumanClientApp::GetApp()->Orders().RescindOrder(*o_it); }
+        for (int order_id : planet_bombard_orders)
+        { HumanClientApp::GetApp()->Orders().RescindOrder(order_id); }
 
     } else {
         // order selected bombard ships to bombard planet
@@ -2373,10 +2336,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
             bombard_ships.insert(autoselected_bombard_ships.begin(), autoselected_bombard_ships.end());
         }
 
-        for (std::set<TemporaryPtr<const Ship> >::const_iterator ship_it = bombard_ships.begin();
-             ship_it != bombard_ships.end(); ++ship_it)
-        {
-            TemporaryPtr<const Ship> ship = *ship_it;
+        for (TemporaryPtr<const Ship> ship : bombard_ships) {
             if (!ship)
                 continue;
 
@@ -2470,8 +2430,8 @@ bool SidePanel::PlanetPanelContainer::InWindow(const GG::Pt& pt) const {
         return false;
 
     // allow point to be within any planet panel that is below top of container
-    for (std::vector<PlanetPanel*>::const_iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-        if ((*it)->InWindow(pt))
+    for (PlanetPanel* panel : m_planet_panels) {
+        if (panel->InWindow(pt))
             return true;
     }
 
@@ -2531,10 +2491,7 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     Clear();
 
     std::multimap<int, int> orbits_planets;
-    for (std::vector<int>::const_iterator planet_it = planet_ids.begin();
-         planet_it != planet_ids.end(); ++planet_it)
-    {
-        int planet_id = *planet_it;
+    for (int planet_id : planet_ids) {
         TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetPanelContainer::SetPlanets couldn't find planet with id " << planet_id;
@@ -2550,8 +2507,8 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
     }
 
     // create new panels and connect their signals
-    for (std::multimap<int, int>::const_iterator it = orbits_planets.begin(); it != orbits_planets.end(); ++it) {
-        PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), it->second, star_type);
+    for (std::multimap<int, int>::value_type& orbit_planet : orbits_planets) {
+        PlanetPanel* planet_panel = new PlanetPanel(Width() - m_vscroll->Width(), orbit_planet.second, star_type);
         AttachChild(planet_panel);
         m_planet_panels.push_back(planet_panel);
         GG::Connect(m_planet_panels.back()->LeftClickedSignal,          PlanetClickedSignal);
@@ -2582,8 +2539,8 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
     // Determine if scroll bar is required for height or expected because it is already present.
     GG::Y available_height = Height();
     GG::Y initially_used_height = GG::Y0;
-    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-        initially_used_height += (*it)->Height() + EDGE_PAD;
+    for (PlanetPanel* panel : m_planet_panels) {
+        initially_used_height += panel->Height() + EDGE_PAD;
     }
 
     bool vscroll_expected((initially_used_height > available_height)
@@ -2614,8 +2571,7 @@ void SidePanel::PlanetPanelContainer::DoPanelsLayout() {
         y = GG::Y(-m_vscroll->PosnRange().first);
 
     // place panels in sequence from the top, each below the previous
-    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-        PlanetPanel* panel = *it;
+    for (PlanetPanel* panel : m_planet_panels) {
         panel->MoveTo(GG::Pt(GG::X0, y));
         y += panel->Height() + EDGE_PAD;
     }
@@ -2640,8 +2596,7 @@ GG::Y SidePanel::PlanetPanelContainer::ResizePanelsForVScroll(bool use_vscroll) 
     // Size panels accounting for the expected vscroll
     GG::X expected_width(Width() - (use_vscroll ? m_vscroll->Width() : GG::X0));
     GG::Y used_height(GG::Y0);
-    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-        PlanetPanel* panel = *it;
+    for (PlanetPanel* panel : m_planet_panels) {
         panel->Resize(GG::Pt(expected_width, panel->Height()));
 
         // Force planet panel container to render.  Since planet panel rendering
@@ -2673,8 +2628,7 @@ void SidePanel::PlanetPanelContainer::SelectPlanet(int planet_id) {
 
         // scan through panels in container, marking the selected one and
         // unmarking the rest, and remembering if any are marked
-        for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-            PlanetPanel* panel = *it;
+        for (PlanetPanel* panel : m_planet_panels) {
             if (panel->PlanetID() == m_selected_planet_id) {
                 panel->Select(true);
                 planet_id_match_found = true;
@@ -2705,8 +2659,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
         // can be selected, refresh the candidiates and disable the non-selectables
 
         // find selectables
-        for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-            PlanetPanel*    panel =     *it;
+        for (PlanetPanel* panel : m_planet_panels) {
             int             planet_id = panel->PlanetID();
             TemporaryPtr<const Planet>   planet =    GetPlanet(planet_id);
 
@@ -2720,8 +2673,7 @@ void SidePanel::PlanetPanelContainer::DisableNonSelectionCandidates() {
     }
 
     // disable and enabled appropriate panels
-    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-        PlanetPanel* panel = *it;
+    for (PlanetPanel* panel : m_planet_panels) {
         if (disabled_panels.find(panel) != disabled_panels.end()) {
             panel->Disable(true);
             //std::cout << " ... DISABLING PlanetPanel for planet " << panel->PlanetID() << std::endl;
@@ -2742,8 +2694,8 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
 }
 
 void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
-    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it)
-        (*it)->Refresh();
+    for (PlanetPanel* panel : m_planet_panels)
+        panel->Refresh();
 }
 
 void SidePanel::PlanetPanelContainer::ShowScrollbar()
@@ -2762,8 +2714,7 @@ void SidePanel::PlanetPanelContainer::SizeMove(const GG::Pt& ul, const GG::Pt& l
 }
 
 void SidePanel::PlanetPanelContainer::EnableOrderIssuing(bool enable/* = true*/) {
-    for (std::vector<PlanetPanel*>::iterator it = m_planet_panels.begin(); it != m_planet_panels.end(); ++it) {
-        PlanetPanel* panel = *it;
+    for (PlanetPanel* panel : m_planet_panels) {
         panel->EnableOrderIssuing(enable);
     }
 }
@@ -2960,8 +2911,8 @@ void SidePanel::PreRender() {
 
     // Update updates the data for each planet tab in all SidePanels
     if (s_needs_update) {
-        for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
-            (*it)->UpdateImpl();
+        for (SidePanel* panel : s_side_panels)
+            panel->UpdateImpl();
     }
 
     // On a resize only DoLayout should be called.
@@ -2980,8 +2931,8 @@ void SidePanel::PreRender() {
 
 void SidePanel::Update() {
     s_needs_update = true;
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
-        (*it)->RequirePreRender();
+    for (SidePanel* panel : s_side_panels)
+        panel->RequirePreRender();
 }
 
 void SidePanel::UpdateImpl() {
@@ -2994,18 +2945,18 @@ void SidePanel::UpdateImpl() {
 
 void SidePanel::Refresh() {
     s_needs_refresh = true;
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
-        (*it)->RequirePreRender();
+    for (SidePanel* panel : s_side_panels)
+        panel->RequirePreRender();
 }
 
 void SidePanel::RefreshInPreRender() {
     // disconnect any existing system and fleet signals
-    for (std::set<boost::signals2::connection>::iterator it = s_system_connections.begin(); it != s_system_connections.end(); ++it)
-        it->disconnect();
+    for (const boost::signals2::connection& con : s_system_connections)
+        con.disconnect();
     s_system_connections.clear();
 
-    for (std::map<int, boost::signals2::connection>::iterator it = s_fleet_state_change_signals.begin(); it != s_fleet_state_change_signals.end(); ++it)
-        it->second.disconnect();
+    for (std::map<int, boost::signals2::connection>::value_type& entry : s_fleet_state_change_signals)
+        entry.second.disconnect();
     s_fleet_state_change_signals.clear();
 
     // clear any previous colony projections
@@ -3014,8 +2965,8 @@ void SidePanel::RefreshInPreRender() {
 
 
     // refresh individual panels' contents
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
-        (*it)->RefreshImpl();
+    for (SidePanel* panel : s_side_panels)
+        panel->RefreshImpl();
 
 
     // early exit if no valid system object to get or connect signals to
@@ -3030,16 +2981,12 @@ void SidePanel::RefreshInPreRender() {
         return;
     }
 
-    std::vector<TemporaryPtr<Planet> > planets = Objects().FindObjects<Planet>(system->PlanetIDs());
-    for (std::vector<TemporaryPtr<Planet> >::iterator it = planets.begin(); it != planets.end(); ++it) {
-        TemporaryPtr<Planet> planet = *it;
+    for (TemporaryPtr<Planet> planet : Objects().FindObjects<Planet>(system->PlanetIDs())) {
         s_system_connections.insert(GG::Connect(planet->ResourceCenterChangedSignal,
                                                 SidePanel::ResourceCenterChangedSignal));
     }
 
-    std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(system->FleetIDs());
-    for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        TemporaryPtr<Fleet> fleet = *it;
+    for (TemporaryPtr<Fleet> fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
         s_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal,
                                                                 &SidePanel::FleetStateChanged);
     }
@@ -3073,12 +3020,10 @@ void SidePanel::RefreshSystemNames() {
     // maintaing the list by incrementally inserting/deleting system
     // names, then this approach should also be dropped.
     std::set<std::pair<std::string, int> > sorted_systems;
-    for (ObjectMap::const_iterator<System> sys_it = Objects().const_begin<System>();
-         sys_it != Objects().const_end<System>(); ++sys_it)
-    {
+    for (TemporaryPtr<const System> system : Objects().FindObjects<System>()) {
         // Skip rows for systems that aren't known to this client, except the selected system
-        if (!sys_it->Name().empty() || sys_it->ID() == s_system_id)
-            sorted_systems.insert(std::make_pair(sys_it->Name(), sys_it->ID()));
+        if (!system->Name().empty() || system->ID() == s_system_id)
+            sorted_systems.insert(std::make_pair(system->Name(), system->ID()));
     }
 
     boost::shared_ptr<GG::Font> system_name_font(ClientUI::GetBoldFont(SystemNameFontSize()));
@@ -3087,10 +3032,8 @@ void SidePanel::RefreshSystemNames() {
     // Make a vector of sorted rows and insert them in a single operation.
     std::vector<GG::DropDownList::Row*> rows;
     rows.reserve(sorted_systems.size());
-    for (std::set<std::pair<std::string, int> >::const_iterator sys_it = sorted_systems.begin();
-         sys_it != sorted_systems.end(); ++sys_it)
-    {
-        int sys_id = sys_it->second;
+    for (const std::pair<std::string, int>& entry : sorted_systems) {
+        int sys_id = entry.second;
         rows.push_back(new SystemRow(sys_id, system_name_height));
     }
     m_system_name->Insert(rows, false);
@@ -3170,11 +3113,7 @@ void SidePanel::RefreshImpl() {
     // get just planets owned by player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     std::vector<int> owned_planets;
-    std::vector<TemporaryPtr<const Planet> > planets_here = Objects().FindObjects<const Planet>(planet_ids);
-    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = planets_here.begin();
-         it != planets_here.end(); ++it)
-    {
-        TemporaryPtr<const Planet> planet = *it;
+    for (TemporaryPtr<const Planet> planet : Objects().FindObjects<const Planet>(planet_ids)) {
         if (planet->OwnedBy(empire_id))
             owned_planets.push_back(planet->ID());
     }
@@ -3198,10 +3137,8 @@ void SidePanel::RefreshImpl() {
         DetachChild(m_system_resource_summary);
     } else {
         // add tooltips to the system resource summary
-        for (std::vector<std::pair<MeterType, MeterType> >::const_iterator it = meter_types.begin();
-             it != meter_types.end(); ++it)
-        {
-            MeterType type = it->first;
+        for (const std::pair<MeterType, MeterType>& entry : meter_types) {
+            MeterType type = entry.first;
             // add tooltip for each meter type
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(
                 new SystemResourceSummaryBrowseWnd(MeterToResource(type), s_system_id, HumanClientApp::GetApp()->EmpireID()));
@@ -3321,10 +3258,7 @@ void SidePanel::PlanetClickedSlot(int planet_id) {
 }
 
 void SidePanel::FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets) {
-    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin();
-         it != fleets.end(); ++it)
-    {
-        TemporaryPtr<Fleet> fleet = *it;
+    for (TemporaryPtr<Fleet> fleet : fleets) {
         s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
         s_fleet_state_change_signals[fleet->ID()] = GG::Connect(fleet->StateChangedSignal, &SidePanel::FleetStateChanged);
     }
@@ -3332,10 +3266,7 @@ void SidePanel::FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets) 
 }
 
 void SidePanel::FleetsRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets) {
-    for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = fleets.begin();
-         it != fleets.end(); ++it)
-    {
-        TemporaryPtr<Fleet> fleet = *it;
+    for (TemporaryPtr<Fleet> fleet : fleets) {
         std::map<int, boost::signals2::connection>::iterator signal_it = s_fleet_state_change_signals.find(fleet->ID());
         if (signal_it != s_fleet_state_change_signals.end()) {
             signal_it->second.disconnect();
@@ -3388,9 +3319,9 @@ void SidePanel::SelectPlanet(int planet_id) {
 
     // Use the first sidepanel with selection enabled to determine if planet is selectable.
     bool planet_selectable(false);
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it) {
-        if ((*it)->m_selection_enabled) {
-            planet_selectable = (*it)->PlanetSelectable(planet_id);
+    for (SidePanel* panel : s_side_panels) {
+        if (panel->m_selection_enabled) {
+            planet_selectable = panel->PlanetSelectable(planet_id);
             break;
         }
     }
@@ -3402,8 +3333,8 @@ void SidePanel::SelectPlanet(int planet_id) {
 
     s_planet_id = planet_id;
 
-    for (std::set<SidePanel*>::iterator it = s_side_panels.begin(); it != s_side_panels.end(); ++it)
-        (*it)->RequirePreRender();
+    for (SidePanel* panel : s_side_panels)
+        panel->RequirePreRender();
 
     PlanetSelectedSignal(s_planet_id);
 }

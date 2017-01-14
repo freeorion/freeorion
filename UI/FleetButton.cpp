@@ -103,13 +103,13 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
     // get fleets
     std::vector<TemporaryPtr<const Fleet> > fleets;
-    for (std::vector<int>::const_iterator it = fleet_IDs.begin(); it != fleet_IDs.end(); ++it) {
-        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
+    for (int fleet_id : fleet_IDs) {
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
-            ErrorLogger() << "FleetButton::FleetButton couldn't get fleet with id " << *it;
+            ErrorLogger() << "FleetButton::FleetButton couldn't get fleet with id " << fleet_id;
             continue;
         }
-        m_fleets.push_back(*it);
+        m_fleets.push_back(fleet_id);
         fleets.push_back(fleet);
     }
 
@@ -124,8 +124,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     } else {
         owner_id = (*fleets.begin())->Owner();
         // use ALL_EMPIRES if there are multiple owners (including no owner and an owner)
-        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-            TemporaryPtr<const Fleet> fleet = *it;
+        for (TemporaryPtr<const Fleet> fleet : fleets) {
             if (fleet->Owner() != owner_id) {
                 owner_id = ALL_EMPIRES;
                 multiple_owners = true;
@@ -142,12 +141,9 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
         // all ships owned by now empire
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
-        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-            TemporaryPtr<const Fleet> fleet = *it;
-            for (std::set<int>::const_iterator ship_it = fleet->ShipIDs().begin();
-                 ship_it != fleet->ShipIDs().end(); ++ship_it)
-            {
-                if (TemporaryPtr<const Ship> ship = GetShip(*ship_it)) {
+        for (TemporaryPtr<const Fleet> fleet : fleets) {
+            for (int ship_id : fleet->ShipIDs()) {
+                if (TemporaryPtr<const Ship> ship = GetShip(ship_id)) {
                     if (!ship->IsMonster()) {
                         monsters = false;
                         break;
@@ -199,14 +195,11 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
     // select icon(s) for fleet(s)
     int num_ships = 0;
-    for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = fleets.begin(); it != fleets.end(); ++it) {
-        TemporaryPtr<const Fleet> fleet = *it;
+    for (TemporaryPtr<const Fleet> fleet : fleets) {
         if (fleet)
             num_ships += fleet->NumShips();
     }
     boost::shared_ptr<GG::Texture> size_texture = FleetSizeIcon(num_ships, size_type);
-    std::vector<boost::shared_ptr<GG::Texture> > head_textures = FleetHeadIcons(fleets, size_type);
-
 
     // add RotatingGraphics for all icons needed
     if (size_texture) {
@@ -219,16 +212,14 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
         AttachChild(icon);
     }
 
-    for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = head_textures.begin();
-         it != head_textures.end(); ++it)
-    {
-        RotatingGraphic* icon = new RotatingGraphic(*it, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+    for (boost::shared_ptr<GG::Texture> texture : FleetHeadIcons(fleets, size_type)) {
+        RotatingGraphic* icon = new RotatingGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
         icon->SetRPM(0.0f);
         icon->SetColor(this->Color());
         m_icons.push_back(icon);
-        if (Width() < (*it)->DefaultWidth())
-            Resize(GG::Pt((*it)->DefaultWidth(), (*it)->DefaultHeight()));
+        if (Width() < texture->DefaultWidth())
+            Resize(GG::Pt(texture->DefaultWidth(), texture->DefaultHeight()));
         AttachChild(icon);
     }
 
@@ -244,8 +235,8 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
         return;
 
     bool at_least_one_fleet_visible = false;
-    for (std::vector<int>::const_iterator it = m_fleets.begin(); it != m_fleets.end(); ++it) {
-        if (GetUniverse().GetObjectVisibilityByEmpire(*it, empire_id) >= VIS_BASIC_VISIBILITY) {
+    for (int fleet_id : m_fleets) {
+        if (GetUniverse().GetObjectVisibilityByEmpire(fleet_id, empire_id) >= VIS_BASIC_VISIBILITY) {
             at_least_one_fleet_visible = true;
             break;
         }
@@ -297,8 +288,7 @@ void FleetButton::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void FleetButton::LayoutIcons() {
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
-    for (std::vector<RotatingGraphic*>::iterator it = m_icons.begin(); it != m_icons.end(); ++it) {
-        RotatingGraphic* graphic = *it;
+    for (RotatingGraphic* graphic : m_icons) {
         GG::SubTexture subtexture = graphic->GetTexture();
         GG::Pt subtexture_sz = GG::Pt(subtexture.Width(), subtexture.Height());
         //std::cout << "FleetButton::LayoutIcons repositioning icon: sz: " << subtexture_sz << "  tex: " << subtexture.GetTexture()->Filename() << std::endl;
@@ -384,8 +374,7 @@ std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(const std::vector< T
 
     // the set of fleets is treated like a fleet that contains all the ships
     bool hasColonyShips = false; bool hasOutpostShips = false; bool hasTroopShips = false; bool hasMonsters = false; bool hasArmedShips = false;
-    for (std::vector< TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin(); fleet_it != fleets.end(); ++fleet_it) {
-        const TemporaryPtr<const Fleet> fleet = *fleet_it;
+    for (TemporaryPtr<const Fleet> fleet : fleets) {
         if (!fleet)
             continue;
 
@@ -411,9 +400,9 @@ std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(const std::vector< T
     if (main_filenames.empty()) { main_filenames.push_back("head-scout.png"); }
 
     std::vector<boost::shared_ptr<GG::Texture> > result;
-    for (std::vector<std::string>::const_iterator it = main_filenames.begin(); it != main_filenames.end(); ++it) {
+    for (const std::string& name : main_filenames) {
         boost::shared_ptr<GG::Texture> texture_temp = ClientUI::GetTexture(
-            ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + *it), false);
+            ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + name), false);
         glBindTexture(GL_TEXTURE_2D, texture_temp->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

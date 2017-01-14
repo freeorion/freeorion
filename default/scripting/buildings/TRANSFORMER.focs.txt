@@ -1,7 +1,7 @@
 BuildingType
     name = "BLD_TRANSFORMER"
     description = "BLD_TRANSFORMER_DESC"
-    buildcost = 100
+    buildcost = 600
     buildtime = 8
     location = AND [
         Not Contains Building name = "BLD_TRANSFORMER"

@@ -323,8 +323,8 @@ void VarText::SetTemplateString(const std::string& text, bool stringtable_lookup
 
 std::vector<std::string> VarText::GetVariableTags() const {
     std::vector<std::string> retval;
-    for (std::map<std::string, std::string>::const_iterator it = m_variables.begin(); it != m_variables.end(); ++it)
-        retval.push_back(it->first);
+    for (const std::map<std::string, std::string>::value_type& variable : m_variables)
+        retval.push_back(variable.first);
     return retval;
 }
 

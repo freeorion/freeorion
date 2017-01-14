@@ -309,11 +309,8 @@ namespace parse {
         if (macros_directly_referenced_in_input_text.find(macro_to_find) != macros_directly_referenced_in_input_text.end())
             return true;
         // check if macros referenced in text reference macro_to_find
-        for (std::set<std::string>::const_iterator direct_refs_it = macros_directly_referenced_in_input_text.begin();
-             direct_refs_it != macros_directly_referenced_in_input_text.end(); ++direct_refs_it)
-        {
+        for (const std::string& direct_referenced_macro_key : macros_directly_referenced_in_input_text) {
             // get text of directly referenced macro
-            const std::string& direct_referenced_macro_key = *direct_refs_it;
             std::map<std::string, std::string>::const_iterator macro_it = macros.find(direct_referenced_macro_key);
             if (macro_it == macros.end()) {
                 ErrorLogger() << "macro_deep_referenced_in_text couldn't find referenced macro: " << direct_referenced_macro_key;
@@ -329,11 +326,9 @@ namespace parse {
     }
 
     void check_for_cyclic_macro_references(const std::map<std::string, std::string>& macros) {
-        for (std::map<std::string, std::string>::const_iterator macro_it = macros.begin();
-             macro_it != macros.end(); ++macro_it)
-        {
-            if (macro_deep_referenced_in_text(macro_it->first, macro_it->second, macros))
-                ErrorLogger() << "Cyclic macro found: " << macro_it->first << " references itself (eventually)";
+        for (const std::map<std::string, std::string>::value_type& macro : macros) {
+            if (macro_deep_referenced_in_text(macro.first, macro.second, macros))
+                ErrorLogger() << "Cyclic macro found: " << macro.first << " references itself (eventually)";
         }
     }
 
@@ -395,9 +390,8 @@ namespace parse {
 
         // recursively expand macro keys: replace [[MACRO_KEY]] in other macro
         // text with the macro text corresponding to MACRO_KEY.
-        for (std::map<std::string, std::string>::iterator macro_it = macros.begin();
-             macro_it != macros.end(); ++macro_it)
-        { replace_macro_references(macro_it->second, macros); }
+        for (std::map<std::string, std::string>::value_type& macro : macros)
+        { replace_macro_references(macro.second, macros); }
 
         // substitute macro keys - replace [[MACRO_KEY]] in the input text with
         // the macro text corresponding to MACRO_KEY
@@ -412,9 +406,8 @@ namespace parse {
             return false;
 
         // skip byte order mark (BOM)
-        static const int UTF8_BOM[3] = {0x00EF, 0x00BB, 0x00BF};
-        for (int i = 0; i < 3; i++) {
-            if (UTF8_BOM[i] != ifs.get()) {
+        for (int BOM : {0xEF, 0xBB, 0xBF}) {
+            if (BOM != ifs.get()) {
                 // no header set stream back to start of file
                 ifs.seekg(0, std::ios::beg);
                 // and continue
@@ -435,18 +428,15 @@ namespace parse {
      */
     std::vector<boost::filesystem::path> ListScripts(const boost::filesystem::path& path) {
         std::vector<boost::filesystem::path> retval;
-        std::vector<boost::filesystem::path> fn_list = ListDir(path);
 
         try {
-            for (std::vector<boost::filesystem::path>::iterator fn_it = fn_list.begin();
-                 fn_it != fn_list.end(); ++fn_it)
-            {
-                std::string fn_ext = fn_it->extension().string();
-                std::string fn_stem_ext = fn_it->stem().extension().string();
+            for (const boost::filesystem::path& file : ListDir(path)) {
+                std::string fn_ext = file.extension().string();
+                std::string fn_stem_ext = file.stem().extension().string();
                 if (fn_ext == ".txt" && fn_stem_ext == ".focs") {
-                    retval.push_back(*fn_it);
+                    retval.push_back(file);
                 } else {
-                    TraceLogger() << "Parse: Skipping file " << fn_it->string() 
+                    TraceLogger() << "Parse: Skipping file " << file.string()
                                   << " due to extension (" << fn_stem_ext << fn_ext << ")";
                 }
             }
@@ -522,33 +512,28 @@ namespace parse {
                     continue;
                 }
                 fn_str = fn_str.substr(1, fn_str.size() - 1);
-                std::vector<boost::filesystem::path> fn_list = ListDir(match_path.parent_path());
                 std::set<boost::filesystem::path> match_list;
                 // filter results
-                for (std::vector<boost::filesystem::path>::iterator fn_it = fn_list.begin();
-                    fn_it != fn_list.end(); ++fn_it)
-                {
-                    std::string it_str = fn_it->filename().string();
+                for (const boost::filesystem::path& file : ListDir(match_path.parent_path())) {
+                    std::string it_str = file.filename().string();
                     std::size_t it_len = it_str.length();
                     std::size_t match_len = fn_str.length();
                     if (it_len > match_len) {
                         if (it_str.substr(it_len - match_len, match_len) == fn_str) {
-                            match_list.insert(*fn_it);
+                            match_list.insert(file);
                         }
                     }
                 }
                 // read in results
                 std::string dir_text;
-                for (std::set<boost::filesystem::path>::iterator list_it = match_list.begin();
-                     list_it != match_list.end(); ++list_it)
-                {
-                    if (files_included.insert(boost::filesystem::canonical(*list_it)).second) {
+                for (const boost::filesystem::path& file : match_list) {
+                    if (files_included.insert(boost::filesystem::canonical(file)).second) {
                         std::string new_text;
-                        if (read_file(*list_it, new_text)) {
+                        if (read_file(file, new_text)) {
                             new_text.append("\n");
                             dir_text.append(new_text);
                         } else {
-                            ErrorLogger() << "Parse: Unable to read file " << list_it->string();
+                            ErrorLogger() << "Parse: Unable to read file " << file.string();
                         }
                     }
                 }

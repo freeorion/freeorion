@@ -29,6 +29,11 @@
 #ifndef _GG_Clr_h_
 #define _GG_Clr_h_
 
+#include <string>
+#include <stdexcept>
+#include <sstream>
+
+
 namespace GG {
 
 /** \brief A simple 32-bit structure that can act as a packed 32-bit unsigned
@@ -70,6 +75,40 @@ inline Clr FloatClr(float r, float g, float b, float a)
                static_cast<unsigned char>(g * 255),
                static_cast<unsigned char>(b * 255),
                static_cast<unsigned char>(a * 255));
+}
+
+/** Named ctor that constructs a Clr from a string that represents the color
+    channels in the format '#RRGGBB', '#RRGGBBAA' where each channel value
+    ranges from 0 to FF.  When the alpha component is left out the alpha
+    value FF is assumed.
+    @throws std::invalid_argument if the hex_colour string is not well formed
+    */
+inline Clr HexClr(const std::string& hex_colour)
+{
+    GG::Clr retval = GG::Clr(0, 0, 0, 255);
+
+    std::istringstream iss(hex_colour);
+
+    unsigned long rgba = 0;
+    if ((hex_colour.size() == 7 || hex_colour.size() == 9) &&
+            '#' == iss.get() && !(iss >> std::hex >> rgba).fail())
+    {
+        if (hex_colour.size() == 7) {
+            retval.r = (rgba >> 16) & 0xFF;
+            retval.g = (rgba >> 8)  & 0xFF;
+            retval.b = rgba         & 0xFF;
+            retval.a = 255;
+        } else {
+            retval.r = (rgba >> 24) & 0xFF;
+            retval.g = (rgba >> 16) & 0xFF;
+            retval.b = (rgba >> 8)  & 0xFF;
+            retval.a = rgba         & 0xFF;
+        }
+
+        return retval;
+    }
+
+    throw std::invalid_argument("GG::HexClr could not interpret hex colour string");
 }
 
 /** Returns true iff \a rhs and \a lhs are identical. */

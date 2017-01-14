@@ -155,9 +155,8 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
 
     // put into multimap to sort by population, ascending
     std::multimap<float, std::string> counts_species;
-    for (std::map<std::string, float>::const_iterator it = population_counts.begin();
-         it != population_counts.end(); ++it)
-    { counts_species.insert(std::make_pair(it->second, it->first)); }
+    for (const std::map<std::string, float>::value_type& entry : population_counts)
+    { counts_species.insert(std::make_pair(entry.second, entry.first)); }
 
     // add species rows
     for (std::multimap<float, std::string>::const_reverse_iterator it = counts_species.rbegin();
@@ -203,10 +202,9 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
         std::back_inserter<std::vector<std::string> >(tag_order));
 
     // add tags/characteristics rows
-    //for (std::map<std::string, float>::const_iterator it = tag_counts.begin(); it != tag_counts.end(); ++it) {
-    for (std::vector<std::string>::iterator it = tag_order.begin(); it != tag_order.end(); ++it) {
-        //DebugLogger() << "Census checking for tag '"<< *it <<"'";
-        std::map<std::string, float>::const_iterator it2 = tag_counts.find(*it);
+    for (const std::string& tag_ord : tag_order) {
+        //DebugLogger() << "Census checking for tag '"<< tag_ord <<"'";
+        std::map<std::string, float>::const_iterator it2 = tag_counts.find(tag_ord);
         if (it2 != tag_counts.end()) {
             GG::ListBox::Row* row = new GG::ListBox::Row(m_list->Width(), ROW_HEIGHT, "Census Characteristics Row");
             row->push_back(new CensusRowPanel(m_tags_list->Width(), ROW_HEIGHT, it2->first, it2->second, false));

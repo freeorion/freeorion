@@ -552,11 +552,7 @@ void ResearchWnd::UpdateQueue() {
     if (!empire)
         return;
 
-    const ResearchQueue& queue = empire->GetResearchQueue();
-
-
-    for (ResearchQueue::const_iterator it = queue.begin(); it != queue.end(); ++it) {
-        const ResearchQueue::Element& elem = *it;
+    for (const ResearchQueue::Element& elem : empire->GetResearchQueue()) {
         QueueRow* row = new QueueRow(queue_lb->RowWidth(), elem);
         queue_lb->Insert(row);
     }
@@ -599,8 +595,7 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
         return;
     const ResearchQueue& queue = empire->GetResearchQueue();
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
-    for (std::vector<std::string>::const_iterator it = tech_vec.begin(); it != tech_vec.end(); ++it) {
-        const std::string& tech_name = *it;
+    for (const std::string& tech_name : tech_vec) {
         if (empire->TechResearched(tech_name))
             continue;
         // AddTechsToQueueSlot is currently used for (i) adding a tech and any not-yet-queued prereqs to the

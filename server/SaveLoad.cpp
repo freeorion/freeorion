@@ -44,9 +44,8 @@ namespace fs = boost::filesystem;
 namespace {
     std::map<int, SaveGameEmpireData> CompileSaveGameEmpireData(const EmpireManager& empire_manager) {
         std::map<int, SaveGameEmpireData> retval;
-        const EmpireManager& empires = Empires();
-        for (EmpireManager::const_iterator it = empires.begin(); it != empires.end(); ++it)
-            retval[it->first] = SaveGameEmpireData(it->first, it->second->Name(), it->second->PlayerName(), it->second->Color());
+        for (const std::map<int, Empire*>::value_type& entry : Empires())
+            retval[entry.first] = SaveGameEmpireData(entry.first, entry.second->Name(), entry.second->PlayerName(), entry.second->Color());
         return retval;
     }
 
@@ -55,8 +54,6 @@ namespace {
                                     const std::map<int, SaveGameEmpireData>& empire_save_game_data,
                                     SaveGamePreviewData& preview)
     {
-        typedef std::vector<PlayerSaveGameData>::const_iterator player_iterator;
-
         // First compile the non-player related data
         preview.current_turn = server_save_game_data.m_current_turn;
         preview.number_of_empires = empire_save_game_data.size();
@@ -72,13 +69,13 @@ namespace {
 
             // If there are human players, the first of them should be the main player
             short humans = 0;
-            for (player_iterator it = player_save_game_data.begin(); it != player_save_game_data.end(); ++it) {
-                if (it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+            for (const PlayerSaveGameData& psgd : player_save_game_data) {
+                if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
                     if (player->m_client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER &&
                        player->m_client_type != Networking::CLIENT_TYPE_HUMAN_OBSERVER &&
                        player->m_client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR)
                     {
-                        player = &(*it);
+                        player = &psgd;
                     }
                     ++humans;
                 }
@@ -119,9 +116,8 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
     // reinterpret save game data as header data for uncompressed header
     std::vector<PlayerSaveHeaderData> player_save_header_data;
-    for (std::vector<PlayerSaveGameData>::const_iterator it = player_save_game_data.begin();
-         it != player_save_game_data.end(); ++it)
-    { player_save_header_data.push_back(*it); }
+    for (const PlayerSaveGameData& psgd : player_save_game_data)
+    { player_save_header_data.push_back(psgd); }
 
 
     int bytes_written = 0;

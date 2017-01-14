@@ -13,17 +13,8 @@
 #include <boost/serialization/access.hpp>
 
 
-
-class XMLElement;
-
 FO_COMMON_API extern const std::string MP_SAVE_FILE_EXTENSION;
 FO_COMMON_API extern const std::string SP_SAVE_FILE_EXTENSION;
-
-/** Returns an XML representation of a GG::Clr object. */
-XMLElement ClrToXML(const GG::Clr& clr);
-
-/** Returns a GG::Clr object constructed from its XML representation. */
-FO_COMMON_API GG::Clr XMLToClr(const XMLElement& clr);
 
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {

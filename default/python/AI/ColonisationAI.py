@@ -683,7 +683,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     if detail is None:
         detail = []
     retval = 0
-    discount_multiplier = [30.0, 40.0][fo.empireID() % 2]
+    discount_multiplier = foAI.foAIstate.character.preferred_discount_multiplier([30.0, 40.0])
     species = fo.getSpecies(spec_name or "")  # in case None is passed as specName
     species_foci = [] and species and list(species.foci)
     tag_list = list(species.tags) if species else []

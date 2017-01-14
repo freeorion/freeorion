@@ -660,33 +660,31 @@ CPSize GG::NextWordEdgeFrom(const std::string& text, CPSize from_position, bool 
 
         // start with the leftmost word, traverse words to the right
         // until past the reference point
-        for (std::set<std::pair<CPSize, CPSize> >::const_iterator it = words.begin();
-            it != words.end(); ++it)
-        {
-            if (it->first > from_position) {
+        for (const std::pair<CPSize, CPSize>& word_range : words) {
+            if (word_range.first > from_position) {
                 // found word is after of the position. can stop
                 // searching and use whatever the last found word's position was
                 break;
 
-            } else if (it->first < from_position && it->second >= from_position) {
+            } else if (word_range.first < from_position && word_range.second >= from_position) {
                 // found word starting before and ending at/after the position. can
                 // stop searching and use the start of the found word.
-                retval = it->first;
+                retval = word_range.first;
                 break;
 
-            } else if (it->second < from_position) {
+            } else if (word_range.second < from_position) {
                 // found word ending before the position. can use the start
                 // or end of the found word...
-                if (it->second < from_position - 1) {
+                if (word_range.second < from_position - 1) {
                     // there is a gap between the end of the word and the search
                     // reference position. use one past the end of the word
-                    retval = it->second + 1;
+                    retval = word_range.second + 1;
                     // don't break, as there might be later words that are closer to
                     // the search reference position
                 } else {
                     // the end of the word is immediately before the search
                     // reference position. use the start of the word.
-                    retval = it->first;
+                    retval = word_range.first;
                     // can stop searching since the word is right next to the
                     // search reference position
                     break;

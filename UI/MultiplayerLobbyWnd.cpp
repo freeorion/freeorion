@@ -533,11 +533,9 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
 
         // look up this client's player name by ID
         std::string player_name;
-        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_lobby_data.m_players.begin();
-             it != m_lobby_data.m_players.end(); ++it)
-        {
-            if (it->first == HumanClientApp::GetApp()->PlayerID() && it->first != Networking::INVALID_PLAYER_ID) {
-                player_name = it->second.m_player_name;
+        for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
+            if (entry.first == HumanClientApp::GetApp()->PlayerID() && entry.first != Networking::INVALID_PLAYER_ID) {
+                player_name = entry.second.m_player_name;
                 break;
             }
         }
@@ -557,11 +555,9 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, 
 void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg) {
     // look up player name by ID
     std::string player_name;
-    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_lobby_data.m_players.begin();
-         it != m_lobby_data.m_players.end(); ++it)
-    {
-        if (it->first == player_id && it->first != Networking::INVALID_PLAYER_ID) {
-            player_name = it->second.m_player_name;
+    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
+        if (entry.first == player_id && entry.first != Networking::INVALID_PLAYER_ID) {
+            player_name = entry.second.m_player_name;
             break;
         }
     }
@@ -573,11 +569,11 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg) {
 namespace {
     void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
         DebugLogger() << "PlayerSetupData:";
-        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it)
-            DebugLogger() << boost::lexical_cast<std::string>(it->first) << " : "
-                                   << it->second.m_player_name << ", "
-                                   << it->second.m_client_type << ", "
-                                   << it->second.m_starting_species_name;
+        for (const std::pair<int, PlayerSetupData>& entry : psd)
+            DebugLogger() << boost::lexical_cast<std::string>(entry.first) << " : "
+                                   << entry.second.m_player_name << ", "
+                                   << entry.second.m_client_type << ", "
+                                   << entry.second.m_starting_species_name;
     }
 }
 
@@ -737,18 +733,18 @@ void MultiPlayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new
 
 void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
     m_lobby_data.m_players.clear();
-    for (GG::ListBox::iterator it = m_players_lb->begin(); it != m_players_lb->end(); ++it) {
-        const PlayerRow* row = dynamic_cast<const PlayerRow*>(*it);
-        if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(row)) {
+    for (GG::ListBox::Row* row : *m_players_lb) {
+        const PlayerRow* player_row = dynamic_cast<const PlayerRow*>(row);
+        if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(player_row)) {
             // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
             if (empty_row->m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                m_lobby_data.m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, row->m_player_data));
+                m_lobby_data.m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_row->m_player_data));
 
             // empty rows that are still showing no player don't need to be sent to the server.
 
         } else {
             // all other row types pass along data directly
-            m_lobby_data.m_players.push_back(std::make_pair(row->m_player_id, row->m_player_data));
+            m_lobby_data.m_players.push_back(std::make_pair(player_row->m_player_id, player_row->m_player_data));
         }
     }
 
@@ -765,11 +761,9 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     m_players_lb->Clear();
 
     // repopulate list with rows built from current lobby data
-    for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data.m_players.begin();
-         player_setup_it != m_lobby_data.m_players.end(); ++player_setup_it)
-    {
-        int data_player_id = player_setup_it->first;
-        PlayerSetupData& psd = player_setup_it->second;
+    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data.m_players) {
+        int data_player_id = entry.first;
+        PlayerSetupData& psd = entry.second;
 
         if (m_lobby_data.m_new_game) {
             bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID());   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
@@ -840,32 +834,32 @@ bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {
     std::set<unsigned int> empire_colors;
     int num_players_excluding_observers(0);
 
-    for (GG::ListBox::iterator it = m_players_lb->begin(); it != m_players_lb->end(); ++it) {
-        const PlayerRow& row = dynamic_cast<const PlayerRow&>(**it);
-        if (row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
-            row.m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+    for (GG::ListBox::Row* row : *m_players_lb) {
+        const PlayerRow& prow = dynamic_cast<const PlayerRow&>(*row);
+        if (prow.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
+            prow.m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
         {
             num_players_excluding_observers++;
 
             // all non-observers must have unique non-blank names and colours
 
-            if (row.m_player_data.m_empire_name.empty())
+            if (prow.m_player_data.m_empire_name.empty())
                 return false;
 
-            empire_names.insert(row.m_player_data.m_empire_name);
+            empire_names.insert(prow.m_player_data.m_empire_name);
 
             unsigned int color_as_uint =
-                row.m_player_data.m_empire_color.r << 24 |
-                row.m_player_data.m_empire_color.g << 16 |
-                row.m_player_data.m_empire_color.b << 8 |
-                row.m_player_data.m_empire_color.a;
+                prow.m_player_data.m_empire_color.r << 24 |
+                prow.m_player_data.m_empire_color.g << 16 |
+                prow.m_player_data.m_empire_color.b << 8 |
+                prow.m_player_data.m_empire_color.a;
             empire_colors.insert(color_as_uint);
-        } else if (row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-                   row.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+        } else if (prow.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                   prow.m_player_data.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
             // do nothing special for this player
         } else {
-            if (dynamic_cast<const EmptyPlayerRow*>(*it)) {
+            if (dynamic_cast<const EmptyPlayerRow*>(row)) {
                 // ignore empty player row
             } else {
                 ErrorLogger() << "MultiPlayerLobbyWnd::PlayerDataAcceptable found not empty player row with unrecognized client type?!";

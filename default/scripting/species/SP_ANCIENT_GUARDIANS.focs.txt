@@ -22,9 +22,9 @@ Species
         [[AVERAGE_DEFENSE_TROOPS]]
 
         // not for description
-
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[STANDARD_SHIP_SHIELDS]]
 
         // huge bonus to planetary shields
         EffectsGroup

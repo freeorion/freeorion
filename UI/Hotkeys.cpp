@@ -89,9 +89,8 @@ std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
 std::set<std::string> Hotkey::DefinedHotkeys() {
     std::set<std::string> retval;
     if (s_hotkeys) {
-        for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-             i != s_hotkeys->end(); ++i)
-        { retval.insert(i->first); }
+        for (const std::map<std::string, Hotkey>::value_type& entry : *s_hotkeys)
+        { retval.insert(entry.first); }
     }
     return retval;
 }
@@ -151,10 +150,8 @@ void Hotkey::SetFromString(const std::string& str) {
 void Hotkey::AddOptions(OptionsDB& db) {
     if (!s_hotkeys)
         return;
-    for (std::map<std::string, Hotkey>::const_iterator i = s_hotkeys->begin();
-         i != s_hotkeys->end(); ++i)
-    {
-        const Hotkey& hotkey = i->second;
+    for (const std::map<std::string, Hotkey>::value_type& entry : *s_hotkeys) {
+        const Hotkey& hotkey = entry.second;
         std::string n = "UI.hotkeys.";
         n += hotkey.m_name;
         db.Add(n, hotkey.GetDescription(),
@@ -203,10 +200,8 @@ std::string Hotkey::PrettyPrint() const
 { return PrettyPrint(m_key, m_mod_keys); }
 
 void Hotkey::ReadFromOptions(OptionsDB& db) {
-    for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-         i != s_hotkeys->end(); ++i)
-    {
-        Hotkey& hotkey = i->second;
+    for (std::map<std::string, Hotkey>::value_type& entry : *s_hotkeys) {
+        Hotkey& hotkey = entry.second;
 
         std::string options_db_name = "UI.hotkeys." + hotkey.m_name;
         if (!db.OptionExists(options_db_name)) {
@@ -278,10 +273,8 @@ Hotkey& Hotkey::PrivateNamedHotkey(const std::string& name) {
 std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
     std::map<std::string, std::set<std::string> > ret;
     if (s_hotkeys) {
-        for (std::map<std::string, Hotkey>::iterator i = s_hotkeys->begin();
-             i != s_hotkeys->end(); ++i)
-        {
-            const std::string& hk_name = i->first;
+        for (const std::map<std::string, Hotkey>::value_type& hotkey : *s_hotkeys) {
+            const std::string& hk_name = hotkey.first;
             std::string section = "HOTKEYS_GENERAL";
             size_t j = hk_name.find('.');
             if (j != std::string::npos) {
@@ -352,10 +345,8 @@ InvisibleWindowCondition::InvisibleWindowCondition(const std::list<const GG::Wnd
 {}
 
 bool InvisibleWindowCondition::IsActive() const {
-    for (std::list<const GG::Wnd*>::const_iterator i = m_blacklist.begin();
-         i != m_blacklist.end(); ++i)
-    {
-        if ((*i)->Visible())
+    for (const GG::Wnd* wnd : m_blacklist) {
+        if (wnd->Visible())
             return false;
     }
     return true;
@@ -386,19 +377,16 @@ OrCondition::OrCondition(HotkeyCondition* c1, HotkeyCondition* c2,
 }
 
 bool OrCondition::IsActive() const {
-    for (std::list<HotkeyCondition*>::const_iterator i = m_conditions.begin();
-         i != m_conditions.end(); ++i)
-    {
-        if ((*i)->IsActive())
+    for (HotkeyCondition* cond : m_conditions) {
+        if (cond->IsActive())
             return true;
     }
     return false;
 }
 
 OrCondition::~OrCondition() {
-    for (std::list<HotkeyCondition*>::iterator i = m_conditions.begin();
-         i != m_conditions.end(); ++i)
-    { delete *i; }
+    for (HotkeyCondition* cond : m_conditions)
+    { delete cond; }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -426,19 +414,16 @@ AndCondition::AndCondition(HotkeyCondition* c1, HotkeyCondition* c2,
 }
 
 bool AndCondition::IsActive() const {
-    for (std::list<HotkeyCondition*>::const_iterator i = m_conditions.begin();
-         i != m_conditions.end(); ++i)
-    {
-        if (!(*i)->IsActive())
+    for (HotkeyCondition* cond : m_conditions) {
+        if (!cond->IsActive())
             return false;
     }
     return true;
 }
 
 AndCondition::~AndCondition() {
-    for (std::list<HotkeyCondition*>::iterator i = m_conditions.begin();
-         i != m_conditions.end(); ++i)
-    { delete *i; }
+    for (HotkeyCondition* cond : m_conditions)
+    { delete cond; }
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -459,9 +444,8 @@ HotkeyManager* HotkeyManager::GetManager() {
 }
 
 void HotkeyManager::RebuildShortcuts() {
-    for (std::set<boost::signals2::connection>::iterator i = m_internal_connections.begin();
-         i != m_internal_connections.end(); ++i)
-    { i->disconnect(); }
+    for (const boost::signals2::connection& con : m_internal_connections)
+    { con.disconnect(); }
     m_internal_connections.clear();
 
     /// @todo Disable the shortcuts that we've enabled so far ? Is it
@@ -470,9 +454,8 @@ void HotkeyManager::RebuildShortcuts() {
 
     // Now, build up again all the shortcuts
     GG::GUI* gui = GG::GUI::GetGUI();
-    for (Connections::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-    {
-        const Hotkey& hk = Hotkey::NamedHotkey(i->first);
+    for (Connections::value_type& entry : m_connections) {
+        const Hotkey& hk = Hotkey::NamedHotkey(entry.first);
 
         gui->SetAccelerator(hk.m_key, hk.m_mod_keys);
 

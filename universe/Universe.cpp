@@ -527,7 +527,7 @@ std::set<int> Universe::EmpireVisibleObjectIDs(int empire_id/* = ALL_EMPIRES*/) 
     // if an empire has visibility of it
     for (ObjectMap::const_iterator<> obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
         int id = obj_it->ID();
-        for (std::set<int>::const_iterator empire_it = empire_ids.begin(); empire_it != empire_ids.end(); ++empire_it) {
+        for (int empire_id : empire_ids) {
             Visibility vis = GetObjectVisibilityByEmpire(id, empire_id);
             if (vis >= VIS_BASIC_VISIBILITY) {
                 retval.insert(id);
@@ -1401,10 +1401,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
     std::list<int> objects_list;
     objects_list.push_back(object_id);
 
-    for (std::list<int>::iterator list_it = objects_list.begin(); list_it !=  objects_list.end(); ++list_it) {
-        // get next object id on list
-        int cur_object_id = *list_it;
-        // get object
+    for (int cur_object_id : objects_list) {
         TemporaryPtr<UniverseObject> cur_object = m_objects.Object(cur_object_id);
         if (!cur_object) {
             ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object...";
@@ -1933,18 +1930,18 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
     std::map<std::string, std::vector<TemporaryPtr<const UniverseObject> > > specials_objects;
     // determine objects with specials in a single pass
-    for (ObjectMap::const_iterator<> obj_it = m_objects.const_begin(); obj_it != m_objects.const_end(); ++obj_it) {
-        int source_object_id = obj_it->ID();
+    for (TemporaryPtr<const UniverseObject> obj : m_objects) {
+        int source_object_id = obj->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
-        for (const std::map<const std::string, std::pair<int, float>>::value_type& entry : obj_it->Specials()) {
+        for (const std::map<const std::string, std::pair<int, float>>::value_type& entry : obj->Specials()) {
             const std::string& special_name = entry.first;
             const Special*     special      = GetSpecial(special_name);
             if (!special) {
                 ErrorLogger() << "GetEffectsAndTargets couldn't get Special " << special_name;
                 continue;
             }
-            specials_objects[special_name].push_back(*obj_it);
+            specials_objects[special_name].push_back(obj);
         }
     }
     // enforce specials effects order
@@ -2535,11 +2532,8 @@ namespace {
     std::map<int, std::map<std::pair<double, double>, float> > GetEmpiresPositionDetectionRanges() {
         std::map<int, std::map<std::pair<double, double>, float> > retval;
 
-        for (ObjectMap::const_iterator<> object_it = Objects().const_begin();
-             object_it != Objects().const_end(); ++object_it)
-        {
+        for (TemporaryPtr<const UniverseObject> obj : Objects()) {
             // skip unowned objects, which can't provide detection to any empire
-            TemporaryPtr<const UniverseObject> obj = *object_it;
             if (obj->Unowned())
                 continue;
 
@@ -2699,8 +2693,7 @@ namespace {
     {
         Universe& universe = GetUniverse();
 
-        for (const std::map<int, std::map<std::pair<double, double>, float>>::value_type& detecting_empire_entry :
-             empire_location_detection_ranges)
+        for (const std::map<int, std::map<std::pair<double, double>, float>>::value_type& detecting_empire_entry : empire_location_detection_ranges)
         {
             int detecting_empire_id = detecting_empire_entry.first;
             double detection_strength = 0.0;
@@ -2754,8 +2747,7 @@ namespace {
     {
         Universe& universe = GetUniverse();
 
-        for (const std::map<int, std::map<std::pair<double, double>, float>>::value_type& detecting_empire_entry :
-             empire_location_detection_ranges)
+        for (const std::map<int, std::map<std::pair<double, double>, float>>::value_type& detecting_empire_entry : empire_location_detection_ranges)
         {
             int detecting_empire_id = detecting_empire_entry.first;
             // get empire's locations of detection ability
@@ -2791,13 +2783,10 @@ namespace {
     /** sets visibility of objects that empires own for those objects */
     void SetEmpireOwnedObjectVisibilities() {
         Universe& universe = GetUniverse();
-        for (ObjectMap::const_iterator<> object_it = Objects().const_begin();
-                object_it != Objects().const_end(); ++object_it)
-        {
-            TemporaryPtr<const UniverseObject> obj = *object_it;
+        for (TemporaryPtr<const UniverseObject> obj : Objects()) {
             if (obj->Unowned())
                 continue;
-            universe.SetEmpireObjectVisibility(obj->Owner(), object_it->ID(), VIS_FULL_VISIBILITY);
+            universe.SetEmpireObjectVisibility(obj->Owner(), obj->ID(), VIS_FULL_VISIBILITY);
         }
     }
 
@@ -3145,9 +3134,8 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
         return;
 
     // for each object in universe
-    for (ObjectMap::const_iterator<> it = m_objects.const_begin(); it != m_objects.const_end(); ++it) {
-        int object_id = it->ID();
-        TemporaryPtr<const UniverseObject> full_object = *it; // not filtered on server by visibility
+    for (TemporaryPtr<const UniverseObject> full_object : m_objects) {
+        int object_id = full_object->ID();
         if (!full_object) {
             ErrorLogger() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects with id " << object_id;
             continue;
@@ -3304,12 +3292,11 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                 stale_set.insert(fleet_id);
                 continue;
             }
-            const std::set<int>& ship_ids = fleet->ShipIDs();
 
             bool fleet_stale = true;
             // check each ship. if any are visible or not visible but not stale,
             // fleet is not stale
-            for (int ship_id : ship_ids) {
+            for (int ship_id : fleet->ShipIDs()) {
                 TemporaryPtr<const Ship> ship = latest_known_objects.Object<Ship>(ship_id);
 
                 // if ship doesn't think it's in this fleet, doesn't count.
@@ -3659,9 +3646,9 @@ namespace {
         TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
-                if (obj_it->OwnedBy(empire_id)) {
-                    source = *obj_it;
+            for (TemporaryPtr<const UniverseObject> obj : Objects()) {
+                if (obj->OwnedBy(empire_id)) {
+                    source = obj;
                     break;
                 }
             }
@@ -3684,8 +3671,7 @@ void Universe::UpdateStatRecords() {
     }
 
     // process each stat
-    for (const std::map<std::string, ValueRef::ValueRefBase<double>*>::value_type& stat_entry :
-         EmpireStatistics::GetEmpireStats())
+    for (const std::map<std::string, ValueRef::ValueRefBase<double>*>::value_type& stat_entry : EmpireStatistics::GetEmpireStats())
     {
         const std::string& stat_name = stat_entry.first;
 

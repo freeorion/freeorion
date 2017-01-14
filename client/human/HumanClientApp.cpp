@@ -271,22 +271,18 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     parse::keymaps(named_key_maps);
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Keymaps:";
-        for (std::map<std::string, std::map<int, int> >::const_iterator km_it = named_key_maps.begin();
-             km_it != named_key_maps.end(); ++km_it)
-        {
-            DebugLogger() << "Keymap name = \"" << km_it->first << "\"";
-            const std::map<int, int>& key_map = km_it->second;
-            for (std::map<int, int>::const_iterator keys_it = key_map.begin(); keys_it != key_map.end(); ++keys_it)
-                DebugLogger() << "    " << char(keys_it->first) << " : " << char(keys_it->second);
+        for (std::map<std::string, std::map<int, int>>::value_type& km : named_key_maps) {
+            DebugLogger() << "Keymap name = \"" << km.first << "\"";
+            for (std::map<int, int>::value_type& keys : km.second)
+                DebugLogger() << "    " << char(keys.first) << " : " << char(keys.second);
         }
     }
     std::map<std::string, std::map<int, int> >::const_iterator km_it = named_key_maps.find("TEST");
     if (km_it != named_key_maps.end()) {
         const std::map<int, int> int_key_map = km_it->second;
         std::map<GG::Key, GG::Key> key_map;
-        for (std::map<int, int>::const_iterator key_int_it = int_key_map.begin();
-             key_int_it != int_key_map.end(); ++key_int_it)
-        { key_map[GG::Key(key_int_it->first)] = GG::Key(key_int_it->second); }
+        for (const std::map<int, int>::value_type& int_key : int_key_map)
+        { key_map[GG::Key(int_key.first)] = GG::Key(int_key.second); }
         this->SetKeyMap(key_map);
     }
 
@@ -338,15 +334,13 @@ bool HumanClientApp::CanSaveNow() const {
         return false;
 
     // can't save while AIs are playing their turns...
-    for (std::map<int, PlayerInfo>::const_iterator player_it = this->m_player_info.begin();
-         player_it != this->m_player_info.end(); ++player_it)
-    {
-        const PlayerInfo& info = player_it->second;
+    for (const std::map<int, PlayerInfo>::value_type& entry : m_player_info) {
+        const PlayerInfo& info = entry.second;
         if (info.client_type != Networking::CLIENT_TYPE_AI_PLAYER)
             continue;   // only care about AIs
 
         std::map<int, Message::PlayerStatus>::const_iterator
-            status_it = this->m_player_status.find(player_it->first);
+            status_it = m_player_status.find(entry.first);
 
         if (status_it == this->m_player_status.end()) {
             return false;  // missing status for AI; can't assume it's ready
@@ -505,13 +499,15 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         if (human_player_setup_data.m_starting_species_name == "1")
             human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 
-        if (!GetSpecies(human_player_setup_data.m_starting_species_name)) {
+        if (human_player_setup_data.m_starting_species_name != "RANDOM" &&
+            !GetSpecies(human_player_setup_data.m_starting_species_name))
+        {
             const SpeciesManager& sm = GetSpeciesManager();
             if (sm.NumPlayableSpecies() < 1)
                 human_player_setup_data.m_starting_species_name.clear();
             else
                 human_player_setup_data.m_starting_species_name = sm.playable_begin()->first;
-            }
+        }
 
         human_player_setup_data.m_save_game_empire_id = ALL_EMPIRES; // not used for new games
         human_player_setup_data.m_client_type = Networking::CLIENT_TYPE_HUMAN_PLAYER;
@@ -1003,21 +999,18 @@ namespace {
             }
 
             //DebugLogger() << "files by write time:";
-            //for (std::multimap<std::time_t, path>::const_iterator it = files_by_write_time.begin();
-            //     it != files_by_write_time.end(); ++it)
-            //{ DebugLogger() << it->first << " : " << it->second.filename(); }
+            //for (std::multimap<std::time_t, path>::value_type& entry : files_by_write_time)
+            //{ DebugLogger() << entry.first << " : " << entry.second.filename(); }
 
             int num_to_delete = files_by_write_time.size() - files_limit + 1;   // +1 because will add a new file after deleting, bringing number back up to limit
             if (num_to_delete <= 0)
                 return; // don't need to delete anything.
 
             int num_deleted = 0;
-            for (std::multimap<std::time_t, path>::const_iterator it = files_by_write_time.begin();
-                 it != files_by_write_time.end(); ++it)
-            {
+            for (std::multimap<std::time_t, path>::value_type& entry : files_by_write_time) {
                 if (num_deleted >= num_to_delete)
                     break;
-                remove(it->second);
+                remove(entry.second);
                 ++num_deleted;
             }
         } catch (...) {

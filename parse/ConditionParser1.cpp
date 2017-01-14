@@ -102,6 +102,11 @@ namespace {
                 ;
 
             owned_by_4
+                =   tok.Human_
+                    [ _val = new_<Condition::EmpireAffiliation>( AFFIL_HUMAN ) ]
+                ;
+
+            owned_by_5
                 =   tok.OwnedBy_
                 >>  parse::label(Affiliation_token) >> parse::enum_parser<EmpireAffiliationType>() [ _a = _1 ]
                 >>  parse::label(Empire_token)      >  int_value_ref
@@ -113,6 +118,7 @@ namespace {
                 |   owned_by_2
                 |   owned_by_3
                 |   owned_by_4
+                |   owned_by_5
                 ;
 
             and_
@@ -232,7 +238,8 @@ namespace {
         parse::condition_parser_rule    owned_by_1;
         parse::condition_parser_rule    owned_by_2;
         parse::condition_parser_rule    owned_by_3;
-        owned_by_rule                   owned_by_4;
+        parse::condition_parser_rule    owned_by_4;
+        owned_by_rule                   owned_by_5;
         parse::condition_parser_rule    owned_by;
         and_or_rule                     and_;
         and_or_rule                     or_;

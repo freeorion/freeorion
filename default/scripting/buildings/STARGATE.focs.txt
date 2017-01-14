@@ -1,12 +1,8 @@
 BuildingType
     name = "BLD_STARGATE"
     description = "BLD_STARGATE_DESC"
-    buildcost = 500 + 50 *
-                    Count condition = And [
-                        Building name = "BLD_STARGATE"
-                        OwnedBy empire = Source.Owner
-                    ]
-    buildtime = 10
+    buildcost = 500
+    buildtime = 8
     tags = "ORBITAL"
     location = AND [
         TargetPopulation low = 1

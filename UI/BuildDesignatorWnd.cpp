@@ -182,10 +182,9 @@ namespace {
             return source;
 
         // not a valid source?!  scan through all objects to find one owned by this empire
-        const ObjectMap& objects = GetUniverse().Objects();
-        for (ObjectMap::const_iterator<> obj_it = objects.const_begin(); obj_it != objects.const_end(); ++obj_it) {
-            if (obj_it->OwnedBy(empire_id)) {
-                source = *obj_it;
+        for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects()) {
+            if (obj->OwnedBy(empire_id)) {
+                source = obj;
                 break;
             }
         }
@@ -227,11 +226,8 @@ namespace {
             }
             if (const HullType* hull_type = ship_design->GetHull())
                 location_conditions.push_back(const_cast<Condition::ConditionBase*>(hull_type->Location()));
-            std::vector<std::string> parts = ship_design->Parts();
-            for (std::vector<std::string>::const_iterator it = parts.begin();
-                 it != parts.end(); ++it)
-            {
-                if (const PartType* part_type = GetPartType(*it))
+            for (const std::string& part_name : ship_design->Parts()) {
+                if (const PartType* part_type = GetPartType(part_name))
                     location_conditions.push_back(const_cast<Condition::ConditionBase*>(part_type->Location()));
             }
         }
@@ -298,21 +294,20 @@ namespace {
             // load ship parts, stack ship parts that are used multiple times
             std::string ship_parts_formatted;
             std::map<std::string, int> ship_part_names;
-            const std::vector<std::string>& parts = design->Parts();
 
-            for (std::vector<std::string>::const_iterator it = parts.begin(); it != parts.end(); ++it) {
-                if (ship_part_names.find(*it) != ship_part_names.end())
-                    ship_part_names[*it]++;
+            for (const std::string& part_name : design->Parts()) {
+                if (ship_part_names.find(part_name) != ship_part_names.end())
+                    ship_part_names[part_name]++;
                 else
-                    ship_part_names.insert(std::pair<std::string, int>(*it, 1));
+                    ship_part_names.insert(std::pair<std::string, int>(part_name, 1));
             }
 
-            for (std::map<std::string, int>::const_iterator it = ship_part_names.begin(); it != ship_part_names.end(); ++it) {
-                if (!UserStringExists(it->first)) continue;
-                if (ship_part_names[it->first] == 1)
-                    ship_parts_formatted += (UserString(it->first) + ", ");
+            for (const std::map<std::string, int>::value_type& part_name_count : ship_part_names) {
+                if (!UserStringExists(part_name_count.first)) continue;
+                if (ship_part_names[part_name_count.first] == 1)
+                    ship_parts_formatted += (UserString(part_name_count.first) + ", ");
                 else
-                    ship_parts_formatted += (UserString(it->first) + " x" + boost::lexical_cast<std::string>(it->second) + ", ");
+                    ship_parts_formatted += (UserString(part_name_count.first) + " x" + boost::lexical_cast<std::string>(part_name_count.second) + ", ");
             }
 
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PARTS") + ": " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
@@ -421,8 +416,8 @@ namespace {
             if (old_size != Size()) {
                 const GG::Pt row_size = ListRowSize();
                 //std::cout << "BuildableItemsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
-                for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-                    (*it)->Resize(row_size);
+                for (GG::ListBox::Row* row : *this)
+                    row->Resize(row_size);
             }
         }
 
@@ -789,9 +784,6 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     boost::shared_ptr<GG::Font> default_font = ClientUI::GetFont();
     const GG::Pt row_size = m_buildable_items->ListRowSize();
 
-    // counter that keeps track of how many rows have been added so far
-    int i = 0;
-
     // populate list with building types
     //DebugLogger() << "BuildDesignatorWnd::BuildSelector::PopulateList() : Adding Buildings ";
     if (m_build_types_shown.find(BT_BUILDING) != m_build_types_shown.end()) {
@@ -799,8 +791,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         // craete and insert rows...
         std::vector<GG::ListBox::Row*> rows;
         rows.reserve(std::distance(manager.begin(), manager.end()));
-        for (BuildingTypeManager::iterator it = manager.begin(); it != manager.end(); ++it, ++i) {
-            const std::string name = it->first;
+        for (const std::map<std::string, BuildingType*>::value_type& entry : manager) {
+            const std::string name = entry.first;
             if (!BuildableItemVisible(BT_BUILDING, name))
                 continue;
             ProductionItemRow* item_row = new ProductionItemRow(row_size.x, row_size.y,
@@ -810,10 +802,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         }
         m_buildable_items->Insert(rows, false);
         // resize inserted rows and record first row to show
-        for (BuildableItemsListBox::iterator it = m_buildable_items->begin();
-            it != m_buildable_items->end(); ++it)
-        {
-            (*it)->Resize(row_size);
+        for (GG::ListBox::Row* row : *m_buildable_items) {
+            row->Resize(row_size);
         }
     }
 
@@ -832,8 +822,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         // create and insert rows...
         std::vector<GG::ListBox::Row*> rows;
         rows.reserve(design_ids.size());
-        for (std::vector<int>::const_iterator it = design_ids.begin(); it != design_ids.end(); ++it, ++i) {
-            int ship_design_id = *it;
+        for (int ship_design_id : design_ids) {
             if (!BuildableItemVisible(BT_SHIP, ship_design_id))
                 continue;
             const ShipDesign* ship_design = GetShipDesign(ship_design_id);
@@ -846,10 +835,8 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         }
         m_buildable_items->Insert(rows, false);
         // resize inserted rows and record first row to show
-        for (BuildableItemsListBox::iterator it = m_buildable_items->begin();
-            it != m_buildable_items->end(); ++it)
-        {
-            (*it)->Resize(row_size);
+        for (GG::ListBox::Row* row : *m_buildable_items) {
+            row->Resize(row_size);
         }
     }
 
@@ -1359,8 +1346,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     int best_planet_id = INVALID_OBJECT_ID; // id of selected planet
     double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
 
-    for (std::vector<TemporaryPtr<const Planet> >::const_iterator it = planets.begin(); it != planets.end(); ++it) {
-        TemporaryPtr<const Planet> planet = *it;
+    for (TemporaryPtr<const Planet> planet : planets) {
         int planet_id = planet->ID();
         if (!m_side_panel->PlanetSelectable(planet_id))
             continue;

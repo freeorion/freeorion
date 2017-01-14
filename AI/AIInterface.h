@@ -4,6 +4,8 @@
 #include <string>
 #include <vector>
 
+#include <boost/python/str.hpp>
+
 struct CombatData;
 class Empire;
 class Tech;
@@ -221,12 +223,33 @@ namespace AIInterface {
      */
     int CurrentTurn();
 
-    /** @brief Return the value of the ::OptionsDB `ai-config` key
+    /** @brief Return the OptionsDB option @a option
      *
-     * @return An UTF-8 encoded and NUL terminated string containing the path
-     *      to an optional ai configuration file or an empty string if not set.
+     * @return Return the OptionsDB option @a option or None if not set.
+     * @ throw boost::bad_any_cast if option exists but is not a string
      */
-    std::string GetAIConfigStr();
+    boost::python::object GetOptionsDBOptionStr(std::string const &option);
+
+    /** @brief Return the OptionsDB option @a option
+     *
+     * @return Return the OptionsDB option @a option or None if not set.
+     * @ throw boost::bad_any_cast if option exists but is not an int
+     */
+    boost::python::object GetOptionsDBOptionInt(std::string const &option);
+
+    /** @brief Return the OptionsDB option @a option
+     *
+     * @return Return the OptionsDB option @a option or None if not set.
+     * @ throw boost::bad_any_cast if option exists but is not bool
+     */
+    boost::python::object GetOptionsDBOptionBool(std::string const &option);
+
+    /** @brief Return the OptionsDB option @a option
+     *
+     * @return Return the OptionsDB option @a option or None if not set.
+     * @ throw boost::bad_any_cast if option exists but is not a double
+     */
+    boost::python::object GetOptionsDBOptionDouble(std::string const &option);
 
     /** @brief Return the canonical AI directory path
      *

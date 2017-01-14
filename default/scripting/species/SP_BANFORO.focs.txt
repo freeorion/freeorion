@@ -49,6 +49,7 @@ Species
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[STANDARD_SHIP_SHIELDS]]
     ]
 
     [[BARREN_STANDARD_EP]]

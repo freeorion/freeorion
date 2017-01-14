@@ -157,9 +157,9 @@ namespace {
         TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (ObjectMap::const_iterator<> obj_it = Objects().const_begin(); obj_it != Objects().const_end(); ++obj_it) {
-                if (obj_it->OwnedBy(empire_id)) {
-                    source = *obj_it;
+            for (TemporaryPtr<const UniverseObject> obj : Objects()) {
+                if (obj->OwnedBy(empire_id)) {
+                    source = obj;
                     break;
                 }
             }
@@ -333,10 +333,10 @@ TechManager::TechManager() {
     }
 
     std::set<std::string> empty_defined_categories;
-    for (std::map<std::string, TechCategory*>::iterator map_it = m_categories.begin(); map_it != m_categories.end(); ++map_it) {
-        std::set<std::string>::iterator set_it = categories_seen_in_techs.find(map_it->first);
+    for (const std::map<std::string, TechCategory*>::value_type& map : m_categories) {
+        std::set<std::string>::iterator set_it = categories_seen_in_techs.find(map.first);
         if (set_it == categories_seen_in_techs.end()) {
-            empty_defined_categories.insert(map_it->first);
+            empty_defined_categories.insert(map.first);
         } else {
             categories_seen_in_techs.erase(set_it);
         }
@@ -432,12 +432,12 @@ std::string TechManager::FindFirstDependencyCycle() {
     static const std::set<std::string> EMPTY_STRING_SET;    // used in case an invalid tech is processed
 
     std::set<const Tech*> checked_techs; // the list of techs that are not part of any cycle
-    for (iterator it = begin(); it != end(); ++it) {
-        if (checked_techs.find(*it) != checked_techs.end())
+    for (const Tech* tech : *this) {
+        if (checked_techs.find(tech) != checked_techs.end())
             continue;
 
         std::vector<const Tech*> stack;
-        stack.push_back(*it);
+        stack.push_back(tech);
         while (!stack.empty()) {
             // Examine the tech on top of the stack.  If the tech has no prerequisite techs, or if all
             // of its prerequisite techs have already been checked, pop it off the stack and mark it as
@@ -552,8 +552,7 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
     const Empire* empire = GetEmpire(empire_id);
 
     // traverse list, appending new prereqs to it, and putting unique prereqs into set
-    for (std::list<std::string>::iterator it = prereqs_list.begin(); it != prereqs_list.end(); ++it) {
-        std::string cur_name = *it;
+    for (const std::string& cur_name : prereqs_list) {
         const Tech* cur_tech = this->GetTech(cur_name);
 
         // check if this tech is already in the map of prereqs.  If so, it has already been processed, and can be skipped.
@@ -575,9 +574,8 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
 
     // extract sorted techs into vector, to be passed to signal...
     std::vector<std::string> retval;
-    for (std::multimap<float, std::string>::const_iterator it = techs_to_add_map.begin();
-         it != techs_to_add_map.end(); ++it)
-    { retval.push_back(it->second); }
+    for (const std::multimap<float, std::string>::value_type& tech_to_add : techs_to_add_map)
+    { retval.push_back(tech_to_add.second); }
 
     return retval;
 }

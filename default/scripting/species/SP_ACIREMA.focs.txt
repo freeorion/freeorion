@@ -54,13 +54,7 @@ Species
             activation = Turn high = 0
             effects = SetStarType type = Blue
 
-        EffectsGroup
-            description = "GOOD_SHIP_SHIELD_DESC"
-            scope = And [
-                Source
-                Ship
-            ]
-            effects = SetMaxShield value = Value + 1
+        [[GOOD_SHIP_SHIELDS]]
 
         EffectsGroup
             description = "GOOD_PLANETARY_DEFENSE_DESC"

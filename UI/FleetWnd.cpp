@@ -161,8 +161,8 @@ namespace {
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     bool ContainsArmedShips(const std::vector<int>& ship_ids) {
-        for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
-            if (TemporaryPtr<const Ship> ship = GetShip(*it))
+        for (int ship_id : ship_ids)
+            if (TemporaryPtr<const Ship> ship = GetShip(ship_id))
                 if (ship->IsArmed() || ship->HasFighters())
                     return true;
         return false;
@@ -203,10 +203,7 @@ namespace {
 
 
         // validate ships in each group, and generate fleet names for those ships
-        for (std::vector<std::vector<int> >::const_iterator group_it = ship_id_groups.begin();
-             group_it != ship_id_groups.end(); ++group_it)
-        {
-            const std::vector<int>& ship_ids = *group_it;
+        for (const std::vector<int>& ship_ids : ship_id_groups) {
             std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(ship_ids);
             if (ships.empty())
                 continue;
@@ -221,11 +218,7 @@ namespace {
             // validate that ships are in the same system and all owned by this
             // client's empire.
             // also record the fleets from which ships are taken
-            for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-                 ship_it != ships.end(); ++ship_it)
-            {
-                TemporaryPtr<const Ship> ship = *ship_it;
-
+            for (TemporaryPtr<const Ship> ship : ships) {
                 if (ship->SystemID() != system->ID()) {
                     ErrorLogger() << "CreateNewFleetsForShips passed ships with inconsistent system ids";
                     continue;
@@ -268,10 +261,8 @@ namespace {
         }
 
         // set / determine aggressiveness for new fleets
-        for (std::vector<std::vector<int> >::const_iterator groups_it = order_ship_id_groups.begin();
-             groups_it != order_ship_id_groups.end(); ++groups_it)
-        {
-            order_ship_aggressives.push_back(AggressionForFleet(aggression, *groups_it));
+        for (const std::vector<int>& ship_ids : order_ship_id_groups) {
+            order_ship_aggressives.push_back(AggressionForFleet(aggression, ship_ids));
         }
 
         // create new fleet with ships
@@ -282,11 +273,7 @@ namespace {
 
 
         // delete empty fleets from which ships may have been taken
-        std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>(original_fleet_ids);
-        for (std::vector<TemporaryPtr<Fleet> >::iterator it = fleets.begin();
-             it != fleets.end(); ++it)
-        {
-            TemporaryPtr<const Fleet> fleet = *it;
+        for (TemporaryPtr<const Fleet> fleet : Objects().FindObjects<Fleet>(original_fleet_ids)) {
             if (fleet && fleet->Empty())
                 HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                     new DeleteFleetOrder(client_empire_id, fleet->ID())));
@@ -317,11 +304,7 @@ namespace {
 
         // select ships with the requested design id
         std::vector<int> ships_of_design_ids;
-        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
-        for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
-             it != ships.end(); ++it)
-        {
-            TemporaryPtr<const Ship> ship = *it;
+        for (TemporaryPtr<const Ship> ship : Objects().FindObjects<Ship>(ship_ids)) {
             if (ship->DesignID() == design_id)
                 ships_of_design_ids.push_back(ship->ID());
         }
@@ -342,20 +325,14 @@ namespace {
 
         // sort ships by ID into container, indexed by design id
         std::map<int, std::vector<int> > designs_ship_ids;
-        std::vector<TemporaryPtr<Ship> > ships = Objects().FindObjects<Ship>(ship_ids);
-        for (std::vector<TemporaryPtr<Ship> >::const_iterator it = ships.begin();
-            it != ships.end(); ++it)
-        {
-            TemporaryPtr<const Ship> ship = *it;
-
+        for (TemporaryPtr<Ship> ship : Objects().FindObjects<Ship>(ship_ids)) {
             designs_ship_ids[ship->DesignID()].push_back(ship->ID());
         }
 
         // note that this will cause a UI update for each call to CreateNewFleetFromShips
         // we can re-evaluate this code if it presents a noticable performance problem
-        for (std::map<int, std::vector<int> >::const_iterator it = designs_ship_ids.begin();
-             it != designs_ship_ids.end(); ++it)
-        { CreateNewFleetFromShips(it->second, aggression); }
+        for (const std::map<int, std::vector<int>>::value_type& entry : designs_ship_ids)
+        { CreateNewFleetFromShips(entry.second, aggression); }
     }
 
     void MergeFleetsIntoFleet(int fleet_id) {
@@ -388,10 +365,7 @@ namespace {
         empire_system_fleets.reserve(all_system_fleets.size());
         std::vector<int> empire_system_ship_ids;
 
-        for (std::vector<TemporaryPtr<Fleet> >::iterator it = all_system_fleets.begin();
-             it != all_system_fleets.end(); ++it)
-        {
-            TemporaryPtr<Fleet> fleet = *it;
+        for (TemporaryPtr<Fleet> fleet : all_system_fleets) {
             if (!fleet->OwnedBy(client_empire_id))
                 continue;
             if (fleet->ID() == target_fleet->ID() || fleet->ID() == INVALID_OBJECT_ID)
@@ -412,11 +386,9 @@ namespace {
 
         // delete empty fleets from which ships have been taken
         GetUniverse().InhibitUniverseObjectSignals(true);
-        for (std::vector<int>::const_iterator it = empire_system_fleet_ids.begin();
-             it != empire_system_fleet_ids.end(); ++it)
-        {
+        for (int fleet_id : empire_system_fleet_ids) {
             HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-               new DeleteFleetOrder(client_empire_id, *it)));
+               new DeleteFleetOrder(client_empire_id, fleet_id)));
         }
         GetUniverse().InhibitUniverseObjectSignals(false);
 
@@ -432,10 +404,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        const OrderSet& orders = app->Orders();
-        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
-                retval[order->ObjectID()] = it->first;
+        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
+            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
+                retval[order->ObjectID()] = entry.first;
             }
         }
         return retval;
@@ -491,9 +462,9 @@ FleetWnd* FleetUIManager::ActiveFleetWnd() const
 FleetWnd* FleetUIManager::WndForFleet(TemporaryPtr<const Fleet> fleet) const {
     assert(fleet);
     FleetWnd* retval = 0;
-    for (std::set<FleetWnd*>::const_iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ++it) {
-        if ((*it)->ContainsFleet(fleet->ID())) {
-            retval = *it;
+    for (FleetWnd* wnd : m_fleet_wnds) {
+        if (wnd->ContainsFleet(fleet->ID())) {
+            retval = wnd;
             break;
         }
     }
@@ -541,13 +512,15 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
 }
 
 void FleetUIManager::CullEmptyWnds() {
+    std::vector<FleetWnd*> to_be_closed;
     // scan through FleetWnds, deleting those that have no fleets
-    for (std::set<FleetWnd*>::iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ) {
-        std::set<FleetWnd*>::iterator cur_wnd_it = it++;
-        FleetWnd* cur_wnd = *cur_wnd_it;
+    for (FleetWnd* cur_wnd : m_fleet_wnds) {
         if (cur_wnd->FleetIDs().empty())
-            delete cur_wnd;
+            to_be_closed.push_back(cur_wnd);
     }
+
+    for (auto &close : to_be_closed)
+        close->CloseClicked();
 }
 
 void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
@@ -556,8 +529,8 @@ void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
 
     // disconnect old active FleetWnd signals
     if (m_active_fleet_wnd) {
-        for (std::vector<boost::signals2::connection>::iterator it = m_active_fleet_wnd_signals.begin(); it != m_active_fleet_wnd_signals.end(); ++it)
-            it->disconnect();
+        for (boost::signals2::connection& con : m_active_fleet_wnd_signals)
+            con.disconnect();
         m_active_fleet_wnd_signals.clear();
     }
 
@@ -573,10 +546,12 @@ void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
 
 bool FleetUIManager::CloseAll() {
     bool retval = !m_fleet_wnds.empty();
+
+    // closing a fleet window removes it from m_fleet_wnds
     std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
 
-    for (std::size_t i = 0; i < vec.size(); ++i)
-        vec[i]->CloseClicked();
+    for (FleetWnd* wnd : vec)
+        wnd->CloseClicked();
 
     m_active_fleet_wnd = 0;
 
@@ -589,9 +564,8 @@ void FleetUIManager::RefreshAll() {
     if (m_fleet_wnds.empty())
         return;
 
-    std::vector<FleetWnd*> vec(m_fleet_wnds.begin(), m_fleet_wnds.end());
-    for (std::size_t i = 0; i < vec.size(); ++i)
-        vec[i]->Refresh();
+    for (FleetWnd* wnd : m_fleet_wnds)
+        wnd->Refresh();
 }
 
 FleetUIManager& FleetUIManager::GetFleetUIManager() {
@@ -618,8 +592,8 @@ void FleetUIManager::FleetWndClicked(FleetWnd* fleet_wnd) {
 
 void FleetUIManager::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
-    for (std::set<FleetWnd*>::iterator it = m_fleet_wnds.begin(); it != m_fleet_wnds.end(); ++it)
-        (*it)->EnableOrderIssuing(m_order_issuing_enabled);
+    for (FleetWnd* wnd : m_fleet_wnds)
+        wnd->EnableOrderIssuing(m_order_issuing_enabled);
 }
 
 namespace {
@@ -872,8 +846,8 @@ void ShipDataPanel::Refresh() {
             delete m_design_name_text;
             m_design_name_text = 0;
         }
-        for (std::vector<std::pair<MeterType, StatisticIcon*> >::iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it)
-            delete it->second;
+        for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons)
+            delete entry.second;
         m_stat_icons.clear();
         return;
     }
@@ -907,39 +881,40 @@ void ShipDataPanel::Refresh() {
     }
 
     // update stat icon values and browse wnds
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin();
-         it != m_stat_icons.end(); ++it)
-    {
-        it->second->SetValue(StatValue(it->first));
+    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+        entry.second->SetValue(StatValue(entry.first));
 
-        it->second->ClearBrowseInfoWnd();
-        if (it->first == METER_CAPACITY) {  // refers to damage
+        entry.second->ClearBrowseInfoWnd();
+        if (entry.first == METER_CAPACITY) {  // refers to damage
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new ShipDamageBrowseWnd(
-                m_ship_id, it->first));
-            it->second->SetBrowseInfoWnd(browse_wnd);
+                m_ship_id, entry.first));
+            entry.second->SetBrowseInfoWnd(browse_wnd);
 
-        } else if (it->first == METER_TROOPS) {
+        } else if (entry.first == METER_TROOPS) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
                 UserString("SHIP_TROOPS_STAT")));
-            it->second->SetBrowseInfoWnd(browse_wnd);
+            entry.second->SetBrowseInfoWnd(browse_wnd);
 
-        } else if (it->first == METER_SECONDARY_STAT) {
-            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                FightersIcon(), UserString("SHIP_FIGHTERS_TITLE"),
-                UserString("SHIP_FIGHTERS_STAT")));
-            it->second->SetBrowseInfoWnd(browse_wnd);
+        } else if (entry.first == METER_SECONDARY_STAT) {
+            boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new ShipFightersBrowseWnd(
+                m_ship_id, entry.first));
+            entry.second->SetBrowseInfoWnd(browse_wnd);
+            boost::shared_ptr<GG::BrowseInfoWnd> detailed_wnd(new ShipFightersBrowseWnd(
+                m_ship_id, entry.first, true));
+            entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
+            entry.second->SetBrowseInfoWnd(detailed_wnd, 1);
 
-        } else if (it->first == METER_POPULATION) {
+        } else if (entry.first == METER_POPULATION) {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
                 ColonyIcon(), UserString("SHIP_COLONY_TITLE"),
                 UserString("SHIP_COLONY_STAT")));
-            it->second->SetBrowseInfoWnd(browse_wnd);
+            entry.second->SetBrowseInfoWnd(browse_wnd);
 
         } else {
             boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(
-                m_ship_id, it->first, AssociatedMeterType(it->first)));
-            it->second->SetBrowseInfoWnd(browse_wnd);
+                m_ship_id, entry.first, AssociatedMeterType(entry.first)));
+            entry.second->SetBrowseInfoWnd(browse_wnd);
         }
     }
 
@@ -995,8 +970,8 @@ void ShipDataPanel::DoLayout() {
 
     // position ship statistic icons one after another horizontally and centered vertically
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-        it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
+    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+        entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
 }
@@ -1051,11 +1026,9 @@ void ShipDataPanel::Init() {
     meters_icons.push_back(std::make_pair(METER_STEALTH,    ClientUI::MeterIcon(METER_STEALTH)));
     meters_icons.push_back(std::make_pair(METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)));
 
-    for (std::vector<std::pair<MeterType, boost::shared_ptr<GG::Texture> > >::const_iterator it = meters_icons.begin();
-         it != meters_icons.end(); ++it)
-    {
-        StatisticIcon* icon = new StatisticIcon(it->second, 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(it->first, icon));
+    for (std::pair<MeterType, boost::shared_ptr<GG::Texture>>& entry : meters_icons) {
+        StatisticIcon* icon = new StatisticIcon(entry.second, 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back(std::make_pair(entry.first, icon));
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
     }
@@ -1238,8 +1211,8 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, boo
     DropsAcceptable(drop_wnds_acceptable.begin(), drop_wnds_acceptable.end(), pt, mod_keys);
 
     // scan through wnds, looking for one that isn't dropable
-    for (DropsAcceptableIter it = drop_wnds_acceptable.begin(); it != drop_wnds_acceptable.end(); ++it) {
-        if (!it->second) {
+    for (const std::map<const Wnd*, bool>::value_type& drop_wnd_acceptable : drop_wnds_acceptable) {
+        if (!drop_wnd_acceptable.second) {
             // wnd can't be dropped
             Select(false);
             break;
@@ -1334,12 +1307,12 @@ void FleetDataPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& 
     DebugLogger() << "FleetWnd::AcceptDrops with " << wnds.size() << " wnds at pt: " << pt;
     std::vector<int> ship_ids;
     ship_ids.reserve(wnds.size());
-    for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it)
-        if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(*it))
+    for (Wnd* wnd : wnds)
+        if (const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd))
             ship_ids.push_back(ship_row->ShipID());
     std::string id_list;
-    for (std::vector<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it)
-        id_list += boost::lexical_cast<std::string>(*it) + " ";
+    for (int ship_id : ship_ids)
+        id_list += boost::lexical_cast<std::string>(ship_id) + " ";
     DebugLogger() << "FleetWnd::AcceptDrops found " << ship_ids.size() << " ship ids: " << id_list;
 
     if (ship_ids.empty())
@@ -1550,11 +1523,7 @@ void FleetDataPanel::SetStatIconValues() {
 
     fuels.reserve(fleet->NumShips());
     speeds.reserve(fleet->NumShips());
-    std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(fleet->ShipIDs());
-    for (std::vector<TemporaryPtr<const Ship> >::const_iterator it = ships.begin();
-         it != ships.end(); ++it)
-    {
-        TemporaryPtr<const Ship> ship = *it;
+    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
         int ship_id = ship->ID();
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
@@ -1578,34 +1547,32 @@ void FleetDataPanel::SetStatIconValues() {
         min_fuel = *std::min_element(fuels.begin(), fuels.end());
     if (!speeds.empty())
         min_speed = *std::min_element(speeds.begin(), speeds.end());
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it =
-        m_stat_icons.begin(); it != m_stat_icons.end(); ++it) 
-    {
-        MeterType stat_name = it->first;
+    for (std::pair<MeterType, StatisticIcon*> entry : m_stat_icons) {
+        MeterType stat_name = entry.first;
         if (stat_name == METER_SPEED)
-            it->second->SetValue(min_speed);
+            entry.second->SetValue(min_speed);
         else if (stat_name == METER_FUEL)
-            it->second->SetValue(min_fuel);
+            entry.second->SetValue(min_fuel);
         else if (stat_name == METER_SHIELD)
-            it->second->SetValue(shield_tally/ship_count);
+            entry.second->SetValue(shield_tally/ship_count);
         else if (stat_name == METER_STRUCTURE)
-            it->second->SetValue(structure_tally);
+            entry.second->SetValue(structure_tally);
         else if (stat_name == METER_CAPACITY)
-            it->second->SetValue(damage_tally);
+            entry.second->SetValue(damage_tally);
         else if (stat_name == METER_SECONDARY_STAT)
-            it->second->SetValue(fighters_tally);
+            entry.second->SetValue(fighters_tally);
         else if (stat_name == METER_POPULATION)
-            it->second->SetValue(colony_tally);
+            entry.second->SetValue(colony_tally);
         else if (stat_name == METER_SIZE)
-            it->second->SetValue(ship_count);
+            entry.second->SetValue(ship_count);
         else if (stat_name == METER_TROOPS)
-            it->second->SetValue(troops_tally);
+            entry.second->SetValue(troops_tally);
         else if (stat_name == METER_INDUSTRY)
-            it->second->SetValue(fleet->ResourceOutput(RE_INDUSTRY));
+            entry.second->SetValue(fleet->ResourceOutput(RE_INDUSTRY));
         else if (stat_name == METER_RESEARCH)
-            it->second->SetValue(fleet->ResourceOutput(RE_RESEARCH));
+            entry.second->SetValue(fleet->ResourceOutput(RE_RESEARCH));
         else if (stat_name == METER_TRADE)
-            it->second->SetValue(fleet->ResourceOutput(RE_TRADE));
+            entry.second->SetValue(fleet->ResourceOutput(RE_TRADE));
     }
 }
 
@@ -1678,8 +1645,8 @@ void FleetDataPanel::DoLayout() {
 
     // position stat icons, centering them vertically if there's more space than required
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-        it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
+    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+        entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
 
@@ -1732,13 +1699,11 @@ void FleetDataPanel::Init() {
         meters_icons_browsetext.push_back(boost::make_tuple(METER_FUEL, ClientUI::MeterIcon(METER_FUEL), "FW_FLEET_FUEL_SUMMARY"));
         meters_icons_browsetext.push_back(boost::make_tuple(METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY"));
 
-        for (std::vector<boost::tuple<MeterType, boost::shared_ptr<GG::Texture>, std::string> >::const_iterator it = meters_icons_browsetext.begin();
-             it != meters_icons_browsetext.end(); ++it)
-        {
-            StatisticIcon* icon = new StatisticIcon(it->get<1>(), 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(it->get<0>(), icon));
+        for (const boost::tuple<MeterType, boost::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
+            StatisticIcon* icon = new StatisticIcon(entry.get<1>(), 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back(std::make_pair(entry.get<0>(), icon));
             icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString(it->get<2>()));
+            icon->SetBrowseText(UserString(entry.get<2>()));
             icon->InstallEventFilter(this);
             AttachChild(icon);
             icon->SetBrowseModeTime(tooltip_delay);
@@ -1863,9 +1828,7 @@ public:
         std::vector<TemporaryPtr<Ship> > dropped_ships;
 
         //DebugLogger() << "... getting/sorting dropped fleets or ships...";
-        for (std::vector<Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
-            const GG::Wnd* wnd = *it;
-
+        for (const GG::Wnd* wnd : wnds) {
             if (drop_target_fleet_row == wnd) {
                 ErrorLogger() << "FleetsListBox::AcceptDrops  dropped wnd is same as drop target?! skipping";
                 continue;
@@ -1904,8 +1867,7 @@ public:
             //DebugLogger() << " ... processing dropped " << dropped_fleets.size() << " fleets";
             // dropping fleets.  get each ships of all source fleets and transfer to the target fleet
 
-            for (std::vector<TemporaryPtr<Fleet> >::const_iterator it = dropped_fleets.begin(); it != dropped_fleets.end(); ++it) {
-                TemporaryPtr<const Fleet> dropped_fleet = *it;
+            for (TemporaryPtr<const Fleet> dropped_fleet : dropped_fleets) {
                 if (!dropped_fleet) {
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get dropped fleet?";
                     continue;
@@ -1941,8 +1903,7 @@ public:
             // compile ship IDs into a vector, while also recording original fleets from which ships are being taken
             std::vector<int> ship_ids_vec;
             std::set<int> dropped_ships_fleets;
-            for (std::vector<TemporaryPtr<Ship> >::const_iterator it = dropped_ships.begin(); it != dropped_ships.end(); ++it) {
-                TemporaryPtr<const Ship> ship = *it;
+            for (TemporaryPtr<const Ship> ship : dropped_ships) {
                 if (!ship) {
                     ErrorLogger() << "FleetsListBox::AcceptDrops  couldn't get dropped ship?";
                     continue;
@@ -1957,8 +1918,8 @@ public:
                     new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
 
                 // delete empty fleets
-                for (std::set<int>::const_iterator it = dropped_ships_fleets.begin(); it != dropped_ships_fleets.end(); ++it) {
-                    TemporaryPtr<const Fleet> fleet = GetFleet(*it);
+                for (int fleet_id : dropped_ships_fleets) {
+                    TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
                     if (fleet && fleet->Empty())
                         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
                             new DeleteFleetOrder(empire_id, fleet->ID())));
@@ -2023,11 +1984,11 @@ public:
         bool fleets_seen = false;
         bool ships_seen = false;
 
-        for (DropsAcceptableIter it = drop_wnds_acceptable.begin(); it != drop_wnds_acceptable.end(); ++it) {
-            if (!it->second)
+        for (std::map<const Wnd*, bool>::value_type& drop_wnd_acceptable : drop_wnds_acceptable) {
+            if (!drop_wnd_acceptable.second)
                 return; // a row was an invalid drop. abort without highlighting drop target.
 
-            const GG::Wnd* dropped_wnd = it->first;
+            const GG::Wnd* dropped_wnd = drop_wnd_acceptable.first;
             if (dropped_wnd->DragDropDataType() == FLEET_DROP_TYPE_STRING) {
                 fleets_seen = true;
                 if (ships_seen)
@@ -2072,8 +2033,8 @@ public:
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
             //std::cout << "FleetListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
-            for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-                (*it)->Resize(row_size);
+            for (GG::ListBox::Row* row : *this)
+                row->Resize(row_size);
         }
     }
 
@@ -2267,9 +2228,7 @@ public:
         const std::set<int> ship_ids = fleet->ShipIDs();
         std::vector<GG::ListBox::Row*> rows;
         rows.reserve(ship_ids.size());
-        for (std::set<int>::const_iterator it = ship_ids.begin(); it != ship_ids.end(); ++it) {
-            int ship_id = *it;
-
+        for (int ship_id : ship_ids) {
             // skip known destroyed and stale info objects
             if (this_client_known_destroyed_objects.find(ship_id) != this_client_known_destroyed_objects.end())
                 continue;
@@ -2280,8 +2239,8 @@ public:
             rows.push_back(row);
         }
         Insert(rows, false);
-        for (std::vector<GG::ListBox::Row*>::iterator it = rows.begin(); it != rows.end(); ++it)
-        { (*it)->Resize(row_size); }
+        for (GG::ListBox::Row* row : rows)
+        { row->Resize(row_size); }
 
         SelChangedSignal(this->Selections());
     }
@@ -2337,8 +2296,7 @@ public:
 
         TemporaryPtr<Ship> ship_from_dropped_wnd;
         std::vector<int> ship_ids;
-        for (std::vector<GG::Wnd*>::const_iterator it = wnds.begin(); it != wnds.end(); ++it) {
-            const GG::Wnd* wnd = *it;
+        for (const GG::Wnd* wnd : wnds) {
             if (wnd->DragDropDataType() == SHIP_DROP_TYPE_STRING) {
                 const ShipRow* ship_row = boost::polymorphic_downcast<const ShipRow*>(wnd);
                 assert(ship_row);
@@ -2375,8 +2333,8 @@ public:
         if (old_size != Size()) {
             const GG::Pt row_size = ListRowSize();
             //std::cout << "ShipsListBox::SizeMove list row size: (" << Value(row_size.x) << ", " << Value(row_size.y) << ")" << std::endl;
-            for (GG::ListBox::iterator it = begin(); it != end(); ++it)
-                (*it)->Resize(row_size);
+            for (GG::ListBox::Row* row : *this)
+                row->Resize(row_size);
         }
     }
 
@@ -2519,16 +2477,10 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
     //std::cout << "FleetDetailPanel::SelectedShipIDs()" << std::endl;
     std::set<int> retval;
 
-    const GG::ListBox::SelectionSet& selections = m_ships_lb->Selections();
-    //std::cout << " selections size: " << selections.size() << std::endl;
-    for (GG::ListBox::SelectionSet::const_iterator sel_it = selections.begin();
-         sel_it != selections.end(); ++sel_it)
-    {
-        std::list<GG::ListBox::Row*>::iterator starRow_it = *sel_it;
+    for (const GG::ListBox::SelectionSet::value_type& selection : m_ships_lb->Selections()) {
         bool hasRow = false;
-        for (std::list<GG::ListBox::Row*>::iterator lb_it = m_ships_lb->begin(); lb_it != m_ships_lb->end(); ++lb_it)
-        {
-            if (lb_it == starRow_it) {
+        for (GG::ListBox::Row* lb_row : *m_ships_lb) {
+            if (lb_row == *selection) {
                 hasRow=true;
                 break;
             }
@@ -2537,7 +2489,7 @@ std::set<int> FleetDetailPanel::SelectedShipIDs() const {
             ErrorLogger() << "FleetDetailPanel::SelectedShipIDs tried to get invalid ship row selection;";
             continue;
         }
-        GG::ListBox::Row* row = **sel_it;
+        GG::ListBox::Row* row = *selection;
         ShipRow* ship_row = dynamic_cast<ShipRow*>(row);
         if (ship_row && (ship_row->ShipID() != INVALID_OBJECT_ID))
             retval.insert(ship_row->ShipID());
@@ -2758,8 +2710,8 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
             m_empire_id = fleet->Owner();
     }
 
-    for (std::vector<int>::const_iterator it = fleet_ids.begin(); it != fleet_ids.end(); ++it)
-        m_fleet_ids.insert(*it);
+    for (int fleet_id : fleet_ids)
+        m_fleet_ids.insert(fleet_id);
     Init(selected_fleet_id);
 }
 
@@ -2897,20 +2849,11 @@ void FleetWnd::SetStatIconValues() {
     float troop_tally =     0.0f;
     float colony_tally =    0.0f;
 
-    std::vector<TemporaryPtr<const Fleet> > fleets = Objects().FindObjects<const Fleet>(m_fleet_ids);
-    for (std::vector<TemporaryPtr<const Fleet> >::const_iterator fleet_it = fleets.begin();
-         fleet_it != fleets.end(); ++fleet_it)
-    {
-        TemporaryPtr<const Fleet> fleet = *fleet_it;
-
+    for (TemporaryPtr<const Fleet> fleet : Objects().FindObjects<const Fleet>(m_fleet_ids)) {
         if ( !(((m_empire_id == ALL_EMPIRES) && (fleet->Unowned())) || fleet->OwnedBy(m_empire_id)) )
             continue;
 
-        std::vector<TemporaryPtr<const Ship> > ships = Objects().FindObjects<const Ship>(fleet->ShipIDs());
-        for (std::vector<TemporaryPtr<const Ship> >::const_iterator ship_it = ships.begin();
-             ship_it != ships.end(); ++ship_it)
-        {
-            TemporaryPtr<const Ship> ship = *ship_it;
+        for (TemporaryPtr<const Ship> ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
             int ship_id = ship->ID();
 
             // skip known destroyed and stale info objects
@@ -2931,24 +2874,22 @@ void FleetWnd::SetStatIconValues() {
         }
     }
 
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it =
-        m_stat_icons.begin(); it != m_stat_icons.end(); ++it) 
-    {
-        MeterType stat_name = it->first;
+    for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+        MeterType stat_name = entry.first;
         if (stat_name == METER_SHIELD)
-            it->second->SetValue(shield_tally/ship_count);
+            entry.second->SetValue(shield_tally/ship_count);
         else if (stat_name == METER_STRUCTURE)
-            it->second->SetValue(structure_tally);
+            entry.second->SetValue(structure_tally);
         else if (stat_name == METER_CAPACITY)
-            it->second->SetValue(damage_tally);
+            entry.second->SetValue(damage_tally);
         else if (stat_name == METER_SECONDARY_STAT)
-            it->second->SetValue(fighters_tally);
+            entry.second->SetValue(fighters_tally);
         else if (stat_name == METER_POPULATION)
-            it->second->SetValue(colony_tally);
+            entry.second->SetValue(colony_tally);
         else if (stat_name == METER_SIZE)
-            it->second->SetValue(ship_count);
+            entry.second->SetValue(ship_count);
         else if (stat_name == METER_TROOPS)
-            it->second->SetValue(troop_tally);
+            entry.second->SetValue(troop_tally);
     }
 }
 
@@ -2976,16 +2917,14 @@ void FleetWnd::Refresh() {
 
     // Check all fleets in initial_fleet_ids and keep those that exist.
     boost::unordered_set<int> fleets_that_exist;
-    for (std::set<int>::const_iterator it = initial_fleet_ids.begin(); it != initial_fleet_ids.end(); ++it) {
-        int fleet_id = *it;
-
+    for (int fleet_id : initial_fleet_ids) {
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())
             continue;
         if (this_client_stale_object_info.find(fleet_id) != this_client_stale_object_info.end())
             continue;
 
-        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet)
             continue;
 
@@ -2997,14 +2936,11 @@ void FleetWnd::Refresh() {
     }
 
     // Filter initially selected fleets according to existing fleets
-    for (std::set<int>::const_iterator it = initially_selected_fleets.begin();
-         it != initially_selected_fleets.end(); ++it)
-    {
-        int fleet_id =  *it;
+    for (int fleet_id : initially_selected_fleets) {
         if (!fleets_that_exist.count(fleet_id))
             continue;
 
-        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet)
             continue;
 
@@ -3056,12 +2992,7 @@ void FleetWnd::Refresh() {
     if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
         m_fleet_ids.clear();
         // get fleets to show from system, based on required ownership
-        const ObjectMap& objects = Objects();
-        std::vector<TemporaryPtr<const Fleet> > system_fleets = objects.FindObjects<Fleet>(system->FleetIDs());
-        for (std::vector<TemporaryPtr<const Fleet> >::const_iterator it = system_fleets.begin();
-             it != system_fleets.end(); ++it)
-        {
-            TemporaryPtr<const Fleet> fleet = *it;
+        for (TemporaryPtr<const Fleet> fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
             int fleet_id = fleet->ID();
 
             // skip known destroyed and stale info objects
@@ -3076,8 +3007,8 @@ void FleetWnd::Refresh() {
 
     // Add rows for the known good fleet_ids.
     m_fleets_lb->Clear();
-    for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it)
-        AddFleet(*it);
+    for (int fleet_id : m_fleet_ids)
+        AddFleet(fleet_id);
 
     // Use selected fleets that are at the determined location
     std::set<int> still_present_initially_selected_fleets;
@@ -3138,8 +3069,8 @@ void FleetWnd::DoLayout() {
 
     // position fleet aggregate stat icons
     GG::Pt icon_ul = GG::Pt(GG::X0 + DATA_PANEL_TEXT_PAD, top);
-    for (std::vector<std::pair<MeterType, StatisticIcon*> >::const_iterator it = m_stat_icons.begin(); it != m_stat_icons.end(); ++it) {
-        it->second->SizeMove(icon_ul, icon_ul + StatIconSize());
+    for (std::pair<MeterType, StatisticIcon*>& stat_icon : m_stat_icons) {
+        stat_icon.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
     top += FLEET_STAT_HEIGHT;
@@ -3147,8 +3078,8 @@ void FleetWnd::DoLayout() {
     // are there any fleets owned by this client's empire int his FleetWnd?
     bool this_client_owns_fleets_in_this_wnd(false);
     int this_client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    for (std::set<int>::const_iterator it = m_fleet_ids.begin(); it != m_fleet_ids.end(); ++it) {
-        TemporaryPtr<const Fleet> fleet = GetFleet(*it);
+    for (int fleet_id : m_fleet_ids) {
+        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet)
             continue;
         if (fleet->OwnedBy(this_client_empire_id)) {
@@ -3362,34 +3293,34 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     // find damaged ships
     std::vector<int> damaged_ship_ids;
     damaged_ship_ids.reserve(ship_ids_set.size());
-    for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-        TemporaryPtr<const Ship> ship = GetShip(*it);
+    for (int ship_id : ship_ids_set) {
+        TemporaryPtr<const Ship> ship = GetShip(ship_id);
         if (ship->InitialMeterValue(METER_STRUCTURE) < ship->InitialMeterValue(METER_MAX_STRUCTURE))
-            damaged_ship_ids.push_back(*it);
+            damaged_ship_ids.push_back(ship_id);
     }
 
     // find ships with no remaining fuel
     std::vector<int> unfueled_ship_ids;
     unfueled_ship_ids.reserve(ship_ids_set.size());
-    for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-        TemporaryPtr<const Ship> ship = GetShip(*it);
+    for (int ship_id : ship_ids_set) {
+        TemporaryPtr<const Ship> ship = GetShip(ship_id);
         if (!ship)
             continue;
         if (ship->InitialMeterValue(METER_FUEL) < 1)
-            unfueled_ship_ids.push_back(*it);
+            unfueled_ship_ids.push_back(ship_id);
     }
 
     // find ships that can carry fighters but dont have a full complement of them
     std::vector<int> not_full_fighters_ship_ids;
     not_full_fighters_ship_ids.reserve(ship_ids_set.size());
-    for (std::set<int>::const_iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-        TemporaryPtr<const Ship> ship = GetShip(*it);
+    for (int ship_id : ship_ids_set) {
+        TemporaryPtr<const Ship> ship = GetShip(ship_id);
         if (!ship)
             continue;
         if (!ship->HasFighters())
             continue;
         if (ship->FighterCount() < ship->FighterMax())
-            not_full_fighters_ship_ids.push_back(*it);
+            not_full_fighters_ship_ids.push_back(ship_id);
     }
 
 
@@ -3397,12 +3328,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
     // an owned object in this fleet's system
     std::set<int> peaceful_empires_in_system;
     if (system) {
-        std::vector<TemporaryPtr<const UniverseObject> > system_objects =
-            Objects().FindObjects<const UniverseObject>(system->ObjectIDs());
-        for (std::vector<TemporaryPtr<const UniverseObject> >::const_iterator it = system_objects.begin();
-             it != system_objects.end(); ++it)
-        {
-            TemporaryPtr<const UniverseObject> obj = *it;
+        for (TemporaryPtr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ObjectIDs())) {
             if (obj->GetVisibility(client_empire_id) < VIS_PARTIAL_VISIBILITY)
                 continue;
             if (obj->Owner() == client_empire_id || obj->Unowned())
@@ -3531,13 +3457,11 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
         // submenus for each available recipient empire
         GG::MenuItem give_away_menu(UserString("ORDER_GIVE_FLEET_TO_EMPIRE"), -1, false, false);
-        for (EmpireManager::const_iterator it = Empires().begin();
-             it != Empires().end(); ++it)
-        {
-            int other_empire_id = it->first;
+        for (std::map<int, Empire*>::value_type& entry : Empires()) {
+            int other_empire_id = entry.first;
             if (peaceful_empires_in_system.find(other_empire_id) == peaceful_empires_in_system.end())
                 continue;
-            give_away_menu.next_level.push_back(GG::MenuItem(it->second->Name(), 100 + other_empire_id, false, false));
+            give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), 100 + other_empire_id, false, false));
         }
         menu_contents.next_level.push_back(give_away_menu);
 
@@ -3614,8 +3538,8 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             // assemble container of containers of ids of fleets to create.
             // one ship id per vector
             std::vector<std::vector<int> > ship_id_groups;
-            for (it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-                std::vector<int> single_id(1, *it);
+            for (int ship_id : ship_ids_set) {
+                std::vector<int> single_id(1, ship_id);
                 ship_id_groups.push_back(single_id);
             }
 
@@ -3637,24 +3561,21 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
         case 5: { // issue scrap orders to all ships in this fleet
             std::set<int> ship_ids_set = fleet->ShipIDs();
-            for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-                    int ship_id = *it;
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new ScrapOrder(client_empire_id, ship_id))
-                    );
-                }
+            for (int ship_id : ship_ids_set) {
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new ScrapOrder(client_empire_id, ship_id))
+                );
+            }
             break;
         }
 
         case 6: { // cancel scrap orders for all ships in this fleet
             const OrderSet orders = HumanClientApp::GetApp()->Orders();
-            std::set<int> ship_ids_set = fleet->ShipIDs();
-            for (std::set<int>::iterator it = ship_ids_set.begin(); it != ship_ids_set.end(); ++it) {
-                int ship_id = *it;
-                for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-                    if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
+            for (int ship_id : fleet->ShipIDs()) {
+                for (const std::map<int, OrderPtr>::value_type& entry : orders) {
+                    if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
                         if (order->ObjectID() == ship_id) {
-                            HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
+                            HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
@@ -3675,13 +3596,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         }
 
         case 12: { // cancel give away order for this fleet
-            const OrderSet orders = HumanClientApp::GetApp()->Orders();
-            for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
+            for (const std::map<int, OrderPtr>::value_type& entry : HumanClientApp::GetApp()->Orders()) {
                 if (boost::shared_ptr<GiveObjectToEmpireOrder> order =
-                    boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(it->second))
+                    boost::dynamic_pointer_cast<GiveObjectToEmpireOrder>(entry.second))
                 {
                     if (order->ObjectID() == fleet->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(it->first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }

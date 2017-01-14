@@ -2,7 +2,7 @@ BuildingType
     name = "BLD_BIOTERROR_PROJECTOR"
     description = "BLD_BIOTERROR_PROJECTOR_DESC"
     buildcost = 75
-    buildtime = 15
+    buildtime = 8
     location = And [
         Planet
         Not Contains Building name = "BLD_BIOTERROR_PROJECTOR"

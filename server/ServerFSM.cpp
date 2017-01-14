@@ -67,13 +67,10 @@ namespace {
         if (single_player_setup_data.m_new_game) {
             // for new games, get host player's name from PlayerSetupData for the
             // (should be only) human player
-            for (std::vector<PlayerSetupData>::const_iterator setup_data_it = single_player_setup_data.m_players.begin();
-                 setup_data_it != single_player_setup_data.m_players.end(); ++setup_data_it)
-            {
+            for (const PlayerSetupData& psd : single_player_setup_data.m_players) {
                 // In a single player game, the host player is always the human player, so
                 // this is just a matter of finding which player setup data is for
                 // a human player, and assigning that setup data to the host player id
-                const PlayerSetupData& psd = *setup_data_it;
                 if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
                     return psd.m_player_name;
             }
@@ -88,10 +85,7 @@ namespace {
             LoadPlayerSaveHeaderData(single_player_setup_data.m_filename, player_save_header_data);
 
             // find which player was the human (and thus the host) in the saved game
-            for (std::vector<PlayerSaveHeaderData>::const_iterator save_data_it = player_save_header_data.begin();
-                 save_data_it != player_save_header_data.end(); ++save_data_it)
-            {
-                const PlayerSaveHeaderData& psgd = *save_data_it;
+            for (const PlayerSaveHeaderData& psgd : player_save_header_data) {
                 if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
                     return psgd.m_name;
             }
@@ -101,18 +95,18 @@ namespace {
 
     void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
         DebugLogger() << "PlayerSetupData:";
-        for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = psd.begin(); it != psd.end(); ++it) {
+        for (const std::pair<int, PlayerSetupData>& entry : psd) {
             std::stringstream ss;
-            ss << boost::lexical_cast<std::string>(it->first) << " : "
-               << it->second.m_player_name << ", ";
-            switch (it->second.m_client_type) {
+            ss << boost::lexical_cast<std::string>(entry.first) << " : "
+               << entry.second.m_player_name << ", ";
+            switch (entry.second.m_client_type) {
             case Networking::CLIENT_TYPE_AI_PLAYER:         ss << "AI_PLAYER, ";    break;
             case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ss << "MODERATOR, ";    break;
             case Networking::CLIENT_TYPE_HUMAN_OBSERVER:    ss << "OBSERVER, ";     break;
             case Networking::CLIENT_TYPE_HUMAN_PLAYER:      ss << "HUMAN_PLAYER, "; break;
             default:                                        ss << "<invalid client type>, ";
             }
-            ss << it->second.m_starting_species_name;
+            ss << entry.second.m_starting_species_name;
             DebugLogger() << " ... " << ss.str();
         }
     }
@@ -123,9 +117,8 @@ namespace {
         if (empire_names.empty())
             UserStringList("EMPIRE_NAMES", empire_names);
         std::set<std::string> validNames(empire_names.begin(), empire_names.end());
-        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = players.begin(); player_setup_it != players.end(); ++player_setup_it)
-        {
-            std::set<std::string>::iterator name_it = validNames.find(player_setup_it->second.m_empire_name);
+        for (const std::pair<int, PlayerSetupData>& psd : players) {
+            std::set<std::string>::iterator name_it = validNames.find(psd.second.m_empire_name);
             if (name_it != validNames.end())
                 validNames.erase(name_it);
         }
@@ -356,7 +349,7 @@ MPLobby::MPLobby(my_context c) :
     PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
 
     player_setup_data.m_player_name =           player_connection->PlayerName();
-    player_setup_data.m_empire_name =           GenerateEmpireName(m_lobby_data->m_players);
+    player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(m_lobby_data->m_players);
     player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
     player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
     // leaving save game empire id as default
@@ -421,18 +414,14 @@ sc::result MPLobby::react(const Disconnection& d) {
 namespace {
     GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData> >& psd) {
         //DebugLogger() << "finding colours for empire of player " << player_name;
-        const std::vector<GG::Clr>& empire_colours = EmpireColors();
         GG::Clr empire_colour = GG::Clr(192, 192, 192, 255);
-        for (std::vector<GG::Clr>::const_iterator it = empire_colours.begin(); it != empire_colours.end(); ++it) {
-            const GG::Clr& possible_colour = *it;
+        for (const GG::Clr& possible_colour : EmpireColors()) {
             //DebugLogger() << "trying colour " << possible_colour.r << ", " << possible_colour.g << ", " << possible_colour.b;
 
             // check if any other player / empire is using this colour
             bool colour_is_new = true;
-            for (std::list<std::pair<int, PlayerSetupData> >::const_iterator player_it = psd.begin(); 
-                 player_it != psd.end(); ++player_it)
-            {
-                const GG::Clr& player_colour = player_it->second.m_empire_color;
+            for (const std::pair<int, PlayerSetupData>& entry : psd) {
+                const GG::Clr& player_colour = entry.second.m_empire_color;
                 if (player_colour == possible_colour) {
                     colour_is_new = false;
                     break;
@@ -478,7 +467,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     PlayerSetupData player_setup_data;
     player_setup_data.m_player_name =           player_name;
     player_setup_data.m_client_type =           client_type;
-    player_setup_data.m_empire_name =           GenerateEmpireName(m_lobby_data->m_players);
+    player_setup_data.m_empire_name =           (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(m_lobby_data->m_players);
     player_setup_data.m_empire_color =          GetUnusedEmpireColour(m_lobby_data->m_players);
     if (m_lobby_data->m_seed!="")
         player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
@@ -581,10 +570,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // up iteration above.  these disconnections will lead to Disconnect events
     // being generated and MPLobby::react(Disconnect) being called.  If this
     // disconnects the host, then a new host will be selected within that function.
-    for (std::vector<PlayerConnectionPtr>::iterator drop_con_it = player_connections_to_drop.begin();
-         drop_con_it != player_connections_to_drop.end(); ++drop_con_it)
-    {
-        server.m_networking.Disconnect(*drop_con_it);
+    for (PlayerConnectionPtr drop_con : player_connections_to_drop) {
+        server.m_networking.Disconnect(drop_con);
     }
 
     // remove empty lobby player entries.  these will occur if AIs are dropped
@@ -607,10 +594,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
     // assign unique names / colours to any lobby entry that lacks them, or
     // remove empire / colours from observers
-    for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
-         player_setup_it != m_lobby_data->m_players.end(); ++player_setup_it)
-    {
-        PlayerSetupData& psd = player_setup_it->second;
+    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data->m_players) {
+        PlayerSetupData& psd = entry.second;
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
             psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
@@ -646,7 +631,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.m_player_name.empty())
                 psd.m_player_name = UserString("PLAYER") + "_" + boost::lexical_cast<std::string>(nameless_player_count++);
             if (psd.m_empire_name.empty())
-                psd.m_empire_name = GenerateEmpireName(m_lobby_data->m_players);
+                psd.m_empire_name = psd.m_player_name;
             if (psd.m_starting_species_name.empty())
                 psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
         }
@@ -665,10 +650,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         m_lobby_data->m_save_game = new_file;
 
         // reset assigned empires in save game for all players.  new loaded game may not have the same set of empire IDs to choose from
-        for (std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
-             player_setup_it != m_lobby_data->m_players.end(); ++player_setup_it)
-        {
-            player_setup_it->second.m_save_game_empire_id = ALL_EMPIRES;
+        for (std::pair<int, PlayerSetupData>& psd : m_lobby_data->m_players) {
+            psd.second.m_save_game_empire_id = ALL_EMPIRES;
         }
 
         // refresh save game empire data
@@ -827,18 +810,18 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     // Ensure all players have unique non-empty names   // TODO: the uniqueness part...
     unsigned int player_num = 1;
-    for (std::vector<PlayerSetupData>::iterator psd_it = players.begin(); psd_it != players.end(); ++psd_it) {
-        if (psd_it->m_player_name.empty()) {
-            if (psd_it->m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                psd_it->m_player_name = "AI_" + boost::lexical_cast<std::string>(player_num++);
-            else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                psd_it->m_player_name = "Human_Player_" + boost::lexical_cast<std::string>(player_num++);
-            else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-                psd_it->m_player_name = "Observer_" + boost::lexical_cast<std::string>(player_num++);
-            else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-                psd_it->m_player_name = "Moderator_" + boost::lexical_cast<std::string>(player_num++);
+    for (PlayerSetupData& psd : players) {
+        if (psd.m_player_name.empty()) {
+            if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                psd.m_player_name = "AI_" + boost::lexical_cast<std::string>(player_num++);
+            else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                psd.m_player_name = "Human_Player_" + boost::lexical_cast<std::string>(player_num++);
+            else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                psd.m_player_name = "Observer_" + boost::lexical_cast<std::string>(player_num++);
+            else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                psd.m_player_name = "Moderator_" + boost::lexical_cast<std::string>(player_num++);
             else
-                psd_it->m_player_name = "Player_" + boost::lexical_cast<std::string>(player_num++);
+                psd.m_player_name = "Player_" + boost::lexical_cast<std::string>(player_num++);
         }
     }
 
@@ -868,10 +851,7 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         }
 
         // add player setup data for each player in saved gamed
-        for (std::vector<PlayerSaveHeaderData>::const_iterator save_data_it = player_save_header_data.begin();
-             save_data_it != player_save_header_data.end(); ++save_data_it)
-        {
-            const PlayerSaveHeaderData& psgd = *save_data_it;
+        for (const PlayerSaveHeaderData& psgd : player_save_header_data) {
             if (psgd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER ||
                 psgd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
             {
@@ -889,9 +869,9 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     m_num_expected_players = players.size();
     m_expected_ai_player_names.clear();
-    for (std::vector<PlayerSetupData>::const_iterator it = players.begin(); it != players.end(); ++it)
-        if (it->m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_player_names.insert(it->m_player_name);
+    for (const PlayerSetupData& psd : players)
+        if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            m_expected_ai_player_names.insert(psd.m_player_name);
 
     server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
 
@@ -1017,12 +997,10 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     std::vector<PlayerSetupData> player_setup_data;
     m_expected_ai_player_names.clear();
 
-    for (std::list<std::pair<int, PlayerSetupData> >::const_iterator it = m_lobby_data->m_players.begin();
-         it != m_lobby_data->m_players.end(); ++it)
-    {
-        player_setup_data.push_back(it->second);
-        if (it->second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_player_names.insert(it->second.m_player_name);
+    for (std::pair<int, PlayerSetupData>& psd : m_lobby_data->m_players) {
+        player_setup_data.push_back(psd.second);
+        if (psd.second.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            m_expected_ai_player_names.insert(psd.second.m_player_name);
     }
 
     server.CreateAIClients(player_setup_data, m_lobby_data->m_ai_aggr);
@@ -1255,8 +1233,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             return discard_event();
         }
 
-        for (OrderSet::const_iterator it = order_set->begin(); it != order_set->end(); ++it) {
-            OrderPtr order = it->second;
+        for (const std::map<int, OrderPtr>::value_type& entry : *order_set) {
+            OrderPtr order = entry.second;
             if (!order) {
                 ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
                 continue;

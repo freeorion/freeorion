@@ -9,7 +9,7 @@ from common import configure_logging
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
 from common.option_tools import parse_config
-parse_config(fo.getAIConfigStr(), fo.getUserConfigDir())
+parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())
 
 from freeorion_tools import patch_interface
 patch_interface()
@@ -30,6 +30,8 @@ import TechsListsAI
 from AIDependencies import INVALID_ID
 from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
 from common.listeners import listener
+from character.character_module import Aggression
+from character.character_strings_module import get_trait_name_aggression, possible_capitals
 
 main_timer = Timer('timer', write_log=True)
 turn_timer = Timer('bucket', write_log=True)
@@ -43,26 +45,9 @@ except ImportError:
     pass
 
 
-ai_config = fo.getAIConfigStr()
-print "Initialized FreeOrion Python AI with ai_config string '%s'" % ai_config
 user_dir = fo.getUserDataDir()
 print "Path to folder for user specific data: %s" % user_dir
 print 'Python paths', sys.path
-
-_aggression_names = {fo.aggression.beginner: "GSETUP_BEGINNER",
-                     fo.aggression.turtle: "GSETUP_TURTLE",
-                     fo.aggression.cautious: "GSETUP_CAUTIOUS",
-                     fo.aggression.typical: "GSETUP_TYPICAL",
-                     fo.aggression.aggressive: "GSETUP_AGGRESSIVE",
-                     fo.aggression.maniacal: "GSETUP_MANIACAL"}
-
-_capitals = {fo.aggression.beginner: UserStringList("AI_CAPITOL_NAMES_BEGINNER"),
-             fo.aggression.turtle: UserStringList("AI_CAPITOL_NAMES_TURTLE"),
-             fo.aggression.cautious: UserStringList("AI_CAPITOL_NAMES_CAUTIOUS"),
-             fo.aggression.typical: UserStringList("AI_CAPITOL_NAMES_TYPICAL"),
-             fo.aggression.aggressive: UserStringList("AI_CAPITOL_NAMES_AGGRESSIVE"),
-             fo.aggression.maniacal: UserStringList("AI_CAPITOL_NAMES_MANIACAL")}
-
 
 # Mock to have proper inspection and autocomplete for this variable
 class AIStateMock(AIstate.AIstate):
@@ -75,7 +60,7 @@ diplomatic_corp = None
 
 
 @chat_on_error
-def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invalid-name
+def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=invalid-name
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
     empire = fo.getEmpire()
@@ -84,12 +69,14 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
         return
 
     turn_timer.start("Server Processing")
-    print "New game started, AI Aggression level %d (%s)" % (aggression, UserString(_aggression_names[aggression]))
 
     # initialize AIstate
     global foAIstate
     print "Initializing foAIstate..."
-    foAIstate = AIstate.AIstate(aggression)
+    foAIstate = AIstate.AIstate(aggression_input)
+    aggression_trait = foAIstate.character.get_trait(Aggression)
+    print "New game started, AI Aggression level %d (%s)" % (
+        aggression_trait.key, get_trait_name_aggression(foAIstate.character))
     foAIstate.session_start_cleanup()
     print "Initialization of foAIstate complete!"
     print "Trying to rename our homeworld..."
@@ -97,7 +84,7 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
     universe = fo.getUniverse()
     if planet_id is not None and planet_id != INVALID_ID:
         planet = universe.getPlanet(planet_id)
-        new_name = " ".join([random.choice(_capitals.get(aggression, []) or [" "]).strip(), planet.name])
+        new_name = " ".join([random.choice(possible_capitals(foAIstate.character)).strip(), planet.name])
         print "    Renaming to %s..." % new_name
         res = fo.issueRenameOrder(planet_id, new_name)
         print "    Result: %d; Planet is now named %s" % (res, planet.name)
@@ -105,9 +92,8 @@ def startNewGame(aggression=fo.aggression.aggressive):  # pylint: disable=invali
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
-    diplomatic_corp = diplomatic_corp_configs.get(aggression, DiplomaticCorp.DiplomaticCorp)()
+    diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
-
 
 @chat_on_error
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
@@ -126,10 +112,11 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
         foAIstate.session_start_cleanup()
         print_error("Fail to load aiState form saved game: %s" % e)
 
+    aggression_trait = foAIstate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
                                fo.aggression.maniacal: DiplomaticCorp.ManiacalDiplomaticCorp}
     global diplomatic_corp
-    diplomatic_corp = diplomatic_corp_configs.get(foAIstate.aggression, DiplomaticCorp.DiplomaticCorp)()
+    diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
 
 
@@ -232,7 +219,7 @@ def generateOrders():  # pylint: disable=invalid-name
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, _aggression_names[foAIstate.aggression], greet))
+        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
     foAIstate.split_new_fleets()
@@ -290,4 +277,4 @@ def declare_war_on_all():  # pylint: disable=invalid-name
             fo.sendDiplomaticMessage(msg)
 
 
-init_handlers(fo.getAIConfigStr(), fo.getAIDir())
+init_handlers(fo.getOptionsDBOptionStr("ai-config"), fo.getAIDir())

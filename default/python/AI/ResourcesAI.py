@@ -530,7 +530,7 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
                     focus_manager.bake_future_focus(pid, RESEARCH, False)
                 continue
             if adj_round == 3:  # take research at planets where can do reasonable balance
-                if has_force or (foAI.foAIstate.aggression < fo.aggression.aggressive) or (target_rp >= priority_ratio * cumulative_pp):
+                if has_force or foAI.foAIstate.character.may_dither_focus_to_gain_research() or (target_rp >= priority_ratio * cumulative_pp):
                     continue
                 pop = planet.currentMeterValue(fo.meterType.population)
                 t_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
@@ -550,9 +550,9 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
     ratios.sort()
     printed_header = False
     got_algo = tech_is_complete("LRN_ALGO_ELEGANCE")
-    for ratio, pid, info in ratios:
+    for ratio, pid, pinfo in ratios:
         if priority_ratio < (target_rp / (target_pp + 0.0001)):  # we have enough RP
-            if ratio < 1.1 and foAI.foAIstate.aggression > fo.aggression.cautious:  # but wait, RP is still super cheap relative to PP, maybe will take more RP
+            if ratio < 1.1 and foAI.foAIstate.character.may_research_heavily():  # but wait, RP is still super cheap relative to PP, maybe will take more RP
                 if priority_ratio < 1.5 * (target_rp / (target_pp + 0.0001)):  # yeah, really a glut of RP, stop taking RP
                     break
             else:  # RP not super cheap & we have enough, stop taking it

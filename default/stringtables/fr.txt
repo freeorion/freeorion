@@ -133,6 +133,9 @@ En pause
 RESUME
 Reprendre
 
+DIFFICULTY
+Difficulté
+
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
 NEW_FLEET_NAME
@@ -1450,7 +1453,10 @@ OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Fixe la taille des icônes de système stellaire au-dessous de laquelle les icônes minimales affichées auront une taille fixe.
 
 OPTIONS_DB_UI_TOOLTIP_DELAY
-Fixe le délai, en millisecondes, d'apparition dans l'interface utilisateur des bulles d'information lors du survol par le curseur.
+Fixe le délai d'apparition dans l'interface utilisateur des bulles d'information, en millisecondes.
+
+OPTIONS_DB_UI_TOOLTIP_LONG_DELAY
+Fixe le délai d'apparition dans l'interface utilisateur des bulles d'information alternatives, en millisecondes.
 
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
 Lors d'une recherche dans l'Encyclopédie, vérifier les correspondances dans le contenu des articles.
@@ -2064,6 +2070,9 @@ Agressif
 GSETUP_MANIACAL
 Maniaque
 
+# Random species selection description
+GSETUP_SPECIES_RANDOM_DESC
+Sélectionne au hasard une espèce parmi celles jouables.
 
 ##
 ## About dialog
@@ -2695,41 +2704,80 @@ MAP_INDICATOR_FPS
 MAP_BTN_MENU  # translated
 Menu
 
+MAP_BTN_MENU_DESC
+''''''
+
 MAP_BTN_AUTO_ADVANCE_ENABLED
 Avance Tour Automatique
+
+MAP_BTN_AUTO_ADVANCE_ENABLED_DESC
+''''''
 
 MAP_BTN_MANUAL_TURN_ADVANCE
 Avance Tour Manuelle
 
+MAP_BTN_MANUAL_TURN_ADVANCE_DESC
+''''''
+
 MAP_BTN_MODERATOR
 Modérateur
+
+MAP_BTN_MODERATOR_DESC
+''''''
 
 MAP_BTN_OBJECTS
 Objets
 
+MAP_BTN_OBJECTS_DESC
+''''''
+
 MAP_BTN_SITREP
 Rapport de tour
+
+MAP_BTN_SITREP_DESC
+''''''
 
 MAP_BTN_RESEARCH
 Recherche
 
+MAP_BTN_RESEARCH_DESC
+''''''
+
 MAP_BTN_PRODUCTION  # translated
 Production
+
+MAP_BTN_PRODUCTION_DESC
+''''''
 
 MAP_BTN_DESIGN
 Conception
 
+MAP_BTN_DESIGN_DESC
+''''''
+
 MAP_BTN_GRAPH
 Graphiques
+
+MAP_BTN_GRAPH_DESC
+''''''
 
 MAP_BTN_PEDIA
 Encyclopédie
 
+MAP_BTN_PEDIA_DESC
+''''''
+
 MAP_BTN_EMPIRES  # translated
 Empires
 
+MAP_BTN_EMPIRES_DESC
+''''''
+
 MAP_BTN_MESSAGES  # translated
 Messages
+
+MAP_BTN_MESSAGES_DESC
+''''''
 
 MAP_PRODUCTION_TITLE  # translated
 Production
@@ -3021,6 +3069,24 @@ Espèce <i>%2%</i>
 #TT_FIELD
 #<i>%2%</i>
 
+TT_FIGHTER_LAUNCH
+Lancement
+
+# %1% number of fighters
+# %2% damage per fighter
+TT_FIGHTER_DAMAGE
+%1% en Attaque * %2% de Dommages
+
+# Represent a value out of a possible total value
+# %1% number
+# %2% number
+TT_N_OF_N
+%1% sur %2%
+
+# %1% combat round
+TT_COMBAT_ROUND
+Passe %1%:
+
 TT_UNKNOWN
 Inconnu
 
@@ -3193,6 +3259,15 @@ Total des troupes d'Infanterie à bord de cet astronef.
 
 SHIP_FIGHTERS_TITLE
 Chasseurs
+
+SHIP_FIGHTER_BAY_SUMMARY
+Capacité Lancement
+
+SHIP_FIGHTER_HANGAR_SUMMARY
+Chasseurs Disponibles
+
+SHIP_FIGHTERS_DAMAGE_TOTAL
+Dommages Totaux
 
 SHIP_FIGHTERS_STAT
 Total des chasseurs à bord de cet astronef.
@@ -3528,7 +3603,7 @@ Production %1% : File d'Attente
 # %3% production points used per turn.
 # %4% production points available per turn.
 PRODUCTION_WND_PROGRESS
-'''%1% / %2% PP
+'''%1%%% achevé
 + %3% / %4% PP/tour sur cible'''
 
 # %1% location where the item is produced.

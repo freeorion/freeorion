@@ -5,8 +5,8 @@ ShipDesign
     parts = [
         "SR_WEAPON_2_1"
         "SR_WEAPON_2_1"
-        "SR_WEAPON_2_1"
         "AR_ZORTRIUM_PLATE"
-        "FU_BASIC_TANK"
+        "AR_ZORTRIUM_PLATE"
+        "FU_IMPROVED_ENGINE_COUPLINGS"
     ]
     model = "mark1"

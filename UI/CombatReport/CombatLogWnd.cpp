@@ -68,10 +68,10 @@ namespace {
 
     std::map<int, int> CountByOwner(const std::set<int>& owners, const std::set<int>& objects) {
         std::map<int, int> objects_per_owner;
-        for (std::set<int>::const_iterator it = owners.begin(); it != owners.end(); ++it)
-            objects_per_owner[*it] = 0;
-        for (std::set<int>::const_iterator it = objects.begin(); it != objects.end(); ++it) {
-            TemporaryPtr<const UniverseObject> object = Objects().Object(*it);
+        for (int owner_id : owners)
+            objects_per_owner[owner_id] = 0;
+        for (int obj_id : objects) {
+            TemporaryPtr<const UniverseObject> object = Objects().Object(obj_id);
             if (object && (
                     object->ObjectType() == OBJ_SHIP || (
                         object->GetMeter(METER_POPULATION) &&
@@ -149,8 +149,8 @@ namespace {
 
     CombatLogAccordionPanel::~CombatLogAccordionPanel() {
         if (!IsCollapsed() && !details.empty()) {
-            for (std::vector<GG::Wnd *>::iterator it = details.begin(); it != details.end(); ++it) {
-                delete *it;
+            for (GG::Wnd* wnd : details) {
+                delete wnd;
             }
         }
     }
@@ -159,8 +159,8 @@ namespace {
         DebugLogger() << "Expand/Collapse of detailed combat log.";
         bool new_collapsed = !IsCollapsed();
         if (new_collapsed) {
-            for (std::vector<GG::Wnd*>::iterator it = details.begin(); it != details.end(); ++it) {
-                GetLayout()->Remove(*it);
+            for (GG::Wnd* wnd : details) {
+                GetLayout()->Remove(wnd);
             }
         } else {
             if (details.empty()) {
@@ -168,8 +168,8 @@ namespace {
                 log.PopulateWithFlatLogs(Width(), viewing_empire_id, details, event, detail_text);
             }
 
-            for (std::vector<GG::Wnd*>::iterator it = details.begin(); it != details.end(); ++it) {
-                GetLayout()->Add(*it, GetLayout()->Rows(), 0);
+            for (GG::Wnd* wnd : details) {
+                GetLayout()->Add(wnd, GetLayout()->Rows(), 0);
             }
         }
         SetCollapsed(new_collapsed);
@@ -270,9 +270,8 @@ namespace {
                                  || scroll_panel->InClient(LowerRight())
                                  || scroll_panel->InClient(GG::Pt(Right(), Top()))
                                  || scroll_panel->InClient(GG::Pt(Left(), Bottom())))) {
-                for (std::vector<boost::signals2::connection>::iterator sig_it = m_signals.begin();
-                     sig_it != m_signals.end(); ++sig_it){
-                    sig_it->disconnect();
+                for (boost::signals2::connection& signal : m_signals) {
+                    signal.disconnect();
                 }
                 m_signals.clear();
 
@@ -327,11 +326,9 @@ void CombatLogWnd::CombatLogWndImpl::PopulateWithFlatLogs(GG::X w, int viewing_e
     }
 
     if (!event->AreSubEventsEmpty(viewing_empire_id)) {
-        std::vector<ConstCombatEventPtr> sub_events = event->SubEvents(viewing_empire_id);
-        for (std::vector<ConstCombatEventPtr>::iterator sub_event_it = sub_events.begin();
-             sub_event_it != sub_events.end(); ++sub_event_it) {
+        for (ConstCombatEventPtr sub_event : event->SubEvents(viewing_empire_id)) {
             std::vector<GG::Wnd*> flat_logs =
-                MakeCombatLogPanel(w, viewing_empire_id, *sub_event_it);
+                MakeCombatLogPanel(w, viewing_empire_id, sub_event);
             new_logs.insert(new_logs.end(), flat_logs.begin(), flat_logs.end());
         }
     }
@@ -413,15 +410,11 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
     AddRow(DecorateLinkText(summary_text.str()));
 
     // Write Logs
-    for (std::vector<CombatEventPtr>::const_iterator it = log.combat_events.begin();
-         it != log.combat_events.end(); ++it) {
-        DebugLogger() << "event debug info: " << it->get()->DebugString();
+    for (CombatEventPtr event : log.combat_events) {
+        DebugLogger() << "event debug info: " << event->DebugString();
 
-        std::vector<GG::Wnd *> flat_logs =
-            MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, *it);
-        for (std::vector<GG::Wnd *>::iterator log_it = flat_logs.begin();
-             log_it != flat_logs.end(); ++log_it) {
-            AddRow(*log_it);
+        for (GG::Wnd* wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {
+            AddRow(wnd);
         }
     }
 

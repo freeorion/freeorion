@@ -366,10 +366,7 @@ ServerNetworking::const_established_iterator ServerNetworking::established_end()
 
 int ServerNetworking::NewPlayerID() const {
     int biggest_current_player_id(0);
-    for (PlayerConnections::const_iterator it = m_player_connections.begin();
-         it != m_player_connections.end(); ++it)
-    {
-        const PlayerConnectionPtr player = *it;
+    for (const PlayerConnectionPtr player : m_player_connections) {
         int player_id = player->PlayerID();
         if (player_id != INVALID_PLAYER_ID && player_id > biggest_current_player_id)
             biggest_current_player_id = player_id;
@@ -387,10 +384,7 @@ bool ServerNetworking::PlayerIsHost(int player_id) const {
 }
 
 bool ServerNetworking::ModeratorsInGame() const {
-    for (PlayerConnections::const_iterator it = m_player_connections.begin();
-         it != m_player_connections.end(); ++it)
-    {
-        const PlayerConnectionPtr player = *it;
+    for (const PlayerConnectionPtr player : m_player_connections) {
         if (player->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
             return true;
     }

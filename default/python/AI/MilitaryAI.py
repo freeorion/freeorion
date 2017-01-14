@@ -58,10 +58,6 @@ def try_again(mil_fleet_ids, try_reset=False, thisround=""):
     get_military_fleets(try_reset=try_reset, thisround=thisround)
 
 
-def get_safety_factor():
-    return [4.0, 3.0, 2.0, 1.5, 1.2, 1.0][foAI.foAIstate.aggression]
-
-
 def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False, repair_limit=0.70):
     """Returns tuple of lists: (ids_needing_repair, ids_not)."""
     fleet_buckets = [[], []]
@@ -198,7 +194,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     else:
         threat_bias = 0
 
-    safety_factor = get_safety_factor()
+    safety_factor = foAI.foAIstate.character.military_safety_factor()
 
     num_targets = max(10, PriorityAI.allotted_outpost_targets)
     top_target_planets = ([pid for pid, pscore, trp in AIstate.invasionTargets[:PriorityAI.allottedInvasionTargets] if pscore > 20] +

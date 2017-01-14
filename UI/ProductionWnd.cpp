@@ -121,16 +121,15 @@ namespace {
             else
                 myQuantSet.insert(quantity);
 
-            for (std::set<int>::iterator it = myQuantSet.begin(); it != myQuantSet.end(); ++it)
-            {
-                QuantRow* row =  new QuantRow(*it, build.item.design_id, nwidth, h, inProgress, amBlockType);
+            for (int quantity : myQuantSet) {
+                QuantRow* row =  new QuantRow(quantity, build.item.design_id, nwidth, h, inProgress, amBlockType);
                 GG::DropDownList::iterator latest_it = Insert(row);
 
                 if (amBlockType) {
-                    if (build.blocksize == *it)
+                    if (build.blocksize == quantity)
                         Select(latest_it);
                 } else {
-                    if (build.remaining == *it)
+                    if (build.remaining == quantity)
                         Select(latest_it);
                 }
             }
@@ -296,7 +295,7 @@ namespace {
 
         // %1% / %2%  +  %3% / %4% PP/turn
         main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_PROGRESS"))
-                        % DoubleToString(progress, 3, false)
+                        % DoubleToString(progress*100.0f, 3, false)
                         % DoubleToString(total_cost, 3, false)
                         % DoubleToString(allocation, 3, false)
                         % DoubleToString(max_allocation, 3, false)) + "\n";
@@ -338,15 +337,17 @@ namespace {
             if (empire)
                 boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
             total_cost *= elem.blocksize;
+
             float per_turn_cost = total_cost / std::max(1, minimum_turns);
-            float progress = empire ? empire->ProductionStatus(queue_index) : 0.0f;
-            if (progress == -1.0f)
-                progress = 0.0f;
+
+            float pp_accumulated = empire ? empire->ProductionStatus(queue_index) : 0.0f; // returns as PP
+            if (pp_accumulated == -1.0f)
+                pp_accumulated = 0.0f;
 
             panel = new QueueProductionItemPanel(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
                                                  elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                 static_cast<int>(progress / std::max(1e-6f, per_turn_cost)),
-                                                 std::fmod(progress, per_turn_cost) / std::max(1e-6f, per_turn_cost));
+                                                 static_cast<int>(pp_accumulated / std::max(1e-6f, per_turn_cost)),
+                                                 std::fmod(pp_accumulated, per_turn_cost) / std::max(1e-6f, per_turn_cost));
             push_back(panel);
 
             // Since this is only called during PreRender force panel to PreRender()
@@ -372,10 +373,7 @@ namespace {
         virtual void Disable(bool b) {
             GG::ListBox::Row::Disable(b);
 
-            for (std::vector<GG::Control*>::iterator it = this->m_cells.begin();
-                 it != this->m_cells.end(); ++it)
-            {
-                GG::Control* ctrl = *it;
+            for (GG::Control* ctrl : m_cells) {
                 if (ctrl)
                     ctrl->Disable(this->Disabled());
             }
@@ -999,13 +997,12 @@ void ProductionWnd::UpdateQueue() {
     if (!empire)
         return;
 
-    const ProductionQueue& queue = empire->GetProductionQueue();
-
     int i = 0;
-    for (ProductionQueue::const_iterator it = queue.begin(); it != queue.end(); ++it, ++i) {
-        QueueRow* row = new QueueRow(queue_lb->RowWidth(), *it, i);
+    for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
+        QueueRow* row = new QueueRow(queue_lb->RowWidth(), elem, i);
         GG::Connect(row->RowQuantChangedSignal,     &ProductionWnd::ChangeBuildQuantityBlockSlot, this);
         queue_lb->Insert(row);
+        ++i;
     }
 
     // Restore the list scroll state
@@ -1050,19 +1047,16 @@ void ProductionWnd::UpdateInfoPanel() {
 
         float available_pp_at_loc = 0.0f, allocated_pp_at_loc = 0.0f;   // for the resource sharing group containing the selected production location
 
-        for (std::map<std::set<int>, float>::const_iterator map_it = available_pp.begin();
-             map_it != available_pp.end(); ++map_it)
-        {
-            if (map_it->first.find(prod_loc_id) != map_it->first.end()) {
-                available_pp_at_loc = map_it->second;
+        for (const std::map<std::set<int>, float>::value_type& map : available_pp) {
+            if (map.first.find(prod_loc_id) != map.first.end()) {
+                available_pp_at_loc = map.second;
                 break;
             }
         }
-                for (std::map<std::set<int>, float>::const_iterator map_it = allocated_pp.begin();
-             map_it != allocated_pp.end(); ++map_it)
-        {
-            if (map_it->first.find(prod_loc_id) != map_it->first.end()) {
-                allocated_pp_at_loc = map_it->second;
+
+        for (const std::map<std::set<int>, float>::value_type& map : allocated_pp) {
+            if (map.first.find(prod_loc_id) != map.first.end()) {
+                allocated_pp_at_loc = map.second;
                 break;
             }
         }

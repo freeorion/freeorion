@@ -1,255 +1,227 @@
 <?xml version="1.0"?>
 <GG::XMLDoc>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Desert01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Desert01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/yellow_atmosphere.png</filename>
-        <alpha>230</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/yellow_atmosphere.png"
+        alpha="230"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Desert02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Desert02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/yellow_atmosphere.png</filename>
-        <alpha>230</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/yellow_atmosphere.png"
+        alpha="230"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Desert03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Desert03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/yellow_atmosphere.png</filename>
-        <alpha>230</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/yellow_atmosphere.png"
+        alpha="230"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/GasGiant01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/GasGiant01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/yellow_atmosphere.png</filename>
-        <alpha>150</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/yellow_atmosphere.png"
+        alpha="150"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/GasGiant02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/GasGiant02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/blue_atmosphere.png</filename>
-        <alpha>150</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/blue_atmosphere.png"
+        alpha="150"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/GasGiant03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/GasGiant03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/orange_atmosphere.png</filename>
-        <alpha>150</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/orange_atmosphere.png"
+        alpha="150"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/GasGiant04.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/GasGiant04.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/green_atmosphere.png</filename>
-        <alpha>150</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/green_atmosphere.png"
+        alpha="150"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Inferno01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Inferno01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/red_atmosphere.png</filename>
-        <alpha>230</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/red_atmosphere.png"
+        alpha="230"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Inferno02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Inferno02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/red_atmosphere.png</filename>
-        <alpha>230</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/red_atmosphere.png"
+        alpha="230"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Inferno03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Inferno03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/red_atmosphere.png</filename>
-        <alpha>170</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/red_atmosphere.png"
+        alpha="170"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Ocean01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Ocean01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/purple_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/purple_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Ocean02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Ocean02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/purple_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/purple_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Ocean03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Ocean03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/purple_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/purple_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Radiated01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Radiated01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/pink_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/pink_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Radiated02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Radiated02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/pink_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/pink_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Radiated03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Radiated03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/pink_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/pink_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Swamp01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Swamp01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/green_atmosphere.png</filename>
-        <alpha>150</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/green_atmosphere.png"
+        alpha="150"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Swamp02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Swamp02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/green_atmosphere.png</filename>
-        <alpha>150</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/green_atmosphere.png"
+        alpha="150"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Swamp03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Swamp03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/green_atmosphere.png</filename>
-        <alpha>150</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/green_atmosphere.png"
+        alpha="150"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Terran01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Terran01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/blue_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/blue_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Terran02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Terran02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/blue_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/blue_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Terran03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Terran03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/blue_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/blue_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Toxic01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Toxic01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/turquoise_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/turquoise_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Toxic02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Toxic02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/turquoise_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/turquoise_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Toxic03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Toxic03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/turquoise_atmosphere.png</filename>
-        <alpha>204</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/turquoise_atmosphere.png"
+        alpha="204"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Tundra01.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Tundra01.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/white_atmosphere.png</filename>
-        <alpha>255</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/white_atmosphere.png"
+        alpha="255"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Tundra02.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Tundra02.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/white_atmosphere.png</filename>
-        <alpha>255</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/white_atmosphere.png"
+        alpha="255"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
-  <PlanetAtmosphereData>
-    <planet_filename>planets/Tundra03.png</planet_filename>
+  <PlanetAtmosphereData planet_filename="planets/Tundra03.png">
     <atmospheres>
-      <Atmosphere>
-        <filename>planets/atmospheres/white_atmosphere.png</filename>
-        <alpha>255</alpha>
-      </Atmosphere>
+      <Atmosphere
+        filename="planets/atmospheres/white_atmosphere.png"
+        alpha="255"
+      />
     </atmosphere>
   </PlanetAtmosphereData>
 

@@ -113,15 +113,15 @@ public:
         // We want to measure health on a single scale that shows as much as possible
         // while fitting the data of both sides.
         // Therefore we make the side with more health fill the window
-        for (std::map<int, CombatSummary>::const_iterator it = combat_summaries.begin(); it != combat_summaries.end(); ++it ) {
-            m_max_total_max_health = std::max( it->second.total_max_health, m_max_total_max_health );
-            m_max_units_on_a_side = std::max( static_cast<int>(it->second.unit_summaries.size()), m_max_units_on_a_side );
-            m_sum_of_max_max_healths += it->second.max_max_health;
+        for (const std::map<int, CombatSummary>::value_type& combat_summary : combat_summaries) {
+            m_max_total_max_health = std::max(combat_summary.second.total_max_health, m_max_total_max_health);
+            m_max_units_on_a_side = std::max(static_cast<int>(combat_summary.second.unit_summaries.size()), m_max_units_on_a_side);
+            m_sum_of_max_max_healths += combat_summary.second.max_max_health;
 
             if (0.f > m_min_of_max_max_healths) {
-                m_min_of_max_max_healths = it->second.total_max_health;
+                m_min_of_max_max_healths = combat_summary.second.total_max_health;
             } else {
-                m_min_of_max_max_healths = std::min(it->second.max_max_health, m_min_of_max_max_healths);
+                m_min_of_max_max_healths = std::min(combat_summary.second.max_max_health, m_min_of_max_max_healths);
             }
         }
 
@@ -365,11 +365,9 @@ public:
     }
 
     void MakeBars() {
-        for (CombatSummary::UnitSummaries::const_iterator it = m_side_summary.unit_summaries.begin();
-                it != m_side_summary.unit_summaries.end();
-                ++it) {
-            if ((*it)->max_health > 0) {
-                m_participant_bars.push_back(new ParticipantBar(**it, m_sizer));
+        for (CombatSummary::ParticipantSummaryPtr unit : m_side_summary.unit_summaries) {
+            if (unit->max_health > 0) {
+                m_participant_bars.push_back(new ParticipantBar(*unit, m_sizer));
                 AttachChild(m_participant_bars.back());
             }
         }
@@ -386,11 +384,7 @@ public:
         alive_ll.y += ClientHeight();
         GG::Pt dead_lr = ClientSize();
 
-        for (std::vector<ParticipantBar*>::const_iterator it = m_participant_bars.begin();
-                it != m_participant_bars.end();
-                ++it)
-        {
-            ParticipantBar* bar = *it;
+        for (ParticipantBar* bar : m_participant_bars) {
             bar->DoLayout(m_y_axis_label->MinUsableSize().x);
             if (bar->Alive()) {
                 bar->MoveBottomTo(alive_ll);
@@ -522,9 +516,8 @@ private:
 
     float MaxMaxHealth() {
         float max_health = -1.0f;
-        for (CombatSummary::UnitSummaries::const_iterator it = m_side_summary.unit_summaries.begin();
-             it != m_side_summary.unit_summaries.end(); ++it)
-        { max_health = std::max(max_health, (*it)->max_health); }
+        for (CombatSummary::ParticipantSummaryPtr participant : m_side_summary.unit_summaries)
+        { max_health = std::max(max_health, participant->max_health); }
         return max_health;
     }
 };
@@ -563,17 +556,16 @@ public:
     }
 
     virtual ~OptionsBar() {
-        for (std::vector<ToggleData*>::iterator it = m_toggles.begin(); it != m_toggles.end(); ++it)
-        { delete *it; }
+        for (ToggleData* data : m_toggles)
+        { delete data; }
         m_toggles.clear();
     }
 
     virtual GG::Pt MinUsableSize() const {
         GG::Pt min_size(GG::X0, GG::Y0);
 
-        for (std::vector<ToggleData*>::const_iterator it = m_toggles.begin();
-             it != m_toggles.end(); ++it)
-        { min_size.x += (*it)->button->Width() + OPTION_BUTTON_PADDING; }
+        for (ToggleData* data : m_toggles)
+        { min_size.x += data->button->Width() + OPTION_BUTTON_PADDING; }
 
         min_size.y = OPTION_BAR_HEIGHT;
 
@@ -584,19 +576,18 @@ public:
         boost::shared_ptr<GG::Font> cui_font = ClientUI::GetFont();
 
         GG::Pt pos(GG::X(0), GG::Y(0));
-        for (std::vector<ToggleData*>::iterator it = m_toggles.begin(); it != m_toggles.end(); ++it) {
-            ToggleData& toggle = **it;
-            if (!toggle.button->Children().empty()) {
+        for (ToggleData* data : m_toggles) {
+            if (!data->button->Children().empty()) {
                 //Assume first child of the button is the label
-                if (const GG::TextControl* label = dynamic_cast<GG::TextControl const*>(toggle.button->Children().front()))
+                if (const GG::TextControl* label = dynamic_cast<GG::TextControl const*>(data->button->Children().front()))
                 {
-                    toggle.button->Resize(
+                    data->button->Resize(
                         GG::Pt(label->MinUsableSize().x + OPTION_BUTTON_PADDING,
                                OPTION_BUTTON_HEIGHT));
                 }
             }
-            toggle.button->MoveTo(pos);
-            pos.x += toggle.button->Width() + OPTION_BUTTON_PADDING;
+            data->button->MoveTo(pos);
+            pos.x += data->button->Width() + OPTION_BUTTON_PADDING;
         }
     }
 
@@ -695,8 +686,7 @@ void GraphicalSummaryWnd::DoLayout() {
     m_sizer->SetAvailableSize(space_for_bars);
     m_options_bar->DoLayout();
 
-    for (std::vector<SideBar*>::iterator it = m_side_boxes.begin(); it != m_side_boxes.end(); ++it ) {
-        SideBar* box = *it;
+    for (SideBar* box : m_side_boxes) {
         box->MoveTo(ul);
         box->DoLayout();
         ul.y += box->Height() + SIDE_BOX_MARGIN;
@@ -721,8 +711,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
         ErrorLogger() << "CombatReportWnd::CombatReportPrivate::MakeSummaries: Could not find log: " << log_id;
     } else {
         const CombatLog& log = GetCombatLog(log_id);
-        for (std::set<int>::const_iterator it = log.object_ids.begin(); it != log.object_ids.end(); ++it) {
-            int object_id = *it;
+        for (int object_id : log.object_ids) {
             if (object_id < 0)
                 continue;   // fighters and invalid objects
             TemporaryPtr<UniverseObject> object = GetUniverseObject(object_id);
@@ -743,11 +732,11 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             }
         }
 
-        for (std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it) {
-            DebugLogger() << "MakeSummaries: empire " << it->first
-                          << " total health: " << it->second.total_current_health
-                          << " max health: " << it->second.total_max_health
-                          << " units: " << it->second.unit_summaries.size();
+        for (std::map<int, CombatSummary>::value_type& summary : m_summaries) {
+            DebugLogger() << "MakeSummaries: empire " << summary.first
+                          << " total health: " << summary.second.total_current_health
+                          << " max health: " << summary.second.total_max_health
+                          << " units: " << summary.second.unit_summaries.size();
         }
     }
 
@@ -755,9 +744,8 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
 }
 
 void GraphicalSummaryWnd::DeleteSideBars() {
-    for (std::vector<SideBar*>::iterator it = m_side_boxes.begin();
-         it != m_side_boxes.end(); ++it)
-    { DeleteChild(*it); }
+    for (SideBar* box : m_side_boxes)
+    { DeleteChild(box); }
     m_side_boxes.clear();
 }
 
@@ -766,10 +754,10 @@ void GraphicalSummaryWnd::GenerateGraph() {
 
     m_sizer.reset(new BarSizer(m_summaries, ClientSize()));
 
-    for (std::map<int, CombatSummary>::iterator it = m_summaries.begin(); it != m_summaries.end(); ++it) {
-        if (it->second.total_max_health > EPSILON) {
-            it->second.Sort();
-            SideBar* box = new SideBar(it->second, *m_sizer);
+    for (std::map<int, CombatSummary>::value_type& summary : m_summaries) {
+        if (summary.second.total_max_health > EPSILON) {
+            summary.second.Sort();
+            SideBar* box = new SideBar(summary.second, *m_sizer);
             m_side_boxes.push_back(box);
             AttachChild(box);
         }

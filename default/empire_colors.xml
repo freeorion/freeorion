@@ -1,21 +1,10 @@
 <?xml version="1.0"?>
-<!-- The Different formatting of the following colors is just to show that different methods are possible. -->
 <XMLDoc>
-<GG::Clr hex="00FF00"/>  <!-- Pure Green -->
-<GG::Clr hex="2020FFFF"/> <!-- Dark Blue -->
-<GG::Clr hex="FF00FFFF"/> <!-- Pure Magenta -->
-<GG::Clr> <!-- Pure Yellow -->
-   <red>255</red>
-   <green>255</green>
-   <blue>0</blue>
-   <alpha>255</alpha>
-</GG::Clr>
-<GG::Clr>   <!-- Pure Cyan -->
-   <red>0</red>
-   <green>255</green>
-   <blue>255</blue>
-   <alpha>255</alpha>
-</GG::Clr>
+<GG::Clr hex="00FF00"/> <!-- Pure Green -->
+<GG::Clr hex="2020FF"/> <!-- Dark Blue -->
+<GG::Clr hex="FF00FF"/> <!-- Pure Magenta -->
+<GG::Clr hex="FFFF00"/> <!-- Pure Yellow -->
+<GG::Clr hex="00FFFF"/> <!-- Pure Cyan -->
 <GG::Clr hex="801010"/> <!-- Dark Red -->
 <GG::Clr hex="FF8C00"/> <!-- Orange -->
 <GG::Clr hex="7200B3"/> <!-- Purple -->

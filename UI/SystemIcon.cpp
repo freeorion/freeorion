@@ -60,7 +60,7 @@ namespace {
             std::string retval;
             int start = 0;
 
-            for (std::set<int>::iterator it = owner_empire_ids.begin(); it != owner_empire_ids.end(); ++it) {
+            for (int empire_id : owner_empire_ids) {
                 int current_length = piece_length;
                 if (extra > 0) { // Use left over letters as long as we have them
                     ++current_length;
@@ -71,7 +71,7 @@ namespace {
                 utf8::utf32to8(name.begin() + start, name.begin() + start + current_length, std::back_inserter(piece));
 
                 GG::Clr empire_clr = ClientUI::TextColor();
-                const Empire* empire = GetEmpire(*it);
+                const Empire* empire = GetEmpire(empire_id);
                 if (empire)
                     empire_clr = empire->Color();
 
@@ -119,10 +119,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     std::set<int> owner_empire_ids;
     std::vector<TemporaryPtr<const Planet> > system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
 
-    for (std::vector<TemporaryPtr<const Planet> >::const_iterator planet_it = system_planets.begin();
-         planet_it != system_planets.end(); ++planet_it)
-    {
-        TemporaryPtr<const Planet> planet = *planet_it;
+    for (TemporaryPtr<const Planet> planet : system_planets) {
         int planet_id = planet->ID();
 
         if (known_destroyed_object_ids.find(planet_id) != known_destroyed_object_ids.end())
@@ -130,10 +127,8 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // is planet a capital?
         if (!capital) {
-            for (EmpireManager::const_iterator empire_it = empire_manager.begin();
-                 empire_it != empire_manager.end(); ++empire_it)
-            {
-                if (empire_it->second->CapitalID() == planet_id) {
+            for (const std::map<int, Empire*>::value_type& entry : empire_manager) {
+                if (entry.second->CapitalID() == planet_id) {
                     capital = true;
                     break;
                 }
@@ -142,10 +137,8 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // is planet a homeworld? (for any species)
         if (!homeworld) {
-            for (SpeciesManager::iterator species_it = species_manager.begin();
-                 species_it != species_manager.end(); ++species_it)
-            {
-                if (const Species* species = species_it->second) {
+            for (const std::map<std::string, Species*>::value_type& entry : species_manager) {
+                if (const Species* species = entry.second) {
                     const std::set<int>& homeworld_ids = species->Homeworlds();
                     if (homeworld_ids.find(planet_id) != homeworld_ids.end()) {
                         homeworld = true;
@@ -157,11 +150,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // does planet contain a shipyard?
         if (!has_shipyard) {
-            std::vector<TemporaryPtr<const Building> > buildings = Objects().FindObjects<const Building>(planet->BuildingIDs());
-            for (std::vector<TemporaryPtr<const Building> >::const_iterator building_it = buildings.begin();
-                 building_it != buildings.end(); ++building_it)
-            {
-                TemporaryPtr<const Building> building = *building_it;
+            for (TemporaryPtr<const Building> building : Objects().FindObjects<const Building>(planet->BuildingIDs())) {
                 int building_id = building->ID();
 
                 if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())

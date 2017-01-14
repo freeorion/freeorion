@@ -4,6 +4,7 @@ import random
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import AIDependencies
 import AIstate
+from character.character_module import Aggression
 import FleetUtilsAI
 import FreeOrionAI as foAI
 import PlanetUtilsAI
@@ -227,7 +228,7 @@ def generate_production_orders():
         fo.updateProductionQueue()
 
     building_expense = 0.0
-    building_ratio = [0.4, 0.35, 0.30][fo.empireID() % 3]
+    building_ratio = foAI.foAIstate.character.preferred_building_ratio([0.4, 0.35, 0.30])
     print "Buildings present on all owned planets:"
     for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
         planet = universe.getPlanet(pid)
@@ -374,13 +375,12 @@ def generate_production_orders():
 
     print "best_pilot_facilities: \n %s" % best_pilot_facilities
 
-    max_defense_portion = [0.7, 0.4, 0.3, 0.2, 0.1, 0.0][foAI.foAIstate.aggression]
-    aggression_index = max(1, foAI.foAIstate.aggression)
-    if ((current_turn % aggression_index) == 0) and foAI.foAIstate.aggression < fo.aggression.maniacal:
+    max_defense_portion = foAI.foAIstate.character.max_defense_portion()
+    if foAI.foAIstate.character.check_orbital_production():
         sys_orbital_defenses = {}
         queued_defenses = {}
         defense_allocation = 0.0
-        target_orbitals = min(int(((current_turn + 4) / (8.0 * aggression_index**1.5))**0.8), fo.aggression.maniacal - aggression_index)
+        target_orbitals = foAI.foAIstate.character.target_number_of_orbitals()
         print "Orbital Defense Check -- target Defense Orbitals: ", target_orbitals
         for element in production_queue:
             if (element.buildType == EmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.get_ship_role(element.designID) == ShipRoleType.BASE_DEFENSE):
@@ -560,7 +560,7 @@ def generate_production_orders():
 
     shipyard_type = fo.getBuildingType("BLD_SHIPYARD_BASE")
     building_name = "BLD_SHIPYARD_AST"
-    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.aggression > fo.aggression.beginner:
+    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
         queued_building_locs = [element.locationID for element in production_queue if (element.name == building_name)]
         if not queued_building_locs:
             building_type = fo.getBuildingType(building_name)
@@ -646,7 +646,7 @@ def generate_production_orders():
 
     building_name = "BLD_GAS_GIANT_GEN"
     max_gggs = 1
-    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.aggression > fo.aggression.beginner:
+    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
         queued_building_locs = [element.locationID for element in production_queue if (element.name == building_name)]
         building_type = fo.getBuildingType(building_name)
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):  # TODO: check to ensure that a resource center exists in system, or GGG would be wasted
@@ -673,7 +673,7 @@ def generate_production_orders():
                         print "Enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, universe.getPlanet(pid).name, res)
 
     building_name = "BLD_SOL_ORB_GEN"
-    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.aggression > fo.aggression.turtle:
+    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
         already_got_one = 99
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
             planet = universe.getPlanet(pid)
@@ -735,7 +735,7 @@ def generate_production_orders():
     building_name = "BLD_ART_BLACK_HOLE"
     if (
         empire.buildingTypeAvailable(building_name) and
-        foAI.foAIstate.aggression > fo.aggression.typical and
+        foAI.foAIstate.character.may_build_building(building_name) and
         len(AIstate.empireStars.get(fo.starType.red, [])) > 0
     ):
         already_got_one = False
@@ -784,7 +784,7 @@ def generate_production_orders():
                     print "problem queueing %s at planet %s" % (building_name, planet_used)
 
     building_name = "BLD_BLACK_HOLE_POW_GEN"
-    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.aggression > fo.aggression.cautious:
+    if empire.buildingTypeAvailable(building_name) and  foAI.foAIstate.character.may_build_building(building_name):
         already_got_one = False
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
             planet = universe.getPlanet(pid)
@@ -951,7 +951,7 @@ def generate_production_orders():
                 if universe.getBuilding(bldg).buildingTypeName == building_name:
                     res = fo.issueScrapOrder(bldg)
                     print "Tried scrapping %s at planet %s, got result %d" % (building_name, planet.name, res)
-        elif foAI.foAIstate.aggression > fo.aggression.typical and can_build_camp and (t_pop >= 36):
+        elif foAI.foAIstate.character.may_build_building(building_name) and can_build_camp and (t_pop >= 36):
             if (planet.focus == FocusType.FOCUS_GROWTH) or ("COMPUTRONIUM_SPECIAL" in planet.specials) or (pid == capital_id):
                 continue
                 # pass  # now that focus setting takes these into account, probably works ok to have conc camp, but let's not push it
@@ -1200,7 +1200,7 @@ def generate_production_orders():
             troopers_needed = max(0, int(min(0.99 + (current_turn/20.0 - total_available_troops)/max(2, prod_time - 1), total_military_ships/3 - total_troop_ships)))
             ship_number = troopers_needed
             per_turn_cost = (float(prod_cost) / prod_time)
-            if troopers_needed > 0 and total_pp > 3*per_turn_cost*queued_troop_ships and foAI.foAIstate.aggression >= fo.aggression.typical:
+            if troopers_needed > 0 and total_pp > 3*per_turn_cost*queued_troop_ships and foAI.foAIstate.character.may_produce_troops():
                 retval = fo.issueEnqueueShipProductionOrder(best_design_id, loc)
                 if retval != 0:
                     print "forcing %d new ship(s) to production queue: %s; per turn production cost %.1f" % (ship_number, best_design.name, ship_number*per_turn_cost)
@@ -1422,8 +1422,8 @@ def build_ship_facilities(bld_name, best_pilot_facilities, top_locs=None):
     universe = fo.getUniverse()
     empire = fo.getEmpire()
     total_pp = empire.productionPoints
-    min_aggr, prereq_bldg, this_cost, time = AIDependencies.SHIP_FACILITIES.get(bld_name, (None, '', -1, -1))
-    if min_aggr is None or min_aggr > foAI.foAIstate.aggression:
+    __, prereq_bldg, this_cost, time = AIDependencies.SHIP_FACILITIES.get(bld_name, (None, '', -1, -1))
+    if not foAI.foAIstate.character.may_build_building(bld_name):
         return
     bld_type = fo.getBuildingType(bld_name)
     if not empire.buildingTypeAvailable(bld_name):
@@ -1520,7 +1520,7 @@ def find_automatic_historic_analyzer_candidates():
         fo.aggression.maniacal: (25, 50, 100)
     }
 
-    min_pp, turn_trigger, min_pp_per_additional = conditions.get(foAI.foAIstate.aggression,
+    min_pp, turn_trigger, min_pp_per_additional = conditions.get(foAI.foAIstate.character.get_trait(Aggression).key,
                                                                  (ARB_LARGE_NUMBER, ARB_LARGE_NUMBER, ARB_LARGE_NUMBER))
     # If we can colonize good planets instead, do not build this.
     num_colony_targets = 0

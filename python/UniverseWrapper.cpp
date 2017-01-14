@@ -73,9 +73,8 @@ namespace {
 
     std::vector<std::string>SpeciesFoci(const Species& species) {
         std::vector<std::string> retval;
-        const std::vector<FocusType>& foci = species.Foci();
-        for (std::vector<FocusType>::const_iterator f_it = foci.begin(); f_it != foci.end(); ++f_it)
-            retval.push_back(f_it->Name());
+        for (const FocusType& focus : species.Foci())
+            retval.push_back(focus.Name());
         return retval;
     }
 
@@ -126,21 +125,17 @@ namespace {
     boost::function<bool(const Universe&, int, int, int)> SystemsConnectedFunc =                &SystemsConnectedP;
 
     std::vector<int>        ImmediateNeighborsP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
-        std::multimap<double, int> lanemap;
         std::vector<int> retval;
-        lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
-        for (std::multimap<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
-        { retval.push_back(it->second); }
+        for (const std::multimap<double, int>::value_type& entry : universe.ImmediateNeighbors(system1_id, empire_id))
+        { retval.push_back(entry.second); }
         return retval;
     }
     boost::function<std::vector<int> (const Universe&, int, int)> ImmediateNeighborsFunc =      &ImmediateNeighborsP;
 
     std::map<int,double>    SystemNeighborsMapP(const Universe& universe, int system1_id, int empire_id = ALL_EMPIRES) {
-        std::multimap<double, int> lanemap;
         std::map<int,double> retval;
-        lanemap = universe.ImmediateNeighbors(system1_id, empire_id);
-        for (std::multimap<double, int>::const_iterator it = lanemap.begin(); it != lanemap.end(); ++it)
-        { retval[it->second] = it->first; }
+        for (const std::multimap<double, int>::value_type& entry : universe.ImmediateNeighbors(system1_id, empire_id))
+        { retval[entry.second] = entry.first; }
         return retval;
     }
     boost::function<std::map<int, double> (const Universe&, int, int)> SystemNeighborsMapFunc = &SystemNeighborsMapP;
@@ -151,9 +146,8 @@ namespace {
 
     std::vector<std::string> ObjectSpecials(const UniverseObject& object) {
         std::vector<std::string> retval;
-        for (std::map<std::string, std::pair<int, float> >::const_iterator it = object.Specials().begin();
-             it != object.Specials().end(); ++it)
-        { retval.push_back(it->first); }
+        for (const std::map<std::string, std::pair<int, float>>::value_type& special : object.Specials())
+        { retval.push_back(special.first); }
         return retval;
     }
 
@@ -178,11 +172,9 @@ namespace {
     //std::vector<std::string>        (ShipDesign::*PartsSlotType)(ShipSlotType) const =          &ShipDesign::Parts;
 
     std::vector<int>        AttackStatsP(const ShipDesign& ship_design) {
-        const std::vector<std::string>& partslist = ship_design.Parts();
         std::vector<int> results;
-        for (std::vector<std::string>::const_iterator part_it = partslist.begin(); part_it!=partslist.end(); ++part_it)
-        {
-            const PartType* part = GetPartType(*part_it);
+        for (const std::string& part_name : ship_design.Parts()) {
+            const PartType* part = GetPartType(part_name);
             if (part && part->Class() == PC_DIRECT_WEAPON) { // TODO: handle other weapon classes when they are implemented
                 results.push_back(part->Capacity());
             }
@@ -193,9 +185,8 @@ namespace {
 
     std::vector<ShipSlotType> HullSlots(const HullType& hull) {
         std::vector<ShipSlotType> retval;
-        std::vector< HullType::Slot > slots = hull.Slots();
-        for (std::vector<HullType::Slot>::iterator s_it = slots.begin(); s_it != slots.end(); ++s_it)
-            retval.push_back(s_it->type);
+        for (const HullType::Slot& slot : hull.Slots())
+            retval.push_back(slot.type);
         return retval;
     }
     boost::function<std::vector<ShipSlotType> (const HullType&)> HullSlotsFunc =                &HullSlots;

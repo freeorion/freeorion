@@ -256,12 +256,8 @@ namespace parse {
     bool species(std::map<std::string, Species*>& species_) {
         bool result = true;
 
-        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/species");
-
-        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
-             file_it != file_list.end(); ++file_it)
-        {
-            result &= detail::parse_file<rules, std::map<std::string, Species*> >(*file_it, species_);
+        for (const boost::filesystem::path& file : ListScripts("scripting/species")) {
+            result &= detail::parse_file<rules, std::map<std::string, Species*> >(file, species_);
         }
 
         return result;

@@ -2289,14 +2289,12 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             system->Insert(destination);
 
         // find fleets / ships at destination location and insert into system
-        for (ObjectMap::iterator<Fleet> it = Objects().begin<Fleet>(); it != Objects().end<Fleet>(); ++it) {
-            TemporaryPtr<Fleet> obj = *it;
+        for (TemporaryPtr<Fleet> obj : Objects().FindObjects<Fleet>()) {
             if (obj->X() == system->X() && obj->Y() == system->Y())
                 system->Insert(obj);
         }
 
-        for (ObjectMap::iterator<Ship> it = Objects().begin<Ship>(); it != Objects().end<Ship>(); ++it) {
-            TemporaryPtr<Ship> obj = *it;
+        for (TemporaryPtr<Ship> obj : Objects().FindObjects<Ship>()) {
             if (obj->X() == system->X() && obj->Y() == system->Y())
                 system->Insert(obj);
         }

@@ -162,19 +162,17 @@ namespace {
         std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
 
         // pick a name for the system
-        for (std::list<std::string>::const_iterator it = star_names.begin(); it != star_names.end(); ++it) {
+        for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (std::vector<TemporaryPtr<const System> >::const_iterator sys_it = systems.begin();
-                 sys_it != systems.end(); ++sys_it)
-            {
-                if ((*sys_it)->Name() == *it) {
+            for (TemporaryPtr<const System> system : systems) {
+                if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another system has this name. skip to next potential name.
                 }
             }
             if (!dupe)
-                return *it; // no systems have this name yet. use it.
+                return star_name; // no systems have this name yet. use it.
         }
         return "";  // fallback to empty name.
     }

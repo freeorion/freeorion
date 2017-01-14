@@ -59,9 +59,9 @@ bool RegisterOptions(OptionsDBFn function) {
 
 OptionsDB& GetOptionsDB() {
     static OptionsDB options_db;
-    if (unsigned int registry_size = OptionsRegistry().size()) {
-        for (unsigned int i = 0; i < registry_size; ++i)
-            OptionsRegistry()[i](options_db);
+    if (!OptionsRegistry().empty()) {
+        for (OptionsDBFn fn : OptionsRegistry())
+            fn(options_db);
         OptionsRegistry().clear();
     }
     return options_db;
@@ -204,9 +204,9 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
     os << UserString("COMMAND_LINE_USAGE") << command_line << "\n";
 
     int longest_param_name = 0;
-    for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
-        if (longest_param_name < static_cast<int>(it->first.size()))
-            longest_param_name = it->first.size();
+    for (const std::map<std::string, Option>::value_type& option : m_options) {
+        if (longest_param_name < static_cast<int>(option.first.size()))
+            longest_param_name = option.first.size();
     }
 
     int description_column = 5;
@@ -215,36 +215,36 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
     if (description_width <= 0)
         throw std::runtime_error("The longest parameter name leaves no room for a description.");
 
-    for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
+    for (const std::map<std::string, Option>::value_type& option : m_options) {
         // Ignore unrecognized options that have not been formally registered
         // with Add().
-        if (!it->second.recognized)
+        if (!option.second.recognized)
             continue;
 
-        if (it->second.short_name)
-            os << "-" << it->second.short_name << ", --" << it->second.name << "\n";
+        if (option.second.short_name)
+            os << "-" << option.second.short_name << ", --" << option.second.name << "\n";
         else
-            os << "--" << it->second.name << "\n";
+            os << "--" << option.second.name << "\n";
 
         os << std::string(description_column - 1, ' ');
 
         typedef boost::tokenizer<boost::char_separator<char> > Tokenizer;
         boost::char_separator<char> separator(" \t");
-        Tokenizer tokens(UserString(it->second.description), separator);
+        Tokenizer tokens(UserString(option.second.description), separator);
         int curr_column = description_column;
-        for (Tokenizer::iterator it = tokens.begin(); it != tokens.end(); ++it) {
-            if (80 < curr_column + it->size()) {
-                os << "\n" << std::string(description_column, ' ') << *it;
-                curr_column = description_column + it->size();
+        for (const Tokenizer::value_type& token : tokens) {
+            if (80 < curr_column + token.size()) {
+                os << "\n" << std::string(description_column, ' ') << token;
+                curr_column = description_column + token.size();
             } else {
-                os << " " << *it;
-                curr_column += it->size() + 1;
+                os << " " << token;
+                curr_column += token.size() + 1;
             }
         }
 
-        if (it->second.validator) {
+        if (option.second.validator) {
             std::stringstream stream;
-            stream << UserString("COMMAND_LINE_DEFAULT") << it->second.DefaultValueToString();
+            stream << UserString("COMMAND_LINE_DEFAULT") << option.second.DefaultValueToString();
             if (80 < curr_column + stream.str().size() + 3) {
                 os << "\n" << std::string(description_column, ' ') << stream.str() << "\n";
             } else {
@@ -263,12 +263,12 @@ void OptionsDB::GetXML(XMLDoc& doc) const {
     std::vector<XMLElement*> elem_stack;
     elem_stack.push_back(&doc.root_node);
 
-    for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it) {
-        if (!it->second.storable)
+    for (const std::map<std::string, Option>::value_type& option : m_options) {
+        if (!option.second.storable)
             continue;
-        std::string::size_type last_dot = it->first.find_last_of('.');
-        std::string section_name = last_dot == std::string::npos ? "" : it->first.substr(0, last_dot);
-        std::string name = it->first.substr(last_dot == std::string::npos ? 0 : last_dot + 1);
+        std::string::size_type last_dot = option.first.find_last_of('.');
+        std::string section_name = last_dot == std::string::npos ? "" : option.first.substr(0, last_dot);
+        std::string name = option.first.substr(last_dot == std::string::npos ? 0 : last_dot + 1);
         while (1 < elem_stack.size()) {
             std::string prev_section = PreviousSectionName(elem_stack);
             if (prev_section == section_name) {
@@ -285,23 +285,23 @@ void OptionsDB::GetXML(XMLDoc& doc) const {
             std::string::size_type pos = 0;
             while ((pos = section_name.find('.', last_pos)) != std::string::npos) {
                 XMLElement temp(section_name.substr(last_pos, pos - last_pos));
-                elem_stack.back()->AppendChild(temp);
+                elem_stack.back()->children.push_back(temp);
                 elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
                 last_pos = pos + 1;
             }
             XMLElement temp(section_name.substr(last_pos));
-            elem_stack.back()->AppendChild(temp);
+            elem_stack.back()->children.push_back(temp);
             elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
         }
 
         XMLElement temp(name);
-        if (it->second.validator) {
-            temp.SetText(it->second.ValueToString());
-        } else if (it->second.flag) {
-            if (!boost::any_cast<bool>(it->second.value))
+        if (option.second.validator) {
+            temp.SetText(option.second.ValueToString());
+        } else if (option.second.flag) {
+            if (!boost::any_cast<bool>(option.second.value))
                 continue;
         }
-        elem_stack.back()->AppendChild(temp);
+        elem_stack.back()->children.push_back(temp);
         elem_stack.push_back(&elem_stack.back()->Child(temp.Tag()));
     }
 }
@@ -335,9 +335,9 @@ void OptionsDB::RemoveUnrecognized(const std::string& prefix) {
 
 void OptionsDB::FindOptions(std::set<std::string>& ret, const std::string& prefix) const {
     ret.clear();
-    for (std::map<std::string, Option>::const_iterator it = m_options.begin(); it != m_options.end(); ++it)
-        if (it->second.recognized && it->first.find(prefix) == 0)
-            ret.insert(it->first);
+    for (const std::map<std::string, Option>::value_type& option : m_options)
+        if (option.second.recognized && option.first.find(prefix) == 0)
+            ret.insert(option.first);
 }
 
 void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
@@ -438,16 +438,16 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 }
 
 void OptionsDB::SetFromXML(const XMLDoc& doc) {
-    for (int i = 0; i < doc.root_node.NumChildren(); ++i)
-    { SetFromXMLRecursive(doc.root_node.Child(i), ""); }
+    for (const XMLElement& child : doc.root_node.children)
+    { SetFromXMLRecursive(child, ""); }
 }
 
 void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& section_name) {
     std::string option_name = section_name + (section_name == "" ? "" : ".") + elem.Tag();
 
-    if (elem.NumChildren()) {
-        for (int i = 0; i < elem.NumChildren(); ++i)
-            SetFromXMLRecursive(elem.Child(i), option_name);
+    if (!elem.children.empty()) {
+        for (const XMLElement& child : elem.children)
+            SetFromXMLRecursive(child, option_name);
 
     } else {
         std::map<std::string, Option>::iterator it = m_options.find(option_name);
@@ -500,9 +500,10 @@ std::string ListToString(const std::vector<std::string>& input_list) {
 
 std::vector<std::string> StringToList(const std::string& input_string) {
     std::vector<std::string> retval;
-    boost::tokenizer<boost::escaped_list_separator<char> > tok(input_string);
-    for (boost::tokenizer<boost::escaped_list_separator<char> >::iterator it = tok.begin(); it != tok.end(); ++it) {
-        retval.push_back(*it);
+    typedef boost::tokenizer<boost::char_separator<char> > Tokenizer;
+    Tokenizer tokens(input_string);
+    for (const Tokenizer::value_type& token : tokens) {
+        retval.push_back(token);
     }
     return retval;
 }

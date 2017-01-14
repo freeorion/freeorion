@@ -5,7 +5,7 @@ ShipDesign
     parts = [
         "FT_BAY_1"
         "FT_BAY_1"
-        "FT_BAY_1"
+        "AR_STD_PLATE"
         "FT_HANGAR_1"
     ]
     model = "mark1"

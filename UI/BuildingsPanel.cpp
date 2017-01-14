@@ -34,10 +34,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        const OrderSet& orders = app->Orders();
-        for (OrderSet::const_iterator it = orders.begin(); it != orders.end(); ++it) {
-            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(it->second)) {
-                retval[order->ObjectID()] = it->first;
+        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
+            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
+                retval[order->ObjectID()] = entry.first;
             }
         }
         return retval;
@@ -76,8 +75,8 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
 
 BuildingsPanel::~BuildingsPanel() {
     // delete building indicators
-    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it)
-        delete *it;
+    for (BuildingIndicator* indicator : m_building_indicators)
+        delete indicator;
     m_building_indicators.clear();
 }
 
@@ -92,9 +91,9 @@ void BuildingsPanel::Update() {
     //std::cout << "BuildingsPanel::Update" << std::endl;
 
     // remove old indicators
-    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
-        DetachChild(*it);
-        delete (*it);
+    for (BuildingIndicator* indicator : m_building_indicators) {
+        DetachChild(indicator);
+        delete (indicator);
     }
     m_building_indicators.clear();
 
@@ -103,7 +102,6 @@ void BuildingsPanel::Update() {
         ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
     }
-    const std::set<int>& buildings = planet->BuildingIDs();
     int system_id = planet->SystemID();
 
     const int indicator_size = static_cast<int>(Value(Width() * 1.0 / m_columns));
@@ -113,9 +111,7 @@ void BuildingsPanel::Update() {
     const std::set<int>& this_client_stale_object_info = GetUniverse().EmpireStaleKnowledgeObjectIDs(this_client_empire_id);
 
     // get existing / finished buildings and use them to create building indicators
-    for (std::set<int>::const_iterator it = buildings.begin(); it != buildings.end(); ++it) {
-        int object_id = *it;
-
+    for (int object_id : planet->BuildingIDs()) {
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(object_id) != this_client_known_destroyed_objects.end())
             continue;
@@ -142,12 +138,10 @@ void BuildingsPanel::Update() {
     if (!empire)
         return;
 
-    const ProductionQueue& queue = empire->GetProductionQueue();
-
-    int queue_index = 0;
-    for (ProductionQueue::const_iterator queue_it = queue.begin(); queue_it != queue.end(); ++queue_it, ++queue_index) {
-        const ProductionQueue::Element elem = *queue_it;
-
+    int queue_index = -1;
+    for (const ProductionQueue::Element& elem : empire->GetProductionQueue()) {
+        ++queue_index;
+        //std::cout << "queue index: " << queue_index << " elem: " << elem.Dump() << std::endl;
         if (elem.item.build_type != BT_BUILDING) continue;  // don't show in-progress ships in BuildingsPanel...
         if (elem.location != m_planet_id) continue;         // don't show buildings located elsewhere
 
@@ -157,7 +151,7 @@ void BuildingsPanel::Update() {
         boost::tie(total_cost, total_turns) = empire->ProductionCostAndTime(elem);
 
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
-        double turns_completed = total_turns * std::min<double>(1.0, progress / total_cost);
+        double turns_completed = progress / std::max(total_cost, 1.0);
         BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), elem.item.name,
                                                        turns_completed, total_turns, total_cost, turn_spending);
 
@@ -180,9 +174,8 @@ void BuildingsPanel::RefreshImpl() {
 }
 
 void BuildingsPanel::EnableOrderIssuing(bool enable/* = true*/) {
-    for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin();
-         it != m_building_indicators.end(); ++it)
-    { (*it)->EnableOrderIssuing(enable); }
+    for (BuildingIndicator* indicator : m_building_indicators)
+    { indicator->EnableOrderIssuing(enable); }
 }
 
 void BuildingsPanel::ExpandCollapseButtonPressed()
@@ -201,9 +194,7 @@ void BuildingsPanel::DoLayout() {
     // update size of panel and position and visibility of widgets
     if (!s_expanded_map[m_planet_id]) {
         int n = 0;
-        for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
-            BuildingIndicator* ind = *it;
-
+        for (BuildingIndicator* ind : m_building_indicators) {
             const GG::Pt ul = GG::Pt(MeterIconSize().x * n, GG::Y0);
             const GG::Pt lr = ul + MeterIconSize();
 
@@ -218,9 +209,7 @@ void BuildingsPanel::DoLayout() {
 
         height = m_expand_button->Height();
     } else {
-        for (std::vector<BuildingIndicator*>::iterator it = m_building_indicators.begin(); it != m_building_indicators.end(); ++it) {
-            BuildingIndicator* ind = *it;
-
+        for (BuildingIndicator* ind : m_building_indicators) {
             const GG::Pt ul = GG::Pt(GG::X(padding * (column + 1) + indicator_size * column), GG::Y(padding * (row + 1) + indicator_size * row));
             const GG::Pt lr = ul + GG::Pt(GG::X(indicator_size), GG::Y(indicator_size));
 

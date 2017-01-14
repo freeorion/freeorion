@@ -74,8 +74,8 @@ std::string CombatSummary::SideName() const {
 
 unsigned int CombatSummary::DestroyedUnits() const {
     unsigned count = 0;
-    for (UnitSummaries::const_iterator it = unit_summaries.begin(); it != unit_summaries.end(); ++it) {
-        if ((*it)->current_health <= 0.0f && (*it)->max_health > 0.0f) {
+    for (ParticipantSummaryPtr summary : unit_summaries) {
+        if (summary->current_health <= 0.0f && summary->max_health > 0.0f) {
             ++count;
         }
     }

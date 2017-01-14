@@ -145,34 +145,6 @@ public:
         virtual const char* type() const throw()
         { return "XMLElement::NoSuchChild"; }
     };
-
-    /** @brief  Thrown when a request for an indexed child element cannot be
-     *      fulfilled.
-     */
-    class NoSuchIndex : public Exception
-    {
-    public:
-        /** @copydoc Exception::Exception(const std::string&) */
-        NoSuchIndex (const std::string& message) :
-            Exception (message)
-        {}
-
-        virtual const char* type() const throw()
-        { return "XMLElement::NoSuchIndex"; }
-    };
-    //@}
-
-    /** @name  Iterators */ //@{
-    //@{
-    /** @brief Iterator to iterate over child XMLElement%s. */
-    typedef std::vector<XMLElement>::iterator       child_iterator;
-    typedef std::vector<XMLElement>::const_iterator const_child_iterator;
-    //@}
-    //@{
-    /** @brief Iterator to iterate over a XMLElement attributes. */
-    typedef std::map<std::string, std::string>::iterator       attr_iterator;
-    typedef std::map<std::string, std::string>::const_iterator const_attr_iterator;
-    //@}
     //@}
 
     /** @name  Structors */ //@{
@@ -223,8 +195,9 @@ public:
      *      element.
      */
     XMLElement(const std::string& tag, const XMLElement& body) :
+        children(std::vector<XMLElement>(1, body)),
         m_tag(tag),
-        m_children(std::vector<XMLElement>(1, body)), m_root(false)
+        m_root(false)
     {}
     //@}
 
@@ -241,20 +214,6 @@ public:
      */
     const std::string& Text() const;
 
-    /** @brief  Returns the number of child nodes inside this XMLElement.
-     *
-     * @return  The number of child XMLElement%s contained by this this
-     *      XMLElement.  Is always positive.
-     */
-    int NumChildren() const;
-
-    /** @brief  Returns the number of attributes attached to this XMLElement.
-     *
-     * @return  The number of attributes attached to this XMLElement.  Is always
-     *      positive.
-     */
-    int NumAttributes() const;
-
     /** @brief  Returns if this XMLElement contains a child with @p tag as
      *      tag-name.
      *
@@ -263,35 +222,6 @@ public:
      *      false if not.
      */
     bool ContainsChild(const std::string& tag) const;
-
-    /** @brief  Returns if this XMLElement contains an attribute with the
-     *      attribute key @p key.
-     *
-     * @param[in] key  The attribute key of the searched attribute.
-     * @return  True if there is an attribute with a @p key, false if not.
-     */
-    bool ContainsAttribute(const std::string& key) const;
-
-    /** @brief  Returns the index of the first child XMLElement with @p tag as
-     *      tag-name or -1 if none found.
-     *
-     * @param[in] tag  The tag-name of the searched child XMLElement.
-     * @return  The index of the first found child XMLElement with @p tag as
-     *      tag-name or -1 of no such child XMLElement can be found.
-     */
-    int ChildIndex(const std::string& tag) const;
-
-    /** @brief  Returns the XMLElement child at the @p index%ed position of the
-     *      child list of this XMLElement.
-     *
-     * @param[in] index  The index of the child XMLElement requested. The passed
-     *      value must be between 0 and NumChildren() - 1.
-     * @return  A reference to the XMLElement child at the @p index%ed position
-     *      of this XMLElement child list.
-     * @throw XMLElement::NoSuchIndex  When @p index is out of range in this
-     *      XMLElement child list.
-     */
-    const XMLElement& Child(unsigned int index) const;
 
     /** @brief  Returns the first XMLElement child that has @p tag as tag-name.
      *
@@ -302,22 +232,6 @@ public:
      *      exists.
      */
     const XMLElement& Child(const std::string& tag) const;
-
-    /** @brief  Returns the last XMLElement child of this XMLElement.
-     *
-     * @return  A reference to the last XMLElement child.
-     * @throw XMLElement:NoSuchIndex  When there are no child XMLElement%s.
-     */
-    const XMLElement& LastChild() const;
-
-    /** @brief  Returns the value of the attribute with name @p key or an empty
-     *      string if there is no with attribute with this key.
-     *
-     * @param[in] key  The attribute key of the searched attribute.
-     * @return  The value of the attribute with the @p key or an empty string if
-     *      there is no such attribute.
-     */
-    const std::string& Attribute(const std::string& key) const;
 
     /** @brief  Write this XMLElement XML formatted into the given output
      *      stream @p os with indentation level @p indent when @p whitespace
@@ -343,43 +257,11 @@ public:
      *      XMLElement.
      */
     std::string WriteElement(int indent = 0, bool whitespace = true) const;
-
-    /** @brief  Return an iterator to the first child in this XMLElement. */
-    const_child_iterator child_begin() const;
-
-    /** @brief  Return an iterator to the one beyond last child in this
-     * XMLElement.
-     */
-    const_child_iterator child_end() const;
-
-    /** @brief  Return an iterator to the first attribute in this XMLElement. */
-    const_attr_iterator attr_begin() const;
-
-    /** @brief  Return an iterator to the one beyond last attribute in this
-     * XMLElement.
-     */
-    const_attr_iterator attr_end() const;
     //@}
 
     /** @name  Mutators */ //@{
-    /** @copydoc XMLElement::Child(unsigned int) const */
-    XMLElement& Child(unsigned int index);
-
     /** @copydoc XMLElement::Child(const std::string&) const */
     XMLElement& Child(const std::string& tag);
-
-    /** @copydoc XMLElement::LastChild() const */
-    XMLElement& LastChild();
-
-    /** @brief  Sets the @p value of the attribute @p key in this XMLElement.
-     *
-     * When the attribute @p key already has a value set it will be overwritten
-     * with the new @p value.
-     *
-     * @param[in] key  The key of the attribute to set.
-     * @param[in] value  The new value the attribute should be set to.
-     */
-    void SetAttribute(const std::string& key, const std::string& value);
 
     /** @brief  Sets the tag-name of this XMLElement to @p tag.
      *
@@ -392,77 +274,20 @@ public:
      * @param[in] text  The new text content this XMLElement should have.
      */
     void SetText(const std::string& text);
+    //@}
 
-    /** @brief  Removes the attribute with @p key from this XMLElement.
-     *
-     * @param[in] key  The key of the attribute to be deleted.  If no such
-     *      attribute exist no action is taken.
+    /** @brief  The attributes associated to this XMLElement by key name
+     *      mapping.
      */
-    void RemoveAttribute(const std::string& key);
+    std::map<std::string, std::string> attributes;
 
-    /** @brief  Removes all attributes from this XMLElement. */
-    void RemoveAttributes();
-
-    /** @brief  Adds a given child XMLElement @p child to the end of the child
-     *      list of this XMLElement.
-     *
-     * @param[in] child  The XMLElement to be appended to the child list.
-     */
-    void AppendChild(const XMLElement& child);
-
-    /** @brief  Creates an new empty XMLElement with the tag-name @p tag and
-     *      appends it to the child list of this XMLElement.
-     *
-     * @param[in] tag  The tag of the created XMLElement.
-     */
-    void AppendChild(const std::string& tag);
-
-    /** @brief  Adds a given child XMLElement @p child before the child element
-     *      at the @p index%ed position in the child list of this XMLElement.
-     *
-     * @param[in] child  The XMLElement to be inserted into the child list.
-     * @param[in] index  The index of the child XMLElement where the @p child
-     *      put be in front of. The passed value must be between 0 and
-     *      NumChildren() - 1.
-     * @throw XMLElement::NoSuchIndex  When @p index is out of range in this
-     *      XMLElement child list.
-     */
-    void AddChildBefore(const XMLElement& child, unsigned int index);
-
-    /** @brief  Removes the XMLElement child at the @p index%ed position of the
-     *      child list of this XMLElement.
-     *
-     * @param[in] index  The index of the child XMLElement that should be
-     *      removed.  The passed value must be between 0 and NumChildren() - 1.
-     * @throw XMLElement::NoSuchIndex  When @p index is out of range in this
-     *      XMLElement child list.
-     */
-    void RemoveChild(unsigned int index);
-
-    /** @brief  Removes the XMLElement child with the tag-name @p tag from this
+    /** @brief  Stores a list of the child XMLElement%s associated to this
      *      XMLElement.
      *
-     * @param[in] tag  The tag-name of the child XMLElement to be deleted.
-     * @throw XMLElement::NoSuchChild  When no child with a tag-name @p tag
-     *      exists.
+     * This list can be empty when this XMLElement has no associated child
+     * elements.
      */
-    void RemoveChild(const std::string& tag);
-
-    /** @brief Removes all children from this XMLElement. */
-    void RemoveChildren();
-
-    /** @copydoc XMLElement::child_begin() const */
-    child_iterator child_begin();
-
-    /** @copydoc XMLElement::child_end() const */
-    child_iterator child_end();
-
-    /** @copydoc XMLElement::attr_begin() const */
-    attr_iterator attr_begin();
-
-    /** @copydoc XMLElement::attr_end() const */
-    attr_iterator attr_end();
-    //@}
+    std::vector<XMLElement> children;
 
 private:
     /** @name  Structors */ //@{
@@ -487,19 +312,6 @@ private:
 
     /** @brief  Stores the text content associated to this XMLElement. */
     std::string m_text;
-
-    /** @brief  Stores the attributes associated to this XMLElement by key name
-     *      mapping.
-     */
-    std::map<std::string, std::string> m_attributes;
-
-    /** @brief  Stores a list of the child XMLElement%s associated to this
-     *      XMLElement.
-     *
-     * This list can be empty when this XMLElement has no associated child
-     * elements.
-     */
-    std::vector<XMLElement> m_children;
 
     /** @brief  Set to true if this XMLElement is the root element of an XMLDoc
      *      document.

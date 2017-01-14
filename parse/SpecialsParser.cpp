@@ -143,12 +143,8 @@ namespace parse {
     bool specials(std::map<std::string, Special*>& specials_) {
         bool result = true;
 
-        std::vector<boost::filesystem::path> file_list = ListScripts("scripting/specials");
-
-        for (std::vector<boost::filesystem::path>::iterator file_it = file_list.begin();
-             file_it != file_list.end(); ++file_it)
-        {
-            result &= detail::parse_file<rules, std::map<std::string, Special*> >(*file_it, specials_);
+        for (const boost::filesystem::path& file : ListScripts("scripting/specials")) {
+            result &= detail::parse_file<rules, std::map<std::string, Special*> >(file, specials_);
         }
 
         return result;

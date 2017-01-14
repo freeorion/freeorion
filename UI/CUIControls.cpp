@@ -1354,7 +1354,7 @@ void StatisticIcon::DoLayout() {
         text_elements
             .AddText(" (")
             .AddOpenTag(ValueColor(1))
-            .AddText("Pi"+DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) )
+            .AddText(DoubleToString(m_values[1], m_digits[1], m_show_signs[1]) )
             .AddCloseTag("rgba")
             .AddText(")");
 
@@ -1407,9 +1407,8 @@ CUIToolBar::CUIToolBar() :
 {}
 
 bool CUIToolBar::InWindow(const GG::Pt& pt) const {
-    const std::list<GG::Wnd*>& children = Children();
-    for (std::list<GG::Wnd*>::const_iterator it = children.begin(); it != children.end(); ++it)
-        if ((*it)->InWindow(pt))
+    for (GG::Wnd* wnd : Children())
+        if (wnd->InWindow(pt))
             return true;
     return GG::Wnd::InWindow(pt);
 }
@@ -1434,25 +1433,36 @@ namespace {
         {
             if (!species)
                 return;
-            GG::Wnd::SetName(species->Name());
-            GG::StaticGraphic* icon = new GG::StaticGraphic(
-                ClientUI::SpeciesIcon(species->Name()), GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
-            icon->Resize(GG::Pt(GG::X(Value(h - 5)), h - 5));
+            const std::string& species_name = species->Name();
+            Init(species_name, UserString(species_name), species->GameplayDescription(), w, h,
+                 ClientUI::SpeciesIcon(species_name));
+        };
+
+        SpeciesRow(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
+                   GG::X w, GG::Y h, boost::shared_ptr<GG::Texture> species_icon) :
+            GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
+        { Init(species_name, localized_name, species_desc, w, h, species_icon); };
+
+    private:
+        void Init(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
+                  GG::X width, GG::Y height, boost::shared_ptr<GG::Texture> species_icon)
+        {
+            GG::Wnd::SetName(species_name);
+            GG::StaticGraphic* icon = new GG::StaticGraphic(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
+            icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             push_back(icon);
-            GG::Label* species_name = new CUILabel(UserString(species->Name()), GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
-            push_back(species_name);
-            GG::X first_col_width(Value(h));
+            GG::Label* species_label = new CUILabel(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
+            push_back(species_label);
+            GG::X first_col_width(Value(height));
             SetColWidth(0, first_col_width);
-            SetColWidth(1, w - first_col_width);
+            SetColWidth(1, width - first_col_width);
             GetLayout()->SetColumnStretch(0, 0.0);
             GetLayout()->SetColumnStretch(1, 1.0);
-            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-            SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
-                new IconTextBrowseWnd(ClientUI::SpeciesIcon(species->Name()),
-                                      UserString(species->Name()),
-                                      species->GameplayDescription())
-                                     )
-                            );
+            if (!species_desc.empty()) {
+                SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(species_icon, localized_name,
+                                                                                            species_desc)));
+            }
         }
     };
 }
@@ -1469,8 +1479,12 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
     const SpeciesManager& sm = GetSpeciesManager();
     for (SpeciesManager::playable_iterator it = sm.playable_begin(); it != sm.playable_end(); ++it)
         Insert(new SpeciesRow(it->second, w, h - 4));
-    if (!this->Empty())
+    if (!this->Empty()) {
+        // Add an option for random selection
+        Insert(new SpeciesRow("RANDOM", UserString("GSETUP_RANDOM"), UserString("GSETUP_SPECIES_RANDOM_DESC"), w, h - 4,
+                              ClientUI::GetTexture("default/data/art/icons/unknown.png")));
         Select(this->begin());
+    }
     GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
 }
 
@@ -1488,8 +1502,8 @@ const std::string& SpeciesSelector::CurrentSpeciesName() const {
 
 std::vector<std::string> SpeciesSelector::AvailableSpeciesNames() const {
     std::vector<std::string> retval;
-    for (CUIDropDownList::const_iterator row_it = this->begin(); row_it != this->end(); ++row_it)
-        if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(*row_it))
+    for (CUIDropDownList::Row* row : *this)
+        if (const SpeciesRow* species_row = dynamic_cast<const SpeciesRow*>(row))
             retval.push_back(species_row->Name());
     return retval;
 }
@@ -1556,9 +1570,8 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
     CUIDropDownList(6)
 {
     Resize(GG::Pt(COLOR_SELECTOR_WIDTH, h - 8));
-    const std::vector<GG::Clr>& colors = EmpireColors();
-    for (unsigned int i = 0; i < colors.size(); ++i) {
-        Insert(new ColorRow(colors[i], h - 4));
+    for (const GG::Clr& color : EmpireColors()) {
+        Insert(new ColorRow(color, h - 4));
     }
     GG::Connect(SelChangedSignal, &EmpireColorSelector::SelectionChanged, this);
 }
@@ -2029,8 +2042,8 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<boost::sh
     m_graphics(),
     m_styles(styles)
 {
-    for (std::vector<boost::shared_ptr<GG::Texture> >::const_iterator it = textures.begin(); it != textures.end(); ++it)
-        m_graphics.push_back(GG::SubTexture(*it, GG::X0, GG::Y0, (*it)->DefaultWidth(), (*it)->DefaultHeight()));
+    for (boost::shared_ptr<GG::Texture> texture : textures)
+        m_graphics.push_back(GG::SubTexture(texture, GG::X0, GG::Y0, texture->DefaultWidth(), texture->DefaultHeight()));
     Init();
 }
 
@@ -2120,9 +2133,7 @@ void MultiTextureStaticGraphic::ValidateStyles() {
     unsigned int num_graphics = m_graphics.size();
     m_styles.resize(num_graphics, GG::GRAPHIC_CENTER);
 
-    for (std::vector<GG::Flags<GG::GraphicStyle> >::iterator it = m_styles.begin(); it != m_styles.end(); ++it) {
-        GG::Flags<GG::GraphicStyle>& style = *it;
-
+    for (GG::Flags<GG::GraphicStyle>& style : m_styles) {
         int dup_ct = 0;   // duplication count
         if (style & GG::GRAPHIC_LEFT) ++dup_ct;
         if (style & GG::GRAPHIC_RIGHT) ++dup_ct;
