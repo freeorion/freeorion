@@ -1772,7 +1772,12 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, c
     if (design_row) {
         int id = design_row->DesignID();
         const ShipDesign* design = GetShipDesign(id);
-        if (design)
+        if (!design)
+            return;
+        if (modkeys & GG::MOD_KEY_CTRL)
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ShipDesignOrder(HumanClientApp::GetApp()->EmpireID(), id, true)));
+        else
             DesignClickedSignal(design);
         return;
     }
