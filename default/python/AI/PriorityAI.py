@@ -14,10 +14,10 @@ import ResearchAI
 import AIDependencies
 from turn_state import state
 from EnumsAI import PriorityType, MissionType, EmpireProductionTypes, get_priority_production_types, ShipRoleType
-from freeorion_tools import Timer, tech_is_complete
+from freeorion_tools import FOTimer, tech_is_complete
 from AIDependencies import INVALID_ID
 
-prioritiees_timer = Timer('calculate_priorities()')
+prioritiees_timer = FOTimer('calculate_priorities()')
 
 allottedInvasionTargets = 0
 allottedColonyTargets = 0
