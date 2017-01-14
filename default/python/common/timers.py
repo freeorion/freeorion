@@ -33,11 +33,10 @@ class Timer(object):
         self.section_name = section_name
         self.start_time = time()
 
-    def end(self):
+    def _print_timer_table(self, time_table):
         """
-        Stop timer, output result, clear checks.
+        Print a header and a footer and fill it with the timing results from time_table
         """
-        self.stop()
         if not self.timers:
             return
         max_header = max(len(x[0]) for x in self.timers)
@@ -45,7 +44,44 @@ class Timer(object):
         print
         print 'Timing for %s:' % self.timer_name
         print '=' * line_max_size
-        for name, val in self.timers:
+
+        for name, val in time_table:
             print "%-*s %8d msec" % (max_header, name, val)
+
         print '-' * line_max_size
         print ("Total: %8d msec" % sum(x[1] for x in self.timers)).rjust(line_max_size)
+
+    def print_flat(self):
+        """
+        Output result.
+        """
+        self._print_timer_table(self.timers)
+
+    def print_aggregate(self):
+        """
+        Print aggregated results for each section.
+        """
+        accumulated_times = {}
+        ordered_names = []
+        for name, val in self.timers:
+            if name not in accumulated_times:
+                ordered_names.append(name)
+                accumulated_times[name] = 0
+            accumulated_times[name] += val
+        time_table = [(name, accumulated_times[name]) for name in ordered_names]
+
+        self._print_timer_table(time_table)
+
+    def end(self, dont_print=False):
+        """
+        Stop timer, output flat result if dont_print is False.
+        """
+        self.stop()
+        if not dont_print:
+            self.print_flat()
+
+    def clear(self):
+        """
+        Clear timers
+        """
+        self.timers = []

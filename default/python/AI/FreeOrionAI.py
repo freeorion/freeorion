@@ -251,6 +251,7 @@ def generateOrders():  # pylint: disable=invalid-name
             print_error(e, location=action.__name__)
     main_timer.end()
     turn_timer.end()
+    turn_timer.clear()
     turn_timer.start("Server_Processing")
 
     try:

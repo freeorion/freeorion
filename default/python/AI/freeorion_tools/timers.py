@@ -44,6 +44,15 @@ class DummyTimer(object):
     def end(self):
         pass
 
+    def clear(self):
+        pass
+
+    def print_flat(self):
+        pass
+
+    def print_aggregate(self):
+        pass
+
 
 class FOLogTimer(Timer):
     """A Timer with a FO AI engine dependent extension that logs timer results to a file each turn.
