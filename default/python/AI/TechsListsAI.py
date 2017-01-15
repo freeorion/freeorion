@@ -191,6 +191,31 @@ class TechGroup1SparseB(TechGroup1):
             "SHP_SPACE_FLUX_DRIVE"
         )
 
+class TechGroup1SparseC(TechGroup1):
+    def __init__(self):
+        super(TechGroup1SparseC, self).__init__()
+        self.enqueue(
+            self.economy,
+            self.economy,
+            "SHP_ORG_HULL",
+            "PRO_NANOTECH_PROD",
+            "GRO_GENETIC_ENG",
+            "PRO_SENTIENT_AUTOMATION",
+            "GRO_GENETIC_MED",
+            "GRO_SYMBIOTIC_BIO",
+            "PRO_MICROGRAV_MAN",
+            "PRO_EXOBOTS",
+            "GRO_XENO_GENETICS",
+            "SHP_ASTEROID_HULLS",
+            "PRO_FUSION_GEN",
+            "SHP_WEAPON_2_1",
+            "SHP_ZORTRIUM_PLATE",
+            "SHP_SPACE_FLUX_DRIVE",
+            "LRN_FORCE_FIELD",
+            "PRO_ORBITAL_GEN",
+            "SPY_DETECT_2",
+        )
+
 
 class TechGroup2(TechGroup):
     def __init__(self):
@@ -579,6 +604,7 @@ def test_tech_integrity():
         TechGroup1b,
         TechGroup1SparseA,
         TechGroup1SparseB,
+        TechGroup1SparseC,
         TechGroup2,
         TechGroup2A,
         TechGroup2B,
@@ -631,13 +657,13 @@ def sparse_galaxy_techs(index):
         result += TechGroup4().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 3:
-        result = TechGroup1SparseB().get_techs()  # early org_hull
+        result = TechGroup1SparseC().get_techs()  # early org_hull
         result += TechGroup2SparseB().get_techs()
         result += TechGroup3A().get_techs()
         result += TechGroup4().get_techs()
         result += TechGroup5().get_techs()  #
     elif index == 4:
-        result = TechGroup1SparseB().get_techs()  # early _lrn_artif_minds
+        result = TechGroup1SparseC().get_techs()  # early _lrn_artif_minds
         result += TechGroup2SparseB().get_techs()
         result += TechGroup3B().get_techs()  # faster plasma weaps
         result += TechGroup4().get_techs()

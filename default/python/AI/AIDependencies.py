@@ -103,6 +103,14 @@ SPECIES_INDUSTRY_MODIFIER = {'NO': 0.0, 'BAD': 0.75, 'GOOD': 1.5, 'GREAT': 2.0, 
 SPECIES_POPULATION_MODIFIER = {'BAD': 0.75, 'GOOD': 1.25}
 SPECIES_SUPPLY_MODIFIER = {'BAD': 0, 'AVERAGE': 1, 'GREAT': 2, 'ULTIMATE': 3}
 
+# <editor-fold desc="XenoResurrectionSpecies">
+EXTINCT_SPECIES = [
+    "BANFORO",
+    "KILANDOW",
+    "MISIORLA"
+]
+# </editor-fold>
+
 # <editor-fold desc="Piloting traits">
 # TODO (Morlic): Consider using only 1 dict with tuple for (Capacity, SecondaryStat) effects
 PILOT_DAMAGE_MODIFIER_DICT = {
