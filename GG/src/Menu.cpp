@@ -613,8 +613,11 @@ void PopupMenu::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     int update_ID = 0;
     if (m_caret[0] != INVALID_CARET) {
         MenuItem* menu_ptr = &m_menu_data;
-        for (std::size_t caret : m_caret)
+        for (std::size_t caret : m_caret) {
+            if (caret == INVALID_CARET)
+                break;
             menu_ptr = &menu_ptr->next_level[caret];
+        }
         update_ID = menu_ptr->item_ID;
     }
     BrowsedSignal(update_ID);
