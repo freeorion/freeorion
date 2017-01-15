@@ -17,7 +17,6 @@ from turn_state import state
 from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
                      FocusType, ShipRoleType, ShipDesignTypes)
 from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error, Timer
-from TechsListsAI import EXOBOT_TECH_NAME
 from common.print_utils import Table, Sequence, Text
 from AIDependencies import INVALID_ID
 
@@ -288,13 +287,10 @@ def generate_production_orders():
             print
             print "Buildings already in Production Queue:"
             capital_queued_buildings = []
-            queued_exobot_locs = []
             for element in [e for e in production_queue if (e.buildType == EmpireProductionTypes.BT_BUILDING)]:
                 building_expense += element.allocation
                 if element.locationID == homeworld.id:
                     capital_queued_buildings.append(element)
-                if element.name == "BLD_COL_EXOBOT":
-                    queued_exobot_locs.append(element.locationID)
             for bldg in capital_queued_buildings:
                 print "    %s turns: %s PP: %s" % (bldg.name, bldg.turnsLeft, bldg.allocation)
             if not capital_queued_buildings:
@@ -337,22 +333,6 @@ def generate_production_orders():
                             print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
                     except:
                         print "Error: exception triggered and caught: ", traceback.format_exc()
-
-            num_queued_exobots = len(queued_exobot_locs)
-            if empire.techResearched(EXOBOT_TECH_NAME) and num_queued_exobots < 2:
-                potential_locs = []
-                for pid, (score, this_spec) in foAI.foAIstate.colonisablePlanetIDs.items():
-                    if this_spec == "SP_EXOBOT" and pid not in queued_exobot_locs:
-                        candidate = universe.getPlanet(pid)
-                        if candidate.systemID in empire.supplyUnobstructedSystems:
-                            potential_locs.append((score, pid))
-                if potential_locs:
-                    candidate_id = sorted(potential_locs)[-1][-1]
-                    res = fo.issueEnqueueBuildingProductionOrder("BLD_COL_EXOBOT", candidate_id)
-                    print "Enqueueing BLD_COL_EXOBOT, with result %d" % res
-                    # if res:
-                    #    res=fo.issueRequeueProductionOrder(production_queue.size -1, 0) # move to front
-                    #    print "Requeueing %s to front of build queue, with result %d"%("BLD_COL_EXOBOT", res)
 
             if ("BLD_IMPERIAL_PALACE" in possible_building_types) and ("BLD_IMPERIAL_PALACE" not in (capital_buildings + queued_building_names)):
                 res = fo.issueEnqueueBuildingProductionOrder("BLD_IMPERIAL_PALACE", homeworld.id)
