@@ -1894,8 +1894,11 @@ void TechTreeWnd::TechListBox::Populate() {
     // set attributes after clear and insert, cached rows may have incorrect widths
     std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
     int num_cols = static_cast<int>(col_widths.size());
-    for (int i = 0; i < num_cols; ++i)
+    for (int i = 0; i < num_cols; ++i) {
         SetColWidth(i, col_widths[i]);
+        // only stretch the last column
+        SetColStretch(i, (i < num_cols - 1) ? 0.0 : 1.0);
+    }
     if (SortCol() < 1)
         SetSortCol(2);
     // TODO workaround for header rendering excessively high and overlapping some rows
