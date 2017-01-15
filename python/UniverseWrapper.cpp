@@ -30,6 +30,8 @@ namespace boost {
     const volatile System*          get_pointer(const volatile System* p) { return p; }
     const volatile Field*           get_pointer(const volatile Field* p) { return p; }
     const volatile Building*        get_pointer(const volatile Building* p) { return p; }
+    template<>
+    const volatile Universe*        get_pointer<const volatile Universe>(const volatile Universe* p) { return p; }
 }
 #  endif
 #endif
