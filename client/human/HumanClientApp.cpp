@@ -893,7 +893,6 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     {
         GetCombatLogManager().CompleteLog(it->first, it->second);
     }
-
 }
 
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
@@ -999,9 +998,8 @@ void HumanClientApp::HandleTurnUpdate()
 { UpdateCombatLogManager(); }
 
 void HumanClientApp::UpdateCombatLogManager() {
-    boost::optional<std::vector<int> > incompleteIDs(GetCombatLogManager().IncompleteLogIDs());
-    if (incompleteIDs)
-        m_networking.SendMessage(RequestCombatLogsMessage(PlayerID(), *incompleteIDs));
+    if (auto incomplete_ids {GetCombatLogManager().IncompleteLogIDs()})
+        m_networking.SendMessage(RequestCombatLogsMessage(PlayerID(), *incomplete_ids));
 }
 
 namespace {
