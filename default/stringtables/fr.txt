@@ -4102,41 +4102,6 @@ ENC_AUTO_TIME_COST_VARIABLE_DETAIL_STR
 '''
 Sur %1%, le coût et le temps sont de %2% %3% sur %4% tours.'''
 
-# FIXME
-# Displays the ship design properties inside a Pedia article in detail.
-# %1% description.
-# %2% hull name.
-# %3% list of builtin parts.
-# %4% number of builtin weapon parts.
-# %5% number of builtin rocket parts.
-# %6% number of builtin fighter bays.
-# %7% number of builtin point defense weapon bays.
-# %8% amount of structure points.
-# %9% amount of shield points.
-# %10% amount of detection points.
-# %11% amount of stealth points.
-# %12% battle speed.
-# %13% starlane speed.
-# %14% fuel capacity.
-# %15% number of settlers.
-# %16% number of troops.
-# %17% total damage done by weapons.
-# %18% species that mans the ship.
-ENC_SHIP_DESIGN_DESCRIPTION_STR
-'''%1%
-
-Coque : %2%
-Équipement : %3%
-
-Total [[encyclopedia DAMAGE_TITLE]] : %17%    [[metertype METER_STRUCTURE]] : %8%    [[metertype METER_SHIELD]] : %9%
-[[metertype METER_SPEED]] : %13%    Capacité [[metertype METER_FUEL]] : %14%
-[[metertype METER_DETECTION]] : %10%    [[metertype METER_STEALTH]] : %11%
-Colons à bord : %15%    [[metertype METER_TROOPS]] à bord : %16%
-
-Estimation force de combat (sans boucliers): %19$.f (%20$.2f par PP)
-Contre la plupart des armes et boucliers ennemis: %21$.f (%22$.2f par PP)
-'''
-
 # Displays a ship design inside the Pedia with the basic informations.
 # %1% description.
 # %2% hull name.
@@ -4149,17 +4114,38 @@ Coque: %2%
 
 '''
 
-# FIXME
-# will need dummy vals 1-8 and 12 for numbering to remain compatible with original ENC_SHIP_DESIGN_DESCRIPTION_STR
+# Detailed ship design information for a given species
+# %1% species for this design
+# %2% total damage from all weapon types
+# %3% weapon shots per round
+# %4% structure
+# %5% shield
+# %6% detection range
+# %7% stealth
+# %8% starlane speed
+# %9% fuel
+# %10% population
+# %11% troops
+# %12% fighters
+# %13% total damage per round of fighters
+# %14% launch bay capacity
+# %15% average attack strength
+# %16% average attack strength/pp
+# %17% mock enemy attack strength
+# %18% mock enemy shields
+# %19% mock average attack strength
+# %20% mock average attack strength/pp
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
-Pour espèce : %18%
-Total [[encyclopedia DAMAGE_TITLE]] : %17%    [[metertype METER_STRUCTURE]] : %8%    [[metertype METER_SHIELD]] : %9%
-[[metertype METER_SPEED]] : %13%    Capacité [[metertype METER_FUEL]] : %14%
-[[metertype METER_DETECTION]] : %10%    [[metertype METER_STEALTH]] : %11%
-Colons à bord : %15%    [[metertype METER_TROOPS]] à bord : %16%
-Estimation force de combat (sans boucliers) :  %19$.f   (%20$.2f par PP)
-Contre les dommages %21$.1f et boucliers %22$.1f ennemis :  %23$.f   (%24$.2f par PP)
+Pour [[encyclopedia ENC_SPECIES]]: %1%
+Total [[encyclopedia DAMAGE_TITLE]] : %2%    [[PC_DIRECT_WEAPON]] Coups: %3%
+[[metertype METER_STRUCTURE]] : %4%    [[metertype METER_SHIELD]] : %5%
+[[metertype METER_DETECTION]] : %6%    [[metertype METER_STEALTH]] : %7%
+[[metertype METER_SPEED]] : %8%    Capacité [[metertype METER_FUEL]] : %9%
+Colons à bord : %10%    [[metertype METER_TROOPS]] à bord : %11%
+[[OBJ_FIGHTER]] [[encyclopedia DAMAGE_TITLE]]: %13%    [[ENC_SDD_HANGAR]]: %12%    [[ENC_SDD_BAY]]: %14%
+Estimation force de combat (sans boucliers) :  %15$.f   (%16$.2f par PP)
+Contre les dommages %17$.1f et boucliers %18$.1f ennemis :  %19$.f   (%20$.2f par PP)
 '''
 
 ENC_UNLOCKED_BY

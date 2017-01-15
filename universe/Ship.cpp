@@ -431,6 +431,37 @@ float Ship::InitialPartMeterValue(MeterType type, const std::string& part_name) 
     return 0.0f;
 }
 
+float Ship::SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const {
+    float retval = 0.0f;
+
+    const ShipDesign* design = GetShipDesign(m_design_id);
+    if (!design)
+        return retval;
+
+    const std::vector<std::string>& parts = design->Parts();
+    if (parts.empty())
+        return retval;
+
+    std::map<std::string, int> part_counts;
+    for (const std::string& part : parts)
+        part_counts[part]++;
+
+    for (const PartMeterMap::value_type& part_meter : m_part_meters) {
+        if (part_meter.first.first != type)
+            continue;
+        const std::string& part_name = part_meter.first.second;
+        if (part_counts[part_name] < 1)
+            continue;
+        const PartType* part_type = GetPartType(part_name);
+        if (!part_type)
+            continue;
+        if (part_class == part_type->Class())
+            retval += part_meter.second.Current() * part_counts[part_name];
+    }
+
+    return retval;
+}
+
 float Ship::FighterCount() const {
     float retval = 0.0f;
     for (const PartMeterMap::value_type& entry : m_part_meters) {

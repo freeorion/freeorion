@@ -1980,28 +1980,26 @@ namespace {
         float typical_shot = *std::max_element(enemy_shots.begin(), enemy_shots.end());
         float typical_strength = std::pow(ship->TotalWeaponsDamage(enemy_DR) * structure * typical_shot / std::max(typical_shot - shield, 0.001f), 0.6f);
         return (FlexibleFormat(UserString("ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR"))
-            % ""
-            % ""
-            % ""
-            % ""
-            % ""
-            % ""
-            % ""
-            % ship->CurrentMeterValue(METER_MAX_STRUCTURE)
-            % ship->CurrentMeterValue(METER_MAX_SHIELD)
+            % species
+            % attack
+            % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_SECONDARY_STAT, PC_DIRECT_WEAPON)
+            % structure
+            % shield
             % ship->CurrentMeterValue(METER_DETECTION)
             % ship->CurrentMeterValue(METER_STEALTH)
-            % ship->CurrentMeterValue(METER_SPEED)
             % ship->CurrentMeterValue(METER_SPEED)
             % ship->CurrentMeterValue(METER_MAX_FUEL)
             % design->ColonyCapacity()
             % ship->TroopCapacity()
-            % attack
-            % species
-            % strength % (strength / cost)
+            % ship->FighterMax()
+            % (attack - ship->TotalWeaponsDamage(0.0f, false))
+            % ship->SumCurrentPartMeterValuesForPartClass(METER_MAX_CAPACITY, PC_FIGHTER_BAY)
+            % strength
+            % (strength / cost)
             % typical_shot
             % enemy_DR
-            % typical_strength % (typical_strength / cost)).str();
+            % typical_strength
+            % (typical_strength / cost)).str();
     }
 
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,

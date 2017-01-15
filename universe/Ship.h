@@ -61,6 +61,9 @@ public:
     float                       CurrentPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns current value of the specified part meter \a type for the specified part name
     float                       InitialPartMeterValue(MeterType type, const std::string& part_name) const;  ///< returns this turn's initial value for the speicified part meter \a type for the specified part name
 
+    /** Returns sum of current value for part meter @p type of all parts with ShipPartClass @p part_class */
+    float                       SumCurrentPartMeterValuesForPartClass(MeterType type, ShipPartClass part_class) const;
+
     float                       TotalWeaponsDamage(float shield_DR = 0.0f, bool include_fighters = true) const; ///< versus an enemy with a given shields DR
     float                       FighterCount() const;
     float                       FighterMax() const;
