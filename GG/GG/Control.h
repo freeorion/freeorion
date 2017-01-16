@@ -54,10 +54,11 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   Render() = 0;
+    /** Sets the color of the control. */
+    virtual void SetColor(Clr c);
 
-    virtual void   SetColor(Clr c);        ///< sets the color of the control
-    virtual void   Disable(bool b = true); ///< disables/enables the control; disabled controls appear greyed
+    /** Disables/enables the control; disabled controls appear greyed. */
+    virtual void Disable(bool b = true);
     //@}
 
 protected:
@@ -66,9 +67,9 @@ protected:
     Control(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE); ///< basic ctor
     //@}
 
-    virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
-    virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
-    virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     Clr  m_color;    ///< the color of the control
     bool m_disabled; ///< whether or not this control is disabled

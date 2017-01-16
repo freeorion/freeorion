@@ -85,7 +85,7 @@ struct GG_API MenuItem
     template <class T1, class T2>
     MenuItem(const std::string& str, int id, bool disable, bool check, void (T1::* slot)(), T2* obj);
 
-    virtual ~MenuItem(); ///< virtual dtor
+    virtual ~MenuItem();
     //@}
 
     /** \name Accessors */ ///@{
@@ -140,7 +140,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt        MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     const MenuItem&   AllMenus() const;                           ///< returns a const reference to the MenuItem that contains all the menus and their contents
     bool              ContainsMenu(const std::string& str) const; ///< returns true if there is a top-level menu in the MenuBar whose label is \a str
@@ -161,12 +161,12 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   Render();
-    virtual void   LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   MouseLeave();
+    void Render() override;
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseLeave() override;
 
-    virtual void   SizeMove(const Pt& ul, const Pt& lr);
+    void SizeMove(const Pt& ul, const Pt& lr) override;
 
     MenuItem&      AllMenus();                    ///< returns a reference to the MenuItem that contains all the menus and their contents
 
@@ -246,7 +246,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt  ClientUpperLeft() const;
+    Pt ClientUpperLeft() const override;
 
     int         MenuID() const;            ///< returns the integer ID of the menu item selected by the user, or 0 if none was selected
     Clr         BorderColor() const;       ///< returns the color used to render the border of the control
@@ -259,15 +259,15 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   Render();
-    virtual void   LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
-    virtual void   RButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   RClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
+    void Render() override;
+    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
+    void RButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void RClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
 
-    virtual bool   Run();
+    bool Run() override;
 
     void           SetBorderColor(Clr clr);       ///< sets the color used to render the border of the control
     void           SetInteriorColor(Clr clr);     ///< sets the color used to render the interior of the control

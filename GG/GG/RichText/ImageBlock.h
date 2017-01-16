@@ -36,9 +36,9 @@ public:
     ImageBlock(const boost::filesystem::path& path, X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
 
     //! Implement from BlockControl sets the maximum width, returns the actual size based on that.
-    virtual Pt SetMaxWidth(X width);
+    Pt SetMaxWidth(X width) override;
 
-    virtual void Render();
+    void Render() override;
 
     //! Set the root path from which to look for images with the factory.
     static bool SetImagePath(RichText::IBlockControlFactory* factory,   //!< The factory to set the path for. Should be an image block factory.

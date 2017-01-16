@@ -303,7 +303,7 @@ public:
     };
 
     /** \name Structors */ ///@{
-    virtual ~Wnd(); ///< Virtual dtor.
+    virtual ~Wnd();
     //@}
 
     /** \name Accessors */ ///@{

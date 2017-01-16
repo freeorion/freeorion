@@ -75,12 +75,12 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt MinUsableSize() const;
-    virtual Pt ClientUpperLeft() const;
-    virtual Pt ClientLowerRight() const;
+    Pt MinUsableSize() const override;
+    Pt ClientUpperLeft() const override;
+    Pt ClientLowerRight() const override;
 
     /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
-    virtual Pt MinUsableSize(X width) const;
+    Pt MinUsableSize(X width) const override;
 
     /** Returns the current position of the cursor (first selected character
         to one past the last selected one). */
@@ -106,9 +106,9 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render();
+    void Render() override;
 
-    virtual void SetColor(Clr c);
+    void SetColor(Clr c) override;
 
     /** Sets the interior color of the control. */
     void SetInteriorColor(Clr c);
@@ -135,7 +135,7 @@ public:
     /** Deselects text */
     virtual void DeselectAll();
 
-    virtual void SetText(const std::string& str);
+    void SetText(const std::string& str) override;
 
     /** Replaces selected text with, or inserts at cursor, the text in \a text. */
     virtual void AcceptPastedText(const std::string& text);
@@ -190,14 +190,14 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
-    virtual void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
-    virtual void TextInput(const std::string* text);
-    virtual void GainingFocus();
-    virtual void LosingFocus();
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
+    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void TextInput(const std::string* text) override;
+    void GainingFocus() override;
+    void LosingFocus() override;
 
     /** Does a bit more than its name suggests.  Records the current time, and
         if it's within GUI::DoubleClickInterval() of the last button down

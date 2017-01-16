@@ -215,7 +215,7 @@ public:
             \a nl indicates that it is a newline element. */
         TextElement(bool ws, bool nl);
 
-        virtual ~TextElement(); ///< Virtual dtor.
+        virtual ~TextElement();
 
         /** Attach this TextElement to the string \p whole_text, by
             attaching the SubString data member text to \p whole_text.
@@ -320,11 +320,11 @@ public:
         /** Attach to \p whole_text by binding all Substring data members,
             both the base class and the data member tag_name to the string
             \p whole_text.*/
-        virtual void Bind(const std::string& whole_text);
+        void Bind(const std::string& whole_text) override;
 
-        virtual TextElementType Type() const;
+        TextElementType Type() const override;
 
-        virtual bool operator==(const TextElement &rhs) const;
+        bool operator==(const TextElement &rhs) const override;
 
         /** The parameter strings within the tag, e.g. "0", "0", "0", and "255"
             for the tag "<rgba 0 0 0 255>". */

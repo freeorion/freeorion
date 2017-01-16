@@ -66,16 +66,16 @@ public:
               Clr color, Flags<MultiEditStyle> style = MULTI_LINEWRAP, Clr text_color = CLR_BLACK,
               Clr interior = CLR_ZERO);
 
-    /** Dtor. */
     virtual ~MultiEdit();
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt MinUsableSize() const;
+    Pt MinUsableSize() const override;
+
+    Pt ClientLowerRight() const override;
 
     /** Returns the size to show the whole text without scrollbars. */
     Pt FullSize() const;
-    virtual Pt ClientLowerRight() const;
 
     /** Returns the style flags for this MultiEdit. */
     Flags<MultiEditStyle> Style() const;
@@ -90,13 +90,13 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   Render();
+    void Render() override;
 
-    virtual void   SizeMove(const Pt& ul, const Pt& lr);
+    void SizeMove(const Pt& ul, const Pt& lr) override;
 
-    virtual void   SelectAll();
-    virtual void   DeselectAll();
-    virtual void   SetText(const std::string& str);
+    void SelectAll() override;
+    void DeselectAll() override;
+    void SetText(const std::string& str) override;
 
     /** Sets the style flags for this MultiEdit to \a style. */
     void           SetStyle(Flags<MultiEditStyle> style);
@@ -112,7 +112,7 @@ public:
     void           SetVScrollWheelIncrement(unsigned int increment);
     void           SetHScrollWheelIncrement(unsigned int increment);
 
-    virtual void   AcceptPastedText(const std::string& text);
+    void AcceptPastedText(const std::string& text) override;
     //@}
 
     /** A sentinel value that indicates that there is no limit on the number
@@ -126,7 +126,7 @@ public:
 protected:
     /** \name Accessors */ ///@{
     /** Returns true if >= 1 characters are selected. */
-    virtual bool MultiSelected() const;
+    bool MultiSelected() const override;
 
     /** Returns the width of the scrollbar on the right side of the control (0
         if none). */
@@ -198,11 +198,11 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
-    virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
-    virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
-    virtual void TextInput(const std::string* text);
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
+    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void TextInput(const std::string* text) override;
 
     /** Recreates the vertical and horizontal scrolls as needed. */
     void RecreateScrolls();
@@ -216,7 +216,7 @@ protected:
         this function, the scroll positions will be reset. */
     void PreserveTextPositionOnNextSetText();
 
-    virtual std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index);
+    std::pair<CPSize, CPSize> GetDoubleButtonDownWordIndices(CPSize char_index) override;
     //@}
 
     /** The width used to create the control's vertical and horizontal

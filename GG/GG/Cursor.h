@@ -48,7 +48,7 @@ class GG_API Cursor
 public:
     /** \name Structors */ ///@{
     Cursor();          ///< ctor
-    virtual ~Cursor(); ///< virtual dtor
+    virtual ~Cursor();
     //@}
 
     /** \name Mutators */ ///@{
@@ -83,7 +83,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render(const Pt& pt);
+    void Render(const Pt& pt) override;
     //@}
 
 private:

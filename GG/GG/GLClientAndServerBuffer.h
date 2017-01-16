@@ -15,8 +15,8 @@ class GG_API GLBufferBase
 {
 public:
     GLBufferBase();             // ctor
-    virtual ~GLBufferBase();    // dtor,    required to automatically drop
-                                //          server buffer in case of delete
+    /** Required to automatically drop server buffer in case of delete. */
+    virtual ~GLBufferBase();
 
     // use this if you want to make sure that two buffers both
     // have server buffers or not, drops the buffer for mixed cases
@@ -81,7 +81,7 @@ class GG_API GLRGBAColorBuffer : public GLClientAndServerBufferBase<unsigned cha
 public:
     GLRGBAColorBuffer();
     void store(const Clr& color);
-    virtual void activate() const;
+    void activate() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -96,7 +96,7 @@ public:
     void store(X x, float y);
     void store(float x, Y y);
     void store(float x, float y);
-    virtual void activate() const;
+    void activate() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -106,7 +106,7 @@ class GG_API GLTexCoordBuffer : public GLClientAndServerBufferBase<float>
 {
 public:
     GLTexCoordBuffer();
-    virtual void activate() const;
+    void activate() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -117,7 +117,7 @@ class GG_API GL3DVertexBuffer : public GLClientAndServerBufferBase<float>
 public:
     GL3DVertexBuffer();
     void store(float x, float y, float z);
-    virtual void activate() const;
+    void activate() const override;
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -128,7 +128,7 @@ class GG_API GLNormalBuffer : public GLClientAndServerBufferBase<float>
 public:
     GLNormalBuffer();
     void store(float x, float y, float z);
-    virtual void activate() const;
+    void activate() const override;
 };
 
 }

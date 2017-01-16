@@ -158,7 +158,7 @@ public:
     typedef std::set<std::pair<Key, Flags<ModKey> > >::const_iterator const_accel_iterator;
 
     /** \name Structors */ ///@{
-    virtual ~GUI(); ///< virtual dtor
+    virtual ~GUI();
     //@}
 
     /** \name Accessors */ ///@{
@@ -419,7 +419,7 @@ public:
     virtual std::vector<std::string> GetSupportedResolutions() const = 0;
 
     /** Returns the default resolution of the display */
-    virtual Pt GetDefaultResolution(int display_id) = 0;
+    virtual Pt GetDefaultResolution(int display_id) const = 0;
 
 protected:
     /** \name Structors */ ///@{

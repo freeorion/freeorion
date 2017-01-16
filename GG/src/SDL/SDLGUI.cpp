@@ -364,7 +364,7 @@ namespace {
             std::exception(), exit_code(exit_code_)
         {}
 
-        virtual const char* what() const throw()
+        const char* what() const noexcept override
         { return  exit_code ? "Quitting SDLGUI with error." : "Quitting SDLGUI normally."; }
 
         int exit_code;
@@ -376,7 +376,7 @@ namespace {
             m_status(status)
         {}
 
-        virtual const char* what() const throw() {
+        const char* what() const noexcept override {
             switch (m_status) {
                 case GL_FRAMEBUFFER_UNSUPPORTED_EXT:
                     return "The requested framebuffer format was unsupported";
@@ -924,7 +924,7 @@ void SDLGUI::SDLMinimalInit()
     }
 }
 
-Pt SDLGUI::GetDefaultResolution(int display_id)
+Pt SDLGUI::GetDefaultResolution(int display_id) const
 { return GetDefaultResolutionStatic(display_id); }
 
 Pt SDLGUI::GetDefaultResolutionStatic(int display_id)

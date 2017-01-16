@@ -123,7 +123,8 @@ while ( ... ) {
 class GG_API EventPump : public EventPumpBase
 {
 public:
-    virtual ~EventPump() {} ///< virtual dtor
+    virtual ~EventPump()
+    {}
 
     /** Cycles through event-handling and rendering, calling
         GUI::HandleSystemEvents() and then EventPumpBase::LoopBody(). */
@@ -138,7 +139,8 @@ class GG_API ModalEventPump : public EventPump
 {
 public:
     ModalEventPump(const bool& done); ///< Basic ctor.
-    virtual void operator()();
+
+    void operator()() override;
 
 protected:
     /** Returns true iff the constructor parameter \a done is true. */

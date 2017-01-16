@@ -83,7 +83,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render();
+    void Render() override;
 
     /** Sets the style flags, and perfroms sanity checking \see
         GraphicStyle */

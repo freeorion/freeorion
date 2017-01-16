@@ -68,9 +68,9 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render();
-    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
+    void Render() override;
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
 
     void SetHueSaturation(double hue, double saturation); ///< sets the current hue and saturation.  Note that this does not cause a signal to be emitted.
     //@}
@@ -102,9 +102,9 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render();
-    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
+    void Render() override;
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
 
     /** Sets the current hue and saturation.  These are only used to render
         the control, and do not otherwise influence its operation. */
@@ -155,9 +155,9 @@ public:
 
     protected:
         /** \name Mutators */ ///@{
-        virtual void RenderUnpressed();
-        virtual void RenderPressed();
-        virtual void RenderRollover();
+        void RenderUnpressed() override;
+        void RenderPressed() override;
+        void RenderRollover() override;
         //@}
 
     private:
@@ -178,7 +178,7 @@ public:
         //@}
 
         /** \name Accessors */ ///@{
-        virtual void Render();
+        void Render() override;
         //@}
     };
 
@@ -198,8 +198,8 @@ public:
     Clr Result() const;
     //@}
 
-    virtual void Render();
-    virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    void Render() override;
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     //@}
 
     static const std::size_t INVALID_COLOR_BUTTON;

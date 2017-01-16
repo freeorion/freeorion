@@ -17,10 +17,11 @@ public:
     TextBlock(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
               Flags<TextFormat> format, Flags<WndFlag> flags);
 
-    virtual void Render() {};
+    void Render() override
+    {};
 
     //! Calculate the size based on the width it should take.
-    virtual Pt SetMaxWidth(X width);
+    Pt SetMaxWidth(X width) override;
 
 private:
     TextControl* m_text; //! The text control used to handle the text.

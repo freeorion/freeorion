@@ -65,7 +65,7 @@ class GG_API Texture
 public:
     /** \name Structors */ ///@{
     Texture();          ///< ctor
-    virtual ~Texture(); ///< virtual dtor
+    virtual ~Texture();
     //@}
 
     /** \name Accessors */ ///@{
@@ -182,7 +182,7 @@ public:
 
     SubTexture(const SubTexture& rhs); ///< copy ctor
     const SubTexture& operator=(const SubTexture& rhs); ///< assignment operator
-    virtual ~SubTexture(); ///< virtual dtor
+    virtual ~SubTexture();
     //@}
 
     /** \name Accessors */ ///@{

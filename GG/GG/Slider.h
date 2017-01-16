@@ -74,7 +74,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt           MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     T                    Posn() const;           ///< returns the current tab position
     std::pair<T, T>      SliderRange() const;    ///< returns the defined possible range of control
@@ -93,10 +93,10 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   Render();
-    virtual void   SizeMove(const Pt& ul, const Pt& lr);
-    virtual void   Disable(bool b = true);
-    virtual void   SetColor(Clr c);
+    void Render() override;
+    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void Disable(bool b = true) override;
+    void SetColor(Clr c) override;
 
     void           SizeSlider(T min, T max); ///< sets the logical range of the control; \a min must not equal \a max
     void           SetMax(T max);            ///< sets the maximum value of the control
@@ -119,10 +119,9 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
-
-    virtual bool EventFilter(Wnd* w, const WndEvent& event);
+    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     void MoveTabToPosn(); ///< moves the tab to the current logical position
     //@}

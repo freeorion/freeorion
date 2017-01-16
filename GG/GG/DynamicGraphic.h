@@ -126,7 +126,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render();
+    void Render() override;
 
     /** Adds a set of frames from Texture \a texture to the animation.  If \a
         frames == ALL_FRAMES, the Texture is assumed to contain the maximum

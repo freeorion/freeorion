@@ -142,11 +142,14 @@ public:
         //@}
 
         /** \name Accessors */ ///@{
-        virtual SortKeyType SortKey(std::size_t column) const;  ///< returns the string by which this row may be sorted
+        /** Returns the string by which this row may be sorted. */
+        virtual SortKeyType SortKey(std::size_t column) const;
         std::size_t         size() const;                       ///< returns the number of Controls in this Row
         bool                empty() const;                      ///< returns true iff there are 0 Controls in this Row
 
-        virtual Control*    at(std::size_t n) const;            ///< returns the Control in the \a nth cell of this Row \throw std::range_error throws when size() <= \a n
+        /** Returns the Control in the \a nth cell of this Row
+            \throw std::range_error throws when size() <= \a n */
+        virtual Control* at(std::size_t n) const;
 
         Alignment    RowAlignment() const;              ///< returns the vertical alignment of this Row
         Alignment    ColAlignment(std::size_t n) const; ///< returns the horizontal alignment of the Control in the \a nth cell of this Row; not range checked
@@ -157,7 +160,7 @@ public:
         //@}
 
         /** \name Mutators */ ///@{
-        virtual void Render();
+        void Render() override;
 
         void         push_back(Control* c); ///< adds a given Control to the end of the Row; this Control becomes property of the Row
         void         clear(); ///< removes and deletes all cells in this Row
@@ -179,8 +182,9 @@ public:
         //@}
 
         boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
+
     protected:
-        virtual void           RClick(const Pt& pt, GG::Flags<GG::ModKey> mod);
+        void RClick(const Pt& pt, GG::Flags<GG::ModKey> mod) override;
 
         std::vector<Control*>  m_cells;          ///< the Controls in this Row (each may be null)
         Alignment              m_row_alignment;  ///< row alignment; one of ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM
@@ -253,13 +257,13 @@ public:
     /** basic ctor */
     ListBox(Clr color, Clr interior = CLR_ZERO);
 
-    virtual ~ListBox(); ///< virtual dtor
+    virtual ~ListBox();
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt      MinUsableSize() const;
-    virtual Pt      ClientUpperLeft() const;
-    virtual Pt      ClientLowerRight() const;
+    Pt MinUsableSize() const override;
+    Pt ClientUpperLeft() const override;
+    Pt ClientLowerRight() const override;
 
     bool                Empty() const;          ///< returns true when the ListBox is empty
     const_iterator      begin() const;          ///< returns an iterator to the first list row
@@ -332,20 +336,21 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void    StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset);
-    virtual void    AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys);
-    virtual void    ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
-    virtual void    PreRender();
-    virtual void    Render();
+    void StartingChildDragDrop(const Wnd* wnd, const GG::Pt& offset) override;
+    void AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys) override;
+    void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
+    void PreRender() override;
+    void Render() override;
 
-    virtual void    SizeMove(const Pt& ul, const Pt& lr);  ///< resizes the control, then resizes the scrollbars as needed
+    /** Resizes the control, then resizes the scrollbars as needed. */
+    void SizeMove(const Pt& ul, const Pt& lr) override;
 
     /** Show the  list box.  If \p show_children is true then show the rows that are within the
         boundaries of the list box.*/
-    virtual void    Show(bool show_children = true);
+    void Show(bool show_children = true) override;
 
-    virtual void    Disable(bool b = true);
-    virtual void    SetColor(Clr c);
+    void Disable(bool b = true) override;
+    void SetColor(Clr c) override;
 
     /** Insertion sorts \a row into the ListBox if sorted, or inserts into an
         unsorted ListBox before \a it; returns insertion point.  This Row
@@ -517,15 +522,15 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void    KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
-    virtual void    MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
-    virtual void    DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys);
-    virtual void    DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys);
-    virtual void    DragDropLeave();
-    virtual void    CancellingChildDragDrop(const std::vector<const Wnd*>& wnds);
-    virtual void    TimerFiring(unsigned int ticks, Timer* timer);
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void DragDropEnter(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
+    void DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_acceptable, Flags<ModKey> mod_keys) override;
+    void DragDropLeave() override;
+    void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
+    void TimerFiring(unsigned int ticks, Timer* timer) override;
 
-    virtual bool    EventFilter(Wnd* w, const WndEvent& event);
+    bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     /** Define the number of columns, the column widths and alignment from \p row.*/
     iterator        Insert(Row* row, iterator it, bool dropped, bool signal);                       ///< insertion sorts into list, or inserts into an unsorted list before \a it; returns insertion point
@@ -539,8 +544,8 @@ protected:
 
     void            AdjustScrolls(bool adjust_for_resize);  ///< creates, destroys, or resizes scrolls to reflect size of data in listbox
 
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                    const Pt& pt, Flags<ModKey> mod_keys) const;
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         const Pt& pt, Flags<ModKey> mod_keys) const override;
     void            HandleRowRightClicked(const Pt& pt, Flags<ModKey> mod);
 
 private:

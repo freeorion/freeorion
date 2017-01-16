@@ -81,7 +81,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt           MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     std::pair<int, int>  PosnRange() const;         ///< range currently being viewed
     std::pair<int, int>  ScrollRange() const;       ///< defined possible range of control
@@ -96,13 +96,14 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   Render();
+    void Render() override;
 
-    virtual void   SizeMove(const Pt& ul, const Pt& lr);
-    virtual void   DoLayout();
+    void SizeMove(const Pt& ul, const Pt& lr) override;
 
-    virtual void   Disable(bool b = true);
-    virtual void   SetColor(Clr c);
+    void Disable(bool b = true) override;
+    void SetColor(Clr c) override;
+
+    virtual void DoLayout();
 
     void           SetInteriorColor(Clr c); ///< sets the color painted into the client area of the control
     void           SizeScroll(int min, int max, unsigned int line, unsigned int page); ///< sets the logical ranges of the control, and the logical increment values
@@ -130,14 +131,13 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void  LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void  LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void  LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void  MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
+    bool EventFilter(Wnd* w, const WndEvent& event) override;
 
-    virtual bool  EventFilter(Wnd* w, const WndEvent& event);
-
-    virtual void  InitBuffer();
+    virtual void InitBuffer();
     //@}
 
     GG::GL2DVertexBuffer    m_buffer;

@@ -122,16 +122,16 @@ public:
     Alignment       ColAlignment(std::size_t n) const; ///< returns the alignment of column \a n; must be LIST_LEFT, LIST_CENTER, or LIST_RIGHT; not range-checked
     Alignment       RowAlignment(iterator it) const;   ///< returns the alignment of row \a n; must be LIST_TOP, LIST_VCENTER, or LIST_BOTTOM; not range-checked
 
-    virtual Pt      ClientUpperLeft() const;
-    virtual Pt      ClientLowerRight() const;
+    Pt ClientUpperLeft() const override;
+    Pt ClientLowerRight() const override;
 
     /** Return the width of the displayed row.  Override this function if the displayed row is a
         different width than the client width.*/
-    virtual GG::X  DisplayedRowWidth() const;
+    virtual GG::X DisplayedRowWidth() const;
 
     /** Return the width of the dropped row.  Override this function if the dropped row is a
         different width than the client width.*/
-    virtual GG::X  DroppedRowWidth() const;
+    virtual GG::X DroppedRowWidth() const;
 
     /** The selection change signal while not running the modal drop down box.
         This will also signal an event when the drop list closes if the selection changed.
@@ -144,10 +144,12 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void    PreRender();
-    virtual void    Render();
-    virtual void    SizeMove(const Pt& ul, const Pt& lr); ///< resizes the control, ensuring the proper height is maintained based on the list's row height
-    virtual void    SetColor(Clr c);
+    void PreRender() override;
+    void Render() override;
+    /** Resizes the control, ensuring the proper height is maintained based on
+        the list's row height. */
+    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void SetColor(Clr c) override;
 
     /** Insertion sorts \a row into a sorted list, or inserts into an unsorted
         list before \a it; returns index of insertion point.  This Row becomes
@@ -219,14 +221,14 @@ public:
 
 protected:
     /** \name Mutators */ ///@{
-    virtual void    LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void    KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
-    virtual void    MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
+    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
 
     ListBox*        LB();                ///< returns the ListBox used to render the selected row and the popup list
 
-    virtual void    InitBuffer();
-    virtual void    RenderDisplayedRow();
+    virtual void InitBuffer();
+    virtual void RenderDisplayedRow();
 
     GL2DVertexBuffer    m_buffer;
     //@}

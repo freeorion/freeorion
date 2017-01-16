@@ -17,10 +17,10 @@ public:
     BlockControl(X x, Y y, X w, GG::Flags<GG::WndFlag> flags);
 
     //! Set the maximum width of the block control. Returns the size based on the width.
-    virtual Pt SetMaxWidth (X width) = 0;
+    virtual Pt SetMaxWidth(X width) = 0;
 
     //! Redirect size move to setmaxwidth.
-    virtual void SizeMove (const Pt& ul, const Pt& lr);
+    void SizeMove(const Pt& ul, const Pt& lr) override;
 };
 
 }

@@ -49,12 +49,12 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt ClientUpperLeft() const;
-    virtual Pt ClientLowerRight() const;
+    Pt ClientUpperLeft() const override;
+    Pt ClientLowerRight() const override;
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render();
+    void Render() override;
 
     /** Sets the color of the group box. */
     void SetColor(Clr c);

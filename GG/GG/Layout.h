@@ -108,7 +108,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     std::size_t      Rows() const;                             ///< returns the number of rows in the layout
     std::size_t      Columns() const;                          ///< returns the number of columns in the layout
@@ -137,11 +137,11 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void StartingChildDragDrop(const Wnd* wnd, const Pt& offset);
-    virtual void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds);
-    virtual void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination);
-    virtual void SizeMove(const Pt& ul, const Pt& lr);
-    virtual void Render();
+    void StartingChildDragDrop(const Wnd* wnd, const Pt& offset) override;
+    void CancellingChildDragDrop(const std::vector<const Wnd*>& wnds) override;
+    void ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination) override;
+    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void Render() override;
 
     /** Inserts \a w into the layout in the indicated cell, expanding the
         layout grid as necessary.  \throw GG::Layout::AttemptedOverwrite
@@ -237,9 +237,9 @@ public:
 
 protected:
     /** \name Mutators */ ///@{
-    virtual void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
-    virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
-    virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     virtual void DoLayout(Pt ul, Pt lr);
 

@@ -27,13 +27,13 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void SizeMove(const Pt& ul, const Pt& lr);
-    virtual void PreRender();
+    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void PreRender() override;
     //@}
 
 protected:
     /** \name Mutators */ ///@{
-    virtual void RedoLayout();
+    void RedoLayout() override;
     //@}
 
 private:

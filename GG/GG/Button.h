@@ -66,7 +66,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt       MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
     ButtonState       State() const;
@@ -83,11 +83,12 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void   Show(bool children = true);
-    virtual void   Render();
-    virtual void   SizeMove(const Pt& ul, const Pt& lr);
+    void Show(bool children = true) override;
+    void Render() override;
+    void SizeMove(const Pt& ul, const Pt& lr) override;
 
-    virtual void   SetColor(Clr c); ///< Sets the control's color; does not affect the text color
+    /** Sets the control's color; does not affect the text color. */
+    void SetColor(Clr c) override;
 
     /** Sets button state programmatically \see ButtonState */
     void           SetState(ButtonState state);
@@ -100,21 +101,24 @@ public:
 
 protected:
     /** \name Mutators */ ///@{
-    virtual void   LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
-    virtual void   LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   RButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
-    virtual void   RButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   RClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   MouseEnter(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void   MouseLeave();
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
+    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void RButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void RDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
+    void RButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void RClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseEnter(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseLeave() override;
 
-    virtual void   RenderUnpressed();   ///< Draws the button unpressed.  If an unpressed graphic has been supplied, it is used.
-    virtual void   RenderPressed();     ///< Draws the button pressed.  If an pressed graphic has been supplied, it is used.
-    virtual void   RenderRollover();    ///< Draws the button rolled-over.  If an rollover graphic has been supplied, it is used.
+    /** Draws the button unpressed.  If an unpressed graphic has been supplied, it is used. */
+    virtual void RenderUnpressed();
+    /** Draws the button pressed.  If an pressed graphic has been supplied, it is used. */
+    virtual void RenderPressed();
+    /** Draws the button rolled-over.  If an rollover graphic has been supplied, it is used. */
+    virtual void RenderRollover();
     //@}
 
     TextControl*   m_label;             ///< Label used to display text
@@ -165,7 +169,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt       MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     /** Returns button state \see ButtonState */
     ButtonState       State() const;
@@ -180,9 +184,9 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void     Show(bool children = true);
-    virtual void     Render();
-    virtual void     SizeMove(const Pt& ul, const Pt& lr);
+    void Show(bool children = true) override;
+    void Render() override;
+    void SizeMove(const Pt& ul, const Pt& lr) override;
 
     void             Reset();                 ///< Unchecks button
     void             SetCheck(bool b = true); ///< (Un)checks button
@@ -191,12 +195,12 @@ public:
 
 protected:
     /** \name Mutators */ ///@{
-    virtual void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys);
-    virtual void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void MouseHere(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void MouseLeave();
+    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
+    void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void MouseLeave() override;
 
     /** Sets button state programmatically \see ButtonState */
     void         SetState(ButtonState next_state);
@@ -276,7 +280,7 @@ class GG_API BeveledCheckBoxRepresenter: public StateButtonRepresenter
 public:
     explicit BeveledCheckBoxRepresenter(Clr int_color = CLR_ZERO);
 
-    virtual void Render(const StateButton& button) const;
+    void Render(const StateButton& button) const override;
 
 private:
     Clr m_int_color;
@@ -289,7 +293,7 @@ class GG_API BeveledRadioRepresenter: public StateButtonRepresenter
 public:
     explicit BeveledRadioRepresenter(Clr int_color = CLR_ZERO);
 
-    virtual void Render(const StateButton& button) const;
+    void Render(const StateButton& button) const override;
 
 private:
     Clr m_int_color;
@@ -300,9 +304,9 @@ private:
 class GG_API BeveledTabRepresenter: public StateButtonRepresenter
 {
 public:
-    virtual void Render(const StateButton& button) const;
+    void Render(const StateButton& button) const override;
 
-    virtual Pt MinUsableSize(const StateButton& button) const;
+    Pt MinUsableSize(const StateButton& button) const override;
 };
 
 
@@ -329,7 +333,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt       MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     /** Returns the orientation of the buttons in the group */
     Orientation      GetOrientation() const;
@@ -364,7 +368,7 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render();
+    void Render() override;
 
     /** Checks the index-th button, and unchecks all others.  If there is no
         index-th button, they are all unchecked, and the currently-checked

@@ -21,11 +21,12 @@ class Scroll;
 class GG_API ScrollPanel : public Wnd
 {
 public:
-    virtual void SizeMove(const Pt& ul, const Pt& lr);
-    virtual void Render();
     ScrollPanel();
     //! Create a ScrollPanel with content.
     ScrollPanel(X x, Y y, X w, Y h, Wnd* content);
+
+    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void Render() override;
 
     //! Set the scroll position
     void ScrollTo(Y pos);
@@ -38,7 +39,7 @@ public:
     { return m_vscroll;}
 
 protected:
-    virtual void MouseWheel(const Pt& pt, int move, GG::Flags< GG::ModKey > mod_keys);
+    void MouseWheel(const Pt& pt, int move, GG::Flags< GG::ModKey > mod_keys) override;
 
 private:
     Scroll* m_vscroll; //!< The vertical scroll bar.

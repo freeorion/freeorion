@@ -44,17 +44,19 @@ public:
     ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t m_num_shown_rows);
     ~ModalListPicker();
 
-    virtual bool   Run();
-    virtual void   EndRun();
+    bool Run() override;
+    void EndRun() override;
+    void Render() override
+    {}
+
     bool           Dropped() const;
-    virtual void   Render() {}
 
     /** Adjust the m_lb_wnd size so that there are no more than m_num_shown_rows shown. It will
         not adjust a visible window, or if there is no relative to window. */
     void CorrectListSize();
 
-    virtual void LClick(const Pt& pt, Flags<ModKey> mod_keys);
-    virtual void ModalInit();
+    void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
+    void ModalInit() override;
 
     ListBox* LB()
     { return m_lb_wnd; }
@@ -89,10 +91,11 @@ public:
 protected:
     /** ModalListPicker needs to process its own key press events because modal windows in GG
         can't have parents. */
-    virtual void    KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+
     /** ModalListPicker needs to process its own mouse events because modal windows in GG can't
         have parents.*/
-    virtual void    MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
+    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
 
 private:
     void LBSelChangedSlot(const ListBox::SelectionSet& rows);

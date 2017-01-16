@@ -97,8 +97,9 @@ public:
         Since Control does not have a way to access Flags the copy using default flags.
     */
     explicit TextControl(const TextControl& that);
-    //@}
+
     virtual ~TextControl();
+    //@}
 
     /** Assignment operator.
 
@@ -111,10 +112,10 @@ public:
     TextControl& operator=(const TextControl& that);
 
     /** \name Accessors */ ///@{
-    virtual Pt        MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     /** Returns the minimum usable size if the text were reflowed into a \a width box.*/
-    virtual Pt        MinUsableSize(X width) const;
+    virtual Pt MinUsableSize(X width) const;
 
     /** Returns the text displayed in this control. */
     const std::string& Text() const;
@@ -190,7 +191,13 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render();
+    void Render() override;
+
+    void SizeMove(const Pt& ul, const Pt& lr) override;
+
+    /** Just like Control::SetColor(), except that this one also adjusts the
+        text color. */
+    void SetColor(Clr c) override;
 
     /** Sets the text displayed in this control to \a str.  May resize the
         window.  If the control was constructed with FORMAT_NOWRAP, calls
@@ -244,17 +251,11 @@ public:
     /** Sets the Font used by this TextControl to render its text. */
     void         SetFont(boost::shared_ptr<Font> font);
 
-    virtual void SizeMove(const Pt& ul, const Pt& lr);
-
     /** Sets the text format; ensures that the flags are sane. */
     void         SetTextFormat(Flags<TextFormat> format);
 
     /** Sets the text color. */
     void         SetTextColor(Clr color);
-
-    /** Just like Control::SetColor(), except that this one also adjusts the
-        text color. */
-    virtual void SetColor(Clr c);
 
     /** Enables/disables text clipping to the client area. */
     void         ClipText(bool b);

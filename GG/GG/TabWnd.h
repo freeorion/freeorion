@@ -56,7 +56,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
     bool Empty() const;
@@ -129,7 +129,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt      MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
     bool            Empty() const;
@@ -218,7 +218,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual Pt      MinUsableSize() const;
+    Pt MinUsableSize() const override;
 
     /** Returns true iff NumWnds() == 0. */
     bool            Empty() const;
@@ -236,10 +236,11 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void    MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys);
-    virtual void    SizeMove(const Pt& ul, const Pt& lr);
-    virtual void    DoLayout();
-    virtual void    Render();
+    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void SizeMove(const Pt& ul, const Pt& lr) override;
+    void Render() override;
+
+    virtual void DoLayout();
 
     /** Adds a tab called \a name to the sequence of tabs in this TabBar.  \a
         name can be used later to remove the tab (\a name is not checked for
@@ -277,7 +278,7 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual bool    EventFilter(Wnd* w, const WndEvent& event);
+    bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     /** Brings the currently-selected tab button to the top within the tab
         button group. */

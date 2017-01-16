@@ -49,8 +49,11 @@ public:
     ExceptionBase(const std::string& msg) throw() : m_msg(msg) {}   ///< a ctor that allows the throwing code to include a text message
     ~ExceptionBase() throw() {}                                     ///< dtor required by std::exception
 
-    virtual const char* type() const throw() = 0;                   ///< returns a string representation of the type this exception
-    virtual const char* what() const throw() {return m_msg.c_str();}
+    /** Returns a string representation of the type this exception. */
+    virtual const char* type() const throw() = 0;
+
+    const char* what() const throw() override
+    { return m_msg.c_str(); }
 
 private:
     std::string m_msg; ///< the text message associated with this Exception (may be "")
@@ -64,7 +67,7 @@ private:
     public:                                                             \
         name () throw() : ExceptionBase() {}                            \
         name (const std::string& msg) throw() : ExceptionBase(msg) {}   \
-        virtual const char* type() const throw()                        \
+        const char* type() const noexcept override                      \
             {return "GG::" # name ;}                                    \
     };
 
@@ -77,7 +80,7 @@ private:
     public:                                                             \
         name () throw() : ExceptionBase() {}                            \
         name (const std::string& msg) throw() : ExceptionBase(msg) {}   \
-        virtual const char* type() const throw() = 0;                   \
+        const char* type() const noexcept override = 0;                 \
     };
 
 /** Declares a concrete exception class derived from \a superclass.  This
@@ -89,7 +92,7 @@ private:
     public:                                                             \
         name () throw() : superclass () {}                              \
         name (const std::string& msg) throw() : superclass (msg) {}     \
-        virtual const char* type() const throw()                        \
+        const char* type() const noexcept override                      \
             {return # class_name "::" # name ;}                         \
     };
 

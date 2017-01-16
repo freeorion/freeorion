@@ -60,8 +60,6 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
-    virtual void Render() = 0;
-
     /** Collects data from \a target that is needed by Render().  Note that
         the one datum that is always available for any Wnd is the text to
         display for \a mode, accessible through Wnd::BrowseInfoText() (though
@@ -113,7 +111,7 @@ public:
     //@}
 
     /** \name Accessors */ ///@{
-    virtual bool                   WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
     bool                           TextFromTarget() const; ///< returns true iff the text to display will be read from the target wnd
     const std::string&             Text () const;          ///< returns the text currently set for display
@@ -128,8 +126,8 @@ public:
 
     /** \name Mutators */ ///@{
     void         SetText(const std::string& str);
-    virtual void Render();
-    virtual void SizeMove(const Pt& ul, const Pt& lr);
+    void Render() override;
+    void SizeMove(const Pt& ul, const Pt& lr) override;
 
     void SetTextFromTarget(bool b);                    ///< sets the text display mode to static (\a b == true) or dynamic (read from the target Wnd, \a b == false)
     void SetFont(const boost::shared_ptr<Font>& font); ///< sets the Font used to display text
@@ -143,7 +141,7 @@ public:
 
 private:
     virtual void InitBuffer();
-    virtual void UpdateImpl(std::size_t mode, const Wnd* target);
+    void UpdateImpl(std::size_t mode, const Wnd* target) override;
 
     GG::GL2DVertexBuffer    m_buffer;
     bool                    m_text_from_target;
