@@ -46,6 +46,10 @@ namespace {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/not_ready.png");
     }
 
+    const boost::shared_ptr<GG::Texture> GetHostTexture() {
+        return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/host.png");
+    }
+
     const GG::X EMPIRE_NAME_WIDTH(150);
     const GG::X BROWSE_BTN_WIDTH(50);
 
@@ -244,6 +248,13 @@ namespace {
                 at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth())));
+                if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
+                    push_back(new GG::StaticGraphic(GetHostTexture(),
+                        GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+                } else {
+                    push_back(new CUILabel(""));
+                }
+                at(6)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
 
                 return;
             }
@@ -290,6 +301,16 @@ namespace {
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth())));
             }
+
+            // host
+            if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
+                push_back(new GG::StaticGraphic(GetHostTexture(),
+                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+            } else {
+                push_back(new CUILabel(""));
+            }
+            at(6)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
+
         }
 
     private:
@@ -386,6 +407,15 @@ namespace {
                     "", PlayerReadyBrowseWidth())));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             }
+
+            // host
+            if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
+                push_back(new GG::StaticGraphic(GetHostTexture(),
+                    GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
+            } else {
+                push_back(new CUILabel(""));
+            }
+            at(6)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
         }
 
     private:
@@ -431,6 +461,7 @@ namespace {
             push_back(new CUILabel(""));
             push_back(new CUILabel(""));
             push_back(new CUILabel(""));
+            push_back(new CUILabel(""));
         }
     private:
         void PlayerTypeChanged(Networking::ClientType type) {
@@ -439,7 +470,7 @@ namespace {
         }
     };
 
-    const GG::X     LOBBY_WND_WIDTH(840);
+    const GG::X     LOBBY_WND_WIDTH(860);
     const GG::Y     LOBBY_WND_HEIGHT(720);
     const int       CONTROL_MARGIN = 5; // gap to leave between controls in the window
     const GG::X     GALAXY_SETUP_PANEL_WIDTH(250);
@@ -451,17 +482,18 @@ namespace {
     const GG::Pt    PREVIEW_SZ(GG::X(248), GG::Y(186));
     const int       PREVIEW_MARGIN = 3;
 
-    std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X(580)) {
+    std::vector<GG::X> PlayerRowColWidths(GG::X width = GG::X(600)) {
         std::vector<GG::X> retval;
         GG::X color_width(75);
         GG::X ready_width((ClientUI::Pts() / 2) * 5);
-        GG::X prop_width = ((width - color_width - ready_width) / 4) - CONTROL_MARGIN;
+        GG::X prop_width = ((width - color_width - 2 * ready_width) / 4) - CONTROL_MARGIN;
         retval.push_back(prop_width); // type
         retval.push_back(prop_width); // player name
         retval.push_back(prop_width); // empire name
         retval.push_back(color_width); // color
         retval.push_back(prop_width); // species/original player
         retval.push_back(ready_width); // player ready
+        retval.push_back(ready_width); // host
         return retval;
     }
 }
@@ -508,7 +540,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_players_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
     m_players_lb->LockColWidths();
     m_players_lb->ManuallyManageColProps();
-    m_players_lb->SetNumCols(6);
+    m_players_lb->SetNumCols(7);
     std::vector<GG::X> col_widths = PlayerRowColWidths();
     for (unsigned int i = 0; i < m_players_lb->NumCols(); ++i) {
         m_players_lb->SetColWidth(i, col_widths[i]);
@@ -562,8 +594,10 @@ MultiPlayerLobbyWnd::PlayerLabelRow::PlayerLabelRow(GG::X width /* = GG::X(580)*
     push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_COLOURS"), GG::FORMAT_BOTTOM | GG::FORMAT_WORDBREAK));
     push_back(new CUILabel(UserString("MULTIPLAYER_PLAYER_LIST_ORIGINAL_NAMES"), GG::FORMAT_BOTTOM | GG::FORMAT_WORDBREAK));
     push_back(new GG::StaticGraphic(GetReadyTexture(true), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
+    push_back(new GG::StaticGraphic(GetHostTexture(), GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE));
     // restrict height of ready state icon
     at(5)->SetMaxSize(GG::Pt(GG::X(400), PlayerFontHeight()));
+    at(6)->SetMaxSize(GG::Pt(GG::X(400), PlayerFontHeight()));
     std::vector<GG::X> col_widths = PlayerRowColWidths(width);
     unsigned int i = 0;
     for (GG::Control* control : m_cells) {

@@ -37,7 +37,7 @@ public:
 protected:
     virtual GG::Rect CalculatePosition() const;
     struct PlayerLabelRow : GG::ListBox::Row {
-        PlayerLabelRow(GG::X width = GG::X(580));
+        PlayerLabelRow(GG::X width = GG::X(600));
         /** Set text of control at @p column to @p str */
         void SetText(size_t column, const std::string& str);
         virtual void Render();

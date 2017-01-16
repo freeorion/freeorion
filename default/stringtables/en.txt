@@ -1759,10 +1759,10 @@ START_GAME_BN
 Start game
 
 READY_BN
-Ready
+Accept
 
 NOT_READY_BN
-Not ready
+Decline
 
 ##
 ## Galaxy Setup Screen
