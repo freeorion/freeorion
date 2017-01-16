@@ -406,6 +406,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
+    case Message::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
 
     default:
         ErrorLogger() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
@@ -803,7 +804,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     DebugLogger() << "ServerApp::UpdateSavePreviews: ServerApp UpdateSavePreviews";
 
     std::string directory_name;
-    ExtractMessageData(msg, directory_name);
+    ExtractRequestSavePreviewsMessageData(msg, directory_name);
 
     DebugLogger() << "ServerApp::UpdateSavePreviews: Got preview request for directory: " << directory_name;
 
@@ -825,6 +826,27 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size() << " previews in response.";
     player_connection->SendMessage(DispatchSavePreviewsMessage(player_connection->PlayerID(), preview_information));
     DebugLogger() << "ServerApp::UpdateSavePreviews: Previews sent.";
+}
+
+void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection){
+    std::vector<int> ids;
+    ExtractRequestCombatLogsMessageData(msg, ids);
+
+    // Compose a vector of the requested ids and logs
+    std::vector<std::pair<int, const CombatLog> > logs;
+    for (std::vector<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
+        boost::optional<const CombatLog&> log = GetCombatLogManager().GetLog(*it);
+        if (!log) {
+            ErrorLogger() << "UpdateCombatLogs can't fetch log with id = "<< *it << " ... skipping.";
+            continue;
+        }
+        logs.push_back(std::make_pair(*it, *log));
+    }
+
+    // Return them to the client
+    DebugLogger() << "UpdateCombatLogs returning " << logs.size()
+                  << " logs to player " << player_connection->PlayerID();
+    player_connection->SendMessage(DispatchCombatLogsMessage(player_connection->PlayerID(), logs));
 }
 
 namespace {
@@ -1821,7 +1843,7 @@ namespace {
 
         for (const CombatInfo& combat_info : combats) {
             // add combat log entry
-            int log_id = log_manager.AddLog(CombatLog(combat_info));
+            int log_id = log_manager.AddNewLog(CombatLog(combat_info));
 
             // basic "combat occured" sitreps
             const std::set<int>& empire_ids = combat_info.empire_ids;

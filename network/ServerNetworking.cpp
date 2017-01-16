@@ -194,6 +194,7 @@ namespace {
         case Message::MODERATOR_ACTION:         return "Moderator Action";
         case Message::SHUT_DOWN_SERVER:         return "Shut Down Server";
         case Message::REQUEST_SAVE_PREVIEWS:    return "Request save previews";
+        case Message::REQUEST_COMBAT_LOGS:      return "Request combat logs";
         default:                                return "Unknown Type";
         };
     }

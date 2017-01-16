@@ -707,11 +707,11 @@ void GraphicalSummaryWnd::HandleButtonChanged() {
 
 void GraphicalSummaryWnd::MakeSummaries(int log_id) {
     m_summaries.clear();
-    if (!CombatLogAvailable(log_id)) {
+    boost::optional<const CombatLog&> log = GetCombatLog(log_id);
+    if (!log) {
         ErrorLogger() << "CombatReportWnd::CombatReportPrivate::MakeSummaries: Could not find log: " << log_id;
     } else {
-        const CombatLog& log = GetCombatLog(log_id);
-        for (int object_id : log.object_ids) {
+        for (int object_id : log->object_ids) {
             if (object_id < 0)
                 continue;   // fighters and invalid objects
             TemporaryPtr<UniverseObject> object = GetUniverseObject(object_id);
@@ -724,8 +724,8 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
             if (m_summaries.find(owner_id) == m_summaries.end())
                 m_summaries[owner_id] = CombatSummary(owner_id);
 
-            std::map<int, CombatParticipantState>::const_iterator map_it = log.participant_states.find(object_id);
-            if (map_it != log.participant_states.end()) {
+            std::map<int, CombatParticipantState>::const_iterator map_it = log->participant_states.find(object_id);
+            if (map_it != log->participant_states.end()) {
                 m_summaries[owner_id].AddUnit(object_id, map_it->second);
             } else {
                 ErrorLogger() << "Participant state missing from log. Object id: " << object_id << " log id: " << log_id;

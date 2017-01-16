@@ -712,7 +712,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     Message response;
     m_networking.SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
     if (response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
-        ExtractMessageData(response, previews);
+        ExtractDispatchSavePreviewsMessageData(response, previews);
         DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
     }else{
         ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << response.Type();
@@ -865,6 +865,8 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg));               break;
     case Message::DIPLOMATIC_STATUS:        m_fsm->process_event(DiplomaticStatusUpdate(msg));  break;
     case Message::END_GAME:                 m_fsm->process_event(::EndGame(msg));               break;
+
+    case Message::DISPATCH_COMBAT_LOGS:     m_fsm->process_event(DispatchCombatLogs(msg));       break;
     default:
         ErrorLogger() << "HumanClientApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".";
     }
@@ -876,6 +878,21 @@ void HumanClientApp::HandleSaveGameDataRequest() {
     SaveGameUIData ui_data;
     m_ui->GetSaveGameUIData(ui_data);
     m_networking.SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
+}
+
+void HumanClientApp::UpdateCombatLogs(const Message& msg){
+    DebugLogger() << "HCL Update Combat Logs";
+
+    // Unpack the combat logs from the message
+    std::vector<std::pair<int, CombatLog> > logs;
+    ExtractDispatchCombatLogsMessageData(msg, logs);
+
+    // Update the combat log manager with the completed logs.
+    for (std::vector<std::pair<int, CombatLog> >::const_iterator it = logs.begin();
+         it != logs.end(); ++it)
+    {
+        GetCombatLogManager().CompleteLog(it->first, it->second);
+    }
 }
 
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
@@ -973,6 +990,16 @@ void HumanClientApp::StartGame() {
 
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         map_wnd->ResetEmpireShown();
+
+    UpdateCombatLogManager();
+}
+
+void HumanClientApp::HandleTurnUpdate()
+{ UpdateCombatLogManager(); }
+
+void HumanClientApp::UpdateCombatLogManager() {
+    if (auto incomplete_ids {GetCombatLogManager().IncompleteLogIDs()})
+        m_networking.SendMessage(RequestCombatLogsMessage(PlayerID(), *incomplete_ids));
 }
 
 namespace {

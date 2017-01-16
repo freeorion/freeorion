@@ -375,7 +375,8 @@ void CombatLogWnd::CombatLogWndImpl::SetFont(boost::shared_ptr<GG::Font> font)
 { m_font = font; }
 
 void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
-    if (!CombatLogAvailable(log_id)) {
+    boost::optional<const CombatLog&> log = GetCombatLog(log_id);
+    if (!log) {
         ErrorLogger() << "Couldn't find combat log with id: " << log_id;
         return;
     }
@@ -388,29 +389,28 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
                                        );
     m_wnd.SetLayout(layout);
 
-    const CombatLog& log = GetCombatLog(log_id);
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     // Write Header text
-    DebugLogger() << "Setting log with " << log.combat_events.size() << " events";
+    DebugLogger() << "Setting log with " << log->combat_events.size() << " events";
 
-    TemporaryPtr<const System> system = GetSystem(log.system_id);
+    TemporaryPtr<const System> system = GetSystem(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
 
     AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
-                                % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, log.system_id, sys_name)
-                                % log.turn) + "\n"
+                                % LinkTaggedIDText(VarText::SYSTEM_ID_TAG, log->system_id, sys_name)
+                                % log->turn) + "\n"
                            ));
     AddRow(DecorateLinkText(UserString("COMBAT_INITIAL_FORCES")));
-    AddRow(DecorateLinkText(CountsToText(CountByOwner(log.empire_ids, log.object_ids))));
+    AddRow(DecorateLinkText(CountsToText(CountByOwner(log->empire_ids, log->object_ids))));
 
     std::stringstream summary_text;
     summary_text << std::endl << UserString("COMBAT_SUMMARY_DESTROYED")
-                 << std::endl << CountsToText(CountByOwner(log.empire_ids, log.destroyed_object_ids));
+                 << std::endl << CountsToText(CountByOwner(log->empire_ids, log->destroyed_object_ids));
     AddRow(DecorateLinkText(summary_text.str()));
 
     // Write Logs
-    for (CombatEventPtr event : log.combat_events) {
+    for (CombatEventPtr event : log->combat_events) {
         DebugLogger() << "event debug info: " << event->DebugString();
 
         for (GG::Wnd* wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {

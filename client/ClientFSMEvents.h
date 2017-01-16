@@ -21,6 +21,7 @@ struct MessageEventBase
 
 // Define Boost.Preprocessor list of all Message events
 #define MESSAGE_EVENTS                         \
+    (DispatchCombatLogs)                       \
     (Error)                                    \
     (HostMPGame)                               \
     (HostSPGame)                               \

@@ -5,6 +5,9 @@
 
 #include "../util/Export.h"
 
+#include <boost/optional/optional.hpp>
+#include <boost/scoped_ptr.hpp>
+
 // A snapshot of the state of a participant of the combat
 // at it's end
 struct FO_COMMON_API CombatParticipantState {
@@ -43,29 +46,35 @@ BOOST_CLASS_VERSION ( CombatLog, 1 );
 class FO_COMMON_API CombatLogManager {
 public:
     /** \name Accessors */ //@{
-    std::map<int, CombatLog>::const_iterator    begin() const;
-    std::map<int, CombatLog>::const_iterator    end() const;
-    std::map<int, CombatLog>::const_iterator    find(int log_id) const;
-    bool                                        LogAvailable(int log_id) const; // returns whether a log with the indicated id is available
-    const CombatLog&                            GetLog(int log_id) const;       // returns requested combat log, or an empty default log if no log with the requested id exists
+    /** Return the requested combat log or boost::none.*/
+    boost::optional<const CombatLog&>  GetLog(int log_id) const;
+
+    /** Return the ids of all incomplete logs or boost::none if they are all complete.*/
+    boost::optional<std::vector<int> > IncompleteLogIDs() const;
     //@}
 
     /** \name Mutators */ //@{
-    int     AddLog(const CombatLog& log);   // adds log, returns unique log id
-    void    RemoveLog(int log_id);
+    int     AddNewLog(const CombatLog& log);   // adds log, returns unique log id
+    /** Replace incomplete log with \p id with \p log. An incomplete log is a
+        partially downloaded log where only the log id is known.*/
+    void    CompleteLog(int id, const CombatLog& log);
     void    Clear();
+
+    /** Serialize log headers so that the receiving LogManager can then request
+        complete logs in the background.*/
+    template <class Archive>
+    void SerializeIncompleteLogs(Archive& ar, const unsigned int version);
     //@}
 
     static CombatLogManager& GetCombatLogManager();
 
 private:
     CombatLogManager();
+    ~CombatLogManager();
 
-    void GetLogsToSerialize(std::map<int, CombatLog>& logs, int encoding_empire) const;
-    void SetLog(int log_id, const CombatLog& log);
-
-    std::map<int, CombatLog>    m_logs;
-    int                         m_latest_log_id;
+    class CombatLogManagerImpl;
+    // TODO use C++11 unique_ptr
+    boost::scoped_ptr<CombatLogManagerImpl> const pimpl;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -77,29 +86,6 @@ FO_COMMON_API CombatLogManager&   GetCombatLogManager();
 
 /** Returns the CombatLog with the indicated id, or an empty log if there
   * is no avaiable log with that id. */
-FO_COMMON_API const CombatLog&    GetCombatLog(int log_id);
-
-/** Returns true if a CombatLog with the indicated id is available. */
-FO_COMMON_API bool                CombatLogAvailable(int log_id);
-
-template <class Archive>
-void CombatLogManager::serialize(Archive& ar, const unsigned int version)
-{
-    std::map<int, CombatLog> logs;
-
-    if (Archive::is_saving::value) {
-        GetLogsToSerialize(logs, GetUniverse().EncodingEmpire());
-    }
-
-    ar  & BOOST_SERIALIZATION_NVP(logs)
-        & BOOST_SERIALIZATION_NVP(m_latest_log_id);
-
-    if (Archive::is_loading::value) {
-        // copy new logs, but don't erase old ones
-        for (std::map<int, CombatLog>::value_type& log : logs)
-            this->SetLog(log.first, log.second);
-    }
-}
-
+FO_COMMON_API boost::optional<const CombatLog&> GetCombatLog(int log_id);
 
 #endif // _CombatLogManager_h_
