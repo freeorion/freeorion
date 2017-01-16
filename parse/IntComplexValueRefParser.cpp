@@ -102,6 +102,18 @@ namespace parse {
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
+            ship_parts_owned
+                =   (
+                            tok.ShipPartsOwned_ [ _a = construct<std::string>(_1) ]
+                        >-( parse::label(Empire_token)          > int_value_ref [ _b = _1 ] )
+                        >-(     ( parse::label(Name_token)      > string_value_ref [ _d = _1 ] )
+                            |   ( parse::label(Class_token)     >>
+                                  parse::enum_parser<ShipPartClass>() [ _c = new_<ValueRef::Constant<int>>(_1) ]
+                                )
+                          )
+                    ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
+                ;
+
             ship_designs_destroyed
                 =   (
                             tok.ShipDesignsDestroyed_ [ _a = construct<std::string>(_1) ]
@@ -238,6 +250,7 @@ namespace parse {
                 |   outposts_owned
                 |   parts_in_ship_design
                 |   part_class_in_ship_design
+                |   ship_parts_owned
                 |   ship_designs_destroyed
                 |   ship_designs_lost
                 |   ship_designs_owned
@@ -265,6 +278,7 @@ namespace parse {
             outposts_owned.name("OutpostsOwned");
             parts_in_ship_design.name("PartsInShipDesign");
             part_class_in_ship_design.name("PartClassInShipDesign");
+            ship_parts_owned.name("ShipPartsOwned");
             ship_designs_destroyed.name("ShipDesignsDestroyed");
             ship_designs_lost.name("ShipDesignsLost");
             ship_designs_owned.name("ShipDesignsOwned");
@@ -292,6 +306,7 @@ namespace parse {
             debug(outposts_owned);
             debug(parts_in_ship_design);
             debug(part_class_in_ship_design);
+            debug(ship_parts_owned);
             debug(ship_designs_destroyed);
             debug(ship_designs_lost);
             debug(ship_designs_owned);
@@ -321,6 +336,7 @@ namespace parse {
         complex_variable_rule<int>::type    outposts_owned;
         complex_variable_rule<int>::type    parts_in_ship_design;
         complex_variable_rule<int>::type    part_class_in_ship_design;
+        complex_variable_rule<int>::type    ship_parts_owned;
         complex_variable_rule<int>::type    ship_designs_destroyed;
         complex_variable_rule<int>::type    ship_designs_lost;
         complex_variable_rule<int>::type    ship_designs_owned;

@@ -1278,6 +1278,8 @@ namespace {
             return empire->SpeciesShipsProduced();
         if (parsed_map_name == "SpeciesShipsScrapped")
             return empire->SpeciesShipsScrapped();
+        if (parsed_map_name == "ShipPartsOwned")
+            return empire->ShipPartTypesOwned();
 
         return EMPTY_STRING_INT_MAP;
     }
@@ -1516,6 +1518,59 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         // if no key specified, get sum of all entries (for single empire or sum of all empires)
         return GetEmpirePropertySumAllIntKeys(empire_id, variable_name);
+    }
+
+    // empire properties indexed by string or ShipPartClass (as int)
+    if (variable_name == "ShipPartsOwned") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return 0;
+        }
+
+        // get key if either was specified
+        std::string key_string;
+        int key_int = NUM_SHIP_PART_CLASSES;
+        if (m_string_ref1) {
+            key_string = m_string_ref1->Eval(context);
+            if (key_string.empty())
+                return 0;
+        } else if (m_int_ref2) {
+            key_int = m_int_ref2->Eval(context);
+            if (key_int <= INVALID_SHIP_PART_CLASS || key_int >= NUM_SHIP_PART_CLASSES)
+                return 0;
+        }
+
+        // if a key string specified, get just that entry (for single empire or sum of all empires)
+        if (m_string_ref1)
+            return GetEmpirePropertySingleKey(empire_id, variable_name, key_string);
+
+        // if a key integer specified, get just that entry (for single empire or sum of all empires)
+        if (m_int_ref2) {
+            ShipPartClass part_class = ShipPartClass(key_int);
+            int sum = 0;
+            // single empire
+            if (empire_id != ALL_EMPIRES) {
+                Empire* empire = GetEmpire(empire_id);
+                for (const std::map<ShipPartClass, int>::value_type& property_entry : empire->ShipPartClassOwned())
+                    if (part_class == NUM_SHIP_PART_CLASSES || property_entry.first == part_class)
+                        sum += property_entry.second;
+                return sum;
+            }
+
+            // all empires summed
+            for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+                Empire* empire = GetEmpire(empire_entry.first);
+                for (const std::map<ShipPartClass, int>::value_type& property_entry : empire->ShipPartClassOwned())
+                    if (part_class == NUM_SHIP_PART_CLASSES || property_entry.first == part_class)
+                        sum += property_entry.second;
+            }
+            return sum;
+        }
+
+        // no key string or integer provided, get all (for single empire or sum of all empires)
+        return GetEmpirePropertySumAllStringKeys(empire_id, variable_name);
     }
 
     // unindexed empire proprties

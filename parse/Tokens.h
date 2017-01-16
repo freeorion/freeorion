@@ -403,6 +403,7 @@
     (ShipHull)                                  \
     (ShipPart)                                  \
     (ShipPartMeter)                             \
+    (ShipPartsOwned)                            \
     (Ships)                                     \
     (Short_Description)                         \
     (ShortestPath)                              \
