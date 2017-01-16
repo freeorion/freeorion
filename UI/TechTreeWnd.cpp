@@ -29,6 +29,7 @@
 #include <algorithm>
 
 #include <boost/timer.hpp>
+#include <boost/locale.hpp>
 
 namespace {
     const std::string RES_PEDIA_WND_NAME = "research.pedia";
@@ -41,6 +42,21 @@ namespace {
         db.Add("UI.tech-layout-zoom-scale",     UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
         db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
         db.Add("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
+
+        // TechListBox::TechRow column widths
+        int default_pts = 16;
+        db.Add("UI.research.listbox.column-widths.graphic",     UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_GRAPHIC"),
+               default_pts * 2,         StepValidator<int>(1));
+        db.Add("UI.research.listbox.column-widths.name",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_NAME"),
+               default_pts * 18,        StepValidator<int>(1));
+        db.Add("UI.research.listbox.column-widths.cost",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_COST"),
+               default_pts * 8,         StepValidator<int>(1));
+        db.Add("UI.research.listbox.column-widths.time",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_TIME"),
+               default_pts * 6,         StepValidator<int>(1));
+        db.Add("UI.research.listbox.column-widths.category",    UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
+               default_pts * 12,        StepValidator<int>(1));
+        db.Add("UI.research.listbox.column-widths.description", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
+               default_pts * 18,        StepValidator<int>(1));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -120,6 +136,13 @@ namespace {
         TechTreeWnd* const m_tree_wnd;
         const TechStatus m_status;
     };
+
+    // Duplicated in MapWnd.cpp/ObjectListWnd.cpp
+    const std::locale& GetLocale() {
+        static boost::locale::generator gen;
+        static const std::locale& loc = gen("en_US.UTF-8");  // manually sets locale
+        return loc;
+    }
 }
 
 ///////////////////////////
@@ -1532,6 +1555,7 @@ public:
     /** \name Accessors */ //@{
     std::set<std::string>   GetCategoriesShown() const;
     std::set<TechStatus>    GetTechStatusesShown() const;
+    bool TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column);
     //@}
 
     //! \name Mutators //@{
@@ -1559,6 +1583,7 @@ private:
         const std::string&          GetTech() { return m_tech; }
         virtual void                Render();
         static std::vector<GG::X>   ColWidths(GG::X total_width);
+        static std::vector<GG::Alignment> ColAlignments();
         void                        Update();
 
     private:
@@ -1570,10 +1595,13 @@ private:
     void    TechLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    TechPediaDisplay(const std::string& tech_name);
+    void    ToggleSortCol(unsigned int col);
 
     std::set<std::string>                   m_categories_shown;
     std::set<TechStatus>                    m_tech_statuses_shown;
     std::multimap<std::string, TechRow*>    m_all_tech_rows;
+    GG::ListBox::Row*                       m_header_row;
+    size_t                                  m_previous_sort_col;
 };
 
 void TechTreeWnd::TechListBox::TechRow::Render() {
@@ -1583,20 +1611,58 @@ void TechTreeWnd::TechListBox::TechRow::Render() {
 }
 
 std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_width) {
-    const GG::X GRAPHIC_WIDTH(ClientUI::Pts() * 2);
-    const GG::X NAME_WIDTH(ClientUI::Pts() * 18);
-    const GG::X COST_WIDTH(ClientUI::Pts() * 4);
-    const GG::X TIME_WIDTH(ClientUI::Pts() * 4);
-    const GG::X CATEGORY_WIDTH(ClientUI::Pts() * 8);
-
-    const GG::X DESC_WIDTH = std::max(GG::X1, total_width - GRAPHIC_WIDTH - NAME_WIDTH - COST_WIDTH - TIME_WIDTH - CATEGORY_WIDTH);
     std::vector<GG::X> retval;
-    retval.push_back(GRAPHIC_WIDTH);
-    retval.push_back(NAME_WIDTH);
-    retval.push_back(COST_WIDTH);
-    retval.push_back(TIME_WIDTH);
-    retval.push_back(CATEGORY_WIDTH);
-    retval.push_back(DESC_WIDTH);
+
+    GG::X graphic_width(    GetOptionsDB().Get<int>("UI.research.listbox.column-widths.graphic"));
+    GG::X name_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.name"));
+    GG::X cost_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.cost"));
+    GG::X time_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.time"));
+    GG::X category_width(   GetOptionsDB().Get<int>("UI.research.listbox.column-widths.category"));
+
+    GG::X cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
+
+    GG::X desc_width(std::max(GetOptionsDB().Get<int>("UI.research.listbox.column-widths.description"),
+                              Value(total_width - cols_width_sum)));
+
+    retval.push_back(graphic_width);
+    retval.push_back(name_width);
+    retval.push_back(cost_width);
+    retval.push_back(time_width);
+    retval.push_back(category_width);
+    retval.push_back(desc_width);
+
+    return retval;
+}
+
+std::vector<GG::Alignment> TechTreeWnd::TechListBox::TechRow::ColAlignments() {
+    std::vector<GG::Alignment> retval;
+
+    retval.push_back(GG::ALIGN_CENTER);  // graphic
+    retval.push_back(GG::ALIGN_LEFT);  // name
+    retval.push_back(GG::ALIGN_RIGHT);  // cost
+    retval.push_back(GG::ALIGN_RIGHT);  // time
+    retval.push_back(GG::ALIGN_LEFT);  // category
+    retval.push_back(GG::ALIGN_LEFT);  // description
+
+    return retval;
+}
+
+bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) {
+    bool retval = false;
+    const std::string lhs_key = boost::trim_copy(lhs.SortKey(column));
+    const std::string rhs_key = boost::trim_copy(rhs.SortKey(column));
+
+    // When equal, sort by previous sorted column
+    if ((lhs_key == rhs_key) && (m_previous_sort_col != column)) {
+        retval = TechRowCmp(lhs, rhs, m_previous_sort_col);
+    } else {
+        try {  // attempt compare by int
+            retval = boost::lexical_cast<int>(lhs_key) < boost::lexical_cast<int>(rhs_key);
+        } catch (const boost::bad_lexical_cast& e) {
+            retval = GetLocale().operator()(lhs_key, rhs_key);
+        }
+    }
+
     return retval;
 }
 
@@ -1610,39 +1676,45 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
 
     std::vector<GG::X> col_widths = ColWidths(w);
     const GG::X GRAPHIC_WIDTH =   col_widths[0];
-    const GG::X NAME_WIDTH =      col_widths[1];
-    const GG::X COST_WIDTH =      col_widths[2];
-    const GG::X TIME_WIDTH =      col_widths[3];
-    const GG::X CATEGORY_WIDTH =  col_widths[4];
-    const GG::X DESC_WIDTH =      col_widths[5];
-    const GG::Y HEIGHT(Value(GRAPHIC_WIDTH));
+    const GG::Y ICON_HEIGHT(std::max(ClientUI::Pts(), Value(GRAPHIC_WIDTH) - 6));
+    // TODO replace string padding with new TextFormat flag
+    std::string just_pad = "    ";
 
-    GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-    graphic->Resize(GG::Pt(GRAPHIC_WIDTH, HEIGHT));
+    GG::StaticGraphic* graphic = new GG::StaticGraphic(ClientUI::TechIcon(m_tech),
+                                                       GG::GRAPHIC_VCENTER | GG::GRAPHIC_CENTER | GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    graphic->Resize(GG::Pt(GRAPHIC_WIDTH, ICON_HEIGHT));
     graphic->SetColor(ClientUI::CategoryColor(this_row_tech->Category()));
     push_back(graphic);
 
-    GG::Label* text = new CUILabel(UserString(m_tech), GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(NAME_WIDTH, HEIGHT));
+    GG::Label* text = new CUILabel(just_pad + UserString(m_tech), GG::FORMAT_LEFT);
+    text->SetResetMinSize(false);
     text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    text = new CUILabel(cost_str, GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(COST_WIDTH, HEIGHT));
+    text = new CUILabel(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
+    text->SetResetMinSize(false);
+    text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
     std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    text = new CUILabel(time_str, GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(TIME_WIDTH, HEIGHT));
+    text = new CUILabel(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
+    text->SetResetMinSize(false);
+    text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    text = new CUILabel(UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(CATEGORY_WIDTH, HEIGHT));
+    text = new CUILabel(just_pad + UserString(this_row_tech->Category()), GG::FORMAT_LEFT);
+    text->SetResetMinSize(false);
+    text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    text = new CUILabel(UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
-    text->Resize(GG::Pt(DESC_WIDTH, HEIGHT));
+    text = new CUILabel(just_pad + UserString(this_row_tech->ShortDescription()), GG::FORMAT_LEFT);
+    text->ClipText(true);
+    text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 }
 
@@ -1650,14 +1722,25 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     const Tech* this_row_tech = ::GetTech(m_tech);
     if (!this_row_tech || this->size() < 4)
         return;
+    // TODO replace string padding with new TextFormat flag
+    std::string just_pad = "    ";
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((size() >= 3) ? at(2) : 0))
-        tc->SetText(cost_str);
+    if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : 0))
+        cost_btn->SetText(cost_str + just_pad + just_pad);
 
     std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    if (GG::TextControl* tc = dynamic_cast<GG::TextControl*>((size() >= 4) ? at(3) : 0))
-        tc->SetText(time_str);
+    if (GG::Button* time_btn = dynamic_cast<GG::Button*>((size() >= 4) ? at(3) : 0))
+        time_btn->SetText(time_str + just_pad + just_pad);
+}
+
+void TechTreeWnd::TechListBox::ToggleSortCol(unsigned int col) {
+    if (SortCol() != col) {
+        m_previous_sort_col = SortCol();
+        SetSortCol(col);
+    } else {  // toggle the sort direction
+        SetStyle(Style() ^ GG::LIST_SORTDESCENDING);
+    }
 }
 
 TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
@@ -1668,7 +1751,7 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     GG::Connect(LeftClickedSignal,      &TechListBox::TechLeftClicked,      this);
     GG::Connect(RightClickedSignal,     &TechListBox::TechRightClicked,     this);
 
-    SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL);
+    SetStyle(GG::LIST_NOSEL);
 
     // show all categories...
     m_categories_shown.clear();
@@ -1681,13 +1764,65 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     m_tech_statuses_shown.insert(TS_RESEARCHABLE);
     m_tech_statuses_shown.insert(TS_COMPLETE);
 
-    std::vector<GG::X> col_widths = TechRow::ColWidths(w - ClientUI::ScrollWidth() - 6);
-    SetNumCols(col_widths.size());
-    LockColWidths();
-    for (unsigned int i = 0; i < col_widths.size(); ++i) {
-        SetColWidth(i, col_widths[i]);
-        SetColAlignment(i, GG::ALIGN_LEFT);
+    GG::X row_width = w - ClientUI::ScrollWidth() - ClientUI::Pts();
+    std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
+    const GG::Y HEIGHT(Value(col_widths[0]));
+    m_header_row = new GG::ListBox::Row(row_width, HEIGHT, "");
+
+    CUILabel* graphic_col = new CUILabel("");  // graphic
+    graphic_col->Resize(GG::Pt(col_widths[0], HEIGHT));
+    graphic_col->ClipText(true);
+    graphic_col->SetChildClippingMode(ClipToWindow);
+    m_header_row->push_back(graphic_col);
+
+    CUIButton* name_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_NAME"));
+    name_col->Resize(GG::Pt(col_widths[1], HEIGHT));
+    name_col->SetChildClippingMode(ClipToWindow);
+    name_col->LeftClickedSignal.connect([this]() { ToggleSortCol(1); });
+    m_header_row->push_back(name_col);
+
+    CUIButton* cost_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_COST"));
+    cost_col->Resize(GG::Pt(col_widths[2], HEIGHT));
+    cost_col->SetChildClippingMode(ClipToWindow);
+    cost_col->LeftClickedSignal.connect([this]() { ToggleSortCol(2); });
+    m_header_row->push_back(cost_col);
+
+    CUIButton* time_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_TIME"));
+    time_col->Resize(GG::Pt(col_widths[3], HEIGHT));
+    time_col->SetChildClippingMode(ClipToWindow);
+    time_col->LeftClickedSignal.connect([this]() { ToggleSortCol(3); });
+    m_header_row->push_back(time_col);
+
+    CUIButton* category_col = new CUIButton( UserString("TECH_WND_LIST_COLUMN_CATEGORY"));
+    category_col->Resize(GG::Pt(col_widths[4], HEIGHT));
+    category_col->SetChildClippingMode(ClipToWindow);
+    category_col->LeftClickedSignal.connect([this]() { ToggleSortCol(4); });
+    m_header_row->push_back(category_col);
+
+    CUIButton* descr_col = new CUIButton(UserString("TECH_WND_LIST_COLUMN_DESCRIPTION"));
+    descr_col->Resize(GG::Pt(col_widths[5], HEIGHT));
+    descr_col->SetChildClippingMode(ClipToWindow);
+    descr_col->LeftClickedSignal.connect([this]() { ToggleSortCol(5); });
+    m_header_row->push_back(descr_col);
+
+    m_header_row->Resize(GG::Pt(row_width, HEIGHT));
+
+    // Initialize column widths before setting header
+    int num_cols = m_header_row->size();
+    std::vector<GG::Alignment> col_alignments = TechRow::ColAlignments();
+    SetNumCols(num_cols);
+    for (int i = 0; i < num_cols; ++i) {
+        SetColWidth(i, m_header_row->at(i)->Width());
+        SetColAlignment(i, col_alignments[i]);
     }
+
+    SetColHeaders(m_header_row);
+    LockColWidths();
+
+    // Initialize sorting
+    SetSortCol(2);
+    m_previous_sort_col = 3;
+    SetSortCmp([&](const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t col) { return TechRowCmp(lhs, rhs, col); });
 }
 
 TechTreeWnd::TechListBox::~TechListBox() {
@@ -1724,6 +1859,8 @@ void TechTreeWnd::TechListBox::Populate() {
     double insertion_elapsed = 0.0;
     boost::timer creation_timer;
     boost::timer insertion_timer;
+
+    GG::X row_width = Width() - ClientUI::ScrollWidth() - ClientUI::Pts();
     // HACK! This caching of TechRows works only if there are no "hidden" techs
     // that are added to the manager mid-game.
     TechManager& manager = GetTechManager();
@@ -1732,7 +1869,7 @@ void TechTreeWnd::TechListBox::Populate() {
             const std::string& tech_name = UserString(tech->Name());
             creation_timer.restart();
             m_all_tech_rows.insert(std::make_pair(tech_name,
-                new TechRow(Width() - ClientUI::ScrollWidth() - 6, tech->Name())));
+                new TechRow(row_width, tech->Name())));
             creation_elapsed += creation_timer.elapsed();
         }
     }
@@ -1755,10 +1892,18 @@ void TechTreeWnd::TechListBox::Populate() {
     }
 
     // set attributes after clear and insert, cached rows may have incorrect widths
-    std::vector<GG::X> col_widths = TechRow::ColWidths(Width());
+    std::vector<GG::X> col_widths = TechRow::ColWidths(row_width);
     int num_cols = static_cast<int>(col_widths.size());
-    for (int i = 0; i < num_cols; ++i)
+    for (int i = 0; i < num_cols; ++i) {
         SetColWidth(i, col_widths[i]);
+        // only stretch the last column
+        SetColStretch(i, (i < num_cols - 1) ? 0.0 : 1.0);
+    }
+    if (SortCol() < 1)
+        SetSortCol(2);
+    // TODO workaround for header rendering excessively high and overlapping some rows
+    if (begin() != end())
+        BringRowIntoView(begin());
 
     DebugLogger() << "Tech List Box Done Populating";
     DebugLogger() << "    Creation time=" << (creation_elapsed * 1000) << "ms";
