@@ -1758,6 +1758,11 @@ Load game
 START_GAME_BN
 Start game
 
+READY_BN
+Accept
+
+NOT_READY_BN
+Decline
 
 ##
 ## Galaxy Setup Screen

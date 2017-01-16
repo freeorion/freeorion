@@ -41,11 +41,11 @@ namespace {
         return retval;
     }
     boost::shared_ptr<GG::Texture> PlayingIcon() {
-        static boost::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "playing.png");
+        static boost::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "not_ready.png");
         return retval;
     }
     boost::shared_ptr<GG::Texture> WaitingIcon() {
-        static boost::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "waiting.png");
+        static boost::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "ready.png");
         return retval;
     }
     boost::shared_ptr<GG::Texture> CombatIcon() {
