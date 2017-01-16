@@ -313,28 +313,22 @@ FORMAT_LIST_10_ITEMS
 ##
 
 SD_CARRIER
-Prototype Porteur
+Porteur d'Escorte
 
 SD_CARRIER_DESC
-Modèle prototype propulsant des chasseurs en cours de bataille en lieu et place d'une puissance de feu directe.
+Porteur conçu pour défendre les autres vaisseaux armés via le lancement d'escadrons d'Intercepteurs.
 
 SD_FLAK
-Prototype Antiaérien
+Porteur de Flotte
 
 SD_FLAK_DESC
-Modèle prototype équipé de canons antiaériens comme moyen de riposte contre les chasseurs.
+Porteur conçu pour prendre part aux actions offensives de flotte, à l'aide d'escadrons de Bombardiers et de Canons Mitrailleurs.
 
 SD_SCOUT
 Éclaireur
 
 SD_SCOUT_DESC
 Petit astronef économique mais non-armé, spécialement conçu pour la reconnaissance et l'exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_AST_SCOUT
-Éclaireur Astéroïdal
-
-SD_AST_SCOUT_DESC
-Petit astronef économique mais non-armé, fabriqué à partir d'un astéroïde, conçu pour la reconnaissance et l'exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_SCOUT_2
 Éclaireur Radar
@@ -361,82 +355,46 @@ SD_ENG_SCOUT_DESC
 Astronef compact et rapide mais non-armé, conçu pour la reconnaissance et l'exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 SD_SMALL_MARK_1  # translated
-Corvette (M)
+Corvette M
 
 SD_SMALL_MARK1_DESC
 Petit astronef équipé d'un Canon Mitrailleur. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
-SD_SMALL_MARK_2  # translated
-Corvette (L)
-
-SD_SMALL_MARK2_DESC
-Petit astronef équipé d'un Canon Laser. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
 SD_MARK_1
-Escorteur (M1)
+Escorteur Ms
 
 SD_MARK1_DESC
 Frégate basique équipée d'un Canon Mitrailleur. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
-SD_MARK_2
-Escorteur (M2)
-
-SD_MARK2_DESC
-Frégate améliorée équipée d'un Canon Mitrailleur. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_MARK_3
-Escorteur (L1)
-
-SD_MARK3_DESC
-Frégate basique équipée d'un Canon Laser. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_MARK_4
-Escorteur (L2)
-
-SD_MARK4_DESC
-Frégate améliorée équipée d'un Canon Laser. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_LARGE_MARK_1  # translated
-Destroyer (M1)
+SD_LARGE_MARK_1
+Croiseur Ms
 
 SD_LARGE_MARK1_DESC
-Chasseur basique équipé de Canons Mitrailleurs. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Croiseur équipé de lasers améliorés et d'un blindage standard pour missions indépendantes de longue portée. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
-SD_LARGE_MARK_2  # translated
-Destroyer (M2)
+SD_LARGE_MARK_2
+Croiseur Lz
 
 SD_LARGE_MARK2_DESC
-Chasseur amélioré équipé de Canons Mitrailleurs. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Croiseur conçu pour missions indépendantes de longue portée. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
-SD_LARGE_MARK_3
-Croiseur (L1)
+SD_LARGE_MARK_3  # translated
+Destroyer Ms
 
 SD_LARGE_MARK3_DESC
-Chasseur amélioré équipé de Canons Laser. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Destroyer conçu pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
-SD_LARGE_MARK_4
-Croiseur (L2)
+SD_LARGE_MARK_4  # translated
+Destroyer Lz
 
 SD_LARGE_MARK4_DESC
-Chasseur amélioré équipé d'un Blindage évolué et de Canons Laser. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Destroyer équipé de Canons Laser et Blindage améliorés pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ROBOTIC_OUTPOST
 Bâtisseur Robotique
 
 SD_ROBOTIC_OUTPOST_DESC
 Peut établir des avant-postes dans les systèmes très lointains.
-
-SD_ROBOTIC_COLONY
-Colon Robotique
-
-SD_ROBOTIC_COLONY_DESC
-Peut établir des colonies dans les systèmes très lointains.
-
-SD_ROBOTIC_CRYOCOL
-Colon Cryo-Robotique
-
-SD_ROBOTIC_CRYOCOL_DESC
-Peut établir des colonies évoluées dans les systèmes très lointains.
 
 SD_ROBO_FLUX_SCOUT
 Éclaireur Flux
@@ -457,40 +415,34 @@ SD_ROBO_FLUX_TROOPS_HVY_DESC
 Transporteur rapide d'infanterie améliorée
 
 SD_ROBOTIC1
-Robocroiseur (M1)
+Robocroiseur Mfs
 
 SD_ROBOTIC1_DESC
-Chasseur robotique équipé de Canons Mitrailleurs. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Croiseur conçu pour missions indépendantes ou au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC2
-Robocroiseur (M2)
+Destroyer Mfs-DG  # translated
 
 SD_ROBOTIC2_DESC
-Chasseur robotique équipé d'un Blindage amélioré et de Canons Mitrailleurs. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Destroyer à coque robotique conçu pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC3
-Robocroiseur (L)
+Robocroiseur Lzi
 
 SD_ROBOTIC3_DESC
-Chasseur robotique amélioré équipé d'un Blindage évolué et de Canons Laser. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
-
-SD_NANOROBOTIC1
-Croiseur Nanobot
-
-SD_NANOROBOTIC1_DESC
-Croiseur lourd évolué capable de s'auto-réparer.
+Astronef robotique conçu pour missions indépendantes de longue portée. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_GRAVITATING1
-Cuirassé Gravitator (P)
+Cuirassé Pfd-DS
 
 SD_GRAVITATING1_DESC
-Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+Cuirassé auto-gravitationnel conçu pour missions au sein de larges flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_GRAVITATING2
-Cuirassé Gravitator (D)
+Cuirassé Dfx-BS
 
 SD_GRAVITATING2_DESC
-Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+Cuirassé de grand standing équipé des toutes dernières technologies de pointe en matière d'armement et de protection. Prix en conséquence. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 #SD_ROBO_TITAN1
 #Dreadnaught
@@ -498,101 +450,11 @@ Cuirassé de grand standing équipé des toutes dernières technologies d'armeme
 SD_ROBO_TITAN1_DESC
 Cuirassé de grand standing équipé des toutes dernières technologies d'armement et de protection. Prix en conséquence. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
-SD_ORGANIC1
-Escorteur Organic (M1)
-
-SD_ORGANIC1_DESC
-Chasseur organique équipé de technologies basiques d'armement et de défense. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_ORGANIC2
-Escorteur Organic (M2)
-
-SD_ORGANIC2_DESC
-Chasseur organique équipé de Blindages améliorés. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_ORGANIC3
-Escorteur Organic (L)
-
-SD_ORGANIC3_DESC
-Chasseur organique équipé de Blindages améliorés et d'un Canon Laser. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_SHIELD_BUG_1
-Escorteur Organic Lourd (M)
-
-SD_SHIELD_BUG_1_DESC
-Chasseur organique équipé de [[metertype METER_SHIELD]]. Efficace contre les ennemis faiblement armés. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_SHIELD_BUG_2
-Escorteur Organic Lourd (L)
-
-SD_SHIELD_BUG_2_DESC
-Chasseur organique équipé de [[metertype METER_SHIELD]]. Efficace contre les ennemis faiblement armés. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
 SD_AST_1
 Destroyer Rock (L)
 
 SD_AST_1_DESC
-Un astronef astéroïdal équipé de Canons Laser. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
-
-SD_AST_2
-Destroyer Rock (P1)
-
-SD_AST_2_DESC
-Un astronef astéroïdal équipé de Canons Plasma. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
-
-SD_AST_3
-Destroyer Rock (P2)
-
-SD_AST_3_DESC
-Un astronef astéroïdal équipé de Canons Plasma et de Blindages Carbone. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM]]
-
-SD_HEAVY_AST_1
-Cuirassé Rock (L)
-
-SD_HEAVY_AST_1_DESC
-Un astronef astéroïdal massif équipé de Canons Laser. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
-
-SD_HEAVY_AST_2
-Cuirassé Rock (P)
-
-SD_HEAVY_AST_2_DESC
-Un astronef astéroïdal massif équipé de Canons Plasma et de Blindages Carbone. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED_ANY_SYSTEM]]
-
-SD_CRYSTAL
-Destroyer Crystal (P)
-
-SD_CRYSTAL_DESC
-Un astronef astéroïdal cristallisé équipé de Canons Plasma et d'un Blindage Cristal. [[BLD_SHIPYARD_BASE_AST_REQUIRED]] [[BLD_SHIPYARD_AST_REF_REQUIRED]]
-
-SD_ENDO_1
-Croiseur Endomorphic (L)
-
-SD_ENDO_1_DESC
-Chasseur endomorphique équipé de [[metertype METER_SHIELD]], de Blindages améliorés et de Canons Laser. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
-
-SD_ENDO_2
-Croiseur Endomorphic (P1)
-
-SD_ENDO_2_DESC
-Chasseur endomorphique équipé de [[metertype METER_SHIELD]], de Blindages améliorés et de Canons Plasma. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
-
-SD_ENDO_3
-Croiseur Endomorphic (P2)
-
-SD_ENDO_3_DESC
-Chasseur endomorphique équipé de [[metertype METER_SHIELD]] améliorés, de Blindages Diamant et de Canons Plasma. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_ORG_XENO_FAC_REQUIRED]]
-
-SD_FRACTAL_1
-Cuirassé Fractal (P)
-
-SD_FRACTAL_1_DESC
-Un bâtiment de guerre exotique, basé sur l'énergie fractale. [[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]
-
-SD_FRACTAL_2
-Cuirassé Fractal (D)
-
-SD_FRACTAL_2_DESC
-Un bâtiment de guerre exotique, basé sur l'énergie fractale. [[BLD_SHIPYARD_BASE_ENRG_COMP_TWO_STARS_REQUIRED]]
+Destroyer à coque astéroïdale conçu pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_COLONY_SHIP
 Colon Galactique
@@ -600,29 +462,11 @@ Colon Galactique
 SD_COLONY_SHIP_DESC
 Astronef non-armé [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
 
-SD_ORG_COLONY_SHIP
-Colon Galactique Organic
-
-SD_ORG_COLONY_SHIP_DESC
-Astronef organique non-armé [[SHIPDESIGN_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]] ainsi que d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
-
 SD_CRYONIC_COLONY_SHIP
 Colon Galactique Cryogenic
 
 SD_CRYONIC_COLONY_SHIP_DESC
 Astronef non-armé [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]].
-
-SD_ORG_CRYOCOL_SHIP
-Colon Galactique Cryo-Organic
-
-SD_ORG_CRYOCOL_SHIP_DESC
-Astronef organique non-armé [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]] ainsi que d'un [[buildingtype BLD_SHIPYARD_ORG_ORB_INC]].
-
-SD_AST_CRYOCOL_SHIP
-Colon Galactique Cryo-Astéroïdal
-
-SD_AST_CRYOCOL_SHIP_DESC
-Astronef astéroïdal non-armé [[SHIPDESIGN_MANY_MILLIONS_COLONIZATION_CAPACITY]]. [[MIN_POPULATION_THREE_REQUIRED]], et disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], au sein d'un système abritant une Ceinture d'Astéroïdes et un [[buildingtype BLD_SHIPYARD_AST]].
 
 SD_OUTPOST_SHIP
 Bâtisseur Galactique
@@ -683,30 +527,6 @@ Transport d'Infanterie
 
 SD_TROOP_SHIP_DESC
 Transporte 3 régiments d'[[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
-
-SD_ORG_TROOP_SHIP
-Transport Organic d'Infanterie
-
-SD_ORG_TROOP_SHIP_DESC
-Transporte 4 régiments d'[[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
-
-SD_ENG_TROOP_SHIP
-Transport Energy d'Infanterie
-
-SD_ENG_TROOP_SHIP_DESC
-Transporte un régiment d'[[SHIPDESIGN_PLANET_INVASION]]. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
-
-SD_ENG1
-Corvette Energy (L)
-
-SD_ENG1_DESC
-Astronef de combat compact et rapide. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
-
-SD_ENG2
-Corvette Energy (P)
-
-SD_ENG2_DESC
-Astronef de combat compact et rapide, avec armement amélioré. [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
 
 #SD_DRAGON_TOOTH
 #Dragon Tooth
@@ -1609,6 +1429,19 @@ Définit le chemin du dossier contenant les fichiers de script de l'IA, pour l'e
 OPTIONS_DB_AI_CONFIG
 Est disponible pour l'IA via l'interface freeorion, et utilisé pour l'éxécution en cours uniquement.  Permet de nommer un fichier de configuration optionnel de l'IA à l'intérieur du dossier de scripts de l'IA; par défaut une valeur nulle. A pour but de faciliter le test de l'IA.
 
+OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED
+Valeur boléenne pour test d'IA indiquant si toutes les IAs ont forcément le même Niveau d'Agressivité.
+
+OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED_VALUE
+Valeur forcée pour le Niveau d'Agressivité. Une valeur de 0 à 5.
+
+OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED
+Valeur boléenne pour test d'IA indiquant si toutes les IAs ont forcément le même Niveau selon l'EmpireID.
+
+OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
+Valeur forcée pour le Niveau selon l'EmpireID. Une valeur de 0 à 39.
+
+
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
 Si activé, les parties solo bénéficieront d'une sauvegarde automatique régulière.
 
@@ -1843,6 +1676,9 @@ Charger une partie
 INTRO_BTN_OPTIONS  # translated
 Options
 
+INTRO_BTN_PEDIA
+[[MAP_BTN_PEDIA]]
+
 INTRO_BTN_ABOUT
 À propos
 
@@ -1922,6 +1758,11 @@ Charger partie
 START_GAME_BN
 Lancer partie
 
+READY_BN
+Accepter
+
+NOT_READY_BN
+Refuser
 
 ##
 ## Galaxy Setup Screen
@@ -4138,15 +3979,21 @@ Coque: %2%
 ENC_SHIP_DESIGN_DESCRIPTION_STATS_STR
 '''
 Pour [[encyclopedia ENC_SPECIES]]: %1%
-Total [[encyclopedia DAMAGE_TITLE]] : %2%    [[PC_DIRECT_WEAPON]] Coups: %3%
+Total [[encyclopedia DAMAGE_TITLE]] : %2%    Tirs [[PC_DIRECT_WEAPON]] : %3%
 [[metertype METER_STRUCTURE]] : %4%    [[metertype METER_SHIELD]] : %5%
 [[metertype METER_DETECTION]] : %6%    [[metertype METER_STEALTH]] : %7%
-[[metertype METER_SPEED]] : %8%    Capacité [[metertype METER_FUEL]] : %9%
-Colons à bord : %10%    [[metertype METER_TROOPS]] à bord : %11%
-[[OBJ_FIGHTER]] [[encyclopedia DAMAGE_TITLE]]: %13%    [[ENC_SDD_HANGAR]]: %12%    [[ENC_SDD_BAY]]: %14%
-Estimation force de combat (sans boucliers) :  %15$.f   (%16$.2f par PP)
-Contre les dommages %17$.1f et boucliers %18$.1f ennemis :  %19$.f   (%20$.2f par PP)
+[[metertype METER_SPEED]] : %8%    [[METER_CAPACITY]] [[metertype METER_FUEL]] : %9%
+[[METER_CAPACITY]] Colonisation : %10%    [[metertype METER_TROOPS]] : %11%
+[[encyclopedia DAMAGE_TITLE]] [[OBJ_FIGHTER]] : %13%    [[ENC_SDD_HANGAR]] : %12%    [[ENC_SDD_BAY]] : %14%
+Estimation force de combat (<i>sans boucliers</i>) :  %15$.f   (%16$.2f par PP)
+(<i>ennemi avec dommages %17$.1f et boucliers %18$.1f</i>) :  %19$.f   (%20$.2f par PP)
 '''
+
+ENC_SDD_HANGAR
+[[METER_CAPACITY]] [[encyclopedia PC_FIGHTER_HANGAR]]
+
+ENC_SDD_BAY
+[[METER_CAPACITY]] [[encyclopedia PC_FIGHTER_BAY]]
 
 ENC_UNLOCKED_BY
 '''<u>Débloqué par tech. :</u>
@@ -6854,7 +6701,7 @@ Préfèrent les Planètes [[PT_TOXIC]]s.
 
 SP_MISIORLA_DESC
 '''Description:
-Un Misiorla est un mollusque doté de quatre tentacules flexibles et de deux paires de quatre yeux. Parfaitement adaptés à leur environnement natal, les Misiorla étaient capables de se mouvoir dans des mers de fluides acides et de flotter au sein d'épais nuages de brume. Ils étaient cependant considérés comme une espèce aux capacités très limitées, à peine digne de l'attention que leur portait une civilisation amie, du fait de leur absence totale de talent, que ce soit en terme de recherche ou d'industrie. Cet état de fait changea diamétralement lorsque qu'un Misiorla fut placé pour la première fois aux commandes d'un astronef. La nouvelle se répandit comme une traînée de poudre à travers toutes la galaxie: les Misiorla s'avéraient être les meilleurs pilotes de combat de l'univers. Les premiers mercenaires Misiorla furent recrutés pour piloter des chasseurs, les suivants se virent confier les commandes de croiseurs, mais leur potentiel réel se révéla entièrement lorsqu'un vaisseau amiral à la technologie dépassée, mais dirigé par un Misiorla, anéantit à lui seul toute la flotte d'un empire ennemi à la puissance pourtant bien supérieure.
+Un Misiorla est un mollusque doté de quatre tentacules flexibles et de deux paires de quatre yeux. Parfaitement adaptés à leur environnement natal, les Misiorla étaient capables de se mouvoir dans des mers de fluides acides et de flotter au sein d'épais nuages de brume. Ils étaient cependant considérés comme une espèce aux capacités très limitées, à peine digne de l'attention que leur portait une civilisation amie, du fait de leur absence totale de talent, que ce soit en matière de recherche ou d'industrie. Cet état de fait changea diamétralement lorsque qu'un Misiorla fut placé pour la première fois aux commandes d'un astronef. La nouvelle se répandit comme une traînée de poudre à travers toutes la galaxie: les Misiorla s'avéraient être les meilleurs pilotes de combat de l'univers. Les premiers mercenaires Misiorla furent recrutés pour piloter des chasseurs, les suivants se virent confier les commandes de croiseurs, mais leur potentiel réel se révéla entièrement lorsqu'un vaisseau amiral à la technologie dépassée, mais dirigé par un Misiorla, anéantit à lui seul toute la flotte d'un empire ennemi à la puissance pourtant bien supérieure.
 
 Structure sociale:
 Les Misiorla vouent leur existence au pilotage d'astronef. Piloter est leur métier, leur sport, leur activité favorite. Leur société devient alors totalement dépendante des autres espèces, car ils sont incapables de s'organiser dès qu'il sagit d'une autre activité. Un Misiorla peut être recruté par quiconque offrant quelque chose à piloter ainsi que le carburant nécessaire.
@@ -7795,9 +7642,22 @@ Armement
 PC_FIGHTER_HANGAR
 Hangar
 
+PC_FIGHTER_HANGAR_DESC
+'''Les Hangars sont les lieux de stockage, de maintenance, et de réapprovisionnement pour les Chasseurs.
+Un astronef ne peut pas accueillir plus d'un type de Hangar.
+
+Après un combat, les Chasseurs doivent retourner à un Hangar pour effectuer des réparations, un réapprovisionnement en carburant, et un réarmement.
+Si un porteur est détruit en combat, chacun de ses chasseurs ayant survécu à la bataille sera dans l'impossibilité de s'y remettre à quai, et sera par conséquent perdu.
+'''
+
 # Ship part classes
 PC_FIGHTER_BAY
 Rampe Lanc.
+
+PC_FIGHTER_BAY_DESC
+'''Les Rampes de Lancement sont le point d'accès des Chasseurs pour entrer ou décoller d'un astronef porteur.
+Chaque Rampe de Lancement autorise un nombre défini de Chasseurs à décoller lors de chaque passe de combat.
+'''
 
 # Ship part classes
 PC_SHIELD
@@ -9141,7 +9001,7 @@ PRO_MICROGRAV_MAN_DESC
 
 L'extraction de ressources minières sur des planétoïdes implique de nombreux challenges mais aussi de réelles opportunités en comparaison d'une exploitation planétaire classique. Ne disposant pas de la masse nécessaire pour la liquéfaction et la différenciation, les astéroïdes permettent un accès bien plus aisé à certains éléments lourds, tandis que l'absence de gravité rend l'extraction en vue d'une utilisation directe dans l'espace bien plus efficace. Par contre, la taille généralement limitée des astéroïdes requiert des infrastructures d'extraction auto-suffisantes et d'une grande mobilité. Par conséquent, les défis relatifs à un environnement en microgravité doivent être surmontés, nécessitant une refonte totale des méthodes traditionnelles.
 
-La microgravité en orbite basse offre également de nouveaux concepts de production industrielle, d'équipement et de techniques impossibles à la surface. Les objets massifs peuvent être manipulés à l'aide d'une installation minimale. Les liquides et les gaz évoluent librement, soumis seulement à la tension de surface, à moins qu'ils ne soient manipulés d'une aute manière. Au sein des usines, les équipements sont agencés en trois dimensions d'une manière optimale. Si bien exploitées, toutes ces conditions permettent une amélioration conséquente en termes d'efficacité et de production.'''
+La microgravité en orbite basse offre également de nouveaux concepts de production industrielle, d'équipement et de techniques impossibles à la surface. Les objets massifs peuvent être manipulés à l'aide d'une installation minimale. Les liquides et les gaz évoluent librement, soumis seulement à la tension de surface, à moins qu'ils ne soient manipulés d'une aute manière. Au sein des usines, les équipements sont agencés en trois dimensions d'une manière optimale. Si bien exploitées, toutes ces conditions permettent une amélioration conséquente en matière d'efficacité et de production.'''
 
 PRO_ROBOTIC_PROD
 Production Robotisée
@@ -9650,7 +9510,7 @@ GRO_BIOTERROR
 Complexe Bioterroriste
 
 GRO_BIOTERROR_DESC
-Un centre de recherche créé pour développer le plus terrifiant des armements biologiques, et ce, à l'abri des regards indiscrets. L'arme biologique agit cependant trop lentement pour être utilisée directement en cas de conflit militaire de grande ampleur, mais reste inégalable en terme de terreur: la promesse d'une contamination rampante et inévitable engendrerait une profonde panique, les images d'un peuple à l'agonie confiné par son propre gouvernement propageraient la peur et le désespoir au delà de la zone touchée. Toutefois, de grandes précautions doivent être prises lors du développement de tels organismes pathogènes afin d'éviter toute libération accidentelle. De plus, le secret le plus absolu est nécessaire pour dissiper le risque de détérioration des relations avec la population civile et les autres empires.
+Un centre de recherche créé pour développer le plus terrifiant des armements biologiques, et ce, à l'abri des regards indiscrets. L'arme biologique agit cependant trop lentement pour être utilisée directement en cas de conflit militaire de grande ampleur, mais reste inégalable en termes de terreur: la promesse d'une contamination rampante et inévitable engendrerait une profonde panique, les images d'un peuple à l'agonie confiné par son propre gouvernement propageraient la peur et le désespoir au delà de la zone touchée. Toutefois, de grandes précautions doivent être prises lors du développement de tels organismes pathogènes afin d'éviter toute libération accidentelle. De plus, le secret le plus absolu est nécessaire pour dissiper le risque de détérioration des relations avec la population civile et les autres empires.
 
 GRO_REMOTE_TERRAFORM_SHORT_DESC
 Permet la terraformation à distance
