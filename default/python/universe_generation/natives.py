@@ -1,10 +1,10 @@
 import random
 import itertools
+import statistics
 
 import freeorion as fo
 
 import planets
-import statistics
 import universe_tables
 from galaxy_topology import get_systems_within_jumps
 

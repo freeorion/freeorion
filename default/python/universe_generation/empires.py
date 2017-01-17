@@ -1,5 +1,6 @@
 import os.path
 import random
+import statistics
 
 import freeorion as fo
 
@@ -12,7 +13,6 @@ from options import (HS_ACCEPTABLE_PLANET_TYPES, HS_MIN_PLANETS_IN_VICINITY_TOTA
                      HS_VICINITY_RANGE, HS_MIN_SYSTEMS_IN_VICINITY, HS_ACCEPTABLE_PLANET_SIZES)
 
 from util import load_string_list, report_error
-import statistics
 
 
 def get_empire_name_generator():
@@ -321,7 +321,8 @@ def compile_home_system_list(num_home_systems, systems, gsd):
             pool_matching_sys_limit.append(system)
             if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
                 pool_matching_sys_and_planet_limit.append(system)
-    print len(pool_matching_sys_and_planet_limit), "systems meet the min systems and planets in the near vicinity limit"
+    print (len(pool_matching_sys_and_planet_limit),
+           "systems meet the min systems and planets in the near vicinity limit")
     print len(pool_matching_sys_limit), "systems meet the min systems in the near vicinity limit"
 
     # now try to pick the requested number of home systems

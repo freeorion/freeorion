@@ -1,13 +1,14 @@
 import random
 from collections import defaultdict
+import statistics
 
 import freeorion as fo
-import statistics
 import universe_tables
 from timers import Timer
 from galaxy_topology import get_systems_within_jumps
 
 REPEAT_RATE = {1: 0.08, 2: 0.05, 3: 0.01, 4: 0.00}
+
 
 def calc_num_placed(objs):
     """Return a list of number placed at each obj"""
@@ -26,7 +27,7 @@ def place_special_fast(specials, obj, specials_timer, per_special_timer):
     # placed here given that a special will be placed here.
     probs = [fo.special_spawn_rate(sp) for sp in specials]
     total_prob = sum(probs)
-    thresholds = [x/total_prob for x in probs]
+    thresholds = [x / total_prob for x in probs]
 
     chance = random.random()
     for threshold, special in zip(thresholds, specials):
@@ -89,7 +90,7 @@ def distribute_specials(specials_freq, universe_objects):
 
     print("Base chance for specials is {}. Placing specials on {} of {} ({:1.4f})objects"
           .format(base_chance, len(objects_needing_specials), len(universe_objects),
-                  float(len(objects_needing_specials))/len(universe_objects)))
+                  float(len(objects_needing_specials)) / len(universe_objects)))
 
     specials_timer.start("Associate with Systems")
     obj_tuple_needing_specials = set(zip(objects_needing_specials,
@@ -124,7 +125,7 @@ def distribute_specials(specials_freq, universe_objects):
             candidates.append(member[0])
             obj_tuple_needing_specials.remove(member)
             if member[2] > 1:
-                obj_tuple_needing_specials.add((member[0], member[1], member[2]-1))
+                obj_tuple_needing_specials.add((member[0], member[1], member[2] - 1))
 
             specials_timer.start("Trim close")
             # remove all neighbors from the local pool

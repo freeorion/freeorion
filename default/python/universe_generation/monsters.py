@@ -1,11 +1,12 @@
 import random
 import itertools
+import statistics
 import freeorion as fo
 from util import MapGenerationError, report_error
 from galaxy_topology import get_systems_within_jumps
-import statistics
 import universe_tables
 from galaxy import DisjointSets
+
 
 
 class StarlaneAlteringMonsters(object):
@@ -131,7 +132,8 @@ def generate_monsters(monster_freq, _systems, home_systems):
     systems = [s for s in _systems if s not in empire_exclusions]
 
     # Fleet plans that include ships capable of altering starlanes.
-    ## @content_tag{CAN_ALTER_STARLANES} universe_generator special handling for fleets containing a hull design with this tag.
+    # @content_tag{CAN_ALTER_STARLANES} universe_generator special handling for
+    # fleets containing a hull design with this tag.
     fleet_can_alter_starlanes = {fp for fp in fleet_plans
                                  if any([universe.getGenericShipDesign(design).hull_type.hasTag("CAN_ALTER_STARLANES")
                                          for design in fp.ship_designs()])}
@@ -144,7 +146,8 @@ def generate_monsters(monster_freq, _systems, home_systems):
         print "/ spawn limit", fleet_plan.spawn_limit(),
         print "/ effective chance", basic_chance * fleet_plan.spawn_rate(),
         fp_location_cache[fleet_plan] = set(fleet_plan.locations(systems))
-        print "/ can be spawned at", len([x == True for x in fp_location_cache[fleet_plan]]), "of", len(systems), "systems"
+        print ("/ can be spawned at", len([x is True for x in fp_location_cache[fleet_plan]]),
+               "of", len(systems), "systems")
         if fleet_plan.name() in nest_name_map.values():
             statistics.tracked_monsters_chance[fleet_plan.name()] = basic_chance * fleet_plan.spawn_rate()
 
@@ -203,8 +206,8 @@ def generate_monsters(monster_freq, _systems, home_systems):
             # decrement counter for this monster fleet
             spawn_limits[fleet_plan] -= 1
 
-        except MapGenerationError as e:
-            report_error(str(e))
+        except MapGenerationError as err:
+            report_error(str(err))
             continue
 
     print "Actual # monster fleets placed: %d; Total Placement Expectation: %.1f" % (actual_tally, expectation_tally)
