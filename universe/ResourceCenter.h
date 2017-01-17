@@ -52,7 +52,9 @@ public:
     void            ClearFocus();
     void            UpdateFocusHistory();
 
-    virtual void    Reset();                                                        ///< Resets the meters, etc.  This should be called when a ResourceCenter is wiped out due to starvation, etc.
+    /** Resets the meters, etc. This should be called when a ResourceCenter is
+        wiped out due to starvation, etc. */
+    virtual void Reset();
     //@}
 
 protected:

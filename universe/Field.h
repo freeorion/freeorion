@@ -13,30 +13,34 @@ namespace Effect {
 class FO_COMMON_API Field : public UniverseObject {
 public:
     /** \name Accessors */ //@{
-    virtual std::set<std::string>
-                                Tags() const;                                       ///< returns all tags this object has
-    virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
+    std::set<std::string> Tags() const override;
 
-    virtual UniverseObjectType  ObjectType() const;
-    virtual std::string         Dump() const;
+    bool HasTag(const std::string& name) const override;
+
+    UniverseObjectType ObjectType() const override;
+
+    std::string Dump() const override;
+
+    int ContainerObjectID() const override;
+
+    bool ContainedBy(int object_id) const override;
+
+    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+
+    const std::string& PublicName(int empire_id) const override;
+
+    void ClampMeters() override;
 
     const std::string&          FieldTypeName() const { return m_type_name; }
-    virtual TemporaryPtr<UniverseObject>
-                                Accept(const UniverseObjectVisitor& visitor) const;
-
-    virtual int                 ContainerObjectID() const;                          ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
-    virtual bool                ContainedBy(int object_id) const;                   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
 
     bool                        InField(TemporaryPtr<const UniverseObject> obj) const;
     bool                        InField(double x, double y) const;
-
-    virtual const std::string&  PublicName(int empire_id) const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void                Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
+    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
-    virtual void                ResetTargetMaxUnpairedMeters();
+    void ResetTargetMaxUnpairedMeters() override;
     //@}
 
 protected:
@@ -56,12 +60,11 @@ public:
 protected:
 #endif
 
-    virtual Field*              Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Field
+    /** Returns new copy of this Field. */
+    Field* Clone(int empire_id = ALL_EMPIRES) const override;
     //@}
 
 private:
-    virtual void                ClampMeters();
-
     std::string     m_type_name;
 
     friend class boost::serialization::access;

@@ -15,19 +15,22 @@ public:
     Fighter();
     ~Fighter() {}
 
-    virtual UniverseObjectType  ObjectType() const;
-    virtual std::string         Dump() const;
+    UniverseObjectType ObjectType() const override;
+
+    std::string Dump() const override;
+
+    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+
+    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+
     float                       Damage() const;
     bool                        Destroyed() const;
     int                         LaunchedFrom() const;
     const std::string&          SpeciesName() const;
     void                        SetDestroyed(bool destroyed = true);
 
-    virtual TemporaryPtr<UniverseObject>    Accept(const UniverseObjectVisitor& visitor) const;
-    virtual void                            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
-
 protected:
-    virtual Fighter*    Clone(int empire_id = ALL_EMPIRES) const;
+    Fighter* Clone(int empire_id = ALL_EMPIRES) const override;
 
 private:
     float       m_damage;           // strength of fighter's attack

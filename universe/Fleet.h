@@ -30,17 +30,23 @@ struct MovePathNode {
 class FO_COMMON_API Fleet : public UniverseObject {
 public:
     /** \name Accessors */ //@{
-    virtual UniverseObjectType          ObjectType() const;
-    virtual std::string                 Dump() const;
+    UniverseObjectType ObjectType() const override;
+
+    std::string Dump() const override;
+
+    int ContainerObjectID() const override;
+
+    const std::set<int>& ContainedObjectIDs() const override;
+
+    bool Contains(int object_id) const override;
+
+    bool ContainedBy(int object_id) const override;
+
+    const std::string& PublicName(int empire_id) const override;
+
+    TemporaryPtr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const override;
 
     const std::set<int>&                ShipIDs() const     { return m_ships; }         ///< returns set of IDs of ships in fleet.
-
-    virtual int                         ContainerObjectID() const;          ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
-    virtual const std::set<int>&        ContainedObjectIDs() const;         ///< returns ids of objects directly contained within this object
-    virtual bool                        Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
-    virtual bool                        ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
-
-    virtual const std::string&          PublicName(int empire_id) const;
 
     /** Returns the list of systems that this fleet will move through en route
       * to its destination (may be empty).  If this fleet is currently at a
@@ -95,19 +101,19 @@ public:
      * If in a system and not blockaded, the value is the current system ID. The blockade intent is that you can't
      * break a blockade unless you beat the blockaders (via combat or they retreat).**/
     int                                 ArrivalStarlane() const             { return m_arrival_starlane; }
-
-    virtual TemporaryPtr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
+    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+
+    void MovementPhase() override;
+
+    void ResetTargetMaxUnpairedMeters() override;
 
     void                    SetRoute(const std::list<int>& route);          ///< sets this fleet to move through the series of systems in the list, in order
     void                    CalculateRouteTo(int target_system_id);         ///< sets this fleet to move through the series of systems that makes the shortest path from its current location to target_system_id
 
     void                    SetAggressive(bool aggressive = true);          ///< sets this fleet to be agressive (true) or passive (false)
-
-    virtual void            MovementPhase();
 
     void                    AddShip(int ship_id);                           ///< adds the ship to the fleet
     void                    AddShips(const std::vector<int>& ship_ids);     ///< adds the ships to the fleet
@@ -120,8 +126,6 @@ public:
 
     void                    SetGiveToEmpire(int empire_id);                 ///< marks fleet to be given to empire
     void                    ClearGiveToEmpire();                            ///< marks fleet not to be given to any empire
-
-    virtual void            ResetTargetMaxUnpairedMeters();
     //@}
 
     /* returns a name for a fleet based on its ships*/
@@ -160,7 +164,8 @@ public:
 protected:
 #endif
 
-    virtual Fleet*          Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Fleet
+    /** Returns new copy of this Fleet. */
+    Fleet* Clone(int empire_id = ALL_EMPIRES) const override;
     //@}
 
 private:

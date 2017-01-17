@@ -71,16 +71,31 @@ public:
     int                         SpecialAddedOnTurn(const std::string& name) const;  ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
     float                       SpecialCapacity(const std::string& name) const;     ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
-    virtual std::set<std::string>   Tags() const;                                   ///< returns all tags this object has
-    virtual bool                    HasTag(const std::string& name) const;          ///< returns true iff this object has the tag with the indicated \a name
+    /** Returns all tags this object has. */
+    virtual std::set<std::string> Tags() const;
 
-    virtual UniverseObjectType  ObjectType() const;
-    virtual std::string         Dump() const;                       ///< outputs textual description of object to logger
+    /** Returns true iff this object has the tag with the indicated \a name. */
+    virtual bool HasTag(const std::string& name) const;
 
-    virtual int                 ContainerObjectID() const;          ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
-    virtual const std::set<int>&ContainedObjectIDs() const;         ///< returns ids of objects contained within this object
-    virtual bool                Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
-    virtual bool                ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
+    virtual UniverseObjectType ObjectType() const;
+
+    /** Outputs textual description of object to logger. */
+    virtual std::string Dump() const;
+
+    /** Returns id of the object that directly contains this object, if any, or
+        INVALID_OBJECT_ID if this object is not contained by any other. */
+    virtual int ContainerObjectID() const;
+
+    /** Returns ids of objects contained within this object. */
+    virtual const std::set<int>& ContainedObjectIDs() const;
+
+    /** Returns true if there is an object with id \a object_id is contained
+        within this UniverseObject. */
+    virtual bool Contains(int object_id) const;
+
+    /* Returns true if there is an object with id \a object_id that contains
+       this UniverseObject. */
+    virtual bool ContainedBy(int object_id) const;
 
     std::set<int>               VisibleContainedObjectIDs(int empire_id) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
@@ -88,13 +103,18 @@ public:
     const Meter*                GetMeter(MeterType type) const;                 ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
     float                       CurrentMeterValue(MeterType type) const;        ///< returns current value of the specified meter \a type
     float                       InitialMeterValue(MeterType type) const;        ///< returns this turn's initial value for the speicified meter \a type
-    virtual float               NextTurnCurrentMeterValue(MeterType type) const;///< returns an estimate of the next turn's current value of the specified meter \a type
+
+    /** Returns an estimate of the next turn's current value of the specified
+        meter \a type. */
+    virtual float NextTurnCurrentMeterValue(MeterType type) const;
 
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
-    virtual const std::string&  PublicName(int empire_id) const;    ///< returns the name of this objectas it appears to empire \a empire_id
 
-    /** accepts a visitor object \see UniverseObjectVisitor */
-    virtual TemporaryPtr<UniverseObject>    Accept(const UniverseObjectVisitor& visitor) const;
+    /** Returns the name of this objectas it appears to empire \a empire_id .*/
+    virtual const std::string&  PublicName(int empire_id) const;
+
+    /** Accepts a visitor object \see UniverseObjectVisitor */
+    virtual TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const;
 
     int                         CreationTurn() const;               ///< returns game turn on which object was created
     int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
@@ -106,7 +126,7 @@ public:
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
       * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
-    virtual void            Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) = 0;
+    virtual void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) = 0;
 
     void                    SetID(int id);                      ///< sets the ID number of the object to \a id
     void                    Rename(const std::string& name);    ///< renames this object to \a name
@@ -127,9 +147,13 @@ public:
     std::map<MeterType, Meter>&
                             Meters() { return m_meters; }           ///< returns this UniverseObject's meters
     Meter*                  GetMeter(MeterType type);               ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
-    virtual void            BackPropagateMeters();                  ///< sets all this UniverseObject's meters' initial values equal to their current values
 
-    virtual void            SetOwner(int id);                       ///< sets the empire that owns this object
+    /** Sets all this UniverseObject's meters' initial values equal to their
+        current values. */
+    virtual void BackPropagateMeters();
+
+    /** Sets the empire that owns this object. */
+    virtual void SetOwner(int id);
 
     void                    SetSystem(int sys);                     ///< assigns this object to a System.  does not actually move object in universe
     virtual void            AddSpecial(const std::string& name, float capacity = 0.0f); ///< adds the Special \a name to this object, if it is not already present
@@ -138,26 +162,28 @@ public:
 
     /** Performs the movement that this object is responsible for this object's
       * actions during the movement phase of a turn. */
-    virtual void            MovementPhase() {};
+    virtual void MovementPhase()
+    {};
 
     /** Sets current value of max, target and unpaired meters in in this
       * UniverseObject to Meter::DEFAULT_VALUE.  This should be done before any
       * Effects that alter these meter(s) act on the object. */
-    virtual void            ResetTargetMaxUnpairedMeters();
+    virtual void ResetTargetMaxUnpairedMeters();
 
     /** Sets current value of active paired meters (the non-max non-target
       * meters that have a max or target meter associated with them) back to
       * the initial value the meter had at the start of this turn. */
-    virtual void            ResetPairedActiveMeters();
+    virtual void ResetPairedActiveMeters();
 
     /** calls Clamp(min, max) on meters each meter in this UniverseObject, to
       * ensure that meter current values aren't outside the valid range for
       * each meter. */
-    virtual void            ClampMeters();
+    virtual void ClampMeters();
 
-    /** performs the movement that this object is responsible for this object's actions during the pop growth/production/research
-        phase of a turn. */
-    virtual void            PopGrowthProductionResearchPhase() {};
+    /** performs the movement that this object is responsible for this object's
+        actions during the pop growth/production/research phase of a turn. */
+    virtual void PopGrowthProductionResearchPhase()
+    {};
     //@}
 
     static const double         INVALID_POSITION;       ///< the position in x and y at which default-constructed objects are placed

@@ -14,24 +14,48 @@ public:
     typedef std::map<std::pair<MeterType, std::string>, Meter>          PartMeterMap;
 
     /** \name Accessors */ //@{
-    virtual std::set<std::string>
-                                Tags() const;                                       ///< returns all tags this object has
-    virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
+    std::set<std::string> Tags() const override;
 
-    virtual UniverseObjectType  ObjectType() const;
-    virtual std::string         Dump() const;
+    bool HasTag(const std::string& name) const override;
+
+    UniverseObjectType ObjectType() const override;
+
+    std::string Dump() const override;
+
+    int ContainerObjectID() const override
+    { return m_fleet_id; }
+
+    bool ContainedBy(int object_id) const override;
+
+    float NextTurnCurrentMeterValue(MeterType type) const override;
+
+    const std::string& PublicName(int empire_id) const override;
+
+    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+
+    /** Back propagates part meters (which UniverseObject equivalent doesn't). */
+    void BackPropagateMeters() override;
+
+    void ResetTargetMaxUnpairedMeters() override;
+
+    void ResetPairedActiveMeters() override;
+
+    void ClampMeters() override;
+
+    void PopGrowthProductionResearchPhase() override;
+
+    /** Returns new copy of this Ship. */
+    Ship* Clone(int empire_id = ALL_EMPIRES) const override;
+
+    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
     int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
 
-    virtual int                 ContainerObjectID() const   { return m_fleet_id; }              ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
-    virtual bool                ContainedBy(int object_id) const;                               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
     int                         FleetID() const             { return m_fleet_id; }              ///< returns the ID of the fleet the ship is residing in
 
     int                         ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this ship
     int                         ArrivedOnTurn() const       { return m_arrived_on_turn; }       ///< returns the turn on which this ship arrived in its current system
-
-    virtual const std::string&  PublicName(int empire_id) const;
 
     bool                        IsMonster() const;
     bool                        IsArmed() const;
@@ -44,11 +68,6 @@ public:
     float                       Speed() const;
     float                       ColonyCapacity() const;
     float                       TroopCapacity() const;
-
-    virtual TemporaryPtr<UniverseObject>
-                                Accept(const UniverseObjectVisitor& visitor) const;
-
-    virtual float               NextTurnCurrentMeterValue(MeterType type) const;    ///< returns expected value of  specified meter current value on the next turn
 
     bool                        OrderedScrapped() const         { return m_ordered_scrapped; }          ///< returns true iff this ship has been ordered scrapped, or false otherwise
     int                         OrderedColonizePlanet() const   { return m_ordered_colonize_planet_id; }///< returns the ID of the planet this ship has been ordered to colonize, or INVALID_OBJECT_ID if this ship hasn't been ordered to colonize a planet
@@ -72,10 +91,6 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
-
-    virtual void    BackPropagateMeters();                                      ///< back propagates part meters (which UniverseObject equivalent doesn't)
-
     void            SetFleetID(int fleet_id);                                   ///< sets the ID of the fleet the ship resides in
     void            SetArrivedOnTurn(int turn);
 
@@ -95,8 +110,6 @@ public:
 
     Meter*          GetPartMeter(MeterType type, const std::string& part_name); ///< returns the requested Meter, or 0 if no such Meter of that type is found in this object
 
-    virtual void    ResetTargetMaxUnpairedMeters();
-    virtual void    ResetPairedActiveMeters();
     virtual void    SetShipMetersToMax();
     //@}
 
@@ -117,15 +130,10 @@ public:
 #if BOOST_VERSION >= 106100
 protected:
 #endif
-
-    virtual Ship*   Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Ship
     //@}
 
 
 private:
-    virtual void    PopGrowthProductionResearchPhase();
-    virtual void    ClampMeters();
-
     int             m_design_id;
     int             m_fleet_id;
     bool            m_ordered_scrapped;

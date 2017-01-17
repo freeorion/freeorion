@@ -16,12 +16,42 @@ class FO_COMMON_API Planet :
 {
 public:
     /** \name Accessors */ //@{
-    virtual std::set<std::string>
-                                Tags() const;                                       ///< returns all tags this object has
-    virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
+    std::set<std::string> Tags() const override;
 
-    virtual UniverseObjectType  ObjectType() const;
-    virtual std::string         Dump() const;
+    bool HasTag(const std::string& name) const override;
+
+    UniverseObjectType ObjectType() const override;
+
+    std::string Dump() const override;
+
+    int ContainerObjectID() const override;
+
+    const std::set<int>& ContainedObjectIDs() const override;
+
+    bool Contains(int object_id) const override;
+
+    bool ContainedBy(int object_id) const override;
+
+    float CurrentMeterValue(MeterType type) const override;
+
+    float InitialMeterValue(MeterType type) const override;
+
+    float NextTurnCurrentMeterValue(MeterType type) const override;
+
+    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+
+    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+
+    Meter* GetMeter(MeterType type) override;
+
+
+    std::vector<std::string> AvailableFoci() const override;
+
+    const std::string& FocusIcon(const std::string& focus_name) const override;
+
+    void Reset() override;
+
+    void Depopulate() override;
 
     PlanetType                  Type() const                        { return m_type; }
     PlanetType                  OriginalType() const                { return m_original_type; }
@@ -54,36 +84,17 @@ public:
 
     const std::set<int>&        BuildingIDs() const {return m_buildings;}
 
-    virtual int                 ContainerObjectID() const;          ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
-    virtual const std::set<int>&ContainedObjectIDs() const;         ///< returns ids of objects contained within this object
-    virtual bool                Contains(int object_id) const;      ///< returns true if there is an object with id \a object_id is contained within this UniverseObject
-    virtual bool                ContainedBy(int object_id) const;   ///< returns true if there is an object with id \a object_id that contains this UniverseObject
-
-    virtual std::vector<std::string>    AvailableFoci() const;
-    virtual const std::string&          FocusIcon(const std::string& focus_name) const;
-
     bool                        IsAboutToBeColonized() const    { return m_is_about_to_be_colonized; }
     bool                        IsAboutToBeInvaded() const      { return m_is_about_to_be_invaded; }
     bool                        IsAboutToBeBombarded() const    { return m_is_about_to_be_bombarded; }
     int                         OrderedGivenToEmpire() const    { return m_ordered_given_to_empire_id; }
     int                         LastTurnAttackedByShip() const  { return m_last_turn_attacked_by_ship; }
 
-    virtual TemporaryPtr<UniverseObject>
-                                Accept(const UniverseObjectVisitor& visitor) const;
-
-    virtual float               InitialMeterValue(MeterType type) const;
-    virtual float               CurrentMeterValue(MeterType type) const;
-    virtual float               NextTurnCurrentMeterValue(MeterType type) const;
-
     const std::string&          SurfaceTexture() const          { return m_surface_texture; }
     std::string                 CardinalSuffix() const;     ///< returns a roman number representing this planets orbit in relation to other planets
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
-
-    virtual Meter*  GetMeter(MeterType type);
-
     void            SetType(PlanetType type);           ///< sets the type of this Planet to \a type
     void            SetOriginalType(PlanetType type);   ///< sets the original type of this Planet to \a type
     void            SetSize(PlanetSize size);           ///< sets the size of this Planet to \a size
@@ -93,9 +104,6 @@ public:
 
     void            AddBuilding(int building_id);       ///< adds the building to the planet
     bool            RemoveBuilding(int building_id);    ///< removes the building from the planet; returns false if no such building was found
-
-    virtual void    Reset();                            ///< Resets the meters, specials, etc., of a planet to an unowned state.
-    virtual void    Depopulate();
 
     void            Conquer(int conquerer);             ///< Called during combat when a planet changes hands
     bool            Colonize(int empire_id, const std::string& species_name, double population); ///< Called during colonization handling to do the actual colonizing
@@ -112,7 +120,7 @@ public:
 
     void            SetSurfaceTexture(const std::string& texture);
 
-    virtual void    ResetTargetMaxUnpairedMeters();
+    void ResetTargetMaxUnpairedMeters() override;
     //@}
 
     static int      TypeDifference(PlanetType type1, PlanetType type2);
@@ -136,19 +144,24 @@ public:
 protected:
 #endif
 
-    virtual Planet*         Clone(int empire_id = ALL_EMPIRES) const;  ///< returns new copy of this Planet
+    /** returns new copy of this Planet. */
+    Planet* Clone(int empire_id = ALL_EMPIRES) const override;
     //@}
 
 private:
     void Init();
 
-    virtual const Meter*    GetMeter(MeterType type) const;
+    Visibility GetVisibility(int empire_id) const override
+    { return UniverseObject::GetVisibility(empire_id); }
 
-    virtual void            PopGrowthProductionResearchPhase();
-    virtual void            ClampMeters();
+    const Meter* GetMeter(MeterType type) const override;
 
-    virtual Visibility      GetVisibility(int empire_id) const  { return UniverseObject::GetVisibility(empire_id); }
-    virtual void            AddMeter(MeterType meter_type)      { UniverseObject::AddMeter(meter_type); }
+    void AddMeter(MeterType meter_type) override
+    { UniverseObject::AddMeter(meter_type); }
+
+    void PopGrowthProductionResearchPhase() override;
+
+    void ClampMeters() override;
 
     PlanetType      m_type;
     PlanetType      m_original_type;

@@ -21,36 +21,41 @@ namespace Condition {
 class FO_COMMON_API Building : public UniverseObject {
 public:
     /** \name Accessors */ //@{
-    virtual std::set<std::string>
-                                Tags() const;                                       ///< returns all tags this object has
-    virtual bool                HasTag(const std::string& name) const;              ///< returns true iff this object has the tag with the indicated \a name
+    std::set<std::string> Tags() const override;
 
-    virtual UniverseObjectType  ObjectType() const;
-    virtual std::string         Dump() const;
+    bool HasTag(const std::string& name) const override;
 
-    const std::string&      BuildingTypeName() const    { return m_building_type; };        ///< returns the name of the BuildingType object for this building
+    UniverseObjectType ObjectType() const override;
 
-    virtual int             ContainerObjectID() const   { return m_planet_id; }             ///< returns id of the object that directly contains this object, if any, or INVALID_OBJECT_ID if this object is not contained by any other
-    virtual bool            ContainedBy(int object_id) const;                               ///< returns true if there is an object with id \a object_id that contains this UniverseObject
+    std::string Dump() const override;
+
+    int ContainerObjectID() const override
+    { return m_planet_id; }
+
+    bool ContainedBy(int object_id) const override;
+
+    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+
+    /** Returns the name of the BuildingType object for this building. */
+    const std::string& BuildingTypeName() const
+    { return m_building_type; };
+
     int                     PlanetID() const            { return m_planet_id; }             ///< returns the ID number of the planet this building is on
 
     int                     ProducedByEmpireID() const  { return m_produced_by_empire_id; } ///< returns the empire ID of the empire that produced this building
-
-    virtual TemporaryPtr<UniverseObject>
-                            Accept(const UniverseObjectVisitor& visitor) const;
 
     bool                    OrderedScrapped() const     { return m_ordered_scrapped; }
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES);
+    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void            SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
 
     void            Reset();                            ///< resets any building state, and removes owners
     void            SetOrderedScrapped(bool b = true);  ///< flags building for scrapping
 
-    virtual void    ResetTargetMaxUnpairedMeters();
+    void ResetTargetMaxUnpairedMeters() override;
     //@}
 
 protected:
@@ -77,7 +82,8 @@ public:
 protected:
 #endif
 
-    virtual Building*       Clone(int empire_id = ALL_EMPIRES) const;   ///< returns new copy of this Building
+    /** Returns new copy of this Building. */
+    Building* Clone(int empire_id = ALL_EMPIRES) const override;
     //@}
 
 private:
