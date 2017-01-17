@@ -144,18 +144,16 @@ def generate_monsters(monster_freq, systems):
     # required to prevent their placement from disjoining the map
     starlane_altering_monsters = StarlaneAlteringMonsters(systems)
 
+    # collect info for tracked monster nest valid locations
+    planets = [p for s in systems for p in fo.sys_get_planets(s)]
+    for nest in tracked_nest_valid_locations:
+        tracked_nest_valid_locations[nest] = len(fo.special_locations(nest, planets))
+
     # for each system in the list that has been passed to this function, find a monster fleet that can be spawned at
     # the system and which hasn't already been added too many times, then attempt to add that monster fleet by
     # testing the spawn rate chance
     random.shuffle(systems)
     for system in systems:
-        # collect info for tracked monster nest valid locations
-        for planet in fo.sys_get_planets(system):
-            for nest in tracked_nest_valid_locations:
-                # print "\t tracked monster check planet: %d size: %s for nest: %20s  | result: %s"
-                # % (planet, fo.planet_get_size(planet), nest, fo.special_location(nest, planet))
-                if fo.special_location(nest, planet):
-                    tracked_nest_valid_locations[nest] += 1
 
         # collect info for tracked monster valid locations
         for fp in tracked_plan_valid_locations:
