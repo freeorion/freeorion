@@ -28,16 +28,26 @@ class ShipDesign;
 class FO_COMMON_API Order {
 public:
     /** \name Structors */ //@{
-    Order(); ///< default ctor
-    Order(int empire) : m_empire(empire), m_executed(false) {}     ///< ctor taking the ID of the Empire issuing the order
-    virtual ~Order() {}
+    Order();
+
+    /** ctor taking the ID of the Empire issuing the order. */
+    Order(int empire) :
+        m_empire(empire),
+        m_executed(false)
+    {}
+
+    virtual ~Order()
+    {}
     //@}
 
     /** \name Accessors */ //@{
-    int     EmpireID() const {return m_empire;} ///< returns the ID of the Empire issuing the order
+    /** Returns the ID of the Empire issuing the order. */
+    int EmpireID() const
+    { return m_empire; }
     //@}
 
-    /**
+    /** Executes the order on the Universe and Empires.
+     *
      *  Preconditions of Execute():
      *  For all order subclasses, the empire ID for the order
      *  must be that of an existing empire.
@@ -45,23 +55,33 @@ public:
      *  Subclasses add additional preconditions.  An std::runtime_error
      *   should be thrown if any precondition fails.
      */
-    void    Execute() const;            ///< executes the order on the Universe and Empires
+    void Execute() const;
 
-    bool    Undo() const;               ///< if this function returns true, it reverts the game state to what it was before this order was executed, otherwise it returns false and has no effect
+    /** If this function returns true, it reverts the game state to what it was
+     *  before this order was executed, otherwise it returns false and has no
+     *  effect. */
+    bool Undo() const;
 
 protected:
     /** \name Mutators */ //@{
-    void    ValidateEmpireID() const;   ///< verifies that the empire ID in this order is that of an existing empire.  Throws an std::runtime_error if not
-    bool    Executed() const;           ///< returns true iff this order has been executed (a second execution indicates server-side execution)
+    /** Verifies that the empire ID in this order is that of an existing empire.
+     *  Throws an std::runtime_error if not. */
+    void ValidateEmpireID() const;
+
+    /** Returns true iff this order has been executed (a second execution
+     *  indicates server-side execution). */
+    bool Executed() const;
     //@}
 
 private:
     virtual void ExecuteImpl() const = 0;
+
     virtual bool UndoImpl() const;
 
-    int             m_empire;
+    int m_empire;
 
-    mutable bool    m_executed; // indicates that Execute() has occured, and so an undo is legal
+    /** Indicates that Execute() has occured, and so an undo is legal. */
+    mutable bool m_executed;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -77,12 +97,18 @@ class FO_COMMON_API RenameOrder : public Order {
 public:
     /** \name Structors */ //@{
     RenameOrder();
+
     RenameOrder(int empire, int object, const std::string& name);
     //@}
 
     /** \name Accessors */ //@{
-    int                  ObjectID() const {return m_object;} ///< returns ID of fleet selected in this order
-    const std::string&   Name() const     {return m_name;}  ///< returns the new name of the fleet
+    /** Returns ID of fleet selected in this order. */
+    int ObjectID() const
+    { return m_object; }
+
+    /** Returns the new name of the fleet. */
+    const std::string& Name() const
+    { return m_name; }
     //@}
 
 private:
@@ -94,10 +120,10 @@ private:
      *    - the planet focus is changed which=0(primary),1(secondary)
      *
      */
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
-    int           m_object;
-    std::string   m_name;
+    int m_object;
+    std::string m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -114,20 +140,32 @@ class FO_COMMON_API NewFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     NewFleetOrder();
+
     NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
                   int system_id, const std::vector<int>& ship_ids,
                   bool aggressive = false);
-    NewFleetOrder(int empire, const std::vector<std::string>& fleet_names, const std::vector<int>& fleet_ids,
+
+    NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
+                  const std::vector<int>& fleet_ids,
                   int system_id, const std::vector<std::vector<int> >& ship_id_groups,
                   const std::vector<bool>& aggressives);
     //@}
 
     /** \name Accessors */ //@{
-    int                                     SystemID() const    { return m_system_id; }
-    const std::vector<std::string>&         FleetNames() const  { return m_fleet_names; }
-    const std::vector<int>&                 FleetIDs() const    { return m_fleet_ids; }
-    const std::vector<std::vector<int> >&   ShipIDGroups() const{ return m_ship_id_groups; }
-    const std::vector<bool>&                Aggressive() const  { return m_aggressives; }
+    int SystemID() const
+    { return m_system_id; }
+
+    const std::vector<std::string>& FleetNames() const
+    { return m_fleet_names; }
+
+    const std::vector<int>& FleetIDs() const
+    { return m_fleet_ids; }
+
+    const std::vector<std::vector<int> >& ShipIDGroups() const
+    { return m_ship_id_groups; }
+
+    const std::vector<bool>& Aggressive() const
+    { return m_aggressives; }
     //@}
 
 private:
@@ -139,13 +177,13 @@ private:
      *    - new fleets will exist in system with id m_system_id,
      *      and will belong to the creating empire.
      */
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
-    std::vector<std::string>        m_fleet_names;
-    int                             m_system_id;
-    std::vector<int>                m_fleet_ids;
-    std::vector<std::vector<int> >  m_ship_id_groups;
-    std::vector<bool>               m_aggressives;
+    std::vector<std::string> m_fleet_names;
+    int m_system_id;
+    std::vector<int> m_fleet_ids;
+    std::vector<std::vector<int>> m_ship_id_groups;
+    std::vector<bool> m_aggressives;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -162,14 +200,27 @@ class FO_COMMON_API FleetMoveOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetMoveOrder();
+
     FleetMoveOrder(int empire, int fleet_id, int start_system_id, int dest_system_id, bool append = false);
     //@}
 
     /** \name Accessors */ //@{
-    int                      FleetID() const             {return m_fleet;}        ///< returns ID of fleet selected in this order
-    int                      StartSystemID() const       {return m_start_system;} ///< returns ID of system set as the start system for this order (the system the route starts from)
-    int                      DestinationSystemID() const {return m_dest_system;}  ///< returns ID of system set as destination for this order
-    const std::vector<int>&  Route() const               {return m_route;}        ///< returns the IDs of the systems in the route specified by this Order
+    /** Returns ID of fleet selected in this order. */
+    int FleetID() const
+    {return m_fleet;}
+
+    /** Returns ID of system set as the start system for this order (the system
+        the route starts from). */
+    int StartSystemID() const
+    { return m_start_system; }
+
+    /* Returns ID of system set as destination for this order. */
+    int DestinationSystemID() const
+    { return m_dest_system; }
+
+    /* Returns the IDs of the systems in the route specified by this Order. */
+    const std::vector<int>& Route() const
+    { return m_route; }
     //@}
 
 private:
@@ -184,13 +235,13 @@ private:
      *    - TODO: WRITE THIS
      *
      */
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
-    int              m_fleet;
-    int              m_start_system;
-    int              m_dest_system;
+    int m_fleet;
+    int m_start_system;
+    int m_dest_system;
     std::vector<int> m_route;
-    bool             m_append;
+    bool m_append;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -208,12 +259,18 @@ class FO_COMMON_API FleetTransferOrder : public Order {
 public:
     /** \name Structors */ //@{
     FleetTransferOrder();
+
     FleetTransferOrder(int empire, int dest_fleet, const std::vector<int>& ships);
     //@}
 
     /** \name Accessors */ //@{
-    int                     DestinationFleet() const {return m_dest_fleet;} ///< returns ID of the fleet that the ships will go into
-    const std::vector<int>& Ships() const            {return m_add_ships;}  ///< returns IDs of the ships selected for addition to the fleet
+    /* Returns ID of the fleet that the ships will go into. */
+    int DestinationFleet() const
+    { return m_dest_fleet; }
+
+    /** Returns IDs of the ships selected for addition to the fleet. */
+    const std::vector<int>& Ships() const
+    { return m_add_ships; }
     //@}
 
 private:
@@ -225,10 +282,10 @@ private:
      *  Postconditions:
      *     - all ships in m_add_ships will be moved from their initial fleet to the destination fleet
      */
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
-    int               m_dest_fleet;
-    std::vector<int>  m_add_ships;
+    int m_dest_fleet;
+    std::vector<int> m_add_ships;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -244,12 +301,18 @@ class FO_COMMON_API ColonizeOrder : public Order {
 public:
     /** \name Structors */ //@{
     ColonizeOrder();
+
     ColonizeOrder(int empire, int ship, int planet);
     //@}
 
     /** \name Accessors */ //@{
-    int             PlanetID() const  {return m_planet;}    ///< returns ID of the planet to be colonized
-    int             ShipID  () const  {return m_ship  ;}    ///< returns ID of the ship which is colonizing the planet
+    /** Returns ID of the planet to be colonized. */
+    int PlanetID() const
+    { return m_planet; }
+
+    /** Returns ID of the ship which is colonizing the planet. */
+    int ShipID() const
+    { return m_ship; }
     //@}
 
 private:
@@ -264,11 +327,12 @@ private:
      *      - The ship with ID m_ship will be marked to colonize the planet with
      *        id m_planet during the next turn processing.
      */
-    virtual void ExecuteImpl() const;
-    virtual bool UndoImpl() const;
+    void ExecuteImpl() const override;
 
-    int                 m_ship;
-    int                 m_planet;
+    bool UndoImpl() const override;
+
+    int m_ship;
+    int m_planet;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -284,12 +348,18 @@ class FO_COMMON_API InvadeOrder : public Order {
 public:
     /** \name Structors */ //@{
     InvadeOrder();
+
     InvadeOrder(int empire, int ship, int planet);
     //@}
 
     /** \name Accessors */ //@{
-    int             PlanetID() const  {return m_planet;}    ///< returns ID of the planet to be invaded
-    int             ShipID  () const  {return m_ship  ;}    ///< returns ID of the ship which is invading the planet
+    /** Returns ID of the planet to be invaded. */
+    int PlanetID() const
+    { return m_planet; }
+
+    /** Returns ID of the ship which is invading the planet. */
+    int ShipID() const
+    { return m_ship; }
     //@}
 
 private:
@@ -304,11 +374,12 @@ private:
      *      - The ship with ID m_ship will be marked to invade the planet with
      *        id m_planet during the next turn processing.
      */
-    virtual void ExecuteImpl() const;
-    virtual bool UndoImpl() const;
+    void ExecuteImpl() const override;
 
-    int                 m_ship;
-    int                 m_planet;
+    bool UndoImpl() const override;
+
+    int m_ship;
+    int m_planet;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -324,12 +395,18 @@ class FO_COMMON_API BombardOrder : public Order {
 public:
     /** \name Structors */ //@{
     BombardOrder();
+
     BombardOrder(int empire, int ship, int planet);
     //@}
 
     /** \name Accessors */ //@{
-    int             PlanetID() const  {return m_planet;}    ///< returns ID of the planet to be bombarded
-    int             ShipID  () const  {return m_ship  ;}    ///< returns ID of the ship which is bombarding the planet
+    /** Returns ID of the planet to be bombarded. */
+    int PlanetID() const
+    { return m_planet; }
+
+    /** Returns ID of the ship which is bombarding the planet. */
+    int ShipID() const
+    { return m_ship; }
     //@}
 
 private:
@@ -342,11 +419,12 @@ private:
      *      - The ship with ID m_ship will be marked to bombard the planet with
      *        id m_planet during the next turn processing.
      */
-    virtual void ExecuteImpl() const;
-    virtual bool UndoImpl() const;
+    void ExecuteImpl() const override;
 
-    int                 m_ship;
-    int                 m_planet;
+    bool UndoImpl() const override;
+
+    int m_ship;
+    int m_planet;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -364,11 +442,14 @@ class FO_COMMON_API DeleteFleetOrder : public Order {
 public:
     /** \name Structors */ //@{
     DeleteFleetOrder();
+
     DeleteFleetOrder(int empire, int fleet);
     //@}
 
     /** \name Accessors */ //@{
-    int   FleetID() const   {return m_fleet;}  ///< returns ID of the fleet to be deleted
+    /** Returns ID of the fleet to be deleted. */
+    int FleetID() const
+    { return m_fleet; }
     //@}
 
 private:
@@ -381,7 +462,7 @@ private:
      *     - the fleet is deleted
      */
     //< either ExecuteServerApply or ExecuteServerRevoke is called!!!
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
     int m_fleet;
 
@@ -399,11 +480,14 @@ class FO_COMMON_API ChangeFocusOrder : public Order {
 public:
     /** \name Structors */ //@{
     ChangeFocusOrder();
+
     ChangeFocusOrder(int empire, int planet, const std::string& focus);
     //@}
 
     /** \name Accessors */ //@{
-    int   PlanetID() const   {return m_planet;}  ///< returns ID of the fleet to be deleted
+    /* Returns ID of the fleet to be deleted. */
+    int PlanetID() const
+    { return m_planet; }
     //@}
 
 private:
@@ -414,9 +498,9 @@ private:
      *  Postconditions:
      *    - the planet focus is changed
      */
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
-    int         m_planet;
+    int m_planet;
     std::string m_focus;
 
     friend class boost::serialization::access;
@@ -435,18 +519,21 @@ class FO_COMMON_API ResearchQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
     ResearchQueueOrder();
+
     ResearchQueueOrder(int empire, const std::string& tech_name);
+
     ResearchQueueOrder(int empire, const std::string& tech_name, int position);
+
     ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy);
     //@}
 
 private:
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
     std::string m_tech_name;
-    int         m_position;
-    bool        m_remove;
-    int         m_pause;
+    int m_position;
+    bool m_remove;
+    int m_pause;
 
     static const int INVALID_INDEX = -500;
     static const int PAUSE = 1;
@@ -471,27 +558,34 @@ class FO_COMMON_API ProductionQueueOrder : public Order {
 public:
     /** \name Structors */ //@{
     ProductionQueueOrder();
+
     ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item, int number, int location, int pos = -1);
+
     ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy);
+
     ProductionQueueOrder(int empire, int index, int rally_point_id, bool dummy1, bool dummy2);
+
     ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize);
+
     ProductionQueueOrder(int empire, int index, int new_index);
+
     ProductionQueueOrder(int empire, int index);
+
     ProductionQueueOrder(int empire, int index, bool pause, float dummy);
     //@}
 
 private:
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
     ProductionQueue::ProductionItem m_item;
-    int         m_number;
-    int         m_location;
-    int         m_index;
-    int         m_new_quantity;
-    int         m_new_blocksize;
-    int         m_new_index;
-    int         m_rally_point_id;
-    int         m_pause;
+    int m_number;
+    int m_location;
+    int m_index;
+    int m_new_quantity;
+    int m_new_blocksize;
+    int m_new_index;
+    int m_rally_point_id;
+    int m_pause;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
@@ -524,10 +618,15 @@ class FO_COMMON_API ShipDesignOrder : public Order {
 public:
     /** \name Structors */ //@{
     ShipDesignOrder();
+
     ShipDesignOrder(int empire, int existing_design_id_to_remember);
+
     ShipDesignOrder(int empire, int design_id_to_erase, bool dummy);
+
     ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
+
     ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name = "", const std::string& new_description = "");
+
     ShipDesignOrder(int empire, int design_id_to_move, int design_id_after);
     //@}
 
@@ -550,25 +649,26 @@ private:
      *    - For removing a design, the empire will no longer have the design's
      *      id in its set of design ids
      */
-    virtual void ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
-    int                         m_design_id;
-    bool                        m_update_name_or_description;
-    bool                        m_delete_design_from_empire;
-    bool                        m_create_new_design;
-    bool                        m_move_design;
+    int m_design_id;
+    bool m_update_name_or_description;
+    bool m_delete_design_from_empire;
+    bool m_create_new_design;
+    bool m_move_design;
 
     // details of design to create
-    std::string                 m_name;
-    std::string                 m_description;
-    int                         m_designed_on_turn;
-    std::string                 m_hull;
-    std::vector<std::string>    m_parts;
-    bool                        m_is_monster;
-    std::string                 m_icon;
-    std::string                 m_3D_model;
-    bool                        m_name_desc_in_stringtable;
-    int                         m_design_id_after;             //<location after the inserted design
+    std::string m_name;
+    std::string m_description;
+    int m_designed_on_turn;
+    std::string m_hull;
+    std::vector<std::string> m_parts;
+    bool m_is_monster;
+    std::string m_icon;
+    std::string m_3D_model;
+    bool m_name_desc_in_stringtable;
+    /** Location after the inserted design. */
+    int m_design_id_after;
     // end details of design to create
 
     friend class boost::serialization::access;
@@ -586,11 +686,14 @@ class FO_COMMON_API ScrapOrder : public Order {
 public:
     /** \name Structors */ //@{
     ScrapOrder();
+
     ScrapOrder(int empire, int object_id);
     //@}
 
     /** \name Accessors */ //@{
-    int             ObjectID() const { return m_object_id; }///< returns ID of object selected in this order
+    /** Returns ID of object selected in this order. */
+    int ObjectID() const
+    { return m_object_id; }
     //@}
 
 private:
@@ -602,8 +705,9 @@ private:
      *  Postconditions:
      *     - the object is marked to be scrapped during the next turn processing.
      */
-    virtual void    ExecuteImpl() const;
-    virtual bool    UndoImpl() const;
+    void ExecuteImpl() const override;
+
+    bool UndoImpl() const override;
 
     int m_object_id;
 
@@ -622,12 +726,18 @@ class FO_COMMON_API AggressiveOrder : public Order {
 public:
     /** \name Structors */ //@{
     AggressiveOrder();
+
     AggressiveOrder(int empire, int object_id, bool aggression = true);
     //@}
 
     /** \name Accessors */ //@{
-    int             ObjectID() const    { return m_object_id; } ///< returns ID of object selected in this order
-    bool            Aggression() const  { return m_aggression; }///< returns aggression state to set object to
+    /** Returns ID of object selected in this order. */
+    int ObjectID() const
+    { return m_object_id; }
+
+    /** Returns aggression state to set object to. */
+    bool Aggression() const
+    { return m_aggression; }
     //@}
 
 private:
@@ -639,10 +749,10 @@ private:
      *  Postconditions:
      *     - the object is set to the new aggression state
      */
-    virtual void    ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
-    int     m_object_id;
-    bool    m_aggression;
+    int m_object_id;
+    bool m_aggression;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -659,12 +769,18 @@ class FO_COMMON_API GiveObjectToEmpireOrder : public Order {
 public:
     /** \name Structors */ //@{
     GiveObjectToEmpireOrder();
+
     GiveObjectToEmpireOrder(int empire, int object_id, int recipient);
     //@}
 
     /** \name Accessors */ //@{
-    int             ObjectID() const    { return m_object_id; }             ///< returns ID of object selected in this order
-    int             RecipientEmpireID() { return m_recipient_empire_id; }   ///< returns ID of empire to which object is given
+    /** Returns ID of object selected in this order. */
+    int ObjectID() const
+    { return m_object_id; }
+
+    /** Returns ID of empire to which object is given. */
+    int RecipientEmpireID()
+    { return m_recipient_empire_id; }
     //@}
 
 private:
@@ -676,11 +792,12 @@ private:
      *  Postconditions:
      *     - the object's ownership is set to the other empire
      */
-    virtual void    ExecuteImpl() const;
-    virtual bool    UndoImpl() const;
+    void ExecuteImpl() const override;
 
-    int     m_object_id;
-    int     m_recipient_empire_id;
+    bool UndoImpl() const override;
+
+    int m_object_id;
+    int m_recipient_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -695,11 +812,14 @@ class FO_COMMON_API ForgetOrder : public Order {
 public:
     /** \name Structors */ //@{
     ForgetOrder();
+
     ForgetOrder(int empire, int object_id);
     //@}
 
     /** \name Accessors */ //@{
-    int             ObjectID() const { return m_object_id; }///< returns ID of object selected in this order
+    /** Returns ID of object selected in this order. */
+    int ObjectID() const
+    { return m_object_id; }
     //@}
 
 private:
@@ -710,7 +830,7 @@ private:
      *  Postconditions:
      *     - the object is removed from the table of known objects.
      */
-    virtual void    ExecuteImpl() const;
+    void ExecuteImpl() const override;
 
     int m_object_id;
 
