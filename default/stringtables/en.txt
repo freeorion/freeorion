@@ -12482,6 +12482,8 @@ GROWTH_SPECIALS_ENTRY_LIST
 [[encyclopedia LITHIC_SPECIES_TITLE]] specials:
 [[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
 
+GROWTH_SPECIAL_LABEL
+Planet <i>%1%</i> [[TT_SPECIAL]]
 
 ##
 ## Species picks
