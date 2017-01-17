@@ -2876,37 +2876,37 @@ TT_INHERENT
 Inherent
 
 # %1% name of the owning empire.
-# %2% FIXME
+# %2% name of tech
 TT_TECH
 %1% Tech <i>%2%</i>
 
 # %1% name of the planet, where the building is located.
-# %2% FIXME
+# %2% name of building
 TT_BUILDING
 %1% Building <i>%2%</i>
 
-# %1% FIXME
-# %2% FIXME
+# %1% source of effect
+# %2% name of ship hull
 TT_SHIP_HULL
 Ship <i>%1%</i> Hull <i>%2%</i>
 
-# %1% FIXME
-# %2% FIXME
+# %1% source of effect
+# %2% name of ship part
 TT_SHIP_PART
 Ship <i>%1%</i> Part <i>%2%</i>
 
-# %1% FIXME
-# %2% FIXME
+# %1% source of effect
+# %2% name of special
 TT_SPECIAL
 Special <i>%2%</i>
 
-# %1% name of the species.
-# %2% FIXME
+# %1% source of effect
+# %2% name of species
 TT_SPECIES
 Species <i>%2%</i>
 
 # %1% name of this fields field type.
-# %2% FIXME
+# %2% name of field
 TT_FIELD
 <i>%2%</i>
 
