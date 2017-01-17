@@ -165,17 +165,22 @@ namespace {
     struct ObjectTypeVisitor : UniverseObjectVisitor {
         ObjectTypeVisitor() : m_type(INVALID_UNIVERSE_OBJECT_TYPE) {}
 
-        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Building> obj) const
+        TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Building> obj) const override
         { m_type = OBJ_BUILDING; return obj; }
-        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const
+
+        TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const override
         { m_type = OBJ_FLEET; return obj; }
-        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Planet> obj) const
+
+        TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Planet> obj) const override
         { m_type = OBJ_PLANET; return obj; }
-        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Ship> obj) const
+
+        TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Ship> obj) const override
         { m_type = OBJ_SHIP; return obj; }
-        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<System> obj) const
+
+        TemporaryPtr<UniverseObject> Visit(TemporaryPtr<System> obj) const override
         { m_type = OBJ_SYSTEM; return obj; }
-        virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Field> obj) const
+
+        TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Field> obj) const override
         { m_type = OBJ_FIELD; return obj; }
 
         mutable UniverseObjectType m_type;

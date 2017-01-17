@@ -90,32 +90,50 @@ namespace ValueRef {
 template <class T>
 struct ValueRefBase
 {
-    virtual ~ValueRefBase() {} ///< virtual dtor
+    virtual ~ValueRefBase()
+    {}
 
-    virtual bool        operator==(const ValueRefBase<T>& rhs) const;
-    bool                operator!=(const ValueRefBase<T>& rhs) const { return !(*this == rhs); }
+    virtual bool operator==(const ValueRefBase<T>& rhs) const;
+
+    bool operator!=(const ValueRefBase<T>& rhs) const
+    { return !(*this == rhs); }
+
+    /** Evaluates the expression tree with an empty context.  Useful for
+      * evaluating expressions that do not depend on context. */
+    T Eval() const
+    { return Eval(::ScriptingContext()); }
 
     /** Evaluates the expression tree and return the results; \a context
       * is used to fill in any instances of the "Value" variable or references
       * to objects such as the source, effect target, or condition candidates
       * that exist in the tree. */
-    virtual T           Eval(const ScriptingContext& context) const = 0;
+    virtual T Eval(const ScriptingContext& context) const = 0;
 
-    /** Evaluates the expression tree with an empty context.  Useful for
-      * evaluating expressions that do not depend on context. */
-    T                   Eval() const { return Eval(::ScriptingContext()); }
+    virtual bool RootCandidateInvariant() const
+    { return false; }
 
-    virtual bool        RootCandidateInvariant() const { return false; }
-    virtual bool        LocalCandidateInvariant() const { return false; }
-    virtual bool        TargetInvariant() const { return false; }
-    virtual bool        SourceInvariant() const { return false; }
-    virtual bool        SimpleIncrement() const { return false; }
-    virtual bool        ConstantExpr() const { return false; }
+    virtual bool LocalCandidateInvariant() const
+    { return false; }
+
+    virtual bool TargetInvariant() const
+    { return false; }
+
+    virtual bool SourceInvariant() const
+    { return false; }
+
+    virtual bool SimpleIncrement() const
+    { return false; }
+
+    virtual bool ConstantExpr() const
+    { return false; }
 
     virtual std::string Description() const = 0;
-    virtual std::string Dump() const = 0; ///< returns a text description of this type of special
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    /** Returns a text description of this type of special. */
+    virtual std::string Dump() const = 0;
+
+    virtual void SetTopLevelContent(const std::string& content_name)
+    {}
 
 private:
     friend class boost::serialization::access;
@@ -129,22 +147,36 @@ struct FO_COMMON_API Constant : public ValueRefBase<T>
 {
     Constant(T value); ///< basic ctor
 
-    virtual bool        operator==(const ValueRefBase<T>& rhs) const;
-    T                   Value() const;
-    virtual T           Eval(const ScriptingContext& context) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        LocalCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual bool        ConstantExpr() const { return true; }
+    bool operator==(const ValueRefBase<T>& rhs) const override;
 
-    virtual std::string Description() const;
-    virtual std::string Dump() const;
+    T Eval(const ScriptingContext& context) const override;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool LocalCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    bool ConstantExpr() const override
+    { return true; }
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    T Value() const;
 
 private:
-    T           m_value;
+    T m_value;
+
     std::string m_top_level_content;
 
     friend class boost::serialization::access;
@@ -158,22 +190,33 @@ template <class T>
 struct FO_COMMON_API Variable : public ValueRefBase<T>
 {
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
+
     Variable(ReferenceType ref_type, const std::string& property_name = "");
 
-    virtual bool                    operator==(const ValueRefBase<T>& rhs) const;
-    ReferenceType                   GetReferenceType() const;
+    bool operator==(const ValueRefBase<T>& rhs) const override;
+
+    T Eval(const ScriptingContext& context) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool LocalCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    ReferenceType GetReferenceType() const;
+
     const std::vector<std::string>& PropertyName() const;
-    virtual T                       Eval(const ScriptingContext& context) const;
-    virtual bool                    RootCandidateInvariant() const;
-    virtual bool                    LocalCandidateInvariant() const;
-    virtual bool                    TargetInvariant() const;
-    virtual bool                    SourceInvariant() const;
-    virtual std::string             Description() const;
-    virtual std::string             Dump() const;
 
 protected:
-    mutable ReferenceType       m_ref_type;
-    std::vector<std::string>    m_property_name;
+    mutable ReferenceType m_ref_type;
+
+    std::vector<std::string> m_property_name;
 
 private:
     friend class boost::serialization::access;
@@ -195,23 +238,32 @@ struct FO_COMMON_API Statistic : public Variable<T>
 
     ~Statistic();
 
-    virtual bool                    operator==(const ValueRefBase<T>& rhs) const;
+    bool operator==(const ValueRefBase<T>& rhs) const override;
 
-    StatisticType                   GetStatisticType() const    { return m_stat_type; }
-    const Condition::ConditionBase* GetSamplingCondition() const{ return m_sampling_condition; }
-    const ValueRefBase<T>*GetValueRef() const         { return m_value_ref; }
+    T Eval(const ScriptingContext& context) const override;
 
-    virtual T                       Eval(const ScriptingContext& context) const;
+    bool RootCandidateInvariant() const override;
 
-    virtual bool                    RootCandidateInvariant() const;
-    virtual bool                    LocalCandidateInvariant() const;
-    virtual bool                    TargetInvariant() const;
-    virtual bool                    SourceInvariant() const;
+    bool LocalCandidateInvariant() const override;
 
-    virtual std::string             Description() const;
-    virtual std::string             Dump() const;
+    bool TargetInvariant() const override;
 
-    virtual void                    SetTopLevelContent(const std::string& content_name);
+    bool SourceInvariant() const override;
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    StatisticType GetStatisticType() const
+    { return m_stat_type; }
+
+    const Condition::ConditionBase* GetSamplingCondition() const
+    { return m_sampling_condition; }
+
+    const ValueRefBase<T>* GetValueRef() const
+    { return m_value_ref; }
 
 protected:
     /** Gets the set of objects in the Universe that match the sampling condition. */
@@ -225,12 +277,12 @@ protected:
                                     std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const;
 
     /** Computes the statistic from the specified set of property values. */
-    T       ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const;
+    T ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const;
 
 private:
-    StatisticType               m_stat_type;
-    Condition::ConditionBase*   m_sampling_condition;
-    ValueRefBase<T>*  m_value_ref;
+    StatisticType m_stat_type;
+    Condition::ConditionBase* m_sampling_condition;
+    ValueRefBase<T>* m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -251,26 +303,38 @@ struct FO_COMMON_API ComplexVariable : public Variable<T>
 
     ~ComplexVariable();
 
-    virtual bool                    operator==(const ValueRefBase<T>& rhs) const;
-    const ValueRefBase<int>*        IntRef1() const;
-    const ValueRefBase<int>*        IntRef2() const;
-    const ValueRefBase<int>*        IntRef3() const;
-    const ValueRefBase<std::string>*StringRef1() const;
-    const ValueRefBase<std::string>*StringRef2() const;
-    virtual T                       Eval(const ScriptingContext& context) const;
-    virtual bool                    RootCandidateInvariant() const;
-    virtual bool                    LocalCandidateInvariant() const;
-    virtual bool                    TargetInvariant() const;
-    virtual bool                    SourceInvariant() const;
-    virtual std::string             Description() const;
-    virtual std::string             Dump() const;
+    bool operator==(const ValueRefBase<T>& rhs) const override;
 
-    virtual void                    SetTopLevelContent(const std::string& content_name);
+    T Eval(const ScriptingContext& context) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool LocalCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRefBase<int>* IntRef1() const;
+
+    const ValueRefBase<int>* IntRef2() const;
+
+    const ValueRefBase<int>* IntRef3() const;
+
+    const ValueRefBase<std::string>* StringRef1() const;
+
+    const ValueRefBase<std::string>* StringRef2() const;
 
 protected:
-    ValueRefBase<int>*        m_int_ref1;
-    ValueRefBase<int>*        m_int_ref2;
-    ValueRefBase<int>*        m_int_ref3;
+    ValueRefBase<int>* m_int_ref1;
+    ValueRefBase<int>* m_int_ref2;
+    ValueRefBase<int>* m_int_ref3;
     ValueRefBase<std::string>*m_string_ref1;
     ValueRefBase<std::string>*m_string_ref2;
 
@@ -287,20 +351,31 @@ template <class FromType, class ToType>
 struct FO_COMMON_API StaticCast : public Variable<ToType>
 {
     StaticCast(Variable<FromType>* value_ref);
+
     StaticCast(ValueRefBase<FromType>* value_ref);
+
     ~StaticCast();
 
-    virtual bool        operator==(const ValueRefBase<ToType>& rhs) const;
-    virtual ToType      Eval(const ScriptingContext& context) const;
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        LocalCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description() const;
-    virtual std::string Dump() const;
-    const ValueRefBase<FromType>*   GetValueRef() const { return m_value_ref; }
+    bool operator==(const ValueRefBase<ToType>& rhs) const override;
 
-    virtual void                    SetTopLevelContent(const std::string& content_name);
+    ToType Eval(const ScriptingContext& context) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool LocalCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRefBase<FromType>* GetValueRef() const
+    { return m_value_ref; }
 
 private:
     ValueRefBase<FromType>* m_value_ref;
@@ -320,17 +395,26 @@ struct FO_COMMON_API StringCast : public Variable<std::string>
     StringCast(ValueRefBase<FromType>* value_ref);
     ~StringCast();
 
-    virtual bool        operator==(const ValueRefBase<std::string>& rhs) const;
-    virtual std::string Eval(const ScriptingContext& context) const;
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        LocalCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description() const;
-    virtual std::string Dump() const;
-    const ValueRefBase<FromType>*   GetValueRef() const { return m_value_ref; }
+    bool operator==(const ValueRefBase<std::string>& rhs) const override;
 
-    virtual void                    SetTopLevelContent(const std::string& content_name);
+    std::string Eval(const ScriptingContext& context) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool LocalCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRefBase<FromType>* GetValueRef() const
+    { return m_value_ref; }
 
 private:
     ValueRefBase<FromType>* m_value_ref;
@@ -346,17 +430,26 @@ struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
     UserStringLookup(ValueRefBase<std::string>* value_ref);
     ~UserStringLookup();
 
-    virtual bool        operator==(const ValueRefBase<std::string>& rhs) const;
-    virtual std::string Eval(const ScriptingContext& context) const;
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        LocalCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description() const;
-    virtual std::string Dump() const;
-    const ValueRefBase<std::string>*    GetValueRef() const { return m_value_ref; }
+    bool operator==(const ValueRefBase<std::string>& rhs) const override;
 
-    virtual void                        SetTopLevelContent(const std::string& content_name);
+    std::string Eval(const ScriptingContext& context) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool LocalCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRefBase<std::string>* GetValueRef() const
+    { return m_value_ref; }
 
 private:
     ValueRefBase<std::string>* m_value_ref;
@@ -378,22 +471,33 @@ struct FO_COMMON_API NameLookup : public Variable<std::string> {
     NameLookup(ValueRefBase<int>* value_ref, LookupType lookup_type);
     ~NameLookup();
 
-    virtual bool        operator==(const ValueRefBase<std::string>& rhs) const;
-    virtual std::string Eval(const ScriptingContext& context) const;
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        LocalCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description() const;
-    virtual std::string Dump() const;
-    const ValueRefBase<int>*    GetValueRef() const { return m_value_ref; }
-    LookupType                  GetLookupType() const { return m_lookup_type; }
+    bool operator==(const ValueRefBase<std::string>& rhs) const override;
 
-    virtual void                SetTopLevelContent(const std::string& content_name);
+    std::string Eval(const ScriptingContext& context) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool LocalCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRefBase<int>* GetValueRef() const
+    { return m_value_ref; }
+
+    LookupType GetLookupType() const
+    { return m_lookup_type; }
 
 private:
-    ValueRefBase<int>*  m_value_ref;
-    LookupType          m_lookup_type;
+    ValueRefBase<int>* m_value_ref;
+    LookupType m_lookup_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -406,34 +510,54 @@ private:
 template <class T>
 struct FO_COMMON_API Operation : public ValueRefBase<T>
 {
+    /** Binary operation ctor. */
     Operation(OpType op_type, ValueRefBase<T>* operand1,
-              ValueRefBase<T>* operand2);                                       ///< binary operation ctor
-    Operation(OpType op_type, ValueRefBase<T>* operand);                        ///< unary operation ctor
-    Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& operands);   ///< nary operation ctor
+              ValueRefBase<T>* operand2);
+
+    /** Unary operation ctor. */
+    Operation(OpType op_type, ValueRefBase<T>* operand);
+
+    /* N-ary operation ctor. */
+    Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& operands);
+
     ~Operation();
 
-    virtual bool                            operator==(const ValueRefBase<T>& rhs) const;
-    OpType                                  GetOpType() const;
-    const ValueRefBase<T>*                  LHS() const;        // 1st operand (or 0 if none exists)
-    const ValueRefBase<T>*                  RHS() const;        // 2nd operand (or 0 if only one exists)
-    const std::vector<ValueRefBase<T>*>&    Operands() const;   // all operands
+    bool operator==(const ValueRefBase<T>& rhs) const override;
 
-    virtual T               Eval(const ScriptingContext& context) const;
-    virtual bool            RootCandidateInvariant() const;
-    virtual bool            LocalCandidateInvariant() const;
-    virtual bool            TargetInvariant() const;
-    virtual bool            SourceInvariant() const;
-    virtual bool            ConstantExpr() const;
+    T Eval(const ScriptingContext& context) const override;
 
-    virtual bool            SimpleIncrement() const;
-    virtual std::string     Description() const;
-    virtual std::string     Dump() const;
+    bool RootCandidateInvariant() const override;
 
-    virtual void            SetTopLevelContent(const std::string& content_name);
+    bool LocalCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    bool SimpleIncrement() const override;
+
+    bool ConstantExpr() const override;
+
+    std::string Description() const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    OpType GetOpType() const;
+
+    /** 1st operand (or 0 if none exists). */
+    const ValueRefBase<T>* LHS() const;
+
+    /** 2nd operand (or 0 if only one exists) */
+    const ValueRefBase<T>* RHS() const;
+
+    /** all operands */
+    const std::vector<ValueRefBase<T>*>& Operands() const;
 
 private:
-    OpType                          m_op_type;
-    std::vector<ValueRefBase<T>*>   m_operands;
+    OpType m_op_type;
+    std::vector<ValueRefBase<T>*> m_operands;
 
     friend class boost::serialization::access;
     template <class Archive>
