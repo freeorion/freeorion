@@ -134,7 +134,7 @@ def create_universe(psd_map):
 
     print "Generating Space Monsters"
     seed_rng(seed_pool.pop())
-    generate_monsters(gsd.monster_frequency, systems)
+    generate_monsters(gsd.monster_frequency, systems, home_systems)
 
     print "Distributing Starting Specials"
     seed_rng(seed_pool.pop())
