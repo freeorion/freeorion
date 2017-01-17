@@ -1016,7 +1016,7 @@ def generate_classic_research_orders():
     # if we own a blackhole, accelerate sing_gen and conc camp
     if True:  # just to help with cold-folding / organization
         if (fo.currentTurn() > 50 and len(AIstate.empireStars.get(fo.starType.blackHole, [])) != 0 and
-                foAI.foAIstate.character.may_research_tech_classic("PRO_SINGULAR_GEN") and not tech_is_complete(AIDependencies.PRO_SINGULAR_GEN) and
+                foAI.foAIstate.character.may_research_tech_classic("PRO_SINGULAR_GEN") and not tech_is_complete(Dep.PRO_SINGULAR_GEN) and
                 tech_is_complete(Dep.PRO_SOL_ORB_GEN)):
             # sing_tech_list = [ "LRN_GRAVITONICS" , "PRO_SINGULAR_GEN"]  # formerly also "CON_ARCH_PSYCH", "CON_CONC_CAMP",
             sing_gen_tech = fo.getTech(Dep.PRO_SINGULAR_GEN)
