@@ -19,9 +19,16 @@ namespace Moderator {
 class ModeratorAction {
 public:
     ModeratorAction();
-    virtual ~ModeratorAction() {}
-    virtual void        Execute() const {}
-    virtual std::string Dump() const { return "ModeratorAction"; }
+
+    virtual ~ModeratorAction()
+    {}
+
+    virtual void Execute() const
+    {}
+
+    virtual std::string Dump() const
+    { return "ModeratorAction"; }
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -31,10 +38,16 @@ private:
 class FO_COMMON_API DestroyUniverseObject : public ModeratorAction {
 public:
     DestroyUniverseObject();
+
     explicit DestroyUniverseObject(int object_id);
-    virtual ~DestroyUniverseObject() {}
-    virtual void        Execute() const;
-    virtual std::string Dump() const;
+
+    virtual ~DestroyUniverseObject()
+    {}
+
+    void Execute() const override;
+
+    std::string Dump() const override;
+
 private:
     int m_object_id;
 
@@ -46,10 +59,16 @@ private:
 class FO_COMMON_API SetOwner : public ModeratorAction {
 public:
     SetOwner();
+
     SetOwner(int object_id, int new_owner_empire_id);
-    virtual ~SetOwner() {}
-    virtual void        Execute() const;
-    virtual std::string Dump() const;
+
+    virtual ~SetOwner()
+    {}
+
+    void Execute() const override;
+
+    std::string Dump() const override;
+
 private:
     int m_object_id;
     int m_new_owner_empire_id;
@@ -62,13 +81,19 @@ private:
 class FO_COMMON_API AddStarlane : public ModeratorAction {
 public:
     AddStarlane();
+
     AddStarlane(int system_1_id, int system_2_id);
-    virtual ~AddStarlane() {}
-    virtual void        Execute() const;
-    virtual std::string Dump() const;
+
+    virtual ~AddStarlane()
+    {}
+
+    void Execute() const override;
+
+    std::string Dump() const override;
+
 private:
-    double      m_id_1;
-    double      m_id_2;
+    double m_id_1;
+    double m_id_2;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -78,13 +103,19 @@ private:
 class FO_COMMON_API RemoveStarlane : public ModeratorAction {
 public:
     RemoveStarlane();
+
     RemoveStarlane(int system_1_id, int system_2_id);
-    virtual ~RemoveStarlane() {}
-    virtual void        Execute() const;
-    virtual std::string Dump() const;
+
+    virtual ~RemoveStarlane()
+    {}
+
+    void Execute() const override;
+
+    std::string Dump() const override;
+
 private:
-    double      m_id_1;
-    double      m_id_2;
+    double m_id_1;
+    double m_id_2;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -94,10 +125,16 @@ private:
 class FO_COMMON_API CreateSystem : public ModeratorAction {
 public:
     CreateSystem();
+
     CreateSystem(double x, double y, StarType star_type);
-    virtual ~CreateSystem() {}
-    virtual void        Execute() const;
-    virtual std::string Dump() const;
+
+    virtual ~CreateSystem()
+    {}
+
+    void Execute() const override;
+
+    std::string Dump() const override;
+
 private:
     double      m_x;
     double      m_y;
@@ -111,14 +148,20 @@ private:
 class FO_COMMON_API CreatePlanet : public ModeratorAction {
 public:
     CreatePlanet();
+
     CreatePlanet(int system_id, PlanetType planet_type, PlanetSize planet_size);
-    virtual ~CreatePlanet() {}
-    virtual void        Execute() const;
-    virtual std::string Dump() const;
+
+    virtual ~CreatePlanet()
+    {}
+
+    void Execute() const override;
+
+    std::string Dump() const override;
+
 private:
-    int         m_system_id;
-    PlanetType  m_planet_type;
-    PlanetSize  m_planet_size;
+    int m_system_id;
+    PlanetType m_planet_type;
+    PlanetSize m_planet_size;
 
     friend class boost::serialization::access;
     template <class Archive>
