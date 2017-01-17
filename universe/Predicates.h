@@ -36,13 +36,21 @@ extern const int ALL_EMPIRES;
     of a single subclass are recognized by the visitor. */
 struct FO_COMMON_API UniverseObjectVisitor {
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<UniverseObject> obj) const;
+
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Building> obj) const;
+
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const;
+
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Planet> obj) const;
+
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Ship> obj) const;
+
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<System> obj) const;
+
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Field> obj) const;
+
     virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fighter> obj) const;
+
     virtual ~UniverseObjectVisitor();
 };
 
@@ -52,8 +60,11 @@ struct FO_COMMON_API UniverseObjectVisitor {
 struct FO_COMMON_API StationaryFleetVisitor : UniverseObjectVisitor
 {
     StationaryFleetVisitor(int empire = ALL_EMPIRES);
-    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const;
+
     virtual ~StationaryFleetVisitor();
+
+    TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const override;
+
     const int empire_id;
 };
 
@@ -63,8 +74,11 @@ struct FO_COMMON_API StationaryFleetVisitor : UniverseObjectVisitor
 struct FO_COMMON_API OrderedMovingFleetVisitor : UniverseObjectVisitor
 {
     OrderedMovingFleetVisitor(int empire = ALL_EMPIRES);
-    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const;
+
     virtual ~OrderedMovingFleetVisitor();
+
+    TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const override;
+
     const int empire_id;
 };
 
@@ -73,8 +87,11 @@ struct FO_COMMON_API OrderedMovingFleetVisitor : UniverseObjectVisitor
 struct FO_COMMON_API MovingFleetVisitor : UniverseObjectVisitor
 {
     MovingFleetVisitor(int empire = ALL_EMPIRES);
-    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const;
+
     virtual ~MovingFleetVisitor();
+
+    TemporaryPtr<UniverseObject> Visit(TemporaryPtr<Fleet> obj) const override;
+
     const int empire_id;
 };
 
@@ -83,8 +100,12 @@ template <class T>
 struct OwnedVisitor : UniverseObjectVisitor
 {
     OwnedVisitor(int empire = ALL_EMPIRES);
-    virtual TemporaryPtr<UniverseObject> Visit(TemporaryPtr<T> obj) const;
-    virtual ~OwnedVisitor() {} 
+
+    virtual ~OwnedVisitor()
+    {}
+
+    TemporaryPtr<UniverseObject> Visit(TemporaryPtr<T> obj) const override;
+
     const int empire_id;
 };
 
