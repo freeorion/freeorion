@@ -86,75 +86,83 @@ struct FO_COMMON_API ConditionBase {
         m_target_invariant(UNKNOWN_INVARIANCE),
         m_source_invariant(UNKNOWN_INVARIANCE)
     {}
+
     virtual ~ConditionBase();
 
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    bool                operator!=(const ConditionBase& rhs) const { return !(*this == rhs); }
+    virtual bool operator==(const ConditionBase& rhs) const;
 
-    virtual void        Eval(const ScriptingContext& parent_context,
-                             ObjectSet& matches,
-                             ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const;
+    bool operator!=(const ConditionBase& rhs) const
+    { return !(*this == rhs); }
+
+    virtual void Eval(const ScriptingContext& parent_context,
+                      ObjectSet& matches,
+                      ObjectSet& non_matches,
+                      SearchDomain search_domain = NON_MATCHES) const;
 
     /** Matches with an empty ScriptingContext */
-    void                Eval(ObjectSet& matches,
-                             ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const;
+    void Eval(ObjectSet& matches,
+              ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const;
 
     /** Tests all objects in universe as NON_MATCHES. */
-    void                Eval(const ScriptingContext& parent_context,
-                             ObjectSet& matches) const;
+    void Eval(const ScriptingContext& parent_context,
+              ObjectSet& matches) const;
 
     /** Tests all objects in universe as NON_MATCHES with empty ScriptingContext. */
-    void                Eval(ObjectSet& matches) const;
+    void Eval(ObjectSet& matches) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
-    bool                Eval(const ScriptingContext& parent_context,
-                             TemporaryPtr<const UniverseObject> candidate) const;
+    bool Eval(const ScriptingContext& parent_context,
+              TemporaryPtr<const UniverseObject> candidate) const;
 
     /** Tests single candidate object, returning true iff it matches condition
       * with empty ScriptingContext. */
-    bool                Eval(TemporaryPtr<const UniverseObject> candidate) const;
+    bool Eval(TemporaryPtr<const UniverseObject> candidate) const;
 
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
+    virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                                   ObjectSet& condition_non_targets) const;
 
     /** Returns true iff this condition's evaluation does not reference
       * the RootCandidate objects.  This requirement ensures that if this
       * condition is a subcondition to another Condition or a ValueRef, this
       * condition may be evaluated once and its result used to match all local
       * candidates to that condition. */
-    virtual bool        RootCandidateInvariant() const { return false; }
+    virtual bool RootCandidateInvariant() const
+    { return false; }
 
     /** (Almost) all conditions are varying with local candidates; this is the
       * point of evaluating a condition.  This funciton is provided for
       * consistency with ValueRef, which may not depend on the local candidiate
       * of an enclosing condition. */
-    bool                LocalCandidateInvariant() const { return false; }
+    bool LocalCandidateInvariant() const
+    { return false; }
 
     /** Returns true iff this condition's evaluation does not reference the
       * target object.*/
-    virtual bool        TargetInvariant() const { return false; }
+    virtual bool TargetInvariant() const
+    { return false; }
 
     /** Returns true iff this condition's evaluation does not reference the
       * source object.*/
-    virtual bool        SourceInvariant() const { return false; }
+    virtual bool SourceInvariant() const
+    { return false; }
 
     virtual std::string Description(bool negated = false) const = 0;
+
     virtual std::string Dump() const = 0;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) = 0;
+    virtual void SetTopLevelContent(const std::string& content_name) = 0;
 
 protected:
-    mutable Invariance  m_root_candidate_invariant;
-    mutable Invariance  m_target_invariant;
-    mutable Invariance  m_source_invariant;
+    mutable Invariance m_root_candidate_invariant;
+    mutable Invariance m_target_invariant;
+    mutable Invariance m_source_invariant;
 
 private:
     struct MatchHelper;
     friend struct MatchHelper;
 
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    virtual bool Match(const ScriptingContext& local_context) const;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -171,29 +179,45 @@ struct FO_COMMON_API Number : public ConditionBase {
         m_high(high),
         m_condition(condition)
     {}
-    virtual ~Number();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
-    const ConditionBase*                GetCondition() const { return m_condition; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Number();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<int>* High() const
+    { return m_high; }
+
+    const ConditionBase* GetCondition() const
+    { return m_condition; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*    m_low;
-    ValueRef::ValueRefBase<int>*    m_high;
-    ConditionBase*                  m_condition;
+    ValueRef::ValueRefBase<int>* m_low;
+    ValueRef::ValueRefBase<int>* m_high;
+    ConditionBase* m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -206,27 +230,41 @@ struct FO_COMMON_API Turn : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
-    virtual ~Turn();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Turn();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<int>* High() const
+    { return m_high; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*    m_low;
-    ValueRef::ValueRefBase<int>*    m_high;
+    ValueRef::ValueRefBase<int>* m_low;
+    ValueRef::ValueRefBase<int>* m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -262,31 +300,50 @@ struct FO_COMMON_API SortedNumberOf : public ConditionBase {
         m_sorting_method(sorting_method),
         m_condition(condition)
     {}
-    virtual ~SortedNumberOf();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*      Number() const { return m_number; }
-    const ValueRef::ValueRefBase<double>*   SortKey() const { return m_sort_key; }
-    SortingMethod                           GetSortingMethod() const { return m_sorting_method; }
-    const ConditionBase*                    GetCondition() const { return m_condition; }
-    virtual void                            GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                                              ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~SortedNumberOf();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* Number() const
+    { return m_number; }
+
+    const ValueRef::ValueRefBase<double>* SortKey() const
+    { return m_sort_key; }
+
+    SortingMethod GetSortingMethod() const
+    { return m_sorting_method; }
+
+    const ConditionBase* GetCondition() const
+    { return m_condition; }
 
 private:
-    ValueRef::ValueRefBase<int>*    m_number;
+    ValueRef::ValueRefBase<int>* m_number;
     ValueRef::ValueRefBase<double>* m_sort_key;
-    SortingMethod                   m_sorting_method;
-    ConditionBase*                  m_condition;
+    SortingMethod m_sorting_method;
+    ConditionBase* m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -296,18 +353,31 @@ private:
 /** Matches all objects. */
 struct FO_COMMON_API All : public ConditionBase {
     All() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
     friend class boost::serialization::access;
@@ -319,21 +389,35 @@ private:
  *  Essentially the entire point of this Condition is to provide the specialized GetDefaultInitialCandidateObjects() */
 struct FO_COMMON_API None : public ConditionBase {
     None() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const { }  // efficient rejection of everything
+    bool operator==(const ConditionBase& rhs) const override;
 
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override
+    { /* efficient rejection of everything. */ }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
     friend class boost::serialization::access;
@@ -349,33 +433,45 @@ struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
         m_empire_id(empire_id),
         m_affiliation(affiliation)
     {}
+
     explicit EmpireAffiliation(EmpireAffiliationType affiliation) :
        m_empire_id(0),
        m_affiliation(affiliation)
     {}
+
     virtual ~EmpireAffiliation();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
-    EmpireAffiliationType               GetAffiliation() const { return m_affiliation; }
+    bool operator==(const ConditionBase& rhs) const override;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* EmpireID() const
+    { return m_empire_id; }
+
+    EmpireAffiliationType GetAffiliation() const
+    { return m_affiliation; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*    m_empire_id;
-    EmpireAffiliationType           m_affiliation;
+    ValueRef::ValueRefBase<int>* m_empire_id;
+    EmpireAffiliationType m_affiliation;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -385,19 +481,27 @@ private:
 /** Matches the source object only. */
 struct FO_COMMON_API Source : public ConditionBase {
     Source() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    //virtual bool        SourceInvariant() const { return false; } // same as ConditionBase
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -410,17 +514,27 @@ private:
   * subcondition in order to evaluate the outer condition. */
 struct FO_COMMON_API RootCandidate : public ConditionBase {
     RootCandidate() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return false; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    bool RootCandidateInvariant() const override
+    { return false; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -433,19 +547,30 @@ private:
 /** Matches the target of an effect being executed. */
 struct FO_COMMON_API Target : public ConditionBase {
     Target() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return false; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return false; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -460,29 +585,43 @@ struct FO_COMMON_API Homeworld : public ConditionBase {
         ConditionBase(),
         m_names()
     {}
+
     explicit Homeworld(const std::vector<ValueRef::ValueRefBase<std::string>*>& names) :
         ConditionBase(),
         m_names(names)
     {}
-    virtual ~Homeworld();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Homeworld();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ValueRef::ValueRefBase<std::string>*> Names() const
+    { return m_names; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
 
@@ -494,19 +633,30 @@ private:
 /** Matches planets that are an empire's capital. */
 struct FO_COMMON_API Capital : public ConditionBase {
     Capital() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -516,19 +666,30 @@ private:
 /** Matches space monsters. */
 struct FO_COMMON_API Monster : public ConditionBase {
     Monster() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -538,17 +699,27 @@ private:
 /** Matches armed ships and monsters. */
 struct FO_COMMON_API Armed : public ConditionBase {
     Armed() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -561,25 +732,38 @@ struct FO_COMMON_API Type : public ConditionBase {
         ConditionBase(),
         m_type(type)
     {}
-    virtual ~Type();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<UniverseObjectType>*   GetType() const { return m_type; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Type();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<UniverseObjectType>* GetType() const
+    { return m_type; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<UniverseObjectType>* m_type;
 
@@ -595,25 +779,38 @@ struct FO_COMMON_API Building : public ConditionBase {
         ConditionBase(),
         m_names(names)
     {}
-    virtual ~Building();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ValueRef::ValueRefBase<std::string>*>   Names() const { return m_names; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Building();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ValueRef::ValueRefBase<std::string>*> Names() const
+    { return m_names; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
 
@@ -625,6 +822,7 @@ private:
 /** Matches all objects that have an attached Special named \a name. */
 struct FO_COMMON_API HasSpecial : public ConditionBase {
     explicit HasSpecial(const std::string& name);
+
     explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name = 0) :
         ConditionBase(),
         m_name(name),
@@ -633,6 +831,7 @@ struct FO_COMMON_API HasSpecial : public ConditionBase {
         m_since_turn_low(0),
         m_since_turn_high(0)
     {}
+
     HasSpecial(ValueRef::ValueRefBase<std::string>* name,
                ValueRef::ValueRefBase<int>* since_turn_low,
                ValueRef::ValueRefBase<int>* since_turn_high = 0) :
@@ -643,6 +842,7 @@ struct FO_COMMON_API HasSpecial : public ConditionBase {
         m_since_turn_low(since_turn_low),
         m_since_turn_high(since_turn_high)
     {}
+
     HasSpecial(ValueRef::ValueRefBase<std::string>* name,
                ValueRef::ValueRefBase<double>* capacity_low,
                ValueRef::ValueRefBase<double>* capacity_high = 0) :
@@ -653,33 +853,53 @@ struct FO_COMMON_API HasSpecial : public ConditionBase {
         m_since_turn_low(0),
         m_since_turn_high(0)
     {}
-    virtual ~HasSpecial();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
-    const ValueRef::ValueRefBase<double>*       CapacityLow() const { return m_capacity_low; }
-    const ValueRef::ValueRefBase<double>*       CapacityHigh() const { return m_capacity_high; }
-    const ValueRef::ValueRefBase<int>*          SinceTurnLow() const { return m_since_turn_low; }
-    const ValueRef::ValueRefBase<int>*          SinceTurnHigh() const { return m_since_turn_high; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~HasSpecial();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<std::string>* Name() const
+    { return m_name; }
+
+    const ValueRef::ValueRefBase<double>* CapacityLow() const
+    { return m_capacity_low; }
+
+    const ValueRef::ValueRefBase<double>* CapacityHigh() const
+    { return m_capacity_high; }
+
+    const ValueRef::ValueRefBase<int>* SinceTurnLow() const
+    { return m_since_turn_low; }
+
+    const ValueRef::ValueRefBase<int>* SinceTurnHigh() const
+    { return m_since_turn_high; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>*    m_name;
-    ValueRef::ValueRefBase<double>*         m_capacity_low;
-    ValueRef::ValueRefBase<double>*         m_capacity_high;
-    ValueRef::ValueRefBase<int>*            m_since_turn_low;
-    ValueRef::ValueRefBase<int>*            m_since_turn_high;
+    ValueRef::ValueRefBase<std::string>* m_name;
+    ValueRef::ValueRefBase<double>* m_capacity_low;
+    ValueRef::ValueRefBase<double>* m_capacity_high;
+    ValueRef::ValueRefBase<int>* m_since_turn_low;
+    ValueRef::ValueRefBase<int>* m_since_turn_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -689,31 +909,42 @@ private:
 /** Matches all objects that have the tag \a tag. */
 struct FO_COMMON_API HasTag : public ConditionBase {
     explicit HasTag(const std::string& name);
+
     explicit HasTag(ValueRef::ValueRefBase<std::string>* name = 0) :
         ConditionBase(),
         m_name(name)
     {}
+
     virtual ~HasTag();
 
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
+    bool operator==(const ConditionBase& rhs) const override;
 
-    ValueRef::ValueRefBase<std::string>*    Name() const { return m_name; }
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    ValueRef::ValueRefBase<std::string>* Name() const
+    { return m_name; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>*    m_name;
+    ValueRef::ValueRefBase<std::string>* m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -727,27 +958,41 @@ struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
-    virtual ~CreatedOnTurn();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~CreatedOnTurn();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<int>* High() const
+    { return m_high; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*    m_low;
-    ValueRef::ValueRefBase<int>*    m_high;
+    ValueRef::ValueRefBase<int>* m_low;
+    ValueRef::ValueRefBase<int>* m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -762,27 +1007,40 @@ struct FO_COMMON_API Contains : public ConditionBase {
         ConditionBase(),
         m_condition(condition)
     {}
-    virtual ~Contains();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ConditionBase*GetCondition() const { return m_condition; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Contains();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ConditionBase* GetCondition() const
+    { return m_condition; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ConditionBase*  m_condition;
+    ConditionBase* m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -797,25 +1055,38 @@ struct FO_COMMON_API ContainedBy : public ConditionBase {
         ConditionBase(),
         m_condition(condition)
     {}
-    virtual ~ContainedBy();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ConditionBase*GetCondition() const { return m_condition; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~ContainedBy();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ConditionBase* GetCondition() const
+    { return m_condition; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ConditionBase* m_condition;
 
@@ -830,25 +1101,38 @@ struct FO_COMMON_API InSystem : public ConditionBase {
         ConditionBase(),
         m_system_id(system_id)
     {}
-    virtual ~InSystem();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  SystemId() const { return m_system_id; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~InSystem();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* SystemId() const
+    { return m_system_id; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<int>* m_system_id;
 
@@ -863,25 +1147,38 @@ struct FO_COMMON_API ObjectID : public ConditionBase {
         ConditionBase(),
         m_object_id(object_id)
     {}
-    virtual ~ObjectID();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  ObjectId() const { return m_object_id; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~ObjectID();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* ObjectId() const
+    { return m_object_id; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<int>* m_object_id;
 
@@ -898,27 +1195,40 @@ struct FO_COMMON_API PlanetType : public ConditionBase {
         ConditionBase(),
         m_types(types)
     {}
-    virtual ~PlanetType();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ValueRef::ValueRefBase< ::PlanetType>*>&    Types() const { return m_types; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~PlanetType();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ValueRef::ValueRefBase<::PlanetType>*>& Types() const
+    { return m_types; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase< ::PlanetType>*> m_types;
+    std::vector<ValueRef::ValueRefBase<::PlanetType>*> m_types;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -933,27 +1243,40 @@ struct FO_COMMON_API PlanetSize : public ConditionBase {
         ConditionBase(),
         m_sizes(sizes)
     {}
-    virtual ~PlanetSize();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>&    Sizes() const { return m_sizes; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~PlanetSize();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& Sizes() const
+    { return m_sizes; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase< ::PlanetSize>*> m_sizes;
+    std::vector<ValueRef::ValueRefBase<::PlanetSize>*> m_sizes;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -970,28 +1293,41 @@ struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
         m_environments(environments),
         m_species_name(species_name_ref)
     {}
-    virtual ~PlanetEnvironment();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& Environments() const { return m_environments; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~PlanetEnvironment();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ValueRef::ValueRefBase<::PlanetEnvironment>*>& Environments() const
+    { return m_environments; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>  m_environments;
-    ValueRef::ValueRefBase<std::string>*                        m_species_name;
+    std::vector<ValueRef::ValueRefBase<::PlanetEnvironment>*> m_environments;
+    ValueRef::ValueRefBase<std::string>* m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1006,29 +1342,43 @@ struct FO_COMMON_API Species : public ConditionBase {
         ConditionBase(),
         m_names(names)
     {}
+
     Species() :
         ConditionBase(),
         m_names()
     {}
-    virtual ~Species();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Species();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ValueRef::ValueRefBase<std::string>*>& Names() const
+    { return m_names; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
 
@@ -1053,6 +1403,7 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
+
     explicit Enqueued(ValueRef::ValueRefBase<int>* design_id,
              ValueRef::ValueRefBase<int>* empire_id = 0,
              ValueRef::ValueRefBase<int>* low = 0,
@@ -1065,6 +1416,7 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
+
     Enqueued() :
         ConditionBase(),
         m_build_type(BT_NOT_BUILDING),
@@ -1074,37 +1426,60 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
         m_low(0),
         m_high(0)
     {}
-    virtual ~Enqueued();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    BuildType           GetBuildType() const { return m_build_type; }
-    const ValueRef::ValueRefBase<std::string>*  GetName() const { return m_name; }
-    const ValueRef::ValueRefBase<int>*          DesignID() const { return m_design_id; }
-    const ValueRef::ValueRefBase<int>*          EmpireID() const { return m_empire_id; }
-    const ValueRef::ValueRefBase<int>*          Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*          High() const { return m_high; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Enqueued();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    BuildType GetBuildType() const
+    { return m_build_type; }
+
+    const ValueRef::ValueRefBase<std::string>* GetName() const
+    { return m_name; }
+
+    const ValueRef::ValueRefBase<int>* DesignID() const
+    { return m_design_id; }
+
+    const ValueRef::ValueRefBase<int>* EmpireID() const
+    { return m_empire_id; }
+
+    const ValueRef::ValueRefBase<int>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<int>* High() const
+    { return m_high; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    BuildType                               m_build_type;
-    ValueRef::ValueRefBase<std::string>*    m_name;
-    ValueRef::ValueRefBase<int>*            m_design_id;
-    ValueRef::ValueRefBase<int>*            m_empire_id;
-    ValueRef::ValueRefBase<int>*            m_low;
-    ValueRef::ValueRefBase<int>*            m_high;
+    BuildType m_build_type;
+    ValueRef::ValueRefBase<std::string>* m_name;
+    ValueRef::ValueRefBase<int>* m_design_id;
+    ValueRef::ValueRefBase<int>* m_empire_id;
+    ValueRef::ValueRefBase<int>* m_low;
+    ValueRef::ValueRefBase<int>* m_high;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1117,25 +1492,38 @@ struct FO_COMMON_API FocusType : public ConditionBase {
         ConditionBase(),
         m_names(names)
     {}
-    virtual ~FocusType();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ValueRef::ValueRefBase<std::string>*>&  Names() const { return m_names; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~FocusType();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ValueRef::ValueRefBase<std::string>*>& Names() const
+    { return m_names; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     std::vector<ValueRef::ValueRefBase<std::string>*> m_names;
 
@@ -1151,25 +1539,37 @@ struct FO_COMMON_API StarType : public ConditionBase {
         ConditionBase(),
         m_types(types)
     {}
-    virtual ~StarType();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ValueRef::ValueRefBase< ::StarType>*>&  Types() const { return m_types; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~StarType();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ValueRef::ValueRefBase< ::StarType>*>& Types() const
+    { return m_types; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    std::vector<ValueRef::ValueRefBase< ::StarType>*> m_types;
+    std::vector<ValueRef::ValueRefBase<::StarType>*> m_types;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1182,27 +1582,40 @@ struct FO_COMMON_API DesignHasHull : public ConditionBase {
         ConditionBase(),
         m_name(name)
     {}
-    virtual ~DesignHasHull();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~DesignHasHull();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<std::string>* Name() const
+    { return m_name; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>*    m_name;
+    ValueRef::ValueRefBase<std::string>* m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1219,31 +1632,48 @@ struct FO_COMMON_API DesignHasPart : public ConditionBase {
         m_high(high),
         m_name(name)
     {}
-    virtual ~DesignHasPart();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*          Low() const  { return m_low; }
-    const ValueRef::ValueRefBase<int>*          High() const { return m_high; }
-    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~DesignHasPart();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<int>* High() const
+    { return m_high; }
+
+    const ValueRef::ValueRefBase<std::string>* Name() const
+    { return m_name; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*            m_low;
-    ValueRef::ValueRefBase<int>*            m_high;
-    ValueRef::ValueRefBase<std::string>*    m_name;
+    ValueRef::ValueRefBase<int>* m_low;
+    ValueRef::ValueRefBase<int>* m_high;
+    ValueRef::ValueRefBase<std::string>* m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1260,31 +1690,48 @@ struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
         m_high(high),
         m_class(part_class)
     {}
-    virtual ~DesignHasPartClass();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  Low() const { return m_low; }
-    const ValueRef::ValueRefBase<int>*  High() const { return m_high; }
-    ShipPartClass                       Class() const { return m_class; }
-    void                GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~DesignHasPartClass();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<int>* High() const
+    { return m_high; }
+
+    ShipPartClass Class() const
+    { return m_class; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*    m_low;
-    ValueRef::ValueRefBase<int>*    m_high;
-    ShipPartClass                   m_class;
+    ValueRef::ValueRefBase<int>* m_low;
+    ValueRef::ValueRefBase<int>* m_high;
+    ShipPartClass m_class;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1298,26 +1745,37 @@ struct FO_COMMON_API PredefinedShipDesign : public ConditionBase {
         ConditionBase(),
         m_name(name)
     {}
+
     virtual ~PredefinedShipDesign();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    const ValueRef::ValueRefBase<std::string>*  Name() const { return m_name; }
+    bool operator==(const ConditionBase& rhs) const override;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<std::string>* Name() const
+    { return m_name; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>*    m_name;
+    ValueRef::ValueRefBase<std::string>* m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1330,23 +1788,35 @@ struct FO_COMMON_API NumberedShipDesign : public ConditionBase {
         ConditionBase(),
         m_design_id(design_id)
     {}
-    virtual ~NumberedShipDesign();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  DesignID() const { return m_design_id; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~NumberedShipDesign();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* DesignID() const
+    { return m_design_id; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<int>* m_design_id;
 
@@ -1361,23 +1831,35 @@ struct FO_COMMON_API ProducedByEmpire : public ConditionBase {
         ConditionBase(),
         m_empire_id(empire_id)
     {}
-    virtual ~ProducedByEmpire();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~ProducedByEmpire();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* EmpireID() const
+    { return m_empire_id; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<int>* m_empire_id;
 
@@ -1392,23 +1874,35 @@ struct FO_COMMON_API Chance : public ConditionBase {
         ConditionBase(),
         m_chance(chance)
     {}
-    virtual ~Chance();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<double>*   GetChance() const { return m_chance; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Chance();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<double>* GetChance() const
+    { return m_chance; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<double>* m_chance;
 
@@ -1427,27 +1921,43 @@ struct FO_COMMON_API MeterValue : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
-    virtual ~MeterValue();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
-    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
-    MeterType                               GetMeterType() const { return m_meter; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~MeterValue();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<double>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<double>* High() const
+    { return m_high; }
+
+    MeterType GetMeterType() const
+    { return m_meter; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    MeterType                       m_meter;
+    MeterType m_meter;
     ValueRef::ValueRefBase<double>* m_low;
     ValueRef::ValueRefBase<double>* m_high;
 
@@ -1469,31 +1979,49 @@ struct FO_COMMON_API ShipPartMeterValue : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
-    virtual ~ShipPartMeterValue();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<std::string>*  PartName() const { return m_part_name; }
-    const ValueRef::ValueRefBase<double>*       Low() const { return m_low; }
-    const ValueRef::ValueRefBase<double>*       High() const { return m_high; }
-    MeterType                                   GetMeterType() const { return m_meter; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~ShipPartMeterValue();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<std::string>* PartName() const
+    { return m_part_name; }
+
+    const ValueRef::ValueRefBase<double>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<double>* High() const
+    { return m_high; }
+
+    MeterType GetMeterType() const
+    { return m_meter; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>*    m_part_name;
-    MeterType                               m_meter;
-    ValueRef::ValueRefBase<double>*         m_low;
-    ValueRef::ValueRefBase<double>*         m_high;
+    ValueRef::ValueRefBase<std::string>* m_part_name;
+    MeterType m_meter;
+    ValueRef::ValueRefBase<double>* m_low;
+    ValueRef::ValueRefBase<double>* m_high;
 };
 
 /** Matches all objects if the empire with id \a empire_id has an empire meter
@@ -1508,6 +2036,7 @@ struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
+
     EmpireMeterValue(ValueRef::ValueRefBase<int>* empire_id,
                      const std::string& meter,
                      ValueRef::ValueRefBase<double>* low,
@@ -1518,29 +2047,47 @@ struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
-    virtual ~EmpireMeterValue();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::string&                      Meter() const { return m_meter; }
-    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
-    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
-    const ValueRef::ValueRefBase<int>*      EmpireID() const { return m_empire_id; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~EmpireMeterValue();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::string& Meter() const
+    { return m_meter; }
+
+    const ValueRef::ValueRefBase<double>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<double>* High() const
+    { return m_high; }
+
+    const ValueRef::ValueRefBase<int>* EmpireID() const
+    { return m_empire_id; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*    m_empire_id;
-    const std::string               m_meter;
+    ValueRef::ValueRefBase<int>* m_empire_id;
+    const std::string m_meter;
     ValueRef::ValueRefBase<double>* m_low;
     ValueRef::ValueRefBase<double>* m_high;
 };
@@ -1555,27 +2102,43 @@ struct FO_COMMON_API EmpireStockpileValue : public ConditionBase {
         m_low(low),
         m_high(high)
     {}
-    virtual ~EmpireStockpileValue();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<double>*   Low() const { return m_low; }
-    const ValueRef::ValueRefBase<double>*   High() const { return m_high; }
-    ResourceType                            Stockpile() const { return m_stockpile; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~EmpireStockpileValue();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<double>* Low() const
+    { return m_low; }
+
+    const ValueRef::ValueRefBase<double>* High() const
+    { return m_high; }
+
+    ResourceType Stockpile() const
+    { return m_stockpile; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ResourceType                    m_stockpile;
+    ResourceType m_stockpile;
     ValueRef::ValueRefBase<double>* m_low;
     ValueRef::ValueRefBase<double>* m_high;
 
@@ -1590,24 +2153,35 @@ struct FO_COMMON_API OwnerHasTech : public ConditionBase {
         ConditionBase(),
         m_name(name)
     {}
+
     virtual ~OwnerHasTech();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    const ValueRef::ValueRefBase<std::string>*  Tech() const { return m_name; }
+    bool operator==(const ConditionBase& rhs) const override;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<std::string>* Tech() const
+    { return m_name; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<std::string>* m_name;
 
@@ -1619,30 +2193,42 @@ private:
 /** Matches all objects whose owner who has the building type \a name available. */
 struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
     explicit OwnerHasBuildingTypeAvailable(const std::string& name);
+
     explicit OwnerHasBuildingTypeAvailable(ValueRef::ValueRefBase<std::string>* name) :
         ConditionBase(),
         m_name(name)
     {}
+
     virtual ~OwnerHasBuildingTypeAvailable();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    const ValueRef::ValueRefBase<std::string>*  GetBuildingType() const { return m_name; }
+    bool operator==(const ConditionBase& rhs) const override;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<std::string>* GetBuildingType() const
+    { return m_name; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>*    m_name;
+    ValueRef::ValueRefBase<std::string>* m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1652,30 +2238,42 @@ private:
 /** Matches all objects whose owner who has the ship design \a id available. */
 struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
     explicit OwnerHasShipDesignAvailable(int id);
+
     explicit OwnerHasShipDesignAvailable(ValueRef::ValueRefBase<int>* id) :
         ConditionBase(),
         m_id(id)
     {}
+
     virtual ~OwnerHasShipDesignAvailable();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    const ValueRef::ValueRefBase<int>*  GetDesignID() const { return m_id; }
+    bool operator==(const ConditionBase& rhs) const override;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* GetDesignID() const
+    { return m_id; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*    m_id;
+    ValueRef::ValueRefBase<int>* m_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1688,23 +2286,35 @@ struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
         ConditionBase(),
         m_empire_id(empire_id)
     {}
-    virtual ~VisibleToEmpire();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<int>*  EmpireID() const { return m_empire_id; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~VisibleToEmpire();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<int>* EmpireID() const
+    { return m_empire_id; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<int>* m_empire_id;
 
@@ -1723,25 +2333,35 @@ struct FO_COMMON_API WithinDistance : public ConditionBase {
         m_distance(distance),
         m_condition(condition)
     {}
-    virtual ~WithinDistance();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~WithinDistance();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<double>* m_distance;
-    ConditionBase*                  m_condition;
+    ConditionBase* m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1758,25 +2378,35 @@ struct FO_COMMON_API WithinStarlaneJumps : public ConditionBase {
         m_jumps(jumps),
         m_condition(condition)
     {}
-    virtual ~WithinStarlaneJumps();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~WithinStarlaneJumps();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<int>* m_jumps;
-    ConditionBase*               m_condition;
+    ConditionBase* m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1794,24 +2424,34 @@ struct FO_COMMON_API CanAddStarlaneConnection :  ConditionBase {
         ConditionBase(),
         m_condition(condition)
     {}
-    virtual ~CanAddStarlaneConnection();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~CanAddStarlaneConnection();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ConditionBase*      m_condition;
+    ConditionBase* m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1825,22 +2465,32 @@ struct FO_COMMON_API ExploredByEmpire : public ConditionBase {
         ConditionBase(),
         m_empire_id(empire_id)
     {}
-    virtual ~ExploredByEmpire();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~ExploredByEmpire();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<int>* m_empire_id;
 
@@ -1853,17 +2503,27 @@ private:
   * turn, or were located somewhere else last turn...? */
 struct FO_COMMON_API Stationary : public ConditionBase {
     explicit Stationary() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1876,24 +2536,37 @@ struct FO_COMMON_API Aggressive: public ConditionBase {
         ConditionBase(),
         m_aggressive(true)
     {}
+
     explicit Aggressive(bool aggressive) :
         ConditionBase(),
         m_aggressive(aggressive)
     {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    bool                GetAggressive() const { return m_aggressive; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
+
+    bool GetAggressive() const
+    { return m_aggressive; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    bool    m_aggressive;   // false to match passive ships/fleets
+    bool m_aggressive;   // false to match passive ships/fleets
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1907,24 +2580,34 @@ struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
         ConditionBase(),
         m_empire_id(empire_id)
     {}
-    virtual ~FleetSupplyableByEmpire();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~FleetSupplyableByEmpire();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*  m_empire_id;
+    ValueRef::ValueRefBase<int>* m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1940,25 +2623,35 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire : public ConditionBase {
         m_empire_id(empire_id),
         m_condition(condition)
     {}
-    virtual ~ResourceSupplyConnectedByEmpire();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~ResourceSupplyConnectedByEmpire();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<int>*  m_empire_id;
-    ConditionBase*                m_condition;
+    ValueRef::ValueRefBase<int>* m_empire_id;
+    ConditionBase* m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1968,17 +2661,27 @@ private:
 /** Matches objects whose species has the ability to found new colonies. */
 struct FO_COMMON_API CanColonize : public ConditionBase {
     explicit CanColonize() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1988,17 +2691,27 @@ private:
 /** Matches objects whose species has the ability to produce ships. */
 struct FO_COMMON_API CanProduceShips : public ConditionBase {
     CanProduceShips() : ConditionBase() {}
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual bool        RootCandidateInvariant() const { return true; }
-    virtual bool        TargetInvariant() const { return true; }
-    virtual bool        SourceInvariant() const { return true; }
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name) {}
+    bool operator==(const ConditionBase& rhs) const override;
+
+    bool RootCandidateInvariant() const override
+    { return true; }
+
+    bool TargetInvariant() const override
+    { return true; }
+
+    bool SourceInvariant() const override
+    { return true; }
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override
+    {}
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2012,24 +2725,33 @@ struct FO_COMMON_API OrderedBombarded : public ConditionBase {
         ConditionBase(),
         m_by_object_condition(by_object_condition)
     {}
-    virtual ~OrderedBombarded();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~OrderedBombarded();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    virtual void SetTopLevelContent(const std::string& content_name) override;
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ConditionBase*      m_by_object_condition;
+    ConditionBase* m_by_object_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2051,33 +2773,53 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
         m_compare_type1(comp1),
         m_compare_type2(comp2)
     {}
-    virtual ~ValueTest();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<double>*   GetValueRef1() const { return m_value_ref1; }
-    const ValueRef::ValueRefBase<double>*   GetValueRef2() const { return m_value_ref2; }
-    const ValueRef::ValueRefBase<double>*   GetValueRef3() const { return m_value_ref3; }
-    ComparisonType                          GetComparisonType1() const { return m_compare_type1; }
-    ComparisonType                          GetComparisonType2() const { return m_compare_type2; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~ValueTest();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<double>* GetValueRef1() const
+    { return m_value_ref1; }
+
+    const ValueRef::ValueRefBase<double>* GetValueRef2() const
+    { return m_value_ref2; }
+
+    const ValueRef::ValueRefBase<double>* GetValueRef3() const
+    { return m_value_ref3; }
+
+    ComparisonType GetComparisonType1() const
+    { return m_compare_type1; }
+
+    ComparisonType GetComparisonType2() const
+    { return m_compare_type2; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
     ValueRef::ValueRefBase<double>* m_value_ref1;
     ValueRef::ValueRefBase<double>* m_value_ref2;
     ValueRef::ValueRefBase<double>* m_value_ref3;
-    ComparisonType                  m_compare_type1;
-    ComparisonType                  m_compare_type2;
+    ComparisonType m_compare_type1;
+    ComparisonType m_compare_type2;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2095,28 +2837,42 @@ public:
         m_name2(name2),
         m_content_type(content_type)
     {}
-    virtual ~Location();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ValueRef::ValueRefBase<std::string>*  GetName1() const { return m_name1; }
-    const ValueRef::ValueRefBase<std::string>*  GetName2() const { return m_name2; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Location();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ValueRef::ValueRefBase<std::string>* GetName1() const
+    { return m_name1; }
+
+    const ValueRef::ValueRefBase<std::string>* GetName2() const
+    { return m_name2; }
 
 private:
-    virtual bool        Match(const ScriptingContext& local_context) const;
+    bool Match(const ScriptingContext& local_context) const override;
 
-    ValueRef::ValueRefBase<std::string>*    m_name1;
-    ValueRef::ValueRefBase<std::string>*    m_name2;
-    ContentType                             m_content_type;
+    ValueRef::ValueRefBase<std::string>* m_name1;
+    ValueRef::ValueRefBase<std::string>* m_name2;
+    ContentType m_content_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2129,23 +2885,35 @@ struct FO_COMMON_API And : public ConditionBase {
         ConditionBase(),
         m_operands(operands)
     {}
-    virtual ~And();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ConditionBase*>&
-                        Operands() const { return m_operands; }
-    virtual void        GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
-                                                          ObjectSet& condition_non_targets) const;
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~And();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
+                                           ObjectSet& condition_non_targets) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ConditionBase*>& Operands() const
+    { return m_operands; }
 
 private:
     std::vector<ConditionBase*> m_operands;
@@ -2161,21 +2929,31 @@ struct FO_COMMON_API Or : public ConditionBase {
         ConditionBase(),
         m_operands(operands)
     {}
-    virtual ~Or();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const std::vector<ConditionBase*>&
-                        Operands() const { return m_operands; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Or();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    virtual void SetTopLevelContent(const std::string& content_name) override;
+
+    const std::vector<ConditionBase*>& Operands() const
+    { return m_operands; }
 
 private:
     std::vector<ConditionBase*> m_operands;
@@ -2191,20 +2969,32 @@ struct FO_COMMON_API Not : public ConditionBase {
         ConditionBase(),
         m_operand(operand)
     {}
-    virtual ~Not();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const;
-    const ConditionBase*Operand() const { return m_operand; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Not();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ConditionBase* Operand() const
+    { return m_operand; }
 
 private:
     ConditionBase* m_operand;
@@ -2222,25 +3012,40 @@ struct FO_COMMON_API Described : public ConditionBase {
         m_condition(condition),
         m_desc_stringtable_key(desc_stringtable_key)
     {}
-    virtual ~Described();
-    virtual bool        operator==(const ConditionBase& rhs) const;
-    virtual void        Eval(const ScriptingContext& parent_context, ObjectSet& matches,
-                             ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const;
-    void                Eval(ObjectSet& matches, ObjectSet& non_matches,
-                             SearchDomain search_domain = NON_MATCHES) const { ConditionBase::Eval(matches, non_matches, search_domain); }
-    virtual bool        RootCandidateInvariant() const;
-    virtual bool        TargetInvariant() const;
-    virtual bool        SourceInvariant() const;
-    virtual std::string Description(bool negated = false) const;
-    virtual std::string Dump() const                    { return m_condition ? m_condition->Dump() : ""; }
-    const ConditionBase*SubCondition() const            { return m_condition; }
-    const std::string&  DescriptionStringKey() const    { return m_desc_stringtable_key; }
 
-    virtual void        SetTopLevelContent(const std::string& content_name);
+    virtual ~Described();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    void Eval(ObjectSet& matches, ObjectSet& non_matches,
+              SearchDomain search_domain = NON_MATCHES) const
+    { ConditionBase::Eval(matches, non_matches, search_domain); }
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override
+    { return m_condition ? m_condition->Dump() : ""; }
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+    const ConditionBase* SubCondition() const
+    { return m_condition; }
+
+    const std::string& DescriptionStringKey() const
+    { return m_desc_stringtable_key; }
 
 private:
-    ConditionBase*  m_condition;
-    std::string     m_desc_stringtable_key;
+    ConditionBase* m_condition;
+    std::string m_desc_stringtable_key;
 
     friend class boost::serialization::access;
     template <class Archive>
