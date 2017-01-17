@@ -15,6 +15,7 @@
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
 #include "../../universe/Enums.h"
+#include "../../universe/ValueRef.h"
 
 #include "../../server/ServerApp.h"
 #include "../../util/Directories.h"
@@ -40,6 +41,7 @@
 #include <boost/python/list.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/extract.hpp>
+#include <boost/python/stl_iterator.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 
 #ifdef FREEORION_MACOSX
@@ -474,18 +476,41 @@ namespace {
         int SpawnLimit()
         { return m_monster_fleet_plan->SpawnLimit(); }
 
-        bool Location(int object_id) {
-            // get the universe object to test and check if it exists
-            std::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
-            if (!obj) {
-                ErrorLogger() << "MonsterFleetPlanWrapper::Location: Couldn't get object with ID " << object_id;
-                return false;
+        //Checks the possiblity of placement of many systems at once.
+        //Checking many systems is more efficient because monster fleet plans
+        //typically use WithinStarLaneJumps to exclude placement near empires.
+        list Locations(list systems) {
+            list locations_of_permitted_systems;
+
+            Condition::ObjectSet objs;
+            boost::python::stl_input_iterator<int> end;
+            for (boost::python::stl_input_iterator<int> sys_id(systems);
+                 sys_id != end; ++sys_id) {
+                if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*sys_id))
+                    objs.push_back(obj);
             }
+            if (objs.empty()) {
+                ErrorLogger() << "MonsterFleetPlanWrapper::Locations: Couldn't get any objects";
+                return locations_of_permitted_systems;
+            }
+
+            Condition::ObjectSet permitted_systems;
 
             // get location condition and evaluate it with the specified universe object
             // if no location condition has been defined, any object matches
             const Condition::ConditionBase* location_test = m_monster_fleet_plan->Location();
-            return (!location_test || location_test->Eval(obj));
+
+            if (location_test)
+                location_test->Eval(ScriptingContext(), permitted_systems, objs);
+            else
+                permitted_systems = objs;
+
+            for (Condition::ObjectSet::const_iterator system = permitted_systems.begin();
+                 system != permitted_systems.end(); ++system) {
+                locations_of_permitted_systems.append((*system)->ID());
+            }
+
+            return locations_of_permitted_systems;
         }
 
         const MonsterFleetPlan& GetMonsterFleetPlan()
@@ -1217,7 +1242,7 @@ namespace FreeOrionPython {
             .def("ship_designs",        &MonsterFleetPlanWrapper::ShipDesigns)
             .def("spawn_rate",          &MonsterFleetPlanWrapper::SpawnRate)
             .def("spawn_limit",         &MonsterFleetPlanWrapper::SpawnLimit)
-            .def("location",            &MonsterFleetPlanWrapper::Location);
+            .def("locations",           &MonsterFleetPlanWrapper::Locations);
 
         def("get_universe",                         GetUniverse,                    return_value_policy<reference_existing_object>());
         def("get_all_empires",                      GetAllEmpires);
