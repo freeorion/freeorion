@@ -4100,17 +4100,17 @@ ENC_COMBAT_UNKNOWN_DESTROYED_STR
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked fighter.
 ENC_COMBAT_FIGHTER_INCAPACITATED_STR
-A%1%fighter was destroyed
+A %2% was destroyed
 
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked planet.
 ENC_COMBAT_PLANET_INCAPACITATED_STR
-The%1%planet %2% was incapacitated
+The planet %2% was incapacitated
 
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked unit.
 ENC_COMBAT_DESTROYED_STR
-The%1%ship %2% was destroyed
+The ship %2% was destroyed
 
 # %1% unused
 # %2% name of empire
