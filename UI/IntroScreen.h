@@ -15,8 +15,9 @@ class CreditsWnd;
 class IntroScreen : public GG::Wnd {
 public:
     /** \name Structors*/ //!@{
-    IntroScreen();                              //!< default ctor
-    ~IntroScreen();                             //!< default dtor
+    IntroScreen();
+
+    ~IntroScreen();
     //!@}
 
     /** \name Mutators*/ //!@{

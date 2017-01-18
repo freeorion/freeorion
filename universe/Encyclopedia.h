@@ -8,7 +8,6 @@
 #include "../util/Export.h"
 
 struct FO_COMMON_API EncyclopediaArticle {
-    /** Default ctor */
     EncyclopediaArticle() :
         name(""),
         category(""),

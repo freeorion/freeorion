@@ -144,7 +144,8 @@ private:
 struct FO_COMMON_API ProductionQueue {
     /** The type that specifies a single production item (BuildType and name string). */
     struct ProductionItem {
-        ProductionItem(); ///< default ctor.
+        ProductionItem();
+
         ProductionItem(BuildType build_type_, std::string name_);   ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
         ProductionItem(BuildType build_type_, int design_id_);      ///< basic ctor for BuildTypes that use int to indentify the design of the item (ShipDesigns)
 
@@ -170,9 +171,12 @@ struct FO_COMMON_API ProductionQueue {
 
     /** The type of a single element in the production queue. */
     struct Element {
-        Element(); ///< default ctor.
+        Element();
+
         Element(ProductionItem item_, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
+
         Element(BuildType build_type, std::string name, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
+
         Element(BuildType build_type, int design_id, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);
 
         ProductionItem  item;
@@ -206,7 +210,7 @@ struct FO_COMMON_API ProductionQueue {
     typedef QueueType::const_iterator const_iterator;
 
     /** \name Structors */ //@{
-    ProductionQueue(int empire_id); ///< Basic ctor.
+    ProductionQueue(int empire_id);
     //@}
 
     /** \name Accessors */ //@{

@@ -45,9 +45,17 @@ namespace GG {
 class ExceptionBase : public std::exception
 {
 public:
-    ExceptionBase() throw() {}                                      ///< default ctor
-    ExceptionBase(const std::string& msg) throw() : m_msg(msg) {}   ///< a ctor that allows the throwing code to include a text message
-    ~ExceptionBase() throw() {}                                     ///< dtor required by std::exception
+    ExceptionBase() noexcept
+    {}
+
+    /** Create an exception with the given @p msg. */
+    ExceptionBase(const std::string& msg) noexcept :
+        m_msg(msg)
+    {}
+
+    /** Dtor required by std::exception. */
+    ~ExceptionBase() noexcept
+    {}
 
     /** Returns a string representation of the type this exception. */
     virtual const char* type() const throw() = 0;

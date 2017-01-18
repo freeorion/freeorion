@@ -21,9 +21,11 @@ class UniverseObject;
 class FO_COMMON_API PopCenter : virtual public EnableTemporaryFromThis<UniverseObject> {
 public:
     /** \name Structors */ //@{
-    PopCenter();                                        ///< default ctor
-    explicit PopCenter(const std::string& species_name);///< basic ctor
-    virtual ~PopCenter();                               ///< dtor
+    PopCenter();
+
+    explicit PopCenter(const std::string& species_name);
+
+    virtual ~PopCenter();
     //@}
 
     /** \name Accessors */ //@{

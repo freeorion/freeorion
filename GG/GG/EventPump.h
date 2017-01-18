@@ -45,7 +45,7 @@ namespace GG {
     consistency. */
 struct GG_API EventPumpState
 {
-    EventPumpState(); ///< Default ctor.
+    EventPumpState();
 
     boost::chrono::high_resolution_clock::time_point last_FPS_time;    ///< The last time an FPS calculation was done.
     boost::chrono::high_resolution_clock::time_point last_frame_time;  ///< The time of the last frame rendered.
@@ -138,7 +138,7 @@ public:
 class GG_API ModalEventPump : public EventPump
 {
 public:
-    ModalEventPump(const bool& done); ///< Basic ctor.
+    ModalEventPump(const bool& done);
 
     void operator()() override;
 

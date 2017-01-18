@@ -86,8 +86,9 @@ public:
     //@}
 
     /** \name Structors */ //@{
-    Universe();                                     ///< default ctor
-    virtual ~Universe();                            ///< dtor
+    Universe();
+
+    virtual ~Universe();
     //@}
 
     /** \name Accessors */ //@{

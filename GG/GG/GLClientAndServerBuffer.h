@@ -14,7 +14,8 @@ namespace GG {
 class GG_API GLBufferBase
 {
 public:
-    GLBufferBase();             // ctor
+    GLBufferBase();
+
     /** Required to automatically drop server buffer in case of delete. */
     virtual ~GLBufferBase();
 

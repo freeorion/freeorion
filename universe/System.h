@@ -126,7 +126,7 @@ protected:
     friend class ObjectMap;
 
     /** \name Structors */ //@{
-    System();   ///< default ctor
+    System();
 
     /** general ctor.  \throw std::invalid_arugment May throw
       * std::invalid_arugment if \a star is out of the range of StarType,

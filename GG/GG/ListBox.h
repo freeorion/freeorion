@@ -136,8 +136,10 @@ public:
         typedef std::string SortKeyType;
 
         /** \name Structors */ ///@{
-        Row(); ///< default ctor
-        Row(X w, Y h, const std::string& drag_drop_data_type, Alignment align = ALIGN_VCENTER, unsigned int margin = 2); ///< ctor
+        Row();
+
+        Row(X w, Y h, const std::string& drag_drop_data_type, Alignment align = ALIGN_VCENTER, unsigned int margin = 2);
+
         virtual ~Row();
         //@}
 
@@ -254,7 +256,6 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    /** basic ctor */
     ListBox(Clr color, Clr interior = CLR_ZERO);
 
     virtual ~ListBox();

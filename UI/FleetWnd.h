@@ -90,7 +90,8 @@ class FleetWnd : public MapWndPopup {
 public:
     /** \name Structors */ //@{
     FleetWnd();
-    ~FleetWnd(); ///< dtor
+
+    ~FleetWnd();
     //@}
 
     //! \name Accessors //@{

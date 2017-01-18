@@ -54,7 +54,7 @@ public:
 class CUIButton : public GG::Button {
 public:
     /** \name Structors */ //@{
-    CUIButton(const std::string& str); ///< basic ctor
+    CUIButton(const std::string& str);
 
     CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed, const GG::SubTexture& rollover);
     //@}
@@ -98,7 +98,7 @@ class CUIArrowButton : public GG::Button {
 public:
     /** \name Structors */ //@{
     CUIArrowButton(ShapeOrientation orientation, bool fill_background,
-                   GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE); ///< basic ctor
+                   GG::Flags<GG::WndFlag> flags = GG::INTERACTIVE);
     //@}
 
     /** \name Accessors */ //@{
@@ -201,7 +201,7 @@ private:
 class CUIStateButton : public GG::StateButton {
 public:
     /** \name Structors */ //@{
-    CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, boost::shared_ptr<GG::StateButtonRepresenter> representer); ///< ctor
+    CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, boost::shared_ptr<GG::StateButtonRepresenter> representer);
     //@}
 };
 
@@ -209,7 +209,6 @@ public:
 class CUITabBar : public GG::TabBar {
 public:
     /** \name Structors */ ///@{
-    /** Basic ctor. */
     CUITabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
               GG::Clr text_color);
     //@}
@@ -248,7 +247,7 @@ public:
     };
 
     /** \name Structors */ //@{
-    CUIScroll(GG::Orientation orientation); ///< basic ctor
+    CUIScroll(GG::Orientation orientation);
     //@}
 
     /** \name Mutators */ //@{
@@ -265,7 +264,7 @@ protected:
 class CUIListBox : public GG::ListBox {
 public:
     /** \name Structors */ //@{
-    CUIListBox(void); ///< basic ctor
+    CUIListBox(void);
     //@}
 
     /** \name Mutators */ //@{
@@ -309,7 +308,7 @@ private:
 class CUIEdit : public GG::Edit {
 public:
     /** \name Structors */ //@{
-    CUIEdit(const std::string& str); ///< basic ctor
+    CUIEdit(const std::string& str);
     //@}
 
     /** \name Mutators */ //@{
@@ -332,7 +331,7 @@ public:
 class CUIMultiEdit : public GG::MultiEdit {
 public:
     /** \name Structors */ //@{
-    CUIMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP); ///< basic ctor
+    CUIMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     //@}
 
     /** \name Mutators */ //@{
@@ -346,7 +345,7 @@ public:
 class CUILinkTextMultiEdit : public CUIMultiEdit, public TextLinker {
 public:
     /** \name Structors */ //@{
-    CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP); ///< basic ctor
+    CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG::MultiEditStyle> style = GG::MULTI_LINEWRAP);
     //@}
 
     /** \name Accessors */ //@{
@@ -610,7 +609,6 @@ private:
 class MultiTurnProgressBar : public GG::Control {
 public:
     /** \name Structors */ //@{
-    /** ctor */
     MultiTurnProgressBar(int total_turns, double turns_completed, double total_cost, double turn_spending,
                          const GG::Clr& bar_color, const GG::Clr& background, const GG::Clr& outline_color);
     //@}
@@ -670,7 +668,7 @@ public:
     //@}
 
 protected:
-    MultiTextureStaticGraphic();    ///< default ctor
+    MultiTextureStaticGraphic();
 
     /** Returns the area in which the graphic is actually rendered, in
         UpperLeft()-relative coordinates.  This may not be the entire area of

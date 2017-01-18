@@ -139,7 +139,6 @@ public:
     public:
         typedef std::pair<std::string::const_iterator, std::string::const_iterator> IterPair;
 
-        /** Default ctor. */
         Substring();
 
         /** Ctor.  \a first_ must be <= \a second_. */
@@ -347,17 +346,15 @@ public:
         formatting tags present on that line as well. */
     struct GG_API LineData
     {
-        LineData(); ///< Default ctor.
+        LineData();
 
         /** \brief Contains the extent, the index into the original string,
             and the text formatting tags that should be applied before
             rendering of a visible glyph. */
         struct GG_API CharData
         {
-            /** Defauilt ctor. */
             CharData();
 
-            /** Ctor. */
             CharData(X extent_, StrSize str_index, StrSize str_size, CPSize cp_index,
                      const std::vector<boost::shared_ptr<TextElement> >& tags_);
 
@@ -399,7 +396,8 @@ public:
         if present. */
     struct GG_API RenderState
     {
-        RenderState(); ///< Default ctor.
+        RenderState();
+
         RenderState(Clr color); //< Takes default text color as parameter
 
         /** The count of open \<i> tags seen since the last \</i> seen. */
@@ -668,7 +666,7 @@ public:
 
 protected:
     /** \name Structors */ ///@{
-    Font(); ///< Default ctor.
+    Font();
     //@}
 
 private:
@@ -676,7 +674,8 @@ private:
         from the OpenGL texture(s) created at GG::Font creation time. */
     struct Glyph
     {
-        Glyph(); ///< Default ctor
+        Glyph();
+
         Glyph(const boost::shared_ptr<Texture>& texture, const Pt& ul, const Pt& lr, Y y_ofs,
               X lb, X adv); ///< Ctor
 

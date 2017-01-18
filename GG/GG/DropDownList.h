@@ -84,7 +84,7 @@ public:
     /** basic ctor.  DropDownList retains ownership of \a lb, if it is non-null. */
     DropDownList(size_t num_shown_elements, Clr color);
 
-    ~DropDownList(); ///< dtor
+    ~DropDownList();
     //@}
 
     /** \name Accessors */ ///@{

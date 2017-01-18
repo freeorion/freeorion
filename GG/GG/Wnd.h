@@ -740,7 +740,7 @@ protected:
     };
 
     /** \name Structors */ ///@{
-    Wnd(); ///< Default ctor.
+    Wnd();
 
     /** Ctor that allows a size and position to be specified, as well as
         creation flags. */

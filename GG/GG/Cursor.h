@@ -47,7 +47,8 @@ class GG_API Cursor
 {
 public:
     /** \name Structors */ ///@{
-    Cursor();          ///< ctor
+    Cursor();
+
     virtual ~Cursor();
     //@}
 

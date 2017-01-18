@@ -39,13 +39,12 @@ public:
     typedef boost::filter_iterator<EstablishedPlayer, PlayerConnections::const_iterator>    const_established_iterator;
 
     /** \name Structors */ //@{
-    /** Basic ctor. */
     ServerNetworking(boost::asio::io_service& io_service,
                      MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback,
                      ConnectionFn disconnected_callback);
 
-    ~ServerNetworking(); //< Dtor.
+    ~ServerNetworking();
     //@}
 
     /** \name Accessors */ //@{

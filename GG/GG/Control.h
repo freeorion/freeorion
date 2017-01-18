@@ -63,8 +63,9 @@ public:
 
 protected:
     /** \name Structors */ ///@{
-    Control(); ///< default ctor
-    Control(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE); ///< basic ctor
+    Control();
+
+    Control(X x, Y y, X w, Y h, Flags<WndFlag> flags = INTERACTIVE);
     //@}
 
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;

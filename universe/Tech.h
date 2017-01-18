@@ -56,7 +56,6 @@ public:
     };
 
     /** \name Structors */ //@{
-    /** basic ctor */
     Tech(const std::string& name, const std::string& description, const std::string& short_description,
          const std::string& category,
          ValueRef::ValueRefBase<double>* research_cost,

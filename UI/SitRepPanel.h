@@ -11,7 +11,7 @@ class SitRepEntry;
 class SitRepPanel : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    SitRepPanel(const std::string& config_name = ""); ///< basic ctor
+    SitRepPanel(const std::string& config_name = "");
     //@}
 
     /** \name Accessors */ //@{

@@ -24,9 +24,11 @@ class UniverseObject;
 class FO_COMMON_API ResourceCenter : virtual public EnableTemporaryFromThis<UniverseObject> {
 public:
     /** \name Structors */ //@{
-    ResourceCenter();                               ///< default ctor
-    virtual ~ResourceCenter();                      ///< dtor
-    ResourceCenter(const ResourceCenter& rhs);      ///< copy ctor
+    ResourceCenter();
+
+    ResourceCenter(const ResourceCenter& rhs);
+
+    virtual ~ResourceCenter();
     //@}
 
     /** \name Accessors */ //@{

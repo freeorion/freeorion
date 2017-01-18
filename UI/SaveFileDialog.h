@@ -30,7 +30,8 @@ public:
 
     /// Contruct for getting the previews from the server
     SaveFileDialog(bool load = false);
-    ~SaveFileDialog(); //!< dtor
+
+    ~SaveFileDialog();
     //@}
 
     /** \name Mutators */ //@{

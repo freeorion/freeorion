@@ -400,7 +400,6 @@ namespace {
             m_fleet_plan = new FleetPlan(fleet_name, designs, false);
         }
 
-        // dtor
         virtual ~FleetPlanWrapper()
         { delete m_fleet_plan; }
 
@@ -453,7 +452,6 @@ namespace {
                                  spawn_limit, 0, false);
         }
 
-        // dtor
         virtual ~MonsterFleetPlanWrapper()
         { delete m_monster_fleet_plan; }
 

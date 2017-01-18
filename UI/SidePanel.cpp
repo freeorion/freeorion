@@ -467,7 +467,8 @@ namespace {
 class SidePanel::PlanetPanel : public GG::Control {
 public:
     /** \name Structors */ //@{
-    PlanetPanel(GG::X w, int planet_id, StarType star_type); ///< basic ctor
+    PlanetPanel(GG::X w, int planet_id, StarType star_type);
+
     ~PlanetPanel();
     //@}
 

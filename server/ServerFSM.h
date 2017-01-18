@@ -44,7 +44,7 @@ struct ProcessTurn : sc::event<ProcessTurn>                             {};
 //  Message events
 /** The base class for all state machine events that are based on Messages. */
 struct MessageEventBase {
-    MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection); ///< Basic ctor.
+    MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection);
 
     Message              m_message;
     PlayerConnectionPtr  m_player_connection;

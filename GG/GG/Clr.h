@@ -47,7 +47,6 @@ namespace GG {
 struct Clr
 {
     /** \name Structors */ ///@{
-    /** default ctor */
     Clr() :
         r(0), g(0), b(0), a(0)
         {}

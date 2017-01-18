@@ -64,7 +64,8 @@ class GG_API Texture
 {
 public:
     /** \name Structors */ ///@{
-    Texture();          ///< ctor
+    Texture();
+
     virtual ~Texture();
     //@}
 
@@ -167,7 +168,7 @@ class GG_API SubTexture
 {
 public:
     /** \name Structors */ ///@{
-    SubTexture(); ///< default ctor
+    SubTexture();
 
     /** Creates a SubTexture from a GG::Texture and coordinates into it.
         \throw GG::SubTexture::BadTexture Throws if the given Texture is null.
@@ -180,8 +181,10 @@ public:
         \throw GG::SubTexture::BadTexture Throws if the given Texture is null.*/
     SubTexture(const boost::shared_ptr<const Texture>& texture);
 
-    SubTexture(const SubTexture& rhs); ///< copy ctor
-    const SubTexture& operator=(const SubTexture& rhs); ///< assignment operator
+    SubTexture(const SubTexture& rhs);
+
+    const SubTexture& operator=(const SubTexture& rhs);
+
     virtual ~SubTexture();
     //@}
 

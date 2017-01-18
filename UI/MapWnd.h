@@ -48,8 +48,9 @@ struct LaneEndpoints {
 class MapWnd : public GG::Wnd {
 public:
     //! \name Structors //!@{
-    MapWnd();    //!< default ctor
-    ~MapWnd();   //!< default dtor
+    MapWnd();
+
+    ~MapWnd();
     //!@}
 
     //! \name Accessors //!@{

@@ -44,8 +44,10 @@ class Slider;
     possible. */
 struct GG_API HSVClr
 {
-    HSVClr(); ///< default ctor
-    HSVClr(double h_, double s_, double v_, GLubyte a_ = 255); ///< ctor
+    HSVClr();
+
+    HSVClr(double h_, double s_, double v_, GLubyte a_ = 255);
+
     double  h;   ///< hue
     double  s;   ///< saturation
     double  v;   ///< value
@@ -64,12 +66,14 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    HueSaturationPicker(X x, Y y, X w, Y h); ///< basic ctor
+    HueSaturationPicker(X x, Y y, X w, Y h);
     //@}
 
     /** \name Mutators */ ///@{
     void Render() override;
+
     void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
+
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
 
     void SetHueSaturation(double hue, double saturation); ///< sets the current hue and saturation.  Note that this does not cause a signal to be emitted.
@@ -98,7 +102,7 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    ValuePicker(X x, Y y, X w, Y h, Clr arrow_color); ///< basic ctor
+    ValuePicker(X x, Y y, X w, Y h, Clr arrow_color);
     //@}
 
     /** \name Mutators */ ///@{
@@ -174,7 +178,7 @@ public:
     {
     public:
         /** \name Structors */ ///@{
-        ColorDisplay(Clr color); ///< ctor.
+        ColorDisplay(Clr color);
         //@}
 
         /** \name Accessors */ ///@{
@@ -183,7 +187,6 @@ public:
     };
 
     /** \name Structors */ ///@{
-    /** ctor */
     ColorDlg(X x, Y y, Clr original_color, const boost::shared_ptr<Font>& font,
              Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK);
     //@}

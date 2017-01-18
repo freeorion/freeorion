@@ -63,8 +63,10 @@ struct GG_API MenuItem
     //@}
 
     /** \name Structors */ ///@{
-    MenuItem(); ///< default ctor
+    MenuItem();
+
     MenuItem(const std::string& str, int id, bool disable, bool check);
+
     explicit MenuItem(bool separator);
 
     /** Ctor that allows direct attachment of this item's signal to a "slot"

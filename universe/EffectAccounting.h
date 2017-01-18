@@ -30,7 +30,8 @@ namespace Effect {
     /** Accounting information about what the causes are and changes produced
       * by effects groups acting on meters of objects. */
     struct AccountingInfo : public EffectCause {
-        AccountingInfo();           ///< default ctor
+        AccountingInfo();
+
         int     source_id;          ///< source object of effect
         float   meter_change;       ///< net change on meter due to this effect, as best known by client's empire
         float   running_meter_total;///< meter total as of this effect.

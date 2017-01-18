@@ -93,7 +93,7 @@ private:
 class GalaxySetupWnd : public CUIWnd {
 public:
     /** \name Structors*/ //!@{
-    GalaxySetupWnd();   //!< default ctor
+    GalaxySetupWnd();
     //!@}
 
     /** \name Accessors*/ //!@{

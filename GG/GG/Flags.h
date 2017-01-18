@@ -293,8 +293,10 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    /** Default ctor. */
-    Flags() : m_flags(0) {}
+    Flags() :
+        m_flags(0)
+    {}
+
     /** Ctor.  Note that this ctor allows implicit conversions from FlagType
         to Flags.  \throw Throws GG::Flags::UnknownFlag if \a flag is not
         found in FlagSpec<FlagType>::instance(). */

@@ -17,8 +17,9 @@ public:
 
     //! \name Structors
     //!@{
-    OptionsWnd();  //!< default ctor
-    ~OptionsWnd(); //!< dtor
+    OptionsWnd();
+
+    ~OptionsWnd();
     //!@}
 
     //! \name Mutators

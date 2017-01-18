@@ -70,7 +70,7 @@ public:
 
     /** \name Structors */ ///@{
     Slider(T min, T max, Orientation orientation, Clr color,
-           unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE); ///< ctor
+           unsigned int tab_width, unsigned int line_width = 5, Flags<WndFlag> flags = INTERACTIVE);
     //@}
 
     /** \name Accessors */ ///@{

@@ -130,8 +130,10 @@ protected:
     friend class ObjectMap;
 
     /** \name Structors */ //@{
-    Planet();                                   ///< default ctor
-    Planet(PlanetType type, PlanetSize size);   ///< general ctor taking just the planet's type and size
+    Planet();
+
+    /** Create planet from @p type and @p size. */
+    Planet(PlanetType type, PlanetSize size);
 
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     template <class T> friend void boost::checked_delete(T* x);

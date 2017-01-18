@@ -9,7 +9,7 @@ class StatisticIcon;
 class SpecialsPanel : public GG::Wnd {
 public:
     /** \name Structors */ //@{
-    SpecialsPanel(GG::X w, int object_id);   ///< basic ctor
+    SpecialsPanel(GG::X w, int object_id);
     //@}
 
     /** \name Accessors */ //@{

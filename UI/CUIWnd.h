@@ -17,7 +17,7 @@ public:
        RESTORE_BUTTON
    };
 
-   CUI_MinRestoreButton(); ///< basic ctor
+   CUI_MinRestoreButton();
 
    Mode GetMode() const {return m_mode;} ///< returns the current mode of this button (is it a minimize button or a restore button?)
 

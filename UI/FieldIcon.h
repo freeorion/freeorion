@@ -12,8 +12,9 @@
 class FieldIcon : public GG::Control {
 public:
     //! \name Structors //!@{
-    FieldIcon(int field_id);                                    //!< basid ctor
-    ~FieldIcon();                                               //!< dtor
+    FieldIcon(int field_id);
+
+    ~FieldIcon();
     //!@}
 
     //! \name Accessors //!@{

@@ -17,9 +17,17 @@
 class FO_COMMON_API Meter {
 public:
     /** \name Structors */ //@{
-    Meter();                                        ///< default ctor.  values all set to DEFAULT_VALUE
-    explicit Meter(float current_value);            ///< basic ctor.  current value set to \a current_value and initial value set to DEFAULT_VALUE
-    Meter(float current_value, float initial_value);///< full ctor
+    /** Creates a new meter with both initial and current value set to
+        DEFAULT_VALUE. */
+    Meter();
+
+    /** Creates a new meter with the current value set to @p current_value and
+        the initial value set to DEFAULT_VALUE. */
+    explicit Meter(float current_value);
+
+    /** Creates a new meter with the current value set to @p current_value and
+        the initial value set to @p initial_value. */
+    Meter(float current_value, float initial_value);
     //@}
 
     /** \name Accessors */ //@{

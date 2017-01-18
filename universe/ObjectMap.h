@@ -156,8 +156,9 @@ public:
     };
 
     /** \name Structors */ //@{
-    ObjectMap();            ///< default ctor
-    ~ObjectMap();           ///< dtor
+    ObjectMap();
+
+    ~ObjectMap();
 
     /** Copies contents of this ObjectMap to a new ObjectMap, which is
       * returned.  Copies are limited to only duplicate information that the

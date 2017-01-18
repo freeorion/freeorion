@@ -15,7 +15,8 @@ struct Disconnection : boost::statechart::event<Disconnection> {};
 /** The base class for all state machine events that are based on Messages. */
 struct MessageEventBase
 {
-    MessageEventBase(Message& message); ///< Basic ctor.
+    MessageEventBase(Message& message);
+
     Message m_message;
 };
 

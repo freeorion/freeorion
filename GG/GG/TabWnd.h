@@ -50,8 +50,8 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    /** Basic ctor. */
     OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = NO_WND_FLAGS);
+
     ~OverlayWnd();
     //@}
 
@@ -124,7 +124,6 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    /** Basic ctor. */
     TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK);
     //@}
 
@@ -212,7 +211,6 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    /** Basic ctor. */
     TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
            Flags<WndFlag> flags = INTERACTIVE);
     //@}

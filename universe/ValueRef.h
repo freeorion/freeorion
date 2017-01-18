@@ -145,7 +145,7 @@ private:
 template <class T>
 struct FO_COMMON_API Constant : public ValueRefBase<T>
 {
-    Constant(T value); ///< basic ctor
+    Constant(T value);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
 

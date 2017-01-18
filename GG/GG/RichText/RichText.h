@@ -41,10 +41,12 @@ public:
     static const std::string PLAINTEXT_TAG;
 
     /** \name Structors */ ///@{
-    RichText(); ///< default ctor
+    RichText();
+
     RichText(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font,
              Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
-             Flags<WndFlag> flags = NO_WND_FLAGS); ///< basic ctor
+             Flags<WndFlag> flags = NO_WND_FLAGS);
+
     ~RichText();
     //@}
 

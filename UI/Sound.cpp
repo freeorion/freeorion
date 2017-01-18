@@ -20,8 +20,9 @@
 class Sound::SoundImpl
 {
 public:
-    SoundImpl();  ///< ctor.
-    ~SoundImpl(); ///< dotr.
+    SoundImpl();
+
+    ~SoundImpl();
 
     /** Enables the sound system.  Throws Sound::InitializationFailureException on failure. */
     void Enable();

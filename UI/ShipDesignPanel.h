@@ -9,7 +9,7 @@
 class ShipDesignPanel : public GG::Control {
 public:
     /** \name Structors */ //@{
-    ShipDesignPanel(GG::X w, GG::Y h, int design_id);   ///< basic ctor
+    ShipDesignPanel(GG::X w, GG::Y h, int design_id);
     //@}
 
     /** \name Accessors */ //@{

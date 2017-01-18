@@ -30,14 +30,13 @@ namespace Effect {
 class FO_COMMON_API FocusType {
 public:
     /** \name Structors */ //@{
-    /** default ctor */
     FocusType() :
         m_name(),
         m_description(),
         m_location(),
         m_graphic()
     {}
-    /** basic ctor */
+
     FocusType(const std::string& name, const std::string& description,
               const Condition::ConditionBase* location, const std::string& graphic);
     //@}
@@ -103,7 +102,6 @@ struct SpeciesStrings {
 class FO_COMMON_API Species {
 public:
     /** \name Structors */ //@{
-    /** basic ctor */
     Species(const SpeciesStrings& strings,
             const std::vector<FocusType>& foci,
             const std::string& preferred_focus,

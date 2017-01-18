@@ -35,7 +35,8 @@ public:
     typedef std::map<int, Empire*>::const_iterator const_iterator;
 
     /** \name Structors */ //@{
-    virtual ~EmpireManager(); ///< virtual dtor
+    virtual ~EmpireManager();
+
     const EmpireManager& operator=(EmpireManager& rhs); ///< assignment operator (move semantics)
     //@}
 

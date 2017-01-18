@@ -26,7 +26,6 @@ namespace Condition {
 class FO_COMMON_API Special {
 public:
     /** \name Structors */ //@{
-    /** basic ctor */
     Special(const std::string& name, const std::string& description,
             ValueRef::ValueRefBase<double>* stealth,
             const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,

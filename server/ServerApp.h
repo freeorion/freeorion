@@ -21,7 +21,8 @@ struct ServerFSM;
 /** Contains basic data about a player in a game. */
 struct PlayerSaveHeaderData {
     PlayerSaveHeaderData();
-    PlayerSaveHeaderData(const std::string& name, int empire_id, Networking::ClientType client_type); ///< ctor
+
+    PlayerSaveHeaderData(const std::string& name, int empire_id, Networking::ClientType client_type);
 
     std::string                         m_name;
     int                                 m_empire_id;
@@ -35,10 +36,11 @@ private:
 
 /** Contains data that must be saved for a single player. */
 struct PlayerSaveGameData : public PlayerSaveHeaderData {
-    PlayerSaveGameData(); ///< default ctor
+    PlayerSaveGameData();
+
     PlayerSaveGameData(const std::string& name, int empire_id, const boost::shared_ptr<OrderSet>& orders,
                        const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
-                       Networking::ClientType client_type); ///< ctor
+                       Networking::ClientType client_type);
 
     boost::shared_ptr<OrderSet>         m_orders;
     boost::shared_ptr<SaveGameUIData>   m_ui_data;
@@ -53,7 +55,8 @@ private:
 /** contains data that must be retained by the server when saving and loading a
   * game that isn't player data or the universe */
 struct ServerSaveGameData {
-    ServerSaveGameData();                               ///< default ctor
+    ServerSaveGameData();
+
     ServerSaveGameData(int current_turn);
 
     int                                     m_current_turn;

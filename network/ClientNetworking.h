@@ -55,7 +55,7 @@ public:
     typedef boost::array<int, 5>                                            MessageHeaderBuffer;
 
     /** \name Structors */ //@{
-    ClientNetworking(); ///< Basic ctor.
+    ClientNetworking();
     //@}
 
     /** \name Accessors */ //@{

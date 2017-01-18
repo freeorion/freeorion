@@ -6,7 +6,7 @@
 class InGameMenu : public CUIWnd {
 public:
     /** \name Structors */ //@{
-    InGameMenu();  //!< default ctor
+    InGameMenu();
 
     ~InGameMenu();
     //@}

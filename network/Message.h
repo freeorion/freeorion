@@ -116,9 +116,8 @@ public:
     )
 
     /** \name Structors */ //@{
-    Message(); ///< Default ctor.
+    Message();
 
-    /** Basic ctor. */
     Message(MessageType message_type,
             int sending_player,
             int receiving_player,

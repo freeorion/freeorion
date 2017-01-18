@@ -84,7 +84,7 @@ public:
     Spin(T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color,
          Clr text_color = CLR_BLACK);
 
-    ~Spin(); // dtor
+    ~Spin();
     //@}
 
     /** \name Accessors */ ///@{
