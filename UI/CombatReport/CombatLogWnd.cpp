@@ -156,7 +156,6 @@ namespace {
     }
 
     void CombatLogAccordionPanel::ToggleExpansion() {
-        DebugLogger() << "Expand/Collapse of detailed combat log.";
         bool new_collapsed = !IsCollapsed();
         if (new_collapsed) {
             for (GG::Wnd* wnd : details) {
@@ -381,6 +380,9 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
         return;
     }
 
+    bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
+                           GetOptionsDB().Get<bool>("verbose-combat-logging");
+
     m_wnd.DeleteChildren();
     GG::Layout* layout = new GG::DeferredLayout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y
                                         , m_wnd.Width(), m_wnd.Height()
@@ -392,7 +394,8 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     // Write Header text
-    DebugLogger() << "Setting log with " << log->combat_events.size() << " events";
+    if (verbose_logging)
+        DebugLogger() << "Showing combat log #" << log_id << " with " << log->combat_events.size() << " events";
 
     TemporaryPtr<const System> system = GetSystem(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
@@ -411,7 +414,8 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
 
     // Write Logs
     for (CombatEventPtr event : log->combat_events) {
-        DebugLogger() << "event debug info: " << event->DebugString();
+        if (verbose_logging)
+            DebugLogger() << "event debug info: " << event->DebugString();
 
         for (GG::Wnd* wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {
             AddRow(wnd);
