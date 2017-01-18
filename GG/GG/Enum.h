@@ -118,9 +118,9 @@ namespace GG {
   * all of which will exist in whatever namespace this
   * macro is used. */
 #define GG_ENUM(EnumName, ...)                                                          \
-    enum EnumName {                                                                     \
+    enum EnumName : int {                                                               \
         __VA_ARGS__                                                                     \
-     };                                                                                 \
+    };                                                                                  \
                                                                                         \
     inline std::istream& operator>>(std::istream& is, EnumName& value) {         \
         ::GG::EnumMap<EnumName>& map = ::GG::GetEnumMap<EnumName>();                    \

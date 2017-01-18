@@ -1,6 +1,7 @@
 #include "Fighter.h"
 
 #include "Predicates.h"
+#include "Enums.h"
 #include "../util/Logger.h"
 
 
