@@ -19,11 +19,15 @@
 /// Generated when a new bout begins in the battle
 struct FO_COMMON_API BoutBeginEvent : public CombatEvent {
     BoutBeginEvent();
-    BoutBeginEvent(int bout);
-    virtual ~BoutBeginEvent() {}
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    BoutBeginEvent(int bout);
+
+    virtual ~BoutBeginEvent()
+    {}
+
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
 
     int bout;
 
@@ -39,20 +43,27 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
     typedef boost::shared_ptr<BoutEvent> BoutEventPtr;
 
     BoutEvent();
+
     BoutEvent(int bout);
 
-    virtual ~BoutEvent() {}
+    virtual ~BoutEvent()
+    {}
 
     void AddEvent(CombatEventPtr & event);
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
-    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
-    virtual bool AreSubEventsEmpty(int viewing_empire_id) const
-    { return events.empty();}
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
+
+    bool AreSubEventsEmpty(int viewing_empire_id) const override
+    { return events.empty(); }
+
     virtual bool AreSubEventsOrdered() const
     { return true; }
-    virtual bool FlattenSubEvents() const
+
+    bool FlattenSubEvents() const override
     { return true; }
 
 private:
@@ -73,16 +84,21 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
 
     SimultaneousEvents();
 
-    virtual ~SimultaneousEvents() {}
+    virtual ~SimultaneousEvents()
+    {}
 
     void AddEvent(CombatEventPtr &event);
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
-    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
-    virtual bool AreSubEventsEmpty(int viewing_empire_id) const
-    { return events.empty();}
-    virtual bool FlattenSubEvents() const
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
+
+    bool AreSubEventsEmpty(int viewing_empire_id) const override
+    { return events.empty(); }
+
+    virtual bool FlattenSubEvents() const override
     { return true; }
 
 protected:
@@ -110,15 +126,18 @@ typedef boost::shared_ptr<FighterLaunchesEvent> FighterLaunchesEventPtr;
 struct FO_COMMON_API InitialStealthEvent : public CombatEvent {
 
     /// a map of attacker empire id -> defender empire id -> set of (attacker ids, visibility)
-    typedef std::map<int, std::map< int, std::set< std::pair<int, Visibility> > > > StealthInvisbleMap;
+    typedef std::map<int, std::map<int, std::set<std::pair<int, Visibility>>>> StealthInvisbleMap;
 
     InitialStealthEvent();
+
     InitialStealthEvent(const StealthInvisbleMap &);
 
-    virtual ~InitialStealthEvent() {}
+    virtual ~InitialStealthEvent()
+    {}
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
 
 private:
 
@@ -133,31 +152,39 @@ private:
  At this time always decloaking.*/
 struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     StealthChangeEvent();
+
     StealthChangeEvent(int bout);
 
-    virtual ~StealthChangeEvent() {}
+    virtual ~StealthChangeEvent()
+    {}
+
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
+
+    bool AreSubEventsEmpty(int viewing_empire_id) const override;
 
     void AddEvent(int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_);
-
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
-    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
-    virtual bool AreSubEventsEmpty(int viewing_empire_id) const;
 
     struct StealthChangeEventDetail;
     typedef boost::shared_ptr<StealthChangeEventDetail> StealthChangeEventDetailPtr;
     typedef boost::shared_ptr<const StealthChangeEventDetail> ConstStealthChangeEventDetailPtr;
     struct StealthChangeEventDetail : public CombatEvent {
+        StealthChangeEventDetail();
+
+        StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_);
+
+        std::string DebugString() const override;
+
+        std::string CombatLogDescription(int viewing_empire_id) const override;
+
         int attacker_id;
         int target_id;
         int attacker_empire_id;
         int target_empire_id;
         Visibility visibility;
-        StealthChangeEventDetail();
-        StealthChangeEventDetail(int attacker_id_, int target_id_, int attacker_empire_, int target_empire_, Visibility new_visibility_);
-
-        virtual std::string DebugString() const;
-        virtual std::string CombatLogDescription(int viewing_empire_id) const;
 
         friend class boost::serialization::access;
         template <class Archive>
@@ -165,7 +192,7 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
     };
 
 private:
-    int     bout;
+    int bout;
 
     std::map<int, std::vector<StealthChangeEventDetailPtr> > events;
 
@@ -194,25 +221,30 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
                     const boost::tuple<float, float, float> &power_shield_damage,
                     int attacker_owner_id_, int target_owner_id_);
 
-    virtual ~WeaponFireEvent() {}
+    virtual ~WeaponFireEvent()
+    {}
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
-    virtual std::string CombatLogDetails(int viewing_empire_id) const;
-    virtual bool AreDetailsEmpty(int viewing_empire_id) const
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    std::string CombatLogDetails(int viewing_empire_id) const override;
+
+    bool AreDetailsEmpty(int viewing_empire_id) const override
     { return false; }
-    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
 
-    int     bout;
-    int     round;
-    int     attacker_id;
-    int     target_id;
+    boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
+
+    int bout;
+    int round;
+    int attacker_id;
+    int target_id;
     std::string weapon_name;
-    float   power;
-    float   shield;
-    float   damage;
-    int     attacker_owner_id;
-    int     target_owner_id;
+    float power;
+    float shield;
+    float damage;
+    int attacker_owner_id;
+    int target_owner_id;
 
 private:
     friend class boost::serialization::access;
@@ -224,12 +256,17 @@ private:
 /// eg. a ship is destroyed or a planet loses all defence
 struct FO_COMMON_API IncapacitationEvent : public CombatEvent {
     IncapacitationEvent();
-    IncapacitationEvent(int bout_, int object_id_, int object_owner_id_);
-    virtual ~IncapacitationEvent() {}
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
-    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
+    IncapacitationEvent(int bout_, int object_id_, int object_owner_id_);
+
+    virtual ~IncapacitationEvent()
+    {}
+
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
     int bout;
     int object_id;
@@ -246,12 +283,17 @@ struct FO_COMMON_API FighterAttackedEvent : public CombatEvent {
     typedef boost::shared_ptr<FighterAttackedEvent> FighterAttackedEventPtr;
 
     FighterAttackedEvent();
-    FighterAttackedEvent(int bout_, int round_, int attacked_by_object_id_, int attacker_owner_empire_id_, int attacked_owner_id_);
-    virtual ~FighterAttackedEvent() {}
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
-    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
+    FighterAttackedEvent(int bout_, int round_, int attacked_by_object_id_, int attacker_owner_empire_id_, int attacked_owner_id_);
+
+    virtual ~FighterAttackedEvent()
+    {}
+
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
     int bout;
     int round;
@@ -270,12 +312,17 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     typedef boost::shared_ptr<FighterLaunchEvent> FighterLaunchEventPtr;
 
     FighterLaunchEvent();
-    FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_, int number_launched_);
-    virtual ~FighterLaunchEvent() {}
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
-    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
+    FighterLaunchEvent(int bout_, int launched_from_id_, int fighter_owner_empire_id_, int number_launched_);
+
+    virtual ~FighterLaunchEvent()
+    {}
+
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
     int bout;
     int fighter_owner_empire_id;    // may be ALL_EMPIRE if fighter was owned by no empire
@@ -295,25 +342,31 @@ struct FO_COMMON_API WeaponsPlatformEvent : public CombatEvent {
     typedef boost::shared_ptr<const WeaponsPlatformEvent> ConstWeaponsPlatformEventPtr;
 
     WeaponsPlatformEvent();
+
     WeaponsPlatformEvent(int bout, int attacker_id, int attacker_owner_id_);
 
-    virtual ~WeaponsPlatformEvent() {}
+    virtual ~WeaponsPlatformEvent()
+    {}
 
     void AddEvent(int round, int target_id, int target_owner_id_, std::string const & weapon_name_,
                   float power_, float shield_, float damage_);
 
-    virtual std::string DebugString() const;
-    virtual std::string CombatLogDescription(int viewing_empire_id) const;
-    virtual std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const;
-    virtual bool AreSubEventsEmpty(int viewing_empire_id) const;
-    virtual boost::optional<int> PrincipalFaction(int viewing_empire_id) const;
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    std::vector<ConstCombatEventPtr> SubEvents(int viewing_empire_id) const override;
+
+    bool AreSubEventsEmpty(int viewing_empire_id) const override;
+
+    boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
 
     int bout;
     int attacker_id;
     int attacker_owner_id;
 
 private:
-    std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr> > events;
+    std::map<int, std::vector<WeaponFireEvent::WeaponFireEventPtr>> events;
 
     friend class boost::serialization::access;
     template <class Archive>
