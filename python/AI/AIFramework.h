@@ -9,15 +9,23 @@
 class PythonAI : public PythonBase, public AIBase {
 public:
     bool Initialize();
-    bool InitModules(); // Initializes AI Python modules
 
-    virtual void                GenerateOrders();
-    virtual void                HandleChatMessage(int sender_id, const std::string& msg);
-    virtual void                HandleDiplomaticMessage(const DiplomaticMessage& msg);
-    virtual void                HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u);
-    virtual void                StartNewGame();
-    virtual void                ResumeLoadedGame(const std::string& save_state_string);
-    virtual const std::string&  GetSaveStateString();
+    /** Initializes AI Python modules. */
+    bool InitModules() override;
+
+    void GenerateOrders() override;
+
+    void HandleChatMessage(int sender_id, const std::string& msg) override;
+
+    void HandleDiplomaticMessage(const DiplomaticMessage& msg) override;
+
+    void HandleDiplomaticStatusUpdate(const DiplomaticStatusUpdateInfo& u) override;
+
+    void StartNewGame() override;
+
+    void ResumeLoadedGame(const std::string& save_state_string) override;
+
+    const std::string&  GetSaveStateString() override;
 
 private:
     // reference to imported Python AI module
