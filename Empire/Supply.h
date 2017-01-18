@@ -45,6 +45,9 @@ public:
 
     /** Returns the range from each system some empire can propagate supply.*/
     const std::map<int, float>&                             PropagatedSupplyRanges() const;
+    /** Returns the range from each system that the empire with id \a empire_id
+      * can propagate supply.*/
+    const std::map<int, float>&                             PropagatedSupplyRanges(int empire_id) const;
 
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
@@ -82,6 +85,11 @@ private:
     /** for whichever empire can propagate supply into this system, what is the
         additional range from this system that empire can propagate supply */
     std::map<int, float>                            m_propagated_supply_ranges;
+
+    /** for each empire, what systems it can propagate supply into, and how many
+      * further supply jumps it could propagate past this system, if not blocked
+      * from doing so by supply obstructions. */
+    std::map<int, std::map<int, float>>             m_empire_propagated_supply_ranges;
 
     friend class boost::serialization::access;
     template <class Archive>

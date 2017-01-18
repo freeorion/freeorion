@@ -34,6 +34,7 @@ namespace {
     static const std::set<int> EMPTY_INT_SET;
     static const std::set<std::set<int> > EMPTY_INT_SET_SET;
     static const std::set<std::pair<int, int> > EMPTY_INT_PAIR_SET;
+    static const std::map<int, float> EMPTY_INT_FLOAT_MAP;
 }
 
 const std::map<int, std::set<std::pair<int, int> > >& SupplyManager::SupplyStarlaneTraversals() const
@@ -86,6 +87,14 @@ const std::set<std::set<int> >& SupplyManager::ResourceSupplyGroups(int empire_i
 
 const std::map<int, float>& SupplyManager::PropagatedSupplyRanges() const
 { return m_propagated_supply_ranges; }
+
+const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id) const
+{
+    auto emp_it = m_empire_propagated_supply_ranges.find(empire_id);
+    if (emp_it == m_empire_propagated_supply_ranges.end())
+        return EMPTY_INT_FLOAT_MAP;
+    return emp_it->second;
+}
 
 bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
     if (system_id == INVALID_OBJECT_ID)
@@ -564,6 +573,7 @@ void SupplyManager::Update() {
             m_fleet_supplyable_system_ids[empire_id].insert(supply_range.first);
             // should be only one empire per system at this point, but use max just to be safe...
             m_propagated_supply_ranges[supply_range.first] = std::max(supply_range.second, m_propagated_supply_ranges[supply_range.first]);
+            m_empire_propagated_supply_ranges[empire_id][supply_range.first] = m_propagated_supply_ranges[supply_range.first];
         }
     }
 

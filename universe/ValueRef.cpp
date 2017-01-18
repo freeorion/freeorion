@@ -1129,125 +1129,10 @@ template <>
 StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const
 { return INVALID_STAR_TYPE; }
 
-template <>
-double ComplexVariable<double>::Eval(const ScriptingContext& context) const
-{
-    const std::string& variable_name = m_property_name.back();
-
-    if (variable_name == "HullFuel") {
-        std::string hull_type_name;
-        if (m_string_ref1)
-            hull_type_name = m_string_ref1->Eval(context);
-
-        const HullType* hull_type = GetHullType(hull_type_name);
-        if (!hull_type)
-            return 0.0;
-
-        return hull_type->Fuel();
-
-    } else if (variable_name == "HullStealth") {
-        std::string hull_type_name;
-        if (m_string_ref1)
-            hull_type_name = m_string_ref1->Eval(context);
-
-        const HullType* hull_type = GetHullType(hull_type_name);
-        if (!hull_type)
-            return 0.0;
-
-        return hull_type->Stealth();
-
-    } else if (variable_name == "HullStructure") {
-        std::string hull_type_name;
-        if (m_string_ref1)
-            hull_type_name = m_string_ref1->Eval(context);
-
-        const HullType* hull_type = GetHullType(hull_type_name);
-        if (!hull_type)
-            return 0.0f;
-
-        return hull_type->Structure();
-
-    } else if (variable_name == "HullSpeed") {
-        std::string hull_type_name;
-        if (m_string_ref1)
-            hull_type_name = m_string_ref1->Eval(context);
-
-        const HullType* hull_type = GetHullType(hull_type_name);
-        if (!hull_type)
-            return 0.0;
-
-        return hull_type->Speed();
-
-    } else if (variable_name == "PartCapacity") {
-        std::string part_type_name;
-        if (m_string_ref1)
-            part_type_name = m_string_ref1->Eval(context);
-
-        const PartType* part_type = GetPartType(part_type_name);
-        if (!part_type)
-            return 0.0;
-
-        return part_type->Capacity();
-
-    } else if (variable_name == "DirectDistanceBetween") {
-        int object1_id = INVALID_OBJECT_ID;
-        if (m_int_ref1)
-            object1_id = m_int_ref1->Eval(context);
-        TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
-        if (!obj1)
-            return 0.0;
-
-        int object2_id = INVALID_OBJECT_ID;
-        if (m_int_ref2)
-            object2_id = m_int_ref2->Eval(context);
-        TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
-        if (!obj2)
-            return 0.0;
-
-        double dx = obj2->X() - obj1->X();
-        double dy = obj2->Y() - obj1->Y();
-        return static_cast<float>(std::sqrt(dx*dx + dy*dy));
-
-    } else if (variable_name == "ShortestPath") {
-        int object1_id = INVALID_OBJECT_ID;
-        if (m_int_ref1)
-            object1_id = m_int_ref1->Eval(context);
-
-        int object2_id = INVALID_OBJECT_ID;
-        if (m_int_ref2)
-            object2_id = m_int_ref2->Eval(context);
-
-        return GetUniverse().ShortestPathDistance(object1_id, object2_id);
-
-    } else if (variable_name == "SpeciesEmpireOpinion") {
-        int empire_id = ALL_EMPIRES;
-        if (m_int_ref1)
-            empire_id = m_int_ref1->Eval(context);
-
-        std::string species_name;
-        if (m_string_ref1)
-            species_name = m_string_ref1->Eval(context);
-
-        return GetSpeciesManager().SpeciesEmpireOpinion(species_name, empire_id);
-
-    } else if (variable_name == "SpeciesSpeciesOpinion") {
-        std::string opinionated_species_name;
-        if (m_string_ref1)
-            opinionated_species_name = m_string_ref1->Eval(context);
-
-        std::string rated_species_name;
-        if (m_string_ref2)
-            rated_species_name = m_string_ref2->Eval(context);
-
-        return GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
-    }
-
-    return 0.0;
-}
-
 namespace {
     static std::map<std::string, int> EMPTY_STRING_INT_MAP;
     static std::map<int, int> EMPTY_INT_INT_MAP;
+    static std::map<int, float> EMPTY_INT_FLOAT_MAP;
 
     const std::map<std::string, int>& GetEmpireStringIntMap(int empire_id, const std::string& parsed_map_name) {
         Empire* empire = GetEmpire(empire_id);
@@ -1305,7 +1190,20 @@ namespace {
         return EMPTY_INT_INT_MAP;
     }
 
-    int GetEmpirePropertyNoKeyImpl(int empire_id, const std::string& parsed_property_name) {
+    const std::map<int, float>& GetEmpireIntFloatMap(int empire_id, const std::string& parsed_map_name) {
+        Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return EMPTY_INT_FLOAT_MAP;
+
+        if (parsed_map_name == "PropegatedSystemSupplyRange")
+            return GetSupplyManager().PropagatedSupplyRanges(empire_id);
+        if (parsed_map_name == "SystemSupplyRange")
+            return empire->SystemSupplyRanges();
+
+        return EMPTY_INT_FLOAT_MAP;
+    }
+
+    int GetIntEmpirePropertyNoKeyImpl(int empire_id, const std::string& parsed_property_name) {
         Empire* empire = GetEmpire(empire_id);
         if (!empire)
             return 0;
@@ -1318,8 +1216,8 @@ namespace {
     }
 
     // gets property for a particular map key string for one or all empires
-    int GetEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
-                                   const std::string& map_key)
+    int GetIntEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
+                                      const std::string& map_key)
     {
         int sum = 0;
         if (map_key.empty())
@@ -1345,7 +1243,7 @@ namespace {
     }
 
     // gets property for the sum of all map keys for one or all empires
-    int GetEmpirePropertySumAllStringKeys(int empire_id, const std::string& parsed_property_name) {
+    int GetIntEmpirePropertySumAllStringKeys(int empire_id, const std::string& parsed_property_name) {
         int sum = 0;
 
         // single empire
@@ -1365,8 +1263,8 @@ namespace {
     }
 
     // gets property for a particular map key int for one or all empires
-    int GetEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
-                                   int map_key)
+    int GetIntEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
+                                      int map_key)
     {
         int sum = 0;
 
@@ -1389,8 +1287,32 @@ namespace {
         return sum;
     }
 
+    float GetFloatEmpirePropertySingleKey(int empire_id, const std::string& parsed_property_name,
+                                          int map_key)
+    {
+        float sum = 0.0f;
+
+        // single empire
+        if (empire_id != ALL_EMPIRES) {
+            const std::map<int, float>& map = GetEmpireIntFloatMap(empire_id, parsed_property_name);
+            std::map<int, float>::const_iterator it = map.find(map_key);
+            if (it == map.end())
+                return 0.0f;
+            return it->second;
+        }
+
+        // all empires summed
+        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            const std::map<int, float>& map = GetEmpireIntFloatMap(empire_entry.first, parsed_property_name);
+            std::map<int, float>::const_iterator map_it = map.find(map_key);
+            if (map_it != map.end())
+                sum += map_it->second;
+        }
+        return sum;
+    }
+
     // gets property for the sum of all map keys for one or all empires
-    int GetEmpirePropertySumAllIntKeys(int empire_id, const std::string& parsed_property_name) {
+    int GetIntEmpirePropertySumAllIntKeys(int empire_id, const std::string& parsed_property_name) {
         int sum = 0;
 
         // single empire
@@ -1404,6 +1326,25 @@ namespace {
         // all empires summed
         for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
             for (const std::map<int, int>::value_type& property_entry : GetEmpireIntIntMap(empire_entry.first, parsed_property_name))
+                sum += property_entry.second;
+        }
+        return sum;
+    }
+
+    float  GetFloatEmpirePropertySumAllIntKeys(int empire_id, const std::string& parsed_property_name) {
+        float sum = 0.0f;
+
+        // single empire
+        if (empire_id != ALL_EMPIRES) {
+            // sum of all key entries for this empire
+            for (const std::map<int, float>::value_type& property_entry : GetEmpireIntFloatMap(empire_id, parsed_property_name))
+                sum += property_entry.second;
+            return sum;
+        }
+
+        // all empires summed
+        for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            for (const std::map<int, float>::value_type& property_entry : GetEmpireIntFloatMap(empire_entry.first, parsed_property_name))
                 sum += property_entry.second;
         }
         return sum;
@@ -1425,17 +1366,17 @@ namespace {
     }
 
     // gets unkeyed property for one or all empires
-    int GetEmpirePropertyNoKey(int empire_id, const std::string& parsed_property_name) {
+    int GetIntEmpirePropertyNoKey(int empire_id, const std::string& parsed_property_name) {
         int sum = 0;
 
         if (empire_id != ALL_EMPIRES) {
             // single empire
-            return GetEmpirePropertyNoKeyImpl(empire_id, parsed_property_name);
+            return GetIntEmpirePropertyNoKeyImpl(empire_id, parsed_property_name);
         }
 
         // all empires summed
         for (const std::map<int, Empire*>::value_type& empire_entry : Empires())
-            sum += GetEmpirePropertyNoKeyImpl(empire_entry.first, parsed_property_name);
+            sum += GetIntEmpirePropertyNoKeyImpl(empire_entry.first, parsed_property_name);
         return sum;
     }
 }
@@ -1477,11 +1418,11 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         // if a string specified, get just that entry (for single empire, or
         // summed for all empires)
         if (m_string_ref1)
-            return GetEmpirePropertySingleKey(empire_id, variable_name, key_string);
+            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_string);
 
         // if no string specified, get sum of all entries (for single empire
         // or summed for all empires)
-        return GetEmpirePropertySumAllStringKeys(empire_id, variable_name);
+        return GetIntEmpirePropertySumAllStringKeys(empire_id, variable_name);
     }
 
     // empire properties indexed by integers
@@ -1502,7 +1443,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         // if a key integer specified, get just that entry (for single empire or sum of all empires)
         if (m_int_ref2) {
             int key_int = m_int_ref2->Eval(context);
-            return GetEmpirePropertySingleKey(empire_id, variable_name, key_int);
+            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_int);
         }
 
         // although indexed by integers, some of these may be specified by a
@@ -1513,11 +1454,11 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
             if (key_string.empty())
                 return 0;
             int key_int = GetIntKeyFromContentStringKey(variable_name, key_string);
-            return GetEmpirePropertySingleKey(empire_id, variable_name, key_int);
+            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_int);
         }
 
         // if no key specified, get sum of all entries (for single empire or sum of all empires)
-        return GetEmpirePropertySumAllIntKeys(empire_id, variable_name);
+        return GetIntEmpirePropertySumAllIntKeys(empire_id, variable_name);
     }
 
     // empire properties indexed by string or ShipPartClass (as int)
@@ -1544,7 +1485,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
         // if a key string specified, get just that entry (for single empire or sum of all empires)
         if (m_string_ref1)
-            return GetEmpirePropertySingleKey(empire_id, variable_name, key_string);
+            return GetIntEmpirePropertySingleKey(empire_id, variable_name, key_string);
 
         // if a key integer specified, get just that entry (for single empire or sum of all empires)
         if (m_int_ref2) {
@@ -1570,7 +1511,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         }
 
         // no key string or integer provided, get all (for single empire or sum of all empires)
-        return GetEmpirePropertySumAllStringKeys(empire_id, variable_name);
+        return GetIntEmpirePropertySumAllStringKeys(empire_id, variable_name);
     }
 
     // unindexed empire proprties
@@ -1582,7 +1523,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
                 return 0;
         }
 
-        return GetEmpirePropertyNoKey(empire_id, variable_name);
+        return GetIntEmpirePropertyNoKey(empire_id, variable_name);
     }
 
     // non-empire properties
@@ -1723,6 +1664,153 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
     return 0;
 }
+
+template <>
+double ComplexVariable<double>::Eval(const ScriptingContext& context) const
+{
+    const std::string& variable_name = m_property_name.back();
+
+    // empire properties indexed by integers
+    if (variable_name == "PropegatedSystemSupplyRange" ||
+        variable_name == "SystemSupplyRange")
+    {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1) {
+            empire_id = m_int_ref1->Eval(context);
+            if (empire_id == ALL_EMPIRES)
+                return 0.0;
+        }
+
+        // if a key integer specified, get just that entry (for single empire or sum of all empires)
+        if (m_int_ref2) {
+            int key_int = m_int_ref2->Eval(context);
+            return GetFloatEmpirePropertySingleKey(empire_id, variable_name, key_int);
+        }
+
+        // if no key specified, get sum of all entries (for single empire or sum of all empires)
+        return GetFloatEmpirePropertySumAllIntKeys(empire_id, variable_name);
+    }
+
+
+    if (variable_name == "HullFuel") {
+        std::string hull_type_name;
+        if (m_string_ref1)
+            hull_type_name = m_string_ref1->Eval(context);
+
+        const HullType* hull_type = GetHullType(hull_type_name);
+        if (!hull_type)
+            return 0.0;
+
+        return hull_type->Fuel();
+
+    }
+    else if (variable_name == "HullStealth") {
+        std::string hull_type_name;
+        if (m_string_ref1)
+            hull_type_name = m_string_ref1->Eval(context);
+
+        const HullType* hull_type = GetHullType(hull_type_name);
+        if (!hull_type)
+            return 0.0;
+
+        return hull_type->Stealth();
+
+    }
+    else if (variable_name == "HullStructure") {
+        std::string hull_type_name;
+        if (m_string_ref1)
+            hull_type_name = m_string_ref1->Eval(context);
+
+        const HullType* hull_type = GetHullType(hull_type_name);
+        if (!hull_type)
+            return 0.0f;
+
+        return hull_type->Structure();
+
+    }
+    else if (variable_name == "HullSpeed") {
+        std::string hull_type_name;
+        if (m_string_ref1)
+            hull_type_name = m_string_ref1->Eval(context);
+
+        const HullType* hull_type = GetHullType(hull_type_name);
+        if (!hull_type)
+            return 0.0;
+
+        return hull_type->Speed();
+
+    }
+    else if (variable_name == "PartCapacity") {
+        std::string part_type_name;
+        if (m_string_ref1)
+            part_type_name = m_string_ref1->Eval(context);
+
+        const PartType* part_type = GetPartType(part_type_name);
+        if (!part_type)
+            return 0.0;
+
+        return part_type->Capacity();
+
+    }
+    else if (variable_name == "DirectDistanceBetween") {
+        int object1_id = INVALID_OBJECT_ID;
+        if (m_int_ref1)
+            object1_id = m_int_ref1->Eval(context);
+        TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+        if (!obj1)
+            return 0.0;
+
+        int object2_id = INVALID_OBJECT_ID;
+        if (m_int_ref2)
+            object2_id = m_int_ref2->Eval(context);
+        TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+        if (!obj2)
+            return 0.0;
+
+        double dx = obj2->X() - obj1->X();
+        double dy = obj2->Y() - obj1->Y();
+        return static_cast<float>(std::sqrt(dx*dx + dy*dy));
+
+    }
+    else if (variable_name == "ShortestPath") {
+        int object1_id = INVALID_OBJECT_ID;
+        if (m_int_ref1)
+            object1_id = m_int_ref1->Eval(context);
+
+        int object2_id = INVALID_OBJECT_ID;
+        if (m_int_ref2)
+            object2_id = m_int_ref2->Eval(context);
+
+        return GetUniverse().ShortestPathDistance(object1_id, object2_id);
+
+    }
+    else if (variable_name == "SpeciesEmpireOpinion") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1)
+            empire_id = m_int_ref1->Eval(context);
+
+        std::string species_name;
+        if (m_string_ref1)
+            species_name = m_string_ref1->Eval(context);
+
+        return GetSpeciesManager().SpeciesEmpireOpinion(species_name, empire_id);
+
+    }
+    else if (variable_name == "SpeciesSpeciesOpinion") {
+        std::string opinionated_species_name;
+        if (m_string_ref1)
+            opinionated_species_name = m_string_ref1->Eval(context);
+
+        std::string rated_species_name;
+        if (m_string_ref2)
+            rated_species_name = m_string_ref2->Eval(context);
+
+        return GetSpeciesManager().SpeciesSpeciesOpinion(opinionated_species_name, rated_species_name);
+    }
+
+    return 0.0;
+}
+
 
 namespace {
     std::vector<std::string> TechsResearchedByEmpire(int empire_id) {

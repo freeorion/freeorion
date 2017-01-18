@@ -5049,6 +5049,12 @@ Supply Range
 SUPPLYING_EMPIRE
 Supplying Empire
 
+SYSTEM_SUPPLY_RANGE
+System Supply Range
+
+PROPAGATED_SUPPLY_RANGE
+Propagated Supply Range
+
 ETA
 Turns To Destination
 
@@ -7535,6 +7541,15 @@ Speed
 # Meter types
 METER_DETECTION_STRENGTH
 [[DETECTION_TITLE]]
+
+METER_BUILDING_COST_FACTOR
+Building Cost Factor
+
+METER_SHIP_COST_FACTOR
+Ship Cost Factor
+
+METER_TECH_COST_FACTOR
+Tech Cost Factor
 
 ALIGN_MILITARISM
 Militarism
