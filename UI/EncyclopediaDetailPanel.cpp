@@ -476,9 +476,7 @@ namespace {
             CUIEdit("")
         {}
 
-        virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point,
-                                 GG::Flags<GG::ModKey> mod_keys)
-        {
+        void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
             switch (key) {
             case GG::GGK_RETURN:
             case GG::GGK_KP_ENTER:

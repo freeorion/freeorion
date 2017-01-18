@@ -15,22 +15,23 @@ public:
                      const GG::Clr& color,
                      GG::Flags< GG::WndFlag > flags);
 
-    virtual GG::Pt SetMaxWidth(GG::X width);
+    GG::Pt SetMaxWidth(GG::X width) override;
+
+    void Render() override
+    {}
 
     CUILinkTextMultiEdit& Text();
-
-    virtual void Render() {}
 
     class Factory: public GG::RichText::IBlockControlFactory {
     public:
         //! Creates a control from the tag (with unparsed parameters) and the content between the tags.
         //! You own the returned control.
-        virtual GG::BlockControl* CreateFromTag(const std::string& tag,
-                                                const GG::RichText::TAG_PARAMS& params,
-                                                const std::string& content,
-                                                const boost::shared_ptr<GG::Font>& font,
-                                                const GG::Clr& color,
-                                                GG::Flags<GG::TextFormat> format);
+        GG::BlockControl* CreateFromTag(const std::string& tag,
+                                        const GG::RichText::TAG_PARAMS& params,
+                                        const std::string& content,
+                                        const boost::shared_ptr<GG::Font>& font,
+                                        const GG::Clr& color,
+                                        GG::Flags<GG::TextFormat> format) override;
 
         ///< link clicked signals: first string is the link type, second string is the specific item clicked
         mutable boost::signals2::signal<void (const std::string&, const std::string&)> LinkClickedSignal;

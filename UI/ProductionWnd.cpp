@@ -59,7 +59,8 @@ namespace {
             Resize(GG::Pt(nwidth, text->Height()));
         }
 
-        void Render() {}
+        void Render() override
+        {}
     };
 
     //////////////
@@ -163,17 +164,17 @@ namespace {
         bool    amOn;
         GG::Y   h;
 
-        void LosingFocus() {
+        void LosingFocus() override {
             amOn = false;
             DropDownList::LosingFocus();
         }
 
-        void LButtonDown(const GG::Pt&  pt, GG::Flags<GG::ModKey> mod_keys) {
+        void LButtonDown(const GG::Pt&  pt, GG::Flags<GG::ModKey> mod_keys) override {
             amOn = !amOn;
             DropDownList::LButtonDown(pt, mod_keys);
         }
 
-        void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+        void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override {
             if (this->Disabled())
                 return;
 
@@ -192,12 +193,13 @@ namespace {
                                  const ProductionQueue::Element& build, double turn_cost, double total_cost,
                                  int turns, int number, int turns_completed, double partially_complete_turn);
 
-        virtual void    PreRender();
-        virtual void    Render();
+        void PreRender() override;
+        void Render() override;
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
         void            UpdateQueue();
         void            ItemQuantityChanged(int quant, int blocksize);
         void            ItemBlocksizeChanged(int quant, int blocksize);
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
         static GG::Y    DefaultHeight();
 
@@ -363,14 +365,14 @@ namespace {
 
         }
 
-        virtual void PreRender() {
+        void PreRender() override {
             GG::ListBox::Row::PreRender();
 
             if (!panel)
                 Init();
         }
 
-        virtual void Disable(bool b) {
+        void Disable(bool b) override {
             GG::ListBox::Row::Disable(b);
 
             for (GG::Control* ctrl : m_cells) {
@@ -641,7 +643,7 @@ namespace {
         boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
 
     protected:
-        void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+        void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
             // mostly duplicated equivalent in QueueListBox, but with extra commands...
 
             GG::MenuItem menu_contents;
@@ -746,7 +748,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         GG::Pt sz = Size();
         CUIWnd::SizeMove(ul, lr);
         if (Size() != sz)

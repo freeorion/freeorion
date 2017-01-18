@@ -333,26 +333,26 @@ public:
     const std::string&  Filename() const
     { return m_filename; }
 
-    virtual void PreRender() {
+    void PreRender() override {
         if (!m_initialized)
             Init();
         GG::ListBox::Row::PreRender();
     }
 
-    virtual void        Render() {
+    void Render() override {
         GG::FlatRectangle(ClientUpperLeft(),
                           ClientLowerRight() - GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN), GG::Y0),
                           GG::CLR_ZERO, ClientUI::WndOuterBorderColor(), 1u);
     }
 
     /** Excludes border from the client area. */
-    virtual GG::Pt      ClientUpperLeft() const {
+    GG::Pt ClientUpperLeft() const override {
         return UpperLeft() + GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN),
                                     GG::Y(SAVE_FILE_CELL_MARGIN));
     }
 
     /** Excludes border from the client area. */
-    virtual GG::Pt      ClientLowerRight() const {
+    GG::Pt ClientLowerRight() const override {
         return LowerRight() - GG::Pt(GG::X(SAVE_FILE_CELL_MARGIN * 2),
                                      GG::Y(SAVE_FILE_CELL_MARGIN));
     }
@@ -389,7 +389,8 @@ public:
         AdjustColumns();
     }
 
-    virtual void Render() { }
+    void Render() override
+    {}
 };
 
 class SaveFileDirectoryRow: public SaveFileRow {
@@ -399,7 +400,7 @@ public:
         SetMargin(ROW_MARGIN);
     }
 
-    virtual void Init() {
+    void Init() override {
         SaveFileRow::Init();
         for (unsigned int i = 0; i < m_columns->size(); ++i) {
             if (i==0) {
@@ -420,7 +421,7 @@ public:
         GetLayout()->PreRender();
     }
 
-    virtual SortKeyType SortKey(std::size_t column) const
+    SortKeyType SortKey(std::size_t column) const override
     { return m_filename; }
 
     GG::X DirectoryNameSize() {
@@ -452,7 +453,7 @@ public:
         SetBrowseModeTime(tooltip_delay);
     }
 
-    virtual void Init() {
+    void Init() override {
         SaveFileRow::Init();
         VarText browse_text(UserStringNop("SAVE_DIALOG_ROW_BROWSE_TEMPLATE"));
 
@@ -468,7 +469,7 @@ public:
         GetLayout()->PreRender();
     }
 
-    virtual SortKeyType SortKey(std::size_t column) const
+    SortKeyType SortKey(std::size_t column) const override
     { return m_full_preview.preview.save_time; }
 
     private:

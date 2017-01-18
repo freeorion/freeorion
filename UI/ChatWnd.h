@@ -19,6 +19,10 @@ public:
     //@}
 
     //! \name Mutators //@{
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void PreRender() override;
+
     void            HandlePlayerChatMessage(const std::string& text, int sender_player_id, int recipient_player_id);
     void            HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id);
     void            HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id);
@@ -26,9 +30,6 @@ public:
     void            HandleLogMessage(const std::string& text);
     void            Clear();
     void            OpenForInput();
-
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    PreRender();
     //@}
 
     /** emitted when the edit gains focus.  Keyboard accelerators elsewhere
@@ -40,7 +41,7 @@ public:
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
 private:
-    virtual void    CloseClicked();
+    void CloseClicked() override;
 
     void            DoLayout();
     void            MessageEntered();

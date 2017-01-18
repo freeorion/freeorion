@@ -12,10 +12,12 @@ public:
     // Must have explicit destructor since CombatReportPrivate is incomplete here
     virtual ~CombatReportWnd();
 
+    void CloseClicked() override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     /// Sets which combat to show.
     void            SetLog(int log_id);
-    virtual void    CloseClicked();
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
 private:
     class CombatReportPrivate;

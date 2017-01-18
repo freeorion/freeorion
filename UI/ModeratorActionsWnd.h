@@ -14,6 +14,7 @@ class ModeratorActionsWnd : public CUIWnd {
 public:
     //! \name Structors //!@{
     ModeratorActionsWnd(const std::string& config_name = "");
+
     virtual ~ModeratorActionsWnd();
     //!@}
 
@@ -26,7 +27,8 @@ public:
     //!@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void            Refresh();
     void            EnableActions(bool enable = true);
     //!@}
@@ -40,8 +42,9 @@ public:
     mutable boost::signals2::signal<void ()>           AddStarlaneActionSelectedSignal;
 
 private:
+    void CloseClicked() override;
+
     void            DoLayout();
-    virtual void    CloseClicked();
 
     void            NoActionClicked();
     void            CreateSystemClicked();

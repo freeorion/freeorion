@@ -41,7 +41,7 @@ typedef boost::shared_ptr<LinkDecorator> LinkDecoratorPtr;
 
 class ColorByOwner: public LinkDecorator {
 public:
-    virtual std::string Decorate(const std::string& object_id_str, const std::string& content) const;
+    std::string Decorate(const std::string& object_id_str, const std::string& content) const override;
 };
 
 class TextLinker {
@@ -133,31 +133,39 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual GG::Pt  TextUpperLeft() const;
-    virtual GG::Pt  TextLowerRight() const;
+    GG::Pt TextUpperLeft() const override;
 
-    virtual const std::vector<GG::Font::LineData>&  GetLineData() const;
-    virtual const boost::shared_ptr<GG::Font>&      GetFont() const;
-    virtual const std::string&                      RawText() const;          ///< returns text displayed before link formatting is added
+    GG::Pt TextLowerRight() const override;
+
+    const std::vector<GG::Font::LineData>& GetLineData() const override;
+
+    const boost::shared_ptr<GG::Font>& GetFont() const override;
+
+    /** Returns text displayed before link formatting is added. */
+    const std::string& RawText() const override;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Render();
-    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    MouseLeave();
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void Render() override;
+
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+    void MouseLeave() override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** sets the text to \a str; may resize the window.  If the window was
         constructed to fit the size of the text (i.e. if the second ctor type
         was used), calls to this function cause the window to be resized to
         whatever space the newly rendered text occupies. */
-    virtual void    SetText(const std::string& str);
+    void SetText(const std::string& str) override;
     //@}
 
 private:
-    virtual void    SetLinkedText(const std::string& str);
+    void SetLinkedText(const std::string& str) override;
 
     std::string     m_raw_text;
 };

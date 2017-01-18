@@ -101,15 +101,18 @@ public:
     std::set<int>           SelectedFleetIDs() const;           ///< returns IDs of selected fleets in this FleetWnd
     std::set<int>           SelectedShipIDs() const;            ///< returns IDs of selected ships in this FleetWnd
     NewFleetAggression      GetNewFleetAggression() const;      ///< returns this FleetWnd's setting for new fleet aggression (auto, aggressive, or passive)
-    virtual GG::Rect        CalculatePosition() const;
+
+    GG::Rect CalculatePosition() const override;
     //@}
 
     //! \name Mutators //@{
-    virtual void            PreRender();
+    void PreRender() override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void                    SelectFleet(int fleet_id);                          ///< deselects any selected fleets, and selects the indicated fleet, bringing it into the fleet detail window
     void                    SetSelectedFleets(const std::set<int>& fleet_ids);  ///< deselects any selected fleets, and selects the fleets with the indicated ids
     void                    SetSelectedShips(const std::set<int>& ship_ids);    ///< deselected any selected ships, and selects the ships with the indicated ids if they are in the selected fleet.
-    virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     /** Enables, or disables if \a enable is false, issuing orders via this FleetWnd. */
     void                    EnableOrderIssuing(bool enable = true);
@@ -123,8 +126,10 @@ public:
 
 protected:
     //! \name Mutators //@{
-    virtual void    CloseClicked();
-    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void CloseClicked() override;
+
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
     void            DoLayout();
     //@}
 
@@ -187,17 +192,19 @@ public:
 
     //! \name Accessors //@{
     /** Excludes border from the client area. */
-    virtual GG::Pt  ClientUpperLeft() const;
+    GG::Pt ClientUpperLeft() const override;
     /** Excludes border from the client area. */
-    virtual GG::Pt  ClientLowerRight() const;
+    GG::Pt ClientLowerRight() const override;
     //@}
 
     //! \name Mutators //@{
     /** Renders black panel background, border with color depending on the
       *current state and a background for the ship's name text. */
-    virtual void    Render();
+    void Render() override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void            Select(bool b);
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
 private:

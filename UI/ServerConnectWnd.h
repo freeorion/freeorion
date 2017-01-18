@@ -19,8 +19,9 @@ public:
 
     //! \name Mutators
     //!@{
-    virtual void ModalInit ();
-    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    void ModalInit() override;
+
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     //!@}
 
     /** \name Accessors */ //@{
@@ -29,7 +30,7 @@ public:
     //@}
 
 protected:
-    virtual GG::Rect CalculatePosition() const;
+    GG::Rect CalculatePosition() const override;
 
 private:
     void Init();

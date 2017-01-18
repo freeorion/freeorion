@@ -81,7 +81,9 @@ namespace {
         class Spacer: public GG::Control {
             public:
             Spacer() {};
-            virtual void Render() {};
+
+            void Render() override
+            {}
         };
 
         // fills player type selection droplist in player row
@@ -193,7 +195,7 @@ namespace {
             GG::Connect(SelChangedSignal, &TypeSelector::SelectionChanged, this);
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             GG::Pt old_size(Size());
             CUIDropDownList::SizeMove(ul, lr);
             if (old_size != Size())

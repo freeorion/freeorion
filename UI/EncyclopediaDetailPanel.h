@@ -33,13 +33,15 @@ public:
     //!@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    PreRender();
-    virtual void    Render();
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void PreRender() override;
+
+    void Render() override;
 
     /** Need to redefine this so that icons and name can be put at the top of
       * the Wnd, rather than being restricted to the client area of a CUIWnd */
-    virtual GG::Pt  ClientUpperLeft() const;
+    GG::Pt ClientUpperLeft() const override;
 
     void            AddItem(const std::string& type, const std::string& name); // adds a new item to m_items
     void            PopItem();
@@ -87,13 +89,13 @@ public:
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
 protected:
-    virtual void    InitBuffers();
+    void InitBuffers() override;
 
 private:
+    void CloseClicked() override;
+
     void            DoLayout();
     void            RefreshImpl();
-
-    virtual void    CloseClicked();
 
     void            HandleLinkClick(const std::string& link_type, const std::string& data);
     void            HandleLinkDoubleClick(const std::string& link_type, const std::string& data);

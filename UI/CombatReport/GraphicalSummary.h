@@ -18,15 +18,15 @@ public:
 
     /// Get the minimum size of this window required to show all of its
     /// children
-    virtual GG::Pt MinUsableSize() const;
+    GG::Pt MinUsableSize() const override;
+
+    void Render() override;
 
     /// Sets the log to show
     void SetLog(int log_id);
 
     /// Position and sizes things appropriately
     void DoLayout();
-
-    virtual void Render();
 
 private:
     std::vector<SideBar*>        m_side_boxes;

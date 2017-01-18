@@ -8,19 +8,23 @@
 class CombatLogWnd : public GG::Wnd {
 public:
     CombatLogWnd(GG::X w, GG::Y h);
+
     virtual ~CombatLogWnd();
 
     /** \name Accessors */ ///@{
-    virtual GG::Pt ClientUpperLeft() const;
-    virtual GG::Pt ClientLowerRight() const;
-    virtual GG::Pt MinUsableSize() const;
+    GG::Pt ClientUpperLeft() const override;
+
+    GG::Pt ClientLowerRight() const override;
+
+    GG::Pt MinUsableSize() const override;
     //@}
 
     /** \name Mutators */ //@{
+    void PreRender() override;
+
     void SetFont(boost::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
-    virtual void PreRender();
     //@}
 
     ///link clicked signals: first string is the link type, second string is the specific item clicked

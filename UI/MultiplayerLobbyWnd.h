@@ -20,14 +20,17 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    GG::Pt MinUsableSize() const override;
+
     bool            LoadGameSelected() const;
-    virtual GG::Pt  MinUsableSize() const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    Render();
-    virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void Render() override;
+
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void            ChatMessage(int player_id, const std::string& msg);
     void            LobbyUpdate(const MultiplayerLobbyData& lobby_data);
@@ -35,13 +38,16 @@ public:
     //@}
 
 protected:
-    virtual GG::Rect CalculatePosition() const;
     struct PlayerLabelRow : GG::ListBox::Row {
         PlayerLabelRow(GG::X width = GG::X(600));
+
         /** Set text of control at @p column to @p str */
         void SetText(size_t column, const std::string& str);
-        virtual void Render();
+
+        void Render() override;
     };
+
+    GG::Rect CalculatePosition() const override;
 
 private:
     void            DoLayout();

@@ -180,7 +180,7 @@ namespace {
 
     class ColorEmpire : public LinkDecorator {
     public:
-        virtual std::string Decorate(const std::string& target, const std::string& content) const {
+        std::string Decorate(const std::string& target, const std::string& content) const override {
             GG::Clr color = ClientUI::DefaultLinkColor();
             int id = CastStringToInt(target);
             Empire* empire = GetEmpire(id);
@@ -202,7 +202,7 @@ namespace {
         mutable boost::signals2::signal<void(const GG::Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
     protected:
-        void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+        void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override {
             if (GetLinkUnderPt(pt) != -1) {
                 LinkText::RClick(pt, mod_keys);
             } else {
@@ -228,14 +228,14 @@ namespace {
             DoLayout(GG::Pt(left, top), w);
         }
 
-        virtual void        Render() {
+        void Render() override {
             GG::Clr background_clr = this->Disabled() ? ClientUI::WndColor() : ClientUI::CtrlColor();
             GG::Pt spacer = GG::Pt(GG::X(sitrep_edge_to_outline_spacing), GG::Y(sitrep_edge_to_outline_spacing));
             GG::FlatRectangle(UpperLeft() + spacer, LowerRight() - spacer,
                               background_clr, ClientUI::WndOuterBorderColor(), 1u);
         }
 
-        virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             if (ul != ClientUpperLeft() || (lr.x - ul.x) != Width())
                 DoLayout(ul, lr.x - ul.x);
         }
@@ -245,7 +245,8 @@ namespace {
         mutable boost::signals2::signal<void(const GG::Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
     protected:
-        void            RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod) { RightClickedSignal(pt, mod); }
+        void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod) override
+        { RightClickedSignal(pt, mod); }
 
     private:
         void            DoLayout(const GG::Pt& ul, const GG::X& width) {
@@ -328,7 +329,7 @@ namespace {
             RequirePreRender();
         }
 
-        virtual void        PreRender() {
+        void PreRender() override {
             GG::ListBox::Row::PreRender();
 
             if (!m_panel)
@@ -340,7 +341,7 @@ namespace {
             GG::ListBox::Row::Resize(m_panel->Size() + border);
         }
 
-        virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             if (!m_panel || (Size() != (lr - ul)))
                 RequirePreRender();
             GG::ListBox::Row::SizeMove(ul, lr);

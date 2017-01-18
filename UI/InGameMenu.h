@@ -7,17 +7,18 @@ class InGameMenu : public CUIWnd {
 public:
     /** \name Structors */ //@{
     InGameMenu();  //!< default ctor
-    ~InGameMenu(); //!< dtor
+
+    ~InGameMenu();
     //@}
 
     /** \name Mutators */ //@{
-    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void         DoLayout();
     //@}
 
 protected:
-    virtual GG::Rect CalculatePosition() const;
+    GG::Rect CalculatePosition() const override;
 
 private:
     void Save();        //!< when m_save_btn button is pressed

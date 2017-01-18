@@ -1547,18 +1547,19 @@ namespace {
                 SetColor(color);
                 SetMinSize(GG::Pt(COLOR_SELECTOR_WIDTH - 40, GG::Y(1)));
             }
-            virtual void Render() {
+
+            void Render() override {
                 GG::FlatRectangle(UpperLeft(), LowerRight(), Color(), GG::CLR_ZERO, 0);
             }
         };
+
         ColorRow(const GG::Clr& color, GG::Y h) :
             GG::ListBox::Row(GG::X(Value(h)), h, "")
         {
             push_back(new ColorSquare(color, h));
         }
 
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-        {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             // Prevent the width from changing
             GG::Control::SizeMove(ul, GG::Pt(ul.x + Width(), lr.y));
         }

@@ -10,12 +10,18 @@ class QueueListBox :
 public:
     QueueListBox(const std::string& drop_type_str, const std::string& prompt_str);
 
-    GG::X           RowWidth() const;
+    void Render() override;
 
-    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                                 GG::Flags<GG::ModKey> mod_keys);
-    virtual void    DragDropLeave();
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                      GG::Flags<GG::ModKey> mod_keys) override;
+
+    void DragDropLeave() override;
+
+    GG::X           RowWidth() const;
 
     virtual void    EnableOrderIssuing(bool enable = true);
     bool            OrderIssuingEnabled() const { return m_order_issuing_enabled; }
@@ -23,16 +29,15 @@ public:
 
     void            Clear();
 
-    virtual void    Render();
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-
     boost::signals2::signal<void (GG::ListBox::Row*, std::size_t)>  QueueItemMovedSignal;
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
 
 protected:
-    virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
+
     virtual void    ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
 private:

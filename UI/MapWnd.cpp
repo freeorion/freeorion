@@ -310,7 +310,7 @@ public:
     virtual ~MapScaleLine()
     { delete m_label; }
 
-    virtual void Render() {
+    void Render() override {
         if (!m_enabled)
             return;
 
@@ -6207,7 +6207,7 @@ namespace {
 
     public:
         NotCoveredMapWndCondition(const MapWnd& tg) : target(tg) {}
-        virtual bool IsActive() const {
+        bool IsActive() const override {
             return target.Visible() && !target.InResearchViewMode() && !target.InDesignViewMode();
         };
     };

@@ -10,8 +10,10 @@
 class TextBrowseWnd : public GG::BrowseInfoWnd {
 public:
     TextBrowseWnd(const std::string& title_text, const std::string& main_text, GG::X w = GG::X(200));
-    virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
-    virtual void Render();
+
+    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
+
+    void Render() override;
 
 private:
     GG::Label*          m_title_text;

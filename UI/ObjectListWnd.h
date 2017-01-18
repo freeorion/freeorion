@@ -16,7 +16,8 @@ public:
     //!@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void            Refresh();
     //!@}
 
@@ -26,6 +27,8 @@ public:
     mutable boost::signals2::signal<void ()>    ClosingSignal;
 
 private:
+    void CloseClicked() override;
+
     void            DoLayout();
 
     void            ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows);
@@ -38,7 +41,6 @@ private:
 
     void            FilterClicked();
     void            CollapseExpandClicked();
-    virtual void    CloseClicked();
 
     ObjectListBox*              m_list_box;
     GG::Button*                 m_filter_button;

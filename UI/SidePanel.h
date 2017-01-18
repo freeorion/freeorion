@@ -27,8 +27,9 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool        InWindow(const GG::Pt& pt) const;
-    virtual GG::Pt      ClientUpperLeft() const;
+    bool InWindow(const GG::Pt& pt) const override;
+
+    GG::Pt ClientUpperLeft() const override;
 
     /** Returns the id of the system shown in the SidePanels, or
       * INVALID_OBJECT_ID if no system is shown */
@@ -44,9 +45,11 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void        PreRender();
-    virtual void        Render();
-    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void PreRender() override;
+
+    void Render() override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** Updates contents of sidepanel, but doesn't recreate contents or check
       * that object pointers are still valid.  All SidePanels' are updated */
@@ -98,7 +101,7 @@ public:
     static boost::signals2::signal<void (int)>    BuildingRightClickedSignal;
 
 protected:
-    virtual void        InitBuffers();
+    void InitBuffers() override;
 
 private:
     class PlanetPanelContainer;

@@ -16,6 +16,7 @@ class ProductionWnd : public GG::Wnd {
 public:
     /** \name Structors */ //@{
     ProductionWnd(GG::X w, GG::Y h);
+
     virtual ~ProductionWnd();
     //@}
 
@@ -25,11 +26,13 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual bool    InWindow(const GG::Pt& pt) const;
-    virtual bool    InClient(const GG::Pt& pt) const;
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    bool InWindow(const GG::Pt& pt) const override;
 
-    void            Render();
+    bool InClient(const GG::Pt& pt) const override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void Render() override;
 
     void            SetEmpireShown(int empire_id);
 

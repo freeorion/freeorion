@@ -286,7 +286,7 @@ namespace {
             HandleMaybeVisible();
         }
 
-        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr)  override {
             LinkText::SizeMove(ul, lr);
             if (! m_signals.empty())
                 HandleMaybeVisible();

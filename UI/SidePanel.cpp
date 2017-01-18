@@ -472,21 +472,27 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool            InWindow(const GG::Pt& pt) const;
+    bool InWindow(const GG::Pt& pt) const override;
+
     int                     PlanetID() const { return m_planet_id; }
     //@}
 
     /** \name Mutators */ //@{
+    void PreRender() override;
+
+    void Render() override;
+
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void                    Select(bool selected);
-
-    virtual void            PreRender();
-    virtual void            Render();
-    virtual void            LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void            LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void            RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void            MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
-
-    virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     void                    Refresh();                      ///< updates panels, shows / hides colonize button, redoes layout of infopanels
 
@@ -560,8 +566,9 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool    InWindow(const GG::Pt& pt) const;
-    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);  ///< respond to movement of the mouse wheel (move > 0 indicates the wheel is rolled up, < 0 indicates down)
+    bool InWindow(const GG::Pt& pt) const override;
+
+    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
 
     int                     SelectedPlanetID() const    {return m_selected_planet_id;}
     const std::set<int>&    SelectionCandidates() const {return m_candidate_ids;}
@@ -569,7 +576,11 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
+    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void PreRender() override;
 
     void            Clear();
     void            SetPlanets(const std::vector<int>& planet_ids, StarType star_type);
@@ -577,12 +588,10 @@ public:
     void            SetValidSelectionPredicate(const boost::shared_ptr<UniverseObjectVisitor> &visitor);
     void            ScrollTo(int pos);
 
-    virtual void    PreRender();
     void            RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
 
     virtual void    ShowScrollbar();
     virtual void    HideScrollbar();
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     /** Enables, or disables if \a enable is false, issuing orders via the
       * PlanetPanels in this PlanetPanelContainer. */
@@ -634,7 +643,7 @@ public:
         Refresh();
     }
 
-    virtual void Render() {
+    void Render() override {
         GG::Pt ul = UpperLeft(), lr = LowerRight();
         // render rotating base planet texture
         RenderPlanet(ul + GG::Pt(Width() / 2, Height() / 2), Value(Width()), m_surface_texture, m_overlay_texture,
@@ -744,7 +753,7 @@ namespace {
             GetLayout()->PreRender();
         }
 
-        virtual void PreRender() {
+        void PreRender() override {
             // If there is no control add it.
             if (GetLayout()->Children().empty())
                 Init();
@@ -754,7 +763,7 @@ namespace {
 
         int SystemID() const { return m_system_id; }
 
-        virtual SortKeyType SortKey(std::size_t column) const
+        SortKeyType SortKey(std::size_t column) const override
         { return GetSystem(m_system_id)->Name() + boost::lexical_cast<std::string>(m_system_id); }
 
     private:
@@ -773,7 +782,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
     void EnableOrderIssuing(bool enable = true)
     { m_order_issuing_enabled = enable; }
 
-    virtual void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override {
         if (CurrentItem() == end())
             return;
 

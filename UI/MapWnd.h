@@ -53,7 +53,7 @@ public:
     //!@}
 
     //! \name Accessors //!@{
-    virtual GG::Pt              ClientUpperLeft() const;
+    GG::Pt ClientUpperLeft() const override;
 
     double                      ZoomFactor() const;
     int                         SystemIconSize() const;
@@ -105,16 +105,25 @@ public:
     //!@}
 
     //! \name Mutators //!@{
-    virtual void    PreRender();
-    virtual void    Render();
-    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    KeyRelease(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    void PreRender() override;
+
+    void Render() override;
+
+    void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void KeyRelease(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void            DoLayout();
 
@@ -517,9 +526,13 @@ class MapWndPopup : public CUIWnd {
 public:
     MapWndPopup(const std::string& t, GG::X default_x, GG::Y default_y, GG::X default_w, GG::Y default_h,
                 GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+
     MapWndPopup(const std::string& t, GG::Flags<GG::WndFlag> flags, const std::string& config_name = "");
+
     virtual ~MapWndPopup();
-    void    CloseClicked();
+
+    void CloseClicked() override;
+
     void    Close();
 };
 

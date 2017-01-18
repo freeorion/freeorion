@@ -18,14 +18,14 @@ public:
     //@}
 
     //! \name Mutators //@{
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void            HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id);
     void            Update();
     void            Refresh();
     void            Clear();
 
     void            SetSelectedPlayers(const std::set<int>& player_ids);
-
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
     mutable boost::signals2::signal<void ()>    SelectedPlayersChangedSignal;
@@ -33,7 +33,7 @@ public:
     mutable boost::signals2::signal<void ()>    ClosingSignal;
 
 private:
-    virtual void    CloseClicked();
+    void CloseClicked() override;
 
     void            DoLayout();
 

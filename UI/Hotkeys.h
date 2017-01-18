@@ -139,7 +139,7 @@ class NoModalWndsOpenCondition : public HotkeyCondition {
 public:
     NoModalWndsOpenCondition() {};
 
-    virtual bool IsActive() const {
+    bool IsActive() const  override {
         return !GG::GUI::GetGUI()->ModalWndsOpen();
     };
 };
@@ -153,7 +153,8 @@ public:
     VisibleWindowCondition(const GG::Wnd* tg) :
         target(tg)
     {}
-    virtual bool IsActive() const {
+
+    bool IsActive() const override {
         if (!target)
             return false;
         return target->Visible();
@@ -170,7 +171,7 @@ public:
                              const GG::Wnd* w3 = 0, const GG::Wnd* w4 = 0);
     InvisibleWindowCondition(const std::list<const GG::Wnd*>& bl);
 
-    virtual bool IsActive() const;
+    bool IsActive() const override;
 };
 
 /// On when the given window is visible
@@ -182,7 +183,8 @@ public:
     FocusWindowCondition(const GG::Wnd* tg) :
         target(tg)
     {}
-    virtual bool IsActive() const {
+
+    bool IsActive() const override {
         if (!target)
             return false;
         const GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
@@ -195,7 +197,7 @@ class FocusWindowIsA : public HotkeyCondition {
 public:
     FocusWindowIsA() {};
 
-    virtual bool IsActive() const {
+    bool IsActive() const override {
         const GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
         //std::cout << "Focus: " << foc << std::endl;
         if (dynamic_cast<const W*>(foc))
@@ -217,7 +219,8 @@ public:
                 HotkeyCondition* c8 = 0);
 
     virtual ~OrCondition();
-    virtual bool IsActive() const;
+
+    bool IsActive() const override;
 };
 
 class AndCondition : public HotkeyCondition {
@@ -233,7 +236,8 @@ public:
                  HotkeyCondition* c8 = 0);
 
     virtual ~AndCondition();
-    virtual bool IsActive() const;
+
+    bool IsActive() const override;
 };
 
 class HotkeyManager {

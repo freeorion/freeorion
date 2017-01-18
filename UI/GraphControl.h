@@ -13,6 +13,10 @@ public:
     //@}
 
     //! \name Mutators //@{
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void Render() override;
+
     void            AddSeries(const std::vector<std::pair<double, double> >& data, const GG::Clr& clr);
     void            Clear();
 
@@ -26,9 +30,6 @@ public:
     void            ShowPoints(bool show = true);
     void            ShowLines(bool show = true);
     void            ShowScale(bool show = true);
-
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    Render();
     //@}
 
 private:

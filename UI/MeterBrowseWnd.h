@@ -23,13 +23,15 @@ class MeterBrowseWnd : public GG::BrowseInfoWnd {
 public:
     MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type = INVALID_METER_TYPE);
 
-    virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
-    virtual void    Render();
+    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
+
+    void Render() override;
 
 protected:
+    void UpdateImpl(std::size_t mode, const Wnd* target) override;
+
     void            Initialize();
 
-    virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
     void            UpdateSummary();
     void            UpdateEffectLabelsAndValues(GG::Y& top);
 
@@ -62,9 +64,10 @@ public:
     ShipDamageBrowseWnd(int object_id, MeterType primary_meter_type);
 
 private:
+    void UpdateImpl(std::size_t mode, const Wnd* target) override;
+
     void            Initialize();
 
-    virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
     void            UpdateSummary();
     void            UpdateEffectLabelsAndValues(GG::Y& top);
 
@@ -75,9 +78,10 @@ public:
     ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts = false);
 
 private:
+    void UpdateImpl(std::size_t mode, const Wnd* target) override;
+
     void            Initialize();
 
-    virtual void    UpdateImpl(std::size_t mode, const Wnd* target);
     void            UpdateSummary();
     void            UpdateEffectLabelsAndValues(GG::Y& top);
 

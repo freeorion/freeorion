@@ -10,10 +10,12 @@ class IconTextBrowseWnd : public GG::BrowseInfoWnd {
 public:
     IconTextBrowseWnd(const boost::shared_ptr<GG::Texture> texture, const std::string& title_text,
                       const std::string& main_text);
-    virtual bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
 
-    virtual void PreRender();
-    virtual void Render();
+    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
+
+    void PreRender() override;
+
+    void Render() override;
 
 private:
     GG::StaticGraphic*                   m_icon;

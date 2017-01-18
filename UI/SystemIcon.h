@@ -23,8 +23,10 @@ class RotatingGraphic;
 class OwnerColoredSystemName : public GG::Control {
 public:
     OwnerColoredSystemName(int system_id, int font_size, bool blank_unexplored_and_none);
-    virtual void Render();
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
+    void Render() override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 };
 
 /** A control that allows interaction with a star system.  This class allows
@@ -39,32 +41,42 @@ public:
     //!@}
 
     //! \name Accessors //!@{
+    /** Checks to see if point lies inside in-system fleet buttons before
+        checking parent InWindow method. */
+    bool InWindow(const GG::Pt& pt) const override;
+
     int             SystemID() const;                           //!< returns ID of system this icon represents
 
     const boost::shared_ptr<GG::Texture>& DiscTexture() const;      //!< returns the solid star disc texture
     const boost::shared_ptr<GG::Texture>& HaloTexture() const;      //!< returns the transparent star halo texture
     const boost::shared_ptr<GG::Texture>& TinyTexture() const;      //!< returns the alternate texture shown when icon very small
 
-    virtual bool    InWindow(const GG::Pt& pt) const;       //!< Overrides GG::Wnd::InWindow. Checks to see if point lies inside in-system fleet buttons before checking main InWindow method.
     GG::Pt          NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
     int             EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
     //!@}
 
     //! \name Mutators //!@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    virtual void    Render();
+    void Render() override;
+
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void MouseLeave() override;
+
+    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+
     void            RenderDisc();
     void            RenderHalo(double scale_factor);
     void            RenderOverlay(double zoom_factor);
-
-    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    RDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    MouseLeave();
-    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
 
     void            SetSelected(bool selected = true);   //!< shows/hides the system selection indicator over this system
 

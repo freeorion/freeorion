@@ -44,9 +44,12 @@ public:
     //!@}
 
     /** \name Mutators*/ //!@{
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void Render() {}
-    virtual void Disable(bool b = true);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void Render() override
+    {}
+
+    void Disable(bool b = true) override;
 
     void SetFromSetupData(const GalaxySetupData& setup_data); ///< sets the controls from a GalaxySetupData
     void GetSetupData(GalaxySetupData& setup_data) const;     ///< fills values in \a setup_data from the panel's current state
@@ -106,13 +109,15 @@ public:
     //!@}
 
     /** \name Mutators*/ //!@{
-    virtual void Render();    //!< drawing code
-    virtual void KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void Render() override;
+
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     //!@}
 
 protected:
-    virtual GG::Rect CalculatePosition() const;
+    GG::Rect CalculatePosition() const override;
 
 private:
     void DoLayout();

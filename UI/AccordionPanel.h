@@ -12,16 +12,20 @@ public:
 
     /** \name Structors */ //@{
     AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left = false);
+
     virtual ~AccordionPanel();
     //@}
 
-    virtual GG::Pt ClientUpperLeft() const;
-    virtual GG::Pt ClientLowerRight() const;
+    GG::Pt ClientUpperLeft() const override;
+
+    GG::Pt ClientLowerRight() const override;
 
     /** \name Mutators */ //@{
-    virtual void Render();
-    virtual void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void Render() override;
+
+    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** Sets the interior color of the box. */
     void SetInteriorColor(GG::Clr c);

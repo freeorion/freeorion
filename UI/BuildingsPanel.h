@@ -21,7 +21,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void PreRender();
+    void PreRender() override;
 
     /** updates, redoes layout, resizes indicator */
     void Refresh();
@@ -37,12 +37,12 @@ public:
 
 protected:
     /** \name Mutators */ //@{
+    /** resizes panel and positions widgets */
+    void DoLayout() override;
+
     /** updates indicators with values of associated object.  Does not do layout and resizing. */
     void Update();
     void RefreshImpl();
-
-    /** resizes panel and positions widgets */
-    virtual void DoLayout();
     //@}
 
 private:
@@ -72,12 +72,15 @@ public:
                       double turns_completed, double total_turns, double total_cost, double turn_spending);
 
     /** \name Mutators */ //@{
-    virtual void PreRender();
-    virtual void    Render();
+    void PreRender() override;
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void Render() override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
     /** Enables, or disables if \a enable is false, issuing orders via this BuildingIndicator. */
     void            EnableOrderIssuing(bool enable = true);

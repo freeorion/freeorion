@@ -20,14 +20,16 @@ public:
 
     bool            Empty();
 
-    virtual void    Render();
-    virtual void    MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys);
+    void Render() override;
+
+    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
 
     void            Update();
 
     void            SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
     void            ClearToolTip(MeterType meter_type);
-    bool            EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
 private:
     void            Init();

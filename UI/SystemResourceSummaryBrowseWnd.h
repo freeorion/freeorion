@@ -13,14 +13,15 @@ class SystemResourceSummaryBrowseWnd : public GG::BrowseInfoWnd {
 public:
     SystemResourceSummaryBrowseWnd(ResourceType resource_type, int system_id, int empire_id = ALL_EMPIRES);
 
-    virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
+    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
 
-    virtual void    Render();
+    void Render() override;
 
 private:
+    void UpdateImpl(std::size_t mode, const GG::Wnd* target) override;
+
     void            Clear();
     void            Initialize();
-    virtual void    UpdateImpl(std::size_t mode, const GG::Wnd* target);
 
     void            UpdateProduction(GG::Y& top);   // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top and updates \a top to the vertical position after the last entry
     void            UpdateAllocation(GG::Y& top);   // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and updates \a top to be the vertical position after the last entry

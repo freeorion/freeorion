@@ -311,9 +311,11 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void        Render();
-    virtual void        LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void        LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void Render() override;
+
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
     //@}
 
     mutable boost::signals2::signal<void (const PartType*)> ClickedSignal;
@@ -384,7 +386,7 @@ public:
     class PartsListBoxRow : public CUIListBox::Row {
     public:
         PartsListBoxRow(GG::X w, GG::Y h);
-        virtual void    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
+        void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
     };
 
     /** \name Structors */ //@{
@@ -399,8 +401,9 @@ public:
     bool                            GetShowingSuperfluous() const { return m_show_superfluous_parts; }
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override;
 
     PartGroupsType  GroupAvailableDisplayableParts(const Empire* empire);
     void            CullSuperfluousParts(std::vector<const PartType* >& this_group,
@@ -423,8 +426,8 @@ public:
     mutable boost::signals2::signal<void (const PartType*)> PartTypeDoubleClickedSignal;
 
 protected:
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     std::set<ShipPartClass> m_part_classes_shown;   // which part classes should be shown
@@ -860,7 +863,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            ShowClass(ShipPartClass part_class, bool refresh_list = true);
     void            ShowAllClasses(bool refresh_list = true);
@@ -1194,8 +1197,12 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void                    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
+
+    void EnableOrderIssuing(bool enable = true) override;
+
     void                            QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
@@ -1209,7 +1216,6 @@ public:
 
     void                            ShowAvailability(bool available, bool refresh_list = true);
     void                            HideAvailability(bool available, bool refresh_list = true);
-    virtual void                    EnableOrderIssuing(bool enable = true);
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -1224,8 +1230,12 @@ public:
     class HullPanel : public GG::Control {
     public:
         HullPanel(GG::X w, GG::Y h, const std::string& hull);
-        virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-        virtual void                    Render() {}
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+        void Render() override
+        {}
+
     private:
         GG::StaticGraphic*              m_graphic;
         GG::Label*                      m_name;
@@ -1234,8 +1244,12 @@ public:
     class SavedDesignPanel : public GG::Control {
     public:
         SavedDesignPanel(GG::X w, GG::Y h, const std::string& saved_design_name);
-        virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-        virtual void                    Render() {}
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+        void Render() override
+        {}
+
     private:
         GG::StaticGraphic*              m_graphic;
         GG::Label*                      m_name;
@@ -1244,8 +1258,10 @@ public:
     class BasesListBoxRow : public CUIListBox::Row {
     public:
         BasesListBoxRow(GG::X w, GG::Y h);
-        virtual void                    Render();
-        virtual void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
+        void Render() override;
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
     };
 
     class HullAndPartsListBoxRow : public BasesListBoxRow {
@@ -1280,7 +1296,7 @@ public:
     };
 
 protected:
-    virtual void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
+    void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
@@ -2026,7 +2042,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void            Reset();
     void            ToggleAvailability(bool available, bool refresh_list);
     void            SetEmpireShown(int empire_id, bool refresh_list);
@@ -2253,15 +2270,21 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset);
-    virtual void    CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds);
-    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination);
-    virtual void    DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                                  GG::Flags<GG::ModKey> mod_keys);
-    virtual void    DragDropLeave();
+    void StartingChildDragDrop(const GG::Wnd* wnd, const GG::Pt& offset) override;
 
-    virtual void    Render();
+    void CancellingChildDragDrop(const std::vector<const GG::Wnd*>& wnds) override;
+
+    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
+
+    void DragDropEnter(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                       GG::Flags<GG::ModKey> mod_keys) override;
+
+    void DragDropLeave() override;
+
+    void Render() override;
+
     void            Highlight(bool actually = true);
 
     void            SetPart(const std::string& part_name);  //!< used to programmatically set the PartControl in this slot.  Does not emit signal
@@ -2276,9 +2299,10 @@ public:
     mutable boost::signals2::signal<void (const PartType*)> PartTypeClickedSignal;
 
 protected:
-    virtual bool    EventFilter(GG::Wnd* w, const GG::WndEvent& event);
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
+    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
+
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     /** emits SlotContentsAlteredSignal with PartType* = 0.  needed because
@@ -2574,10 +2598,12 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void            Sanitize();
 
     void            SetPart(const std::string& part_name, unsigned int slot);   //!< puts specified part in specified slot.  does nothing if slot is out of range of available slots for current hull
@@ -2637,8 +2663,8 @@ public:
     mutable boost::signals2::signal<void (int)>             CompleteDesignClickedSignal;
 
 protected:
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart

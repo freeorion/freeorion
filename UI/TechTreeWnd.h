@@ -37,13 +37,15 @@ public:
     //@}
 
     //! \name Mutators //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void Show(bool children = true) override;
+
     void            Update();
     void            Clear();
     void            Reset();
     void            SetScale(double scale);
 
-    virtual void    Show(bool children = true);
     void            ShowCategory(const std::string& category);
     void            ShowAllCategories();
     void            HideCategory(const std::string& category);

@@ -137,15 +137,15 @@ namespace {
         }
 
         /** Excludes border from the client area. */
-        virtual GG::Pt  ClientUpperLeft() const
+        GG::Pt ClientUpperLeft() const override
         { return UpperLeft() + GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
 
         /** Excludes border from the client area. */
-        virtual GG::Pt  ClientLowerRight() const
+        GG::Pt ClientLowerRight() const override
         { return LowerRight() - GG::Pt(GG::X(DATA_PANEL_BORDER), GG::Y(DATA_PANEL_BORDER)); }
 
         /** Renders panel background, border with color depending on the current state. */
-        virtual void    Render() {
+        void Render() override {
             const GG::Clr& background_colour = ClientUI::WndColor();
             const GG::Clr& unselected_colour = ClientUI::WndOuterBorderColor();
             const GG::Clr& selected_colour = ClientUI::WndInnerBorderColor();
@@ -216,7 +216,7 @@ namespace {
         void            Select(bool b)
         { m_selected = b; }
 
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
             if (old_size != Size())
@@ -474,7 +474,7 @@ namespace {
 
         /** This function overridden because otherwise, rows don't expand
           * larger than their initial size when resizing the list. */
-        void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             //std::cout << "PlayerRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -503,7 +503,7 @@ public:
         LockColWidths();
     }
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
         //std::cout << "PlayerListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;

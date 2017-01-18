@@ -19,14 +19,14 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
+
     int PlanetID() const { return m_planet_id; }
     //@}
 
     /** \name Mutators */ //@{
     /** expands or collapses panel to show details or just summary info */
     void ExpandCollapse(bool expanded);
-
-    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event);
 
     /** updates indicators with values of associated object.  Does not do layout and resizing. */
     void Update();
@@ -37,7 +37,7 @@ public:
 protected:
     /** \name Mutators */ //@{
     /** resizes panel and positions widgets */
-    virtual void DoLayout();
+    void DoLayout() override;
     //@}
 
 private:

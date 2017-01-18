@@ -669,7 +669,7 @@ namespace {
             }
         }
 
-        void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             //std::cout << "ShipRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -1052,29 +1052,39 @@ public:
     FleetDataPanel(GG::X w, GG::Y h, int fleet_id);
     FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target);
 
-    virtual GG::Pt      ClientUpperLeft() const;  ///< upper left plus border insets
-    virtual GG::Pt      ClientLowerRight() const; ///< lower right minus border insets
+    /** Upper left plus border insets. */
+    GG::Pt ClientUpperLeft() const override;
+
+    /** Lower right minus border insets. */
+    GG::Pt ClientLowerRight() const override;
+
+    void PreRender() override;
+
+    void Render() override;
+
+    void DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                      GG::Flags<GG::ModKey> mod_keys) override;
+
+    void CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                    GG::Flags<GG::ModKey> mod_keys) override;
+
+    void DragDropLeave() override;
+
+    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     bool                Selected() const;
     NewFleetAggression  GetNewFleetAggression() const;
-
-    virtual void        PreRender();
-    virtual void        Render();
-    virtual void        DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                                     GG::Flags<GG::ModKey> mod_keys);
-    virtual void        CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                                   GG::Flags<GG::ModKey> mod_keys);
-    virtual void        DragDropLeave();
-    virtual void        AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys);
     void                Select(bool b);
-    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr);
 
     mutable boost::signals2::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
 
 protected:
-    virtual bool        EventFilter(GG::Wnd* w, const GG::WndEvent& event);
-    virtual void        DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                        const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const;
+    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
+
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
     void                AggressionToggleButtonPressed();
@@ -1757,7 +1767,7 @@ namespace {
             push_back(m_panel);
         }
 
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
             //std::cout << "FleetRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -1789,7 +1799,7 @@ public:
         m_order_issuing_enabled = enable;
     }
 
-    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
+    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override {
         //DebugLogger() << "FleetsListBox::AcceptDrops";
         if (wnds.empty()) {
             ErrorLogger() << "FleetsListBox::AcceptDrops dropped wnds empty";
@@ -1931,8 +1941,8 @@ public:
         //DebugLogger() << "FleetsListBox::AcceptDrops finished";
     }
 
-    virtual void    DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
-                                 GG::Flags<GG::ModKey> mod_keys)
+    void DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
+                      GG::Flags<GG::ModKey> mod_keys) override
     {
         //std::cout << "FleetsListBox::DragDropHere" << std::endl << std::flush;
         CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
@@ -2019,14 +2029,14 @@ public:
         HighlightRow(row_it);
     }
 
-    virtual void    DragDropLeave() {
+    void DragDropLeave() override {
         //std::cout << "FleetsListBox::DragDropLeave" << std::endl << std::flush;
         CUIListBox::DragDropLeave();
         ClearHighlighting();
         //std::cout << "FleetsListBox::DragDropLeave done" << std::endl << std::flush;
     }
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
         //std::cout << "FleetListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -2042,8 +2052,8 @@ public:
     { return GG::Pt(Width() - RightMargin() - 5, ListRowHeight()); }
 
 protected:
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override
     {
         // default result, possibly to be updated later: reject all drops
         for (DropsAcceptableIter it = first; it != last; ++it)
@@ -2257,8 +2267,8 @@ public:
         m_order_issuing_enabled = enable;
     }
 
-    virtual void    DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                    const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
+    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
+                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override
     {
         for (DropsAcceptableIter it = first; it != last; ++it) {
             it->second = false; // default
@@ -2290,7 +2300,7 @@ public:
         }
     }
 
-    virtual void    AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
+    void AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) override {
         if (wnds.empty())
             return;
 
@@ -2326,7 +2336,7 @@ public:
         }
     }
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         CUIListBox::SizeMove(ul, lr);
         //std::cout << "ShipsListBox::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -2355,13 +2365,14 @@ class FleetDetailPanel : public GG::Wnd {
 public:
     FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_issuing_enabled, GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS); ///< ctor
 
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     int             FleetID() const;
     std::set<int>   SelectedShipIDs() const;    ///< returns ids of ships selected in the detail panel's ShipsListBox
 
     void            SetFleet(int fleet_id);                         ///< sets the currently-displayed Fleet.  setting to INVALID_OBJECT_ID shows no fleet
     void            SetSelectedShips(const std::set<int>& ship_ids);///< sets the currently-selected ships in the ships list
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     void            Refresh();
 
     void            EnableOrderIssuing(bool enabled = true);

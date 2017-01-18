@@ -26,15 +26,19 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    virtual bool            InWindow(const GG::Pt& pt) const;       ///< returns true if \a pt is within or over the button
+    /** Returns true if \a pt is within or over the button. */
+    bool InWindow(const GG::Pt& pt) const override;
+
     const std::vector<int>& Fleets() const {return m_fleets;}       ///< returns the fleets represented by this control
     bool                    Selected() const {return m_selected;}   ///< returns whether this button has been marked selected
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
+    void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
     void                    SetSelected(bool selected = true);      ///< sets selection status of button.  if selected = true, marks button as selected.  otherwise marks button as not selected
-    virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
     //@}
 
     static void             PlayFleetButtonOpenSound();
@@ -42,9 +46,11 @@ public:
 
 protected:
     /** \name Mutators */ //@{
-    virtual void            RenderUnpressed();
-    virtual void            RenderPressed();
-    virtual void            RenderRollover();
+    void RenderUnpressed() override;
+
+    void RenderPressed() override;
+
+    void RenderRollover() override;
     //@}
 
 private:

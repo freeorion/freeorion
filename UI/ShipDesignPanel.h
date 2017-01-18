@@ -17,8 +17,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void            SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void            Render();
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void Render() override;
 
     void                    Update();
     //@}

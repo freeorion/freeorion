@@ -18,8 +18,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    Render()
-    {
+    void Render() override {
         const GG::Pt UL = this->UpperLeft();
         const GG::Pt LR = this->LowerRight();
         GG::Clr border_color_to_use = this->Disabled() ? GG::DisabledColor(ClientUI::CtrlBorderColor()) : ClientUI::CtrlBorderColor();
@@ -39,8 +38,7 @@ public:
         GG::FlatRectangle(ul, lr, GG::CLR_ZERO, border_color_to_use, 1);
     }
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr)
-    {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         GG::Wnd::SizeMove(ul, lr);
         if (this->GetOrientation() == GG::VERTICAL) {
             this->Tab()->Resize(GG::Pt(GG::X(this->TabWidth()), GG::Y(this->TabWidth())));

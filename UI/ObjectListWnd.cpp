@@ -490,7 +490,7 @@ public:
         return new Condition::All();
     }
 
-    virtual void Render()
+    void Render() override
     { GG::FlatRectangle(UpperLeft(), LowerRight(), ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
 private:
@@ -938,7 +938,7 @@ public:
     { return m_condition_widget->GetCondition(); }
 
 protected:
-    virtual GG::Rect CalculatePosition() const
+    GG::Rect CalculatePosition() const override
     { return GG::Rect(GG::X(100), GG::Y(100), GG::X(500), GG::Y(350)); }
 
 private:
@@ -1220,12 +1220,12 @@ public:
 
     int                 ObjectID() const { return m_object_id; }
 
-    virtual void PreRender() {
+    void PreRender() override {
         GG::Control::PreRender();
         RefreshLayout();
     }
 
-    virtual void        Render() {
+    void Render() override {
         if (!m_initialized)
             Init();
 
@@ -1242,7 +1242,7 @@ public:
     void                Select(bool b)
     { m_selected = b; }
 
-    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
@@ -1438,7 +1438,7 @@ public:
         m_panel->Resize(Size() - border);
     }
 
-    virtual GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const
+    GG::ListBox::Row::SortKeyType SortKey(std::size_t column) const override
     { return m_panel ? m_panel->SortKey(column) : ""; }
 
     int                     ObjectID() const {
@@ -1462,7 +1462,7 @@ public:
     void                    Update()
     { m_panel->RequirePreRender(); }
 
-    void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
         if (!empty() && old_size != Size() && m_panel){
@@ -1496,14 +1496,14 @@ public:
         SetChildClippingMode(ClipToClient);
     }
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         GG::Control::SizeMove(ul, lr);
         if (old_size != Size())
             DoLayout();
     }
 
-    virtual void    Render()
+    void Render() override
     {}
 
     void            Refresh() {
@@ -1643,7 +1643,7 @@ public:
         GG::Connect(m_panel->ColumnsChangedSignal,          ColumnsChangedSignal);
     }
 
-    void                    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         GG::ListBox::Row::SizeMove(ul, lr);
         //std::cout << "ObjectRow::SizeMove size: (" << Value(Width()) << ", " << Value(Height()) << ")" << std::endl;
@@ -1732,7 +1732,7 @@ public:
         delete m_filter_condition;
     }
 
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         Wnd::SizeMove(ul, lr);
         if (old_size != Size()) {

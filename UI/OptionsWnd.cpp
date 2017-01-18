@@ -50,7 +50,9 @@ namespace {
     class PlaceholderWnd : public GG::Wnd {
     public:
         PlaceholderWnd(GG::X w, GG::Y h) : Wnd(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS) {}
-        virtual void Render() {}
+
+        void Render() override
+        {}
     };
 
     class RowContentsWnd : public GG::Control {
@@ -66,7 +68,7 @@ namespace {
             DoLayout();
         }
 
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             GG::Control::SizeMove(ul, lr);
             if (old_size != Size())
@@ -80,7 +82,7 @@ namespace {
             }
         }
 
-        virtual void    Render() {
+        void Render() override {
             //GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_RED, GG::CLR_PINK, 1);
         }
     private:
@@ -263,10 +265,12 @@ namespace {
         KeyPressCatcher() :
             Wnd(GG::X0, GG::Y0, GG::X0, GG::Y0, GG::Flags<GG::WndFlag>(GG::MODAL))
         {};
-        virtual void Render() {};
 
-        virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point,
-                              GG::Flags<GG::ModKey> mod_keys)
+        void Render() override
+        {}
+
+        void KeyPress(GG::Key key, boost::uint32_t key_code_point,
+                      GG::Flags<GG::ModKey> mod_keys) override
         {
             m_key = key;
             m_code_point = key_code_point;
@@ -331,7 +335,7 @@ namespace {
             DoLayout();
         }
 
-        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             GG::Pt old_size = GG::Wnd::Size();
 
             CUIWnd::SizeMove(ul, lr);
@@ -392,7 +396,7 @@ namespace {
             }
         }
 
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             //std::cout << "OptionsListRow::SizeMove(" << ul << ", " << lr << ")" << std::endl;
             const GG::Pt old_size = Size();
             GG::ListBox::Row::SizeMove(ul, lr);
@@ -400,7 +404,7 @@ namespace {
                 m_contents->Resize(Size());
         }
 
-        virtual void    Render() {
+        void Render() override {
             //GG::FlatRectangle(UpperLeft(), LowerRight(), GG::CLR_DARK_BLUE, GG::CLR_YELLOW, 1);
         }
     private:
@@ -419,7 +423,7 @@ namespace {
             SetVScrollWheelIncrement(ClientUI::Pts() * 10);
         }
 
-        virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             const GG::Pt old_size = Size();
             CUIListBox::SizeMove(ul, lr);
             if (old_size != Size()) {

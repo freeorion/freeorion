@@ -13,11 +13,12 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void Render() override;
 
     void            Reset();
     void            Sanitize();
-    void            Render();
 
     /** Shows \a part_type in design encyclopedia window */
     void            ShowPartTypeInEncyclopedia(const std::string& part_type);

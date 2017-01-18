@@ -23,9 +23,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
-    void    Render();
+    void Render() override;
 
     void    SetEmpireShown(int empire_id);
 

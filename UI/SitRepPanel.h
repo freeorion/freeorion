@@ -20,8 +20,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    KeyPress (GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            Update(); ///< loads all the relevant SitReps into the window
 
@@ -32,7 +33,8 @@ public:
     mutable boost::signals2::signal<void ()> ClosingSignal;
 
 private:
-    virtual void    CloseClicked();
+    void CloseClicked() override;
+
     void            PrevClicked();
     void            NextClicked();
     void            LastClicked();

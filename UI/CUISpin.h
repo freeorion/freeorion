@@ -35,8 +35,7 @@ public:
     }
 
     /** \name Mutators */ //@{
-    virtual void Render()
-    {
+    void Render() override {
         GG::Clr color_to_use = this->Disabled() ? DisabledColor(this->Color()) : this->Color();
         GG::Clr int_color_to_use = this->Disabled() ? DisabledColor(this->InteriorColor()) : this->InteriorColor();
         GG::Pt ul = this->UpperLeft(), lr = this->LowerRight();

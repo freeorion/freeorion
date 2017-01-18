@@ -51,11 +51,12 @@ public:
     CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co);
     ~CreditsWnd();
 
-    virtual void    Render();
-    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+    void Render() override;
+
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
     { OnExit(); }
-    virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
-    {
+
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
         if (key == GG::GGK_ESCAPE)
             OnExit();
     }

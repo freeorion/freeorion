@@ -9,8 +9,11 @@
 class ResourceBrowseWnd : public GG::BrowseInfoWnd {
 public:
     ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label, float used, float output, float target_output);
-    virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
-    virtual void    Render();
+
+    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
+
+    void Render() override;
+
     void            DoLayout();
 
 private:

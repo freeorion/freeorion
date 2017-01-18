@@ -57,7 +57,7 @@ public:
         DoLayout();
     }
 
-    virtual void    Render() {
+    void Render() override {
         GG::Pt ul = UpperLeft();
 
         glPushMatrix();

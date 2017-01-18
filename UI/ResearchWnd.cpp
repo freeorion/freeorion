@@ -37,9 +37,13 @@ namespace {
     public:
         QueueTechPanel(GG::X x, GG::Y y, GG::X w, const std::string& tech_name, double allocated_rp,
                        int turns_left, double turns_completed, int empire_id, bool paused = false);
-        virtual void Render();
-        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+
+        void Render() override;
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
         static GG::Y DefaultHeight();
+
     private:
         void Draw(GG::Clr clr, bool fill);
 
@@ -91,7 +95,7 @@ namespace {
             SetBrowseInfoWnd(TechPanelRowBrowseWnd(elem.name, elem.empire_id));
         }
 
-        virtual void PreRender() {
+        void PreRender() override {
             GG::ListBox::Row::PreRender();
 
             if (!panel)
@@ -102,7 +106,7 @@ namespace {
             GG::ListBox::Row::Resize(panel->Size() + border);
         }
 
-        virtual void SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
             if (panel) {
                 GG::Pt border(GG::X(2 * GetLayout()->BorderMargin()), GG::Y(2 * GetLayout()->BorderMargin()));
                 panel->Resize(lr - ul - border);
@@ -275,7 +279,7 @@ public:
     boost::signals2::signal<void (GG::ListBox::iterator, bool)> QueueItemPausedSignal;
 
 protected:
-    void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+    void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
         // mostly duplicated equivalent in QueueListBox, but with an extra command...
 
         GG::MenuItem menu_contents;
@@ -365,7 +369,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    virtual void        SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         GG::Pt sz = Size();
         CUIWnd::SizeMove(ul, lr);
         if (Size() != sz)

@@ -10,8 +10,10 @@ class CensusBrowseWnd : public GG::BrowseInfoWnd {
 public:
     CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,
                     const std::map<std::string, float>& tag_counts);
-    virtual bool    WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const;
-    virtual void    Render();
+
+    bool WndHasBrowseInfo(const Wnd* wnd, std::size_t mode) const override;
+
+    void Render() override;
 
 private:
     virtual void  InitBuffer();

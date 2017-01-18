@@ -19,19 +19,21 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    bool InWindow(const GG::Pt& pt) const override;
+
+    bool InClient(const GG::Pt& pt) const override;
+
     /** returns set of BulldType shown in this selector */
     const std::set<BuildType>&      GetBuildTypesShown() const;
 
     /** .first -> available items; .second -> unavailable items */
     const std::pair<bool, bool>&    GetAvailabilitiesShown() const;
 
-    virtual bool    InWindow(const GG::Pt& pt) const;
-    virtual bool    InClient(const GG::Pt& pt) const;
     int             SelectedPlanetID() const;
     //@}
 
     /** \name Mutators */ //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     /** Centres map wnd on location of item on queue with index \a queue_idx
       * and displays info about that item in encyclopedia window

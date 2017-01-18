@@ -21,7 +21,7 @@ public:
 
    Mode GetMode() const {return m_mode;} ///< returns the current mode of this button (is it a minimize button or a restore button?)
 
-   void Render();
+   void Render() override;
 
    void Toggle(); ///< toggles modes between MIN_BUTTON and RESTORE_BUTTON
 
@@ -103,9 +103,12 @@ public:
 
     //! \name Accessors //@{
     bool            Minimized() const {return m_minimized;} //!< returns true if window is minimized
-    virtual GG::Pt  ClientUpperLeft() const;
-    virtual GG::Pt  ClientLowerRight() const;
-    virtual bool    InWindow(const GG::Pt& pt) const;
+
+    GG::Pt ClientUpperLeft() const override;
+
+    GG::Pt ClientLowerRight() const override;
+
+    bool InWindow(const GG::Pt& pt) const override;
 
     GG::X           LeftBorder() const;                 //!< the distance on the left side between the outer edge of the window and the inner border
     GG::Y           TopBorder() const;                  //!< the distance at the top between the outer edge of the window and the inner border
@@ -114,17 +117,28 @@ public:
     //@}
 
     //! \name Mutators //@{
-    virtual void    SizeMove(const GG::Pt& ul, const GG::Pt& lr);
-    virtual void    Render();
-    virtual void    LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {return LButtonUp(pt, mod_keys);}
-    virtual void    MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys);
-    virtual void    MouseLeave();
-    virtual void    Hide(bool children = true);
-    virtual void    Show(bool children = true);
+    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+    void Render() override;
+
+    void LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LButtonUp(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
+    { return LButtonUp(pt, mod_keys); }
+
+    void MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override;
+
+    void MouseLeave() override;
+
+    void Hide(bool children = true) override;
+
+    void Show(bool children = true) override;
 
     void            ToggleMinimized() { MinimizeClicked(); }
     void            Close()           { CloseClicked(); }
@@ -174,7 +188,7 @@ protected:
     void            Init(const std::string& t);     //!< performs initialization common to all CUIWnd constructors
     void            ResetDefaultPosition();         //!< called via signal from the ClientUI, passes the value from CalculatePosition() to InitSizeMove()
 
-    virtual void    SetParent(GG::Wnd* wnd);
+    void SetParent(GG::Wnd* wnd) override;
     //@}
 
     bool                    m_resizable;            //!< true if the window is able to be resized
@@ -219,8 +233,9 @@ class CUIEditWnd : public CUIWnd {
 public:
     CUIEditWnd(GG::X w, const std::string& prompt_text, const std::string& edit_text, GG::Flags<GG::WndFlag> flags = GG::MODAL);
 
-    virtual void ModalInit();
-    virtual void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+    void ModalInit() override;
+
+    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     const std::string& Result() const;
 

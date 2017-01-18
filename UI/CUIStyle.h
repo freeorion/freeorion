@@ -6,53 +6,53 @@
 class CUIStyle : public GG::StyleFactory
 {
 public:
-    virtual std::string            Translate(const std::string& text) const;
+    std::string Translate(const std::string& text) const override;
 
-    virtual GG::DropDownList*      NewDropDownList(size_t num_shown_elements, GG::Clr color) const;
+    GG::DropDownList* NewDropDownList(size_t num_shown_elements, GG::Clr color) const override;
 
-    virtual GG::Edit*              NewEdit(const std::string& str, const boost::shared_ptr<GG::Font>& font,
-                                           GG::Clr color, GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO) const;
+    GG::Edit* NewEdit(const std::string& str, const boost::shared_ptr<GG::Font>& font,
+                      GG::Clr color, GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO) const override;
 
-    virtual GG::ListBox*           NewListBox(GG::Clr color, GG::Clr interior = GG::CLR_ZERO) const;
+    GG::ListBox* NewListBox(GG::Clr color, GG::Clr interior = GG::CLR_ZERO) const override;
 
-    virtual GG::Scroll*            NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior) const;
+    GG::Scroll* NewScroll(GG::Orientation orientation, GG::Clr color, GG::Clr interior) const override;
 
-    virtual GG::Slider<int>*       NewIntSlider(int min, int max, GG::Orientation orientation,
-                                                GG::Clr color, int tab_width, int line_width = 5) const;
+    GG::Slider<int>* NewIntSlider(int min, int max, GG::Orientation orientation,
+                                  GG::Clr color, int tab_width, int line_width = 5) const override;
 
 
-    virtual GG::TabBar*            NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
-                                             GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::TabBar* NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
+                          GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewScrollUpButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewScrollUpButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewScrollDownButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewScrollDownButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewVScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewVScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewScrollLeftButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewScrollLeftButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewScrollRightButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewScrollRightButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewHScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewHScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewVSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewVSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewHSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewHSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::StateButton*       NewTabBarTab(const std::string& str,
-                                                const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
-                                                GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::StateButton* NewTabBarTab(const std::string& str,
+                                  const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
+                                  GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual GG::Button*            NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const;
+    GG::Button* NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    virtual void                   DeleteWnd(GG::Wnd* wnd) const;
+    void DeleteWnd(GG::Wnd* wnd) const override;
 };
 
 #endif // _CUIStyle_h_
