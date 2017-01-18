@@ -89,11 +89,13 @@ namespace {
     std::string CountsToText(const std::map<int, int>& count_per_empire, const std::string& delimiter = ", ") {
         std::stringstream ss;
         for (std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
-            std::string owner_string = UserString("NEUTRAL");
+            std::string owner_string;
             if (const Empire* owner = GetEmpire(it->first))
                 owner_string = GG::RgbaTag(owner->Color()) + "<" + VarText::EMPIRE_ID_TAG + " "
                     + boost::lexical_cast<std::string>(owner->EmpireID()) + ">" + owner->Name()
                     + "</" + VarText::EMPIRE_ID_TAG + ">" + "</rgba>";
+            else
+                owner_string = GG::RgbaTag(ClientUI::DefaultLinkColor()) + UserString("NEUTRAL")  + "</rgba>";
             ss << owner_string << ": " << it->second;
             ++it;
             if (it != count_per_empire.end())
