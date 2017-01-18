@@ -25,11 +25,14 @@ class FO_COMMON_API IApp {
 public:
     virtual ~IApp();
 
-    static IApp* GetApp(); ///< returns a IApp pointer to the singleton instance of the app
+    /** Returns a IApp pointer to the singleton instance of the app. */
+    static IApp* GetApp();
 
-    virtual Universe& GetUniverse() = 0;  ///< returns applications copy of Universe
+    /** Returns applications copy of Universe. */
+    virtual Universe& GetUniverse() = 0;
 
-    virtual EmpireManager& Empires() = 0; ///< returns the set of known Empires for this application
+    /** Returns the set of known Empires for this application. */
+    virtual EmpireManager& Empires() = 0;
 
     virtual Empire* GetEmpire(int id) = 0;
 
@@ -48,18 +51,24 @@ public:
         Can return INVALID_OBJECT_ID if an ID cannot be created. */
     virtual int GetNewObjectID() = 0;
 
-    /** returns a design ID which can be used for a new design to uniquely identify it.
+    /** returns a design ID which can be used for a new design to uniquely
+        identify it.
         Can return INVALID_OBJECT_ID if an ID cannot be created. */
     virtual int GetNewDesignID() = 0;
 
-    virtual int CurrentTurn() const = 0;        ///< returns the current game turn
+    /** Returns the current game turn. */
+    virtual int CurrentTurn() const = 0;
 
     static int MAX_AI_PLAYERS(); ///<Maximum number of AIs
 
+    /** Returns the galaxy setup data used for the current game */
     virtual const GalaxySetupData& GetGalaxySetupData() const = 0;
 
-    virtual Networking::ClientType GetEmpireClientType(int empire_id) const = 0;///< returns the networking client type for the given empire_id
-    virtual Networking::ClientType GetPlayerClientType(int player_id) const = 0;///< returns the networking client type for the given player_id
+    /** Returns the networking client type for the given empire_id. */
+    virtual Networking::ClientType GetEmpireClientType(int empire_id) const = 0;
+
+    /** Returns the networking client type for the given player_id. */
+    virtual Networking::ClientType GetPlayerClientType(int player_id) const = 0;
 
     virtual int EffectsProcessingThreads() const = 0;
 

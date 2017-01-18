@@ -69,29 +69,60 @@ class ServerApp : public IApp {
 public:
     /** \name Structors */ //@{
     ServerApp();
+
     ~ServerApp();
     //@}
 
     /** \name Accessors */ //@{
-    int     CurrentTurn() const {return m_current_turn;}   ///< returns current turn of the server
 
-    /** Returns the galaxy setup data used for the current game */
-    const GalaxySetupData&  GetGalaxySetupData() const { return m_galaxy_setup_data; }
+    /** Returns a ClientApp pointer to the singleton instance of the app. */
+    static ServerApp* GetApp();
 
-    /** Returns the empire ID for the player with ID \a player_id */
-    int     PlayerEmpireID(int player_id) const;
+    Universe& GetUniverse() override;
 
-    /** Returns the player ID for the player controlling the empire with id \a empire_id */
-    int     EmpirePlayerID(int empire_id) const;
+    EmpireManager& Empires() override;
+
+    Empire* GetEmpire(int id) override;
+
+    SupplyManager& GetSupplyManager() override;
+
+    TemporaryPtr<UniverseObject> GetUniverseObject(int object_id) override;
+
+    /** Returns the server's map for known objects of specified empire. */
+    ObjectMap& EmpireKnownObjects(int empire_id) override;
+
+    TemporaryPtr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
+
+    std::string GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) override;
+
+    int GetNewObjectID() override;
+
+    int GetNewDesignID() override;
+
+    int CurrentTurn() const override
+    { return m_current_turn; }
+
+    const GalaxySetupData&  GetGalaxySetupData() const override
+    { return m_galaxy_setup_data; }
 
     /** Checks if player with ID \a player_id is a human player
         who's client runs on the same machine as the server */
-    bool    IsLocalHumanPlayer(int player_id);
+    bool IsLocalHumanPlayer(int player_id);
 
-    Networking::ClientType  GetEmpireClientType(int empire_id) const;   ///< returns the networking client type for the given empire_id
-    Networking::ClientType  GetPlayerClientType(int player_id) const;   ///< returns the networking client type for the given player_id
+    /** Returns the networking client type for the given empire_id. */
+    Networking::ClientType GetEmpireClientType(int empire_id) const override;
 
-    virtual int             EffectsProcessingThreads() const;
+    /** Returns the networking client type for the given player_id. */
+    Networking::ClientType GetPlayerClientType(int player_id) const override;
+
+    int EffectsProcessingThreads() const override;
+
+    /** Returns the empire ID for the player with ID \a player_id */
+    int PlayerEmpireID(int player_id) const;
+
+    /** Returns the player ID for the player controlling the empire with id \a
+        empire_id */
+    int EmpirePlayerID(int empire_id) const;
     //@}
 
 
@@ -174,26 +205,7 @@ public:
     /** Send the requested combat logs to the client.*/
     void UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection);
 
-    static ServerApp*           GetApp();         ///< returns a ClientApp pointer to the singleton instance of the app
-    Universe&                   GetUniverse();    ///< returns server's copy of Universe
-    EmpireManager&              Empires();        ///< returns the server's copy of the Empires
-    Empire*                     GetEmpire(int id);
-    SupplyManager&              GetSupplyManager();
-    TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
-    ObjectMap&                  EmpireKnownObjects(int empire_id); ///< returns the server's map for known objects of specified empire. */
-    TemporaryPtr<UniverseObject>EmpireKnownObject(int object_id, int empire_id);
-
     ServerNetworking&           Networking();     ///< returns the networking object for the server
-
-    std::string                 GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
-
-    /** returns a universe object ID which can be used for new objects.
-        Can return INVALID_OBJECT_ID if an ID cannot be created. */
-    int                         GetNewObjectID();
-
-    /** returns a design ID which can be used for a new design to uniquely identify it.
-        Can return INVALID_OBJECT_ID if an ID cannot be created. */
-    int                         GetNewDesignID();
 
 private:
     const ServerApp& operator=(const ServerApp&); // disabled

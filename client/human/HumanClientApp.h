@@ -34,14 +34,21 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    int EffectsProcessingThreads() const override;
+
     bool                SinglePlayerGame() const;   ///< returns true iff this game is a single-player game
     bool                CanSaveNow() const;         ///< returns true / false to indicate whether this client can currently safely initiate a game save
     int                 AutoTurnsLeft() const;      ///< returns number of turns left to execute automatically
     bool                HaveWindowFocus() const;    ///< as far as the HCA knows, does the game window have focus?
-    virtual int         EffectsProcessingThreads() const;
     //@}
 
     /** \name Mutators */ //@{
+    /** Handle background events that need starting when the turn updates.
+     */
+    void HandleTurnUpdate() override;
+
+    void StartTurn() override;
+
     void                SetSinglePlayerGame(bool sp = true);
 
     void                StartServer();                  ///< starts a server process on localhost
@@ -54,9 +61,6 @@ public:
     void                SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
     void                StartGame();
 
-    /** Handle background events that need starting when the turn updates.
-     */
-    void                HandleTurnUpdate();
     /** Check if the CombatLogManager has incomplete logs that need fetching and start fetching
         them from the server.
      */
@@ -77,8 +81,6 @@ public:
 
     float               GLVersion() const;
 
-    virtual void        StartTurn();
-
     void                HandleSaveGameDataRequest();
     void                UpdateCombatLogs(const Message& msg);
 
@@ -96,12 +98,14 @@ public:
     /** Adds window dimension options to OptionsDB after the start of main, but before HumanClientApp constructor.
         OSX will not tolerate static initialization of SDL, to check screen size. */
     static void AddWindowSizeOptionsAfterMainStart(OptionsDB& db);
+
 protected:
-    virtual void Initialize();
+    void Initialize() override;
 
 private:
-    virtual void    HandleSystemEvents();
-    virtual void    RenderBegin();
+    void HandleSystemEvents() override;
+
+    void RenderBegin() override;
 
     void            HandleMessage(Message& msg);
 

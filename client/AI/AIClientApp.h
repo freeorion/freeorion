@@ -23,8 +23,10 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&  PlayerName() const { return m_player_name; }
-    virtual int         EffectsProcessingThreads() const;
+    int EffectsProcessingThreads() const override;
+
+    const std::string& PlayerName() const
+    { return m_player_name; }
     //@}
 
     static AIClientApp* GetApp();       ///< returns a AIClientApp pointer to the singleton instance of the app

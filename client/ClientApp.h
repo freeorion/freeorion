@@ -39,7 +39,7 @@ public:
      *
      * @return The number representing the current game turn.
      */
-    int CurrentTurn() const;
+    int CurrentTurn() const override;
 
     /** @brief Return the player identfier of the player controlling the empire
      *      @a empire_id
@@ -76,7 +76,7 @@ public:
      *      the known universe of this client.
      *
      * @{ */
-    Universe& GetUniverse();
+    Universe& GetUniverse() override;
     const Universe& GetUniverse() const;
     /** @} */
 
@@ -86,7 +86,7 @@ public:
      *
      * @{ */
     GalaxySetupData& GetGalaxySetupData();
-    const GalaxySetupData& GetGalaxySetupData() const;
+    const GalaxySetupData& GetGalaxySetupData() const override;
     /** @} */
 
     /** @brief Return the OrderSet of this client
@@ -120,7 +120,7 @@ public:
      * @return the networking client type of the empire represented by @a
      *      empire_id parameter.
      */
-    Networking::ClientType GetEmpireClientType(int empire_id) const;
+    Networking::ClientType GetEmpireClientType(int empire_id) const override;
 
     /** @brief Return the Networking::ClientType of the player @a player_id
      *
@@ -129,7 +129,7 @@ public:
      * @return the networking client type of the player represented by @a
      *      player_id parameter.
      */
-    Networking::ClientType GetPlayerClientType(int player_id) const;
+    Networking::ClientType GetPlayerClientType(int player_id) const override;
 
     /** @brief Return the ::UniverseObject associated with @a object_id
      *
@@ -139,7 +139,7 @@ public:
      *      When there is no matching object or the client does not know of the
      *      object existence the pointer may be NULL.
      */
-    TemporaryPtr<UniverseObject>GetUniverseObject(int object_id);
+    TemporaryPtr<UniverseObject>GetUniverseObject(int object_id) override;
 
     /** @brief Return the for this client visible name of @a object
      *
@@ -148,7 +148,7 @@ public:
      * @return The name of the @a object.  Depdending on Visibility it may not
      *      match with the actual object name.
      */
-    std::string GetVisibleObjectName(TemporaryPtr<const UniverseObject> object);
+    std::string GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) override;
 
     /** @brief Send the OrderSet to the server and start a new turn */
     virtual void StartTurn();
@@ -158,7 +158,7 @@ public:
      * @return The EmpireManager instance in charge of maintaining the Empire
      *      object instances.
      */
-    EmpireManager& Empires();
+    EmpireManager& Empires() override;
 
     /** @brief Return the Empire identified by @a empire_id
      *
@@ -168,9 +168,9 @@ public:
      *      If there is no Empire with this @a empire_id or if the Empire is
      *      not yet known to this client a NULL pointer is returned.
      */
-    Empire* GetEmpire(int empire_id);
+    Empire* GetEmpire(int empire_id) override;
 
-    SupplyManager& GetSupplyManager();
+    SupplyManager& GetSupplyManager() override;
 
     /** @brief Return all Objects known to @a empire_id
      *
@@ -179,7 +179,7 @@ public:
      * @return A map containing all Objects known to the ::Empire identified by
      *      @a empire_id.  If there is no ::Empire an empty map is returned.
      */
-    ObjectMap& EmpireKnownObjects(int empire_id);
+    ObjectMap& EmpireKnownObjects(int empire_id) override;
 
     /** @brief Return the UniverseObject @a object_id if known by @a empire_id
      *
@@ -191,7 +191,7 @@ public:
      *      If there is no such object or if that object is not known to the
      *      empire a NULL pointer is returned.
      */
-    TemporaryPtr<UniverseObject> EmpireKnownObject(int object_id, int empire_id);
+    TemporaryPtr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
 
     /** @brief Set the identifier of the ::Empire controlled by this client to
      *      @a empire_id
@@ -233,7 +233,7 @@ public:
      * @return A new, unique universe object identifier.  If no new idenfifier
      *      can be create INVALID_OBJECT_ID is returned.
      */
-    int GetNewObjectID();
+    int GetNewObjectID() override;
 
     /** @brief Return a new ship design identifier
      *
@@ -243,7 +243,7 @@ public:
      * @return A new, unique ship design identifier.  If no new idenfifier
      *      can be create INVALID_OBJECT_ID is returned.
      */
-    int GetNewDesignID();
+    int GetNewDesignID() override;
 
     /** @brief Return the singleton instance of this Application
      *
