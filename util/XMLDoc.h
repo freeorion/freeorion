@@ -142,7 +142,7 @@ public:
             Exception (message)
         {}
 
-        virtual const char* type() const throw()
+        const char* type() const noexcept override
         { return "XMLElement::NoSuchChild"; }
     };
     //@}
