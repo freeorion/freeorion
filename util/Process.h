@@ -1,28 +1,9 @@
 #ifndef _Process_h_
 #define _Process_h_
 
-// HACK: The following two includes work around a bug in boost 1.56,
-// which uses them without including.
-#include <boost/version.hpp>
-#if BOOST_VERSION == 105600
-#include <boost/serialization/singleton.hpp> // This
-#include <boost/serialization/extended_type_info.hpp> //This
-#endif
-// HACK: For a similar boost 1.57 bug
-#if BOOST_VERSION == 105700
-#include <boost/serialization/type_info_implementation.hpp> // This
-#endif
-
-#if BOOST_VERSION == 105800
-// HACK: The following two includes work around a bug in boost 1.58
-#include <boost/serialization/type_info_implementation.hpp>
-#include <boost/archive/basic_archive.hpp>
-#endif
-
-#include <boost/serialization/shared_ptr.hpp>
-
 #include <vector>
 #include <string>
+#include <boost/shared_ptr.hpp>
 
 #include "Export.h"
 
