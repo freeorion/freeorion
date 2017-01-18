@@ -423,7 +423,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
 
     # give homeworld starting buildings
     print "Player", player_name, ": add starting buildings to homeworld"
-    for item in fo.load_unlocked_buildings():
+    for item in fo.load_starting_buildings():
         fo.create_building(item.name, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.

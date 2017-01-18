@@ -68,7 +68,7 @@ set (freeorionparse_SOURCE
     TechsParser.cpp
     Tokens.cpp
     UniverseObjectTypeValueRefParser.cpp
-    UnlockedBuildingsParser.cpp
+    StartingBuildingsParser.cpp
     ValueRefParserImpl.cpp
 )
 
