@@ -22,12 +22,12 @@ def calc_num_placed(objs):
     """Return a list of number placed at each obj"""
     return [1 if random.random() > REPEAT_RATE[1] else
             2 if random.random() > REPEAT_RATE[2] else
-            3 if random.random() > REPEAT_RATE[3] else 1
+            3 if random.random() > REPEAT_RATE[3] else 4
             for __ in objs]
 
 
-def place_special_fast(specials, obj, specials_timer, per_special_timer):
-    """ Place at least single special.
+def place_special(specials, obj, specials_timer, per_special_timer):
+    """ Place at most a single special.
     Return the number of specials placed.
     """
     num_placed = 0
@@ -121,7 +121,7 @@ def distribute_specials(specials_freq, universe_objects):
         for (obj, sys, n) in obj_tuple_needing_specials:
             systems_needing_specials[sys].add((obj, sys, n))
 
-        print " Placing in " + str(len(systems_needing_specials)) + " locations remaining"
+        print " Placing in {} locations remaining.".format(str(len(systems_needing_specials)))
 
         # Find a list of candidates all spaced GALAXY_DECORRECLATION_DISTANCE apart
         specials_timer.start("Compose spaced list")
@@ -130,14 +130,15 @@ def distribute_specials(specials_freq, universe_objects):
             specials_timer.start("Randos")
             random_sys = random.choice(systems_needing_specials.values())
             member = random.choice(list(random_sys))
-            candidates.append(member[0])
+            (obj, sys, n) = member
+            candidates.append(obj)
             obj_tuple_needing_specials.remove(member)
-            if member[2] > 1:
-                obj_tuple_needing_specials.add((member[0], member[1], member[2] - 1))
+            if n > 1:
+                obj_tuple_needing_specials.add((obj, sys, n - 1))
 
             specials_timer.start("Trim close")
             # remove all neighbors from the local pool
-            for neighbor in get_systems_within_jumps(member[1], GALAXY_DECOUPLING_DISTANCE):
+            for neighbor in get_systems_within_jumps(sys, GALAXY_DECOUPLING_DISTANCE):
                 if neighbor in systems_needing_specials:
                     systems_needing_specials.pop(neighbor)
 
@@ -174,7 +175,7 @@ def distribute_specials(specials_freq, universe_objects):
                 statistics.specials_repeat_dist[0] += 1
                 continue
 
-            num_placed = place_special_fast(local_specials, obj, specials_timer, per_special_timer)
+            num_placed = place_special(local_specials, obj, specials_timer, per_special_timer)
             track_num_placed[obj] += num_placed
 
     specials_timer.start("Compile num_placed statistics")
