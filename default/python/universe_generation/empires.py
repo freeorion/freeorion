@@ -113,18 +113,24 @@ class HomeSystemFinder(object):
             if system not in self.system_merit:
                 self.system_merit[system] = calculate_home_system_merit(system)
 
-        best_case_worst_merit = sorted(self.system_merit.values())[self.num_home_systems - 1]
-        current_worst_merit = 0
+        # In the list of systems sorted by merit, if the first num_home_systems are all min_jumps
+        # apart, then the merit of the num_home_systems nth system is the
+        # best_case_merit_lower_bound that can be achieved.
+        best_case_merit_lower_bound = sorted(self.system_merit.values())[self.num_home_systems - 1]
+        current_merit_lower_bound = 0
 
         best_candidate = []
 
         # cap the number of attempts to the smaller of the number of systems in the pool, or 100
         attempts = min(100, len(systems_pool))
 
+        # Copy systems_pool to avoid aliasing of the caller's systems_pool variable
+        local_pool = set(systems_pool)
+
         while attempts:
             candidate = []
             # use a local pool of all candidate systems better than the worst threshold merit
-            local_pool = {s for s in systems_pool if self.system_merit[s] > current_worst_merit}
+            local_pool = {s for s in local_pool if self.system_merit[s] > current_merit_lower_bound}
             if len(local_pool) < self.num_home_systems:
                 break
 
@@ -133,24 +139,22 @@ class HomeSystemFinder(object):
                 candidate.append(member)
 
                 # remove all neighbors from the local pool
-                for neighbor in get_systems_within_jumps(member, min_jumps):
-                    if neighbor in local_pool:
-                        local_pool.remove(neighbor)
+                local_pool -= set(get_systems_within_jumps(member, min_jumps))
+
+            if len(candidate) < self.num_home_systems:
+                break
 
             # Calculate the merit of the current attempt.  If it is the best so far
             # keep it and update the merit_threshold
-            if len(candidate) >= self.num_home_systems:
-                merit_system = sorted([(self.system_merit[s], s)
-                                       for s in candidate])[:self.num_home_systems]
-                merit = merit_system[self.num_home_systems - 1]
-                if merit > current_worst_merit:
-                    current_worst_merit = merit
-                    best_candidate = [s for (_, s) in merit_system]
+            merit_system = sorted([(self.system_merit[s], s)
+                                   for s in candidate])[:self.num_home_systems]
+            merit = merit_system[-1]
+            if merit > current_merit_lower_bound:
+                current_merit_lower_bound = merit
+                best_candidate = [s for (_, s) in merit_system]
 
-                # quit if it isn't possible to improve the current accepted list
-                if merit >= best_case_worst_merit:
-                    break
-            else:
+            # quit if it isn't possible to improve the current accepted list
+            if merit >= best_case_merit_lower_bound:
                 break
             attempts -= 1
         return best_candidate
