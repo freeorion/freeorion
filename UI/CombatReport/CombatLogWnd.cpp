@@ -386,11 +386,11 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
                            GetOptionsDB().Get<bool>("verbose-combat-logging");
 
     m_wnd.DeleteChildren();
-    GG::Layout* layout = new GG::DeferredLayout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y
-                                        , m_wnd.Width(), m_wnd.Height()
-                                        , 1, 1 ///< numrows, numcols
-                                        , 0, 0 ///< wnd margin, cell margin
-                                       );
+    GG::Layout* layout = new GG::DeferredLayout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y,
+                                                m_wnd.Width(), m_wnd.Height(),
+                                                1, 1, ///< numrows, numcols
+                                                0, 0 ///< wnd margin, cell margin
+                                               );
     m_wnd.SetLayout(layout);
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
