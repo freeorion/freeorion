@@ -4,7 +4,7 @@ import freeorion as fo
 def get_systems_within_jumps(origin_system, jumps):
     """
     Returns all systems within jumps jumps of system origin_system (including origin_system).
-    If jumps is 0, return list that only contains system origin_system.
+    If jumps is 0, return list that only contains origin_system.
     If jumps is negative, return empty list.
     """
     # TODO use a priority queue or at least sets

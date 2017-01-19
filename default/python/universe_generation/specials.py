@@ -7,6 +7,14 @@ import universe_tables
 from timers import Timer
 from galaxy_topology import get_systems_within_jumps
 
+# REPEAT_RATE along with calc_num_placed determines if there are multiple specials in a single
+# location.  There can only be at most 4 specials in a single location.
+# The probabilites break down as follows:
+# Count  Probability
+# one    (1 - REPEAT_RATE[0])
+# two    REPEAT_RATE[0] * (1 - REPEAT_RATE[1])
+# three  REPEAT_RATE[0] * REPEAT_RATE[1] *(1 - REPEAT_RATE[2])
+# four   REPEAT_RATE[0] * REPEAT_RATE[1] * REPEAT_RATE[2]
 REPEAT_RATE = {1: 0.08, 2: 0.05, 3: 0.01, 4: 0.00}
 
 

@@ -94,19 +94,19 @@ class HomeSystemFinder(object):
 
     def find_home_systems_for_min_jump_distance(self, systems_pool, min_jumps):
         """
-        Return a good list of home systems
+        Return a good list of home systems or an empty list if there are fewer than num_home_systems in the pool.
 
-        Return a list of home systems which are at least the specified minimum number of jumps apart,
-        and with a good system merit picked randomly from the specified pool.
+        A good list of home systems are at least the specified minimum number of jumps apart,
+        with the best minimum system merit of all such lists picked randomly from the ''systems_pool''.
 
-        Return an empty list if there are fewer than num_home_systems in the pool.
+        Algorithm:
+        Make several attempts to find systems that match the condition
+        of being at least min_jumps apart.
+        Use the minimum merit of the best num_home_system systems found
+        as the merit of the current best set of systems.
+        On each attempt use the merit of the current best set of home
+        systems to truncate the pool of candidates.
         """
-        # Make several attempts to find systems that match the condition
-        # of being at least min_jumps apart
-        # Use the minimum merit of the best num_home_system systems found
-        # as the merit of the current best set of systems.
-        # On each attempt use the merit of the current best set of home
-        # systems to truncate the pool of candidates.
 
         # precalculate the system merits
         for system in systems_pool:
