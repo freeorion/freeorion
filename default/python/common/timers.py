@@ -36,6 +36,8 @@ class Timer(object):
         """
         Print a header and a footer and fill it with the timing results from time_table.
         """
+        # TODO: Convert to use table code from here /python/common/print_utils.py#L116
+
         if not self.timers:
             return
         max_header = max(len(x[0]) for x in self.timers)
