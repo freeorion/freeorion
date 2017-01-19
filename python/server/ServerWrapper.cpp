@@ -326,9 +326,8 @@ namespace {
         list py_items;
         std::vector<ItemSpec> buildings;
         parse::starting_buildings(buildings);
-        for (std::vector<ItemSpec>::const_iterator building = buildings.begin()
-                 ; building != buildings.end(); ++building) {
-            py_items.append(object(*building));
+        for (auto building : buildings) {
+            py_items.append(object(building));
         }
         return py_items;
     }
