@@ -4,8 +4,9 @@
 #include <GG/GGFwd.h>
 #include <GG/BrowseInfoWnd.h>
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 
+extern const int ALL_EMPIRES;
 
 /** Gives information about inporting and exporting of resources to and from this system when mousing
   * over the system resource production summary. */

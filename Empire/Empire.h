@@ -305,24 +305,24 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    const std::string&      Name() const;                                           ///< Returns the Empire's name
-    const std::string&      PlayerName() const;                                     ///< Returns the Empire's player's name
+    const std::string&      Name() const;                               ///< Returns the Empire's name
+    const std::string&      PlayerName() const;                         ///< Returns the Empire's player's name
 
-    int                     EmpireID() const;                                       ///< Returns the Empire's unique numeric ID
+    int                     EmpireID() const;                           ///< Returns the Empire's unique numeric ID
 
-    const GG::Clr&          Color() const;                                          ///< Returns the Empire's color
+    const GG::Clr&          Color() const;                              ///< Returns the Empire's color
 
-    int                     CapitalID() const;                                      ///< Returns the numeric ID of the empire's capital
-    int                     StockpileID(ResourceType res = INVALID_RESOURCE_TYPE) const;///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
+    int                     CapitalID() const;                          ///< Returns the numeric ID of the empire's capital
+    int                     StockpileID(ResourceType res) const;        ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
     std::string             Dump() const;
 
-    const std::set<std::string>&    AvailableTechs() const;                         ///< Returns the set of all available techs.
-    const std::set<std::string>&    AvailableBuildingTypes() const;                 ///< Returns the set of all available building types.
-    std::set<int>                   AvailableShipDesigns() const;                   ///< Returns the set of ship design ids of this empire that the empire can actually build
-    const std::set<int>&            ShipDesigns() const;                            ///< Returns the set of all ship design ids of this empire
-    const std::set<std::string>&    AvailableShipParts() const;                     ///< Returns the set of ship part names this empire that the empire can currently build
-    const std::set<std::string>&    AvailableShipHulls() const;                     ///< Returns the set of ship hull names that that the empire can currently build
+    const std::set<std::string>&    AvailableTechs() const;             ///< Returns the set of all available techs.
+    const std::set<std::string>&    AvailableBuildingTypes() const;     ///< Returns the set of all available building types.
+    std::set<int>                   AvailableShipDesigns() const;       ///< Returns the set of ship design ids of this empire that the empire can actually build
+    const std::set<int>&            ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
+    const std::set<std::string>&    AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build
+    const std::set<std::string>&    AvailableShipHulls() const;         ///< Returns the set of ship hull names that that the empire can currently build
 
     const std::string&              TopPriorityEnqueuedTech() const;
     const std::string&              MostExpensiveEnqueuedTech() const;

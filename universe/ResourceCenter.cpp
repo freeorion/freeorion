@@ -9,6 +9,7 @@
 #include "ShipDesign.h"
 #include "System.h"
 #include "Building.h"
+#include "Enums.h"
 
 #include <stdexcept>
 
@@ -48,6 +49,9 @@ void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object, Visi
         this->m_last_turn_focus_changed_turn_initial = copied_object->m_last_turn_focus_changed_turn_initial;
     }
 }
+
+void ResourceCenter::Copy(TemporaryPtr<const ResourceCenter> copied_object)
+{ Copy(copied_object, VIS_FULL_VISIBILITY); }
 
 void ResourceCenter::Init() {
     //DebugLogger() << "ResourceCenter::Init";

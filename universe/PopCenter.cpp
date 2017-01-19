@@ -4,6 +4,7 @@
 #include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "Meter.h"
+#include "Enums.h"
 
 #include <algorithm>
 #include <stdexcept>
@@ -38,6 +39,9 @@ void PopCenter::Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis
         this->m_species_name =      copied_object->m_species_name;
     }
 }
+
+void PopCenter::Copy(TemporaryPtr<const PopCenter> copied_object)
+{ Copy(copied_object, VIS_FULL_VISIBILITY); }
 
 void PopCenter::Init() {
     //DebugLogger() << "PopCenter::Init";

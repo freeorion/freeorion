@@ -1,7 +1,7 @@
 #ifndef _PopCenter_h_
 #define _PopCenter_h_
 
-#include "Enums.h"
+#include "EnumsFwd.h"
 
 #include <boost/serialization/nvp.hpp>
 
@@ -41,7 +41,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void                Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis);
+    void                Copy(TemporaryPtr<const PopCenter> copied_object);
     void                SetSpecies(const std::string& species_name);        ///< sets the species of the population to \a species_name
     virtual void        Reset();                                            ///< sets all meters to 0, clears race name
     virtual void        Depopulate();                                       ///< removes population

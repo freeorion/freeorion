@@ -2,7 +2,7 @@
 #define _TechTreeWnd_h_
 
 #include <GG/Wnd.h>
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 
 class Tech;
 class EncyclopediaDetailPanel;

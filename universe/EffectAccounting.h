@@ -1,7 +1,7 @@
 #ifndef _Effect_Accounting_h_
 #define _Effect_Accounting_h_
 
-#include "Enums.h"
+#include "EnumsFwd.h"
 
 #include "TemporaryPtr.h"
 #include <boost/shared_ptr.hpp>

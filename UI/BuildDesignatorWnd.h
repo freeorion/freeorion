@@ -1,7 +1,7 @@
 #ifndef _BuildDesignatorWnd_h_
 #define _BuildDesignatorWnd_h_
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../Empire/Empire.h"
 
 #include <GG/Wnd.h>
@@ -104,16 +104,16 @@ public:
 
     /** emitted when the indicated build is indicated by the user */
     mutable boost::signals2::signal<void (const ProductionQueue::ProductionItem&, int, int, int)>
-                                            AddBuildToQueueSignal;
+                                                        AddBuildToQueueSignal;
     /** emitted when the quantity of items in a single build queue item is
       * changed by the user */
-    mutable boost::signals2::signal<void (int, int)>  BuildQuantityChangedSignal;
+    mutable boost::signals2::signal<void (int, int)>    BuildQuantityChangedSignal;
     /** emitted when the user selects a system from within this Wnd (but not
       * when this Wnd's system is set programatically) */
-    mutable boost::signals2::signal<void (int)>       SystemSelectedSignal;
+    mutable boost::signals2::signal<void (int)>         SystemSelectedSignal;
     /** emitted when the user changes the planet selection from within this
       * Wnd (but not when this Wnd's selected planet is set programatically) */
-    mutable boost::signals2::signal<void (int)>       PlanetSelectedSignal;
+    mutable boost::signals2::signal<void (int)>         PlanetSelectedSignal;
 
 private:
     class BuildSelector;

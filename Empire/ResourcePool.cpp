@@ -4,6 +4,7 @@
 
 #include "../universe/ObjectMap.h"
 #include "../universe/Planet.h"
+#include "../universe/Enums.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 

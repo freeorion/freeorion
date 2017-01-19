@@ -2,6 +2,7 @@
 
 #include "UniverseObject.h"
 #include "ObjectMap.h"
+#include "Enums.h"
 
 Effect::EffectCause::EffectCause() :
     cause_type(INVALID_EFFECTS_GROUP_CAUSE_TYPE),

@@ -7,7 +7,7 @@
 #include <GG/DropDownList.h>
 
 #include "CUIWnd.h"
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 
 
 class ModeratorActionsWnd : public CUIWnd {
