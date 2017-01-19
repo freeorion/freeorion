@@ -156,7 +156,8 @@ class HomeSystemFinder(object):
             # quit if it isn't possible to improve the current accepted list
             if merit >= best_case_merit_lower_bound:
                 break
-            attempts -= 1
+
+            attempts = min(attempts - 1, len(local_pool))
         return best_candidate
 
 
