@@ -4,6 +4,17 @@
 #include <string>
 #include <vector>
 
+#ifdef FREEORION_MACOSX
+// Bugfix for https://github.com/freeorion/freeorion/issues/1228
+
+// The problem on OSX is that the boost/python/str.hpp redefines toupper() and
+// similar functions if they are not already defined.
+
+// This includes iostream before the boost/python/str.hpp to fix this issue.
+// If the subsequent #include <boost/python/str.hpp> is removed then so can this workaround.
+#include <iostream>
+#endif
+
 #include <boost/python/str.hpp>
 
 struct CombatData;
