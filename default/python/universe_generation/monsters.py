@@ -118,7 +118,6 @@ def generate_monsters(monster_freq, _systems, home_systems):
     tracked_plan_tries = {name: 0 for name in nest_name_map.values()}
     tracked_plan_counts = {name: 0 for name in nest_name_map.values()}
     tracked_plan_valid_locations = {fp: 0 for fp in fleet_plans if fp.name() in tracked_plan_counts}
-    tracked_nest_valid_locations = {nest: 0 for nest in nest_name_map}
 
     if not fleet_plans:
         return
@@ -126,9 +125,9 @@ def generate_monsters(monster_freq, _systems, home_systems):
     universe = fo.get_universe()
 
     EMPIRE_TO_MONSTER_MIN_DIST = 2
-    empire_exclusions = set(list(itertools.chain.from_iterable(
-        [get_systems_within_jumps(e, EMPIRE_TO_MONSTER_MIN_DIST)
-         for e in home_systems])))
+    empire_exclusions = set(itertools.chain.from_iterable(
+        get_systems_within_jumps(e, EMPIRE_TO_MONSTER_MIN_DIST)
+        for e in home_systems))
     systems = [s for s in _systems if s not in empire_exclusions]
 
     # Fleet plans that include ships capable of altering starlanes.
@@ -146,7 +145,7 @@ def generate_monsters(monster_freq, _systems, home_systems):
         print "/ spawn limit", fleet_plan.spawn_limit(),
         print "/ effective chance", basic_chance * fleet_plan.spawn_rate(),
         fp_location_cache[fleet_plan] = set(fleet_plan.locations(systems))
-        print ("/ can be spawned at", len([x is True for x in fp_location_cache[fleet_plan]]),
+        print ("/ can be spawned at", len(fp_location_cache[fleet_plan]),
                "of", len(systems), "systems")
         if fleet_plan.name() in nest_name_map.values():
             statistics.tracked_monsters_chance[fleet_plan.name()] = basic_chance * fleet_plan.spawn_rate()
@@ -157,8 +156,8 @@ def generate_monsters(monster_freq, _systems, home_systems):
 
     # collect info for tracked monster nest valid locations
     planets = [p for s in systems for p in fo.sys_get_planets(s)]
-    for nest in tracked_nest_valid_locations:
-        tracked_nest_valid_locations[nest] = len(fo.special_locations(nest, planets))
+    tracked_nest_valid_locations = {nest: len(fo.special_locations(nest, planets))
+                                    for nest in nest_name_map}
 
     # for each system in the list that has been passed to this function, find a monster fleet that can be spawned at
     # the system and which hasn't already been added too many times, then attempt to add that monster fleet by

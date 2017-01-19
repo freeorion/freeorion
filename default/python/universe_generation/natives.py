@@ -28,9 +28,9 @@ def generate_natives(native_freq, systems, empire_home_systems):
     # select only planets sufficiently far away from player home systems
     # list of planets safe for natives
     EMPIRE_TO_NATIVE_MIN_DIST = 2
-    empire_exclusions = set(list(itertools.chain.from_iterable(
-        [get_systems_within_jumps(e, EMPIRE_TO_NATIVE_MIN_DIST)
-         for e in empire_home_systems])))
+    empire_exclusions = set(itertools.chain.from_iterable(
+        get_systems_within_jumps(e, EMPIRE_TO_NATIVE_MIN_DIST)
+        for e in empire_home_systems))
     native_safe_planets = set(itertools.chain.from_iterable(
         [fo.sys_get_planets(s) for s in systems if s not in empire_exclusions]))
 
