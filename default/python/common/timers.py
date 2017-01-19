@@ -5,7 +5,6 @@ class Timer(object):
     def __init__(self, timer_name):
         """
         Creates timer. Timer name is name that will be in logs.
-
         """
         self.timer_name = timer_name
         self.start_time = None
@@ -35,7 +34,7 @@ class Timer(object):
 
     def _print_timer_table(self, time_table):
         """
-        Print a header and a footer and fill it with the timing results from time_table
+        Print a header and a footer and fill it with the timing results from time_table.
         """
         if not self.timers:
             return
@@ -82,6 +81,6 @@ class Timer(object):
 
     def clear(self):
         """
-        Clear timers
+        Clear timers.
         """
         self.timers = []
