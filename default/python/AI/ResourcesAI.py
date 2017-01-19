@@ -18,9 +18,9 @@ import random
 import ColonisationAI
 import AIDependencies
 import CombatRatingsAI
-from freeorion_tools import tech_is_complete, FOTimer
+from freeorion_tools import tech_is_complete, AITimer
 
-resource_timer = FOTimer('timer_bucket')
+resource_timer = AITimer('timer_bucket')
 
 # Local Constants
 INDUSTRY = FocusType.FOCUS_INDUSTRY

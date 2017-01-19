@@ -16,10 +16,10 @@ import ColonisationAI
 import MilitaryAI
 from EnumsAI import MissionType, PriorityType
 import CombatRatingsAI
-from freeorion_tools import tech_is_complete, FOTimer
+from freeorion_tools import tech_is_complete, AITimer
 from AIDependencies import INVALID_ID
 
-invasion_timer = FOTimer('get_invasion_fleets()', write_log=False)
+invasion_timer = AITimer('get_invasion_fleets()', write_log=False)
 
 
 def get_invasion_fleets():

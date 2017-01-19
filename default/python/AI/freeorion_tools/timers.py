@@ -54,7 +54,7 @@ class DummyTimer(object):
         pass
 
 
-class FOLogTimer(Timer):
+class AILogTimer(Timer):
     """A Timer with a FO AI engine dependent extension that logs timer results to a file each turn.
     """
     def __init__(self, timer_name, write_log=False):
@@ -100,4 +100,4 @@ class FOLogTimer(Timer):
             self._write(''.join(row))
         self.timers = []  # clear times
 
-FOTimer = FOLogTimer if USE_TIMERS else DummyTimer
+AITimer = AILogTimer if USE_TIMERS else DummyTimer
