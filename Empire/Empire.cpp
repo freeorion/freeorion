@@ -1454,10 +1454,12 @@ void Empire::Init() {
     m_resource_pools[RE_INDUSTRY] = boost::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
     m_resource_pools[RE_TRADE] =    boost::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
 
+    /* TODO remove
     if (m_resource_pools[RE_INDUSTRY]->Stockpile() < 100) {
         DebugLogger() << "========= Setting 500 PP to RE_INDUSTRY stockpile : " << EmpireID() << " (was " << m_resource_pools[RE_INDUSTRY]->Stockpile() << " PP) ========";
         m_resource_pools[RE_INDUSTRY]->SetStockpile(500);
     }
+    */
 
     m_eliminated = false;
 
