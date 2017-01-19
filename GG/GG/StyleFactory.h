@@ -141,34 +141,34 @@ public:
     virtual Scroll* NewMultiEditHScroll(Clr color, Clr interior) const;
 
     /** Returns a new up (decrease) Button, to be used in a vertical Scroll. */
-    virtual Button* NewScrollUpButton(Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewScrollUpButton(Clr color) const;
 
     /** Returns a new down (increase) Button, to be used in a vertical Scroll. */
-    virtual Button* NewScrollDownButton(Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewScrollDownButton(Clr color) const;
 
     /** Returns a new tab Button, to be used in a vertical Scroll. */
-    virtual Button* NewVScrollTabButton(Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewVScrollTabButton(Clr color) const;
 
     /** Returns a new left (decrease) Button, to be used in a horizontal Scroll. */
-    virtual Button* NewScrollLeftButton(Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewScrollLeftButton(Clr color) const;
 
     /** Returns a new right (increase) Button, to be used in a horizontal Scroll. */
-    virtual Button* NewScrollRightButton(Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewScrollRightButton(Clr color) const;
 
     /** Returns a new tab Button, to be used in a horizontal Scroll. */
-    virtual Button* NewHScrollTabButton(Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewHScrollTabButton(Clr color) const;
 
     /** Returns a new tab Button, to be used in a vertical Slider. */
-    virtual Button* NewVSliderTabButton(Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewVSliderTabButton(Clr color) const;
 
     /** Returns a new tab Button, to be used in a horizontal Slider. */
-    virtual Button* NewHSliderTabButton(Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewHSliderTabButton(Clr color) const;
 
     /** Returns a new increase Button, to be used in a Spin. */
-    virtual Button* NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color) const;
 
     /** Returns a new decrease Button, to be used in a Spin. */
-    virtual Button* NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK) const;
+    virtual Button* NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr color) const;
 
     /** Returns a new Edit, to be used in an editable Spin. */
     virtual Edit* NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,

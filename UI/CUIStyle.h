@@ -24,25 +24,25 @@ public:
     GG::TabBar* NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
                           GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    GG::Button* NewScrollUpButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewScrollUpButton(GG::Clr color) const override;
 
-    GG::Button* NewScrollDownButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewScrollDownButton(GG::Clr color) const override;
 
-    GG::Button* NewVScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewVScrollTabButton(GG::Clr color) const override;
 
-    GG::Button* NewScrollLeftButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewScrollLeftButton(GG::Clr color) const override;
 
-    GG::Button* NewScrollRightButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewScrollRightButton(GG::Clr color) const override;
 
-    GG::Button* NewHScrollTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewHScrollTabButton(GG::Clr color) const override;
 
-    GG::Button* NewVSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewVSliderTabButton(GG::Clr color) const override;
 
-    GG::Button* NewHSliderTabButton(GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewHSliderTabButton(GG::Clr color) const override;
 
-    GG::Button* NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color) const override;
 
-    GG::Button* NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color) const override;
 
     GG::StateButton* NewTabBarTab(const std::string& str,
                                   const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
