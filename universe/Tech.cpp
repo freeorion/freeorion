@@ -215,7 +215,7 @@ int Tech::ResearchTime(int empire_id) const {
 
 
 ///////////////////////////////////////////////////////////
-// ItemSpec                                        //
+// ItemSpec                                              //
 ///////////////////////////////////////////////////////////
 ItemSpec::ItemSpec() :
     type(INVALID_UNLOCKABLE_ITEM_TYPE),
