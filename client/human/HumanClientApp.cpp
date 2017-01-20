@@ -231,7 +231,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
         inform_user_sound_failed = true;
     }
 
-    m_ui = boost::shared_ptr<ClientUI>(new ClientUI());
+    m_ui.reset(new ClientUI());
 
     EnableFPS();
     UpdateFPSLimit();

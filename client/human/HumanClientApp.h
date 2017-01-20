@@ -72,8 +72,8 @@ public:
     void                InitAutoTurns(int auto_turns);                  ///< Initialize auto turn counter
     void                DecAutoTurns(int n = 1);                        ///< Decrease auto turn counter
 
-    boost::shared_ptr<ClientUI>
-                        GetClientUI() { return m_ui; }
+    ClientUI& GetClientUI()
+    { return *m_ui.get(); }
 
     void                Reinitialize();
 
@@ -126,7 +126,10 @@ private:
     std::unique_ptr<HumanClientFSM> m_fsm;
 
     Process                     m_server_process;       ///< the server process (when hosting a game or playing single player); will be empty when playing multiplayer as a non-host player
-    boost::shared_ptr<ClientUI> m_ui;                   ///< the one and only ClientUI object!
+
+    /** The only instance of the ClientUI. */
+    std::unique_ptr<ClientUI> m_ui;
+
     bool                        m_single_player_game;   ///< true when this game is a single-player game
     bool                        m_game_started;         ///< true when a game is currently in progress
     bool                        m_connected;            ///< true if we are in a state in which we are supposed to be connected to the server
