@@ -2,8 +2,8 @@ Species
     name = "SP_SCYLIOR"
     description = "SP_SCYLIOR_DESC"
     gameplay_description = "SP_SCYLIOR_GAMEPLAY_DESC"
-    //Playable
-    Native
+    Playable
+    //Native
     CanProduceShips
     CanColonize
 
