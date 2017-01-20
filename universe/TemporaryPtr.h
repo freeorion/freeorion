@@ -55,7 +55,7 @@ public:
     void reset() { internal_assign(boost::shared_ptr<T>()); };
     T*   get() const;
 
-    operator bool() const { return get() != NULL; }
+    operator bool() const { return get() != nullptr; }
     T* operator ->() const { return get(); }
     T& operator *() const  { return *get(); }
     //@}

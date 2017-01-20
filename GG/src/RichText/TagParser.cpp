@@ -153,7 +153,7 @@ namespace GG {
             {
                 // Use ParseTagsImpl to get the the beginning of the first unmatched end tag.
                 // We are interested only in the first level tags, so don't pass the vector to populate.
-                std::string::const_iterator current = ParseTagsImpl(start, end, 0);
+                std::string::const_iterator current = ParseTagsImpl(start, end, nullptr);
 
                 // It is an error if the end tag is not found.
                 if (current == end) {
@@ -166,7 +166,7 @@ namespace GG {
 
                     if (StartsWith(current, end, end_tag)) {
                         // A tag was successfully fully read. Add it to tags, if we got one.
-                        if (tags != 0) {
+                        if (tags) {
                             tags->push_back(
                                 RichTextTag(tag, parameters, std::string(start, current)));
                         }

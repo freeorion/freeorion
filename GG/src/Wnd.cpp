@@ -42,7 +42,10 @@ namespace {
     using namespace boost::multi_index;
     struct GridLayoutWnd
     {
-        GridLayoutWnd() : wnd(0) {}
+        GridLayoutWnd() :
+            wnd(nullptr)
+        {}
+
         GridLayoutWnd(Wnd* wnd_, const Pt& ul_, const Pt& lr_) : wnd(wnd_), ul(ul_), lr(lr_) {}
         Wnd* wnd;
         Pt ul;
@@ -176,13 +179,13 @@ boost::shared_ptr<BrowseInfoWnd> Wnd::s_default_browse_info_wnd;
 
 Wnd::Wnd() :
     m_done(false),
-    m_parent(0),
+    m_parent(nullptr),
     m_visible(true),
     m_child_clipping_mode(DontClip),
     m_non_client_child(false),
     m_max_size(X(1 << 30), Y(1 << 30)),
-    m_layout(0),
-    m_containing_layout(0),
+    m_layout(nullptr),
+    m_containing_layout(nullptr),
     m_flags()
 {
     m_browse_modes.resize(1);
@@ -192,15 +195,15 @@ Wnd::Wnd() :
 
 Wnd::Wnd(X x, Y y, X w, Y h, Flags<WndFlag> flags/* = INTERACTIVE | DRAGABLE*/) :
     m_done(false),
-    m_parent(0),
+    m_parent(nullptr),
     m_visible(true),
     m_child_clipping_mode(DontClip),
     m_non_client_child(false),
     m_upperleft(x, y),
     m_lowerright(x + w, y + h),
     m_max_size(X(1 << 30), Y(1 << 30)),
-    m_layout(0),
-    m_containing_layout(0),
+    m_layout(nullptr),
+    m_containing_layout(nullptr),
     m_flags(flags)
 {
     ValidateFlags();
@@ -591,12 +594,12 @@ void Wnd::DetachChild(Wnd* wnd)
     if (it == m_children.end())
         return;
     m_children.erase(it);
-    wnd->SetParent(0);
+    wnd->SetParent(nullptr);
     if (wnd == m_layout)
-        m_layout = 0;
+        m_layout = nullptr;
     if (Layout* this_as_layout = dynamic_cast<Layout*>(this)) {
         this_as_layout->Remove(wnd);
-        wnd->m_containing_layout = 0;
+        wnd->m_containing_layout = nullptr;
     }
 }
 
@@ -625,7 +628,7 @@ void Wnd::DeleteChild(Wnd* wnd)
 
 void Wnd::DeleteChildren()
 {
-    m_layout = 0;
+    m_layout = nullptr;
     for (std::list<Wnd*>::iterator it = m_children.begin(); it != m_children.end();) {
         Wnd* wnd = *it++;
         delete wnd;
@@ -850,7 +853,7 @@ void Wnd::RemoveLayout()
         }
         // prevent DeleteChild from recursively calling RemoveLayout
         GG::Layout* temp_layout = m_layout;
-        m_layout = 0;
+        m_layout = nullptr;
         DeleteChild(temp_layout);
     }
 }

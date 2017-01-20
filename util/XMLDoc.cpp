@@ -188,7 +188,7 @@ void XMLElement::SetText(const std::string& text)
 // XMLDoc
 ////////////////////////////////////////////////
 // static(s)
-XMLDoc*                  XMLDoc::s_curr_parsing_doc = 0;
+XMLDoc*                  XMLDoc::s_curr_parsing_doc = nullptr;
 std::vector<XMLElement*> XMLDoc::s_element_stack;
 XMLDoc::RuleDefiner      XMLDoc::s_rule_definer;
 XMLElement               XMLDoc::s_temp_elem;
@@ -227,7 +227,7 @@ std::istream& XMLDoc::ReadDoc(std::istream& is)
         parse_str += temp_str + '\n';
     }
     parse(parse_str.c_str(), document);
-    s_curr_parsing_doc = 0;
+    s_curr_parsing_doc = nullptr;
     return is;
 }
 

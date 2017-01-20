@@ -340,7 +340,7 @@ public:
     SideBar(const CombatSummary& combat_summary, const BarSizer& sizer):
         GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::INTERACTIVE),
         m_side_summary(combat_summary),
-        m_x_axis_label(0),
+        m_x_axis_label(nullptr),
         m_sizer(sizer)
     {
 
@@ -633,7 +633,7 @@ private:
             option_key(option_key),
             sizer(sizer),
             parent(parent),
-            button(0)
+            button(nullptr)
         {
             button = new CUIButton("-");
             parent->AttachChild(button);
@@ -646,8 +646,8 @@ private:
 
 GraphicalSummaryWnd::GraphicalSummaryWnd() :
     GG::Wnd(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_sizer(0),
-    m_options_bar(0)
+    m_sizer(nullptr),
+    m_options_bar(nullptr)
 {}
 
 GG::Pt GraphicalSummaryWnd::MinUsableSize() const {

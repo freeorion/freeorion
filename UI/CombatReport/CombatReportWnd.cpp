@@ -206,7 +206,7 @@ CombatReportWnd::CombatReportWnd(const std::string& config_name) :
     CUIWnd(UserString("COMBAT_REPORT_TITLE"),
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE,
            config_name, false),
-    m_impl(0)
+    m_impl(nullptr)
 { m_impl.reset(new CombatReportPrivate(*this)); }
 
 CombatReportWnd::~CombatReportWnd()

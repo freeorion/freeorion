@@ -560,10 +560,6 @@ void RadioButtonGroup::ButtonClickedFunctor::operator()(bool checked)
 }
 
 // ButtonSlot
-RadioButtonGroup::ButtonSlot::ButtonSlot() :
-    button(0)
-{}
-
 RadioButtonGroup::ButtonSlot::ButtonSlot(StateButton* button_) :
     button(button_)
 {}

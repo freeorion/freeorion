@@ -1353,7 +1353,7 @@ namespace {
         static AlignmentManager*    s_instance;
     };
     // static(s)
-    AlignmentManager* AlignmentManager::s_instance = 0;
+    AlignmentManager* AlignmentManager::s_instance = nullptr;
 
     const AlignmentManager& AlignmentManager::GetAlignmentManager() {
         static AlignmentManager manager;
@@ -1488,7 +1488,7 @@ Meter* Empire::GetMeter(const std::string& name) {
     if (it != m_meters.end())
         return &(it->second);
     else
-        return 0;
+        return nullptr;
 }
 
 const Meter* Empire::GetMeter(const std::string& name) const {
@@ -1496,7 +1496,7 @@ const Meter* Empire::GetMeter(const std::string& name) const {
     if (it != m_meters.end())
         return &(it->second);
     else
-        return 0;
+        return nullptr;
 }
 
 void Empire::BackPropagateMeters() {
@@ -1570,7 +1570,7 @@ const std::string& Empire::MostExpensiveEnqueuedTech() const {
         return EMPTY_STRING;
     float biggest_cost = -99999.9f; // arbitrary small number
 
-    const ResearchQueue::Element* best_elem = 0;
+    const ResearchQueue::Element* best_elem = nullptr;
 
     for (const ResearchQueue::Element& elem : m_research_queue) {
         const Tech* tech = GetTech(elem.name);
@@ -1593,7 +1593,7 @@ const std::string& Empire::LeastExpensiveEnqueuedTech() const {
         return EMPTY_STRING;
     float smallest_cost = 999999.9f; // arbitrary large number
 
-    const ResearchQueue::Element* best_elem = 0;
+    const ResearchQueue::Element* best_elem = nullptr;
 
     for (const ResearchQueue::Element& elem : m_research_queue) {
         const Tech* tech = GetTech(elem.name);
@@ -1613,7 +1613,7 @@ const std::string& Empire::LeastExpensiveEnqueuedTech() const {
 
 const std::string& Empire::MostRPSpentEnqueuedTech() const {
     float most_spent = -999999.9f;  // arbitrary small number
-    const std::map<std::string, float>::value_type* best_progress = 0;
+    const std::map<std::string, float>::value_type* best_progress = nullptr;
 
     for (const std::map<std::string, float>::value_type& progress : m_research_progress) {
         const std::string& tech_name = progress.first;
@@ -1633,7 +1633,7 @@ const std::string& Empire::MostRPSpentEnqueuedTech() const {
 
 const std::string& Empire::MostRPCostLeftEnqueuedTech() const {
     float most_left = -999999.9f;  // arbitrary small number
-    const std::map<std::string, float>::value_type* best_progress = 0;
+    const std::map<std::string, float>::value_type* best_progress = nullptr;
 
     for (const std::map<std::string, float>::value_type& progress : m_research_progress) {
         const std::string& tech_name = progress.first;
@@ -2994,7 +2994,7 @@ void Empire::CheckProductionProgress() {
                 break;
             for (std::map<int, float>::value_type& object_meter : meter_type.second) {
                 TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_meter.first);
-                const Meter* meter = obj ? obj->GetMeter(meter_type.first) : 0;
+                const Meter* meter = obj ? obj->GetMeter(meter_type.first) : nullptr;
                 if (!meter || meter->Current() < object_meter.second * elem.blocksize) {
                     consumption_impossible = true;
                     break;

@@ -204,7 +204,7 @@ namespace {
 
         void SelectionChanged(GG::DropDownList::iterator it)
         {
-            const GG::ListBox::Row* row = 0;
+            const GG::ListBox::Row* row = nullptr;
             if (it != this->end())
                 row = *it;
             if (!row)
@@ -338,7 +338,7 @@ namespace {
     struct LoadGamePlayerRow : PlayerRow {
         LoadGamePlayerRow(const PlayerSetupData& player_data, int player_id, const std::map<int, SaveGameEmpireData>& save_game_empire_data, bool disabled) :
             PlayerRow(player_data, player_id),
-            m_empire_list(0),
+            m_empire_list(nullptr),
             m_save_game_empire_data(save_game_empire_data)
         {
             // human / AI / observer indicator / selector
@@ -503,17 +503,17 @@ namespace {
 MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     CUIWnd(UserString("MPLOBBY_WINDOW_TITLE"),
            GG::ONTOP | GG::INTERACTIVE | GG::RESIZABLE),
-    m_chat_box(0),
-    m_chat_input_edit(0),
-    m_new_load_game_buttons(0),
-    m_galaxy_setup_panel(0),
-    m_browse_saves_btn(0),
-    m_preview_image(0),
-    m_players_lb(0),
-    m_players_lb_headers(0),
-    m_ready_bn(0),
-    m_cancel_bn(0),
-    m_start_conditions_text(0)
+    m_chat_box(nullptr),
+    m_chat_input_edit(nullptr),
+    m_new_load_game_buttons(nullptr),
+    m_galaxy_setup_panel(nullptr),
+    m_browse_saves_btn(nullptr),
+    m_preview_image(nullptr),
+    m_players_lb(nullptr),
+    m_players_lb_headers(nullptr),
+    m_ready_bn(nullptr),
+    m_cancel_bn(nullptr),
+    m_start_conditions_text(nullptr)
 {
     Sound::TempUISoundDisabler sound_disabler;
 
@@ -840,7 +840,7 @@ void MultiPlayerLobbyWnd::SaveGameBrowse() {
 void MultiPlayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image) {
     if (m_preview_image) {
         DeleteChild(m_preview_image);
-        m_preview_image = 0;
+        m_preview_image = nullptr;
     }
     m_preview_image = new GG::StaticGraphic(new_image, GG::GRAPHIC_FITGRAPHIC);
     AttachChild(m_preview_image);

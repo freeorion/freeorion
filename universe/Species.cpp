@@ -304,7 +304,7 @@ void Species::SetOtherSpeciesOpinion(const std::string& species_name, double opi
 // SpeciesManager                              //
 /////////////////////////////////////////////////
 // static(s)
-SpeciesManager* SpeciesManager::s_instance = 0;
+SpeciesManager* SpeciesManager::s_instance = nullptr;
 
 bool SpeciesManager::PlayableSpecies::operator()(
     const std::map<std::string, Species*>::value_type& species_map_iterator) const
@@ -346,12 +346,12 @@ SpeciesManager::~SpeciesManager() {
 
 const Species* SpeciesManager::GetSpecies(const std::string& name) const {
     std::map<std::string, Species*>::const_iterator it = m_species.find(name);
-    return it != m_species.end() ? it->second : 0;
+    return it != m_species.end() ? it->second : nullptr;
 }
 
 Species* SpeciesManager::GetSpecies(const std::string& name) {
     std::map<std::string, Species*>::iterator it = m_species.find(name);
-    return it != m_species.end() ? it->second : 0;
+    return it != m_species.end() ? it->second : nullptr;
 }
 
 int SpeciesManager::GetSpeciesID(const std::string& name) const {
@@ -442,7 +442,7 @@ void SpeciesManager::SetSpeciesHomeworlds(const std::map<std::string, std::set<i
         const std::string& species_name = entry.first;
         const std::set<int>& homeworlds = entry.second;
 
-        Species* species = 0;
+        Species* species = nullptr;
         std::map<std::string, Species*>::iterator species_it = m_species.find(species_name);
         if (species_it != m_species.end())
             species = species_it->second;

@@ -1218,8 +1218,8 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     m_values(),
     m_digits(),
     m_show_signs(),
-    m_icon(0),
-    m_text(0)
+    m_icon(nullptr),
+    m_text(nullptr)
 {
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
 
@@ -1239,8 +1239,8 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     m_values(std::vector<double>(1, value)),
     m_digits(std::vector<int>(1, digits)),
     m_show_signs(std::vector<bool>(1, showsign)),
-    m_icon(0),
-    m_text(0)
+    m_icon(nullptr),
+    m_text(nullptr)
 {
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
 
@@ -1261,8 +1261,8 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     m_values(std::vector<double>(2, 0.0)),
     m_digits(std::vector<int>(2, 2)),
     m_show_signs(std::vector<bool>(2, false)),
-    m_icon(0),
-    m_text(0)
+    m_icon(nullptr),
+    m_text(nullptr)
 {
     SetName("StatisticIcon");
     m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC);
@@ -1522,7 +1522,7 @@ void SpeciesSelector::SelectSpecies(const std::string& species_name) {
 }
 
 void SpeciesSelector::SelectionChanged(GG::DropDownList::iterator it) {
-    const GG::ListBox::Row* row = 0;
+    const GG::ListBox::Row* row = nullptr;
     if (it != this->end())
         row = *it;
     if (row)
@@ -1709,18 +1709,18 @@ ProductionInfoPanel::ProductionInfoPanel(const std::string& title, const std::st
     m_units_str(point_units_str),
     m_title_str(title),
     m_empire_id(ALL_EMPIRES),
-    m_total_points_label(0),
-    m_total_points(0),
-    m_total_points_P_label(0),
-    m_wasted_points_label(0),
-    m_wasted_points(0),
-    m_wasted_points_P_label(0),
-    m_local_points_label(0),
-    m_local_points(0),
-    m_local_points_P_label(0),
-    m_local_wasted_points_label(0),
-    m_local_wasted_points(0),
-    m_local_wasted_points_P_label(0)
+    m_total_points_label(nullptr),
+    m_total_points(nullptr),
+    m_total_points_P_label(nullptr),
+    m_wasted_points_label(nullptr),
+    m_wasted_points(nullptr),
+    m_wasted_points_P_label(nullptr),
+    m_local_points_label(nullptr),
+    m_local_points(nullptr),
+    m_local_points_P_label(nullptr),
+    m_local_wasted_points_label(nullptr),
+    m_local_wasted_points(nullptr),
+    m_local_wasted_points_P_label(nullptr)
 {}
 
 GG::Pt ProductionInfoPanel::MinUsableSize() const {
@@ -1827,12 +1827,18 @@ void ProductionInfoPanel::SetEmpireID(int empire_id) {
 }
 
 void ProductionInfoPanel::ClearLocalInfo() {
-    delete m_local_points_label;            m_local_points_label = 0;
-    delete m_local_points;                  m_local_points = 0;
-    delete m_local_points_P_label;          m_local_points_P_label = 0;
-    delete m_local_wasted_points_label;     m_local_wasted_points_label = 0;
-    delete m_local_wasted_points;           m_local_wasted_points = 0;
-    delete m_local_wasted_points_P_label;   m_local_wasted_points_P_label = 0;
+    delete m_local_points_label;
+    m_local_points_label = nullptr;
+    delete m_local_points;
+    m_local_points = nullptr;
+    delete m_local_points_P_label;
+    m_local_points_P_label = nullptr;
+    delete m_local_wasted_points_label;
+    m_local_wasted_points_label = nullptr;
+    delete m_local_wasted_points;
+    m_local_wasted_points = nullptr;
+    delete m_local_wasted_points_P_label;
+    m_local_wasted_points_P_label = nullptr;
 
     const Empire* empire = GetEmpire(m_empire_id);
     std::string empire_name;
@@ -1843,12 +1849,18 @@ void ProductionInfoPanel::ClearLocalInfo() {
 }
 
 void ProductionInfoPanel::Clear() {
-    delete m_total_points_label;            m_total_points_label = 0;
-    delete m_total_points;                  m_total_points = 0;
-    delete m_total_points_P_label;          m_total_points_P_label = 0;
-    delete m_wasted_points_label;           m_wasted_points_label = 0;
-    delete m_wasted_points;                 m_wasted_points = 0;
-    delete m_wasted_points_P_label;         m_wasted_points_P_label = 0;
+    delete m_total_points_label;
+    m_total_points_label = nullptr;
+    delete m_total_points;
+    m_total_points = nullptr;
+    delete m_total_points_P_label;
+    m_total_points_P_label = nullptr;
+    delete m_wasted_points_label;
+    m_wasted_points_label = nullptr;
+    delete m_wasted_points;
+    m_wasted_points = nullptr;
+    delete m_wasted_points_P_label;
+    m_wasted_points_P_label = nullptr;
     m_empire_id = ALL_EMPIRES;
 
     ClearLocalInfo();
@@ -2001,7 +2013,9 @@ void MultiTurnProgressBar::Render() {
 // FPSIndicator
 //////////////////////////////////////////////////
 FPSIndicator::FPSIndicator(void) :
-    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP), m_enabled(false), m_displayed_FPS(0)
+    GG::TextControl(GG::X0, GG::Y0, GG::X1, GG::Y1, "", ClientUI::GetFont(), ClientUI::TextColor(), GG::FORMAT_NOWRAP, GG::ONTOP),
+    m_enabled(false),
+    m_displayed_FPS(0)
 {
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
     UpdateEnabled();

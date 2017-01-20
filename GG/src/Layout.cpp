@@ -556,7 +556,7 @@ void Layout::Remove(Wnd* wnd)
     const WndPosition& wnd_position = it->second;
     for (std::size_t i = wnd_position.first_row; i < wnd_position.last_row; ++i) {
         for (std::size_t j = wnd_position.first_column; j < wnd_position.last_column; ++j) {
-            m_cells[i][j] = 0;
+            m_cells[i][j] = nullptr;
         }
     }
     Pt original_ul = it->second.original_ul;

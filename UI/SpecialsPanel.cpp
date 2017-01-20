@@ -71,7 +71,7 @@ void SpecialsPanel::Update() {
     // for specials with a nonzero
     for (const std::map<std::string, std::pair<int, float>>::value_type& entry : obj->Specials()) {
         const Special* special = GetSpecial(entry.first);
-        StatisticIcon* graphic = 0;
+        StatisticIcon* graphic = nullptr;
         if (entry.second.second > 0.0f)
             graphic = new StatisticIcon(ClientUI::SpecialIcon(special->Name()), entry.second.second, 2, false,
                                         GG::X0, GG::Y0, SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);

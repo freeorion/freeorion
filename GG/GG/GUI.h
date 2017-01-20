@@ -239,7 +239,7 @@ public:
         function should only be called from custom EventPump event
         handlers. */
     virtual void    HandleSystemEvents() = 0;
-    void            HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text = NULL); ///< event handler for GG events
+    void            HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text = nullptr); ///< event handler for GG events
     void            ClearEventState();
 
     void            SetFocusWnd(Wnd* wnd);          ///< sets the input focus window to \a wnd

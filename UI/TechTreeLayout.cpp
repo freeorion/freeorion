@@ -29,10 +29,10 @@ bool TechTreeLayout::Column::Fit(int index, TechTreeLayout::Node* node) {
 
     int size = m_column.size();
     if (index + node->GetWeight() > size)
-        m_column.resize(index + node->GetWeight(), 0);
+        m_column.resize(index + node->GetWeight(), nullptr);
 
     for (int j = index + node->GetWeight(); j-->index; ) {
-        if (m_column[j] != 0 && m_column[j] != node)
+        if (m_column[j] != nullptr && m_column[j] != node)
             return false;
     }
     return true;
@@ -78,7 +78,7 @@ bool TechTreeLayout::Column::Place(int index, TechTreeLayout::Node* node) {
 bool TechTreeLayout::Column::Move(int to, TechTreeLayout::Node* node) {
     if (Fit(to, node)) {
         for ( int i = node->m_row + node->GetWeight(); i-->node->m_row; )
-            m_column[i] = 0;
+            m_column[i] = nullptr;
 
         Place(to, node);
         return true;
@@ -88,7 +88,7 @@ bool TechTreeLayout::Column::Move(int to, TechTreeLayout::Node* node) {
 
 unsigned int TechTreeLayout::Column::Size() {
     for (unsigned int i = m_column.size(); i --> 0; ) {
-        if (m_column[i] != 0)
+        if (m_column[i])
             return i;
     }
     return 0;
@@ -96,15 +96,15 @@ unsigned int TechTreeLayout::Column::Size() {
 
 TechTreeLayout::Node* TechTreeLayout::Column::Seek(Node* m, int direction) {
     if (!m || direction == 0)
-        return 0;
+        return nullptr;
 
-    Node* n = 0;
+    Node* n = nullptr;
     int i = m->m_row;
 
     // find next node adjacent to node m in requested direction
     while (!n || n == m) {
         if (i < 0 || i >= static_cast<int>(m_column.size()))
-            return 0;
+            return nullptr;
 
         n = m_column[i];
         i += direction;
@@ -364,7 +364,7 @@ TechTreeLayout::Node::Node(const std::string& tech, GG::X width, GG::Y height) :
     m_children_rows(0),
     m_parents(),
     m_children(),
-    m_primary_child(0),
+    m_primary_child(nullptr),
     m_out_edges(),
     m_weight(NODE_CELL_HEIGHT)
 { assert(width > 0 && height > 0 && ::GetTech(tech)); }
@@ -384,7 +384,7 @@ TechTreeLayout::Node::Node(Node* parent, Node* child, std::vector<Node*>& nodes)
     m_children_rows(0),
     m_parents(),
     m_children(),
-    m_primary_child(0),
+    m_primary_child(nullptr),
     m_out_edges(),
     m_weight(LINE_CELL_HEIGHT)
 {
@@ -522,7 +522,7 @@ bool TechTreeLayout::Node::Wobble(Column& column) {
     Node* n = column.Seek(this, direction);
 
     // try to switch node with neighbour node
-    if (n != 0) {
+    if (n) {
         s_dist     = n->CalculateFamilyDistance(n->m_row);
         new_s_dist = n->CalculateFamilyDistance(   m_row);
         new_dist   =    CalculateFamilyDistance(n->m_row);

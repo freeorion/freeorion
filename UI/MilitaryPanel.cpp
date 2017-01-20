@@ -29,8 +29,8 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
     m_planet_id(planet_id),
     m_meter_stats(),
-    m_multi_icon_value_indicator(0),
-    m_multi_meter_status_bar(0)
+    m_multi_icon_value_indicator(nullptr),
+    m_multi_meter_status_bar(nullptr)
 {
     SetName("MilitaryPanel");
 

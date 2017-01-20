@@ -38,14 +38,14 @@ namespace GG {
     }
 
     ScrollPanel::ScrollPanel():
-        m_vscroll(0),
-        m_content(0),
+        m_vscroll(nullptr),
+        m_content(nullptr),
         m_background_color(CLR_ZERO)
     {}
 
     ScrollPanel::ScrollPanel(X x, Y y, X w, Y h, Wnd* content):
         Wnd(x, y, w, h, INTERACTIVE),
-        m_vscroll(0),
+        m_vscroll(nullptr),
         m_content(content),
         m_background_color(CLR_ZERO)
     {

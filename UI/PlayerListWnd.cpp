@@ -100,13 +100,13 @@ namespace {
         PlayerDataPanel(GG::X w, GG::Y h, int player_id) :
             Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
             m_player_id(player_id),
-            //m_player_name_text(0),
-            m_empire_name_text(0),
-            m_empire_ship_text(0),
-            m_empire_planet_text(0),
-            m_empire_production_text(0),
-            m_empire_research_text(0),
-            m_empire_detection_text(0),
+            //m_player_name_text(nullptr),
+            m_empire_name_text(nullptr),
+            m_empire_ship_text(nullptr),
+            m_empire_planet_text(nullptr),
+            m_empire_production_text(nullptr),
+            m_empire_research_text(nullptr),
+            m_empire_detection_text(nullptr),
             m_diplo_status(INVALID_DIPLOMATIC_STATUS),
             m_player_status(Message::WAITING),
             m_player_type(Networking::INVALID_CLIENT_TYPE),
@@ -450,7 +450,7 @@ namespace {
         PlayerRow(GG::X w, GG::Y h, int player_id) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_NONE, 0),
             m_player_id(player_id),
-            m_panel(0)
+            m_panel(nullptr)
         {
             SetName("PlayerRow");
             SetChildClippingMode(ClipToClient);
@@ -530,7 +530,7 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
     CUIWnd(UserString("PLAYERS_LIST_PANEL_TITLE"),
            GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name),
-    m_player_list(0)
+    m_player_list(nullptr)
 {
     m_player_list = new PlayerListBox();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
@@ -667,7 +667,7 @@ void PlayerListWnd::PlayerSelectionChanged(const GG::ListBox::SelectionSet& rows
             ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged got empty row";
             continue;
         }
-        GG::Control* control = !row->empty() ? row->at(0) : 0;
+        GG::Control* control = !row->empty() ? row->at(0) : nullptr;
         if (!control) {
             ErrorLogger() << "PlayerListWnd::PlayerSelectionChanged couldn't get control from row";
             continue;

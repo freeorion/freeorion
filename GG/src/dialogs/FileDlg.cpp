@@ -150,14 +150,14 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
     m_in_win32_drive_selection(false),
     m_save_str(GetStyleFactory()->Translate("Save")),
     m_open_str(GetStyleFactory()->Translate("Open")),
-    m_curr_dir_text(0),
-    m_files_list(0),
-    m_files_edit(0),
-    m_filter_list(0),
-    m_ok_button(0),
-    m_cancel_button(0),
-    m_files_label(0),
-    m_file_types_label(0)
+    m_curr_dir_text(nullptr),
+    m_files_list(nullptr),
+    m_files_edit(nullptr),
+    m_filter_list(nullptr),
+    m_ok_button(nullptr),
+    m_cancel_button(nullptr),
+    m_files_label(nullptr),
+    m_file_types_label(nullptr)
 {
     CreateChildren(multi);
     Init(directory);

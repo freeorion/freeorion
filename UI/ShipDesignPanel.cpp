@@ -9,8 +9,8 @@
 ShipDesignPanel::ShipDesignPanel(GG::X w, GG::Y h, int design_id) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_design_id(design_id),
-    m_graphic(0),
-    m_name(0)
+    m_graphic(nullptr),
+    m_name(nullptr)
 {
     SetChildClippingMode(ClipToClient);
     if (const ShipDesign* design = GetShipDesign(m_design_id)) {

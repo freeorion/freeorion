@@ -81,7 +81,7 @@ std::size_t OverlayWnd::NumWnds() const
 { return m_wnds.size(); }
 
 Wnd* OverlayWnd::CurrentWnd() const
-{ return m_current_wnd_index == NO_WND ? 0 : m_wnds[m_current_wnd_index]; }
+{ return m_current_wnd_index == NO_WND ? nullptr : m_wnds[m_current_wnd_index]; }
 
 std::size_t OverlayWnd::CurrentWndIndex() const
 { return m_current_wnd_index; }
@@ -105,7 +105,7 @@ void OverlayWnd::InsertWnd(std::size_t index, Wnd* wnd)
 
 Wnd* OverlayWnd::RemoveWnd(std::size_t index)
 {
-    Wnd* retval = 0;
+    Wnd* retval = nullptr;
     if (index < m_wnds.size()) {
         std::vector<Wnd*>::iterator it = m_wnds.begin() + index;
         retval = *it;
@@ -118,7 +118,7 @@ Wnd* OverlayWnd::RemoveWnd(std::size_t index)
 
 Wnd* OverlayWnd::RemoveWnd(Wnd* wnd)
 {
-    Wnd* retval = 0;
+    Wnd* retval = nullptr;
     std::vector<Wnd*>::iterator it = std::find(m_wnds.begin(), m_wnds.end(), wnd);
     if (it != m_wnds.end()) {
         if (it - m_wnds.begin() == static_cast<std::ptrdiff_t>(m_current_wnd_index))
@@ -268,10 +268,10 @@ const X TabBar::BUTTON_WIDTH(10);
 TabBar::TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
-    m_tabs(0),
+    m_tabs(nullptr),
     m_font(font),
-    m_left_button(0),
-    m_right_button(0),
+    m_left_button(nullptr),
+    m_right_button(nullptr),
     m_left_right_button_layout(new Layout(X0, Y0, X1, TabHeightFromFont(font), 1, 3)),
     m_text_color(text_color),
     m_first_tab_shown(0)

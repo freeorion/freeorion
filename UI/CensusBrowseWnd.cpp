@@ -32,9 +32,9 @@ class CensusRowPanel : public GG::Control {
 public:
     CensusRowPanel(GG::X w, GG::Y h, const std::string& name, double census_val, bool show_icon) :
         GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-        m_icon(0),
-        m_name(0),
-        m_census_val(0)
+        m_icon(nullptr),
+        m_name(nullptr),
+        m_census_val(nullptr)
     {
         m_show_icon = show_icon;
         SetChildClippingMode(ClipToClient);
@@ -120,11 +120,11 @@ private:
 CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<std::string, float>& population_counts,
                                  const std::map<std::string, float>& tag_counts) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
-    m_title_text(0),
-    m_species_text(0),
-    m_list(0),
-    m_tags_text(0),
-    m_tags_list(0),
+    m_title_text(nullptr),
+    m_species_text(nullptr),
+    m_list(nullptr),
+    m_tags_text(nullptr),
+    m_tags_list(nullptr),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2)
 {
     const GG::Y ROW_HEIGHT(MeterIconSize().y);

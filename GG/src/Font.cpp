@@ -51,7 +51,7 @@
 namespace GG { namespace detail {
 
     FTFaceWrapper::FTFaceWrapper() :
-        m_face(0)
+        m_face(nullptr)
     {}
 
     FTFaceWrapper::~FTFaceWrapper()
@@ -208,7 +208,7 @@ namespace {
 
     struct FTLibraryWrapper
     {
-        FTLibraryWrapper() : m_library(0)
+        FTLibraryWrapper() : m_library(nullptr)
         {
             if (!m_library && FT_Init_FreeType(&m_library)) // if no library exists and we can't create one...
                 throw FailedFTLibraryInit("Unable to initialize FreeType font library object");
@@ -494,7 +494,7 @@ namespace {
     class CompiledRegex {
     public:
         CompiledRegex(const boost::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
-            m_text(0),
+            m_text(nullptr),
             m_known_tags(&known_tags),
             m_ignore_tags(false),
             m_tag_stack(),
@@ -772,7 +772,7 @@ public:
     }
 
     /** Add an open tag iff it exists as a recognized tag.*/
-    void AddOpenTag(const std::string& tag, const std::vector<std::string>* params = 0)
+    void AddOpenTag(const std::string& tag, const std::vector<std::string>* params = nullptr)
     {
         if (!StaticTagHandler().IsKnown(tag))
             return;

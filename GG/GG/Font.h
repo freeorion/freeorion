@@ -515,7 +515,7 @@ public:
 
     /** Formatted text rendering. */
     void RenderText(const Pt& pt1, const Pt& pt2, const std::string& text, Flags<TextFormat>& format,
-                    const std::vector<LineData>& line_data, RenderState* render_state = 0) const;
+                    const std::vector<LineData>& line_data, RenderState* render_state = nullptr) const;
 
     /** Formatted text rendering over a subset of lines and code points.  The
         glyphs rendered are in the range [CodePointIndexOf(<i>begin_line</i>,
@@ -529,7 +529,7 @@ public:
     /** Wrapper around PreRenderText that provides dummy values for line start and end values.*/
     void PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Flags<TextFormat>& format,
                        RenderCache& cache, const std::vector<LineData>& line_data,
-                       RenderState* render_state = 0) const;
+                       RenderState* render_state = nullptr) const;
 
     /** Fill the \p cache with glyphs corresponding to the passed in \p text and \p line_data.*/
     void PreRenderText(const Pt& pt1, const Pt& pt2, const std::string& text,
@@ -942,7 +942,7 @@ template <class CharSetIter>
 boost::shared_ptr<GG::Font>
 GG::FontManager::GetFont(const std::string& font_filename, unsigned int pts,
                          CharSetIter first, CharSetIter last)
-{ return GetFontImpl(font_filename, pts, 0, first, last); }
+{ return GetFontImpl(font_filename, pts, nullptr, first, last); }
 
 template <class CharSetIter>
 boost::shared_ptr<GG::Font>

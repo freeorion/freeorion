@@ -111,8 +111,8 @@ MultiEdit::MultiEdit(const std::string& str, const boost::shared_ptr<Font>& font
     m_first_col_shown(0),
     m_first_row_shown(0),
     m_max_lines_history(ALL_LINES),
-    m_vscroll(0),
-    m_hscroll(0),
+    m_vscroll(nullptr),
+    m_hscroll(nullptr),
     m_vscroll_wheel_scroll_increment(0),
     m_hscroll_wheel_scroll_increment(0),
     m_preserve_text_position_on_next_set_text(false),
@@ -1047,7 +1047,7 @@ void MultiEdit::RecreateScrolls()
 {
     delete m_vscroll;
     delete m_hscroll;
-    m_vscroll = m_hscroll = 0;
+    m_vscroll = m_hscroll = nullptr;
     AdjustScrolls();
 }
 
@@ -1245,7 +1245,7 @@ void MultiEdit::AdjustScrolls()
     if (m_vscroll) { // if scroll already exists...
         if (!need_vert) { // remove scroll
             DeleteChild(m_vscroll);
-            m_vscroll = 0;
+            m_vscroll = nullptr;
         } else { // ensure vertical scroll has the right logical and physical dimensions
             unsigned int line_size = (m_vscroll_wheel_scroll_increment != 0
                                         ? m_vscroll_wheel_scroll_increment
@@ -1281,7 +1281,7 @@ void MultiEdit::AdjustScrolls()
     if (m_hscroll) { // if scroll already exists...
         if (!need_horz) { // remove scroll
             DeleteChild(m_hscroll);
-            m_hscroll = 0;
+            m_hscroll = nullptr;
         } else { // ensure horizontal scroll has the right logical and physical dimensions
             unsigned int line_size = (m_hscroll_wheel_scroll_increment != 0
                                         ? m_hscroll_wheel_scroll_increment

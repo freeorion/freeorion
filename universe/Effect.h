@@ -62,7 +62,7 @@ public:
 
     /** execute all effects in group */
     void    Execute(const TargetsCauses& targets_causes,
-                    AccountingMap* accounting_map = 0,
+                    AccountingMap* accounting_map = nullptr,
                     bool only_meter_effects = false,
                     bool only_appearance_effects = false,
                     bool include_empire_meter_effects = false,
@@ -114,7 +114,7 @@ public:
     virtual void Execute(const ScriptingContext& context, const TargetSet& targets) const;
 
     virtual void Execute(const TargetsCauses& targets_causes,
-                         AccountingMap* accounting_map = 0,
+                         AccountingMap* accounting_map = nullptr,
                          bool only_meter_effects = false,
                          bool only_appearance_effects = false,
                          bool include_empire_meter_effects = false,
@@ -181,7 +181,7 @@ public:
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
 
     void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = 0,
+                 AccountingMap* accounting_map = nullptr,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -231,7 +231,7 @@ public:
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
 
     void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = 0,
+                 AccountingMap* accounting_map = nullptr,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -275,7 +275,7 @@ public:
     void Execute(const ScriptingContext& context) const override;
 
     void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = 0,
+                 AccountingMap* accounting_map = nullptr,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -506,7 +506,7 @@ class FO_COMMON_API CreatePlanet : public EffectBase {
 public:
     CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
                  ValueRef::ValueRefBase<PlanetSize>* size,
-                 ValueRef::ValueRefBase<std::string>* name = 0,
+                 ValueRef::ValueRefBase<std::string>* name = nullptr,
                  const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     virtual ~CreatePlanet();
@@ -532,7 +532,7 @@ private:
 class FO_COMMON_API CreateBuilding : public EffectBase {
 public:
     explicit CreateBuilding(ValueRef::ValueRefBase<std::string>* building_type_name,
-                            ValueRef::ValueRefBase<std::string>* name = 0,
+                            ValueRef::ValueRefBase<std::string>* name = nullptr,
                             const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     virtual ~CreateBuilding();
@@ -559,15 +559,15 @@ private:
 class FO_COMMON_API CreateShip : public EffectBase {
 public:
     explicit CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_design_name,
-                        ValueRef::ValueRefBase<int>* empire_id = 0,
-                        ValueRef::ValueRefBase<std::string>* species_name = 0,
-                        ValueRef::ValueRefBase<std::string>* ship_name = 0,
+                        ValueRef::ValueRefBase<int>* empire_id = nullptr,
+                        ValueRef::ValueRefBase<std::string>* species_name = nullptr,
+                        ValueRef::ValueRefBase<std::string>* ship_name = nullptr,
                         const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     explicit CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
-                        ValueRef::ValueRefBase<int>* empire_id = 0,
-                        ValueRef::ValueRefBase<std::string>* species_name = 0,
-                        ValueRef::ValueRefBase<std::string>* ship_name = 0,
+                        ValueRef::ValueRefBase<int>* empire_id = nullptr,
+                        ValueRef::ValueRefBase<std::string>* species_name = nullptr,
+                        ValueRef::ValueRefBase<std::string>* ship_name = nullptr,
                         const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     virtual ~CreateShip();
@@ -596,15 +596,15 @@ private:
 class FO_COMMON_API CreateField : public EffectBase {
 public:
     explicit CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
-                         ValueRef::ValueRefBase<double>* size = 0,
-                         ValueRef::ValueRefBase<std::string>* name = 0,
+                         ValueRef::ValueRefBase<double>* size = nullptr,
+                         ValueRef::ValueRefBase<std::string>* name = nullptr,
                          const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                 ValueRef::ValueRefBase<double>* x,
                 ValueRef::ValueRefBase<double>* y,
-                ValueRef::ValueRefBase<double>* size = 0,
-                ValueRef::ValueRefBase<std::string>* name = 0,
+                ValueRef::ValueRefBase<double>* size = nullptr,
+                ValueRef::ValueRefBase<std::string>* name = nullptr,
                 const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     virtual ~CreateField();
@@ -635,12 +635,12 @@ public:
     CreateSystem(ValueRef::ValueRefBase< ::StarType>* type,
                  ValueRef::ValueRefBase<double>* x,
                  ValueRef::ValueRefBase<double>* y,
-                 ValueRef::ValueRefBase<std::string>* name = 0,
+                 ValueRef::ValueRefBase<std::string>* name = nullptr,
                  const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     CreateSystem(ValueRef::ValueRefBase<double>* x,
                  ValueRef::ValueRefBase<double>* y,
-                 ValueRef::ValueRefBase<std::string>* name = 0,
+                 ValueRef::ValueRefBase<std::string>* name = nullptr,
                  const std::vector<EffectBase*>& effects_to_apply_after = std::vector<EffectBase*>());
 
     virtual ~CreateSystem();
@@ -691,7 +691,7 @@ public:
     explicit AddSpecial(const std::string& name, float capacity = 1.0f);
 
     explicit AddSpecial(ValueRef::ValueRefBase<std::string>* name,
-                        ValueRef::ValueRefBase<double>* capacity = 0);
+                        ValueRef::ValueRefBase<double>* capacity = nullptr);
 
     ~AddSpecial();
 
@@ -836,8 +836,8 @@ public:
                 Condition::ConditionBase* focal_point_condition);
 
     MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
-                ValueRef::ValueRefBase<double>* focus_x = 0,
-                ValueRef::ValueRefBase<double>* focus_y = 0);
+                ValueRef::ValueRefBase<double>* focus_x = nullptr,
+                ValueRef::ValueRefBase<double>* focus_y = nullptr);
 
     virtual ~MoveInOrbit();
 
@@ -866,8 +866,8 @@ public:
                 Condition::ConditionBase* dest_condition);
 
     MoveTowards(ValueRef::ValueRefBase<double>* speed,
-                ValueRef::ValueRefBase<double>* dest_x = 0,
-                ValueRef::ValueRefBase<double>* dest_y = 0);
+                ValueRef::ValueRefBase<double>* dest_x = nullptr,
+                ValueRef::ValueRefBase<double>* dest_y = nullptr);
 
     virtual ~MoveTowards();
 
@@ -985,7 +985,7 @@ private:
 class FO_COMMON_API GiveEmpireTech : public EffectBase {
 public:
     explicit GiveEmpireTech(ValueRef::ValueRefBase<std::string>* tech_name,
-                            ValueRef::ValueRefBase<int>* empire_id = 0);
+                            ValueRef::ValueRefBase<int>* empire_id = nullptr);
 
     virtual ~GiveEmpireTech();
 
@@ -1022,7 +1022,7 @@ public:
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
                           const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
                           EmpireAffiliationType affiliation,
-                          Condition::ConditionBase* condition = 0,
+                          Condition::ConditionBase* condition = nullptr,
                           const std::string label = "",
                           bool stringtable_lookup = true);
 
@@ -1037,7 +1037,7 @@ public:
     void Execute(const ScriptingContext& context) const override;
 
     void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = 0,
+                 AccountingMap* accounting_map = nullptr,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -1094,7 +1094,7 @@ public:
     void Execute(const ScriptingContext& context) const override;
 
     void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = 0,
+                 AccountingMap* accounting_map = nullptr,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -1124,7 +1124,7 @@ public:
     void Execute(const ScriptingContext& context) const override;
 
     void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = 0,
+                 AccountingMap* accounting_map = nullptr,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -1151,8 +1151,8 @@ private:
 class FO_COMMON_API SetVisibility : public EffectBase {
 public:
     SetVisibility(Visibility vis, EmpireAffiliationType affiliation,
-                  ValueRef::ValueRefBase<int>* empire_id = 0,
-                  Condition::ConditionBase* of_objects = 0);    // if not specified, acts on target. if specified, acts on all matching objects
+                  ValueRef::ValueRefBase<int>* empire_id = nullptr,
+                  Condition::ConditionBase* of_objects = nullptr);    // if not specified, acts on target. if specified, acts on all matching objects
 
     virtual ~SetVisibility();
 
@@ -1200,7 +1200,7 @@ public:
     void Execute(const ScriptingContext& context, const TargetSet& targets) const override;
 
     void Execute(const TargetsCauses& targets_causes,
-                 AccountingMap* accounting_map = 0,
+                 AccountingMap* accounting_map = nullptr,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,
@@ -1221,7 +1221,7 @@ public:
 
 protected:
     void Execute(const ScriptingContext& context, const TargetSet& targets,
-                 AccountingMap* accounting_map = 0,
+                 AccountingMap* accounting_map = nullptr,
                  bool only_meter_effects = false,
                  bool only_appearance_effects = false,
                  bool include_empire_meter_effects = false,

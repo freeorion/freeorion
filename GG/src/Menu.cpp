@@ -403,7 +403,7 @@ PopupMenu::PopupMenu(X x, Y y, const boost::shared_ptr<Font>& font, const MenuIt
     m_open_levels(),
     m_caret(1, INVALID_CARET),
     m_origin(x, y),
-    m_item_selected(0)
+    m_item_selected(nullptr)
 {
     m_open_levels.resize(1);
 

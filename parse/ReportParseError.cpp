@@ -97,8 +97,8 @@ void parse::detail::default_send_error_string(const std::string& str) {
     std::cout << str +"\n" << std::flush;
 }
 
-const char* parse::detail::s_filename = 0;
-parse::text_iterator* parse::detail::s_text_it = 0;
+const char* parse::detail::s_filename = nullptr;
+parse::text_iterator* parse::detail::s_text_it = nullptr;
 parse::text_iterator parse::detail::s_begin;
 parse::text_iterator parse::detail::s_end;
 

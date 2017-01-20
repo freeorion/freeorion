@@ -10,7 +10,7 @@
 std::ostream& std::operator << (std::ostream& stream, const std::type_info& type) {
 #ifdef __GNUG__
     int status = -4;
-    char* res = abi::__cxa_demangle(type.name(), NULL, NULL, &status);
+    char* res = abi::__cxa_demangle(type.name(), nullptr, nullptr, &status);
     stream << ((status == 0) ? res : type.name());
     free(res);
 #else

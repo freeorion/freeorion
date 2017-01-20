@@ -73,7 +73,7 @@ GG::TabBar* CUIStyle::NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr
 { return new CUITabBar(font, color, text_color); }
 
 GG::Button* CUIStyle::NewScrollUpButton(GG::Clr color) const
-{ return 0; }
+{ return nullptr; }
 
 GG::Button* CUIStyle::NewScrollDownButton(GG::Clr color) const
 { return NewScrollUpButton(color); }

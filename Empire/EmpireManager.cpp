@@ -42,7 +42,7 @@ const EmpireManager& EmpireManager::operator=(EmpireManager& rhs) {
 
 const Empire* EmpireManager::GetEmpire(int id) const {
     const_iterator it = m_empire_map.find(id);
-    return it == m_empire_map.end() ? 0 : it->second;
+    return it == m_empire_map.end() ? nullptr : it->second;
 }
 
 const std::string& EmpireManager::GetEmpireName(int id) const {
@@ -83,7 +83,7 @@ std::string EmpireManager::Dump() const {
 
 Empire* EmpireManager::GetEmpire(int id) {
     iterator it = m_empire_map.find(id);
-    return it == end() ? 0 : it->second;
+    return it == end() ? nullptr : it->second;
 }
 
 EmpireManager::iterator EmpireManager::begin()

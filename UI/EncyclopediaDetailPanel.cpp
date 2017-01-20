@@ -497,14 +497,14 @@ std::list <std::pair<std::string, std::string> >::iterator  EncyclopediaDetailPa
 
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(UserString("MAP_BTN_PEDIA"), flags, config_name, false),
-    m_name_text(0),
-    m_cost_text(0),
-    m_summary_text(0),
-    m_description_box(0),
-    m_description_panel(0),
-    m_icon(0),
-    m_search_edit(0),
-    m_graph(0),
+    m_name_text(nullptr),
+    m_cost_text(nullptr),
+    m_summary_text(nullptr),
+    m_description_box(nullptr),
+    m_description_panel(nullptr),
+    m_icon(nullptr),
+    m_search_edit(nullptr),
+    m_graph(nullptr),
     m_needs_refresh(false)
 {
     const int PTS = ClientUI::Pts();
@@ -2543,7 +2543,7 @@ void EncyclopediaDetailPanel::PreRender() {
 void EncyclopediaDetailPanel::RefreshImpl() {
     if (m_icon) {
         DeleteChild(m_icon);
-        m_icon = 0;
+        m_icon = nullptr;
     }
     m_name_text->Clear();
     m_summary_text->Clear();

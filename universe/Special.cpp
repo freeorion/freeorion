@@ -44,7 +44,7 @@ namespace {
         }
         const Special* GetSpecial(const std::string& name) const {
             std::map<std::string, Special*>::const_iterator it = m_specials.find(name);
-            return it != m_specials.end() ? it->second : 0;
+            return it != m_specials.end() ? it->second : nullptr;
         }
     private:
         std::map<std::string, Special*> m_specials;

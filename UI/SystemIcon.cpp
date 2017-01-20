@@ -231,14 +231,14 @@ void OwnerColoredSystemName::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     GG::Control(x, y, w, GG::Y(Value(w)), GG::INTERACTIVE),
     m_system_id(system_id),
-    m_tiny_graphic(0),
-    m_selection_indicator(0),
-    m_tiny_selection_indicator(0),
-    m_mouseover_indicator(0),
-    m_mouseover_unexplored_indicator(0),
-    m_tiny_mouseover_indicator(0),
+    m_tiny_graphic(nullptr),
+    m_selection_indicator(nullptr),
+    m_tiny_selection_indicator(nullptr),
+    m_mouseover_indicator(nullptr),
+    m_mouseover_unexplored_indicator(nullptr),
+    m_tiny_mouseover_indicator(nullptr),
     m_selected(false),
-    m_colored_name(0),
+    m_colored_name(nullptr),
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
@@ -644,7 +644,8 @@ void SystemIcon::Refresh() {
 
 
     // remove existing system name control
-    delete m_colored_name;  m_colored_name = 0;
+    delete m_colored_name;
+    m_colored_name = nullptr;
 
     // create new system name control
     if (!name.empty()) {

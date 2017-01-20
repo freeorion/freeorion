@@ -318,7 +318,7 @@ ServerNetworking::ServerNetworking(boost::asio::io_service& io_service,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
     m_host_player_id(Networking::INVALID_PLAYER_ID),
-    m_discovery_server(0),
+    m_discovery_server(nullptr),
     m_player_connection_acceptor(io_service),
     m_nonplayer_message_callback(nonplayer_message_callback),
     m_player_message_callback(player_message_callback),

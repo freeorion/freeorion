@@ -14,7 +14,7 @@
 struct PromptRow : GG::ListBox::Row {
     PromptRow(GG::X w, std::string prompt_str) :
         GG::ListBox::Row(w, GG::Y(20), ""),
-        m_prompt(0)
+        m_prompt(nullptr)
     {
         //std::cout << "PromptRow(" << w << ", ...)" << std::endl;
 

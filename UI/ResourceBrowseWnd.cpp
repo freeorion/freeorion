@@ -15,16 +15,16 @@ namespace {
 ResourceBrowseWnd::ResourceBrowseWnd(const std::string& title_text, const std::string& unit_label,
                                      float used, float output, float target_output) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, BrowseTextWidth(), GG::Y1),
-    m_title_text(0),
-    m_used_points_label(0),
-    m_used_points(0),
-    m_used_points_P_label(0),
-    m_output_points_label(0),
-    m_output_points(0),
-    m_output_points_P_label(0),
-    m_target_points_label(0),
-    m_target_points(0),
-    m_target_points_P_label(0),
+    m_title_text(nullptr),
+    m_used_points_label(nullptr),
+    m_used_points(nullptr),
+    m_used_points_P_label(nullptr),
+    m_output_points_label(nullptr),
+    m_output_points(nullptr),
+    m_output_points_P_label(nullptr),
+    m_target_points_label(nullptr),
+    m_target_points(nullptr),
+    m_target_points_P_label(nullptr),
     m_offset(GG::X0, ICON_BROWSE_ICON_HEIGHT/2)
 {
     const GG::Y ROW_HEIGHT(ClientUI::Pts()*4/3);

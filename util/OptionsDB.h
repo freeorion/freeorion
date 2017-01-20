@@ -261,7 +261,7 @@ public:
             value = true; // if the flag is present at all its value is true
         }
         m_options[name] = Option(static_cast<char>(0), name, value, boost::lexical_cast<std::string>(false),
-                                 description, 0, storable, true, true);
+                                 description, nullptr, storable, true, true);
         m_dirty = true;
         OptionAddedSignal(name);
     }
@@ -283,7 +283,7 @@ public:
             value = true; // if the flag is present at all its value is true
         }
         m_options[name] = Option(short_name, name, value, boost::lexical_cast<std::string>(false),
-                                 description, 0, storable, true, true);
+                                 description, nullptr, storable, true, true);
         m_dirty = true;
         OptionAddedSignal(name);
     }

@@ -247,7 +247,7 @@ struct GG::GUIImpl
 };
 
 GUIImpl::GUIImpl() :
-    m_focus_wnd(0),
+    m_focus_wnd(nullptr),
     m_allow_modal_accelerator_signals(false),
     m_mouse_pos(X(-1000), Y(-1000)),
     m_mouse_rel(X(0), Y(0)),
@@ -264,35 +264,35 @@ GUIImpl::GUIImpl() :
     m_min_drag_time(250),
     m_min_drag_distance(5),
     m_prev_mouse_button_press_time(-1),
-    m_prev_wnd_under_cursor(0),
+    m_prev_wnd_under_cursor(nullptr),
     m_prev_wnd_under_cursor_time(-1),
-    m_curr_wnd_under_cursor(0),
+    m_curr_wnd_under_cursor(nullptr),
     m_drag_wnds(),
     m_curr_drag_wnd_dragged(false),
-    m_curr_drag_wnd(0),
-    m_curr_drag_drop_here_wnd(0),
+    m_curr_drag_wnd(nullptr),
+    m_curr_drag_drop_here_wnd(nullptr),
     m_wnd_region(WR_NONE),
     m_browse_info_mode(0),
-    m_browse_target(0),
-    m_drag_drop_originating_wnd(0),
+    m_browse_target(nullptr),
+    m_drag_drop_originating_wnd(nullptr),
     m_mouse_lr_swap(false),
     m_delta_t(0),
     m_rendering_drag_drop_wnds(false),
     m_FPS(-1.0),
     m_calc_FPS(false),
     m_max_FPS(0.0),
-    m_double_click_wnd(0),
+    m_double_click_wnd(nullptr),
     m_double_click_button(0),
     m_double_click_start_time(-1),
     m_double_click_time(-1),
     m_style_factory(new StyleFactory()),
     m_render_cursor(false),
     m_cursor(),
-    m_save_as_png_wnd(0),
+    m_save_as_png_wnd(nullptr),
     m_clipboard_text()
 {
+    m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = nullptr;
     m_mouse_button_state[0] = m_mouse_button_state[1] = m_mouse_button_state[2] = false;
-    m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = 0;
 }
 
 void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, int curr_ticks)
@@ -303,7 +303,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
     m_wnd_drag_offset = Pt();
     m_prev_mouse_button_press_time = 0;
     m_browse_info_wnd.reset();
-    m_browse_target = 0;
+    m_browse_target = nullptr;
     m_prev_wnd_under_cursor_time = curr_ticks;
     m_prev_mouse_button_press_time = curr_ticks;
     m_prev_mouse_button_press_pos = pos;
@@ -316,7 +316,7 @@ void GUIImpl::HandleMouseButtonPress(unsigned int mouse_button, const Pt& pos, i
     }
 
     // if this window is not a disabled Control window, it becomes the focus window
-    Control* control = 0;
+    Control* control = nullptr;
     if (m_drag_wnds[mouse_button] && (!(control = dynamic_cast<Control*>(m_drag_wnds[mouse_button])) || !control->Disabled()))
         GUI::s_gui->SetFocusWnd(m_drag_wnds[mouse_button]);
 
@@ -472,7 +472,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
     m_last_mouse_button_down_repeat_time = 0;
     m_prev_wnd_drag_position = Pt();
     m_browse_info_wnd.reset();
-    m_browse_target = 0;
+    m_browse_target = nullptr;
     m_prev_wnd_under_cursor_time = curr_ticks;
 
     Wnd* click_wnd = m_drag_wnds[mouse_button];
@@ -486,7 +486,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
         (m_curr_drag_wnd_dragged && click_wnd && (click_wnd->DragDropDataType() != "") && (mouse_button == 0));
 
     m_mouse_button_state[mouse_button] = false;
-    m_drag_wnds[mouse_button] = 0; // if the mouse button is released, stop the tracking the drag window
+    m_drag_wnds[mouse_button] = nullptr; // if the mouse button is released, stop the tracking the drag window
     m_wnd_region = WR_NONE;        // and clear this, just in case
 
     if (!in_drag_drop && click_wnd && m_curr_wnd_under_cursor == click_wnd) {
@@ -498,7 +498,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
             // within the time limit, so it's a double-click, not a click
             m_double_click_button == mouse_button)
         {
-            m_double_click_wnd = 0;
+            m_double_click_wnd = nullptr;
             m_double_click_start_time = -1;
             m_double_click_time = -1;
             click_wnd->HandleEvent(WndEvent(ButtonEvent(WndEvent::LDoubleClick, mouse_button), pos, m_mod_keys));
@@ -506,7 +506,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
         } else {
             // just a single click
             if (m_double_click_time > 0) {
-                m_double_click_wnd = 0;
+                m_double_click_wnd = nullptr;
                 m_double_click_start_time = -1;
                 m_double_click_time = -1;
             } else {
@@ -520,7 +520,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
 
     } else {
         // drag-dropping
-        m_double_click_wnd = 0;
+        m_double_click_wnd = nullptr;
         m_double_click_time = -1;
         if (click_wnd)
             click_wnd->HandleEvent(WndEvent(ButtonEvent(WndEvent::LButtonUp, mouse_button), pos, m_mod_keys));
@@ -539,7 +539,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                     // prep / handle end of drag-drop
                     m_drag_drop_originating_wnd = click_wnd->Parent();
                     m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
-                    m_curr_drag_drop_here_wnd = 0;
+                    m_curr_drag_drop_here_wnd = nullptr;
 
                     // put dragged Wnd into container depending on whether it is accepted by the drop target
                     std::vector<Wnd*> accepted_wnds;
@@ -570,7 +570,7 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
                 // prep / handle end of drag-drop
                 m_drag_drop_originating_wnd = click_wnd->Parent();
                 m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
-                m_curr_drag_drop_here_wnd = 0;
+                m_curr_drag_drop_here_wnd = nullptr;
 
                 // put dragged Wnds into containers depending on whether they were accepted by the drop target
                 std::vector<Wnd*> accepted_wnds;
@@ -594,12 +594,12 @@ void GUIImpl::HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& 
             }
         }
     }
-    m_drag_drop_originating_wnd = 0;
+    m_drag_drop_originating_wnd = nullptr;
     m_drag_drop_wnds.clear();
     m_drag_drop_wnds_acceptable.clear();
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
     m_curr_drag_wnd_dragged = false;
-    m_curr_drag_wnd = 0;
+    m_curr_drag_wnd = nullptr;
 }
 
 void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks)
@@ -649,7 +649,7 @@ void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModK
     key = KeyMappedKey(key, m_key_map);
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
-    m_browse_target = 0;
+    m_browse_target = nullptr;
     m_last_pressed_key_code_point = std::make_pair(key, key_code_point);
     m_last_key_press_repeat_time = 0;
     m_prev_key_press_time = curr_ticks;
@@ -680,7 +680,7 @@ void GUIImpl::HandleKeyRelease(Key key, boost::uint32_t key_code_point, Flags<Mo
     m_last_pressed_key_code_point.first = GGK_UNKNOWN;
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
-    m_browse_target = 0;
+    m_browse_target = nullptr;
     if (GUI::s_gui->FocusWnd())
         GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(
             WndEvent::KeyRelease, key, key_code_point, mod_keys));
@@ -689,7 +689,7 @@ void GUIImpl::HandleKeyRelease(Key key, boost::uint32_t key_code_point, Flags<Mo
 void GUIImpl::HandleTextInput(const std::string* text) {
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
-    m_browse_target = 0;
+    m_browse_target = nullptr;
     if (GUI::s_gui->FocusWnd())
         GUI::s_gui->FocusWnd()->HandleEvent(WndEvent(WndEvent::TextInput, text));
 }
@@ -718,7 +718,7 @@ void GUIImpl::HandleMouseMove(Flags<ModKey> mod_keys, const GG::Pt& pos, const P
     }
     if (m_prev_wnd_under_cursor != m_curr_wnd_under_cursor) {
         m_browse_info_wnd.reset();
-        m_browse_target = 0;
+        m_browse_target = nullptr;
         m_prev_wnd_under_cursor_time = curr_ticks;
     }
     m_prev_wnd_under_cursor = m_curr_wnd_under_cursor; // update this for the next time around
@@ -728,7 +728,7 @@ void GUIImpl::HandleMouseWheel(Flags<ModKey> mod_keys, const GG::Pt& pos, const 
 {
     m_curr_wnd_under_cursor = GUI::s_gui->CheckedGetWindowUnder(pos, mod_keys);
     m_browse_info_wnd.reset();
-    m_browse_target = 0;
+    m_browse_target = nullptr;
     m_prev_wnd_under_cursor_time = curr_ticks;
     // don't send out 0-movement wheel messages
     if (m_curr_wnd_under_cursor && rel.y)
@@ -745,7 +745,7 @@ void GUIImpl::HandleMouseEnter(Flags< ModKey > mod_keys, const GG::Pt& pos, Wnd*
 
 void GUIImpl::ClearState()
 {
-    m_focus_wnd = 0;
+    m_focus_wnd = nullptr;
     m_mouse_pos = GG::Pt(X(-1000), Y(-1000));
     m_mouse_rel = GG::Pt(X(0), Y(0));
     m_mod_keys = Flags<ModKey>();
@@ -755,33 +755,33 @@ void GUIImpl::ClearState()
 
     m_prev_wnd_drag_position = Pt();
     m_browse_info_wnd.reset();
-    m_browse_target = 0;
+    m_browse_target = nullptr;
 
     m_prev_mouse_button_press_time = -1;
-    m_prev_wnd_under_cursor = 0;
+    m_prev_wnd_under_cursor = nullptr;
     m_prev_wnd_under_cursor_time = -1;
-    m_curr_wnd_under_cursor = 0;
+    m_curr_wnd_under_cursor = nullptr;
 
     m_mouse_button_state[0] = m_mouse_button_state[1] = m_mouse_button_state[2] = false;
-    m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = 0;
+    m_drag_wnds[0] = m_drag_wnds[1] = m_drag_wnds[2] = nullptr;
 
     m_curr_drag_wnd_dragged = false;
-    m_curr_drag_wnd = 0;
-    m_curr_drag_drop_here_wnd = 0;
+    m_curr_drag_wnd = nullptr;
+    m_curr_drag_drop_here_wnd = nullptr;
     m_wnd_region = WR_NONE;
-    m_browse_target = 0;
-    m_drag_drop_originating_wnd = 0;
-    m_curr_wnd_under_cursor = 0;
+    m_browse_target = nullptr;
+    m_drag_drop_originating_wnd = nullptr;
+    m_curr_wnd_under_cursor = nullptr;
 
     m_delta_t = 0;
 
-    m_double_click_wnd = 0;
+    m_double_click_wnd = nullptr;
     m_double_click_start_time = -1;
     m_double_click_time = -1;
 }
 
 // static member(s)
-GUI*                       GUI::s_gui = 0;
+GUI*                       GUI::s_gui = nullptr;
 boost::shared_ptr<GUIImpl> GUI::s_impl;
 
 // member functions
@@ -1098,7 +1098,7 @@ void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point
         if (s_impl->m_double_click_time >= s_impl->m_double_click_interval) {
             s_impl->m_double_click_start_time = -1;
             s_impl->m_double_click_time = -1;
-            s_impl->m_double_click_wnd = 0;
+            s_impl->m_double_click_wnd = nullptr;
         }
     }
 
@@ -1226,11 +1226,11 @@ void GUI::WndDying(Wnd* wnd)
 
     Remove(wnd);
     if (MatchesOrContains(wnd, s_impl->m_focus_wnd))
-        s_impl->m_focus_wnd = 0;
+        s_impl->m_focus_wnd = nullptr;
     for (std::pair<Wnd*, Wnd*>& modal_wnd : s_impl->m_modal_wnds) {
         if (MatchesOrContains(wnd, modal_wnd.second)) {
             if (MatchesOrContains(wnd, modal_wnd.first)) {
-                modal_wnd.second = 0;
+                modal_wnd.second = nullptr;
             } else { // if the modal window for the removed window's focus level is available, revert focus to the modal window
                 if ((modal_wnd.second = modal_wnd.first))
                     modal_wnd.first->HandleEvent(WndEvent(WndEvent::GainingFocus));
@@ -1238,29 +1238,29 @@ void GUI::WndDying(Wnd* wnd)
         }
     }
     if (MatchesOrContains(wnd, s_impl->m_prev_wnd_under_cursor))
-        s_impl->m_prev_wnd_under_cursor = 0;
+        s_impl->m_prev_wnd_under_cursor = nullptr;
     if (MatchesOrContains(wnd, s_impl->m_curr_wnd_under_cursor))
-        s_impl->m_curr_wnd_under_cursor = 0;
+        s_impl->m_curr_wnd_under_cursor = nullptr;
     if (MatchesOrContains(wnd, s_impl->m_drag_wnds[0])) {
-        s_impl->m_drag_wnds[0] = 0;
+        s_impl->m_drag_wnds[0] = nullptr;
         s_impl->m_wnd_region = WR_NONE;
     }
     if (MatchesOrContains(wnd, s_impl->m_drag_wnds[1])) {
-        s_impl->m_drag_wnds[1] = 0;
+        s_impl->m_drag_wnds[1] = nullptr;
         s_impl->m_wnd_region = WR_NONE;
     }
     if (MatchesOrContains(wnd, s_impl->m_drag_wnds[2])) {
-        s_impl->m_drag_wnds[2] = 0;
+        s_impl->m_drag_wnds[2] = nullptr;
         s_impl->m_wnd_region = WR_NONE;
     }
     if (MatchesOrContains(wnd, s_impl->m_curr_drag_drop_here_wnd))
-        s_impl->m_curr_drag_drop_here_wnd = 0;
+        s_impl->m_curr_drag_drop_here_wnd = nullptr;
     if (MatchesOrContains(wnd, s_impl->m_drag_drop_originating_wnd))
-        s_impl->m_drag_drop_originating_wnd = 0;
+        s_impl->m_drag_drop_originating_wnd = nullptr;
     s_impl->m_drag_drop_wnds.erase(wnd);
     s_impl->m_drag_drop_wnds_acceptable.erase(wnd);
     if (MatchesOrContains(wnd, s_impl->m_double_click_wnd)) {
-        s_impl->m_double_click_wnd = 0;
+        s_impl->m_double_click_wnd = nullptr;
         s_impl->m_double_click_start_time = -1;
         s_impl->m_double_click_time = -1;
     }
@@ -1612,7 +1612,7 @@ void GUI::RenderWindow(Wnd* wnd)
 
     if (wnd == s_impl->m_save_as_png_wnd) {
         WriteWndToPNG(s_impl->m_save_as_png_wnd, s_impl->m_save_as_png_filename);
-        s_impl->m_save_as_png_wnd = 0;
+        s_impl->m_save_as_png_wnd = nullptr;
         s_impl->m_save_as_png_filename.clear();
     }
 }
@@ -1699,7 +1699,7 @@ void GUI::Render()
         if (!s_impl->m_curr_wnd_under_cursor) {
             s_impl->m_browse_info_wnd.reset();
             s_impl->m_browse_info_mode = -1;
-            s_impl->m_browse_target = 0;
+            s_impl->m_browse_target = nullptr;
             s_impl->m_prev_wnd_under_cursor_time = Ticks();
         } else {
             assert(s_impl->m_browse_target);
@@ -1744,7 +1744,7 @@ bool GUI::ProcessBrowseInfoImpl(Wnd* wnd)
 
 Wnd* GUI::ModalWindow() const
 {
-    Wnd* retval = 0;
+    Wnd* retval = nullptr;
     if (!s_impl->m_modal_wnds.empty())
         retval = s_impl->m_modal_wnds.back().first;
     return retval;
@@ -1762,7 +1762,7 @@ Wnd* GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys)
 
     if (s_impl->m_curr_drag_drop_here_wnd && !unregistered_drag_drop && !registered_drag_drop) {
         s_impl->m_curr_drag_drop_here_wnd->HandleEvent(WndEvent(WndEvent::DragDropLeave));
-        s_impl->m_curr_drag_drop_here_wnd = 0;
+        s_impl->m_curr_drag_drop_here_wnd = nullptr;
     }
 
     if (w == s_impl->m_curr_wnd_under_cursor)
@@ -1773,13 +1773,13 @@ Wnd* GUI::CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys)
         if (unregistered_drag_drop) {
             s_impl->m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
             s_impl->m_drag_drop_wnds_acceptable[dragged_wnd] = false;
-            s_impl->m_curr_drag_drop_here_wnd = 0;
+            s_impl->m_curr_drag_drop_here_wnd = nullptr;
 
         } else if (registered_drag_drop) {
             s_impl->m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::DragDropLeave));
             for (std::map<const Wnd*, bool>::value_type& acceptable_wnd : s_impl->m_drag_drop_wnds_acceptable)
             { acceptable_wnd.second = false; }
-            s_impl->m_curr_drag_drop_here_wnd = 0;
+            s_impl->m_curr_drag_drop_here_wnd = nullptr;
 
         } else {
             s_impl->m_curr_wnd_under_cursor->HandleEvent(WndEvent(WndEvent::MouseLeave));

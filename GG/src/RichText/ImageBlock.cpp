@@ -18,7 +18,7 @@ namespace GG {
     ImageBlock::ImageBlock(const fs::path& path, X x, Y y, X w,
                            GG::Flags<GG::WndFlag> flags) :
         BlockControl(x, y, w, flags),
-        m_graphic(0)
+        m_graphic(nullptr)
     {
         try {
             boost::shared_ptr<Texture> texture = GetTextureManager().GetTexture(path);
@@ -31,7 +31,7 @@ namespace GG {
 
     Pt ImageBlock::SetMaxWidth(X width)
     {
-        if (m_graphic != 0) {
+        if (m_graphic) {
             // Give the graphic the set width and give it liberty with the height.
             m_graphic->Resize(Pt(width, Y(INT_MAX)));
 
@@ -92,7 +92,7 @@ namespace GG {
             fs::path combined_path = m_root_path / param_path;
 
             if (!fs::exists(combined_path))
-                return 0;
+                return nullptr;
 
             // Create a new image block, basing the path on the root path.
             return new ImageBlock(combined_path, X0, Y0, X1, Flags<WndFlag>());
@@ -137,7 +137,7 @@ namespace GG {
         ImageBlockFactory* image_factory = dynamic_cast<ImageBlockFactory*>(factory);
 
         // If successful, set the root path.
-        if (image_factory != 0) {
+        if (image_factory) {
             image_factory->SetRootPath(path);
             return true;
         } else {

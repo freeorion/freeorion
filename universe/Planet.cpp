@@ -106,7 +106,7 @@ Planet* Planet::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
-        return 0;
+        return nullptr;
 
     Planet* retval = new Planet();
     retval->Copy(TemporaryFromThis(), empire_id);
@@ -236,7 +236,7 @@ void Planet::Init() {
 }
 
 PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/* = ""*/) const {
-    const Species* species = 0;
+    const Species* species = nullptr;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
@@ -253,7 +253,7 @@ PlanetEnvironment Planet::EnvironmentForSpecies(const std::string& species_name/
 }
 
 PlanetType Planet::NextBetterPlanetTypeForSpecies(const std::string& species_name/* = ""*/) const {
-    const Species* species = 0;
+    const Species* species = nullptr;
     if (species_name.empty()) {
         const std::string& this_planet_species_name = this->SpeciesName();
         if (this_planet_species_name.empty())
@@ -713,7 +713,7 @@ void Planet::Conquer(int conquerer) {
 }
 
 bool Planet::Colonize(int empire_id, const std::string& species_name, double population) {
-    const Species* species = 0;
+    const Species* species = nullptr;
 
     // if desired pop > 0, we want a colony, not an outpost, so we need to do some checks
     if (population > 0.0) {

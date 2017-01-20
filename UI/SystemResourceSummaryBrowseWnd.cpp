@@ -23,7 +23,7 @@ namespace {
         }
 
 
-        const Empire* empire = 0;
+        const Empire* empire = nullptr;
 
         if (empire_id != ALL_EMPIRES) {
             empire = GetEmpire(empire_id);
@@ -91,9 +91,9 @@ SystemResourceSummaryBrowseWnd::SystemResourceSummaryBrowseWnd(ResourceType reso
     m_resource_type(resource_type),
     m_system_id(system_id),
     m_empire_id(empire_id),
-    m_production_label(0),
-    m_allocation_label(0),
-    m_import_export_label(0),
+    m_production_label(nullptr),
+    m_allocation_label(nullptr),
+    m_import_export_label(nullptr),
     row_height(1),
     production_label_top(0),
     allocation_label_top(0),
@@ -365,7 +365,7 @@ void SystemResourceSummaryBrowseWnd::UpdateAllocation(GG::Y& top) {
 void SystemResourceSummaryBrowseWnd::UpdateImportExport(GG::Y& top) {
     m_import_export_label->SetText(UserString("IMPORT_EXPORT_TOOLTIP"));
 
-    const Empire* empire = 0;
+    const Empire* empire = nullptr;
 
     // check for early exit cases...
     bool abort = false;

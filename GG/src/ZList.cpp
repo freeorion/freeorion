@@ -32,17 +32,17 @@ using namespace GG;
 ///////////////////////////////////////
 Wnd* ZList::Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore/* = 0*/) const
 {
-    Wnd* retval = 0;
+    Wnd* retval = nullptr;
     if (modal) { // if a modal window is active, only look there
         // NOTE: We have to check Visible() separately, because in the
         // rendering code an invisble parent's children are never rendered.
         retval =
             modal->Visible() &&
             modal->InWindow(pt) ?
-            PickWithinWindow(pt, modal, ignore) : 0;
+            PickWithinWindow(pt, modal, ignore) : nullptr;
     } else { // otherwise, look in the z-list
         for (Wnd* wnd : *this) {
-            Wnd* temp = 0;
+            Wnd* temp = nullptr;
             if (wnd->Visible() &&
                 wnd->InWindow(pt) &&
                 (temp = PickWithinWindow(pt, wnd, ignore))) {
@@ -120,14 +120,14 @@ Wnd* ZList::PickWithinWindow(const Pt& pt, Wnd* wnd, const std::set<Wnd*>* ignor
         (wnd->Visible() &&
          wnd->Interactive() &&
          (!ignore || ignore->find(wnd) == ignore->end())) ?
-        wnd : 0;
+        wnd : nullptr;
     // look through all the children of wnd, and determine whether pt lies in
     // any of them (or their children)
     std::list<Wnd*>::reverse_iterator end_it = wnd->m_children.rend();
     for (std::list<Wnd*>::reverse_iterator it = wnd->m_children.rbegin(); it != end_it; ++it) {
         if (!(*it)->Visible())
             continue;
-        Wnd* temp = 0;
+        Wnd* temp = nullptr;
         if ((*it)->InWindow(pt) && (temp = PickWithinWindow(pt, *it, ignore))) {
             retval = temp;
             break;

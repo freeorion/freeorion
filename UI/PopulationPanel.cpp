@@ -29,8 +29,8 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     AccordionPanel(w, GG::Y(ClientUI::Pts()*2)),
     m_popcenter_id(object_id),
     m_meter_stats(),
-    m_multi_icon_value_indicator(0),
-    m_multi_meter_status_bar(0)
+    m_multi_icon_value_indicator(nullptr),
+    m_multi_meter_status_bar(nullptr)
 {
     SetName("PopulationPanel");
 

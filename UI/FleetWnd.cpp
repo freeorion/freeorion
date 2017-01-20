@@ -444,7 +444,7 @@ namespace {
 ////////////////////////////////////////////////
 FleetUIManager::FleetUIManager() :
     m_order_issuing_enabled(true),
-    m_active_fleet_wnd(0)
+    m_active_fleet_wnd(nullptr)
 {}
 
 FleetUIManager::iterator FleetUIManager::begin() const
@@ -461,7 +461,7 @@ FleetWnd* FleetUIManager::ActiveFleetWnd() const
 
 FleetWnd* FleetUIManager::WndForFleet(TemporaryPtr<const Fleet> fleet) const {
     assert(fleet);
-    FleetWnd* retval = 0;
+    FleetWnd* retval = nullptr;
     for (FleetWnd* wnd : m_fleet_wnds) {
         if (wnd->ContainsFleet(fleet->ID())) {
             retval = wnd;
@@ -553,7 +553,7 @@ bool FleetUIManager::CloseAll() {
     for (FleetWnd* wnd : vec)
         wnd->CloseClicked();
 
-    m_active_fleet_wnd = 0;
+    m_active_fleet_wnd = nullptr;
 
     ActiveFleetWndChangedSignal();
 
@@ -576,7 +576,7 @@ FleetUIManager& FleetUIManager::GetFleetUIManager() {
 void FleetUIManager::FleetWndClosing(FleetWnd* fleet_wnd) {
     bool active_wnd_affected = false;
     if (fleet_wnd == m_active_fleet_wnd) {
-        m_active_fleet_wnd = 0;
+        m_active_fleet_wnd = nullptr;
         active_wnd_affected = true;
     }
     m_fleet_wnds.erase(fleet_wnd);
@@ -656,7 +656,7 @@ namespace {
         ShipRow(GG::X w, GG::Y h, int ship_id) :
             GG::ListBox::Row(w, h, ""),
             m_ship_id(ship_id),
-            m_panel(0)
+            m_panel(nullptr)
         {
             SetName("ShipRow");
             SetChildClippingMode(ClipToClient);
@@ -691,14 +691,14 @@ ShipDataPanel::ShipDataPanel(GG::X w, GG::Y h, int ship_id) :
     Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_initialized(false),
     m_ship_id(ship_id),
-    m_ship_icon(0),
-    m_scrap_indicator(0),
-    m_colonize_indicator(0),
-    m_invade_indicator(0),
-    m_bombard_indicator(0),
-    m_scanline_control(0),
-    m_ship_name_text(0),
-    m_design_name_text(0),
+    m_ship_icon(nullptr),
+    m_scrap_indicator(nullptr),
+    m_colonize_indicator(nullptr),
+    m_invade_indicator(nullptr),
+    m_bombard_indicator(nullptr),
+    m_scanline_control(nullptr),
+    m_ship_name_text(nullptr),
+    m_design_name_text(nullptr),
     m_stat_icons(),
     m_selected(false)
 {
@@ -767,23 +767,23 @@ void ShipDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ShipDataPanel::SetShipIcon() {
     delete m_ship_icon;
-    m_ship_icon = 0;
+    m_ship_icon = nullptr;
 
     delete m_scrap_indicator;
-    m_scrap_indicator = 0;
+    m_scrap_indicator = nullptr;
 
     delete m_colonize_indicator;
-    m_colonize_indicator = 0;
+    m_colonize_indicator = nullptr;
 
     delete m_invade_indicator;
-    m_invade_indicator = 0;
+    m_invade_indicator = nullptr;
 
     delete m_bombard_indicator;
-    m_bombard_indicator = 0;
+    m_bombard_indicator = nullptr;
 
     if (m_scanline_control) {
         delete m_scanline_control;
-        m_scanline_control = 0;
+        m_scanline_control = nullptr;
     }
 
     TemporaryPtr<const Ship> ship = GetShip(m_ship_id);
@@ -844,7 +844,7 @@ void ShipDataPanel::Refresh() {
         m_ship_name_text->SetText("");
         if (m_design_name_text) {
             delete m_design_name_text;
-            m_design_name_text = 0;
+            m_design_name_text = nullptr;
         }
         for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons)
             delete entry.second;
@@ -1122,12 +1122,12 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_system_id(INVALID_OBJECT_ID),
     m_new_fleet_drop_target(false),
     m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
-    m_fleet_icon(0),
-    m_fleet_name_text(0),
-    m_fleet_destination_text(0),
-    m_aggression_toggle(0),
-    m_gift_indicator(0),
-    m_scanline_control(0),
+    m_fleet_icon(nullptr),
+    m_fleet_name_text(nullptr),
+    m_fleet_destination_text(nullptr),
+    m_aggression_toggle(nullptr),
+    m_gift_indicator(nullptr),
+    m_scanline_control(nullptr),
     m_stat_icons(),
     m_selected(false),
     m_initialized(false)
@@ -1142,12 +1142,12 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_system_id(system_id),
     m_new_fleet_drop_target(new_fleet_drop_target), // should be true?
     m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
-    m_fleet_icon(0),
-    m_fleet_name_text(0),
-    m_fleet_destination_text(0),
-    m_aggression_toggle(0),
-    m_gift_indicator(0),
-    m_scanline_control(0),
+    m_fleet_icon(nullptr),
+    m_fleet_name_text(nullptr),
+    m_fleet_destination_text(nullptr),
+    m_aggression_toggle(nullptr),
+    m_gift_indicator(nullptr),
+    m_scanline_control(nullptr),
     m_stat_icons(),
     m_selected(false),
     m_initialized(false)
@@ -1442,13 +1442,13 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
 
 void FleetDataPanel::Refresh() {
     delete m_fleet_icon;
-    m_fleet_icon = 0;
+    m_fleet_icon = nullptr;
     if (m_scanline_control) {
         delete m_scanline_control;
-        m_scanline_control = 0;
+        m_scanline_control = nullptr;
     }
     delete m_gift_indicator;
-    m_gift_indicator = 0;
+    m_gift_indicator = nullptr;
 
     if (m_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
@@ -1759,7 +1759,7 @@ namespace {
         FleetRow(int fleet_id, GG::X w, GG::Y h) :
             GG::ListBox::Row(w, h, GetFleet(fleet_id) ? FLEET_DROP_TYPE_STRING : ""),
             m_fleet_id(fleet_id),
-            m_panel(0)
+            m_panel(nullptr)
         {
             SetName("FleetRow");
             SetChildClippingMode(ClipToClient);
@@ -1967,7 +1967,7 @@ public:
         assert(drop_target_row);
         assert(!drop_target_row->empty());
 
-        GG::Control* control = !drop_target_row->empty() ? drop_target_row->at(0) : 0;
+        GG::Control* control = !drop_target_row->empty() ? drop_target_row->at(0) : nullptr;
         assert(control);
 
         FleetDataPanel* drop_target_data_panel = boost::polymorphic_downcast<FleetDataPanel*>(control);
@@ -2123,7 +2123,7 @@ private:
         GG::ListBox::Row* selected_row = *row_it;
         assert(selected_row);
         assert(!selected_row->empty());
-        GG::Control* control = !selected_row->empty() ? selected_row->at(0) : 0;
+        GG::Control* control = !selected_row->empty() ? selected_row->at(0) : nullptr;
         FleetDataPanel* data_panel = boost::polymorphic_downcast<FleetDataPanel*>(control);
         assert(data_panel);
 
@@ -2174,7 +2174,7 @@ private:
             return;
         }
 
-        GG::Control* control = !selected_row->empty() ? selected_row->at(0) : 0;;
+        GG::Control* control = !selected_row->empty() ? selected_row->at(0) : nullptr;
         if (!control) {
             ErrorLogger() << "FleetsListBox::ClearHighlighting : null control in selected row!";
             return;
@@ -2401,7 +2401,7 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
     GG::Wnd(GG::X0, GG::Y0, w, h, flags),
     m_fleet_id(INVALID_OBJECT_ID),
     m_order_issuing_enabled(order_issuing_enabled),
-    m_ships_lb(0)
+    m_ships_lb(nullptr)
 {
     SetName("FleetDetailPanel");
     SetChildClippingMode(ClipToClient);
@@ -2545,7 +2545,7 @@ void FleetDetailPanel::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> 
 void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& rows) {
     for (GG::ListBox::iterator it = m_ships_lb->begin(); it != m_ships_lb->end(); ++it) {
         try {
-            ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>(!(**it).empty() ? (**it).at(0) : 0);
+            ShipDataPanel* ship_panel = boost::polymorphic_downcast<ShipDataPanel*>(!(**it).empty() ? (**it).at(0) : nullptr);
             ship_panel->Select(rows.find(it) != rows.end());
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetDetailPanel::ShipSelectionChanged caught exception: " << e.what();
@@ -2711,9 +2711,9 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     m_empire_id(ALL_EMPIRES),
     m_system_id(INVALID_OBJECT_ID),
     m_order_issuing_enabled(order_issuing_enabled),
-    m_fleets_lb(0),
-    m_new_fleet_drop_target(0),
-    m_fleet_detail_panel(0),
+    m_fleets_lb(nullptr),
+    m_new_fleet_drop_target(nullptr),
+    m_fleet_detail_panel(nullptr),
     m_stat_icons()
 {
     if (!fleet_ids.empty()) {
@@ -3279,7 +3279,7 @@ void FleetWnd::FleetSelectionChanged(const GG::ListBox::SelectionSet& rows) {
 
     for (GG::ListBox::iterator it = m_fleets_lb->begin(); it != m_fleets_lb->end(); ++it) {
         try {
-            if (FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(!(**it).empty() ? (**it).at(0) : 0))
+            if (FleetDataPanel* fleet_panel = boost::polymorphic_downcast<FleetDataPanel*>(!(**it).empty() ? (**it).at(0) : nullptr))
                 fleet_panel->Select(rows.find(it) != rows.end());
         } catch (const std::exception& e) {
             ErrorLogger() << "FleetWnd::FleetSelectionChanged caught exception: " << e.what();

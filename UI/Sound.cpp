@@ -108,7 +108,7 @@ namespace {
         boost::scoped_array<char> array(new char[buffer_size]);
         bytes = 0;
 
-        if (alcGetCurrentContext() != 0) {
+        if (alcGetCurrentContext()) {
             /* First, let's fill up the buffer. We need the loop, as ov_read treats (buffer_size - bytes) to read as a suggestion only */
             do {
                 bytes_new = ov_read(ogg_file, &array[bytes],(buffer_size - bytes), endian, 2, 1, &bitStream);
@@ -271,18 +271,17 @@ void Sound::SoundImpl::InitOpenAL() {
     ALCdevice *device;
     ALenum error_code;
 
-    device = alcOpenDevice(0);    /* currently only select the default output device - usually a NULL-terminated
-                                   * string desctribing a device can be passed here (of type ALchar*) */
-    if (device == 0) {
+    device = alcOpenDevice(nullptr);
+
+    if (!device) {
         ErrorLogger() << "Unable to initialise default OpenAL device.";
         m_initialized = false;
         return;
     }
 
-    context = alcCreateContext(device, 0);   // instead of 0 we can pass a ALCint* pointing to a set of
-    // attributes (ALC_FREQUENCY, ALC_REFRESH and ALC_SYNC)
+    context = alcCreateContext(device, nullptr);
 
-    if (!((context != 0) && (alcMakeContextCurrent(context) == AL_TRUE) && ((error_code = alGetError()) == AL_NO_ERROR) )) {
+    if (!(context && (alcMakeContextCurrent(context) == AL_TRUE) && ((error_code = alGetError()) == AL_NO_ERROR) )) {
         ErrorLogger() << "Unable to create OpenAL context : " << alGetString(error_code) << "\n";
         alcCloseDevice(device);
         m_initialized = false;
@@ -293,7 +292,7 @@ void Sound::SoundImpl::InitOpenAL() {
     error_code = alGetError();
     if (error_code != AL_NO_ERROR) {
         ErrorLogger() << "Unable to create OpenAL listener: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-        alcMakeContextCurrent(0);
+        alcMakeContextCurrent(nullptr);
         alcDestroyContext(context);
         alcCloseDevice(device);
         m_initialized = false;
@@ -304,7 +303,7 @@ void Sound::SoundImpl::InitOpenAL() {
     error_code = alGetError();
     if (error_code != AL_NO_ERROR) {
         ErrorLogger() << "Unable to create OpenAL sources: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
-        alcMakeContextCurrent(0);
+        alcMakeContextCurrent(nullptr);
         alcDestroyContext(context);
         alcCloseDevice(device);
         m_initialized = false;
@@ -316,7 +315,7 @@ void Sound::SoundImpl::InitOpenAL() {
     if (error_code != AL_NO_ERROR) {
         ErrorLogger() << "Unable to create OpenAL buffers: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
         alDeleteSources(NUM_SOURCES, m_sources);
-        alcMakeContextCurrent(0);
+        alcMakeContextCurrent(nullptr);
         alcDestroyContext(context);
         alcCloseDevice(device);
         m_initialized = false;
@@ -330,7 +329,7 @@ void Sound::SoundImpl::InitOpenAL() {
             ErrorLogger() << "Unable to set OpenAL source to relative: " << alGetString(error_code) << "\n" << "Disabling OpenAL sound system!\n";
             alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
             alDeleteSources(NUM_SOURCES, m_sources);
-            alcMakeContextCurrent(0);
+            alcMakeContextCurrent(nullptr);
             alcDestroyContext(context);
             alcCloseDevice(device);
             m_initialized = false;
@@ -349,21 +348,22 @@ void Sound::SoundImpl::InitOpenAL() {
 }
 
 void Sound::SoundImpl::ShutdownOpenAL() {
+    ALCcontext* context = alcGetCurrentContext();
 
-    if (alcGetCurrentContext() != 0) {
+    if (context) {
         alDeleteSources(NUM_SOURCES, m_sources); // Automatically stops currently playing sources
 
         alDeleteBuffers(NUM_MUSIC_BUFFERS, m_music_buffers);
         for (std::map<std::string, ALuint>::value_type& buffer : m_buffers)
             alDeleteBuffers(1, &(buffer.second));
-    }
 
-    ALCcontext* context = alcGetCurrentContext();
-    if (context != 0) {
         ALCdevice* device = alcGetContextsDevice(context);
-        alcMakeContextCurrent(0);
+
+        alcMakeContextCurrent(nullptr);
+
         alcDestroyContext(context);
-        if (device != 0)
+
+        if (device)
             alcCloseDevice(device);
     }
 }
@@ -375,7 +375,7 @@ void Sound::SoundImpl::PlayMusic(const boost::filesystem::path& path, int loops 
 
     ALenum m_openal_error;
     std::string filename = PathString(path);
-    FILE* m_f = 0;
+    FILE* m_f = nullptr;
     vorbis_info* vorbis_info;
     m_music_loops = 0;
 
@@ -393,17 +393,17 @@ void Sound::SoundImpl::PlayMusic(const boost::filesystem::path& path, int loops 
     };
 #endif
 
-    if (alcGetCurrentContext() != 0)
+    if (alcGetCurrentContext())
     {
         if (m_music_name.size() > 0)
             StopMusic();
        
-        if ((m_f = fopen(filename.c_str(), "rb")) != 0) // make sure we CAN open it
+        if ((m_f = fopen(filename.c_str(), "rb")) != nullptr) // make sure we CAN open it
         {
 #ifdef FREEORION_WIN32
-            if (!(ov_test_callbacks(m_f, &m_ogg_file, 0, 0, callbacks))) // check if it's a proper ogg
+            if (!(ov_test_callbacks(m_f, &m_ogg_file, nullptr, 0, callbacks))) // check if it's a proper ogg
 #else
-            if (!(ov_test(m_f, &m_ogg_file, 0, 0))) // check if it's a proper ogg
+            if (!(ov_test(m_f, &m_ogg_file, nullptr, 0))) // check if it's a proper ogg
 #endif
             {
                 ov_test_open(&m_ogg_file); // it is, now fully open the file
@@ -454,7 +454,7 @@ void Sound::SoundImpl::StopMusic() {
     if (!m_initialized)
         return;
 
-    if (alcGetCurrentContext() != 0) {
+    if (alcGetCurrentContext()) {
         alSourceStop(m_sources[0]);
         if (m_music_name.size() > 0) {
             m_music_name.clear();  // do this to avoid music being re-started by other functions
@@ -472,7 +472,7 @@ void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui
     ALuint current_buffer;
     ALenum source_state;
     ALsizei ogg_freq;
-    FILE *file = 0;
+    FILE *file = nullptr;
     int m_i;
     bool found_buffer = false;
     bool found_source = false;
@@ -491,21 +491,21 @@ void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui
     };
 #endif
 
-    if (alcGetCurrentContext() != 0) {
+    if (alcGetCurrentContext()) {
         /* First check if the sound data of the file we want to play is already buffered somewhere */
         std::map<std::string, ALuint>::iterator it = m_buffers.find(filename);
         if (it != m_buffers.end()) {
             current_buffer = it->second;
             found_buffer = true;
         } else {
-            if ((file = fopen(filename.c_str(), "rb")) != 0) { // make sure we CAN open it
+            if ((file = fopen(filename.c_str(), "rb")) != nullptr) { // make sure we CAN open it
                 OggVorbis_File ogg_file;
                 vorbis_info *vorbis_info;
                 ALenum ogg_format;
 #ifdef FREEORION_WIN32
-                if (!(ov_test_callbacks(file, &ogg_file, 0, 0, callbacks))) // check if it's a proper ogg
+                if (!(ov_test_callbacks(file, &ogg_file, nullptr, 0, callbacks))) // check if it's a proper ogg
 #else
-                if (!(ov_test(file, &ogg_file, 0, 0))) // check if it's a proper ogg
+                if (!(ov_test(file, &ogg_file, nullptr, 0))) // check if it's a proper ogg
 #endif
                 {
                     ov_test_open(&ogg_file); // it is, now fully open the file
@@ -614,7 +614,7 @@ void Sound::SoundImpl::SetMusicVolume(int vol) {
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
     GetOptionsDB().Set<int>("UI.sound.music-volume", vol);
-    if (alcGetCurrentContext() != 0)
+    if (alcGetCurrentContext())
     {
         alSourcef(m_sources[0], AL_GAIN, ((ALfloat) vol)/255.0);
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
@@ -633,7 +633,7 @@ void Sound::SoundImpl::SetUISoundsVolume(int vol) {
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
     GetOptionsDB().Set<int>("UI.sound.volume", vol);
-    if (alcGetCurrentContext() != 0) {
+    if (alcGetCurrentContext()) {
         for (int it = 1; it < NUM_SOURCES; ++it)
             alSourcef(m_sources[it], AL_GAIN, ((ALfloat) vol)/255.0);
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
@@ -650,7 +650,7 @@ void Sound::SoundImpl::DoFrame() {
     ALint    state;
     int      num_buffers_processed;
 
-    if ((alcGetCurrentContext() != 0) && (m_music_name.size() > 0)) {
+    if (alcGetCurrentContext() && (m_music_name.size() > 0)) {
         alGetSourcei(m_sources[0], AL_BUFFERS_PROCESSED, &num_buffers_processed);
         while (num_buffers_processed > 0) {
             ALuint buffer_name_yay;

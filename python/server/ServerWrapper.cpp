@@ -794,7 +794,7 @@ namespace {
         // get owner empire of specified fleet
         int empire_id = fleet->Owner();
         // if we got the id of an actual empire, get the empire object and check if it exists
-        Empire* empire = 0;
+        Empire* empire = nullptr;
         if (empire_id != ALL_EMPIRES) {
             empire = GetEmpire(empire_id);
             if (!empire) {

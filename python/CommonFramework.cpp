@@ -26,7 +26,7 @@ PythonBase::PythonBase() :
     m_home_dir(""),
     m_program_name(""),
 #endif
-    m_python_module_error(NULL)
+    m_python_module_error(nullptr)
 {}
 
 PythonBase::~PythonBase() {

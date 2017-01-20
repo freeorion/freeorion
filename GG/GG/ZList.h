@@ -53,7 +53,7 @@ public:
     /** \name Accessors */ ///@{
     /** Returns pointer to the window under the point pt; constrains pick to
         modal if nonzero, and ignores \a ignore if nonzero. */
-    Wnd* Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore = 0) const;
+    Wnd* Pick(const Pt& pt, Wnd* modal, const std::set<Wnd*>* ignore = nullptr) const;
     //@}
 
     /** \name Mutators */ ///@{

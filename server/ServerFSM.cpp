@@ -1258,7 +1258,7 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
         return discard_event();
     }
 
-    Moderator::ModeratorAction* action = 0;
+    Moderator::ModeratorAction* action = nullptr;
     ExtractModeratorActionMessageData(message, action);
 
     DebugLogger() << "PlayingGame::react(ModeratorAct): " << (action ? action->Dump() : "(null)");

@@ -87,7 +87,7 @@ public:
 
     /** Blit any portion of texture to any place on screen, scaling as
         necessary*/
-    void OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords = 0) const;
+    void OrthoBlit(const Pt& pt1, const Pt& pt2, const GLfloat* tex_coords = nullptr) const;
 
     /** Blit default portion of texture unscaled to \a pt (upper left
         corner)*/

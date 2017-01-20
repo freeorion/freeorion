@@ -77,7 +77,7 @@ System* System::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
-        return 0;
+        return nullptr;
 
     System* retval = new System();
     retval->Copy(TemporaryFromThis(), empire_id);

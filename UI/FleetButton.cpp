@@ -70,8 +70,8 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     GG::Button("", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_icons(),
-    m_selection_indicator(0),
-    m_scanline_control(0),
+    m_selection_indicator(nullptr),
+    m_scanline_control(nullptr),
     m_selected(false)
 { Init(fleet_IDs, size_type); }
 
@@ -79,8 +79,8 @@ FleetButton::FleetButton(int fleet_id, SizeType size_type) :
     GG::Button("", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_icons(),
-    m_selection_indicator(0),
-    m_scanline_control(0),
+    m_selection_indicator(nullptr),
+    m_scanline_control(nullptr),
     m_selected(false)
 {
     std::vector<int> fleet_IDs;

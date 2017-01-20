@@ -363,7 +363,7 @@ struct Universe::GraphImpl {
 
     struct EdgeVisibilityFilter     {
         EdgeVisibilityFilter() :
-            m_graph(0),
+            m_graph(nullptr),
             m_empire_id(ALL_EMPIRES)
         {}
 
@@ -559,9 +559,9 @@ const std::set<int>& Universe::EmpireStaleKnowledgeObjectIDs(int empire_id) cons
 
 const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
     if (ship_design_id == ShipDesign::INVALID_DESIGN_ID)
-        return 0;
+        return nullptr;
     ship_design_iterator it = m_ship_designs.find(ship_design_id);
-    return (it != m_ship_designs.end() ? it->second : 0);
+    return (it != m_ship_designs.end() ? it->second : nullptr);
 }
 
 void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/, const std::string& description/* = ""*/) {
@@ -582,14 +582,14 @@ void Universe::RenameShipDesign(int design_id, const std::string& name/* = ""*/,
 
 const ShipDesign* Universe::GetGenericShipDesign(const std::string& name) const {
     if (name.empty())
-        return 0;
+        return nullptr;
     for (const std::map<int, ShipDesign*>::value_type& entry : m_ship_designs) {
         const ShipDesign* design = entry.second;
         const std::string& design_name = design->Name(false);
         if (name == design_name)
             return design;
     }
-    return 0;
+    return nullptr;
 }
 
 const std::set<int>& Universe::EmpireKnownShipDesignIDs(int empire_id) const {
@@ -1677,7 +1677,7 @@ namespace {
             // set up storage
             return &m_entries[cond];
 
-        return NULL;
+        return nullptr;
     }
 
     void StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache::MarkComplete(std::pair<bool, Effect::TargetSet>* cache_entry)
@@ -1701,7 +1701,7 @@ namespace {
         const ScriptingContext&                                       source_context,
         Effect::TargetSet&                                            target_objects)
     {
-        std::pair<bool, Effect::TargetSet>* cache_entry = NULL;
+        std::pair<bool, Effect::TargetSet>* cache_entry = nullptr;
 
         if (!cond)
             return EMPTY_TARGET_SET;
@@ -2221,8 +2221,8 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
     // FIXME: GetEffectsAndTargets already produces this separation, exploit that
     std::map<int, std::vector<std::pair<Effect::EffectsGroup*, Effect::TargetsCauses> > > dispatched_targets_causes;
     {
-        const Effect::EffectsGroup* last_effects_group   = 0;
-        Effect::TargetsCauses*      group_targets_causes = 0;
+        const Effect::EffectsGroup* last_effects_group   = nullptr;
+        Effect::TargetsCauses*      group_targets_causes = nullptr;
 
         for (const std::pair<Effect::SourcedEffectsGroup, Effect::TargetsAndCause>& targets_cause : targets_causes) {
             const Effect::SourcedEffectsGroup& sourced_effects_group = targets_cause.first;
@@ -2303,7 +2303,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,
-                                   update_effect_accounting ? &m_effect_accounting_map : 0,
+                                   update_effect_accounting ? &m_effect_accounting_map : nullptr,
                                    only_meter_effects,
                                    only_appearance_effects,
                                    include_empire_meter_effects,

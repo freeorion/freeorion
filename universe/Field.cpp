@@ -21,7 +21,7 @@ namespace {
         typedef boost::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
-        Condition::Source* activation = 0;
+        Condition::Source* activation = nullptr;
         ValueRef::ValueRefBase<double>* vr =
             new ValueRef::Operation<double>(
                 ValueRef::PLUS,
@@ -64,7 +64,7 @@ Field* Field::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
-        return 0;
+        return nullptr;
 
     Field* retval = new Field();
     retval->Copy(TemporaryFromThis(), empire_id);
@@ -221,7 +221,7 @@ std::string FieldType::Dump() const {
 // FieldTypeManager                         //
 /////////////////////////////////////////////////
 // static(s)
-FieldTypeManager* FieldTypeManager::s_instance = 0;
+FieldTypeManager* FieldTypeManager::s_instance = nullptr;
 
 FieldTypeManager::FieldTypeManager() {
     if (s_instance)
@@ -252,7 +252,7 @@ FieldTypeManager::~FieldTypeManager() {
 
 const FieldType* FieldTypeManager::GetFieldType(const std::string& name) const {
     std::map<std::string, FieldType*>::const_iterator it = m_field_types.find(name);
-    return it != m_field_types.end() ? it->second : 0;
+    return it != m_field_types.end() ? it->second : nullptr;
 }
 
 FieldTypeManager& FieldTypeManager::GetFieldTypeManager() {

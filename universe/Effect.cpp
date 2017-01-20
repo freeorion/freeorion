@@ -1357,7 +1357,7 @@ CreateShip::CreateShip(ValueRef::ValueRefBase<std::string>* predefined_ship_desi
                        ValueRef::ValueRefBase<std::string>* ship_name,
                        const std::vector<EffectBase*>& effects_to_apply_after) :
     m_design_name(predefined_ship_design_name),
-    m_design_id(0),
+    m_design_id(nullptr),
     m_empire_id(empire_id),
     m_species_name(species_name),
     m_name(ship_name),
@@ -1369,7 +1369,7 @@ CreateShip::CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
                        ValueRef::ValueRefBase<std::string>* species_name,
                        ValueRef::ValueRefBase<std::string>* ship_name,
                        const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_design_name(0),
+    m_design_name(nullptr),
     m_design_id(ship_design_id),
     m_empire_id(empire_id),
     m_species_name(species_name),
@@ -1423,7 +1423,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     }
 
     int empire_id = ALL_EMPIRES;
-    Empire* empire(0);  // not const Empire* so that empire::NewShipName can be called
+    Empire* empire = nullptr;  // not const Empire* so that empire::NewShipName can be called
     if (m_empire_id) {
         empire_id = m_empire_id->Eval(context);
         if (empire_id != ALL_EMPIRES) {
@@ -1533,8 +1533,8 @@ CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
                          ValueRef::ValueRefBase<std::string>* name,
                          const std::vector<EffectBase*>& effects_to_apply_after) :
     m_field_type_name(field_type_name),
-    m_x(0),
-    m_y(0),
+    m_x(nullptr),
+    m_y(nullptr),
     m_size(size),
     m_name(name),
     m_effects_to_apply_after(effects_to_apply_after)
@@ -1691,7 +1691,7 @@ CreateSystem::CreateSystem(ValueRef::ValueRefBase<double>* x,
                            ValueRef::ValueRefBase<double>* y,
                            ValueRef::ValueRefBase<std::string>* name,
                            const std::vector<EffectBase*>& effects_to_apply_after) :
-    m_type(0),
+    m_type(nullptr),
     m_x(x),
     m_y(y),
     m_name(name),
@@ -2326,15 +2326,15 @@ MoveInOrbit::MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
                          Condition::ConditionBase* focal_point_condition) :
     m_speed(speed),
     m_focal_point_condition(focal_point_condition),
-    m_focus_x(0),
-    m_focus_y(0)
+    m_focus_x(nullptr),
+    m_focus_y(nullptr)
 {}
 
 MoveInOrbit::MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
                          ValueRef::ValueRefBase<double>* focus_x/* = 0*/,
                          ValueRef::ValueRefBase<double>* focus_y/* = 0*/) :
     m_speed(speed),
-    m_focal_point_condition(0),
+    m_focal_point_condition(nullptr),
     m_focus_x(focus_x),
     m_focus_y(focus_y)
 {}
@@ -2467,15 +2467,15 @@ MoveTowards::MoveTowards(ValueRef::ValueRefBase<double>* speed,
                          Condition::ConditionBase* dest_condition) :
     m_speed(speed),
     m_dest_condition(dest_condition),
-    m_dest_x(0),
-    m_dest_y(0)
+    m_dest_x(nullptr),
+    m_dest_y(nullptr)
 {}
 
 MoveTowards::MoveTowards(ValueRef::ValueRefBase<double>* speed,
                          ValueRef::ValueRefBase<double>* dest_x/* = 0*/,
                          ValueRef::ValueRefBase<double>* dest_y/* = 0*/) :
     m_speed(speed),
-    m_dest_condition(0),
+    m_dest_condition(nullptr),
     m_dest_x(dest_x),
     m_dest_y(dest_y)
 {}
@@ -2876,7 +2876,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
     m_icon(icon),
     m_message_parameters(message_parameters),
     m_recipient_empire_id(recipient_empire_id),
-    m_condition(0),
+    m_condition(nullptr),
     m_affiliation(affiliation),
     m_label(label),
     m_stringtable_lookup(stringtable_lookup)
@@ -2892,7 +2892,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
-    m_recipient_empire_id(0),
+    m_recipient_empire_id(nullptr),
     m_condition(condition),
     m_affiliation(affiliation),
     m_label(label),
@@ -2907,7 +2907,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, 
     m_message_string(message_string),
     m_icon(icon),
     m_message_parameters(message_parameters),
-    m_recipient_empire_id(0),
+    m_recipient_empire_id(nullptr),
     m_condition(),
     m_affiliation(affiliation),
     m_label(label),

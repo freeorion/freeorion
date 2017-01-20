@@ -117,7 +117,7 @@ public:
         m_preferred_focus(preferred_focus),
         m_planet_environments(planet_environments),
         m_effects(effects),
-        m_location(0),
+        m_location(nullptr),
         m_playable(params.playable),
         m_native(params.native),
         m_can_colonize(params.can_colonize),

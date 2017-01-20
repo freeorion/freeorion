@@ -226,7 +226,7 @@ private:
 
 /** Matches all objects if the current game turn is >= \a low and < \a high. */
 struct FO_COMMON_API Turn : public ConditionBase {
-    explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = 0) :
+    explicit Turn(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high = nullptr) :
         m_low(low),
         m_high(high)
     {}
@@ -284,7 +284,7 @@ struct FO_COMMON_API SortedNumberOf : public ConditionBase {
     SortedNumberOf(ValueRef::ValueRefBase<int>* number,
                    ConditionBase* condition) :
         m_number(number),
-        m_sort_key(0),
+        m_sort_key(nullptr),
         m_sorting_method(SORT_RANDOM),
         m_condition(condition)
     {}
@@ -435,7 +435,7 @@ struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
     {}
 
     explicit EmpireAffiliation(EmpireAffiliationType affiliation) :
-       m_empire_id(0),
+       m_empire_id(nullptr),
        m_affiliation(affiliation)
     {}
 
@@ -823,35 +823,35 @@ private:
 struct FO_COMMON_API HasSpecial : public ConditionBase {
     explicit HasSpecial(const std::string& name);
 
-    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name = 0) :
+    explicit HasSpecial(ValueRef::ValueRefBase<std::string>* name = nullptr) :
         ConditionBase(),
         m_name(name),
-        m_capacity_low(0),
-        m_capacity_high(0),
-        m_since_turn_low(0),
-        m_since_turn_high(0)
+        m_capacity_low(nullptr),
+        m_capacity_high(nullptr),
+        m_since_turn_low(nullptr),
+        m_since_turn_high(nullptr)
     {}
 
     HasSpecial(ValueRef::ValueRefBase<std::string>* name,
                ValueRef::ValueRefBase<int>* since_turn_low,
-               ValueRef::ValueRefBase<int>* since_turn_high = 0) :
+               ValueRef::ValueRefBase<int>* since_turn_high = nullptr) :
         ConditionBase(),
         m_name(name),
-        m_capacity_low(0),
-        m_capacity_high(0),
+        m_capacity_low(nullptr),
+        m_capacity_high(nullptr),
         m_since_turn_low(since_turn_low),
         m_since_turn_high(since_turn_high)
     {}
 
     HasSpecial(ValueRef::ValueRefBase<std::string>* name,
                ValueRef::ValueRefBase<double>* capacity_low,
-               ValueRef::ValueRefBase<double>* capacity_high = 0) :
+               ValueRef::ValueRefBase<double>* capacity_high = nullptr) :
         ConditionBase(),
         m_name(name),
         m_capacity_low(capacity_low),
         m_capacity_high(capacity_high),
-        m_since_turn_low(0),
-        m_since_turn_high(0)
+        m_since_turn_low(nullptr),
+        m_since_turn_high(nullptr)
     {}
 
     virtual ~HasSpecial();
@@ -910,7 +910,7 @@ private:
 struct FO_COMMON_API HasTag : public ConditionBase {
     explicit HasTag(const std::string& name);
 
-    explicit HasTag(ValueRef::ValueRefBase<std::string>* name = 0) :
+    explicit HasTag(ValueRef::ValueRefBase<std::string>* name = nullptr) :
         ConditionBase(),
         m_name(name)
     {}
@@ -1288,7 +1288,7 @@ private:
   * planets are also matched. */
 struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
     PlanetEnvironment(const std::vector<ValueRef::ValueRefBase< ::PlanetEnvironment>*>& environments,
-                      ValueRef::ValueRefBase<std::string>* species_name_ref = 0) :
+                      ValueRef::ValueRefBase<std::string>* species_name_ref = nullptr) :
         ConditionBase(),
         m_environments(environments),
         m_species_name(species_name_ref)
@@ -1392,22 +1392,22 @@ private:
 struct FO_COMMON_API Enqueued : public ConditionBase {
     Enqueued(BuildType build_type,
              ValueRef::ValueRefBase<std::string>* name,
-             ValueRef::ValueRefBase<int>* empire_id = 0,
-             ValueRef::ValueRefBase<int>* low = 0,
-             ValueRef::ValueRefBase<int>* high = 0) :
+             ValueRef::ValueRefBase<int>* empire_id = nullptr,
+             ValueRef::ValueRefBase<int>* low = nullptr,
+             ValueRef::ValueRefBase<int>* high = nullptr) :
         ConditionBase(),
         m_build_type(build_type),
         m_name(name),
-        m_design_id(0),
+        m_design_id(nullptr),
         m_empire_id(empire_id),
         m_low(low),
         m_high(high)
     {}
 
     explicit Enqueued(ValueRef::ValueRefBase<int>* design_id,
-             ValueRef::ValueRefBase<int>* empire_id = 0,
-             ValueRef::ValueRefBase<int>* low = 0,
-             ValueRef::ValueRefBase<int>* high = 0) :
+             ValueRef::ValueRefBase<int>* empire_id = nullptr,
+             ValueRef::ValueRefBase<int>* low = nullptr,
+             ValueRef::ValueRefBase<int>* high = nullptr) :
         ConditionBase(),
         m_build_type(BT_SHIP),
         m_name(),
@@ -1421,10 +1421,10 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
         ConditionBase(),
         m_build_type(BT_NOT_BUILDING),
         m_name(),
-        m_design_id(0),
-        m_empire_id(0),
-        m_low(0),
-        m_high(0)
+        m_design_id(nullptr),
+        m_empire_id(nullptr),
+        m_low(nullptr),
+        m_high(nullptr)
     {}
 
     virtual ~Enqueued();
@@ -1625,8 +1625,8 @@ private:
 /** Matches all ships whose ShipDesign has >= \a low and < \a high of the ship
   * part specified by \a name. */
 struct FO_COMMON_API DesignHasPart : public ConditionBase {
-    DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low = 0,
-                  ValueRef::ValueRefBase<int>* high = 0) :
+    DesignHasPart(ValueRef::ValueRefBase<std::string>* name, ValueRef::ValueRefBase<int>* low = nullptr,
+                  ValueRef::ValueRefBase<int>* high = nullptr) :
         ConditionBase(),
         m_low(low),
         m_high(high),
@@ -2031,7 +2031,7 @@ struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
                      ValueRef::ValueRefBase<double>* low,
                      ValueRef::ValueRefBase<double>* high) :
         ConditionBase(),
-        m_empire_id(0),
+        m_empire_id(nullptr),
         m_meter(meter),
         m_low(low),
         m_high(high)
@@ -2765,7 +2765,7 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
               ComparisonType comp1,
               ValueRef::ValueRefBase<double>* value_ref2,
               ComparisonType comp2 = INVALID_COMPARISON,
-              ValueRef::ValueRefBase<double>* value_ref3 = 0) :
+              ValueRef::ValueRefBase<double>* value_ref3 = nullptr) :
         ConditionBase(),
         m_value_ref1(value_ref1),
         m_value_ref2(value_ref2),
@@ -2831,7 +2831,7 @@ private:
 struct FO_COMMON_API Location : public ConditionBase {
 public:
     Location(ContentType content_type, ValueRef::ValueRefBase<std::string>* name1,
-             ValueRef::ValueRefBase<std::string>* name2 = 0) :
+             ValueRef::ValueRefBase<std::string>* name2 = nullptr) :
         ConditionBase(),
         m_name1(name1),
         m_name2(name2),

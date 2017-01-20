@@ -972,7 +972,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return planet->Focus();
 
     } else if (property_name == "PreferredFocus") {
-        const Species* species = 0;
+        const Species* species = nullptr;
         if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object)) {
             species = GetSpecies(planet->SpeciesName());
         } else if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object)) {
@@ -1635,7 +1635,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return retval;
 
     } else if (variable_name == "SlotsInHull") {
-        const HullType* hull_type = 0;
+        const HullType* hull_type = nullptr;
         if (m_string_ref1) {
             std::string hull_name = m_string_ref1->Eval(context);
             hull_type = GetHullType(hull_name);

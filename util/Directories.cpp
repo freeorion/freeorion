@@ -241,7 +241,7 @@ void InitDirs(const std::string& argv0) {
      * change before initial_path is initialized. */
     fs::initial_path();
 
-    br_init(0);
+    br_init(nullptr);
 
     MigrateOldConfigDirsToXDGLocation();
 

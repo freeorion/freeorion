@@ -181,7 +181,7 @@ namespace GG {
         std::string value_str;
         EnumType value;
         if (std::getline(name_and_value, value_str)) {
-            value = (EnumType)strtol(value_str.c_str(), 0, 0);
+            value = (EnumType)strtol(value_str.c_str(), nullptr, 0);
         }
         else {
             value = (EnumType)default_value;

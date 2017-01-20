@@ -108,7 +108,7 @@ const ShipDesign* GetShipDesign(int ship_design_id)
 // PartTypeManager                 //
 /////////////////////////////////////
 // static
-PartTypeManager* PartTypeManager::s_instance = 0;
+PartTypeManager* PartTypeManager::s_instance = nullptr;
 
 PartTypeManager::PartTypeManager() {
     if (s_instance)
@@ -140,7 +140,7 @@ PartTypeManager::~PartTypeManager() {
 
 const PartType* PartTypeManager::GetPartType(const std::string& name) const {
     std::map<std::string, PartType*>::const_iterator it = m_parts.find(name);
-    return it != m_parts.end() ? it->second : 0;
+    return it != m_parts.end() ? it->second : nullptr;
 }
 
 const PartTypeManager& PartTypeManager::GetPartTypeManager() {
@@ -434,7 +434,7 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
 // HullTypeManager                 //
 /////////////////////////////////////
 // static
-HullTypeManager* HullTypeManager::s_instance = 0;
+HullTypeManager* HullTypeManager::s_instance = nullptr;
 
 HullTypeManager::HullTypeManager() {
     if (s_instance)
@@ -466,7 +466,7 @@ HullTypeManager::~HullTypeManager() {
 
 const HullType* HullTypeManager::GetHullType(const std::string& name) const {
     std::map<std::string, HullType*>::const_iterator it = m_hulls.find(name);
-    return it != m_hulls.end() ? it->second : 0;
+    return it != m_hulls.end() ? it->second : nullptr;
 }
 
 const HullTypeManager& HullTypeManager::GetHullTypeManager() {
@@ -1016,7 +1016,7 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
 // PredefinedShipDesignManager     //
 /////////////////////////////////////
 // static(s)
-PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = 0;
+PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = nullptr;
 
 PredefinedShipDesignManager::PredefinedShipDesignManager() {
     if (s_instance)

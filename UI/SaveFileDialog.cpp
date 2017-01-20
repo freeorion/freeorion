@@ -178,7 +178,7 @@ public:
         if (column.m_name == "turn")
             format_flags = GG::FORMAT_CENTER;
 
-        GG::Label* retval = 0;
+        GG::Label* retval = nullptr;
 
         if (column.m_fixed) {
             retval = new CUILabel(value, format_flags, GG::NO_WND_FLAGS,

@@ -1652,7 +1652,7 @@ template <class T>
 const ValueRefBase<T>* Operation<T>::LHS() const
 {
     if (m_operands.empty())
-        return 0;
+        return nullptr;
     return m_operands[0];
 }
 
@@ -1660,7 +1660,7 @@ template <class T>
 const ValueRefBase<T>* Operation<T>::RHS() const
 {
     if (m_operands.size() < 2)
-        return 0;
+        return nullptr;
     return m_operands[1];
 }
 

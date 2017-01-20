@@ -85,14 +85,14 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
     m_program_id = glCreateProgram();
     CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateProgram()");
 
-    const char* strings[1] = { 0 };
+    const char* strings[1] = { nullptr };
 
     if (!vertex_shader.empty()) {
         m_vertex_shader_id = glCreateShader(GL_VERTEX_SHADER);
         CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateShader(GL_VERTEX_SHADER)");
 
         strings[0] = vertex_shader.c_str();
-        glShaderSource(m_vertex_shader_id, 1, strings, 0);
+        glShaderSource(m_vertex_shader_id, 1, strings, nullptr);
         CHECK_ERROR("ShaderProgram::ShaderProgram", "glShaderSource(vertex_shader)");
 
         glCompileShader(m_vertex_shader_id);
@@ -109,7 +109,7 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
         CHECK_ERROR("ShaderProgram::ShaderProgram", "glCreateShader(GL_FRAGMENT_SHADER)");
 
         strings[0] = fragment_shader.c_str();
-        glShaderSource(m_fragment_shader_id, 1, strings, 0);
+        glShaderSource(m_fragment_shader_id, 1, strings, nullptr);
         CHECK_ERROR("ShaderProgram::ShaderProgram", "glShaderSource(fragment_shader)");
 
         glCompileShader(m_fragment_shader_id);
@@ -136,7 +136,7 @@ ShaderProgram* ShaderProgram::shaderProgramFactory(const std::string& vertex_sha
 {
     if (HumanClientApp::GetApp()->GLVersion() >= 2.0f) 
         return new ShaderProgram(vertex_shader,fragment_shader);
-    return 0;
+    return nullptr;
 }
 
 ShaderProgram::~ShaderProgram() {

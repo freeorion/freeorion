@@ -152,7 +152,7 @@ protected:
         of the first character of the first formatting tag is returned instead.
         Not range-checked. */
     CPSize CharIndexOf(std::size_t row, CPSize char_idx,
-                       const std::vector<Font::LineData>* line_data = 0) const;
+                       const std::vector<Font::LineData>* line_data = nullptr) const;
 
     /** Returns the the x-coordinate of the beginning of row \a row, in
         cleint-space coordinates.  Not range-checked. */

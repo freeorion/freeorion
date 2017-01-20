@@ -5,7 +5,7 @@
 
 AccordionPanel::AccordionPanel(GG::X w, GG::Y h, bool is_button_on_left /*= false*/) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_expand_button(0),
+    m_expand_button(nullptr),
     m_collapsed(true),
     m_is_left(is_button_on_left),
     m_interior_color(ClientUI::WndColor()),

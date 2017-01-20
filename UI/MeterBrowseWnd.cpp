@@ -84,11 +84,14 @@ MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, Mete
     m_primary_meter_type(primary_meter_type),
     m_secondary_meter_type(secondary_meter_type),
     m_object_id(object_id),
-    m_summary_title(0),
-    m_current_label(0), m_current_value(0),
-    m_next_turn_label(0), m_next_turn_value(0),
-    m_change_label(0), m_change_value(0),
-    m_meter_title(0),
+    m_summary_title(nullptr),
+    m_current_label(nullptr),
+    m_current_value(nullptr),
+    m_next_turn_label(nullptr),
+    m_next_turn_value(nullptr),
+    m_change_label(m_change_label),
+    m_change_value(nullptr),
+    m_meter_title(nullptr),
     m_row_height(1),
     m_initialized(false)
 {}
@@ -384,10 +387,10 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     for (const Effect::AccountingInfo& info : *maybe_info_vec) {
         TemporaryPtr<const UniverseObject> source = GetUniverseObject(info.source_id);
 
-        const Empire*   empire = 0;
+        const Empire*   empire = nullptr;
         TemporaryPtr<const Building> building;
         TemporaryPtr<const Planet>   planet;
-        //TemporaryPtr<const Ship>     ship = 0;
+        //TemporaryPtr<const Ship>     ship;
         std::string     text;
         std::string     name;
         if (source)
@@ -652,8 +655,8 @@ namespace {
 
 ShipFightersBrowseWnd::ShipFightersBrowseWnd(int object_id, MeterType primary_meter_type, bool show_all_bouts /* = false*/) :
     MeterBrowseWnd(object_id, primary_meter_type),
-    m_bay_list(0),
-    m_hangar_list(0),
+    m_bay_list(nullptr),
+    m_hangar_list(nullptr),
     m_show_all_bouts(show_all_bouts)
 {}
 

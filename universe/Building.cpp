@@ -45,7 +45,7 @@ Building* Building::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
-        return 0;
+        return nullptr;
 
     Building* retval = new Building();
     retval->Copy(TemporaryFromThis(), empire_id);
@@ -336,7 +336,7 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
 // BuildingTypeManager                         //
 /////////////////////////////////////////////////
 // static(s)
-BuildingTypeManager* BuildingTypeManager::s_instance = 0;
+BuildingTypeManager* BuildingTypeManager::s_instance = nullptr;
 
 BuildingTypeManager::BuildingTypeManager() {
     if (s_instance)
@@ -371,7 +371,7 @@ BuildingTypeManager::~BuildingTypeManager() {
 
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {
     std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
-    return it != m_building_types.end() ? it->second : 0;
+    return it != m_building_types.end() ? it->second : nullptr;
 }
 
 BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager() {

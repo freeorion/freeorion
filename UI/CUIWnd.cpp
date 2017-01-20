@@ -143,9 +143,9 @@ CUIWnd::CUIWnd(const std::string& wnd_name,
     m_mouse_in_resize_tab(false),
     m_config_save(true),
     m_config_name(AddWindowOptions(config_name, x, y, w, h, visible, false, false)),
-    m_close_button(0),
-    m_minimize_button(0),
-    m_pin_button(0),
+    m_close_button(nullptr),
+    m_minimize_button(nullptr),
+    m_pin_button(nullptr),
     m_vertex_buffer(),
     m_buffer_indices()
 {
@@ -169,9 +169,9 @@ CUIWnd::CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags, const 
     m_mouse_in_resize_tab(false),
     m_config_save(true),
     m_config_name(AddWindowOptions(config_name, INVALID_POS, INVALID_POS, 1, 1, visible, false, false)),
-    m_close_button(0),
-    m_minimize_button(0),
-    m_pin_button(0),
+    m_close_button(nullptr),
+    m_minimize_button(nullptr),
+    m_pin_button(nullptr),
     m_vertex_buffer(),
     m_buffer_indices()
 { Init(wnd_name); }

@@ -255,7 +255,7 @@ const Meter* UniverseObject::GetMeter(MeterType type) const {
     std::map<MeterType, Meter>::const_iterator it = m_meters.find(type);
     if (it != m_meters.end())
         return &(it->second);
-    return 0;
+    return nullptr;
 }
 
 float UniverseObject::CurrentMeterValue(MeterType type) const {
@@ -340,7 +340,7 @@ Meter* UniverseObject::GetMeter(MeterType type) {
     std::map<MeterType, Meter>::iterator it = m_meters.find(type);
     if (it != m_meters.end())
         return &(it->second);
-    return 0;
+    return nullptr;
 }
 
 void UniverseObject::BackPropagateMeters() {

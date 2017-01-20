@@ -18,7 +18,7 @@ protected:
     ShaderProgram(const std::string& vertex_shader, const std::string& fragment_shader); // ctor protected use factory to get instance
 
 public:
-    // shader factory -- will return NULL if OpenGL version is too low
+    // shader factory -- will return nullptr if OpenGL version is too low
     static ShaderProgram* shaderProgramFactory(const std::string& vertex_shader, const std::string& fragment_shader);
 
     ~ShaderProgram();

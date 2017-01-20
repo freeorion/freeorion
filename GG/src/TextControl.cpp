@@ -47,7 +47,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
     m_set_min_size(false),
     m_code_points(0),
     m_font(font),
-    m_render_cache(0),
+    m_render_cache(nullptr),
     m_cached_minusable_size_width(X0),
     m_cached_minusable_size(Pt())
 {
@@ -69,7 +69,7 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
     m_text_elements(),
     m_code_points(0),
     m_font(font),
-    m_render_cache(0),
+    m_render_cache(nullptr),
     m_cached_minusable_size_width(X0),
     m_cached_minusable_size(Pt())
 {
@@ -99,7 +99,7 @@ TextControl::TextControl(const TextControl& that) :
 TextControl::~TextControl()
 {
     delete m_render_cache;
-    m_render_cache = 0;
+    m_render_cache = nullptr;
 }
 
 TextControl& TextControl::operator=(const TextControl& that)
@@ -210,7 +210,7 @@ void TextControl::Render()
     Clr clr_to_use = Disabled() ? DisabledColor(TextColor()) : TextColor();
     glColor(clr_to_use);
     if (m_font) {
-        if (m_render_cache == 0) {
+        if (!m_render_cache) {
             RefreshCache();
         }
         if (m_clip_text)
@@ -237,7 +237,7 @@ void TextControl::PurgeCache()
     if (m_render_cache)
         delete m_render_cache;
 
-    m_render_cache = 0;
+    m_render_cache = nullptr;
 }
 
 void TextControl::SetText(const std::string& str)

@@ -45,7 +45,7 @@ const int GroupBox::FRAME_THICK = 2;
 const int GroupBox::PIXEL_MARGIN = 4;
 
 GroupBox::GroupBox() :
-    m_label(0),
+    m_label(nullptr),
     m_set_client_corners_equal_to_box_corners(false)
 {}
 
@@ -56,7 +56,7 @@ GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::sh
     m_text_color(text_color),
     m_int_color(interior),
     m_font(font),
-    m_label(label.empty() ? 0 : GUI::GetGUI()->GetStyleFactory()->NewTextControl(label, m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP)),
+    m_label(label.empty() ? nullptr : GUI::GetGUI()->GetStyleFactory()->NewTextControl(label, m_font, m_text_color, FORMAT_LEFT | FORMAT_TOP)),
     m_set_client_corners_equal_to_box_corners(false)
 {
     if (m_label) {
@@ -71,7 +71,7 @@ Pt GroupBox::ClientUpperLeft() const
     Pt retval = UpperLeft();
     if (!m_set_client_corners_equal_to_box_corners)
         retval += Pt(X(FRAME_THICK + PIXEL_MARGIN),
-                     Y(FRAME_THICK + PIXEL_MARGIN) + TopOfFrame(m_label != 0, m_font));
+                     Y(FRAME_THICK + PIXEL_MARGIN) + TopOfFrame(m_label != nullptr, m_font));
     return retval;
 }
 
@@ -86,7 +86,7 @@ Pt GroupBox::ClientLowerRight() const
 void GroupBox::Render()
 {
     Pt ul = UpperLeft(), lr = LowerRight() - Pt(X1, Y1);
-    ul.y += TopOfFrame(m_label != 0, m_font);
+    ul.y += TopOfFrame(m_label != nullptr, m_font);
     Clr light = LightColor(m_color);
     Clr dark = DarkColor(m_color);
     const int GAP_FROM_TEXT = 2;

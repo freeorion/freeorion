@@ -1184,7 +1184,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
 
         if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             // get save state string
-            const std::string* sss = 0;
+            const std::string* sss = nullptr;
             if (!psgd.m_save_state_string.empty())
                 sss = &psgd.m_save_state_string;
 
@@ -1407,7 +1407,7 @@ int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects-threads-server"); }
 
 void ServerApp::AddEmpireTurn(int empire_id)
-{ m_turn_sequence[empire_id] = 0; } // std::map<int, OrderSet*>
+{ m_turn_sequence[empire_id] = nullptr; }
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
@@ -1419,7 +1419,7 @@ void ServerApp::ClearEmpireTurnOrders() {
     for (std::map<int, OrderSet*>::value_type& order : m_turn_sequence) {
         if (order.second) {
             delete order.second;
-            order.second = 0;
+            order.second = nullptr;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace std {
 #endif
 
 namespace {
-    std::vector<boost::shared_ptr<Effect::EffectsGroup> >* g_effects_groups = 0;
+    std::vector<boost::shared_ptr<Effect::EffectsGroup> >* g_effects_groups = nullptr;
 
     struct rules {
         rules() {

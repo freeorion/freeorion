@@ -698,11 +698,11 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
     m_cost_and_duration_text(),
     m_eta_text(),
     m_layout_panel(panel),
-    m_icon(0),
+    m_icon(nullptr),
     m_unlock_icons(),
-    m_name_label(0),
-    m_cost_and_duration_label(0),
-    m_eta_label(0),
+    m_name_label(nullptr),
+    m_cost_and_duration_label(nullptr),
+    m_eta_label(nullptr),
     m_colour(GG::CLR_GRAY),
     m_status(TS_RESEARCHABLE),
     m_browse_highlight(false),
@@ -1106,11 +1106,11 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_selected_tech_name(),
     m_browsed_tech_name(),
     m_graph(),
-    m_layout_surface(0),
-    m_vscroll(0),
-    m_hscroll(0),
-    m_zoom_in_button(0),
-    m_zoom_out_button(0)
+    m_layout_surface(nullptr),
+    m_vscroll(nullptr),
+    m_hscroll(nullptr),
+    m_zoom_in_button(nullptr),
+    m_zoom_out_button(nullptr)
 {
     SetChildClippingMode(ClipToClient);
 
@@ -1747,11 +1747,11 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     std::string just_pad = "    ";
 
     std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
-    if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : 0))
+    if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : nullptr))
         cost_btn->SetText(cost_str + just_pad + just_pad);
 
     std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
-    if (GG::Button* time_btn = dynamic_cast<GG::Button*>((size() >= 4) ? at(3) : 0))
+    if (GG::Button* time_btn = dynamic_cast<GG::Button*>((size() >= 4) ? at(3) : nullptr))
         time_btn->SetText(time_str + just_pad + just_pad);
 }
 
@@ -2042,10 +2042,10 @@ void TechTreeWnd::TechListBox::TechDoubleClicked(GG::ListBox::iterator it, const
 //////////////////////////////////////////////////
 TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
-    m_tech_tree_controls(0),
-    m_enc_detail_panel(0),
-    m_layout_panel(0),
-    m_tech_list(0),
+    m_tech_tree_controls(nullptr),
+    m_enc_detail_panel(nullptr),
+    m_layout_panel(nullptr),
+    m_tech_list(nullptr),
     m_init_flag(initially_hidden)
 {
     Sound::TempUISoundDisabler sound_disabler;

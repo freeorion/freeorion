@@ -190,9 +190,9 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const boost::shared_ptr
     m_min_value(min),
     m_max_value(max),
     m_editable(edits),
-    m_edit(0),
-    m_up_button(0),
-    m_down_button(0),
+    m_edit(nullptr),
+    m_up_button(nullptr),
+    m_down_button(nullptr),
     m_button_width(15)
 {
     Init(font, color, text_color);

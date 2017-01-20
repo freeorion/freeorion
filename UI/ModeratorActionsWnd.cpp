@@ -26,17 +26,17 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
            config_name, false),
     m_actions_enabled(true),
     m_selected_action(MAS_NoAction),
-    m_no_action_button(0),
-    m_create_system_button(0),
-    m_star_type_drop(0),
-    m_create_planet_button(0),
-    m_planet_type_drop(0),
-    m_planet_size_drop(0),
-    m_delete_object_button(0),
-    m_set_owner_button(0),
-    m_empire_drop(0),
-    m_add_starlane_button(0),
-    m_remove_starlane_button(0)
+    m_no_action_button(nullptr),
+    m_create_system_button(nullptr),
+    m_star_type_drop(nullptr),
+    m_create_planet_button(nullptr),
+    m_planet_type_drop(nullptr),
+    m_planet_size_drop(nullptr),
+    m_delete_object_button(nullptr),
+    m_set_owner_button(nullptr),
+    m_empire_drop(nullptr),
+    m_add_starlane_button(nullptr),
+    m_remove_starlane_button(nullptr)
 {
     ClientUI* ui = ClientUI::GetClientUI();
     GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;

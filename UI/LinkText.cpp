@@ -144,7 +144,7 @@ int LinkDecorator::CastStringToInt(const std::string& str) {
 
 std::string ColorByOwner::Decorate(const std::string& object_id_str, const std::string& content) const {
     GG::Clr color = ClientUI::DefaultLinkColor();
-    const Empire* empire = 0;
+    const Empire* empire = nullptr;
     // get object indicated by object_id, and then get object's owner, if any
     int object_id = CastStringToInt(object_id_str);
     TemporaryPtr<const UniverseObject> object = Objects().Object(object_id);

@@ -69,7 +69,6 @@ namespace {
 
 // static member(s)
 AIClientApp::AIClientApp(const std::vector<std::string>& args) :
-    m_AI(0),
     m_player_name(""),
     m_max_aggression(0)
 {

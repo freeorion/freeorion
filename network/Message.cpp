@@ -289,7 +289,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(players)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
             Serialize(oa, orders);
-            bool ui_data_available = (ui_data != 0);
+            bool ui_data_available = (ui_data != nullptr);
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
             if (ui_data_available)
                 oa << boost::serialization::make_nvp("ui_data", *ui_data);
@@ -311,7 +311,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
             oa << BOOST_SERIALIZATION_NVP(players)
                << BOOST_SERIALIZATION_NVP(loaded_game_data);
             Serialize(oa, orders);
-            bool ui_data_available = (ui_data != 0);
+            bool ui_data_available = (ui_data != nullptr);
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
             if (ui_data_available)
                 oa << boost::serialization::make_nvp("ui_data", *ui_data);
@@ -351,7 +351,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
             Serialize(oa, orders);
             bool ui_data_available = false;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            bool save_state_string_available = (save_state_string != 0);
+            bool save_state_string_available = (save_state_string != nullptr);
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available)
                 oa << boost::serialization::make_nvp("save_state_string", *save_state_string);
@@ -373,7 +373,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
             Serialize(oa, orders);
             bool ui_data_available = false;
             oa << BOOST_SERIALIZATION_NVP(ui_data_available);
-            bool save_state_string_available = (save_state_string != 0);
+            bool save_state_string_available = (save_state_string != nullptr);
             oa << BOOST_SERIALIZATION_NVP(save_state_string_available);
             if (save_state_string_available)
                 oa << boost::serialization::make_nvp("save_state_string", *save_state_string);

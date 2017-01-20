@@ -223,7 +223,7 @@ namespace AIInterface {
      *
      * @param name The identifying name of the requested ::Tech.
      *
-     * @return A pointer to the ::Tech matching @a name or NULL if no ::Tech
+     * @return A pointer to the ::Tech matching @a name or nullptr if no ::Tech
      *      with that name was found.
      */
     const Tech* GetTech(const std::string& name);

@@ -66,7 +66,7 @@ struct HotkeyManager::ConditionalConnection {
 /////////////////////////////////////////////////////////
 // Hotkey
 /////////////////////////////////////////////////////////
-std::map<std::string, Hotkey>* Hotkey::s_hotkeys = 0;
+std::map<std::string, Hotkey>* Hotkey::s_hotkeys = nullptr;
 
 void Hotkey::AddHotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!s_hotkeys)
@@ -429,7 +429,7 @@ AndCondition::~AndCondition() {
 //////////////////////////////////////////////////////////////////////
 // HotkeyManager
 //////////////////////////////////////////////////////////////////////
-HotkeyManager* HotkeyManager::s_singleton = 0;
+HotkeyManager* HotkeyManager::s_singleton = nullptr;
 
 HotkeyManager::HotkeyManager()
 {}

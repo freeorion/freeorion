@@ -134,7 +134,7 @@ std::string OptionsDB::Option::DefaultValueToString() const {
 // OptionsDB
 /////////////////////////////////////////////
 // static(s)
-OptionsDB* OptionsDB::s_options_db = 0;
+OptionsDB* OptionsDB::s_options_db = nullptr;
 
 OptionsDB::OptionsDB() {
     if (s_options_db)

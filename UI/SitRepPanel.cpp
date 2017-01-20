@@ -220,8 +220,8 @@ namespace {
             Control(left, top, w, h, GG::NO_WND_FLAGS),
             m_initialized(false),
             m_sitrep_entry(sitrep),
-            m_icon(0),
-            m_link_text(0)
+            m_icon(nullptr),
+            m_link_text(nullptr)
         {
             SetChildClippingMode(ClipToClient);
             Init();
@@ -318,7 +318,7 @@ namespace {
     public:
         SitRepRow(GG::X w, GG::Y h, const SitRepEntry& sitrep) :
             GG::ListBox::Row(w, h, ""),
-            m_panel(0),
+            m_panel(nullptr),
             m_sitrep(sitrep)
         {
             SetName("SitRepRow");
@@ -367,11 +367,11 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     CUIWnd(UserString("SITREP_PANEL_TITLE"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name),
-    m_sitreps_lb(0),
-    m_prev_turn_button(0),
-    m_next_turn_button(0),
-    m_last_turn_button(0),
-    m_filter_button(0),
+    m_sitreps_lb(nullptr),
+    m_prev_turn_button(nullptr),
+    m_next_turn_button(nullptr),
+    m_last_turn_button(nullptr),
+    m_filter_button(nullptr),
     m_showing_turn(INVALID_GAME_TURN),
     m_hidden_sitrep_templates(HiddenSitRepTemplateStringsFromOptions())
 {
@@ -618,7 +618,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     std::string entry_margin("  ");
     separator_item.separator = true;
     int start_turn = 0;
-    SitRepRow* sitrep_row(0);
+    SitRepRow* sitrep_row = nullptr;
     if (it != m_sitreps_lb->end()) 
         sitrep_row = dynamic_cast<SitRepRow*>(*it);
     submenu_ignore.label = entry_margin + UserString("SITREP_IGNORE_MENU");

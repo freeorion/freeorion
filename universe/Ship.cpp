@@ -106,7 +106,7 @@ Ship* Ship::Clone(int empire_id) const {
     Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(this->ID(), empire_id);
 
     if (!(vis >= VIS_BASIC_VISIBILITY && vis <= VIS_FULL_VISIBILITY))
-        return 0;
+        return nullptr;
 
     Ship* retval = new Ship();
     retval->Copy(TemporaryFromThis(), empire_id);
@@ -412,7 +412,7 @@ const Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) co
 { return const_cast<Ship*>(this)->GetPartMeter(type, part_name); }
 
 Meter* Ship::GetPartMeter(MeterType type, const std::string& part_name) {
-    Meter* retval = 0;
+    Meter* retval = nullptr;
     PartMeterMap::iterator it = m_part_meters.find(std::make_pair(type, part_name));
     if (it != m_part_meters.end())
         retval = &it->second;

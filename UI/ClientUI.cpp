@@ -401,7 +401,7 @@ std::map<StarType, std::string>& ClientUI::HaloStarTypeFilePrefixes() {
 }
 
 // private static members
-ClientUI* ClientUI::s_the_UI = 0;
+ClientUI* ClientUI::s_the_UI = nullptr;
 
 std::ostream& operator<< (std::ostream& os, const GG::UnicodeCharset& chset) {
     os << chset.m_script_name << " " << chset.m_first_char << " " << chset.m_last_char << "\n";
@@ -587,11 +587,11 @@ namespace {
 // ClientUI
 ////////////////////////////////////////////////
 ClientUI::ClientUI() :
-    m_map_wnd(0),
-    m_message_wnd(0),
-    m_player_list_wnd(0),
-    m_intro_screen(0),
-    m_multiplayer_lobby_wnd(0)
+    m_map_wnd(nullptr),
+    m_message_wnd(nullptr),
+    m_player_list_wnd(nullptr),
+    m_intro_screen(nullptr),
+    m_multiplayer_lobby_wnd(nullptr)
 {
     s_the_UI = this;
     Hotkey::ReadFromOptions(GetOptionsDB());
@@ -641,18 +641,18 @@ ClientUI::~ClientUI() {
     delete m_player_list_wnd;
     delete m_intro_screen;
     delete m_multiplayer_lobby_wnd;
-    s_the_UI = 0;
+    s_the_UI = nullptr;
 }
 
 MapWnd* ClientUI::GetMapWnd()
 {
-    static bool initialized = m_map_wnd ? true : (m_map_wnd = new MapWnd()) != 0;
+    static bool initialized = m_map_wnd ? true : (m_map_wnd = new MapWnd()) != nullptr;
     return m_map_wnd;
 }
 
 MapWnd const* ClientUI::GetMapWndConst() const
 {
-    static bool initialized = m_map_wnd ? true : (m_map_wnd = new MapWnd()) != 0;
+    static bool initialized = m_map_wnd ? true : (m_map_wnd = new MapWnd()) != nullptr;
     return m_map_wnd;
 }
 

@@ -192,7 +192,7 @@ Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv
     for (unsigned int i = 0; i < argv.size(); ++i) {
         args.push_back(const_cast<char*>(&(const_cast<std::string&>(argv[i])[0])));
     }
-    args.push_back(0);
+    args.push_back(nullptr);
 
     switch (m_process_id = fork()) {
     case -1: { // error

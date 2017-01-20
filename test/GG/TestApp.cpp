@@ -191,7 +191,8 @@ void TestApp::Run(GG::Wnd* wnd) {
 
 TestAppImpl::TestAppImpl(TestApp* q, int argc, char** argv, unsigned width,
                          unsigned height) :
-    m_front(q), m_app(NULL)
+    m_front(q),
+    m_app(nullptr)
 {
         std::vector<std::string> args;
 

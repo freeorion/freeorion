@@ -18,10 +18,10 @@
 FieldIcon::FieldIcon(int field_id) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1),
     m_field_id(field_id),
-    m_selection_indicator(0),
-    m_mouseover_indicator(0),
+    m_selection_indicator(nullptr),
+    m_mouseover_indicator(nullptr),
     m_selected(false),
-    m_name(0)
+    m_name(nullptr)
 {
     Refresh();
 }

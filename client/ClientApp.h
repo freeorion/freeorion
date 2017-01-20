@@ -137,7 +137,7 @@ public:
      *
      * @return A pointer to the ::UniverseObject associated with @a object_id.
      *      When there is no matching object or the client does not know of the
-     *      object existence the pointer may be NULL.
+     *      object existence the pointer may be nullptr.
      */
     TemporaryPtr<UniverseObject>GetUniverseObject(int object_id) override;
 
@@ -166,7 +166,7 @@ public:
      *
      * @return A pointer to the Empire instance represented by @a empire_id.
      *      If there is no Empire with this @a empire_id or if the Empire is
-     *      not yet known to this client a NULL pointer is returned.
+     *      not yet known to this client a nullptr is returned.
      */
     Empire* GetEmpire(int empire_id) override;
 
@@ -189,7 +189,7 @@ public:
      * @return A pointer to the UniverseObject, that is identified by
      *      @a object_id and known by the ::Empire identified by @a empire_id.
      *      If there is no such object or if that object is not known to the
-     *      empire a NULL pointer is returned.
+     *      empire a nullptr is returned.
      */
     TemporaryPtr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
 

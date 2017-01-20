@@ -286,7 +286,7 @@ void Texture::Load(const boost::filesystem::path& path, bool mipmap/* = false*/)
             const_view(image._dynamic_cast<image_prefix ## _image_t>())); \
     }
 
-    const unsigned char* image_data = 0;
+    const unsigned char* image_data = nullptr;
 
     IF_IMAGE_TYPE_IS(gil::gray8)
     else IF_IMAGE_TYPE_IS(gil::gray_alpha8)
@@ -415,7 +415,7 @@ void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLe
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, m_wrap_s);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, m_wrap_t);
 
-    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, Value(GL_texture_width), Value(GL_texture_height), 0, format, type, 0);
+    glTexImage2D(GL_PROXY_TEXTURE_2D, 0, format, Value(GL_texture_width), Value(GL_texture_height), 0, format, type, nullptr);
     GLint checked_format;
     glGetTexLevelParameteriv(GL_PROXY_TEXTURE_2D, 0, GL_TEXTURE_INTERNAL_FORMAT, &checked_format);
     if (!checked_format)
@@ -462,7 +462,7 @@ void Texture::InitFromRawData(X width, Y height, const unsigned char* image, GLe
 
 unsigned char* Texture::GetRawBytes()
 {
-    unsigned char* retval = 0;
+    unsigned char* retval = nullptr;
     glPushClientAttrib(GL_CLIENT_PIXEL_STORE_BIT);
     glPixelStorei(GL_PACK_SWAP_BYTES, false);
     glPixelStorei(GL_PACK_LSB_FIRST, false);

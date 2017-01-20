@@ -38,8 +38,8 @@ private:
     class SoundOptionsFeedback {
     public:
         SoundOptionsFeedback() :
-            m_effects_button(0),
-            m_music_button(0)
+            m_effects_button(nullptr),
+            m_music_button(nullptr)
         {}
 
         /** Stores a pointer to the sound effects check box.*/
@@ -81,9 +81,9 @@ private:
                                      const std::string& volume_option_name, const std::string& text, bool toggle_value,
                                      SoundOptionsFeedback &fb);
     void                FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory, bool relative_path);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, StringValidator string_validator = 0);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator = 0);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator = 0);
+    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, StringValidator string_validator = nullptr);
+    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator = nullptr);
+    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator = nullptr);
     void                DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path);
     void                SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
     void                ColorOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);

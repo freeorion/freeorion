@@ -258,9 +258,9 @@ ScanlineRenderer BuildingIndicator::s_scanline_shader;
 
 BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_graphic(0),
-    m_scrap_indicator(0),
-    m_progress_bar(0),
+    m_graphic(nullptr),
+    m_scrap_indicator(nullptr),
+    m_progress_bar(nullptr),
     m_building_id(building_id),
     m_order_issuing_enabled(true)
 {
@@ -272,9 +272,9 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
                                      double turns_completed, double total_turns, double total_cost, double turn_spending) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_graphic(0),
-    m_scrap_indicator(0),
-    m_progress_bar(0),
+    m_graphic(nullptr),
+    m_scrap_indicator(nullptr),
+    m_progress_bar(nullptr),
     m_building_id(INVALID_OBJECT_ID),
     m_order_issuing_enabled(true)
 {
@@ -352,11 +352,11 @@ void BuildingIndicator::Refresh() {
 
     if (m_graphic) {
         delete m_graphic;
-        m_graphic = 0;
+        m_graphic = nullptr;
     }
     if (m_scrap_indicator) {
         delete m_scrap_indicator;
-        m_scrap_indicator = 0;
+        m_scrap_indicator = nullptr;
     }
 
     if (const BuildingType* type = GetBuildingType(building->BuildingTypeName())) {

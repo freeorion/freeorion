@@ -46,11 +46,11 @@ namespace {
             m_item(item),
             m_empire_id(empire_id),
             m_location_id(location_id),
-            m_icon(0),
-            m_name(0),
-            m_cost(0),
-            m_time(0),
-            m_desc(0)
+            m_icon(nullptr),
+            m_name(nullptr),
+            m_cost(nullptr),
+            m_time(nullptr),
+            m_desc(nullptr)
         {
             SetChildClippingMode(ClipToClient);
         }
@@ -343,7 +343,7 @@ namespace {
             m_item(item),
             m_empire_id(empire_id),
             m_location_id(location_id),
-            m_panel(0)
+            m_panel(nullptr)
         {
             SetName("ProductionItemRow");
             SetChildClippingMode(ClipToClient);
@@ -966,9 +966,9 @@ const std::string BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE = "Production It
 
 BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     Wnd(GG::X0, GG::Y0, w, h, GG::INTERACTIVE | GG::ONTOP),
-    m_enc_detail_panel(0),
-    m_build_selector(0),
-    m_side_panel(0)
+    m_enc_detail_panel(nullptr),
+    m_build_selector(nullptr),
+    m_side_panel(nullptr)
 {
     m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
     GG::Connect(m_enc_detail_panel->ClosingSignal, boost::bind(&BuildDesignatorWnd::HidePedia, this));     // Wnd is manually closed by user

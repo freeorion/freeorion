@@ -196,7 +196,7 @@ namespace {
     template <typename T>
     T const* FindParentOfType(GG::Wnd const* parent) {
         GG::Wnd const * iwnd = parent;
-        T const* type_T = 0;
+        T const* type_T = nullptr;
         while (iwnd && !(type_T = dynamic_cast<const T*>(iwnd))){
             iwnd = iwnd->Parent();
         }

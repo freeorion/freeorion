@@ -426,9 +426,10 @@ protected:
         RadioButtonGroup. */
     struct GG_API ButtonSlot
     {
-        ButtonSlot();
         ButtonSlot(StateButton* button_);
-        StateButton*                button;
+
+        StateButton* button;
+
         boost::signals2::connection connection;
     };
 

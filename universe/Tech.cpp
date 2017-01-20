@@ -53,7 +53,7 @@ namespace {
 
     const Tech* Cheapest(const std::vector<const Tech*>& next_techs, int empire_id) {
         if (next_techs.empty())
-            return 0;
+            return nullptr;
 
         float min_price = next_techs[0]->ResearchCost(empire_id);
         int min_index = 0;
@@ -242,16 +242,16 @@ bool operator!=(const ItemSpec& lhs, const ItemSpec& rhs)
 // TechManager                                           //
 ///////////////////////////////////////////////////////////
 // static(s)
-TechManager* TechManager::s_instance = 0;
+TechManager* TechManager::s_instance = nullptr;
 
 const Tech* TechManager::GetTech(const std::string& name) const {
     iterator it = m_techs.get<NameIndex>().find(name);
-    return it == m_techs.get<NameIndex>().end() ? 0 : *it;
+    return it == m_techs.get<NameIndex>().end() ? nullptr : *it;
 }
 
 const TechCategory* TechManager::GetTechCategory(const std::string& name) const {
     std::map<std::string, TechCategory*>::const_iterator it = m_categories.find(name);
-    return it == m_categories.end() ? 0 : it->second;
+    return it == m_categories.end() ? nullptr : it->second;
 }
 
 std::vector<std::string> TechManager::CategoryNames() const {

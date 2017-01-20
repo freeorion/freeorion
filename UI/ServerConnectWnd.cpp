@@ -41,15 +41,15 @@ namespace {
 ServerConnectWnd::ServerConnectWnd() :
     CUIWnd(UserString("SCONNECT_WINDOW_TITLE"),
            GG::INTERACTIVE | GG::MODAL),
-    m_host_or_join_radio_group(0),
-    m_LAN_game_label(0),
-    m_servers_lb(0),
-    m_find_LAN_servers_bn(0),
-    m_internet_game_label(0),
-    m_IP_address_edit(0),
-    m_player_name_edit(0),
-    m_ok_bn(0),
-    m_cancel_bn(0)
+    m_host_or_join_radio_group(nullptr),
+    m_LAN_game_label(nullptr),
+    m_servers_lb(nullptr),
+    m_find_LAN_servers_bn(nullptr),
+    m_internet_game_label(nullptr),
+    m_IP_address_edit(nullptr),
+    m_player_name_edit(nullptr),
+    m_ok_bn(nullptr),
+    m_cancel_bn(nullptr)
 {
     Sound::TempUISoundDisabler sound_disabler;
 

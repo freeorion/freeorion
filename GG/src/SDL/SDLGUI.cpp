@@ -323,7 +323,7 @@ namespace {
         target.w = width;
         target.h = height;
         target.format = 0; // DOn't care
-        target.driverdata = 0;
+        target.driverdata = nullptr;
         target.refresh_rate = 0;
         SDL_DisplayMode closest;
         SDL_GetClosestDisplayMode(display_id, &target, &closest);
@@ -415,7 +415,7 @@ namespace GG {
             glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP, GL_FALSE);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0,
-                         GL_RGBA, GL_UNSIGNED_BYTE, 0);
+                         GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
             glBindTexture(GL_TEXTURE_2D, 0);
 
             // create a renderbuffer object to store depth and stencil info
@@ -486,9 +486,10 @@ SDLGUI::SDLGUI(int w/* = 1024*/, int h/* = 768*/, bool calc_FPS/* = false*/, con
     m_fullscreen(fullscreen),
     m_fake_mode_change(fake_mode_change),
     m_display_id(0),
-    m_window(NULL),
+    m_window(nullptr),
+    m_gl_context(nullptr),
     m_done(false),
-    m_framebuffer(NULL),
+    m_framebuffer(nullptr),
     m_key_map()
 {
     SDLInit();
@@ -651,7 +652,7 @@ void SDLGUI::SDLInit()
         }
 
         SDL_ShowSimpleMessageBox(
-            SDL_MESSAGEBOX_ERROR, "OpenGL initialization error", msg.c_str(), 0);
+            SDL_MESSAGEBOX_ERROR, "OpenGL initialization error", msg.c_str(), nullptr);
         std::cerr << msg << std::endl;
         Exit(1);
     }
@@ -855,12 +856,12 @@ void SDLGUI::FinalCleanup()
 {
     if (m_gl_context){
         SDL_GL_DeleteContext(m_gl_context);
-        m_gl_context = 0;
+        m_gl_context = nullptr;
     }
 
     if (m_window) {
         SDL_DestroyWindow(m_window);
-        m_window = 0;
+        m_window = nullptr;
     }
 }
 
@@ -984,7 +985,7 @@ void SDLGUI::RelayTextInput(const SDL_TextInputEvent& text, GG::Pt mouse_pos)
 
 void SDLGUI::ResetFramebuffer()
 {
-    m_framebuffer.reset(NULL);
+    m_framebuffer.reset();
     if (m_fake_mode_change && m_fullscreen) {
         try {
             m_framebuffer.reset(new Framebuffer(Pt(m_app_width, m_app_height)));

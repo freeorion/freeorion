@@ -230,7 +230,7 @@ const UnicodeCharset* GG::CharsetContaining(boost::uint32_t c)
         }
     }
     std::size_t block = c / BLOCK_SIZE;
-    return block < s_charset_blocks.size() ? s_charset_blocks[block] : 0;
+    return block < s_charset_blocks.size() ? s_charset_blocks[block] : nullptr;
 }
 
 const UnicodeCharset* GG::CharsetWithName(const std::string& name)
@@ -242,5 +242,5 @@ const UnicodeCharset* GG::CharsetWithName(const std::string& name)
         }
     }
     std::map<std::string, const UnicodeCharset*>::const_iterator it = s_name_map.find(name);
-    return it == s_name_map.end() ? 0 : it->second;
+    return it == s_name_map.end() ? nullptr : it->second;
 }

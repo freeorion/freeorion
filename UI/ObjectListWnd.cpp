@@ -165,7 +165,7 @@ namespace {
             if (entry.first.first == name)
                 return entry.second;
         }
-        return 0;
+        return nullptr;
     }
 
     int GetColumnWidth(int column) {
@@ -204,10 +204,10 @@ namespace {
 
     const ValueRef::ValueRefBase<std::string>* GetColumnValueRef(int column) {
         if (column < 0)
-            return 0;
+            return nullptr;
         std::string option_name = "UI.objects-list-info-col-" + boost::lexical_cast<std::string>(column);
         if (!GetOptionsDB().OptionExists(option_name))
-            return 0;
+            return nullptr;
         std::string column_ref_name = GetOptionsDB().Get<std::string>(option_name);
         return GetValueRefByName(column_ref_name);
     }
@@ -330,12 +330,12 @@ const GG::X CONDITION_WIDGET_WIDTH(380);
 
 class ConditionWidget : public GG::Control {
 public:
-    ConditionWidget(GG::X x, GG::Y y, const Condition::ConditionBase* initial_condition = 0) :
+    ConditionWidget(GG::X x, GG::Y y, const Condition::ConditionBase* initial_condition = nullptr) :
         GG::Control(x, y, CONDITION_WIDGET_WIDTH, GG::Y1, GG::INTERACTIVE),
-        m_class_drop(0),
-        m_string_drop(0),
-        m_param_spin1(0),
-        m_param_spin2(0)
+        m_class_drop(nullptr),
+        m_string_drop(nullptr),
+        m_param_spin1(nullptr),
+        m_param_spin2(nullptr)
     {
         if (!initial_condition) {
             Condition::ConditionBase* init_condition = new Condition::All();
@@ -673,9 +673,12 @@ private:
         if (!m_class_drop)
             return;
         // remove old parameter controls
-        delete m_string_drop;   m_string_drop = 0;
-        delete m_param_spin1;   m_param_spin1 = 0;
-        delete m_param_spin2;   m_param_spin2 = 0;
+        delete m_string_drop;
+        m_string_drop = nullptr;
+        delete m_param_spin1;
+        m_param_spin1 = nullptr;
+        delete m_param_spin2;
+        m_param_spin2 = nullptr;
 
         // determine which condition is selected
         GG::ListBox::iterator row_it = m_class_drop->CurrentItem();
@@ -922,9 +925,9 @@ public:
         m_vis_filters(vis_filters),
         m_filter_buttons(),
         m_accept_changes(false),
-        m_filters_layout(0),
-        m_cancel_button(0),
-        m_apply_button(0)
+        m_filters_layout(nullptr),
+        m_cancel_button(nullptr),
+        m_apply_button(nullptr)
     { Init(condition_filter); }
 
     bool    ChangesAccepted()
@@ -952,7 +955,7 @@ private:
         m_filters_layout->SetColumnStretch(0, 0.0);
 
         GG::X button_width = GG::X(ClientUI::Pts()*8);
-        GG::Button* label = 0;
+        GG::Button* label = nullptr;
 
         label = new CUIButton(UserString("VISIBLE"));
         label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
@@ -1192,10 +1195,9 @@ public:
         m_indent(indent),
         m_expanded(expanded),
         m_has_contents(has_contents),
-        m_expand_button(0),
-        m_dot(0),
-        m_icon(0),
-        m_controls(0),
+        m_expand_button(nullptr),
+        m_dot(nullptr),
+        m_icon(nullptr),
         m_column_val_cache(),
         m_selected(false)
     {
@@ -1255,9 +1257,12 @@ public:
         GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_CENTER | GG::GRAPHIC_VCENTER |
                                             GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE;
 
-        delete m_dot;           m_dot = 0;
-        delete m_expand_button; m_expand_button = 0;
-        delete m_icon;          m_icon = 0;
+        delete m_dot;
+        m_dot = nullptr;
+        delete m_expand_button;
+        m_expand_button = nullptr;
+        delete m_icon;
+        m_icon = nullptr;
 
         if (m_has_contents) {
             boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
@@ -1415,7 +1420,7 @@ public:
               int container_object_panel, const std::set<int>& contained_object_panels,
               int indent) :
         GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
-        m_panel(0),
+        m_panel(nullptr),
         m_container_object_panel(container_object_panel),
         m_contained_object_panels(contained_object_panels),
         m_obj_init(obj),
@@ -1635,7 +1640,7 @@ class ObjectHeaderRow : public GG::ListBox::Row {
 public:
     ObjectHeaderRow(GG::X w, GG::Y h) :
         GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
-        m_panel(0)
+        m_panel(nullptr)
     {
         m_panel = new ObjectHeaderPanel(w, h);
         push_back(m_panel);
@@ -1695,9 +1700,9 @@ public:
         CUIListBox(),
         m_object_change_connections(),
         m_collapsed_objects(),
-        m_filter_condition(0),
+        m_filter_condition(nullptr),
         m_visibilities(),
-        m_header_row(0)
+        m_header_row(nullptr)
     {
         // preinitialize listbox/row column widths, because what
         // ListBox::Insert does on default is not suitable for this case
@@ -2185,9 +2190,9 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     CUIWnd(UserString("MAP_BTN_OBJECTS"),
            GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE,
            config_name, false),
-    m_list_box(0),
-    m_filter_button(0),
-    m_collapse_button(0)
+    m_list_box(nullptr),
+    m_filter_button(nullptr),
+    m_collapse_button(nullptr)
 {
     m_list_box = new ObjectListBox();
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
@@ -2259,7 +2264,7 @@ void ObjectListWnd::ObjectSelectionChanged(const GG::ListBox::SelectionSet& rows
             ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged got empty row";
             continue;
         }
-        GG::Control* control = !row->empty() ? row->at(0) : 0;
+        GG::Control* control = !row->empty() ? row->at(0) : nullptr;
         if (!control) {
             ErrorLogger() << "ObjectListWnd::ObjectSelectionChanged couldn't get control from row";
             continue;

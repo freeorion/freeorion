@@ -186,7 +186,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
                                int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
     SDLGUI(width, height, calculate_fps, name, x, y, fullscreen, fake_mode_change),
-    m_fsm(0),
+    m_fsm(nullptr),
     m_single_player_game(true),
     m_game_started(false),
     m_connected(false),

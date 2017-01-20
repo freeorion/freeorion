@@ -197,20 +197,20 @@ void CreditsWnd::Render() {
 /////////////////////////////////
 IntroScreen::IntroScreen() :
     GG::Wnd(GG::X0, GG::Y0, GG::GUI::GetGUI()->AppWidth(), GG::GUI::GetGUI()->AppHeight(), GG::NO_WND_FLAGS),
-    m_single_player(0),
-    m_quick_start(0),
-    m_multi_player(0),
-    m_load_game(0),
-    m_options(0),
-    m_pedia(0),
-    m_about(0),
-    m_website(0),
-    m_credits(0),
-    m_exit_game(0),
-    m_menu(0),
-    m_splash(0),
-    m_logo(0),
-    m_version(0)
+    m_single_player(nullptr),
+    m_quick_start(nullptr),
+    m_multi_player(nullptr),
+    m_load_game(nullptr),
+    m_options(nullptr),
+    m_pedia(nullptr),
+    m_about(nullptr),
+    m_website(nullptr),
+    m_credits(nullptr),
+    m_exit_game(nullptr),
+    m_menu(nullptr),
+    m_splash(nullptr),
+    m_logo(nullptr),
+    m_version(nullptr)
 {
     m_menu = new CUIWnd(UserString("INTRO_WINDOW_TITLE"), GG::X1, GG::Y1,
                         MAIN_MENU_WIDTH, MAIN_MENU_HEIGHT, GG::ONTOP | GG::INTERACTIVE);

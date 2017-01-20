@@ -48,9 +48,9 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const boost::sh
     m_default(0),
     m_escape(buttons - 1),
     m_result(0),
-    m_button_0(0),
-    m_button_1(0),
-    m_button_2(0)
+    m_button_0(nullptr),
+    m_button_1(nullptr),
+    m_button_2(nullptr)
 { Init(msg, font, buttons, zero, one, two); }
 
 Clr ThreeButtonDlg::ButtonColor() const

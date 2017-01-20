@@ -2016,10 +2016,10 @@ void Building::SetTopLevelContent(const std::string& content_name) {
 HasSpecial::HasSpecial(const std::string& name) :
     ConditionBase(),
     m_name(new ValueRef::Constant<std::string>(name)),
-    m_capacity_low(0),
-    m_capacity_high(0),
-    m_since_turn_low(0),
-    m_since_turn_high(0)
+    m_capacity_low(nullptr),
+    m_capacity_high(nullptr),
+    m_since_turn_low(nullptr),
+    m_since_turn_high(nullptr)
 {}
 
 HasSpecial::~HasSpecial() {
@@ -7996,7 +7996,7 @@ namespace {
                                               const std::string& name2)
     {
         if (name1.empty())
-            return 0;
+            return nullptr;
         switch (content_type) {
         case CONTENT_BUILDING: {
             if (const BuildingType* bt = GetBuildingType(name1))
@@ -8006,7 +8006,7 @@ namespace {
         case CONTENT_SPECIES: {
             const ::Species* s = GetSpecies(name1);
             if (!s)
-                return 0;
+                return nullptr;
             return s->Location();
         }
         case CONTENT_SHIP_HULL: {
@@ -8026,7 +8026,7 @@ namespace {
         }
         case CONTENT_FOCUS : {
             if (name2.empty())
-                return 0;
+                return nullptr;
             // get species, then focus from that species
             if (const ::Species* s = GetSpecies(name1)) {
                 for (const ::FocusType& f : s->Foci()) {
@@ -8037,9 +8037,9 @@ namespace {
             break;
         }
         default:
-            return 0;
+            return nullptr;
         }
-        return 0;
+        return nullptr;
     }
 }
 

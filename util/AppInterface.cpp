@@ -4,7 +4,7 @@ const int INVALID_GAME_TURN = -(2 << 15) + 1;
 const int BEFORE_FIRST_TURN = -(2 << 14);
 const int IMPOSSIBLY_LARGE_TURN = 2 << 15;
 
-IApp*  IApp::s_app = 0;
+IApp*  IApp::s_app = nullptr;
 
 IApp::IApp() {
     if (s_app)
@@ -14,7 +14,7 @@ IApp::IApp() {
 }
 
 IApp::~IApp()
-{ s_app = 0; }
+{ s_app = nullptr; }
 
 IApp* IApp::GetApp()
 { return s_app; }

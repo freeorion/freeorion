@@ -100,7 +100,7 @@ namespace {
     };
 
     ListBox::Row* SafeDeref(const ListBox::iterator& it, const ListBox::iterator& end)
-    { return it == end ? 0 : *it; }
+    { return it == end ? nullptr : *it; }
 
     bool RowAboveOrIsRow(ListBox::iterator lhs, ListBox::iterator rhs, ListBox::iterator end)
     {
@@ -302,9 +302,9 @@ void ListBox::Row::resize(std::size_t n)
 
     for (std::size_t ii = n; ii < old_size; ++ii) {
         delete m_cells[ii];
-        m_cells[ii] = 0;
+        m_cells[ii] = nullptr;
     }
-    m_cells.resize(n, 0);
+    m_cells.resize(n, nullptr);
     m_col_widths.resize(n);
     m_col_alignments.resize(n);
     m_col_stretches.resize(n);
@@ -367,11 +367,11 @@ void ListBox::Row::SetCell(std::size_t n, Control* c)
 Control* ListBox::Row::RemoveCell(std::size_t n)
 {
     if (m_cells.size() <= n)
-        return 0;
+        return nullptr;
     Layout* layout = GetLayout();
     Control* retval = m_cells[n];
     layout->Remove(retval);
-    m_cells[n] = 0;
+    m_cells[n] = nullptr;
     return retval;
 }
 
@@ -513,8 +513,8 @@ bool ListBox::RowPtrIteratorLess::operator()(const ListBox::iterator& lhs, const
 ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     Control(X0, Y0, X1, Y1, INTERACTIVE),
     m_rows(),
-    m_vscroll(0),
-    m_hscroll(0),
+    m_vscroll(nullptr),
+    m_hscroll(nullptr),
     m_vscroll_wheel_scroll_increment(0),
     m_hscroll_wheel_scroll_increment(0),
     m_caret(m_rows.end()),
@@ -551,7 +551,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_normalize_rows_on_insert(true),
     m_manage_column_props(true),
     m_add_padding_at_end(true),
-    m_iterator_being_erased(0)
+    m_iterator_being_erased(nullptr)
 {
     Control::SetColor(color);
     ValidateStyle();
@@ -1047,9 +1047,9 @@ void ListBox::Clear()
     }
 
     DeleteChild(m_vscroll);
-    m_vscroll = 0;
+    m_vscroll = nullptr;
     DeleteChild(m_hscroll);
-    m_hscroll = 0;
+    m_hscroll = nullptr;
 
     if (m_iterator_being_erased)
         *m_iterator_being_erased = m_rows.end();
@@ -1288,7 +1288,7 @@ void ListBox::SetColHeaders(Row* r)
 }
 
 void ListBox::RemoveColHeaders()
-{ SetColHeaders(0); }
+{ SetColHeaders(nullptr); }
 
 void ListBox::SetNumCols(std::size_t n)
 {
@@ -1975,11 +1975,11 @@ void ListBox::Insert(const std::vector<Row*>& rows, iterator it, bool dropped, b
 ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
 {
     if (it == m_rows.end())
-        return 0;
+        return nullptr;
 
     if (m_iterator_being_erased) {
         *m_iterator_being_erased = m_rows.end();
-        return 0;
+        return nullptr;
     }
 
     RequirePreRender();
@@ -2190,7 +2190,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
     // Remove unecessary vscroll
     if (m_vscroll && !vertical_needed) {
         DeleteChild(m_vscroll);
-        m_vscroll = 0;
+        m_vscroll = nullptr;
         vscroll_added_or_removed = true;
     }
 
@@ -2232,7 +2232,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
     // Remove unecessary hscroll
     if (m_hscroll && !horizontal_needed) {
         DeleteChild(m_hscroll);
-        m_hscroll = 0;
+        m_hscroll = nullptr;
     }
 
     // Add necessary hscroll

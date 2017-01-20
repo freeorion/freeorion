@@ -147,7 +147,7 @@ private:
 //// Public interface //////////
 ///////////////////////////////
 TechTreeArcs::TechTreeArcs() :
-    m_impl(0)
+    m_impl(nullptr)
 {}
 
 TechTreeArcs::TechTreeArcs(const TechTreeLayout& layout, const std::set<std::string>& techs_to_show) :
@@ -166,7 +166,7 @@ void TechTreeArcs::Render(double scale) {
 void TechTreeArcs::Reset() {
     if (m_impl)
         delete m_impl;
-    m_impl = 0;
+    m_impl = nullptr;
 }
 
 void TechTreeArcs::Reset(const TechTreeLayout& layout, const std::set< std::string >& techs_to_show) {
