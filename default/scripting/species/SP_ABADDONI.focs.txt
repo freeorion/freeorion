@@ -2,7 +2,8 @@ Species
     name = "SP_ABADDONI"
     description = "SP_ABADDONI_DESC"
     gameplay_description = "SP_ABADDONI_GAMEPLAY_DESC"
-    Native
+    Playable
+    //Native
     CanProduceShips
     CanColonize
 

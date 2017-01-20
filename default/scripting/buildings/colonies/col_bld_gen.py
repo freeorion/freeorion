@@ -31,6 +31,7 @@ species_list = [
     ("SP_SSLITH", "Sslith", "icons/species/sslith.png"),
     ("SP_TAEGHIRUS", "Tae Ghirus", "icons/species/t-aeghirus.png"),
     ("SP_TRITH", "Trith", "icons/species/trith.png"),
+    ("SP_RADON", "Radons", "icons/species/robotic-05.png"),
     ("SP_UGMORS", "Ugmors", "icons/species/amorphous-06.png"),
     ("SP_EXOBOT", "Exobot", "icons/species/robotic-01.png")
 ]
