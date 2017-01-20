@@ -162,7 +162,7 @@ private:
   * stores the type of item that is being unlocked, such as a building or ship component, and the
   * \a name field contains the name of the actual item (e.g. (UIT_BUILDING, "Superfarm") or
   * (UIT_SHIP_PART, "Death Ray")). */
-struct ItemSpec {
+FO_COMMON_API struct ItemSpec {
     ItemSpec();
     ItemSpec(UnlockableItemType type_, const std::string& name_) :
         type(type_),
