@@ -1,5 +1,7 @@
 #include "EnumParser.h"
 
+#include "../universe/Enums.h"
+
 
 namespace qi = boost::spirit::qi;
 

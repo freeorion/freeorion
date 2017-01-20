@@ -2,7 +2,7 @@
 #define _Common_Params_h_
 
 #include "Lexer.h"
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"

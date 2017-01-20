@@ -1,7 +1,7 @@
 #ifndef _MultiplayerCommon_h_
 #define _MultiplayerCommon_h_
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../network/Networking.h"
 #include "Export.h"
 
@@ -10,28 +10,21 @@
 #include <list>
 #include <set>
 #include <vector>
+#include <map>
 #include <boost/serialization/access.hpp>
 
 
 FO_COMMON_API extern const std::string MP_SAVE_FILE_EXTENSION;
 FO_COMMON_API extern const std::string SP_SAVE_FILE_EXTENSION;
 
+extern const int ALL_EMPIRES;
+
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {
     /** \name Structors */ //@{
-    GalaxySetupData() :
-        m_seed(),
-        m_size(100),
-        m_shape(SPIRAL_2),
-        m_age(GALAXY_SETUP_MEDIUM),
-        m_starlane_freq(GALAXY_SETUP_MEDIUM),
-        m_planet_density(GALAXY_SETUP_MEDIUM),
-        m_specials_freq(GALAXY_SETUP_MEDIUM),
-        m_monster_freq(GALAXY_SETUP_MEDIUM),
-        m_native_freq(GALAXY_SETUP_MEDIUM),
-        m_ai_aggr(MANIACAL)
-    {}
+    GalaxySetupData();
     //@}
+
     /** \name Accessors */ //@{
     const std::string&  GetSeed() const;
     int                 GetSize() const;
