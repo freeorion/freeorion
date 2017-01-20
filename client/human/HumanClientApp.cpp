@@ -186,7 +186,6 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
                                int x, int y, bool fullscreen, bool fake_mode_change) :
     ClientApp(),
     SDLGUI(width, height, calculate_fps, name, x, y, fullscreen, fake_mode_change),
-    m_fsm(nullptr),
     m_single_player_game(true),
     m_game_started(false),
     m_connected(false),
@@ -199,7 +198,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 #ifdef FREEORION_MACOSX
     SDL_SetHint(SDL_HINT_MAC_CTRL_CLICK_EMULATE_RIGHT_CLICK, "1");
 #endif
-    m_fsm = new HumanClientFSM(*this);
+    m_fsm.reset(new HumanClientFSM(*this));
 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
 
@@ -322,7 +321,6 @@ HumanClientApp::~HumanClientApp() {
     if (m_networking.Connected())
         m_networking.DisconnectFromServer();
     m_server_process.RequestTermination();
-    delete m_fsm;
 }
 
 bool HumanClientApp::SinglePlayerGame() const
