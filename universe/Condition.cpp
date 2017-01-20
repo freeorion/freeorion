@@ -8328,8 +8328,8 @@ std::string And::Dump() const {
 }
 
 void And::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context, ObjectSet& condition_non_targets) const {
-    if (!Operands().empty()) {
-        Operands()[0]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets); // gets condition_non_targets from first operand condition
+    if (!m_operands.empty()) {
+        m_operands[0]->GetDefaultInitialCandidateObjects(parent_context, condition_non_targets); // gets condition_non_targets from first operand condition
     } else {
         ConditionBase::GetDefaultInitialCandidateObjects(parent_context, condition_non_targets);
     }

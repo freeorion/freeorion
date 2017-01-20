@@ -203,15 +203,6 @@ struct FO_COMMON_API Number : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<int>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<int>* High() const
-    { return m_high; }
-
-    const ConditionBase* GetCondition() const
-    { return m_condition; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -253,12 +244,6 @@ struct FO_COMMON_API Turn : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<int>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<int>* High() const
-    { return m_high; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -326,18 +311,6 @@ struct FO_COMMON_API SortedNumberOf : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<int>* Number() const
-    { return m_number; }
-
-    const ValueRef::ValueRefBase<double>* SortKey() const
-    { return m_sort_key; }
-
-    SortingMethod GetSortingMethod() const
-    { return m_sorting_method; }
-
-    const ConditionBase* GetCondition() const
-    { return m_condition; }
 
 private:
     ValueRef::ValueRefBase<int>* m_number;
@@ -460,12 +433,6 @@ struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<int>* EmpireID() const
-    { return m_empire_id; }
-
-    EmpireAffiliationType GetAffiliation() const
-    { return m_affiliation; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -617,9 +584,6 @@ struct FO_COMMON_API Homeworld : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const std::vector<ValueRef::ValueRefBase<std::string>*> Names() const
-    { return m_names; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -759,9 +723,6 @@ struct FO_COMMON_API Type : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<UniverseObjectType>* GetType() const
-    { return m_type; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -805,9 +766,6 @@ struct FO_COMMON_API Building : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const std::vector<ValueRef::ValueRefBase<std::string>*> Names() const
-    { return m_names; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -877,21 +835,6 @@ struct FO_COMMON_API HasSpecial : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<std::string>* Name() const
-    { return m_name; }
-
-    const ValueRef::ValueRefBase<double>* CapacityLow() const
-    { return m_capacity_low; }
-
-    const ValueRef::ValueRefBase<double>* CapacityHigh() const
-    { return m_capacity_high; }
-
-    const ValueRef::ValueRefBase<int>* SinceTurnLow() const
-    { return m_since_turn_low; }
-
-    const ValueRef::ValueRefBase<int>* SinceTurnHigh() const
-    { return m_since_turn_high; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -938,9 +881,6 @@ struct FO_COMMON_API HasTag : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    ValueRef::ValueRefBase<std::string>* Name() const
-    { return m_name; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -981,12 +921,6 @@ struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<int>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<int>* High() const
-    { return m_high; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1034,9 +968,6 @@ struct FO_COMMON_API Contains : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ConditionBase* GetCondition() const
-    { return m_condition; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1082,9 +1013,6 @@ struct FO_COMMON_API ContainedBy : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ConditionBase* GetCondition() const
-    { return m_condition; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1128,9 +1056,6 @@ struct FO_COMMON_API InSystem : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<int>* SystemId() const
-    { return m_system_id; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1173,9 +1098,6 @@ struct FO_COMMON_API ObjectID : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<int>* ObjectId() const
-    { return m_object_id; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1222,9 +1144,6 @@ struct FO_COMMON_API PlanetType : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const std::vector<ValueRef::ValueRefBase<::PlanetType>*>& Types() const
-    { return m_types; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1269,9 +1188,6 @@ struct FO_COMMON_API PlanetSize : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const std::vector<ValueRef::ValueRefBase< ::PlanetSize>*>& Sizes() const
-    { return m_sizes; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1319,9 +1235,6 @@ struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const std::vector<ValueRef::ValueRefBase<::PlanetEnvironment>*>& Environments() const
-    { return m_environments; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1373,9 +1286,6 @@ struct FO_COMMON_API Species : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const std::vector<ValueRef::ValueRefBase<std::string>*>& Names() const
-    { return m_names; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1453,24 +1363,6 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    BuildType GetBuildType() const
-    { return m_build_type; }
-
-    const ValueRef::ValueRefBase<std::string>* GetName() const
-    { return m_name; }
-
-    const ValueRef::ValueRefBase<int>* DesignID() const
-    { return m_design_id; }
-
-    const ValueRef::ValueRefBase<int>* EmpireID() const
-    { return m_empire_id; }
-
-    const ValueRef::ValueRefBase<int>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<int>* High() const
-    { return m_high; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1519,9 +1411,6 @@ struct FO_COMMON_API FocusType : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const std::vector<ValueRef::ValueRefBase<std::string>*>& Names() const
-    { return m_names; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1562,9 +1451,6 @@ struct FO_COMMON_API StarType : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const std::vector<ValueRef::ValueRefBase< ::StarType>*>& Types() const
-    { return m_types; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1608,9 +1494,6 @@ struct FO_COMMON_API DesignHasHull : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<std::string>* Name() const
-    { return m_name; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1658,15 +1541,6 @@ struct FO_COMMON_API DesignHasPart : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<int>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<int>* High() const
-    { return m_high; }
-
-    const ValueRef::ValueRefBase<std::string>* Name() const
-    { return m_name; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1717,15 +1591,6 @@ struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<int>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<int>* High() const
-    { return m_high; }
-
-    ShipPartClass Class() const
-    { return m_class; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1769,9 +1634,6 @@ struct FO_COMMON_API PredefinedShipDesign : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<std::string>* Name() const
-    { return m_name; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1811,9 +1673,6 @@ struct FO_COMMON_API NumberedShipDesign : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<int>* DesignID() const
-    { return m_design_id; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1855,9 +1714,6 @@ struct FO_COMMON_API ProducedByEmpire : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<int>* EmpireID() const
-    { return m_empire_id; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -1897,9 +1753,6 @@ struct FO_COMMON_API Chance : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<double>* GetChance() const
-    { return m_chance; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -1944,15 +1797,6 @@ struct FO_COMMON_API MeterValue : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<double>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<double>* High() const
-    { return m_high; }
-
-    MeterType GetMeterType() const
-    { return m_meter; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -2002,18 +1846,6 @@ struct FO_COMMON_API ShipPartMeterValue : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<std::string>* PartName() const
-    { return m_part_name; }
-
-    const ValueRef::ValueRefBase<double>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<double>* High() const
-    { return m_high; }
-
-    MeterType GetMeterType() const
-    { return m_meter; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -2071,18 +1903,6 @@ struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const std::string& Meter() const
-    { return m_meter; }
-
-    const ValueRef::ValueRefBase<double>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<double>* High() const
-    { return m_high; }
-
-    const ValueRef::ValueRefBase<int>* EmpireID() const
-    { return m_empire_id; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -2126,15 +1946,6 @@ struct FO_COMMON_API EmpireStockpileValue : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<double>* Low() const
-    { return m_low; }
-
-    const ValueRef::ValueRefBase<double>* High() const
-    { return m_high; }
-
-    ResourceType Stockpile() const
-    { return m_stockpile; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -2176,9 +1987,6 @@ struct FO_COMMON_API OwnerHasTech : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<std::string>* Tech() const
-    { return m_name; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -2222,9 +2030,6 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<std::string>* GetBuildingType() const
-    { return m_name; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -2267,9 +2072,6 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<int>* GetDesignID() const
-    { return m_id; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -2309,9 +2111,6 @@ struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<int>* EmpireID() const
-    { return m_empire_id; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -2797,21 +2596,6 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRef::ValueRefBase<double>* GetValueRef1() const
-    { return m_value_ref1; }
-
-    const ValueRef::ValueRefBase<double>* GetValueRef2() const
-    { return m_value_ref2; }
-
-    const ValueRef::ValueRefBase<double>* GetValueRef3() const
-    { return m_value_ref3; }
-
-    ComparisonType GetComparisonType1() const
-    { return m_compare_type1; }
-
-    ComparisonType GetComparisonType2() const
-    { return m_compare_type2; }
-
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
@@ -2860,12 +2644,6 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ValueRef::ValueRefBase<std::string>* GetName1() const
-    { return m_name1; }
-
-    const ValueRef::ValueRefBase<std::string>* GetName2() const
-    { return m_name2; }
 
 private:
     bool Match(const ScriptingContext& local_context) const override;
@@ -2952,9 +2730,6 @@ struct FO_COMMON_API Or : public ConditionBase {
 
     virtual void SetTopLevelContent(const std::string& content_name) override;
 
-    const std::vector<ConditionBase*>& Operands() const
-    { return m_operands; }
-
 private:
     std::vector<ConditionBase*> m_operands;
 
@@ -2992,9 +2767,6 @@ struct FO_COMMON_API Not : public ConditionBase {
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ConditionBase* Operand() const
-    { return m_operand; }
 
 private:
     ConditionBase* m_operand;
@@ -3036,12 +2808,6 @@ struct FO_COMMON_API Described : public ConditionBase {
     { return m_condition ? m_condition->Dump() : ""; }
 
     void SetTopLevelContent(const std::string& content_name) override;
-
-    const ConditionBase* SubCondition() const
-    { return m_condition; }
-
-    const std::string& DescriptionStringKey() const
-    { return m_desc_stringtable_key; }
 
 private:
     ConditionBase* m_condition;
