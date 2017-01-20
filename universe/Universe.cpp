@@ -23,6 +23,7 @@
 #include "Species.h"
 #include "Condition.h"
 #include "ValueRef.h"
+#include "Enums.h"
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>

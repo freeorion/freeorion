@@ -21,6 +21,7 @@
 #include "ShipDesign.h"
 #include "Tech.h"
 #include "Species.h"
+#include "Enums.h"
 
 #include <boost/filesystem/fstream.hpp>
 

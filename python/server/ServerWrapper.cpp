@@ -13,6 +13,7 @@
 #include "../../universe/Tech.h"
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
+#include "../../universe/Enums.h"
 
 #include "../../server/ServerApp.h"
 #include "../../util/Directories.h"

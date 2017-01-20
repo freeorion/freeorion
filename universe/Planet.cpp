@@ -9,6 +9,7 @@
 #include "Condition.h"
 #include "Universe.h"
 #include "ValueRef.h"
+#include "Enums.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"

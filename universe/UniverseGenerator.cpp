@@ -12,6 +12,7 @@
 #include "System.h"
 #include "Species.h"
 #include "ValueRef.h"
+#include "Enums.h"
 
 //////////////////////////////////////////
 //  Universe Setup Functions            //

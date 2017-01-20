@@ -21,6 +21,7 @@
 #include "../universe/Species.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
+#include "../universe/Enums.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>

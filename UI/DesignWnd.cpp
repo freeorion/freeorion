@@ -20,6 +20,7 @@
 #include "../universe/Condition.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
+#include "../universe/Enums.h"
 #include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>

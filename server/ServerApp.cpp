@@ -16,6 +16,7 @@
 #include "../universe/System.h"
 #include "../universe/Species.h"
 #include "../universe/UniverseGenerator.h"
+#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 #include "../util/Directories.h"
 #include "../util/i18n.h"

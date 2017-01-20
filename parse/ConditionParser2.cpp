@@ -4,6 +4,7 @@
 #include "Label.h"
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
+#include "../universe/Enums.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 
