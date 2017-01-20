@@ -26,6 +26,7 @@
 #include "../universe/Special.h"
 #include "../universe/Species.h"
 #include "../universe/Field.h"
+#include "../universe/Enums.h"
 #include "../combat/CombatLogManager.h"
 #include "../client/human/HumanClientApp.h"
 

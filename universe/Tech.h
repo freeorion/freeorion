@@ -3,7 +3,7 @@
 
 #include "ValueRefFwd.h"
 
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "../util/Export.h"
 
 #include <boost/multi_index_container.hpp>
@@ -14,6 +14,7 @@
 #include <set>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <GG/Clr.h>
 
@@ -162,10 +163,7 @@ private:
   * \a name field contains the name of the actual item (e.g. (UIT_BUILDING, "Superfarm") or
   * (UIT_SHIP_PART, "Death Ray")). */
 struct ItemSpec {
-    ItemSpec() :
-        type(INVALID_UNLOCKABLE_ITEM_TYPE),
-        name("")
-    {}
+    ItemSpec();
     ItemSpec(UnlockableItemType type_, const std::string& name_) :
         type(type_),
         name(name_)

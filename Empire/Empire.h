@@ -16,6 +16,7 @@ class ShipDesign;
 class SitRepEntry;
 extern const int INVALID_GAME_TURN;
 extern const int INVALID_OBJECT_ID;
+extern const int ALL_EMPIRES;
 
 class Alignment {
 public:

@@ -10,6 +10,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "ValueRef.h"
+#include "Enums.h"
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -216,6 +217,11 @@ int Tech::ResearchTime(int empire_id) const {
 ///////////////////////////////////////////////////////////
 // ItemSpec                                        //
 ///////////////////////////////////////////////////////////
+ItemSpec::ItemSpec() :
+    type(INVALID_UNLOCKABLE_ITEM_TYPE),
+    name()
+{}
+
 std::string ItemSpec::Dump() const {
     std::string retval = "Item type = ";
     switch (type) {

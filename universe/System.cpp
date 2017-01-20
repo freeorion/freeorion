@@ -6,6 +6,7 @@
 #include "Building.h"
 #include "Predicates.h"
 #include "Universe.h"
+#include "Enums.h"
 
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"

@@ -4,6 +4,7 @@
 #include "../util/Logger.h"
 #include "../universe/ResourceCenter.h"
 #include "../universe/System.h"
+#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "CUIControls.h"

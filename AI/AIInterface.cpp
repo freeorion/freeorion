@@ -12,6 +12,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Tech.h"
+#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 
 #include "../util/Directories.h"

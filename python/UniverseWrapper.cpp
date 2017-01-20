@@ -11,6 +11,7 @@
 #include "../universe/Field.h"
 #include "../universe/Special.h"
 #include "../universe/Species.h"
+#include "../universe/Enums.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
 

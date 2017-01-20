@@ -5,6 +5,7 @@
 #include "../util/Serialize.ipp"
 #include "../util/Serialize.h"
 #include "../universe/Universe.h"
+#include "../universe/Enums.h"
 
 #include <sstream>
 

@@ -14,6 +14,7 @@
 #include "Species.h"
 #include "Universe.h"
 #include "ValueRef.h"
+#include "Enums.h"
 
 #include <cfloat>
 #include <boost/filesystem/fstream.hpp>
@@ -185,6 +186,55 @@ namespace {
 ////////////////////////////////////////////////
 // PartType
 ////////////////////////////////////////////////
+
+PartType::PartType() :
+    m_name("invalid part type"),
+    m_description("indescribable"),
+    m_class(INVALID_SHIP_PART_CLASS),
+    m_capacity(0.0f),
+    m_secondary_stat(1.0f),
+    m_production_cost(0),
+    m_production_time(0),
+    m_producible(false),
+    m_mountable_slot_types(),
+    m_tags(),
+    m_production_meter_consumption(),
+    m_production_special_consumption(),
+    m_location(0),
+    m_exclusions(),
+    m_effects(),
+    m_icon(),
+    m_add_standard_capacity_effect(false)
+{}
+
+PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
+                   const CommonParams& common_params, const MoreCommonParams& more_common_params,
+                   std::vector<ShipSlotType> mountable_slot_types,
+                   const std::string& icon, bool add_standard_capacity_effect) :
+    m_name(more_common_params.name),
+    m_description(more_common_params.description),
+    m_class(part_class),
+    m_capacity(capacity),
+    m_secondary_stat(stat2),
+    m_production_cost(common_params.production_cost),
+    m_production_time(common_params.production_time),
+    m_producible(common_params.producible),
+    m_mountable_slot_types(mountable_slot_types),
+    m_tags(),
+    m_production_meter_consumption(common_params.production_meter_consumption),
+    m_production_special_consumption(common_params.production_special_consumption),
+    m_location(common_params.location),
+    m_exclusions(more_common_params.exclusions),
+    m_effects(),
+    m_icon(icon),
+    m_add_standard_capacity_effect(add_standard_capacity_effect)
+{
+    //std::cout << "part type: " << m_name << " producible: " << m_producible << std::endl;
+    Init(common_params.effects);
+    for (const std::string& tag : common_params.tags)
+        m_tags.insert(boost::to_upper_copy<std::string>(tag));
+}
+
 void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
     if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
         switch (m_class) {
@@ -346,6 +396,10 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
 ////////////////////////////////////////////////
 // HullType
 ////////////////////////////////////////////////
+HullType::Slot::Slot() :
+    type(INVALID_SHIP_SLOT_TYPE), x(0.5), y(0.5)
+{}
+
 void HullType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
     if (m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));

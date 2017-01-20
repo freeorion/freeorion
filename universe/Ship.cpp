@@ -9,6 +9,7 @@
 #include "ShipDesign.h"
 #include "Species.h"
 #include "Universe.h"
+#include "Enums.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 

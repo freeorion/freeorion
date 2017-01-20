@@ -12,6 +12,7 @@
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Enums.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 

@@ -6,6 +6,7 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/Planet.h"
 #include "../universe/Tech.h"
+#include "../universe/Enums.h"
 #include "../util/SitRepEntry.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"

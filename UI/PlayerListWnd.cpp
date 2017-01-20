@@ -12,6 +12,7 @@
 #include "../universe/Ship.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
+#include "../universe/Enums.h"
 
 #include <GG/DrawUtil.h>
 
