@@ -157,11 +157,9 @@ class HomeSystemFinder(object):
             # Calculate the merit of the current attempt.  If it is the best so far
             # keep it and update the merit_threshold
             merit_system = sorted([(self.system_merit[s], s)
-                                   for s in candidate])[:self.num_home_systems]
-            merit = merit_system[-1]
-            if merit > current_merit_lower_bound:
-                current_merit_lower_bound = merit
-                best_candidate = [s for (_, s) in merit_system]
+                                   for s in candidate], reverse=True)[:self.num_home_systems]
+
+            (merit, system) = merit_system[-1]
 
             # quit if it isn't possible to improve the current accepted list
             if merit >= best_case_merit_lower_bound:
