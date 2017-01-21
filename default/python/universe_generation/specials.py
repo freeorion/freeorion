@@ -113,8 +113,8 @@ def distribute_specials(specials_freq, universe_objects):
     i_cache = 0
     while obj_tuple_needing_specials:
         systems_needing_specials = defaultdict(set)
-        for (obj, sys, n) in obj_tuple_needing_specials:
-            systems_needing_specials[sys].add((obj, sys, n))
+        for (obj, system, specials_count) in obj_tuple_needing_specials:
+            systems_needing_specials[system].add((obj, system, specials_count))
 
         print " Placing in {} locations remaining.".format(str(len(systems_needing_specials)))
 
@@ -125,15 +125,15 @@ def distribute_specials(specials_freq, universe_objects):
             specials_timer.start("Randos")
             random_sys = random.choice(systems_needing_specials.values())
             member = random.choice(list(random_sys))
-            (obj, sys, n) = member
+            obj, system, specials_count = member
             candidates.append(obj)
             obj_tuple_needing_specials.remove(member)
-            if n > 1:
-                obj_tuple_needing_specials.add((obj, sys, n - 1))
+            if specials_count > 1:
+                obj_tuple_needing_specials.add((obj, system, specials_count - 1))
 
             specials_timer.start("Trim close")
             # remove all neighbors from the local pool
-            for neighbor in get_systems_within_jumps(sys, GALAXY_DECOUPLING_DISTANCE):
+            for neighbor in get_systems_within_jumps(system, GALAXY_DECOUPLING_DISTANCE):
                 if neighbor in systems_needing_specials:
                     systems_needing_specials.pop(neighbor)
 
