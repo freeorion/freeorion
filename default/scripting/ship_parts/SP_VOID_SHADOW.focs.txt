@@ -61,6 +61,6 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = "icons/ship_parts/bioterm.png"
+    icon = "icons/ship_parts/void-shadow.png"
 
 #include "/scripting/common/upkeep.macros"
