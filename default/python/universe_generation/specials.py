@@ -7,8 +7,8 @@ import universe_tables
 from timers import Timer
 from galaxy_topology import get_systems_within_jumps
 
-# REPEAT_RATE along with calc_num_placed determines if there are multiple specials in a single
-# location.  There can only be at most 4 specials in a single location.
+# REPEAT_RATE along with calculate_number_of_specials_to_place determines if there are multiple
+# specials in a single location.  There can only be at most 4 specials in a single location.
 # The probabilites break down as follows:
 # Count  Probability
 # one    (1 - REPEAT_RATE[0])
@@ -18,7 +18,7 @@ from galaxy_topology import get_systems_within_jumps
 REPEAT_RATE = {1: 0.08, 2: 0.05, 3: 0.01, 4: 0.00}
 
 
-def calc_num_placed(objs):
+def calculate_number_of_specials_to_place(objs):
     """Return a list of number placed at each obj"""
     return [1 if random.random() > REPEAT_RATE[1] else
             2 if random.random() > REPEAT_RATE[2] else
@@ -103,7 +103,7 @@ def distribute_specials(specials_freq, universe_objects):
     specials_timer.start("Associate with Systems")
     obj_tuple_needing_specials = set(zip(objects_needing_specials,
                                          fo.objs_get_systems(objects_needing_specials),
-                                         calc_num_placed(objects_needing_specials)))
+                                         calculate_number_of_specials_to_place(objects_needing_specials)))
 
     # Equal to the largest distance in WithinStarlaneJumps conditions
     # GALAXY_DECOUPLING_DISTANCE is used as follows.  For any two or more objects
