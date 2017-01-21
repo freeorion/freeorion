@@ -1,9 +1,9 @@
 import random
 import itertools
-import statistics
 import freeorion as fo
 from util import MapGenerationError, report_error
 from galaxy_topology import get_systems_within_jumps
+import statistics
 import universe_tables
 from galaxy import DisjointSets
 

@@ -1,6 +1,5 @@
 import os.path
 import random
-import statistics
 
 import freeorion as fo
 
@@ -13,6 +12,7 @@ from options import (HS_ACCEPTABLE_PLANET_TYPES, HS_MIN_PLANETS_IN_VICINITY_TOTA
                      HS_VICINITY_RANGE, HS_MIN_SYSTEMS_IN_VICINITY, HS_ACCEPTABLE_PLANET_SIZES)
 
 from util import load_string_list, report_error
+import statistics
 
 
 def get_empire_name_generator():

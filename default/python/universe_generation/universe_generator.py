@@ -1,5 +1,4 @@
 import random
-import statistics
 
 from common import configure_logging
 
@@ -15,6 +14,7 @@ from monsters import generate_monsters
 from specials import distribute_specials
 from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
+import statistics
 
 
 class PyGalaxySetupData:
