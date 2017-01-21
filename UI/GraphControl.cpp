@@ -21,20 +21,10 @@ GraphControl::GraphControl() :
     m_x_scale_ticks(),
     m_y_scale_ticks()
 {
-    std::vector<std::pair<double, double> > test_data;
-    test_data.push_back(std::make_pair(0.0, 1.0));
-    test_data.push_back(std::make_pair(1.0, 3.2));
-    test_data.push_back(std::make_pair(4.2, -1));
-    test_data.push_back(std::make_pair(0, 0));
-    test_data.push_back(std::make_pair(-1, 1));
+    std::vector<std::pair<double, double> > test_data = {{0.0, 1.0}, {1.0, 3.2}, {4.2, -1}, {0, 0}, {-1, 1}};
     m_data.push_back(std::make_pair(test_data, GG::CLR_CYAN));
 
-    test_data.clear();
-    test_data.push_back(std::make_pair(1.0, 1.0));
-    test_data.push_back(std::make_pair(2.0, 3.2));
-    test_data.push_back(std::make_pair(3.2, -1));
-    test_data.push_back(std::make_pair(4, 0));
-    test_data.push_back(std::make_pair(5, 1));
+    test_data = {{1.0, 1.0}, {2.0, 3.2}, {3.2, -1}, {4, 0}, {5, 1}};
     m_data.push_back(std::make_pair(test_data, GG::CLR_YELLOW));
 
     AutoSetRange();
