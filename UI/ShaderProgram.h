@@ -5,6 +5,7 @@
 
 #include <boost/filesystem/operations.hpp>
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -19,7 +20,7 @@ protected:
 
 public:
     // shader factory -- will return nullptr if OpenGL version is too low
-    static ShaderProgram* shaderProgramFactory(const std::string& vertex_shader, const std::string& fragment_shader);
+    static std::unique_ptr<ShaderProgram> shaderProgramFactory(const std::string& vertex_shader, const std::string& fragment_shader);
 
     ~ShaderProgram();
 

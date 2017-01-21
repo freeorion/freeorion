@@ -131,11 +131,11 @@ ShaderProgram::ShaderProgram(const std::string& vertex_shader, const std::string
     GetProgramLog(m_program_id, m_program_log);
 }
 
-ShaderProgram* ShaderProgram::shaderProgramFactory(const std::string& vertex_shader,
-                                                   const std::string& fragment_shader)
+std::unique_ptr<ShaderProgram> ShaderProgram::shaderProgramFactory(const std::string& vertex_shader,
+                                                                   const std::string& fragment_shader)
 {
-    if (HumanClientApp::GetApp()->GLVersion() >= 2.0f) 
-        return new ShaderProgram(vertex_shader,fragment_shader);
+    if (HumanClientApp::GetApp()->GLVersion() >= 2.0f)
+        return std::unique_ptr<ShaderProgram>(new ShaderProgram(vertex_shader,fragment_shader));
     return nullptr;
 }
 

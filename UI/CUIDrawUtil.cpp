@@ -401,8 +401,7 @@ public:
             boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
             std::string shader_text;
             ReadFile(shader_path, shader_text);
-            m_scanline_shader = boost::shared_ptr<ShaderProgram>(
-                ShaderProgram::shaderProgramFactory("", shader_text));
+            m_scanline_shader = ShaderProgram::shaderProgramFactory("", shader_text);
 
             if (!m_scanline_shader) {
                 ErrorLogger() << "ScanlineRenderer failed to initialize shader.";
@@ -436,7 +435,7 @@ public:
         StopUsing();
     }
 
-    boost::shared_ptr<ShaderProgram> m_scanline_shader;
+    std::unique_ptr<ShaderProgram> m_scanline_shader;
     bool m_failed_init;
     GG::Clr m_color;
 };
