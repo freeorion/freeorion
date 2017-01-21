@@ -113,10 +113,13 @@ class HomeSystemFinder(object):
             if system not in self.system_merit:
                 self.system_merit[system] = calculate_home_system_merit(system)
 
-        # In the list of systems sorted by merit, if the first num_home_systems are all min_jumps
-        # apart, then the merit of the num_home_systems nth system is the
-        # best_case_merit_lower_bound that can be achieved.
-        best_case_merit_lower_bound = sorted(self.system_merit.values())[self.num_home_systems - 1]
+        # In the list of systems reverse sorted by merit, if the first
+        # num_home_systems are all min_jumps apart, then the merit of the
+        # num_home_systems nth system is the best_case_merit_lower_bound that
+        # can be achieved.
+        all_merit_system = sorted([(self.system_merit[s], s)
+                                   for s in systems_pool], reverse=True)
+        (best_case_merit_lower_bound, _) = all_merit_system[self.num_home_systems - 1]
         current_merit_lower_bound = 0
 
         best_candidate = []
@@ -124,13 +127,13 @@ class HomeSystemFinder(object):
         # cap the number of attempts to the smaller of the number of systems in the pool, or 100
         attempts = min(100, len(systems_pool))
 
-        # Copy systems_pool to avoid aliasing of the caller's systems_pool variable
-        local_pool = set(systems_pool)
 
         while attempts:
             candidate = []
             # use a local pool of all candidate systems better than the worst threshold merit
-            local_pool = {s for s in local_pool if self.system_merit[s] > current_merit_lower_bound}
+            all_merit_system = [(m, s) for (m, s) in all_merit_system if m > current_merit_lower_bound]
+            local_pool = {s for (m, s) in all_merit_system}
+
             if len(local_pool) < self.num_home_systems:
                 break
 
