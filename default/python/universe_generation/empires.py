@@ -119,7 +119,6 @@ class HomeSystemFinder(object):
         # can be achieved.
         all_merit_system = sorted([(self.system_merit[s], s)
                                    for s in systems_pool], reverse=True)
-        (best_case_merit_lower_bound, _) = all_merit_system[self.num_home_systems - 1]
         current_merit_lower_bound = 0
 
         best_candidate = []
@@ -171,10 +170,6 @@ class HomeSystemFinder(object):
 
             # Quit if the lowest merit planet meets the minimum threshold
             if merit >= min_planets_in_vicinity_limit(get_systems_within_jumps(system, HS_VICINITY_RANGE)):
-                break
-
-            # quit if it isn't possible to improve the current accepted list
-            if merit >= best_case_merit_lower_bound:
                 break
 
             # If we have a better candidate, set the new lower bound one higher to try for a better candidate.
