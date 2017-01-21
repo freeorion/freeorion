@@ -99,17 +99,9 @@ struct FO_COMMON_API ConditionBase {
                       ObjectSet& non_matches,
                       SearchDomain search_domain = NON_MATCHES) const;
 
-    /** Matches with an empty ScriptingContext */
-    void Eval(ObjectSet& matches,
-              ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const;
-
     /** Tests all objects in universe as NON_MATCHES. */
     void Eval(const ScriptingContext& parent_context,
               ObjectSet& matches) const;
-
-    /** Tests all objects in universe as NON_MATCHES with empty ScriptingContext. */
-    void Eval(ObjectSet& matches) const;
 
     /** Tests single candidate object, returning true iff it matches condition. */
     bool Eval(const ScriptingContext& parent_context,
@@ -187,10 +179,6 @@ struct FO_COMMON_API Number : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -228,10 +216,6 @@ struct FO_COMMON_API Turn : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -293,10 +277,6 @@ struct FO_COMMON_API SortedNumberOf : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -332,10 +312,6 @@ struct FO_COMMON_API All : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     std::string Description(bool negated = false) const override;
 
     std::string Dump() const override;
@@ -367,10 +343,6 @@ struct FO_COMMON_API None : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override
@@ -418,9 +390,6 @@ struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -565,10 +534,6 @@ struct FO_COMMON_API Homeworld : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -704,10 +669,6 @@ struct FO_COMMON_API Type : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -747,10 +708,6 @@ struct FO_COMMON_API Building : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -819,10 +776,6 @@ struct FO_COMMON_API HasSpecial : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -865,10 +818,6 @@ struct FO_COMMON_API HasTag : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -905,10 +854,6 @@ struct FO_COMMON_API CreatedOnTurn : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -948,10 +893,6 @@ struct FO_COMMON_API Contains : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -994,10 +935,6 @@ struct FO_COMMON_API ContainedBy : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -1037,10 +974,6 @@ struct FO_COMMON_API InSystem : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -1079,10 +1012,6 @@ struct FO_COMMON_API ObjectID : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -1125,10 +1054,6 @@ struct FO_COMMON_API PlanetType : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -1169,10 +1094,6 @@ struct FO_COMMON_API PlanetSize : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -1216,10 +1137,6 @@ struct FO_COMMON_API PlanetEnvironment : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -1267,10 +1184,6 @@ struct FO_COMMON_API Species : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -1344,10 +1257,6 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -1392,10 +1301,6 @@ struct FO_COMMON_API FocusType : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -1436,10 +1341,6 @@ struct FO_COMMON_API StarType : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -1475,10 +1376,6 @@ struct FO_COMMON_API DesignHasHull : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -1522,10 +1419,6 @@ struct FO_COMMON_API DesignHasPart : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -1572,10 +1465,6 @@ struct FO_COMMON_API DesignHasPartClass : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
 
@@ -1618,10 +1507,6 @@ struct FO_COMMON_API PredefinedShipDesign : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -1657,10 +1542,6 @@ struct FO_COMMON_API NumberedShipDesign : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -1698,10 +1579,6 @@ struct FO_COMMON_API ProducedByEmpire : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -1737,10 +1614,6 @@ struct FO_COMMON_API Chance : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -1781,10 +1654,6 @@ struct FO_COMMON_API MeterValue : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -1830,10 +1699,6 @@ struct FO_COMMON_API ShipPartMeterValue : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -1887,10 +1752,6 @@ struct FO_COMMON_API EmpireMeterValue : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -1930,10 +1791,6 @@ struct FO_COMMON_API EmpireStockpileValue : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -1971,10 +1828,6 @@ struct FO_COMMON_API OwnerHasTech : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -2014,10 +1867,6 @@ struct FO_COMMON_API OwnerHasBuildingTypeAvailable : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -2056,10 +1905,6 @@ struct FO_COMMON_API OwnerHasShipDesignAvailable : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -2095,10 +1940,6 @@ struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -2140,10 +1981,6 @@ struct FO_COMMON_API WithinDistance : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -2184,10 +2021,6 @@ struct FO_COMMON_API WithinStarlaneJumps : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -2231,10 +2064,6 @@ struct FO_COMMON_API CanAddStarlaneConnection :  ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -2271,10 +2100,6 @@ struct FO_COMMON_API ExploredByEmpire : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -2387,10 +2212,6 @@ struct FO_COMMON_API FleetSupplyableByEmpire : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -2429,10 +2250,6 @@ struct FO_COMMON_API ResourceSupplyConnectedByEmpire : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -2531,9 +2348,6 @@ struct FO_COMMON_API OrderedBombarded : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -2580,10 +2394,6 @@ struct FO_COMMON_API ValueTest : public ConditionBase {
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -2629,10 +2439,6 @@ public:
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
 
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
-
     bool RootCandidateInvariant() const override;
 
     bool TargetInvariant() const override;
@@ -2670,10 +2476,6 @@ struct FO_COMMON_API And : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                            ObjectSet& condition_non_targets) const override;
@@ -2714,9 +2516,6 @@ struct FO_COMMON_API Or : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -2751,10 +2550,6 @@ struct FO_COMMON_API Not : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 
@@ -2791,10 +2586,6 @@ struct FO_COMMON_API Described : public ConditionBase {
 
     void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
-
-    void Eval(ObjectSet& matches, ObjectSet& non_matches,
-              SearchDomain search_domain = NON_MATCHES) const
-    { ConditionBase::Eval(matches, non_matches, search_domain); }
 
     bool RootCandidateInvariant() const override;
 

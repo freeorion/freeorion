@@ -262,10 +262,6 @@ void ConditionBase::Eval(const ScriptingContext& parent_context,
                          SearchDomain search_domain/* = NON_MATCHES*/) const
 { EvalImpl(matches, non_matches, search_domain, MatchHelper(this, parent_context)); }
 
-void ConditionBase::Eval(ObjectSet& matches, ObjectSet& non_matches,
-                         SearchDomain search_domain/* = NON_MATCHES*/) const
-{ Eval(ScriptingContext(), matches, non_matches, search_domain); }
-
 void ConditionBase::Eval(const ScriptingContext& parent_context,
                          ObjectSet& matches) const
 {
@@ -278,9 +274,6 @@ void ConditionBase::Eval(const ScriptingContext& parent_context,
     matches.reserve(condition_initial_candidates.size());
     Eval(parent_context, matches, condition_initial_candidates);
 }
-
-void ConditionBase::Eval(ObjectSet& matches) const
-{ Eval(ScriptingContext(), matches); }
 
 bool ConditionBase::Eval(const ScriptingContext& parent_context,
                          TemporaryPtr<const UniverseObject> candidate) const
