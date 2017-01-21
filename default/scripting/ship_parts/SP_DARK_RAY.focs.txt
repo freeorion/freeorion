@@ -61,6 +61,6 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = "icons/ship_parts/death-spore.png"
+    icon = "icons/ship_parts/dark-ray.png"
 
 #include "/scripting/common/upkeep.macros"
