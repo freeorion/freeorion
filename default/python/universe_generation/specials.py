@@ -27,10 +27,7 @@ def calculate_number_of_specials_to_place(objs):
 
 
 def place_special(specials, obj, specials_timer, per_special_timer):
-    """ Place at most a single special.
-    Return the number of specials placed.
-    """
-    num_placed = 0
+    """ Place a single special."""
     # Calculate the conditional probabilities that each special is
     # placed here given that a special will be placed here.
     probs = [fo.special_spawn_rate(sp) for sp in specials]
@@ -47,13 +44,11 @@ def place_special(specials, obj, specials_timer, per_special_timer):
         specials_timer.start("Place Special")
         # All prerequisites and the test have been met, now add this special to this universe object.
         fo.add_special(obj, special)
-        num_placed += 1
         print "Special", special, "added to", fo.get_name(obj)
 
         break
 
     per_special_timer.start("None")
-    return num_placed
 
 
 # TODO Bug:  distribute_specials forward checks that a special can be
@@ -175,8 +170,8 @@ def distribute_specials(specials_freq, universe_objects):
                 statistics.specials_repeat_dist[0] += 1
                 continue
 
-            num_placed = place_special(local_specials, obj, specials_timer, per_special_timer)
-            track_num_placed[obj] += num_placed
+            place_special(local_specials, obj, specials_timer, per_special_timer)
+            track_num_placed[obj] += 1
 
     specials_timer.start("Compile num_placed statistics")
     for num_placed in track_num_placed.values():
