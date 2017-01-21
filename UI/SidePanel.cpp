@@ -3143,10 +3143,9 @@ void SidePanel::RefreshImpl() {
     }
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
-    std::vector<std::pair<MeterType, MeterType> > meter_types;
-    meter_types.push_back(std::make_pair(METER_INDUSTRY,    METER_TARGET_INDUSTRY));
-    meter_types.push_back(std::make_pair(METER_RESEARCH,    METER_TARGET_RESEARCH));
-    meter_types.push_back(std::make_pair(METER_TRADE,       METER_TARGET_TRADE));
+    std::vector<std::pair<MeterType, MeterType> > meter_types = {{METER_INDUSTRY,   METER_TARGET_INDUSTRY},
+                                                                 {METER_RESEARCH,   METER_TARGET_RESEARCH},
+                                                                 {METER_TRADE,      METER_TARGET_TRADE}};
 
     // refresh the system resource summary.
     m_system_resource_summary = new MultiIconValueIndicator(Width() - MaxPlanetDiameter() - 8,

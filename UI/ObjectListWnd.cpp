@@ -632,17 +632,13 @@ private:
         m_class_drop->SetStyle(GG::LIST_NOSORT);
         AttachChild(m_class_drop);
 
-        std::vector<std::string> row_keys;
-        row_keys.push_back(ALL_CONDITION);              row_keys.push_back(PLANETTYPE_CONDITION);
-        row_keys.push_back(PLANETSIZE_CONDITION);       row_keys.push_back(HASGROWTHSPECIAL_CONDITION);
-        row_keys.push_back(GGWITHPTYPE_CONDITION);      row_keys.push_back(ASTWITHPTYPE_CONDITION);
-        row_keys.push_back(FOCUSTYPE_CONDITION);        row_keys.push_back(STARTYPE_CONDITION);
-        row_keys.push_back(HASTAG_CONDITION);           row_keys.push_back(SPECIES_CONDITION);
-        row_keys.push_back(HASSPECIAL_CONDITION);       row_keys.push_back(EMPIREAFFILIATION_CONDITION);
-        row_keys.push_back(MONSTER_CONDITION);          row_keys.push_back(ARMED_CONDITION);
-        row_keys.push_back(STATIONARY_CONDITION);       row_keys.push_back(CANPRODUCESHIPS_CONDITION);
-        row_keys.push_back(CANCOLONIZE_CONDITION);      row_keys.push_back(HOMEWORLD_CONDITION);
-        row_keys.push_back(METERVALUE_CONDITION);       row_keys.push_back(CAPITAL_CONDITION);
+        std::vector<std::string> row_keys ={ALL_CONDITION,              PLANETTYPE_CONDITION,       PLANETSIZE_CONDITION,
+                                            HASGROWTHSPECIAL_CONDITION, GGWITHPTYPE_CONDITION,      ASTWITHPTYPE_CONDITION,
+                                            FOCUSTYPE_CONDITION,        STARTYPE_CONDITION,         HASTAG_CONDITION,
+                                            HASSPECIAL_CONDITION,       EMPIREAFFILIATION_CONDITION,MONSTER_CONDITION,
+                                            ARMED_CONDITION,            STATIONARY_CONDITION,       CANPRODUCESHIPS_CONDITION,
+                                            CANCOLONIZE_CONDITION,      HOMEWORLD_CONDITION,        METERVALUE_CONDITION,
+                                            CAPITAL_CONDITION };
 
         SetMinSize(m_class_drop->Size());
         GG::ListBox::iterator select_row_it = m_class_drop->end();
