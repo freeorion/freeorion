@@ -1,7 +1,7 @@
 #ifndef _Condition_h_
 #define _Condition_h_
 
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "ValueRefFwd.h"
 #include "TemporaryPtr.h"
 
@@ -20,7 +20,7 @@ struct ScriptingContext;
   * represent predicates about UniverseObjects used by, for instance, the
   * Effect system. */
 namespace Condition {
-typedef std::vector<TemporaryPtr<const UniverseObject> > ObjectSet;
+typedef std::vector<TemporaryPtr<const UniverseObject>> ObjectSet;
 
 enum Invariance {
     UNKNOWN_INVARIANCE, ///< This condition hasn't yet calculated this invariance type
@@ -374,10 +374,12 @@ private:
   * (if \a exclusive == true) by an empire that has affilitation type
   * \a affilitation with Empire \a empire_id. */
 struct FO_COMMON_API EmpireAffiliation : public ConditionBase {
-    explicit EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation = AFFIL_SELF) :
+    EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id, EmpireAffiliationType affiliation) :
         m_empire_id(empire_id),
         m_affiliation(affiliation)
     {}
+
+    explicit EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id);
 
     explicit EmpireAffiliation(EmpireAffiliationType affiliation) :
        m_empire_id(nullptr),
@@ -1230,25 +1232,9 @@ struct FO_COMMON_API Enqueued : public ConditionBase {
     explicit Enqueued(ValueRef::ValueRefBase<int>* design_id,
              ValueRef::ValueRefBase<int>* empire_id = nullptr,
              ValueRef::ValueRefBase<int>* low = nullptr,
-             ValueRef::ValueRefBase<int>* high = nullptr) :
-        ConditionBase(),
-        m_build_type(BT_SHIP),
-        m_name(),
-        m_design_id(design_id),
-        m_empire_id(empire_id),
-        m_low(low),
-        m_high(high)
-    {}
+             ValueRef::ValueRefBase<int>* high = nullptr);
 
-    Enqueued() :
-        ConditionBase(),
-        m_build_type(BT_NOT_BUILDING),
-        m_name(),
-        m_design_id(nullptr),
-        m_empire_id(nullptr),
-        m_low(nullptr),
-        m_high(nullptr)
-    {}
+    Enqueued();
 
     virtual ~Enqueued();
 

@@ -6,6 +6,7 @@
 #include "TechTreeWnd.h"
 #include "../Empire/Empire.h"
 #include "../universe/Tech.h"
+#include "../universe/Enums.h"
 #include "../util/i18n.h"
 #include "../util/Order.h"
 #include "../util/OptionsDB.h"

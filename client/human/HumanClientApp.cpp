@@ -27,6 +27,7 @@
 #include "../../util/Version.h"
 #include "../../universe/Planet.h"
 #include "../../universe/Species.h"
+#include "../../universe/Enums.h"
 #include "../../Empire/Empire.h"
 #include "../../combat/CombatLogManager.h"
 #include "../../parse/Parse.h"

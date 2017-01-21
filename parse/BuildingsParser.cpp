@@ -9,6 +9,7 @@
 #include "CommonParams.h"
 
 #include "../universe/Building.h"
+#include "../universe/Enums.h"
 
 #define DEBUG_PARSERS 0
 

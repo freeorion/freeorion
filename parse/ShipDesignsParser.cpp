@@ -6,6 +6,8 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
+extern const int ALL_EMPIRES;
+
 #define DEBUG_PARSERS 0
 
 #if DEBUG_PARSERS

@@ -2,7 +2,7 @@
 #define _UniverseObject_h_
 
 
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "TemporaryPtr.h"
 #include "EnableTemporaryFromThis.h"
 #include "../util/Export.h"
@@ -21,6 +21,7 @@ class Meter;
 class System;
 class SitRepEntry;
 struct UniverseObjectVisitor;
+extern const int ALL_EMPIRES;
 
 // The ID number assigned to a UniverseObject upon construction;
 // It is assigned an ID later when it is placed in the universe

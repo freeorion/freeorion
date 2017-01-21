@@ -6,6 +6,7 @@
 #include "../util/Logger.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/PopCenter.h"
+#include "../universe/Enums.h"
 #include "../client/human/HumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIControls.h"

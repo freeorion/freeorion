@@ -1,7 +1,7 @@
 #ifndef _Species_h_
 #define _Species_h_
 
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "../util/Export.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
@@ -20,6 +20,8 @@ namespace Condition {
 namespace Effect {
     class EffectsGroup;
 }
+
+extern const int ALL_EMPIRES;
 
 /** A setting that a ResourceCenter can be assigned to influence what it
   * produces.  Doesn't directly affect the ResourceCenter, but effectsgroups

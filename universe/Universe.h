@@ -1,7 +1,7 @@
 #ifndef _Universe_h_
 #define _Universe_h_
 
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "ObjectMap.h"
 #include "TemporaryPtr.h"
 #include "UniverseObject.h"

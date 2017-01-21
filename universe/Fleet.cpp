@@ -5,6 +5,7 @@
 #include "Ship.h"
 #include "System.h"
 #include "Universe.h"
+#include "Enums.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
 #include "../util/ScopedTimer.h"

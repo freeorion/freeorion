@@ -7,7 +7,7 @@
 
 #include "CUIWnd.h"
 #include "CUISlider.h"
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../universe/Fleet.h"
 #include "FleetButton.h"
 

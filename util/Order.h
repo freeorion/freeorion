@@ -1,7 +1,7 @@
 #ifndef _Order_h_
 #define _Order_h_
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "Export.h"
 #include "../Empire/Empire.h"
 

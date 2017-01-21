@@ -3320,12 +3320,8 @@ void Empire::InitResourcePools() {
 
 
     // set stockpile object locations for each resource, ensuring those systems exist
-    std::vector<ResourceType> res_type_vec;
-    res_type_vec.push_back(RE_INDUSTRY);
-    res_type_vec.push_back(RE_TRADE);
-    res_type_vec.push_back(RE_RESEARCH);
-
-    for (ResourceType res_type : res_type_vec) {
+    //static std::vector<ResourceType> res_type_vec {RE_INDUSTRY, RE_TRADE, RE_RESEARCH};
+    for (ResourceType res_type : {RE_INDUSTRY, RE_TRADE, RE_RESEARCH}) {
         int stockpile_object_id = INVALID_OBJECT_ID;
         if (TemporaryPtr<const UniverseObject> stockpile_obj = GetUniverseObject(StockpileID(res_type)))
             stockpile_object_id = stockpile_obj->ID();

@@ -7,6 +7,7 @@
 #include "../universe/System.h"
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
+#include "../universe/Enums.h"
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 

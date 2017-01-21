@@ -16,6 +16,7 @@
 #include "Special.h"
 #include "Meter.h"
 #include "ValueRef.h"
+#include "Enums.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
@@ -1060,6 +1061,11 @@ std::string None::Dump() const
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
 ///////////////////////////////////////////////////////////
+EmpireAffiliation::EmpireAffiliation(ValueRef::ValueRefBase<int>* empire_id) :
+    m_empire_id(empire_id),
+    m_affiliation(AFFIL_SELF)
+{}
+
 EmpireAffiliation::~EmpireAffiliation() {
     if (m_empire_id)
         delete m_empire_id;
@@ -3916,6 +3922,27 @@ void Species::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 // Enqueued                                              //
 ///////////////////////////////////////////////////////////
+Enqueued::Enqueued(ValueRef::ValueRefBase<int>* design_id, ValueRef::ValueRefBase<int>* empire_id,
+                   ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* high) :
+    ConditionBase(),
+    m_build_type(BT_SHIP),
+    m_name(),
+    m_design_id(design_id),
+    m_empire_id(empire_id),
+    m_low(low),
+    m_high(high)
+{}
+
+Enqueued::Enqueued() :
+    ConditionBase(),
+    m_build_type(BT_NOT_BUILDING),
+    m_name(),
+    m_design_id(0),
+    m_empire_id(0),
+    m_low(0),
+    m_high(0)
+{}
+
 Enqueued::~Enqueued() {
     delete m_name;
     delete m_design_id;

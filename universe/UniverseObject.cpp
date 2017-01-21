@@ -8,6 +8,7 @@
 #include "Special.h"
 #include "Universe.h"
 #include "Predicates.h"
+#include "Enums.h"
 
 #include <stdexcept>
 #include <boost/lexical_cast.hpp>

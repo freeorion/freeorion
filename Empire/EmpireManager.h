@@ -1,7 +1,7 @@
 #ifndef _EmpireManager_h_
 #define _EmpireManager_h_
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "Diplomacy.h"
 #include "../util/Export.h"
 
@@ -78,7 +78,7 @@ public:
       * caller's responsibility to make sure that universe updates planet
       * ownership. */
     Empire*     CreateEmpire(int empire_id, const std::string& name, const std::string& player_name,
-                                 const GG::Clr& color);
+                             const GG::Clr& color);
 
     /** Removes and deletes all empires from the manager. */
     void        Clear();

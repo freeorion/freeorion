@@ -2,13 +2,14 @@
 #define COMBATEVENTS_H
 
 #include <set>
+#include <map>
 #include <boost/tuple/tuple.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 
 #include "../util/Export.h"
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 
 #include "CombatEvent.h"
 

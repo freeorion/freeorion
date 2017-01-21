@@ -1,7 +1,7 @@
 #ifndef _ResourceCenter_h_
 #define _ResourceCenter_h_
 
-#include "Enums.h"
+#include "EnumsFwd.h"
 #include "EnableTemporaryFromThis.h"
 #include "TemporaryPtr.h"
 #include <boost/signals2/signal.hpp>
@@ -48,7 +48,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void            Copy(TemporaryPtr<const ResourceCenter> copied_object, Visibility vis = VIS_FULL_VISIBILITY);
+    void            Copy(TemporaryPtr<const ResourceCenter> copied_object, Visibility vis);
+    void            Copy(TemporaryPtr<const ResourceCenter> copied_object);
 
     void            SetFocus(const std::string& focus);
     void            ClearFocus();

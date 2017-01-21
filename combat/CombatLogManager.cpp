@@ -1,6 +1,7 @@
 #include "CombatLogManager.h"
 #include "../universe/Meter.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Enums.h"
 #include "../util/Serialize.h"
 #include "../util/Serialize.ipp"
 #include "../util/Logger.h"

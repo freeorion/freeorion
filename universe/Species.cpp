@@ -6,6 +6,7 @@
 #include "Ship.h"
 #include "UniverseObject.h"
 #include "ValueRef.h"
+#include "Enums.h"
 #include "../parse/Parse.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"

@@ -19,6 +19,7 @@
 #include "../universe/ShipDesign.h"
 #include "../universe/Effect.h"
 #include "../universe/Condition.h"
+#include "../universe/Enums.h"
 #include "../client/human/HumanClientApp.h"
 
 #include <GG/DrawUtil.h>

@@ -5,6 +5,7 @@
 #include "ValueRefParser.h"
 #include "ConditionParserImpl.h"
 #include "../universe/Effect.h"
+#include "../universe/Enums.h"
 
 #include <boost/spirit/include/phoenix.hpp>
 

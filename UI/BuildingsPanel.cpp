@@ -11,6 +11,7 @@
 #include "../universe/Building.h"
 #include "../universe/Effect.h"
 #include "../universe/Planet.h"
+#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "CUIControls.h"

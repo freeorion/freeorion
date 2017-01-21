@@ -11,6 +11,7 @@
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 #include "../client/human/HumanClientApp.h"
 #include "ClientUI.h"
@@ -79,7 +80,11 @@ namespace {
     { return FighterBrowseLabelWidth() + MeterBrowseQtyWidth() + MeterBrowseValueWidth() + (EDGE_PAD * 4); }
 }
 
-MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type/* = INVALID_METER_TYPE*/) :
+MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type) :
+    MeterBrowseWnd(object_id, primary_meter_type, INVALID_METER_TYPE)
+{}
+
+MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, MeterType secondary_meter_type) :
     GG::BrowseInfoWnd(GG::X0, GG::Y0, MeterBrowseLabelWidth() + MeterBrowseValueWidth(), GG::Y1),
     m_primary_meter_type(primary_meter_type),
     m_secondary_meter_type(secondary_meter_type),

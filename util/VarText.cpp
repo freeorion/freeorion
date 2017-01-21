@@ -3,6 +3,7 @@
 #include "../universe/Universe.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
+#include "../universe/Enums.h"
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 #include "i18n.h"

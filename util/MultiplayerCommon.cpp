@@ -8,6 +8,7 @@
 #include "../universe/Fleet.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
+#include "../universe/Enums.h"
 
 #if defined(_MSC_VER) && defined(int64_t)
 #undef int64_t
@@ -67,6 +68,19 @@ namespace {
         return hash_value % static_cast<int>(enum_vals_count);
     }
 }
+
+GalaxySetupData::GalaxySetupData() :
+    m_seed(),
+    m_size(100),
+    m_shape(SPIRAL_2),
+    m_age(GALAXY_SETUP_MEDIUM),
+    m_starlane_freq(GALAXY_SETUP_MEDIUM),
+    m_planet_density(GALAXY_SETUP_MEDIUM),
+    m_specials_freq(GALAXY_SETUP_MEDIUM),
+    m_monster_freq(GALAXY_SETUP_MEDIUM),
+    m_native_freq(GALAXY_SETUP_MEDIUM),
+    m_ai_aggr(MANIACAL)
+{}
 
 const std::string& GalaxySetupData::GetSeed() const
 { return m_seed; }

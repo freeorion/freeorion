@@ -8,6 +8,7 @@
 #include "../universe/ResourceCenter.h"
 #include "../universe/TemporaryPtr.h"
 #include "../universe/UniverseObject.h"
+#include "../universe/Enums.h"
 #include "../client/human/HumanClientApp.h"
 #include "ClientUI.h"
 #include "CUIControls.h"

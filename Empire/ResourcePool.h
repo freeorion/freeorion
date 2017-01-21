@@ -1,7 +1,7 @@
 #ifndef _ResourcePool_h_
 #define _ResourcePool_h_
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../util/Export.h"
 
 #include <boost/signals2/signal.hpp>

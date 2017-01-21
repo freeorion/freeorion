@@ -4,8 +4,10 @@
 #include <boost/filesystem/path.hpp>
 #include <GG/GGFwd.h>
 
-#include "../universe/Enums.h"
+#include "../universe/EnumsFwd.h"
 #include "../util/Random.h"
+
+#include <map>
 
 class Fleet;
 class IntroScreen;

@@ -5,13 +5,13 @@
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../universe/Predicates.h"
-
 #include "../universe/Planet.h"
 #include "../universe/Fleet.h"
 #include "../universe/Ship.h"
 #include "../universe/Fighter.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/System.h"
+#include "../universe/Enums.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
