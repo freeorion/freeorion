@@ -386,10 +386,11 @@ namespace {
     const double TWO_PI = 2.0 * 3.14159;
 }
 
-class ScanlineRenderer::ScanlineRendererImpl {
+class ScanlineRenderer::Impl {
 public:
-    ScanlineRendererImpl() :
-        m_scanline_shader(), m_failed_init(false)
+    Impl() :
+        m_scanline_shader(),
+        m_failed_init(false)
     { m_color = GG::CLR_BLACK; }
 
     void StartUsing() {
@@ -442,24 +443,23 @@ public:
 
 
 ScanlineRenderer::ScanlineRenderer() :
-    pimpl(new ScanlineRendererImpl())
+    m_impl(new Impl())
 {}
 
 // This destructor is required here because ~ScanlineRendererImpl is declared here.
-ScanlineRenderer::~ScanlineRenderer()
-{}
+ScanlineRenderer::~ScanlineRenderer() = default;
 
 void ScanlineRenderer::RenderCircle(const GG::Pt& ul, const GG::Pt& lr)
-{ pimpl->RenderCircle(ul, lr); }
+{ m_impl->RenderCircle(ul, lr); }
 
 void ScanlineRenderer::RenderRectangle(const GG::Pt& ul, const GG::Pt& lr)
-{ pimpl->RenderRectangle(ul, lr); }
+{ m_impl->RenderRectangle(ul, lr); }
 
 void ScanlineRenderer::StartUsing()
-{ pimpl->StartUsing(); }
+{ m_impl->StartUsing(); }
 
 void ScanlineRenderer::SetColor(GG::Clr clr)
-{ pimpl->SetColor(clr); }
+{ m_impl->SetColor(clr); }
 
 void ScanlineRenderer::StopUsing()
-{ pimpl->StopUsing(); }
+{ m_impl->StopUsing(); }

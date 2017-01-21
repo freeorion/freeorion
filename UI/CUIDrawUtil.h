@@ -4,7 +4,9 @@
 #include <GG/Clr.h>
 #include <GG/PtRect.h>
 #include <GG/GLClientAndServerBuffer.h>
-#include <boost/scoped_ptr.hpp>
+
+#include <memory>
+
 
 /** adjusts the intensity of the color up or down by \a amount units per color
   * channel; leaves alpha unchanged if \a jointly_capped is true then, if the
@@ -120,9 +122,9 @@ public:
     void StopUsing();
 
 private:
-    class ScanlineRendererImpl;
-    // TODO use C++11 unique_ptr
-    boost::scoped_ptr<ScanlineRendererImpl> const pimpl;
+    struct Impl;
+
+    std::unique_ptr<Impl> const m_impl;
 };
 
 #endif // _CUIDrawUtil_h_
