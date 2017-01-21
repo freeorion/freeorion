@@ -1633,8 +1633,6 @@ void TechTreeWnd::TechListBox::TechRow::Render() {
 }
 
 std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_width) {
-    std::vector<GG::X> retval;
-
     GG::X graphic_width(    GetOptionsDB().Get<int>("UI.research.listbox.column-widths.graphic"));
     GG::X name_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.name"));
     GG::X cost_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.cost"));
@@ -1646,27 +1644,12 @@ std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_widt
     GG::X desc_width(std::max(GetOptionsDB().Get<int>("UI.research.listbox.column-widths.description"),
                               Value(total_width - cols_width_sum)));
 
-    retval.push_back(graphic_width);
-    retval.push_back(name_width);
-    retval.push_back(cost_width);
-    retval.push_back(time_width);
-    retval.push_back(category_width);
-    retval.push_back(desc_width);
-
-    return retval;
+    return {graphic_width, name_width, cost_width, time_width, category_width, desc_width};
 }
 
 std::vector<GG::Alignment> TechTreeWnd::TechListBox::TechRow::ColAlignments() {
-    std::vector<GG::Alignment> retval;
-
-    retval.push_back(GG::ALIGN_CENTER);  // graphic
-    retval.push_back(GG::ALIGN_LEFT);  // name
-    retval.push_back(GG::ALIGN_RIGHT);  // cost
-    retval.push_back(GG::ALIGN_RIGHT);  // time
-    retval.push_back(GG::ALIGN_LEFT);  // category
-    retval.push_back(GG::ALIGN_LEFT);  // description
-
-    return retval;
+    //              graphic,         name,           cost,           time,         category,     description
+    return {GG::ALIGN_CENTER, GG::ALIGN_LEFT, GG::ALIGN_RIGHT, GG::ALIGN_RIGHT, GG::ALIGN_LEFT, GG::ALIGN_LEFT};
 }
 
 bool TechTreeWnd::TechListBox::TechRowCmp(const GG::ListBox::Row& lhs, const GG::ListBox::Row& rhs, std::size_t column) {
