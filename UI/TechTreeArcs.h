@@ -1,19 +1,25 @@
 #ifndef TECHTREEARCS_H
 #define TECHTREEARCS_H
 
+#include <memory>
 #include <set>
 #include <string>
 
 class TechTreeLayout;
-class TechTreeArcsImplementation;
 
 /// This class is responsible for drawing the lines
 /// of a TechTreeLayout on screen.
 class TechTreeArcs {
 public:
     TechTreeArcs();
+
+    TechTreeArcs(TechTreeArcs& other) = delete;
+
     TechTreeArcs(const TechTreeLayout& layout, const std::set<std::string>& techs_to_show);
+
     ~TechTreeArcs();
+
+    TechTreeArcs& operator=(TechTreeArcs& other) = delete;
 
     void Render(double scale);
 
@@ -23,12 +29,9 @@ public:
     void Reset(const TechTreeLayout& layout, const std::set<std::string>& techs_to_show);
 
 private:
-    /// Should be a c++11 unique_ptr, but we don't have c++11
-    TechTreeArcsImplementation* m_impl;
+    class Impl;
 
-    // Disable copying
-    TechTreeArcs(TechTreeArcs& other);
-    TechTreeArcs& operator=(TechTreeArcs& other);
+    std::unique_ptr<Impl> m_impl;
 };
 
 #endif // TECHTREEARCS_H

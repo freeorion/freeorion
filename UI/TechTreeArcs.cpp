@@ -22,9 +22,9 @@ namespace {
 /////////////////////////////////
 //// Implementation ////////////
 ///////////////////////////////
-class TechTreeArcsImplementation {
+class TechTreeArcs::Impl {
 public:
-    TechTreeArcsImplementation(const TechTreeLayout& layout, const std::set<std::string>& techs_to_show) :
+    Impl(const TechTreeLayout& layout, const std::set<std::string>& techs_to_show) :
         m_layout(layout)
     {
         FillArcBuffer(m_buffer, techs_to_show);
@@ -144,20 +144,14 @@ private:
     }
 };
 
-/////////////////////////////////
-//// Public interface //////////
-///////////////////////////////
-TechTreeArcs::TechTreeArcs() :
-    m_impl(nullptr)
-{}
+
+TechTreeArcs::TechTreeArcs() = default;
 
 TechTreeArcs::TechTreeArcs(const TechTreeLayout& layout, const std::set<std::string>& techs_to_show) :
-    m_impl(new TechTreeArcsImplementation(layout, techs_to_show))
+    m_impl(new Impl(layout, techs_to_show))
 {}
 
-TechTreeArcs::~TechTreeArcs() {
-    Reset();
-}
+TechTreeArcs::~TechTreeArcs() = default;
 
 void TechTreeArcs::Render(double scale) {
     if (m_impl)
@@ -165,12 +159,9 @@ void TechTreeArcs::Render(double scale) {
 }
 
 void TechTreeArcs::Reset() {
-    if (m_impl)
-        delete m_impl;
-    m_impl = nullptr;
+    m_impl.reset();
 }
 
 void TechTreeArcs::Reset(const TechTreeLayout& layout, const std::set< std::string >& techs_to_show) {
-    Reset();
-    m_impl = new TechTreeArcsImplementation(layout, techs_to_show);
+    m_impl.reset(new Impl(layout, techs_to_show));
 }
