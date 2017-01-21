@@ -561,25 +561,10 @@ void ColorDlg::Init(const boost::shared_ptr<Font>& font)
     const int COLOR_BUTTON_ROWS = 4;
     const int COLOR_BUTTON_COLS = 5;
     if (s_custom_colors.empty()) {
-        s_custom_colors.push_back(GG::CLR_WHITE);
-        s_custom_colors.push_back(GG::CLR_LIGHT_GRAY);
-        s_custom_colors.push_back(GG::CLR_GRAY);
-        s_custom_colors.push_back(GG::CLR_DARK_GRAY);
-        s_custom_colors.push_back(GG::CLR_BLACK);
-        s_custom_colors.push_back(GG::CLR_PINK);
-        s_custom_colors.push_back(GG::CLR_RED);
-        s_custom_colors.push_back(GG::CLR_DARK_RED);
-        s_custom_colors.push_back(GG::CLR_MAGENTA);
-        s_custom_colors.push_back(GG::CLR_PURPLE);
-        s_custom_colors.push_back(GG::CLR_BLUE);
-        s_custom_colors.push_back(GG::CLR_DARK_BLUE);
-        s_custom_colors.push_back(GG::CLR_TEAL);
-        s_custom_colors.push_back(GG::CLR_CYAN);
-        s_custom_colors.push_back(GG::CLR_GREEN);
-        s_custom_colors.push_back(GG::CLR_DARK_GREEN);
-        s_custom_colors.push_back(GG::CLR_OLIVE);
-        s_custom_colors.push_back(GG::CLR_YELLOW);
-        s_custom_colors.push_back(GG::CLR_ORANGE);
+        s_custom_colors = { GG::CLR_WHITE,      GG::CLR_LIGHT_GRAY, GG::CLR_GRAY,       GG::CLR_DARK_GRAY,  GG::CLR_BLACK,
+                            GG::CLR_PINK,       GG::CLR_RED,        GG::CLR_DARK_RED,   GG::CLR_MAGENTA,    GG::CLR_PURPLE,
+                            GG::CLR_BLUE,       GG::CLR_DARK_BLUE,  GG::CLR_TEAL,       GG::CLR_CYAN,       GG::CLR_GREEN,
+                            GG::CLR_DARK_GREEN, GG::CLR_OLIVE,      GG::CLR_YELLOW,     GG::CLR_ORANGE};
 
         for (unsigned int i = s_custom_colors.size(); i < COLOR_BUTTON_ROWS * COLOR_BUTTON_COLS; ++i) {
             s_custom_colors.push_back(CLR_GRAY);
