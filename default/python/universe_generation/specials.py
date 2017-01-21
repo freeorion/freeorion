@@ -18,7 +18,7 @@ REPEAT_RATE = {1: 0.08, 2: 0.05, 3: 0.01, 4: 0.00}
 
 
 def calculate_number_of_specials_to_place(objs):
-    """Return a list of number placed at each obj"""
+    """Return a list of number of specials to be placed at each obj"""
     return [1 if random.random() > REPEAT_RATE[1] else
             2 if random.random() > REPEAT_RATE[2] else
             3 if random.random() > REPEAT_RATE[3] else 4
@@ -106,7 +106,7 @@ def distribute_specials(specials_freq, universe_objects):
         for (obj, system, specials_count) in obj_tuple_needing_specials:
             systems_needing_specials[system].add((obj, system, specials_count))
 
-        print " Placing in {} locations remaining.".format(str(len(systems_needing_specials)))
+        print " Placing in {} locations remaining.".format(len(systems_needing_specials))
 
         # Find a list of candidates all spaced GALAXY_DECORRECLATION_DISTANCE apart
         candidates = []
