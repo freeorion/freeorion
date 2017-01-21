@@ -90,11 +90,13 @@ namespace {
     std::string CountsToText(const std::map<int, int>& count_per_empire, const std::string& delimiter = ", ") {
         std::stringstream ss;
         for (std::map<int,int>::const_iterator it = count_per_empire.begin(); it != count_per_empire.end(); ) {
-            std::string owner_string = UserString("NEUTRAL");
+            std::string owner_string;
             if (const Empire* owner = GetEmpire(it->first))
                 owner_string = GG::RgbaTag(owner->Color()) + "<" + VarText::EMPIRE_ID_TAG + " "
                     + boost::lexical_cast<std::string>(owner->EmpireID()) + ">" + owner->Name()
                     + "</" + VarText::EMPIRE_ID_TAG + ">" + "</rgba>";
+            else
+                owner_string = GG::RgbaTag(ClientUI::DefaultLinkColor()) + UserString("NEUTRAL")  + "</rgba>";
             ss << owner_string << ": " << it->second;
             ++it;
             if (it != count_per_empire.end())
@@ -157,7 +159,6 @@ namespace {
     }
 
     void CombatLogAccordionPanel::ToggleExpansion() {
-        DebugLogger() << "Expand/Collapse of detailed combat log.";
         bool new_collapsed = !IsCollapsed();
         if (new_collapsed) {
             for (GG::Wnd* wnd : details) {
@@ -382,18 +383,22 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
         return;
     }
 
+    bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
+                           GetOptionsDB().Get<bool>("verbose-combat-logging");
+
     m_wnd.DeleteChildren();
-    GG::Layout* layout = new GG::DeferredLayout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y
-                                        , m_wnd.Width(), m_wnd.Height()
-                                        , 1, 1 ///< numrows, numcols
-                                        , 0, 0 ///< wnd margin, cell margin
-                                       );
+    GG::Layout* layout = new GG::DeferredLayout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y,
+                                                m_wnd.Width(), m_wnd.Height(),
+                                                1, 1, ///< numrows, numcols
+                                                0, 0 ///< wnd margin, cell margin
+                                               );
     m_wnd.SetLayout(layout);
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     // Write Header text
-    DebugLogger() << "Setting log with " << log->combat_events.size() << " events";
+    if (verbose_logging)
+        DebugLogger() << "Showing combat log #" << log_id << " with " << log->combat_events.size() << " events";
 
     TemporaryPtr<const System> system = GetSystem(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
@@ -412,7 +417,8 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
 
     // Write Logs
     for (CombatEventPtr event : log->combat_events) {
-        DebugLogger() << "event debug info: " << event->DebugString();
+        if (verbose_logging)
+            DebugLogger() << "event debug info: " << event->DebugString();
 
         for (GG::Wnd* wnd : MakeCombatLogPanel(m_font->SpaceWidth()*10, client_empire_id, event)) {
             AddRow(wnd);

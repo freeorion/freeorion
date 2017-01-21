@@ -1554,8 +1554,6 @@ namespace {
         // get any chance to attack during this combat
         if (bout <= GetUniverse().GetNumCombatRounds() - 1) {
             FighterLaunchesEventPtr launches_event = boost::make_shared<FighterLaunchesEvent>();
-            combat_info.combat_events.push_back(launches_event);
-
             for (int attacker_id : shuffled_attackers) {
                 TemporaryPtr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
 
@@ -1576,6 +1574,11 @@ namespace {
 
                 if (verbose_logging)
                     DebugLogger() << "Attacker: " << attacker->Name();
+            }
+
+            if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES)) {
+                CombatEventPtr launches_event_cast = boost::static_pointer_cast<CombatEvent, AttacksEvent>(launches_event);
+                bout_event->AddEvent(launches_event_cast);
             }
         }
 

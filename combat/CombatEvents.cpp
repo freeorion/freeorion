@@ -730,7 +730,9 @@ std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id) con
     if (const Empire* owner = GetEmpire(owner_id))
         owner_string += owner->Name() + " ";
 
-    return str(FlexibleFormat(template_str) % owner_string % object_str);
+    std::string object_link = FighterOrPublicNameLink(viewing_empire_id, object_id, object_owner_id);
+
+    return str(FlexibleFormat(template_str) % owner_string % object_link);
 }
 
 boost::optional<int> IncapacitationEvent::PrincipalFaction(int viewing_empire_id) const {
