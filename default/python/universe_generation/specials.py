@@ -26,11 +26,17 @@ def calculate_number_of_specials_to_place(objs):
 
 
 def place_special(specials, obj):
-    """ Place a single special."""
+    """
+    Place at most a single special.
+    Return the number of specials placed.
+    """
     # Calculate the conditional probabilities that each special is
     # placed here given that a special will be placed here.
     probs = [fo.special_spawn_rate(sp) for sp in specials]
-    total_prob = sum(probs)
+    total_prob = float(sum(probs))
+    if total_prob == 0:
+        # This shouldn't happen since special_spawn_rate > 0.0 is checked in distribute_specials()
+        return 0
     thresholds = [x / total_prob for x in probs]
 
     chance = random.random()
@@ -43,7 +49,8 @@ def place_special(specials, obj):
         fo.add_special(obj, special)
         print "Special", special, "added to", fo.get_name(obj)
 
-        break
+        return 1
+    return 0
 
 
 # TODO Bug:  distribute_specials forward checks that a special can be
@@ -144,8 +151,7 @@ def distribute_specials(specials_freq, universe_objects):
                 statistics.specials_repeat_dist[0] += 1
                 continue
 
-            place_special(local_specials, obj)
-            track_num_placed[obj] += 1
+            track_num_placed[obj] += place_special(local_specials, obj)
 
     for num_placed in track_num_placed.values():
         statistics.specials_repeat_dist[num_placed] += 1
