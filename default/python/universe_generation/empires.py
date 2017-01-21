@@ -134,6 +134,8 @@ class HomeSystemFinder(object):
             if len(local_pool) < self.num_home_systems:
                 break
 
+            attempts = min(attempts - 1, len(local_pool))
+
             while local_pool:
                 member = random.choice(list(local_pool))
                 candidate.append(member)
@@ -157,7 +159,6 @@ class HomeSystemFinder(object):
             if merit >= best_case_merit_lower_bound:
                 break
 
-            attempts = min(attempts - 1, len(local_pool))
         return best_candidate
 
 
