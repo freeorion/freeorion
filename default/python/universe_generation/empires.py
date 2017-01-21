@@ -127,9 +127,12 @@ class HomeSystemFinder(object):
         # cap the number of attempts to the smaller of the number of systems in the pool, or 100
         attempts = min(100, len(systems_pool))
 
+        # Cap the number of attempts when the found number of systems is much less than the target
+        # num_home_systems because this indicates that the min_jumps is too large and/or the
+        # systems_pool is too small to ever succeed.
+        num_complete_misses_remaining = 4
 
-        while attempts:
-            candidate = []
+        while attempts and num_complete_misses_remaining:
             # use a local pool of all candidate systems better than the worst threshold merit
             all_merit_system = [(m, s) for (m, s) in all_merit_system if m > current_merit_lower_bound]
             local_pool = {s for (m, s) in all_merit_system}
@@ -144,6 +147,7 @@ class HomeSystemFinder(object):
 
             attempts = min(attempts - 1, len(local_pool))
 
+            candidate = []
             while local_pool:
                 member = random.choice(list(local_pool))
                 candidate.append(member)
@@ -151,8 +155,12 @@ class HomeSystemFinder(object):
                 # remove all neighbors from the local pool
                 local_pool -= set(get_systems_within_jumps(member, min_jumps))
 
+            # Count complete misses when number of candidates is not close to the target.
+            if len(candidate) < (self.num_home_systems - 4):
+                num_complete_misses_remaining -= 1
+
             if len(candidate) < self.num_home_systems:
-                break
+                continue
 
             # Calculate the merit of the current attempt.  If it is the best so far
             # keep it and update the merit_threshold
@@ -161,9 +169,20 @@ class HomeSystemFinder(object):
 
             (merit, system) = merit_system[-1]
 
+            # Quit if the lowest merit planet meets the minimum threshold
+            if merit >= min_planets_in_vicinity_limit(get_systems_within_jumps(system, HS_VICINITY_RANGE)):
+                break
+
             # quit if it isn't possible to improve the current accepted list
             if merit >= best_case_merit_lower_bound:
                 break
+
+            # If we have a better candidate, set the new lower bound one higher to try for a better candidate.
+            if merit >= current_merit_lower_bound:
+                print ("Home system merit lower bound improved from {} to "
+                       "{}".format(current_merit_lower_bound, merit + 1))
+                current_merit_lower_bound = merit + 1
+                best_candidate = [s for (_, s) in merit_system]
 
         return best_candidate
 
