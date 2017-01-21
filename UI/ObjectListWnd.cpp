@@ -37,14 +37,12 @@ namespace {
     const unsigned int NUM_COLUMNS(12u);
 
     void AddOptions(OptionsDB& db) {
-        std::vector<std::pair<std::string, int> > default_columns_widths;
-        default_columns_widths.push_back(std::make_pair("NAME",             12*12));
-        default_columns_widths.push_back(std::make_pair("ID",               4*12));
-        default_columns_widths.push_back(std::make_pair("OBJECT_TYPE",      5*12));
-        default_columns_widths.push_back(std::make_pair("OWNER",            10*12));
-        default_columns_widths.push_back(std::make_pair("SPECIES",          8*12));
-        default_columns_widths.push_back(std::make_pair("PLANET_TYPE",      8*12));
-        default_columns_widths.push_back(std::make_pair("SIZE_AS_DOUBLE",   8*12));
+        std::vector<std::pair<std::string, int>> default_columns_widths = {
+            {"NAME",             12*12},    {"ID",               4*12},
+            {"OBJECT_TYPE",      5*12},     {"OWNER",            10*12},
+            {"SPECIES",          8*12},     {"PLANET_TYPE",      8*12},
+            {"SIZE_AS_DOUBLE",   8*12}};
+
         for (unsigned int i = default_columns_widths.size(); i < NUM_COLUMNS; ++i)
             default_columns_widths.push_back(std::make_pair("", 8*12));   // arbitrary default width
 

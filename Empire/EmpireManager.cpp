@@ -306,12 +306,8 @@ const std::vector<GG::Clr>& EmpireColors() {
         }
     }
     if (colors.empty()) {
-        colors.push_back(GG::Clr(  0, 255,   0, 255));
-        colors.push_back(GG::Clr(  0,   0, 255, 255));
-        colors.push_back(GG::Clr(255,   0,   0, 255));
-        colors.push_back(GG::Clr(  0, 255, 255, 255));
-        colors.push_back(GG::Clr(255, 255,   0, 255));
-        colors.push_back(GG::Clr(255,   0, 255, 255));
+        colors = {  GG::Clr(  0, 255,   0, 255),    GG::Clr(  0,   0, 255, 255),    GG::Clr(255,   0,   0, 255),
+                    GG::Clr(  0, 255, 255, 255),    GG::Clr(255, 255,   0, 255),    GG::Clr(255,   0, 255, 255)};
     }
     return colors;
 }
