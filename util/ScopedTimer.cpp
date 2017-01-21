@@ -8,17 +8,17 @@
 
 #include <iomanip>
 
-class ScopedTimer::ScopedTimerImpl {
+class ScopedTimer::Impl {
 public:
-    ScopedTimerImpl(const std::string& timed_name, bool enable_output,
-                    boost::chrono::microseconds threshold) :
+    Impl(const std::string& timed_name, bool enable_output,
+         boost::chrono::microseconds threshold) :
         m_start(boost::chrono::high_resolution_clock::now()),
         m_name(timed_name),
         m_enable_output(enable_output),
         m_threshold(threshold)
     {}
 
-    ~ScopedTimerImpl() {
+    ~Impl() {
         boost::chrono::nanoseconds duration = boost::chrono::high_resolution_clock::now() - m_start;
         if (!ShouldOutput(duration))
             return;
@@ -51,11 +51,11 @@ public:
 
 ScopedTimer::ScopedTimer(const std::string& timed_name, bool enable_output,
                          boost::chrono::microseconds threshold) :
-    pimpl(new ScopedTimerImpl(timed_name, enable_output, threshold))
+    m_impl(new Impl(timed_name, enable_output, threshold))
 {}
 
 ScopedTimer::ScopedTimer(const std::string& timed_name, boost::chrono::microseconds threshold) :
-    pimpl(new ScopedTimerImpl(timed_name, true, threshold))
+    m_impl(new Impl(timed_name, true, threshold))
 {}
 
 // ~ScopedTimer is required because Impl is defined here.
@@ -64,7 +64,7 @@ ScopedTimer::~ScopedTimer()
 
 
 
-class SectionedScopedTimer::SectionedScopedTimerImpl : public ScopedTimer::ScopedTimerImpl {
+class SectionedScopedTimer::Impl : public ScopedTimer::Impl {
 
     /** Sections store a time and a duration for each section of the elapsed time report.*/
     struct Sections {
@@ -117,13 +117,13 @@ class SectionedScopedTimer::SectionedScopedTimerImpl : public ScopedTimer::Scope
     };
 
 public:
-    SectionedScopedTimerImpl(const std::string& timed_name, bool enable_output,
-                             boost::chrono::microseconds threshold) :
-        ScopedTimerImpl(timed_name, enable_output, threshold)
+    Impl(const std::string& timed_name, bool enable_output,
+         boost::chrono::microseconds threshold) :
+        ScopedTimer::Impl(timed_name, enable_output, threshold)
     {}
 
     /** The destructor will print the table of accumulated times. */
-    ~SectionedScopedTimerImpl() {
+    ~Impl() {
         boost::chrono::nanoseconds duration = boost::chrono::high_resolution_clock::now() - m_start;
 
         if (!ShouldOutput(duration))
@@ -133,7 +133,7 @@ public:
         if (!m_sections) {
             std::stringstream ss;
             ss << m_name << " time: ";
-            ScopedTimerImpl::FormatDuration(ss, duration);
+            ScopedTimer::Impl::FormatDuration(ss, duration);
             DebugLogger() << ss.str();
             return;
         }
@@ -207,11 +207,11 @@ public:
 
 SectionedScopedTimer::SectionedScopedTimer(const std::string& timed_name, bool enable_output,
                          boost::chrono::microseconds threshold) :
-    pimpl(new SectionedScopedTimerImpl(timed_name, enable_output, threshold))
+    m_impl(new Impl(timed_name, enable_output, threshold))
 {}
 
 SectionedScopedTimer::SectionedScopedTimer(const std::string& timed_name, boost::chrono::microseconds threshold) :
-    pimpl(new SectionedScopedTimerImpl(timed_name, true, threshold))
+    m_impl(new Impl(timed_name, true, threshold))
 {}
 
 // ~SectionedScopedTimer is required because Impl is defined here.
@@ -219,4 +219,4 @@ SectionedScopedTimer::~SectionedScopedTimer()
 {}
 
 void SectionedScopedTimer::EnterSection(const std::string& section_name)
-{ pimpl->EnterSection(section_name);}
+{ m_impl->EnterSection(section_name); }

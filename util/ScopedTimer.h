@@ -1,13 +1,13 @@
 #ifndef _ScopedTimer_h_
 #define _ScopedTimer_h_
 
+#include <memory>
 #include <string>
 
 #include "Export.h"
 
 // TODO change boost to std when C++11 is adopted.
 #include <boost/chrono/chrono.hpp>
-#include <boost/scoped_ptr.hpp>
 
 /** Outputs time during which this object existed.
     Created in the scope of a function, and passed the appropriate
@@ -25,10 +25,10 @@ public:
     ScopedTimer(const std::string& timed_name, boost::chrono::microseconds threshold);
     ~ScopedTimer();
 
-    class ScopedTimerImpl;
+    class Impl;
+
 private:
-    // TODO use C++11 unique_ptr
-    boost::scoped_ptr<ScopedTimerImpl> const pimpl;
+    std::unique_ptr<Impl> const m_impl;
 };
 
 /** Similar to ScopedTimer SectionedScopedTimer times the duration of its own existence.  It also
@@ -99,9 +99,9 @@ public:
     void EnterSection(const std::string& section_name);
 
 private:
-    class SectionedScopedTimerImpl;
-    // TODO use C++11 unique_ptr
-    boost::scoped_ptr<SectionedScopedTimerImpl> const pimpl;
+    class Impl;
+
+    std::unique_ptr<Impl> const m_impl;
 };
 
 #endif // _MultiplayerCommon_h_
