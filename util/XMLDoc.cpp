@@ -56,7 +56,6 @@
 
 #include "XMLDoc.h"
 
-#include <boost/lexical_cast.hpp>
 #include <boost/spirit/include/classic.hpp>
 
 #include <algorithm>
@@ -67,17 +66,12 @@
  *      simple XML files.
  */
 
-#define DEBUG_OUTPUT 0
-
 namespace {
     const std::string INDENT_STR = "  "; // indents are 2 spaces
-    std::string element_name;
-    std::string attribute_name;
 
     using namespace boost::spirit::classic;
 
     typedef chset<unsigned char> chset_t;
-    typedef chlit<unsigned char> chlit_t;
 
     // XML grammar rules
     rule<> document, prolog, element, Misc, Reference, CData, doctypedecl,

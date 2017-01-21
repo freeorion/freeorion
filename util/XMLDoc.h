@@ -186,19 +186,6 @@ public:
         m_text(text),
         m_root(false)
     {}
-
-    /** @brief  Creates a new XMLElement with the given @p tag tag-name and
-     *      @p body a single child element.
-     *
-     * @param[in] tag  The tag name of this XML element.
-     * @param[in] body  The child XML element assigned as body to this XML
-     *      element.
-     */
-    XMLElement(const std::string& tag, const XMLElement& body) :
-        children(std::vector<XMLElement>(1, body)),
-        m_tag(tag),
-        m_root(false)
-    {}
     //@}
 
     /** @name  Accessors */ //@{
