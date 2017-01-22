@@ -89,7 +89,7 @@ namespace GG {
         {
             // Get the path from the parameters.
             fs::path param_path = ExtractPath(params);
-            fs::path combined_path = m_root_path / param_path;
+            fs::path combined_path = fs::exists(param_path) ? param_path : (m_root_path / param_path);
 
             if (!fs::exists(combined_path))
                 return nullptr;
