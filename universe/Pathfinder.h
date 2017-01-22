@@ -6,7 +6,6 @@
 #include "UniverseObject.h"
 
 #include <boost/unordered_map.hpp>
-#include <boost/scoped_ptr.hpp>
 
 #include <vector>
 #include <map>
@@ -139,8 +138,7 @@ public:
 
 private:
     class PathfinderImpl;
-    /* TODO make unique_ptr C++11 */
-    boost::scoped_ptr<PathfinderImpl> const pimpl;
+    std::unique_ptr<PathfinderImpl> const pimpl;
 
     /* friend class boost::serialization::access; */
     /* template <class Archive> */
