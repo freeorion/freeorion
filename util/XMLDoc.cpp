@@ -60,6 +60,7 @@
 
 #include <algorithm>
 #include <stdexcept>
+#include <sstream>
 
 /** @file
  * @brief  Implements free functions and classes to modify, read and write
