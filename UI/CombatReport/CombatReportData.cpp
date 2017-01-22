@@ -1,5 +1,4 @@
 #include "CombatReportData.h"
-#include "../../combat/CombatEvents.h"
 #include "../../combat/CombatLogManager.h"
 #include "../../universe/UniverseObject.h"
 #include "../../util/AppInterface.h"

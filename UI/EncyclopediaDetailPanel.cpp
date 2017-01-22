@@ -35,7 +35,6 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 #include "../combat/CombatLogManager.h"
-#include "../combat/CombatEvents.h"
 #include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>

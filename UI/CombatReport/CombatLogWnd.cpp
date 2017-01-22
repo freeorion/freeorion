@@ -9,7 +9,6 @@
 
 #include "../../client/human/HumanClientApp.h"
 #include "../../combat/CombatLogManager.h"
-#include "../../combat/CombatEvents.h"
 #include "../../universe/System.h"
 #include "../../universe/UniverseObject.h"
 #include "../../universe/Enums.h"

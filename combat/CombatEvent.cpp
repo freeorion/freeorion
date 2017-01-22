@@ -1,6 +1,5 @@
 #include "CombatEvent.h"
 
-#include "CombatEvents.h"
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/version.hpp>
 
