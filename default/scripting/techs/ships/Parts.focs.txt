@@ -208,7 +208,7 @@ Tech
         "SPY_STEALTH_2"
     ]
     unlock = Item type = ShipPart name = "SP_DARK_RAY"
-    graphic = "icons/ship_parts/death-spore.png"
+    graphic = "icons/ship_parts/dark-ray.png"
 
 Tech
     name = "SHP_VOID_SHADOW"
@@ -222,7 +222,7 @@ Tech
         "LRN_GATEWAY_VOID"
     ]
     unlock = Item type = ShipPart name = "SP_VOID_SHADOW"
-    graphic = "icons/ship_parts/bioterm.png"
+    graphic = "icons/ship_parts/void-shadow.png"
 
 Tech
     name = "SHP_CHAOS_WAVE"
@@ -238,6 +238,6 @@ Tech
         "SHP_VOID_SHADOW"
     ]
     unlock = Item type = ShipPart name = "SP_CHAOS_WAVE"
-    graphic = "icons/ship_parts/bioterm.png"
+    graphic = "icons/ship_parts/chaos-wave.png"
 
 #include "/scripting/common/base_prod.macros"
