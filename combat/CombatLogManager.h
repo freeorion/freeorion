@@ -6,7 +6,9 @@
 #include "../util/Export.h"
 
 #include <boost/optional/optional.hpp>
-#include <boost/scoped_ptr.hpp>
+
+#include <memory>
+
 
 // A snapshot of the state of a participant of the combat
 // at it's end
@@ -72,9 +74,9 @@ private:
     CombatLogManager();
     ~CombatLogManager();
 
-    class CombatLogManagerImpl;
-    // TODO use C++11 unique_ptr
-    boost::scoped_ptr<CombatLogManagerImpl> const pimpl;
+    class Impl;
+
+    std::unique_ptr<Impl> const m_impl;
 
     friend class boost::serialization::access;
     template <class Archive>
