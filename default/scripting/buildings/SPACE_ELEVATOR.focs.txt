@@ -60,6 +60,6 @@ BuildingType
             activation = Source
             effects = SetMaxSupply value = Value + 4
     ]
-    icon = ""
+    icon = "icons/building/space-elevator.png"
 
 #include "/scripting/common/enqueue.macros"

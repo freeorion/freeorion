@@ -27,7 +27,7 @@ Part
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     label = "EFFECT_BIOWEAPON_LABEL"
-                    icon = "icons/ship_parts/death-spore.png"
+                    icon = "icons/sitrep/bio_weapon_1.png"
                     parameters = [
                         tag = "planet" data = Target.ID
                         tag = "rawtext" data = "0.5"
@@ -54,7 +54,7 @@ Part
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     label = "EFFECT_BIOWEAPON_LABEL"
-                    icon = "icons/ship_parts/death-spore.png"
+                    icon = "icons/sitrep/bio_weapon_1.png"
                     parameters = [
                         tag = "planet" data = Target.ID
                         tag = "rawtext" data = "0.5"

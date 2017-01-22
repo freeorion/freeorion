@@ -26,7 +26,7 @@ Part
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     label = "EFFECT_BIOWEAPON_LABEL"
-                    icon = "icons/ship_parts/bioterm.png"
+                    icon = "icons/sitrep/bio_weapon_2.png"
                     parameters = [
                         tag = "planet" data = Target.ID
                         tag = "rawtext" data = "2"
@@ -52,7 +52,7 @@ Part
                 GenerateSitRepMessage
                     message = "EFFECT_BIOWEAPON"
                     label = "EFFECT_BIOWEAPON_LABEL"
-                    icon = "icons/ship_parts/bioterm.png"
+                    icon = "icons/sitrep/bio_weapon_2.png"
                     parameters = [
                         tag = "planet" data = Target.ID
                         tag = "rawtext" data = "2"
@@ -61,6 +61,6 @@ Part
                     empire = Target.Owner
             ]
     ]
-    icon = "icons/ship_parts/bioterm.png"
+    icon = "icons/ship_parts/chaos-wave.png"
 
 #include "/scripting/common/upkeep.macros"
