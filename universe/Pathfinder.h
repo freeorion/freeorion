@@ -37,8 +37,8 @@ public:
     typedef boost::shared_ptr<const Pathfinder> ConstPtr;
 
     /** \name Structors */ //@{
-    Pathfinder();                                     ///< default ctor
-    virtual ~Pathfinder();                            ///< dtor
+    Pathfinder();
+    virtual ~Pathfinder();
     //@}
 
     /** \name Accessors */ //@{
