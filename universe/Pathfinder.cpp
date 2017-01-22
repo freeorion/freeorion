@@ -58,8 +58,8 @@ namespace {
             m_data.clear();
             m_data.resize(a_size);
             m_row_mutexes.resize(a_size);
-            for (size_t i = old_size; i < a_size; ++i)
-                m_row_mutexes[i] = boost::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
+            for (auto &row_mutex : m_row_mutexes)
+                row_mutex = boost::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
         }
 
         /**N x N table of hop distances in row column form.*/
@@ -941,17 +941,16 @@ int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y) const {
 
     std::vector<TemporaryPtr<System> > systems = Objects().FindObjects<System>();
 
-    for (std::vector<TemporaryPtr< System> >::const_iterator sys_it = systems.begin();
-         sys_it != systems.end(); ++sys_it)
+    for (auto const &system : systems)
     {
-        double xs = (*sys_it)->X();
-        double ys = (*sys_it)->Y();
+        double xs = system->X();
+        double ys = system->Y();
         double dist2 = (xs-x)*(xs-x) + (ys-y)*(ys-y);
         if (dist2 == 0.0) {
-            return (*sys_it)->ID();
+            return system->ID();
         } else if (dist2 < min_dist2) {
             min_dist2 = dist2;
-            min_dist2_sys_id = (*sys_it)->ID();
+            min_dist2_sys_id = system->ID();
         }
     }
     return min_dist2_sys_id;
@@ -969,7 +968,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
     // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
     bool graph_changed = system_ids.size() != boost::num_vertices(m_graph_impl->system_graph);
     //DebugLogger() << "InitializeSystemGraph(" << for_empire_id << ") system_ids: (" << system_ids.size() << ")";
-    //for (std::vector<int>::const_iterator it = system_ids.begin(); it != system_ids.end(); ++it)
+    //for (int id : system_ids)
     //    DebugLogger() << " ... " << *it;
 
     GraphImpl::SystemIDPropertyMap sys_id_property_map =
@@ -995,11 +994,9 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
         //TemporaryPtr<const System> & system1 = systems[system1_index];
 
         // add edges and edge weights
-        for (std::map<int, bool>::const_iterator it = system1->StarlanesWormholes().begin();
-             it != system1->StarlanesWormholes().end(); ++it)
-        {
+        for (auto const & lane_dest : system1->StarlanesWormholes()) {
             // get id in universe of system at other end of lane
-            const int lane_dest_id = it->first;
+            const int lane_dest_id = lane_dest.first;
             // skip null lanes and only add edges in one direction, to avoid
             // duplicating edges ( since this is an undirected graph, A->B
             // duplicates B->A )
@@ -1016,7 +1013,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
                 boost::add_edge(system1_index, lane_dest_graph_index, new_graph_impl->system_graph);
 
             if (add_edge_result.second) {   // if this is a non-duplicate starlane or wormhole
-                if (it->second) {               // if this is a wormhole
+                if (lane_dest.second) {         // if this is a wormhole
                     edge_weight_map[add_edge_result.first] = WORMHOLE_TRAVEL_DISTANCE;
                 } else {                        // if this is a starlane
                     edge_weight_map[add_edge_result.first] = LinearDistance(system1_id, lane_dest_id);
@@ -1057,8 +1054,8 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(int 
 
     if (for_empire_id == ALL_EMPIRES) {
         // all empires get their own, accurately filtered graph
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-            int empire_id = it->first;
+        for (auto const &empire : Empires()) {
+            int empire_id = empire.first;
             GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_id);
             boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
                 new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
@@ -1071,8 +1068,8 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(int 
         boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
             new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
 
-        for (EmpireManager::const_iterator it = Empires().begin(); it != Empires().end(); ++it) {
-            int empire_id = it->first;
+        for (auto const &empire : Empires()) {
+            int empire_id = empire.first;
             m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
     }
