@@ -1,0 +1,62 @@
+BuildingType
+    name = "BLD_INTERSPECIES_ACADEMY"
+    description = "BLD_INTERSPECIES_ACADEMY_DESC"
+    buildcost = 100
+    buildtime = 3
+    location = AND [
+        Species
+        Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
+        OwnedBy empire = Source.Owner
+    ]
+    EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = Source
+            effects = [
+                GenerateSitRepMessage
+                    message = "Additional stoyield is now sdfaf"
+                    label = "EFFECT_BLACKHOLE_LABEL"
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = Source
+            //stackinggroup = "[[BLD_INTERSPECIES_ACADEMY_SPECIES_STACK(Source.Planet.Species)]]"
+            priority = [[EARLY_PRIORITY]]
+            //                    message = "Additional effect by the %species% on %system% joining the design academy. Imperial stockpile yield is now %rawtext%"
+//                                    tag = "system" data = Source.SystemID
+  //                      tag = "species" data = Source.Planet.Species
+
+            effects = [
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_STORAGE_YIELD" value = Value + 0.2
+                GenerateSitRepMessage
+                    message = "Additional effect by species %rawtext%"
+                    label = "EFFECT_BLACKHOLE_LABEL"
+                    icon = "icons/building/blackhole.png"
+                    parameters = [
+                        tag = "rawtext" data = Source.Planet.Species // gibt nummer der species
+                    ]
+                    empire = Source.Owner
+            ]
+            // Source.Planet.Species gives the id number; the species tag needs literal like "SP_TRITH"
+    ]
+    icon = "icons/building/science-institute.png"
+
+BLD_INTERSPECIES_ACADEMY_SPECIES_STACK
+'''BLD_INTERSPECIES_ACADEMY_@1@_STACK'''
+
+#include "/scripting/common/base_prod.macros"
+
+#include "/scripting/common/enqueue.macros"
+#include "/scripting/common/priorities.macros"
