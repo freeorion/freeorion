@@ -11,18 +11,16 @@
 #include <AL/al.h>
 #endif
 
-#include <map>
-
-#include <boost/scoped_array.hpp>
-
 #include <vorbis/vorbisfile.h>
 
-class Sound::SoundImpl
+#include <map>
+
+class Sound::Impl
 {
 public:
-    SoundImpl();
+    Impl();
 
-    ~SoundImpl();
+    ~Impl();
 
     /** Enables the sound system.  Throws Sound::InitializationFailureException on failure. */
     void Enable();
@@ -105,7 +103,7 @@ namespace {
         ALenum m_openal_error;
         int endian = 0; /// 0 for little-endian (x86), 1 for big-endian (ppc)
         int bitStream, bytes, bytes_new;
-        boost::scoped_array<char> array(new char[buffer_size]);
+        std::unique_ptr<char[]> array(new char[buffer_size]);
         bytes = 0;
 
         if (alcGetCurrentContext()) {
@@ -142,10 +140,10 @@ namespace {
 // TempUISoundDisabler
 ////////////////////////////////////////////////////////////
 Sound::TempUISoundDisabler::TempUISoundDisabler()
-{ Sound::GetSound().pimpl->IncDisabledCount(); }
+{ Sound::GetSound().m_impl->IncDisabledCount(); }
 
 Sound::TempUISoundDisabler::~TempUISoundDisabler()
-{ Sound::GetSound().pimpl->DecDisabledCount(); }
+{ Sound::GetSound().m_impl->DecDisabledCount(); }
 
 ////////////////////////////////////////////////////////////
 // Sound
@@ -157,49 +155,44 @@ Sound& Sound::GetSound()
 }
 
 Sound::Sound() :
-    pimpl(new SoundImpl)
+    m_impl(new Impl)
 {}
 
-// Require here because SoundImpl is defined in this file.
-Sound::~Sound() {}
+// Require here because Sound::Impl is defined in this file.
+Sound::~Sound() = default;
 
 void Sound::Enable()
-{ pimpl->Enable(); }
+{ m_impl->Enable(); }
 
 void Sound::Disable()
-{ pimpl->Disable(); }
+{ m_impl->Disable(); }
 
 void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
-{ pimpl->PlayMusic(path, loops); }
+{ m_impl->PlayMusic(path, loops); }
 
 void Sound::StopMusic()
-{ pimpl->StopMusic(); }
+{ m_impl->StopMusic(); }
 
 void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/)
-{ pimpl->PlaySound(path, is_ui_sound); }
+{ m_impl->PlaySound(path, is_ui_sound); }
 
 void Sound::FreeSound(const boost::filesystem::path& path)
-{ pimpl->FreeSound(path); }
+{ m_impl->FreeSound(path); }
 
 void Sound::FreeAllSounds()
-{ pimpl->FreeAllSounds(); }
+{ m_impl->FreeAllSounds(); }
 
 void Sound::SetMusicVolume(int vol)
-{ pimpl->SetMusicVolume(vol); }
+{ m_impl->SetMusicVolume(vol); }
 
 void Sound::SetUISoundsVolume(int vol)
-{ pimpl->SetUISoundsVolume(vol); }
+{ m_impl->SetUISoundsVolume(vol); }
 
 void Sound::DoFrame()
-{ pimpl->DoFrame(); }
+{ m_impl->DoFrame(); }
 
 
-
-////////////////////////////////////////////////////////////
-// SoundImpl
-////////////////////////////////////////////////////////////
-
-Sound::SoundImpl::SoundImpl() :
+Sound::Impl::Impl() :
     m_sources(),
     m_music_loops(0),
     m_music_name(),
@@ -223,11 +216,11 @@ Sound::SoundImpl::SoundImpl() :
     }
 }
 
-Sound::SoundImpl::~SoundImpl() {
+Sound::Impl::~Impl() {
     Disable();
 }
 
-void Sound::SoundImpl::Enable() {
+void Sound::Impl::Enable() {
     if (m_initialized)
         return;
 
@@ -247,7 +240,7 @@ void Sound::SoundImpl::Enable() {
     DebugLogger() << "Audio " << (m_initialized ? "enabled." : "disabled.");
 }
 
-void Sound::SoundImpl::Disable() {
+void Sound::Impl::Disable() {
     if (!m_initialized)
         return;
     StopMusic();
@@ -266,7 +259,7 @@ void Sound::SoundImpl::Disable() {
 /// Initialize OpenAl and return true on success.
 // TODO rewrite with std::unique_ptr and custom deleter to remove long
 // chain of "destructor" code.
-void Sound::SoundImpl::InitOpenAL() {
+void Sound::Impl::InitOpenAL() {
     ALCcontext *context;
     ALCdevice *device;
     ALenum error_code;
@@ -347,7 +340,7 @@ void Sound::SoundImpl::InitOpenAL() {
     m_initialized = true;
 }
 
-void Sound::SoundImpl::ShutdownOpenAL() {
+void Sound::Impl::ShutdownOpenAL() {
     ALCcontext* context = alcGetCurrentContext();
 
     if (context) {
@@ -369,7 +362,7 @@ void Sound::SoundImpl::ShutdownOpenAL() {
 }
 
 
-void Sound::SoundImpl::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/) {
+void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/) {
     if (!m_initialized)
         return;
 
@@ -450,7 +443,7 @@ void Sound::SoundImpl::PlayMusic(const boost::filesystem::path& path, int loops 
         ErrorLogger() << "PlayMusic: OpenAL ERROR: " << alGetString(m_openal_error);
 }
 
-void Sound::SoundImpl::StopMusic() {
+void Sound::Impl::StopMusic() {
     if (!m_initialized)
         return;
 
@@ -464,7 +457,7 @@ void Sound::SoundImpl::StopMusic() {
     }
 }
 
-void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/) {
+void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/) {
     if (!m_initialized || !GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
@@ -564,7 +557,7 @@ void Sound::SoundImpl::PlaySound(const boost::filesystem::path& path, bool is_ui
     }
 }
 
-void Sound::SoundImpl::FreeSound(const boost::filesystem::path& path) {
+void Sound::Impl::FreeSound(const boost::filesystem::path& path) {
     if (!m_initialized)
         return;
 
@@ -583,7 +576,7 @@ void Sound::SoundImpl::FreeSound(const boost::filesystem::path& path) {
     }
 }
 
-void Sound::SoundImpl::FreeAllSounds() {
+void Sound::Impl::FreeAllSounds() {
     if (!m_initialized)
         return;
 
@@ -605,7 +598,7 @@ void Sound::SoundImpl::FreeAllSounds() {
     }
 }
 
-void Sound::SoundImpl::SetMusicVolume(int vol) {
+void Sound::Impl::SetMusicVolume(int vol) {
     if (!m_initialized)
         return;
 
@@ -624,7 +617,7 @@ void Sound::SoundImpl::SetMusicVolume(int vol) {
     }
 }
 
-void Sound::SoundImpl::SetUISoundsVolume(int vol) {
+void Sound::Impl::SetUISoundsVolume(int vol) {
     if (!m_initialized)
         return;
 
@@ -643,7 +636,7 @@ void Sound::SoundImpl::SetUISoundsVolume(int vol) {
     }
 }
 
-void Sound::SoundImpl::DoFrame() {
+void Sound::Impl::DoFrame() {
     if (!m_initialized)
         return;
 
@@ -669,11 +662,11 @@ void Sound::SoundImpl::DoFrame() {
     }
 } 
 
-bool Sound::SoundImpl::UISoundsTemporarilyDisabled() const
+bool Sound::Impl::UISoundsTemporarilyDisabled() const
 { return m_temporary_disable_count > 0; }
 
-void Sound::SoundImpl::IncDisabledCount()
+void Sound::Impl::IncDisabledCount()
 { ++m_temporary_disable_count; }
 
-void Sound::SoundImpl::DecDisabledCount()
+void Sound::Impl::DecDisabledCount()
 { --m_temporary_disable_count; }

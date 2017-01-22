@@ -2,7 +2,8 @@
 #define _Sound_h_
 
 #include <boost/filesystem/path.hpp>
-#include <boost/scoped_ptr.hpp>
+
+#include <memory>
 
 
 class Sound
@@ -59,9 +60,9 @@ public:
     void Disable();
 
 private:
-    class SoundImpl;
-    // TODO use C++11 unique_ptr
-    boost::scoped_ptr<SoundImpl> const pimpl;
+    class Impl;
+
+    std::unique_ptr<Impl> const m_impl;
 
     Sound();
 
