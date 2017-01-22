@@ -395,9 +395,10 @@ namespace {
 
         } else if (dir_name == "ENC_TEXTURES") {
              for (auto tex : GG::GetTextureManager().Textures())
-                 sorted_entries_list.insert({tex.first, {tex.first + "\n", tex.first}});
+                 sorted_entries_list.insert({tex.first, {(tex.first + "<img src = \"" + tex.first + "\"></img>\n"), tex.first}});
 
         } else if (dir_name == "ENC_STRINGS") {
+            // TODO: show all stringable keys and values
             //for (auto str : GetStringTable().
 
         } else {
