@@ -475,7 +475,7 @@ namespace {
 
         struct EdgeVisibilityFilter     {
             EdgeVisibilityFilter() :
-                m_graph(0),
+                m_graph(nullptr),
                 m_empire_id(ALL_EMPIRES)
             {}
 
