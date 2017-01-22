@@ -68,7 +68,6 @@ set (freeorionparse_SOURCE
     TechsParser.cpp
     Tokens.cpp
     UniverseObjectTypeValueRefParser.cpp
-    StartingBuildingsParser.cpp
     ValueRefParserImpl.cpp
 )
 

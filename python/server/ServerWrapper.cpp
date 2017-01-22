@@ -327,7 +327,10 @@ namespace {
         std::vector<ItemSpec> buildings;
         parse::starting_buildings(buildings);
         for (auto building : buildings) {
-            py_items.append(object(building));
+            if (GetBuildingType(building.name))
+                py_items.append(object(building));
+            else
+                ErrorLogger() << "The item " << building.name << " in the starting building list is not a building.";
         }
         return py_items;
     }
