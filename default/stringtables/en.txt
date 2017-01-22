@@ -3887,6 +3887,9 @@ ENC_FIELD
 ENC_HOMEWORLDS
 [Game - Homeworlds]
 
+ENC_TEXTURES
+[Test - Textures]
+
 ENC_INDEX
 Encyclopedia Index
 

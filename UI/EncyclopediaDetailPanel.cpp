@@ -42,6 +42,7 @@
 #include <GG/GUI.h>
 #include <GG/RichText/RichText.h>
 #include <GG/ScrollPanel.h>
+#include <GG/Texture.h>
 
 #include <boost/algorithm/clamp.hpp>
 #include <boost/algorithm/string.hpp>
@@ -152,69 +153,22 @@ namespace {
         if (dir_name == "ENC_INDEX") {
             // add entries consisting of links to pedia page lists of
             // articles of various types
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_PART"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_PART") + "\n",
-                               "ENC_SHIP_PART")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_HULL"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_HULL") + "\n",
-                               "ENC_SHIP_HULL")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_TECH"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_TECH") + "\n",
-                               "ENC_TECH")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING_TYPE"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING_TYPE") + "\n",
-                               "ENC_BUILDING_TYPE")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIAL"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIAL") + "\n",
-                               "ENC_SPECIAL")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SPECIES"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SPECIES") + "\n",
-                               "ENC_SPECIES")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_HOMEWORLDS"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_HOMEWORLDS") + "\n",
-                               "ENC_HOMEWORLDS")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD_TYPE"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD_TYPE") + "\n",
-                               "ENC_FIELD_TYPE")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_METER_TYPE"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_METER_TYPE") + "\n",
-                               "ENC_METER_TYPE")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_EMPIRE"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_EMPIRE") + "\n",
-                               "ENC_EMPIRE")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP_DESIGN"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP_DESIGN") + "\n",
-                               "ENC_SHIP_DESIGN")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SHIP"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SHIP") + "\n",
-                               "ENC_SHIP")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER") + "\n",
-                               "ENC_MONSTER")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_MONSTER_TYPE"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_MONSTER_TYPE") + "\n",
-                               "ENC_MONSTER_TYPE")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_FLEET"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FLEET") + "\n",
-                               "ENC_FLEET")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_PLANET"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_PLANET") + "\n",
-                               "ENC_PLANET")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_BUILDING"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_BUILDING") + "\n",
-                               "ENC_BUILDING")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_SYSTEM"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_SYSTEM") + "\n",
-                               "ENC_SYSTEM")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_FIELD"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_FIELD") + "\n",
-                               "ENC_FIELD")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_GRAPH"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GRAPH") + "\n",
-                               "ENC_GRAPH")));
-            sorted_entries_list.insert(std::make_pair(UserString("ENC_GALAXY_SETUP"),
-                std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, "ENC_GALAXY_SETUP") + "\n",
-                               "ENC_GALAXY_SETUP")));
+            for (const std::string& str : GetSearchTextDirNames())
+            {
+                if (str == "ENC_INDEX")
+                    continue;
+                sorted_entries_list.insert(std::make_pair(UserString(str),
+                                           std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n",
+                                                          str)));
+            }
+
+            for (const std::string& str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"})
+            {
+                sorted_entries_list.insert(std::make_pair(UserString(str),
+                                           std::make_pair(LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n",
+                                                          str)));
+            }
+
 
             for (const std::map<std::string, std::vector<EncyclopediaArticle>>::value_type& entry : encyclopedia.articles) {
                 // Do not add sub-categories
@@ -438,6 +392,13 @@ namespace {
                     std::make_pair(LinkTaggedText(TextLinker::GRAPH_TAG, stat_record.first) + "\n",
                                    stat_record.first)));
             }
+
+        } else if (dir_name == "ENC_TEXTURES") {
+             for (auto tex : GG::GetTextureManager().Textures())
+                 sorted_entries_list.insert({tex.first, {tex.first + "\n", tex.first}});
+
+        } else if (dir_name == "ENC_STRINGS") {
+            //for (auto str : GetStringTable().
 
         } else {
             // list categories
