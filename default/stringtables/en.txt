@@ -2690,11 +2690,29 @@ Trade
 MAP_TRADE_TEXT
 Empire total trade output. (Trade does nothing)
 
-MAP_FLEET_TITLE
-Fleet Count
+MAP_FLEET_SHIP_COUNT
+Total Ships
 
-MAP_FLEET_TEXT
-Total number of ships
+MAP_FLEET_ARMED_COUNT
+Armed Ships
+
+MAP_FLEET_UNARMED_COUNT
+Unarmed Ships
+
+MAP_FLEET_TROOP_COUNT
+Troop Carrier Ships
+
+MAP_FLEET_COLONY_COUNT
+Colonizing Ships
+
+MAP_FLEET_CARRIER_COUNT
+Fighter Carrier Ships
+
+MAP_FLEET_PART_COUNT
+Total Ship Parts
+
+MAP_FLEET_SLOT_COUNT
+Total Ship Part Slots
 
 
 ##
