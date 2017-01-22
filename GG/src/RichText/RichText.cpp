@@ -225,7 +225,7 @@ namespace GG {
         void PopulateBlocks(const std::vector<RichTextTag>& tags)
         {
             // Create blocks using factories.
-            BOOST_FOREACH (const RichTextTag& tag, tags) {
+            for (const RichTextTag& tag : tags) {
                 RichText::TAG_PARAMS params;
                 // Extract the parameters from params_string to the tag_params map.
                 ExtractParameters(tag.tag_params, params);
