@@ -235,6 +235,10 @@ private:
 class GG_API TextureManager
 {
 public:
+    /** \name Accessors */ ///@{
+    const std::map<std::string, boost::shared_ptr<Texture>>& Textures() const;
+    //@}
+
     /** \name Mutators */ ///@{
     /** Stores a pre-existing GG::Texture in the manager's texture pool, and
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
@@ -272,11 +276,11 @@ private:
     static bool s_il_initialized;
     std::map<std::string, boost::shared_ptr<Texture> > m_textures;  // indexed by string, not path, because some textures may be stored by a name and not loaded from a path
 
-    friend TextureManager& GetTextureManager();
+    friend GG_API TextureManager& GetTextureManager();
 };
 
 /** Returns the singleton TextureManager instance. */
-TextureManager& GetTextureManager();
+GG_API TextureManager& GetTextureManager();
 
 } // namespace GG
 

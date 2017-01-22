@@ -572,6 +572,9 @@ bool TextureManager::s_il_initialized = false;
 TextureManager::TextureManager()
 {}
 
+const std::map<std::string, boost::shared_ptr<Texture>>& TextureManager::Textures() const
+{ return m_textures; }
+
 boost::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, const std::string& texture_name)
 {
     boost::shared_ptr<Texture> temp(texture);
