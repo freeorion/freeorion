@@ -2876,37 +2876,37 @@ TT_INHERENT
 Inhérent
 
 # %1% name of the owning empire.
-# %2% FIXME
+# %2% name of tech
 TT_TECH
 %1% Technologie <i>%2%</i>
 
 # %1% name of the planet, where the building is located.
-# %2% FIXME
+# %2% name of building
 TT_BUILDING
 %1% Structure <i>%2%</i>
 
-# %1% FIXME
-# %2% FIXME
+# %1% source of effect
+# %2% name of ship hull
 TT_SHIP_HULL
 Astronef <i>%1%</i> Coque <i>%2%</i>
 
-# %1% FIXME
-# %2% FIXME
+# %1% source of effect
+# %2% name of ship part
 TT_SHIP_PART
 Astronef <i>%1%</i> Équipement <i>%2%</i>
 
-# %1% FIXME
-# %2% FIXME
+# %1% source of effect
+# %2% name of special
 TT_SPECIAL
 Particularité <i>%2%</i>
 
 # %1% name of the species.
-# %2% FIXME
+# %2% name of species
 TT_SPECIES
 Espèce <i>%2%</i>
 
 # %1% name of this fields field type.
-# %2% FIXME
+# %2% name of field
 #TT_FIELD
 #<i>%2%</i>
 
@@ -3322,6 +3322,21 @@ TECH_WND_PROGRESS
 # %1% estimated turns left until technology is researched.
 TECH_WND_ETA
 %1% tour(s) restant(s)
+
+TECH_WND_LIST_COLUMN_NAME
+Nom
+
+TECH_WND_LIST_COLUMN_COST
+Coût
+
+TECH_WND_LIST_COLUMN_TIME
+Tours
+
+TECH_WND_LIST_COLUMN_CATEGORY
+Catégorie
+
+TECH_WND_LIST_COLUMN_DESCRIPTION  # translated
+Description
 
 
 ##
@@ -3872,6 +3887,9 @@ ENC_FIELD
 ENC_HOMEWORLDS
 [Partie - Planètes Natales]
 
+ENC_TEXTURES  # translated
+[Test - Textures]
+
 ENC_INDEX
 Index de l'Encyclopédie
 
@@ -4085,17 +4103,17 @@ ENC_COMBAT_UNKNOWN_DESTROYED_STR
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked fighter.
 ENC_COMBAT_FIGHTER_INCAPACITATED_STR
-Un%1%chasseur a été détruit
+Un %2% a été détruit
 
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked planet.
 ENC_COMBAT_PLANET_INCAPACITATED_STR
-La planète %2% de l'empire %1% a été mise en déroute
+La planète %2% a été mise en déroute
 
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked unit.
 ENC_COMBAT_DESTROYED_STR
-Le vaisseau %2% de %1% a été détruit
+L'astronef %2% a été détruit
 
 # %1% unused
 # %2% name of empire
@@ -5033,6 +5051,12 @@ Portée Approvisionnement
 
 SUPPLYING_EMPIRE
 Empire Approvisionneur
+
+SYSTEM_SUPPLY_RANGE
+Portée Approvisionnement Système
+
+PROPAGATED_SUPPLY_RANGE
+Portée Approvisionnement Propagée
 
 ETA
 Tours avant Destination
@@ -7520,6 +7544,15 @@ Vitesse
 # Meter types
 METER_DETECTION_STRENGTH  # translated
 [[DETECTION_TITLE]]
+
+METER_BUILDING_COST_FACTOR
+Facteur Coût Structure
+
+METER_SHIP_COST_FACTOR
+Facteur Coût Astronef
+
+METER_TECH_COST_FACTOR
+Facteur Coût Technologie
 
 ALIGN_MILITARISM
 Militarisme
@@ -12467,6 +12500,8 @@ Particularités pour [[encyclopedia ROBOTIC_SPECIES_TITLE]] :
 Particularités pour [[encyclopedia LITHIC_SPECIES_TITLE]] :
 [[special MINERALS_SPECIAL]] | [[special ELERIUM_SPECIAL]] | [[special CRYSTALS_SPECIAL]] '''
 
+GROWTH_SPECIAL_LABEL
+Planète <i>%1%</i> [[TT_SPECIAL]]
 
 ##
 ## Species picks
