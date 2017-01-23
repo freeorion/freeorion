@@ -298,7 +298,7 @@ def stitching_positions(p1, p2):
 
     # Pick a random point in an 2:1 ratio ellipse and then rotate and slide it in between p1 and p2
     p1_p2_theta = acos((p2[0] - p1[0]) / p1_p2_dist)
-    p1_p2_scale = (p1_p2_dist - 2 * min_dist) / 2
+    p1_p2_scale = (p1_p2_dist - 2*min_dist) / 2
     p1_p2_translation = ((p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2)
 
     radius_0space = uniform(0.0, 1.0)
