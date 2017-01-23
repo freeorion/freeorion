@@ -172,11 +172,11 @@ class HomeSystemFinder(object):
             if merit >= min_planets_in_vicinity_limit(get_systems_within_jumps(system, HS_VICINITY_RANGE)):
                 break
 
-            # If we have a better candidate, set the new lower bound one higher to try for a better candidate.
+            # If we have a better candidate, set the new lower bound and try for a better candidate.
             if merit >= current_merit_lower_bound:
                 print ("Home system merit lower bound improved from {} to "
-                       "{}".format(current_merit_lower_bound, merit + 1))
-                current_merit_lower_bound = merit + 1
+                       "{}".format(current_merit_lower_bound, merit))
+                current_merit_lower_bound = merit
                 best_candidate = [s for (_, s) in merit_system]
 
         return best_candidate
