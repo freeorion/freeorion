@@ -152,7 +152,7 @@ class HomeSystemFinder(object):
             local_pool = {s for (m, s) in all_merit_system}
 
             if len(local_pool) < self.num_home_systems:
-                if len(best_candidate) < self.num_home_systems:
+                if not best_candidate:
                     print ("Failing in find_home_systems_for_min_jump_distance because "
                            "current_merit_lower_bound = {} trims local pool to {} systems "
                            "which is less than num_home_systems {}.".format(
