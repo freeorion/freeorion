@@ -103,8 +103,8 @@ class HomeSystemFinder(object):
         Make several attempts to find systems that match the condition
         of being at least min_jumps apart.
         Use the minimum merit of the best num_home_system systems found
-        as the merit of the current best set of systems.
-        On each attempt use the merit of the current best set of home
+        to compare the candidate with the current best set of systems.
+        On each attempt use the minimum merit of the current best set of home
         systems to truncate the pool of candidates.
         """
 
@@ -113,18 +113,12 @@ class HomeSystemFinder(object):
             if system not in self.system_merit:
                 self.system_merit[system] = calculate_home_system_merit(system)
 
-        # In the list of systems reverse sorted by merit, if the first
-        # num_home_systems are all min_jumps apart, then the merit of the
-        # num_home_systems nth system is the best_case_merit_lower_bound that
-        # can be achieved.
+        # The list of merits and systems reverse sorted by merit.
         all_merit_system = sorted([(self.system_merit[s], s)
                                    for s in systems_pool], reverse=True)
+
         current_merit_lower_bound = 0
-
         best_candidate = []
-
-        # cap the number of attempts to the smaller of the number of systems in the pool, or 100
-        attempts = min(100, len(systems_pool))
 
         # Cap the number of attempts when the found number of systems is less than the target
         # num_home_systems because this indicates that the min_jumps is too large and/or the
@@ -145,6 +139,9 @@ class HomeSystemFinder(object):
             len(systems_pool), expected_len_candidate_std, lowest_continuable_mean_len_of_candidates))
 
         lens_of_failed_candidates = []
+
+        # Cap the number of attempts to the smaller of the number of systems in the pool, or 100
+        attempts = min(100, len(systems_pool))
 
         while attempts:
             # use a local pool of all candidate systems better than the worst threshold merit
@@ -189,13 +186,13 @@ class HomeSystemFinder(object):
 
             # If we have a better candidate, set the new lower bound and try for a better candidate.
             if merit >= current_merit_lower_bound:
-                print ("Home system merit lower bound improved from {} to "
+                print ("Home system set merit lower bound improved from {} to "
                        "{}".format(current_merit_lower_bound, merit))
                 current_merit_lower_bound = merit
                 best_candidate = [s for (_, s) in merit_system]
                 lens_of_failed_candidates = []
 
-                # Quit sucessfully if the lowest merit planet meets the minimum threshold
+                # Quit sucessfully if the lowest merit system meets the minimum threshold
                 if merit >= min_planets_in_vicinity_limit(get_systems_within_jumps(system, HS_VICINITY_RANGE)):
                     break
 
