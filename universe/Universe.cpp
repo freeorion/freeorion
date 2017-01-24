@@ -1707,6 +1707,7 @@ namespace {
         if (!cond)
             return EMPTY_TARGET_SET;
 
+        // the passed-in cached_condition_matches are here expected be specific for the current source object
         cache_entry = cached_condition_matches.Find(cond, false);
         if (cache_entry)
             return cache_entry->second;
@@ -1779,8 +1780,11 @@ namespace {
             if (activation && !activation->Eval(source_context, source))
                 continue;
 
+            // if scope is source-invariant, use the source-invariant cache of condition results.
+            // if scope depends on the source object, use a cache of condition results for that souce object.
             bool source_invariant = !source || scope->SourceInvariant();
             ConditionCache* condition_cache = source_invariant ? m_invariant_cached_condition_matches : (*m_source_cached_condition_matches)[source_object_id].get();
+            // look up scope condition in the cache. if not found, calculate it and store in the cache. either way, return the result.
             Effect::TargetSet& target_set = GetConditionMatches(scope,
                                                                 *condition_cache,
                                                                 source,
