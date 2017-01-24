@@ -214,8 +214,7 @@ namespace {
 
         Condition::ObjectSet objs;
         boost::python::stl_input_iterator<int> end;
-        for (boost::python::stl_input_iterator<int> id(obj_ids);
-             id != end; ++id) {
+        for (boost::python::stl_input_iterator<int> id(obj_ids); id != end; ++id) {
             if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*id))
                 objs.push_back(obj);
             else
@@ -235,8 +234,8 @@ namespace {
         else
             permitted_objs = objs;
 
-        for (auto id : permitted_objs) {
-            permitted_ids.append(id->ID());
+        for (auto &obj : permitted_objs) {
+            permitted_ids.append(obj->ID());
         }
 
         return permitted_ids;
@@ -950,7 +949,7 @@ namespace {
         boost::python::stl_input_iterator<int> end;
         for (boost::python::stl_input_iterator<int> id(obj_ids);
              id != end; ++id) {
-            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(*id)) {
+            if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*id)) {
                 py_systems.append(obj->SystemID());
             } else {
                 ErrorLogger() << "Passed an invalid universe object id " << *id;
