@@ -42,7 +42,7 @@ public:
     bool ContainedBy(int object_id) const override
     { return false; }
 
-    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** returns the name to display for players for this system.  While all
       * systems may have a proper name assigned, if they contain no planets or
@@ -90,13 +90,13 @@ public:
     double                  OverlaySize() const         { return m_overlay_size; }  ///< size in universe units
 
     /** fleets are inserted into system */
-    mutable boost::signals2::signal<void (const std::vector<TemporaryPtr<Fleet> >& fleets)> FleetsInsertedSignal;
+    mutable boost::signals2::signal<void (const std::vector<boost::shared_ptr<Fleet>>&)> FleetsInsertedSignal;
     /** fleets are removed from system */
-    mutable boost::signals2::signal<void (const std::vector<TemporaryPtr<Fleet> >& fleets)> FleetsRemovedSignal;
+    mutable boost::signals2::signal<void (const std::vector<boost::shared_ptr<Fleet>>&)> FleetsRemovedSignal;
     //@}
 
     /** \name Mutators */ //@{
-    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     /** Adding owner to system objects is a no-op. */
     void SetOwner(int id) override
@@ -105,7 +105,7 @@ public:
     void ResetTargetMaxUnpairedMeters() override;
 
     /** adds an object to this system. */
-    void                    Insert(TemporaryPtr<UniverseObject> obj, int orbit = -1);
+    void Insert(boost::shared_ptr<UniverseObject> obj, int orbit = -1);
 
     /** removes the object with ID number \a id from this system. */
     void                    Remove(int id);

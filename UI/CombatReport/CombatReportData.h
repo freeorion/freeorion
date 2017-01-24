@@ -1,9 +1,10 @@
 #ifndef COMBATREPORTDATA_H
 #define COMBATREPORTDATA_H
 
-#include "../universe/TemporaryPtr.h"
 
 #include <GG/Clr.h>
+
+#include <boost/shared_ptr.hpp>
 
 #include <vector>
 

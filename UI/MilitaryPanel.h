@@ -3,7 +3,9 @@
 
 #include "AccordionPanel.h"
 #include "../universe/EnumsFwd.h"
-#include "../universe/TemporaryPtr.h"
+
+#include <boost/shared_ptr.hpp>
+
 
 class MultiIconValueIndicator;
 class MultiMeterStatusBar;
@@ -48,7 +50,7 @@ private:
     int m_planet_id;
 
     /** returns the Planet object with id m_planet_id */
-    TemporaryPtr<const Planet> GetPlanet() const;
+    boost::shared_ptr<const Planet> GetPlanet() const;
 
     /** Icons for the associated meter type. */
     std::vector<std::pair<MeterType, StatisticIcon*> > m_meter_stats;

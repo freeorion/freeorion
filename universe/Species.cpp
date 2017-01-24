@@ -519,14 +519,14 @@ void SpeciesManager::ClearSpeciesOpinions() {
 void SpeciesManager::UpdatePopulationCounter() {
     // ships of each species and design
     m_species_object_populations.clear();
-    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator obj_it = Objects().ExistingObjectsBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator obj_it = Objects().ExistingObjectsBegin();
          obj_it != Objects().ExistingObjectsEnd(); ++obj_it)
     {
-        TemporaryPtr<UniverseObject> obj = obj_it->second;
+        boost::shared_ptr<UniverseObject> obj = obj_it->second;
         if (obj->ObjectType() != OBJ_PLANET && obj->ObjectType() != OBJ_POP_CENTER)
             continue;
 
-        TemporaryPtr<PopCenter> pop_center = boost::dynamic_pointer_cast<PopCenter>(obj);
+        boost::shared_ptr<PopCenter> pop_center = boost::dynamic_pointer_cast<PopCenter>(obj);
         if (!pop_center)
             continue;
 

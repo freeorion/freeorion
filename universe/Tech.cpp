@@ -145,20 +145,20 @@ std::string Tech::Dump() const {
 }
 
 namespace {
-    TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
+    boost::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return TemporaryPtr<const UniverseObject>();
+            return boost::shared_ptr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
+        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (TemporaryPtr<const UniverseObject> obj : Objects()) {
+            for (boost::shared_ptr<const UniverseObject> obj : Objects()) {
                 if (obj->OwnedBy(empire_id)) {
                     source = obj;
                     break;
@@ -180,7 +180,7 @@ float Tech::ResearchCost(int empire_id) const {
         return 999999.9f;
 
     } else {
-        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_research_cost->SourceInvariant())
             return 999999.9f;
 
@@ -203,7 +203,7 @@ int Tech::ResearchTime(int empire_id) const {
         return 9999;
 
     } else {
-        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_research_turns->SourceInvariant())
             return 9999;
 

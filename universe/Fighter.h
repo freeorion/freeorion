@@ -19,9 +19,9 @@ public:
 
     std::string Dump() const override;
 
-    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
-    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     float                       Damage() const;
     bool                        Destroyed() const;

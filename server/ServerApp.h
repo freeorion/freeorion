@@ -89,14 +89,14 @@ public:
 
     SupplyManager& GetSupplyManager() override;
 
-    TemporaryPtr<UniverseObject> GetUniverseObject(int object_id) override;
+    boost::shared_ptr<UniverseObject> GetUniverseObject(int object_id) override;
 
     /** Returns the server's map for known objects of specified empire. */
     ObjectMap& EmpireKnownObjects(int empire_id) override;
 
-    TemporaryPtr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
+    boost::shared_ptr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
 
-    std::string GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) override;
+    std::string GetVisibleObjectName(boost::shared_ptr<const UniverseObject> object) override;
 
     int GetNewObjectID() override;
 

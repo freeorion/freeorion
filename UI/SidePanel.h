@@ -130,8 +130,14 @@ private:
     /** Respond to the user clicking a planet by selecting it if selection is enabled.*/
     void                PlanetClickedSlot(int planet_id);
 
-    static void         FleetsInserted(const std::vector<TemporaryPtr<Fleet> >& fleets);    ///< responds to insertion fleets into system during a turn.  may update colonize buttons
-    static void         FleetsRemoved(const std::vector<TemporaryPtr<Fleet> >& fleets);     ///< responds to removal fleets from system during a turn.  may update colonize buttons
+    /** Responds to insertion fleets into system during a turn.  may update
+        colonize buttons. */
+    static void FleetsInserted(const std::vector<boost::shared_ptr<Fleet >& fleets);
+
+    /** Responds to removal fleets from system during a turn.  may update
+        colonize buttons. */
+    static void FleetsRemoved(const std::vector<boost::shared_ptr<Fleet>>& fleets);
+
     static void         FleetStateChanged();            ///< responds to fleet state changes during a turn, which may include issueing or cancelling move orders.  may update colonize buttons
 
     class SystemNameDropDownList;
@@ -162,7 +168,8 @@ private:
     static std::map<int, boost::signals2::connection> s_fleet_state_change_signals;
 };
 
-TemporaryPtr<const Ship>    ValidSelectedColonyShip(int system_id);
+boost::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id);
+
 int                         AutomaticallyChosenColonyShip(int target_planet_id);
 
 #endif // _SidePanel_h_

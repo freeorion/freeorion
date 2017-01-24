@@ -169,10 +169,10 @@ namespace {
         GG::Label*          m_desc;
     };
 
-    TemporaryPtr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
+    boost::shared_ptr<const UniverseObject> GetSourceObjectForEmpire(int empire_id) {
         // get a source object, which is owned by the empire,
         // preferably the capital
-        TemporaryPtr<const UniverseObject> source;
+        boost::shared_ptr<const UniverseObject> source;
         if (empire_id == ALL_EMPIRES)
             return source;
         const Empire* empire = GetEmpire(empire_id);
@@ -183,7 +183,7 @@ namespace {
             return source;
 
         // not a valid source?!  scan through all objects to find one owned by this empire
-        for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects()) {
+        for (boost::shared_ptr<const UniverseObject> obj : GetUniverse().Objects()) {
             if (obj->OwnedBy(empire_id)) {
                 source = obj;
                 break;
@@ -204,7 +204,7 @@ namespace {
             enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->EnqueueLocation()));
             enqueue_conditions.push_back(const_cast<Condition::ConditionBase*>(building_type->Location()));
         }
-        TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
         if (only_failed_conditions)
             return ConditionFailedDescription(enqueue_conditions, GetUniverseObject(candidate_object_id), source);
         else
@@ -232,7 +232,7 @@ namespace {
                     location_conditions.push_back(const_cast<Condition::ConditionBase*>(part_type->Location()));
             }
         }
-        TemporaryPtr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = GetSourceObjectForEmpire(empire_id);
 
         if (only_failed_conditions)
             return ConditionFailedDescription(location_conditions, GetUniverseObject(candidate_object_id), source);
@@ -263,7 +263,7 @@ namespace {
             // show build conditions
             const std::string& enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
             if (!enqueue_and_location_condition_failed_text.empty())
-                if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
+                if (boost::shared_ptr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += "\n\n" + failed_cond_loc + ":\n" + enqueue_and_location_condition_failed_text;
             }
@@ -316,7 +316,7 @@ namespace {
             // show build conditions
             const std::string& location_condition_failed_text = LocationConditionDescription(item.design_id, candidate_object_id, empire_id, true);
             if (!location_condition_failed_text.empty())
-                if (TemporaryPtr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
+                if (boost::shared_ptr<UniverseObject> location = GetUniverseObject(candidate_object_id)) {
                     std::string failed_cond_loc = boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_TOOLTIP_FAILED_COND")) % location->Name());
                     main_text += ("\n\n" + failed_cond_loc + ":\n" + location_condition_failed_text);
                 }
@@ -641,7 +641,7 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
 
 void BuildDesignatorWnd::BuildSelector::Refresh() {
     ScopedTimer timer("BuildDesignatorWnd::BuildSelector::Refresh()");
-    if (TemporaryPtr<const UniverseObject> prod_loc = GetUniverseObject(this->m_production_location))
+    if (boost::shared_ptr<const UniverseObject> prod_loc = GetUniverseObject(this->m_production_location))
         this->SetName(boost::io::str(FlexibleFormat(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE_LOCATION")) % prod_loc->Name()));
     else
         this->SetName(UserString("PRODUCTION_WND_BUILD_ITEMS_TITLE"));
@@ -1048,7 +1048,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
     const ProductionQueue& queue = empire->GetProductionQueue();
     if (0 <= queue_idx && queue_idx < static_cast<int>(queue.size())) {
         int location_id = queue[queue_idx].location;
-        if (TemporaryPtr<const UniverseObject> build_location = objects.Object(location_id)) {
+        if (boost::shared_ptr<const UniverseObject> build_location = objects.Object(location_id)) {
             // centre map on system of build location
             int system_id = build_location->SystemID();
             MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
@@ -1329,13 +1329,13 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     // couldn't reselect stored default, so need to find a reasonable other
     // planet to select.  attempt to find one owned by this client's player
 
-    TemporaryPtr<const System> sys = GetSystem(system_id);   // only checking visible objects for this clients empire (and not the latest known objects) as an empire shouldn't be able to use a planet or system it can't currently see as a production location
+    boost::shared_ptr<const System> sys = GetSystem(system_id);   // only checking visible objects for this clients empire (and not the latest known objects) as an empire shouldn't be able to use a planet or system it can't currently see as a production location
     if (!sys) {
         ErrorLogger() << "BuildDesignatorWnd::SelectDefaultPlanet couldn't get system with id " << system_id;
         return;
     }
 
-    std::vector<TemporaryPtr<const Planet> > planets = Objects().FindObjects<const Planet>(sys->PlanetIDs());
+    std::vector<boost::shared_ptr<const Planet>> planets = Objects().FindObjects<const Planet>(sys->PlanetIDs());
 
     if (planets.empty()) {
         this->SelectPlanet(INVALID_OBJECT_ID);
@@ -1347,7 +1347,7 @@ void BuildDesignatorWnd::SelectDefaultPlanet() {
     int best_planet_id = INVALID_OBJECT_ID; // id of selected planet
     double best_planet_pop = -99999.9;                      // arbitrary negative number, so any planet's pop will be better
 
-    for (TemporaryPtr<const Planet> planet : planets) {
+    for (boost::shared_ptr<const Planet> planet : planets) {
         int planet_id = planet->ID();
         if (!m_side_panel->PlanetSelectable(planet_id))
             continue;

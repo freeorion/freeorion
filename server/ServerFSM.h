@@ -2,7 +2,6 @@
 #define _ServerFSM_h_
 
 #include "../network/Message.h"
-#include "../universe/TemporaryPtr.h"
 
 #include <boost/shared_ptr.hpp>
 #include <boost/mpl/list.hpp>

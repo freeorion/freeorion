@@ -233,7 +233,6 @@ set (freeorioncommon_HEADER
     universe/Tech.h
     universe/Universe.h
     universe/UniverseObject.h
-    universe/TemporaryPtr.h
     universe/ValueRef.h
     universe/ValueRefFwd.h
     util/AppInterface.h

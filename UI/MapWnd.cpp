@@ -238,8 +238,8 @@ namespace {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        TemporaryPtr<const UniverseObject> prev = GetEmpireKnownObject(lane.first, empire_id);
-        TemporaryPtr<const UniverseObject> next = GetEmpireKnownObject(lane.second, empire_id);
+        boost::shared_ptr<const UniverseObject> prev = GetEmpireKnownObject(lane.first, empire_id);
+        boost::shared_ptr<const UniverseObject> next = GetEmpireKnownObject(lane.second, empire_id);
         if (!next || !prev) {
             ErrorLogger() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
             return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
@@ -366,11 +366,11 @@ public:
         // get selected fleet speeds and detection ranges
         std::set<double> fixed_distances;
         for (int fleet_id : fleet_ids) {
-            if (TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id)) {
+            if (boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id)) {
                 if (fleet->Speed() > 20)
                     fixed_distances.insert(fleet->Speed());
                 for (int ship_id : fleet->ShipIDs()) {
-                    if (TemporaryPtr<Ship> ship = GetShip(ship_id)) {
+                    if (boost::shared_ptr<Ship> ship = GetShip(ship_id)) {
                         const float ship_range = ship->CurrentMeterValue(METER_DETECTION);
                         if (ship_range > 20)
                             fixed_distances.insert(ship_range);
@@ -382,9 +382,9 @@ public:
             }
         }
         // get detection ranges for planets in the selected system (if any)
-        if (const TemporaryPtr<const System> system = GetSystem(sel_system_id)) {
+        if (const boost::shared_ptr<const System> system = GetSystem(sel_system_id)) {
             for (int planet_id : system->PlanetIDs()) {
-                if (const TemporaryPtr< Planet > planet = GetPlanet(planet_id)) {
+                if (const boost::shared_ptr<Planet> planet = GetPlanet(planet_id)) {
                     const float planet_range = planet->CurrentMeterValue(METER_DETECTION);
                     if (planet_range > 20)
                         fixed_distances.insert(planet_range);
@@ -1730,7 +1730,7 @@ void MapWnd::RenderSystems() {
 
             // render circles around systems that have at least one starlane, if circles are enabled.
             if (circles) {
-                if (TemporaryPtr<const System> system = GetSystem(system_icon.first)) {
+                if (boost::shared_ptr<const System> system = GetSystem(system_icon.first)) {
                     if (system->NumStarlanes() > 0) {
                         glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
 
@@ -2331,7 +2331,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
-    for (TemporaryPtr<const System> system : objects.FindObjects<System>()) {
+    for (boost::shared_ptr<const System> system : objects.FindObjects<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsInsertedSignal,
                                                                      &MapWnd::FleetsInsertedSignalHandler, this));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsRemovedSignal,
@@ -2420,7 +2420,7 @@ void MapWnd::InitTurn() {
 
     if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
-        if (TemporaryPtr<const UniverseObject> obj = objects.Object(this_client_empire->CapitalID())) {
+        if (boost::shared_ptr<const UniverseObject> obj = objects.Object(this_client_empire->CapitalID())) {
             SelectSystem(obj->SystemID());
             CenterOnMapCoord(obj->X(), obj->Y());
         }
@@ -2511,7 +2511,7 @@ void MapWnd::InitTurnRendering() {
     m_system_icons.clear();
 
     // create system icons
-    for (TemporaryPtr<const System> sys : objects.FindObjects<System>()) {
+    for (boost::shared_ptr<const System> sys : objects.FindObjects<System>()) {
         int sys_id = sys->ID();
 
         // skip known destroyed objects
@@ -2553,7 +2553,7 @@ void MapWnd::InitTurnRendering() {
     m_field_icons.clear();
 
     // create field icons
-    for (TemporaryPtr<const Field> field : objects.FindObjects<Field>()) {
+    for (boost::shared_ptr<const Field> field : objects.FindObjects<Field>()) {
         int fld_id = field->ID();
 
         // skip known destroyed and stale fields
@@ -2613,7 +2613,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
         const SystemIcon* icon = system_icon.second;
         int system_id = system_icon.first;
-        TemporaryPtr<const System> system = GetSystem(system_id);
+        boost::shared_ptr<const System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -3038,14 +3038,14 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             for (int object_id : available_pp_group.first) {
                 // this_pool += boost::lexical_cast<std::string>(object_id) +", ";
 
-                TemporaryPtr<const Planet> planet = GetPlanet(object_id);
+                boost::shared_ptr<const Planet> planet = GetPlanet(object_id);
                 if (!planet)
                     continue;
 
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
-                TemporaryPtr<const System> system = GetSystem(system_id);
+                boost::shared_ptr<const System> system = GetSystem(system_id);
                 if (!system)
                     continue;
 
@@ -3132,7 +3132,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
             continue;
 
-        TemporaryPtr<const System> start_system = GetSystem(system_id);
+        boost::shared_ptr<const System> start_system = GetSystem(system_id);
         if (!start_system) {
             ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -3149,7 +3149,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
                 continue;
 
-            TemporaryPtr<const System> dest_system = GetSystem(render_lane.first);
+            boost::shared_ptr<const System> dest_system = GetSystem(render_lane.first);
             if (!dest_system)
                 continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -3333,7 +3333,7 @@ void MapWnd::InitFieldRenderingBuffers() {
 
     for (std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons) {
         bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon.first, empire_id) > VIS_BASIC_VISIBILITY;
-        TemporaryPtr<const Field> field = GetField(field_icon.first);
+        boost::shared_ptr<const Field> field = GetField(field_icon.first);
         if (!field)
             continue;
         const float FIELD_SIZE = field->CurrentMeterValue(METER_SIZE);  // field size is its radius
@@ -3444,7 +3444,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float> >, float> empire_position_max_detection_ranges;
 
-    for (TemporaryPtr<const UniverseObject> obj : objects.FindObjects<UniverseObject>()) {
+    for (boost::shared_ptr<const UniverseObject> obj : objects.FindObjects<UniverseObject>()) {
         int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
@@ -3465,10 +3465,10 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         if (obj->ObjectType() == OBJ_FLEET)
             continue;
         if (obj->ObjectType() == OBJ_SHIP) {
-            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
+            boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
             if (!ship)
                 continue;
-            TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(ship->FleetID());
+            boost::shared_ptr<const Fleet> fleet = objects.Object<Fleet>(ship->FleetID());
             if (!fleet)
                 continue;
             int cur_id = fleet->SystemID();
@@ -3597,7 +3597,7 @@ void MapWnd::InitScaleCircleRenderingBuffer() {
     if (radius < 5)
         return;
 
-    TemporaryPtr<System> selected_system = GetSystem(SidePanel::SystemID());
+    boost::shared_ptr<System> selected_system = GetSystem(SidePanel::SystemID());
     if (!selected_system)
         return;
 
@@ -3795,11 +3795,11 @@ void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
 }
 
 void MapWnd::CenterOnObject(int id) {
-    if (TemporaryPtr<UniverseObject> obj = GetUniverseObject(id))
+    if (boost::shared_ptr<UniverseObject> obj = GetUniverseObject(id))
         CenterOnMapCoord(obj->X(), obj->Y());
 }
 
-void MapWnd::CenterOnObject(TemporaryPtr<const UniverseObject> obj) {
+void MapWnd::CenterOnObject(boost::shared_ptr<const UniverseObject> obj) {
     if (!obj) return;
     CenterOnMapCoord(obj->X(), obj->Y());
 }
@@ -3811,7 +3811,7 @@ void MapWnd::ReselectLastSystem() {
 
 void MapWnd::SelectSystem(int system_id) {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
-    TemporaryPtr<const System> system = GetSystem(system_id);
+    boost::shared_ptr<const System> system = GetSystem(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
         ErrorLogger() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         system_id = INVALID_OBJECT_ID;
@@ -3871,7 +3871,7 @@ void MapWnd::ReselectLastFleet() {
     //// DEBUG
     //std::cout << "MapWnd::ReselectLastFleet m_selected_fleet_ids: " << std::endl;
     //for (int fleet_id : m_selected_fleet_ids) {
-    //    TemporaryPtr<const UniverseObject> obj = GetUniverse().Object(fleet_id);
+    //    boost::shared_ptr<const UniverseObject> obj = GetUniverse().Object(fleet_id);
     //    if (obj)
     //        std::cout << "    " << obj->Name() << "(" << fleet_id << ")" << std::endl;
     //    else
@@ -3883,7 +3883,7 @@ void MapWnd::ReselectLastFleet() {
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
     for (int fleet_id : m_selected_fleet_ids) {
-        TemporaryPtr<const Fleet> fleet = objects.Object<Fleet>(fleet_id);
+        boost::shared_ptr<const Fleet> fleet = objects.Object<Fleet>(fleet_id);
         if (!fleet)
             missing_fleets.insert(fleet_id);
     }
@@ -3904,7 +3904,7 @@ void MapWnd::SelectPlanet(int planetID)
 void MapWnd::SelectFleet(int fleet_id)
 { SelectFleet(GetFleet(fleet_id)); }
 
-void MapWnd::SelectFleet(TemporaryPtr<Fleet> fleet) {
+void MapWnd::SelectFleet(boost::shared_ptr<Fleet> fleet) {
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     if (!fleet) {
@@ -3976,7 +3976,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
+    boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -4023,7 +4023,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
         return;
 
     // ensure passed fleet exists
-    TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
+    boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -4085,7 +4085,7 @@ void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
-        TemporaryPtr<const System> system = GetSystem(system_icon.first);
+        boost::shared_ptr<const System> system = GetSystem(system_icon.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << system_icon.first;
             continue;
@@ -4100,7 +4100,7 @@ void MapWnd::DoSystemIconsLayout() {
 void MapWnd::DoFieldIconsLayout() {
     // position and resize field icons
     for (std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons) {
-        TemporaryPtr<const Field> field = GetField(field_icon.first);
+        boost::shared_ptr<const Field> field = GetField(field_icon.first);
         if (!field) {
             ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_icon.first;
             continue;
@@ -4121,7 +4121,7 @@ void MapWnd::DoFleetButtonsLayout() {
     // position departing fleet buttons
     for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
         // calculate system icon position
-        TemporaryPtr<const System> system = GetSystem(departing_fleet_button.first);
+        boost::shared_ptr<const System> system = GetSystem(departing_fleet_button.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << departing_fleet_button.first;
             continue;
@@ -4150,7 +4150,7 @@ void MapWnd::DoFleetButtonsLayout() {
     // position stationary fleet buttons
     for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
         // calculate system icon position
-        TemporaryPtr<const System> system = GetSystem(stationary_fleet_button.first);
+        boost::shared_ptr<const System> system = GetSystem(stationary_fleet_button.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << stationary_fleet_button.first;
             continue;
@@ -4180,7 +4180,7 @@ void MapWnd::DoFleetButtonsLayout() {
     for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
         for (FleetButton* fb : moving_fleet_button.second) {
             const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
-            TemporaryPtr<const Fleet> fleet;
+            boost::shared_ptr<const Fleet> fleet;
 
             // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
             if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
@@ -4201,7 +4201,7 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 }
 
-std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(TemporaryPtr<const Fleet> fleet) const {
+std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(boost::shared_ptr<const Fleet> fleet) const {
     if (!fleet) {
         return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
     }
@@ -4230,12 +4230,12 @@ namespace {
     typedef boost::unordered_map<std::pair<std::pair<double, double>, int>, std::vector<int> > LocationXEmpireToFleetsMap;
 
     /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
-    TemporaryPtr<const Fleet> IsQualifiedFleet(const TemporaryPtr<const UniverseObject>& obj,
+    boost::shared_ptr<const Fleet> IsQualifiedFleet(const boost::shared_ptr<const UniverseObject>& obj,
                                                int empire_id,
                                                const std::set<int>& known_destroyed_objects,
                                                const std::set<int>& stale_object_info) {
         int object_id = obj->ID();
-        TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
+        boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
 
         if (fleet
             && !fleet->Empty()
@@ -4244,41 +4244,41 @@ namespace {
         {
             return fleet;
         }
-        return TemporaryPtr<const Fleet>();
+        return boost::shared_ptr<const Fleet>();
     }
 
     /** If the \p fleet has orders and is departing from a valid system, return the system*/
-    TemporaryPtr<const System> IsDepartingFromSystem(const TemporaryPtr<const Fleet>& fleet) {
+    boost::shared_ptr<const System> IsDepartingFromSystem(const boost::shared_ptr<const Fleet>& fleet) {
         if (fleet->FinalDestinationID() != INVALID_OBJECT_ID
             && !fleet->TravelRoute().empty()
             && fleet->SystemID() != INVALID_OBJECT_ID)
         {
-            TemporaryPtr<const System> system = GetSystem(fleet->SystemID());
+            boost::shared_ptr<const System> system = GetSystem(fleet->SystemID());
             if (system)
                 return system;
             ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
                           << " of a departing fleet named " << fleet->Name();
         }
-        return TemporaryPtr<const System>();
+        return boost::shared_ptr<const System>();
     }
 
     /** If the \p fleet is stationary in a valid system, return the system*/
-    TemporaryPtr<const System> IsStationaryInSystem(const TemporaryPtr<const Fleet>& fleet) {
+    boost::shared_ptr<const System> IsStationaryInSystem(const boost::shared_ptr<const Fleet>& fleet) {
         if ((fleet->FinalDestinationID() == INVALID_OBJECT_ID
              || fleet->TravelRoute().empty())
             && fleet->SystemID() != INVALID_OBJECT_ID)
         {
-            TemporaryPtr<const System> system = GetSystem(fleet->SystemID());
+            boost::shared_ptr<const System> system = GetSystem(fleet->SystemID());
             if (system)
                 return system;
             ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
                           << " of a stationary fleet named " << fleet->Name();
         }
-        return TemporaryPtr<const System>();
+        return boost::shared_ptr<const System>();
     }
 
     /** If the \p fleet has a valid destination and it not at a system, return true*/
-    bool IsMoving(const TemporaryPtr<const Fleet>& fleet) {
+    bool IsMoving(const boost::shared_ptr<const Fleet>& fleet) {
         return (fleet->FinalDestinationID() != INVALID_OBJECT_ID
                 && fleet->SystemID() == INVALID_OBJECT_ID);
     }
@@ -4307,10 +4307,10 @@ void MapWnd::DeferredRefreshFleetButtons() {
     SystemXEmpireToFleetsMap   stationary_fleets;
     LocationXEmpireToFleetsMap moving_fleets;
 
-    for (std::map<int, TemporaryPtr<UniverseObject> >::const_iterator candidate_it = Objects().ExistingFleetsBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::const_iterator candidate_it = Objects().ExistingFleetsBegin();
          candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it)
     {
-        TemporaryPtr<const Fleet> fleet = IsQualifiedFleet(
+        boost::shared_ptr<const Fleet> fleet = IsQualifiedFleet(
             candidate_it->second, client_empire_id,
             this_client_known_destroyed_objects, this_client_stale_object_info);
 
@@ -4318,11 +4318,11 @@ void MapWnd::DeferredRefreshFleetButtons() {
             continue;
 
         // Collect fleets with a travel route just departing.
-        if (TemporaryPtr<const System> departure_system = IsDepartingFromSystem(fleet)) {
+        if (boost::shared_ptr<const System> departure_system = IsDepartingFromSystem(fleet)) {
             departing_fleets[std::make_pair(departure_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
             // Collect stationary fleets by system.
-        } else if (TemporaryPtr<const System> stationary_system = IsStationaryInSystem(fleet)) {
+        } else if (boost::shared_ptr<const System> stationary_system = IsStationaryInSystem(fleet)) {
             // DebugLogger() << fleet->Name() << " is Stationary." ;
             stationary_fleets[std::make_pair(stationary_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
@@ -4409,9 +4409,9 @@ void MapWnd::DeleteFleetButtons() {
     m_moving_fleet_buttons.clear();
 }
 
-void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<boost::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("RemoveFleetsStateChangedSignal()", true);
-    for (TemporaryPtr<Fleet> fleet : fleets) {
+    for (boost::shared_ptr<Fleet> fleet : fleets) {
         boost::unordered_map<int, boost::signals2::connection>::iterator
             found_signal = m_fleet_state_change_signals.find(fleet->ID());
         if (found_signal != m_fleet_state_change_signals.end()) {
@@ -4421,22 +4421,22 @@ void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet
     }
 }
 
-void MapWnd::AddFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+void MapWnd::AddFleetsStateChangedSignal(const std::vector<boost::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("AddFleetsStateChangedSignal()", true);
-    for (TemporaryPtr<Fleet> fleet : fleets) {
+    for (boost::shared_ptr<Fleet> fleet : fleets) {
         m_fleet_state_change_signals[fleet->ID()] =
             GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
     }
 }
 
-void MapWnd::FleetsInsertedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+void MapWnd::FleetsInsertedSignalHandler(const std::vector<boost::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("FleetsInsertedSignalHandler()", true);
     RefreshFleetButtons();
     RemoveFleetsStateChangedSignal(fleets);
     AddFleetsStateChangedSignal(fleets);
 }
 
-void MapWnd::FleetsRemovedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets) {
+void MapWnd::FleetsRemovedSignalHandler(const std::vector<boost::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("FleetsRemovedSignalHandler()", true);
     RefreshFleetButtons();
     RemoveFleetsStateChangedSignal(fleets);
@@ -4452,7 +4452,7 @@ void MapWnd::RefreshFleetSignals() {
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    std::vector<TemporaryPtr<Fleet> > fleets = Objects().FindObjects<Fleet>();
+    std::vector<boost::shared_ptr<Fleet>> fleets = Objects().FindObjects<Fleet>();
     AddFleetsStateChangedSignal(fleets);
 }
 
@@ -4692,11 +4692,11 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys)
             }
         } else if (mas == MAS_SetOwner) {
             int empire_id = m_moderator_wnd->SelectedEmpire();
-            TemporaryPtr<const System> system = GetSystem(system_id);
+            boost::shared_ptr<const System> system = GetSystem(system_id);
             if (!system)
                 return;
 
-            for (TemporaryPtr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
+            for (boost::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(player_id,
@@ -4733,7 +4733,7 @@ void MapWnd::PlanetDoubleClicked(int planet_id) {
         return;
 
     // retrieve system_id from planet_id
-    TemporaryPtr<const Planet> planet = GetPlanet(planet_id);
+    boost::shared_ptr<const Planet> planet = GetPlanet(planet_id);
     if (!planet)
         return;
 
@@ -4812,7 +4812,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
     // apply to all this-player-owned fleets in currently-active FleetWnd
     for (int fleet_id : fleet_ids) {
-        TemporaryPtr<const Fleet> fleet = GetFleet(fleet_id);
+        boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
             ErrorLogger() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << fleet_id;
             continue;
@@ -4848,9 +4848,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            TemporaryPtr<const System> begin_sys = GetSystem(begin_id);
+            boost::shared_ptr<const System> begin_sys = GetSystem(begin_id);
             int end_id = *route.rbegin();
-            TemporaryPtr<const System> end_sys = GetSystem(end_id);
+            boost::shared_ptr<const System> end_sys = GetSystem(end_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
@@ -4887,7 +4887,7 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         ErrorLogger() << "Clicked FleetButton contained no fleets!";
         return;
     }
-    TemporaryPtr<const Fleet> first_fleet = GetFleet(btn_fleets[0]);
+    boost::shared_ptr<const Fleet> first_fleet = GetFleet(btn_fleets[0]);
 
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
@@ -5099,12 +5099,12 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     }
 }
 
-void MapWnd::UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj) {
+void MapWnd::UniverseObjectDeleted(boost::shared_ptr<const UniverseObject> obj) {
     if (obj)
         DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
         DebugLogger() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
-    if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj))
+    if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj))
         RemoveFleet(fleet->ID());
 }
 
@@ -5648,7 +5648,7 @@ void MapWnd::ShowProduction() {
     // home system (ie. where the capital is)
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID()))
-            if (TemporaryPtr<const UniverseObject> obj = GetUniverseObject(empire->CapitalID()))
+            if (boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
@@ -5780,7 +5780,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     int total_fleet_count = 0;
-    for (TemporaryPtr<const Ship> ship : Objects().FindObjects<Ship>()) {
+    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
         if (ship->OwnedBy(empire_id) && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end())
             total_fleet_count++;
     }
@@ -5891,8 +5891,8 @@ void MapWnd::RefreshPopulationIndicator() {
 
     //tally up all species population counts
     for (int pop_center_id : pop_center_ids) {
-        TemporaryPtr<const UniverseObject> obj = objects.Object(pop_center_id);
-        TemporaryPtr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
+        boost::shared_ptr<const UniverseObject> obj = objects.Object(pop_center_id);
+        boost::shared_ptr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
         if (!pc)
             continue;
 
@@ -5938,7 +5938,7 @@ bool MapWnd::ZoomToHomeSystem() {
     int home_id = empire->CapitalID();
 
     if (home_id != INVALID_OBJECT_ID) {
-        TemporaryPtr<const UniverseObject> object = GetUniverseObject(home_id);
+        boost::shared_ptr<const UniverseObject> object = GetUniverseObject(home_id);
         if (!object)
             return false;
         CenterOnObject(object->SystemID());
@@ -5964,24 +5964,24 @@ namespace {
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (TemporaryPtr<const System> system : Objects().FindObjects<System>()) {
+        for (boost::shared_ptr<const System> system : Objects().FindObjects<System>()) {
             system_names_ids.insert(std::make_pair(system->Name(), system->ID()));
         }
         return system_names_ids;
     }
 
     std::set<std::pair<std::string, int>, CustomRowCmp> GetOwnedSystemNamesIDs(int empire_id) {
-        std::vector<TemporaryPtr<UniverseObject> > owned_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
+        std::vector<boost::shared_ptr<UniverseObject>> owned_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
 
         // get IDs of systems that contain any owned planets
         boost::unordered_set<int> system_ids;
-        for (TemporaryPtr<UniverseObject> obj : owned_planets)
+        for (boost::shared_ptr<UniverseObject> obj : owned_planets)
         { system_ids.insert(obj->SystemID()); }
 
         // store systems, sorted alphabetically
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
         for (int system_id : system_ids) {
-            if (TemporaryPtr<const System> sys = GetSystem(system_id))
+            if (boost::shared_ptr<const System> sys = GetSystem(system_id))
                 system_names_ids.insert(std::make_pair(sys->Name(), sys->ID()));
         }
 
@@ -5997,7 +5997,7 @@ bool MapWnd::ZoomToPrevOwnedSystem() {
 
     // find currently selected system in list
     std::set<std::pair<std::string, int> >::const_reverse_iterator it = system_names_ids.rend();
-    TemporaryPtr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    boost::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
@@ -6023,7 +6023,7 @@ bool MapWnd::ZoomToNextOwnedSystem() {
     std::set<std::pair<std::string, int>, CustomRowCmp>::const_iterator it = system_names_ids.end();
 
     // find currently selected system in list
-    TemporaryPtr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    boost::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
@@ -6047,7 +6047,7 @@ bool MapWnd::ZoomToPrevSystem() {
 
     // find currently selected system in list
     std::set<std::pair<std::string, int> >::const_reverse_iterator it = system_names_ids.rend();
-    TemporaryPtr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    boost::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
@@ -6072,7 +6072,7 @@ bool MapWnd::ZoomToNextSystem() {
     std::set<std::pair<std::string, int>, CustomRowCmp>::const_iterator it = system_names_ids.end();
 
     // find currently selected system in list
-    TemporaryPtr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    boost::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
@@ -6185,7 +6185,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
         return false; // shouldn't happen?
     for (const std::set<int>& obj_ids : wasted_PP_objects) {
         for (int obj_id : obj_ids) {
-            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(obj_id);
+            boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(obj_id);
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.
                 CenterOnObject(obj->SystemID());
@@ -6340,7 +6340,7 @@ void MapWnd::StopFleetExploring(const int fleet_id) {
     // force UI update. Removing a fleet from the UI's list of exploring fleets
     // doesn't actually change the Fleet object's state in any way, so the UI
     // would otherwise still show the fleet as "exploring"
-    if (TemporaryPtr<Fleet> fleet = GetFleet(fleet_id))
+    if (boost::shared_ptr<Fleet> fleet = GetFleet(fleet_id))
         fleet->StateChangedSignal();
 }
 
@@ -6407,7 +6407,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     //clean the fleet list by removing non-existing fleet, and extract the fleets waiting for orders
     for (std::set<int>::iterator it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
-        TemporaryPtr<Fleet> fleet = GetFleet(*it);
+        boost::shared_ptr<Fleet> fleet = GetFleet(*it);
         if (!fleet || destroyed_objects.find(fleet->ID()) != destroyed_objects.end()) {
             m_fleets_exploring.erase(it++); //this fleet can't explore anymore
         } else {
@@ -6435,7 +6435,7 @@ void MapWnd::DispatchFleetsExploring() {
     std::map<int, int> unknown_systems;
     const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id);
     for (int system_id : candidates_unknown_systems) {
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system)
             continue;
         if (!empire->HasExploredSystem(system->ID()) &&
@@ -6464,7 +6464,7 @@ void MapWnd::DispatchFleetsExploring() {
         int better_fleet_id;
 
         for (int fleet_id : fleet_idle) {
-            TemporaryPtr<Fleet> fleet = GetFleet(fleet_id);
+            boost::shared_ptr<Fleet> fleet = GetFleet(fleet_id);
             if (!fleet || !fleet->MovePath().empty())
                 continue;
 

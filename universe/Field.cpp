@@ -70,14 +70,14 @@ Field* Field::Clone(int empire_id) const {
         return nullptr;
 
     Field* retval = new Field();
-    retval->Copy(TemporaryFromThis(), empire_id);
+    retval->Copy(shared_from_this(), empire_id);
     return retval;
 }
 
-void Field::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
+void Field::Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    TemporaryPtr<const Field> copied_field = boost::dynamic_pointer_cast<const Field>(copied_object);
+    boost::shared_ptr<const Field> copied_field = boost::dynamic_pointer_cast<const Field>(copied_object);
     if (!copied_field) {
         ErrorLogger() << "Field::Copy passed an object that wasn't a Field";
         return;
@@ -123,8 +123,8 @@ const std::string& Field::PublicName(int empire_id) const {
     return UserString(m_type_name);
 }
 
-TemporaryPtr<UniverseObject> Field::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(boost::const_pointer_cast<Field>(boost::static_pointer_cast<const Field>(TemporaryFromThis()))); }
+boost::shared_ptr<UniverseObject> Field::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(boost::const_pointer_cast<Field>(boost::static_pointer_cast<const Field>(shared_from_this()))); }
 
 int Field::ContainerObjectID() const
 { return this->SystemID(); }
@@ -134,7 +134,7 @@ bool Field::ContainedBy(int object_id) const {
         && object_id == this->SystemID();
 }
 
-bool Field::InField(TemporaryPtr<const UniverseObject> obj) const
+bool Field::InField(boost::shared_ptr<const UniverseObject> obj) const
 { return obj && InField(obj->X(), obj->Y()); }
 
 bool Field::InField(double x, double y) const {

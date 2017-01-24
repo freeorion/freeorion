@@ -141,7 +141,7 @@ float Special::InitialCapacity(int object_id) const {
     if (!m_initial_capacity)
         return 0.0f;
 
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     if (!obj)
         return 0.0f;
 

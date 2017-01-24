@@ -99,7 +99,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    TemporaryPtr<const System> system = GetSystem(system_id);
+    boost::shared_ptr<const System> system = GetSystem(system_id);
     if (!system)
         return;
 
@@ -118,9 +118,9 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
 
     std::set<int> owner_empire_ids;
-    std::vector<TemporaryPtr<const Planet> > system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
+    std::vector<boost::shared_ptr<const Planet>> system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
 
-    for (TemporaryPtr<const Planet> planet : system_planets) {
+    for (boost::shared_ptr<const Planet> planet : system_planets) {
         int planet_id = planet->ID();
 
         if (known_destroyed_object_ids.find(planet_id) != known_destroyed_object_ids.end())
@@ -151,7 +151,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // does planet contain a shipyard?
         if (!has_shipyard) {
-            for (TemporaryPtr<const Building> building : Objects().FindObjects<const Building>(planet->BuildingIDs())) {
+            for (boost::shared_ptr<const Building> building : Objects().FindObjects<const Building>(planet->BuildingIDs())) {
                 int building_id = building->ID();
 
                 if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
@@ -243,7 +243,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
-    if (TemporaryPtr<const System> system = GetSystem(m_system_id)) {
+    if (boost::shared_ptr<const System> system = GetSystem(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -635,7 +635,7 @@ void SystemIcon::Refresh() {
     std::string name;
     m_system_connection.disconnect();
 
-    TemporaryPtr<const System> system = GetSystem(m_system_id);
+    boost::shared_ptr<const System> system = GetSystem(m_system_id);
     if (system) {
         name = system->Name();
         m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals2::at_front);

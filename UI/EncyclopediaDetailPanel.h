@@ -3,9 +3,10 @@
 
 #include <GG/GGFwd.h>
 
+#include <boost/shared_ptr.hpp>
+
 #include "CUIWnd.h"
 #include "../universe/EnumsFwd.h"
-#include "../universe/TemporaryPtr.h"
 
 class Planet;
 class Tech;
@@ -50,7 +51,7 @@ public:
 
     void            SetText(const std::string& text, bool lookup_in_stringtable = true);
     void            SetPlanet(int planet_id);
-    void            SetItem(TemporaryPtr<const Planet> planet);
+    void            SetItem(boost::shared_ptr<const Planet> planet);
     void            SetTech(const std::string& tech_name);
     void            SetItem(const Tech* tech);
     void            SetPartType(const std::string& part_name);
@@ -67,7 +68,7 @@ public:
     void            SetItem(const FieldType* field_type);
     void            SetObject(int object_id);
     void            SetObject(const std::string& object_id);
-    void            SetItem(TemporaryPtr<const UniverseObject> obj);
+    void            SetItem(boost::shared_ptr<const UniverseObject> obj);
     void            SetEmpire(int empire_id);
     void            SetEmpire(const std::string& empire_id);
     void            SetItem(const Empire* empire);

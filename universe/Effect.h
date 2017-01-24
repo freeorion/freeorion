@@ -15,7 +15,7 @@ struct ScriptingContext;
 
 namespace Condition {
     struct ConditionBase;
-    typedef std::vector<TemporaryPtr<const UniverseObject> > ObjectSet;
+    typedef std::vector<boost::shared_ptr<const UniverseObject>> ObjectSet;
 }
 
 namespace ValueRef {

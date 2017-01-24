@@ -25,7 +25,7 @@ public:
 
     bool ContainedBy(int object_id) const override;
 
-    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     const std::string& PublicName(int empire_id) const override;
 
@@ -33,12 +33,13 @@ public:
 
     const std::string&          FieldTypeName() const { return m_type_name; }
 
-    bool                        InField(TemporaryPtr<const UniverseObject> obj) const;
+    bool InField(boost::shared_ptr<const UniverseObject> obj) const;
+
     bool                        InField(double x, double y) const;
     //@}
 
     /** \name Mutators */ //@{
-    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void ResetTargetMaxUnpairedMeters() override;
     //@}

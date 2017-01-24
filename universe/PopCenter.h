@@ -4,10 +4,10 @@
 #include "EnumsFwd.h"
 
 #include <boost/serialization/nvp.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #include "../util/Export.h"
-#include "EnableTemporaryFromThis.h"
-#include "TemporaryPtr.h"
 
 class Meter;
 class UniverseObject;
@@ -18,7 +18,7 @@ class UniverseObject;
   * Planet is the most obvious class to inherit PopCenter, but other classes
   * could be made from it as well (e.g., a ship that is large enough to support
   * population and still travel between systems). */
-class FO_COMMON_API PopCenter : virtual public EnableTemporaryFromThis<UniverseObject> {
+class FO_COMMON_API PopCenter : virtual public boost::enable_shared_from_this<UniverseObject> {
 public:
     /** \name Structors */ //@{
     PopCenter();
@@ -41,8 +41,11 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void                Copy(TemporaryPtr<const PopCenter> copied_object, Visibility vis);
-    void                Copy(TemporaryPtr<const PopCenter> copied_object);
+
+    void Copy(boost::shared_ptr<const PopCenter> copied_object, Visibility vis);
+
+    void Copy(boost::shared_ptr<const PopCenter> copied_object);
+
     void                SetSpecies(const std::string& species_name);        ///< sets the species of the population to \a species_name
     virtual void        Reset();                                            ///< sets all meters to 0, clears race name
     virtual void        Depopulate();                                       ///< removes population

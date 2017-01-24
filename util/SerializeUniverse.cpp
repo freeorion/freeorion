@@ -330,10 +330,10 @@ template FO_COMMON_API void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarc
 template FO_COMMON_API void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const Universe& universe);
 
 template <class Archive>
-void Serialize(Archive& oa, const std::map<int, TemporaryPtr<UniverseObject> >& objects)
+void Serialize(Archive& oa, const std::map<int, boost::shared_ptr<UniverseObject>>& objects)
 { oa << BOOST_SERIALIZATION_NVP(objects); }
-template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const std::map<int, TemporaryPtr<UniverseObject> >& objects);
-template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const std::map<int, TemporaryPtr<UniverseObject> >& objects);
+template void Serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& oa, const std::map<int, boost::shared_ptr<UniverseObject>>& objects);
+template void Serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& oa, const std::map<int, boost::shared_ptr<UniverseObject>>& objects);
 
 template <class Archive>
 void Deserialize(Archive& ia, Universe& universe)
@@ -342,7 +342,7 @@ template FO_COMMON_API void Deserialize<freeorion_bin_iarchive>(freeorion_bin_ia
 template FO_COMMON_API void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, Universe& universe);
 
 template <class Archive>
-void Deserialize(Archive& ia, std::map<int, TemporaryPtr<UniverseObject> >& objects)
+void Deserialize(Archive& ia, std::map<int, boost::shared_ptr<UniverseObject>>& objects)
 { ia >> BOOST_SERIALIZATION_NVP(objects); }
-template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, std::map<int, TemporaryPtr<UniverseObject> >& objects);
-template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, std::map<int, TemporaryPtr<UniverseObject> >& objects);
+template void Deserialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ia, std::map<int, boost::shared_ptr<UniverseObject>>& objects);
+template void Deserialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ia, std::map<int, boost::shared_ptr<UniverseObject>>& objects);

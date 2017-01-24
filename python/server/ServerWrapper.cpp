@@ -232,7 +232,7 @@ namespace {
         }
 
         // get the universe object to test and check if it exists
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "SpecialLocation: Couldn't get object with ID " << object_id;
             return false;
@@ -476,7 +476,7 @@ namespace {
 
         bool Location(int object_id) {
             // get the universe object to test and check if it exists
-            TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+            boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
             if (!obj) {
                 ErrorLogger() << "MonsterFleetPlanWrapper::Location: Couldn't get object with ID " << object_id;
                 return false;
@@ -513,7 +513,7 @@ namespace {
     //
     // Wrappers for common UniverseObject class member funtions
     object GetName(int object_id) {
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "GetName: Couldn't get object with ID " << object_id;
             return object("");
@@ -522,7 +522,7 @@ namespace {
     }
 
     void SetName(int object_id, const std::string& name) {
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "RenameUniverseObject: Couldn't get object with ID " << object_id;
             return;
@@ -531,7 +531,7 @@ namespace {
     }
 
     double GetX(int object_id) {
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "GetX: Couldn't get object with ID " << object_id;
             return UniverseObject::INVALID_POSITION;
@@ -540,7 +540,7 @@ namespace {
     }
 
     double GetY(int object_id) {
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "GetY: Couldn't get object with ID " << object_id;
             return UniverseObject::INVALID_POSITION;
@@ -549,7 +549,7 @@ namespace {
     }
 
     tuple GetPos(int object_id) {
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "GetPos: Couldn't get object with ID " << object_id;
             return make_tuple(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
@@ -558,7 +558,7 @@ namespace {
     }
 
     int GetOwner(int object_id) {
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "GetOwner: Couldn't get object with ID " << object_id;
             return ALL_EMPIRES;
@@ -568,7 +568,7 @@ namespace {
 
     void AddSpecial(int object_id, const std::string special_name) {
         // get the universe object and check if it exists
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "AddSpecial: Couldn't get object with ID " << object_id;
             return;
@@ -587,7 +587,7 @@ namespace {
 
     void RemoveSpecial(int object_id, const std::string special_name) {
         // get the universe object and check if it exists
-        TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             ErrorLogger() << "RemoveSpecial: Couldn't get object with ID " << object_id;
             return;
@@ -637,7 +637,7 @@ namespace {
         }
 
         // Create system and insert it into the object map
-        TemporaryPtr<System> system = GetUniverse().CreateSystem(star_type, star_name, x, y);
+        boost::shared_ptr<System> system = GetUniverse().CreateSystem(star_type, star_name, x, y);
         if (!system) {
             ErrorLogger() << "CreateSystem : Attempt to insert system into the object map failed";
             return INVALID_OBJECT_ID;
@@ -647,7 +647,7 @@ namespace {
     }
 
     int CreatePlanet(PlanetSize size, PlanetType planet_type, int system_id, int orbit, const std::string& name) {
-        TemporaryPtr<System> system = Objects().Object<System>(system_id);
+        boost::shared_ptr<System> system = Objects().Object<System>(system_id);
 
         // Perform some validity checks
         // Check if system with id system_id exists
@@ -688,14 +688,14 @@ namespace {
         }
 
         // Create planet and insert it into the object map
-        TemporaryPtr<Planet> planet = GetUniverse().CreatePlanet(planet_type, size);
+        boost::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(planet_type, size);
         if (!planet) {
             ErrorLogger() << "CreateSystem : Attempt to insert planet into the object map failed";
             return INVALID_OBJECT_ID;
         }
 
         // Add planet to system map
-        system->Insert(TemporaryPtr<UniverseObject>(planet), orbit);
+        system->Insert(boost::shared_ptr<UniverseObject>(planet), orbit);
 
         // If a name has been specified, set planet name
         if (!(name.empty()))
@@ -705,13 +705,13 @@ namespace {
     }
 
     int CreateBuilding(const std::string& building_type, int planet_id, int empire_id) {
-        TemporaryPtr<Planet> planet = Objects().Object<Planet>(planet_id);
+        boost::shared_ptr<Planet> planet = Objects().Object<Planet>(planet_id);
         if (!planet) {
             ErrorLogger() << "CreateBuilding: couldn't get planet with ID " << planet_id;
             return INVALID_OBJECT_ID;
         }
 
-        TemporaryPtr<System> system = GetSystem(planet->SystemID());
+        boost::shared_ptr<System> system = GetSystem(planet->SystemID());
         if (!system) {
             ErrorLogger() << "CreateBuilding: couldn't get system for planet";
             return INVALID_OBJECT_ID;
@@ -723,7 +723,7 @@ namespace {
             return INVALID_OBJECT_ID;
         }
 
-        TemporaryPtr<Building> building = GetUniverse().CreateBuilding(empire_id, building_type, empire_id);
+        boost::shared_ptr<Building> building = GetUniverse().CreateBuilding(empire_id, building_type, empire_id);
         if (!building) {
             ErrorLogger() << "CreateBuilding: couldn't create building";
             return INVALID_OBJECT_ID;
@@ -737,14 +737,14 @@ namespace {
 
     int CreateFleet(const std::string& name, int system_id, int empire_id) {
         // Get system and check if it exists
-        TemporaryPtr<System> system = Objects().Object<System>(system_id);
+        boost::shared_ptr<System> system = Objects().Object<System>(system_id);
         if (!system) {
             ErrorLogger() << "CreateFleet: couldn't get system with ID " << system_id;
             return INVALID_OBJECT_ID;
         }
 
         // Create new fleet at the position of the specified system
-        TemporaryPtr<Fleet> fleet = GetUniverse().CreateFleet(name, system->X(), system->Y(), empire_id);
+        boost::shared_ptr<Fleet> fleet = GetUniverse().CreateFleet(name, system->X(), system->Y(), empire_id);
         if (!fleet) {
             ErrorLogger() << "CreateFleet: couldn't create new fleet";
             return INVALID_OBJECT_ID;
@@ -780,13 +780,13 @@ namespace {
         }
 
         // get fleet and check if it exists
-        TemporaryPtr<Fleet> fleet = GetFleet(fleet_id);
+        boost::shared_ptr<Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
             ErrorLogger() << "CreateShip: couldn't get fleet with ID " << fleet_id;
             return INVALID_OBJECT_ID;
         }
 
-        TemporaryPtr<System> system = GetSystem(fleet->SystemID());
+        boost::shared_ptr<System> system = GetSystem(fleet->SystemID());
         if (!system) {
             ErrorLogger() << "CreateShip: couldn't get system for fleet";
             return INVALID_OBJECT_ID;
@@ -805,7 +805,7 @@ namespace {
         }
 
         // create new ship
-        TemporaryPtr<Ship> ship = universe.CreateShip(empire_id, ship_design->ID(), species, empire_id);
+        boost::shared_ptr<Ship> ship = universe.CreateShip(empire_id, ship_design->ID(), species, empire_id);
         if (!ship) {
             ErrorLogger() << "CreateShip: couldn't create new ship";
             return INVALID_OBJECT_ID;
@@ -852,12 +852,12 @@ namespace {
     int CreateMonster(const std::string& design_name, int fleet_id)
     { return CreateShip(NewMonsterName(), design_name, "", fleet_id); }
 
-    TemporaryPtr<Field> CreateFieldImpl(const std::string& field_type_name, double x, double y, double size) {
+    boost::shared_ptr<Field> CreateFieldImpl(const std::string& field_type_name, double x, double y, double size) {
         // check if a field type with the specified field type name exists and get the field type
         const FieldType* field_type = GetFieldType(field_type_name);
         if (!field_type) {
             ErrorLogger() << "CreateFieldImpl: couldn't get field type with name: " << field_type_name;
-            return TemporaryPtr<Field>();
+            return boost::shared_ptr<Field>();
         }
 
         // check if the specified size is within sane limits, and reset its value if not
@@ -871,10 +871,10 @@ namespace {
         }
 
         // create the new field
-        TemporaryPtr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
+        boost::shared_ptr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
         if (!field) {
             ErrorLogger() << "CreateFieldImpl: couldn't create field";
-            return TemporaryPtr<Field>();
+            return boost::shared_ptr<Field>();
         }
 
         // get the localized version of the field type name and set that as the fields name
@@ -883,7 +883,7 @@ namespace {
     }
 
     int CreateField(const std::string& field_type_name, double x, double y, double size) {
-        TemporaryPtr<Field> field = CreateFieldImpl(field_type_name, x, y, size);
+        boost::shared_ptr<Field> field = CreateFieldImpl(field_type_name, x, y, size);
         if (field)
             return field->ID();
         else
@@ -892,13 +892,13 @@ namespace {
 
     int CreateFieldInSystem(const std::string& field_type_name, double size, int system_id) {
         // check if system exists and get system
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "CreateFieldInSystem: couldn't get system with ID" << system_id;
             return INVALID_OBJECT_ID;
         }
         // create the field with the coordinates of the system
-        TemporaryPtr<Field> field = CreateFieldImpl(field_type_name, system->X(), system->Y(), size);
+        boost::shared_ptr<Field> field = CreateFieldImpl(field_type_name, system->X(), system->Y(), size);
         if (!field)
             return INVALID_OBJECT_ID;
         system->Insert(field); // insert the field into the system
@@ -907,7 +907,7 @@ namespace {
 
     // Wrappers for System class member functions
     StarType SystemGetStarType(int system_id) {
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetStarType: couldn't get system with ID " << system_id;
             return INVALID_STAR_TYPE;
@@ -922,7 +922,7 @@ namespace {
             return;
         }
 
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemSetStarType : Couldn't get system with ID " << system_id;
             return;
@@ -932,7 +932,7 @@ namespace {
     }
 
     int SystemGetNumOrbits(int system_id) {
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetNumOrbits : Couldn't get system with ID " << system_id;
             return 0;
@@ -942,7 +942,7 @@ namespace {
 
     list SystemFreeOrbits(int system_id) {
         list py_orbits;
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemFreeOrbits : Couldn't get system with ID " << system_id;
             return py_orbits;
@@ -953,7 +953,7 @@ namespace {
     }
 
     bool SystemOrbitOccupied(int system_id, int orbit) {
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemOrbitOccupied : Couldn't get system with ID " << system_id;
             return 0;
@@ -962,7 +962,7 @@ namespace {
     }
 
     int SystemOrbitOfPlanet(int system_id, int planet_id) {
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemOrbitOfPlanet : Couldn't get system with ID " << system_id;
             return 0;
@@ -972,7 +972,7 @@ namespace {
 
     list SystemGetPlanets(int system_id) {
         list py_planets;
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetPlanets : Couldn't get system with ID " << system_id;
             return py_planets;
@@ -984,7 +984,7 @@ namespace {
 
     list SystemGetFleets(int system_id) {
         list py_fleets;
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetFleets : Couldn't get system with ID " << system_id;
             return py_fleets;
@@ -997,7 +997,7 @@ namespace {
     list SystemGetStarlanes(int system_id) {
         list py_starlanes;
         // get source system
-        TemporaryPtr<System> system = GetSystem(system_id);
+        boost::shared_ptr<System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "SystemGetStarlanes : Couldn't get system with ID " << system_id;
             return py_starlanes;
@@ -1017,12 +1017,12 @@ namespace {
 
     void SystemAddStarlane(int from_sys_id, int to_sys_id) {
         // get source and destination system, check that both exist
-        TemporaryPtr<System> from_sys = GetSystem(from_sys_id);
+        boost::shared_ptr<System> from_sys = GetSystem(from_sys_id);
         if (!from_sys) {
             ErrorLogger() << "SystemAddStarlane : Couldn't find system with ID " << from_sys_id;
             return;
         }
-        TemporaryPtr<System> to_sys = GetSystem(to_sys_id);
+        boost::shared_ptr<System> to_sys = GetSystem(to_sys_id);
         if (!to_sys) {
             ErrorLogger() << "SystemAddStarlane : Couldn't find system with ID " << to_sys_id;
             return;
@@ -1034,12 +1034,12 @@ namespace {
 
     void SystemRemoveStarlane(int from_sys_id, int to_sys_id) {
         // get source and destination system, check that both exist
-        TemporaryPtr<System> from_sys = GetSystem(from_sys_id);
+        boost::shared_ptr<System> from_sys = GetSystem(from_sys_id);
         if (!from_sys) {
             ErrorLogger() << "SystemRemoveStarlane : Couldn't find system with ID " << from_sys_id;
             return;
         }
-        TemporaryPtr<System> to_sys = GetSystem(to_sys_id);
+        boost::shared_ptr<System> to_sys = GetSystem(to_sys_id);
         if (!to_sys) {
             ErrorLogger() << "SystemRemoveStarlane : Couldn't find system with ID " << to_sys_id;
             return;
@@ -1051,7 +1051,7 @@ namespace {
 
     // Wrapper for Planet class member functions
     PlanetType PlanetGetType(int planet_id) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetType: Couldn't get planet with ID " << planet_id;
             return INVALID_PLANET_TYPE;
@@ -1060,7 +1060,7 @@ namespace {
     }
 
     void PlanetSetType(int planet_id, PlanetType planet_type) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetType: Couldn't get planet with ID " << planet_id;
             return;
@@ -1078,7 +1078,7 @@ namespace {
     }
 
     PlanetSize PlanetGetSize(int planet_id) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSize: Couldn't get planet with ID " << planet_id;
             return INVALID_PLANET_SIZE;
@@ -1087,7 +1087,7 @@ namespace {
     }
 
     void PlanetSetSize(int planet_id, PlanetSize planet_size) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSize: Couldn't get planet with ID " << planet_id;
             return;
@@ -1103,7 +1103,7 @@ namespace {
     }
 
     object PlanetGetSpecies(int planet_id) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetSpecies: Couldn't get planet with ID " << planet_id;
             return object("");
@@ -1112,7 +1112,7 @@ namespace {
     }
 
     void PlanetSetSpecies(int planet_id, const std::string& species_name) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
@@ -1121,7 +1121,7 @@ namespace {
     }
 
     object PlanetGetFocus(int planet_id) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetGetFocus: Couldn't get planet with ID " << planet_id;
             return object("");
@@ -1130,7 +1130,7 @@ namespace {
     }
 
     void PlanetSetFocus(int planet_id, const std::string& focus) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetSetSpecies: Couldn't get planet with ID " << planet_id;
             return;
@@ -1140,7 +1140,7 @@ namespace {
 
     list PlanetAvailableFoci(int planet_id) {
         list py_foci;
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetAvailableFoci: Couldn't get planet with ID " << planet_id;
             return py_foci;
@@ -1152,7 +1152,7 @@ namespace {
     }
 
     bool PlanetMakeOutpost(int planet_id, int empire_id) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeOutpost: couldn't get planet with ID:" << planet_id;
             return false;
@@ -1167,7 +1167,7 @@ namespace {
     }
 
     bool PlanetMakeColony(int planet_id, int empire_id, const std::string& species, double population) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetMakeColony: couldn't get planet with ID:" << planet_id;
             return false;
@@ -1190,7 +1190,7 @@ namespace {
     }
 
     object PlanetCardinalSuffix(int planet_id) {
-        TemporaryPtr<Planet> planet = GetPlanet(planet_id);
+        boost::shared_ptr<Planet> planet = GetPlanet(planet_id);
         if (!planet) {
             ErrorLogger() << "PlanetCardinalSuffix: couldn't get planet with ID:" << planet_id;
             return object(UserString("ERROR"));

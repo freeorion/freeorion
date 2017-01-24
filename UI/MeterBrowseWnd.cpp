@@ -132,7 +132,7 @@ void MeterBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
         ErrorLogger() << "MeterBrowseWnd couldn't get object with id " << m_object_id;
         return;
@@ -151,7 +151,7 @@ void MeterBrowseWnd::Initialize() {
         std::string summary_title_text;
         if (m_primary_meter_type == METER_POPULATION) {
             std::string human_readable_species_name;
-            if (TemporaryPtr<const PopCenter> pop = boost::dynamic_pointer_cast<const PopCenter>(obj)) {
+            if (boost::shared_ptr<const PopCenter> pop = boost::dynamic_pointer_cast<const PopCenter>(obj)) {
                 const std::string& species_name = pop->SpeciesName();
                 if (!species_name.empty())
                     human_readable_species_name = UserString(species_name);
@@ -238,7 +238,7 @@ namespace {
         int obj_id, const MeterType& meter_type)
     {
         // get object and meter, aborting if not valid
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(obj_id);
+        boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(obj_id);
         if (!obj) {
             ErrorLogger() << "Couldn't get object with id " << obj_id;
             return boost::none;
@@ -314,7 +314,7 @@ namespace DualMeter {
 }
 
 void MeterBrowseWnd::UpdateSummary() {
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj)
         return;
 
@@ -390,12 +390,12 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     // add label-value pairs for each alteration recorded for this meter
     for (const Effect::AccountingInfo& info : *maybe_info_vec) {
-        TemporaryPtr<const UniverseObject> source = GetUniverseObject(info.source_id);
+        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(info.source_id);
 
         const Empire*   empire = nullptr;
-        TemporaryPtr<const Building> building;
-        TemporaryPtr<const Planet>   planet;
-        //TemporaryPtr<const Ship>     ship;
+        boost::shared_ptr<const Building> building;
+        boost::shared_ptr<const Planet>   planet;
+        //boost::shared_ptr<const Ship>     ship;
         std::string     text;
         std::string     name;
         if (source)
@@ -510,7 +510,7 @@ void ShipDamageBrowseWnd::Initialize() {
     const GG::X TOTAL_WIDTH = MeterBrowseLabelWidth() + MeterBrowseValueWidth();
 
     // get objects and meters to verify that they exist
-    TemporaryPtr<const UniverseObject> ship = GetShip(m_object_id);
+    boost::shared_ptr<const UniverseObject> ship = GetShip(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd couldn't get ship with id " << m_object_id;
         return;
@@ -548,7 +548,7 @@ void ShipDamageBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void ShipDamageBrowseWnd::UpdateSummary() {
-    TemporaryPtr<const Ship> ship = GetShip(m_object_id);
+    boost::shared_ptr<const Ship> ship = GetShip(m_object_id);
     if (!ship)
         return;
 
@@ -573,7 +573,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_effect_labels_and_values.clear();
 
     // get object and meter, aborting if not valid
-    TemporaryPtr<const Ship> ship = GetShip(m_object_id);
+    boost::shared_ptr<const Ship> ship = GetShip(m_object_id);
     if (!ship) {
         ErrorLogger() << "ShipDamageBrowseWnd::UpdateEffectLabelsAndValues couldn't get ship with id " << m_object_id;
         return;
@@ -675,7 +675,7 @@ void ShipFightersBrowseWnd::Initialize() {
     const GG::Clr BG_COLOR = ClientUI::WndColor();
 
     // get objects and meters to verify that they exist
-    TemporaryPtr<const UniverseObject> ship = GetShip(m_object_id);
+    boost::shared_ptr<const UniverseObject> ship = GetShip(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;
@@ -730,7 +730,7 @@ void ShipFightersBrowseWnd::UpdateImpl(std::size_t mode, const Wnd* target) {
 }
 
 void ShipFightersBrowseWnd::UpdateSummary() {
-    TemporaryPtr<const Ship> ship = GetShip(m_object_id);
+    boost::shared_ptr<const Ship> ship = GetShip(m_object_id);
     if (!ship)
         return;
 
@@ -802,7 +802,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     m_hangar_list->DeleteChildren();
 
     // early return if no valid ship, ship design, or no parts in the design
-    TemporaryPtr<const Ship> ship = GetShip(m_object_id);
+    boost::shared_ptr<const Ship> ship = GetShip(m_object_id);
     if (!ship) {
         ErrorLogger() << "Couldn't get ship with id " << m_object_id;
         return;

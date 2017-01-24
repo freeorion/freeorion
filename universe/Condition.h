@@ -3,10 +3,10 @@
 
 #include "EnumsFwd.h"
 #include "ValueRefFwd.h"
-#include "TemporaryPtr.h"
 
 #include "../util/Export.h"
 
+#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -20,7 +20,7 @@ struct ScriptingContext;
   * represent predicates about UniverseObjects used by, for instance, the
   * Effect system. */
 namespace Condition {
-typedef std::vector<TemporaryPtr<const UniverseObject>> ObjectSet;
+typedef std::vector<boost::shared_ptr<const UniverseObject>> ObjectSet;
 
 enum Invariance {
     UNKNOWN_INVARIANCE, ///< This condition hasn't yet calculated this invariance type
@@ -63,8 +63,8 @@ struct ConditionBase;
 
 /** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
 FO_COMMON_API std::string ConditionFailedDescription(const std::vector<ConditionBase*>& conditions,
-                                                     TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
-                                                     TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
+                                                     boost::shared_ptr<const UniverseObject> candidate_object = boost::shared_ptr<const UniverseObject>(),
+                                                     boost::shared_ptr<const UniverseObject> source_object = boost::shared_ptr<const UniverseObject>());
 
 /** Returns a single string which describes a vector of Conditions. If multiple
   * conditions are passed, they are treated as if they were contained by an And
@@ -76,8 +76,8 @@ FO_COMMON_API std::string ConditionFailedDescription(const std::vector<Condition
   * subconditions the candidate matches, and indicate if the overall combination
   * of conditions matches the object. */
 FO_COMMON_API std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
-                                               TemporaryPtr<const UniverseObject> candidate_object = TemporaryPtr<const UniverseObject>(),
-                                               TemporaryPtr<const UniverseObject> source_object = TemporaryPtr<const UniverseObject>());
+                                               boost::shared_ptr<const UniverseObject> candidate_object = boost::shared_ptr<const UniverseObject>(),
+                                               boost::shared_ptr<const UniverseObject> source_object = boost::shared_ptr<const UniverseObject>());
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API ConditionBase {
@@ -105,11 +105,11 @@ struct FO_COMMON_API ConditionBase {
 
     /** Tests single candidate object, returning true iff it matches condition. */
     bool Eval(const ScriptingContext& parent_context,
-              TemporaryPtr<const UniverseObject> candidate) const;
+              boost::shared_ptr<const UniverseObject> candidate) const;
 
     /** Tests single candidate object, returning true iff it matches condition
       * with empty ScriptingContext. */
-    bool Eval(TemporaryPtr<const UniverseObject> candidate) const;
+    bool Eval(boost::shared_ptr<const UniverseObject> candidate) const;
 
     virtual void GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                    ObjectSet& condition_non_targets) const;

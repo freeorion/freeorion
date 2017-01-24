@@ -750,7 +750,7 @@ private:
             // collect all valid tags on any object in universe
             std::set<std::string> all_tags;
 
-            for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>()) {
+            for (boost::shared_ptr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>()) {
                 std::set<std::string> tags = obj->Tags();
                 all_tags.insert(tags.begin(), tags.end());
             }
@@ -835,7 +835,7 @@ private:
 
             // collect all valid foci on any object in universe
             std::set<std::string> all_foci;
-            for (TemporaryPtr<const Planet> planet : Objects().FindObjects<Planet>()) {
+            for (boost::shared_ptr<const Planet> planet : Objects().FindObjects<Planet>()) {
                 std::vector<std::string> obj_foci = planet->AvailableFoci();
                 std::copy(obj_foci.begin(), obj_foci.end(), std::inserter(all_foci, all_foci.end()));
             }
@@ -1126,11 +1126,11 @@ private:
 };
 
 namespace {
-    std::vector<boost::shared_ptr<GG::Texture> > ObjectTextures(TemporaryPtr<const UniverseObject> obj) {
+    std::vector<boost::shared_ptr<GG::Texture>> ObjectTextures(boost::shared_ptr<const UniverseObject> obj) {
         std::vector<boost::shared_ptr<GG::Texture> > retval;
 
         if (obj->ObjectType() == OBJ_SHIP) {
-            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
+            boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
             if (ship) {
                 if (const ShipDesign* design = ship->Design())
                     retval.push_back(ClientUI::ShipDesignIcon(design->ID()));
@@ -1139,7 +1139,7 @@ namespace {
                 retval.push_back(ClientUI::ShipDesignIcon(INVALID_OBJECT_ID));  // default icon
             }
         } else if (obj->ObjectType() == OBJ_FLEET) {
-            if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
+            if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
                 boost::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
                 if (size_icon)
                     retval.push_back(size_icon);
@@ -1147,7 +1147,7 @@ namespace {
                 std::copy(head_icons.begin(), head_icons.end(), std::back_inserter(retval));
             }
         } else if (obj->ObjectType() == OBJ_SYSTEM) {
-            if (TemporaryPtr<const System> system = boost::dynamic_pointer_cast<const System>(obj)) {
+            if (boost::shared_ptr<const System> system = boost::dynamic_pointer_cast<const System>(obj)) {
                 StarType star_type = system->GetStarType();
                 ClientUI* ui = ClientUI::GetClientUI();
                 boost::shared_ptr<GG::Texture> disc_texture = ui->GetModuloTexture(
@@ -1160,13 +1160,13 @@ namespace {
                     retval.push_back(halo_texture);
             }
         } else if (obj->ObjectType() == OBJ_PLANET) {
-            if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj))
+            if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj))
                 retval.push_back(ClientUI::PlanetIcon(planet->Type()));
         } else if (obj->ObjectType() == OBJ_BUILDING) {
-            if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj))
+            if (boost::shared_ptr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj))
                 retval.push_back(ClientUI::BuildingIcon(building->BuildingTypeName()));
         } else if (obj->ObjectType() == OBJ_FIELD) {
-            if (TemporaryPtr<const Field> field = boost::dynamic_pointer_cast<const Field>(obj))
+            if (boost::shared_ptr<const Field> field = boost::dynamic_pointer_cast<const Field>(obj))
                 retval.push_back(ClientUI::FieldTexture(field->FieldTypeName()));
         }
         if (retval.empty())
@@ -1182,7 +1182,7 @@ namespace {
 ////////////////////////////////////////////////
 class ObjectPanel : public GG::Control {
 public:
-    ObjectPanel(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj,
+    ObjectPanel(GG::X w, GG::Y h, boost::shared_ptr<const UniverseObject> obj,
                 bool expanded, bool has_contents, int indent) :
         Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
         m_initialized(false),
@@ -1197,7 +1197,7 @@ public:
         m_selected(false)
     {
         SetChildClippingMode(ClipToClient);
-        TemporaryPtr<const ResourceCenter> rcobj = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
+        boost::shared_ptr<const ResourceCenter> rcobj = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
         if (rcobj)
             GG::Connect(rcobj->ResourceCenterChangedSignal, &ObjectPanel::ResourceCenterChanged, this);
     }
@@ -1281,7 +1281,7 @@ public:
             AttachChild(m_dot);
         }
 
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+        boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
         std::vector<boost::shared_ptr<GG::Texture> > textures = ObjectTextures(obj);
 
         m_icon = new MultiTextureStaticGraphic(textures,
@@ -1362,7 +1362,7 @@ private:
     void                RefreshCache() const {
         m_column_val_cache.clear();
         m_column_val_cache.reserve(NUM_COLUMNS);
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+        boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
         ScriptingContext context(obj);
 
         // get currently displayed column value refs, put values into this panel's cache
@@ -1411,7 +1411,7 @@ private:
 ////////////////////////////////////////////////
 class ObjectRow : public GG::ListBox::Row {
 public:
-    ObjectRow(GG::X w, GG::Y h, TemporaryPtr<const UniverseObject> obj, bool expanded,
+    ObjectRow(GG::X w, GG::Y h, boost::shared_ptr<const UniverseObject> obj, bool expanded,
               int container_object_panel, const std::set<int>& contained_object_panels,
               int indent) :
         GG::ListBox::Row(w, h, "", GG::ALIGN_CENTER, 1),
@@ -1479,7 +1479,7 @@ private:
     ObjectPanel*        m_panel;
     int                 m_container_object_panel;
     std::set<int>       m_contained_object_panels;
-    TemporaryPtr<const UniverseObject> m_obj_init;
+    boost::shared_ptr<const UniverseObject> m_obj_init;
     bool                m_expanded_init;
     int                 m_indent_init;
 };
@@ -1805,7 +1805,7 @@ public:
         m_object_change_connections.clear();
     }
 
-    bool            ObjectShown(TemporaryPtr<const UniverseObject> obj, bool assume_visible_without_checking = false) {
+    bool ObjectShown(boost::shared_ptr<const UniverseObject> obj, bool assume_visible_without_checking = false) {
         if (!obj)
             return false;
 
@@ -1839,7 +1839,7 @@ public:
         std::map<int, std::set<int> >   planet_buildings;
         std::set<int>                   fields;
 
-        for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects()) {
+        for (boost::shared_ptr<const UniverseObject> obj : GetUniverse().Objects()) {
             if (!ObjectShown(obj))
                 continue;
 
@@ -1849,13 +1849,13 @@ public:
                 systems.insert(object_id);
             } else if (obj->ObjectType() == OBJ_FIELD) {
                 fields.insert(object_id);
-            } else if (TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
+            } else if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
                 system_fleets[fleet->SystemID()].insert(object_id);
-            } else if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
+            } else if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
                 fleet_ships[ship->FleetID()].insert(object_id);
-            } else if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
+            } else if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
                 system_planets[planet->SystemID()].insert(object_id);
-            } else if (TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj)) {
+            } else if (boost::shared_ptr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj)) {
                 planet_buildings[building->PlanetID()].insert(object_id);
             }
         }
@@ -2063,7 +2063,7 @@ private:
     void            AddObjectRow(int object_id, int container, const std::set<int>& contents,
                                  int indent, GG::ListBox::iterator it)
     {
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj)
             return;
         const GG::Pt row_size = ListRowSize();
@@ -2155,7 +2155,7 @@ private:
     void            ObjectStateChanged(int object_id) {
         if (object_id == INVALID_OBJECT_ID)
             return;
-        TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
+        boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
         DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
         if (!obj)
             return;
@@ -2167,7 +2167,7 @@ private:
             Refresh();
     }
 
-    void            UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj)
+    void UniverseObjectDeleted(boost::shared_ptr<const UniverseObject> obj)
     { if (obj) RemoveObjectRow(obj->ID()); }
 
     std::map<int, boost::signals2::connection>          m_object_change_connections;
@@ -2327,7 +2327,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
 
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
     if (!obj)
         return;
@@ -2348,7 +2348,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
             ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
             if (row) {
-                TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                boost::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
                 if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
                     for (const std::string& planet_focus : one_planet->AvailableFoci())
                         all_foci[planet_focus]++;
@@ -2441,7 +2441,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
                     ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
                     if (row) {
-                        TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                        boost::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
                         if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
                             one_planet->SetFocus(focus);
                             app->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(app->EmpireID(), one_planet->ID(), focus)));
@@ -2457,7 +2457,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
                     if (!row)
                         continue;
-                    TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    boost::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
                         continue;
                     ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
@@ -2475,7 +2475,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
                     if (!row)
                         continue;
-                    TemporaryPtr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    boost::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID())
                        || !cur_empire->EnqueuableItem(BT_BUILDING, bld, row->ObjectID())
                        || !cur_empire->ProducibleItem(BT_BUILDING, bld, row->ObjectID()))

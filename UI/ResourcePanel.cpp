@@ -6,7 +6,6 @@
 #include "../util/Logger.h"
 #include "../universe/Effect.h"
 #include "../universe/ResourceCenter.h"
-#include "../universe/TemporaryPtr.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/Enums.h"
 #include "../client/human/HumanClientApp.h"
@@ -15,6 +14,9 @@
 #include "MeterBrowseWnd.h"
 #include "MultiIconValueIndicator.h"
 #include "MultiMeterStatusBar.h"
+
+#include <boost/shared_ptr.hpp>
+
 
 namespace {
     const int       EDGE_PAD(3);
@@ -40,7 +42,7 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 {
     SetName("ResourcePanel");
 
-    TemporaryPtr<const ResourceCenter> res = GetResCenter();
+    boost::shared_ptr<const ResourceCenter> res = GetResCenter();
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
@@ -169,7 +171,7 @@ void ResourcePanel::Update() {
         m_multi_icon_value_indicator->ClearToolTip(meter_stat.first);
     }
 
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "BuildingPanel::Update couldn't get object with id " << m_rescenter_id;
         return;
@@ -254,16 +256,16 @@ void ResourcePanel::DoLayout() {
     SetCollapsed(!s_expanded_map[m_rescenter_id]);
 }
 
-TemporaryPtr<const ResourceCenter> ResourcePanel::GetResCenter() const {
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
+boost::shared_ptr<const ResourceCenter> ResourcePanel::GetResCenter() const {
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "ResourcePanel tried to get an object with an invalid m_rescenter_id";
-        return TemporaryPtr<const ResourceCenter>();
+        return boost::shared_ptr<const ResourceCenter>();
     }
-    TemporaryPtr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
+    boost::shared_ptr<const ResourceCenter> res = boost::dynamic_pointer_cast<const ResourceCenter>(obj);
     if (!res) {
         ErrorLogger() << "ResourcePanel failed casting an object pointer to a ResourceCenter pointer";
-        return TemporaryPtr<const ResourceCenter>();
+        return boost::shared_ptr<const ResourceCenter>();
     }
     return res;
 }

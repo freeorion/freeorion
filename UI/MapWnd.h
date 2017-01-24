@@ -147,7 +147,7 @@ public:
 
     void            CenterOnMapCoord(double x, double y);                   //!< centers the map on map position (x, y)
     void            CenterOnObject(int id);                                 //!< centers the map on object with id \a id
-    void            CenterOnObject(TemporaryPtr<const UniverseObject> obj);              //!< centers the map on object \a id
+    void            CenterOnObject(boost::shared_ptr<const UniverseObject> obj);              //!< centers the map on object \a id
 
     void            ShowPlanet(int planet_id);                              //!< brings up encyclopedia panel and displays info about the planet
     void            ShowCombatLog(int log_id);                              //!< brings up encyclopedia panel and displays info about the combat
@@ -167,7 +167,7 @@ public:
     void            ReselectLastSystem();                                   //!< re-selects the most recently selected system, if a valid one exists
     void            SelectPlanet(int planetID);                             //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
     void            SelectFleet(int fleetID);                               //!< programatically selects fleets by ID
-    void            SelectFleet(TemporaryPtr<Fleet> fleet);                              //!< programatically selects fleets
+    void            SelectFleet(boost::shared_ptr<Fleet> fleet);                              //!< programatically selects fleets
     void            ReselectLastFleet();                                    //!< re-selects the most recent selected fleet, if a valid one exists
 
     void            RemoveFleet(int fleet_id); //!< removes specified fleet.
@@ -255,17 +255,17 @@ private:
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
 
     /** Connect all \p fleets StateChangedSignal to RefreshFleetButtons. */
-    void            AddFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    void            AddFleetsStateChangedSignal(const std::vector<boost::shared_ptr<Fleet>>& fleets);
     /** Disconnect all \p fleets StateChangedSignal from RefreshFleetButtons. */
-    void            RemoveFleetsStateChangedSignal(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    void            RemoveFleetsStateChangedSignal(const std::vector<boost::shared_ptr<Fleet>>& fleets);
     /** Handle FleetsInsertedSignal by connecting signals and refreshing fleet buttons. */
-    void            FleetsInsertedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    void            FleetsInsertedSignalHandler(const std::vector<boost::shared_ptr<Fleet>>& fleets);
     /** Handle FleetsRemovedSignal by disconnecting signals and refreshing fleet buttons. */
-    void            FleetsRemovedSignalHandler(const std::vector<TemporaryPtr<Fleet> >& fleets);
+    void            FleetsRemovedSignalHandler(const std::vector<boost::shared_ptr<Fleet>>& fleets);
 
 
     void            DoFleetButtonsLayout();                     //!< does layout of fleet buttons
-    std::pair<double, double>   MovingFleetMapPositionOnLane(TemporaryPtr<const Fleet> fleet) const; //!< returns position on map where a moving fleet should be displayed.  This is different from the fleet's actual universe position due to the squishing of fleets moving along a lane into the space between the system circles at the ends of the lane
+    std::pair<double, double>   MovingFleetMapPositionOnLane(boost::shared_ptr<const Fleet> fleet) const; //!< returns position on map where a moving fleet should be displayed.  This is different from the fleet's actual universe position due to the squishing of fleets moving along a lane into the space between the system circles at the ends of the lane
 
     void            DoSystemIconsLayout();                      //!< does layout of system icons
     void            DoFieldIconsLayout();                       //!< does layout of field icons
@@ -346,7 +346,7 @@ private:
     void            ShipRightClicked(int fleet_id);
     void            ShipsRightClicked(const std::vector<int>& fleet_ids);
 
-    void            UniverseObjectDeleted(TemporaryPtr<const UniverseObject> obj);
+    void            UniverseObjectDeleted(boost::shared_ptr<const UniverseObject> obj);
 
     bool            ReturnToMap();
 

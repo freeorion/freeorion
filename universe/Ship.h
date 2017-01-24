@@ -31,7 +31,7 @@ public:
 
     const std::string& PublicName(int empire_id) const override;
 
-    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
     void BackPropagateMeters() override;
@@ -47,7 +47,7 @@ public:
     /** Returns new copy of this Ship. */
     Ship* Clone(int empire_id = ALL_EMPIRES) const override;
 
-    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
     int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship

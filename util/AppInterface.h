@@ -38,14 +38,14 @@ public:
 
     virtual SupplyManager& GetSupplyManager() = 0;
 
-    virtual TemporaryPtr<UniverseObject> GetUniverseObject(int object_id) = 0;
+    virtual boost::shared_ptr<UniverseObject> GetUniverseObject(int object_id) = 0;
 
     /** Accessor for known objects of specified empire. */
     virtual ObjectMap& EmpireKnownObjects(int empire_id) = 0;
 
-    virtual TemporaryPtr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) = 0;
+    virtual boost::shared_ptr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) = 0;
 
-    virtual std::string GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) = 0;
+    virtual std::string GetVisibleObjectName(boost::shared_ptr<const UniverseObject> object) = 0;
 
     /** returns a universe object ID which can be used for new objects.
         Can return INVALID_OBJECT_ID if an ID cannot be created. */
@@ -107,63 +107,63 @@ inline ObjectMap& EmpireKnownObjects(int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id); }
 
 /** Accessor for individual objects. */
-inline TemporaryPtr<UniverseObject> GetUniverseObject(int object_id)
+inline boost::shared_ptr<UniverseObject> GetUniverseObject(int object_id)
 { return IApp::GetApp()->GetUniverseObject(object_id); }
 
-inline TemporaryPtr<UniverseObject> GetEmpireKnownObject(int object_id, int empire_id)
+inline boost::shared_ptr<UniverseObject> GetEmpireKnownObject(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObject(object_id, empire_id); }
 
-inline TemporaryPtr<ResourceCenter> GetResourceCenter(int object_id)
+inline boost::shared_ptr<ResourceCenter> GetResourceCenter(int object_id)
 { return IApp::GetApp()->GetUniverse().Objects().Object<ResourceCenter>(object_id); }
 
-inline TemporaryPtr<ResourceCenter> GetEmpireKnownResourceCenter(int object_id, int empire_id)
+inline boost::shared_ptr<ResourceCenter> GetEmpireKnownResourceCenter(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<ResourceCenter>(object_id); }
 
-inline TemporaryPtr<PopCenter> GetPopCenter(int object_id)
+inline boost::shared_ptr<PopCenter> GetPopCenter(int object_id)
 { return IApp::GetApp()->GetUniverse().Objects().Object<PopCenter>(object_id); }
 
-inline TemporaryPtr<PopCenter> GetEmpireKnownPopCenter(int object_id, int empire_id)
+inline boost::shared_ptr<PopCenter> GetEmpireKnownPopCenter(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<PopCenter>(object_id); }
 
-inline TemporaryPtr<Planet> GetPlanet(int object_id)
+inline boost::shared_ptr<Planet> GetPlanet(int object_id)
 { return IApp::GetApp()->GetUniverse().Objects().Object<Planet>(object_id); }
 
-inline TemporaryPtr<Planet> GetEmpireKnownPlanet(int object_id, int empire_id)
+inline boost::shared_ptr<Planet> GetEmpireKnownPlanet(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Planet>(object_id); }
 
-inline TemporaryPtr<System> GetSystem(int object_id)
+inline boost::shared_ptr<System> GetSystem(int object_id)
 { return IApp::GetApp()->GetUniverse().Objects().Object<System>(object_id); }
 
-inline TemporaryPtr<System> GetEmpireKnownSystem(int object_id, int empire_id)
+inline boost::shared_ptr<System> GetEmpireKnownSystem(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<System>(object_id); }
 
-inline TemporaryPtr<Field> GetField(int object_id)
+inline boost::shared_ptr<Field> GetField(int object_id)
 { return IApp::GetApp()->GetUniverse().Objects().Object<Field>(object_id); }
 
-inline TemporaryPtr<Field> GetEmpireKnownField(int object_id, int empire_id)
+inline boost::shared_ptr<Field> GetEmpireKnownField(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Field>(object_id); }
 
-inline TemporaryPtr<Ship> GetShip(int object_id)
+inline boost::shared_ptr<Ship> GetShip(int object_id)
 { return IApp::GetApp()->GetUniverse().Objects().Object<Ship>(object_id); }
 
-inline TemporaryPtr<Ship> GetEmpireKnownShip(int object_id, int empire_id)
+inline boost::shared_ptr<Ship> GetEmpireKnownShip(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Ship>(object_id); }
 
-inline TemporaryPtr<Fleet> GetFleet(int object_id)
+inline boost::shared_ptr<Fleet> GetFleet(int object_id)
 { return IApp::GetApp()->GetUniverse().Objects().Object<Fleet>(object_id); }
 
-inline TemporaryPtr<Fleet> GetEmpireKnownFleet(int object_id, int empire_id)
+inline boost::shared_ptr<Fleet> GetEmpireKnownFleet(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Fleet>(object_id); }
 
-inline TemporaryPtr<Building> GetBuilding(int object_id)
+inline boost::shared_ptr<Building> GetBuilding(int object_id)
 { return IApp::GetApp()->GetUniverse().Objects().Object<Building>(object_id); }
 
-inline TemporaryPtr<Building> GetEmpireKnownBuilding(int object_id, int empire_id)
+inline boost::shared_ptr<Building> GetEmpireKnownBuilding(int object_id, int empire_id)
 { return IApp::GetApp()->EmpireKnownObjects(empire_id).Object<Building>(object_id); }
 
 /** Returns the object name of the universe object. This can be apperant object
  * name, if the application isn't supposed to see the real object name. */
-inline std::string GetVisibleObjectName(TemporaryPtr<const UniverseObject> object)
+inline std::string GetVisibleObjectName(boost::shared_ptr<const UniverseObject> object)
 { return IApp::GetApp()->GetVisibleObjectName(object); }
 
 /** Returns a new object ID from the server */

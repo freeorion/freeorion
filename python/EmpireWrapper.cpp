@@ -167,8 +167,8 @@ namespace {
         for (const std::map<std::set<int>, float>::value_type& objects_pp : prodQueue.AvailablePP(industry_pool)) {
             std::set<int> planetSet;
             for (int object_id : objects_pp.first) {
-                TemporaryPtr<UniverseObject> location = GetUniverseObject(object_id);
-                if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
+                boost::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
+                if (/* boost::shared_ptr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                     planetSet.insert(object_id);
             }
             if (!planetSet.empty())
@@ -185,8 +185,8 @@ namespace {
         for (const std::map<std::set<int>, float>::value_type& objects_pp : objectsWithAllocatedPP) {
             std::set<int> planetSet;
             for (int object_id : objects_pp.first) {
-                TemporaryPtr<UniverseObject> location = GetUniverseObject(object_id);
-                if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
+                boost::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
+                if (/* boost::shared_ptr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                     planetSet.insert(object_id);
             }
             if (!planetSet.empty())
@@ -204,8 +204,8 @@ namespace {
         for (const std::set<int>&  objects : objectsWithWastedPP) {
                  std::set<int> planetSet;
                  for (int object_id : objects) {
-                     TemporaryPtr<UniverseObject> location = GetUniverseObject(object_id);
-                     if (/* TemporaryPtr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
+                     boost::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
+                     if (/* boost::shared_ptr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
                          planetSet.insert(object_id);
                  }
                  if (!planetSet.empty())

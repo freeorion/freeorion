@@ -3,7 +3,7 @@
 
 #include <GG/Button.h>
 
-#include "../universe/TemporaryPtr.h"
+#include <boost/shared_ptr.hpp>
 
 class Fleet;
 class RotatingGraphic;
@@ -66,13 +66,13 @@ private:
 };
 
 /* returns head icon for passed fleet at passed icon size */
-std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(TemporaryPtr<const Fleet>, FleetButton::SizeType size_type);
+std::vector<boost::shared_ptr<GG::Texture>> FleetHeadIcons(boost::shared_ptr<const Fleet>, FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleets at passed icon size */
-std::vector<boost::shared_ptr<GG::Texture> > FleetHeadIcons(const std::vector<TemporaryPtr<const Fleet> >& fleets, FleetButton::SizeType size_type);
+std::vector<boost::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<boost::shared_ptr<const Fleet>>& fleets, FleetButton::SizeType size_type);
 
 /* returns size icon for passed fleet at passed icon size */
-boost::shared_ptr<GG::Texture> FleetSizeIcon(TemporaryPtr<const Fleet> fleet, FleetButton::SizeType size_type);
+boost::shared_ptr<GG::Texture> FleetSizeIcon(boost::shared_ptr<const Fleet> fleet, FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleet size at passed icon size */
 boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type);

@@ -3,7 +3,9 @@
 
 #include "AccordionPanel.h"
 #include "../universe/EnumsFwd.h"
-#include "../universe/TemporaryPtr.h"
+
+#include <boost/shared_ptr.hpp>
+
 
 class MultiIconValueIndicator;
 class MultiMeterStatusBar;
@@ -48,7 +50,7 @@ private:
     int m_rescenter_id;
 
     /** returns the ResourceCenter object with id m_rescenter_id */
-    TemporaryPtr<const ResourceCenter> GetResCenter() const;
+    boost::shared_ptr<const ResourceCenter> GetResCenter() const;
 
     /** Icons for the associated meter type. */
     std::vector<std::pair<MeterType, StatisticIcon*> > m_meter_stats;

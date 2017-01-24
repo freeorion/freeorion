@@ -687,7 +687,7 @@ void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { GetMapWndConst()->GetSaveGameUIData(data); }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
-    for (TemporaryPtr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>())
+    for (boost::shared_ptr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
             return ZoomToObject(obj->ID());
     return false;
@@ -699,7 +699,7 @@ bool ClientUI::ZoomToObject(int id) {
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
-    if (TemporaryPtr<const Planet> planet = GetPlanet(id)) {
+    if (boost::shared_ptr<const Planet> planet = GetPlanet(id)) {
         GetMapWnd()->CenterOnObject(planet->SystemID());
         GetMapWnd()->SelectSystem(planet->SystemID());
         GetMapWnd()->SelectPlanet(id);
@@ -715,7 +715,7 @@ bool ClientUI::ZoomToPlanetPedia(int id) {
 }
 
 bool ClientUI::ZoomToSystem(int id) {
-    if (TemporaryPtr<const System> system = GetSystem(id)) {
+    if (boost::shared_ptr<const System> system = GetSystem(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -723,7 +723,7 @@ bool ClientUI::ZoomToSystem(int id) {
 }
 
 bool ClientUI::ZoomToFleet(int id) {
-    if (TemporaryPtr<const Fleet> fleet = GetFleet(id)) {
+    if (boost::shared_ptr<const Fleet> fleet = GetFleet(id)) {
         ZoomToFleet(fleet);
         return true;
     }
@@ -731,13 +731,13 @@ bool ClientUI::ZoomToFleet(int id) {
 }
 
 bool ClientUI::ZoomToShip(int id) {
-    if (TemporaryPtr<const Ship> ship = GetShip(id))
+    if (boost::shared_ptr<const Ship> ship = GetShip(id))
         return ZoomToFleet(ship->FleetID());
     return false;
 }
 
 bool ClientUI::ZoomToBuilding(int id) {
-    if (TemporaryPtr<const Building> building = GetBuilding(id)) {
+    if (boost::shared_ptr<const Building> building = GetBuilding(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
     }
@@ -759,7 +759,7 @@ bool ClientUI::ZoomToCombatLog(int id) {
     return false;
 }
 
-void ClientUI::ZoomToSystem(TemporaryPtr<const System> system) {
+void ClientUI::ZoomToSystem(boost::shared_ptr<const System> system) {
     if (!system)
         return;
 
@@ -767,7 +767,7 @@ void ClientUI::ZoomToSystem(TemporaryPtr<const System> system) {
     GetMapWnd()->SelectSystem(system->ID());
 }
 
-void ClientUI::ZoomToFleet(TemporaryPtr<const Fleet> fleet) {
+void ClientUI::ZoomToFleet(boost::shared_ptr<const Fleet> fleet) {
     if (!fleet)
         return;
 
@@ -891,7 +891,7 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
 }
 
 void ClientUI::DumpObject(int object_id) {
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(object_id);
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     if (!obj)
         return;
     m_message_wnd->HandleLogMessage(obj->Dump() + "\n");

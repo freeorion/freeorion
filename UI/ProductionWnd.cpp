@@ -279,12 +279,12 @@ namespace {
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
         }
 
-        if (TemporaryPtr<UniverseObject> rally_object = GetUniverseObject(elem.rally_point_id)) {
+        if (boost::shared_ptr<UniverseObject> rally_object = GetUniverseObject(elem.rally_point_id)) {
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_RALLIED_TO"))
                                         % rally_object->Name()) + "\n";
         }
 
-        if (TemporaryPtr<UniverseObject> location = GetUniverseObject(elem.location))
+        if (boost::shared_ptr<UniverseObject> location = GetUniverseObject(elem.location))
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION"))
                                         % location->Name()) + "\n";
 
@@ -456,7 +456,7 @@ namespace {
         // get location indicator text
         std::string location_text;
         bool system_selected = false;
-        if (TemporaryPtr<const UniverseObject> location = GetUniverseObject(elem.location)) {
+        if (boost::shared_ptr<const UniverseObject> location = GetUniverseObject(elem.location)) {
             system_selected = (location->SystemID() != -1 && location ->SystemID() == SidePanel::SystemID());
             if (GetOptionsDB().Get<bool>("UI.show-production-location-on-queue"))
                 location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
@@ -658,7 +658,7 @@ namespace {
             BuildType build_type = queue_row ? queue_row->elem.item.build_type : INVALID_BUILD_TYPE;
             if (build_type == BT_SHIP) {
                 // for ships, add a set rally point command
-                if (TemporaryPtr<const System> system = GetSystem(SidePanel::SystemID())) {
+                if (boost::shared_ptr<const System> system = GetSystem(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
                     menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,               4, false, false));
                 }
@@ -1042,7 +1042,7 @@ void ProductionWnd::UpdateInfoPanel() {
 
     // find if there is a local location
     int prod_loc_id = this->SelectedPlanetID();
-    TemporaryPtr<UniverseObject> loc_obj = GetUniverseObject(prod_loc_id);
+    boost::shared_ptr<UniverseObject> loc_obj = GetUniverseObject(prod_loc_id);
     if (loc_obj) {
         // extract available and allocated PP at production location
         std::map<std::set<int>, float> available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));

@@ -2,10 +2,10 @@
 #define _ClientUI_h_
 
 #include <boost/filesystem/path.hpp>
+#include <boost/shared_ptr.hpp>
 #include <GG/GGFwd.h>
 
 #include "../universe/EnumsFwd.h"
-#include "../universe/TemporaryPtr.h"
 #include "../util/Random.h"
 
 #include <map>
@@ -61,8 +61,8 @@ public:
     bool    ZoomToField(int id);                                        //!< Zooms to a particular field on the map
     bool    ZoomToCombatLog(int id);                                    //!< Opens combat log for indicated combat
 
-    void    ZoomToSystem(TemporaryPtr<const System> system);            //!< Zooms to a particular system on the galaxy map
-    void    ZoomToFleet(TemporaryPtr<const Fleet> fleet);               //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    void    ZoomToSystem(boost::shared_ptr<const System> system);       //!< Zooms to a particular system on the galaxy map
+    void    ZoomToFleet(boost::shared_ptr<const Fleet> fleet);          //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
 
     bool    ZoomToContent(const std::string& name, bool reverse_lookup = false);
     bool    ZoomToTech(const std::string& tech_name);                  //!< Opens the technology screen and presents a description of the given technology

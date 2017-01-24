@@ -61,7 +61,7 @@ void SpecialsPanel::Update() {
 
 
     // get specials to display
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
         ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;

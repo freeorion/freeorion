@@ -139,7 +139,7 @@ public:
      *      When there is no matching object or the client does not know of the
      *      object existence the pointer may be nullptr.
      */
-    TemporaryPtr<UniverseObject>GetUniverseObject(int object_id) override;
+    boost::shared_ptr<UniverseObject>GetUniverseObject(int object_id) override;
 
     /** @brief Return the for this client visible name of @a object
      *
@@ -148,7 +148,7 @@ public:
      * @return The name of the @a object.  Depdending on Visibility it may not
      *      match with the actual object name.
      */
-    std::string GetVisibleObjectName(TemporaryPtr<const UniverseObject> object) override;
+    std::string GetVisibleObjectName(boost::shared_ptr<const UniverseObject> object) override;
 
     /** @brief Send the OrderSet to the server and start a new turn */
     virtual void StartTurn();
@@ -191,7 +191,7 @@ public:
      *      If there is no such object or if that object is not known to the
      *      empire a nullptr is returned.
      */
-    TemporaryPtr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
+    boost::shared_ptr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
 
     /** @brief Set the identifier of the ::Empire controlled by this client to
      *      @a empire_id

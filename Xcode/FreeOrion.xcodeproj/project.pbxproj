@@ -857,7 +857,6 @@
 		8257A8D61A90BA610006777D /* GLClientAndServerBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GLClientAndServerBuffer.cpp; sourceTree = "<group>"; };
 		8257A8D81A90BA8C0006777D /* Export.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Export.h; sourceTree = "<group>"; };
 		8257A8D91A90BA8C0006777D /* GLClientAndServerBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLClientAndServerBuffer.h; sourceTree = "<group>"; };
-		8258927D17BBD04400818596 /* EnableTemporaryFromThis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnableTemporaryFromThis.h; sourceTree = "<group>"; };
 		82592EEB147E365700B840A5 /* CUISlider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CUISlider.h; sourceTree = "<group>"; };
 		82592EEE147E37FB00B840A5 /* EffectAccounting.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectAccounting.h; sourceTree = "<group>"; };
 		82592EEF147E381B00B840A5 /* EffectAccounting.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectAccounting.cpp; sourceTree = "<group>"; };
@@ -1077,7 +1076,6 @@
 		82EC868A1B40504700D4584D /* Encyclopedia.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Encyclopedia.h; sourceTree = "<group>"; };
 		82ED913E194F5C85002F0A4A /* make_dmg.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; path = make_dmg.py; sourceTree = "<group>"; };
 		82ED9141194F5CDD002F0A4A /* make_versioncpp.py */ = {isa = PBXFileReference; lastKnownFileType = text.script.python; name = make_versioncpp.py; path = ../cmake/make_versioncpp.py; sourceTree = "<group>"; };
-		82F06B6417B7C3BD00982965 /* TemporaryPtr.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemporaryPtr.h; sourceTree = "<group>"; };
 		8DD76F6C0486A84900D96B5E /* FreeOrion */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = FreeOrion; sourceTree = BUILT_PRODUCTS_DIR; };
 		9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_filesystem.a; sourceTree = "<group>"; };
 		9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_python.a; sourceTree = "<group>"; };
@@ -1819,7 +1817,6 @@
 				471D5CF00A98A3F900DA9C21 /* Effect.h */,
 				82592EEF147E381B00B840A5 /* EffectAccounting.cpp */,
 				82592EEE147E37FB00B840A5 /* EffectAccounting.h */,
-				8258927D17BBD04400818596 /* EnableTemporaryFromThis.h */,
 				82EC86891B40504700D4584D /* Encyclopedia.cpp */,
 				82EC868A1B40504700D4584D /* Encyclopedia.h */,
 				471D5CF20A98A3F900DA9C21 /* Enums.cpp */,
@@ -1854,7 +1851,6 @@
 				471D5D0B0A98A3F900DA9C21 /* System.h */,
 				471D5D0C0A98A3F900DA9C21 /* Tech.cpp */,
 				471D5D0D0A98A3F900DA9C21 /* Tech.h */,
-				82F06B6417B7C3BD00982965 /* TemporaryPtr.h */,
 				471D5D0F0A98A3F900DA9C21 /* Universe.cpp */,
 				471D5D100A98A3F900DA9C21 /* Universe.h */,
 				82B4313314A74E07003EEE42 /* UniverseGenerator.cpp */,

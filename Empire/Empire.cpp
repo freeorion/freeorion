@@ -655,7 +655,7 @@ std::map<std::string, std::map<int, float> > ProductionQueue::ProductionItem::Co
     switch (build_type) {
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            TemporaryPtr<UniverseObject> location_obj = GetUniverseObject(location_id);
+            boost::shared_ptr<UniverseObject> location_obj = GetUniverseObject(location_id);
             ScriptingContext context(location_obj);
 
             for (const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& psc : bt->ProductionSpecialConsumption()) {
@@ -671,7 +671,7 @@ std::map<std::string, std::map<int, float> > ProductionQueue::ProductionItem::Co
                 }
 
                 // determine how much to take from each matched object
-                for (TemporaryPtr<const UniverseObject> object : matches) {
+                for (boost::shared_ptr<const UniverseObject> object : matches) {
                     context.effect_target = boost::const_pointer_cast<UniverseObject>(object);
                     retval[psc.first][object->ID()] += psc.second.first->Eval(context);
                 }
@@ -681,7 +681,7 @@ std::map<std::string, std::map<int, float> > ProductionQueue::ProductionItem::Co
     }
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
-            TemporaryPtr<const UniverseObject> location_obj = GetUniverseObject(location_id);
+            boost::shared_ptr<const UniverseObject> location_obj = GetUniverseObject(location_id);
             ScriptingContext context(location_obj);
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
@@ -719,7 +719,7 @@ std::map<MeterType, std::map<int, float> > ProductionQueue::ProductionItem::Comp
     switch (build_type) {
     case BT_BUILDING: {
         if (const BuildingType* bt = GetBuildingType(name)) {
-            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
+            boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(location_id);
             ScriptingContext context(obj);
 
             for (const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>::value_type& pmc : bt->ProductionMeterConsumption()) {
@@ -732,7 +732,7 @@ std::map<MeterType, std::map<int, float> > ProductionQueue::ProductionItem::Comp
     }
     case BT_SHIP: {
         if (const ShipDesign* sd = GetShipDesign(design_id)) {
-            TemporaryPtr<const UniverseObject> obj = GetUniverseObject(location_id);
+            boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(location_id);
             ScriptingContext context(obj);
 
             if (const HullType* ht = GetHullType(sd->Hull())) {
@@ -1793,7 +1793,7 @@ bool Empire::ProducibleItem(BuildType build_type, const std::string& name, int l
     if (!building_type || !building_type->Producible())
         return false;
 
-    TemporaryPtr<UniverseObject> build_location = GetUniverseObject(location);
+    boost::shared_ptr<UniverseObject> build_location = GetUniverseObject(location);
     if (!build_location)
         return false;
 
@@ -1820,7 +1820,7 @@ bool Empire::ProducibleItem(BuildType build_type, int design_id, int location) c
     if (!ship_design || !ship_design->Producible())
         return false;
 
-    TemporaryPtr<UniverseObject> build_location = GetUniverseObject(location);
+    boost::shared_ptr<UniverseObject> build_location = GetUniverseObject(location);
     if (!build_location) return false;
 
     if (build_type == BT_SHIP) {
@@ -1851,7 +1851,7 @@ bool Empire::EnqueuableItem(BuildType build_type, const std::string& name, int l
     if (!building_type || !building_type->Producible())
         return false;
 
-    TemporaryPtr<UniverseObject> build_location = GetUniverseObject(location);
+    boost::shared_ptr<UniverseObject> build_location = GetUniverseObject(location);
     if (!build_location)
         return false;
 
@@ -1932,15 +1932,15 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     m_supply_system_ranges.clear();
 
     // as of this writing, only planets can generate supply propagation
-    std::vector<TemporaryPtr<const UniverseObject> > owned_planets;
+    std::vector<boost::shared_ptr<const UniverseObject> > owned_planets;
     for (int object_id : known_objects) {
-        if (TemporaryPtr<const Planet> planet = GetPlanet(object_id))
+        if (boost::shared_ptr<const Planet> planet = GetPlanet(object_id))
             if (planet->OwnedBy(this->EmpireID()))
                 owned_planets.push_back(planet);
     }
 
     //std::cout << "... empire owns " << owned_planets.size() << " planets" << std::endl;
-    for (TemporaryPtr<const UniverseObject> obj : owned_planets) {
+    for (boost::shared_ptr<const UniverseObject> obj : owned_planets) {
         //std::cout << "... considering owned planet: " << obj->Name() << std::endl;
 
         // ensure object is within a system, from which it can distribute supplies
@@ -1985,11 +1985,11 @@ void Empire::UpdateUnobstructedFleets() {
         GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     for (int system_id : m_supply_unobstructed_systems) {
-        TemporaryPtr<const System> system = GetSystem(system_id);
+        boost::shared_ptr<const System> system = GetSystem(system_id);
         if (!system)
             continue;
 
-        for (TemporaryPtr<Fleet> fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
+        for (boost::shared_ptr<Fleet> fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
             if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end())
                 continue;
             if (fleet->OwnedBy(m_id))
@@ -2052,7 +2052,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     std::set<int> unrestricted_friendly_systems;
     std::set<int> systems_containing_obstructing_objects;
     std::set<int> unrestricted_obstruction_systems;
-    for (TemporaryPtr<const Fleet> fleet : GetUniverse().Objects().FindObjects<Fleet>()) {
+    for (boost::shared_ptr<const Fleet> fleet : GetUniverse().Objects().FindObjects<Fleet>()) {
         int system_id = fleet->SystemID();
         if (system_id == INVALID_OBJECT_ID) {
             continue;   // not in a system, so can't affect system obstruction
@@ -2133,7 +2133,7 @@ void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
         m_pending_system_exit_lanes[start_system_id].insert(dest_system_id); 
 
     } else { // if the system is unobstructed, mark all its lanes as avilable
-        TemporaryPtr<const System> system = GetSystem(start_system_id);
+        boost::shared_ptr<const System> system = GetSystem(start_system_id);
         for (const std::map<int, bool>::value_type& lane : system->StarlanesWormholes()) {
             m_pending_system_exit_lanes[start_system_id].insert(lane.first); // will add both starlanes and wormholes
         }
@@ -2873,7 +2873,7 @@ void Empire::CheckProductionProgress() {
 
     Universe& universe = GetUniverse();
 
-    std::map<int, std::vector<TemporaryPtr<Ship> > >    system_new_ships;
+    std::map<int, std::vector<boost::shared_ptr<Ship>>> system_new_ships;
     std::map<int, int>                                  new_ship_rally_point_ids;
 
     // preprocess the queue to get all the costs and times of all items
@@ -2946,12 +2946,12 @@ void Empire::CheckProductionProgress() {
                 build_description = "unknown build type";
         }
 
-        TemporaryPtr<UniverseObject> build_location = GetUniverseObject(elem.location);
+        boost::shared_ptr<UniverseObject> build_location = GetUniverseObject(elem.location);
         if (!build_location || (elem.item.build_type == BT_BUILDING && build_location->ObjectType() != OBJ_PLANET)) {
             ErrorLogger() << "Couldn't get valid build location for completed " << build_description;
             continue;
         }
-        TemporaryPtr<System> system = GetSystem(build_location->SystemID());
+        boost::shared_ptr<System> system = GetSystem(build_location->SystemID());
         // TODO: account for shipyards and/or other ship production
         // sites that are in interstellar space, if needed
         if (!system) {
@@ -2980,7 +2980,7 @@ void Empire::CheckProductionProgress() {
             if (consumption_impossible)
                 break;
             for (std::map<int, float>::value_type& special_meter : special_type.second) {
-                TemporaryPtr<UniverseObject> obj = GetUniverseObject(special_meter.first);
+                boost::shared_ptr<UniverseObject> obj = GetUniverseObject(special_meter.first);
                 float capacity = obj ? obj->SpecialCapacity(special_type.first) : 0.0f;
                 if (capacity < special_meter.second * elem.blocksize) {
                     consumption_impossible = true;
@@ -2993,7 +2993,7 @@ void Empire::CheckProductionProgress() {
             if (consumption_impossible)
                 break;
             for (std::map<int, float>::value_type& object_meter : meter_type.second) {
-                TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_meter.first);
+                boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_meter.first);
                 const Meter* meter = obj ? obj->GetMeter(meter_type.first) : nullptr;
                 if (!meter || meter->Current() < object_meter.second * elem.blocksize) {
                     consumption_impossible = true;
@@ -3022,7 +3022,7 @@ void Empire::CheckProductionProgress() {
         // consume the item's special and meter consumption
         for (std::map<std::string, std::map<int, float>>::value_type& special_type : sc) {
             for (std::map<int, float>::value_type& special_meter : special_type.second) {
-                TemporaryPtr<UniverseObject> obj = GetUniverseObject(special_meter.first);
+                boost::shared_ptr<UniverseObject> obj = GetUniverseObject(special_meter.first);
                 if (!obj)
                     continue;
                 if (!obj->HasSpecial(special_type.first))
@@ -3034,7 +3034,7 @@ void Empire::CheckProductionProgress() {
         }
         for (std::map<MeterType, std::map<int, float>>::value_type& meter_type : mc) {
             for (const std::map<int, float>::value_type& object_meter : meter_type.second) {
-                TemporaryPtr<UniverseObject> obj = GetUniverseObject(object_meter.first);
+                boost::shared_ptr<UniverseObject> obj = GetUniverseObject(object_meter.first);
                 if (!obj)
                     continue;
                 Meter*meter = obj->GetMeter(meter_type.first);
@@ -3051,10 +3051,10 @@ void Empire::CheckProductionProgress() {
         // create actual thing(s) being produced
         switch (elem.item.build_type) {
         case BT_BUILDING: {
-            TemporaryPtr<Planet> planet = GetPlanet(elem.location);
+            boost::shared_ptr<Planet> planet = GetPlanet(elem.location);
 
             // create new building
-            TemporaryPtr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
+            boost::shared_ptr<Building> building = universe.CreateBuilding(m_id, elem.item.name, m_id);
             planet->AddBuilding(building->ID());
             building->SetPlanetID(planet->ID());
             system->Insert(building);
@@ -3080,11 +3080,11 @@ void Empire::CheckProductionProgress() {
             // is a valid capital, or otherwise ???
             // TODO: Add more fallbacks if necessary
             std::string species_name;
-            if (TemporaryPtr<const PopCenter> location_pop_center = boost::dynamic_pointer_cast<const PopCenter>(build_location))
+            if (boost::shared_ptr<const PopCenter> location_pop_center = boost::dynamic_pointer_cast<const PopCenter>(build_location))
                 species_name = location_pop_center->SpeciesName();
-            else if (TemporaryPtr<const Ship> location_ship = boost::dynamic_pointer_cast<const Ship>(build_location))
+            else if (boost::shared_ptr<const Ship> location_ship = boost::dynamic_pointer_cast<const Ship>(build_location))
                 species_name = location_ship->SpeciesName();
-            else if (TemporaryPtr<const Planet> capital_planet = GetPlanet(this->CapitalID()))
+            else if (boost::shared_ptr<const Planet> capital_planet = GetPlanet(this->CapitalID()))
                 species_name = capital_planet->SpeciesName();
             // else give up...
             if (species_name.empty()) {
@@ -3100,7 +3100,7 @@ void Empire::CheckProductionProgress() {
                 }
             }
 
-            TemporaryPtr<Ship> ship;
+            boost::shared_ptr<Ship> ship;
 
             for (int count = 0; count < elem.blocksize; count++) {
                 // create ship
@@ -3158,20 +3158,20 @@ void Empire::CheckProductionProgress() {
     }
 
     // create fleets for new ships and put ships into fleets
-    for (std::map<int, std::vector<TemporaryPtr<Ship>>>::value_type& entry : system_new_ships) {
-        TemporaryPtr<System> system = GetSystem(entry.first);
+    for (std::map<int, std::vector<boost::shared_ptr<Ship>>>::value_type& entry : system_new_ships) {
+        boost::shared_ptr<System> system = GetSystem(entry.first);
         if (!system) {
             ErrorLogger() << "Couldn't get system with id " << entry.first << " for creating new fleets for newly produced ships";
             continue;
         }
 
-        std::vector<TemporaryPtr<Ship> >& new_ships = entry.second;
+        std::vector<boost::shared_ptr<Ship>>& new_ships = entry.second;
         if (new_ships.empty())
             continue;
 
         // group ships into fleets by rally point and design
-        std::map<int, std::map<int, std::vector<TemporaryPtr<Ship> > > > new_ships_by_rally_point_id_and_design_id;
-        for (TemporaryPtr<Ship> ship : new_ships) {
+        std::map<int, std::map<int, std::vector<boost::shared_ptr<Ship>>>> new_ships_by_rally_point_id_and_design_id;
+        for (boost::shared_ptr<Ship> ship : new_ships) {
             int rally_point_id = INVALID_OBJECT_ID;
 
             std::map<int, int>::const_iterator rally_it = new_ship_rally_point_ids.find(ship->ID());
@@ -3185,15 +3185,15 @@ void Empire::CheckProductionProgress() {
         // ship design
         // Do not group unarmed ships with no troops (i.e. scouts and
         // colony ships).
-        for (std::map<int, std::map<int, std::vector<TemporaryPtr<Ship>>>>::value_type& entry : new_ships_by_rally_point_id_and_design_id)
+        for (std::map<int, std::map<int, std::vector<boost::shared_ptr<Ship>>>>::value_type& entry : new_ships_by_rally_point_id_and_design_id)
         {
             int rally_point_id = entry.first;
-            std::map<int, std::vector<TemporaryPtr<Ship> > >& new_ships_by_design = entry.second;
+            std::map<int, std::vector<boost::shared_ptr<Ship>>>& new_ships_by_design = entry.second;
 
-            for (std::map<int, std::vector<TemporaryPtr<Ship>>>::value_type& ships_by_design : new_ships_by_design) {
+            for (std::map<int, std::vector<boost::shared_ptr<Ship>>>::value_type& ships_by_design : new_ships_by_design) {
                 std::vector<int> ship_ids;
 
-                std::vector<TemporaryPtr<Ship> >& ships = ships_by_design.second;
+                std::vector<boost::shared_ptr<Ship>>& ships = ships_by_design.second;
                 if (ships.empty())
                     continue;
 
@@ -3204,8 +3204,8 @@ void Empire::CheckProductionProgress() {
                                            || (*ships.begin())->CanHaveTroops()
                                            || (*ships.begin())->CanBombard());
 
-                std::vector<TemporaryPtr<Fleet> > fleets;
-                TemporaryPtr<Fleet> fleet;
+                std::vector<boost::shared_ptr<Fleet>> fleets;
+                boost::shared_ptr<Fleet> fleet;
 
                 if (!individual_fleets) {
                     fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
@@ -3216,7 +3216,7 @@ void Empire::CheckProductionProgress() {
                     fleets.push_back(fleet);
                 }
 
-                for (TemporaryPtr<Ship> ship : ships) {
+                for (boost::shared_ptr<Ship> ship : ships) {
                     if (individual_fleets) {
                         fleet = universe.CreateFleet("", system->X(), system->Y(), m_id);
 
@@ -3230,7 +3230,7 @@ void Empire::CheckProductionProgress() {
                     ship->SetFleetID(fleet->ID());
                 }
 
-                for (TemporaryPtr<Fleet> fleet : fleets) {
+                for (boost::shared_ptr<Fleet> fleet : fleets) {
                     // rename fleet, given its id and the ship that is in it
                     fleet->Rename(fleet->GenerateFleetName());
                     fleet->SetAggressive(fleet->HasArmedShips() || fleet->HasFighterShips());
@@ -3238,7 +3238,7 @@ void Empire::CheckProductionProgress() {
                     if (rally_point_id != INVALID_OBJECT_ID) {
                         if (GetSystem(rally_point_id)) {
                             fleet->CalculateRouteTo(rally_point_id);
-                        } else if (TemporaryPtr<const UniverseObject> rally_obj = GetUniverseObject(rally_point_id)) {
+                        } else if (boost::shared_ptr<const UniverseObject> rally_obj = GetUniverseObject(rally_point_id)) {
                             if (GetSystem(rally_obj->SystemID()))
                                 fleet->CalculateRouteTo(rally_obj->SystemID());
                         } else {
@@ -3273,14 +3273,14 @@ void Empire::InitResourcePools() {
     // get this empire's owned resource centers and ships (which can both produce resources)
     std::vector<int> res_centers;
     res_centers.reserve(Objects().NumExistingResourceCenters());
-    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingResourceCentersBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingResourceCentersBegin();
          it != Objects().ExistingResourceCentersEnd(); ++it)
     {
         if (!it->second->OwnedBy(m_id))
             continue;
         res_centers.push_back(it->first);
     }
-    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingShipsBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingShipsBegin();
          it != Objects().ExistingShipsEnd(); ++it)
     {
         if (!it->second->OwnedBy(m_id))
@@ -3294,7 +3294,7 @@ void Empire::InitResourcePools() {
     // get this empire's owned population centers
     std::vector<int> pop_centers;
     pop_centers.reserve(Objects().NumExistingPopCenters());
-    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingPopCentersBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingPopCentersBegin();
          it != Objects().ExistingPopCentersEnd(); ++it)
     {
         if (it->second->OwnedBy(m_id))
@@ -3309,7 +3309,7 @@ void Empire::InitResourcePools() {
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int> > sets_set;
     std::set<int> all_systems_set;
-    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator it = Objects().ExistingSystemsBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingSystemsBegin();
          it != Objects().ExistingSystemsEnd(); ++it)
     {
         all_systems_set.insert(it->first);
@@ -3323,7 +3323,7 @@ void Empire::InitResourcePools() {
     //static std::vector<ResourceType> res_type_vec {RE_INDUSTRY, RE_TRADE, RE_RESEARCH};
     for (ResourceType res_type : {RE_INDUSTRY, RE_TRADE, RE_RESEARCH}) {
         int stockpile_object_id = INVALID_OBJECT_ID;
-        if (TemporaryPtr<const UniverseObject> stockpile_obj = GetUniverseObject(StockpileID(res_type)))
+        if (boost::shared_ptr<const UniverseObject> stockpile_obj = GetUniverseObject(StockpileID(res_type)))
             stockpile_object_id = stockpile_obj->ID();
         m_resource_pools[res_type]->SetStockpileObject(stockpile_object_id);
     }
@@ -3371,12 +3371,12 @@ void Empire::UpdateOwnedObjectCounters() {
     // ships of each species and design
     m_species_ships_owned.clear();
     m_ship_designs_owned.clear();
-    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator ship_it = Objects().ExistingShipsBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator ship_it = Objects().ExistingShipsBegin();
          ship_it != Objects().ExistingShipsEnd(); ++ship_it)
     {
         if (!ship_it->second->OwnedBy(this->EmpireID()))
             continue;
-        TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(ship_it->second);
+        boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(ship_it->second);
         if (!ship)
             continue;
         if (!ship->SpeciesName().empty())
@@ -3404,12 +3404,12 @@ void Empire::UpdateOwnedObjectCounters() {
     // colonies of each species, and unspecified outposts
     m_species_colonies_owned.clear();
     m_outposts_owned = 0;
-    for (std::map<int, TemporaryPtr<UniverseObject> >::iterator planet_it = Objects().ExistingPlanetsBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator planet_it = Objects().ExistingPlanetsBegin();
          planet_it != Objects().ExistingPlanetsEnd(); ++planet_it)
     {
         if (!planet_it->second->OwnedBy(this->EmpireID()))
             continue;
-        TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(planet_it->second);
+        boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(planet_it->second);
         if (!planet)
             continue;
         if (planet->SpeciesName().empty())
@@ -3420,12 +3420,12 @@ void Empire::UpdateOwnedObjectCounters() {
 
     // buildings of each type
     m_building_types_owned.clear();
-    for (std::map<int, TemporaryPtr<UniverseObject>>::iterator building_it = Objects().ExistingBuildingsBegin();
+    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator building_it = Objects().ExistingBuildingsBegin();
          building_it != Objects().ExistingBuildingsEnd(); ++building_it)
     {
         if (!building_it->second->OwnedBy(this->EmpireID()))
             continue;
-        TemporaryPtr<const Building> building = boost::dynamic_pointer_cast<const Building>(building_it->second);
+        boost::shared_ptr<const Building> building = boost::dynamic_pointer_cast<const Building>(building_it->second);
         if (!building)
             continue;
         m_building_types_owned[building->BuildingTypeName()]++;

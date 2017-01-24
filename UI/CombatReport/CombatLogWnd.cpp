@@ -71,7 +71,7 @@ namespace {
         for (int owner_id : owners)
             objects_per_owner[owner_id] = 0;
         for (int obj_id : objects) {
-            TemporaryPtr<const UniverseObject> object = Objects().Object(obj_id);
+            boost::shared_ptr<const UniverseObject> object = Objects().Object(obj_id);
             if (object && (
                     object->ObjectType() == OBJ_SHIP || (
                         object->GetMeter(METER_POPULATION) &&
@@ -399,7 +399,7 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
     if (verbose_logging)
         DebugLogger() << "Showing combat log #" << log_id << " with " << log->combat_events.size() << " events";
 
-    TemporaryPtr<const System> system = GetSystem(log->system_id);
+    boost::shared_ptr<const System> system = GetSystem(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
 
     AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))

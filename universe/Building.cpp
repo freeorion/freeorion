@@ -48,14 +48,14 @@ Building* Building::Clone(int empire_id) const {
         return nullptr;
 
     Building* retval = new Building();
-    retval->Copy(TemporaryFromThis(), empire_id);
+    retval->Copy(shared_from_this(), empire_id);
     return retval;
 }
 
-void Building::Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id) {
+void Building::Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    TemporaryPtr<const Building> copied_building = boost::dynamic_pointer_cast<const Building>(copied_object);
+    boost::shared_ptr<const Building> copied_building = boost::dynamic_pointer_cast<const Building>(copied_object);
     if (!copied_building) {
         ErrorLogger() << "Building::Copy passed an object that wasn't a Building";
         return;
@@ -114,8 +114,8 @@ std::string Building::Dump() const {
     return os.str();
 }
 
-TemporaryPtr<UniverseObject> Building::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(boost::const_pointer_cast<Building>(boost::static_pointer_cast<const Building>(TemporaryFromThis()))); }
+boost::shared_ptr<UniverseObject> Building::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(boost::const_pointer_cast<Building>(boost::static_pointer_cast<const Building>(shared_from_this()))); }
 
 void Building::SetPlanetID(int planet_id) {
     if (planet_id != m_planet_id) {
@@ -223,20 +223,20 @@ std::string BuildingType::Dump() const {
 }
 
 namespace {
-    TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
+    boost::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return TemporaryPtr<const UniverseObject>();
+            return boost::shared_ptr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
+        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (TemporaryPtr<const UniverseObject> obj : Objects()) {
+            for (boost::shared_ptr<const UniverseObject> obj : Objects()) {
                 if (obj->OwnedBy(empire_id)) {
                     source = obj;
                     break;
@@ -264,11 +264,11 @@ float BuildingType::ProductionCost(int empire_id, int location_id) const {
         if (m_production_cost && m_production_cost->ConstantExpr())
             return m_production_cost->Eval();
 
-        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
+        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 999999.9f;    // arbitrary large number
 
-        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_cost->SourceInvariant())
             return 999999.9f;
 
@@ -288,11 +288,11 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
         if (m_production_time && m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
-        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
+        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 9999;    // arbitrary large number
 
-        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_time->SourceInvariant())
             return 9999;
 
@@ -306,11 +306,11 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     if (!m_location)
         return true;
 
-    TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
+    boost::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
     if (!location)
         return false;
 
-    TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+    boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
     if (!source)
         return false;
 
@@ -321,11 +321,11 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!m_enqueue_location)
         return ProductionLocation(empire_id, location_id);
 
-    TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
+    boost::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
     if (!location)
         return false;
 
-    TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+    boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
     if (!source)
         return false;
 

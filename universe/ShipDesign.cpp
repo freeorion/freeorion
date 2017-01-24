@@ -159,20 +159,20 @@ PartTypeManager::iterator PartTypeManager::end() const
 namespace {
     // Looks like there are at least 3 SourceForEmpire functions lying around - one in ShipDesign, one in Tech, and one in Building
     // TODO: Eliminate duplication
-    TemporaryPtr<const UniverseObject> SourceForEmpire(int empire_id) {
+    boost::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return TemporaryPtr<const UniverseObject>();
+            return boost::shared_ptr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        TemporaryPtr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
+        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (TemporaryPtr<const UniverseObject> obj : Objects()) {
+            for (boost::shared_ptr<const UniverseObject> obj : Objects()) {
                 if (obj->OwnedBy(empire_id)) {
                     source = obj;
                     break;
@@ -357,11 +357,11 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
         if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
 
-        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
+        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 999999.9f;    // arbitrary large number
 
-        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_cost->SourceInvariant())
             return 999999.9f;
 
@@ -378,11 +378,11 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
         if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
-        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
+        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 9999;    // arbitrary large number
 
-        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_time->SourceInvariant())
             return 9999;
 
@@ -448,11 +448,11 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
         if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
 
-        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
+        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 999999.9f;    // arbitrary large number
 
-        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_cost->SourceInvariant())
             return 999999.9f;
 
@@ -469,11 +469,11 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
         if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
-        TemporaryPtr<UniverseObject> location = GetUniverseObject(location_id);
+        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 9999;    // arbitrary large number
 
-        TemporaryPtr<const UniverseObject> source = SourceForEmpire(empire_id);
+        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_time->SourceInvariant())
             return 999999;
 
@@ -811,12 +811,12 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     }
 
     // must own the production location...
-    TemporaryPtr<const UniverseObject> location = GetUniverseObject(location_id);
+    boost::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
     if (!location->OwnedBy(empire_id))
         return false;
 
-    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(location);
-    TemporaryPtr<const Ship> ship;
+    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(location);
+    boost::shared_ptr<const Ship> ship;
     if (!planet)
         ship = boost::dynamic_pointer_cast<const Ship>(location);
     if (!planet && !ship)

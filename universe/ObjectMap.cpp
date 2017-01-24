@@ -54,7 +54,7 @@ void ObjectMap::CopyForSerialize(const ObjectMap& copied_map) {
     m_objects.insert(copied_map.m_objects.begin(), copied_map.m_objects.end());
 }
 
-void ObjectMap::CopyObject(TemporaryPtr<const UniverseObject> source, int empire_id/* = ALL_EMPIRES*/) {
+void ObjectMap::CopyObject(boost::shared_ptr<const UniverseObject> source, int empire_id/* = ALL_EMPIRES*/) {
     if (!source)
         return;
 
@@ -64,7 +64,7 @@ void ObjectMap::CopyObject(TemporaryPtr<const UniverseObject> source, int empire
     if (GetUniverse().GetObjectVisibilityByEmpire(source_id, empire_id) <= VIS_NO_VISIBILITY)
         return;
     
-    if (TemporaryPtr<UniverseObject> destination = this->Object(source_id)) {
+    if (boost::shared_ptr<UniverseObject> destination = this->Object(source_id)) {
         destination->Copy(source, empire_id); // there already is a version of this object present in this ObjectMap, so just update it
     } else {
         Insert(source->Clone(), empire_id); // this object is not yet present in this ObjectMap, so add a new UniverseObject object for it
@@ -83,65 +83,65 @@ int ObjectMap::NumObjects() const
 bool ObjectMap::Empty() const
 { return m_objects.empty(); }
 
-TemporaryPtr<const UniverseObject> ObjectMap::Object(int id) const
+boost::shared_ptr<const UniverseObject> ObjectMap::Object(int id) const
 { return Object<UniverseObject>(id); }
 
-TemporaryPtr<UniverseObject> ObjectMap::Object(int id)
+boost::shared_ptr<UniverseObject> ObjectMap::Object(int id)
 { return Object<UniverseObject>(id); }
 
-std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
-    std::vector<TemporaryPtr<const UniverseObject> > result;
+std::vector<boost::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
+    std::vector<boost::shared_ptr<const UniverseObject>> result;
     for (int object_id : object_ids)
-        if (TemporaryPtr<const UniverseObject> obj = Object(object_id))
+        if (boost::shared_ptr<const UniverseObject> obj = Object(object_id))
             result.push_back(obj);
         else
             ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
     return result;
 }
 
-std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const std::set<int>& object_ids) const {
-    std::vector<TemporaryPtr<const UniverseObject> > result;
+std::vector<boost::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const std::set<int>& object_ids) const {
+    std::vector<boost::shared_ptr<const UniverseObject> > result;
     for (int object_id : object_ids)
-        if (TemporaryPtr<const UniverseObject> obj = Object(object_id))
+        if (boost::shared_ptr<const UniverseObject> obj = Object(object_id))
             result.push_back(obj);
         else
             ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
     return result;
 }
 
-std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const std::vector<int>& object_ids) {
-    std::vector<TemporaryPtr<UniverseObject> > result;
+std::vector<boost::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
+    std::vector<boost::shared_ptr<UniverseObject>> result;
     for (int object_id : object_ids)
-        if (TemporaryPtr<UniverseObject> obj = Object(object_id))
+        if (boost::shared_ptr<UniverseObject> obj = Object(object_id))
             result.push_back(obj);
         else
             ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
     return result;
 }
 
-std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const std::set<int>& object_ids) {
-    std::vector<TemporaryPtr<UniverseObject> > result;
+std::vector<boost::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const std::set<int>& object_ids) {
+    std::vector<boost::shared_ptr<UniverseObject>> result;
     for (int object_id : object_ids)
-        if (TemporaryPtr<UniverseObject> obj = Object(object_id))
+        if (boost::shared_ptr<UniverseObject> obj = Object(object_id))
             result.push_back(obj);
         else
             ErrorLogger() << "ObjectMap::FindObjects couldn't find object with id " << object_id;
     return result;
 }
 
-std::vector<TemporaryPtr<const UniverseObject> > ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
-    std::vector<TemporaryPtr<const UniverseObject> > result;
+std::vector<boost::shared_ptr<const UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) const {
+    std::vector<boost::shared_ptr<const UniverseObject>> result;
     for (const_iterator<> it = const_begin(); it != const_end(); ++it) {
-        if (TemporaryPtr<UniverseObject> obj = it->Accept(visitor))
+        if (boost::shared_ptr<UniverseObject> obj = it->Accept(visitor))
             result.push_back(Object(obj->ID()));
     }
     return result;
 }
 
-std::vector<TemporaryPtr<UniverseObject> > ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
-    std::vector<TemporaryPtr<UniverseObject> > result;
-    for (TemporaryPtr<UniverseObject> obj : *this) {
-        if (TemporaryPtr<UniverseObject> match = obj->Accept(visitor))
+std::vector<boost::shared_ptr<UniverseObject>> ObjectMap::FindObjects(const UniverseObjectVisitor& visitor) {
+    std::vector<boost::shared_ptr<UniverseObject>> result;
+    for (boost::shared_ptr<UniverseObject> obj : *this) {
+        if (boost::shared_ptr<UniverseObject> match = obj->Accept(visitor))
             result.push_back(Object(match->ID()));
     }
     return result;
@@ -178,7 +178,7 @@ void ObjectMap::Insert(boost::shared_ptr<UniverseObject> item, int empire_id/* =
         GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).find(item->ID()) ==
             GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id).end())
     {
-        TemporaryPtr<UniverseObject> this_item = this->Object(item->ID());
+        boost::shared_ptr<UniverseObject> this_item = this->Object(item->ID());
         m_existing_objects[item->ID()] = this_item;
         switch (item->ObjectType()) {
             case OBJ_BUILDING:
@@ -246,7 +246,7 @@ void ObjectMap::swap(ObjectMap& rhs) {
 
 std::vector<int> ObjectMap::FindExistingObjectIDs() const {
     std::vector<int> result;
-    for (const std::map< int, TemporaryPtr< UniverseObject > >::value_type& entry : m_existing_objects)
+    for (const std::map<int, boost::shared_ptr<UniverseObject>>::value_type& entry : m_existing_objects)
     { result.push_back(entry.first); }
     return result;
 }
@@ -266,7 +266,7 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
             continue;
         if (destroyed_object_ids.find(entry.first) != destroyed_object_ids.end())
             continue;
-        TemporaryPtr< UniverseObject > this_item = this->Object(entry.first);
+        boost::shared_ptr<UniverseObject> this_item = this->Object(entry.first);
         m_existing_objects[entry.first] = this_item;
         switch (entry.second->ObjectType()) {
             case OBJ_BUILDING:
@@ -310,7 +310,7 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     std::map<int, std::set<int> >   contained_ships;
     std::map<int, std::set<int> >   contained_fields;
 
-    for (TemporaryPtr<const UniverseObject> contained : *this) {
+    for (boost::shared_ptr<const UniverseObject> contained : *this) {
         if (destroyed_object_ids.find(contained->ID()) != destroyed_object_ids.end())
             continue;
 
@@ -347,9 +347,9 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     }
 
     // set contained objects of all possible containers
-    for (TemporaryPtr<UniverseObject> obj : *this) {
+    for (boost::shared_ptr<UniverseObject> obj : *this) {
         if (obj->ObjectType() == OBJ_SYSTEM) {
-            TemporaryPtr<System> sys = boost::dynamic_pointer_cast<System>(obj);
+            boost::shared_ptr<System> sys = boost::dynamic_pointer_cast<System>(obj);
             if (!sys)
                 continue;
             sys->m_objects =    contained_objs[sys->ID()];
@@ -359,12 +359,12 @@ void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
             sys->m_ships =      contained_ships[sys->ID()];
             sys->m_fields =     contained_fields[sys->ID()];
         } else if (obj->ObjectType() == OBJ_PLANET) {
-            TemporaryPtr<Planet> plt = boost::dynamic_pointer_cast<Planet>(obj);
+            boost::shared_ptr<Planet> plt = boost::dynamic_pointer_cast<Planet>(obj);
             if (!plt)
                 continue;
             plt->m_buildings =  contained_buildings[plt->ID()];
         } else if (obj->ObjectType() == OBJ_FLEET) {
-            TemporaryPtr<Fleet> flt = boost::dynamic_pointer_cast<Fleet>(obj);
+            boost::shared_ptr<Fleet> flt = boost::dynamic_pointer_cast<Fleet>(obj);
             if (!flt)
                 continue;
             flt->m_ships =      contained_ships[flt->ID()];
@@ -388,11 +388,11 @@ std::string ObjectMap::Dump() const {
     return dump_stream.str();
 }
 
-TemporaryPtr<UniverseObject> ObjectMap::ExistingObject(int id) {
-    std::map<int, TemporaryPtr<UniverseObject> >::iterator it = m_existing_objects.find(id);
+boost::shared_ptr<UniverseObject> ObjectMap::ExistingObject(int id) {
+    std::map<int, boost::shared_ptr<UniverseObject>>::iterator it = m_existing_objects.find(id);
     if (it != m_existing_objects.end())
         return it->second;
-    return TemporaryPtr<UniverseObject>();
+    return boost::shared_ptr<UniverseObject>();
 }
 
 // Static helpers

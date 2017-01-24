@@ -34,7 +34,7 @@ public:
 
     bool ContainedBy(int object_id) const override;
 
-    TemporaryPtr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Returns the name of the BuildingType object for this building. */
     const std::string& BuildingTypeName() const
@@ -48,7 +48,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void Copy(TemporaryPtr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void            SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
 

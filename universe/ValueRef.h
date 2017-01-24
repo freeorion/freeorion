@@ -25,16 +25,16 @@ struct ScriptingContext {
     /** Context with only a source object.  Useful for evaluating effectsgroup
       * scope and activation conditions that have no external candidates or
       * effect target to propagate. */
-    explicit ScriptingContext(TemporaryPtr<const UniverseObject> source_) :
+    explicit ScriptingContext(boost::shared_ptr<const UniverseObject> source_) :
         source(source_)
     {}
 
-    ScriptingContext(TemporaryPtr<const UniverseObject> source_, TemporaryPtr<UniverseObject> target_) :
+    ScriptingContext(boost::shared_ptr<const UniverseObject> source_, boost::shared_ptr<UniverseObject> target_) :
         source(source_),
         effect_target(target_)
     {}
 
-    ScriptingContext(TemporaryPtr<const UniverseObject> source_, TemporaryPtr<UniverseObject> target_,
+    ScriptingContext(boost::shared_ptr<const UniverseObject> source_, boost::shared_ptr<UniverseObject> target_,
                      const boost::any& current_value_) :
         source(source_),
         effect_target(target_),
@@ -57,7 +57,7 @@ struct ScriptingContext {
       * there is no root candidate in the parent context, then the input object
       * becomes the root candidate. */
     ScriptingContext(const ScriptingContext& parent_context,
-                     TemporaryPtr<const UniverseObject> condition_local_candidate) :
+                     boost::shared_ptr<const UniverseObject> condition_local_candidate) :
         source(                     parent_context.source),
         effect_target(              parent_context.effect_target),
         condition_root_candidate(   parent_context.condition_root_candidate ?
@@ -67,20 +67,20 @@ struct ScriptingContext {
         current_value(              parent_context.current_value)
     {}
 
-    ScriptingContext(TemporaryPtr<const UniverseObject> source_, TemporaryPtr<UniverseObject> target_,
+    ScriptingContext(boost::shared_ptr<const UniverseObject> source_, boost::shared_ptr<UniverseObject> target_,
                      const boost::any& current_value_,
-                     TemporaryPtr<const UniverseObject> condition_root_candidate_,
-                     TemporaryPtr<const UniverseObject> condition_local_candidate_) :
+                     boost::shared_ptr<const UniverseObject> condition_root_candidate_,
+                     boost::shared_ptr<const UniverseObject> condition_local_candidate_) :
         source(source_),
         condition_root_candidate(condition_root_candidate_),
         condition_local_candidate(condition_local_candidate_),
         current_value(current_value_)
     {}
 
-    TemporaryPtr<const UniverseObject>  source;
-    TemporaryPtr<UniverseObject>        effect_target;
-    TemporaryPtr<const UniverseObject>  condition_root_candidate;
-    TemporaryPtr<const UniverseObject>  condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> source;
+    boost::shared_ptr<UniverseObject> effect_target;
+    boost::shared_ptr<const UniverseObject> condition_root_candidate;
+    boost::shared_ptr<const UniverseObject> condition_local_candidate;
     const boost::any                    current_value;
 };
 
@@ -274,10 +274,10 @@ protected:
     /** Evaluates the property for the specified objects. */
     void    GetObjectPropertyValues(const ScriptingContext& context,
                                     const Condition::ObjectSet& objects,
-                                    std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const;
+                                    std::map<boost::shared_ptr<const UniverseObject>, T>& object_property_values) const;
 
     /** Computes the statistic from the specified set of property values. */
-    T ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const;
+    T ReduceData(const std::map<boost::shared_ptr<const UniverseObject>, T>& object_property_values) const;
 
 private:
     StatisticType m_stat_type;
@@ -822,14 +822,14 @@ void Statistic<T>::GetConditionMatches(const ScriptingContext& context,
 template <class T>
 void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
                                                      const Condition::ObjectSet& objects,
-                                                     std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const
+                                                     std::map<boost::shared_ptr<const UniverseObject>, T>& object_property_values) const
 {
     object_property_values.clear();
 
     if (m_value_ref) {
         // evaluate ValueRef with each condition match as the LocalCandidate
         // TODO: Can / should this be paralleized?
-        for (TemporaryPtr<const UniverseObject> object : objects) {
+        for (boost::shared_ptr<const UniverseObject> object : objects) {
             T property_value = m_value_ref->Eval(ScriptingContext(context, object));
             object_property_values[object] = property_value;
         }
@@ -925,7 +925,7 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
         return T(-1);   // should be INVALID_T of enum types
 
     // evaluate property for each condition-matched object
-    std::map<TemporaryPtr<const UniverseObject>, T> object_property_values;
+    std::map<boost::shared_ptr<const UniverseObject>, T> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     // count number of each result, tracking which has the most occurances
@@ -933,7 +933,7 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
     typename std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
     unsigned int max_seen(0);
 
-    for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+    for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
         const T& property_value = entry.second;
 
         typename std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
@@ -963,7 +963,7 @@ template <>
 std::string Statistic<std::string>::Eval(const ScriptingContext& context) const;
 
 template <class T>
-T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>& object_property_values) const
+T Statistic<T>::ReduceData(const std::map<boost::shared_ptr<const UniverseObject>, T>& object_property_values) const
 {
     if (object_property_values.empty())
         return T(0);
@@ -975,7 +975,7 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
         }
         case UNIQUE_COUNT: {
             std::set<T> observed_values;
-            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
                 observed_values.insert(entry.second);
             }
             return T(observed_values.size());
@@ -989,7 +989,7 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
         }
         case SUM: {
             T accumulator(0);
-            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
                 accumulator += entry.second;
             }
             return accumulator;
@@ -998,7 +998,7 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
 
         case MEAN: {
             T accumulator(0);
-            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
                 accumulator += entry.second;
             }
             return accumulator / static_cast<T>(object_property_values.size());
@@ -1007,7 +1007,7 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
 
         case RMS: {
             T accumulator(0);
-            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
                 accumulator += (entry.second * entry.second);
             }
             accumulator /= static_cast<T>(object_property_values.size());
@@ -1023,7 +1023,7 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
             typename std::map<T, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
             unsigned int max_seen(0);
 
-            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
                 const T& property_value = entry.second;
 
                 typename std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
@@ -1045,9 +1045,9 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
         }
 
         case MAX: {
-            typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator max_it = object_property_values.begin();
+            typename std::map<boost::shared_ptr<const UniverseObject>, T>::const_iterator max_it = object_property_values.begin();
 
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<boost::shared_ptr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -1061,9 +1061,9 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
         }
 
         case MIN: {
-            typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator min_it = object_property_values.begin();
+            typename std::map<boost::shared_ptr<const UniverseObject>, T>::const_iterator min_it = object_property_values.begin();
 
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<boost::shared_ptr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -1077,10 +1077,10 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
         }
 
         case SPREAD: {
-            typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator max_it = object_property_values.begin();
-            typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator min_it = object_property_values.begin();
+            typename std::map<boost::shared_ptr<const UniverseObject>, T>::const_iterator max_it = object_property_values.begin();
+            typename std::map<boost::shared_ptr<const UniverseObject>, T>::const_iterator min_it = object_property_values.begin();
 
-            for (typename std::map<TemporaryPtr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
+            for (typename std::map<boost::shared_ptr<const UniverseObject>, T>::const_iterator it = object_property_values.begin();
                  it != object_property_values.end(); ++it)
             {
                 const T& property_value = it->second;
@@ -1101,14 +1101,14 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
 
             // find sample mean
             T accumulator(0);
-            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
                 accumulator += entry.second;
             }
             const T MEAN(accumulator / static_cast<T>(object_property_values.size()));
 
             // find average of squared deviations from sample mean
             accumulator = T(0);
-            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
                 accumulator += (entry.second - MEAN) * (entry.second - MEAN);
             }
             const T MEAN_DEV2(accumulator / static_cast<T>(static_cast<int>(object_property_values.size()) - 1));
@@ -1119,7 +1119,7 @@ T Statistic<T>::ReduceData(const std::map<TemporaryPtr<const UniverseObject>, T>
 
         case PRODUCT: {
             T accumulator(1);
-            for (const typename std::map<TemporaryPtr<const UniverseObject>, T>::value_type& entry : object_property_values) {
+            for (const typename std::map<boost::shared_ptr<const UniverseObject>, T>::value_type& entry : object_property_values) {
                 accumulator *= entry.second;
             }
             return accumulator;

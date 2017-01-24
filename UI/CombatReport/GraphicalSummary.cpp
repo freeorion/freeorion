@@ -263,7 +263,7 @@ public:
         m_sizer(sizer),
         m_hovered(false)
     {
-        TemporaryPtr<UniverseObject> object =  Objects().Object(participant.object_id);
+        boost::shared_ptr<UniverseObject> object =  Objects().Object(participant.object_id);
         if (object) {
             SetBrowseText(object->PublicName(ClientApp::GetApp()->EmpireID()) + " " +
                           DoubleToString(participant.current_health, 3, false) + "/" +
@@ -714,7 +714,7 @@ void GraphicalSummaryWnd::MakeSummaries(int log_id) {
         for (int object_id : log->object_ids) {
             if (object_id < 0)
                 continue;   // fighters and invalid objects
-            TemporaryPtr<UniverseObject> object = GetUniverseObject(object_id);
+            boost::shared_ptr<UniverseObject> object = GetUniverseObject(object_id);
             if (!object) {
                 ErrorLogger() << "GraphicalSummaryWnd::MakeSummaries couldn't find object with id: " << object_id;
                 continue;

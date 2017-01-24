@@ -37,63 +37,63 @@ namespace {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingObjects());
         std::transform( Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingBuildings());
         std::transform( Objects().ExistingBuildingsBegin(), Objects().ExistingBuildingsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddFieldSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFields());
         std::transform( Objects().ExistingFieldsBegin(), Objects().ExistingFieldsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddFleetSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFleets());
         std::transform( Objects().ExistingFleetsBegin(), Objects().ExistingFleetsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddPlanetSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPlanets());
         std::transform( Objects().ExistingPlanetsBegin(), Objects().ExistingPlanetsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddPopCenterSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPopCenters());
         std::transform( Objects().ExistingPopCentersBegin(), Objects().ExistingPopCentersEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddResCenterSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingResourceCenters());
         std::transform( Objects().ExistingResourceCentersBegin(), Objects().ExistingResourceCentersEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddShipSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingShips());
         std::transform( Objects().ExistingShipsBegin(), Objects().ExistingShipsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddSystemSet(Condition::ObjectSet& condition_non_targets) {
         condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingSystems());
         std::transform( Objects().ExistingSystemsBegin(), Objects().ExistingSystemsEnd(),
                         std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map< int, TemporaryPtr<UniverseObject> >::value_type::second,_1) );
+                        boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     /** Used by 4-parameter ConditionBase::Eval function, and some of its
@@ -140,7 +140,7 @@ namespace {
 
     std::map<std::string, bool> ConditionDescriptionAndTest(const std::vector<Condition::ConditionBase*>& conditions,
                                                             const ScriptingContext& parent_context,
-                                                            TemporaryPtr<const UniverseObject> candidate_object/* = 0*/)
+                                                            boost::shared_ptr<const UniverseObject> candidate_object/* = 0*/)
     {
         std::map<std::string, bool> retval;
 
@@ -163,8 +163,8 @@ namespace {
 
 namespace Condition {
 std::string ConditionFailedDescription(const std::vector<ConditionBase*>& conditions,
-                                       TemporaryPtr<const UniverseObject> candidate_object/* = 0*/,
-                                       TemporaryPtr<const UniverseObject> source_object/* = 0*/)
+                                       boost::shared_ptr<const UniverseObject> candidate_object/* = 0*/,
+                                       boost::shared_ptr<const UniverseObject> source_object/* = 0*/)
 {
     if (conditions.empty())
         return UserString("NONE");
@@ -185,8 +185,8 @@ std::string ConditionFailedDescription(const std::vector<ConditionBase*>& condit
 }
 
 std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
-                                 TemporaryPtr<const UniverseObject> candidate_object/* = 0*/,
-                                 TemporaryPtr<const UniverseObject> source_object/* = 0*/)
+                                 boost::shared_ptr<const UniverseObject> candidate_object/* = 0*/,
+                                 boost::shared_ptr<const UniverseObject> source_object/* = 0*/)
 {
     if (conditions.empty())
         return UserString("NONE");
@@ -238,7 +238,7 @@ struct ConditionBase::MatchHelper {
         m_parent_context(parent_context)
     {}
 
-    bool operator()(TemporaryPtr<const UniverseObject> candidate) const
+    bool operator()(boost::shared_ptr<const UniverseObject> candidate) const
     { return m_this->Match(ScriptingContext(m_parent_context, candidate)); }
 
     const ConditionBase* m_this;
@@ -277,7 +277,7 @@ void ConditionBase::Eval(const ScriptingContext& parent_context,
 }
 
 bool ConditionBase::Eval(const ScriptingContext& parent_context,
-                         TemporaryPtr<const UniverseObject> candidate) const
+                         boost::shared_ptr<const UniverseObject> candidate) const
 {
     if (!candidate)
         return false;
@@ -287,7 +287,7 @@ bool ConditionBase::Eval(const ScriptingContext& parent_context,
     return non_matches.empty(); // if candidate has been matched, non_matches will now be empty
 }
 
-bool ConditionBase::Eval(TemporaryPtr<const UniverseObject> candidate) const {
+bool ConditionBase::Eval(boost::shared_ptr<const UniverseObject> candidate) const {
     if (!candidate)
         return false;
     ObjectSet non_matches, matches;
@@ -376,7 +376,7 @@ void Number::Eval(const ScriptingContext& parent_context,
     // will match anything if the proper number of objects match the
     // subcondition.  So, the local context that is passed to the subcondition
     // needs to have a null local candidate.
-    TemporaryPtr<const UniverseObject> no_object;
+    boost::shared_ptr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (!(
@@ -511,7 +511,7 @@ void Turn::Eval(const ScriptingContext& parent_context,
         // evaluate turn limits once, check range, and use result to match or
         // reject all the search domain, since the current turn doesn't change
         // from object to object, and neither do the range limits.
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int low =  (m_low ? std::max(BEFORE_FIRST_TURN, m_low->Eval(local_context)) : BEFORE_FIRST_TURN);
         int high = (m_high ? std::min(m_high->Eval(local_context), IMPOSSIBLY_LARGE_TURN) : IMPOSSIBLY_LARGE_TURN);
@@ -697,8 +697,8 @@ namespace {
         }
 
         // get sort key values for all objects in from_set, and sort by inserting into map
-        std::multimap<float, TemporaryPtr<const UniverseObject> > sort_key_objects;
-        for (TemporaryPtr<const UniverseObject> from : from_set) {
+        std::multimap<float, boost::shared_ptr<const UniverseObject>> sort_key_objects;
+        for (boost::shared_ptr<const UniverseObject> from : from_set) {
             float sort_value = sort_key->Eval(ScriptingContext(context, from));
             sort_key_objects.insert(std::make_pair(sort_value, from));
         }
@@ -713,8 +713,8 @@ namespace {
         if (sorting_method == SORT_MIN) {
             // move (number) objects with smallest sort key (at start of map)
             // from the from_set into the to_set.
-            for (std::multimap<float, TemporaryPtr<const UniverseObject>>::value_type& entry : sort_key_objects) {
-                TemporaryPtr<const UniverseObject> object_to_transfer = entry.second;
+            for (std::multimap<float, boost::shared_ptr<const UniverseObject>>::value_type& entry : sort_key_objects) {
+                boost::shared_ptr<const UniverseObject> object_to_transfer = entry.second;
                 ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
@@ -728,10 +728,10 @@ namespace {
         } else if (sorting_method == SORT_MAX) {
             // move (number) objects with largest sort key (at end of map)
             // from the from_set into the to_set.
-            for (std::multimap<float, TemporaryPtr<const UniverseObject>>::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
+            for (std::multimap<float, boost::shared_ptr<const UniverseObject>>::reverse_iterator sorted_it = sort_key_objects.rbegin();  // would use const_reverse_iterator but this causes a compile error in some compilers
                  sorted_it != sort_key_objects.rend(); ++sorted_it)
             {
-                TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
+                boost::shared_ptr<const UniverseObject> object_to_transfer = sorted_it->second;
                 ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                 if (from_it != from_set.end()) {
                     *from_it = from_set.back();
@@ -745,7 +745,7 @@ namespace {
         } else if (sorting_method == SORT_MODE) {
             // compile histogram of of number of times each sort key occurs
             std::map<float, unsigned int> histogram;
-            for (std::multimap<float, TemporaryPtr<const UniverseObject> >::value_type& entry : sort_key_objects) {
+            for (std::multimap<float, boost::shared_ptr<const UniverseObject>>::value_type& entry : sort_key_objects) {
                 histogram[entry.first]++;
             }
             // invert histogram to index by number of occurances
@@ -762,15 +762,15 @@ namespace {
                 float cur_sort_key = inv_hist_it->second;
 
                 // get range of objects with the current sort key
-                std::pair<std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator,
-                          std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator> key_range =
+                std::pair<std::multimap<float, boost::shared_ptr<const UniverseObject>>::const_iterator,
+                          std::multimap<float, boost::shared_ptr<const UniverseObject>>::const_iterator> key_range =
                     sort_key_objects.equal_range(cur_sort_key);
 
                 // loop over range, selecting objects to transfer from from_set to to_set
-                for (std::multimap<float, TemporaryPtr<const UniverseObject> >::const_iterator sorted_it = key_range.first;
+                for (std::multimap<float, boost::shared_ptr<const UniverseObject>>::const_iterator sorted_it = key_range.first;
                      sorted_it != key_range.second; ++sorted_it)
                 {
-                    TemporaryPtr<const UniverseObject> object_to_transfer = sorted_it->second;
+                    boost::shared_ptr<const UniverseObject> object_to_transfer = sorted_it->second;
                     ObjectSet::iterator from_it = std::find(from_set.begin(), from_set.end(), object_to_transfer);
                     if (from_it != from_set.end()) {
                         *from_it = from_set.back();
@@ -810,7 +810,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
     // SortedNumberOf does not have a valid local candidate to be matched
     // before the subcondition is evaluated, so the local context that is
     // passed to the subcondition needs to have a null local candidate.
-    TemporaryPtr<const UniverseObject> no_object;
+    boost::shared_ptr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     // which input matches match the subcondition?
@@ -851,7 +851,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
 
     if (search_domain == NON_MATCHES) {
         // put matched objects that are in subcondition_matching_non_matches into matches
-        for (TemporaryPtr<const UniverseObject> matched_object : matched_objects) {
+        for (boost::shared_ptr<const UniverseObject> matched_object : matched_objects) {
             // is this matched object in subcondition_matching_non_matches?
             ObjectSet::iterator smnt_it = std::find(subcondition_matching_non_matches.begin(), subcondition_matching_non_matches.end(), matched_object);
             if (smnt_it != subcondition_matching_non_matches.end()) {
@@ -874,7 +874,7 @@ void SortedNumberOf::Eval(const ScriptingContext& parent_context,
 
     } else { /*(search_domain == MATCHES)*/
         // put matched objecs that are in subcondition_matching_matches back into matches
-        for (TemporaryPtr<const UniverseObject> matched_object : matched_objects) {
+        for (boost::shared_ptr<const UniverseObject> matched_object : matched_objects) {
             // is this matched object in subcondition_matching_matches?
             ObjectSet::iterator smt_it = std::find(subcondition_matching_matches.begin(), subcondition_matching_matches.end(), matched_object);
             if (smt_it != subcondition_matching_matches.end()) {
@@ -1094,7 +1094,7 @@ namespace {
             m_affiliation(affiliation)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -1166,7 +1166,7 @@ void EmpireAffiliation::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         int empire_id = m_empire_id ? m_empire_id->Eval(ScriptingContext(parent_context, no_object)) : ALL_EMPIRES;
         EvalImpl(matches, non_matches, search_domain, EmpireAffiliationSimpleMatch(empire_id, m_affiliation));
     } else {
@@ -1255,7 +1255,7 @@ std::string EmpireAffiliation::Dump() const {
 }
 
 bool EmpireAffiliation::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "EmpireAffiliation::Match passed no candidate object";
         return false;
@@ -1380,13 +1380,13 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a planet or a building on a planet?
-            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-            TemporaryPtr<const ::Building> building;
+            boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+            boost::shared_ptr<const ::Building> building;
             if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
@@ -1511,15 +1511,15 @@ std::string Homeworld::Dump() const {
 }
 
 bool Homeworld::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Homeworld::Match passed no candidate object";
         return false;
     }
 
     // is it a planet or a building on a planet?
-    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-    TemporaryPtr<const ::Building> building;
+    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+    boost::shared_ptr<const ::Building> building;
     if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
@@ -1581,7 +1581,7 @@ std::string Capital::Dump() const
 { return DumpIndent() + "Capital\n"; }
 
 bool Capital::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Capital::Match passed no candidate object";
         return false;
@@ -1616,13 +1616,13 @@ std::string Monster::Dump() const
 { return DumpIndent() + "Monster\n"; }
 
 bool Monster::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Monster::Match passed no candidate object";
         return false;
     }
 
-    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
+    if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
         if (ship->IsMonster())
             return true;
 
@@ -1649,13 +1649,13 @@ std::string Armed::Dump() const
 { return DumpIndent() + "Armed\n"; }
 
 bool Armed::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Armed::Match passed no candidate object";
         return false;
     }
 
-    if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
+    if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
         if (ship->IsArmed() || ship->HasFighters())
             return true;
 
@@ -1687,7 +1687,7 @@ namespace {
             m_type(type)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -1772,7 +1772,7 @@ std::string Type::Dump() const {
 }
 
 bool Type::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Type::Match passed no candidate object";
         return false;
@@ -1788,7 +1788,7 @@ void Type::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_cont
     bool found_type = false;
     if (m_type) {
         found_type = true;
-        //std::vector<TemporaryPtr<const T> > this_base;
+        //std::vector<boost::shared_ptr<const T>> this_base;
         switch (m_type->Eval()) {
             case OBJ_BUILDING:
                 AddBuildingSet(condition_non_targets);
@@ -1867,12 +1867,12 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a building?
-            TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
+            boost::shared_ptr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
             if (!building)
                 return false;
 
@@ -1979,14 +1979,14 @@ void Building::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 { AddBuildingSet(condition_non_targets); }
 
 bool Building::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Building::Match passed no candidate object";
         return false;
     }
 
     // is it a building?
-    TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
+    boost::shared_ptr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
     if (building) {
         // match any building type?
         if (m_names.empty())
@@ -2056,7 +2056,7 @@ namespace {
             m_high_turn(high_turn)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -2095,7 +2095,7 @@ void HasSpecial::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate turn limits once, pass to simple match for all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         std::string name = (m_name ? m_name->Eval(local_context) : "");
         float low_cap = (m_capacity_low ? m_capacity_low->Eval(local_context) : -FLT_MAX);
@@ -2199,7 +2199,7 @@ std::string HasSpecial::Dump() const {
 }
 
 bool HasSpecial::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "HasSpecial::Match passed no candidate object";
         return false;
@@ -2262,7 +2262,7 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -2285,7 +2285,7 @@ void HasTag::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         if (!m_name) {
             EvalImpl(matches, non_matches, search_domain, HasTagSimpleMatch());
@@ -2330,7 +2330,7 @@ std::string HasTag::Dump() const {
 }
 
 bool HasTag::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "HasTag::Match passed no candidate object";
         return false;
@@ -2378,7 +2378,7 @@ namespace {
             m_high(high)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             int turn = candidate->CreationTurn();
@@ -2398,7 +2398,7 @@ void CreatedOnTurn::Eval(const ScriptingContext& parent_context,
                              (!m_high || m_high->LocalCandidateInvariant()) &&
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int low = (m_low ? m_low->Eval(local_context) : BEFORE_FIRST_TURN);
         int high = (m_high ? m_high->Eval(local_context) : IMPOSSIBLY_LARGE_TURN);
@@ -2445,7 +2445,7 @@ std::string CreatedOnTurn::Dump() const {
 }
 
 bool CreatedOnTurn::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "CreatedOnTurn::Match passed no candidate object";
         return false;
@@ -2496,7 +2496,7 @@ namespace {
             // for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
-            for (TemporaryPtr<const UniverseObject> obj : subcondition_matches) {
+            for (boost::shared_ptr<const UniverseObject> obj : subcondition_matches) {
                 if (obj)
                     m_subcondition_matches_ids.push_back(obj->ID());
             }
@@ -2504,7 +2504,7 @@ namespace {
             std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
         }
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -2564,7 +2564,7 @@ void Contains::Eval(const ScriptingContext& parent_context,
 
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects contained by the candidate
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, search_domain == MATCHES ? *matches.begin() : *non_matches.begin());
 
         // initialize subcondition candidates from local candidate's contents
@@ -2591,7 +2591,7 @@ void Contains::Eval(const ScriptingContext& parent_context,
     } else {
         // evaluate contained objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         ObjectSet subcondition_matches;
         m_condition->Eval(local_context, subcondition_matches);
@@ -2635,7 +2635,7 @@ void Contains::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 }
 
 bool Contains::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Contains::Match passed no candidate object";
         return false;
@@ -2646,7 +2646,7 @@ bool Contains::Match(const ScriptingContext& local_context) const {
     m_condition->Eval(local_context, subcondition_matches);
 
     // does candidate object contain any subcondition matches?
-    for (TemporaryPtr<const UniverseObject> obj : subcondition_matches)
+    for (boost::shared_ptr<const UniverseObject> obj : subcondition_matches)
         if (candidate->Contains(obj->ID()))
             return true;
 
@@ -2692,7 +2692,7 @@ namespace {
             // executed for each candidate.
             m_subcondition_matches_ids.reserve(subcondition_matches.size());
             // gather the ids
-            for (TemporaryPtr<const UniverseObject> obj : subcondition_matches) {
+            for (boost::shared_ptr<const UniverseObject> obj : subcondition_matches) {
                 if (obj)
                 { m_subcondition_matches_ids.push_back(obj->ID()); }
             }
@@ -2700,7 +2700,7 @@ namespace {
             std::sort(m_subcondition_matches_ids.begin(), m_subcondition_matches_ids.end());
         }
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -2768,7 +2768,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
 
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects that contain the candidate
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, search_domain == MATCHES ? *matches.begin() : *non_matches.begin());
 
         // initialize subcondition candidates from local candidate's containers
@@ -2801,7 +2801,7 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
     } else {
         // evaluate container objects once using default initial candidates
         // of subcondition to find all subcondition matches in the Universe
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         ObjectSet subcondition_matches;
         m_condition->Eval(local_context, subcondition_matches);
@@ -2846,7 +2846,7 @@ void ContainedBy::GetDefaultInitialCandidateObjects(const ScriptingContext& pare
 }
 
 bool ContainedBy::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ContainedBy::Match passed no candidate object";
         return false;
@@ -2898,7 +2898,7 @@ namespace {
             m_system_id(system_id)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_system_id == INVALID_OBJECT_ID)
@@ -2920,7 +2920,7 @@ void InSystem::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         int system_id = (m_system_id ? m_system_id->Eval(ScriptingContext(parent_context, no_object)) : INVALID_OBJECT_ID);
         EvalImpl(matches, non_matches, search_domain, InSystemSimpleMatch(system_id));
     } else {
@@ -2943,7 +2943,7 @@ std::string InSystem::Description(bool negated/* = false*/) const {
     int system_id = INVALID_OBJECT_ID;
     if (m_system_id && m_system_id->ConstantExpr())
         system_id = m_system_id->Eval();
-    if (TemporaryPtr<const System> system = GetSystem(system_id))
+    if (boost::shared_ptr<const System> system = GetSystem(system_id))
         system_str = system->Name();
     else if (m_system_id)
         system_str = m_system_id->Description();
@@ -2990,13 +2990,13 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 
     // simple case of a single specified system id; can add just objects in that system
     int system_id = m_system_id->Eval(parent_context);
-    TemporaryPtr<const System> system = GetSystem(system_id);
+    boost::shared_ptr<const System> system = GetSystem(system_id);
     if (!system)
         return;
 
     const ObjectMap& obj_map = Objects();
     const std::set<int>& system_object_ids = system->ObjectIDs();
-    std::vector<TemporaryPtr<const UniverseObject> > sys_objs = obj_map.FindObjects(system_object_ids);
+    std::vector<boost::shared_ptr<const UniverseObject>> sys_objs = obj_map.FindObjects(system_object_ids);
 
     // insert all objects that have the specified system id
     condition_non_targets.reserve(sys_objs.size() + 1);
@@ -3006,7 +3006,7 @@ void InSystem::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
 }
 
 bool InSystem::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "InSystem::Match passed no candidate object";
         return false;
@@ -3045,7 +3045,7 @@ namespace {
             m_object_id(object_id)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             return candidate &&
                 m_object_id != INVALID_OBJECT_ID &&
                 candidate->ID() == m_object_id;
@@ -3064,7 +3064,7 @@ void ObjectID::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         int object_id = (m_object_id ? m_object_id->Eval(ScriptingContext(parent_context, no_object)) : INVALID_OBJECT_ID);
         EvalImpl(matches, non_matches, search_domain, ObjectIDSimpleMatch(object_id));
     } else {
@@ -3087,7 +3087,7 @@ std::string ObjectID::Description(bool negated/* = false*/) const {
     int object_id = INVALID_OBJECT_ID;
     if (m_object_id && m_object_id->ConstantExpr())
         object_id = m_object_id->Eval();
-    if (TemporaryPtr<const System> system = GetSystem(object_id))
+    if (boost::shared_ptr<const System> system = GetSystem(object_id))
         object_str = system->Name();
     else if (m_object_id)
         object_str = m_object_id->Description();
@@ -3119,18 +3119,18 @@ void ObjectID::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_
     }
 
     // simple case of a single specified id; can add just that object
-    TemporaryPtr<const UniverseObject> no_object;
+    boost::shared_ptr<const UniverseObject> no_object;
     int object_id = m_object_id->Eval(ScriptingContext(parent_context, no_object));
     if (object_id == INVALID_OBJECT_ID)
         return;
 
-    TemporaryPtr<UniverseObject> obj = Objects().ExistingObject(object_id);
+    boost::shared_ptr<UniverseObject> obj = Objects().ExistingObject(object_id);
     if (obj)
         condition_non_targets.push_back(obj);
 }
 
 bool ObjectID::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ObjectID::Match passed no candidate object";
         return false;
@@ -3176,13 +3176,13 @@ namespace {
             m_types(types)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a planet or on a planet?
-            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-            TemporaryPtr<const ::Building> building;
+            boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+            boost::shared_ptr<const ::Building> building;
             if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
@@ -3292,14 +3292,14 @@ void PlanetType::GetDefaultInitialCandidateObjects(const ScriptingContext& paren
 }
 
 bool PlanetType::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "PlanetType::Match passed no candidate object";
         return false;
     }
 
-    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-    TemporaryPtr<const ::Building> building;
+    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+    boost::shared_ptr<const ::Building> building;
     if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
@@ -3351,13 +3351,13 @@ namespace {
             m_sizes(sizes)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a planet or on a planet? TODO: This concept should be generalized and factored out.
-            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-            TemporaryPtr<const ::Building> building;
+            boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+            boost::shared_ptr<const ::Building> building;
             if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
@@ -3470,14 +3470,14 @@ void PlanetSize::GetDefaultInitialCandidateObjects(const ScriptingContext& paren
 }
 
 bool PlanetSize::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "PlanetSize::Match passed no candidate object";
         return false;
     }
 
-    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-    TemporaryPtr<const ::Building> building;
+    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+    boost::shared_ptr<const ::Building> building;
     if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
@@ -3534,13 +3534,13 @@ namespace {
             m_species(species)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a planet or on a planet? TODO: factor out
-            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-            TemporaryPtr<const ::Building> building;
+            boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+            boost::shared_ptr<const ::Building> building;
             if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
                 planet = GetPlanet(building->PlanetID());
             }
@@ -3676,15 +3676,15 @@ void PlanetEnvironment::GetDefaultInitialCandidateObjects(const ScriptingContext
 }
 
 bool PlanetEnvironment::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "PlanetEnvironment::Match passed no candidate object";
         return false;
     }
 
     // is it a planet or on a planet? TODO: factor out
-    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-    TemporaryPtr<const ::Building> building;
+    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+    boost::shared_ptr<const ::Building> building;
     if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
@@ -3743,25 +3743,25 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a population centre?
-            if (TemporaryPtr<const ::PopCenter> pop = boost::dynamic_pointer_cast<const ::PopCenter>(candidate)) {
+            if (boost::shared_ptr<const ::PopCenter> pop = boost::dynamic_pointer_cast<const ::PopCenter>(candidate)) {
                 const std::string& species_name = pop->SpeciesName();
                 // if the popcenter has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a ship?
-            if (TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate)) {
+            if (boost::shared_ptr<const ::Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate)) {
                 // if the ship has a species and that species is one of those specified...
                 const std::string& species_name = ship->SpeciesName();
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
             }
             // is it a building on a planet?
-            if (TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate)) {
-                TemporaryPtr<const ::Planet> planet = GetPlanet(building->PlanetID());
+            if (boost::shared_ptr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate)) {
+                boost::shared_ptr<const ::Planet> planet = GetPlanet(building->PlanetID());
                 const std::string& species_name = planet->SpeciesName();
                 // if the planet (which IS a popcenter) has a species and that species is one of those specified...
                 return !species_name.empty() && (m_names.empty() || (std::find(m_names.begin(), m_names.end(), species_name) != m_names.end()));
@@ -3873,15 +3873,15 @@ void Species::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
 }
 
 bool Species::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Species::Match passed no candidate object";
         return false;
     }
 
     // is it a planet or a building on a planet? TODO: factor out
-    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
-    TemporaryPtr<const ::Building> building;
+    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+    boost::shared_ptr<const ::Building> building;
     if (!planet && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
         planet = GetPlanet(building->PlanetID());
     }
@@ -3897,7 +3897,7 @@ bool Species::Match(const ScriptingContext& local_context) const {
         }
     }
     // is it a ship?
-    TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
+    boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
     if (ship) {
         if (m_names.empty()) {
             return !ship->SpeciesName().empty();    // match any species name
@@ -4013,7 +4013,7 @@ namespace {
             m_low(low),
             m_high(high)
         {}
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -4193,7 +4193,7 @@ std::string Enqueued::Dump() const {
 }
 
 bool Enqueued::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Enqueued::Match passed no candidate object";
         return false;
@@ -4257,15 +4257,15 @@ namespace {
             m_names(names)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-            TemporaryPtr<const ResourceCenter> res_center = boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
-            TemporaryPtr<const ::Building> building;
+            boost::shared_ptr<const ResourceCenter> res_center = boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
+            boost::shared_ptr<const ::Building> building;
             if (!res_center && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
-                if (TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID()))
+                if (boost::shared_ptr<const Planet> planet = GetPlanet(building->PlanetID()))
                     res_center = boost::dynamic_pointer_cast<const ResourceCenter>(planet);
             }
             if (res_center) {
@@ -4367,17 +4367,17 @@ std::string FocusType::Dump() const {
 }
 
 bool FocusType::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "FocusType::Match passed no candidate object";
         return false;
     }
 
     // is it a ResourceCenter or a Building on a Planet (that is a ResourceCenter)
-    TemporaryPtr<const ResourceCenter> res_center = boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
-    TemporaryPtr<const ::Building> building;
+    boost::shared_ptr<const ResourceCenter> res_center = boost::dynamic_pointer_cast<const ResourceCenter>(candidate);
+    boost::shared_ptr<const ::Building> building;
     if (!res_center && (building = boost::dynamic_pointer_cast<const ::Building>(candidate))) {
-        if (TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID()))
+        if (boost::shared_ptr<const Planet> planet = GetPlanet(building->PlanetID()))
             res_center = boost::dynamic_pointer_cast<const ResourceCenter>(planet);
     }
     if (res_center) {
@@ -4435,11 +4435,11 @@ namespace {
             m_types(types)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
-            TemporaryPtr<const System> system = GetSystem(candidate->SystemID());
+            boost::shared_ptr<const System> system = GetSystem(candidate->SystemID());
             if (system || (system = boost::dynamic_pointer_cast<const System>(candidate)))
                 return !m_types.empty() && (std::find(m_types.begin(), m_types.end(), system->GetStarType()) != m_types.end());
 
@@ -4537,13 +4537,13 @@ std::string StarType::Dump() const {
 }
 
 bool StarType::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "StarType::Match passed no candidate object";
         return false;
     }
 
-    TemporaryPtr<const System> system = GetSystem(candidate->SystemID());
+    boost::shared_ptr<const System> system = GetSystem(candidate->SystemID());
     if (system || (system = boost::dynamic_pointer_cast<const System>(candidate))) {
         for (ValueRef::ValueRefBase<::StarType>* type : m_types) {
             if (type->Eval(local_context) == system->GetStarType())
@@ -4585,12 +4585,12 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a ship?
-            TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
+            boost::shared_ptr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -4613,7 +4613,7 @@ void DesignHasHull::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         std::string name = (m_name ? m_name->Eval(local_context) : "");
         EvalImpl(matches, non_matches, search_domain, DesignHasHullSimpleMatch(name));
@@ -4654,7 +4654,7 @@ std::string DesignHasHull::Dump() const {
 }
 
 bool DesignHasHull::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "DesignHasHull::Match passed no candidate object";
         return false;
@@ -4708,12 +4708,12 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a ship?
-            TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
+            boost::shared_ptr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -4747,7 +4747,7 @@ void DesignHasPart::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         std::string name = (m_name ? m_name->Eval(local_context) : "");
         int low =          (m_low ? std::max(0, m_low->Eval(local_context)) : 1);
@@ -4814,7 +4814,7 @@ std::string DesignHasPart::Dump() const {
 }
 
 bool DesignHasPart::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "DesignHasPart::Match passed no candidate object";
         return false;
@@ -4875,12 +4875,12 @@ namespace {
             m_part_class(part_class)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is it a ship?
-            TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
+            boost::shared_ptr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate);
             if (!ship)
                 return false;
             // with a valid design?
@@ -4914,7 +4914,7 @@ void DesignHasPartClass::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int low =          (m_low ? std::max(0, m_low->Eval(local_context)) : 1);
         int high =         (m_high ? std::min(m_high->Eval(local_context), INT_MAX) : INT_MAX);
@@ -4967,7 +4967,7 @@ std::string DesignHasPartClass::Dump() const {
 }
 
 bool DesignHasPartClass::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "DesignHasPartClass::Match passed no candidate object";
         return false;
@@ -5023,8 +5023,8 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
-            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
+            boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
             if (!ship)
                 return false;
             const ShipDesign* candidate_design = ship->Design();
@@ -5059,7 +5059,7 @@ void PredefinedShipDesign::Eval(const ScriptingContext& parent_context,
         if (!m_name) {
             EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch());
         } else {
-            TemporaryPtr<const UniverseObject> no_object;
+            boost::shared_ptr<const UniverseObject> no_object;
             ScriptingContext local_context(parent_context, no_object);
             std::string name = m_name->Eval(local_context);
             EvalImpl(matches, non_matches, search_domain, PredefinedShipDesignSimpleMatch(name));
@@ -5101,7 +5101,7 @@ std::string PredefinedShipDesign::Dump() const {
 }
 
 bool PredefinedShipDesign::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "PredefinedShipDesign::Match passed no candidate object";
         return false;
@@ -5144,12 +5144,12 @@ namespace {
             m_design_id(design_id)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_design_id == ShipDesign::INVALID_DESIGN_ID)
                 return false;
-            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
+            if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
                 if (ship->DesignID() == m_design_id)
                     return true;
             return false;
@@ -5168,7 +5168,7 @@ void NumberedShipDesign::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         int design_id = m_design_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, NumberedShipDesignSimpleMatch(design_id));
     } else {
@@ -5201,7 +5201,7 @@ std::string NumberedShipDesign::Dump() const
 { return DumpIndent() + "NumberedShipDesign design_id = " + m_design_id->Dump(); }
 
 bool NumberedShipDesign::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "NumberedShipDesign::Match passed no candidate object";
         return false;
@@ -5239,13 +5239,13 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
-            if (TemporaryPtr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate))
+            if (boost::shared_ptr<const ::Ship> ship = boost::dynamic_pointer_cast<const ::Ship>(candidate))
                 return ship->ProducedByEmpireID() == m_empire_id;
-            else if (TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate))
+            else if (boost::shared_ptr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate))
                 return building->ProducedByEmpireID() == m_empire_id;
             return false;
         }
@@ -5263,7 +5263,7 @@ void ProducedByEmpire::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, ProducedByEmpireSimpleMatch(empire_id));
     } else {
@@ -5303,7 +5303,7 @@ std::string ProducedByEmpire::Dump() const
 { return DumpIndent() + "ProducedByEmpire empire_id = " + m_empire_id->Dump(); }
 
 bool ProducedByEmpire::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ProducedByEmpire::Match passed no candidate object";
         return false;
@@ -5342,7 +5342,7 @@ namespace {
             m_chance(chance)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const
         { return RandZeroToOne() <= m_chance; }
 
         float m_chance;
@@ -5358,7 +5358,7 @@ void Chance::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         float chance = std::max(0.0, std::min(1.0, m_chance->Eval(ScriptingContext(parent_context, no_object))));
         EvalImpl(matches, non_matches, search_domain, ChanceSimpleMatch(chance));
     } else {
@@ -5437,7 +5437,7 @@ namespace {
             m_meter_type(meter_type)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -5494,7 +5494,7 @@ void MeterValue::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
         float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
@@ -5558,7 +5558,7 @@ std::string MeterValue::Dump() const {
 }
 
 bool MeterValue::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "MeterValue::Match passed no candidate object";
         return false;
@@ -5612,10 +5612,10 @@ namespace {
             m_meter(meter)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
+            boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
             if (!ship)
                 return false;
             const Meter* meter = ship->GetPartMeter(m_meter, m_part_name);
@@ -5642,7 +5642,7 @@ void ShipPartMeterValue::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
         float high = (m_high ? m_high->Eval(local_context) : Meter::LARGE_VALUE);
@@ -5715,7 +5715,7 @@ std::string ShipPartMeterValue::Dump() const {
 }
 
 bool ShipPartMeterValue::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ShipPartMeterValue::Match passed no candidate object";
         return false;
@@ -5773,7 +5773,7 @@ namespace {
             m_meter(meter)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             const Empire* empire = GetEmpire(m_empire_id);
@@ -5803,7 +5803,7 @@ void EmpireMeterValue::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int empire_id = m_empire_id->Eval(local_context);   // if m_empire_id not set, default to local candidate's owner, which is not target invariant
         float low = (m_low ? m_low->Eval(local_context) : -Meter::LARGE_VALUE);
@@ -5875,7 +5875,7 @@ std::string EmpireMeterValue::Dump() const {
 }
 
 bool EmpireMeterValue::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "EmpireMeterValue::Match passed no candidate object";
         return false;
@@ -5930,7 +5930,7 @@ namespace {
             m_stockpile(stockpile)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -5963,7 +5963,7 @@ void EmpireStockpileValue::Eval(const ScriptingContext& parent_context,
                              (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         float low = m_low->Eval(local_context);
         float high = m_high->Eval(local_context);
@@ -6011,7 +6011,7 @@ std::string EmpireStockpileValue::Dump() const {
 }
 
 bool EmpireStockpileValue::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "EmpireStockpileValue::Match passed no candidate object";
         return false;
@@ -6054,7 +6054,7 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -6079,7 +6079,7 @@ void OwnerHasTech::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         std::string name = m_name ? m_name->Eval(local_context) : "";
         EvalImpl(matches, non_matches, search_domain, OwnerHasTechSimpleMatch(name));
@@ -6120,7 +6120,7 @@ std::string OwnerHasTech::Dump() const {
 }
 
 bool OwnerHasTech::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
@@ -6165,7 +6165,7 @@ namespace {
             m_name(name)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -6190,7 +6190,7 @@ void OwnerHasBuildingTypeAvailable::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         std::string name = m_name ? m_name->Eval(local_context) : "";
         EvalImpl(matches, non_matches, search_domain, OwnerHasBuildingTypeAvailableSimpleMatch(name));
@@ -6226,7 +6226,7 @@ std::string OwnerHasBuildingTypeAvailable::Dump() const {
 }
 
 bool OwnerHasBuildingTypeAvailable::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
@@ -6271,7 +6271,7 @@ namespace {
             m_id(id)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -6296,7 +6296,7 @@ void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate number limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
         int id = m_id ? m_id->Eval(local_context) : ShipDesign::INVALID_DESIGN_ID;
         EvalImpl(matches, non_matches, search_domain, OwnerHasShipDesignAvailableSimpleMatch(id));
@@ -6332,7 +6332,7 @@ std::string OwnerHasShipDesignAvailable::Dump() const {
 }
 
 bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OwnerHasTech::Match passed no candidate object";
         return false;
@@ -6372,7 +6372,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             return candidate->GetVisibility(m_empire_id) != VIS_NO_VISIBILITY;
@@ -6391,7 +6391,7 @@ void VisibleToEmpire::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, VisibleToEmpireSimpleMatch(empire_id));
     } else {
@@ -6431,7 +6431,7 @@ std::string VisibleToEmpire::Dump() const
 { return DumpIndent() + "VisibleToEmpire empire_id = " + m_empire_id->Dump() + "\n"; }
 
 bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "VisibleToEmpire::Match passed no candidate object";
         return false;
@@ -6474,12 +6474,12 @@ namespace {
             m_distance2(distance*distance)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // is candidate object close enough to any of the passed-in objects?
-            for (TemporaryPtr<const UniverseObject> obj : m_from_objects) {
+            for (boost::shared_ptr<const UniverseObject> obj : m_from_objects) {
                 double delta_x = candidate->X() - obj->X();
                 double delta_y = candidate->Y() - obj->Y();
                 if (delta_x*delta_x + delta_y*delta_y <= m_distance2)
@@ -6503,7 +6503,7 @@ void WithinDistance::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
 
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get subcondition matches
@@ -6548,7 +6548,7 @@ std::string WithinDistance::Dump() const {
 }
 
 bool WithinDistance::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "WithinDistance::Match passed no candidate object";
         return false;
@@ -6599,7 +6599,7 @@ namespace {
             m_jump_limit(jump_limit)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_from_objects.empty())
@@ -6608,7 +6608,7 @@ namespace {
                 return false;
 
             // is candidate object close enough to any subcondition matches?
-            for (TemporaryPtr<const UniverseObject> obj : m_from_objects) {
+            for (boost::shared_ptr<const UniverseObject> obj : m_from_objects) {
                 int jumps = GetUniverse().JumpDistanceBetweenObjects(obj->ID(), candidate->ID());
                 if (jumps != -1 && jumps <= m_jump_limit)
                     return true;
@@ -6630,7 +6630,7 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         && (parent_context.condition_root_candidate || RootCandidateInvariant());
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get subcondition matches
@@ -6672,7 +6672,7 @@ std::string WithinStarlaneJumps::Dump() const {
 }
 
 bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "WithinStarlaneJumps::Match passed no candidate object";
         return false;
@@ -6715,9 +6715,9 @@ bool CanAddStarlaneConnection::operator==(const ConditionBase& rhs) const {
 namespace {
     // check if two destination systems, connected to the same origin system
     // would have starlanes too close angularly to eachother
-    bool LanesAngularlyTooClose(TemporaryPtr<const UniverseObject> sys1,
-                                TemporaryPtr<const UniverseObject> lane1_sys2,
-                                TemporaryPtr<const UniverseObject> lane2_sys2)
+    bool LanesAngularlyTooClose(boost::shared_ptr<const UniverseObject> sys1,
+                                boost::shared_ptr<const UniverseObject> lane1_sys2,
+                                boost::shared_ptr<const UniverseObject> lane2_sys2)
     {
         if (!sys1 || !lane1_sys2 || !lane2_sys2)
             return true;
@@ -6756,9 +6756,9 @@ namespace {
     // are to eachother. if the third system is further than the endpoints, than
     // the distance to the line is not considered and the lane is considered
     // acceptable
-    bool ObjectTooCloseToLane(TemporaryPtr<const UniverseObject> lane_end_sys1,
-                              TemporaryPtr<const UniverseObject> lane_end_sys2,
-                              TemporaryPtr<const UniverseObject> obj)
+    bool ObjectTooCloseToLane(boost::shared_ptr<const UniverseObject> lane_end_sys1,
+                              boost::shared_ptr<const UniverseObject> lane_end_sys2,
+                              boost::shared_ptr<const UniverseObject> obj)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || !obj)
             return true;
@@ -6819,10 +6819,10 @@ namespace {
     inline float CrossProduct(float dx1, float dy1, float dx2, float dy2)
     { return dx1*dy2 - dy1*dx2; }
 
-    bool LanesCross(TemporaryPtr<const System> lane1_end_sys1,
-                    TemporaryPtr<const System> lane1_end_sys2,
-                    TemporaryPtr<const System> lane2_end_sys1,
-                    TemporaryPtr<const System> lane2_end_sys2)
+    bool LanesCross(boost::shared_ptr<const System> lane1_end_sys1,
+                    boost::shared_ptr<const System> lane1_end_sys2,
+                    boost::shared_ptr<const System> lane2_end_sys1,
+                    boost::shared_ptr<const System> lane2_end_sys2)
     {
         // are all endpoints valid systems?
         if (!lane1_end_sys1 || !lane1_end_sys2 || !lane2_end_sys1 || !lane2_end_sys2)
@@ -6884,8 +6884,8 @@ namespace {
         return true;
     }
 
-    bool LaneCrossesExistingLane(TemporaryPtr<const System> lane_end_sys1,
-                                 TemporaryPtr<const System> lane_end_sys2)
+    bool LaneCrossesExistingLane(boost::shared_ptr<const System> lane_end_sys1,
+                                 boost::shared_ptr<const System> lane_end_sys2)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
             return true;
@@ -6894,7 +6894,7 @@ namespace {
 
         // loop over all existing lanes in all systems, checking if a lane
         // beween the specified systems would cross any of the existing lanes
-        for (TemporaryPtr<const System> system : objects.FindObjects<System>()) {
+        for (boost::shared_ptr<const System> system : objects.FindObjects<System>()) {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
@@ -6902,7 +6902,7 @@ namespace {
 
             // check all existing lanes of currently-being-checked system
             for (const std::map<int, bool>::value_type& lane : sys_existing_lanes) {
-                TemporaryPtr<const System> lane_end_sys3 = GetSystem(lane.first);
+                boost::shared_ptr<const System> lane_end_sys3 = GetSystem(lane.first);
                 if (!lane_end_sys3)
                     continue;
                 // don't need to check against existing lanes that include one
@@ -6921,18 +6921,18 @@ namespace {
         return false;
     }
 
-    bool LaneTooCloseToOtherSystem(TemporaryPtr<const System> lane_end_sys1,
-                                   TemporaryPtr<const System> lane_end_sys2)
+    bool LaneTooCloseToOtherSystem(boost::shared_ptr<const System> lane_end_sys1,
+                                   boost::shared_ptr<const System> lane_end_sys2)
     {
         if (!lane_end_sys1 || !lane_end_sys2 || lane_end_sys1 == lane_end_sys2)
             return true;
 
         const ObjectMap& objects = Objects();
-        std::vector<TemporaryPtr<const System> > systems = objects.FindObjects<System>();
+        std::vector<boost::shared_ptr<const System>> systems = objects.FindObjects<System>();
 
         // loop over all existing systems, checking if each is too close to a
         // lane between the specified lane endpoints
-        for (TemporaryPtr<const System> system : systems) {
+        for (boost::shared_ptr<const System> system : systems) {
             if (system == lane_end_sys1 || system == lane_end_sys2)
                 continue;
 
@@ -6949,20 +6949,20 @@ namespace {
         {
             // get (one of each of) set of systems that are or that contain any
             // destination objects
-            std::set<TemporaryPtr<const System> > dest_systems;
-            for (TemporaryPtr<const UniverseObject> obj : destination_objects) {
-                if (TemporaryPtr<const System> sys = GetSystem(obj->SystemID()))
+            std::set<boost::shared_ptr<const System> > dest_systems;
+            for (boost::shared_ptr<const UniverseObject> obj : destination_objects) {
+                if (boost::shared_ptr<const System> sys = GetSystem(obj->SystemID()))
                     dest_systems.insert(sys);
             }
             std::copy(dest_systems.begin(), dest_systems.end(), std::inserter(m_destination_systems, m_destination_systems.end()));
         }
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
             // get system from candidate
-            TemporaryPtr<const System> candidate_sys = boost::dynamic_pointer_cast<const System>(candidate);
+            boost::shared_ptr<const System> candidate_sys = boost::dynamic_pointer_cast<const System>(candidate);
             if (!candidate_sys)
                 candidate_sys = GetSystem(candidate->SystemID());
             if (!candidate_sys)
@@ -6970,14 +6970,14 @@ namespace {
 
 
             // check if candidate is one of the destination systems
-            for (TemporaryPtr<const System> destination : m_destination_systems) {
+            for (boost::shared_ptr<const System> destination : m_destination_systems) {
                 if (candidate_sys->ID() == destination->ID())
                     return false;
             }
 
 
             // check if candidate already has a lane to any of the destination systems
-            for (TemporaryPtr<const System> destination : m_destination_systems) {
+            for (boost::shared_ptr<const System> destination : m_destination_systems) {
                 if (candidate_sys->HasStarlaneTo(destination->ID()))
                     return false;
             }
@@ -6986,12 +6986,12 @@ namespace {
             // present lanes of the candidate system
             //std::cout << "... Checking lanes of candidate system: " << candidate->UniverseObject::Name() << std::endl;
             for (const std::map<int, bool>::value_type& lane : candidate_sys->StarlanesWormholes()) {
-                TemporaryPtr<const System> candidate_existing_lane_end_sys = GetSystem(lane.first);
+                boost::shared_ptr<const System> candidate_existing_lane_end_sys = GetSystem(lane.first);
                 if (!candidate_existing_lane_end_sys)
                     continue;
 
                 // check this existing lane against potential lanes to all destination systems
-                for (TemporaryPtr<const System> dest_sys : m_destination_systems) {
+                for (boost::shared_ptr<const System> dest_sys : m_destination_systems) {
                     if (LanesAngularlyTooClose(candidate_sys, candidate_existing_lane_end_sys, dest_sys)) {
                         //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane to " << candidate_existing_lane_end_sys->UniverseObject::Name() << std::endl;
                         return false;
@@ -7003,11 +7003,11 @@ namespace {
             // check if any of the proposed lanes are too close to any already-
             // present lanes of any of the destination systems
             //std::cout << "... Checking lanes of destination systems:" << std::endl;
-            for (TemporaryPtr<const System> dest_sys : m_destination_systems) {
+            for (boost::shared_ptr<const System> dest_sys : m_destination_systems) {
                 // check this destination system's existing lanes against a lane
                 // to the candidate system
                 for (const std::map<int, bool>::value_type& dest_lane : dest_sys->StarlanesWormholes()) {
-                    TemporaryPtr<const System> dest_lane_end_sys = GetSystem(dest_lane.first);
+                    boost::shared_ptr<const System> dest_lane_end_sys = GetSystem(dest_lane.first);
                     if (!dest_lane_end_sys)
                         continue;
 
@@ -7021,16 +7021,16 @@ namespace {
 
             // check if any of the proposed lanes are too close to eachother
             //std::cout << "... Checking proposed lanes against eachother" << std::endl;
-            for (std::vector<TemporaryPtr<const System> >::const_iterator it1 = m_destination_systems.begin();
+            for (std::vector<boost::shared_ptr<const System>>::const_iterator it1 = m_destination_systems.begin();
                  it1 != m_destination_systems.end(); ++it1)
             {
-                TemporaryPtr<const System> dest_sys1 = *it1;
+                boost::shared_ptr<const System> dest_sys1 = *it1;
 
                 // don't need to check a lane in both directions, so start at one past it1
-                std::vector<TemporaryPtr<const System> >::const_iterator it2 = it1;
+                std::vector<boost::shared_ptr<const System>>::const_iterator it2 = it1;
                 ++it2;
                 for (; it2 != m_destination_systems.end(); ++it2) {
-                    TemporaryPtr<const System> dest_sys2 = *it2;
+                    boost::shared_ptr<const System> dest_sys2 = *it2;
                     if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {
                         //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << std::endl;
                         return false;
@@ -7042,7 +7042,7 @@ namespace {
             // check that the proposed lanes are not too close to any existing
             // system they are not connected to
             //std::cout << "... Checking proposed lanes for proximity to other systems" <<std::endl;
-            for (TemporaryPtr<const System> dest_sys : m_destination_systems) {
+            for (boost::shared_ptr<const System> dest_sys : m_destination_systems) {
                 if (LaneTooCloseToOtherSystem(candidate_sys, dest_sys)) {
                     //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to proximity to another system." << std::endl;
                     return false;
@@ -7052,7 +7052,7 @@ namespace {
 
             // check that there are no lanes already existing that cross the proposed lanes
             //std::cout << "... Checking for potential lanes crossing existing lanes" << std::endl;
-            for (TemporaryPtr<const System> dest_sys : m_destination_systems) {
+            for (boost::shared_ptr<const System> dest_sys : m_destination_systems) {
                 if (LaneCrossesExistingLane(candidate_sys, dest_sys)) {
                     //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->Name() << " to " << dest_sys->Name() << " due to crossing an existing lane." << std::endl;
                     return false;
@@ -7062,7 +7062,7 @@ namespace {
             return true;
         }
 
-        std::vector<TemporaryPtr<const System> > m_destination_systems;
+        std::vector<boost::shared_ptr<const System>> m_destination_systems;
     };
 }
 
@@ -7073,7 +7073,7 @@ void CanAddStarlaneConnection::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get subcondition matches
@@ -7111,7 +7111,7 @@ std::string CanAddStarlaneConnection::Dump() const {
 }
 
 bool CanAddStarlaneConnection::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "CanAddStarlaneConnection::Match passed no candidate object";
         return false;
@@ -7154,7 +7154,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -7177,7 +7177,7 @@ void ExploredByEmpire::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, ExploredByEmpireSimpleMatch(empire_id));
     } else {
@@ -7217,7 +7217,7 @@ std::string ExploredByEmpire::Dump() const
 { return DumpIndent() + "ExploredByEmpire empire_id = " + m_empire_id->Dump(); }
 
 bool ExploredByEmpire::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ExploredByEmpire::Match passed no candidate object";
         return false;
@@ -7247,7 +7247,7 @@ std::string Stationary::Dump() const
 { return DumpIndent() + "Stationary\n"; }
 
 bool Stationary::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Stationary::Match passed no candidate object";
         return false;
@@ -7256,9 +7256,9 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     // the only objects that can move are fleets and the ships in them.  so,
     // attempt to cast the candidate object to a fleet or ship, and if it's a ship
     // get the fleet of that ship
-    TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(candidate);
+    boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
-        if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
+        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
             fleet = GetFleet(ship->FleetID());
 
     if (fleet) {
@@ -7296,7 +7296,7 @@ std::string Aggressive::Dump() const
 { return DumpIndent() + (m_aggressive ? "Aggressive\n" : "Passive\n"); }
 
 bool Aggressive::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Aggressive::Match passed no candidate object";
         return false;
@@ -7305,9 +7305,9 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
     // the only objects that can be aggressive are fleets and the ships in them.
     // so, attempt to cast the candidate object to a fleet or ship, and if it's
     // a ship get the fleet of that ship
-    TemporaryPtr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(candidate);
+    boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(candidate);
     if (!fleet)
-        if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
+        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate))
             fleet = GetFleet(ship->FleetID());
 
     if (!fleet)
@@ -7341,7 +7341,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
 
@@ -7370,7 +7370,7 @@ void FleetSupplyableByEmpire::Eval(const ScriptingContext& parent_context,
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate empire id once, and use to check all candidate objects
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         int empire_id = m_empire_id->Eval(ScriptingContext(parent_context, no_object));
         EvalImpl(matches, non_matches, search_domain, FleetSupplyableSimpleMatch(empire_id));
     } else {
@@ -7410,7 +7410,7 @@ std::string FleetSupplyableByEmpire::Dump() const
 { return DumpIndent() + "ResupplyableBy empire_id = " + m_empire_id->Dump(); }
 
 bool FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "FleetSupplyableByEmpire::Match passed no candidate object";
         return false;
@@ -7454,7 +7454,7 @@ namespace {
             m_from_objects(from_objects)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_from_objects.empty())
@@ -7464,7 +7464,7 @@ namespace {
                 return false;
 
             // is candidate object connected to a subcondition matching object by resource supply?
-            for (TemporaryPtr<const UniverseObject> from_object : m_from_objects) {
+            for (boost::shared_ptr<const UniverseObject> from_object : m_from_objects) {
                 for (const std::set<int>& group : groups) {
                     if (group.find(from_object->SystemID()) != group.end()) {
                         // found resource sharing group containing test object.  Does it also contain candidate?
@@ -7497,7 +7497,7 @@ void ResourceSupplyConnectedByEmpire::Eval(const ScriptingContext& parent_contex
                             (parent_context.condition_root_candidate || RootCandidateInvariant()));
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get objects to be considering for matching against subcondition
@@ -7523,7 +7523,7 @@ bool ResourceSupplyConnectedByEmpire::SourceInvariant() const
 { return m_empire_id->SourceInvariant() && m_condition->SourceInvariant(); }
 
 bool ResourceSupplyConnectedByEmpire::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ResourceSupplyConnectedByEmpire::Match passed no candidate object";
         return false;
@@ -7588,7 +7588,7 @@ std::string CanColonize::Dump() const
 { return DumpIndent() + "CanColonize\n"; }
 
 bool CanColonize::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "CanColonize::Match passed no candidate object";
         return false;
@@ -7597,7 +7597,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
     // is it a ship, a planet, or a building on a planet?
     std::string species_name;
     if (candidate->ObjectType() == OBJ_PLANET) {
-        TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+        boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
             ErrorLogger() << "CanColonize couldn't cast supposedly planet candidate";
             return false;
@@ -7605,12 +7605,12 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
-        TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
+        boost::shared_ptr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
             ErrorLogger() << "CanColonize couldn't cast supposedly building candidate";
             return false;
         }
-        TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID());
+        boost::shared_ptr<const Planet> planet = GetPlanet(building->PlanetID());
         if (!planet) {
             ErrorLogger() << "CanColonize couldn't get building's planet";
             return false;
@@ -7618,7 +7618,7 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
-        TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
+        boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
             ErrorLogger() << "CanColonize couldn't cast supposedly ship candidate";
             return false;
@@ -7652,7 +7652,7 @@ std::string CanProduceShips::Dump() const
 { return DumpIndent() + "CanColonize\n"; }
 
 bool CanProduceShips::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "CanProduceShips::Match passed no candidate object";
         return false;
@@ -7661,7 +7661,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
     // is it a ship, a planet, or a building on a planet?
     std::string species_name;
     if (candidate->ObjectType() == OBJ_PLANET) {
-        TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+        boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
         if (!planet) {
             ErrorLogger() << "CanProduceShips couldn't cast supposedly planet candidate";
             return false;
@@ -7669,12 +7669,12 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_BUILDING) {
-        TemporaryPtr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
+        boost::shared_ptr<const ::Building> building = boost::dynamic_pointer_cast<const ::Building>(candidate);
         if (!building) {
             ErrorLogger() << "CanProduceShips couldn't cast supposedly building candidate";
             return false;
         }
-        TemporaryPtr<const Planet> planet = GetPlanet(building->PlanetID());
+        boost::shared_ptr<const Planet> planet = GetPlanet(building->PlanetID());
         if (!planet) {
             ErrorLogger() << "CanProduceShips couldn't get building's planet";
             return false;
@@ -7682,7 +7682,7 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
         species_name = planet->SpeciesName();
 
     } else if (candidate->ObjectType() == OBJ_SHIP) {
-        TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
+        boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(candidate);
         if (!ship) {
             ErrorLogger() << "CanProduceShips couldn't cast supposedly ship candidate";
             return false;
@@ -7725,12 +7725,12 @@ namespace {
             m_by_objects(by_objects)
         {}
 
-        bool operator()(TemporaryPtr<const UniverseObject> candidate) const {
+        bool operator()(boost::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
             if (m_by_objects.empty())
                 return false;
-            TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
+            boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(candidate);
             if (!planet)
                 return false;
             int planet_id = planet->ID();
@@ -7738,8 +7738,8 @@ namespace {
                 return false;
 
             // check if any of the by_objects is ordered to bombard the candidate planet
-            for (TemporaryPtr<const UniverseObject> obj : m_by_objects) {
-                TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
+            for (boost::shared_ptr<const UniverseObject> obj : m_by_objects) {
+                boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
                 if (!ship)
                     continue;
                 if (ship->OrderedBombardPlanet() == planet_id)
@@ -7759,7 +7759,7 @@ void OrderedBombarded::Eval(const ScriptingContext& parent_context,
     bool simple_eval_safe = parent_context.condition_root_candidate || RootCandidateInvariant();
     if (simple_eval_safe) {
         // evaluate contained objects once and check for all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         // get subcondition matches
@@ -7797,7 +7797,7 @@ std::string OrderedBombarded::Dump() const
 { return DumpIndent() + "OrderedBombarded by_object = " + m_by_object_condition->Dump(); }
 
 bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "OrderedBombarded::Match passed no candidate object";
         return false;
@@ -7883,7 +7883,7 @@ void ValueTest::Eval(const ScriptingContext& parent_context,
 
     if (simple_eval_safe) {
         // evaluate value and range limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         float val1, val2, val3;
@@ -7978,7 +7978,7 @@ std::string ValueTest::Dump() const {
 }
 
 bool ValueTest::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "ValueTest::Match passed no candidate object";
         return false;
@@ -8095,7 +8095,7 @@ void Location::Eval(const ScriptingContext& parent_context,
 
     if (simple_eval_safe) {
         // evaluate value and range limits once, use to match all candidates
-        TemporaryPtr<const UniverseObject> no_object;
+        boost::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
 
         std::string name1 = (m_name1 ? m_name1->Eval(local_context) : "");
@@ -8177,7 +8177,7 @@ std::string Location::Dump() const {
 }
 
 bool Location::Match(const ScriptingContext& local_context) const {
-    TemporaryPtr<const UniverseObject> candidate = local_context.condition_local_candidate;
+    boost::shared_ptr<const UniverseObject> candidate = local_context.condition_local_candidate;
     if (!candidate) {
         ErrorLogger() << "Location::Match passed no candidate object";
         return false;
@@ -8230,7 +8230,7 @@ bool And::operator==(const ConditionBase& rhs) const {
 void And::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
                ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    TemporaryPtr<const UniverseObject> no_object;
+    boost::shared_ptr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (m_operands.empty()) {
@@ -8389,7 +8389,7 @@ bool Or::operator==(const ConditionBase& rhs) const {
 void Or::Eval(const ScriptingContext& parent_context, ObjectSet& matches,
               ObjectSet& non_matches, SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    TemporaryPtr<const UniverseObject> no_object;
+    boost::shared_ptr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (m_operands.empty()) {
@@ -8536,7 +8536,7 @@ bool Not::operator==(const ConditionBase& rhs) const {
 void Not::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    TemporaryPtr<const UniverseObject> no_object;
+    boost::shared_ptr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (!m_operand) {
@@ -8617,7 +8617,7 @@ bool Described::operator==(const ConditionBase& rhs) const {
 void Described::Eval(const ScriptingContext& parent_context, ObjectSet& matches, ObjectSet& non_matches,
                      SearchDomain search_domain/* = NON_MATCHES*/) const
 {
-    TemporaryPtr<const UniverseObject> no_object;
+    boost::shared_ptr<const UniverseObject> no_object;
     ScriptingContext local_context(parent_context, no_object);
 
     if (!m_condition) {

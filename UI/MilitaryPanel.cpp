@@ -35,7 +35,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
 {
     SetName("MilitaryPanel");
 
-    TemporaryPtr<const Planet> planet = GetPlanet();
+    boost::shared_ptr<const Planet> planet = GetPlanet();
     if (!planet)
         throw std::invalid_argument("Attempted to construct a MilitaryPanel with an object id is not a Planet");
 
@@ -143,7 +143,7 @@ bool MilitaryPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 }
 
 void MilitaryPanel::Update() {
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
         return;
@@ -226,16 +226,16 @@ void MilitaryPanel::DoLayout() {
     SetCollapsed(!s_expanded_map[m_planet_id]);
 }
 
-TemporaryPtr<const Planet> MilitaryPanel::GetPlanet() const {
-    TemporaryPtr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+boost::shared_ptr<const Planet> MilitaryPanel::GetPlanet() const {
+    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel tried to get an object with an invalid m_planet_id";
-        return TemporaryPtr<const Planet>();
+        return boost::shared_ptr<const Planet>();
     }
-    TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj);
+    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj);
     if (!planet) {
         ErrorLogger() << "MilitaryPanel failed casting an object pointer to a Planet pointer";
-        return TemporaryPtr<const Planet>();
+        return boost::shared_ptr<const Planet>();
     }
     return planet;
 }

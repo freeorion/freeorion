@@ -53,7 +53,7 @@ UniverseObject::UniverseObject(const std::string name, double x, double y) :
 UniverseObject::~UniverseObject()
 {}
 
-void UniverseObject::Copy(TemporaryPtr<const UniverseObject> copied_object, Visibility vis,
+void UniverseObject::Copy(boost::shared_ptr<const UniverseObject> copied_object, Visibility vis,
                           const std::set<std::string>& visible_specials)
 {
     if (copied_object.get() == this)
@@ -181,7 +181,7 @@ UniverseObjectType UniverseObject::ObjectType() const
 { return INVALID_UNIVERSE_OBJECT_TYPE; }
 
 std::string UniverseObject::Dump() const {
-    TemporaryPtr<const System> system = GetSystem(this->SystemID());
+    boost::shared_ptr<const System> system = GetSystem(this->SystemID());
 
     std::stringstream os;
 
@@ -197,7 +197,7 @@ std::string UniverseObject::Dump() const {
     } else {
         os << "  at: (" << this->X() << ", " << this->Y() << ")";
         int near_id = GetUniverse().NearestSystemTo(this->X(), this->Y());
-        TemporaryPtr<const System> system = GetSystem(near_id);
+        boost::shared_ptr<const System> system = GetSystem(near_id);
         if (system) {
             const std::string& sys_name = system->Name();
             if (sys_name.empty())
@@ -297,8 +297,8 @@ Visibility UniverseObject::GetVisibility(int empire_id) const
 const std::string& UniverseObject::PublicName(int empire_id) const
 { return m_name; }
 
-TemporaryPtr<UniverseObject> UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(boost::const_pointer_cast<UniverseObject>(TemporaryFromThis()));}
+boost::shared_ptr<UniverseObject> UniverseObject::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(boost::const_pointer_cast<UniverseObject>(shared_from_this())); }
 
 void UniverseObject::SetID(int id) {
     m_id = id;
@@ -316,7 +316,7 @@ void UniverseObject::Move(double x, double y)
 void UniverseObject::MoveTo(int object_id)
 { MoveTo(GetUniverseObject(object_id)); }
 
-void UniverseObject::MoveTo(TemporaryPtr<UniverseObject> object) {
+void UniverseObject::MoveTo(boost::shared_ptr<UniverseObject> object) {
     if (!object) {
         ErrorLogger() << "UniverseObject::MoveTo : attempted to move to a null object.";
         return;

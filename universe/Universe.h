@@ -3,7 +3,6 @@
 
 #include "EnumsFwd.h"
 #include "ObjectMap.h"
-#include "TemporaryPtr.h"
 #include "UniverseObject.h"
 
 #include <boost/signals2/signal.hpp>
@@ -11,6 +10,7 @@
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <vector>
 #include <list>
@@ -27,7 +27,7 @@ class ShipDesign;
 class System;
 namespace Condition {
     struct ConditionBase;
-    typedef std::vector<TemporaryPtr<const UniverseObject> > ObjectSet;
+    typedef std::vector<boost::shared_ptr<const UniverseObject>> ObjectSet;
 }
 
 namespace Effect {
@@ -35,7 +35,7 @@ namespace Effect {
     struct TargetsAndCause;
     struct SourcedEffectsGroup;
     class EffectsGroup;
-    typedef std::vector<TemporaryPtr<UniverseObject> > TargetSet;
+    typedef std::vector<boost::shared_ptr<UniverseObject>> TargetSet;
     typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo> > > AccountingMap;
     typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause> > TargetsCauses;
     typedef std::map<int, std::map<MeterType, double> > DiscrepancyMap;
@@ -82,7 +82,7 @@ public:
 
     /** \name Signal Types */ //@{
     /** emitted just before the UniverseObject is deleted */
-    typedef boost::signals2::signal<void (TemporaryPtr<const UniverseObject>)> UniverseObjectDeleteSignalType;
+    typedef boost::signals2::signal<void (boost::shared_ptr<const UniverseObject>)> UniverseObjectDeleteSignalType;
     //@}
 
     /** \name Structors */ //@{
@@ -435,27 +435,27 @@ public:
     bool            AllObjectsVisible() const { return m_all_objects_visible; }
 
     /** \name Generators */ //@{
-    TemporaryPtr<Ship> CreateShip(int id = INVALID_OBJECT_ID);
-    TemporaryPtr<Ship> CreateShip(int empire_id, int design_id, const std::string& species_name,
-                                  int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Ship> CreateShip(int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Ship> CreateShip(int empire_id, int design_id, const std::string& species_name,
+                                       int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
 
-    TemporaryPtr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
-    TemporaryPtr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
 
-    TemporaryPtr<Planet> CreatePlanet(int id = INVALID_OBJECT_ID);
-    TemporaryPtr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Planet> CreatePlanet(int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
 
-    TemporaryPtr<System> CreateSystem(int id = INVALID_OBJECT_ID);
-    TemporaryPtr<System> CreateSystem(StarType star, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
-    TemporaryPtr<System> CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
-                                      const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<System> CreateSystem(int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<System> CreateSystem(StarType star, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<System> CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
+                                           const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
 
-    TemporaryPtr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);
-    TemporaryPtr<Building> CreateBuilding(int empire_id, const std::string& building_type,
-                                          int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Building> CreateBuilding(int empire_id, const std::string& building_type,
+                                               int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
 
-    TemporaryPtr<Field> CreateField(int id = INVALID_OBJECT_ID);
-    TemporaryPtr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Field> CreateField(int id = INVALID_OBJECT_ID);
+    boost::shared_ptr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
     //@}
 
 private:
@@ -486,17 +486,17 @@ private:
         boost::shared_mutex m_mutex;
     };
 
-    /** Inserts object \a obj into the universe; returns a TemporaryPtr
+    /** Inserts object \a obj into the universe; returns a boost::shared_ptr
       * to the inserted object. */
     template <class T>
-    TemporaryPtr<T>             Insert(T* obj);
+    boost::shared_ptr<T> Insert(T* obj);
 
     /** Inserts object \a obj of given ID into the universe; returns a
-      * TemporaryPtr to the inserted object on proper insert, or a null
-      * TemporaryPtr on failure.  Useful mostly for times when ID needs
+      * boost::shared_ptr to the inserted object on proper insert, or a null
+      * boost::shared_ptr on failure.  Useful mostly for times when ID needs
       * to be consistent on client and server */
     template <class T>
-    TemporaryPtr<T>             InsertID(T* obj, int id);
+    boost::shared_ptr<T> InsertID(T* obj, int id);
 
     struct GraphImpl;
 
@@ -600,7 +600,7 @@ private:
     void    GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
 
     template <class T>
-    TemporaryPtr<T> InsertNewObject(T* object);
+    boost::shared_ptr<T> InsertNewObject(T* object);
 
     friend class boost::serialization::access;
     template <class Archive>

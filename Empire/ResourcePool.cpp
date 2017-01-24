@@ -159,14 +159,14 @@ void ResourcePool::Update() {
 
     // temporary storage: indexed by group of systems, which objects
     // are located in that system group?
-    std::map<std::set<int>, std::set<TemporaryPtr<const UniverseObject> > > system_groups_to_object_groups;
+    std::map<std::set<int>, std::set<boost::shared_ptr<const UniverseObject>>> system_groups_to_object_groups;
 
 
     // for every object, find if a connected system group contains the object's
     // system.  If a group does, place the object into that system group's set
     // of objects.  If no group contains the object, place the object in its own
     // single-object group.
-    for (TemporaryPtr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(m_object_ids)) {
+    for (boost::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(m_object_ids)) {
         int object_id = obj->ID();
         int object_system_id = obj->SystemID();
         // can't generate resources when not in a system
@@ -204,12 +204,12 @@ void ResourcePool::Update() {
 
     // sum the resource production for object groups, and store the total
     // group production, indexed by group of object ids
-    for (std::map<std::set<int>, std::set<TemporaryPtr<const UniverseObject>>>::value_type& entry : system_groups_to_object_groups) {
-        const std::set<TemporaryPtr<const UniverseObject> >& object_group = entry.second;
+    for (std::map<std::set<int>, std::set<boost::shared_ptr<const UniverseObject>>>::value_type& entry : system_groups_to_object_groups) {
+        const std::set<boost::shared_ptr<const UniverseObject>>& object_group = entry.second;
         std::set<int> object_group_ids;
         float total_group_output = 0.0f;
         float total_group_target_output = 0.0f;
-        for (TemporaryPtr<const UniverseObject> obj : object_group) {
+        for (boost::shared_ptr<const UniverseObject> obj : object_group) {
             if (obj->GetMeter(meter_type))
                 total_group_output += obj->CurrentMeterValue(meter_type);
             if (obj->GetMeter(target_meter_type))
@@ -248,7 +248,7 @@ void PopulationPool::Update() {
     float future_population = 0.0f;
     // sum population from all PopCenters in this pool
     for (int pop_center_id : m_pop_center_ids) {
-        if (TemporaryPtr<const PopCenter> center = GetPopCenter(pop_center_id)) {
+        if (boost::shared_ptr<const PopCenter> center = GetPopCenter(pop_center_id)) {
             m_population += center->CurrentMeterValue(METER_POPULATION);
             future_population += center->NextTurnCurrentMeterValue(METER_POPULATION);
         }

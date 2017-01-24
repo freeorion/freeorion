@@ -720,7 +720,7 @@ void PartsListBox::Populate() {
     // get empire id and location to use for cost and time comparisons
     int loc_id = INVALID_OBJECT_ID;
     if (empire) {
-        TemporaryPtr<const UniverseObject> location = GetUniverseObject(empire->CapitalID());
+        boost::shared_ptr<const UniverseObject> location = GetUniverseObject(empire->CapitalID());
         loc_id = location ? location->ID() : INVALID_OBJECT_ID;
     }
 

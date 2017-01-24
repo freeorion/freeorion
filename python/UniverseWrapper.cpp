@@ -42,7 +42,7 @@ namespace {
     { DebugLogger() << universe.Objects().Dump(); }
 
     // We're returning the result of operator-> here so that python doesn't
-    // need to deal with our TemporaryPtr class.
+    // need to deal with boost::shared_ptr class.
     // Please don't use this trick elsewhere to grab a raw UniverseObject*!
     const UniverseObject*   GetUniverseObjectP(const Universe& universe, int id)
     { return ::GetUniverseObject(id).operator->(); }

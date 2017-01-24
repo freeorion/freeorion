@@ -75,7 +75,7 @@ namespace {
     /// Returns UserString("ENC_COMBAT_UNKNOWN_OBJECT") if object_id is not found.
     std::string PublicNameLink(int empire_id, int object_id) {
 
-        TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
+        boost::shared_ptr<const UniverseObject> object = GetUniverseObject(object_id);
         if (object) {
             const std::string& name = object->PublicName(empire_id);
             const std::string& tag = LinkTag(object->ObjectType());
@@ -705,7 +705,7 @@ std::string IncapacitationEvent::DebugString() const {
 
 
 std::string IncapacitationEvent::CombatLogDescription(int viewing_empire_id) const {
-    TemporaryPtr<const UniverseObject> object = GetUniverseObject(object_id);
+    boost::shared_ptr<const UniverseObject> object = GetUniverseObject(object_id);
     std::string template_str, object_str;
     int owner_id = object_owner_id;
 

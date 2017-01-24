@@ -17,12 +17,17 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    TemporaryPtr<const System>  GetSystem() const;  ///< returns System object in this CombatInfo's objects if one exists with id system_id
+    /** Returns System object in this CombatInfo's objects if one exists with
+        id system_id. */
+    boost::shared_ptr<const System> GetSystem() const;
     //@}
 
     /** \name Mutators */ //@{
     //void                        Clear();            ///< cleans up contents
-    TemporaryPtr<System>        GetSystem();        ///< returns System object in this CombatInfo's objects if one exists with id system_id
+
+    /** Returns System object in this CombatInfo's objects if one exists with
+        id system_id. */
+    boost::shared_ptr<System> GetSystem();
 
     /** Reveal stealthed attacker to their target's empires. */
     void ForceAtLeastBasicVisibility(int attacker_id, int target_id);
