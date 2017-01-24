@@ -108,7 +108,7 @@ def distribute_specials(specials_freq, universe_objects):
 
         print " Placing in {} locations remaining.".format(len(systems_needing_specials))
 
-        # Find a list of candidates all spaced GALAXY_DECORRECLATION_DISTANCE apart
+        # Find a list of candidates all spaced GALAXY_DECOUPLING_DISTANCE apart
         candidates = []
         while systems_needing_specials:
             random_sys = random.choice(systems_needing_specials.values())
