@@ -944,7 +944,7 @@ namespace {
         return field->ID();
     }
 
-    // Wrappers for Object class member functions
+    // Return a list of system ids of universe objects with @p obj_ids.
     list ObjectsGetSystems(list obj_ids) {
         list py_systems;
         boost::python::stl_input_iterator<int> end;
