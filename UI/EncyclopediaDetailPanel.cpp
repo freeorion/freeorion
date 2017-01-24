@@ -394,8 +394,14 @@ namespace {
             }
 
         } else if (dir_name == "ENC_TEXTURES") {
-             for (auto tex : GG::GetTextureManager().Textures())
-                 sorted_entries_list.insert({tex.first, {(tex.first + "<img src = \"" + tex.first + "\"></img>\n"), tex.first}});
+             for (auto tex : GG::GetTextureManager().Textures()) {
+                 std::string texture_info_str = boost::io::str(FlexibleFormat(UserString("ENC_TEXTURE_INFO")) %
+                                                               Value(tex.second->Width()) %
+                                                               Value(tex.second->Height()) %
+                                                               tex.second->BytesPP() %
+                                                               tex.first);
+                 sorted_entries_list.insert({tex.first, {texture_info_str, tex.first}});
+             }
 
         } else if (dir_name == "ENC_STRINGS") {
             // TODO: show all stringable keys and values

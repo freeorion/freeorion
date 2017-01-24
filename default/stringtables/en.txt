@@ -3890,6 +3890,9 @@ ENC_HOMEWORLDS
 ENC_TEXTURES
 [Test - Textures]
 
+ENC_TEXTURE_INFO
+%4% -- %1% x %2% px @ %3% BPP<img src = "%4%"></img>
+
 ENC_INDEX
 Encyclopedia Index
 
