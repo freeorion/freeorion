@@ -36,7 +36,7 @@ namespace {
         if (!app)
             return retval;
         for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
-            if (boost::shared_ptr<ScrapOrder> order = boost::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
+            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
                 retval[order->ObjectID()] = entry.first;
             }
         }
@@ -63,7 +63,7 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
     GG::Connect(m_expand_button->LeftClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
 
     // get owner, connect its production queue changed signal to update this panel
-    boost::shared_ptr<const UniverseObject> planet = GetUniverseObject(m_planet_id);
+    std::shared_ptr<const UniverseObject> planet = GetUniverseObject(m_planet_id);
     if (planet) {
         if (const Empire* empire = GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
@@ -98,7 +98,7 @@ void BuildingsPanel::Update() {
     }
     m_building_indicators.clear();
 
-    boost::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
+    std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet) {
         ErrorLogger() << "BuildingsPanel::Update couldn't get planet with id " << m_planet_id;
         return;
@@ -119,7 +119,7 @@ void BuildingsPanel::Update() {
         if (this_client_stale_object_info.find(object_id) != this_client_stale_object_info.end())
             continue;
 
-        boost::shared_ptr<const Building> building = GetBuilding(object_id);
+        std::shared_ptr<const Building> building = GetBuilding(object_id);
         if (!building) {
             ErrorLogger() << "BuildingsPanel::Update couldn't get building with id: " << object_id << " on planet " << planet->Name();
             continue;
@@ -265,7 +265,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     m_building_id(building_id),
     m_order_issuing_enabled(true)
 {
-    if (boost::shared_ptr<const Building> building = GetBuilding(m_building_id))
+    if (std::shared_ptr<const Building> building = GetBuilding(m_building_id))
         GG::Connect(building->StateChangedSignal,   &BuildingIndicator::RequirePreRender,     this);
     Refresh();
 }
@@ -279,12 +279,12 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     m_building_id(INVALID_OBJECT_ID),
     m_order_issuing_enabled(true)
 {
-    boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(building_type);
+    std::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(building_type);
 
     const BuildingType* type = GetBuildingType(building_type);
     const std::string& desc = type ? type->Description() : "";
 
-    SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new IconTextBrowseWnd(texture, UserString(building_type), UserString(desc))));
 
     m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -345,7 +345,7 @@ void BuildingIndicator::PreRender() {
 void BuildingIndicator::Refresh() {
     SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    boost::shared_ptr<const Building> building = GetBuilding(m_building_id);
+    std::shared_ptr<const Building> building = GetBuilding(m_building_id);
     if (!building)
         return;
 
@@ -361,7 +361,7 @@ void BuildingIndicator::Refresh() {
     }
 
     if (const BuildingType* type = GetBuildingType(building->BuildingTypeName())) {
-        boost::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());
+        std::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(type->Name());
         m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_graphic);
 
@@ -371,12 +371,12 @@ void BuildingIndicator::Refresh() {
         if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !type->Effects().empty())
             desc += "\n" + Dump(type->Effects());
 
-        SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
             new IconTextBrowseWnd(texture, UserString(type->Name()), desc)));
     }
 
     if (building && building->OrderedScrapped()) {
-        boost::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
+        std::shared_ptr<GG::Texture> scrap_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "scrapped.png", true);
         m_scrap_indicator = new GG::StaticGraphic(scrap_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         AttachChild(m_scrap_indicator);
     }
@@ -401,7 +401,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     // queued production item, and that the owner of the building is this
     // client's player's empire
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    boost::shared_ptr<Building> building = GetBuilding(m_building_id);
+    std::shared_ptr<Building> building = GetBuilding(m_building_id);
     if (!building)
         return;
 

@@ -24,8 +24,6 @@
 
 #include <GG/StyleFactory.h>
 
-#include <boost/make_shared.hpp>
-
 #include <GG/Button.h>
 #include <GG/DropDownList.h>
 #include <GG/DynamicGraphic.h>
@@ -47,6 +45,8 @@
 
 #include "DefaultFont.h"
 
+#include <memory>
+
 
 using namespace GG;
 
@@ -56,7 +56,7 @@ StyleFactory::StyleFactory()
 StyleFactory::~StyleFactory()
 {}
 
-boost::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts/* = 12*/) const
+std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts/* = 12*/) const
 {
     if (GetFontManager().HasFont(DefaultFontName(), pts)) {
         return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<unsigned char>());
@@ -67,9 +67,9 @@ boost::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts/* = 12*/) con
     }
 }
 
-boost::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
-                                                  const UnicodeCharset* first,
-                                                  const UnicodeCharset* last) const
+std::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
+                                                const UnicodeCharset* first,
+                                                const UnicodeCharset* last) const
 {
     if (GetFontManager().HasFont(DefaultFontName(), pts, first, last)) {
         return GUI::GetGUI()->GetFont(DefaultFontName(), pts, std::vector<unsigned char>(), first, last);
@@ -84,7 +84,7 @@ boost::shared_ptr<Font> StyleFactory::DefaultFont(unsigned int pts,
 std::string StyleFactory::Translate(const std::string& key) const
 { return key; }
 
-Button* StyleFactory::NewButton(const std::string& str, const boost::shared_ptr<Font>& font,
+Button* StyleFactory::NewButton(const std::string& str, const std::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Flags<WndFlag> flags/* = INTERACTIVE*/) const
 { return new Button(str, font, color, text_color, flags); }
 
@@ -94,7 +94,7 @@ RadioButtonGroup* StyleFactory::NewRadioButtonGroup(Orientation orientation) con
 DropDownList* StyleFactory::NewDropDownList(size_t num_shown_elements, Clr color) const
 { return new DropDownList(num_shown_elements, color); }
 
-Edit* StyleFactory::NewEdit(const std::string& str, const boost::shared_ptr<Font>& font,
+Edit* StyleFactory::NewEdit(const std::string& str, const std::shared_ptr<Font>& font,
                             Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
 { return new Edit(str, font, color, text_color, interior); }
 
@@ -108,11 +108,11 @@ Slider<int>* StyleFactory::NewIntSlider(int min, int max, Orientation orientatio
                                         Clr color, int tab_width, int line_width/* = 5*/) const
 { return new Slider<int>(min, max, orientation, color, tab_width, line_width, INTERACTIVE); }
 
-TextControl* StyleFactory::NewTextControl(const std::string& str, const boost::shared_ptr<Font>& font,
+TextControl* StyleFactory::NewTextControl(const std::string& str, const std::shared_ptr<Font>& font,
                                           Clr color/* = CLR_BLACK*/, Flags<TextFormat> format/* = FORMAT_NONE*/) const
 { return new TextControl(X0, Y0, X1, Y1, str, font, color, format, NO_WND_FLAGS); }
 
-TabBar* StyleFactory::NewTabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+TabBar* StyleFactory::NewTabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return new TabBar(font, color, text_color, INTERACTIVE); }
 
 ListBox* StyleFactory::NewDropDownListListBox(Clr color, Clr interior/* = CLR_ZERO*/) const
@@ -138,55 +138,55 @@ Scroll* StyleFactory::NewMultiEditHScroll(Clr color, Clr interior) const
 { return NewScroll(HORIZONTAL, color, interior); }
 
 Button* StyleFactory::NewScrollUpButton(Clr color) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewScrollDownButton(Clr color) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewVScrollTabButton(Clr color) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
+{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
 
 Button* StyleFactory::NewScrollLeftButton(Clr color) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewScrollRightButton(Clr color) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewHScrollTabButton(Clr color) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
+{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
 
 Button* StyleFactory::NewVSliderTabButton(Clr color) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
+{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
 
 Button* StyleFactory::NewHSliderTabButton(Clr color) const
-{ return NewButton("", boost::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
+{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
 
-Button* StyleFactory::NewSpinIncrButton(const boost::shared_ptr<Font>& font, Clr color) const
+Button* StyleFactory::NewSpinIncrButton(const std::shared_ptr<Font>& font, Clr color) const
 { return NewButton("+", font, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
-Button* StyleFactory::NewSpinDecrButton(const boost::shared_ptr<Font>& font, Clr color) const
+Button* StyleFactory::NewSpinDecrButton(const std::shared_ptr<Font>& font, Clr color) const
 { return NewButton("-", font, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
-Edit* StyleFactory::NewSpinEdit(const std::string& str, const boost::shared_ptr<Font>& font,
+Edit* StyleFactory::NewSpinEdit(const std::string& str, const std::shared_ptr<Font>& font,
                                 Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) const
 { return NewEdit(str, font, color, text_color, interior); }
 
 StateButton* StyleFactory::NewTabBarTab(const std::string& str,
-                                        const boost::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
+                                        const std::shared_ptr<Font>& font, Flags<TextFormat> format, Clr color,
                                         Clr text_color/* = CLR_BLACK*/) const
 {
-    StateButton* retval = new StateButton(str, font, format, color, boost::make_shared<BeveledTabRepresenter>(), text_color);
+    StateButton* retval = new StateButton(str, font, format, color, std::make_shared<BeveledTabRepresenter>(), text_color);
     retval->Resize(retval->MinUsableSize() + Pt(X(12), Y0));
     return retval;
 }
 
-Button* StyleFactory::NewTabBarLeftButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+Button* StyleFactory::NewTabBarLeftButton(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton("<", font, color, text_color, INTERACTIVE); }
 
-Button* StyleFactory::NewTabBarRightButton(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
+Button* StyleFactory::NewTabBarRightButton(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/) const
 { return NewButton(">", font, color, text_color, INTERACTIVE); }
 
-ThreeButtonDlg* StyleFactory::NewThreeButtonDlg(X w, Y h, const std::string& msg, const boost::shared_ptr<Font>& font,
+ThreeButtonDlg* StyleFactory::NewThreeButtonDlg(X w, Y h, const std::string& msg, const std::shared_ptr<Font>& font,
                                                 Clr color, Clr border_color, Clr button_color, Clr text_color,
                                                 int buttons, const std::string& zero/* = ""*/,
                                                 const std::string& one/* = ""*/, const std::string& two/* = ""*/) const

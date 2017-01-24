@@ -2,7 +2,6 @@
 #define _Run_Queue_h_
 
 #include <boost/noncopyable.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
@@ -40,7 +39,7 @@ private:
     boost::shared_mutex             m_schedule_mutex;
     boost::condition_variable_any   m_work_available;
     boost::condition_variable_any   m_work_done;
-    std::vector< boost::shared_ptr< ThreadQueue<WorkItem> > > m_thread_queues;
+    std::vector<std::shared_ptr<ThreadQueue<WorkItem>>> m_thread_queues;
     std::vector<WorkItem*>          m_transfer_queue;
     volatile unsigned               m_transfer_queue_size;
 

@@ -63,7 +63,7 @@ public:
          ValueRef::ValueRefBase<int>* research_turns,
          bool researchable,
          const std::set<std::string>& tags,
-         const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,
+         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
          const std::string& graphic) :
         m_name(name),
@@ -87,7 +87,7 @@ public:
     /** basic ctor taking helper struct to reduce number of direct parameters
       * in order to making parsing work. */
     Tech(const TechInfo& tech_info,
-         const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,
+         const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
          const std::set<std::string>& prerequisites, const std::vector<ItemSpec>& unlocked_items,
          const std::string& graphic) :
         m_name(tech_info.name),
@@ -125,7 +125,7 @@ public:
     /** returns the effects that are applied to the discovering empire's capital
       * when this tech is researched; not all techs have effects, in which case
       * this returns 0 */
-    const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&  Effects() const
+    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
     { return m_effects; }
 
     const std::set<std::string>&    Prerequisites() const { return m_prerequisites; }   //!< returns the set of names of all techs required before this one can be researched
@@ -147,8 +147,7 @@ private:
     ValueRef::ValueRefBase<int>*    m_research_turns;
     bool                            m_researchable;
     std::set<std::string>           m_tags;
-    std::vector<boost::shared_ptr<Effect::EffectsGroup> >
-                                    m_effects;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
     std::set<std::string>           m_prerequisites;
     std::vector<ItemSpec>           m_unlocked_items;
     std::string                     m_graphic;

@@ -49,9 +49,14 @@ public:
 
     int             SystemID() const;                           //!< returns ID of system this icon represents
 
-    const boost::shared_ptr<GG::Texture>& DiscTexture() const;      //!< returns the solid star disc texture
-    const boost::shared_ptr<GG::Texture>& HaloTexture() const;      //!< returns the transparent star halo texture
-    const boost::shared_ptr<GG::Texture>& TinyTexture() const;      //!< returns the alternate texture shown when icon very small
+    /** Returns the solid star disc texture. */
+    const std::shared_ptr<GG::Texture>& DiscTexture() const;
+
+    /** Returns the transparent star halo texture. */
+    const std::shared_ptr<GG::Texture>& HaloTexture() const;
+
+    /** Returns the alternate texture shown when icon very small. */
+    const std::shared_ptr<GG::Texture>& TinyTexture() const;
 
     GG::Pt          NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const; //!< returns upper left point of moving or stationary fleetbutton number \a button_number
     int             EnclosingCircleDiameter() const;        //!< returns diameter of circle enclosing icon around which other icons can be placed and within which the mouse is over the icon
@@ -99,10 +104,19 @@ private:
     void            PositionSystemName();
 
     int                             m_system_id;                //!< the System associated with this SystemIcon
-    boost::shared_ptr<GG::Texture>  m_disc_texture;             //!< solid star disc texture
-    boost::shared_ptr<GG::Texture>  m_halo_texture;             //!< transparent star halo texture
-    boost::shared_ptr<GG::Texture>  m_tiny_texture;             //!< alternate texture shown when icon very small
-    boost::shared_ptr<GG::Texture>  m_overlay_texture;          //!< extra texture drawn over / behind system
+
+    /** Solid star disc texture. */
+    std::shared_ptr<GG::Texture> m_disc_texture;
+
+    /** Transparent star halo texture. */
+    std::shared_ptr<GG::Texture> m_halo_texture;
+
+    /** Alternate texture shown when icon very small. */
+    std::shared_ptr<GG::Texture> m_tiny_texture;
+
+    /** Extra texture drawn over / behind system. */
+    std::shared_ptr<GG::Texture> m_overlay_texture;
+
     double                          m_overlay_size;             //!< size of extra texture in universe units
     GG::StaticGraphic*              m_tiny_graphic;             //!< non-scaled texture shown when zoomed far enough out
     RotatingGraphic*                m_selection_indicator;      //!< shown to indicate system is selected in sidepanel

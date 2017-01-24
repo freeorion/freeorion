@@ -203,13 +203,13 @@ namespace {
 }
 
 SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
-    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     if (!obj)
         return GenericCombatDamagedObjectSitrep(combat_system_id);
 
     SitRepEntry sitrep;
 
-    if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
+    if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj)) {
         if (ship->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_SHIP_DAMAGED_AT_SYSTEM"),
@@ -225,7 +225,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
         sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(ship->DesignID()));
 
-    } else if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
+    } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_PLANET_BOMBARDED_AT_SYSTEM"),
@@ -251,7 +251,7 @@ SitRepEntry CreateCombatDamagedObjectSitRep(int object_id, int combat_system_id,
 }
 
 SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_id, int empire_id) {
-    boost::shared_ptr<const UniverseObject> obj = GetEmpireKnownObject(object_id, empire_id);
+    std::shared_ptr<const UniverseObject> obj = GetEmpireKnownObject(object_id, empire_id);
     if (!obj) {
         DebugLogger() << "Object " << object_id << " does not exist!!!";
         return GenericCombatDestroyedObjectSitrep(combat_system_id);
@@ -259,7 +259,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
 
     SitRepEntry sitrep;
 
-    if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
+    if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj)) {
         if (ship->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_SHIP_DESTROYED_AT_SYSTEM"),
@@ -281,7 +281,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
         sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(object_id));
         sitrep.AddVariable(VarText::DESIGN_ID_TAG,     boost::lexical_cast<std::string>(ship->DesignID()));
 
-    } else if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj)) {
+    } else if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj)) {
         if (fleet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_FLEET_DESTROYED_AT_SYSTEM"),
@@ -296,7 +296,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
                 UserStringNop("SITREP_FLEET_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(object_id));
 
-    } else if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
+    } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
         if (planet->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_PLANET_DESTROYED_AT_SYSTEM"),
@@ -311,7 +311,7 @@ SitRepEntry CreateCombatDestroyedObjectSitRep(int object_id, int combat_system_i
                 UserStringNop("SITREP_PLANET_DESTROYED_AT_SYSTEM_LABEL"), true);
         sitrep.AddVariable(VarText::PLANET_ID_TAG,     boost::lexical_cast<std::string>(object_id));
 
-    } else if (boost::shared_ptr<const Building> building = boost::dynamic_pointer_cast<const Building>(obj)) {
+    } else if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(obj)) {
         if (building->Unowned())
             sitrep = SitRepEntry(
                 UserStringNop("SITREP_UNOWNED_BUILDING_DESTROYED_ON_PLANET_AT_SYSTEM"),
@@ -368,7 +368,7 @@ SitRepEntry CreatePlanetOutpostedSitRep(int planet_id) {
 }
 
 SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, int recipient_empire_id) {
-    boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+    std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
 
     //bool system_contains_recipient_empire_planets = false;
     //if (const System* system = GetSystem(system_id)) {
@@ -407,7 +407,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::FLEET_ID_TAG,      boost::lexical_cast<std::string>(fleet_id));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(ship_id));
-            if (boost::shared_ptr<const Ship> ship = GetShip(ship_id))
+            if (std::shared_ptr<const Ship> ship = GetShip(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, boost::lexical_cast<std::string>(ship->DesignID()));
             return sitrep;
         } else {
@@ -443,7 +443,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(fleet->Owner()));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(ship_id));
-            if (boost::shared_ptr<const Ship> ship = GetShip(ship_id))
+            if (std::shared_ptr<const Ship> ship = GetShip(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, boost::lexical_cast<std::string>(ship->DesignID()));
             return sitrep;
         } else {
@@ -470,7 +470,7 @@ SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, int fleet_id, i
             sitrep.AddVariable(VarText::EMPIRE_ID_TAG,     boost::lexical_cast<std::string>(fleet->Owner()));
             int ship_id = *fleet->ShipIDs().begin();
             sitrep.AddVariable(VarText::SHIP_ID_TAG,       boost::lexical_cast<std::string>(ship_id));
-            if (boost::shared_ptr<const Ship> ship = GetShip(ship_id))
+            if (std::shared_ptr<const Ship> ship = GetShip(ship_id))
                 sitrep.AddVariable(VarText::DESIGN_ID_TAG, boost::lexical_cast<std::string>(ship->DesignID()));
             return sitrep;
         } else {

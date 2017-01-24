@@ -19,7 +19,7 @@
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<ShipSlotType>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, PartType*>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, PartType*>&) { return os; }
 }

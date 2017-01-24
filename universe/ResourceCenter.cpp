@@ -34,7 +34,7 @@ ResourceCenter::ResourceCenter(const ResourceCenter& rhs) :
     m_last_turn_focus_changed_turn_initial(rhs.m_last_turn_focus_changed_turn_initial)
 {}
 
-void ResourceCenter::Copy(boost::shared_ptr<const ResourceCenter> copied_object, Visibility vis) {
+void ResourceCenter::Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis) {
     if (copied_object.get() == this)
         return;
     if (!copied_object) {
@@ -50,7 +50,7 @@ void ResourceCenter::Copy(boost::shared_ptr<const ResourceCenter> copied_object,
     }
 }
 
-void ResourceCenter::Copy(boost::shared_ptr<const ResourceCenter> copied_object)
+void ResourceCenter::Copy(std::shared_ptr<const ResourceCenter> copied_object)
 { Copy(copied_object, VIS_FULL_VISIBILITY); }
 
 void ResourceCenter::Init() {

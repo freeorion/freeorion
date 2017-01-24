@@ -132,11 +132,11 @@ private:
 
     /** Responds to insertion fleets into system during a turn.  may update
         colonize buttons. */
-    static void FleetsInserted(const std::vector<boost::shared_ptr<Fleet >& fleets);
+    static void FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets);
 
     /** Responds to removal fleets from system during a turn.  may update
         colonize buttons. */
-    static void FleetsRemoved(const std::vector<boost::shared_ptr<Fleet>>& fleets);
+    static void FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets);
 
     static void         FleetStateChanged();            ///< responds to fleet state changes during a turn, which may include issueing or cancelling move orders.  may update colonize buttons
 
@@ -168,7 +168,7 @@ private:
     static std::map<int, boost::signals2::connection> s_fleet_state_change_signals;
 };
 
-boost::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id);
+std::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id);
 
 int                         AutomaticallyChosenColonyShip(int target_planet_id);
 

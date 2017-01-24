@@ -187,7 +187,7 @@ public:
     };
 
     /** \name Structors */ ///@{
-    ColorDlg(X x, Y y, Clr original_color, const boost::shared_ptr<Font>& font,
+    ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
              Clr dialog_color, Clr border_color, Clr text_color = CLR_BLACK);
     //@}
 
@@ -218,7 +218,7 @@ private:
 
     enum {R, G, B, A, H, S, V};
 
-    void Init(const boost::shared_ptr<Font>& font);
+    void Init(const std::shared_ptr<Font>& font);
     void ConnectSignals();
     void ColorChanged(HSVClr color);
     void HueSaturationPickerChanged(double hue, double saturation);

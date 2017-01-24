@@ -1,14 +1,17 @@
 #ifndef _ClientUI_h_
 #define _ClientUI_h_
 
-#include <boost/filesystem/path.hpp>
-#include <boost/shared_ptr.hpp>
+
 #include <GG/GGFwd.h>
+
+#include <boost/filesystem/path.hpp>
 
 #include "../universe/EnumsFwd.h"
 #include "../util/Random.h"
 
 #include <map>
+#include <memory>
+
 
 class Fleet;
 class IntroScreen;
@@ -61,8 +64,12 @@ public:
     bool    ZoomToField(int id);                                        //!< Zooms to a particular field on the map
     bool    ZoomToCombatLog(int id);                                    //!< Opens combat log for indicated combat
 
-    void    ZoomToSystem(boost::shared_ptr<const System> system);       //!< Zooms to a particular system on the galaxy map
-    void    ZoomToFleet(boost::shared_ptr<const Fleet> fleet);          //!< Zooms to a particular fleet on the galaxy map and opens the fleet window
+    /** Zooms to a particular system on the galaxy map.*/
+    void ZoomToSystem(std::shared_ptr<const System> system);
+
+    /** Zooms to a particular fleet on the galaxy map and opens the fleet
+        window. */
+    void ZoomToFleet(std::shared_ptr<const Fleet> fleet);
 
     bool    ZoomToContent(const std::string& name, bool reverse_lookup = false);
     bool    ZoomToTech(const std::string& tech_name);                  //!< Opens the technology screen and presents a description of the given technology
@@ -83,15 +90,18 @@ public:
 
     void    InitializeWindows();
 
-    /** Loads a texture at random from the set of files starting with \a prefix in directory \a dir. */
-    boost::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
+    /** Loads a texture at random from the set of files starting with \a prefix
+        in directory \a dir. */
+    std::shared_ptr<GG::Texture> GetRandomTexture(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
 
-    /** Loads texture \a n % N from the set of files starting with \a prefix in directory \a dir, where N is the number
-        of files found in \a dir with prefix \a prefix. */
-    boost::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n, bool mipmap = false);
+    /** Loads texture \a n % N from the set of files starting with \a prefix in
+        directory \a dir, where N is the number of files found in \a dir with
+        prefix \a prefix. */
+    std::shared_ptr<GG::Texture> GetModuloTexture(const boost::filesystem::path& dir, const std::string& prefix, int n, bool mipmap = false);
 
-    /** Returns all textures in the set of files starting with \a prefix in directory \a dir. */
-    std::vector<boost::shared_ptr<GG::Texture> > GetPrefixedTextures(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
+    /** Returns all textures in the set of files starting with \a prefix in
+        directory \a dir. */
+    std::vector<std::shared_ptr<GG::Texture>> GetPrefixedTextures(const boost::filesystem::path& dir, const std::string& prefix, bool mipmap = false);
     //!@}
 
     static ClientUI* GetClientUI();     //!< returns a pointer to the singleton ClientUI class
@@ -104,22 +114,23 @@ public:
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true; loads default missing.png if name isn't
       * found. */
-    static boost::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
+    static std::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
     /** Returns the default font in the specified point size.  Uses "UI.font"
       * option setting as the font filename, and provides Unicode character sets
       * based on the contents of the stringtable in use. */
-    static boost::shared_ptr<GG::Font> GetFont(int pts = Pts());
+    static std::shared_ptr<GG::Font> GetFont(int pts = Pts());
 
     /** Returns the default font in the specified point size.  Uses
       * "UI.font-bold" option setting as the font filename, and provides
-      * Unicode character sets based on the contents of the stringtable in use. */
-    static boost::shared_ptr<GG::Font> GetBoldFont(int pts = Pts());
+      * Unicode character sets based on the contents of the stringtable in use.
+      * */
+    static std::shared_ptr<GG::Font> GetBoldFont(int pts = Pts());
 
     /** Returns the default font in the specified point size.  Uses
       * "UI.title-font" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use. */
-    static boost::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts());
+    static std::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts());
 
     //!@{
     static boost::filesystem::path ArtDir();    //!< directory holding artwork
@@ -167,19 +178,19 @@ public:
     static double       MediumFleetButtonZoomThreshold();   //!< the minimum zoom level of the map at which to show medium fleet icons
 
     // Content Texture Getters
-    static boost::shared_ptr<GG::Texture>   PlanetIcon(PlanetType planet_type);
-    static boost::shared_ptr<GG::Texture>   PlanetSizeIcon(PlanetSize planet_size);
-    static boost::shared_ptr<GG::Texture>   MeterIcon(MeterType meter_type);
-    static boost::shared_ptr<GG::Texture>   BuildingIcon(const std::string& building_type_name);
-    static boost::shared_ptr<GG::Texture>   CategoryIcon(const std::string& category_name);
-    static boost::shared_ptr<GG::Texture>   TechIcon(const std::string& tech_name);
-    static boost::shared_ptr<GG::Texture>   SpecialIcon(const std::string& special_name);
-    static boost::shared_ptr<GG::Texture>   SpeciesIcon(const std::string& species_name);
-    static boost::shared_ptr<GG::Texture>   FieldTexture(const std::string& field_type_name);
-    static boost::shared_ptr<GG::Texture>   PartIcon(const std::string& part_name);
-    static boost::shared_ptr<GG::Texture>   HullTexture(const std::string& hull_name);
-    static boost::shared_ptr<GG::Texture>   HullIcon(const std::string& hull_name);
-    static boost::shared_ptr<GG::Texture>   ShipDesignIcon(int design_id);
+    static std::shared_ptr<GG::Texture> PlanetIcon(PlanetType planet_type);
+    static std::shared_ptr<GG::Texture> PlanetSizeIcon(PlanetSize planet_size);
+    static std::shared_ptr<GG::Texture> MeterIcon(MeterType meter_type);
+    static std::shared_ptr<GG::Texture> BuildingIcon(const std::string& building_type_name);
+    static std::shared_ptr<GG::Texture> CategoryIcon(const std::string& category_name);
+    static std::shared_ptr<GG::Texture> TechIcon(const std::string& tech_name);
+    static std::shared_ptr<GG::Texture> SpecialIcon(const std::string& special_name);
+    static std::shared_ptr<GG::Texture> SpeciesIcon(const std::string& species_name);
+    static std::shared_ptr<GG::Texture> FieldTexture(const std::string& field_type_name);
+    static std::shared_ptr<GG::Texture> PartIcon(const std::string& part_name);
+    static std::shared_ptr<GG::Texture> HullTexture(const std::string& hull_name);
+    static std::shared_ptr<GG::Texture> HullIcon(const std::string& hull_name);
+    static std::shared_ptr<GG::Texture> ShipDesignIcon(int design_id);
 
     // research screen
     static GG::Clr      KnownTechFillColor();
@@ -199,8 +210,7 @@ public:
     //!@}
 
 private:
-    typedef std::pair<std::vector<boost::shared_ptr<GG::Texture> >,
-                      boost::shared_ptr<SmallIntDistType> >         TexturesAndDist;
+    typedef std::pair<std::vector<std::shared_ptr<GG::Texture>>, std::shared_ptr<SmallIntDistType>> TexturesAndDist;
 
     typedef std::map<std::string, TexturesAndDist>                  PrefixedTextures;
 

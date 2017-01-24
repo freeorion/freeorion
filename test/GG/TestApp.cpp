@@ -38,9 +38,9 @@ MinimalGGApp::MinimalGGApp(int width, int height, bool calculate_FPS,
     SDLGUI(width, height, calculate_FPS, name, x, y, fullscreen,
            fake_mode_change)
 {
-    boost::shared_ptr<GG::Texture> cursor_texture = GG::GetTextureManager().GetTexture(
+    std::shared_ptr<GG::Texture> cursor_texture = GG::GetTextureManager().GetTexture(
         (boost::filesystem::path("../default") / "data" / "art" / "cursors" / "default_cursor.png").string(), false);
-    SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
+    SetCursor(std::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
     RenderCursor(true);
 
     GLInit();

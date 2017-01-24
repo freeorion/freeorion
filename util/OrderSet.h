@@ -1,20 +1,21 @@
 #ifndef _OrderSet_h_
 #define _OrderSet_h_
 
-#include <boost/shared_ptr.hpp>
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include "Export.h"
+
 #include <map>
+#include <memory>
 #include <vector>
 
-#include "Export.h"
 
 class Order;
 
 /** The pointer type used to store Orders in OrderSets. */
-typedef boost::shared_ptr<Order> OrderPtr;
+typedef std::shared_ptr<Order> OrderPtr;
 
 /** a collection of orders that may be searched using arbitrary predicate functions and functors*/
 class FO_COMMON_API OrderSet {

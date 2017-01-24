@@ -149,11 +149,11 @@ namespace {
 ///////////////////////////
 // TechPanelRowBrowseWnd //
 ///////////////////////////
-boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id) {
+std::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id) {
     const Empire* empire = GetEmpire(empire_id);
     const Tech* tech = GetTech(tech_name);
     if (!tech) {
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+        std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
         return browse_wnd;
     }
 
@@ -237,7 +237,7 @@ boost::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& te
             % turns);
     }
 
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+    std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
         ClientUI::TechIcon(tech_name), UserString(tech_name), main_text));
     return browse_wnd;
 }
@@ -301,10 +301,10 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
     // create a button for each tech category...
     for (const std::string& category : GetTechManager().CategoryNames()) {
         GG::Clr icon_clr = ClientUI::CategoryColor(category);
-        boost::shared_ptr<GG::SubTexture> icon = boost::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(category));
+        std::shared_ptr<GG::SubTexture> icon = std::make_shared<GG::SubTexture>(ClientUI::CategoryIcon(category));
         m_cat_buttons[category] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                     boost::make_shared<CUIIconButtonRepresenter>(icon, icon_clr));
-        m_cat_buttons[category]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString(category), ""));
+                                                     std::make_shared<CUIIconButtonRepresenter>(icon, icon_clr));
+        m_cat_buttons[category]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString(category), ""));
         m_cat_buttons[category]->SetBrowseModeTime(tooltip_delay);
         AttachChild(m_cat_buttons[category]);
     }
@@ -312,46 +312,46 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
     GG::Clr icon_color = GG::Clr(113, 150, 182, 255);
     // and one for "ALL"
     m_all_cat_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                           boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
-    m_all_cat_button->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("ALL"), ""));
+                                           std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "00_all_cats.png", true)), icon_color));
+    m_all_cat_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("ALL"), ""));
     m_all_cat_button->SetBrowseModeTime(tooltip_delay);
     m_all_cat_button->SetCheck(true);
     AttachChild(m_all_cat_button);
 
     // create a button for each tech status
     m_status_buttons[TS_UNRESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                              boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
-    m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
+                                                              std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
+    m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_UNRESEARCHABLE]->SetCheck(false);
     AttachChild(m_status_buttons[TS_UNRESEARCHABLE]);
 
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                                 boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
-    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
+                                                                     std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
+    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(true);
     AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
 
     m_status_buttons[TS_RESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                            boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
-    m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_RESEARCHABLE"), ""));
+                                                            std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
+    m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_RESEARCHABLE"), ""));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_RESEARCHABLE]->SetCheck(true);
     AttachChild(m_status_buttons[TS_RESEARCHABLE]);
 
     m_status_buttons[TS_COMPLETE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                                        boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
-    m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
+                                                        std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
+    m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
     m_status_buttons[TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_COMPLETE]->SetCheck(true);
     AttachChild(m_status_buttons[TS_COMPLETE]);
 
     // create button to switch between tree and list views
     m_view_type_button = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
-                                             boost::make_shared<CUIIconButtonRepresenter>(boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
-                                                                                      boost::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)), GG::Clr(110, 172, 150, 255)));
-    m_view_type_button->SetBrowseInfoWnd(boost::make_shared<TextBrowseWnd>(UserString("TECH_WND_VIEW_TYPE"), ""));
+                                             std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "06_view_tree.png", true)), icon_color,
+                                                                                      std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "05_view_list.png", true)), GG::Clr(110, 172, 150, 255)));
+    m_view_type_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_VIEW_TYPE"), ""));
     m_view_type_button->SetBrowseModeTime(tooltip_delay);
     m_view_type_button->SetCheck(false);
     AttachChild(m_view_type_button);
@@ -1009,7 +1009,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
 
             // add icons for unlocked items
             for (const ItemSpec& item : tech->UnlockedItems()) {
-                boost::shared_ptr<GG::Texture> texture;
+                std::shared_ptr<GG::Texture> texture;
                 switch (item.type) {
                 case UIT_BUILDING:  texture = ClientUI::BuildingIcon(item.name);    break;
                 case UIT_SHIP_PART: texture = ClientUI::PartIcon(item.name);        break;
@@ -1028,7 +1028,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             std::set<MeterType> meters_affected;
             std::set<std::string> specials_affected;
             std::set<std::string> parts_whose_meters_are_affected;
-            for (boost::shared_ptr<Effect::EffectsGroup> effects_group : tech->Effects()) {
+            for (std::shared_ptr<Effect::EffectsGroup> effects_group : tech->Effects()) {
                 for (Effect::EffectBase* effect : effects_group->EffectsList()) {
                     if (const Effect::SetMeter* set_meter_effect = dynamic_cast<const Effect::SetMeter*>(effect)) {
                         meters_affected.insert(set_meter_effect->GetMeterType());
@@ -1047,7 +1047,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             }
 
             for (const std::string& part_name : parts_whose_meters_are_affected) {
-                boost::shared_ptr<GG::Texture> texture = ClientUI::PartIcon(part_name);
+                std::shared_ptr<GG::Texture> texture = ClientUI::PartIcon(part_name);
                 if (texture) {
                     GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
@@ -1056,7 +1056,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
                 }
             }
             for (MeterType meter_type : meters_affected) {
-                boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(meter_type);
+                std::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(meter_type);
                 if (texture) {
                     GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);
@@ -1066,7 +1066,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
             }
 
             for (const std::string& special_name : specials_affected) {
-                boost::shared_ptr<GG::Texture> texture = ClientUI::SpecialIcon(special_name);
+                std::shared_ptr<GG::Texture> texture = ClientUI::SpecialIcon(special_name);
                 if (texture) {
                     GG::StaticGraphic* graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
                     m_unlock_icons.push_back(graphic);

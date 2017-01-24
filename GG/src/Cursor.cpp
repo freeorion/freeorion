@@ -40,7 +40,7 @@ Cursor::Cursor()
 Cursor::~Cursor()
 {}
 
-TextureCursor::TextureCursor(const boost::shared_ptr<Texture>& texture,
+TextureCursor::TextureCursor(const std::shared_ptr<Texture>& texture,
                              const Pt& hotspot/* = Pt()*/) :
     m_texture(texture),
     m_hotspot(hotspot)
@@ -49,7 +49,7 @@ TextureCursor::TextureCursor(const boost::shared_ptr<Texture>& texture,
     m_hotspot.y = std::max(Y0, std::min(m_hotspot.y, m_texture->DefaultHeight() - 1));
 }
 
-const boost::shared_ptr<Texture>& TextureCursor::GetTexture() const
+const std::shared_ptr<Texture>& TextureCursor::GetTexture() const
 { return m_texture; }
 
 const Pt& TextureCursor::Hotspot() const

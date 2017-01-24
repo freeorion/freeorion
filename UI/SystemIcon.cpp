@@ -99,7 +99,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
-    boost::shared_ptr<const System> system = GetSystem(system_id);
+    std::shared_ptr<const System> system = GetSystem(system_id);
     if (!system)
         return;
 
@@ -118,9 +118,9 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
     bool capital = false, homeworld = false, has_shipyard = false, has_neutrals = false, has_player_planet = false;
 
     std::set<int> owner_empire_ids;
-    std::vector<boost::shared_ptr<const Planet>> system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
+    std::vector<std::shared_ptr<const Planet>> system_planets = Objects().FindObjects<const Planet>(system->PlanetIDs());
 
-    for (boost::shared_ptr<const Planet> planet : system_planets) {
+    for (std::shared_ptr<const Planet> planet : system_planets) {
         int planet_id = planet->ID();
 
         if (known_destroyed_object_ids.find(planet_id) != known_destroyed_object_ids.end())
@@ -151,7 +151,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
 
         // does planet contain a shipyard?
         if (!has_shipyard) {
-            for (boost::shared_ptr<const Building> building : Objects().FindObjects<const Building>(planet->BuildingIDs())) {
+            for (std::shared_ptr<const Building> building : Objects().FindObjects<const Building>(planet->BuildingIDs())) {
                 int building_id = building->ID();
 
                 if (known_destroyed_object_ids.find(building_id) != known_destroyed_object_ids.end())
@@ -190,7 +190,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         wrapped_system_name = "<i>" + wrapped_system_name + "</i>";
     if (has_shipyard)
         wrapped_system_name = "<u>" + wrapped_system_name + "</u>";
-    boost::shared_ptr<GG::Font> font;
+    std::shared_ptr<GG::Font> font;
     if (capital)
         font = ClientUI::GetBoldFont(font_size);
     else
@@ -243,7 +243,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_showing_name(false)
 {
     ClientUI* ui = ClientUI::GetClientUI();
-    if (boost::shared_ptr<const System> system = GetSystem(m_system_id)) {
+    if (std::shared_ptr<const System> system = GetSystem(m_system_id)) {
         StarType star_type = system->GetStarType();
         m_disc_texture = ui->GetModuloTexture(ClientUI::ArtDir() / "stars",
                                               ClientUI::StarTypeFilePrefixes()[star_type],
@@ -266,7 +266,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_tiny_graphic->Hide();
 
     // selection indicator graphic
-    const boost::shared_ptr<GG::Texture>& texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
+    const std::shared_ptr<GG::Texture>& texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection" / "system_selection2.png", true);
 
     GG::X texture_width = texture->DefaultWidth();
     GG::Y texture_height = texture->DefaultHeight();
@@ -276,7 +276,7 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // tiny selection indicator graphic
-    const boost::shared_ptr<GG::Texture>& tiny_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
+    const std::shared_ptr<GG::Texture>& tiny_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_selection_tiny" / "system_selection_tiny2.png", true);
     texture_width = tiny_texture->DefaultWidth();
     texture_height = tiny_texture->DefaultHeight();
     m_tiny_selection_indicator = new RotatingGraphic(tiny_texture, GG::GRAPHIC_NONE);
@@ -285,21 +285,21 @@ SystemIcon::SystemIcon(GG::X x, GG::Y y, GG::X w, int system_id) :
     m_tiny_selection_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // mouseover indicator graphic
-    const boost::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
+    const std::shared_ptr<GG::Texture> mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover.png");
     texture_width = mouseover_texture->DefaultWidth();
     texture_height = mouseover_texture->DefaultHeight();
     m_mouseover_indicator = new GG::StaticGraphic(mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_mouseover_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // unexplored mouseover indicator graphic
-    boost::shared_ptr<GG::Texture> unexplored_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_unexplored.png");
+    std::shared_ptr<GG::Texture> unexplored_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_unexplored.png");
     texture_width = unexplored_mouseover_texture->DefaultWidth();
     texture_height = unexplored_mouseover_texture->DefaultHeight();
     m_mouseover_unexplored_indicator = new GG::StaticGraphic(unexplored_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     m_mouseover_unexplored_indicator->Resize(GG::Pt(texture_width, texture_height));
 
     // tiny mouseover indicator graphic
-    boost::shared_ptr<GG::Texture> tiny_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
+    std::shared_ptr<GG::Texture> tiny_mouseover_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "system_mouseover_tiny.png");
     texture_width = tiny_mouseover_texture->DefaultWidth();
     texture_height = tiny_mouseover_texture->DefaultHeight();
     m_tiny_mouseover_indicator = new GG::StaticGraphic(tiny_mouseover_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -320,13 +320,13 @@ SystemIcon::~SystemIcon() {
 int SystemIcon::SystemID() const
 { return m_system_id; }
 
-const boost::shared_ptr<GG::Texture>& SystemIcon::DiscTexture() const
+const std::shared_ptr<GG::Texture>& SystemIcon::DiscTexture() const
 { return m_disc_texture; }
 
-const boost::shared_ptr<GG::Texture>& SystemIcon::HaloTexture() const
+const std::shared_ptr<GG::Texture>& SystemIcon::HaloTexture() const
 { return m_halo_texture; }
 
-const boost::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
+const std::shared_ptr<GG::Texture>& SystemIcon::TinyTexture() const
 { return m_tiny_texture; }
 
 GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool moving) const {
@@ -343,7 +343,7 @@ GG::Pt SystemIcon::NthFleetButtonUpperLeft(unsigned int button_number, bool movi
     FleetButton::SizeType fb_size_type = ClientUI::GetClientUI()->GetMapWnd()->FleetButtonSizeType();
     GG::Pt button_size = GG::Pt();
     double FB_RADIUS = 0.0;
-    const boost::shared_ptr<GG::Texture>& icon = FleetSizeIcon(1u, fb_size_type);
+    const std::shared_ptr<GG::Texture>& icon = FleetSizeIcon(1u, fb_size_type);
     if (icon) {
         button_size = GG::Pt(icon->DefaultWidth(), icon->DefaultHeight());
         FB_RADIUS = static_cast<double>(Value(button_size.x) + Value(button_size.y))/4.0;   // average half of two side lengths to get radius
@@ -635,7 +635,7 @@ void SystemIcon::Refresh() {
     std::string name;
     m_system_connection.disconnect();
 
-    boost::shared_ptr<const System> system = GetSystem(m_system_id);
+    std::shared_ptr<const System> system = GetSystem(m_system_id);
     if (system) {
         name = system->Name();
         m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals2::at_front);

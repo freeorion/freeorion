@@ -59,7 +59,7 @@ class GG_API ThreeButtonDlg : public Wnd
 public:
     /** \name Structors */ ///@{
     /** Ctor that automatically centers the dialog in the app's area*/
-    ThreeButtonDlg(X w, Y h, const std::string& msg, const boost::shared_ptr<Font>& font, Clr color, 
+    ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shared_ptr<Font>& font, Clr color,
                    Clr border_color, Clr button_color, Clr text_color, std::size_t buttons, const std::string& zero = "", 
                    const std::string& one = "", const std::string& two = "");
     //@}
@@ -84,7 +84,7 @@ public:
 
 private:
     std::size_t NumButtons() const;
-    void Init(const std::string& msg, const boost::shared_ptr<Font>& font, std::size_t buttons,
+    void Init(const std::string& msg, const std::shared_ptr<Font>& font, std::size_t buttons,
               const std::string& zero = "", const std::string& one = "", const std::string& two = "");
     void ConnectSignals();
     void Button0Clicked();

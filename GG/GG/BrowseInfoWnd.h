@@ -78,7 +78,7 @@ public:
         displaying this BrowseInfoWnd as parameters, and returns the desired
         upper-left corner of this BrowseInfoWnd. */
     mutable boost::function<
-        Pt (const Pt&, const boost::shared_ptr<Cursor>&, const BrowseInfoWnd&, const Wnd&)
+        Pt (const Pt&, const std::shared_ptr<Cursor>&, const BrowseInfoWnd&, const Wnd&)
     > PositionWnd;
 
 protected:
@@ -104,7 +104,7 @@ class GG_API TextBoxBrowseInfoWnd : public BrowseInfoWnd
 {
 public:
     /** \name Structors */ ///@{
-    TextBoxBrowseInfoWnd(X w, const boost::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color,
+    TextBoxBrowseInfoWnd(X w, const std::shared_ptr<Font>& font, Clr color, Clr border_color, Clr text_color,
                          Flags<TextFormat> format = FORMAT_LEFT | FORMAT_WORDBREAK,
                          unsigned int border_width = 2, unsigned int text_margin = 4);
     //@}
@@ -114,7 +114,10 @@ public:
 
     bool                           TextFromTarget() const; ///< returns true iff the text to display will be read from the target wnd
     const std::string&             Text () const;          ///< returns the text currently set for display
-    const boost::shared_ptr<Font>& GetFont() const;        ///< returns the Font used to display text
+
+    /** Returns the Font used to display text. */
+    const std::shared_ptr<Font>& GetFont() const;
+
     Clr                            Color() const;          ///< returns the color used to render the text box
     Clr                            BorderColor() const;    ///< returns the color used to render the text box border
     Clr                            TextColor() const;      ///< returns the color used to render the text
@@ -129,7 +132,10 @@ public:
     void SizeMove(const Pt& ul, const Pt& lr) override;
 
     void SetTextFromTarget(bool b);                    ///< sets the text display mode to static (\a b == true) or dynamic (read from the target Wnd, \a b == false)
-    void SetFont(const boost::shared_ptr<Font>& font); ///< sets the Font used to display text
+
+    /** Sets the Font used to display text. */
+    void SetFont(const std::shared_ptr<Font>& font);
+
     void SetColor(Clr color);                          ///< sets the color used to render the text box
     void SetBorderColor(Clr border_color);             ///< sets the color used to render the text box border
     void SetTextColor(Clr text_color);                 ///< sets the color used to render the text
@@ -144,7 +150,7 @@ private:
 
     GG::GL2DVertexBuffer    m_buffer;
     bool                    m_text_from_target;
-    boost::shared_ptr<Font> m_font;
+    std::shared_ptr<Font> m_font;
     Clr                     m_color;
     Clr                     m_border_color;
     unsigned int            m_border_width;

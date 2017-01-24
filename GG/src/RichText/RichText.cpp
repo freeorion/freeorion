@@ -139,7 +139,7 @@ namespace GG {
      */
     class RichTextPrivate {
     public:
-        RichTextPrivate(RichText* q, const std::string& str, const boost::shared_ptr<Font>& font,
+        RichTextPrivate(RichText* q, const std::string& str, const std::shared_ptr<Font>& font,
                         Clr color, Flags<TextFormat> format = FORMAT_NONE) :
             m_owner(q),
             m_font(font),
@@ -204,16 +204,17 @@ namespace GG {
         }
 
         // Set the mapping from tags to factories that should be used to generate blocks from them.
-        void SetBlockFactoryMap(boost::shared_ptr<RichText::BLOCK_FACTORY_MAP> block_factory_map)
+        void SetBlockFactoryMap(std::shared_ptr<RichText::BLOCK_FACTORY_MAP> block_factory_map)
         { m_block_factory_map = block_factory_map; }
 
     private:
         RichText* const             m_owner; //!< The public control.
-        boost::shared_ptr<Font>     m_font; //!< The font to use for text.
+        /** The font to use for text. */
+        std::shared_ptr<Font> m_font;
         Clr                         m_color; //! < The color to use for text.
         Flags<TextFormat>           m_format; //!< Text format.
-        boost::shared_ptr<RichText::BLOCK_FACTORY_MAP>
-                                    m_block_factory_map; //!< A map that tells us how to generate block controls from tags.
+        /** A map that tells us how to generate block controls from tags. */
+        std::shared_ptr<RichText::BLOCK_FACTORY_MAP> m_block_factory_map;
         std::vector<BlockControl*>  m_blocks; //!< The blocks generated from our content.
         int m_padding;
 
@@ -262,7 +263,7 @@ namespace GG {
     /// RichText public interface //
     ///////////////////////////////
     RichText::RichText(X x, Y y, X w, Y h, const std::string& str,
-                       const boost::shared_ptr<Font>& font, Clr color, Flags<TextFormat> format,
+                       const std::shared_ptr<Font>& font, Clr color, Flags<TextFormat> format,
                        Flags<WndFlag> flags) :
         Control(x, y, w, h, flags), m_self(new RichTextPrivate(this, str, font, color, format))
     {
@@ -281,14 +282,14 @@ namespace GG {
 
     void RichText::SizeMove(const Pt& ul, const Pt& lr) { m_self->SizeMove(ul, lr); }
 
-    void RichText::SetBlockFactoryMap(const boost::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map)
+    void RichText::SetBlockFactoryMap(const std::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map)
     { m_self->SetBlockFactoryMap(block_factory_map); }
 
     /// Global storage for registered block tags.
     // The factory object live for the lifetime of the process, they are never
     // deleted.
-    boost::shared_ptr<RichText::BLOCK_FACTORY_MAP>& RichText::DefaultBlockFactoryMap() {
-        static boost::shared_ptr<RichText::BLOCK_FACTORY_MAP> tag_map(
+    std::shared_ptr<RichText::BLOCK_FACTORY_MAP>& RichText::DefaultBlockFactoryMap() {
+        static std::shared_ptr<RichText::BLOCK_FACTORY_MAP> tag_map(
             new RichText::BLOCK_FACTORY_MAP());
         return tag_map;
     }

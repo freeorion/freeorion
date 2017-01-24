@@ -58,13 +58,13 @@ void MultiIconValueIndicator::Init() {
     for (const std::pair<MeterType, MeterType>& meter_type : m_meter_types) {
         const MeterType PRIMARY_METER_TYPE = meter_type.first;
         // get icon texture.
-        boost::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
+        std::shared_ptr<GG::Texture> texture = ClientUI::MeterIcon(PRIMARY_METER_TYPE);
 
         // special case for population meter for an indicator showing only a
         // single popcenter: icon is species icon, rather than generic pop icon
         if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
-            if (boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin()))
-                if (boost::shared_ptr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj))
+            if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin()))
+                if (std::shared_ptr<const PopCenter> pc = std::dynamic_pointer_cast<const PopCenter>(obj))
                     texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
@@ -106,7 +106,7 @@ void MultiIconValueIndicator::Update() {
         assert(m_icons[i]);
         double sum = 0.0;
         for (int object_id : m_object_ids) {
-            boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+            std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
             if (!obj) {
                 ErrorLogger() << "MultiIconValueIndicator::Update couldn't get object with id " << object_id;
                 continue;
@@ -119,7 +119,7 @@ void MultiIconValueIndicator::Update() {
     }
 }
 
-void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd) {
+void MultiIconValueIndicator::SetToolTip(MeterType meter_type, const std::shared_ptr<GG::BrowseInfoWnd>& browse_wnd) {
     for (unsigned int i = 0; i < m_icons.size(); ++i)
         if (m_meter_types.at(i).first == meter_type)
             m_icons.at(i)->SetBrowseInfoWnd(browse_wnd);
@@ -159,9 +159,9 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     GG::MenuItem menu_contents;
     std::string species_name;
 
-    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin());
+    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin());
     if (meter_type == METER_POPULATION && obj && m_object_ids.size() == 1) {
-        boost::shared_ptr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
+        std::shared_ptr<const PopCenter> pc = std::dynamic_pointer_cast<const PopCenter>(obj);
         if (pc) {
             species_name = pc->SpeciesName();
             if (!species_name.empty()) {

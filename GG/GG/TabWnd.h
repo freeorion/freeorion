@@ -124,7 +124,7 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK);
+    TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK);
     //@}
 
     /** \name Accessors */ ///@{
@@ -211,7 +211,7 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
+    TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color = CLR_BLACK,
            Flags<WndFlag> flags = INTERACTIVE);
     //@}
 
@@ -293,7 +293,7 @@ private:
 
     RadioButtonGroup*         m_tabs;
     std::vector<StateButton*> m_tab_buttons;
-    boost::shared_ptr<Font>   m_font;
+    std::shared_ptr<Font> m_font;
     Button*                   m_left_button;
     Button*                   m_right_button;
     Layout*                   m_left_right_button_layout;

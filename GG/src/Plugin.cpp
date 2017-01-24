@@ -73,9 +73,9 @@ extern "C" {
 
     //  TODO: Override this with your own StyleFactory subclass.
     GG_PLUGIN_API
-    boost::shared_ptr<GG::StyleFactory> GetStyleFactory()
+    std::shared_ptr<GG::StyleFactory> GetStyleFactory()
     {
-        static boost::shared_ptr<GG::StyleFactory> style_factory(new GG::StyleFactory());
+        static std::shared_ptr<GG::StyleFactory> style_factory(new GG::StyleFactory());
         return style_factory;
     }
 }

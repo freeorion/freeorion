@@ -49,7 +49,7 @@ namespace {
         const CPSize m_value;
     };
 
-    Y HeightFromFont(const boost::shared_ptr<Font>& font, unsigned int pixel_margin)
+    Y HeightFromFont(const std::shared_ptr<Font>& font, unsigned int pixel_margin)
     {  return font->Height() + 2 * static_cast<int>(pixel_margin); }
 }
 
@@ -59,7 +59,7 @@ namespace {
 // static(s)
 const int Edit::PIXEL_MARGIN = 5;
 
-Edit::Edit(const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
+Edit::Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
            Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/) :
     TextControl(X0, Y0, X1, HeightFromFont(font, PIXEL_MARGIN), str, font, text_color, FORMAT_LEFT | FORMAT_IGNORETAGS, INTERACTIVE | REPEAT_KEY_PRESS),
     m_cursor_pos(CP0, CP0),

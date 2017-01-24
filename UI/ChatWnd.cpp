@@ -150,12 +150,12 @@ void MessageWndEdit::FindGameWords() {
         m_game_words.insert(entry.second->PlayerName());
     }
     // add system names
-    for (boost::shared_ptr<System> system : GetUniverse().Objects().FindObjects<System>()) {
+    for (std::shared_ptr<System> system : GetUniverse().Objects().FindObjects<System>()) {
         if (system->Name() != "")
             m_game_words.insert(system->Name());
     }
      // add ship names
-    for (boost::shared_ptr<Ship> ship : GetUniverse().Objects().FindObjects<Ship>()) {
+    for (std::shared_ptr<Ship> ship : GetUniverse().Objects().FindObjects<Ship>()) {
         if (ship->Name() != "")
             m_game_words.insert(ship->Name());
     }

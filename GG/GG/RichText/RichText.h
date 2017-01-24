@@ -28,7 +28,7 @@ public:
         virtual BlockControl* CreateFromTag(const std::string& tag,
                                             const TAG_PARAMS& params,
                                             const std::string& content,
-                                            const boost::shared_ptr<Font>& font,
+                                            const std::shared_ptr<Font>& font,
                                             const Clr& color,
                                             Flags<TextFormat> format) = 0;
     };
@@ -43,7 +43,7 @@ public:
     /** \name Structors */ ///@{
     RichText();
 
-    RichText(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font,
+    RichText(X x, Y y, X w, Y h, const std::string& str, const std::shared_ptr<Font>& font,
              Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
              Flags<WndFlag> flags = NO_WND_FLAGS);
 
@@ -66,13 +66,13 @@ public:
     void SizeMove(const Pt& ul, const Pt& lr) override;
 
     //! Use this to customize the handling of tags in the text on a per-object basis.
-    void SetBlockFactoryMap(const boost::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map);
+    void SetBlockFactoryMap(const std::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map);
 
     //! Registers a factory in the default block factory map.
     static int RegisterDefaultBlock(const std::string& tag, IBlockControlFactory* factory);
 
     //! Access the default block factory map.
-    static boost::shared_ptr< RichText::BLOCK_FACTORY_MAP >& DefaultBlockFactoryMap();
+    static std::shared_ptr<RichText::BLOCK_FACTORY_MAP>& DefaultBlockFactoryMap();
 
 private:
     friend class RichTextPrivate;

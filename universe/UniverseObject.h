@@ -6,8 +6,6 @@
 #include "../util/Export.h"
 #include "../util/blocking_combiner.h"
 
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/python/detail/destroy.hpp>
 #include <boost/signals2/signal.hpp>
@@ -45,7 +43,7 @@ FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
   * Signal.  This means that all mutators on UniverseObject and its subclasses
   * need to emit this signal.  This is how the UI becomes aware that an object
   * that is being displayed has changed.*/
-class FO_COMMON_API UniverseObject : virtual public boost::enable_shared_from_this<UniverseObject> {
+class FO_COMMON_API UniverseObject : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
     /** \name Signal Types */ //@{
     typedef boost::signals2::signal<void (), blocking_combiner<boost::signals2::optional_last_value<void> > > StateChangedSignalType;
@@ -115,7 +113,7 @@ public:
     virtual const std::string&  PublicName(int empire_id) const;
 
     /** Accepts a visitor object \see UniverseObjectVisitor */
-    virtual boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const;
+    virtual std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const;
 
     int                         CreationTurn() const;               ///< returns game turn on which object was created
     int                         AgeInTurns() const;                 ///< returns elapsed number of turns between turn object was created and current game turn
@@ -127,7 +125,7 @@ public:
     /** copies data from \a copied_object to this object, limited to only copy
       * data about the copied object that is known to the empire with id
       * \a empire_id (or all data if empire_id is ALL_EMPIRES) */
-    virtual void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id) = 0;
+    virtual void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) = 0;
 
     void                    SetID(int id);                      ///< sets the ID number of the object to \a id
     void                    Rename(const std::string& name);    ///< renames this object to \a name
@@ -135,11 +133,12 @@ public:
     /** moves this object by relative displacements x and y. */
     void                    Move(double x, double y);
 
-    /** calls MoveTo(boost::shared_ptr<const UniverseObject>) with the object pointed to by \a object_id. */
+    /** calls MoveTo(std::shared_ptr<const UniverseObject>) with the object
+        pointed to by \a object_id. */
     void                    MoveTo(int object_id);
 
     /** moves this object to exact map coordinates of specified \a object. */
-    void                    MoveTo(boost::shared_ptr<UniverseObject> object);
+    void MoveTo(std::shared_ptr<UniverseObject> object);
 
     /** moves this object to map coordinates (x, y). */
     void                    MoveTo(double x, double y);
@@ -192,15 +191,22 @@ public:
     static const int            SINCE_BEFORE_TIME_AGE;  ///< the age returned by UniverseObject::AgeInTurns() if an object was created on turn BEFORE_FIRST_TURN
 
 protected:
-    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
     friend class Universe;
     friend class ObjectMap;
-    template <class T> friend void boost::checked_delete(T* x);
 
     /** \name Structors */ //@{
     UniverseObject();
     UniverseObject(const std::string name, double x, double y);
+
+    template <typename T> friend void UniverseObjectDeleter(T*);
+    template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
+#if BOOST_VERSION >= 106000
+public:
+#endif
     virtual ~UniverseObject();
+#if BOOST_VERSION >= 106000
+protected:
+#endif
 
     /** returns new copy of this UniverseObject, limited to only copy data that
       * is visible to the empire with the specified \a empire_id as determined
@@ -212,8 +218,10 @@ protected:
     void                    AddMeter(MeterType meter_type); ///< inserts a meter into object as the \a meter_type meter.  Should be used by derived classes to add their specialized meters to objects
     void                    Init();                         ///< adds stealth meter
 
-    void                    Copy(boost::shared_ptr<const UniverseObject> copied_object, Visibility vis,
-                                 const std::set<std::string>& visible_specials);///< used by public UniverseObject::Copy and derived classes' ::Copy methods
+    /** Used by public UniverseObject::Copy and derived classes' ::Copy methods.
+      */
+    void Copy(std::shared_ptr<const UniverseObject> copied_object, Visibility vis,
+              const std::set<std::string>& visible_specials);
 
     std::string             m_name;
 

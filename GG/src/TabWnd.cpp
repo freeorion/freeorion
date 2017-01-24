@@ -41,7 +41,7 @@ namespace {
         std::string m_name;
     };
 
-    Y TabHeightFromFont(const boost::shared_ptr<Font>& font)
+    Y TabHeightFromFont(const std::shared_ptr<Font>& font)
     { return font->Lineskip() + 10; }
 }
 
@@ -163,7 +163,7 @@ void OverlayWnd::SetCurrentWnd(std::size_t index)
 // static(s)
 const std::size_t TabWnd::NO_WND = std::numeric_limits<std::size_t>::max();
 
-TabWnd::TabWnd(X x, Y y, X w, Y h, const boost::shared_ptr<Font>& font, Clr color,
+TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
                Clr text_color/* = CLR_BLACK*/) :
     Wnd(x, y, w, h, INTERACTIVE),
     m_tab_bar(GetStyleFactory()->NewTabBar(font, color, text_color)),
@@ -265,7 +265,7 @@ void TabWnd::TabChanged(std::size_t index, bool signal)
 const std::size_t TabBar::NO_TAB = TabWnd::NO_WND;
 const X TabBar::BUTTON_WIDTH(10);
 
-TabBar::TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
+TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = CLR_BLACK*/,
                Flags<WndFlag> flags/* = INTERACTIVE*/) :
     Control(X0, Y0, X1, TabHeightFromFont(font), flags),
     m_tabs(nullptr),
@@ -280,7 +280,7 @@ TabBar::TabBar(const boost::shared_ptr<Font>& font, Clr color, Clr text_color/* 
 
     SetChildClippingMode(ClipToClient);
 
-    boost::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
+    std::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
 
     m_tabs = style_factory->NewRadioButtonGroup(HORIZONTAL);
     m_tabs->ExpandButtons(true);
@@ -376,7 +376,7 @@ std::size_t TabBar::AddTab(const std::string& name)
 void TabBar::InsertTab(std::size_t index, const std::string& name)
 {
     assert(index <= m_tab_buttons.size());
-    boost::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
+    std::shared_ptr<StyleFactory> style_factory = GetStyleFactory();
     StateButton* button = style_factory->NewTabBarTab(name,
                                                       m_font, FORMAT_CENTER, Color(),
                                                       m_text_color);

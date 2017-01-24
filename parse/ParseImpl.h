@@ -26,7 +26,7 @@ namespace parse { namespace detail {
 
     typedef qi::rule<
         token_iterator,
-        std::vector<boost::shared_ptr<Effect::EffectsGroup> > (),
+        std::vector<std::shared_ptr<Effect::EffectsGroup>> (),
         skipper_type
     > effects_group_rule;
     effects_group_rule& effects_group_parser();

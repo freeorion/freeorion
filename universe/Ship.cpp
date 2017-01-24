@@ -114,10 +114,10 @@ Ship* Ship::Clone(int empire_id) const {
     return retval;
 }
 
-void Ship::Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id) {
+void Ship::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    boost::shared_ptr<const Ship> copied_ship = boost::dynamic_pointer_cast<const Ship>(copied_object);
+    std::shared_ptr<const Ship> copied_ship = std::dynamic_pointer_cast<const Ship>(copied_object);
     if (!copied_ship) {
         ErrorLogger() << "Ship::Copy passed an object that wasn't a Ship";
         return;
@@ -132,7 +132,7 @@ void Ship::Copy(boost::shared_ptr<const UniverseObject> copied_object, int empir
     if (vis >= VIS_BASIC_VISIBILITY) {
         if (this->m_fleet_id != copied_ship->m_fleet_id) {
             // as with other containers, removal from the old container is triggered by the contained Object; removal from System is handled by UniverseObject::Copy
-            if (boost::shared_ptr<Fleet> oldFleet = GetFleet(this->m_fleet_id))
+            if (std::shared_ptr<Fleet> oldFleet = GetFleet(this->m_fleet_id))
                 oldFleet->RemoveShip(this->ID());
             this->m_fleet_id =              copied_ship->m_fleet_id; // as with other containers (Systems), actual insertion into fleet ships set is handled by the fleet
         }
@@ -360,8 +360,8 @@ const std::string& Ship::PublicName(int empire_id) const {
         return UserString("OBJ_SHIP");
 }
 
-boost::shared_ptr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(boost::const_pointer_cast<Ship>(boost::static_pointer_cast<const Ship>(shared_from_this()))); }
+std::shared_ptr<UniverseObject> Ship::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(std::const_pointer_cast<Ship>(std::static_pointer_cast<const Ship>(shared_from_this()))); }
 
 float Ship::NextTurnCurrentMeterValue(MeterType type) const {
     const Meter* meter = UniverseObject::GetMeter(type);

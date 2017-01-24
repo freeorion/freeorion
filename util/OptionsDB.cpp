@@ -193,7 +193,7 @@ const std::string& OptionsDB::GetDescription(const std::string& option_name) con
     return it->second.description;
 }
 
-boost::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const {
+std::shared_ptr<const ValidatorBase> OptionsDB::GetValidator(const std::string& option_name) const {
     std::map<std::string, Option>::const_iterator it = m_options.find(option_name);
     if (!OptionExists(it))
         throw std::runtime_error(("OptionsDB::GetValidator(): No option called \"" + option_name + "\" could be found.").c_str());

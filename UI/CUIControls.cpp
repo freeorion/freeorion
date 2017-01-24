@@ -60,7 +60,7 @@ CUILabel::CUILabel(const std::string& str,
 {}
 
 CUILabel::CUILabel(const std::string& str,
-                   const std::vector<boost::shared_ptr<GG::Font::TextElement> >& text_elements,
+                   const std::vector<std::shared_ptr<GG::Font::TextElement>>& text_elements,
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/,
                    GG::Flags<GG::WndFlag> flags/* = GG::NO_WND_FLAGS*/,
                    GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/, GG::X w /*= GG::X1*/, GG::Y h/*= GG::Y1*/) :
@@ -219,7 +219,7 @@ bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
 ///////////////////////////////////////
 CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                                GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
-    Button("", boost::shared_ptr<GG::Font>(), ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
+    Button("", std::shared_ptr<GG::Font>(), ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color(fill_background)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
@@ -504,7 +504,7 @@ void CUILabelButtonRepresenter::Render(const GG::StateButton& button) const {
     button.GetLabel()->OffsetMove(-(tx_ul));
 }
 
-CUIIconButtonRepresenter::CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> icon,
+CUIIconButtonRepresenter::CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> icon,
                                                    const GG::Clr& highlight_clr) :
     m_unchecked_icon(icon),
     m_checked_icon(icon),
@@ -512,9 +512,9 @@ CUIIconButtonRepresenter::CUIIconButtonRepresenter(boost::shared_ptr<GG::SubText
     m_checked_color(highlight_clr)
 {}
 
-CUIIconButtonRepresenter::CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
+CUIIconButtonRepresenter::CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> unchecked_icon,
                                                    const GG::Clr& unchecked_clr,
-                                                   boost::shared_ptr<GG::SubTexture> checked_icon,
+                                                   std::shared_ptr<GG::SubTexture> checked_icon,
                                                    const GG::Clr& checked_clr) :
     m_unchecked_icon(unchecked_icon),
     m_checked_icon(checked_icon),
@@ -569,7 +569,7 @@ void CUIIconButtonRepresenter::Render(const GG::StateButton& button) const {
 // class CUIStateButton
 ///////////////////////////////////////
 CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format,
-                               boost::shared_ptr<GG::StateButtonRepresenter> representer) :
+                               std::shared_ptr<GG::StateButtonRepresenter> representer) :
     StateButton(str, ClientUI::GetFont(), format,
                 ClientUI::StateButtonColor(), representer, ClientUI::TextColor())
 {}
@@ -578,7 +578,7 @@ CUIStateButton::CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat>
 ///////////////////////////////////////
 // class CUITabBar
 ///////////////////////////////////////
-CUITabBar::CUITabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color) :
+CUITabBar::CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color) :
     GG::TabBar(font, color, text_color)
 {}
 
@@ -601,7 +601,7 @@ void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_b
 ///////////////////////////////////////
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color,
                                 GG::Clr border_color) :
-    Button("", boost::shared_ptr<GG::Font>(), color),
+    Button("", std::shared_ptr<GG::Font>(), color),
     m_border_color(border_color),
     m_orientation(orientation),
     m_mouse_here(false),
@@ -1051,7 +1051,7 @@ CUILinkTextMultiEdit::CUILinkTextMultiEdit(const std::string& str, GG::Flags<GG:
 const std::vector<GG::Font::LineData>& CUILinkTextMultiEdit::GetLineData() const
 { return CUIMultiEdit::GetLineData(); }
 
-const boost::shared_ptr<GG::Font>& CUILinkTextMultiEdit::GetFont() const
+const std::shared_ptr<GG::Font>& CUILinkTextMultiEdit::GetFont() const
 { return CUIMultiEdit::GetFont(); }
 
 GG::Pt CUILinkTextMultiEdit::TextUpperLeft() const
@@ -1210,7 +1210,7 @@ namespace {
     const int STAT_ICON_PAD = 2;    // horizontal or vertical space between icon and label
 }
 
-StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                              GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
                              GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
     GG::Control(x, y, w, h, GG::INTERACTIVE),
@@ -1230,7 +1230,7 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     RequirePreRender();
 }
 
-StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                              double value, int digits, bool showsign,
                              GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
                              GG::X w /*= GG::X1*/, GG::Y h /*= GG::Y1*/) :
@@ -1251,7 +1251,7 @@ StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
     RequirePreRender();
 }
 
-StatisticIcon::StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+StatisticIcon::StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                              double value0, double value1, int digits0, int digits1,
                              bool showsign0, bool showsign1,
                              GG::X x /*= GG::X0*/, GG::Y y /*= GG::Y0*/,
@@ -1439,13 +1439,13 @@ namespace {
         };
 
         SpeciesRow(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
-                   GG::X w, GG::Y h, boost::shared_ptr<GG::Texture> species_icon) :
+                   GG::X w, GG::Y h, std::shared_ptr<GG::Texture> species_icon) :
             GG::ListBox::Row(w, h, "", GG::ALIGN_VCENTER, 0)
         { Init(species_name, localized_name, species_desc, w, h, species_icon); };
 
     private:
         void Init(const std::string& species_name, const std::string& localized_name, const std::string& species_desc,
-                  GG::X width, GG::Y height, boost::shared_ptr<GG::Texture> species_icon)
+                  GG::X width, GG::Y height, std::shared_ptr<GG::Texture> species_icon)
         {
             GG::Wnd::SetName(species_name);
             GG::StaticGraphic* icon = new GG::StaticGraphic(species_icon, GG::GRAPHIC_FITGRAPHIC| GG::GRAPHIC_PROPSCALE);
@@ -1460,7 +1460,7 @@ namespace {
             GetLayout()->SetColumnStretch(1, 1.0);
             if (!species_desc.empty()) {
                 SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(species_icon, localized_name,
+                SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(species_icon, localized_name,
                                                                                             species_desc)));
             }
         }
@@ -2051,13 +2051,13 @@ void FPSIndicator::UpdateEnabled()
 //////////////////////////////////////////////////
 // MultiTextureStaticGraphic
 //////////////////////////////////////////////////
-MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<boost::shared_ptr<GG::Texture> >& textures,
+MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<std::shared_ptr<GG::Texture>>& textures,
                                                      const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_graphics(),
     m_styles(styles)
 {
-    for (boost::shared_ptr<GG::Texture> texture : textures)
+    for (std::shared_ptr<GG::Texture> texture : textures)
         m_graphics.push_back(GG::SubTexture(texture, GG::X0, GG::Y0, texture->DefaultWidth(), texture->DefaultHeight()));
     Init();
 }
@@ -2179,7 +2179,7 @@ void MultiTextureStaticGraphic::ValidateStyles() {
 ////////////////////////////////////////////////
 // RotatingGraphic
 ////////////////////////////////////////////////
-RotatingGraphic::RotatingGraphic(const boost::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style,
+RotatingGraphic::RotatingGraphic(const std::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style,
                 GG::Flags<GG::WndFlag> flags) :
     GG::StaticGraphic(texture, style, flags),
     m_rpm(20.0f),

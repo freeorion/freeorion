@@ -35,7 +35,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
 {
     SetName("MilitaryPanel");
 
-    boost::shared_ptr<const Planet> planet = GetPlanet();
+    std::shared_ptr<const Planet> planet = GetPlanet();
     if (!planet)
         throw std::invalid_argument("Attempted to construct a MilitaryPanel with an object id is not a Planet");
 
@@ -143,7 +143,7 @@ bool MilitaryPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 }
 
 void MilitaryPanel::Update() {
-    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel::Update coudln't get object with id  " << m_planet_id;
         return;
@@ -154,12 +154,12 @@ void MilitaryPanel::Update() {
     m_multi_icon_value_indicator->Update();
 
     // tooltips
-    boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+    std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
 
     for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
         meter_stat.second->SetValue(obj->InitialMeterValue(meter_stat.first));
 
-        browse_wnd = boost::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, meter_stat.first, AssociatedMeterType(meter_stat.first)));
+        browse_wnd = std::shared_ptr<GG::BrowseInfoWnd>(new MeterBrowseWnd(m_planet_id, meter_stat.first, AssociatedMeterType(meter_stat.first)));
         meter_stat.second->SetBrowseInfoWnd(browse_wnd);
         m_multi_icon_value_indicator->SetToolTip(meter_stat.first, browse_wnd);
     }
@@ -226,16 +226,16 @@ void MilitaryPanel::DoLayout() {
     SetCollapsed(!s_expanded_map[m_planet_id]);
 }
 
-boost::shared_ptr<const Planet> MilitaryPanel::GetPlanet() const {
-    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
+std::shared_ptr<const Planet> MilitaryPanel::GetPlanet() const {
+    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel tried to get an object with an invalid m_planet_id";
-        return boost::shared_ptr<const Planet>();
+        return std::shared_ptr<const Planet>();
     }
-    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj);
+    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj);
     if (!planet) {
         ErrorLogger() << "MilitaryPanel failed casting an object pointer to a Planet pointer";
-        return boost::shared_ptr<const Planet>();
+        return std::shared_ptr<const Planet>();
     }
     return planet;
 }

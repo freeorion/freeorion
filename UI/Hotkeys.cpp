@@ -57,7 +57,7 @@ struct HotkeyManager::ConditionalConnection {
     }
 
     /// The condition. If null, always on.
-    boost::shared_ptr<HotkeyCondition> condition;
+    std::shared_ptr<HotkeyCondition> condition;
 
     boost::signals2::connection connection;
     boost::signals2::shared_connection_block blocker;

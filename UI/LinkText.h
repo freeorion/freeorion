@@ -37,7 +37,7 @@ protected:
 };
 
 // Should be unique_ptr, but we don't have c++11
-typedef boost::shared_ptr<LinkDecorator> LinkDecoratorPtr;
+typedef std::shared_ptr<LinkDecorator> LinkDecoratorPtr;
 
 class ColorByOwner: public LinkDecorator {
 public:
@@ -73,7 +73,9 @@ protected:
     void        MouseLeave_();
 
     virtual const std::vector<GG::Font::LineData>&  GetLineData() const = 0;
-    virtual const boost::shared_ptr<GG::Font>&      GetFont() const = 0;
+
+    virtual const std::shared_ptr<GG::Font>& GetFont() const = 0;
+
     virtual GG::Pt                                  TextUpperLeft() const = 0;
     virtual GG::Pt                                  TextLowerRight() const = 0;
     virtual void                                    SetLinkedText(const std::string& str) = 0;
@@ -124,12 +126,12 @@ private:
 class LinkText : public GG::TextControl, public TextLinker {
 public:
     /** \name Structors */ //@{
-    LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK); ///< ctor taking a font directly
+    LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const std::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK); ///< ctor taking a font directly
 
     /** ctor that does not require window size.
         Window size is determined from the string and font; the window will be large enough to fit the text as rendered,
         and no larger.  \see DynamicText::DynamicText() */
-    LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK);
+    LinkText(GG::X x, GG::Y y, const std::string& str, const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK);
     //@}
 
     /** \name Accessors */ //@{
@@ -139,7 +141,7 @@ public:
 
     const std::vector<GG::Font::LineData>& GetLineData() const override;
 
-    const boost::shared_ptr<GG::Font>& GetFont() const override;
+    const std::shared_ptr<GG::Font>& GetFont() const override;
 
     /** Returns text displayed before link formatting is added. */
     const std::string& RawText() const override;

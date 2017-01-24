@@ -54,7 +54,7 @@ private:
     void            NewLoadClicked(std::size_t idx);
     void            GalaxySetupPanelChanged();
     void            SaveGameBrowse();
-    void            PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
+    void PreviewImageChanged(std::shared_ptr<GG::Texture> new_image);
     void            PlayerDataChangedLocally();
     bool            PopulatePlayerList();   ///< repopulate list with rows built from current m_lobby_data.  returns true iff something in the lobby data was changed during population and an update should be sent back to the server
     void            SendUpdate();

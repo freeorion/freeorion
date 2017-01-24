@@ -1,15 +1,17 @@
 #ifndef _Special_h_
 #define _Special_h_
 
+
 #include "ValueRefFwd.h"
 
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
 
+#include "../util/Export.h"
+
+#include <memory>
 #include <string>
 #include <vector>
 
-#include "../util/Export.h"
 
 namespace Effect {
     class EffectsGroup;
@@ -28,7 +30,7 @@ public:
     /** \name Structors */ //@{
     Special(const std::string& name, const std::string& description,
             ValueRef::ValueRefBase<double>* stealth,
-            const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,
+            const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
             double spawn_rate = 1.0, int spawn_limit = 99999,
             ValueRef::ValueRefBase<double>* initial_capaicty = nullptr,
             Condition::ConditionBase* location = nullptr,
@@ -52,7 +54,12 @@ public:
     std::string                             Description() const;                            ///< returns a text description of this type of special
     std::string                             Dump() const;                                   ///< returns a data file format representation of this object
     const ValueRef::ValueRefBase<double>*   Stealth() const     { return m_stealth; }       ///< returns the stealth of the special, which determines how easily it is seen by empires
-    const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& Effects() const    { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects that specials of this type have
+
+    /** Returns the EffectsGroups that encapsulate the effects that specials of
+        this type have. */
+    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
+    { return m_effects; }
+
     float                                   SpawnRate() const   { return m_spawn_rate; }
     int                                     SpawnLimit() const  { return m_spawn_limit; }
     const ValueRef::ValueRefBase<double>*   InitialCapacity() const                 { return m_initial_capacity; }  ///< returns the ValueRef to use to set the initial capacity of the special when placed
@@ -67,8 +74,9 @@ private:
     std::string                     m_name;
     std::string                     m_description;
     ValueRef::ValueRefBase<double>* m_stealth;
-    std::vector<boost::shared_ptr<Effect::EffectsGroup> >
-                                    m_effects;
+
+    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
+
     float                           m_spawn_rate;
     int                             m_spawn_limit;
     ValueRef::ValueRefBase<double>* m_initial_capacity;

@@ -54,7 +54,7 @@
 
 const Tech* GetTech(const std::string& name);
 
-bool TextureFileNameCompare(const boost::shared_ptr<GG::Texture> t1, const boost::shared_ptr<GG::Texture> t2)
+bool TextureFileNameCompare(const std::shared_ptr<GG::Texture> t1, const std::shared_ptr<GG::Texture> t2)
 { return t1 && t2 && t1->Path() < t2->Path(); }
 
 namespace fs = boost::filesystem;
@@ -115,7 +115,7 @@ double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().
 
 
 // content texture getters
-boost::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
+std::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
     std::string icon_filename;
     switch (planet_type) {
     case PT_SWAMP:
@@ -146,7 +146,7 @@ boost::shared_ptr<GG::Texture> ClientUI::PlanetIcon(PlanetType planet_type) {
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet" / icon_filename, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) {
+std::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) {
     std::string icon_filename;
     switch (planet_size) {
     case SZ_TINY:
@@ -169,7 +169,7 @@ boost::shared_ptr<GG::Texture> ClientUI::PlanetSizeIcon(PlanetSize planet_size) 
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "planet" / icon_filename, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
+std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     std::string icon_filename;
     switch (meter_type) {
     case METER_POPULATION:
@@ -228,7 +228,7 @@ boost::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / icon_filename, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::BuildingIcon(const std::string& building_type_name) {
+std::shared_ptr<GG::Texture> ClientUI::BuildingIcon(const std::string& building_type_name) {
     const BuildingType* building_type = GetBuildingType(building_type_name);
     std::string graphic_name;
     if (building_type)
@@ -238,7 +238,7 @@ boost::shared_ptr<GG::Texture> ClientUI::BuildingIcon(const std::string& buildin
     return ClientUI::GetTexture(ArtDir() / graphic_name, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name) {
+std::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& category_name) {
     std::string icon_filename;
     if (const TechCategory* category = GetTechCategory(category_name))
         return ClientUI::GetTexture(ArtDir() / "icons" / "tech" / "categories" / category->graphic, true);
@@ -246,7 +246,7 @@ boost::shared_ptr<GG::Texture> ClientUI::CategoryIcon(const std::string& categor
         return ClientUI::GetTexture(ClientUI::ArtDir() / "", true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::TechIcon(const std::string& tech_name) {
+std::shared_ptr<GG::Texture> ClientUI::TechIcon(const std::string& tech_name) {
     const Tech* tech = GetTechManager().GetTech(tech_name);
     std::string texture_name;
     if (tech) {
@@ -257,7 +257,7 @@ boost::shared_ptr<GG::Texture> ClientUI::TechIcon(const std::string& tech_name) 
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::SpecialIcon(const std::string& special_name) {
+std::shared_ptr<GG::Texture> ClientUI::SpecialIcon(const std::string& special_name) {
     const Special* special = GetSpecial(special_name);
     std::string texture_name;
     if (special)
@@ -267,7 +267,7 @@ boost::shared_ptr<GG::Texture> ClientUI::SpecialIcon(const std::string& special_
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_name) {
+std::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_name) {
     const Species* species = GetSpecies(species_name);
     std::string texture_name;
     if (species)
@@ -277,7 +277,7 @@ boost::shared_ptr<GG::Texture> ClientUI::SpeciesIcon(const std::string& species_
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_type_name) {
+std::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_type_name) {
     const FieldType* type = GetFieldType(field_type_name);
     std::string texture_name;
     if (type)
@@ -287,7 +287,7 @@ boost::shared_ptr<GG::Texture> ClientUI::FieldTexture(const std::string& field_t
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
+std::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) {
     const PartType* part = GetPartType(part_name);
     std::string texture_name;
     if (part)
@@ -297,7 +297,7 @@ boost::shared_ptr<GG::Texture> ClientUI::PartIcon(const std::string& part_name) 
     return ClientUI::GetTexture(ArtDir() / texture_name, false);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name) {
+std::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_name) {
     const HullType* hull = GetHullType(hull_name);
     std::string texture_name;
     if (hull) {
@@ -310,7 +310,7 @@ boost::shared_ptr<GG::Texture> ClientUI::HullTexture(const std::string& hull_nam
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) {
+std::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) {
     const HullType* hull = GetHullType(hull_name);
     std::string texture_name;
     if (hull) {
@@ -323,7 +323,7 @@ boost::shared_ptr<GG::Texture> ClientUI::HullIcon(const std::string& hull_name) 
     return ClientUI::GetTexture(ArtDir() / texture_name, true);
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
+std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
     if (const ShipDesign* design = GetShipDesign(design_id)) {
         const std::string& icon_name = design->Icon();
         if (icon_name.empty())
@@ -687,7 +687,7 @@ void ClientUI::GetSaveGameUIData(SaveGameUIData& data) const
 { GetMapWndConst()->GetSaveGameUIData(data); }
 
 bool ClientUI::ZoomToObject(const std::string& name) {
-    for (boost::shared_ptr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>())
+    for (std::shared_ptr<const UniverseObject> obj : GetUniverse().Objects().FindObjects<UniverseObject>())
         if (boost::iequals(obj->Name(), name))
             return ZoomToObject(obj->ID());
     return false;
@@ -699,7 +699,7 @@ bool ClientUI::ZoomToObject(int id) {
 }
 
 bool ClientUI::ZoomToPlanet(int id) {
-    if (boost::shared_ptr<const Planet> planet = GetPlanet(id)) {
+    if (std::shared_ptr<const Planet> planet = GetPlanet(id)) {
         GetMapWnd()->CenterOnObject(planet->SystemID());
         GetMapWnd()->SelectSystem(planet->SystemID());
         GetMapWnd()->SelectPlanet(id);
@@ -715,7 +715,7 @@ bool ClientUI::ZoomToPlanetPedia(int id) {
 }
 
 bool ClientUI::ZoomToSystem(int id) {
-    if (boost::shared_ptr<const System> system = GetSystem(id)) {
+    if (std::shared_ptr<const System> system = GetSystem(id)) {
         ZoomToSystem(system);
         return true;
     }
@@ -723,7 +723,7 @@ bool ClientUI::ZoomToSystem(int id) {
 }
 
 bool ClientUI::ZoomToFleet(int id) {
-    if (boost::shared_ptr<const Fleet> fleet = GetFleet(id)) {
+    if (std::shared_ptr<const Fleet> fleet = GetFleet(id)) {
         ZoomToFleet(fleet);
         return true;
     }
@@ -731,13 +731,13 @@ bool ClientUI::ZoomToFleet(int id) {
 }
 
 bool ClientUI::ZoomToShip(int id) {
-    if (boost::shared_ptr<const Ship> ship = GetShip(id))
+    if (std::shared_ptr<const Ship> ship = GetShip(id))
         return ZoomToFleet(ship->FleetID());
     return false;
 }
 
 bool ClientUI::ZoomToBuilding(int id) {
-    if (boost::shared_ptr<const Building> building = GetBuilding(id)) {
+    if (std::shared_ptr<const Building> building = GetBuilding(id)) {
         ZoomToBuildingType(building->BuildingTypeName());
         return ZoomToPlanet(building->PlanetID());
     }
@@ -759,7 +759,7 @@ bool ClientUI::ZoomToCombatLog(int id) {
     return false;
 }
 
-void ClientUI::ZoomToSystem(boost::shared_ptr<const System> system) {
+void ClientUI::ZoomToSystem(std::shared_ptr<const System> system) {
     if (!system)
         return;
 
@@ -767,7 +767,7 @@ void ClientUI::ZoomToSystem(boost::shared_ptr<const System> system) {
     GetMapWnd()->SelectSystem(system->ID());
 }
 
-void ClientUI::ZoomToFleet(boost::shared_ptr<const Fleet> fleet) {
+void ClientUI::ZoomToFleet(std::shared_ptr<const Fleet> fleet) {
     if (!fleet)
         return;
 
@@ -891,7 +891,7 @@ bool ClientUI::ZoomToEncyclopediaEntry(const std::string& str) {
 }
 
 void ClientUI::DumpObject(int object_id) {
-    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     if (!obj)
         return;
     m_message_wnd->HandleLogMessage(obj->Dump() + "\n");
@@ -943,25 +943,25 @@ void ClientUI::HandleFullscreenSwitch() const {
     }
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,
-                                                          const std::string& prefix, bool mipmap/* = false*/)
+std::shared_ptr<GG::Texture> ClientUI::GetRandomTexture(const boost::filesystem::path& dir,
+                                                        const std::string& prefix, bool mipmap/* = false*/)
 {
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first[(*prefixed_textures_and_dist.second)()];
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir,
-                                                          const std::string& prefix, int n, bool mipmap/* = false*/)
+std::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem::path& dir,
+                                                        const std::string& prefix, int n, bool mipmap/* = false*/)
 {
     assert(0 <= n);
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first.empty() ?
-        boost::shared_ptr<GG::Texture>() :
+        std::shared_ptr<GG::Texture>() :
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
 }
 
-std::vector<boost::shared_ptr<GG::Texture> > ClientUI::GetPrefixedTextures(const boost::filesystem::path& dir,
-                                                                           const std::string& prefix, bool mipmap/* = false*/)
+std::vector<std::shared_ptr<GG::Texture>> ClientUI::GetPrefixedTextures(const boost::filesystem::path& dir,
+                                                                        const std::string& prefix, bool mipmap/* = false*/)
 {
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first;
@@ -982,8 +982,8 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
     dlg.Run();
 }
 
-boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/) {
-    boost::shared_ptr<GG::Texture> retval;
+std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/) {
+    std::shared_ptr<GG::Texture> retval;
     try {
         retval = HumanClientApp::GetApp()->GetTexture(path, mipmap);
     } catch(...) {
@@ -996,7 +996,7 @@ boost::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::pat
     return retval;
 }
 
-boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
+std::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
      try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
      } catch (...) {
@@ -1009,7 +1009,7 @@ boost::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
     } 
 }
 
-boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) { 
+std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
     try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font-bold"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
@@ -1022,7 +1022,7 @@ boost::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
     }
 }
 
-boost::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/) {
+std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/) {
     try {
         return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.title-font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
@@ -1044,8 +1044,8 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
     PrefixedTextures::iterator prefixed_textures_it = m_prefixed_textures.find(KEY);
     if (prefixed_textures_it == m_prefixed_textures.end()) {
         prefixed_textures_it = m_prefixed_textures.insert(std::make_pair(KEY, TexturesAndDist())).first;
-        std::vector<boost::shared_ptr<GG::Texture> >& textures = prefixed_textures_it->second.first;
-        boost::shared_ptr<SmallIntDistType>& rand_int = prefixed_textures_it->second.second;
+        std::vector<std::shared_ptr<GG::Texture>>& textures = prefixed_textures_it->second.first;
+        std::shared_ptr<SmallIntDistType>& rand_int = prefixed_textures_it->second.second;
         fs::directory_iterator end_it;
         for (fs::directory_iterator it(dir); it != end_it; ++it) {
             try {

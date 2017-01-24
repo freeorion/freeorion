@@ -6,7 +6,7 @@
 
 namespace GG {
 
-    TextBlock::TextBlock(X x, Y y, X w, const std::string& str, const boost::shared_ptr<Font>& font,
+    TextBlock::TextBlock(X x, Y y, X w, const std::string& str, const std::shared_ptr<Font>& font,
                          Clr color, Flags<TextFormat> format, Flags<WndFlag> flags) :
         BlockControl(x, y, w, flags)
     {
@@ -35,7 +35,7 @@ namespace GG {
         BlockControl* CreateFromTag(const std::string& tag,
                                     const RichText::TAG_PARAMS& params,
                                     const std::string& content,
-                                    const boost::shared_ptr<Font>& font,
+                                    const std::shared_ptr<Font>& font,
                                     const Clr& color,
                                     Flags<TextFormat> format) override
         {

@@ -23,7 +23,9 @@ public:
     bool InWindow(const GG::Pt& pt) const override;
 
     int                 FieldID() const;                        //!< returns ID of system this icon represents
-    const boost::shared_ptr<GG::Texture>& FieldTexture() const; //!< returns the field texture
+
+    /** Returns the field texture. */
+    const std::shared_ptr<GG::Texture>& FieldTexture() const;
     //!@}
 
     //! \name Mutators //!@{
@@ -66,7 +68,10 @@ private:
     void            PositionFieldName();
 
     int                             m_field_id;                 //!< the Field associated with this FieldIcon
-    boost::shared_ptr<GG::Texture>  m_texture;                  //!< field texture
+
+    /** Field texture. */
+    std::shared_ptr<GG::Texture> m_texture;
+
     GG::DynamicGraphic*             m_selection_indicator;      //!< shown to indicate system is selected in sidepanel
     GG::StaticGraphic*              m_mouseover_indicator;      //!< shown when the mouse cursor is over the system
     bool                            m_selected;                 //!< is this icon presently selected / should it show m_selected_indicator

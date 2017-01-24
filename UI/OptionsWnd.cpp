@@ -304,8 +304,8 @@ namespace {
         {
             GG::Y top = GG::Y1;
 
-            boost::shared_ptr<GG::Font> font = ClientUI::GetFont();
-            boost::shared_ptr<GG::Texture> texture;
+            std::shared_ptr<GG::Font> font = ClientUI::GetFont();
+            std::shared_ptr<GG::Texture> texture;
             if (font)
                 texture = font->GetTexture();
             if (texture) {
@@ -765,7 +765,7 @@ void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level, c
 }
 
 GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
-    GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
+    GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                button, indentation_level);
     page->Insert(row);
@@ -837,16 +837,16 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
 
 GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
-    boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
+    std::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     GG::Spin<int>* spin = nullptr;
     int value = GetOptionsDB().Get<int>(option_name);
-    if (boost::shared_ptr<const RangedValidator<int> > ranged_validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(validator))
+    if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int> >(validator))
         spin = new CUISpin<int>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
-    else if (boost::shared_ptr<const StepValidator<int> > step_validator = boost::dynamic_pointer_cast<const StepValidator<int> >(validator))
+    else if (std::shared_ptr<const StepValidator<int>> step_validator = std::dynamic_pointer_cast<const StepValidator<int> >(validator))
         spin = new CUISpin<int>(value, step_validator->m_step_size, -1000000, 1000000, true);
-    else if (boost::shared_ptr<const RangedStepValidator<int> > ranged_step_validator = boost::dynamic_pointer_cast<const RangedStepValidator<int> >(validator))
+    else if (std::shared_ptr<const RangedStepValidator<int>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<int> >(validator))
         spin = new CUISpin<int>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
-    else if (boost::shared_ptr<const Validator<int> > int_validator = boost::dynamic_pointer_cast<const Validator<int> >(validator))
+    else if (std::shared_ptr<const Validator<int>> int_validator = std::dynamic_pointer_cast<const Validator<int> >(validator))
         spin = new CUISpin<int>(value, 1, -1000000, 1000000, true);
     if (!spin) {
         ErrorLogger() << "Unable to create IntOption spin";
@@ -873,16 +873,16 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
 
 GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
-    boost::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
+    std::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     GG::Spin<double>* spin = nullptr;
     double value = GetOptionsDB().Get<double>(option_name);
-    if (boost::shared_ptr<const RangedValidator<double> > ranged_validator = boost::dynamic_pointer_cast<const RangedValidator<double> >(validator))
+    if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double> >(validator))
         spin = new CUISpin<double>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
-    else if (boost::shared_ptr<const StepValidator<double> > step_validator = boost::dynamic_pointer_cast<const StepValidator<double> >(validator))
+    else if (std::shared_ptr<const StepValidator<double>> step_validator = std::dynamic_pointer_cast<const StepValidator<double> >(validator))
         spin = new CUISpin<double>(value, step_validator->m_step_size, -1000000, 1000000, true);
-    else if (boost::shared_ptr<const RangedStepValidator<double> > ranged_step_validator = boost::dynamic_pointer_cast<const RangedStepValidator<double> >(validator))
+    else if (std::shared_ptr<const RangedStepValidator<double>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<double> >(validator))
         spin = new CUISpin<double>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
-    else if (boost::shared_ptr<const Validator<double> > double_validator = boost::dynamic_pointer_cast<const Validator<double> >(validator))
+    else if (std::shared_ptr<const Validator<double>> double_validator = std::dynamic_pointer_cast<const Validator<double> >(validator))
         spin = new CUISpin<double>(value, 1, -1000000, 1000000, true);
     if (!spin) {
         ErrorLogger() << "Unable to create DoubleOption spin";
@@ -909,10 +909,10 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
 
 void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, SoundOptionsFeedback &fb) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::StateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
+    GG::StateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
-    boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("UI.sound.music-volume"));
+    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("UI.sound.music-volume"));
     assert(validator);
     GG::Slider<int>* slider = new CUISlider<int>(validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>("UI.sound.music-volume"));
@@ -936,10 +936,10 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
                               bool toggle_value, SoundOptionsFeedback &fb)
 {
     GG::ListBox::Row* row = new GG::ListBox::Row();
-    GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, boost::make_shared<CUICheckBoxRepresenter>());
+    GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
-    boost::shared_ptr<const RangedValidator<int> > validator = boost::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));
+    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));
     assert(validator);
     GG::Slider<int>* slider = new CUISlider<int>(validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>(volume_option_name));
@@ -1048,23 +1048,23 @@ void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std:
 }
 
 void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
-    boost::shared_ptr<const RangedValidator<int> > width_validator =
-        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+    std::shared_ptr<const RangedValidator<int>> width_validator =
+        std::dynamic_pointer_cast<const RangedValidator<int>>(
             GetOptionsDB().GetValidator("app-width"));
-    boost::shared_ptr<const RangedValidator<int> > height_validator =
-        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+    std::shared_ptr<const RangedValidator<int>> height_validator =
+        std::dynamic_pointer_cast<const RangedValidator<int>>(
             GetOptionsDB().GetValidator("app-height"));
-    boost::shared_ptr<const RangedValidator<int> > windowed_width_validator =
-        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+    std::shared_ptr<const RangedValidator<int>> windowed_width_validator =
+        std::dynamic_pointer_cast<const RangedValidator<int>>(
             GetOptionsDB().GetValidator("app-width-windowed"));
-    boost::shared_ptr<const RangedValidator<int> > windowed_height_validator =
-        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+    std::shared_ptr<const RangedValidator<int>> windowed_height_validator =
+        std::dynamic_pointer_cast<const RangedValidator<int>>(
             GetOptionsDB().GetValidator("app-height-windowed"));
-    boost::shared_ptr<const RangedValidator<int> > windowed_left_validator =
-        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+    std::shared_ptr<const RangedValidator<int>> windowed_left_validator =
+        std::dynamic_pointer_cast<const RangedValidator<int>>(
             GetOptionsDB().GetValidator("app-left-windowed"));
-    boost::shared_ptr<const RangedValidator<int> > windowed_top_validator =
-        boost::dynamic_pointer_cast<const RangedValidator<int> >(
+    std::shared_ptr<const RangedValidator<int>> windowed_top_validator =
+        std::dynamic_pointer_cast<const RangedValidator<int>>(
             GetOptionsDB().GetValidator("app-top-windowed"));
 
     // compile list of resolutions available on this system

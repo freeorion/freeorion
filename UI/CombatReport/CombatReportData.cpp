@@ -82,7 +82,7 @@ unsigned int CombatSummary::DestroyedUnits() const {
 }
 
 void CombatSummary::AddUnit(int unit_id, const CombatParticipantState& state) {
-    unit_summaries.push_back(boost::make_shared<ParticipantSummary>(unit_id, SafeEmpireId(empire), state));
+    unit_summaries.push_back(std::make_shared<ParticipantSummary>(unit_id, SafeEmpireId(empire), state));
 
     total_current_health += std::max(unit_summaries.back()->current_health, 0.0f);
     total_max_health += std::max(unit_summaries.back()->max_health, 0.0f);

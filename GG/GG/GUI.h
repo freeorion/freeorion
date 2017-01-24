@@ -205,10 +205,13 @@ public:
     /** Returns true if \a word is a word that appears in \a str */
     virtual bool                                    ContainsWord(const std::string& str, const std::string& word) const;
 
-    const boost::shared_ptr<StyleFactory>& GetStyleFactory() const; ///< returns the currently-installed style factory
+    /** Returns the currently-installed style factory. */
+    const std::shared_ptr<StyleFactory>& GetStyleFactory() const;
 
     bool                                   RenderCursor() const; ///< returns true iff the GUI is responsible for rendering the cursor
-    const boost::shared_ptr<Cursor>&       GetCursor() const; ///< returns the currently-installed cursor
+
+    /* Returns the currently-installed cursor. */
+    const std::shared_ptr<Cursor>& GetCursor() const;
 
     /** Returns an iterator to one past the first defined keyboard accelerator. */
     const_accel_iterator accel_begin() const;
@@ -254,8 +257,9 @@ public:
     void            MoveUp(Wnd* wnd);               ///< moves \a wnd to the top of the z-list
     void            MoveDown(Wnd* wnd);             ///< moves \a wnd to the bottom of the z-list
 
-    virtual boost::shared_ptr<ModalEventPump>
-                   CreateModalEventPump(bool& done); ///< creates a new ModalEventPump that will terminate when \a done is set to true
+    /** Creates a new ModalEventPump that will terminate when \a done is set to
+        true. */
+    virtual std::shared_ptr<ModalEventPump> CreateModalEventPump(bool& done);
 
     /** Adds \a wnd to the set of current drag-and-drop Wnds, to be rendered
         \a offset pixels from the cursor position. \a originating_wnd
@@ -307,29 +311,29 @@ public:
 
     /** Returns a shared_ptr to the desired font, supporting all printable
         ASCII characters. */
-    boost::shared_ptr<Font>    GetFont(const std::string& font_filename, unsigned int pts);
+    std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts);
 
     /** Returns a shared_ptr to the desired font, supporting all printable
         ASCII characters, from the in-memory contents \a file_contents. */
-    boost::shared_ptr<Font>    GetFont(const std::string& font_filename, unsigned int pts,
-                                       const std::vector<unsigned char>& file_contents);
+    std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
+                                  const std::vector<unsigned char>& file_contents);
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last). */
     template <class CharSetIter>
-    boost::shared_ptr<Font>    GetFont(const std::string& font_filename, unsigned int pts,
-                                       CharSetIter first, CharSetIter last);
+    std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
+                                  CharSetIter first, CharSetIter last);
 
     /** Returns a shared_ptr to the desired font, supporting all the
         characters in the UnicodeCharsets in the range [first, last), from the
         in-memory contents \a file_contents. */
     template <class CharSetIter>
-    boost::shared_ptr<Font>    GetFont(const std::string& font_filename, unsigned int pts,
-                                       const std::vector<unsigned char>& file_contents,
-                                       CharSetIter first, CharSetIter last);
+    std::shared_ptr<Font> GetFont(const std::string& font_filename, unsigned int pts,
+                                  const std::vector<unsigned char>& file_contents,
+                                  CharSetIter first, CharSetIter last);
 
     /** Returns a shared_ptr to existing font \a font in a new size, \a pts. */
-    boost::shared_ptr<Font>    GetFont(const boost::shared_ptr<Font>& font, unsigned int pts);
+    std::shared_ptr<Font> GetFont(const std::shared_ptr<Font>& font, unsigned int pts);
 
     /** Removes the desired font from the managed pool; since shared_ptr's are
         used, the font may be deleted much later. */
@@ -338,18 +342,18 @@ public:
     /** Adds an already-constructed texture to the managed pool \warning
         calling code <b>must not</b> delete \a texture; the texture pool will
         do that. */
-    boost::shared_ptr<Texture> StoreTexture(Texture* texture, const std::string& texture_name);
+    std::shared_ptr<Texture> StoreTexture(Texture* texture, const std::string& texture_name);
 
     /** Adds an already-constructed texture to the managed pool. */
-    boost::shared_ptr<Texture> StoreTexture(const boost::shared_ptr<Texture> &texture, const std::string& texture_name);
+    std::shared_ptr<Texture> StoreTexture(const std::shared_ptr<Texture> &texture, const std::string& texture_name);
 
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true. */
-    boost::shared_ptr<Texture> GetTexture(const std::string& name, bool mipmap = false);
+    std::shared_ptr<Texture> GetTexture(const std::string& name, bool mipmap = false);
 
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true. */
-    boost::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
+    std::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
     /** Removes the desired texture from the managed pool; since shared_ptr's
       * are used, the texture may be deleted much later. */
@@ -359,10 +363,13 @@ public:
       * are used, the texture may be deleted much later. */
     void                       FreeTexture(const boost::filesystem::path& path);
 
-    void SetStyleFactory(const boost::shared_ptr<StyleFactory>& factory); ///< sets the currently-installed style factory
+    /** Sets the currently-installed style factory. */
+    void SetStyleFactory(const std::shared_ptr<StyleFactory>& factory);
 
     void RenderCursor(bool render); ///< set this to true iff the GUI should render the cursor
-    void SetCursor(const boost::shared_ptr<Cursor>& cursor); ///< sets the currently-installed cursor
+
+    /** Sets the currently-installed cursor. */
+    void SetCursor(const std::shared_ptr<Cursor>& cursor);
 
     virtual bool SetClipboardText(const std::string& text); ///< sets text stored in clipboard
     bool CopyFocusWndText();                                ///< copies current focus Wnd as text to clipboard
@@ -450,7 +457,7 @@ private:
     Wnd*           CheckedGetWindowUnder(const Pt& pt, Flags<ModKey> mod_keys);
 
     static GUI*                       s_gui;
-    static boost::shared_ptr<GUIImpl> s_impl;
+    static std::shared_ptr<GUIImpl> s_impl;
 
     friend class EventPumpBase; ///< allows EventPumpBase types to drive GUI
     friend struct GUIImpl;
@@ -478,14 +485,14 @@ bool GUI::OrCombiner::operator()(InIt first, InIt last) const
 }
 
 template <class CharSetIter>
-boost::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
-                                     CharSetIter first, CharSetIter last)
+std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
+                                   CharSetIter first, CharSetIter last)
 { return GetFontManager().GetFont(font_filename, pts, first, last); }
 
 template <class CharSetIter>
-boost::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
-                                     const std::vector<unsigned char>& file_contents,
-                                     CharSetIter first, CharSetIter last)
+std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
+                                   const std::vector<unsigned char>& file_contents,
+                                   CharSetIter first, CharSetIter last)
 { return GetFontManager().GetFont(font_filename, pts, file_contents, first, last); }
 
 } // namespace GG

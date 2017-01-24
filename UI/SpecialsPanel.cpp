@@ -61,7 +61,7 @@ void SpecialsPanel::Update() {
 
 
     // get specials to display
-    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
+    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
         ErrorLogger() << "SpecialsPanel::Update couldn't get object with id " << m_object_id;
         return;
@@ -95,7 +95,7 @@ void SpecialsPanel::Update() {
             desc += "\n" + Dump(special->Effects());
         }
 
-        graphic->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        graphic->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
             new IconTextBrowseWnd(ClientUI::SpecialIcon(special->Name()),
                                   UserString(special->Name()),
                                   desc)));

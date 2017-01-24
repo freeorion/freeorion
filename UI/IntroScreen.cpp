@@ -72,7 +72,7 @@ private:
     int                         m_render;
     int                         m_display_list_id;
     int                         m_credits_height;
-    boost::shared_ptr<GG::Font> m_font;
+    std::shared_ptr<GG::Font> m_font;
 };
 
 CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co) :
@@ -132,7 +132,7 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
                         credit += person.attributes.at("task");
                         credit += "</rgba>";
                     }
-                    std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements =
+                    std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
                         m_font->ExpensiveParseFromTextToTextElements(credit, format);
                     std::vector<GG::Font::LineData> lines =
                         m_font->DetermineLines(credit, format, x2 - x1, text_elements);

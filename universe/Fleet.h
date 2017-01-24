@@ -44,7 +44,7 @@ public:
 
     const std::string& PublicName(int empire_id) const override;
 
-    boost::shared_ptr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject>Accept(const UniverseObjectVisitor& visitor) const override;
 
     const std::set<int>&                ShipIDs() const     { return m_ships; }         ///< returns set of IDs of ships in fleet.
 
@@ -104,7 +104,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void MovementPhase() override;
 
@@ -153,9 +153,8 @@ protected:
     {}
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
 
+    template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-    template <class T> friend void boost::checked_delete(T* x);
-
 #if BOOST_VERSION >= 106100
 public:
 #endif

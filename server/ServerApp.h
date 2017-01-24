@@ -38,12 +38,12 @@ private:
 struct PlayerSaveGameData : public PlayerSaveHeaderData {
     PlayerSaveGameData();
 
-    PlayerSaveGameData(const std::string& name, int empire_id, const boost::shared_ptr<OrderSet>& orders,
-                       const boost::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
+    PlayerSaveGameData(const std::string& name, int empire_id, const std::shared_ptr<OrderSet>& orders,
+                       const std::shared_ptr<SaveGameUIData>& ui_data, const std::string& save_state_string,
                        Networking::ClientType client_type);
 
-    boost::shared_ptr<OrderSet>         m_orders;
-    boost::shared_ptr<SaveGameUIData>   m_ui_data;
+    std::shared_ptr<OrderSet> m_orders;
+    std::shared_ptr<SaveGameUIData> m_ui_data;
     std::string                         m_save_state_string;
 
 private:
@@ -89,14 +89,14 @@ public:
 
     SupplyManager& GetSupplyManager() override;
 
-    boost::shared_ptr<UniverseObject> GetUniverseObject(int object_id) override;
+    std::shared_ptr<UniverseObject> GetUniverseObject(int object_id) override;
 
     /** Returns the server's map for known objects of specified empire. */
     ObjectMap& EmpireKnownObjects(int empire_id) override;
 
-    boost::shared_ptr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
+    std::shared_ptr<UniverseObject> EmpireKnownObject(int object_id, int empire_id) override;
 
-    std::string GetVisibleObjectName(boost::shared_ptr<const UniverseObject> object) override;
+    std::string GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) override;
 
     int GetNewObjectID() override;
 
@@ -194,13 +194,13 @@ public:
     /** Restores saved single player gamestate and human and AI client state
       * information. */
     void    LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                                       boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+                           std::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     /** Restores saved multiplayer gamestate and human and AI client state
       * information. */
     void    LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                            const std::vector<PlayerSaveGameData>& player_save_game_data,
-                           boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+                           std::shared_ptr<ServerSaveGameData> server_save_game_data);
     //@}
 
     void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
@@ -236,7 +236,7 @@ private:
       * start messages. */
     void    LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
                          const std::vector<std::pair<int, int> >& player_id_to_save_game_data_index,
-                         boost::shared_ptr<ServerSaveGameData> server_save_game_data);
+                         std::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     /** Calls Python universe generator script.
       * Supposed to be called to create a new universe so it can be used by content

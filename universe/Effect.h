@@ -15,7 +15,7 @@ struct ScriptingContext;
 
 namespace Condition {
     struct ConditionBase;
-    typedef std::vector<boost::shared_ptr<const UniverseObject>> ObjectSet;
+    typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 }
 
 namespace ValueRef {
@@ -98,7 +98,7 @@ private:
 };
 
 /** Returns a single string which `Dump`s a vector of EffectsGroups. */
-FO_COMMON_API std::string Dump(const std::vector<boost::shared_ptr<EffectsGroup> >& effects_groups);
+FO_COMMON_API std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups);
 
 /** The base class for all Effects.  When an Effect is executed, the source
   * object (the object to which the Effect or its containing EffectGroup is

@@ -40,13 +40,13 @@ namespace {
     GG::X PlayerReadyBrowseWidth()
     { return GG::X(ClientUI::Pts() * 11); }
 
-    const boost::shared_ptr<GG::Texture> GetReadyTexture(bool ready) {
+    const std::shared_ptr<GG::Texture> GetReadyTexture(bool ready) {
         if (ready)
             return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/ready.png");
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/not_ready.png");
     }
 
-    const boost::shared_ptr<GG::Texture> GetHostTexture() {
+    const std::shared_ptr<GG::Texture> GetHostTexture() {
         return ClientUI::GetTexture(ClientUI::ArtDir() / "icons/host.png");
     }
 
@@ -247,7 +247,7 @@ namespace {
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                at(5)->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth())));
                 if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
@@ -299,7 +299,7 @@ namespace {
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                at(5)->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth())));
             }
@@ -404,7 +404,7 @@ namespace {
                 push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                at(5)->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth())));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
@@ -525,14 +525,14 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
 
     m_new_load_game_buttons = new GG::RadioButtonGroup(GG::VERTICAL);
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, boost::make_shared<CUIRadioRepresenter>()));
+        new CUIStateButton(UserString("NEW_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
     m_new_load_game_buttons->AddButton(
-        new CUIStateButton(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, boost::make_shared<CUIRadioRepresenter>()));
+        new CUIStateButton(UserString("LOAD_GAME_BN"), GG::FORMAT_LEFT, std::make_shared<CUIRadioRepresenter>()));
 
     m_browse_saves_btn = new CUIButton("...");
     m_save_file_text = new CUILabel("", GG::FORMAT_NOWRAP);
 
-    boost::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
+    std::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
     m_preview_image = new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC);
 
     m_players_lb_headers = new PlayerLabelRow();
@@ -837,7 +837,7 @@ void MultiPlayerLobbyWnd::SaveGameBrowse() {
     SendUpdate();
 }
 
-void MultiPlayerLobbyWnd::PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image) {
+void MultiPlayerLobbyWnd::PreviewImageChanged(std::shared_ptr<GG::Texture> new_image) {
     if (m_preview_image) {
         DeleteChild(m_preview_image);
         m_preview_image = nullptr;

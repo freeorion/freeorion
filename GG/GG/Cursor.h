@@ -31,7 +31,7 @@
 
 #include <GG/PtRect.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 
 namespace GG {
@@ -72,12 +72,12 @@ public:
     /** Ctor.  \a texture is the texture to render and \a hotspot is the
         offset within \a texture where the click-point is located.  \a hotspot
         is clamped to \a texture's valid area. */
-    TextureCursor(const boost::shared_ptr<Texture>& texture, const Pt& hotspot = Pt());
+    TextureCursor(const std::shared_ptr<Texture>& texture, const Pt& hotspot = Pt());
     //@}
 
     /** \name Accessors */ ///@{
     /** Returns the texture used to render this TextureCursor. */
-    const boost::shared_ptr<Texture>& GetTexture() const;
+    const std::shared_ptr<Texture>& GetTexture() const;
 
     /** Returns the position within Texture() of the cursor hotspot. */
     const Pt& Hotspot() const;
@@ -88,7 +88,8 @@ public:
     //@}
 
 private:
-    boost::shared_ptr<Texture> m_texture;
+    std::shared_ptr<Texture> m_texture;
+
     Pt                         m_hotspot;
 };
 

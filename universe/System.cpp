@@ -85,10 +85,10 @@ System* System::Clone(int empire_id) const {
     return retval;
 }
 
-void System::Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id) {
+void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    boost::shared_ptr<const System> copied_system = boost::dynamic_pointer_cast<const System>(copied_object);
+    std::shared_ptr<const System> copied_system = std::dynamic_pointer_cast<const System>(copied_object);
     if (!copied_system) {
         ErrorLogger() << "System::Copy passed an object that wasn't a System";
         return;
@@ -236,7 +236,7 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
 
     if (m_star == STAR_NONE) {
         // determine if there are any planets in the system
-        for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingPlanetsBegin();
+        for (std::map<int, std::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingPlanetsBegin();
              it != Objects().ExistingPlanetsEnd(); ++it)
         {
             if (it->second->SystemID() == this->ID())
@@ -305,7 +305,7 @@ int  System::Owner() const {
     // Check if all of the owners are the same empire.
     int first_owner_found(ALL_EMPIRES);
     for (int planet_id : m_planets) {
-        if (boost::shared_ptr<const Planet> planet = GetPlanet(planet_id)) {
+        if (std::shared_ptr<const Planet> planet = GetPlanet(planet_id)) {
             const int owner(planet->Owner());
             if (owner == ALL_EMPIRES)
                 continue;
@@ -327,10 +327,10 @@ bool System::Contains(int object_id) const {
     return m_objects.find(object_id) != m_objects.end();
 }
 
-boost::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(boost::const_pointer_cast<System>(boost::static_pointer_cast<const System>(shared_from_this()))); }
+std::shared_ptr<UniverseObject> System::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(std::const_pointer_cast<System>(std::static_pointer_cast<const System>(shared_from_this()))); }
 
-void System::Insert(boost::shared_ptr<UniverseObject> obj, int orbit/* = -1*/) {
+void System::Insert(std::shared_ptr<UniverseObject> obj, int orbit/* = -1*/) {
     if (!obj) {
         ErrorLogger() << "System::Insert() : Attempted to place a null object in a System";
         return;
@@ -399,14 +399,14 @@ void System::Insert(boost::shared_ptr<UniverseObject> obj, int orbit/* = -1*/) {
     switch (obj->ObjectType()) {
     case OBJ_SHIP: {
         m_ships.insert(obj->ID());
-        if (boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(obj))
+        if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(obj))
             ship->SetArrivedOnTurn(CurrentTurn());
         break;
     }
     case OBJ_FLEET: {
         m_fleets.insert(obj->ID());
-        std::vector<boost::shared_ptr<Fleet>> fleets;
-        fleets.push_back(boost::dynamic_pointer_cast<Fleet>(obj));
+        std::vector<std::shared_ptr<Fleet>> fleets;
+        fleets.push_back(std::dynamic_pointer_cast<Fleet>(obj));
         FleetsInsertedSignal(fleets);
         break;
     }
@@ -456,8 +456,8 @@ void System::Remove(int id) {
     m_objects.erase(id);
 
     if (removed_fleet) {
-        if (boost::shared_ptr<Fleet> fleet = GetFleet(id)) {
-            std::vector<boost::shared_ptr<Fleet>> fleets;
+        if (std::shared_ptr<Fleet> fleet = GetFleet(id)) {
+            std::vector<std::shared_ptr<Fleet>> fleets;
             fleets.push_back(fleet);
             FleetsRemovedSignal(fleets);
         }
@@ -592,15 +592,15 @@ std::map<int, bool> System::VisibleStarlanesWormholes(int empire_id) const {
     // check if any fleets owned by empire are moving along a starlane connected to this system...
 
     // get moving fleets owned by empire
-    std::vector<boost::shared_ptr<const Fleet>> moving_empire_fleets;
-    for (boost::shared_ptr<const UniverseObject> object : objects.FindObjects(MovingFleetVisitor())) {
-        if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+    std::vector<std::shared_ptr<const Fleet>> moving_empire_fleets;
+    for (std::shared_ptr<const UniverseObject> object : objects.FindObjects(MovingFleetVisitor())) {
+        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
             if (fleet->OwnedBy(empire_id))
                 moving_empire_fleets.push_back(fleet);
     }
 
     // add any lanes an owned fleet is moving along that connect to this system
-    for (boost::shared_ptr<const Fleet> fleet : moving_empire_fleets) {
+    for (std::shared_ptr<const Fleet> fleet : moving_empire_fleets) {
         if (fleet->SystemID() != INVALID_OBJECT_ID) {
             ErrorLogger() << "System::VisibleStarlanesWormholes somehow got a moving fleet that had a valid system id?";
             continue;

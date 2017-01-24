@@ -68,7 +68,7 @@ namespace {
 // FleetButton           //
 ///////////////////////////
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
-    GG::Button("", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
+    GG::Button("", std::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_icons(),
     m_selection_indicator(nullptr),
@@ -77,7 +77,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 { Init(fleet_IDs, size_type); }
 
 FleetButton::FleetButton(int fleet_id, SizeType size_type) :
-    GG::Button("", boost::shared_ptr<GG::Font>(), GG::CLR_ZERO),
+    GG::Button("", std::shared_ptr<GG::Font>(), GG::CLR_ZERO),
     m_fleets(),
     m_icons(),
     m_selection_indicator(nullptr),
@@ -103,9 +103,9 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     //std::cout << "FleetButton::Init" << std::endl;
 
     // get fleets
-    std::vector<boost::shared_ptr<const Fleet>> fleets;
+    std::vector<std::shared_ptr<const Fleet>> fleets;
     for (int fleet_id : fleet_IDs) {
-        boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+        std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
             ErrorLogger() << "FleetButton::FleetButton couldn't get fleet with id " << fleet_id;
             continue;
@@ -125,7 +125,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     } else {
         owner_id = (*fleets.begin())->Owner();
         // use ALL_EMPIRES if there are multiple owners (including no owner and an owner)
-        for (boost::shared_ptr<const Fleet> fleet : fleets) {
+        for (std::shared_ptr<const Fleet> fleet : fleets) {
             if (fleet->Owner() != owner_id) {
                 owner_id = ALL_EMPIRES;
                 multiple_owners = true;
@@ -142,9 +142,9 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
         // all ships owned by now empire
         bool monsters = true;
         // find if any ship in fleets in button is not a monster
-        for (boost::shared_ptr<const Fleet> fleet : fleets) {
+        for (std::shared_ptr<const Fleet> fleet : fleets) {
             for (int ship_id : fleet->ShipIDs()) {
-                if (boost::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+                if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
                     if (!ship->IsMonster()) {
                         monsters = false;
                         break;
@@ -169,12 +169,12 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
     // determine direction button should be rotated to orient along a starlane
     GLfloat pointing_angle = 0.0f;
 
-    boost::shared_ptr<const Fleet> first_fleet;
+    std::shared_ptr<const Fleet> first_fleet;
     if (!m_fleets.empty())
         first_fleet = *fleets.begin();
     if (first_fleet && first_fleet->SystemID() == INVALID_OBJECT_ID && first_fleet->NextSystemID() != INVALID_OBJECT_ID) {
         int next_sys_id = first_fleet->NextSystemID();
-        if (boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(next_sys_id)) {
+        if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(next_sys_id)) {
             // fleet is not in a system and has a valid next destination, so can orient it in that direction
             // fleet icons might not appear on the screen in the exact place corresponding to their
             // actual universe position, but if they're moving along a starlane, this code will assume
@@ -196,11 +196,11 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
     // select icon(s) for fleet(s)
     int num_ships = 0;
-    for (boost::shared_ptr<const Fleet> fleet : fleets) {
+    for (std::shared_ptr<const Fleet> fleet : fleets) {
         if (fleet)
             num_ships += fleet->NumShips();
     }
-    boost::shared_ptr<GG::Texture> size_texture = FleetSizeIcon(num_ships, size_type);
+    std::shared_ptr<GG::Texture> size_texture = FleetSizeIcon(num_ships, size_type);
 
     // add RotatingGraphics for all icons needed
     if (size_texture) {
@@ -213,7 +213,7 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
         AttachChild(icon);
     }
 
-    for (boost::shared_ptr<GG::Texture> texture : FleetHeadIcons(fleets, size_type)) {
+    for (std::shared_ptr<GG::Texture> texture : FleetHeadIcons(fleets, size_type)) {
         RotatingGraphic* icon = new RotatingGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
         icon->SetPhaseOffset(pointing_angle);
         icon->SetRPM(0.0f);
@@ -359,23 +359,23 @@ void FleetButton::PlayFleetButtonOpenSound()
 /////////////////////
 // Free Functions
 /////////////////////
-std::vector<boost::shared_ptr<GG::Texture>> FleetHeadIcons(boost::shared_ptr<const Fleet> fleet, FleetButton::SizeType size_type) {
-    std::vector<boost::shared_ptr<const Fleet>> fleets(1U, fleet);
+std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(std::shared_ptr<const Fleet> fleet, FleetButton::SizeType size_type) {
+    std::vector<std::shared_ptr<const Fleet>> fleets(1U, fleet);
     return FleetHeadIcons(fleets, size_type);
 }
 
-std::vector<boost::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<boost::shared_ptr<const Fleet>>& fleets, FleetButton::SizeType size_type) {
+std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<std::shared_ptr<const Fleet>>& fleets, FleetButton::SizeType size_type) {
     if (size_type == FleetButton::FLEET_BUTTON_NONE || size_type == FleetButton::FLEET_BUTTON_TINY)
-        return std::vector<boost::shared_ptr<GG::Texture> >();
+        return std::vector<std::shared_ptr<GG::Texture>>();
 
     // get file name prefix for appropriate size of icon
     std::string size_prefix = FleetIconSizePrefix(size_type);
     if (size_prefix.empty())
-        return std::vector<boost::shared_ptr<GG::Texture> >();
+        return std::vector<std::shared_ptr<GG::Texture>>();
 
     // the set of fleets is treated like a fleet that contains all the ships
     bool hasColonyShips = false; bool hasOutpostShips = false; bool hasTroopShips = false; bool hasMonsters = false; bool hasArmedShips = false;
-    for (boost::shared_ptr<const Fleet> fleet : fleets) {
+    for (std::shared_ptr<const Fleet> fleet : fleets) {
         if (!fleet)
             continue;
 
@@ -400,9 +400,9 @@ std::vector<boost::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<boo
     }
     if (main_filenames.empty()) { main_filenames.push_back("head-scout.png"); }
 
-    std::vector<boost::shared_ptr<GG::Texture> > result;
+    std::vector<std::shared_ptr<GG::Texture>> result;
     for (const std::string& name : main_filenames) {
-        boost::shared_ptr<GG::Texture> texture_temp = ClientUI::GetTexture(
+        std::shared_ptr<GG::Texture> texture_temp = ClientUI::GetTexture(
             ClientUI::ArtDir() / "icons" / "fleet" / (size_prefix + name), false);
         glBindTexture(GL_TEXTURE_2D, texture_temp->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -415,18 +415,18 @@ std::vector<boost::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<boo
     return result;
 }
 
-boost::shared_ptr<GG::Texture> FleetSizeIcon(boost::shared_ptr<const Fleet> fleet, FleetButton::SizeType size_type) {
+std::shared_ptr<GG::Texture> FleetSizeIcon(std::shared_ptr<const Fleet> fleet, FleetButton::SizeType size_type) {
     if (!fleet)
         return FleetSizeIcon(1u, size_type);
     return FleetSizeIcon(fleet->NumShips(), size_type);
 }
 
-boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type) {
+std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type) {
     if (fleet_size < 1u)
         fleet_size = 1u; // because there's no zero-ship icon, and the one-ship icon is (as of this writing) blank, so is fitting for zero ships
 
     if (size_type == FleetButton::FLEET_BUTTON_NONE)
-        return boost::shared_ptr<GG::Texture>();
+        return std::shared_ptr<GG::Texture>();
 
     if (size_type == FleetButton::FLEET_BUTTON_TINY) {
         if (fleet_size > 1u)
@@ -438,9 +438,9 @@ boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButto
     std::string size_prefix = FleetIconSizePrefix(size_type);
 
     if (size_prefix.empty())
-        return boost::shared_ptr<GG::Texture>();
+        return std::shared_ptr<GG::Texture>();
 
-    boost::shared_ptr<GG::Texture> texture_temp = ClientUI::GetClientUI()->GetModuloTexture(
+    std::shared_ptr<GG::Texture> texture_temp = ClientUI::GetClientUI()->GetModuloTexture(
         ClientUI::ArtDir() / "icons" / "fleet", (size_prefix + "tail-"), FleetSizeIconNumber(fleet_size), false);
     glBindTexture(GL_TEXTURE_2D, texture_temp->OpenGLId());
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -450,8 +450,8 @@ boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButto
     return texture_temp;
 }
 
-boost::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon() {
-    static boost::shared_ptr<GG::Texture> retval;
+std::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon() {
+    static std::shared_ptr<GG::Texture> retval;
     if (!retval) {
         retval = ClientUI::GetClientUI()->GetTexture(ClientUI::ArtDir() / "icons" / "fleet" / "fleet_selection.png", false);
         glBindTexture(GL_TEXTURE_2D, retval->OpenGLId());

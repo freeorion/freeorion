@@ -33,7 +33,7 @@
 using namespace GG;
 
 namespace {
-    Y TopOfFrame(bool label, const boost::shared_ptr<Font>& font)
+    Y TopOfFrame(bool label, const std::shared_ptr<Font>& font)
     { return label ? font->Lineskip() / 2 - 1 : Y0; }
 }
 
@@ -49,7 +49,7 @@ GroupBox::GroupBox() :
     m_set_client_corners_equal_to_box_corners(false)
 {}
 
-GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::shared_ptr<Font>& font,
+GroupBox::GroupBox(X x, Y y, X w, Y h, const std::string& label, const std::shared_ptr<Font>& font,
                    Clr color, Clr text_color/* = CLR_BLACK*/, Clr interior/* = CLR_ZERO*/,
                    Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     m_color(color),

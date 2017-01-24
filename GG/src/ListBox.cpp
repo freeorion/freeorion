@@ -2044,9 +2044,9 @@ struct ListBox::SelectionCache
 };
 
 // TODO: change to unique_ptr with move mechanics or more the entire definition into the cpp file.
-boost::shared_ptr<ListBox::SelectionCache> ListBox::CacheSelections()
+std::shared_ptr<ListBox::SelectionCache> ListBox::CacheSelections()
 {
-    boost::shared_ptr<ListBox::SelectionCache> cache(new ListBox::SelectionCache());
+    std::shared_ptr<ListBox::SelectionCache> cache(new ListBox::SelectionCache());
     cache->caret = SafeDeref(m_caret, m_rows.end());
     for (const SelectionSet::value_type& sel : m_selections) {
         cache->selections.insert(*sel);
@@ -2087,7 +2087,7 @@ void ListBox::RestoreCachedSelections(const ListBox::SelectionCache& cache)
 
 void ListBox::Resort()
 {
-    boost::shared_ptr<ListBox::SelectionCache> cached_selections = CacheSelections();
+    std::shared_ptr<ListBox::SelectionCache> cached_selections = CacheSelections();
 
     std::vector<Row*> rows_vec(m_rows.size());
     std::copy(m_rows.begin(), m_rows.end(), rows_vec.begin());
@@ -2183,7 +2183,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize)
             total_y_extent += cl_sz.y - m_rows.back()->Height();
     }
 
-    boost::shared_ptr<StyleFactory> style = GetStyleFactory();
+    std::shared_ptr<StyleFactory> style = GetStyleFactory();
 
     bool vscroll_added_or_removed(false);
 

@@ -69,7 +69,7 @@ std::string Special::Description() const {
 
     result << UserString(m_description) << "\n";
 
-    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
         const std::string& description = effect->GetDescription();
 
         if (!description.empty()) {
@@ -83,7 +83,7 @@ std::string Special::Description() const {
 void Special::Init() {
     if (m_stealth)
         m_stealth->SetTopLevelContent(m_name);
-    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
         effect->SetTopLevelContent(m_name);
     }
     if (m_initial_capacity)
@@ -126,7 +126,7 @@ std::string Special::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
             retval += effect->Dump();
         }
         --g_indent;
@@ -141,7 +141,7 @@ float Special::InitialCapacity(int object_id) const {
     if (!m_initial_capacity)
         return 0.0f;
 
-    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     if (!obj)
         return 0.0f;
 

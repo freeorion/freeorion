@@ -93,7 +93,7 @@ public:
         specification of a frame size different from the size of the
         DynamicGraphic's size. */
     DynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height, unsigned int margin,
-                   const std::vector<boost::shared_ptr<Texture> >& textures,
+                   const std::vector<std::shared_ptr<Texture>>& textures,
                    Flags<GraphicStyle> style = GRAPHIC_NONE, std::size_t frames = ALL_FRAMES,
                    Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
@@ -142,7 +142,7 @@ public:
         possible number of frames based on its size and the frame size.
         \throw GG::DynamicGraphic::CannotAddFrame Throws if \a texture is not
         large enough to contain any frames.*/
-    void AddFrames(const boost::shared_ptr<Texture>& texture, std::size_t frames = ALL_FRAMES);
+    void AddFrames(const std::shared_ptr<Texture>& texture, std::size_t frames = ALL_FRAMES);
 
     /** Adds a set of frames from Texture \a texture to the animation.  If \a
         frames == ALL_FRAMES, the Textures are assumed to contain the
@@ -151,7 +151,7 @@ public:
         are assumed to have the maximum number of frames based on their sizes.
         \throw GG::DynamicGraphic::CannotAddFrame Throws if no texture in \a
         textures is large enough to contain any frames.*/
-    void AddFrames(const std::vector<boost::shared_ptr<Texture> >& textures, std::size_t frames = ALL_FRAMES);
+    void AddFrames(const std::vector<std::shared_ptr<Texture>>& textures, std::size_t frames = ALL_FRAMES);
 
     void  Play();                    ///< starts the animation of the image
     void  Pause();                   ///< stops playback without adjusting the frame index
@@ -206,7 +206,9 @@ public:
 protected:
     struct FrameSet
     {
-        boost::shared_ptr<const Texture> texture; ///< the texture with the frames in it
+        /** The texture with the frames in it. */
+        std::shared_ptr<const Texture> texture;
+
         std::size_t                      frames;  ///< the number of frames in this texture
     };
 

@@ -1,19 +1,20 @@
 #ifndef _Effect_Accounting_h_
 #define _Effect_Accounting_h_
 
+
 #include "EnumsFwd.h"
 
-#include <boost/shared_ptr.hpp>
-
+#include <memory>
 #include <map>
 #include <string>
 #include <vector>
+
 
 class UniverseObject;
 
 namespace Effect {
     class EffectsGroup;
-    typedef std::vector<boost::shared_ptr<UniverseObject>> TargetSet;
+    typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
 
     /** Description of cause of an effect: the general cause type, and the
       * specific cause.  eg. Building and a particular BuildingType. */
@@ -51,12 +52,12 @@ namespace Effect {
     /** Combination of an EffectsGroup and the id of a source object. */
     struct SourcedEffectsGroup {
         SourcedEffectsGroup();
-        SourcedEffectsGroup(int source_object_id_, const boost::shared_ptr<EffectsGroup>& effects_group_);
+        SourcedEffectsGroup(int source_object_id_, const std::shared_ptr<EffectsGroup>& effects_group_);
         bool    operator<(const SourcedEffectsGroup& right) const;
         void    Execute(const TargetSet& targets) const;
         void    Execute(const TargetsAndCause& targets_and_cause, AccountingMap& accounting_map) const;
         int                             source_object_id;
-        boost::shared_ptr<EffectsGroup> effects_group;
+        std::shared_ptr<EffectsGroup> effects_group;
     };
 
     /** Discrepancy between meter's value at start of turn, and the value that

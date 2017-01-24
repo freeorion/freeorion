@@ -10,7 +10,7 @@ public:
 
     GG::DropDownList* NewDropDownList(size_t num_shown_elements, GG::Clr color) const override;
 
-    GG::Edit* NewEdit(const std::string& str, const boost::shared_ptr<GG::Font>& font,
+    GG::Edit* NewEdit(const std::string& str, const std::shared_ptr<GG::Font>& font,
                       GG::Clr color, GG::Clr text_color = GG::CLR_BLACK, GG::Clr interior = GG::CLR_ZERO) const override;
 
     GG::ListBox* NewListBox(GG::Clr color, GG::Clr interior = GG::CLR_ZERO) const override;
@@ -21,7 +21,7 @@ public:
                                   GG::Clr color, int tab_width, int line_width = 5) const override;
 
 
-    GG::TabBar* NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
+    GG::TabBar* NewTabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
                           GG::Clr text_color = GG::CLR_BLACK) const override;
 
     GG::Button* NewScrollUpButton(GG::Clr color) const override;
@@ -40,17 +40,17 @@ public:
 
     GG::Button* NewHSliderTabButton(GG::Clr color) const override;
 
-    GG::Button* NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color) const override;
+    GG::Button* NewSpinIncrButton(const std::shared_ptr<GG::Font>& font, GG::Clr color) const override;
 
-    GG::Button* NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color) const override;
+    GG::Button* NewSpinDecrButton(const std::shared_ptr<GG::Font>& font, GG::Clr color) const override;
 
     GG::StateButton* NewTabBarTab(const std::string& str,
-                                  const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
+                                  const std::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                   GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    GG::Button* NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewTabBarLeftButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
-    GG::Button* NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
+    GG::Button* NewTabBarRightButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color = GG::CLR_BLACK) const override;
 
     void DeleteWnd(GG::Wnd* wnd) const override;
 };

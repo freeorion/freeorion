@@ -58,7 +58,7 @@ namespace parse {
     FO_PARSE_API bool monster_fleet_plans(std::vector<MonsterFleetPlan*>& monster_fleet_plans_);
 
     FO_PARSE_API bool alignments(std::vector<Alignment>& alignments_,
-                                 std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects_groups);
+                                 std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_groups);
 
     FO_PARSE_API bool statistics(std::map<std::string, ValueRef::ValueRefBase<double>*>& stats_);
 

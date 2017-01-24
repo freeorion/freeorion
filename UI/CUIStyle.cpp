@@ -1,7 +1,5 @@
 #include "CUIStyle.h"
 
-#include <boost/make_shared.hpp>
-
 #include "CUIControls.h"
 #include "CUISlider.h"
 #include "../util/i18n.h"
@@ -54,7 +52,7 @@ std::string CUIStyle::Translate(const std::string& text) const
 GG::DropDownList* CUIStyle::NewDropDownList(size_t num_shown_elements, GG::Clr color) const
 { return new CUIDropDownList(num_shown_elements); }
 
-GG::Edit* CUIStyle::NewEdit(const std::string& str, const boost::shared_ptr<GG::Font>& font,
+GG::Edit* CUIStyle::NewEdit(const std::string& str, const std::shared_ptr<GG::Font>& font,
                             GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/, GG::Clr interior/* = GG::CLR_ZERO*/) const
 { return new CUIEdit(str); }
 
@@ -69,7 +67,7 @@ GG::Slider<int>* CUIStyle::NewIntSlider(int min, int max, GG::Orientation orient
 { return new CUISlider<int>(min, max, orientation); }
 
 
-GG::TabBar* CUIStyle::NewTabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+GG::TabBar* CUIStyle::NewTabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 { return new CUITabBar(font, color, text_color); }
 
 GG::Button* CUIStyle::NewScrollUpButton(GG::Clr color) const
@@ -96,27 +94,27 @@ GG::Button* CUIStyle::NewVSliderTabButton(GG::Clr color) const
 GG::Button* CUIStyle::NewHSliderTabButton(GG::Clr color) const
 { return new CUIScroll::ScrollTab(GG::HORIZONTAL, 0, ClientUI::CtrlColor(), ClientUI::CtrlBorderColor()); }
 
-GG::Button* CUIStyle::NewSpinIncrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color) const
+GG::Button* CUIStyle::NewSpinIncrButton(const std::shared_ptr<GG::Font>& font, GG::Clr color) const
 { return new CUIArrowButton(SHAPE_UP, false, GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN); }
 
-GG::Button* CUIStyle::NewSpinDecrButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color) const
+GG::Button* CUIStyle::NewSpinDecrButton(const std::shared_ptr<GG::Font>& font, GG::Clr color) const
 { return new CUIArrowButton(SHAPE_DOWN, false, GG::INTERACTIVE | GG::REPEAT_BUTTON_DOWN); }
 
 GG::StateButton* CUIStyle::NewTabBarTab(const std::string& str,
-                                        const boost::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
+                                        const std::shared_ptr<GG::Font>& font, GG::Flags<GG::TextFormat> format, GG::Clr color,
                                         GG::Clr text_color/* = GG::CLR_BLACK*/) const
 {
-    GG::StateButton* retval = new CUIStateButton(str, format, boost::make_shared<CUITabRepresenter>());
+    GG::StateButton* retval = new CUIStateButton(str, format, std::make_shared<CUITabRepresenter>());
     retval->SetColor(ClientUI::WndColor());
     retval->GetLabel()->SetTextColor(DarkColor(ClientUI::TextColor()));
     retval->Resize(retval->MinUsableSize() + GG::Pt(GG::X(12), GG::Y0));
     return retval;
 }
 
-GG::Button* CUIStyle::NewTabBarLeftButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+GG::Button* CUIStyle::NewTabBarLeftButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 { return new CUIArrowButton(SHAPE_LEFT, true, GG::INTERACTIVE); }
 
-GG::Button* CUIStyle::NewTabBarRightButton(const boost::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
+GG::Button* CUIStyle::NewTabBarRightButton(const std::shared_ptr<GG::Font>& font, GG::Clr color, GG::Clr text_color/* = GG::CLR_BLACK*/) const
 { return new CUIArrowButton(SHAPE_RIGHT, true, GG::INTERACTIVE); }
 
 void CUIStyle::DeleteWnd(GG::Wnd* wnd) const

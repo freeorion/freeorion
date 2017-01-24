@@ -38,7 +38,7 @@ namespace {
 ////////////////////////////////////////////////
 // GG::TextControl
 ////////////////////////////////////////////////
-TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
+TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const std::shared_ptr<Font>& font, Clr color/* = CLR_BLACK*/,
                          Flags<TextFormat> format/* = FORMAT_NONE*/, Flags<WndFlag> flags/* = NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
     m_format(format),
@@ -56,8 +56,8 @@ TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str, const boost
 }
 
 TextControl::TextControl(X x, Y y, X w, Y h, const std::string& str,
-                         const std::vector<boost::shared_ptr<Font::TextElement> >& text_elements,
-                         const boost::shared_ptr<Font>& font,
+                         const std::vector<std::shared_ptr<Font::TextElement>>& text_elements,
+                         const std::shared_ptr<Font>& font,
                          Clr color /*= CLR_BLACK*/, Flags<TextFormat> format /*= FORMAT_NONE*/,
                          Flags<WndFlag> flags /*= NO_WND_FLAGS*/) :
     Control(x, y, w, h, flags),
@@ -91,7 +91,7 @@ TextControl::TextControl(const TextControl& that) :
     m_cached_minusable_size_width(that.m_cached_minusable_size_width),
     m_cached_minusable_size(that.m_cached_minusable_size)
 {
-    for (boost::shared_ptr<Font::TextElement> elem : m_text_elements) {
+    for (std::shared_ptr<Font::TextElement> elem : m_text_elements) {
         elem->Bind(m_text);
     }
 }
@@ -116,7 +116,7 @@ TextControl& TextControl::operator=(const TextControl& that)
     m_cached_minusable_size_width = that.m_cached_minusable_size_width;
     m_cached_minusable_size = that.m_cached_minusable_size;
 
-    for (boost::shared_ptr<Font::TextElement> elem : m_text_elements) {
+    for (std::shared_ptr<Font::TextElement> elem : m_text_elements) {
         elem->Bind(m_text);
     }
 
@@ -254,13 +254,13 @@ void TextControl::SetText(const std::string& str)
 }
 
 void TextControl::SetText(const std::string& str,
-                          const std::vector<boost::shared_ptr<Font::TextElement> >& text_elements)
+                          const std::vector<std::shared_ptr<Font::TextElement>>& text_elements)
 {
     if (!utf8::is_valid(str.begin(), str.end()))
         return;
 
     std::size_t expected_length(0);
-    for (boost::shared_ptr<Font::TextElement> elem : text_elements) {
+    for (std::shared_ptr<Font::TextElement> elem : text_elements) {
         expected_length += elem->text.size();
     }
 
@@ -270,7 +270,7 @@ void TextControl::SetText(const std::string& str,
     m_text = str;
 
     m_text_elements = text_elements;
-    for (boost::shared_ptr<Font::TextElement> elem : m_text_elements) {
+    for (std::shared_ptr<Font::TextElement> elem : m_text_elements) {
         elem->Bind(m_text);
     }
 
@@ -302,10 +302,10 @@ void TextControl::RecomputeLineData() {
     m_cached_minusable_size_width = X0;
 }
 
-const boost::shared_ptr<Font>& TextControl::GetFont() const
+const std::shared_ptr<Font>& TextControl::GetFont() const
 { return m_font; }
 
-void TextControl::SetFont(boost::shared_ptr<Font> font)
+void TextControl::SetFont(std::shared_ptr<Font> font)
 {
     m_font = font;
     SetText(m_text);

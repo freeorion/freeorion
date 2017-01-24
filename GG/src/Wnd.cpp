@@ -175,7 +175,7 @@ namespace {
 ///////////////////////////////////////
 // static(s)
 unsigned int Wnd::s_default_browse_time = 1500;
-boost::shared_ptr<BrowseInfoWnd> Wnd::s_default_browse_info_wnd;
+std::shared_ptr<BrowseInfoWnd> Wnd::s_default_browse_info_wnd;
 
 Wnd::Wnd() :
     m_done(false),
@@ -387,7 +387,7 @@ const std::vector<Wnd::BrowseInfoMode>& Wnd::BrowseModes() const
 const std::string& Wnd::BrowseInfoText(std::size_t mode) const
 { return m_browse_modes.at(mode).text; }
 
-const boost::shared_ptr<StyleFactory>& Wnd::GetStyleFactory() const
+const std::shared_ptr<StyleFactory>& Wnd::GetStyleFactory() const
 { return m_style_factory ? m_style_factory : GUI::GetGUI()->GetStyleFactory(); }
 
 WndRegion Wnd::WindowRegion(const Pt& pt) const
@@ -897,7 +897,7 @@ bool Wnd::Run()
         gui->RegisterModal(this);
         ModalInit();
         m_done = false;
-        boost::shared_ptr<ModalEventPump> pump = gui->CreateModalEventPump(m_done);
+        std::shared_ptr<ModalEventPump> pump = gui->CreateModalEventPump(m_done);
         (*pump)();
         gui->Remove(this);
         retval = true;
@@ -927,7 +927,7 @@ void Wnd::SetBrowseModeTime(unsigned int time, std::size_t mode/* = 0*/)
     m_browse_modes[mode].time = time;
 }
 
-void Wnd::SetBrowseInfoWnd(const boost::shared_ptr<BrowseInfoWnd>& wnd, std::size_t mode/* = 0*/)
+void Wnd::SetBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& wnd, std::size_t mode/* = 0*/)
 { m_browse_modes.at(mode).wnd = wnd; }
 
 void Wnd::ClearBrowseInfoWnd(std::size_t mode/* = 0*/)
@@ -939,7 +939,7 @@ void Wnd::SetBrowseText(const std::string& text, std::size_t mode/* = 0*/)
 void Wnd::SetBrowseModes(const std::vector<BrowseInfoMode>& modes)
 { m_browse_modes = modes; }
 
-void Wnd::SetStyleFactory(const boost::shared_ptr<StyleFactory>& factory)
+void Wnd::SetStyleFactory(const std::shared_ptr<StyleFactory>& factory)
 { m_style_factory = factory; }
 
 unsigned int Wnd::DefaultBrowseTime()
@@ -948,10 +948,10 @@ unsigned int Wnd::DefaultBrowseTime()
 void Wnd::SetDefaultBrowseTime(unsigned int time)
 { s_default_browse_time = time; }
 
-const boost::shared_ptr<BrowseInfoWnd>& Wnd::DefaultBrowseInfoWnd()
+const std::shared_ptr<BrowseInfoWnd>& Wnd::DefaultBrowseInfoWnd()
 { return s_default_browse_info_wnd; }
 
-void Wnd::SetDefaultBrowseInfoWnd(const boost::shared_ptr<BrowseInfoWnd>& browse_info_wnd)
+void Wnd::SetDefaultBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& browse_info_wnd)
 { s_default_browse_info_wnd = browse_info_wnd; }
 
 Wnd::DragDropRenderingState Wnd::GetDragDropRenderingState() const

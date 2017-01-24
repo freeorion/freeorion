@@ -55,7 +55,7 @@ const std::size_t DynamicGraphic::INVALID_INDEX = std::numeric_limits<std::size_
 const unsigned int DynamicGraphic::INVALID_TIME = std::numeric_limits<unsigned int>::max();
 
 DynamicGraphic::DynamicGraphic(X x, Y y, X w, Y h, bool loop, X frame_width, Y frame_height,
-                               unsigned int margin, const std::vector<boost::shared_ptr<Texture> >& textures,
+                               unsigned int margin, const std::vector<std::shared_ptr<Texture>>& textures,
                                Flags<GraphicStyle> style/* = GRAPHIC_NONE*/, std::size_t frames/* = ALL_FRAMES*/,
                                Flags<WndFlag> flags/* = Flags<WndFlags>()*/) :
     Control(x, y, w, h, flags),
@@ -242,7 +242,7 @@ void DynamicGraphic::AddFrames(const Texture* texture, std::size_t frames/* = AL
     m_frames += fs.frames;
 }
 
-void DynamicGraphic::AddFrames(const boost::shared_ptr<Texture>& texture, std::size_t frames/* = ALL_FRAMES*/)
+void DynamicGraphic::AddFrames(const std::shared_ptr<Texture>& texture, std::size_t frames/* = ALL_FRAMES*/)
 {
     std::size_t frames_in_texture = FramesInTexture(texture.get());
     if (!frames_in_texture)
@@ -255,7 +255,7 @@ void DynamicGraphic::AddFrames(const boost::shared_ptr<Texture>& texture, std::s
     m_frames += fs.frames;
 }
 
-void DynamicGraphic::AddFrames(const std::vector<boost::shared_ptr<Texture> >& textures, std::size_t frames/* = ALL_FRAMES*/)
+void DynamicGraphic::AddFrames(const std::vector<std::shared_ptr<Texture>>& textures, std::size_t frames/* = ALL_FRAMES*/)
 {
     if (!textures.empty()) {
         std::size_t old_frames = m_frames;

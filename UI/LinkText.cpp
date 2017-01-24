@@ -23,7 +23,7 @@ namespace {
 ///////////////////////////////////////
 // LinkText
 ///////////////////////////////////////
-LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const std::shared_ptr<GG::Font>& font,
                    GG::Flags<GG::TextFormat> format/* = GG::FORMAT_NONE*/, GG::Clr color/* = GG::CLR_BLACK*/) :
     GG::TextControl(x, y, w, GG::Y1, str, font, color, format, GG::INTERACTIVE),
     TextLinker(),
@@ -34,7 +34,7 @@ LinkText::LinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boos
     MarkLinks();
 }
 
-LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const boost::shared_ptr<GG::Font>& font, 
+LinkText::LinkText(GG::X x, GG::Y y, const std::string& str, const std::shared_ptr<GG::Font>& font,
                    GG::Clr color/* = GG::CLR_BLACK*/) :
     GG::TextControl(x, y, GG::X1, GG::Y1, str, font, color, GG::FORMAT_NOWRAP, GG::INTERACTIVE),
     TextLinker(),
@@ -68,7 +68,7 @@ GG::Pt LinkText::TextLowerRight() const
 const std::vector<GG::Font::LineData>& LinkText::GetLineData() const
 { return GG::TextControl::GetLineData(); }
 
-const boost::shared_ptr<GG::Font>& LinkText::GetFont() const
+const std::shared_ptr<GG::Font>& LinkText::GetFont() const
 { return GG::TextControl::GetFont(); }
 
 const std::string& LinkText::RawText() const
@@ -147,7 +147,7 @@ std::string ColorByOwner::Decorate(const std::string& object_id_str, const std::
     const Empire* empire = nullptr;
     // get object indicated by object_id, and then get object's owner, if any
     int object_id = CastStringToInt(object_id_str);
-    boost::shared_ptr<const UniverseObject> object = Objects().Object(object_id);
+    std::shared_ptr<const UniverseObject> object = Objects().Object(object_id);
     if (object && !object->Unowned())
         empire = GetEmpire(object->Owner());
     if (empire)
@@ -186,7 +186,7 @@ TextLinker::~TextLinker()
 {}
 
 void TextLinker::SetDecorator(const std::string& link_type, LinkDecorator* decorator) {
-    m_decorators[link_type] = boost::shared_ptr<LinkDecorator>(decorator);
+    m_decorators[link_type] = std::shared_ptr<LinkDecorator>(decorator);
     MarkLinks();
 }
 
@@ -291,8 +291,8 @@ const std::vector<GG::Font::LineData>& TextLinker::GetLineData() const {
     return retval;
 }
 
-const boost::shared_ptr<GG::Font>& TextLinker::GetFont() const {
-    static boost::shared_ptr<GG::Font> retval;
+const std::shared_ptr<GG::Font>& TextLinker::GetFont() const {
+    static std::shared_ptr<GG::Font> retval;
     if (!retval)
         retval = ClientUI::GetFont();
     return retval;
@@ -320,7 +320,7 @@ void TextLinker::FindLinks() {
 
     for (const GG::Font::LineData& curr_line : GetLineData()) {
         for (const GG::Font::LineData::CharData& curr_char : curr_line.char_data) {
-            for (const boost::shared_ptr<GG::Font::FormattingTag>& tag : curr_char.tags) {
+            for (const std::shared_ptr<GG::Font::FormattingTag>& tag : curr_char.tags) {
                 if (tag->tag_name == VarText::PLANET_ID_TAG ||
                     tag->tag_name == VarText::SYSTEM_ID_TAG ||
                     tag->tag_name == VarText::SHIP_ID_TAG ||
@@ -350,7 +350,7 @@ void TextLinker::FindLinks() {
                     } else {
                         link.data = tag->params[0];
                         link.text_posn.first = Value(curr_char.string_index);
-                        for (boost::shared_ptr<GG::Font::FormattingTag> itag : curr_char.tags) {
+                        for (std::shared_ptr<GG::Font::FormattingTag> itag : curr_char.tags) {
                             link.text_posn.first -= Value(itag->StringSize());
                         }
                     }
@@ -365,7 +365,7 @@ void TextLinker::FindLinks() {
 }
 
 void TextLinker::LocateLinks() {
-    const boost::shared_ptr<GG::Font>& font = GetFont();
+    const std::shared_ptr<GG::Font>& font = GetFont();
 
     if (m_links.empty())
         return;

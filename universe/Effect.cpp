@@ -37,12 +37,12 @@ namespace {
      * Universe, and and inserts \a ship into it.  Used when a ship has been
      * moved by the MoveTo effect separately from the fleet that previously
      * held it.  All ships need to be within fleets. */
-    boost::shared_ptr<Fleet> CreateNewFleet(double x, double y, boost::shared_ptr<Ship> ship) {
+    std::shared_ptr<Fleet> CreateNewFleet(double x, double y, std::shared_ptr<Ship> ship) {
         Universe& universe = GetUniverse();
         if (!ship)
-            return boost::shared_ptr<Fleet>();
+            return std::shared_ptr<Fleet>();
 
-        boost::shared_ptr<Fleet> fleet = universe.CreateFleet("", x, y, ship->Owner());
+        std::shared_ptr<Fleet> fleet = universe.CreateFleet("", x, y, ship->Owner());
 
         std::vector<int> ship_ids;
         ship_ids.push_back(ship->ID());
@@ -60,13 +60,13 @@ namespace {
      * when a ship has been moved by the MoveTo effect separately from the
      * fleet that previously held it.  Also used by CreateShip effect to give
      * the new ship a fleet.  All ships need to be within fleets. */
-    boost::shared_ptr<Fleet> CreateNewFleet(boost::shared_ptr<System> system, boost::shared_ptr<Ship> ship) {
+    std::shared_ptr<Fleet> CreateNewFleet(std::shared_ptr<System> system, std::shared_ptr<Ship> ship) {
         if (!system || !ship)
-            return boost::shared_ptr<Fleet>();
+            return std::shared_ptr<Fleet>();
 
         // remove ship from old fleet / system, put into new system if necessary
         if (ship->SystemID() != system->ID()) {
-            if (boost::shared_ptr<System> old_system = GetSystem(ship->SystemID())) {
+            if (std::shared_ptr<System> old_system = GetSystem(ship->SystemID())) {
                 old_system->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
@@ -74,13 +74,13 @@ namespace {
         }
 
         if (ship->FleetID() != INVALID_OBJECT_ID) {
-            if (boost::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID())) {
+            if (std::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID())) {
                 old_fleet->RemoveShip(ship->ID());
             }
         }
 
         // create new fleet for ship, and put it in new system
-        boost::shared_ptr<Fleet> fleet = CreateNewFleet(system->X(), system->Y(), ship);
+        std::shared_ptr<Fleet> fleet = CreateNewFleet(system->X(), system->Y(), ship);
         system->Insert(fleet);
 
         return fleet;
@@ -91,7 +91,7 @@ namespace {
       * with the MoveTo effect, as otherwise the system wouldn't get explored,
       * and objects being moved into unexplored systems might disappear for
       * players or confuse the AI. */
-    void ExploreSystem(int system_id, boost::shared_ptr<const UniverseObject> target_object) {
+    void ExploreSystem(int system_id, std::shared_ptr<const UniverseObject> target_object) {
         if (!target_object)
             return;
         if (Empire* empire = GetEmpire(target_object->Owner()))
@@ -102,13 +102,13 @@ namespace {
      * resets the fleet's move route.  Used after a fleet has been moved with
      * the MoveTo effect, as its previous route was assigned based on its
      * previous location, and may not be valid for its new location. */
-    void UpdateFleetRoute(boost::shared_ptr<Fleet> fleet, int new_next_system, int new_previous_system) {
+    void UpdateFleetRoute(std::shared_ptr<Fleet> fleet, int new_next_system, int new_previous_system) {
         if (!fleet) {
             ErrorLogger() << "UpdateFleetRoute passed a null fleet pointer";
             return;
         }
 
-        boost::shared_ptr<const System> next_system = GetSystem(new_next_system);
+        std::shared_ptr<const System> next_system = GetSystem(new_next_system);
         if (!next_system) {
             ErrorLogger() << "UpdateFleetRoute couldn't get new next system with id: " << new_next_system;
             return;
@@ -149,7 +149,7 @@ namespace {
         for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (boost::shared_ptr<const System> system : Objects().FindObjects<System>()) {
+            for (std::shared_ptr<const System> system : Objects().FindObjects<System>()) {
                 if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another systme has this name. skip to next potential name.
@@ -261,10 +261,10 @@ void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 // Dump function                                         //
 ///////////////////////////////////////////////////////////
-std::string Dump(const std::vector<boost::shared_ptr<EffectsGroup> >& effects_groups) {
+std::string Dump(const std::vector<std::shared_ptr<EffectsGroup>>& effects_groups) {
     std::stringstream retval;
 
-    for (boost::shared_ptr<EffectsGroup> effects_group : effects_groups) {
+    for (std::shared_ptr<EffectsGroup> effects_group : effects_groups) {
         retval << "\n" << effects_group->Dump();
     }
 
@@ -300,7 +300,7 @@ void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targe
     // execute effects on targets
     ScriptingContext local_context = context;
 
-    for (boost::shared_ptr<UniverseObject> target : targets) {
+    for (std::shared_ptr<UniverseObject> target : targets) {
         local_context.effect_target = target;
         this->Execute(local_context);
     }
@@ -360,7 +360,7 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
     for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
         const SourcedEffectsGroup& sourced_effects_group = targets_entry.first;
         int                                 source_id             = sourced_effects_group.source_object_id;
-        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(source_id);
+        std::shared_ptr<const UniverseObject> source = GetUniverseObject(source_id);
         ScriptingContext                    source_context(source);
         const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
@@ -368,7 +368,7 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
         if (log_verbose) {
             DebugLogger() << "\n\nExecute SetMeter effect: \n" << Dump();
             DebugLogger() << "SetMeter execute targets before: ";
-            for (boost::shared_ptr<UniverseObject> target : targets)
+            for (std::shared_ptr<UniverseObject> target : targets)
                 DebugLogger() << " ... " << target->Dump();
         }
 
@@ -378,7 +378,7 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
 
         } else if (!accounting_map) {
             // process each target separately in order to do effect accounting for each
-            for (boost::shared_ptr<UniverseObject> target : targets) {
+            for (std::shared_ptr<UniverseObject> target : targets) {
                 Execute(ScriptingContext(source, target));
             }
 
@@ -393,7 +393,7 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
             }
 
             // process each target separately in order to do effect accounting for each
-            for (boost::shared_ptr<UniverseObject> target : targets) {
+            for (std::shared_ptr<UniverseObject> target : targets) {
                 // get Meter for this effect and target
                 const Meter* meter = target->GetMeter(m_meter);
                 if (!meter)
@@ -418,7 +418,7 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
 
         if (log_verbose) {
             DebugLogger() << "SetMeter execute targets after: ";
-            for (boost::shared_ptr<UniverseObject> target : targets) {
+            for (std::shared_ptr<UniverseObject> target : targets) {
                 DebugLogger() << " ... " << target->Dump();
             }
         }
@@ -431,7 +431,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
     if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
-        for (boost::shared_ptr<UniverseObject> target : targets) {
+        for (std::shared_ptr<UniverseObject> target : targets) {
             Meter* m = target->GetMeter(m_meter);
             if (!m) continue;
             m->SetCurrent(val);
@@ -459,7 +459,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
         }
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
-        for (boost::shared_ptr<UniverseObject> target : targets) {
+        for (std::shared_ptr<UniverseObject> target : targets) {
             Meter* m = target->GetMeter(m_meter);
             if (!m) continue;
             m->AddToCurrent(increment);
@@ -551,7 +551,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target);
+    std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(context.effect_target);
     if (!ship) {
         ErrorLogger() << "SetShipPartMeter::Execute acting on non-ship target:";
         //context.effect_target->Dump();
@@ -582,7 +582,7 @@ void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMa
     for (const std::pair<SourcedEffectsGroup, TargetsAndCause>& targets_entry : targets_causes) {
         const SourcedEffectsGroup& sourced_effects_group = targets_entry.first;
         int                                 source_id             = sourced_effects_group.source_object_id;
-        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(source_id);
+        std::shared_ptr<const UniverseObject> source = GetUniverseObject(source_id);
         ScriptingContext                    source_context(source);
         const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
@@ -590,7 +590,7 @@ void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMa
         if (log_verbose) {
             DebugLogger() << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
             DebugLogger() << "SetShipPartMeter execute targets before: ";
-            for (boost::shared_ptr<UniverseObject> target : targets)
+            for (std::shared_ptr<UniverseObject> target : targets)
                 DebugLogger() << " ... " << target->Dump();
         }
 
@@ -598,7 +598,7 @@ void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMa
 
         if (log_verbose) {
             DebugLogger() << "SetShipPartMeter execute targets after: ";
-            for (boost::shared_ptr<UniverseObject> target : targets)
+            for (std::shared_ptr<UniverseObject> target : targets)
                 DebugLogger() << " ... " << target->Dump();
         }
     }
@@ -616,10 +616,10 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
     if (m_value->TargetInvariant()) {
         // meter value does not depend on target, so handle with single ValueRef evaluation
         float val = m_value->Eval(context);
-        for (boost::shared_ptr<UniverseObject> target : targets) {
+        for (std::shared_ptr<UniverseObject> target : targets) {
             if (target->ObjectType() != OBJ_SHIP)
                 continue;
-            boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target);
+            std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(target);
             if (!ship)
                 continue;
             Meter* m = ship->GetPartMeter(m_meter, part_name);
@@ -648,10 +648,10 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
         }
         //DebugLogger() << "simple increment: " << increment;
         // increment all target meters...
-        for (boost::shared_ptr<UniverseObject> target : targets) {
+        for (std::shared_ptr<UniverseObject> target : targets) {
             if (target->ObjectType() != OBJ_SHIP)
                 continue;
-            boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target);
+            std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(target);
             if (!ship)
                 continue;
             Meter* m = ship->GetPartMeter(m_meter, part_name);
@@ -836,7 +836,7 @@ void SetEmpireCapital::Execute(const ScriptingContext& context) const {
     if (!empire)
         return;
 
-    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(context.effect_target);
+    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(context.effect_target);
     if (!planet)
         return;
 
@@ -863,7 +863,7 @@ SetPlanetType::~SetPlanetType()
 { delete m_type; }
 
 void SetPlanetType::Execute(const ScriptingContext& context) const {
-    if (boost::shared_ptr<Planet> p = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
+    if (std::shared_ptr<Planet> p = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
         PlanetType type = m_type->Eval(ScriptingContext(context, p->Type()));
         p->SetType(type);
         if (type == PT_ASTEROIDS)
@@ -897,7 +897,7 @@ SetPlanetSize::~SetPlanetSize()
 { delete m_size; }
 
 void SetPlanetSize::Execute(const ScriptingContext& context) const {
-    if (boost::shared_ptr<Planet> p = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
+    if (std::shared_ptr<Planet> p = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
         PlanetSize size = m_size->Eval(ScriptingContext(context, p->Size()));
         p->SetSize(size);
         if (size == SZ_ASTEROIDS)
@@ -929,7 +929,7 @@ SetSpecies::~SetSpecies()
 { delete m_species_name; }
 
 void SetSpecies::Execute(const ScriptingContext& context) const {
-    if (boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
+    if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
         std::string species_name = m_species_name->Eval(ScriptingContext(context, planet->SpeciesName()));
         planet->SetSpecies(species_name);
 
@@ -969,7 +969,7 @@ void SetSpecies::Execute(const ScriptingContext& context) const {
 
         planet->SetFocus(new_focus);
 
-    } else if (boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
+    } else if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(context.effect_target)) {
         std::string species_name = m_species_name->Eval(ScriptingContext(context, ship->SpeciesName()));
         ship->SetSpecies(species_name);
     }
@@ -1005,18 +1005,18 @@ void SetOwner::Execute(const ScriptingContext& context) const {
 
     context.effect_target->SetOwner(empire_id);
 
-    if (boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
+    if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(context.effect_target)) {
         // assigning ownership of a ship requires updating the containing
         // fleet, or splitting ship off into a new fleet at the same location
-        boost::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+        std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet)
             return;
         if (fleet->Owner() == empire_id)
             return;
 
         // move ship into new fleet
-        boost::shared_ptr<Fleet> new_fleet;
-        if (boost::shared_ptr<System> system = GetSystem(ship->SystemID()))
+        std::shared_ptr<Fleet> new_fleet;
+        if (std::shared_ptr<System> system = GetSystem(ship->SystemID()))
             new_fleet = CreateNewFleet(system, ship);
         else
             new_fleet = CreateNewFleet(ship->X(), ship->Y(), ship);
@@ -1168,7 +1168,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "CreatePlanet::Execute passed no target object";
         return;
     }
-    boost::shared_ptr<System> system = GetSystem(context.effect_target->SystemID());
+    std::shared_ptr<System> system = GetSystem(context.effect_target->SystemID());
     if (!system) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -1176,7 +1176,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
 
     PlanetSize target_size = INVALID_PLANET_SIZE;
     PlanetType target_type = INVALID_PLANET_TYPE;
-    if (boost::shared_ptr<const Planet> location_planet = boost::dynamic_pointer_cast<const Planet>(context.effect_target)) {
+    if (std::shared_ptr<const Planet> location_planet = std::dynamic_pointer_cast<const Planet>(context.effect_target)) {
         target_size = location_planet->Size();
         target_type = location_planet->Type();
     }
@@ -1195,7 +1195,7 @@ void CreatePlanet::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    boost::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(type, size);
+    std::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(type, size);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;
@@ -1274,9 +1274,9 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "CreateBuilding::Execute passed no target object";
         return;
     }
-    boost::shared_ptr<Planet> location = boost::dynamic_pointer_cast<Planet>(context.effect_target);
+    std::shared_ptr<Planet> location = std::dynamic_pointer_cast<Planet>(context.effect_target);
     if (!location)
-        if (boost::shared_ptr<Building> location_building = boost::dynamic_pointer_cast<Building>(context.effect_target))
+        if (std::shared_ptr<Building> location_building = std::dynamic_pointer_cast<Building>(context.effect_target))
             location = GetPlanet(location_building->PlanetID());
     if (!location) {
         ErrorLogger() << "CreateBuilding::Execute couldn't get a Planet object at which to create the building";
@@ -1295,7 +1295,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    boost::shared_ptr<Building> building = GetUniverse().CreateBuilding(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
+    std::shared_ptr<Building> building = GetUniverse().CreateBuilding(ALL_EMPIRES, building_type_name, ALL_EMPIRES);
     if (!building) {
         ErrorLogger() << "CreateBuilding::Execute couldn't create building!";
         return;
@@ -1306,7 +1306,7 @@ void CreateBuilding::Execute(const ScriptingContext& context) const {
 
     building->SetOwner(location->Owner());
 
-    boost::shared_ptr<System> system = GetSystem(location->SystemID());
+    std::shared_ptr<System> system = GetSystem(location->SystemID());
     if (system)
         system->Insert(building);
 
@@ -1396,7 +1396,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    boost::shared_ptr<System> system = GetSystem(context.effect_target->SystemID());
+    std::shared_ptr<System> system = GetSystem(context.effect_target->SystemID());
     if (!system) {
         ErrorLogger() << "CreateShip::Execute passed a target not in a system";
         return;
@@ -1448,13 +1448,13 @@ void CreateShip::Execute(const ScriptingContext& context) const {
     //// possible future modification: try to put new ship into existing fleet if
     //// ownership with target object's fleet works out (if target is a ship)
     //// attempt to find a
-    //boost::shared_ptr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target);
+    //std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(target);
     //if (!fleet)
-    //    if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(target))
+    //    if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(target))
     //        fleet = ship->FleetID();
     //// etc.
 
-    boost::shared_ptr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
+    std::shared_ptr<Ship> ship = GetUniverse().CreateShip(empire_id, design_id, species_name, ALL_EMPIRES);
     system->Insert(ship);
 
     if (m_name) {
@@ -1572,7 +1572,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "CreateField::Execute passed null target";
         return;
     }
-    boost::shared_ptr<UniverseObject> target = context.effect_target;
+    std::shared_ptr<UniverseObject> target = context.effect_target;
 
     if (!m_field_type_name)
         return;
@@ -1606,7 +1606,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
     else
         y = target->Y();
 
-    boost::shared_ptr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
+    std::shared_ptr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
     if (!field) {
         ErrorLogger() << "CreateField::Execute couldn't create field!";
         return;
@@ -1614,7 +1614,7 @@ void CreateField::Execute(const ScriptingContext& context) const {
 
     // if target is a system, and location matches system location, can put
     // field into system
-    boost::shared_ptr<System> system = boost::dynamic_pointer_cast<System>(target);
+    std::shared_ptr<System> system = std::dynamic_pointer_cast<System>(target);
     if (system && (!m_y || y == system->Y()) && (!m_x || x == system->X()))
         system->Insert(field);
 
@@ -1738,7 +1738,7 @@ void CreateSystem::Execute(const ScriptingContext& context) const {
         name_str = GenerateSystemName();
     }
 
-    boost::shared_ptr<System> system = GetUniverse().CreateSystem(star_type, name_str, x, y);
+    std::shared_ptr<System> system = GetUniverse().CreateSystem(star_type, name_str, x, y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
@@ -1902,7 +1902,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "AddStarlanes::Execute passed no target object";
         return;
     }
-    boost::shared_ptr<System> target_system = boost::dynamic_pointer_cast<System>(context.effect_target);
+    std::shared_ptr<System> target_system = std::dynamic_pointer_cast<System>(context.effect_target);
     if (!target_system)
         target_system = GetSystem(context.effect_target->SystemID());
     if (!target_system)
@@ -1919,18 +1919,18 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
         return; // nothing to do!
 
     // get systems containing at least one endpoint object
-    std::set<boost::shared_ptr<System>> endpoint_systems;
-    for (boost::shared_ptr<const UniverseObject> endpoint_object : endpoint_objects) {
-        boost::shared_ptr<const System> endpoint_system = boost::dynamic_pointer_cast<const System>(endpoint_object);
+    std::set<std::shared_ptr<System>> endpoint_systems;
+    for (std::shared_ptr<const UniverseObject> endpoint_object : endpoint_objects) {
+        std::shared_ptr<const System> endpoint_system = std::dynamic_pointer_cast<const System>(endpoint_object);
         if (!endpoint_system)
             endpoint_system = GetSystem(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
-        endpoint_systems.insert(boost::const_pointer_cast<System>(endpoint_system));
+        endpoint_systems.insert(std::const_pointer_cast<System>(endpoint_system));
     }
 
     // add starlanes from target to endpoint systems
-    for (boost::shared_ptr<System> endpoint_system : endpoint_systems) {
+    for (std::shared_ptr<System> endpoint_system : endpoint_systems) {
         target_system->AddStarlane(endpoint_system->ID());
         endpoint_system->AddStarlane(target_system->ID());
     }
@@ -1961,7 +1961,7 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "AddStarlanes::Execute passed no target object";
         return;
     }
-    boost::shared_ptr<System> target_system = boost::dynamic_pointer_cast<System>(context.effect_target);
+    std::shared_ptr<System> target_system = std::dynamic_pointer_cast<System>(context.effect_target);
     if (!target_system)
         target_system = GetSystem(context.effect_target->SystemID());
     if (!target_system)
@@ -1979,19 +1979,19 @@ void RemoveStarlanes::Execute(const ScriptingContext& context) const {
         return; // nothing to do!
 
     // get systems containing at least one endpoint object
-    std::set<boost::shared_ptr<System>> endpoint_systems;
-    for (boost::shared_ptr<const UniverseObject> endpoint_object : endpoint_objects) {
-        boost::shared_ptr<const System> endpoint_system = boost::dynamic_pointer_cast<const System>(endpoint_object);
+    std::set<std::shared_ptr<System>> endpoint_systems;
+    for (std::shared_ptr<const UniverseObject> endpoint_object : endpoint_objects) {
+        std::shared_ptr<const System> endpoint_system = std::dynamic_pointer_cast<const System>(endpoint_object);
         if (!endpoint_system)
             endpoint_system = GetSystem(endpoint_object->SystemID());
         if (!endpoint_system)
             continue;
-        endpoint_systems.insert(boost::const_pointer_cast<System>(endpoint_system));
+        endpoint_systems.insert(std::const_pointer_cast<System>(endpoint_system));
     }
 
     // remove starlanes from target to endpoint systems
     int target_system_id = target_system->ID();
-    for (boost::shared_ptr<System> endpoint_system : endpoint_systems) {
+    for (std::shared_ptr<System> endpoint_system : endpoint_systems) {
         target_system->RemoveStarlane(endpoint_system->ID());
         endpoint_system->RemoveStarlane(target_system_id);
     }
@@ -2021,7 +2021,7 @@ void SetStarType::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "SetStarType::Execute given no target object";
         return;
     }
-    if (boost::shared_ptr<System> s = boost::dynamic_pointer_cast<System>(context.effect_target))
+    if (std::shared_ptr<System> s = std::dynamic_pointer_cast<System>(context.effect_target))
         s->SetStarType(m_type->Eval(ScriptingContext(context, s->GetStarType())));
     else
         ErrorLogger() << "SetStarType::Execute given a non-system target";
@@ -2063,16 +2063,16 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         return;
 
     // "randomly" pick a destination
-    boost::shared_ptr<UniverseObject> destination = boost::const_pointer_cast<UniverseObject>(*valid_locations.begin());
+    std::shared_ptr<UniverseObject> destination = std::const_pointer_cast<UniverseObject>(*valid_locations.begin());
 
     // get previous system from which to remove object if necessary
-    boost::shared_ptr<System> old_sys = GetSystem(context.effect_target->SystemID());
+    std::shared_ptr<System> old_sys = GetSystem(context.effect_target->SystemID());
 
     // do the moving...
-    if (boost::shared_ptr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target)) {
+    if (std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(context.effect_target)) {
         // fleets can be inserted into the system that contains the destination
         // object (or the destination object itself if it is a system)
-        if (boost::shared_ptr<System> dest_system = GetSystem(destination->SystemID())) {
+        if (std::shared_ptr<System> dest_system = GetSystem(destination->SystemID())) {
             if (fleet->SystemID() != dest_system->ID()) {
                 // remove fleet from old system, put into new system
                 if (old_sys)
@@ -2080,7 +2080,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
                 dest_system->Insert(fleet);
 
                 // also move ships of fleet
-                for (boost::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+                for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
                     if (old_sys)
                         old_sys->Remove(ship->ID());
                     dest_system->Insert(ship);
@@ -2101,7 +2101,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             fleet->MoveTo(destination);
 
             // also move ships of fleet
-            for (boost::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+            for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
                 if (old_sys)
                     old_sys->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
@@ -2122,9 +2122,9 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             // if destination object is a fleet or is part of a fleet, can use
             // that fleet's previous and next systems to get valid next and
             // previous systems for the target fleet.
-            boost::shared_ptr<const Fleet> dest_fleet = boost::dynamic_pointer_cast<const Fleet>(destination);
+            std::shared_ptr<const Fleet> dest_fleet = std::dynamic_pointer_cast<const Fleet>(destination);
             if (!dest_fleet)
-                if (boost::shared_ptr<const Ship> dest_ship = boost::dynamic_pointer_cast<const Ship>(destination))
+                if (std::shared_ptr<const Ship> dest_ship = std::dynamic_pointer_cast<const Ship>(destination))
                     dest_fleet = GetFleet(dest_ship->FleetID());
             if (dest_fleet) {
                 UpdateFleetRoute(fleet, dest_fleet->NextSystemID(), dest_fleet->PreviousSystemID());
@@ -2136,13 +2136,13 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             }
         }
 
-    } else if (boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(context.effect_target)) {
+    } else if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(context.effect_target)) {
         // TODO: make sure colonization doesn't interfere with this effect, and vice versa
 
         // is destination a ship/fleet ?
-        boost::shared_ptr<Fleet> dest_fleet = boost::dynamic_pointer_cast<Fleet>(destination);   // may be 0 if destination is not a fleet
+        std::shared_ptr<Fleet> dest_fleet = std::dynamic_pointer_cast<Fleet>(destination);
         if (!dest_fleet) {
-            boost::shared_ptr<Ship> dest_ship = boost::dynamic_pointer_cast<Ship>(destination);  // may still be 0
+            std::shared_ptr<Ship> dest_ship = std::dynamic_pointer_cast<Ship>(destination);
             if (dest_ship)
                 dest_fleet = GetFleet(dest_ship->FleetID());
         }
@@ -2163,18 +2163,18 @@ void MoveTo::Execute(const ScriptingContext& context) const {
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
 
-            if (boost::shared_ptr<System> new_sys = GetSystem(dest_sys_id)) {
+            if (std::shared_ptr<System> new_sys = GetSystem(dest_sys_id)) {
                 // ship is moving to a new system. insert it.
                 new_sys->Insert(ship);
             } else {
                 // ship is moving to a non-system location. move it there.
-                ship->MoveTo(boost::dynamic_pointer_cast<UniverseObject>(dest_fleet));
+                ship->MoveTo(std::dynamic_pointer_cast<UniverseObject>(dest_fleet));
             }
 
             // may create a fleet for ship below...
         }
 
-        boost::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID());
+        std::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID());
 
         if (dest_fleet && same_owners) {
             // ship is moving to a different fleet owned by the same empire, so
@@ -2195,7 +2195,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
 
         } else {
             // need to create a new fleet for ship
-            if (boost::shared_ptr<System> dest_system = GetSystem(dest_sys_id)) {
+            if (std::shared_ptr<System> dest_system = GetSystem(dest_sys_id)) {
                 CreateNewFleet(dest_system, ship);                          // creates new fleet, inserts fleet into system and ship into fleet
                 ExploreSystem(dest_system->ID(), ship);
 
@@ -2209,10 +2209,10 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             universe.EffectDestroy(old_fleet->ID(), INVALID_OBJECT_ID); // no particular object destroyed this fleet
         }
 
-    } else if (boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(context.effect_target)) {
+    } else if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
         // planets need to be located in systems, so get system that contains destination object
 
-        boost::shared_ptr<System> dest_system = GetSystem(destination->SystemID());
+        std::shared_ptr<System> dest_system = GetSystem(destination->SystemID());
         if (!dest_system)
             return; // can't move a planet to a non-system
 
@@ -2227,7 +2227,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         dest_system->Insert(planet);  // let system pick an orbit
 
         // also insert buildings of planet into system.
-        for (boost::shared_ptr<Building> building : Objects().FindObjects<Building>(planet->BuildingIDs())) {
+        for (std::shared_ptr<Building> building : Objects().FindObjects<Building>(planet->BuildingIDs())) {
             if (old_sys)
                 old_sys->Remove(building->ID());
             dest_system->Insert(building);
@@ -2239,14 +2239,14 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         ExploreSystem(dest_system->ID(), planet);
 
 
-    } else if (boost::shared_ptr<Building> building = boost::dynamic_pointer_cast<Building>(context.effect_target)) {
+    } else if (std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(context.effect_target)) {
         // buildings need to be located on planets, so if destination is a
         // planet, insert building into it, or attempt to get the planet on
         // which the destination object is located and insert target building
         // into that
-        boost::shared_ptr<Planet> dest_planet = boost::dynamic_pointer_cast<Planet>(destination);
+        std::shared_ptr<Planet> dest_planet = std::dynamic_pointer_cast<Planet>(destination);
         if (!dest_planet) {
-            boost::shared_ptr<Building> dest_building = boost::dynamic_pointer_cast<Building>(destination);
+            std::shared_ptr<Building> dest_building = std::dynamic_pointer_cast<Building>(destination);
             if (dest_building) {
                 dest_planet = GetPlanet(dest_building->PlanetID());
             }
@@ -2257,7 +2257,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         if (dest_planet->ID() == building->PlanetID())
             return; // nothing to do
 
-        boost::shared_ptr<System> dest_system = GetSystem(destination->SystemID());
+        std::shared_ptr<System> dest_system = GetSystem(destination->SystemID());
         if (!dest_system)
             return;
 
@@ -2266,7 +2266,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             old_sys->Remove(building->ID());
         building->SetSystem(INVALID_OBJECT_ID);
 
-        if (boost::shared_ptr<Planet> old_planet = GetPlanet(building->PlanetID()))
+        if (std::shared_ptr<Planet> old_planet = GetPlanet(building->PlanetID()))
             old_planet->RemoveBuilding(building->ID());
 
         dest_planet->AddBuilding(building->ID());
@@ -2276,7 +2276,7 @@ void MoveTo::Execute(const ScriptingContext& context) const {
         ExploreSystem(dest_system->ID(), building);
 
 
-    } else if (boost::shared_ptr<System> system = boost::dynamic_pointer_cast<System>(context.effect_target)) {
+    } else if (std::shared_ptr<System> system = std::dynamic_pointer_cast<System>(context.effect_target)) {
         if (destination->SystemID() != INVALID_OBJECT_ID) {
             // TODO: merge systems
             return;
@@ -2290,23 +2290,23 @@ void MoveTo::Execute(const ScriptingContext& context) const {
             system->Insert(destination);
 
         // find fleets / ships at destination location and insert into system
-        for (boost::shared_ptr<Fleet> obj : Objects().FindObjects<Fleet>()) {
+        for (std::shared_ptr<Fleet> obj : Objects().FindObjects<Fleet>()) {
             if (obj->X() == system->X() && obj->Y() == system->Y())
                 system->Insert(obj);
         }
 
-        for (boost::shared_ptr<Ship> obj : Objects().FindObjects<Ship>()) {
+        for (std::shared_ptr<Ship> obj : Objects().FindObjects<Ship>()) {
             if (obj->X() == system->X() && obj->Y() == system->Y())
                 system->Insert(obj);
         }
 
 
-    } else if (boost::shared_ptr<Field> field = boost::dynamic_pointer_cast<Field>(context.effect_target)) {
+    } else if (std::shared_ptr<Field> field = std::dynamic_pointer_cast<Field>(context.effect_target)) {
         if (old_sys)
             old_sys->Remove(field->ID());
         field->SetSystem(INVALID_OBJECT_ID);
         field->MoveTo(destination);
-        if (boost::shared_ptr<System> dest_system = boost::dynamic_pointer_cast<System>(destination))
+        if (std::shared_ptr<System> dest_system = std::dynamic_pointer_cast<System>(destination))
             dest_system->Insert(field);
     }
 }
@@ -2352,7 +2352,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "MoveInOrbit::Execute given no target object";
         return;
     }
-    boost::shared_ptr<UniverseObject> target = context.effect_target;
+    std::shared_ptr<UniverseObject> target = context.effect_target;
 
     double focus_x = 0.0, focus_y = 0.0, speed = 1.0;
     if (m_focus_x)
@@ -2368,7 +2368,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         m_focal_point_condition->Eval(context, matches);
         if (matches.empty())
             return;
-        boost::shared_ptr<const UniverseObject> focus_object = *matches.begin();
+        std::shared_ptr<const UniverseObject> focus_object = *matches.begin();
         focus_x = focus_object->X();
         focus_y = focus_object->Y();
     }
@@ -2390,20 +2390,20 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return;
 
-    boost::shared_ptr<System> old_sys = GetSystem(target->SystemID());
+    std::shared_ptr<System> old_sys = GetSystem(target->SystemID());
 
-    if (boost::shared_ptr<System> system = boost::dynamic_pointer_cast<System>(target)) {
+    if (std::shared_ptr<System> system = std::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
         return;
 
-    } else if (boost::shared_ptr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target)) {
+    } else if (std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(target)) {
         if (old_sys)
             old_sys->Remove(fleet->ID());
         fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
 
-        for (boost::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+        for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             if (old_sys)
                 old_sys->Remove(ship->ID());
             ship->SetSystem(INVALID_OBJECT_ID);
@@ -2411,12 +2411,12 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         }
         return;
 
-    } else if (boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target)) {
+    } else if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(target)) {
         if (old_sys)
             old_sys->Remove(ship->ID());
         ship->SetSystem(INVALID_OBJECT_ID);
 
-        boost::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID());
+        std::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID());
         if (old_fleet) {
             old_fleet->RemoveShip(ship->ID());
             if (old_fleet->Empty()) {
@@ -2431,7 +2431,7 @@ void MoveInOrbit::Execute(const ScriptingContext& context) const {
         CreateNewFleet(new_x, new_y, ship); // creates new fleet and inserts ship into fleet
         return;
 
-    } else if (boost::shared_ptr<Field> field = boost::dynamic_pointer_cast<Field>(target)) {
+    } else if (std::shared_ptr<Field> field = std::dynamic_pointer_cast<Field>(target)) {
         if (old_sys)
             old_sys->Remove(field->ID());
         field->SetSystem(INVALID_OBJECT_ID);
@@ -2493,7 +2493,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         ErrorLogger() << "MoveTowards::Execute given no target object";
         return;
     }
-    boost::shared_ptr<UniverseObject> target = context.effect_target;
+    std::shared_ptr<UniverseObject> target = context.effect_target;
 
     double dest_x = 0.0, dest_y = 0.0, speed = 1.0;
     if (m_dest_x)
@@ -2509,7 +2509,7 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         m_dest_condition->Eval(context, matches);
         if (matches.empty())
             return;
-        boost::shared_ptr<const UniverseObject> focus_object = *matches.begin();
+        std::shared_ptr<const UniverseObject> focus_object = *matches.begin();
         dest_x = focus_object->X();
         dest_y = focus_object->Y();
     }
@@ -2537,22 +2537,22 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
     if (target->X() == new_x && target->Y() == new_y)
         return; // nothing to do
 
-    if (boost::shared_ptr<System> system = boost::dynamic_pointer_cast<System>(target)) {
+    if (std::shared_ptr<System> system = std::dynamic_pointer_cast<System>(target)) {
         system->MoveTo(new_x, new_y);
-        for (boost::shared_ptr<UniverseObject> obj : Objects().FindObjects<UniverseObject>(system->ObjectIDs())) {
+        for (std::shared_ptr<UniverseObject> obj : Objects().FindObjects<UniverseObject>(system->ObjectIDs())) {
             obj->MoveTo(new_x, new_y);
         }
         // don't need to remove objects from system or insert into it, as all
         // contained objects in system are moved with it, maintaining their
         // containment situation
 
-    } else if (boost::shared_ptr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(target)) {
-        boost::shared_ptr<System> old_sys = GetSystem(fleet->SystemID());
+    } else if (std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(target)) {
+        std::shared_ptr<System> old_sys = GetSystem(fleet->SystemID());
         if (old_sys)
             old_sys->Remove(fleet->ID());
         fleet->SetSystem(INVALID_OBJECT_ID);
         fleet->MoveTo(new_x, new_y);
-        for (boost::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+        for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             if (old_sys)
                 old_sys->Remove(ship->ID());
             ship->SetSystem(INVALID_OBJECT_ID);
@@ -2562,13 +2562,13 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
         // todo: is fleet now close enough to fall into a system?
         UpdateFleetRoute(fleet, INVALID_OBJECT_ID, INVALID_OBJECT_ID);
 
-    } else if (boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(target)) {
-        boost::shared_ptr<System> old_sys = GetSystem(ship->SystemID());
+    } else if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(target)) {
+        std::shared_ptr<System> old_sys = GetSystem(ship->SystemID());
         if (old_sys)
             old_sys->Remove(ship->ID());
         ship->SetSystem(INVALID_OBJECT_ID);
 
-        boost::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID());
+        std::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID());
         if (old_fleet)
             old_fleet->RemoveShip(ship->ID());
         ship->SetFleetID(INVALID_OBJECT_ID);
@@ -2580,8 +2580,8 @@ void MoveTowards::Execute(const ScriptingContext& context) const {
             GetUniverse().EffectDestroy(old_fleet->ID(), INVALID_OBJECT_ID);    // no object in particular destroyed this fleet
         }
 
-    } else if (boost::shared_ptr<Field> field = boost::dynamic_pointer_cast<Field>(target)) {
-        boost::shared_ptr<System> old_sys = GetSystem(field->SystemID());
+    } else if (std::shared_ptr<Field> field = std::dynamic_pointer_cast<Field>(target)) {
+        std::shared_ptr<System> old_sys = GetSystem(field->SystemID());
         if (old_sys)
             old_sys->Remove(field->ID());
         field->SetSystem(INVALID_OBJECT_ID);
@@ -2628,7 +2628,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    boost::shared_ptr<Fleet> target_fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target);
+    std::shared_ptr<Fleet> target_fleet = std::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
         ErrorLogger() << "SetDestination::Execute acting on non-fleet target:";
         context.effect_target->Dump();
@@ -2649,7 +2649,7 @@ void SetDestination::Execute(const ScriptingContext& context) const {
     int destination_idx = RandSmallInt(0, valid_locations.size() - 1);
     Condition::ObjectSet::iterator obj_it = valid_locations.begin();
     std::advance(obj_it, destination_idx);
-    boost::shared_ptr<UniverseObject> destination = boost::const_pointer_cast<UniverseObject>(*obj_it);
+    std::shared_ptr<UniverseObject> destination = std::const_pointer_cast<UniverseObject>(*obj_it);
     int destination_system_id = destination->SystemID();
 
     // early exit if destination is not / in a system
@@ -2701,7 +2701,7 @@ void SetAggression::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    boost::shared_ptr<Fleet> target_fleet = boost::dynamic_pointer_cast<Fleet>(context.effect_target);
+    std::shared_ptr<Fleet> target_fleet = std::dynamic_pointer_cast<Fleet>(context.effect_target);
     if (!target_fleet) {
         ErrorLogger() << "SetAggression::Execute acting on non-fleet target:";
         context.effect_target->Dump();
@@ -2993,7 +2993,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
         // add empires that can see any condition-matching object
         for (const std::map<int, Empire*>::value_type& empire_entry : Empires()) {
             int empire_id = empire_entry.first;
-            for (boost::shared_ptr<const UniverseObject> object : condition_matches) {
+            for (std::shared_ptr<const UniverseObject> object : condition_matches) {
                 if (object->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY) {
                     recipient_empire_ids.insert(empire_id);
                     break;
@@ -3117,7 +3117,7 @@ void SetOverlayTexture::Execute(const ScriptingContext& context) const {
     if (m_size)
         size = m_size->Eval(context);
 
-    if (boost::shared_ptr<System> system = boost::dynamic_pointer_cast<System>(context.effect_target))
+    if (std::shared_ptr<System> system = std::dynamic_pointer_cast<System>(context.effect_target))
         system->SetOverlayTexture(m_texture, size);
 }
 
@@ -3160,7 +3160,7 @@ SetTexture::SetTexture(const std::string& texture) :
 void SetTexture::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
         return;
-    if (boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(context.effect_target))
+    if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(context.effect_target))
         planet->SetSurfaceTexture(m_texture);
 }
 
@@ -3273,7 +3273,7 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
     } else {
         Condition::ObjectSet condition_matches;
         m_condition->Eval(context, condition_matches);
-        for (boost::shared_ptr<const UniverseObject> object : condition_matches) {
+        for (std::shared_ptr<const UniverseObject> object : condition_matches) {
             object_ids.insert(object->ID());
         }
     }

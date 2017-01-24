@@ -1,12 +1,14 @@
 #ifndef _ENCYCLOPEDIA_DETAIL_PANEL_H_
 #define _ENCYCLOPEDIA_DETAIL_PANEL_H_
 
-#include <GG/GGFwd.h>
 
-#include <boost/shared_ptr.hpp>
+#include <GG/GGFwd.h>
 
 #include "CUIWnd.h"
 #include "../universe/EnumsFwd.h"
+
+#include <memory>
+
 
 class Planet;
 class Tech;
@@ -51,7 +53,7 @@ public:
 
     void            SetText(const std::string& text, bool lookup_in_stringtable = true);
     void            SetPlanet(int planet_id);
-    void            SetItem(boost::shared_ptr<const Planet> planet);
+    void SetItem(std::shared_ptr<const Planet> planet);
     void            SetTech(const std::string& tech_name);
     void            SetItem(const Tech* tech);
     void            SetPartType(const std::string& part_name);
@@ -68,14 +70,14 @@ public:
     void            SetItem(const FieldType* field_type);
     void            SetObject(int object_id);
     void            SetObject(const std::string& object_id);
-    void            SetItem(boost::shared_ptr<const UniverseObject> obj);
+    void SetItem(std::shared_ptr<const UniverseObject> obj);
     void            SetEmpire(int empire_id);
     void            SetEmpire(const std::string& empire_id);
     void            SetItem(const Empire* empire);
     void            SetDesign(int design_id);
     void            SetDesign(const std::string& design_id);
     void            SetItem(const ShipDesign* design);
-    void            SetIncompleteDesign(boost::weak_ptr<const ShipDesign> incomplete_design);
+    void SetIncompleteDesign(std::weak_ptr<const ShipDesign> incomplete_design);
     void            SetMeterType(const std::string& meter_string);
     void            SetItem(const MeterType& meter_type);
     void            SetGraph(const std::string& graph_id);
@@ -105,7 +107,8 @@ private:
     static std::list<std::pair <std::string, std::string> >             m_items;    // stores all items which have been observed in the past
                                                                                     // .first == item type; .second == item.name
     static std::list<std::pair <std::string, std::string> >::iterator   m_items_it; // stores actual position within m_items
-    boost::weak_ptr<const ShipDesign>                                   m_incomplete_design;
+
+    std::weak_ptr<const ShipDesign> m_incomplete_design;
 
     GG::Label*          m_name_text;        // name
     GG::Label*          m_cost_text;        // cost and time to build or research

@@ -67,7 +67,7 @@ namespace {
             valid = false;
             return UserString("ERROR");
         }
-        boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
         if (!obj) {
             //ErrorLogger() << "UniverseObjectString couldn't get object with ID " << object_id;
             valid = false;

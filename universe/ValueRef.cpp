@@ -30,17 +30,17 @@ std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
 
 namespace {
-    boost::shared_ptr<const UniverseObject> FollowReference(std::vector<std::string>::const_iterator first,
-                                                            std::vector<std::string>::const_iterator last,
-                                                            ValueRef::ReferenceType ref_type,
-                                                            const ScriptingContext& context)
+    std::shared_ptr<const UniverseObject> FollowReference(std::vector<std::string>::const_iterator first,
+                                                          std::vector<std::string>::const_iterator last,
+                                                          ValueRef::ReferenceType ref_type,
+                                                          const ScriptingContext& context)
     {
         //DebugLogger() << "FollowReference: source: " << (context.source ? context.source->Name() : "0")
         //              << " target: " << (context.effect_target ? context.effect_target->Name() : "0")
         //              << " local c: " << (context.condition_local_candidate ? context.condition_local_candidate->Name() : "0")
         //              << " root c: " << (context.condition_root_candidate ? context.condition_root_candidate->Name() : "0");
 
-        boost::shared_ptr<const UniverseObject> obj;
+        std::shared_ptr<const UniverseObject> obj;
         switch(ref_type) {
         case ValueRef::NON_OBJECT_REFERENCE:                    return context.condition_local_candidate;   break;
         case ValueRef::SOURCE_REFERENCE:                        obj = context.source;                       break;
@@ -60,17 +60,17 @@ namespace {
             default:                                                type_string = "LocalCandidate"; break;
             }
             ErrorLogger() << "FollowReference : top level object (" << type_string << ") not defined in scripting context";
-            return boost::shared_ptr<const UniverseObject>();
+            return std::shared_ptr<const UniverseObject>();
         }
 
         while (first != last) {
             std::string property_name = *first;
             if (property_name == "Planet") {
-                if (boost::shared_ptr<const Building> b = boost::dynamic_pointer_cast<const Building>(obj)) {
+                if (std::shared_ptr<const Building> b = std::dynamic_pointer_cast<const Building>(obj)) {
                     obj = GetPlanet(b->PlanetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
-                    obj = boost::shared_ptr<const UniverseObject>();
+                    obj = std::shared_ptr<const UniverseObject>();
                 }
             } else if (property_name == "System") {
                 if (obj)
@@ -78,11 +78,11 @@ namespace {
                 if (!obj)
                     ErrorLogger() << "FollowReference : Unable to get system for object";
             } else if (property_name == "Fleet") {
-                if (boost::shared_ptr<const Ship> s = boost::dynamic_pointer_cast<const Ship>(obj)) {
+                if (std::shared_ptr<const Ship> s = std::dynamic_pointer_cast<const Ship>(obj)) {
                     obj = GetFleet(s->FleetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
-                    obj = boost::shared_ptr<const UniverseObject>();
+                    obj = std::shared_ptr<const UniverseObject>();
                 }
             }
             ++first;
@@ -95,7 +95,7 @@ namespace {
     std::string TraceReference(const std::vector<std::string>& property_name, ValueRef::ReferenceType ref_type,
                                const ScriptingContext& context)
     {
-        boost::shared_ptr<const UniverseObject> obj, initial_obj;
+        std::shared_ptr<const UniverseObject> obj, initial_obj;
         std::string retval = ReconstructName(property_name, ref_type) + " : ";
         switch(ref_type) {
         case ValueRef::NON_OBJECT_REFERENCE:
@@ -133,22 +133,22 @@ namespace {
             std::string property_name = *first;
             retval += " " + property_name + " ";
             if (property_name == "Planet") {
-                if (boost::shared_ptr<const Building> b = boost::dynamic_pointer_cast<const Building>(obj)) {
+                if (std::shared_ptr<const Building> b = std::dynamic_pointer_cast<const Building>(obj)) {
                     retval += "(" + boost::lexical_cast<std::string>(b->PlanetID()) + "): ";
                     obj = GetPlanet(b->PlanetID());
                 } else
-                    obj = boost::shared_ptr<const UniverseObject>();
+                    obj = std::shared_ptr<const UniverseObject>();
             } else if (property_name == "System") {
                 if (obj) {
                     retval += "(" + boost::lexical_cast<std::string>(obj->SystemID()) + "): ";
                     obj = GetSystem(obj->SystemID());
                 }
             } else if (property_name == "Fleet") {
-                if (boost::shared_ptr<const Ship> s = boost::dynamic_pointer_cast<const Ship>(obj))  {
+                if (std::shared_ptr<const Ship> s = std::dynamic_pointer_cast<const Ship>(obj))  {
                     retval += "(" + boost::lexical_cast<std::string>(s->FleetID()) + "): ";
                     obj = GetFleet(s->FleetID());
                 } else
-                    obj = boost::shared_ptr<const UniverseObject>();
+                    obj = std::shared_ptr<const UniverseObject>();
             }
 
             ++first;
@@ -165,22 +165,22 @@ namespace {
     struct ObjectTypeVisitor : UniverseObjectVisitor {
         ObjectTypeVisitor() : m_type(INVALID_UNIVERSE_OBJECT_TYPE) {}
 
-        boost::shared_ptr<UniverseObject> Visit(boost::shared_ptr<Building> obj) const override
+        std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Building> obj) const override
         { m_type = OBJ_BUILDING; return obj; }
 
-        boost::shared_ptr<UniverseObject> Visit(boost::shared_ptr<Fleet> obj) const override
+        std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Fleet> obj) const override
         { m_type = OBJ_FLEET; return obj; }
 
-        boost::shared_ptr<UniverseObject> Visit(boost::shared_ptr<Planet> obj) const override
+        std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Planet> obj) const override
         { m_type = OBJ_PLANET; return obj; }
 
-        boost::shared_ptr<UniverseObject> Visit(boost::shared_ptr<Ship> obj) const override
+        std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Ship> obj) const override
         { m_type = OBJ_SHIP; return obj; }
 
-        boost::shared_ptr<UniverseObject> Visit(boost::shared_ptr<System> obj) const override
+        std::shared_ptr<UniverseObject> Visit(std::shared_ptr<System> obj) const override
         { m_type = OBJ_SYSTEM; return obj; }
 
-        boost::shared_ptr<UniverseObject> Visit(boost::shared_ptr<Field> obj) const override
+        std::shared_ptr<UniverseObject> Visit(std::shared_ptr<Field> obj) const override
         { m_type = OBJ_FIELD; return obj; }
 
         mutable UniverseObjectType m_type;
@@ -468,13 +468,13 @@ PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const
 
     IF_CURRENT_VALUE(PlanetSize)
 
-    boost::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    std::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<PlanetSize>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
         return INVALID_PLANET_SIZE;
     }
 
-    if (boost::shared_ptr<const Planet> p = boost::dynamic_pointer_cast<const Planet>(object)) {
+    if (std::shared_ptr<const Planet> p = std::dynamic_pointer_cast<const Planet>(object)) {
         if (property_name == "PlanetSize")
             return p->Size();
         else if (property_name == "NextLargerPlanetSize")
@@ -500,13 +500,13 @@ PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const
 
     IF_CURRENT_VALUE(PlanetType)
 
-    boost::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    std::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<PlanetType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
         return INVALID_PLANET_TYPE;
     }
 
-    if (boost::shared_ptr<const Planet> p = boost::dynamic_pointer_cast<const Planet>(object)) {
+    if (std::shared_ptr<const Planet> p = std::dynamic_pointer_cast<const Planet>(object)) {
         if (property_name == "PlanetType")
             return p->Type();
         else if (property_name == "OriginalType")
@@ -539,12 +539,12 @@ PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& cont
     IF_CURRENT_VALUE(PlanetEnvironment)
 
     if (property_name == "PlanetEnvironment") {
-        boost::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        std::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             ErrorLogger() << "Variable<PlanetEnvironment>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return INVALID_PLANET_ENVIRONMENT;
         }
-        if (boost::shared_ptr<const Planet> p = boost::dynamic_pointer_cast<const Planet>(object))
+        if (std::shared_ptr<const Planet> p = std::dynamic_pointer_cast<const Planet>(object))
             return p->EnvironmentForSpecies();
     }
 
@@ -566,7 +566,7 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
     IF_CURRENT_VALUE(UniverseObjectType)
 
     if (property_name == "ObjectType") {
-        boost::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+        std::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
         if (!object) {
             ErrorLogger() << "Variable<UniverseObjectType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
             return INVALID_UNIVERSE_OBJECT_TYPE;
@@ -574,9 +574,9 @@ UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& co
         ObjectTypeVisitor v;
         if (object->Accept(v))
             return v.m_type;
-        else if (boost::dynamic_pointer_cast<const PopCenter>(object))
+        else if (std::dynamic_pointer_cast<const PopCenter>(object))
             return OBJ_POP_CENTER;
-        else if (boost::dynamic_pointer_cast<const ResourceCenter>(object))
+        else if (std::dynamic_pointer_cast<const ResourceCenter>(object))
             return OBJ_PROD_CENTER;
     }
 
@@ -597,13 +597,13 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
 
     IF_CURRENT_VALUE(StarType)
 
-    boost::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    std::shared_ptr<const UniverseObject> object = FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<StarType>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
         return INVALID_STAR_TYPE;
     }
 
-    if (boost::shared_ptr<const System> s = boost::dynamic_pointer_cast<const System>(object)) {
+    if (std::shared_ptr<const System> s = std::dynamic_pointer_cast<const System>(object)) {
         if (property_name == "StarType")
             return s->GetStarType();
         else if (property_name == "NextOlderStarType")
@@ -650,7 +650,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return 0.0;
     }
 
-    boost::shared_ptr<const UniverseObject> object =
+    std::shared_ptr<const UniverseObject> object =
         FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<double>::Eval unable to follow reference: "
@@ -680,24 +680,24 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         return object->Y();
 
     } else if (property_name == "SizeAsDouble") {
-        if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
+        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->SizeAsInt();
 
     } else if (property_name == "DistanceFromOriginalType") {
-        if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
+        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->DistanceFromOriginalType();
 
     } else if (property_name == "NextTurnPopGrowth") {
-        if (boost::shared_ptr<const PopCenter> pop = boost::dynamic_pointer_cast<const PopCenter>(object))
+        if (std::shared_ptr<const PopCenter> pop = std::dynamic_pointer_cast<const PopCenter>(object))
             return pop->NextTurnPopGrowth();
 
     } else if (property_name == "CurrentTurn") {
         return CurrentTurn();
 
     } else if (property_name == "Attack") {
-        if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->Damage();
-        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->TotalWeaponsDamage();
 
     } else if (property_name == "PropagatedSupplyRange") {
@@ -759,7 +759,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return 0;
     }
 
-    boost::shared_ptr<const UniverseObject> object =
+    std::shared_ptr<const UniverseObject> object =
         FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<int>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
@@ -784,51 +784,51 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return object->AgeInTurns();
 
     } else if (property_name == "TurnsSinceFocusChange") {
-        if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
+        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->TurnsSinceFocusChange();
         else
             return 0;
 
     } else if (property_name == "ProducedByEmpireID") {
-        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->ProducedByEmpireID();
-        else if (boost::shared_ptr<const Building> building = boost::dynamic_pointer_cast<const Building>(object))
+        else if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(object))
             return building->ProducedByEmpireID();
         else
             return ALL_EMPIRES;
 
     } else if (property_name == "ArrivedOnTurn") {
-        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->ArrivedOnTurn();
         else
             return INVALID_GAME_TURN;
 
     } else if (property_name == "DesignID") {
-        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->DesignID();
         else
             return ShipDesign::INVALID_DESIGN_ID;
 
     } else if (property_name == "SpeciesID") {
-        if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
+        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
-        else if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+        else if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return GetSpeciesManager().GetSpeciesID(ship->SpeciesName());
         else
             return -1;
 
     } else if (property_name == "FleetID") {
-        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->FleetID();
-        else if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+        else if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->ID();
         else
             return INVALID_OBJECT_ID;
 
     } else if (property_name == "PlanetID") {
-        if (boost::shared_ptr<const Building> building = boost::dynamic_pointer_cast<const Building>(object))
+        if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(object))
             return building->PlanetID();
-        else if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
+        else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->ID();
         else
             return INVALID_OBJECT_ID;
@@ -837,19 +837,19 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return object->SystemID();
 
     } else if (property_name == "FinalDestinationID") {
-        if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->FinalDestinationID();
         else
             return INVALID_OBJECT_ID;
 
     } else if (property_name == "NextSystemID") {
-        if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->NextSystemID();
         else
             return INVALID_OBJECT_ID;
 
     } else if (property_name == "PreviousSystemID") {
-        if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->PreviousSystemID();
         else
             return INVALID_OBJECT_ID;
@@ -861,38 +861,38 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         return GetUniverse().NearestSystemTo(object->X(), object->Y());
 
     } else if (property_name == "NumShips") {
-        if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->NumShips();
         else
             return 0;
 
     } else if (property_name == "NumStarlanes") {
-        if (boost::shared_ptr<const System> system = boost::dynamic_pointer_cast<const System>(object))
+        if (std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(object))
             return system->NumStarlanes();
         else
             return 0;
 
     } else if (property_name == "LastTurnBattleHere") {
-        if (boost::shared_ptr<const System> system = boost::dynamic_pointer_cast<const System>(object))
+        if (std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(object))
             return system->LastTurnBattleHere();
-        else if (boost::shared_ptr<const System> system = GetSystem(object->SystemID()))
+        else if (std::shared_ptr<const System> system = GetSystem(object->SystemID()))
             return system->LastTurnBattleHere();
         else
             return INVALID_GAME_TURN;
 
     } else if (property_name == "LastTurnActiveInBattle") {
-        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->LastTurnActiveInCombat();
         else
             return INVALID_GAME_TURN;
 
     } else if (property_name == "Orbit") {
-        if (boost::shared_ptr<const System> system = GetSystem(object->SystemID()))
+        if (std::shared_ptr<const System> system = GetSystem(object->SystemID()))
             return system->OrbitOfPlanet(object->ID());
         return -1;
 
     } else if (property_name == "ETA") {
-        if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(object))
+        if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
             return fleet->ETA().first;
         else
             return 0;
@@ -932,7 +932,7 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return "";
     }
 
-    boost::shared_ptr<const UniverseObject> object =
+    std::shared_ptr<const UniverseObject> object =
         FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
     if (!object) {
         ErrorLogger() << "Variable<std::string>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
@@ -958,24 +958,24 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
         return boost::lexical_cast<std::string>(object->ObjectType());
 
     } else if (property_name == "Species") {
-        if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
+        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->SpeciesName();
-        else if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
+        else if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->SpeciesName();
 
     } else if (property_name == "BuildingType") {
-        if (boost::shared_ptr<const Building> building = boost::dynamic_pointer_cast<const Building>(object))
+        if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(object))
             return building->BuildingTypeName();
 
     } else if (property_name == "Focus") {
-        if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
+        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->Focus();
 
     } else if (property_name == "PreferredFocus") {
         const Species* species = nullptr;
-        if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object)) {
+        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object)) {
             species = GetSpecies(planet->SpeciesName());
-        } else if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object)) {
+        } else if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object)) {
             species = GetSpecies(ship->SpeciesName());
         }
         if (species)
@@ -1042,7 +1042,7 @@ double Statistic<double>::Eval(const ScriptingContext& context) const
         return condition_matches.empty() ? 0.0 : 1.0;
 
     // evaluate property for each condition-matched object
-    std::map<boost::shared_ptr<const UniverseObject>, double> object_property_values;
+    std::map<std::shared_ptr<const UniverseObject>, double> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     return ReduceData(object_property_values);
@@ -1062,7 +1062,7 @@ int Statistic<int>::Eval(const ScriptingContext& context) const
         return condition_matches.empty() ? 0 : 1;
 
     // evaluate property for each condition-matched object
-    std::map<boost::shared_ptr<const UniverseObject>, int> object_property_values;
+    std::map<std::shared_ptr<const UniverseObject>, int> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     return ReduceData(object_property_values);
@@ -1083,7 +1083,7 @@ std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
         return "";
 
     // evaluate property for each condition-matched object
-    std::map<boost::shared_ptr<const UniverseObject>, std::string> object_property_values;
+    std::map<std::shared_ptr<const UniverseObject>, std::string> object_property_values;
     GetObjectPropertyValues(context, condition_matches, object_property_values);
 
     // count number of each result, tracking which has the most occurances
@@ -1091,7 +1091,7 @@ std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
     std::map<std::string, unsigned int>::const_iterator most_common_property_value_it = histogram.begin();
     unsigned int max_seen(0);
 
-    for (const std::map<boost::shared_ptr<const UniverseObject>, std::string>::value_type& entry : object_property_values) {
+    for (const std::map<std::shared_ptr<const UniverseObject>, std::string>::value_type& entry : object_property_values) {
         const std::string& property_value = entry.second;
 
         std::map<std::string, unsigned int>::iterator hist_it = histogram.find(property_value);
@@ -1761,14 +1761,14 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
             object1_id = m_int_ref1->Eval(context);
-        boost::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+        std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
         if (!obj1)
             return 0.0;
 
         int object2_id = INVALID_OBJECT_ID;
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
-        boost::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+        std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
         if (!obj2)
             return 0.0;
 
@@ -2348,7 +2348,7 @@ std::string NameLookup::Eval(const ScriptingContext& context) const {
 
     switch (m_lookup_type) {
     case OBJECT_NAME: {
-        boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_value_ref->Eval(context));
+        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_value_ref->Eval(context));
         return obj ? obj->Name() : "";
         break;
     }

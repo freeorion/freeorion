@@ -44,7 +44,7 @@ class GG_API GroupBox : public Wnd
 public:
     /** \name Structors */ ///@{
     /** Height is determined from the font and point size used. */
-    GroupBox(X x, Y y, X w, Y h, const std::string& label, const boost::shared_ptr<Font>& font, Clr color,
+    GroupBox(X x, Y y, X w, Y h, const std::string& label, const std::shared_ptr<Font>& font, Clr color,
              Clr text_color = CLR_BLACK, Clr interior = CLR_ZERO, Flags<WndFlag> flags = NO_WND_FLAGS);
     //@}
 
@@ -91,7 +91,7 @@ private:
     Clr                     m_color;      ///< Color of box frame
     Clr                     m_text_color; ///< Color of label text
     Clr                     m_int_color;  ///< Color of background inside box
-    boost::shared_ptr<Font> m_font;
+    std::shared_ptr<Font> m_font;
     TextControl*            m_label;
     bool                    m_set_client_corners_equal_to_box_corners;
 };

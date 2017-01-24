@@ -80,7 +80,7 @@ void Tech::Init() {
     if (m_research_turns)
         m_research_turns->SetTopLevelContent(m_name);
 
-    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects)
+    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects)
     { effect->SetTopLevelContent(m_name); }
 }
 
@@ -132,7 +132,7 @@ std::string Tech::Dump() const {
         } else {
             retval += DumpIndent() + "effectsgroups = [\n";
             ++g_indent;
-            for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+            for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
                 retval += effect->Dump();
             }
             --g_indent;
@@ -145,20 +145,20 @@ std::string Tech::Dump() const {
 }
 
 namespace {
-    boost::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
+    std::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return boost::shared_ptr<const UniverseObject>();
+            return std::shared_ptr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
+        std::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (boost::shared_ptr<const UniverseObject> obj : Objects()) {
+            for (std::shared_ptr<const UniverseObject> obj : Objects()) {
                 if (obj->OwnedBy(empire_id)) {
                     source = obj;
                     break;
@@ -180,7 +180,7 @@ float Tech::ResearchCost(int empire_id) const {
         return 999999.9f;
 
     } else {
-        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_research_cost->SourceInvariant())
             return 999999.9f;
 
@@ -203,7 +203,7 @@ int Tech::ResearchTime(int empire_id) const {
         return 9999;
 
     } else {
-        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_research_turns->SourceInvariant())
             return 9999;
 

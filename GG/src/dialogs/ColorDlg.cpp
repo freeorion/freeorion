@@ -383,7 +383,7 @@ void ValuePicker::SetValueFromPt(Pt pt)
 
 // ColorDlg::ColorButton
 ColorDlg::ColorButton::ColorButton(const Clr& color) :
-    Button("", boost::shared_ptr<Font>(), color),
+    Button("", std::shared_ptr<Font>(), color),
     m_represented_color(CLR_BLACK)
 {}
 
@@ -502,7 +502,7 @@ void ColorDlg::ColorButtonClickFunctor::operator()()
 std::vector<Clr> ColorDlg::s_custom_colors;
 const std::size_t ColorDlg::INVALID_COLOR_BUTTON = std::numeric_limits<std::size_t>::max();
 
-ColorDlg::ColorDlg(X x, Y y, Clr original_color, const boost::shared_ptr<Font>& font,
+ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& font,
                    Clr dialog_color, Clr border_color, Clr text_color/* = CLR_BLACK*/) :
     Wnd(x, y, X(315), Y(300), INTERACTIVE | DRAGABLE | MODAL),
     m_original_color(original_color),
@@ -551,12 +551,12 @@ void ColorDlg::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> m
         CancelClicked();
 }
 
-void ColorDlg::Init(const boost::shared_ptr<Font>& font)
+void ColorDlg::Init(const std::shared_ptr<Font>& font)
 {
     m_current_color = m_original_color_specified ? Convert(m_original_color) : Convert(CLR_BLACK);
     Clr color = Convert(m_current_color);
 
-    boost::shared_ptr<StyleFactory> style = GetStyleFactory();
+    std::shared_ptr<StyleFactory> style = GetStyleFactory();
 
     const int COLOR_BUTTON_ROWS = 4;
     const int COLOR_BUTTON_COLS = 5;

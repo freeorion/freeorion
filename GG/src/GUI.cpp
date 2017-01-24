@@ -202,8 +202,9 @@ struct GG::GUIImpl
     Pt           m_wnd_resize_offset;     // offset from the cursor of either the upper-left or lower-right corner of the GUI window currently being resized
     WndRegion    m_wnd_region;            // window region currently being dragged or clicked; for non-frame windows, this will always be WR_NONE
 
-    boost::shared_ptr<BrowseInfoWnd>
-                 m_browse_info_wnd;       // the current browse info window, if any
+    /** The current browse info window, if any. */
+    std::shared_ptr<BrowseInfoWnd> m_browse_info_wnd;
+
     int          m_browse_info_mode;      // the current browse info mode (only valid if browse_info_wnd is non-null)
     Wnd*         m_browse_target;         // the current browse info target
 
@@ -216,8 +217,8 @@ struct GG::GUIImpl
     std::set<std::pair<Key, Flags<ModKey> > >
                  m_accelerators;          // the keyboard accelerators
 
-    std::map<std::pair<Key, Flags<ModKey> >, boost::shared_ptr<GUI::AcceleratorSignalType> >
-                 m_accelerator_sigs;      // the signals emitted by the keyboard accelerators
+    /** The signals emitted by the keyboard accelerators. */
+    std::map<std::pair<Key, Flags<ModKey>>, std::shared_ptr<GUI::AcceleratorSignalType>> m_accelerator_sigs;
 
     bool         m_mouse_lr_swap;         // treat left and right mouse events as each other
     std::map<Key, Key>
@@ -234,9 +235,9 @@ struct GG::GUIImpl
     int          m_double_click_start_time;// the time from which we started measuring double_click_time, in ms
     int          m_double_click_time;     // time elapsed since last click, in ms
 
-    boost::shared_ptr<StyleFactory> m_style_factory;
+    std::shared_ptr<StyleFactory> m_style_factory;
     bool                            m_render_cursor;
-    boost::shared_ptr<Cursor>       m_cursor;
+    std::shared_ptr<Cursor> m_cursor;
 
     std::set<Timer*>  m_timers;
 
@@ -782,7 +783,7 @@ void GUIImpl::ClearState()
 
 // static member(s)
 GUI*                       GUI::s_gui = nullptr;
-boost::shared_ptr<GUIImpl> GUI::s_impl;
+std::shared_ptr<GUIImpl> GUI::s_impl;
 
 // member functions
 GUI::GUI(const std::string& app_name)
@@ -1044,13 +1045,13 @@ bool GUI::ContainsWord(const std::string& str, const std::string& word) const
     return false;
 }
 
-const boost::shared_ptr<StyleFactory>& GUI::GetStyleFactory() const
+const std::shared_ptr<StyleFactory>& GUI::GetStyleFactory() const
 { return s_impl->m_style_factory; }
 
 bool GUI::RenderCursor() const
 { return s_impl->m_render_cursor; }
 
-const boost::shared_ptr<Cursor>& GUI::GetCursor() const
+const std::shared_ptr<Cursor>& GUI::GetCursor() const
 { return s_impl->m_cursor; }
 
 GUI::const_accel_iterator GUI::accel_begin() const
@@ -1061,7 +1062,7 @@ GUI::const_accel_iterator GUI::accel_end() const
 
 GUI::AcceleratorSignalType& GUI::AcceleratorSignal(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/) const
 {
-    boost::shared_ptr<AcceleratorSignalType>& sig_ptr = s_impl->m_accelerator_sigs[std::make_pair(key, mod_keys)];
+    std::shared_ptr<AcceleratorSignalType>& sig_ptr = s_impl->m_accelerator_sigs[std::make_pair(key, mod_keys)];
     if (!sig_ptr)
         sig_ptr.reset(new AcceleratorSignalType());
     if (INSTRUMENT_ALL_SIGNALS)
@@ -1286,8 +1287,8 @@ void GUI::MoveUp(Wnd* wnd)
 void GUI::MoveDown(Wnd* wnd)
 { if (wnd) s_impl->m_zlist.MoveDown(wnd); }
 
-boost::shared_ptr<ModalEventPump> GUI::CreateModalEventPump(bool& done)
-{ return boost::shared_ptr<ModalEventPump>(new ModalEventPump(done)); }
+std::shared_ptr<ModalEventPump> GUI::CreateModalEventPump(bool& done)
+{ return std::shared_ptr<ModalEventPump>(new ModalEventPump(done)); }
 
 void GUI::RegisterDragDropWnd(Wnd* wnd, const Pt& offset, Wnd* originating_wnd)
 {
@@ -1382,16 +1383,16 @@ void GUI::SetMouseLRSwapped(bool swapped/* = true*/)
 void GUI::SetKeyMap(const std::map<Key, Key>& key_map)
 { s_impl->m_key_map = key_map; }
 
-boost::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts)
+std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts)
 { return GetFontManager().GetFont(font_filename, pts); }
 
-boost::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
-                                     const std::vector<unsigned char>& file_contents)
+std::shared_ptr<Font> GUI::GetFont(const std::string& font_filename, unsigned int pts,
+                                   const std::vector<unsigned char>& file_contents)
 { return GetFontManager().GetFont(font_filename, pts, file_contents); }
 
-boost::shared_ptr<Font> GUI::GetFont(const boost::shared_ptr<Font>& font, unsigned int pts)
+std::shared_ptr<Font> GUI::GetFont(const std::shared_ptr<Font>& font, unsigned int pts)
 {
-    boost::shared_ptr<Font> retval;
+    std::shared_ptr<Font> retval;
     if (font->FontName() == StyleFactory::DefaultFontName()) {
         retval = GetStyleFactory()->DefaultFont(pts);
     } else {
@@ -1405,19 +1406,19 @@ boost::shared_ptr<Font> GUI::GetFont(const boost::shared_ptr<Font>& font, unsign
 void GUI::FreeFont(const std::string& font_filename, unsigned int pts)
 { GetFontManager().FreeFont(font_filename, pts); }
 
-boost::shared_ptr<Texture> GUI::StoreTexture(Texture* texture, const std::string& texture_name)
+std::shared_ptr<Texture> GUI::StoreTexture(Texture* texture, const std::string& texture_name)
 { return GetTextureManager().StoreTexture(texture, texture_name); }
 
-boost::shared_ptr<Texture> GUI::StoreTexture(const boost::shared_ptr<Texture>& texture, const std::string& texture_name)
+std::shared_ptr<Texture> GUI::StoreTexture(const std::shared_ptr<Texture>& texture, const std::string& texture_name)
 { return GetTextureManager().StoreTexture(texture, texture_name); }
 
-boost::shared_ptr<Texture> GUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
+std::shared_ptr<Texture> GUI::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 { return GetTextureManager().GetTexture(path, mipmap); }
 
 void GUI::FreeTexture(const boost::filesystem::path& path)
 { GetTextureManager().FreeTexture(path); }
 
-void GUI::SetStyleFactory(const boost::shared_ptr<StyleFactory>& factory)
+void GUI::SetStyleFactory(const std::shared_ptr<StyleFactory>& factory)
 {
     s_impl->m_style_factory = factory;
     if (!s_impl->m_style_factory)
@@ -1427,7 +1428,7 @@ void GUI::SetStyleFactory(const boost::shared_ptr<StyleFactory>& factory)
 void GUI::RenderCursor(bool render)
 { s_impl->m_render_cursor = render; }
 
-void GUI::SetCursor(const boost::shared_ptr<Cursor>& cursor)
+void GUI::SetCursor(const std::shared_ptr<Cursor>& cursor)
 { s_impl->m_cursor = cursor; }
 
 std::string GUI::ClipboardText() const

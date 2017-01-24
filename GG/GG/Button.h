@@ -61,7 +61,7 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    Button(const std::string& str, const boost::shared_ptr<Font>& font, Clr color,
+    Button(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
            Clr text_color = CLR_BLACK, Flags<WndFlag> flags = INTERACTIVE);
     //@}
 
@@ -164,8 +164,8 @@ public:
     //@}
 
     /** \name Structors */ ///@{
-    StateButton(const std::string& str, const boost::shared_ptr<Font>& font, Flags<TextFormat> format,
-                Clr color, boost::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
+    StateButton(const std::string& str, const std::shared_ptr<Font>& font, Flags<TextFormat> format,
+                Clr color, std::shared_ptr<StateButtonRepresenter> representer, Clr text_color = CLR_BLACK); ///< Ctor
     //@}
 
     /** \name Accessors */ ///@{
@@ -207,7 +207,8 @@ protected:
     //@}
 
 private:
-    boost::shared_ptr<StateButtonRepresenter> m_representer;
+    std::shared_ptr<StateButtonRepresenter> m_representer;
+
     TextControl*      m_label;       ///< Label used to display text
 
     ButtonState       m_state;       ///< Button is always in exactly one of the ButtonState states above

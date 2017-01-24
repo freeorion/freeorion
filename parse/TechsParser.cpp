@@ -14,7 +14,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<ItemSpec>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::set<std::string>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
     inline ostream& operator<<(ostream& os, const Tech::TechInfo&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, TechCategory*>&) { return os; }
 }
@@ -201,7 +201,7 @@ namespace {
                 Tech::TechInfo,
                 std::set<std::string>,
                 std::vector<ItemSpec>,
-                std::vector<boost::shared_ptr<Effect::EffectsGroup> >,
+                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
                 std::string
             >,
             parse::skipper_type

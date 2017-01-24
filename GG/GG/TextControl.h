@@ -71,7 +71,7 @@ public:
 
     /** \name Structors */ ///@{
     /** Ctor. */
-    TextControl(X x, Y y, X w, Y h, const std::string& str, const boost::shared_ptr<Font>& font,
+    TextControl(X x, Y y, X w, Y h, const std::string& str, const std::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
 
@@ -81,8 +81,8 @@ public:
      Font::ExpensiveParseFromTextToTextElements() will not be called on \p str.  Hence this
      constructor is much faster than the first constructor.*/
     TextControl(X x, Y y, X w, Y h, const std::string& str,
-                const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements,
-                const boost::shared_ptr<Font>& font,
+                const std::vector<std::shared_ptr<Font::TextElement>>&text_elements,
+                const std::shared_ptr<Font>& font,
                 Clr color = CLR_BLACK, Flags<TextFormat> format = FORMAT_NONE,
                 Flags<WndFlag> flags = NO_WND_FLAGS);
 
@@ -216,7 +216,7 @@ public:
         from examining \p text_elements then it will return without changing the TextControl.
     */
     virtual void SetText(const std::string& str,
-                         const std::vector<boost::shared_ptr<Font::TextElement> >&text_elements);
+                         const std::vector<std::shared_ptr<Font::TextElement>>&text_elements);
 
     /** Change TextControl's text to replace the text at templated \p targ_offset with \p new_text.
 
@@ -246,10 +246,10 @@ public:
     void ChangeTemplatedText(const std::string& new_text, size_t targ_offset);
 
     /** Returns the Font used by this TextControl to render its text. */
-    const boost::shared_ptr<Font>& GetFont() const;
+    const std::shared_ptr<Font>& GetFont() const;
 
     /** Sets the Font used by this TextControl to render its text. */
-    void         SetFont(boost::shared_ptr<Font> font);
+    void SetFont(std::shared_ptr<Font> font);
 
     /** Sets the text format; ensures that the flags are sane. */
     void         SetTextFormat(Flags<TextFormat> format);
@@ -331,11 +331,10 @@ private:
     Clr                         m_text_color;  ///< the color of the text itself (may differ from GG::Control::m_color)
     bool                        m_clip_text;
     bool                        m_set_min_size;
-    std::vector<boost::shared_ptr<Font::TextElement> >
-                                m_text_elements;
+    std::vector<std::shared_ptr<Font::TextElement>> m_text_elements;
     std::vector<Font::LineData> m_line_data;
     CPSize                      m_code_points;
-    boost::shared_ptr<Font>     m_font;
+    std::shared_ptr<Font> m_font;
     Pt                          m_text_ul;     ///< stored relative to the control's UpperLeft()
     Pt                          m_text_lr;     ///< stored relative to the control's UpperLeft()
     Font::RenderCache*          m_render_cache;///< Cache much of text rendering.

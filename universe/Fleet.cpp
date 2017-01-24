@@ -40,14 +40,14 @@ namespace {
                 if (next_it == end)
                     break;  // current system is the last on the route, so don't need to add any additional distance.
 
-                boost::shared_ptr<const System> cur_sys = GetSystem(*it);
+                std::shared_ptr<const System> cur_sys = GetSystem(*it);
 
                 if (!cur_sys) {
                     ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *it;
                     return distance;
                 }
 
-                boost::shared_ptr<const System> next_sys = GetSystem(*next_it);
+                std::shared_ptr<const System> next_sys = GetSystem(*next_it);
                 if (!next_sys) {
                     ErrorLogger() << "Fleet::SetRoute() couldn't get system with id " << *next_it;
                     return distance;
@@ -61,18 +61,18 @@ namespace {
         }
     }
 
-    void MoveFleetWithShips(boost::shared_ptr<Fleet>& fleet, double x, double y){
+    void MoveFleetWithShips(std::shared_ptr<Fleet>& fleet, double x, double y){
         fleet->MoveTo(x, y);
 
-        for (boost::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+        for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             ship->MoveTo(x, y);
         }
     }
 
-    void InsertFleetWithShips(boost::shared_ptr<Fleet>& fleet, boost::shared_ptr<System>& system){
+    void InsertFleetWithShips(std::shared_ptr<Fleet>& fleet, std::shared_ptr<System>& system){
         system->Insert(fleet);
 
-        for (boost::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
+        for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(fleet->ShipIDs())) {
             system->Insert(ship);
         }
     }
@@ -108,10 +108,10 @@ Fleet* Fleet::Clone(int empire_id) const {
     return retval;
 }
 
-void Fleet::Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id) {
+void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id) {
     if (copied_object.get() == this)
         return;
-    boost::shared_ptr<const Fleet> copied_fleet = boost::dynamic_pointer_cast<const Fleet>(copied_object);
+    std::shared_ptr<const Fleet> copied_fleet = std::dynamic_pointer_cast<const Fleet>(copied_object);
     if (!copied_fleet) {
         ErrorLogger() << "Fleet::Copy passed an object that wasn't a Fleet";
         return;
@@ -265,7 +265,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
     //    DebugLogger() << "Fleet::MovePath ... " << waypoint;
     //DebugLogger() << "Fleet::MovePath END of Route ";
 
-    // get iterator pointing to boost::shared_ptr<System> on route that is the first after where this fleet is currently.
+    // get iterator pointing to std::shared_ptr<System> on route that is the first after where this fleet is currently.
     // if this fleet is in a system, the iterator will point to the system after the current in the route
     // if this fleet is not in a system, the iterator will point to the first system in the route
     std::list<int>::const_iterator route_it = route.begin();
@@ -276,9 +276,9 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
 
     // get current, previous and next systems of fleet
-    boost::shared_ptr<const System> cur_system = GetSystem(this->SystemID());         // may be 0
-    boost::shared_ptr<const System> prev_system = GetSystem(this->PreviousSystemID());// may be 0 if this fleet is not moving or ordered to move
-    boost::shared_ptr<const System> next_system = GetSystem(*route_it);               // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
+    std::shared_ptr<const System> cur_system = GetSystem(this->SystemID());         // may be 0
+    std::shared_ptr<const System> prev_system = GetSystem(this->PreviousSystemID());// may be 0 if this fleet is not moving or ordered to move
+    std::shared_ptr<const System> next_system = GetSystem(*route_it);               // can't use this->NextSystemID() because this fleet may not be moving and may not have a next system. this might occur when a fleet is in a system, not ordered to move or ordered to move to a system, but a projected fleet move line is being calculated to a different system
     if (!next_system) {
         ErrorLogger() << "Fleet::MovePath couldn't get next system with id " << *route_it << " for this fleet " << this->Name();
         return retval;
@@ -346,7 +346,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
         // Make sure that there actually still is a starlane between the two systems
         // we are between
-        boost::shared_ptr<const System> prev_or_cur;
+        std::shared_ptr<const System> prev_or_cur;
         if (cur_system) {
             prev_or_cur = cur_system;
         } else if (prev_system) {
@@ -415,7 +415,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             // if moved away any distance from a system, are no longer in that system
             if (cur_system && dist_travelled_this_step >= FLEET_MOVEMENT_EPSILON) {
                 prev_system = cur_system;
-                cur_system = boost::shared_ptr<System>();
+                cur_system = std::shared_ptr<System>();
             }
         }
 
@@ -572,7 +572,7 @@ float Fleet::Fuel() const {
     float fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
 
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::Fuel skipping ship with no fuel meter";
@@ -598,7 +598,7 @@ float Fleet::MaxFuel() const {
     float max_fuel = Meter::LARGE_VALUE;
     bool is_fleet_scrapped = true;
 
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         const Meter* meter = ship->UniverseObject::GetMeter(METER_MAX_FUEL);
         if (!meter) {
             ErrorLogger() << "Fleet::MaxFuel skipping ship with no max fuel meter";
@@ -624,7 +624,7 @@ int Fleet::FinalDestinationID() const {
 } 
 
 bool Fleet::HasMonsters() const {
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->IsMonster())
             return true;
     }
@@ -632,7 +632,7 @@ bool Fleet::HasMonsters() const {
 }
 
 bool Fleet::HasArmedShips() const {
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->IsArmed())
             return true;
     }
@@ -640,7 +640,7 @@ bool Fleet::HasArmedShips() const {
 }
 
 bool Fleet::HasFighterShips() const {
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->HasFighters())
             return true;
     }
@@ -648,7 +648,7 @@ bool Fleet::HasFighterShips() const {
 }
 
 bool Fleet::HasColonyShips() const {
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->CanColonize())
             if (const ShipDesign* design = ship->Design())
                 if (design->ColonyCapacity() > 0.0)
@@ -658,7 +658,7 @@ bool Fleet::HasColonyShips() const {
 }
 
 bool Fleet::HasOutpostShips() const {
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->CanColonize())
             if (const ShipDesign* design = ship->Design())
                 if (design->ColonyCapacity() == 0.0)
@@ -668,7 +668,7 @@ bool Fleet::HasOutpostShips() const {
 }
 
 bool Fleet::HasTroopShips() const {
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->HasTroops())
             return true;
     }
@@ -676,7 +676,7 @@ bool Fleet::HasTroopShips() const {
 }
 
 bool Fleet::HasShipsOrderedScrapped() const {
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (ship->OrderedScrapped())
             return true;
     }
@@ -684,7 +684,7 @@ bool Fleet::HasShipsOrderedScrapped() const {
 }
 
 bool Fleet::HasShipsWithoutScrapOrders() const {
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         if (!ship->OrderedScrapped())
             return true;
     }
@@ -700,7 +700,7 @@ float Fleet::ResourceOutput(ResourceType type) const {
         return output;
 
     // determine resource output of each ship in this fleet
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(m_ships)) {
         output += ship->CurrentMeterValue(meter_type);
     }
     return output;
@@ -709,8 +709,8 @@ float Fleet::ResourceOutput(ResourceType type) const {
 bool Fleet::UnknownRoute() const
 { return m_travel_route.size() == 1 && m_travel_route.front() == INVALID_OBJECT_ID; }
 
-boost::shared_ptr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
-{ return visitor.Visit(boost::const_pointer_cast<Fleet>(boost::static_pointer_cast<const Fleet>(shared_from_this()))); }
+std::shared_ptr<UniverseObject> Fleet::Accept(const UniverseObjectVisitor& visitor) const
+{ return visitor.Visit(std::const_pointer_cast<Fleet>(std::static_pointer_cast<const Fleet>(shared_from_this()))); }
 
 void Fleet::SetRoute(const std::list<int>& route) {
     //DebugLogger() << "Fleet::SetRoute() ";
@@ -739,7 +739,7 @@ void Fleet::SetRoute(const std::list<int>& route) {
     if (!m_travel_route.empty()) {
         // if we're already moving, add in the distance from where we are to the first system in the route
         if (SystemID() != route.front()) {
-            boost::shared_ptr<const System> starting_system = GetSystem(route.front());
+            std::shared_ptr<const System> starting_system = GetSystem(route.front());
             if (!starting_system) {
                 ErrorLogger() << "Fleet::SetRoute couldn't get system with id " << route.front();
                 return;
@@ -803,9 +803,9 @@ void Fleet::SetNextAndPreviousSystems(int next, int prev) {
 void Fleet::MovementPhase() {
     //DebugLogger() << "Fleet::MovementPhase this: " << this->Name() << " id: " << this->ID();
 
-    boost::shared_ptr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(shared_from_this());
+    std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(shared_from_this());
     if (fleet.get() != this) {
-        ErrorLogger() << "Fleet::MovementPhase was passed a boost::shared_ptr different from itself.";
+        ErrorLogger() << "Fleet::MovementPhase was passed a std::shared_ptr different from itself.";
         return;
     }
 
@@ -815,18 +815,18 @@ void Fleet::MovementPhase() {
         supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(),
                                            empire->SupplyUnobstructedSystems().end());
 
-    std::vector<boost::shared_ptr<Ship> > ships = Objects().FindObjects<Ship>(m_ships);
+    std::vector<std::shared_ptr<Ship>> ships = Objects().FindObjects<Ship>(m_ships);
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
     if (GetSupplyManager().SystemHasFleetSupply(fleet->SystemID(), fleet->Owner())) {
-        for (boost::shared_ptr<Ship> ship : ships) {
+        for (std::shared_ptr<Ship> ship : ships) {
             ship->Resupply();
         }
     }
 
-    boost::shared_ptr<System> current_system = GetSystem(fleet->SystemID());
-    boost::shared_ptr<const System> initial_system = current_system;
+    std::shared_ptr<System> current_system = GetSystem(fleet->SystemID());
+    std::shared_ptr<const System> initial_system = current_system;
     std::list<MovePathNode> move_path = fleet->MovePath();
 
     // If the move path cannot lead to our destination,
@@ -879,7 +879,7 @@ void Fleet::MovementPhase() {
             //if (fleet->FinalDestinationID() == INVALID_OBJECT_ID ||
             //    fleet->FinalDestinationID() == fleet->SystemID())
             //{
-            //    for (boost::shared_ptr<Ship> ship : ships) {
+            //    for (std::shared_ptr<Ship> ship : ships) {
             //        if (Meter* fuel_meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
             //            fuel_meter->AddToCurrent(0.1001f);  // .0001 to prevent rounding down
             //            fuel_meter->BackPropagate();
@@ -897,7 +897,7 @@ void Fleet::MovementPhase() {
             // remove fleet and ships from system they are departing
             current_system->Remove(fleet->ID());
             fleet->SetSystem(INVALID_OBJECT_ID);
-            for (boost::shared_ptr<Ship> ship : ships) {
+            for (std::shared_ptr<Ship> ship : ships) {
                 current_system->Remove(ship->ID());
                 ship->SetSystem(INVALID_OBJECT_ID);
             }
@@ -916,7 +916,7 @@ void Fleet::MovementPhase() {
     for (it = move_path.begin(); it != move_path.end(); ++it) {
         next_it = it;   ++next_it;
 
-        boost::shared_ptr<System> system = GetSystem(it->object_id);
+        std::shared_ptr<System> system = GetSystem(it->object_id);
 
         // is this system the last node reached this turn?  either it's an end of turn node,
         // or there are no more nodes after this one on path
@@ -948,7 +948,7 @@ void Fleet::MovementPhase() {
             if (resupply_here) {
                 //DebugLogger() << " ... node has fuel supply.  consumed fuel for movement reset to 0 and fleet resupplied";
                 fuel_consumed = 0.0f;
-                for (boost::shared_ptr<Ship> ship : ships) {
+                for (std::shared_ptr<Ship> ship : ships) {
                     ship->Resupply();
                 }
             }
@@ -1005,7 +1005,7 @@ void Fleet::MovementPhase() {
 
     // consume fuel from ships in fleet
     if (fuel_consumed > 0.0f) {
-        for (boost::shared_ptr<Ship> ship : ships) {
+        for (std::shared_ptr<Ship> ship : ships) {
             if (Meter* meter = ship->UniverseObject::GetMeter(METER_FUEL)) {
                 meter->AddToCurrent(-fuel_consumed);
                 meter->BackPropagate();
@@ -1096,7 +1096,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
             ErrorLogger() << "Fleet::CalculateRoute got empty route from ShortestPath";
             return;
         }
-        boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(sys_list1.front());
+        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(sys_list1.front());
         if (!obj) {
             ErrorLogger() << "Fleet::CalculateRoute couldn't get path start object with id " << path1.first.front();
             return;
@@ -1169,7 +1169,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     // find which empires have blockading aggressive armed ships in system;
     // fleets that just arrived do not blockade by themselves, but may
     // reinforce a preexisting blockade, and may possibly contribute to detection
-    boost::shared_ptr<System> current_system = GetSystem(start_system_id);
+    std::shared_ptr<System> current_system = GetSystem(start_system_id);
     if (!current_system) {
         DebugLogger() << "Fleet::BlockadedAtSystem fleet " << ID() << " considering system (" << start_system_id << ") but can't retrieve system copy";
         return false;
@@ -1188,19 +1188,19 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     float lowest_ship_stealth = 99999.9f; // arbitrary large number. actual stealth of ships should be less than this...
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(this->ShipIDs())) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(this->ShipIDs())) {
         if (lowest_ship_stealth > ship->CurrentMeterValue(METER_STEALTH))
             lowest_ship_stealth = ship->CurrentMeterValue(METER_STEALTH);
     }
 
     float monster_detection = 0.0f;
-    std::vector<boost::shared_ptr<const Fleet> > fleets =
+    std::vector<std::shared_ptr<const Fleet>> fleets =
         Objects().FindObjects<const Fleet>(current_system->FleetIDs());
-    for (boost::shared_ptr<const Fleet> fleet : fleets) {
+    for (std::shared_ptr<const Fleet> fleet : fleets) {
         if (!fleet->Unowned())
             continue;
 
-        for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
+        for (std::shared_ptr<const Ship> ship : Objects().FindObjects<const Ship>(fleet->ShipIDs())) {
             float cur_detection = ship->CurrentMeterValue(METER_DETECTION);
             if (cur_detection >= monster_detection)
                 monster_detection = cur_detection;
@@ -1208,7 +1208,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
     }
 
     bool can_be_blockaded = false;
-    for (boost::shared_ptr<const Fleet> fleet : fleets) {
+    for (std::shared_ptr<const Fleet> fleet : fleets) {
         if (fleet->NextSystemID() != INVALID_OBJECT_ID) //fleets trying to leave this turn can't blockade pre-combat.
             continue;
         bool unrestricted = (fleet->m_arrival_starlane == start_system_id);
@@ -1243,7 +1243,7 @@ float Fleet::Speed() const {
     bool isFleetScrapped = true;
     float retval = MAX_SHIP_SPEED;  // max speed no ship can go faster than
     for (int ship_id : m_ships) {
-        if (boost::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 if (ship->Speed() < retval)
                     retval = ship->Speed();
@@ -1265,7 +1265,7 @@ float Fleet::Damage() const {
     bool isFleetScrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
-        if (boost::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 if (const ShipDesign* design = ship->Design()){
                     retval += design->Attack();
@@ -1288,7 +1288,7 @@ float Fleet::Structure() const {
     bool isFleetScrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
-        if (boost::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_STRUCTURE);
                 isFleetScrapped = false;
@@ -1309,7 +1309,7 @@ float Fleet::Shields() const {
     bool isFleetScrapped = true;
     float retval = 0.0f;
     for (int ship_id : m_ships) {
-        if (boost::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
             if (!ship->OrderedScrapped()) {
                 retval += ship->CurrentMeterValue(METER_SHIELD);
                 isFleetScrapped = false;
@@ -1354,14 +1354,14 @@ std::string Fleet::GenerateFleetName() {
     if (ID() == INVALID_OBJECT_ID)
         return UserString("NEW_FLEET_NAME_NO_NUMBER");
 
-    std::vector<boost::shared_ptr<const Ship>> ships;
+    std::vector<std::shared_ptr<const Ship>> ships;
     for (int ship_id : m_ships) {
-        if (boost::shared_ptr<const Ship> ship = GetShip(ship_id)) {
+        if (std::shared_ptr<const Ship> ship = GetShip(ship_id)) {
             ships.push_back(ship);
         }
     }
 
-    std::vector<boost::shared_ptr<const Ship>>::iterator it = ships.begin();
+    std::vector<std::shared_ptr<const Ship>>::iterator it = ships.begin();
 
     // TODO C++11 replace all of these loops with std::all_of
     bool all_monster(true);

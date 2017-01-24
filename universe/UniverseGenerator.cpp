@@ -137,7 +137,7 @@ namespace Delauney {
 
     /** runs a Delauney Triangulation routine on a set of 2D points extracted
       * from an array of systems returns the list of triangles produced */
-    std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<boost::shared_ptr<System>> &systems) {
+    std::list<Delauney::DTTriangle>* DelauneyTriangulate(std::vector<std::shared_ptr<System>> &systems) {
 
         int n, c, theSize, num, num2; // loop counters, storage for retreived size of a vector, temp storage
         std::list<Delauney::DTTriangle>::iterator itCur, itEnd;
@@ -156,7 +156,7 @@ namespace Delauney {
 
         // extract systems positions, and store in vector.  Can't use actual systems data since
         // systems have position limitations which would interfere with algorithm
-        for (boost::shared_ptr<System> system : systems) {
+        for (std::shared_ptr<System> system : systems) {
             points.push_back(Delauney::DTPoint(system->X(), system->Y()));
         }
 
@@ -463,7 +463,7 @@ namespace {
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
     void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray,
-                                    std::vector<boost::shared_ptr<System>> &systems)
+                                    std::vector<std::shared_ptr<System>> &systems)
     {
         // start and end systems of a new lane being considered, and end points of lanes that already exist with that
         // start at the start or destination of the new lane
@@ -635,7 +635,7 @@ namespace {
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
     void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray,
-                          std::vector<boost::shared_ptr<System>> &systems)
+                          std::vector<std::shared_ptr<System>> &systems)
     {
         // start and end systems of a new lane being considered, and end points of lanes that already exist with that start
         // at the start or destination of the new lane
@@ -740,7 +740,7 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
     std::set<int>::iterator laneSetIter, laneSetEnd, laneSetIter2, laneSetEnd2;
 
     // get systems
-    std::vector<boost::shared_ptr<System>> sys_vec = Objects().FindObjects<System>();
+    std::vector<std::shared_ptr<System>> sys_vec = Objects().FindObjects<System>();
     num_systems = sys_vec.size();  // (actually = number of systems + 1)
 
     // pass systems to Delauney Triangulation routine, getting array of triangles back
@@ -847,7 +847,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
 
     // check for each pair of meter types.  if both exist, set active
     // meter current value equal to target meter current value.
-    for (boost::shared_ptr<UniverseObject> object : object_map) {
+    for (std::shared_ptr<UniverseObject> object : object_map) {
         for (std::map<MeterType, MeterType>::value_type& entry : meters)
             if (Meter* meter = object->GetMeter(entry.first))
                 if (Meter* targetmax_meter = object->GetMeter(entry.second))
@@ -856,7 +856,7 @@ void SetActiveMetersToTargetMaxCurrentValues(ObjectMap& object_map) {
 }
 
 void SetNativePopulationValues(ObjectMap& object_map) {
-    for (boost::shared_ptr<UniverseObject> object : object_map) {
+    for (std::shared_ptr<UniverseObject> object : object_map) {
         Meter* meter = object->GetMeter(METER_POPULATION);
         Meter* targetmax_meter = object->GetMeter(METER_TARGET_POPULATION);
         // only applies to unowned planets
@@ -870,8 +870,8 @@ void SetNativePopulationValues(ObjectMap& object_map) {
 
 bool SetEmpireHomeworld(Empire* empire, int planet_id, std::string species_name) {
     // get home planet and system, check if they exist
-    boost::shared_ptr<Planet> home_planet = GetPlanet(planet_id);
-    boost::shared_ptr<System> home_system;
+    std::shared_ptr<Planet> home_planet = GetPlanet(planet_id);
+    std::shared_ptr<System> home_system;
     if (home_planet)
         home_system = GetSystem(home_planet->SystemID());
     if (!home_planet || !home_system) {

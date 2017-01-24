@@ -15,7 +15,7 @@ int main(int argc, char* argv[])
     const std::set<GG::UnicodeCharset> charsets_ = GG::UnicodeCharsetsToRender(message);
     const std::vector<GG::UnicodeCharset> charsets(charsets_.begin(), charsets_.end());
 
-    const boost::shared_ptr<GG::Font> font =
+    const std::shared_ptr<GG::Font> font =
     GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(12, &charsets[0], &charsets[0] + charsets.size());
 
     GG::Wnd* quit_dlg =

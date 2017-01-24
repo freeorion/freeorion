@@ -7,7 +7,7 @@
 //! A Simple resizable dialog with a single child that fills it.
 class TestDialog: public GG::Wnd{
 public:
-    TestDialog(GG::Wnd* child, const boost::shared_ptr<GG::Font>& font);
+    TestDialog(GG::Wnd* child, const std::shared_ptr<GG::Font>& font);
 
     virtual void Render();
 

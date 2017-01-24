@@ -78,7 +78,7 @@ Species::~Species()
 void Species::Init() {
     if (m_location)
         m_location->SetTopLevelContent(this->m_name);
-    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
         effect->SetTopLevelContent(m_name);
     }
 }
@@ -117,7 +117,7 @@ std::string Species::Dump() const {
     } else {
         retval += DumpIndent() + "effectsgroups = [\n";
         ++g_indent;
-        for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+        for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
             retval += effect->Dump();
         }
         --g_indent;
@@ -153,7 +153,7 @@ std::string Species::GameplayDescription() const {
 
     bool requires_separator = true;
 
-    for (boost::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
+    for (std::shared_ptr<Effect::EffectsGroup> effect : m_effects) {
         const std::string& description = effect->GetDescription();
         if (description.empty())
             continue;
@@ -519,14 +519,14 @@ void SpeciesManager::ClearSpeciesOpinions() {
 void SpeciesManager::UpdatePopulationCounter() {
     // ships of each species and design
     m_species_object_populations.clear();
-    for (std::map<int, boost::shared_ptr<UniverseObject>>::iterator obj_it = Objects().ExistingObjectsBegin();
+    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator obj_it = Objects().ExistingObjectsBegin();
          obj_it != Objects().ExistingObjectsEnd(); ++obj_it)
     {
-        boost::shared_ptr<UniverseObject> obj = obj_it->second;
+        std::shared_ptr<UniverseObject> obj = obj_it->second;
         if (obj->ObjectType() != OBJ_PLANET && obj->ObjectType() != OBJ_POP_CENTER)
             continue;
 
-        boost::shared_ptr<PopCenter> pop_center = boost::dynamic_pointer_cast<PopCenter>(obj);
+        std::shared_ptr<PopCenter> pop_center = std::dynamic_pointer_cast<PopCenter>(obj);
         if (!pop_center)
             continue;
 

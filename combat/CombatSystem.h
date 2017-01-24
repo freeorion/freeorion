@@ -19,7 +19,7 @@ public:
     /** \name Accessors */ //@{
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */
-    boost::shared_ptr<const System> GetSystem() const;
+    std::shared_ptr<const System> GetSystem() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -27,7 +27,7 @@ public:
 
     /** Returns System object in this CombatInfo's objects if one exists with
         id system_id. */
-    boost::shared_ptr<System> GetSystem();
+    std::shared_ptr<System> GetSystem();
 
     /** Reveal stealthed attacker to their target's empires. */
     void ForceAtLeastBasicVisibility(int attacker_id, int target_id);

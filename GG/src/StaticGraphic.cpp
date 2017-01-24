@@ -71,7 +71,7 @@ namespace {
 ////////////////////////////////////////////////
 // GG::StaticGraphic
 ////////////////////////////////////////////////
-StaticGraphic::StaticGraphic(const boost::shared_ptr<Texture>& texture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
+StaticGraphic::StaticGraphic(const std::shared_ptr<Texture>& texture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
                              Flags<WndFlag> flags/* = 0*/) :
     Control(X0, Y0, X1, Y1, flags),
     m_style(style)
@@ -165,7 +165,7 @@ void StaticGraphic::SetStyle(Flags<GraphicStyle> style)
     ValidateStyle();
 }
 
-void StaticGraphic::SetTexture(const boost::shared_ptr<Texture>& texture)
+void StaticGraphic::SetTexture(const std::shared_ptr<Texture>& texture)
 { SetTexture(SubTexture(texture, X0, Y0, texture->DefaultWidth(), texture->DefaultHeight())); }
 
 void StaticGraphic::SetTexture(const SubTexture& subtexture)

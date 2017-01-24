@@ -195,7 +195,7 @@ namespace {
     //////////////////////////////////
     class SitRepLinkText : public LinkText {
     public:
-        SitRepLinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const boost::shared_ptr<GG::Font>& font,
+        SitRepLinkText(GG::X x, GG::Y y, GG::X w, const std::string& str, const std::shared_ptr<GG::Font>& font,
                        GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, w, str, font, format, color) {}
 
@@ -281,7 +281,7 @@ namespace {
             int icon_dim = GetIconSize();
             std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
                 "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
-            boost::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
+            std::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
                 ClientUI::ArtDir() / icon_texture, true);
             m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
             AttachChild(m_icon);

@@ -50,7 +50,7 @@ Moderator::SetOwner::SetOwner(int object_id, int new_owner_empire_id) :
 {}
 
 void Moderator::SetOwner::Execute() const {
-    boost::shared_ptr<UniverseObject> obj = GetUniverseObject(m_object_id);
+    std::shared_ptr<UniverseObject> obj = GetUniverseObject(m_object_id);
     if (!obj) {
         ErrorLogger() << "Moderator::SetOwner::Execute couldn't get object with id: " << m_object_id;
         return;
@@ -80,12 +80,12 @@ Moderator::AddStarlane::AddStarlane(int system_1_id, int system_2_id) :
 {}
 
 void Moderator::AddStarlane::Execute() const {
-    boost::shared_ptr<System> sys1 = GetSystem(m_id_1);
+    std::shared_ptr<System> sys1 = GetSystem(m_id_1);
     if (!sys1) {
         ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
-    boost::shared_ptr<System> sys2 = GetSystem(m_id_2);
+    std::shared_ptr<System> sys2 = GetSystem(m_id_2);
     if (!sys2) {
         ErrorLogger() << "Moderator::AddStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
@@ -116,12 +116,12 @@ Moderator::RemoveStarlane::RemoveStarlane(int system_1_id, int system_2_id) :
 {}
 
 void Moderator::RemoveStarlane::Execute() const {
-    boost::shared_ptr<System> sys1 = GetSystem(m_id_1);
+    std::shared_ptr<System> sys1 = GetSystem(m_id_1);
     if (!sys1) {
         ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_1;
         return;
     }
-    boost::shared_ptr<System> sys2 = GetSystem(m_id_2);
+    std::shared_ptr<System> sys2 = GetSystem(m_id_2);
     if (!sys2) {
         ErrorLogger() << "Moderator::RemoveStarlane::Execute couldn't get system with id: " << m_id_2;
         return;
@@ -160,13 +160,13 @@ namespace {
             UserStringList("STAR_NAMES", star_names);
 
         const ObjectMap& objects = Objects();
-        std::vector<boost::shared_ptr<const System>> systems = objects.FindObjects<System>();
+        std::vector<std::shared_ptr<const System>> systems = objects.FindObjects<System>();
 
         // pick a name for the system
         for (const std::string& star_name : star_names) {
             // does an existing system have this name?
             bool dupe = false;
-            for (boost::shared_ptr<const System> system : systems) {
+            for (std::shared_ptr<const System> system : systems) {
                 if (system->Name() == star_name) {
                     dupe = true;
                     break;  // another system has this name. skip to next potential name.
@@ -180,7 +180,7 @@ namespace {
 }
 
 void Moderator::CreateSystem::Execute() const {
-    boost::shared_ptr<System> system = GetUniverse().CreateSystem(m_star_type, GenerateSystemName(), m_x, m_y);
+    std::shared_ptr<System> system = GetUniverse().CreateSystem(m_star_type, GenerateSystemName(), m_x, m_y);
     if (!system) {
         ErrorLogger() << "CreateSystem::Execute couldn't create system!";
         return;
@@ -213,7 +213,7 @@ Moderator::CreatePlanet::CreatePlanet(int system_id, PlanetType planet_type, Pla
 {}
 
 void Moderator::CreatePlanet::Execute() const {
-    boost::shared_ptr<System> location = GetSystem(m_system_id);
+    std::shared_ptr<System> location = GetSystem(m_system_id);
     if (!location) {
         ErrorLogger() << "CreatePlanet::Execute couldn't get a System object at which to create the planet";
         return;
@@ -226,14 +226,14 @@ void Moderator::CreatePlanet::Execute() const {
         return;
     }
 
-    boost::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(m_planet_type, m_planet_size);
+    std::shared_ptr<Planet> planet = GetUniverse().CreatePlanet(m_planet_type, m_planet_size);
     if (!planet) {
         ErrorLogger() << "CreatePlanet::Execute unable to create new Planet object";
         return;
     }
 
     int orbit = *(free_orbits.begin());
-    location->Insert(boost::shared_ptr<UniverseObject>(planet), orbit);
+    location->Insert(std::shared_ptr<UniverseObject>(planet), orbit);
 }
 
 std::string Moderator::CreatePlanet::Dump() const {

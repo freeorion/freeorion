@@ -1,16 +1,18 @@
 #ifndef _Object_Map_h_
 #define _Object_Map_h_
 
-#include <map>
-#include <vector>
-#include <set>
-#include <string>
 
-#include <boost/smart_ptr.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/type_traits/remove_const.hpp>
 
 #include "../util/Export.h"
+
+#include <map>
+#include <memory>
+#include <set>
+#include <string>
+#include <vector>
+
 
 struct UniverseObjectVisitor;
 
@@ -26,57 +28,63 @@ class Field;
 
 FO_COMMON_API extern const int ALL_EMPIRES;
 
+
+template<typename T>
+inline void UniverseObjectDeleter(T* o)
+{ delete o; }
+
+
 /** Contains a set of objects that make up a (known or complete) Universe. */
 class FO_COMMON_API ObjectMap {
 public:
     template <class T = UniverseObject>
-    struct iterator : private std::map<int, boost::shared_ptr<T> >::iterator {
-        iterator(const typename std::map<int, boost::shared_ptr<T> >::iterator& base, ObjectMap& owner) :
-            std::map<int, boost::shared_ptr<T> >::iterator(base),
+    struct iterator : private std::map<int, std::shared_ptr<T>>::iterator {
+        iterator(const typename std::map<int, std::shared_ptr<T>>::iterator& base, ObjectMap& owner) :
+            std::map<int, std::shared_ptr<T>>::iterator(base),
             m_owner(owner)
         { Refresh(); }
 
-        boost::shared_ptr<T> operator *() const
+        std::shared_ptr<T> operator *() const
         { return m_current_ptr; }
 
         // The result of this operator is not intended to be stored, so it's safe to
         // return a reference to an instance variable that's going to be soon overwritten.
-        boost::shared_ptr<T>& operator ->() const
+        std::shared_ptr<T>& operator ->() const
         { return m_current_ptr; }
 
         iterator& operator ++() {
-            std::map<int, boost::shared_ptr<T> >::iterator::operator++();
+            std::map<int, std::shared_ptr<T>>::iterator::operator++();
             Refresh();
             return *this;
         }
 
         iterator operator ++(int) {
-            iterator result = iterator(std::map<int, boost::shared_ptr<T> >::iterator::operator++(0), m_owner);
+            iterator result = iterator(std::map<int, std::shared_ptr<T>>::iterator::operator++(0), m_owner);
             Refresh();
             return result;
         }
 
         iterator& operator --() {
-            std::map<int, boost::shared_ptr<T> >::iterator::operator--();
+            std::map<int, std::shared_ptr<T>>::iterator::operator--();
             Refresh();
             return *this;
         }
 
         iterator operator --(int) {
-            iterator result = iterator(std::map<int, boost::shared_ptr<T> >::iterator::operator--(0), m_owner);
+            iterator result = iterator(std::map<int, std::shared_ptr<T>>::iterator::operator--(0), m_owner);
             Refresh();
             return result;
         }
 
         bool operator ==(const iterator& other) const
-        { return (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) == other); }
+        { return (typename std::map<int, std::shared_ptr<T>>::iterator(*this) == other); }
 
         bool operator !=(const iterator& other) const
-        { return (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) != other);}
+        { return (typename std::map<int, std::shared_ptr<T>>::iterator(*this) != other);}
 
     private:
         // 
-        mutable boost::shared_ptr<T> m_current_ptr;
+        mutable std::shared_ptr<T> m_current_ptr;
         ObjectMap& m_owner;
 
         // We always want m_current_ptr to be pointing to our parent iterator's
@@ -84,72 +92,72 @@ public:
         // return a "null" pointer.  We assume that we are dealing with valid
         // iterators in the range [begin(), end()].
         void Refresh() const {
-            if (typename std::map<int, boost::shared_ptr<T> >::iterator(*this) == (m_owner.Map<T>().end())) {
-                m_current_ptr = boost::shared_ptr<T>();
+            if (typename std::map<int, std::shared_ptr<T>>::iterator(*this) == (m_owner.Map<T>().end())) {
+                m_current_ptr = std::shared_ptr<T>();
             } else {
-                m_current_ptr = boost::shared_ptr<T>(std::map<int, boost::shared_ptr<T>>::iterator::operator*().second);
+                m_current_ptr = std::shared_ptr<T>(std::map<int, std::shared_ptr<T>>::iterator::operator*().second);
             }
         }
     };
 
     template <class T = UniverseObject>
-    struct const_iterator : private std::map<int, boost::shared_ptr<T> >::const_iterator {
-        const_iterator(const typename std::map<int, boost::shared_ptr<T> >::const_iterator& base, const ObjectMap& owner) :
-            std::map<int, boost::shared_ptr<T> >::const_iterator(base),
+    struct const_iterator : private std::map<int, std::shared_ptr<T>>::const_iterator {
+        const_iterator(const typename std::map<int, std::shared_ptr<T>>::const_iterator& base, const ObjectMap& owner) :
+            std::map<int, std::shared_ptr<T>>::const_iterator(base),
             m_owner(owner)
         { Refresh(); }
 
-        boost::shared_ptr<const T> operator *() const
+        std::shared_ptr<const T> operator *() const
         { return m_current_ptr; }
-        
+
         // The result of this operator is not intended to be stored, so it's safe to
         // return a reference to an instance variable that's going to be soon overwritten.
-        boost::shared_ptr<const T>& operator ->() const
+        std::shared_ptr<const T>& operator ->() const
         { return m_current_ptr; }
 
         const_iterator& operator ++() {
-            std::map<int, boost::shared_ptr<T> >::const_iterator::operator++();
+            std::map<int, std::shared_ptr<T>>::const_iterator::operator++();
             Refresh();
             return *this;
         }
 
         const_iterator operator ++(int) {
-            const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator++(0);
+            const_iterator result = std::map<int, std::shared_ptr<T>>::const_iterator::operator++(0);
             Refresh();
             return result;
         }
 
         const_iterator& operator --() {
-            std::map<int, boost::shared_ptr<T> >::const_iterator::operator--();
+            std::map<int, std::shared_ptr<T>>::const_iterator::operator--();
             Refresh();
             return *this;
         }
 
         const_iterator operator --(int) {
-            const_iterator result = std::map<int, boost::shared_ptr<T> >::const_iterator::operator--(0);
+            const_iterator result = std::map<int, std::shared_ptr<T>>::const_iterator::operator--(0);
             Refresh();
             return result;
         }
 
         bool operator ==(const const_iterator& other) const
-        { return (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) == other); }
+        { return (typename std::map<int, std::shared_ptr<T>>::const_iterator(*this) == other); }
 
         bool operator !=(const const_iterator& other) const
-        { return (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) != other); }
+        { return (typename std::map<int, std::shared_ptr<T>>::const_iterator(*this) != other); }
 
     private:
         // See iterator for comments.
-        mutable boost::shared_ptr<const T> m_current_ptr;
+        mutable std::shared_ptr<const T> m_current_ptr;
         const ObjectMap& m_owner;
 
         // We always want m_current_ptr to be pointing to our parent iterator's current item, if it is a valid object.
         // Otherwise, we just want to return a "null" pointer.  We assume that we are dealing with valid iterators in
         // the range [begin(), end()].
         void Refresh() const {
-            if (typename std::map<int, boost::shared_ptr<T> >::const_iterator(*this) == (m_owner.Map<T>().end())) {
-                m_current_ptr = boost::shared_ptr<T>();
+            if (typename std::map<int, std::shared_ptr<T>>::const_iterator(*this) == (m_owner.Map<T>().end())) {
+                m_current_ptr = std::shared_ptr<T>();
             } else {
-                m_current_ptr = boost::shared_ptr<T>(std::map<int, boost::shared_ptr<T>>::const_iterator::operator*().second);
+                m_current_ptr = std::shared_ptr<T>(std::map<int, std::shared_ptr<T>>::const_iterator::operator*().second);
             }
         }
     };
@@ -177,62 +185,62 @@ public:
     bool                    Empty() const;
 
     /** Returns a pointer to the universe object with ID number \a id,
-      * or a null boost::shared_ptr if none exists */
-    boost::shared_ptr<const UniverseObject> Object(int id) const;
+      * or a null std::shared_ptr if none exists */
+    std::shared_ptr<const UniverseObject> Object(int id) const;
 
     /** Returns a pointer to the universe object with ID number \a id,
-      * or a null boost::shared_ptr if none exists */
-    boost::shared_ptr<UniverseObject> Object(int id);
+      * or a null std::shared_ptr if none exists */
+    std::shared_ptr<UniverseObject> Object(int id);
 
     /** Returns a pointer to the object of type T with ID number \a id.
-      * Returns a null boost::shared_ptr if none exists or the object with
+      * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <class T>
-    boost::shared_ptr<const T> Object(int id) const;
+    std::shared_ptr<const T> Object(int id) const;
 
     /** Returns a pointer to the object of type T with ID number \a id.
-      * Returns a nullboost::shared_ptr if none exists or the object with
+      * Returns a null std::shared_ptr if none exists or the object with
       * ID \a id is not of type T. */
     template <class T>
-    boost::shared_ptr<T> Object(int id);
+    std::shared_ptr<T> Object(int id);
 
     /** Returns a vector containing the objects with ids in \a object_ids */
-    std::vector<boost::shared_ptr<const UniverseObject>> FindObjects(const std::vector<int>& object_ids) const;
-    std::vector<boost::shared_ptr<const UniverseObject>> FindObjects(const std::set<int>& object_ids) const;
+    std::vector<std::shared_ptr<const UniverseObject>> FindObjects(const std::vector<int>& object_ids) const;
+    std::vector<std::shared_ptr<const UniverseObject>> FindObjects(const std::set<int>& object_ids) const;
 
     /** Returns a vector containing the objects with ids in \a object_ids */
-    std::vector<boost::shared_ptr<UniverseObject>> FindObjects(const std::vector<int>& object_ids);
-    std::vector<boost::shared_ptr<UniverseObject>> FindObjects(const std::set<int>& object_ids);
+    std::vector<std::shared_ptr<UniverseObject>> FindObjects(const std::vector<int>& object_ids);
+    std::vector<std::shared_ptr<UniverseObject>> FindObjects(const std::set<int>& object_ids);
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <class T>
-    std::vector<boost::shared_ptr<const T>> FindObjects(const std::vector<int>& object_ids) const;
+    std::vector<std::shared_ptr<const T>> FindObjects(const std::vector<int>& object_ids) const;
 
     template <class T>
-    std::vector<boost::shared_ptr<const T>> FindObjects(const std::set<int>& object_ids) const;
+    std::vector<std::shared_ptr<const T>> FindObjects(const std::set<int>& object_ids) const;
 
     /** Returns a vector containing the objects with ids in \a object_ids that
       * are of type T */
     template <class T>
-    std::vector<boost::shared_ptr<T>> FindObjects(const std::vector<int>& object_ids);
+    std::vector<std::shared_ptr<T>> FindObjects(const std::vector<int>& object_ids);
 
     template <class T>
-    std::vector<boost::shared_ptr<T>> FindObjects(const std::set<int>& object_ids);
+    std::vector<std::shared_ptr<T>> FindObjects(const std::set<int>& object_ids);
 
     /** Returns all the objects that match \a visitor */
-    std::vector<boost::shared_ptr<const UniverseObject>> FindObjects(const UniverseObjectVisitor& visitor) const;
+    std::vector<std::shared_ptr<const UniverseObject>> FindObjects(const UniverseObjectVisitor& visitor) const;
 
     /** Returns all the objects that match \a visitor */
-    std::vector<boost::shared_ptr<UniverseObject>> FindObjects(const UniverseObjectVisitor& visitor);
+    std::vector<std::shared_ptr<UniverseObject>> FindObjects(const UniverseObjectVisitor& visitor);
 
     /** Returns all the objects of type T */
     template <class T>
-    std::vector<boost::shared_ptr<const T>> FindObjects() const;
+    std::vector<std::shared_ptr<const T>> FindObjects() const;
 
     /** Returns all the objects of type T */
     template <class T>
-    std::vector<boost::shared_ptr<T>> FindObjects();
+    std::vector<std::shared_ptr<T>> FindObjects();
 
     /** Returns the IDs of all the objects that match \a visitor */
     std::vector<int>        FindObjectIDs(const UniverseObjectVisitor& visitor) const;
@@ -266,66 +274,66 @@ public:
     std::string             Dump() const;
 
     /**  */
-    boost::shared_ptr<UniverseObject> ExistingObject(int id);
-    std::map<int, boost::shared_ptr<UniverseObject> >::iterator ExistingObjectsBegin()
+    std::shared_ptr<UniverseObject> ExistingObject(int id);
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingObjectsBegin()
     { return m_existing_objects.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject> >::iterator ExistingObjectsEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingObjectsEnd()
     { return m_existing_objects.end(); }
     int NumExistingObjects()
     {return m_existing_objects.size(); }
 
-    std::map<int, boost::shared_ptr<UniverseObject> >::iterator ExistingResourceCentersBegin()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingResourceCentersBegin()
     { return m_existing_resource_centers.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject> >::iterator ExistingResourceCentersEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingResourceCentersEnd()
     { return m_existing_resource_centers.end(); }
     int NumExistingResourceCenters()
     {return m_existing_resource_centers.size(); }
 
-    std::map<int, boost::shared_ptr<UniverseObject> >::iterator ExistingPopCentersBegin()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingPopCentersBegin()
     { return m_existing_pop_centers.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject> >::iterator ExistingPopCentersEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingPopCentersEnd()
     { return m_existing_pop_centers.end(); }
     int NumExistingPopCenters()
     {return m_existing_pop_centers.size(); }
 
-    std::map<int, boost::shared_ptr<UniverseObject> >::iterator ExistingShipsBegin()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingShipsBegin()
     { return m_existing_ships.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject> >::iterator ExistingShipsEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingShipsEnd()
     { return m_existing_ships.end(); }
     int NumExistingShips()
     {return m_existing_ships.size(); }
 
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingFleetsBegin()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingFleetsBegin()
     { return m_existing_fleets.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingFleetsEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingFleetsEnd()
     { return m_existing_fleets.end(); }
     int NumExistingFleets()
     {return m_existing_fleets.size(); }
 
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingPlanetsBegin()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingPlanetsBegin()
     { return m_existing_planets.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingPlanetsEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingPlanetsEnd()
     { return m_existing_planets.end(); }
     int NumExistingPlanets()
     {return m_existing_planets.size(); }
 
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingSystemsBegin()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingSystemsBegin()
     { return m_existing_systems.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingSystemsEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingSystemsEnd()
     { return m_existing_systems.end(); }
     int NumExistingSystems()
     {return m_existing_systems.size(); }
 
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingBuildingsBegin()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingBuildingsBegin()
     { return m_existing_buildings.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingBuildingsEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingBuildingsEnd()
     { return m_existing_buildings.end(); }
     int NumExistingBuildings()
     {return m_existing_buildings.size(); }
 
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingFieldsBegin()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingFieldsBegin()
     { return m_existing_fields.begin(); }
-    std::map<int, boost::shared_ptr<UniverseObject>>::iterator ExistingFieldsEnd()
+    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingFieldsEnd()
     { return m_existing_fields.end(); }
     int NumExistingFields()
     {return m_existing_fields.size(); }
@@ -361,25 +369,25 @@ public:
       * by passing the visibility of the object by the empire specified by
       * \a empire_id to Copy or Clone of the object.  The passed object is
       * unchanged. */
-    void CopyObject(boost::shared_ptr<const UniverseObject> source, int empire_id = ALL_EMPIRES);
+    void CopyObject(std::shared_ptr<const UniverseObject> source, int empire_id = ALL_EMPIRES);
 
     /** Adds object \a obj to the map under its ID, if it is a valid object.
       * If there already was an object in the map with the id \a id then
-      * that object will be removed.  A boost::shared_ptr to the new object is
+      * that object will be removed.  A std::shared_ptr to the new object is
       * returned. */
     template <class T>
-    boost::shared_ptr<T> Insert(T* obj, int empire_id = ALL_EMPIRES);
+    std::shared_ptr<T> Insert(T* obj, int empire_id = ALL_EMPIRES);
 
     /** Adds object \a obj to the map under its ID, if it is a valid object. */
     template <class T>
-    void Insert(boost::shared_ptr<T> obj, int empire_id = ALL_EMPIRES);
+    void Insert(std::shared_ptr<T> obj, int empire_id = ALL_EMPIRES);
 
     /** Removes object with id \a id from map, and returns that object, if
       * there was an object under that ID in the map.  If no such object
       * existed in the map, a null shared_ptr is returned and nothing is
       * removed. The ObjectMap will no longer share ownership of the
       * returned object. */
-    boost::shared_ptr<UniverseObject>     Remove(int id);
+    std::shared_ptr<UniverseObject> Remove(int id);
 
     /** Empties map, removing shared ownership by this map of all
       * previously contained objects. */
@@ -400,40 +408,63 @@ public:
     //@}
 
 private:
-    void                Insert(boost::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
+    void Insert(std::shared_ptr<UniverseObject> item, int empire_id = ALL_EMPIRES);
+
     void                CopyObjectsToSpecializedMaps();
+
     template <class T>
-    const std::map<int, boost::shared_ptr<T> >& Map() const;
+    const std::map<int, std::shared_ptr<T> >& Map() const;
+
     template <class T>
-    std::map<int, boost::shared_ptr<T> >& Map();
+    std::map<int, std::shared_ptr<T>>& Map();
 
     template<class T>
-    static void         ClearMap(std::map<int, boost::shared_ptr<T> >& map);
-    template <class T>
-    static void         TryInsertIntoMap(std::map<int, boost::shared_ptr<T> >& map, boost::shared_ptr<UniverseObject> item);
-    template <class T>
-    static void         EraseFromMap(std::map<int, boost::shared_ptr<T> >& map, int id);
-    template <class T>
-    static void         SwapMap(std::map<int, boost::shared_ptr<T> >& map, ObjectMap& rhs);
+    static void ClearMap(std::map<int, std::shared_ptr<T> >& map);
 
-    std::map<int, boost::shared_ptr<UniverseObject> >           m_objects;
-    std::map<int, boost::shared_ptr<ResourceCenter> >           m_resource_centers;
-    std::map<int, boost::shared_ptr<PopCenter> >                m_pop_centers;
-    std::map<int, boost::shared_ptr<Ship> >                     m_ships;
-    std::map<int, boost::shared_ptr<Fleet> >                    m_fleets;
-    std::map<int, boost::shared_ptr<Planet> >                   m_planets;
-    std::map<int, boost::shared_ptr<System> >                   m_systems;
-    std::map<int, boost::shared_ptr<Building> >                 m_buildings;
-    std::map<int, boost::shared_ptr<Field> >                    m_fields;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_objects;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_resource_centers;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_pop_centers;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_ships;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_fleets;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_planets;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_systems;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_buildings;
-    std::map<int, boost::shared_ptr<UniverseObject>> m_existing_fields;
+    template <class T>
+    static void TryInsertIntoMap(std::map<int, std::shared_ptr<T>>& map, std::shared_ptr<UniverseObject> item);
+
+    template <class T>
+    static void EraseFromMap(std::map<int, std::shared_ptr<T> >& map, int id);
+
+    template <class T>
+    static void SwapMap(std::map<int, std::shared_ptr<T> >& map, ObjectMap& rhs);
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_objects;
+
+    std::map<int, std::shared_ptr<ResourceCenter>> m_resource_centers;
+
+    std::map<int, std::shared_ptr<PopCenter>> m_pop_centers;
+
+    std::map<int, std::shared_ptr<Ship>> m_ships;
+
+    std::map<int, std::shared_ptr<Fleet>> m_fleets;
+
+    std::map<int, std::shared_ptr<Planet>> m_planets;
+
+    std::map<int, std::shared_ptr<System>> m_systems;
+
+    std::map<int, std::shared_ptr<Building>> m_buildings;
+
+    std::map<int, std::shared_ptr<Field>> m_fields;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_objects;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_resource_centers;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_pop_centers;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_ships;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_fleets;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_planets;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_systems;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_buildings;
+
+    std::map<int, std::shared_ptr<UniverseObject>> m_existing_fields;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -457,37 +488,37 @@ ObjectMap::const_iterator<T> ObjectMap::const_end() const
 { return const_iterator<T>(Map<typename boost::remove_const<T>::type>().end(), *this); }
 
 template <class T>
-boost::shared_ptr<const T> ObjectMap::Object(int id) const {
-    typename std::map<int, boost::shared_ptr<typename boost::remove_const<T>::type> >::const_iterator it =
+std::shared_ptr<const T> ObjectMap::Object(int id) const {
+    typename std::map<int, std::shared_ptr<typename boost::remove_const<T>::type>>::const_iterator it =
         Map<typename boost::remove_const<T>::type>().find(id);
-    return boost::shared_ptr<const T>(
+    return std::shared_ptr<const T>(
         it != Map<typename boost::remove_const<T>::type>().end()
             ? it->second
-            : boost::shared_ptr<const T>());
+            : std::shared_ptr<const T>());
 }
 
 template <class T>
-boost::shared_ptr<T> ObjectMap::Object(int id) {
-    typename std::map<int, boost::shared_ptr<typename boost::remove_const<T>::type> >::iterator it =
+std::shared_ptr<T> ObjectMap::Object(int id) {
+    typename std::map<int, std::shared_ptr<typename boost::remove_const<T>::type>>::iterator it =
         Map<typename boost::remove_const<T>::type>().find(id);
-    return boost::shared_ptr<T>(
+    return std::shared_ptr<T>(
         it != Map<typename boost::remove_const<T>::type>().end()
             ? it->second
-            : boost::shared_ptr<typename boost::remove_const<T>::type>()
+            : std::shared_ptr<typename boost::remove_const<T>::type>()
         );
 }
 
 template <class T>
-std::vector<boost::shared_ptr<const T>> ObjectMap::FindObjects() const {
-    std::vector<boost::shared_ptr<const T>> result;
+std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects() const {
+    std::vector<std::shared_ptr<const T>> result;
     for (const_iterator<T> it = const_begin<T>(); it != const_end<T>(); ++it)
         result.push_back(*it);
     return result;
 }
 
 template <class T>
-std::vector<boost::shared_ptr<T>> ObjectMap::FindObjects() {
-    std::vector<boost::shared_ptr<T>> result;
+std::vector<std::shared_ptr<T>> ObjectMap::FindObjects() {
+    std::vector<std::shared_ptr<T>> result;
     for (iterator<T> it = begin<T>(); it != end<T>(); ++it)
         result.push_back(*it);
     return result;
@@ -496,7 +527,7 @@ std::vector<boost::shared_ptr<T>> ObjectMap::FindObjects() {
 template <class T>
 std::vector<int> ObjectMap::FindObjectIDs() const {
     std::vector<int> result;
-    for (typename std::map<int, boost::shared_ptr<T> >::const_iterator
+    for (typename std::map<int, std::shared_ptr<T>>::const_iterator
          it = Map<typename boost::remove_const<T>::type>().begin();
          it != Map<typename boost::remove_const<T>::type>().end(); ++it)
     { result.push_back(it->first); }
@@ -504,49 +535,49 @@ std::vector<int> ObjectMap::FindObjectIDs() const {
 }
 
 template <class T>
-std::vector<boost::shared_ptr<const T>> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
-    std::vector<boost::shared_ptr<const T>> retval;
+std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects(const std::vector<int>& object_ids) const {
+    std::vector<std::shared_ptr<const T>> retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
-        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(object_id);
+        typename std::map<int, std::shared_ptr<mutableT>>::const_iterator map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
-            retval.push_back(boost::shared_ptr<const T>(map_it->second));
+            retval.push_back(std::shared_ptr<const T>(map_it->second));
     }
     return retval;
 }
 
 template <class T>
-std::vector<boost::shared_ptr<const T>> ObjectMap::FindObjects(const std::set<int>& object_ids) const {
-    std::vector<boost::shared_ptr<const T>> retval;
+std::vector<std::shared_ptr<const T>> ObjectMap::FindObjects(const std::set<int>& object_ids) const {
+    std::vector<std::shared_ptr<const T>> retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
-        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(object_id);
+        typename std::map<int, std::shared_ptr<mutableT>>::const_iterator map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
-            retval.push_back(boost::shared_ptr<const T>(map_it->second));
+            retval.push_back(std::shared_ptr<const T>(map_it->second));
     }
     return retval;
 }
 
 template <class T>
-std::vector<boost::shared_ptr<T>> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
-    std::vector<boost::shared_ptr<T>> retval;
+std::vector<std::shared_ptr<T>> ObjectMap::FindObjects(const std::vector<int>& object_ids) {
+    std::vector<std::shared_ptr<T>> retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
-        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(object_id);
+        typename std::map<int, std::shared_ptr<mutableT>>::const_iterator map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
-            retval.push_back(boost::shared_ptr<T>(map_it->second));
+            retval.push_back(std::shared_ptr<T>(map_it->second));
     }
     return retval;
 }
 
 template <class T>
-std::vector<boost::shared_ptr<T>> ObjectMap::FindObjects(const std::set<int>& object_ids) {
-    std::vector<boost::shared_ptr<T>> retval;
+std::vector<std::shared_ptr<T>> ObjectMap::FindObjects(const std::set<int>& object_ids) {
+    std::vector<std::shared_ptr<T>> retval;
     typedef typename boost::remove_const<T>::type mutableT;
     for (int object_id : object_ids) {
-        typename std::map<int, boost::shared_ptr<mutableT> >::const_iterator map_it = Map<mutableT>().find(object_id);
+        typename std::map<int, std::shared_ptr<mutableT>>::const_iterator map_it = Map<mutableT>().find(object_id);
         if (map_it != Map<mutableT>().end())
-            retval.push_back(boost::shared_ptr<T>(map_it->second));
+            retval.push_back(std::shared_ptr<T>(map_it->second));
     }
     return retval;
 }
@@ -556,76 +587,76 @@ int ObjectMap::NumObjects() const
 { return Map<typename boost::remove_const<T>::type>().size(); }
 
 template <class T>
-boost::shared_ptr<T> ObjectMap::Insert(T* item, int empire_id /* = ALL_EMPIRES */) {
+std::shared_ptr<T> ObjectMap::Insert(T* item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
-        return boost::shared_ptr<T>();
+        return std::shared_ptr<T>();
 
-    boost::shared_ptr<T> shared_item(item);
+    std::shared_ptr<T> shared_item(item, UniverseObjectDeleter<T>);
     Insert(shared_item, empire_id);
-    return boost::shared_ptr<T>(shared_item);
+    return std::shared_ptr<T>(shared_item);
 }
 
 template <class T>
-void ObjectMap::Insert(boost::shared_ptr<T> item, int empire_id /* = ALL_EMPIRES */) {
+void ObjectMap::Insert(std::shared_ptr<T> item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
         return;
-    Insert(boost::dynamic_pointer_cast<UniverseObject>(item), empire_id);
+    Insert(std::dynamic_pointer_cast<UniverseObject>(item), empire_id);
 }
 
 // template specializations
 
 template <>
-const std::map<int, boost::shared_ptr<UniverseObject> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, boost::shared_ptr<ResourceCenter> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, boost::shared_ptr<PopCenter> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, boost::shared_ptr<Ship> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, boost::shared_ptr<Fleet> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, boost::shared_ptr<Planet> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, boost::shared_ptr<System> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<System>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, boost::shared_ptr<Building> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<Building>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, boost::shared_ptr<Field> >&  ObjectMap::Map() const;
+const std::map<int, std::shared_ptr<Field>>& ObjectMap::Map() const;
 
 template <>
-std::map<int, boost::shared_ptr<UniverseObject> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map();
 
 template <>
-std::map<int, boost::shared_ptr<ResourceCenter> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map();
 
 template <>
-std::map<int, boost::shared_ptr<PopCenter> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map();
 
 template <>
-std::map<int, boost::shared_ptr<Ship> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map();
 
 template <>
-std::map<int, boost::shared_ptr<Fleet> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map();
 
 template <>
-std::map<int, boost::shared_ptr<Planet> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map();
 
 template <>
-std::map<int, boost::shared_ptr<System> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<System>>& ObjectMap::Map();
 
 template <>
-std::map<int, boost::shared_ptr<Building> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<Building>>& ObjectMap::Map();
 
 template <>
-std::map<int, boost::shared_ptr<Field> >&  ObjectMap::Map();
+std::map<int, std::shared_ptr<Field>>& ObjectMap::Map();
 
 #endif

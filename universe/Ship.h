@@ -31,7 +31,7 @@ public:
 
     const std::string& PublicName(int empire_id) const override;
 
-    boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Back propagates part meters (which UniverseObject equivalent doesn't). */
     void BackPropagateMeters() override;
@@ -47,7 +47,7 @@ public:
     /** Returns new copy of this Ship. */
     Ship* Clone(int empire_id = ALL_EMPIRES) const override;
 
-    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     const ShipDesign*           Design() const;     ///< returns the design of the ship, containing engine type, weapons, etc.
     int                         DesignID() const            { return m_design_id; }             ///< returns the design id of the ship
@@ -115,6 +115,7 @@ public:
 
 protected:
     friend class Universe;
+
     /** \name Structors */ //@{
     Ship();
 
@@ -123,9 +124,8 @@ protected:
     Ship(int empire_id, int design_id, const std::string& species_name,
          int produced_by_empire_id = ALL_EMPIRES);
 
+    template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-    template <class T> friend void boost::checked_delete(T* x);
-
 #if BOOST_VERSION >= 106100
 public:
 #endif

@@ -128,7 +128,7 @@ MenuItem::~MenuItem()
 ////////////////////////////////////////////////
 const std::size_t MenuBar::INVALID_CARET = std::numeric_limits<std::size_t>::max();
 
-MenuBar::MenuBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr text_color/* = CLR_WHITE*/,
+MenuBar::MenuBar(X x, Y y, X w, const std::shared_ptr<Font>& font, Clr text_color/* = CLR_WHITE*/,
                  Clr color/* = CLR_BLACK*/, Clr interior/* = CLR_SHADOW*/) :
     Control(x, y, w, font->Lineskip()),
     m_font(font),
@@ -147,7 +147,7 @@ MenuBar::MenuBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr text_co
         Connect(BrowsedSignal, MenuSignalEcho("MenuBar::BrowsedSignal"));
 }
 
-MenuBar::MenuBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, const MenuItem& m,
+MenuBar::MenuBar(X x, Y y, X w, const std::shared_ptr<Font>& font, const MenuItem& m,
                  Clr text_color/* = CLR_WHITE*/, Clr color/* = CLR_BLACK*/, Clr interior/* = CLR_SHADOW*/) :
     Control(x, y, w, font->Lineskip()),
     m_font(font),
@@ -321,7 +321,7 @@ void MenuBar::SetHiliteColor(Clr clr)
 void MenuBar::SetSelectedTextColor(Clr clr)
 { m_sel_text_color = clr; }
 
-const boost::shared_ptr<Font>& MenuBar::GetFont() const
+const std::shared_ptr<Font>& MenuBar::GetFont() const
 { return m_font; }
 
 const std::vector<TextControl*>& MenuBar::MenuLabels() const
@@ -390,7 +390,7 @@ namespace {
 
 const std::size_t PopupMenu::INVALID_CARET = std::numeric_limits<std::size_t>::max();
 
-PopupMenu::PopupMenu(X x, Y y, const boost::shared_ptr<Font>& font, const MenuItem& m, Clr text_color/* = CLR_WHITE*/,
+PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color/* = CLR_WHITE*/,
                      Clr border_color/* = CLR_BLACK*/, Clr interior_color/* = CLR_SHADOW*/, Clr hilite_color/* = CLR_GRAY*/) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth() - 1, GUI::GetGUI()->AppHeight() - 1, INTERACTIVE | MODAL),
     m_font(font),
@@ -462,7 +462,7 @@ void PopupMenu::Render()
                     needs_indicator = true;
             }
             Flags<TextFormat> fmt = FORMAT_LEFT | FORMAT_TOP;
-            std::vector<boost::shared_ptr<Font::TextElement> > text_elements
+            std::vector<std::shared_ptr<Font::TextElement>> text_elements
                 = m_font->ExpensiveParseFromTextToTextElements(str, fmt);
             std::vector<Font::LineData> lines = m_font->DetermineLines(str, fmt, X0, text_elements);
             Pt menu_sz = m_font->TextExtent(lines); // get dimensions of text in menu
@@ -520,7 +520,7 @@ void PopupMenu::Render()
 
                 if (!menu.next_level[j].separator) {
                     // TODO cache line data v expensive calculation
-                    std::vector<boost::shared_ptr<Font::TextElement> > text_elements =
+                    std::vector<std::shared_ptr<Font::TextElement>> text_elements =
                         m_font->ExpensiveParseFromTextToTextElements(menu.next_level[j].label, fmt);
                     std::vector<Font::LineData> lines =
                         m_font->DetermineLines(menu.next_level[j].label, fmt, X0, text_elements);
@@ -657,7 +657,7 @@ void PopupMenu::SetHiliteColor(Clr clr)
 void PopupMenu::SetSelectedTextColor(Clr clr)
 { m_sel_text_color = clr; }
 
-const boost::shared_ptr<Font>& PopupMenu::GetFont() const
+const std::shared_ptr<Font>& PopupMenu::GetFont() const
 { return m_font; }
 
 const MenuItem& PopupMenu::MenuData() const

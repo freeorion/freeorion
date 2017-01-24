@@ -29,15 +29,17 @@
 #ifndef _GG_ListBox_h_
 #define _GG_ListBox_h_
 
+
 #include <GG/AlignmentFlags.h>
 #include <GG/ClrConstants.h>
 #include <GG/Control.h>
 #include <GG/Timer.h>
 
-#include <boost/shared_ptr.hpp>
 #include <boost/unordered_set.hpp>
 
+#include <memory>
 #include <set>
+
 
 namespace GG {
 
@@ -564,7 +566,7 @@ private:
 
     struct SelectionCache;
     /** Cache the selected, clicked and last browsed rows.*/
-    boost::shared_ptr<SelectionCache> CacheSelections();
+    std::shared_ptr<SelectionCache> CacheSelections();
     /** Restore cached selected, clicked and last browsed rows.*/
     void RestoreCachedSelections(const SelectionCache& cache);
 

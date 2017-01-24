@@ -1,18 +1,20 @@
 #ifndef _Species_h_
 #define _Species_h_
 
+
 #include "EnumsFwd.h"
 #include "../util/Export.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 
+#include <map>
+#include <memory>
+#include <set>
 #include <string>
 #include <vector>
-#include <map>
-#include <set>
+
 
 namespace Condition {
     struct ConditionBase;
@@ -54,7 +56,9 @@ public:
 private:
     std::string                                         m_name;
     std::string                                         m_description;
-    boost::shared_ptr<const Condition::ConditionBase>   m_location;
+
+    std::shared_ptr<const Condition::ConditionBase> m_location;
+
     std::string                                         m_graphic;
 };
 
@@ -108,7 +112,7 @@ public:
             const std::vector<FocusType>& foci,
             const std::string& preferred_focus,
             const std::map<PlanetType, PlanetEnvironment>& planet_environments,
-            const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects,
+            const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects,
             const SpeciesParams& params,
             const std::set<std::string>& tags,
             const std::string& graphic) :
@@ -153,7 +157,12 @@ public:
     const std::map<PlanetType, PlanetEnvironment>& PlanetEnvironments() const { return m_planet_environments; } ///< returns a map from PlanetType to the PlanetEnvironment this Species has on that PlanetType
     PlanetEnvironment               GetPlanetEnvironment(PlanetType planet_type) const;     ///< returns the PlanetEnvironment this species has on PlanetType \a planet_type
     PlanetType                      NextBetterPlanetType(PlanetType initial_planet_type) const; ///< returns the next better PlanetType for this species from the \a initial_planet_type specified
-    const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& Effects() const { return m_effects; }///< returns the EffectsGroups that encapsulate the effects that species of this type have
+
+    /** Returns the EffectsGroups that encapsulate the effects that species of
+        this type have. */
+    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
+    { return m_effects; }
+
     bool                            Playable() const        { return m_playable; }          ///< returns whether this species is a suitable starting species for players
     bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
     bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
@@ -187,8 +196,7 @@ private:
     std::string                             m_preferred_focus;
     std::map<PlanetType, PlanetEnvironment> m_planet_environments;
 
-    std::vector<boost::shared_ptr<Effect::EffectsGroup> >
-                                            m_effects;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
 
     mutable Condition::ConditionBase*       m_location;
 

@@ -1,9 +1,11 @@
 #ifndef _FleetButton_h_
 #define _FleetButton_h_
 
+
 #include <GG/Button.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
 
 class Fleet;
 class RotatingGraphic;
@@ -66,18 +68,18 @@ private:
 };
 
 /* returns head icon for passed fleet at passed icon size */
-std::vector<boost::shared_ptr<GG::Texture>> FleetHeadIcons(boost::shared_ptr<const Fleet>, FleetButton::SizeType size_type);
+std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(std::shared_ptr<const Fleet>, FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleets at passed icon size */
-std::vector<boost::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<boost::shared_ptr<const Fleet>>& fleets, FleetButton::SizeType size_type);
+std::vector<std::shared_ptr<GG::Texture>> FleetHeadIcons(const std::vector<std::shared_ptr<const Fleet>>& fleets, FleetButton::SizeType size_type);
 
 /* returns size icon for passed fleet at passed icon size */
-boost::shared_ptr<GG::Texture> FleetSizeIcon(boost::shared_ptr<const Fleet> fleet, FleetButton::SizeType size_type);
+std::shared_ptr<GG::Texture> FleetSizeIcon(std::shared_ptr<const Fleet> fleet, FleetButton::SizeType size_type);
 
 /* returns head icon for passed fleet size at passed icon size */
-boost::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type);
+std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton::SizeType size_type);
 
 /* returns icon for indication fleet icon selection */
-boost::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon();
+std::shared_ptr<GG::Texture> FleetSelectionIndicatorIcon();
 
 #endif // _FleetButton_h_

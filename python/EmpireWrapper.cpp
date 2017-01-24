@@ -21,7 +21,9 @@
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/to_python_converter.hpp>
-#include <boost/shared_ptr.hpp>
+
+#include <memory>
+
 
 namespace {
     // Research queue tests whether it contains a Tech by name, but Python needs
@@ -161,14 +163,14 @@ namespace {
     //.def("objectsWithWastedPP",             make_function(&ProductionQueue::ObjectsWithWastedPP,  return_value_policy<return_by_value>()))
 
     std::map<std::set<int>, float> PlanetsWithAvailablePP_P(const Empire& empire) {
-        const boost::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
+        const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planetsWithAvailablePP;
         for (const std::map<std::set<int>, float>::value_type& objects_pp : prodQueue.AvailablePP(industry_pool)) {
             std::set<int> planetSet;
             for (int object_id : objects_pp.first) {
-                boost::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
-                if (/* boost::shared_ptr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
+                std::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
+                if (/* std::shared_ptr<const Planet> planet = */ std::dynamic_pointer_cast<const Planet>(location))
                     planetSet.insert(object_id);
             }
             if (!planetSet.empty())
@@ -185,8 +187,8 @@ namespace {
         for (const std::map<std::set<int>, float>::value_type& objects_pp : objectsWithAllocatedPP) {
             std::set<int> planetSet;
             for (int object_id : objects_pp.first) {
-                boost::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
-                if (/* boost::shared_ptr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
+                std::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
+                if (/* std::shared_ptr<const Planet> planet = */ std::dynamic_pointer_cast<const Planet>(location))
                     planetSet.insert(object_id);
             }
             if (!planetSet.empty())
@@ -197,15 +199,15 @@ namespace {
     boost::function<std::map<std::set<int>, float>(const Empire& )> PlanetsWithAllocatedPP_Func =   &PlanetsWithAllocatedPP_P;
 
     std::set<std::set<int> > PlanetsWithWastedPP_P(const Empire& empire) {
-        const boost::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
+        const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::set<std::set<int> > planetsWithWastedPP;
         std::set<std::set<int> > objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
         for (const std::set<int>&  objects : objectsWithWastedPP) {
                  std::set<int> planetSet;
                  for (int object_id : objects) {
-                     boost::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
-                     if (/* boost::shared_ptr<const Planet> planet = */ boost::dynamic_pointer_cast<const Planet>(location))
+                     std::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
+                     if (/* std::shared_ptr<const Planet> planet = */ std::dynamic_pointer_cast<const Planet>(location))
                          planetSet.insert(object_id);
                  }
                  if (!planetSet.empty())
@@ -260,7 +262,7 @@ namespace FreeOrionPython {
         ;
         boost::python::to_python_converter<FloatIntPair, FloatIntPairConverter>();
 
-        class_<ResourcePool, boost::shared_ptr<ResourcePool>, boost::noncopyable >("resPool", boost::python::no_init);
+        class_<ResourcePool, std::shared_ptr<ResourcePool>, boost::noncopyable>("resPool", boost::python::no_init);
         //FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
         FreeOrionPython::SetWrapper<IntSet>::Wrap("IntSetSet");
         class_<std::map<std::set<int>, float> > ("resPoolMap")

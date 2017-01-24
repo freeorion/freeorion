@@ -28,7 +28,8 @@ public:
 
     void            Update();
 
-    void            SetToolTip(MeterType meter_type, const boost::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
+    void SetToolTip(MeterType meter_type, const std::shared_ptr<GG::BrowseInfoWnd>& browse_wnd);
+
     void            ClearToolTip(MeterType meter_type);
 
 private:

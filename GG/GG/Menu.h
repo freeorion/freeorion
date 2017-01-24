@@ -91,8 +91,12 @@ struct GG_API MenuItem
     //@}
 
     /** \name Accessors */ ///@{
-    mutable boost::shared_ptr<SelectedIDSignalType> SelectedIDSignal; ///< the selected signal object for this MenuItem that conveys the selected menu item ID
-    mutable boost::shared_ptr<SelectedSignalType>   SelectedSignal;   ///< the selected signal object for this MenuItem
+    /** The selected signal object for this MenuItem that conveys the selected
+        menu item ID. */
+    mutable std::shared_ptr<SelectedIDSignalType> SelectedIDSignal;
+
+    /** The selected signal object for this MenuItem. */
+    mutable std::shared_ptr<SelectedSignalType> SelectedSignal;
     //@}
 
     std::string           label;      ///< text shown for this menu item
@@ -137,8 +141,11 @@ public:
     /** \name Structors */ ///@{
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
-    MenuBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, Clr text_color = CLR_WHITE, Clr color = CLR_BLACK, Clr interior = CLR_SHADOW); ///< ctor
-    MenuBar(X x, Y y, X w, const boost::shared_ptr<Font>& font, const MenuItem& m, Clr text_color = CLR_WHITE, Clr color = CLR_BLACK, Clr interior = CLR_SHADOW); ///< ctor that takes a MenuItem containing menus with which to populate the MenuBar
+    MenuBar(X x, Y y, X w, const std::shared_ptr<Font>& font, Clr text_color = CLR_WHITE, Clr color = CLR_BLACK, Clr interior = CLR_SHADOW);
+
+    /** Ctor that takes a MenuItem containing menus with which to populate the
+        MenuBar. */
+    MenuBar(X x, Y y, X w, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color = CLR_WHITE, Clr color = CLR_BLACK, Clr interior = CLR_SHADOW);
     //@}
 
     /** \name Accessors */ ///@{
@@ -190,7 +197,9 @@ public:
 
 protected:
     /** \name Accessors */ ///@{
-    const boost::shared_ptr<Font>&   GetFont() const;    ///< returns the font used to render text in the control
+    /** Returns the font used to render text in the control. */
+    const std::shared_ptr<Font>& GetFont() const;
+
     const std::vector<TextControl*>& MenuLabels() const; ///< returns the text for each top-level menu item
     std::size_t                      Caret() const;      ///< returns the current position of the caret
     //@}
@@ -200,7 +209,9 @@ private:
         rows if they will not fit in one */
     void AdjustLayout(bool reset = false);
 
-    boost::shared_ptr<Font>   m_font;           ///< the font used to render the text in the control
+    /** The font used to render the text in the control. */
+    std::shared_ptr<Font> m_font;
+
     Clr                       m_border_color;   ///< the color of the menu's border
     Clr                       m_int_color;      ///< color painted into the client area of the control
     Clr                       m_text_color;     ///< color used to paint text in control
@@ -243,7 +254,7 @@ public:
     /** \name Structors */ ///@{
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
-    PopupMenu(X x, Y y, const boost::shared_ptr<Font>& font, const MenuItem& m, Clr text_color = CLR_WHITE,
+    PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color = CLR_WHITE,
               Clr border_color = CLR_BLACK, Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
     //@}
 
@@ -282,7 +293,9 @@ public:
 
 protected:
     /** \name Accessors */ ///@{
-    const boost::shared_ptr<Font>&  GetFont() const;      ///< returns the font used to render text in the control
+    /** Returns the font used to render text in the control. */
+    const std::shared_ptr<Font>& GetFont() const;
+
     const MenuItem&                 MenuData() const;     ///< returns a const reference to the MenuItem that contains all the menu contents
     const std::vector<Rect>&        OpenLevels() const;   ///< returns the bounding rectangles for each open submenu, used to detect clicks in them
     const std::vector<std::size_t>& Caret() const;        ///< returns the stack representing the caret's location's path (eg 0th subitem of 1st subitem of item 3) back() is the most recent push
@@ -290,8 +303,9 @@ protected:
     //@}
 
 private:
-    boost::shared_ptr<Font>
-                      m_font;           ///< the font used to render the text in the control
+    /** The font used to render the text in the control. */
+    std::shared_ptr<Font> m_font;
+
     Clr               m_border_color;   ///< the color of the menu's border
     Clr               m_int_color;      ///< color painted into the client area of the control
     Clr               m_text_color;     ///< color used to paint text in control

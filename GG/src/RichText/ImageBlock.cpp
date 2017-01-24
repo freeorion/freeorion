@@ -21,7 +21,7 @@ namespace GG {
         m_graphic(nullptr)
     {
         try {
-            boost::shared_ptr<Texture> texture = GetTextureManager().GetTexture(path);
+            std::shared_ptr<Texture> texture = GetTextureManager().GetTexture(path);
             m_graphic = new StaticGraphic(texture, GRAPHIC_PROPSCALE | GRAPHIC_SHRINKFIT | GRAPHIC_CENTER);
             AttachChild(m_graphic);
         } catch (GG::Texture::BadFile&) {
@@ -83,7 +83,7 @@ namespace GG {
         BlockControl* CreateFromTag(const std::string& tag,
                                     const RichText::TAG_PARAMS& params,
                                     const std::string& content,
-                                    const boost::shared_ptr<Font>& font,
+                                    const std::shared_ptr<Font>& font,
                                     const Clr& color,
                                     Flags<TextFormat> format) override
         {

@@ -27,7 +27,7 @@ PopCenter::PopCenter() :
 PopCenter::~PopCenter()
 {}
 
-void PopCenter::Copy(boost::shared_ptr<const PopCenter> copied_object, Visibility vis) {
+void PopCenter::Copy(std::shared_ptr<const PopCenter> copied_object, Visibility vis) {
     if (copied_object.get() == this)
         return;
     if (!copied_object) {
@@ -40,7 +40,7 @@ void PopCenter::Copy(boost::shared_ptr<const PopCenter> copied_object, Visibilit
     }
 }
 
-void PopCenter::Copy(boost::shared_ptr<const PopCenter> copied_object)
+void PopCenter::Copy(std::shared_ptr<const PopCenter> copied_object)
 { Copy(copied_object, VIS_FULL_VISIBILITY); }
 
 void PopCenter::Init() {

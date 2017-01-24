@@ -34,7 +34,7 @@ public:
 
     bool ContainedBy(int object_id) const override;
 
-    boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** Returns the name of the BuildingType object for this building. */
     const std::string& BuildingTypeName() const
@@ -48,7 +48,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     void            SetPlanetID(int planet_id);         ///< sets the planet on which the building is located
 
@@ -72,9 +72,8 @@ protected:
     Building(int empire_id, const std::string& building_type,
              int produced_by_empire_id = ALL_EMPIRES);
 
+    template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-    template <class T> friend void boost::checked_delete(T* x);
-
 #if BOOST_VERSION >= 106100
 public:
 #endif
@@ -82,7 +81,6 @@ public:
 #if BOOST_VERSION >= 106100
 protected:
 #endif
-
     /** Returns new copy of this Building. */
     Building* Clone(int empire_id = ALL_EMPIRES) const override;
     //@}
@@ -155,8 +153,11 @@ public:
     const Condition::ConditionBase* Location() const        { return m_location; }          ///< returns the condition that determines the locations where this building can be produced
     const Condition::ConditionBase* EnqueueLocation() const { return m_enqueue_location; }  ///< returns the condition that determines the locations where this building can be enqueued (ie. put onto the production queue)
 
-    const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
-                                    Effects() const         { return m_effects; }           ///< returns the EffectsGroups that encapsulate the effects that buildings of this type have when operational
+    /** Returns the EffectsGroups that encapsulate the effects that buildings ofi
+        this type have when operational. */
+    const std::vector<std::shared_ptr<Effect::EffectsGroup>>& Effects() const
+    { return m_effects; }
+
     const std::string&              Icon() const            { return m_icon; }              ///< returns the name of the grapic file for this building type
 
     bool ProductionLocation(int empire_id, int location_id) const;  ///< returns true iff the empire with ID empire_id can produce this building at the location with location_id
@@ -188,7 +189,7 @@ private:
                                                             m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
     Condition::ConditionBase*                               m_enqueue_location;
-    std::vector<boost::shared_ptr<Effect::EffectsGroup> >   m_effects;
+    std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
     std::string                                             m_icon;
 };
 

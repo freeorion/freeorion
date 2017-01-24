@@ -28,7 +28,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void SetFont(boost::shared_ptr<GG::Font> font);
+    void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
     /** Add a row at the end of the combat report*/
@@ -57,12 +57,12 @@ public:
 
     // default flags for a text link log segment
     GG::Flags<GG::TextFormat> m_text_format_flags;
-    boost::shared_ptr<GG::Font> m_font;
+    std::shared_ptr<GG::Font> m_font;
 
 };
 
 namespace {
-    typedef boost::shared_ptr<LinkText> LinkTextPtr;
+    typedef std::shared_ptr<LinkText> LinkTextPtr;
 
     const std::string EMPTY_STRING;
 
@@ -71,7 +71,7 @@ namespace {
         for (int owner_id : owners)
             objects_per_owner[owner_id] = 0;
         for (int obj_id : objects) {
-            boost::shared_ptr<const UniverseObject> object = Objects().Object(obj_id);
+            std::shared_ptr<const UniverseObject> object = Objects().Object(obj_id);
             if (object && (
                     object->ObjectType() == OBJ_SHIP || (
                         object->GetMeter(METER_POPULATION) &&
@@ -228,7 +228,7 @@ namespace {
 
         LazyScrollerLinkText(
             GG::Wnd & parent, GG::X x, GG::Y y, const std::string& str,
-            const boost::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
+            const std::shared_ptr<GG::Font>& font, GG::Clr color = GG::CLR_BLACK) :
             LinkText(x, y, UserString("ELLIPSIS"), font, color),
             m_text( new std::string(str)),
             m_signals()
@@ -372,7 +372,7 @@ void CombatLogWnd::CombatLogWndImpl::AddRow(GG::Wnd* wnd) {
         layout->Add(wnd, layout->Rows(), 0);
 }
 
-void CombatLogWnd::CombatLogWndImpl::SetFont(boost::shared_ptr<GG::Font> font)
+void CombatLogWnd::CombatLogWndImpl::SetFont(std::shared_ptr<GG::Font> font)
 { m_font = font; }
 
 void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
@@ -399,7 +399,7 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
     if (verbose_logging)
         DebugLogger() << "Showing combat log #" << log_id << " with " << log->combat_events.size() << " events";
 
-    boost::shared_ptr<const System> system = GetSystem(log->system_id);
+    std::shared_ptr<const System> system = GetSystem(log->system_id);
     const std::string& sys_name = (system ? system->PublicName(client_empire_id) : UserString("ERROR"));
 
     AddRow(DecorateLinkText(str(FlexibleFormat(UserString("ENC_COMBAT_LOG_DESCRIPTION_STR"))
@@ -444,7 +444,7 @@ CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
 CombatLogWnd::~CombatLogWnd()
 {}
 
-void CombatLogWnd::SetFont(boost::shared_ptr<GG::Font> font)
+void CombatLogWnd::SetFont(std::shared_ptr<GG::Font> font)
 { pimpl->SetFont(font); }
 
 void CombatLogWnd::SetLog(int log_id)

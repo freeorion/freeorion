@@ -22,7 +22,7 @@ public:
     /** \name Mutators */ //@{
     void PreRender() override;
 
-    void SetFont(boost::shared_ptr<GG::Font> font);
+    void SetFont(std::shared_ptr<GG::Font> font);
     /// Set which log to show
     void SetLog(int log_id);
     //@}

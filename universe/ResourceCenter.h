@@ -2,8 +2,6 @@
 #define _ResourceCenter_h_
 
 #include "EnumsFwd.h"
-#include <boost/enable_shared_from_this.hpp>
-#include <boost/shared_ptr.hpp>
 #include <boost/signals2/signal.hpp>
 #include <boost/serialization/nvp.hpp>
 
@@ -21,7 +19,7 @@ class UniverseObject;
   * classes could be made from it as well (e.g., a trade-ship or mining vessel,
   * or a non-Planet UniverseObject- and PopCenter- derived object of some
   * sort. */
-class FO_COMMON_API ResourceCenter : virtual public boost::enable_shared_from_this<UniverseObject> {
+class FO_COMMON_API ResourceCenter : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
     /** \name Structors */ //@{
     ResourceCenter();
@@ -48,8 +46,9 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    void            Copy(boost::shared_ptr<const ResourceCenter> copied_object, Visibility vis);
-    void            Copy(boost::shared_ptr<const ResourceCenter> copied_object);
+    void Copy(std::shared_ptr<const ResourceCenter> copied_object, Visibility vis);
+
+    void Copy(std::shared_ptr<const ResourceCenter> copied_object);
 
     void            SetFocus(const std::string& focus);
     void            ClearFocus();

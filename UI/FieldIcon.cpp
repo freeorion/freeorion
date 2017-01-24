@@ -35,7 +35,7 @@ FieldIcon::~FieldIcon() {
 int FieldIcon::FieldID() const
 { return m_field_id; }
 
-const boost::shared_ptr<GG::Texture>& FieldIcon::FieldTexture() const
+const std::shared_ptr<GG::Texture>& FieldIcon::FieldTexture() const
 { return m_texture; }
 
 void FieldIcon::LButtonDown(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -78,7 +78,7 @@ void FieldIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void FieldIcon::Refresh() {
-    boost::shared_ptr<const Field> field = GetField(m_field_id);
+    std::shared_ptr<const Field> field = GetField(m_field_id);
     if (!field)
         return;
     m_texture = ClientUI::FieldTexture(field->FieldTypeName());
@@ -99,7 +99,7 @@ void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     GG::MenuItem menu_contents;
 
-    boost::shared_ptr<const Field> field = GetField(m_field_id);
+    std::shared_ptr<const Field> field = GetField(m_field_id);
     if (!field)
         return;
     const std::string& field_type_name = field->FieldTypeName();

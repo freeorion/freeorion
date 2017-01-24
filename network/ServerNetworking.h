@@ -5,11 +5,11 @@
 
 #include <boost/array.hpp>
 #include <boost/asio.hpp>
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/function.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/signals2/signal.hpp>
 
+#include <memory>
 #include <queue>
 #include <set>
 
@@ -17,7 +17,7 @@
 class DiscoveryServer;
 class PlayerConnection;
 
-typedef boost::shared_ptr<PlayerConnection> PlayerConnectionPtr;
+typedef std::shared_ptr<PlayerConnection> PlayerConnectionPtr;
 typedef boost::function<void (Message, PlayerConnectionPtr)> MessageAndConnectionFn;
 typedef boost::function<void (PlayerConnectionPtr)> ConnectionFn;
 typedef boost::function<void ()> NullaryFn;
@@ -158,7 +158,7 @@ private:
     server as an actual player in a game, EstablishPlayer() should be called.
     This establishes the aforementioned properties. */
 class PlayerConnection :
-    public boost::enable_shared_from_this<PlayerConnection>
+    public std::enable_shared_from_this<PlayerConnection>
 {
 public:
     /** \name Structors */ //@{

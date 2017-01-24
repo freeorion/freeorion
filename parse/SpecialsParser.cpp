@@ -13,7 +13,7 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, Special*>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, Special*>&) { return os; }
 }
@@ -118,7 +118,7 @@ namespace {
                 double,
                 int,
                 Condition::ConditionBase*,
-                std::vector<boost::shared_ptr<Effect::EffectsGroup> >,
+                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*
             >,

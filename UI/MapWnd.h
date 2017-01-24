@@ -147,7 +147,9 @@ public:
 
     void            CenterOnMapCoord(double x, double y);                   //!< centers the map on map position (x, y)
     void            CenterOnObject(int id);                                 //!< centers the map on object with id \a id
-    void            CenterOnObject(boost::shared_ptr<const UniverseObject> obj);              //!< centers the map on object \a id
+
+    /** Centers the map on object \a id. */
+    void CenterOnObject(std::shared_ptr<const UniverseObject> obj);
 
     void            ShowPlanet(int planet_id);                              //!< brings up encyclopedia panel and displays info about the planet
     void            ShowCombatLog(int log_id);                              //!< brings up encyclopedia panel and displays info about the combat
@@ -167,7 +169,10 @@ public:
     void            ReselectLastSystem();                                   //!< re-selects the most recently selected system, if a valid one exists
     void            SelectPlanet(int planetID);                             //!< programatically selects planets on sidepanels.  catches signals from production wnd or sidepanel for when the user changes the selected planet
     void            SelectFleet(int fleetID);                               //!< programatically selects fleets by ID
-    void            SelectFleet(boost::shared_ptr<Fleet> fleet);                              //!< programatically selects fleets
+
+    /** Programatically selects fleets. */
+    void SelectFleet(std::shared_ptr<Fleet> fleet);
+
     void            ReselectLastFleet();                                    //!< re-selects the most recent selected fleet, if a valid one exists
 
     void            RemoveFleet(int fleet_id); //!< removes specified fleet.
@@ -255,17 +260,27 @@ private:
     void            RefreshFleetButtonSelectionIndicators();    //!< marks (only) selected fleets' buttons as selected
 
     /** Connect all \p fleets StateChangedSignal to RefreshFleetButtons. */
-    void            AddFleetsStateChangedSignal(const std::vector<boost::shared_ptr<Fleet>>& fleets);
+    void AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets);
+
     /** Disconnect all \p fleets StateChangedSignal from RefreshFleetButtons. */
-    void            RemoveFleetsStateChangedSignal(const std::vector<boost::shared_ptr<Fleet>>& fleets);
-    /** Handle FleetsInsertedSignal by connecting signals and refreshing fleet buttons. */
-    void            FleetsInsertedSignalHandler(const std::vector<boost::shared_ptr<Fleet>>& fleets);
-    /** Handle FleetsRemovedSignal by disconnecting signals and refreshing fleet buttons. */
-    void            FleetsRemovedSignalHandler(const std::vector<boost::shared_ptr<Fleet>>& fleets);
+    void RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets);
+
+    /** Handle FleetsInsertedSignal by connecting signals and refreshing fleet
+        buttons. */
+    void FleetsInsertedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets);
+
+    /** Handle FleetsRemovedSignal by disconnecting signals and refreshing fleet
+        buttons. */
+    void FleetsRemovedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets);
 
 
     void            DoFleetButtonsLayout();                     //!< does layout of fleet buttons
-    std::pair<double, double>   MovingFleetMapPositionOnLane(boost::shared_ptr<const Fleet> fleet) const; //!< returns position on map where a moving fleet should be displayed.  This is different from the fleet's actual universe position due to the squishing of fleets moving along a lane into the space between the system circles at the ends of the lane
+
+    /** Returns position on map where a moving fleet should be displayed.  This
+        is different from the fleet's actual universe position due to the
+        squishing of fleets moving along a lane into the space between the
+        system circles at the ends of the lane. */
+    std::pair<double, double> MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const;
 
     void            DoSystemIconsLayout();                      //!< does layout of system icons
     void            DoFieldIconsLayout();                       //!< does layout of field icons
@@ -346,7 +361,7 @@ private:
     void            ShipRightClicked(int fleet_id);
     void            ShipsRightClicked(const std::vector<int>& fleet_ids);
 
-    void            UniverseObjectDeleted(boost::shared_ptr<const UniverseObject> obj);
+    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
 
     bool            ReturnToMap();
 
@@ -455,8 +470,8 @@ private:
 
     std::pair<int, int>                 m_line_between_systems;                             //!< set when map should render line connecting 2 systems
 
-    std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_core_quad_vertices;
-    std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>  m_star_halo_quad_vertices;
+    std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer> m_star_core_quad_vertices;
+    std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer> m_star_halo_quad_vertices;
     GG::GL2DVertexBuffer                m_galaxy_gas_quad_vertices;
     GG::GLTexCoordBuffer                m_galaxy_gas_texture_coords;
     GG::GLTexCoordBuffer                m_star_texture_coords;
@@ -467,7 +482,9 @@ private:
     GG::GL2DVertexBuffer                m_RC_starlane_vertices;
     GG::GLRGBAColorBuffer               m_RC_starlane_colors;
 
-    std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer> >    m_field_vertices;   //!< first buffer is visible fields, second buffer is not visible (scanlined) fields for each texture
+    /** First buffer is visible fields, second buffer is not visible (scanlined)
+        fields for each texture. */
+    std::map<std::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer>> m_field_vertices;
     GG::GL2DVertexBuffer                m_field_scanline_circles;
     GG::GLTexCoordBuffer                m_field_texture_coords;
 

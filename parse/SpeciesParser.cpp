@@ -13,7 +13,7 @@
 namespace std {
     inline ostream& operator<<(ostream& os, const FocusType&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<FocusType>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<PlanetType, PlanetEnvironment>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const PlanetType, PlanetEnvironment>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<PlanetType, PlanetEnvironment>&) { return os; }
@@ -172,7 +172,7 @@ namespace {
 
         typedef boost::spirit::qi::rule<
             parse::token_iterator,
-            void (std::vector<boost::shared_ptr<Effect::EffectsGroup> >&),
+            void (std::vector<std::shared_ptr<Effect::EffectsGroup>>&),
             parse::skipper_type
         > effects_rule;
 
@@ -226,7 +226,7 @@ namespace {
                 SpeciesParams,
                 std::set<std::string>,  // tags
                 std::vector<FocusType>,
-                std::vector<boost::shared_ptr<Effect::EffectsGroup> >,
+                std::vector<std::shared_ptr<Effect::EffectsGroup>>,
                 std::map<PlanetType, PlanetEnvironment>,
                 std::string             // graphic
             >,

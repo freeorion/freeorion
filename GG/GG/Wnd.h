@@ -271,7 +271,7 @@ public:
 
         /** The BrowseInfoWnd used to display the browse info for this
             mode. */
-        boost::shared_ptr<BrowseInfoWnd> wnd;
+        std::shared_ptr<BrowseInfoWnd> wnd;
 
         /** The text to display in the BrowseInfoWnd shown for this mode. */
         std::string                      text;
@@ -457,7 +457,7 @@ public:
 
     /** Returns the currently-installed style factory if none exists, or the
         GUI-wide one otherwise. */
-    const boost::shared_ptr<StyleFactory>& GetStyleFactory() const;
+    const std::shared_ptr<StyleFactory>& GetStyleFactory() const;
 
     /** Returns the region under point \a pt. */
     virtual WndRegion WindowRegion(const Pt& pt) const;
@@ -657,7 +657,7 @@ public:
     /** Sets the Wnd that is used to show browse info about this Wnd in the
         browse info mode \a mode.  \throw std::out_of_range May throw
         std::out_of_range if \a mode is not a valid browse mode. */
-    void SetBrowseInfoWnd(const boost::shared_ptr<BrowseInfoWnd>& wnd, std::size_t mode = 0);
+    void SetBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& wnd, std::size_t mode = 0);
 
     /** Removes the Wnd that is used to show browse info about this Wnd in the
         browse info mode \a mode (but does nothing to the mode itself).
@@ -681,7 +681,7 @@ public:
     void SetBrowseModes(const std::vector<BrowseInfoMode>& modes);
 
     /** Sets the currently-installed style factory. */
-    void SetStyleFactory(const boost::shared_ptr<StyleFactory>& factory);
+    void SetStyleFactory(const std::shared_ptr<StyleFactory>& factory);
     //@}
 
 
@@ -696,11 +696,11 @@ public:
     /** Returns the single BrowseInfoWnd to place in the browse modes during
         Wnd construction.  This returns a TextBoxBrowseInfoWnd with a default
         parameterization. */
-    static const boost::shared_ptr<BrowseInfoWnd>& DefaultBrowseInfoWnd();
+    static const std::shared_ptr<BrowseInfoWnd>& DefaultBrowseInfoWnd();
 
     /** Sets the single BrowseInfoWnd to place in the browse modes during Wnd
         construction. */
-    static void SetDefaultBrowseInfoWnd(const boost::shared_ptr<BrowseInfoWnd>& browse_info_wnd);
+    static void SetDefaultBrowseInfoWnd(const std::shared_ptr<BrowseInfoWnd>& browse_info_wnd);
 
     /** \name Exceptions */ ///@{
     /** The base class for Wnd exceptions. */
@@ -968,8 +968,8 @@ private:
     std::vector<BrowseInfoMode>
                       m_browse_modes;      ///< The browse info modes for this window
 
-    boost::shared_ptr<StyleFactory>
-                      m_style_factory;     ///< The style factory to use when creating dialogs or child controls
+    /** The style factory to use when creating dialogs or child controls. */
+    std::shared_ptr<StyleFactory> m_style_factory;
 
     /** Flags supplied at window creation for clickability, dragability,
         resizability, etc. */
@@ -981,7 +981,7 @@ private:
 
     /** The default BrowseInfoWmd to set for the first (and only) value in
         m_browse_mode_times during Wnd contruction */
-    static boost::shared_ptr<BrowseInfoWnd> s_default_browse_info_wnd;
+    static std::shared_ptr<BrowseInfoWnd> s_default_browse_info_wnd;
 
     friend class GUI;   ///< GUI needs access to \a m_children, etc.
     friend struct GUIImpl;

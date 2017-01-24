@@ -25,9 +25,9 @@ namespace {
     const bool CHEAP_AND_FAST_SHIP_PRODUCTION = false;    // makes all ships cost 1 PP and take 1 turn to build
     const std::string EMPTY_STRING;
 
-    boost::shared_ptr<Effect::EffectsGroup>
+    std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, float increase) {
-        typedef boost::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
+        typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
@@ -42,9 +42,9 @@ namespace {
                 scope, activation, Effects(1, new Effect::SetMeter(meter_type, vr))));
     }
 
-    boost::shared_ptr<Effect::EffectsGroup>
+    std::shared_ptr<Effect::EffectsGroup>
     IncreaseMeter(MeterType meter_type, const std::string& part_name, float increase, bool allow_stacking = true) {
-        typedef boost::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
+        typedef std::shared_ptr<Effect::EffectsGroup> EffectsGroupPtr;
         typedef std::vector<Effect::EffectBase*> Effects;
         Condition::Source* scope = new Condition::Source;
         Condition::Source* activation = new Condition::Source;
@@ -159,20 +159,20 @@ PartTypeManager::iterator PartTypeManager::end() const
 namespace {
     // Looks like there are at least 3 SourceForEmpire functions lying around - one in ShipDesign, one in Tech, and one in Building
     // TODO: Eliminate duplication
-    boost::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
+    std::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return boost::shared_ptr<const UniverseObject>();
+            return std::shared_ptr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
+        std::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (boost::shared_ptr<const UniverseObject> obj : Objects()) {
+            for (std::shared_ptr<const UniverseObject> obj : Objects()) {
                 if (obj->OwnedBy(empire_id)) {
                     source = obj;
                     break;
@@ -235,7 +235,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
         m_tags.insert(boost::to_upper_copy<std::string>(tag));
 }
 
-void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
+void PartType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects) {
     if ((m_capacity != 0 || m_secondary_stat != 0) && m_add_standard_capacity_effect) {
         switch (m_class) {
         case PC_COLONY:
@@ -285,7 +285,7 @@ void PartType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
         }
     }
 
-    for (boost::shared_ptr<Effect::EffectsGroup> effect : effects) {
+    for (std::shared_ptr<Effect::EffectsGroup> effect : effects) {
         effect->SetTopLevelContent(m_name);
         m_effects.push_back(effect);
     }
@@ -357,11 +357,11 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
         if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
 
-        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 999999.9f;    // arbitrary large number
 
-        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_cost->SourceInvariant())
             return 999999.9f;
 
@@ -378,11 +378,11 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
         if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
-        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 9999;    // arbitrary large number
 
-        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_time->SourceInvariant())
             return 9999;
 
@@ -400,7 +400,7 @@ HullType::Slot::Slot() :
     type(INVALID_SHIP_SLOT_TYPE), x(0.5), y(0.5)
 {}
 
-void HullType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >& effects) {
+void HullType::Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects) {
     if (m_fuel != 0)
         m_effects.push_back(IncreaseMeter(METER_MAX_FUEL,       m_fuel));
     if (m_stealth != 0)
@@ -410,7 +410,7 @@ void HullType::Init(const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&
     if (m_speed != 0)
         m_effects.push_back(IncreaseMeter(METER_SPEED,          m_speed));
 
-    for (boost::shared_ptr<Effect::EffectsGroup> effect : effects) {
+    for (std::shared_ptr<Effect::EffectsGroup> effect : effects) {
         effect->SetTopLevelContent(m_name);
         m_effects.push_back(effect);
     }
@@ -448,11 +448,11 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
         if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
 
-        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 999999.9f;    // arbitrary large number
 
-        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_cost->SourceInvariant())
             return 999999.9f;
 
@@ -469,11 +469,11 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
         if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
-        boost::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
+        std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
         if (!location)
             return 9999;    // arbitrary large number
 
-        boost::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
+        std::shared_ptr<const UniverseObject> source = SourceForEmpire(empire_id);
         if (!source && !m_production_time->SourceInvariant())
             return 999999;
 
@@ -811,14 +811,14 @@ bool ShipDesign::ProductionLocation(int empire_id, int location_id) const {
     }
 
     // must own the production location...
-    boost::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
+    std::shared_ptr<const UniverseObject> location = GetUniverseObject(location_id);
     if (!location->OwnedBy(empire_id))
         return false;
 
-    boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(location);
-    boost::shared_ptr<const Ship> ship;
+    std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(location);
+    std::shared_ptr<const Ship> ship;
     if (!planet)
-        ship = boost::dynamic_pointer_cast<const Ship>(location);
+        ship = std::dynamic_pointer_cast<const Ship>(location);
     if (!planet && !ship)
         return false;
 

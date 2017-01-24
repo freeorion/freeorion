@@ -81,7 +81,7 @@ public:
     /** \name Structors */ ///@{
     /** Ctor that does not required height. Height is determined from the font
         and point size used.*/
-    Spin(T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color,
+    Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font, Clr color,
          Clr text_color = CLR_BLACK);
 
     ~Spin();
@@ -157,7 +157,7 @@ protected:
 
 private:
     void ConnectSignals();
-    void Init(const boost::shared_ptr<Font>& font, Clr color, Clr text_color);
+    void Init(const std::shared_ptr<Font>& font, Clr color, Clr text_color);
     void ValueUpdated(const std::string& val_text);
     void IncrImpl(bool signal);
     void DecrImpl(bool signal);
@@ -182,7 +182,7 @@ private:
 
 // template implementations
 template<class T>
-Spin<T>::Spin(T value, T step, T min, T max, bool edits, const boost::shared_ptr<Font>& font, Clr color,
+Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<Font>& font, Clr color,
               Clr text_color/* = CLR_BLACK*/) :
     Control(X0, Y0, X1, font->Height() + 2 * PIXEL_MARGIN, INTERACTIVE),
     m_value(value),
@@ -429,12 +429,12 @@ void Spin<T>::ConnectSignals()
 }
 
 template<class T>
-void Spin<T>::Init(const boost::shared_ptr<Font>& font, Clr color, Clr text_color)
+void Spin<T>::Init(const std::shared_ptr<Font>& font, Clr color, Clr text_color)
 {
-    boost::shared_ptr<StyleFactory> style = GetStyleFactory();
+    std::shared_ptr<StyleFactory> style = GetStyleFactory();
     Control::SetColor(color);
     m_edit = style->NewSpinEdit(boost::lexical_cast<std::string>(m_value), font, CLR_ZERO, text_color, CLR_ZERO);
-    boost::shared_ptr<Font> small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
+    std::shared_ptr<Font> small_font = GUI::GetGUI()->GetFont(font, static_cast<int>(font->PointSize() * 0.75));
     m_up_button = style->NewSpinIncrButton(small_font, color);
     m_down_button = style->NewSpinDecrButton(small_font, color);
     m_edit->InstallEventFilter(this);

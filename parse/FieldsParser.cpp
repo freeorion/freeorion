@@ -12,7 +12,7 @@
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::vector<boost::shared_ptr<Effect::EffectsGroup> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::map<std::string, FieldType*>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::pair<const std::string, FieldType*>&) { return os; }
 }
@@ -79,7 +79,7 @@ namespace {
                 std::string,
                 float,
                 std::set<std::string>,
-                std::vector<boost::shared_ptr<Effect::EffectsGroup> >
+                std::vector<std::shared_ptr<Effect::EffectsGroup>>
             >,
             parse::skipper_type
         > field_rule;

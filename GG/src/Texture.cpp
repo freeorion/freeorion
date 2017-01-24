@@ -489,7 +489,7 @@ SubTexture::SubTexture() :
     m_tex_coords()
 {}
 
-SubTexture::SubTexture(const boost::shared_ptr<const Texture>& texture, X x1, Y y1, X x2, Y y2) :
+SubTexture::SubTexture(const std::shared_ptr<const Texture>& texture, X x1, Y y1, X x2, Y y2) :
     m_texture(texture),
     m_width(x2 - x1),
     m_height(y2 - y1),
@@ -504,7 +504,7 @@ SubTexture::SubTexture(const boost::shared_ptr<const Texture>& texture, X x1, Y 
     m_tex_coords[3] = Value(y2 * 1.0 / texture->Height());
 }
 
-SubTexture::SubTexture(const boost::shared_ptr<const Texture>& texture) :
+SubTexture::SubTexture(const std::shared_ptr<const Texture>& texture) :
     m_texture(texture),
     m_width(GG::X1),
     m_height(GG::Y1),
@@ -572,21 +572,21 @@ bool TextureManager::s_il_initialized = false;
 TextureManager::TextureManager()
 {}
 
-const std::map<std::string, boost::shared_ptr<Texture>>& TextureManager::Textures() const
+const std::map<std::string, std::shared_ptr<Texture>>& TextureManager::Textures() const
 { return m_textures; }
 
-boost::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, const std::string& texture_name)
+std::shared_ptr<Texture> TextureManager::StoreTexture(Texture* texture, const std::string& texture_name)
 {
-    boost::shared_ptr<Texture> temp(texture);
+    std::shared_ptr<Texture> temp(texture);
     return StoreTexture(temp, texture_name);
 }
 
-boost::shared_ptr<Texture> TextureManager::StoreTexture(const boost::shared_ptr<Texture>& texture, const std::string& texture_name)
+std::shared_ptr<Texture> TextureManager::StoreTexture(const std::shared_ptr<Texture>& texture, const std::string& texture_name)
 { return (m_textures[texture_name] = texture); }
 
-boost::shared_ptr<Texture> TextureManager::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
+std::shared_ptr<Texture> TextureManager::GetTexture(const boost::filesystem::path& path, bool mipmap/* = false*/)
 {
-    std::map<std::string, boost::shared_ptr<Texture> >::iterator it = m_textures.find(path.generic_string());
+    std::map<std::string, std::shared_ptr<Texture>>::iterator it = m_textures.find(path.generic_string());
     if (it == m_textures.end()) { // if no such texture was found, attempt to load it now, using name as the filename
         //std::cout << "TextureManager::GetTexture storing new texture under name: " << path.generic_string();
         return (m_textures[path.generic_string()] = LoadTexture(path, mipmap));
@@ -600,14 +600,14 @@ void TextureManager::FreeTexture(const boost::filesystem::path& path)
 
 void TextureManager::FreeTexture(const std::string& name)
 {
-    std::map<std::string, boost::shared_ptr<Texture> >::iterator it = m_textures.find(name);
+    std::map<std::string, std::shared_ptr<Texture>>::iterator it = m_textures.find(name);
     if (it != m_textures.end())
         m_textures.erase(it);
 }
 
-boost::shared_ptr<Texture> TextureManager::LoadTexture(const boost::filesystem::path& path, bool mipmap)
+std::shared_ptr<Texture> TextureManager::LoadTexture(const boost::filesystem::path& path, bool mipmap)
 {
-    boost::shared_ptr<Texture> temp(new Texture());
+    std::shared_ptr<Texture> temp(new Texture());
     temp->Load(path, mipmap);
     return (m_textures[path.generic_string()] = temp);
 }

@@ -1,6 +1,7 @@
 #ifndef _Universe_h_
 #define _Universe_h_
 
+
 #include "EnumsFwd.h"
 #include "ObjectMap.h"
 #include "UniverseObject.h"
@@ -10,15 +11,16 @@
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/thread/shared_mutex.hpp>
-#include <boost/shared_ptr.hpp>
 
-#include <vector>
 #include <list>
 #include <map>
-#include <string>
+#include <memory>
 #include <set>
+#include <string>
+#include <vector>
 
 #include "../util/Export.h"
+
 
 class Empire;
 struct UniverseObjectVisitor;
@@ -27,7 +29,7 @@ class ShipDesign;
 class System;
 namespace Condition {
     struct ConditionBase;
-    typedef std::vector<boost::shared_ptr<const UniverseObject>> ObjectSet;
+    typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
 }
 
 namespace Effect {
@@ -35,7 +37,7 @@ namespace Effect {
     struct TargetsAndCause;
     struct SourcedEffectsGroup;
     class EffectsGroup;
-    typedef std::vector<boost::shared_ptr<UniverseObject>> TargetSet;
+    typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
     typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo> > > AccountingMap;
     typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause> > TargetsCauses;
     typedef std::map<int, std::map<MeterType, double> > DiscrepancyMap;
@@ -82,7 +84,7 @@ public:
 
     /** \name Signal Types */ //@{
     /** emitted just before the UniverseObject is deleted */
-    typedef boost::signals2::signal<void (boost::shared_ptr<const UniverseObject>)> UniverseObjectDeleteSignalType;
+    typedef boost::signals2::signal<void (std::shared_ptr<const UniverseObject>)> UniverseObjectDeleteSignalType;
     //@}
 
     /** \name Structors */ //@{
@@ -435,27 +437,27 @@ public:
     bool            AllObjectsVisible() const { return m_all_objects_visible; }
 
     /** \name Generators */ //@{
-    boost::shared_ptr<Ship> CreateShip(int id = INVALID_OBJECT_ID);
-    boost::shared_ptr<Ship> CreateShip(int empire_id, int design_id, const std::string& species_name,
-                                       int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Ship> CreateShip(int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Ship> CreateShip(int empire_id, int design_id, const std::string& species_name,
+                                     int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
 
-    boost::shared_ptr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
-    boost::shared_ptr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Fleet> CreateFleet(int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Fleet> CreateFleet(const std::string& name, double x, double y, int owner, int id = INVALID_OBJECT_ID);
 
-    boost::shared_ptr<Planet> CreatePlanet(int id = INVALID_OBJECT_ID);
-    boost::shared_ptr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Planet> CreatePlanet(int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Planet> CreatePlanet(PlanetType type, PlanetSize size, int id = INVALID_OBJECT_ID);
 
-    boost::shared_ptr<System> CreateSystem(int id = INVALID_OBJECT_ID);
-    boost::shared_ptr<System> CreateSystem(StarType star, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
-    boost::shared_ptr<System> CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
-                                           const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
+    std::shared_ptr<System> CreateSystem(int id = INVALID_OBJECT_ID);
+    std::shared_ptr<System> CreateSystem(StarType star, const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
+    std::shared_ptr<System> CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
+                                         const std::string& name, double x, double y, int id = INVALID_OBJECT_ID);
 
-    boost::shared_ptr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);
-    boost::shared_ptr<Building> CreateBuilding(int empire_id, const std::string& building_type,
-                                               int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Building> CreateBuilding(int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Building> CreateBuilding(int empire_id, const std::string& building_type,
+                                             int produced_by_empire_id = ALL_EMPIRES, int id = INVALID_OBJECT_ID);
 
-    boost::shared_ptr<Field> CreateField(int id = INVALID_OBJECT_ID);
-    boost::shared_ptr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Field> CreateField(int id = INVALID_OBJECT_ID);
+    std::shared_ptr<Field> CreateField(const std::string& field_type, double x, double y, double radius, int id = INVALID_OBJECT_ID);
     //@}
 
 private:
@@ -478,25 +480,25 @@ private:
             m_data.resize(a_size);
             m_row_mutexes.resize(a_size);
             for (size_t i = old_size; i < a_size; ++i)
-                m_row_mutexes[i] = boost::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
+                m_row_mutexes[i] = std::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
         }
 
         std::vector< std::vector<T> > m_data;
-        std::vector< boost::shared_ptr<boost::shared_mutex> > m_row_mutexes;
+        std::vector<std::shared_ptr<boost::shared_mutex>> m_row_mutexes;
         boost::shared_mutex m_mutex;
     };
 
-    /** Inserts object \a obj into the universe; returns a boost::shared_ptr
+    /** Inserts object \a obj into the universe; returns a std::shared_ptr
       * to the inserted object. */
     template <class T>
-    boost::shared_ptr<T> Insert(T* obj);
+    std::shared_ptr<T> Insert(T* obj);
 
     /** Inserts object \a obj of given ID into the universe; returns a
-      * boost::shared_ptr to the inserted object on proper insert, or a null
-      * boost::shared_ptr on failure.  Useful mostly for times when ID needs
+      * std::shared_ptr to the inserted object on proper insert, or a null
+      * std::shared_ptr on failure.  Useful mostly for times when ID needs
       * to be consistent on client and server */
     template <class T>
-    boost::shared_ptr<T> InsertID(T* obj, int id);
+    std::shared_ptr<T> InsertID(T* obj, int id);
 
     struct GraphImpl;
 
@@ -548,7 +550,11 @@ private:
     std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
     mutable distance_matrix_storage<short>  m_system_jumps;             ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-    boost::shared_ptr<GraphImpl>            m_graph_impl;               ///< a graph in which the systems are vertices and the starlanes are edges
+
+    /** A graph in which the systems are vertices and the starlanes are edges.
+     */
+    std::shared_ptr<GraphImpl> m_graph_impl;
+
     boost::unordered_map<int, size_t>       m_system_id_to_graph_index;
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
@@ -600,7 +606,7 @@ private:
     void    GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_knowledge_object_ids, int encoding_empire) const;
 
     template <class T>
-    boost::shared_ptr<T> InsertNewObject(T* object);
+    std::shared_ptr<T> InsertNewObject(T* object);
 
     friend class boost::serialization::access;
     template <class Archive>

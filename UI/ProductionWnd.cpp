@@ -233,7 +233,7 @@ namespace {
     /////////////////////////////
     // ProductionItemBrowseWnd //
     /////////////////////////////
-    boost::shared_ptr<GG::BrowseInfoWnd> ProductionItemBrowseWnd(const ProductionQueue::Element& elem) {
+    std::shared_ptr<GG::BrowseInfoWnd> ProductionItemBrowseWnd(const ProductionQueue::Element& elem) {
         //const Empire* empire = GetEmpire(elem.empire_id);
 
         std::string main_text;
@@ -242,14 +242,14 @@ namespace {
         //int min_turns = 1;
         float total_cost = 0.0f;
         float max_allocation = 0.0f;
-        boost::shared_ptr<GG::Texture> icon;
+        std::shared_ptr<GG::Texture> icon;
         //bool available = false;
         bool location_ok = false;
 
         if (elem.item.build_type == BT_BUILDING) {
             const BuildingType* building_type = GetBuildingType(elem.item.name);
             if (!building_type) {
-                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+                std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
                 return browse_wnd;
             }
             main_text += UserString("OBJ_BUILDING") + "\n";
@@ -265,7 +265,7 @@ namespace {
         } else if (elem.item.build_type == BT_SHIP) {
             const ShipDesign* design = GetShipDesign(elem.item.design_id);
             if (!design) {
-                boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
+                std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
                 return browse_wnd;
             }
             main_text += UserString("OBJ_SHIP") + "\n";
@@ -279,12 +279,12 @@ namespace {
             icon = ClientUI::ShipDesignIcon(elem.item.design_id);
         }
 
-        if (boost::shared_ptr<UniverseObject> rally_object = GetUniverseObject(elem.rally_point_id)) {
+        if (std::shared_ptr<UniverseObject> rally_object = GetUniverseObject(elem.rally_point_id)) {
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_RALLIED_TO"))
                                         % rally_object->Name()) + "\n";
         }
 
-        if (boost::shared_ptr<UniverseObject> location = GetUniverseObject(elem.location))
+        if (std::shared_ptr<UniverseObject> location = GetUniverseObject(elem.location))
             main_text += boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ENQUEUED_ITEM_LOCATION"))
                                         % location->Name()) + "\n";
 
@@ -313,7 +313,7 @@ namespace {
             title_text = boost::lexical_cast<std::string>(elem.blocksize) + "x ";
         title_text += item_name;
 
-        boost::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(icon, title_text, main_text));
+        std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(icon, title_text, main_text));
         return browse_wnd;
     }
 
@@ -436,7 +436,7 @@ namespace {
             : ClientUI::ResearchableTechTextAndBorderColor();
 
         // get graphic and player-visible name text for item
-        boost::shared_ptr<GG::Texture> graphic;
+        std::shared_ptr<GG::Texture> graphic;
         std::string name_text;
         if (elem.item.build_type == BT_BUILDING) {
             graphic = ClientUI::BuildingIcon(elem.item.name);
@@ -456,7 +456,7 @@ namespace {
         // get location indicator text
         std::string location_text;
         bool system_selected = false;
-        if (boost::shared_ptr<const UniverseObject> location = GetUniverseObject(elem.location)) {
+        if (std::shared_ptr<const UniverseObject> location = GetUniverseObject(elem.location)) {
             system_selected = (location->SystemID() != -1 && location ->SystemID() == SidePanel::SystemID());
             if (GetOptionsDB().Get<bool>("UI.show-production-location-on-queue"))
                 location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
@@ -658,7 +658,7 @@ namespace {
             BuildType build_type = queue_row ? queue_row->elem.item.build_type : INVALID_BUILD_TYPE;
             if (build_type == BT_SHIP) {
                 // for ships, add a set rally point command
-                if (boost::shared_ptr<const System> system = GetSystem(SidePanel::SystemID())) {
+                if (std::shared_ptr<const System> system = GetSystem(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
                     menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,               4, false, false));
                 }
@@ -1042,7 +1042,7 @@ void ProductionWnd::UpdateInfoPanel() {
 
     // find if there is a local location
     int prod_loc_id = this->SelectedPlanetID();
-    boost::shared_ptr<UniverseObject> loc_obj = GetUniverseObject(prod_loc_id);
+    std::shared_ptr<UniverseObject> loc_obj = GetUniverseObject(prod_loc_id);
     if (loc_obj) {
         // extract available and allocated PP at production location
         std::map<std::set<int>, float> available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));

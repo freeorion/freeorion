@@ -213,7 +213,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     LogDependencyVersions();
 
-    boost::shared_ptr<GG::StyleFactory> style(new CUIStyle());
+    std::shared_ptr<GG::StyleFactory> style(new CUIStyle());
     SetStyleFactory(style);
 
     SetMinDragTime(0);
@@ -238,14 +238,14 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     UpdateFPSLimit();
     GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
 
-    boost::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
+    std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
         new GG::TextBoxBrowseInfoWnd(GG::X(400), ClientUI::GetFont(),
                                      GG::Clr(0, 0, 0, 200), ClientUI::WndOuterBorderColor(), ClientUI::TextColor(),
                                      GG::FORMAT_LEFT | GG::FORMAT_WORDBREAK, 1));
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 
-    boost::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
-    SetCursor(boost::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
+    std::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
+    SetCursor(std::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
     RenderCursor(true);
 
     EnableKeyPressRepeat(GetOptionsDB().Get<int>("UI.keypress-repeat-delay"),

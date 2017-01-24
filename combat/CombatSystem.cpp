@@ -21,9 +21,6 @@
 
 #include "../network/Message.h"
 
-#include <boost/make_shared.hpp>
-
-
 
 ////////////////////////////////////////////////
 // CombatInfo
@@ -37,7 +34,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     turn(turn_),
     system_id(system_id_)
 {
-    boost::shared_ptr<System> system = ::GetSystem(system_id);
+    std::shared_ptr<System> system = ::GetSystem(system_id);
     if (!system) {
         ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
         return;
@@ -49,9 +46,9 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
 
 
     // find ships and their owners in system
-    std::vector<boost::shared_ptr<Ship>> ships = Objects().FindObjects<Ship>(system->ShipIDs());
+    std::vector<std::shared_ptr<Ship>> ships = Objects().FindObjects<Ship>(system->ShipIDs());
 
-    for (boost::shared_ptr<Ship> ship : ships) {
+    for (std::shared_ptr<Ship> ship : ships) {
         // add owner to empires that have assets in this battle
         empire_ids.insert(ship->Owner());
 
@@ -59,10 +56,10 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     }
 
     // find planets and their owners in system
-    std::vector<boost::shared_ptr<Planet> > planets =
+    std::vector<std::shared_ptr<Planet>> planets =
         Objects().FindObjects<Planet>(system->PlanetIDs());
 
-    for (boost::shared_ptr<Planet> planet : planets) {
+    for (std::shared_ptr<Planet> planet : planets) {
         // if planet is populated, add owner to empires that have assets in this battle
         if (!planet->Unowned() || planet->CurrentMeterValue(METER_POPULATION) > 0.0)
             empire_ids.insert(planet->Owner());
@@ -79,9 +76,9 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     InitializeObjectVisibility();
 
     // ships
-    for (boost::shared_ptr<Ship> ship : ships) {
+    for (std::shared_ptr<Ship> ship : ships) {
         int ship_id = ship->ID();
-        boost::shared_ptr<const Fleet> fleet = GetFleet(ship->FleetID());
+        std::shared_ptr<const Fleet> fleet = GetFleet(ship->FleetID());
         if (!fleet) {
             ErrorLogger() << "CombatInfo::CombatInfo couldn't get fleet with id "
                                    << ship->FleetID() << " in system " << system->Name() << " (" << system_id << ")";
@@ -107,7 +104,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     }
 
     // planets
-    for (boost::shared_ptr<Planet> planet : planets) {
+    for (std::shared_ptr<Planet> planet : planets) {
         int planet_id = planet->ID();
         std::string planet_known = "At " + system->Name() + " Planet " + boost::lexical_cast<std::string>(planet_id) + " owned by empire " +
                                     boost::lexical_cast<std::string>(planet->Owner()) + " visible to empires: ";
@@ -129,10 +126,10 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // empire latest known objects ObjectMap - NOTE: Using the real thing now
 }
 
-boost::shared_ptr<const System> CombatInfo::GetSystem() const
+std::shared_ptr<const System> CombatInfo::GetSystem() const
 { return this->objects.Object<System>(this->system_id); }
 
-boost::shared_ptr<System> CombatInfo::GetSystem()
+std::shared_ptr<System> CombatInfo::GetSystem()
 { return this->objects.Object<System>(this->system_id); }
 
 void CombatInfo::GetEmpireIdsToSerialize(std::set<int>& filtered_empire_ids, int encoding_empire) const {
@@ -234,7 +231,7 @@ void CombatInfo::GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisi
 void CombatInfo::InitializeObjectVisibility()
 {
     // system and empire visibility of all objects in it
-    boost::shared_ptr<System> system = ::GetSystem(system_id);
+    std::shared_ptr<System> system = ::GetSystem(system_id);
     std::set< int > local_object_ids = system->ContainedObjectIDs();
     for (int empire_id : empire_ids) {
         if (empire_id == ALL_EMPIRES)
@@ -251,8 +248,8 @@ void CombatInfo::InitializeObjectVisibility()
 
 void CombatInfo::ForceAtLeastBasicVisibility(int attacker_id, int target_id)
 {
-    boost::shared_ptr<UniverseObject> attacker = objects.Object(attacker_id);
-    boost::shared_ptr<UniverseObject> target = objects.Object(target_id);
+    std::shared_ptr<UniverseObject> attacker = objects.Object(attacker_id);
+    std::shared_ptr<UniverseObject> target = objects.Object(target_id);
     // Also ensure that attacker (and their fleet if attacker was a ship) are
     // revealed with at least BASIC_VISIBILITY to the target empire
     Visibility old_visibility = empire_object_visibility[target->Owner()][attacker->ID()];
@@ -292,7 +289,7 @@ namespace {
         float           fighter_damage;     // for fighter bays, input value should be determined by ship fighter weapon setup
     };
 
-    void AttackShipShip(boost::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, boost::shared_ptr<Ship> target,
+    void AttackShipShip(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, std::shared_ptr<Ship> target,
                         CombatInfo& combat_info, int bout, int round,
                         WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
@@ -332,7 +329,7 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackShipPlanet(boost::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, boost::shared_ptr<Planet> target,
+    void AttackShipPlanet(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, std::shared_ptr<Planet> target,
                           CombatInfo& combat_info, int bout, int round,
                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
@@ -409,7 +406,7 @@ namespace {
         target->SetLastTurnAttackedByShip(CurrentTurn());
     }
 
-    void AttackShipFighter(boost::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, boost::shared_ptr<Fighter> target,
+    void AttackShipFighter(std::shared_ptr<Ship> attacker, const PartAttackInfo& weapon, std::shared_ptr<Fighter> target,
                            CombatInfo& combat_info, int bout, int round,
                            AttacksEventPtr &attacks_event,
                            WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
@@ -424,7 +421,7 @@ namespace {
         attacker->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackPlanetShip(boost::shared_ptr<Planet> attacker, const PartAttackInfo& weapon, boost::shared_ptr<Ship> target,
+    void AttackPlanetShip(std::shared_ptr<Planet> attacker, const PartAttackInfo& weapon, std::shared_ptr<Ship> target,
                           CombatInfo& combat_info, int bout, int round,
                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
@@ -467,7 +464,7 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackPlanetFighter(boost::shared_ptr<Planet> attacker, const PartAttackInfo& weapon, boost::shared_ptr<Fighter> target,
+    void AttackPlanetFighter(std::shared_ptr<Planet> attacker, const PartAttackInfo& weapon, std::shared_ptr<Fighter> target,
                              CombatInfo& combat_info, int bout, int round,
                              AttacksEventPtr &attacks_event,
                              WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
@@ -487,7 +484,7 @@ namespace {
         combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name, power, 0.0f, 1.0f);
     }
 
-    void AttackFighterShip(boost::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon, boost::shared_ptr<Ship> target,
+    void AttackFighterShip(std::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon, std::shared_ptr<Ship> target,
                            CombatInfo& combat_info, int bout, int round,
                            AttacksEventPtr &attacks_event)
     {
@@ -523,7 +520,7 @@ namespace {
         }
 
         float pierced_shield_value(-1.0);
-        CombatEventPtr attack_event = boost::make_shared<WeaponFireEvent>(
+        CombatEventPtr attack_event = std::make_shared<WeaponFireEvent>(
             bout, round, attacker->ID(), target->ID(), weapon.part_type_name,
             boost::tie(power, pierced_shield_value, damage),
             attacker->Owner(), target->Owner());
@@ -531,7 +528,7 @@ namespace {
         target->SetLastTurnActiveInCombat(CurrentTurn());
     }
 
-    void AttackFighterFighter(boost::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon, boost::shared_ptr<Fighter> target,
+    void AttackFighterFighter(std::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon, std::shared_ptr<Fighter> target,
                               CombatInfo& combat_info, int bout, int round,
                               AttacksEventPtr &attacks_event)
     {
@@ -544,22 +541,22 @@ namespace {
             target->SetDestroyed();
         }
 
-        CombatEventPtr attack_event = boost::make_shared<FighterAttackedEvent>(
+        CombatEventPtr attack_event = std::make_shared<FighterAttackedEvent>(
             bout, round, INVALID_OBJECT_ID, attacker->Owner(), target->Owner());
         attacks_event->AddEvent(attack_event);
     }
 
-    void Attack(boost::shared_ptr<UniverseObject>& attacker, const PartAttackInfo& weapon,
-                boost::shared_ptr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round,
+    void Attack(std::shared_ptr<UniverseObject>& attacker, const PartAttackInfo& weapon,
+                std::shared_ptr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round,
                 AttacksEventPtr &attacks_event,
                 WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event)
     {
-        boost::shared_ptr<Ship> attack_ship = boost::dynamic_pointer_cast<Ship>(attacker);
-        boost::shared_ptr<Planet> attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
-        boost::shared_ptr<Fighter> attack_fighter = boost::dynamic_pointer_cast<Fighter>(attacker);
-        boost::shared_ptr<Ship> target_ship = boost::dynamic_pointer_cast<Ship>(target);
-        boost::shared_ptr<Planet> target_planet = boost::dynamic_pointer_cast<Planet>(target);
-        boost::shared_ptr<Fighter> target_fighter = boost::dynamic_pointer_cast<Fighter>(target);
+        std::shared_ptr<Ship> attack_ship = std::dynamic_pointer_cast<Ship>(attacker);
+        std::shared_ptr<Planet> attack_planet = std::dynamic_pointer_cast<Planet>(attacker);
+        std::shared_ptr<Fighter> attack_fighter = std::dynamic_pointer_cast<Fighter>(attacker);
+        std::shared_ptr<Ship> target_ship = std::dynamic_pointer_cast<Ship>(target);
+        std::shared_ptr<Planet> target_planet = std::dynamic_pointer_cast<Planet>(target);
+        std::shared_ptr<Fighter> target_fighter = std::dynamic_pointer_cast<Fighter>(target);
 
         if (attack_ship && target_ship) {
             AttackShipShip(attack_ship, weapon, target_ship, combat_info, bout, round, platform_event);
@@ -582,7 +579,7 @@ namespace {
         }
     }
 
-    bool ObjectTypeCanBeAttacked(boost::shared_ptr<const UniverseObject> obj) {
+    bool ObjectTypeCanBeAttacked(std::shared_ptr<const UniverseObject> obj) {
         if (!obj)
             return false;
 
@@ -600,7 +597,7 @@ namespace {
         return false;
     }
 
-    bool ObjectDiplomaticallyAttackableByEmpire(boost::shared_ptr<const UniverseObject> obj, int empire_id) {
+    bool ObjectDiplomaticallyAttackableByEmpire(std::shared_ptr<const UniverseObject> obj, int empire_id) {
         if (!obj)
             return false;
         if (obj->OwnedBy(empire_id))
@@ -615,7 +612,7 @@ namespace {
         return true;
     }
 
-    bool ObjectTargettableByEmpire(boost::shared_ptr<const UniverseObject> obj, int empire_id) {
+    bool ObjectTargettableByEmpire(std::shared_ptr<const UniverseObject> obj, int empire_id) {
         if (!obj)
             return false;
         if (obj->ObjectType() != OBJ_FIGHTER &&
@@ -631,13 +628,13 @@ namespace {
         return true;
     }
 
-    bool ObjectAttackableByEmpire(boost::shared_ptr<const UniverseObject> obj, int empire_id) {
+    bool ObjectAttackableByEmpire(std::shared_ptr<const UniverseObject> obj, int empire_id) {
         return ObjectTypeCanBeAttacked(obj)
             && ObjectDiplomaticallyAttackableByEmpire(obj, empire_id)
             && ObjectTargettableByEmpire(obj, empire_id);
     }
 
-    bool ObjectUnTargettableByEmpire(boost::shared_ptr<const UniverseObject> obj, int empire_id) {
+    bool ObjectUnTargettableByEmpire(std::shared_ptr<const UniverseObject> obj, int empire_id) {
         return ObjectTypeCanBeAttacked(obj)
             && ObjectDiplomaticallyAttackableByEmpire(obj, empire_id)
             && !ObjectTargettableByEmpire(obj, empire_id);
@@ -645,11 +642,11 @@ namespace {
 
     // monsters / natives can attack any planet, but can only attack
     // visible ships or ships that are in aggressive fleets
-    bool ObjectDiplomaticallyAttackableByMonsters(boost::shared_ptr<const UniverseObject> obj) {
+    bool ObjectDiplomaticallyAttackableByMonsters(std::shared_ptr<const UniverseObject> obj) {
         return (!obj->Unowned());
     }
 
-    bool ObjectTargettableByMonsters(boost::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
+    bool ObjectTargettableByMonsters(std::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
         UniverseObjectType obj_type = obj->ObjectType();
         if (obj_type == OBJ_PLANET || obj_type == OBJ_FIGHTER) {
             return true;
@@ -662,31 +659,31 @@ namespace {
         return false;
     }
 
-    bool ObjectAttackableByMonsters(boost::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
+    bool ObjectAttackableByMonsters(std::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
         return ObjectTypeCanBeAttacked(obj)
             && ObjectDiplomaticallyAttackableByMonsters(obj)
             && ObjectTargettableByMonsters(obj, monster_detection);
     }
 
-    bool ObjectUnTargettableByMonsters(boost::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
+    bool ObjectUnTargettableByMonsters(std::shared_ptr<const UniverseObject> obj, float monster_detection = 0.0f) {
         return ObjectTypeCanBeAttacked(obj)
             && ObjectDiplomaticallyAttackableByMonsters(obj)
             && !ObjectTargettableByMonsters(obj, monster_detection);
     }
 
-    bool ObjectCanAttack(boost::shared_ptr<const UniverseObject> obj) {
-        if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj)) {
+    bool ObjectCanAttack(std::shared_ptr<const UniverseObject> obj) {
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj)) {
             return ship->IsArmed() || ship->HasFighters();
-        } else if (boost::shared_ptr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(obj)) {
+        } else if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj)) {
             return planet->CurrentMeterValue(METER_DEFENSE) > 0.0f;
-        } else if (boost::shared_ptr<const Fighter> fighter = boost::dynamic_pointer_cast<const Fighter>(obj)) {
+        } else if (std::shared_ptr<const Fighter> fighter = std::dynamic_pointer_cast<const Fighter>(obj)) {
             return fighter->Damage() > 0.0f;
         } else {
             return false;
         }
     }
 
-    std::vector<PartAttackInfo> ShipWeaponsStrengths(boost::shared_ptr<const Ship> ship) {
+    std::vector<PartAttackInfo> ShipWeaponsStrengths(std::shared_ptr<const Ship> ship) {
         std::vector<PartAttackInfo> retval;
         if (!ship)
             return retval;
@@ -762,7 +759,7 @@ namespace {
                 if (combat_info.destroyed_object_ids.find(attacker_id) != combat_info.destroyed_object_ids.end())
                     continue;   // destroyed objects can't launch fighters
 
-                boost::shared_ptr<const Ship> ship = combat_info.objects.Object<Ship>(attacker_id);
+                std::shared_ptr<const Ship> ship = combat_info.objects.Object<Ship>(attacker_id);
                 if (!ship)
                     continue;   // non-ships can't launch fighters
 
@@ -783,7 +780,7 @@ namespace {
     float GetMonsterDetection(const CombatInfo& combat_info) {
         float monster_detection = 0.0;
         for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin(); it != combat_info.objects.const_end(); ++it) {
-            boost::shared_ptr<const UniverseObject> obj = *it;
+            std::shared_ptr<const UniverseObject> obj = *it;
             if (obj->Unowned() && (obj->ObjectType() == OBJ_SHIP || obj->ObjectType() == OBJ_PLANET )){
                 monster_detection = std::max(monster_detection, obj->CurrentMeterValue(METER_DETECTION));
             }
@@ -823,7 +820,7 @@ namespace {
                 Fighter* fighter = new Fighter(owner_empire_id, from_ship_id, species, damage);
                 fighter->SetID(next_fighter_id--);
                 fighter->Rename(UserString("OBJ_FIGHTER"));
-                boost::shared_ptr<Fighter> fighter_ptr = combat_info.objects.Insert(fighter);
+                std::shared_ptr<Fighter> fighter_ptr = combat_info.objects.Insert(fighter);
                 if (!fighter_ptr) {
                     ErrorLogger() << "AddFighters unable to create and insert new Fighter object...";
                     break;
@@ -870,12 +867,12 @@ namespace {
         /// Removes dead units from lists of attackers and defenders
         void CullTheDead(int bout,   BoutEvent::BoutEventPtr &bout_event) {
             IncapacitationsEventPtr incaps_event =
-                boost::make_shared<IncapacitationsEvent>();
+                std::make_shared<IncapacitationsEvent>();
 
             for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
                  it != combat_info.objects.const_end(); ++it)
             {
-                boost::shared_ptr<const UniverseObject> obj = *it;
+                std::shared_ptr<const UniverseObject> obj = *it;
 
                 // There may be objects, for example unowned planets, that were
                 // not a part of the battle to start with. Ignore them
@@ -890,27 +887,27 @@ namespace {
                                  // as any attack destroys them and
                                  // their ID isn't known on clients to
                                  // be displayed anyway
-                    CombatEventPtr incap_event = boost::make_shared<IncapacitationEvent>(
+                    CombatEventPtr incap_event = std::make_shared<IncapacitationEvent>(
                         bout, obj->ID(), obj->Owner());
                     incaps_event->AddEvent(incap_event);
                 }
             }
             if (!incaps_event->AreSubEventsEmpty(ALL_EMPIRES)) {
-                CombatEventPtr incaps_cast = boost::static_pointer_cast<CombatEvent, IncapacitationsEvent>(incaps_event);
+                CombatEventPtr incaps_cast = std::static_pointer_cast<CombatEvent, IncapacitationsEvent>(incaps_event);
                 bout_event->AddEvent(incaps_cast);
             }
         }
 
         /// Checks if target is destroyed and if it is, update lists of living objects.
         /// Return true if is incapacitated
-        bool CheckDestruction(const boost::shared_ptr<const UniverseObject>& target) {
+        bool CheckDestruction(const std::shared_ptr<const UniverseObject>& target) {
             bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                    GetOptionsDB().Get<bool>("verbose-combat-logging");
             int target_id = target->ID();
             // check for destruction of target object
 
             if (target->ObjectType() == OBJ_FIGHTER) {
-                const boost::shared_ptr<const Fighter> fighter = boost::dynamic_pointer_cast<const Fighter>(target);
+                const std::shared_ptr<const Fighter> fighter = std::dynamic_pointer_cast<const Fighter>(target);
                 if (fighter && fighter->Destroyed()) {
                     // remove destroyed fighter's ID from lists of valid attackers and targets
                     valid_attacker_object_ids.erase(target_id);
@@ -1039,7 +1036,7 @@ namespace {
             if (verbose_logging) DebugLogger() << "Reporting Invisible Objects";
             InitialStealthEvent::StealthInvisbleMap report;
             for (int object_id : valid_target_object_ids) {
-                boost::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
+                std::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
 
                 // for all empires, can they attack this object?
                 for (int attacking_empire_id : combat_info.empire_ids) {
@@ -1088,7 +1085,7 @@ namespace {
             for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
                  it != combat_info.objects.const_end(); ++it)
             {
-                boost::shared_ptr<const UniverseObject> obj = *it;
+                std::shared_ptr<const UniverseObject> obj = *it;
                 std::string obj_status = "Considerting object " + obj->Name() + " owned by " + boost::lexical_cast<std::string>(obj->Owner());
                 if (ObjectCanAttack(obj)) {
                     if (verbose_logging)
@@ -1111,7 +1108,7 @@ namespace {
             bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                    GetOptionsDB().Get<bool>("verbose-combat-logging");
             for (int object_id : valid_target_object_ids) {
-                boost::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
+                std::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
                 if (verbose_logging)
                     DebugLogger() << "Considering attackability of object " << obj->Name() 
                                   << " owned by " << boost::lexical_cast<std::string>(obj->Owner());
@@ -1147,7 +1144,7 @@ namespace {
     };
 
 
-    const std::set<int> ValidTargetsForAttackerType(boost::shared_ptr<UniverseObject>& attacker,
+    const std::set<int> ValidTargetsForAttackerType(std::shared_ptr<UniverseObject>& attacker,
                                                     AutoresolveInfo& combat_state,
                                                     const std::set<int>& potential_target_ids)
     {
@@ -1161,7 +1158,7 @@ namespace {
         std::string invalid_target_ids;
 
         for (int target_id : potential_target_ids) {
-            boost::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
+            std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
             if (!target) {
                 ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
                 continue;
@@ -1190,7 +1187,7 @@ namespace {
         return valid_target_ids;
     }
 
-    void ShootAllWeapons(boost::shared_ptr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
+    void ShootAllWeapons(std::shared_ptr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
                          AutoresolveInfo& combat_state, int bout, int round,
                          AttacksEventPtr &attacks_event,
                          WeaponsPlatformEvent::WeaponsPlatformEventPtr &platform_event)
@@ -1254,7 +1251,7 @@ namespace {
             }
             int target_id = *target_it;
 
-            boost::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
+            std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
             if (!target) {
                 ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
                 continue;
@@ -1268,7 +1265,7 @@ namespace {
         } // end for over weapons
     }
 
-    void ReduceStoredFighterCount(boost::shared_ptr<Ship>& ship, float launched_fighters) {
+    void ReduceStoredFighterCount(std::shared_ptr<Ship>& ship, float launched_fighters) {
         if (!ship || launched_fighters <= 0)
             return;
 
@@ -1308,7 +1305,7 @@ namespace {
         }
     }
 
-    void LaunchFighters(boost::shared_ptr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
+    void LaunchFighters(std::shared_ptr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
                         AutoresolveInfo& combat_state, int bout, int round,
                         FighterLaunchesEventPtr &launches_event)
     {
@@ -1321,7 +1318,7 @@ namespace {
         }
 
         static const std::string EMPTY_STRING;
-        boost::shared_ptr<Ship> attacker_ship = boost::dynamic_pointer_cast<Ship>(attacker);
+        std::shared_ptr<Ship> attacker_ship = std::dynamic_pointer_cast<Ship>(attacker);
         const std::string& species_name = attacker_ship ? attacker_ship->SpeciesName() : EMPTY_STRING;
 
         for (const PartAttackInfo& weapon : weapons) {
@@ -1344,7 +1341,7 @@ namespace {
 
             // combat event
             CombatEventPtr launch_event =
-                boost::make_shared<FighterLaunchEvent>(bout, attacker->ID(), attacker_owner_id, new_fighter_ids.size());
+                std::make_shared<FighterLaunchEvent>(bout, attacker->ID(), attacker_owner_id, new_fighter_ids.size());
             launches_event->AddEvent(launch_event);
 
 
@@ -1360,7 +1357,7 @@ namespace {
         } // end for over weapons
     }
 
-    void IncreaseStoredFighterCount(boost::shared_ptr<Ship>& ship, float recovered_fighters) {
+    void IncreaseStoredFighterCount(std::shared_ptr<Ship>& ship, float recovered_fighters) {
         if (!ship || recovered_fighters <= 0)
             return;
 
@@ -1409,7 +1406,7 @@ namespace {
         for (ObjectMap::iterator<> obj_it = combat_info.objects.begin();
              obj_it != combat_info.objects.end() && obj_it->ID() < 0; ++obj_it)
         {
-            boost::shared_ptr<Fighter> fighter = boost::dynamic_pointer_cast<Fighter>(*obj_it);
+            std::shared_ptr<Fighter> fighter = std::dynamic_pointer_cast<Fighter>(*obj_it);
             if (!fighter || fighter->Destroyed())
                 continue;   // destroyed fighters can't return
             if (combat_info.destroyed_object_ids.find(fighter->LaunchedFrom()) != combat_info.destroyed_object_ids.end())
@@ -1418,28 +1415,28 @@ namespace {
         }
 
         for (std::map<int, float>::value_type& entry : ships_fighters_to_add_back) {
-            boost::shared_ptr<Ship> ship = combat_info.objects.Object<Ship>(entry.first);
+            std::shared_ptr<Ship> ship = combat_info.objects.Object<Ship>(entry.first);
             if (!ship) {
                 ErrorLogger() << "Couldn't get ship with id " << entry.first << " for fighter to return to...";
                 continue;
             }
             IncreaseStoredFighterCount(ship, entry.second);
             // launching negative ships indicates recovery of them
-            CombatEventPtr launch_event = boost::make_shared<FighterLaunchEvent>(bout, entry.first, ship->Owner(), -entry.second);
+            CombatEventPtr launch_event = std::make_shared<FighterLaunchEvent>(bout, entry.first, ship->Owner(), -entry.second);
             launches_event->AddEvent(launch_event);
         }
     }
 
-    std::vector<PartAttackInfo> GetWeapons(boost::shared_ptr<UniverseObject>& attacker) {
+    std::vector<PartAttackInfo> GetWeapons(std::shared_ptr<UniverseObject>& attacker) {
         // loop over weapons of attacking object.  each gets a shot at a
         // randomly selected target object
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                GetOptionsDB().Get<bool>("verbose-combat-logging");
         std::vector<PartAttackInfo> weapons;
 
-        boost::shared_ptr<Ship> attack_ship = boost::dynamic_pointer_cast<Ship>(attacker);
-        boost::shared_ptr<Planet> attack_planet = boost::dynamic_pointer_cast<Planet>(attacker);
-        boost::shared_ptr<Fighter> attack_fighter = boost::dynamic_pointer_cast<Fighter>(attacker);
+        std::shared_ptr<Ship> attack_ship = std::dynamic_pointer_cast<Ship>(attacker);
+        std::shared_ptr<Planet> attack_planet = std::dynamic_pointer_cast<Planet>(attacker);
+        std::shared_ptr<Fighter> attack_fighter = std::dynamic_pointer_cast<Fighter>(attacker);
 
         if (attack_ship) {
             weapons = ShipWeaponsStrengths(attack_ship);    // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons with PC_DIRECT_WEAPON part class
@@ -1465,7 +1462,7 @@ namespace {
     }
 
     void CombatRound(int bout, CombatInfo& combat_info, AutoresolveInfo& combat_state) {
-        BoutEvent::BoutEventPtr bout_event = boost::make_shared<BoutEvent>(bout);
+        BoutEvent::BoutEventPtr bout_event = std::make_shared<BoutEvent>(bout);
         combat_info.combat_events.push_back(bout_event);
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                GetOptionsDB().Get<bool>("verbose-combat-logging");
@@ -1484,8 +1481,8 @@ namespace {
             { DebugLogger() << attacker; }
         }
 
-        AttacksEventPtr attacks_event = boost::make_shared<AttacksEvent>();
-        CombatEventPtr attacks_event_cast = boost::static_pointer_cast<CombatEvent, AttacksEvent>(attacks_event);
+        AttacksEventPtr attacks_event = std::make_shared<AttacksEvent>();
+        CombatEventPtr attacks_event_cast = std::static_pointer_cast<CombatEvent, AttacksEvent>(attacks_event);
         bout_event->AddEvent(attacks_event_cast);
 
         int round = 1;  // counter of events during the current combat bout
@@ -1494,7 +1491,7 @@ namespace {
         // despite their attack power depending on something (their defence meter)
         // that processing shots at them may reduce.
         for (int attacker_id : shuffled_attackers) {
-            boost::shared_ptr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
+            std::shared_ptr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
 
             if (!attacker) {
                 ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
@@ -1512,15 +1509,15 @@ namespace {
 
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker); // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with PC_DIRECT_WEAPON part class
             WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
-                = boost::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
-            CombatEventPtr platform_event_cast = boost::static_pointer_cast<CombatEvent, WeaponsPlatformEvent>(platform_event);
+                = std::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
+            CombatEventPtr platform_event_cast = std::static_pointer_cast<CombatEvent, WeaponsPlatformEvent>(platform_event);
             attacks_event->AddEvent(platform_event_cast);
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++, attacks_event, platform_event);
         }
 
         // now process ship and fighter attacks
         for (int attacker_id : shuffled_attackers) {
-            boost::shared_ptr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
+            std::shared_ptr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
 
             if (!attacker) {
                 ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
@@ -1540,11 +1537,11 @@ namespace {
             // randomly selected target object
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker);  // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with PC_DIRECT_WEAPON part class
             WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
-                = boost::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
+                = std::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++, attacks_event, platform_event);
             if (!platform_event->AreSubEventsEmpty(attacker->Owner())) {
                 CombatEventPtr platform_event_cast =
-                    boost::static_pointer_cast<CombatEvent, WeaponsPlatformEvent>(platform_event);
+                    std::static_pointer_cast<CombatEvent, WeaponsPlatformEvent>(platform_event);
                 attacks_event->AddEvent(platform_event_cast);
             }
         }
@@ -1553,9 +1550,9 @@ namespace {
         // no point is launching fighters during the last bout, as they will not
         // get any chance to attack during this combat
         if (bout <= GetUniverse().GetNumCombatRounds() - 1) {
-            FighterLaunchesEventPtr launches_event = boost::make_shared<FighterLaunchesEvent>();
+            FighterLaunchesEventPtr launches_event = std::make_shared<FighterLaunchesEvent>();
             for (int attacker_id : shuffled_attackers) {
-                boost::shared_ptr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
+                std::shared_ptr<UniverseObject> attacker = combat_info.objects.Object(attacker_id);
 
                 if (!attacker) {
                     ErrorLogger() << "CombatRound couldn't get object with id " << attacker_id;
@@ -1577,34 +1574,34 @@ namespace {
             }
 
             if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES)) {
-                CombatEventPtr launches_event_cast = boost::static_pointer_cast<CombatEvent, AttacksEvent>(launches_event);
+                CombatEventPtr launches_event_cast = std::static_pointer_cast<CombatEvent, AttacksEvent>(launches_event);
                 bout_event->AddEvent(launches_event_cast);
             }
         }
 
         // Stealthed attackers have now revealed themselves to their targets.
         // Process this for each new combat event.
-        boost::shared_ptr<StealthChangeEvent> stealth_change_event = boost::make_shared<StealthChangeEvent>(bout);
+        std::shared_ptr<StealthChangeEvent> stealth_change_event = std::make_shared<StealthChangeEvent>(bout);
         std::vector<ConstCombatEventPtr> attacks_this_bout = attacks_event->SubEvents(ALL_EMPIRES);
         for (ConstCombatEventPtr this_event : attacks_this_bout) {
             // mark attacker as valid target for attacked object's owner, so that regardless
             // of visibility the attacker can be counter-attacked in subsequent rounds if it
             // was not already attackable
-            std::vector<boost::shared_ptr<const WeaponFireEvent> > weapon_fire_events;
-            if (boost::shared_ptr<const WeaponFireEvent> naked_fire_event
-                = boost::dynamic_pointer_cast<const WeaponFireEvent>(this_event)) {
+            std::vector<std::shared_ptr<const WeaponFireEvent>> weapon_fire_events;
+            if (std::shared_ptr<const WeaponFireEvent> naked_fire_event
+                = std::dynamic_pointer_cast<const WeaponFireEvent>(this_event)) {
                 weapon_fire_events.push_back(naked_fire_event);
-            } else if (boost::shared_ptr<const WeaponsPlatformEvent> weapons_platform
-                       = boost::dynamic_pointer_cast<const WeaponsPlatformEvent>(this_event)) {
+            } else if (std::shared_ptr<const WeaponsPlatformEvent> weapons_platform
+                       = std::dynamic_pointer_cast<const WeaponsPlatformEvent>(this_event)) {
                 for (ConstCombatEventPtr more_event : weapons_platform->SubEvents(ALL_EMPIRES)){
-                    if (boost::shared_ptr<const WeaponFireEvent> this_attack
-                        = boost::dynamic_pointer_cast<const WeaponFireEvent>(more_event)) {
+                    if (std::shared_ptr<const WeaponFireEvent> this_attack
+                        = std::dynamic_pointer_cast<const WeaponFireEvent>(more_event)) {
                         weapon_fire_events.push_back(this_attack);
                     }
                 }
             }
 
-            for (boost::shared_ptr<const WeaponFireEvent> this_attack : weapon_fire_events) {
+            for (std::shared_ptr<const WeaponFireEvent> this_attack : weapon_fire_events) {
                 combat_info.ForceAtLeastBasicVisibility(this_attack->attacker_id, this_attack->target_id);
                 int target_empire = combat_info.objects.Object(this_attack->target_id)->Owner();
                 std::set<int>::iterator attacker_targettable_it
@@ -1631,7 +1628,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         return;
     bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
-    boost::shared_ptr<const System> system = combat_info.objects.Object<System>(combat_info.system_id);
+    std::shared_ptr<const System> system = combat_info.objects.Object<System>(combat_info.system_id);
     if (!system)
         ErrorLogger() << "AutoResolveCombat couldn't get system with id " << combat_info.system_id;
     else
@@ -1654,7 +1651,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     AutoresolveInfo combat_state(combat_info);
 
     combat_info.combat_events.push_back(
-        boost::make_shared<InitialStealthEvent>(
+        std::make_shared<InitialStealthEvent>(
             combat_state.ReportInvisibleObjects(combat_info)));
 
     // run multiple combat "bouts" during which each combat object can take
@@ -1679,7 +1676,7 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         last_bout = bout;
     } // end for over combat arounds
 
-    FighterLaunchesEventPtr launches_event = boost::make_shared<FighterLaunchesEvent>();
+    FighterLaunchesEventPtr launches_event = std::make_shared<FighterLaunchesEvent>();
     combat_info.combat_events.push_back(launches_event);
 
     RecoverFighters(combat_info, last_bout, launches_event);

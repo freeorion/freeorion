@@ -1,11 +1,13 @@
 #ifndef _Process_h_
 #define _Process_h_
 
-#include <vector>
+
+#include <memory>
 #include <string>
-#include <boost/shared_ptr.hpp>
+#include <vector>
 
 #include "Export.h"
+
 
 /** Encapsulates a spawned child process in a platform-independent manner. A Process object holds a shared_ptr to the
    data on the process it creates; therefore Process objects can be freely copied, with the same copy semantics as 
@@ -67,7 +69,7 @@ public:
 private:
     class Impl;
 
-    boost::shared_ptr<Impl> m_impl;
+    std::shared_ptr<Impl> m_impl;
     bool                    m_empty;           ///< true iff this is a default-constructed Process (no associated process exists)
     bool                    m_low_priority;    ///< true if this process is set to low priority
 };

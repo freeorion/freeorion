@@ -35,7 +35,6 @@
 #include <boost/noncopyable.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/thread/condition_variable.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
@@ -391,7 +390,7 @@ struct Universe::GraphImpl {
             int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
             // look up lane between systems
-            boost::shared_ptr<const System> system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
+            std::shared_ptr<const System> system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
             if (!system1) {
                 ErrorLogger() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                 return false;
@@ -408,7 +407,7 @@ struct Universe::GraphImpl {
         int                     m_empire_id;
     };
     typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
-    typedef std::map<int, boost::shared_ptr<EmpireViewSystemGraph> > EmpireViewSystemGraphMap;
+    typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph>> EmpireViewSystemGraphMap;
 
     // declare property map types for properties declared above
     typedef boost::property_map<SystemGraph, vertex_system_id_t>::const_type        ConstSystemIDPropertyMap;
@@ -645,7 +644,7 @@ std::set<std::string> Universe::GetObjectVisibleSpecialsByEmpire(int object_id, 
             return std::set<std::string>();
         return object_it->second;
     } else {
-        boost::shared_ptr<const UniverseObject> obj = m_objects.Object(object_id);
+        std::shared_ptr<const UniverseObject> obj = m_objects.Object(object_id);
         if (!obj)
             return std::set<std::string>();
         // all specials visible
@@ -763,12 +762,12 @@ namespace {
 }
 
 double Universe::LinearDistance(int system1_id, int system2_id) const {
-    boost::shared_ptr<const System> system1 = GetSystem(system1_id);
+    std::shared_ptr<const System> system1 = GetSystem(system1_id);
     if (!system1) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system1_id;
         throw std::out_of_range("system1_id invalid");
     }
-    boost::shared_ptr<const System> system2 = GetSystem(system2_id);
+    std::shared_ptr<const System> system2 = GetSystem(system2_id);
     if (!system2) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system2_id;
         throw std::out_of_range("system2_id invalid");
@@ -888,10 +887,10 @@ std::pair<std::list<int>, int> Universe::LeastJumpsPath(int system1_id, int syst
 }
 
 namespace {
-    boost::shared_ptr<const Fleet> FleetFromObject(boost::shared_ptr<const UniverseObject> obj) {
-        boost::shared_ptr<const Fleet> retval = boost::dynamic_pointer_cast<const Fleet>(obj);
+    std::shared_ptr<const Fleet> FleetFromObject(std::shared_ptr<const UniverseObject> obj) {
+        std::shared_ptr<const Fleet> retval = std::dynamic_pointer_cast<const Fleet>(obj);
         if (!retval) {
-            if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj))
+            if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj))
                 retval = GetFleet(ship->FleetID());
         }
         return retval;
@@ -899,16 +898,16 @@ namespace {
 }
 
 int Universe::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    boost::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
     if (!obj1)
         return INT_MAX;
 
-    boost::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
     if (!obj2)
         return INT_MAX;
 
-    boost::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
-    boost::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
+    std::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
+    std::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
 
     if (system_one && system_two) {
         // both condition-matching object and candidate are / in systems.
@@ -926,7 +925,7 @@ int Universe::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
 
     } else if (system_one) {
         // just object one is / in a system.
-        if (boost::shared_ptr<const Fleet> fleet = FleetFromObject(obj2)) {
+        if (std::shared_ptr<const Fleet> fleet = FleetFromObject(obj2)) {
             // other object is a fleet that is between systems
             // need to check shortest path from systems on either side of starlane fleet is on
             short jumps1 = -1, jumps2 = -1;
@@ -949,7 +948,7 @@ int Universe::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
 
     } else if (system_two) {
         // just object two is a system.
-        if (boost::shared_ptr<const Fleet> fleet = FleetFromObject(obj1)) {
+        if (std::shared_ptr<const Fleet> fleet = FleetFromObject(obj1)) {
             // other object is a fleet that is between systems
             // need to check shortest path from systems on either side of starlane fleet is on
             short jumps1 = -1, jumps2 = -1;
@@ -972,8 +971,8 @@ int Universe::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
     } else {
         // neither object is / in a system
 
-        boost::shared_ptr<const Fleet> fleet_one = FleetFromObject(obj1);
-        boost::shared_ptr<const Fleet> fleet_two = FleetFromObject(obj2);
+        std::shared_ptr<const Fleet> fleet_one = FleetFromObject(obj1);
+        std::shared_ptr<const Fleet> fleet_two = FleetFromObject(obj2);
 
         if (fleet_one && fleet_two) {
             // both objects are / in a fleet.
@@ -1012,25 +1011,25 @@ double Universe::ShortestPathDistance(int object1_id, int object2_id) const {
     // If one or both objects are (in) a fleet between systems, use the destination system
     // and add the distance from the fleet to the destination system, essentially calculating
     // the distance travelled until both could be in the same system.
-    boost::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
     if (!obj1)
         return -1;
 
-    boost::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
     if (!obj2)
         return -1;
 
-    boost::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
-    boost::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
+    std::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
+    std::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
     std::pair< std::list< int >, double > path_len_pair;
     double dist1(0.0), dist2(0.0);
-    boost::shared_ptr<const Fleet> fleet;
+    std::shared_ptr<const Fleet> fleet;
 
     if (!system_one) {
         fleet = FleetFromObject(obj1);
         if (!fleet)
             return -1;
-        if (boost::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+        if (std::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
             system_one = next_sys;
             dist1 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
         }
@@ -1040,7 +1039,7 @@ double Universe::ShortestPathDistance(int object1_id, int object2_id) const {
         fleet = FleetFromObject(obj2);
         if (!fleet)
             return -1;
-        if (boost::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+        if (std::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
             system_two = next_sys;
             dist2 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
         }
@@ -1065,7 +1064,7 @@ bool Universe::SystemsConnected(int system1_id, int system2_id, int empire_id) c
 }
 
 bool Universe::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
-    if (boost::shared_ptr<const System> system = GetEmpireKnownSystem(system_id, empire_id))
+    if (std::shared_ptr<const System> system = GetEmpireKnownSystem(system_id, empire_id))
         if (!system->StarlanesWormholes().empty())
             return true;
     return false;
@@ -1086,7 +1085,7 @@ int Universe::NearestSystemTo(double x, double y) const {
     double min_dist2 = DBL_MAX;
     int min_dist2_sys_id = INVALID_OBJECT_ID;
 
-    for (boost::shared_ptr<const System> system : m_objects.FindObjects<System>()) {
+    for (std::shared_ptr<const System> system : m_objects.FindObjects<System>()) {
         double xs = system->X();
         double ys = system->Y();
         double dist2 = (xs-x)*(xs-x) + (ys-y)*(ys-y);
@@ -1112,9 +1111,9 @@ int Universe::GenerateObjectID() {
 }
 
 template <class T>
-boost::shared_ptr<T> Universe::Insert(T* obj) {
+std::shared_ptr<T> Universe::Insert(T* obj) {
     if (!obj)
-        return boost::shared_ptr<T>();
+        return std::shared_ptr<T>();
 
     int id = GenerateObjectID();
     if (id != INVALID_OBJECT_ID) {
@@ -1126,18 +1125,18 @@ boost::shared_ptr<T> Universe::Insert(T* obj) {
     // Realistically, we should probably do something a little more drastic in this case,
     // like terminate the program and call 911 or something.
     delete obj;
-    return boost::shared_ptr<T>();
+    return std::shared_ptr<T>();
 }
 
 template <class T>
-boost::shared_ptr<T> Universe::InsertID(T* obj, int id) {
+std::shared_ptr<T> Universe::InsertID(T* obj, int id) {
     if (id == INVALID_OBJECT_ID)
         return Insert(obj);
     if (!obj || id >= MAX_ID)
-        return boost::shared_ptr<T>();
+        return std::shared_ptr<T>();
 
     obj->SetID(id);
-    boost::shared_ptr<T> result = m_objects.Insert(obj);
+    std::shared_ptr<T> result = m_objects.Insert(obj);
     if (id > m_last_allocated_object_id )
         m_last_allocated_object_id = id;
     DebugLogger() << "Inserting object with id " << id;
@@ -1207,7 +1206,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (boost::shared_ptr<UniverseObject> object : m_objects) {
+    for (std::shared_ptr<UniverseObject> object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
@@ -1217,7 +1216,7 @@ void Universe::ApplyAllEffectsAndUpdateMeters(bool do_accounting) {
     ExecuteEffects(targets_causes, do_accounting, false, false, true);
     // clamp max meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
     // clamp max and target meters to [DEFAULT_VALUE, LARGE_VALUE] and current meters to [DEFAULT_VALUE, max]
-    for (boost::shared_ptr<UniverseObject> object : m_objects)
+    for (std::shared_ptr<UniverseObject> object : m_objects)
         object->ClampMeters();
 }
 
@@ -1234,14 +1233,14 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes, object_ids);
 
-    std::vector<boost::shared_ptr<UniverseObject>> objects = m_objects.FindObjects(object_ids);
+    std::vector<std::shared_ptr<UniverseObject>> objects = m_objects.FindObjects(object_ids);
 
     // revert all current meter values (which are modified by effects) to
     // their initial state for this turn, so meter
     // value can be calculated (by accumulating all effects' modifications this
     // turn) and active meters have the proper baseline from which to
     // accumulate changes from effects
-    for (boost::shared_ptr<UniverseObject> object : objects) {
+    for (std::shared_ptr<UniverseObject> object : objects) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
@@ -1251,7 +1250,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(const std::vector<int>& object_i
 
     ExecuteEffects(targets_causes, do_accounting, true);
 
-    for (boost::shared_ptr<UniverseObject> object : objects)
+    for (std::shared_ptr<UniverseObject> object : objects)
         object->ClampMeters();
 }
 
@@ -1265,7 +1264,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
-    for (boost::shared_ptr<UniverseObject> object : m_objects) {
+    for (std::shared_ptr<UniverseObject> object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
         object->ResetPairedActiveMeters();
     }
@@ -1273,7 +1272,7 @@ void Universe::ApplyMeterEffectsAndUpdateMeters(bool do_accounting) {
         entry.second->ResetMeters();
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
-    for (boost::shared_ptr<UniverseObject> object : m_objects)
+    for (std::shared_ptr<UniverseObject> object : m_objects)
         object->ClampMeters();
 }
 
@@ -1286,13 +1285,13 @@ void Universe::ApplyMeterEffectsAndUpdateTargetMaxUnpairedMeters(bool do_account
     Effect::TargetsCauses targets_causes;
     GetEffectsAndTargets(targets_causes);
 
-    for (boost::shared_ptr<UniverseObject> object : m_objects) {
+    for (std::shared_ptr<UniverseObject> object : m_objects) {
         object->ResetTargetMaxUnpairedMeters();
     }
 
     ExecuteEffects(targets_causes, do_accounting, true, false, true);
 
-    for (boost::shared_ptr<UniverseObject> object : m_objects)
+    for (std::shared_ptr<UniverseObject> object : m_objects)
         object->ClampMeters();
 }
 
@@ -1352,7 +1351,7 @@ void Universe::InitMeterEstimatesAndDiscrepancies() {
         if (m_destroyed_object_ids.find(object_id) != m_destroyed_object_ids.end())
             continue;
         // get object
-        boost::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
+        std::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
         if (!obj) {
             ErrorLogger() << "Universe::InitMeterEstimatesAndDiscrepancies couldn't find an object that was in the effect accounting map...?";
             continue;
@@ -1404,7 +1403,7 @@ void Universe::UpdateMeterEstimates(int object_id, bool update_contained_objects
     objects_list.push_back(object_id);
 
     for (int cur_object_id : objects_list) {
-        boost::shared_ptr<UniverseObject> cur_object = m_objects.Object(cur_object_id);
+        std::shared_ptr<UniverseObject> cur_object = m_objects.Object(cur_object_id);
         if (!cur_object) {
             ErrorLogger() << "Universe::UpdateMeterEstimates tried to get an invalid object...";
             return;
@@ -1450,15 +1449,15 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     // get all pointers to objects once, to avoid having to do so repeatedly
     // when iterating over the list in the following code
-    std::vector<boost::shared_ptr<UniverseObject>> object_ptrs = m_objects.FindObjects(objects_vec);
+    std::vector<std::shared_ptr<UniverseObject>> object_ptrs = m_objects.FindObjects(objects_vec);
     if (objects_vec.empty()) {
         object_ptrs.reserve(m_objects.NumExistingObjects());
         std::transform(Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(),
                        std::back_inserter(object_ptrs),
-                       boost::bind(&std::map<int, boost::shared_ptr<UniverseObject>>::value_type::second, _1));
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }
 
-    for (boost::shared_ptr<UniverseObject> obj : object_ptrs) {
+    for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
         int obj_id = obj->ID();
 
         // Reset max meters to DEFAULT_VALUE and current meters to initial value at start of this turn
@@ -1485,7 +1484,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "UpdateMeterEstimatesImpl after resetting meters objects:";
-        for (boost::shared_ptr<UniverseObject> obj : object_ptrs) {
+        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
             DebugLogger() << obj->Dump();
         }
     }
@@ -1500,7 +1499,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "UpdateMeterEstimatesImpl after executing effects objects:";
-        for (boost::shared_ptr<UniverseObject> obj : object_ptrs) {
+        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
             DebugLogger() << obj->Dump();
         }
     }
@@ -1509,7 +1508,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
     // max at the start of the turn
     if (!m_effect_discrepancy_map.empty() && do_accounting) {
-        for (boost::shared_ptr<UniverseObject> obj : object_ptrs) {
+        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
             int obj_id = obj->ID();
 
             // check if this object has any discrepancies
@@ -1545,7 +1544,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     }
 
     // clamp meters to valid range of max values, and so current is less than max
-    for (boost::shared_ptr<UniverseObject> obj : object_ptrs) {
+    for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
         // currently this clamps all meters, even if not all meters are being processed by this function...
         // but that shouldn't be a problem, as clamping meters that haven't changed since they were last
         // updated should have no effect
@@ -1554,7 +1553,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
-        for (boost::shared_ptr<UniverseObject> obj : object_ptrs) {
+        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
             DebugLogger() << obj->Dump();
         }
     }
@@ -1562,7 +1561,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
 void Universe::BackPropagateObjectMeters(const std::vector<int>& object_ids) {
     // copy current meter values to initial values
-    for (boost::shared_ptr<UniverseObject> obj : m_objects.FindObjects(object_ids))
+    for (std::shared_ptr<UniverseObject> obj : m_objects.FindObjects(object_ids))
         obj->BackPropagateMeters();
 }
 
@@ -1591,45 +1590,45 @@ namespace {
             boost::condition_variable_any m_state_changed;
         };
         StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-            const boost::shared_ptr<Effect::EffectsGroup>&          the_effects_group,
-            const std::vector<boost::shared_ptr<const UniverseObject>>& the_sources,
+            const std::shared_ptr<Effect::EffectsGroup>& the_effects_group,
+            const std::vector<std::shared_ptr<const UniverseObject>>& the_sources,
             EffectsCauseType                                        the_effect_cause_type,
             const std::string&                                      the_specific_cause_name,
             Effect::TargetSet&                                      the_target_objects,
             Effect::TargetsCauses&                                  the_targets_causes,
-            std::map<int, boost::shared_ptr<ConditionCache> >&      the_source_cached_condition_matches,
+            std::map<int, std::shared_ptr<ConditionCache>>& the_source_cached_condition_matches,
             ConditionCache&                                         the_invariant_cached_condition_matches,
             boost::shared_mutex&                                    the_global_mutex
         );
         void operator ()();
     private:
         // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe. 
-        boost::shared_ptr<Effect::EffectsGroup>                 m_effects_group;
-        const std::vector<boost::shared_ptr<const UniverseObject>>* m_sources;
+        std::shared_ptr<Effect::EffectsGroup> m_effects_group;
+        const std::vector<std::shared_ptr<const UniverseObject>>* m_sources;
         EffectsCauseType                                        m_effect_cause_type;
         const std::string                                       m_specific_cause_name;
         Effect::TargetSet*                                      m_target_objects;
         Effect::TargetsCauses*                                  m_targets_causes;
-        std::map<int, boost::shared_ptr<ConditionCache> >*      m_source_cached_condition_matches;
+        std::map<int, std::shared_ptr<ConditionCache>>* m_source_cached_condition_matches;
         ConditionCache*                                         m_invariant_cached_condition_matches;
         boost::shared_mutex*                                    m_global_mutex;
 
         static Effect::TargetSet& GetConditionMatches(
             const Condition::ConditionBase*    cond,
             ConditionCache&                    cached_condition_matches,
-            boost::shared_ptr<const UniverseObject> source,
+            std::shared_ptr<const UniverseObject> source,
             const ScriptingContext&            source_context,
             Effect::TargetSet&                 target_objects);
     };
 
     StoreTargetsAndCausesOfEffectsGroupsWorkItem::StoreTargetsAndCausesOfEffectsGroupsWorkItem(
-            const boost::shared_ptr<Effect::EffectsGroup>&          the_effects_group,
-            const std::vector<boost::shared_ptr<const UniverseObject>>& the_sources,
+            const std::shared_ptr<Effect::EffectsGroup>& the_effects_group,
+            const std::vector<std::shared_ptr<const UniverseObject>>& the_sources,
             EffectsCauseType                                        the_effect_cause_type,
             const std::string&                                      the_specific_cause_name,
             Effect::TargetSet&                                      the_target_objects,
             Effect::TargetsCauses&                                  the_targets_causes,
-            std::map<int, boost::shared_ptr<ConditionCache> >&      the_source_cached_condition_matches,
+            std::map<int, std::shared_ptr<ConditionCache>>& the_source_cached_condition_matches,
             ConditionCache&                                         the_invariant_cached_condition_matches,
             boost::shared_mutex&                                    the_global_mutex
         ) :
@@ -1699,7 +1698,7 @@ namespace {
     Effect::TargetSet& StoreTargetsAndCausesOfEffectsGroupsWorkItem::GetConditionMatches(
         const Condition::ConditionBase*                               cond,
         StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache& cached_condition_matches,
-        boost::shared_ptr<const UniverseObject> source,
+        std::shared_ptr<const UniverseObject> source,
         const ScriptingContext&                                       source_context,
         Effect::TargetSet&                                            target_objects)
     {
@@ -1751,7 +1750,7 @@ namespace {
         if (GetOptionsDB().Get<bool>("verbose-logging")) {
             boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
             std::string sources_ids;
-            for (boost::shared_ptr<const UniverseObject> obj : *m_sources) {
+            for (std::shared_ptr<const UniverseObject> obj : *m_sources) {
                 sources_ids += obj->Name() + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
             }
             DebugLogger() << "StoreTargetsAndCausesOfEffectsGroups: effects_group: " << m_effects_group->AccountingLabel()
@@ -1767,7 +1766,7 @@ namespace {
         // create temporary container for concurrent work
         Effect::TargetSet target_objects(*m_target_objects);
         // process all sources in set provided
-        for (boost::shared_ptr<const UniverseObject> source : *m_sources) {
+        for (std::shared_ptr<const UniverseObject> source : *m_sources) {
             ScriptingContext source_context(source);
             int source_object_id = (source ? source->ID() : INVALID_OBJECT_ID);
             ScopedTimer update_timer("... StoreTargetsAndCausesOfEffectsGroups done processing source " +
@@ -1800,8 +1799,8 @@ namespace {
             }
 
             {
-                // NOTE: boost::shared_ptr copying is not thread-safe.
-                // FIXME: use boost::shared_ptr here, or a dedicated lock
+                // NOTE: std::shared_ptr copying is not thread-safe.
+                // FIXME: use std::shared_ptr here, or a dedicated lock
                 boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
 
                 // combine effects group and source object id into a sourced effects group
@@ -1837,7 +1836,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "target objects:";
-        for (boost::shared_ptr<UniverseObject> obj : all_potential_targets) {
+        for (std::shared_ptr<UniverseObject> obj : all_potential_targets) {
             DebugLogger() << obj->Dump();
         }
     }
@@ -1847,14 +1846,14 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // scope conditions. Index INVALID_OBJECT_ID stores results for
     // source-invariant conditions
     typedef StoreTargetsAndCausesOfEffectsGroupsWorkItem::ConditionCache ConditionCache;
-    std::map<int, boost::shared_ptr<ConditionCache> > cached_source_condition_matches;
+    std::map<int, std::shared_ptr<ConditionCache>> cached_source_condition_matches;
 
     // prepopulate the cache for safe concurrent access
     for (int obj_id : m_objects.FindObjectIDs()) {
-        cached_source_condition_matches[obj_id] = boost::shared_ptr<ConditionCache>(new ConditionCache);
+        cached_source_condition_matches[obj_id] = std::shared_ptr<ConditionCache>(new ConditionCache);
     }
 
-    cached_source_condition_matches[INVALID_OBJECT_ID] = boost::shared_ptr<ConditionCache>(new ConditionCache);
+    cached_source_condition_matches[INVALID_OBJECT_ID] = std::shared_ptr<ConditionCache>(new ConditionCache);
 
     ConditionCache& invariant_condition_matches = *cached_source_condition_matches[INVALID_OBJECT_ID];
 
@@ -1875,8 +1874,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
 
     // find each species planets in single pass, maintaining object map order per-species
-    std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>> species_objects;
-    for (boost::shared_ptr<Planet> planet : m_objects.FindObjects<Planet>()) {
+    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> species_objects;
+    for (std::shared_ptr<Planet> planet : m_objects.FindObjects<Planet>()) {
         if (m_destroyed_object_ids.find(planet->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string& species_name = planet->SpeciesName();
@@ -1894,7 +1893,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
 
     // find each species ships in single pass, maintaining object map order per-species
-    for (boost::shared_ptr<Ship> ship : m_objects.FindObjects<Ship>()) {
+    for (std::shared_ptr<Ship> ship : m_objects.FindObjects<Ship>()) {
         if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string& species_name = ship->SpeciesName();
@@ -1913,13 +1912,13 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
         const std::string& species_name = entry.first;
         const Species*     species      = entry.second;
-        std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>>::iterator species_objects_it =
+        std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>>::iterator species_objects_it =
             species_objects.find(species_name);
 
         if (species_objects_it == species_objects.end())
             continue;
 
-        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : species->Effects()) {
+        for (std::shared_ptr<Effect::EffectsGroup> effects_group : species->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, species_objects_it->second, ECT_SPECIES, species_name,
@@ -1934,9 +1933,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         DebugLogger() << "Universe::GetEffectsAndTargets for SPECIALS";
     type_timer.restart();
-    std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>> specials_objects;
+    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
-    for (boost::shared_ptr<const UniverseObject> obj : m_objects) {
+    for (std::shared_ptr<const UniverseObject> obj : m_objects) {
         int source_object_id = obj->ID();
         if (m_destroyed_object_ids.find(source_object_id) != m_destroyed_object_ids.end())
             continue;
@@ -1953,12 +1952,12 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // enforce specials effects order
     for (const std::string& special_name : SpecialNames()) {
         const Special*     special      = GetSpecial(special_name);
-        std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>>::iterator specials_objects_it = specials_objects.find(special_name);
+        std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>>::iterator specials_objects_it = specials_objects.find(special_name);
 
         if (specials_objects_it == specials_objects.end())
             continue;
 
-        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : special->Effects()) {
+        for (std::shared_ptr<Effect::EffectsGroup> effects_group : special->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, specials_objects_it->second, ECT_SPECIAL, special_name,
@@ -1974,11 +1973,11 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     if (GetOptionsDB().Get<bool>("verbose-logging"))
         DebugLogger() << "Universe::GetEffectsAndTargets for TECHS";
     type_timer.restart();
-    std::list<std::vector<boost::shared_ptr<const UniverseObject>>> tech_sources;
+    std::list<std::vector<std::shared_ptr<const UniverseObject>>> tech_sources;
     for (std::map<int, Empire*>::value_type& entry : Empires()) {
         const Empire* empire = entry.second;
         int source_id = empire->CapitalID();
-        boost::shared_ptr<const UniverseObject> source = m_objects.Object(source_id);
+        std::shared_ptr<const UniverseObject> source = m_objects.Object(source_id);
         if (source_id == INVALID_OBJECT_ID ||
             !source ||
             !source->Unowned() || // TODO: Don't forget to fix this!
@@ -1986,13 +1985,13 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         {
             // find alternate object owned by this empire to act as source
             // first try to get a planet
-            std::vector<boost::shared_ptr<UniverseObject>> empire_planets = m_objects.FindObjects(OwnedVisitor<Planet>(empire->EmpireID()));
+            std::vector<std::shared_ptr<UniverseObject>> empire_planets = m_objects.FindObjects(OwnedVisitor<Planet>(empire->EmpireID()));
             if (!empire_planets.empty()) {
                 source = *empire_planets.begin();
                 source_id = source->ID();
             } else {
                 // if no planet, use any owned object
-                std::vector<boost::shared_ptr<UniverseObject>> empire_objects = m_objects.FindObjects(OwnedVisitor<UniverseObject>(empire->EmpireID()));
+                std::vector<std::shared_ptr<UniverseObject>> empire_objects = m_objects.FindObjects(OwnedVisitor<UniverseObject>(empire->EmpireID()));
                 if (!empire_objects.empty()) {
                     source = *empire_objects.begin();
                     source_id = source->ID();
@@ -2007,12 +2006,12 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             continue;
         }
 
-        tech_sources.push_back(std::vector<boost::shared_ptr<const UniverseObject>>(1U, source));
+        tech_sources.push_back(std::vector<std::shared_ptr<const UniverseObject>>(1U, source));
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
             const Tech* tech = GetTech(*tech_it);
             if (!tech) continue;
 
-            for (boost::shared_ptr<Effect::EffectsGroup> effects_group : tech->Effects()) {
+            for (std::shared_ptr<Effect::EffectsGroup> effects_group : tech->Effects()) {
                 targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
                 run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                     effects_group, tech_sources.back(), ECT_TECH, tech->Name(),
@@ -2031,8 +2030,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     type_timer.restart();
 
     // determine buildings of each type in a single pass
-    std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>> buildings_by_type;
-    for (boost::shared_ptr<Building> building : m_objects.FindObjects<Building>()) {
+    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> buildings_by_type;
+    for (std::shared_ptr<Building> building : m_objects.FindObjects<Building>()) {
         if (m_destroyed_object_ids.find(building->ID()) != m_destroyed_object_ids.end())
             continue;
         const std::string&  building_type_name = building->BuildingTypeName();
@@ -2049,13 +2048,13 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
         const std::string&  building_type_name = entry.first;
         const BuildingType* building_type      = entry.second;
-        std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>>::iterator buildings_by_type_it =
+        std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>>::iterator buildings_by_type_it =
             buildings_by_type.find(building_type_name);
 
         if (buildings_by_type_it == buildings_by_type.end())
             continue;
 
-        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : building_type->Effects()) {
+        for (std::shared_ptr<Effect::EffectsGroup> effects_group : building_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, buildings_by_type_it->second, ECT_BUILDING, building_type_name,
@@ -2074,9 +2073,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // determine ship hulls and parts of each type in a single pass
     // the same ship might be added multiple times if it contains the part multiple times
     // recomputing targets for the same ship and part is kind of silly here, but shouldn't hurt
-    std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>> ships_by_hull_type;
-    std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>> ships_by_part_type;
-    for (boost::shared_ptr<const Ship> ship : m_objects.FindObjects<Ship>()) {
+    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_hull_type;
+    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> ships_by_part_type;
+    for (std::shared_ptr<const Ship> ship : m_objects.FindObjects<Ship>()) {
         if (m_destroyed_object_ids.find(ship->ID()) != m_destroyed_object_ids.end())
             continue;
 
@@ -2108,12 +2107,12 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager()) {
         const std::string& hull_type_name = entry.first;
         const HullType*    hull_type      = entry.second;
-        std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>>::iterator ships_by_hull_type_it = ships_by_hull_type.find(hull_type_name);
+        std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>>::iterator ships_by_hull_type_it = ships_by_hull_type.find(hull_type_name);
 
         if (ships_by_hull_type_it == ships_by_hull_type.end())
             continue;
 
-        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : hull_type->Effects()) {
+        for (std::shared_ptr<Effect::EffectsGroup> effects_group : hull_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, ships_by_hull_type_it->second, ECT_SHIP_HULL, hull_type_name,
@@ -2127,12 +2126,12 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager()) {
         const std::string& part_type_name = entry.first;
         const PartType*    part_type      = entry.second;
-        std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>>::iterator ships_by_part_type_it = ships_by_part_type.find(part_type_name);
+        std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>>::iterator ships_by_part_type_it = ships_by_part_type.find(part_type_name);
 
         if (ships_by_part_type_it == ships_by_part_type.end())
             continue;
 
-        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : part_type->Effects()) {
+        for (std::shared_ptr<Effect::EffectsGroup> effects_group : part_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, ships_by_part_type_it->second, ECT_SHIP_PART, part_type_name,
@@ -2149,8 +2148,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
         DebugLogger() << "Universe::GetEffectsAndTargets for FIELDS";
     type_timer.restart();
     // determine fields of each type in a single pass
-    std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>> fields_by_type;
-    for (boost::shared_ptr<const Field> field : m_objects.FindObjects<Field>()) {
+    std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
+    for (std::shared_ptr<const Field> field : m_objects.FindObjects<Field>()) {
         if (m_destroyed_object_ids.find(field->ID()) != m_destroyed_object_ids.end())
             continue;
 
@@ -2168,12 +2167,12 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     for (const std::map<std::string, FieldType*>::value_type& entry : GetFieldTypeManager()) {
         const std::string& field_type_name = entry.first;
         const FieldType*   field_type      = entry.second;
-        std::map<std::string, std::vector<boost::shared_ptr<const UniverseObject>>>::iterator fields_by_type_it = fields_by_type.find(field_type_name);
+        std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>>::iterator fields_by_type_it = fields_by_type.find(field_type_name);
 
         if (fields_by_type_it == fields_by_type.end())
             continue;
 
-        for (boost::shared_ptr<Effect::EffectsGroup> effects_group : field_type->Effects()) {
+        for (std::shared_ptr<Effect::EffectsGroup> effects_group : field_type->Effects()) {
             targets_causes_reorder_buffer.push_back(Effect::TargetsCauses());
             run_queue.AddWork(new StoreTargetsAndCausesOfEffectsGroupsWorkItem(
                 effects_group, fields_by_type_it->second, ECT_FIELD, field_type_name,
@@ -2327,7 +2326,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
     for (std::map<int, std::set<int>>::value_type& entry : m_marked_destroyed) {
         int obj_id = entry.first;
-        boost::shared_ptr<UniverseObject> obj = GetUniverseObject(obj_id);
+        std::shared_ptr<UniverseObject> obj = GetUniverseObject(obj_id);
         if (!obj)
             continue;
 
@@ -2354,19 +2353,19 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 namespace {
     static const std::string EMPTY_STRING;
 
-    const std::string& GetSpeciesFromObject(boost::shared_ptr<const UniverseObject> obj) {
-        boost::shared_ptr<const Fleet> obj_fleet;
-        boost::shared_ptr<const Ship> obj_ship;
-        boost::shared_ptr<const Building> obj_building;
+    const std::string& GetSpeciesFromObject(std::shared_ptr<const UniverseObject> obj) {
+        std::shared_ptr<const Fleet> obj_fleet;
+        std::shared_ptr<const Ship> obj_ship;
+        std::shared_ptr<const Building> obj_building;
 
         switch (obj->ObjectType()) {
         case OBJ_PLANET: {
-            boost::shared_ptr<const Planet> obj_planet = boost::static_pointer_cast<const Planet>(obj);
+            std::shared_ptr<const Planet> obj_planet = std::static_pointer_cast<const Planet>(obj);
             return obj_planet->SpeciesName();
             break;
         }
         case OBJ_SHIP: {
-            boost::shared_ptr<const Ship> obj_ship = boost::static_pointer_cast<const Ship>(obj);
+            std::shared_ptr<const Ship> obj_ship = std::static_pointer_cast<const Ship>(obj);
             return obj_ship->SpeciesName();
             break;
         }
@@ -2375,19 +2374,19 @@ namespace {
         }
     }
 
-    int GetDesignIDFromObject(boost::shared_ptr<const UniverseObject> obj) {
+    int GetDesignIDFromObject(std::shared_ptr<const UniverseObject> obj) {
         if (obj->ObjectType() != OBJ_SHIP)
             return ShipDesign::INVALID_DESIGN_ID;
-        boost::shared_ptr<const Ship> shp = boost::static_pointer_cast<const Ship>(obj);
+        std::shared_ptr<const Ship> shp = std::static_pointer_cast<const Ship>(obj);
         return shp->DesignID();
     }
 }
 
 void Universe::CountDestructionInStats(int object_id, int source_object_id) {
-    boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     if (!obj)
         return;
-    boost::shared_ptr<const UniverseObject> source = GetUniverseObject(source_object_id);
+    std::shared_ptr<const UniverseObject> source = GetUniverseObject(source_object_id);
     if (!source)
         return;
 
@@ -2448,7 +2447,7 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     if (objects.Empty())
         return;
 
-    boost::shared_ptr<UniverseObject> obj = objects.Object(object_id);
+    std::shared_ptr<UniverseObject> obj = objects.Object(object_id);
     if (!obj) {
         ErrorLogger() << "ForgetKnownObject empire: " << empire_id
                       << " bad object id: " << object_id;
@@ -2463,17 +2462,17 @@ void Universe::ForgetKnownObject(int empire_id, int object_id) {
     }
 
     for (int child_id : obj->VisibleContainedObjectIDs(empire_id)) {
-        if (boost::shared_ptr<UniverseObject> child = objects.Object(child_id))
+        if (std::shared_ptr<UniverseObject> child = objects.Object(child_id))
             ForgetKnownObject(empire_id, child->ID());
     }
 
     if (int container_id = obj->ContainerObjectID() != INVALID_OBJECT_ID) {
-        if (boost::shared_ptr<UniverseObject> container = objects.Object(container_id)) {
-            if (boost::shared_ptr<System> system = boost::dynamic_pointer_cast<System>(container))
+        if (std::shared_ptr<UniverseObject> container = objects.Object(container_id)) {
+            if (std::shared_ptr<System> system = std::dynamic_pointer_cast<System>(container))
                 system->Remove(object_id);
-            else if (boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(container))
+            else if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(container))
                 planet->RemoveBuilding(object_id);
-            else if (boost::shared_ptr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(container))
+            else if (std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(container))
                 fleet->RemoveShip(object_id);
         }
     }
@@ -2503,7 +2502,7 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // if object is a ship, empire also gets knowledge of its design
     if (vis >= VIS_PARTIAL_VISIBILITY) {
-        if (boost::shared_ptr<const Ship> ship = GetShip(object_id)) {
+        if (std::shared_ptr<const Ship> ship = GetShip(object_id)) {
             int design_id = ship->DesignID();
             if (design_id == ShipDesign::INVALID_DESIGN_ID) {
                 ErrorLogger() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
@@ -2520,7 +2519,7 @@ void Universe::SetEmpireSpecialVisibility(int empire_id, int object_id,
 {
     if (empire_id == ALL_EMPIRES || special_name.empty() || object_id == INVALID_OBJECT_ID)
         return;
-    //boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+    //std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     //if (!obj)
     //    return;
     //if (!obj->HasSpecial(special_name))
@@ -2538,7 +2537,7 @@ namespace {
     std::map<int, std::map<std::pair<double, double>, float> > GetEmpiresPositionDetectionRanges() {
         std::map<int, std::map<std::pair<double, double>, float> > retval;
 
-        for (boost::shared_ptr<const UniverseObject> obj : Objects()) {
+        for (std::shared_ptr<const UniverseObject> obj : Objects()) {
             // skip unowned objects, which can't provide detection to any empire
             if (obj->Unowned())
                 continue;
@@ -2552,11 +2551,11 @@ namespace {
                 continue;
 
             // don't allow moving ships / fleets to give detection
-            boost::shared_ptr<const Fleet> fleet;
+            std::shared_ptr<const Fleet> fleet;
             if (obj->ObjectType() == OBJ_FLEET) {
-                fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
+                fleet = std::dynamic_pointer_cast<const Fleet>(obj);
             } else if (obj->ObjectType() == OBJ_SHIP) {
-                boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
+                std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj);
                 if (ship)
                     fleet = Objects().Object<Fleet>(ship->FleetID());
             }
@@ -2611,7 +2610,7 @@ namespace {
         for (ObjectMap::const_iterator<> object_it = objects.const_begin();
              object_it != objects.const_end(); ++object_it)
         {
-            boost::shared_ptr<const UniverseObject> obj = *object_it;
+            std::shared_ptr<const UniverseObject> obj = *object_it;
             int object_id = object_it->ID();
             const Meter* stealth_meter = obj->GetMeter(METER_STEALTH);
             if (!stealth_meter)
@@ -2716,7 +2715,7 @@ namespace {
                 detecting_empire_entry.second;
 
             // for each field, try to find a detector position in range for this empire
-            for (boost::shared_ptr<const Field> field : objects.FindObjects<Field>()) {
+            for (std::shared_ptr<const Field> field : objects.FindObjects<Field>()) {
                 if (field->GetMeter(METER_STEALTH)->Current() > detection_strength)
                     continue;
                 double field_size = field->GetMeter(METER_SIZE)->Current();
@@ -2789,7 +2788,7 @@ namespace {
     /** sets visibility of objects that empires own for those objects */
     void SetEmpireOwnedObjectVisibilities() {
         Universe& universe = GetUniverse();
-        for (boost::shared_ptr<const UniverseObject> obj : Objects()) {
+        for (std::shared_ptr<const UniverseObject> obj : Objects()) {
             if (obj->Unowned())
                 continue;
             universe.SetEmpireObjectVisibility(obj->Owner(), obj->ID(), VIS_FULL_VISIBILITY);
@@ -2822,7 +2821,7 @@ namespace {
         std::map<int, std::set<int> > empires_systems_with_owned_objects;
         // get systems where empires have owned objects
         for (ObjectMap::const_iterator<> it = objects.const_begin(); it != objects.const_end(); ++it) {
-            boost::shared_ptr<const UniverseObject> obj = *it;
+            std::shared_ptr<const UniverseObject> obj = *it;
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID)
                 continue;
             empires_systems_with_owned_objects[obj->Owner()].insert(obj->SystemID());
@@ -2838,8 +2837,8 @@ namespace {
         }
 
         // get planets, check their locations...
-        std::vector<boost::shared_ptr<const Planet>> planets = objects.FindObjects<Planet>();
-        for (boost::shared_ptr<const Planet> planet : objects.FindObjects<Planet>()) {
+        std::vector<std::shared_ptr<const Planet>> planets = objects.FindObjects<Planet>();
+        for (std::shared_ptr<const Planet> planet : objects.FindObjects<Planet>()) {
             int system_id = planet->SystemID();
             if (system_id == INVALID_OBJECT_ID)
                 continue;
@@ -2867,7 +2866,7 @@ namespace {
             int container_obj_id = container_object_it->ID();
 
             // get container object
-            boost::shared_ptr<const UniverseObject> container_obj = *container_object_it;
+            std::shared_ptr<const UniverseObject> container_obj = *container_object_it;
             if (!container_obj)
                 continue;   // shouldn't be necessary, but I like to be safe...
 
@@ -2948,7 +2947,7 @@ namespace {
 
     void PropagateVisibilityToSystemsAlongStarlanes(const ObjectMap& objects,
                                                     Universe::EmpireObjectVisibilityMap& empire_object_visibility) {
-        for (boost::shared_ptr<const System> system : objects.FindObjects<System>()) {
+        for (std::shared_ptr<const System> system : objects.FindObjects<System>()) {
             int system_id = system->ID();
 
             // for each empire with a visibility map
@@ -2993,11 +2992,11 @@ namespace {
         // ensure systems on either side of a starlane along which a fleet is
         // moving are at least basically visible, so that the starlane itself can /
         // will be visible
-        std::vector<boost::shared_ptr<const Fleet>> moving_fleets;
-        for (boost::shared_ptr<const UniverseObject> obj : objects.FindObjects(MovingFleetVisitor())) {
+        std::vector<std::shared_ptr<const Fleet>> moving_fleets;
+        for (std::shared_ptr<const UniverseObject> obj : objects.FindObjects(MovingFleetVisitor())) {
             if (obj->Unowned() || obj->SystemID() == INVALID_OBJECT_ID || obj->ObjectType() != OBJ_FLEET)
                 continue;
-            boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
+            std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj);
             if (!fleet)
                 continue;
 
@@ -3049,7 +3048,7 @@ namespace {
                     continue;
 
                 int object_id = obj_entry.first;
-                boost::shared_ptr<const UniverseObject> obj = objects.Object(object_id);
+                std::shared_ptr<const UniverseObject> obj = objects.Object(object_id);
                 if (!obj)
                     continue;
 
@@ -3140,7 +3139,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
         return;
 
     // for each object in universe
-    for (boost::shared_ptr<const UniverseObject> full_object : m_objects) {
+    for (std::shared_ptr<const UniverseObject> full_object : m_objects) {
         int object_id = full_object->ID();
         if (!full_object) {
             ErrorLogger() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects with id " << object_id;
@@ -3172,7 +3171,7 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
             // update empire's latest known data about object, based on current visibility and historical visibility and knowledge of object
 
             // is there already last known version of an UniverseObject stored for this empire?
-            if (boost::shared_ptr<UniverseObject> known_obj = known_object_map.Object(object_id)) {
+            if (std::shared_ptr<UniverseObject> known_obj = known_object_map.Object(object_id)) {
                 known_obj->Copy(full_object, empire_id);                    // already a stored version of this object for this empire.  update it, limited by visibility this empire has for this object this turn
             } else {
                 if (UniverseObject* new_obj = full_object->Clone(empire_id))    // no previously-recorded version of this object for this empire.  create a new one, copying only the information limtied by visibility, leaving the rest as default values
@@ -3282,7 +3281,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
                 continue;
             if (obj_it->GetVisibility(empire_id) >= VIS_BASIC_VISIBILITY)
                 continue;
-            boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(*obj_it);
+            std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(*obj_it);
             if (!fleet)
                 continue;
             int fleet_id = obj_it->ID();
@@ -3303,7 +3302,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
             // check each ship. if any are visible or not visible but not stale,
             // fleet is not stale
             for (int ship_id : fleet->ShipIDs()) {
-                boost::shared_ptr<const Ship> ship = latest_known_objects.Object<Ship>(ship_id);
+                std::shared_ptr<const Ship> ship = latest_known_objects.Object<Ship>(ship_id);
 
                 // if ship doesn't think it's in this fleet, doesn't count.
                 if (!ship || ship->FleetID() != fleet_id)
@@ -3331,7 +3330,7 @@ void Universe::UpdateEmpireStaleObjectKnowledge() {
         }
 
         //for (int stale_id : stale_set) {
-        //    boost::shared_ptr<const UniverseObject> obj = latest_known_objects.Object(stale_id);
+        //    std::shared_ptr<const UniverseObject> obj = latest_known_objects.Object(stale_id);
         //    DebugLogger() << "Object " << stale_id << " : " << (obj ? obj->Name() : "(unknown)") << " is stale for empire " << empire_id ;
         //}
     }
@@ -3364,7 +3363,7 @@ void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id)
 
 void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = true*/) {
     // remove object from any containing UniverseObject
-    boost::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
+    std::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
     if (!obj) {
         ErrorLogger() << "Universe::Destroy called for nonexistant object with id: " << object_id;
         return;
@@ -3391,17 +3390,17 @@ void Universe::Destroy(int object_id, bool update_destroyed_object_knowers/* = t
 std::set<int> Universe::RecursiveDestroy(int object_id) {
     std::set<int> retval;
 
-    boost::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
+    std::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
     if (!obj) {
         DebugLogger() << "Universe::RecursiveDestroy asked to destroy nonexistant object with id " << object_id;
         return retval;
     }
 
-    boost::shared_ptr<System> system = GetSystem(obj->SystemID());
+    std::shared_ptr<System> system = GetSystem(obj->SystemID());
 
-    if (boost::shared_ptr<Ship> ship = boost::dynamic_pointer_cast<Ship>(obj)) {
+    if (std::shared_ptr<Ship> ship = std::dynamic_pointer_cast<Ship>(obj)) {
         // if a ship is being deleted, and it is the last ship in its fleet, then the empty fleet should also be deleted
-        boost::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
+        std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID());
         if (fleet) {
             fleet->RemoveShip(ship->ID());
             if (fleet->Empty()) {
@@ -3416,7 +3415,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         Destroy(object_id);
         retval.insert(object_id);
 
-    } else if (boost::shared_ptr<Fleet> fleet = boost::dynamic_pointer_cast<Fleet>(obj)) {
+    } else if (std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(obj)) {
         for (int ship_id : fleet->ShipIDs()) {
             if (system)
                 system->Remove(ship_id);
@@ -3428,7 +3427,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         Destroy(object_id);
         retval.insert(object_id);
 
-    } else if (boost::shared_ptr<Planet> planet = boost::dynamic_pointer_cast<Planet>(obj)) {
+    } else if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(obj)) {
         for (int building_id : planet->BuildingIDs()) {
             if (system)
                 system->Remove(building_id);
@@ -3440,7 +3439,7 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         Destroy(object_id);
         retval.insert(object_id);
 
-    } else if (boost::shared_ptr<System> obj_system = boost::dynamic_pointer_cast<System>(obj)) {
+    } else if (std::shared_ptr<System> obj_system = std::dynamic_pointer_cast<System>(obj)) {
         // destroy all objects in system
         for (int system_id : obj_system->ObjectIDs()) {
             Destroy(system_id);
@@ -3449,12 +3448,12 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
 
         // remove any starlane connections to this system
         int this_sys_id = obj_system->ID();
-        for (boost::shared_ptr<System> sys : m_objects.FindObjects<System>()) {
+        for (std::shared_ptr<System> sys : m_objects.FindObjects<System>()) {
             sys->RemoveStarlane(this_sys_id);
         }
 
         // remove fleets / ships moving along destroyed starlane
-        for (boost::shared_ptr<Fleet> fleet : m_objects.FindObjects<Fleet>()) {
+        for (std::shared_ptr<Fleet> fleet : m_objects.FindObjects<Fleet>()) {
             if (fleet->SystemID() == INVALID_OBJECT_ID && (
                 fleet->NextSystemID() == this_sys_id ||
                 fleet->PreviousSystemID() == this_sys_id))
@@ -3467,8 +3466,8 @@ std::set<int> Universe::RecursiveDestroy(int object_id) {
         // don't need to bother with removing things from system, fleets, or
         // ships, since everything in system is being destroyed
 
-    } else if (boost::shared_ptr<Building> building = boost::dynamic_pointer_cast<Building>(obj)) {
-        boost::shared_ptr<Planet> planet = GetPlanet(building->PlanetID());
+    } else if (std::shared_ptr<Building> building = std::dynamic_pointer_cast<Building>(obj)) {
+        std::shared_ptr<Planet> planet = GetPlanet(building->PlanetID());
         if (planet)
             planet->RemoveBuilding(object_id);
         if (system)
@@ -3490,7 +3489,7 @@ bool Universe::Delete(int object_id) {
     DebugLogger() << "Universe::Delete with ID: " << object_id;
     // find object amongst existing objects and delete directly, without storing
     // any info about the previous object (as is done for destroying an object)
-    boost::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
+    std::shared_ptr<UniverseObject> obj = m_objects.Object(object_id);
     if (!obj) {
         ErrorLogger() << "Tried to delete a nonexistant object with id: " << object_id;
         return false;
@@ -3516,7 +3515,7 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
-    boost::shared_ptr<GraphImpl> new_graph_impl(new GraphImpl());
+    std::shared_ptr<GraphImpl> new_graph_impl(new GraphImpl());
     std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
     // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
     bool graph_changed = system_ids.size() != boost::num_vertices(m_graph_impl->system_graph);
@@ -3543,7 +3542,7 @@ void Universe::InitializeSystemGraph(int for_empire_id) {
     // add edges for all starlanes
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
         int system1_id = system_ids[system1_index];
-        boost::shared_ptr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
+        std::shared_ptr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
 
         // add edges and edge weights
         for (const std::map<int, bool>::value_type& entry : system1->StarlanesWormholes()) {
@@ -3605,7 +3604,7 @@ void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id) {
         for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
             int empire_id = empire_entry.first;
             GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_id);
-            boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
+            std::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
                 new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
             m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
@@ -3613,7 +3612,7 @@ void Universe::UpdateEmpireVisibilityFilteredSystemGraphs(int for_empire_id) {
     } else {
         // all empires share a single filtered graph, filtered by the for_empire_id
         GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, for_empire_id);
-        boost::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
+        std::shared_ptr<GraphImpl::EmpireViewSystemGraph> filtered_graph_ptr(
             new GraphImpl::EmpireViewSystemGraph(m_graph_impl->system_graph, filter));
 
         for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
@@ -3639,20 +3638,20 @@ namespace {
     // Looks like there are at least 4 SourceForEmpire functions lying around:
     // one in ShipDesign, one in Tech, one in Building, one here...
     // TODO: Eliminate duplication
-    boost::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
+    std::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return boost::shared_ptr<const UniverseObject>();
+            return std::shared_ptr<const UniverseObject>();
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is
         // doing the building.  Ideally this will be the capital, but any object
         // owned by the empire will work.
-        boost::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
+        std::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
         // no capital?  scan through all objects to find one owned by this empire
         if (!source) {
-            for (boost::shared_ptr<const UniverseObject> obj : Objects()) {
+            for (std::shared_ptr<const UniverseObject> obj : Objects()) {
                 if (obj->OwnedBy(empire_id)) {
                     source = obj;
                     break;
@@ -3670,7 +3669,7 @@ void Universe::UpdateStatRecords() {
     if (current_turn == 0)
         m_stat_records.clear();
 
-    std::map<int, boost::shared_ptr<const UniverseObject>> empire_sources;
+    std::map<int, std::shared_ptr<const UniverseObject>> empire_sources;
 
     for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
         empire_sources[empire_entry.first] = SourceForEmpire(empire_entry.first);
@@ -3688,7 +3687,7 @@ void Universe::UpdateStatRecords() {
         std::map<int, std::map<int, double> >& stat_records = m_stat_records[stat_name];
 
         // calculate stat for each empire, store in records for current turn
-        for (std::map<int, boost::shared_ptr<const UniverseObject>>::value_type entry : empire_sources) {
+        for (std::map<int, std::shared_ptr<const UniverseObject>>::value_type entry : empire_sources) {
             int empire_id = entry.first;
 
             if (value_ref->SourceInvariant()) {
@@ -3874,51 +3873,51 @@ void Universe::GetEmpireStaleKnowledgeObjects(ObjectKnowledgeMap& empire_stale_k
 }
 
 template <class T>
-boost::shared_ptr<T> Universe::InsertNewObject(T* object) {
+std::shared_ptr<T> Universe::InsertNewObject(T* object) {
     m_objects.Insert(object);
     return m_objects.Object<T>(object->ID());
 }
 
-boost::shared_ptr<Ship> Universe::CreateShip(int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Ship> Universe::CreateShip(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Ship(), id); }
 
-boost::shared_ptr<Ship> Universe::CreateShip(int empire_id, int design_id, const std::string& species_name,
-                                             int produced_by_empire_id/*= ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Ship> Universe::CreateShip(int empire_id, int design_id, const std::string& species_name,
+                                           int produced_by_empire_id/*= ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Ship(empire_id, design_id, species_name, produced_by_empire_id), id); }
 
-boost::shared_ptr<Fleet> Universe::CreateFleet(int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Fleet> Universe::CreateFleet(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Fleet(), id); }
 
-boost::shared_ptr<Fleet> Universe::CreateFleet(const std::string& name, double x, double y, int owner, int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Fleet> Universe::CreateFleet(const std::string& name, double x, double y, int owner, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Fleet(name, x, y, owner), id); }
 
-boost::shared_ptr<Planet> Universe::CreatePlanet(int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Planet> Universe::CreatePlanet(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Planet(), id); }
 
-boost::shared_ptr<Planet> Universe::CreatePlanet(PlanetType type, PlanetSize size, int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Planet> Universe::CreatePlanet(PlanetType type, PlanetSize size, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Planet(type, size), id); }
 
-boost::shared_ptr<System> Universe::CreateSystem(int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<System> Universe::CreateSystem(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new System(), id); }
 
-boost::shared_ptr<System> Universe::CreateSystem(StarType star, const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<System> Universe::CreateSystem(StarType star, const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new System(star, name, x, y), id); }
 
-boost::shared_ptr<System> Universe::CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
-                                                 const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<System> Universe::CreateSystem(StarType star, const std::map<int, bool>& lanes_and_holes,
+                                               const std::string& name, double x, double y, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new System(star, lanes_and_holes, name, x, y), id); }
 
-boost::shared_ptr<Building> Universe::CreateBuilding(int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Building> Universe::CreateBuilding(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Building(), id); }
 
-boost::shared_ptr<Building> Universe::CreateBuilding(int empire_id, const std::string& building_type,
-                                                     int produced_by_empire_id/* = ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Building> Universe::CreateBuilding(int empire_id, const std::string& building_type,
+                                                   int produced_by_empire_id/* = ALL_EMPIRES*/, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Building(empire_id, building_type, produced_by_empire_id), id); }
 
-boost::shared_ptr<Field> Universe::CreateField(int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Field> Universe::CreateField(int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Field(), id); }
 
-boost::shared_ptr<Field> Universe::CreateField(const std::string& field_type, double x, double y, double radius, int id/* = INVALID_OBJECT_ID*/)
+std::shared_ptr<Field> Universe::CreateField(const std::string& field_type, double x, double y, double radius, int id/* = INVALID_OBJECT_ID*/)
 { return InsertID(new Field(field_type, x, y, radius), id); }
 
 void Universe::ResetUniverse() {

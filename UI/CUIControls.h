@@ -39,7 +39,7 @@ public:
              GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
 
     CUILabel(const std::string& str,
-             const std::vector<boost::shared_ptr<GG::Font::TextElement> >& text_elements,
+             const std::vector<std::shared_ptr<GG::Font::TextElement>>& text_elements,
              GG::Flags<GG::TextFormat> format = GG::FORMAT_NONE,
              GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS,
              GG::X x = GG::X0, GG::Y y = GG::Y0, GG::X w = GG::X1, GG::Y h = GG::Y1);
@@ -177,12 +177,12 @@ public:
  */
 class CUIIconButtonRepresenter : public GG::StateButtonRepresenter {
 public:
-    CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> icon,
+    CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> icon,
                              const GG::Clr& highlight_clr);
 
-    CUIIconButtonRepresenter(boost::shared_ptr<GG::SubTexture> unchecked_icon,
+    CUIIconButtonRepresenter(std::shared_ptr<GG::SubTexture> unchecked_icon,
                              const GG::Clr& unchecked_clr,
-                             boost::shared_ptr<GG::SubTexture> checked_icon,
+                             std::shared_ptr<GG::SubTexture> checked_icon,
                              const GG::Clr& checked_clr);
 
     void Render(const GG::StateButton& button) const override;
@@ -190,8 +190,8 @@ public:
     void OnChecked(bool checked) const override;
 
 private:
-    boost::shared_ptr<GG::SubTexture>   m_unchecked_icon;
-    boost::shared_ptr<GG::SubTexture>   m_checked_icon;
+    std::shared_ptr<GG::SubTexture> m_unchecked_icon;
+    std::shared_ptr<GG::SubTexture> m_checked_icon;
     GG::Clr                             m_unchecked_color;
     GG::Clr                             m_checked_color;
 };
@@ -201,7 +201,7 @@ private:
 class CUIStateButton : public GG::StateButton {
 public:
     /** \name Structors */ //@{
-    CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, boost::shared_ptr<GG::StateButtonRepresenter> representer);
+    CUIStateButton(const std::string& str, GG::Flags<GG::TextFormat> format, std::shared_ptr<GG::StateButtonRepresenter> representer);
     //@}
 };
 
@@ -209,7 +209,7 @@ public:
 class CUITabBar : public GG::TabBar {
 public:
     /** \name Structors */ ///@{
-    CUITabBar(const boost::shared_ptr<GG::Font>& font, GG::Clr color,
+    CUITabBar(const std::shared_ptr<GG::Font>& font, GG::Clr color,
               GG::Clr text_color);
     //@}
 
@@ -351,7 +351,7 @@ public:
     /** \name Accessors */ //@{
     const std::vector<GG::Font::LineData>& GetLineData() const override;
 
-    const boost::shared_ptr<GG::Font>& GetFont() const override;
+    const std::shared_ptr<GG::Font>& GetFont() const override;
 
     GG::Pt TextUpperLeft() const override;
 
@@ -408,16 +408,16 @@ struct CUISimpleDropDownListRow : public GG::ListBox::Row {
 class StatisticIcon : public GG::Control {
 public:
     /** \name Structors */ //@{
-    StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+    StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   GG::X x = GG::X0, GG::Y y = GG::Y0,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
 
-    StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+    StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool showsign,
                   GG::X x = GG::X0, GG::Y y = GG::Y0,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
 
-    StatisticIcon(const boost::shared_ptr<GG::Texture> texture,
+    StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
                   bool showsign0, bool showsign1,
                   GG::X x = GG::X0, GG::Y y = GG::Y0,
@@ -651,7 +651,7 @@ public:
       * order they are specified in \a textures with GraphicStyles specified in the same-indexed value of \a styles.
       * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
       * associated styles use the style GRAPHIC_CENTER. */
-    MultiTextureStaticGraphic(const std::vector<boost::shared_ptr<GG::Texture> >& textures,
+    MultiTextureStaticGraphic(const std::vector<std::shared_ptr<GG::Texture>>& textures,
                               const std::vector<GG::Flags<GG::GraphicStyle> >& styles = std::vector<GG::Flags<GG::GraphicStyle> >());
 
     /** creates a MultiTextureStaticGraphic from multiple pre-existing SubTextures which are rendered back-to-front in the
@@ -688,7 +688,7 @@ private:
 class RotatingGraphic : public GG::StaticGraphic {
 public:
     /** \name Structors */ ///@{
-    RotatingGraphic(const boost::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
+    RotatingGraphic(const std::shared_ptr<GG::Texture>& texture, GG::Flags<GG::GraphicStyle> style = GG::GRAPHIC_NONE,
                     GG::Flags<GG::WndFlag> flags = GG::NO_WND_FLAGS);
     //@}
 

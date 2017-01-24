@@ -42,7 +42,7 @@ public:
     bool ContainedBy(int object_id) const override
     { return false; }
 
-    boost::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
+    std::shared_ptr<UniverseObject> Accept(const UniverseObjectVisitor& visitor) const override;
 
     /** returns the name to display for players for this system.  While all
       * systems may have a proper name assigned, if they contain no planets or
@@ -90,13 +90,13 @@ public:
     double                  OverlaySize() const         { return m_overlay_size; }  ///< size in universe units
 
     /** fleets are inserted into system */
-    mutable boost::signals2::signal<void (const std::vector<boost::shared_ptr<Fleet>>&)> FleetsInsertedSignal;
+    mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsInsertedSignal;
     /** fleets are removed from system */
-    mutable boost::signals2::signal<void (const std::vector<boost::shared_ptr<Fleet>>&)> FleetsRemovedSignal;
+    mutable boost::signals2::signal<void (const std::vector<std::shared_ptr<Fleet>>&)> FleetsRemovedSignal;
     //@}
 
     /** \name Mutators */ //@{
-    void Copy(boost::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
+    void Copy(std::shared_ptr<const UniverseObject> copied_object, int empire_id = ALL_EMPIRES) override;
 
     /** Adding owner to system objects is a no-op. */
     void SetOwner(int id) override
@@ -105,7 +105,7 @@ public:
     void ResetTargetMaxUnpairedMeters() override;
 
     /** adds an object to this system. */
-    void Insert(boost::shared_ptr<UniverseObject> obj, int orbit = -1);
+    void Insert(std::shared_ptr<UniverseObject> obj, int orbit = -1);
 
     /** removes the object with ID number \a id from this system. */
     void                    Remove(int id);
@@ -141,9 +141,8 @@ protected:
     System(StarType star, const std::map<int, bool>& lanes_and_holes,
            const std::string& name, double x, double y);
 
+    template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-    template <class T> friend void boost::checked_delete(T* x);
-
 #if BOOST_VERSION >= 106100
 public:
 #endif

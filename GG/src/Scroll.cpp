@@ -70,7 +70,7 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
     m_tab_dragged(false)
 {
     Control::SetColor(color);
-    boost::shared_ptr<StyleFactory> style = GetStyleFactory();
+    std::shared_ptr<StyleFactory> style = GetStyleFactory();
     if (m_orientation == VERTICAL) {
         m_decr = style->NewScrollUpButton(color);
         m_incr = style->NewScrollDownButton(color);

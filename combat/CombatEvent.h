@@ -1,18 +1,21 @@
 #ifndef COMBATEVENT_H
 #define COMBATEVENT_H
 
-#include <boost/shared_ptr.hpp>
+
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 #include <boost/optional/optional.hpp>
-#include <vector>
 
 #include "../util/Export.h"
 
+#include <memory>
+#include <vector>
+
+
 // Should be unique_ptr, but we don't have c++11
 struct CombatEvent;
-typedef boost::shared_ptr<CombatEvent> CombatEventPtr;
-typedef boost::shared_ptr<const CombatEvent> ConstCombatEventPtr;
+typedef std::shared_ptr<CombatEvent> CombatEventPtr;
+typedef std::shared_ptr<const CombatEvent> ConstCombatEventPtr;
 
 /// An abstract base class for combat events
 /**

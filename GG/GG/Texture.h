@@ -174,12 +174,12 @@ public:
         \throw GG::SubTexture::BadTexture Throws if the given Texture is null.
         \throw GG::SubTexture::InvalidTextureCoordinates Throws if the texture
         coordinates are not well formed.*/
-    SubTexture(const boost::shared_ptr<const Texture>& texture, X x1, Y y1, X x2, Y y2);
+    SubTexture(const std::shared_ptr<const Texture>& texture, X x1, Y y1, X x2, Y y2);
 
     /** Creates a SubTexture from a GG::Texture and uses coordinates to cover
         the whole texture.
         \throw GG::SubTexture::BadTexture Throws if the given Texture is null.*/
-    SubTexture(const boost::shared_ptr<const Texture>& texture);
+    SubTexture(const std::shared_ptr<const Texture>& texture);
 
     SubTexture(const SubTexture& rhs);
 
@@ -218,7 +218,8 @@ public:
     //@}
 
 private:
-    boost::shared_ptr<const Texture> m_texture;        ///< shared_ptr to texture object with entire image
+    /** shared_ptr to texture object with entire image. */
+    std::shared_ptr<const Texture> m_texture;
     X                                m_width;
     Y                                m_height;
     GLfloat                          m_tex_coords[4];  ///< position of element within containing texture 
@@ -236,7 +237,7 @@ class GG_API TextureManager
 {
 public:
     /** \name Accessors */ ///@{
-    const std::map<std::string, boost::shared_ptr<Texture>>& Textures() const;
+    const std::map<std::string, std::shared_ptr<Texture>>& Textures() const;
     //@}
 
     /** \name Mutators */ ///@{
@@ -244,18 +245,18 @@ public:
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
         delete \a texture; \a texture becomes the property of the manager,
         which will eventually delete it. */
-    boost::shared_ptr<Texture> StoreTexture(Texture* texture, const std::string& texture_name);
+    std::shared_ptr<Texture> StoreTexture(Texture* texture, const std::string& texture_name);
 
     /** Stores a pre-existing GG::Texture in the manager's texture pool, and
         returns a shared_ptr to it. \warning Calling code <b>must not</b>
         delete \a texture; \a texture becomes the property of the manager,
         which will eventually delete it. */
-    boost::shared_ptr<Texture> StoreTexture(const boost::shared_ptr<Texture>& texture, const std::string& texture_name);
+    std::shared_ptr<Texture> StoreTexture(const std::shared_ptr<Texture>& texture, const std::string& texture_name);
 
     /** Returns a shared_ptr to the texture created from image file \a path.
         If the texture is not present in the manager's pool, it will be loaded
         from disk. */
-    boost::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
+    std::shared_ptr<Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
     /** Removes the manager's shared_ptr to the texture created from image
         file \a path, if it exists.  \note Due to shared_ptr semantics, the
@@ -270,11 +271,14 @@ public:
 
 private:
     TextureManager();
-    boost::shared_ptr<Texture> LoadTexture(const boost::filesystem::path& path, bool mipmap);
+    std::shared_ptr<Texture> LoadTexture(const boost::filesystem::path& path, bool mipmap);
 
     static bool s_created;
     static bool s_il_initialized;
-    std::map<std::string, boost::shared_ptr<Texture> > m_textures;  // indexed by string, not path, because some textures may be stored by a name and not loaded from a path
+
+    /** Indexed by string, not path, because some textures may be stored by a
+        name and not loaded from a path. */
+    std::map<std::string, std::shared_ptr<Texture>> m_textures;
 
     friend GG_API TextureManager& GetTextureManager();
 };

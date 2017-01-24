@@ -238,8 +238,8 @@ namespace {
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        boost::shared_ptr<const UniverseObject> prev = GetEmpireKnownObject(lane.first, empire_id);
-        boost::shared_ptr<const UniverseObject> next = GetEmpireKnownObject(lane.second, empire_id);
+        std::shared_ptr<const UniverseObject> prev = GetEmpireKnownObject(lane.first, empire_id);
+        std::shared_ptr<const UniverseObject> next = GetEmpireKnownObject(lane.second, empire_id);
         if (!next || !prev) {
             ErrorLogger() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
             return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
@@ -366,11 +366,11 @@ public:
         // get selected fleet speeds and detection ranges
         std::set<double> fixed_distances;
         for (int fleet_id : fleet_ids) {
-            if (boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id)) {
+            if (std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id)) {
                 if (fleet->Speed() > 20)
                     fixed_distances.insert(fleet->Speed());
                 for (int ship_id : fleet->ShipIDs()) {
-                    if (boost::shared_ptr<Ship> ship = GetShip(ship_id)) {
+                    if (std::shared_ptr<Ship> ship = GetShip(ship_id)) {
                         const float ship_range = ship->CurrentMeterValue(METER_DETECTION);
                         if (ship_range > 20)
                             fixed_distances.insert(ship_range);
@@ -382,9 +382,9 @@ public:
             }
         }
         // get detection ranges for planets in the selected system (if any)
-        if (const boost::shared_ptr<const System> system = GetSystem(sel_system_id)) {
+        if (const std::shared_ptr<const System> system = GetSystem(sel_system_id)) {
             for (int planet_id : system->PlanetIDs()) {
-                if (const boost::shared_ptr<Planet> planet = GetPlanet(planet_id)) {
+                if (const std::shared_ptr<Planet> planet = GetPlanet(planet_id)) {
                     const float planet_range = planet->CurrentMeterValue(METER_DETECTION);
                     if (planet_range > 20)
                         fixed_distances.insert(planet_range);
@@ -785,7 +785,7 @@ MapWnd::MapWnd() :
     m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_menu->LeftClickedSignal, boost::bind(&MapWnd::ShowMenu, this));
     m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_menu->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_menu->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC"))));
 
 
@@ -802,7 +802,7 @@ MapWnd::MapWnd() :
     m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_pedia->LeftClickedSignal, boost::bind(&MapWnd::TogglePedia, this));
     m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_pedia->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_pedia->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC"))));
 
     in_window_func =
@@ -818,7 +818,7 @@ MapWnd::MapWnd() :
     m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_graphs->LeftClickedSignal, boost::bind(&MapWnd::ShowGraphs, this));
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_graphs->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_graphs->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC"))));
 
     in_window_func =
@@ -834,7 +834,7 @@ MapWnd::MapWnd() :
     m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_design->LeftClickedSignal, boost::bind(&MapWnd::ToggleDesign, this));
     m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_design->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_design->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC"))));
 
     in_window_func =
@@ -850,7 +850,7 @@ MapWnd::MapWnd() :
     m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_production->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_production->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_production->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC"))));
 
     in_window_func =
@@ -866,7 +866,7 @@ MapWnd::MapWnd() :
     m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_research->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch, this));
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_research->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC"))));
 
     in_window_func =
@@ -882,7 +882,7 @@ MapWnd::MapWnd() :
     m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_objects->LeftClickedSignal, boost::bind(&MapWnd::ToggleObjects, this));
     m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_objects->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_objects->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC"))));
 
     in_window_func =
@@ -898,7 +898,7 @@ MapWnd::MapWnd() :
     m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_empires->LeftClickedSignal, boost::bind(&MapWnd::ToggleEmpires, this));
     m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_empires->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_empires->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC"))));
 
     in_window_func =
@@ -914,7 +914,7 @@ MapWnd::MapWnd() :
     m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_siterep->LeftClickedSignal, boost::bind(&MapWnd::ToggleSitRep, this));
     m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_siterep->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_siterep->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC"))));
 
     in_window_func =
@@ -930,7 +930,7 @@ MapWnd::MapWnd() :
     m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_messages->LeftClickedSignal, boost::bind(&MapWnd::ToggleMessages, this));
     m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_messages->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_messages->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC"))));
 
     in_window_func =
@@ -946,7 +946,7 @@ MapWnd::MapWnd() :
     m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_moderator->LeftClickedSignal, boost::bind(&MapWnd::ToggleModeratorActions, this));
     m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_moderator->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_btn_moderator->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR_DESC"))));
 
 
@@ -1554,7 +1554,7 @@ void MapWnd::RenderFields() {
     glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
     // render not visible fields
-    for (std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer> >::value_type& field_buffer : m_field_vertices) {
+    for (std::map<std::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer>>::value_type& field_buffer : m_field_vertices) {
         if (field_buffer.second.second.empty())
             continue;
 
@@ -1586,7 +1586,7 @@ void MapWnd::RenderFields() {
 
 
     // render visible fields
-    for (std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer>>::value_type& field_buffer : m_field_vertices) {
+    for (std::map<std::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer>>::value_type& field_buffer : m_field_vertices) {
         if (field_buffer.second.first.empty())
             continue;
 
@@ -1601,8 +1601,8 @@ void MapWnd::RenderFields() {
 }
 
 namespace {
-    boost::shared_ptr<GG::Texture> GetGasTexture() {
-        static boost::shared_ptr<GG::Texture> gas_texture;
+    std::shared_ptr<GG::Texture> GetGasTexture() {
+        static std::shared_ptr<GG::Texture> gas_texture;
         if (!gas_texture) {
             gas_texture = ClientUI::GetClientUI()->GetTexture(ClientUI::ArtDir() / "galaxy_decoration" / "gaseous_array.png");
             gas_texture->SetFilters(GL_NEAREST, GL_NEAREST);
@@ -1663,7 +1663,7 @@ void MapWnd::RenderSystems() {
         glScalef(1.0f / HALO_SCALE_FACTOR, 1.0f / HALO_SCALE_FACTOR, 1.0f);
         glTranslatef(-0.5f, -0.5f, 0.0f);
         m_star_texture_coords.activate();
-        for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::value_type& star_halo_buffer : m_star_halo_quad_vertices) {
+        for (std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::value_type& star_halo_buffer : m_star_halo_quad_vertices) {
             if (!star_halo_buffer.second.size())
                 continue;
             glBindTexture(GL_TEXTURE_2D, star_halo_buffer.first->OpenGLId());
@@ -1678,7 +1678,7 @@ void MapWnd::RenderSystems() {
         ClientUI::SystemTinyIconSizeThreshold() < ZoomFactor() * ClientUI::SystemIconSize())
     {
         m_star_texture_coords.activate();
-        for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::value_type& star_core_buffer : m_star_core_quad_vertices) {
+        for (std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::value_type& star_core_buffer : m_star_core_quad_vertices) {
             if (!star_core_buffer.second.size())
                 continue;
             glBindTexture(GL_TEXTURE_2D, star_core_buffer.first->OpenGLId());
@@ -1730,7 +1730,7 @@ void MapWnd::RenderSystems() {
 
             // render circles around systems that have at least one starlane, if circles are enabled.
             if (circles) {
-                if (boost::shared_ptr<const System> system = GetSystem(system_icon.first)) {
+                if (std::shared_ptr<const System> system = GetSystem(system_icon.first)) {
                     if (system->NumStarlanes() > 0) {
                         glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
 
@@ -1809,8 +1809,8 @@ namespace {
     GG::GLTexCoordBuffer dot_star_texture_coords;
     const unsigned int BUFFER_CAPACITY(512);    // should be long enough for most plausible fleet move lines
 
-    boost::shared_ptr<GG::Texture> MoveLineDotTexture() {
-        boost::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
+    std::shared_ptr<GG::Texture> MoveLineDotTexture() {
+        std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "misc" / "move_line_dot.png");
         return retval;
     }
 }
@@ -1828,7 +1828,7 @@ void MapWnd::RenderFleetMovementLines() {
     float move_line_animation_shift = static_cast<int>(ticks * rate) % dot_spacing;
 
     // texture for dots
-    boost::shared_ptr<GG::Texture> move_line_dot_texture = MoveLineDotTexture();
+    std::shared_ptr<GG::Texture> move_line_dot_texture = MoveLineDotTexture();
     float dot_size = Value(move_line_dot_texture->DefaultWidth());
     //std::cout << "dot size: " << dot_size << std::endl;
 
@@ -1983,7 +1983,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
     const double MARKER_HALF_SIZE = 9;
     const int MARKER_PTS = ClientUI::Pts();
-    boost::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(MARKER_PTS);
+    std::shared_ptr<GG::Font> font = ClientUI::GetBoldFont(MARKER_PTS);
     GG::Flags<GG::TextFormat> flags = GG::FORMAT_CENTER | GG::FORMAT_VCENTER;
 
     glPushMatrix();
@@ -2035,7 +2035,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
         std::string text = "<s>" + boost::lexical_cast<std::string>(vert.eta) + "</s>";
         glColor(GG::CLR_WHITE);
         // TODO cache the text_elements
-        std::vector<boost::shared_ptr<GG::Font::TextElement> > text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
+        std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
         std::vector<GG::Font::LineData> lines =
             font->DetermineLines(text, flags, lr.x - ul.x, text_elements);
         font->RenderText(ul, lr, text, flags, lines);
@@ -2331,7 +2331,7 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
-    for (boost::shared_ptr<const System> system : objects.FindObjects<System>()) {
+    for (std::shared_ptr<const System> system : objects.FindObjects<System>()) {
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsInsertedSignal,
                                                                      &MapWnd::FleetsInsertedSignalHandler, this));
         m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsRemovedSignal,
@@ -2420,7 +2420,7 @@ void MapWnd::InitTurn() {
 
     if (turn_number == 1 && this_client_empire) {
         // start first turn with player's system selected
-        if (boost::shared_ptr<const UniverseObject> obj = objects.Object(this_client_empire->CapitalID())) {
+        if (std::shared_ptr<const UniverseObject> obj = objects.Object(this_client_empire->CapitalID())) {
             SelectSystem(obj->SystemID());
             CenterOnMapCoord(obj->X(), obj->Y());
         }
@@ -2511,7 +2511,7 @@ void MapWnd::InitTurnRendering() {
     m_system_icons.clear();
 
     // create system icons
-    for (boost::shared_ptr<const System> sys : objects.FindObjects<System>()) {
+    for (std::shared_ptr<const System> sys : objects.FindObjects<System>()) {
         int sys_id = sys->ID();
 
         // skip known destroyed objects
@@ -2553,7 +2553,7 @@ void MapWnd::InitTurnRendering() {
     m_field_icons.clear();
 
     // create field icons
-    for (boost::shared_ptr<const Field> field : objects.FindObjects<Field>()) {
+    for (std::shared_ptr<const Field> field : objects.FindObjects<Field>()) {
         int fld_id = field->ID();
 
         // skip known destroyed and stale fields
@@ -2613,7 +2613,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
         const SystemIcon* icon = system_icon.second;
         int system_id = system_icon.first;
-        boost::shared_ptr<const System> system = GetSystem(system_id);
+        std::shared_ptr<const System> system = GetSystem(system_id);
         if (!system) {
             ErrorLogger() << "MapWnd::InitSystemRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -2645,7 +2645,7 @@ void MapWnd::InitSystemRenderingBuffers() {
 
 
         // add (rotated) gaseous substance around system
-        if (boost::shared_ptr<GG::Texture> gas_texture = GetGasTexture()) {
+        if (std::shared_ptr<GG::Texture> gas_texture = GetGasTexture()) {
             const float GAS_SIZE = ClientUI::SystemIconSize() * 6.0;
             const float ROTATION = system_id * 27.0; // arbitrary rotation in radians ("27.0" is just a number that produces pleasing results)
             const float COS_THETA = std::cos(ROTATION);
@@ -2711,7 +2711,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     // create new buffers
 
     // star cores
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::value_type& star_core_buffer : m_star_core_quad_vertices) {
+    for (std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::value_type& star_core_buffer : m_star_core_quad_vertices) {
         glBindTexture(GL_TEXTURE_2D, star_core_buffer.first->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -2720,7 +2720,7 @@ void MapWnd::InitSystemRenderingBuffers() {
     }
 
     // star halos
-    for (std::map<boost::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::value_type& star_halo_buffer : m_star_halo_quad_vertices) {
+    for (std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer>::value_type& star_halo_buffer : m_star_halo_quad_vertices) {
         glBindTexture(GL_TEXTURE_2D, star_halo_buffer.first->OpenGLId());
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
@@ -2988,7 +2988,7 @@ namespace {
         if (map_it == mmap.end()) {
             map_it = mmap.insert(map_it,
                                  std::make_pair(kkey,
-                                                boost::make_shared<typename Map::mapped_type::element_type>()));
+                                                std::make_shared<typename Map::mapped_type::element_type>()));
             if (map_it == mmap.end())
                 ErrorLogger() << "Unable to insert new empty set into map.";
         }
@@ -3014,13 +3014,13 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     const Empire* this_client_empire = GetEmpire(client_empire_id);
 
     // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
-    boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_pool_systems;
+    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_pool_systems;
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-    boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > > res_group_cores;
+    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_group_cores;
 
     boost::unordered_set<int>                           res_group_core_members;
-    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >   member_to_core;
-    boost::shared_ptr<boost::unordered_set<int> >       under_alloc_res_grp_core_members;
+    boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
+    std::shared_ptr<boost::unordered_set<int>> under_alloc_res_grp_core_members;
 
     if (this_client_empire) {
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
@@ -3038,14 +3038,14 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             for (int object_id : available_pp_group.first) {
                 // this_pool += boost::lexical_cast<std::string>(object_id) +", ";
 
-                boost::shared_ptr<const Planet> planet = GetPlanet(object_id);
+                std::shared_ptr<const Planet> planet = GetPlanet(object_id);
                 if (!planet)
                     continue;
 
                 //DebugLogger() << "Empire " << empire_id << "; Planet (" << object_id << ") is named " << planet->Name();
 
                 int system_id = planet->SystemID();
-                boost::shared_ptr<const System> system = GetSystem(system_id);
+                std::shared_ptr<const System> system = GetSystem(system_id);
                 if (!system)
                     continue;
 
@@ -3071,8 +3071,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // For each pool of resources find all paths available through
         // the supply network.
 
-        for (boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int>>>::value_type& res_pool_system : res_pool_systems) {
-            boost::shared_ptr<std::set<int> >& group_core = lookup_or_make_shared(res_group_cores, res_pool_system.first);
+        for (boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>::value_type& res_pool_system : res_pool_systems) {
+            std::shared_ptr<std::set<int>>& group_core = lookup_or_make_shared(res_group_cores, res_pool_system.first);
 
             // All individual resource system are included in the
             // network on their own.
@@ -3110,10 +3110,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
             std::map<std::set<int>, float>::const_iterator allocated_it = allocated_pp.find(available_pp_group.first);
             if (allocated_it == allocated_pp.end() || (group_pp > allocated_it->second + 0.05)) {
-                boost::unordered_map<std::set<int>, boost::shared_ptr<std::set<int> > >::iterator group_core_it = res_group_cores.find(available_pp_group.first);
+                boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>::iterator group_core_it = res_group_cores.find(available_pp_group.first);
                 if (group_core_it != res_group_cores.end()) {
                     if (!under_alloc_res_grp_core_members)
-                        under_alloc_res_grp_core_members = boost::make_shared<boost::unordered_set<int> >();
+                        under_alloc_res_grp_core_members = std::make_shared<boost::unordered_set<int>>();
                     under_alloc_res_grp_core_members->insert(group_core_it->second->begin(), group_core_it->second->end());
                 }
             }
@@ -3132,7 +3132,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
             continue;
 
-        boost::shared_ptr<const System> start_system = GetSystem(system_id);
+        std::shared_ptr<const System> start_system = GetSystem(system_id);
         if (!start_system) {
             ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
             continue;
@@ -3149,7 +3149,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
                 continue;
 
-            boost::shared_ptr<const System> dest_system = GetSystem(render_lane.first);
+            std::shared_ptr<const System> dest_system = GetSystem(render_lane.first);
             if (!dest_system)
                 continue;
             //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
@@ -3230,8 +3230,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
-                    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >::const_iterator start_core = member_to_core.find(start_system->ID());
-                    boost::unordered_map<int, boost::shared_ptr<std::set<int> > >::const_iterator dest_core = member_to_core.find(dest_system->ID());
+                    boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator start_core = member_to_core.find(start_system->ID());
+                    boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator dest_core = member_to_core.find(dest_system->ID());
                     if (start_core != member_to_core.end() && dest_core != member_to_core.end()
                         && (start_core->second != dest_core->second)
                         && (*(start_core->second) != *(dest_core->second)))
@@ -3333,13 +3333,13 @@ void MapWnd::InitFieldRenderingBuffers() {
 
     for (std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons) {
         bool current_field_visible = universe.GetObjectVisibilityByEmpire(field_icon.first, empire_id) > VIS_BASIC_VISIBILITY;
-        boost::shared_ptr<const Field> field = GetField(field_icon.first);
+        std::shared_ptr<const Field> field = GetField(field_icon.first);
         if (!field)
             continue;
         const float FIELD_SIZE = field->CurrentMeterValue(METER_SIZE);  // field size is its radius
         if (FIELD_SIZE <= 0)
             continue;
-        boost::shared_ptr<GG::Texture> field_texture = field_icon.second->FieldTexture();
+        std::shared_ptr<GG::Texture> field_texture = field_icon.second->FieldTexture();
         if (!field_texture)
             continue;
 
@@ -3396,8 +3396,8 @@ void MapWnd::InitFieldRenderingBuffers() {
     }
     m_field_scanline_circles.createServerBuffer();
 
-    for (std::map<boost::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer>>::value_type& field_buffer : m_field_vertices) {
-        boost::shared_ptr<GG::Texture> field_texture = field_buffer.first;
+    for (std::map<std::shared_ptr<GG::Texture>, std::pair<GG::GL2DVertexBuffer, GG::GL2DVertexBuffer>>::value_type& field_buffer : m_field_vertices) {
+        std::shared_ptr<GG::Texture> field_texture = field_buffer.first;
         if (!field_texture)
             continue;
 
@@ -3444,7 +3444,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     // for each map position and empire, find max value of detection range at that position
     std::map<std::pair<int, std::pair<float, float> >, float> empire_position_max_detection_ranges;
 
-    for (boost::shared_ptr<const UniverseObject> obj : objects.FindObjects<UniverseObject>()) {
+    for (std::shared_ptr<const UniverseObject> obj : objects.FindObjects<UniverseObject>()) {
         int object_id = obj->ID();
         // skip destroyed objects
         if (destroyed_object_ids.find(object_id) != destroyed_object_ids.end())
@@ -3465,10 +3465,10 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         if (obj->ObjectType() == OBJ_FLEET)
             continue;
         if (obj->ObjectType() == OBJ_SHIP) {
-            boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj);
+            std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(obj);
             if (!ship)
                 continue;
-            boost::shared_ptr<const Fleet> fleet = objects.Object<Fleet>(ship->FleetID());
+            std::shared_ptr<const Fleet> fleet = objects.Object<Fleet>(ship->FleetID());
             if (!fleet)
                 continue;
             int cur_id = fleet->SystemID();
@@ -3597,7 +3597,7 @@ void MapWnd::InitScaleCircleRenderingBuffer() {
     if (radius < 5)
         return;
 
-    boost::shared_ptr<System> selected_system = GetSystem(SidePanel::SystemID());
+    std::shared_ptr<System> selected_system = GetSystem(SidePanel::SystemID());
     if (!selected_system)
         return;
 
@@ -3795,11 +3795,11 @@ void MapWnd::ShowEncyclopediaEntry(const std::string& str) {
 }
 
 void MapWnd::CenterOnObject(int id) {
-    if (boost::shared_ptr<UniverseObject> obj = GetUniverseObject(id))
+    if (std::shared_ptr<UniverseObject> obj = GetUniverseObject(id))
         CenterOnMapCoord(obj->X(), obj->Y());
 }
 
-void MapWnd::CenterOnObject(boost::shared_ptr<const UniverseObject> obj) {
+void MapWnd::CenterOnObject(std::shared_ptr<const UniverseObject> obj) {
     if (!obj) return;
     CenterOnMapCoord(obj->X(), obj->Y());
 }
@@ -3811,7 +3811,7 @@ void MapWnd::ReselectLastSystem() {
 
 void MapWnd::SelectSystem(int system_id) {
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
-    boost::shared_ptr<const System> system = GetSystem(system_id);
+    std::shared_ptr<const System> system = GetSystem(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
         ErrorLogger() << "MapWnd::SelectSystem couldn't find system with id " << system_id << " so is selected no system instead";
         system_id = INVALID_OBJECT_ID;
@@ -3871,7 +3871,7 @@ void MapWnd::ReselectLastFleet() {
     //// DEBUG
     //std::cout << "MapWnd::ReselectLastFleet m_selected_fleet_ids: " << std::endl;
     //for (int fleet_id : m_selected_fleet_ids) {
-    //    boost::shared_ptr<const UniverseObject> obj = GetUniverse().Object(fleet_id);
+    //    std::shared_ptr<const UniverseObject> obj = GetUniverse().Object(fleet_id);
     //    if (obj)
     //        std::cout << "    " << obj->Name() << "(" << fleet_id << ")" << std::endl;
     //    else
@@ -3883,7 +3883,7 @@ void MapWnd::ReselectLastFleet() {
     // search through stored selected fleets' ids and remove ids of missing fleets
     std::set<int> missing_fleets;
     for (int fleet_id : m_selected_fleet_ids) {
-        boost::shared_ptr<const Fleet> fleet = objects.Object<Fleet>(fleet_id);
+        std::shared_ptr<const Fleet> fleet = objects.Object<Fleet>(fleet_id);
         if (!fleet)
             missing_fleets.insert(fleet_id);
     }
@@ -3904,7 +3904,7 @@ void MapWnd::SelectPlanet(int planetID)
 void MapWnd::SelectFleet(int fleet_id)
 { SelectFleet(GetFleet(fleet_id)); }
 
-void MapWnd::SelectFleet(boost::shared_ptr<Fleet> fleet) {
+void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     if (!fleet) {
@@ -3976,7 +3976,7 @@ void MapWnd::SetFleetMovementLine(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID)
         return;
 
-    boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+    std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::SetFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -4023,7 +4023,7 @@ void MapWnd::SetProjectedFleetMovementLine(int fleet_id, const std::list<int>& t
         return;
 
     // ensure passed fleet exists
-    boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+    std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
     if (!fleet) {
         ErrorLogger() << "MapWnd::SetProjectedFleetMovementLine was passed invalid fleet id " << fleet_id;
         return;
@@ -4085,7 +4085,7 @@ void MapWnd::DoSystemIconsLayout() {
     // position and resize system icons and gaseous substance
     const int SYSTEM_ICON_SIZE = SystemIconSize();
     for (boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
-        boost::shared_ptr<const System> system = GetSystem(system_icon.first);
+        std::shared_ptr<const System> system = GetSystem(system_icon.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoSystemIconsLayout couldn't get system with id " << system_icon.first;
             continue;
@@ -4100,7 +4100,7 @@ void MapWnd::DoSystemIconsLayout() {
 void MapWnd::DoFieldIconsLayout() {
     // position and resize field icons
     for (std::map<int, FieldIcon*>::value_type& field_icon : m_field_icons) {
-        boost::shared_ptr<const Field> field = GetField(field_icon.first);
+        std::shared_ptr<const Field> field = GetField(field_icon.first);
         if (!field) {
             ErrorLogger() << "MapWnd::DoFieldIconsLayout couldn't get field with id " << field_icon.first;
             continue;
@@ -4121,7 +4121,7 @@ void MapWnd::DoFleetButtonsLayout() {
     // position departing fleet buttons
     for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
         // calculate system icon position
-        boost::shared_ptr<const System> system = GetSystem(departing_fleet_button.first);
+        std::shared_ptr<const System> system = GetSystem(departing_fleet_button.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << departing_fleet_button.first;
             continue;
@@ -4150,7 +4150,7 @@ void MapWnd::DoFleetButtonsLayout() {
     // position stationary fleet buttons
     for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
         // calculate system icon position
-        boost::shared_ptr<const System> system = GetSystem(stationary_fleet_button.first);
+        std::shared_ptr<const System> system = GetSystem(stationary_fleet_button.first);
         if (!system) {
             ErrorLogger() << "MapWnd::DoFleetButtonsLayout couldn't find system with id " << stationary_fleet_button.first;
             continue;
@@ -4180,7 +4180,7 @@ void MapWnd::DoFleetButtonsLayout() {
     for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
         for (FleetButton* fb : moving_fleet_button.second) {
             const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
-            boost::shared_ptr<const Fleet> fleet;
+            std::shared_ptr<const Fleet> fleet;
 
             // skip button if it has no fleets (somehow...?) or if the first fleet in the button is 0
             if (fb->Fleets().empty() || !(fleet = objects.Object<Fleet>(*fb->Fleets().begin()))) {
@@ -4201,7 +4201,7 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 }
 
-std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(boost::shared_ptr<const Fleet> fleet) const {
+std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const {
     if (!fleet) {
         return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
     }
@@ -4230,12 +4230,13 @@ namespace {
     typedef boost::unordered_map<std::pair<std::pair<double, double>, int>, std::vector<int> > LocationXEmpireToFleetsMap;
 
     /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
-    boost::shared_ptr<const Fleet> IsQualifiedFleet(const boost::shared_ptr<const UniverseObject>& obj,
-                                               int empire_id,
-                                               const std::set<int>& known_destroyed_objects,
-                                               const std::set<int>& stale_object_info) {
+    std::shared_ptr<const Fleet> IsQualifiedFleet(const std::shared_ptr<const UniverseObject>& obj,
+                                                  int empire_id,
+                                                  const std::set<int>& known_destroyed_objects,
+                                                  const std::set<int>& stale_object_info)
+    {
         int object_id = obj->ID();
-        boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj);
+        std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj);
 
         if (fleet
             && !fleet->Empty()
@@ -4244,41 +4245,41 @@ namespace {
         {
             return fleet;
         }
-        return boost::shared_ptr<const Fleet>();
+        return std::shared_ptr<const Fleet>();
     }
 
     /** If the \p fleet has orders and is departing from a valid system, return the system*/
-    boost::shared_ptr<const System> IsDepartingFromSystem(const boost::shared_ptr<const Fleet>& fleet) {
+    std::shared_ptr<const System> IsDepartingFromSystem(const std::shared_ptr<const Fleet>& fleet) {
         if (fleet->FinalDestinationID() != INVALID_OBJECT_ID
             && !fleet->TravelRoute().empty()
             && fleet->SystemID() != INVALID_OBJECT_ID)
         {
-            boost::shared_ptr<const System> system = GetSystem(fleet->SystemID());
+            std::shared_ptr<const System> system = GetSystem(fleet->SystemID());
             if (system)
                 return system;
             ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
                           << " of a departing fleet named " << fleet->Name();
         }
-        return boost::shared_ptr<const System>();
+        return std::shared_ptr<const System>();
     }
 
     /** If the \p fleet is stationary in a valid system, return the system*/
-    boost::shared_ptr<const System> IsStationaryInSystem(const boost::shared_ptr<const Fleet>& fleet) {
+    std::shared_ptr<const System> IsStationaryInSystem(const std::shared_ptr<const Fleet>& fleet) {
         if ((fleet->FinalDestinationID() == INVALID_OBJECT_ID
              || fleet->TravelRoute().empty())
             && fleet->SystemID() != INVALID_OBJECT_ID)
         {
-            boost::shared_ptr<const System> system = GetSystem(fleet->SystemID());
+            std::shared_ptr<const System> system = GetSystem(fleet->SystemID());
             if (system)
                 return system;
             ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
                           << " of a stationary fleet named " << fleet->Name();
         }
-        return boost::shared_ptr<const System>();
+        return std::shared_ptr<const System>();
     }
 
     /** If the \p fleet has a valid destination and it not at a system, return true*/
-    bool IsMoving(const boost::shared_ptr<const Fleet>& fleet) {
+    bool IsMoving(const std::shared_ptr<const Fleet>& fleet) {
         return (fleet->FinalDestinationID() != INVALID_OBJECT_ID
                 && fleet->SystemID() == INVALID_OBJECT_ID);
     }
@@ -4307,10 +4308,10 @@ void MapWnd::DeferredRefreshFleetButtons() {
     SystemXEmpireToFleetsMap   stationary_fleets;
     LocationXEmpireToFleetsMap moving_fleets;
 
-    for (std::map<int, boost::shared_ptr<UniverseObject>>::const_iterator candidate_it = Objects().ExistingFleetsBegin();
+    for (std::map<int, std::shared_ptr<UniverseObject>>::const_iterator candidate_it = Objects().ExistingFleetsBegin();
          candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it)
     {
-        boost::shared_ptr<const Fleet> fleet = IsQualifiedFleet(
+        std::shared_ptr<const Fleet> fleet = IsQualifiedFleet(
             candidate_it->second, client_empire_id,
             this_client_known_destroyed_objects, this_client_stale_object_info);
 
@@ -4318,11 +4319,11 @@ void MapWnd::DeferredRefreshFleetButtons() {
             continue;
 
         // Collect fleets with a travel route just departing.
-        if (boost::shared_ptr<const System> departure_system = IsDepartingFromSystem(fleet)) {
+        if (std::shared_ptr<const System> departure_system = IsDepartingFromSystem(fleet)) {
             departing_fleets[std::make_pair(departure_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
             // Collect stationary fleets by system.
-        } else if (boost::shared_ptr<const System> stationary_system = IsStationaryInSystem(fleet)) {
+        } else if (std::shared_ptr<const System> stationary_system = IsStationaryInSystem(fleet)) {
             // DebugLogger() << fleet->Name() << " is Stationary." ;
             stationary_fleets[std::make_pair(stationary_system->ID(), fleet->Owner())].push_back(fleet->ID());
 
@@ -4409,9 +4410,9 @@ void MapWnd::DeleteFleetButtons() {
     m_moving_fleet_buttons.clear();
 }
 
-void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<boost::shared_ptr<Fleet>>& fleets) {
+void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("RemoveFleetsStateChangedSignal()", true);
-    for (boost::shared_ptr<Fleet> fleet : fleets) {
+    for (std::shared_ptr<Fleet> fleet : fleets) {
         boost::unordered_map<int, boost::signals2::connection>::iterator
             found_signal = m_fleet_state_change_signals.find(fleet->ID());
         if (found_signal != m_fleet_state_change_signals.end()) {
@@ -4421,22 +4422,22 @@ void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<boost::shared_ptr<
     }
 }
 
-void MapWnd::AddFleetsStateChangedSignal(const std::vector<boost::shared_ptr<Fleet>>& fleets) {
+void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("AddFleetsStateChangedSignal()", true);
-    for (boost::shared_ptr<Fleet> fleet : fleets) {
+    for (std::shared_ptr<Fleet> fleet : fleets) {
         m_fleet_state_change_signals[fleet->ID()] =
             GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
     }
 }
 
-void MapWnd::FleetsInsertedSignalHandler(const std::vector<boost::shared_ptr<Fleet>>& fleets) {
+void MapWnd::FleetsInsertedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("FleetsInsertedSignalHandler()", true);
     RefreshFleetButtons();
     RemoveFleetsStateChangedSignal(fleets);
     AddFleetsStateChangedSignal(fleets);
 }
 
-void MapWnd::FleetsRemovedSignalHandler(const std::vector<boost::shared_ptr<Fleet>>& fleets) {
+void MapWnd::FleetsRemovedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("FleetsRemovedSignalHandler()", true);
     RefreshFleetButtons();
     RemoveFleetsStateChangedSignal(fleets);
@@ -4452,7 +4453,7 @@ void MapWnd::RefreshFleetSignals() {
 
     // connect fleet change signals to update fleet movement lines, so that ordering
     // fleets to move updates their displayed path and rearranges fleet buttons (if necessary)
-    std::vector<boost::shared_ptr<Fleet>> fleets = Objects().FindObjects<Fleet>();
+    std::vector<std::shared_ptr<Fleet>> fleets = Objects().FindObjects<Fleet>();
     AddFleetsStateChangedSignal(fleets);
 }
 
@@ -4692,11 +4693,11 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys)
             }
         } else if (mas == MAS_SetOwner) {
             int empire_id = m_moderator_wnd->SelectedEmpire();
-            boost::shared_ptr<const System> system = GetSystem(system_id);
+            std::shared_ptr<const System> system = GetSystem(system_id);
             if (!system)
                 return;
 
-            for (boost::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
+            for (std::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
                     net.SendMessage(ModeratorActionMessage(player_id,
@@ -4733,7 +4734,7 @@ void MapWnd::PlanetDoubleClicked(int planet_id) {
         return;
 
     // retrieve system_id from planet_id
-    boost::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+    std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
     if (!planet)
         return;
 
@@ -4812,7 +4813,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
     // apply to all this-player-owned fleets in currently-active FleetWnd
     for (int fleet_id : fleet_ids) {
-        boost::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+        std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
         if (!fleet) {
             ErrorLogger() << "MapWnd::PlotFleetMovementLine couldn't get fleet with id " << fleet_id;
             continue;
@@ -4848,9 +4849,9 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
         // disallow "offroad" (direct non-starlane non-wormhole) travel
         if (route.size() == 2 && *route.begin() != *route.rbegin()) {
             int begin_id = *route.begin();
-            boost::shared_ptr<const System> begin_sys = GetSystem(begin_id);
+            std::shared_ptr<const System> begin_sys = GetSystem(begin_id);
             int end_id = *route.rbegin();
-            boost::shared_ptr<const System> end_sys = GetSystem(end_id);
+            std::shared_ptr<const System> end_sys = GetSystem(end_id);
 
             if (!begin_sys->HasStarlaneTo(end_id) && !begin_sys->HasWormholeTo(end_id) &&
                 !end_sys->HasStarlaneTo(begin_id) && !end_sys->HasWormholeTo(begin_id))
@@ -4887,7 +4888,7 @@ void MapWnd::FleetButtonLeftClicked(const FleetButton* fleet_btn) {
         ErrorLogger() << "Clicked FleetButton contained no fleets!";
         return;
     }
-    boost::shared_ptr<const Fleet> first_fleet = GetFleet(btn_fleets[0]);
+    std::shared_ptr<const Fleet> first_fleet = GetFleet(btn_fleets[0]);
 
 
     // find if a FleetWnd for this FleetButton's fleet(s) is already open, and if so, if there
@@ -5099,12 +5100,12 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     }
 }
 
-void MapWnd::UniverseObjectDeleted(boost::shared_ptr<const UniverseObject> obj) {
+void MapWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) {
     if (obj)
         DebugLogger() << "MapWnd::UniverseObjectDeleted: " << obj->ID();
     else
         DebugLogger() << "MapWnd::UniverseObjectDeleted: NO OBJECT";
-    if (boost::shared_ptr<const Fleet> fleet = boost::dynamic_pointer_cast<const Fleet>(obj))
+    if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(obj))
         RemoveFleet(fleet->ID());
 }
 
@@ -5302,7 +5303,7 @@ void MapWnd::ToggleAutoEndTurn() {
         m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn_mouseover.png")));
 
         m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_btn_auto_turn->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        m_btn_auto_turn->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_BTN_MANUAL_TURN_ADVANCE"), UserString("MAP_BTN_MANUAL_TURN_ADVANCE_DESC"))));
 
     } else {
@@ -5312,7 +5313,7 @@ void MapWnd::ToggleAutoEndTurn() {
         m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn_mouseover.png")));
 
         m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_btn_auto_turn->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        m_btn_auto_turn->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_BTN_AUTO_ADVANCE_ENABLED"), UserString("MAP_BTN_AUTO_ADVANCE_ENABLED_DESC"))));
     }
 }
@@ -5648,7 +5649,7 @@ void MapWnd::ShowProduction() {
     // home system (ie. where the capital is)
     if (SidePanel::SystemID() == INVALID_OBJECT_ID) {
         if (const Empire* empire = HumanClientApp::GetApp()->GetEmpire(HumanClientApp::GetApp()->EmpireID()))
-            if (boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(empire->CapitalID()))
+            if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(empire->CapitalID()))
                 SelectSystem(obj->SystemID());
     } else {
         // if a system is already shown, make sure a planet gets selected by
@@ -5765,7 +5766,7 @@ void MapWnd::RefreshTradeResourceIndicator() {
     m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
     m_trade->ClearBrowseInfoWnd();
     m_trade->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_trade->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_trade->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_TRADE_TITLE"), UserString("MAP_TRADE_TEXT"))));
 }
 
@@ -5780,7 +5781,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
 
     int total_fleet_count = 0;
-    for (boost::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
+    for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {
         if (ship->OwnedBy(empire_id) && this_client_known_destroyed_objects.find(ship->ID()) == this_client_known_destroyed_objects.end())
             total_fleet_count++;
     }
@@ -5788,7 +5789,7 @@ void MapWnd::RefreshFleetResourceIndicator() {
     m_fleet->SetValue(total_fleet_count);
     m_fleet->ClearBrowseInfoWnd();
     m_fleet->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_fleet->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_fleet->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_FLEET_TITLE"), UserString("MAP_FLEET_TEXT"))));
 }
 
@@ -5808,7 +5809,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double total_RP_wasted = total_RP_output - total_RP_spent;
     double total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
 
-    m_research->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_research->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new ResourceBrowseWnd(UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
                               total_RP_spent, total_RP_output, total_RP_target_output)));
 
@@ -5818,7 +5819,7 @@ void MapWnd::RefreshResearchResourceIndicator() {
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
         m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_research_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        m_research_wasted->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"),
                               boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
                                 % DoubleToString(total_RP_output, 3, false)
@@ -5835,7 +5836,7 @@ void MapWnd::RefreshDetectionIndicator() {
     m_detection->SetValue(empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
     m_detection->ClearBrowseInfoWnd();
     m_detection->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_detection->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_detection->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new TextBrowseWnd(UserString("MAP_DETECTION_TITLE"), UserString("MAP_DETECTION_TEXT"))));
 }
 
@@ -5855,7 +5856,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double total_PP_wasted = total_PP_output - total_PP_spent;
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
 
-    m_industry->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_industry->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new ResourceBrowseWnd(UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
                               total_PP_spent, total_PP_output, total_PP_target_output)));
 
@@ -5865,7 +5866,7 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_industry_wasted->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+        m_industry_wasted->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
             new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
                               boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
                                 % DoubleToString(total_PP_output, 3, false)
@@ -5891,8 +5892,8 @@ void MapWnd::RefreshPopulationIndicator() {
 
     //tally up all species population counts
     for (int pop_center_id : pop_center_ids) {
-        boost::shared_ptr<const UniverseObject> obj = objects.Object(pop_center_id);
-        boost::shared_ptr<const PopCenter> pc = boost::dynamic_pointer_cast<const PopCenter>(obj);
+        std::shared_ptr<const UniverseObject> obj = objects.Object(pop_center_id);
+        std::shared_ptr<const PopCenter> pc = std::dynamic_pointer_cast<const PopCenter>(obj);
         if (!pc)
             continue;
 
@@ -5909,7 +5910,7 @@ void MapWnd::RefreshPopulationIndicator() {
     }
 
     m_population->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_population->SetBrowseInfoWnd(boost::shared_ptr<GG::BrowseInfoWnd>(
+    m_population->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
         new CensusBrowseWnd(UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts)));
 }
 
@@ -5938,7 +5939,7 @@ bool MapWnd::ZoomToHomeSystem() {
     int home_id = empire->CapitalID();
 
     if (home_id != INVALID_OBJECT_ID) {
-        boost::shared_ptr<const UniverseObject> object = GetUniverseObject(home_id);
+        std::shared_ptr<const UniverseObject> object = GetUniverseObject(home_id);
         if (!object)
             return false;
         CenterOnObject(object->SystemID());
@@ -5964,24 +5965,24 @@ namespace {
     std::set<std::pair<std::string, int>, CustomRowCmp> GetSystemNamesIDs() {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
-        for (boost::shared_ptr<const System> system : Objects().FindObjects<System>()) {
+        for (std::shared_ptr<const System> system : Objects().FindObjects<System>()) {
             system_names_ids.insert(std::make_pair(system->Name(), system->ID()));
         }
         return system_names_ids;
     }
 
     std::set<std::pair<std::string, int>, CustomRowCmp> GetOwnedSystemNamesIDs(int empire_id) {
-        std::vector<boost::shared_ptr<UniverseObject>> owned_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
+        std::vector<std::shared_ptr<UniverseObject>> owned_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
 
         // get IDs of systems that contain any owned planets
         boost::unordered_set<int> system_ids;
-        for (boost::shared_ptr<UniverseObject> obj : owned_planets)
+        for (std::shared_ptr<UniverseObject> obj : owned_planets)
         { system_ids.insert(obj->SystemID()); }
 
         // store systems, sorted alphabetically
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
         for (int system_id : system_ids) {
-            if (boost::shared_ptr<const System> sys = GetSystem(system_id))
+            if (std::shared_ptr<const System> sys = GetSystem(system_id))
                 system_names_ids.insert(std::make_pair(sys->Name(), sys->ID()));
         }
 
@@ -5997,7 +5998,7 @@ bool MapWnd::ZoomToPrevOwnedSystem() {
 
     // find currently selected system in list
     std::set<std::pair<std::string, int> >::const_reverse_iterator it = system_names_ids.rend();
-    boost::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    std::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
@@ -6023,7 +6024,7 @@ bool MapWnd::ZoomToNextOwnedSystem() {
     std::set<std::pair<std::string, int>, CustomRowCmp>::const_iterator it = system_names_ids.end();
 
     // find currently selected system in list
-    boost::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    std::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
@@ -6047,7 +6048,7 @@ bool MapWnd::ZoomToPrevSystem() {
 
     // find currently selected system in list
     std::set<std::pair<std::string, int> >::const_reverse_iterator it = system_names_ids.rend();
-    boost::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    std::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.rend())
@@ -6072,7 +6073,7 @@ bool MapWnd::ZoomToNextSystem() {
     std::set<std::pair<std::string, int>, CustomRowCmp>::const_iterator it = system_names_ids.end();
 
     // find currently selected system in list
-    boost::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
+    std::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.begin(), system_names_ids.end(), std::make_pair(sel_sys->Name(), sel_sys->ID()));
         if (it != system_names_ids.end())
@@ -6172,7 +6173,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
         return false;
 
     const ProductionQueue& queue = empire->GetProductionQueue();
-    const boost::shared_ptr<ResourcePool> pool = empire->GetResourcePool(RE_INDUSTRY);
+    const std::shared_ptr<ResourcePool> pool = empire->GetResourcePool(RE_INDUSTRY);
     if (!pool)
         return false;
     std::set<std::set<int> > wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
@@ -6185,7 +6186,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
         return false; // shouldn't happen?
     for (const std::set<int>& obj_ids : wasted_PP_objects) {
         for (int obj_id : obj_ids) {
-            boost::shared_ptr<const UniverseObject> obj = GetUniverseObject(obj_id);
+            std::shared_ptr<const UniverseObject> obj = GetUniverseObject(obj_id);
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.
                 CenterOnObject(obj->SystemID());
@@ -6340,7 +6341,7 @@ void MapWnd::StopFleetExploring(const int fleet_id) {
     // force UI update. Removing a fleet from the UI's list of exploring fleets
     // doesn't actually change the Fleet object's state in any way, so the UI
     // would otherwise still show the fleet as "exploring"
-    if (boost::shared_ptr<Fleet> fleet = GetFleet(fleet_id))
+    if (std::shared_ptr<Fleet> fleet = GetFleet(fleet_id))
         fleet->StateChangedSignal();
 }
 
@@ -6407,7 +6408,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     //clean the fleet list by removing non-existing fleet, and extract the fleets waiting for orders
     for (std::set<int>::iterator it = m_fleets_exploring.begin(); it != m_fleets_exploring.end();) {
-        boost::shared_ptr<Fleet> fleet = GetFleet(*it);
+        std::shared_ptr<Fleet> fleet = GetFleet(*it);
         if (!fleet || destroyed_objects.find(fleet->ID()) != destroyed_objects.end()) {
             m_fleets_exploring.erase(it++); //this fleet can't explore anymore
         } else {
@@ -6435,7 +6436,7 @@ void MapWnd::DispatchFleetsExploring() {
     std::map<int, int> unknown_systems;
     const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id);
     for (int system_id : candidates_unknown_systems) {
-        boost::shared_ptr<System> system = GetSystem(system_id);
+        std::shared_ptr<System> system = GetSystem(system_id);
         if (!system)
             continue;
         if (!empire->HasExploredSystem(system->ID()) &&
@@ -6464,7 +6465,7 @@ void MapWnd::DispatchFleetsExploring() {
         int better_fleet_id;
 
         for (int fleet_id : fleet_idle) {
-            boost::shared_ptr<Fleet> fleet = GetFleet(fleet_id);
+            std::shared_ptr<Fleet> fleet = GetFleet(fleet_id);
             if (!fleet || !fleet->MovePath().empty())
                 continue;
 

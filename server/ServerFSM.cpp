@@ -291,7 +291,7 @@ sc::result Idle::react(const HostSPGame& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    boost::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
+    std::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
     std::string client_version_string;
     ExtractHostSPGameMessageData(message, *single_player_setup_data, client_version_string);
 
@@ -1501,7 +1501,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
 
     // extract client save information in message
     OrderSet received_orders;
-    boost::shared_ptr<SaveGameUIData> ui_data(new SaveGameUIData);
+    std::shared_ptr<SaveGameUIData> ui_data(new SaveGameUIData);
     bool ui_data_available = false;
     std::string save_state_string;
     bool save_state_string_available = false;
@@ -1518,7 +1518,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // store recieved orders or already existing orders.  I'm not sure what's
     // going on here with the two possible sets of orders.  apparently the
     // received orders are ignored if there are already existing orders?
-    boost::shared_ptr<OrderSet> order_set;
+    std::shared_ptr<OrderSet> order_set;
     if (const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id))) {
         OrderSet* existing_orders = server.m_turn_sequence[empire->EmpireID()];
         if (existing_orders)

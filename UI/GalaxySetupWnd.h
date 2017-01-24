@@ -33,14 +33,14 @@ public:
     GalaxySetupOption               GetNativeFrequency() const;     //!< Returns the frequency of natives
     Aggression                      GetAIAggression() const;        //!< Returns the  maximum AI aggression level 
 
-    boost::shared_ptr<GG::Texture>  PreviewImage() const;           //!< Returns the current preview image texture
+    /** Returns the current preview image texture. */
+    std::shared_ptr<GG::Texture> PreviewImage() const;
 
     /** the settings changed signal object for this GalaxySetupPanel */
     mutable boost::signals2::signal<void ()>  SettingsChangedSignal;
 
     /** the image changed signal object for this GalaxySetupPanel */
-    mutable boost::signals2::signal<void (boost::shared_ptr<GG::Texture>)>
-                                    ImageChangedSignal;
+    mutable boost::signals2::signal<void (std::shared_ptr<GG::Texture>)> ImageChangedSignal;
     //!@}
 
     /** \name Mutators*/ //!@{
@@ -84,8 +84,9 @@ private:
     GG::DropDownList*   m_native_freq_list;     //!< The frequency of natives
     GG::Label*          m_ai_aggression_label;
     GG::DropDownList*   m_ai_aggression_list;   //!< The max aggression choices for AI opponents
-    
-    std::vector<boost::shared_ptr<GG::Texture> > m_textures; //!< textures for galaxy previews
+
+    /** Textures for galaxy previews. */
+    std::vector<std::shared_ptr<GG::Texture>> m_textures;
 };
 
 //! This class is the Galaxy Setup window.  It is a modal window
@@ -121,7 +122,7 @@ protected:
 
 private:
     void DoLayout();
-    void PreviewImageChanged(boost::shared_ptr<GG::Texture> new_image);
+    void PreviewImageChanged(std::shared_ptr<GG::Texture> new_image);
     void EmpireNameChanged(const std::string& name);
     void PlayerNameChanged(const std::string& name);
     void OkClicked();

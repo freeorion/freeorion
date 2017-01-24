@@ -10,7 +10,7 @@ class CUILinkTextMultiEdit;
 class CUILinkTextBlock : public GG::BlockControl {
 public:
     CUILinkTextBlock(const std::string& str,
-                     const boost::shared_ptr<GG::Font>& font,
+                     const std::shared_ptr<GG::Font>& font,
                      GG::Flags<GG::TextFormat> format,
                      const GG::Clr& color,
                      GG::Flags< GG::WndFlag > flags);
@@ -29,7 +29,7 @@ public:
         GG::BlockControl* CreateFromTag(const std::string& tag,
                                         const GG::RichText::TAG_PARAMS& params,
                                         const std::string& content,
-                                        const boost::shared_ptr<GG::Font>& font,
+                                        const std::shared_ptr<GG::Font>& font,
                                         const GG::Clr& color,
                                         GG::Flags<GG::TextFormat> format) override;
 

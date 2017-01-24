@@ -37,7 +37,7 @@ using namespace GG;
 
 const std::size_t ThreeButtonDlg::NO_BUTTON = std::numeric_limits<std::size_t>::max();
 
-ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const boost::shared_ptr<Font>& font,
+ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shared_ptr<Font>& font,
                                Clr color, Clr border_color, Clr button_color, Clr text_color, std::size_t buttons,
                                const std::string& zero/* = ""*/, const std::string& one/* = ""*/, const std::string& two/* = ""*/) :
     Wnd((GUI::GetGUI()->AppWidth() - w) / 2, (GUI::GetGUI()->AppHeight() - h) / 2, w, h, INTERACTIVE | DRAGABLE | MODAL),
@@ -124,7 +124,7 @@ std::size_t ThreeButtonDlg::NumButtons() const
     return retval;
 }
 
-void ThreeButtonDlg::Init(const std::string& msg, const boost::shared_ptr<Font>& font, std::size_t buttons,
+void ThreeButtonDlg::Init(const std::string& msg, const std::shared_ptr<Font>& font, std::size_t buttons,
                           const std::string& zero/* = ""*/, const std::string& one/* = ""*/,
                           const std::string& two/* = ""*/)
 {
@@ -139,7 +139,7 @@ void ThreeButtonDlg::Init(const std::string& msg, const boost::shared_ptr<Font>&
     Layout* layout = new Layout(X0, Y0, X1, Y1, 2, 1, 10);
     Layout* button_layout = new Layout(X0, Y0, X1, Y1, 1, buttons, 0, 10);
 
-    boost::shared_ptr<StyleFactory> style = GetStyleFactory();
+    std::shared_ptr<StyleFactory> style = GetStyleFactory();
 
     TextControl* message_text = style->NewTextControl(msg, font, m_text_color,
                                                       FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);

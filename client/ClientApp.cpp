@@ -52,7 +52,7 @@ Empire* ClientApp::GetEmpire(int empire_id)
 SupplyManager& ClientApp::GetSupplyManager()
 { return m_supply_manager; }
 
-boost::shared_ptr<UniverseObject> ClientApp::GetUniverseObject(int object_id)
+std::shared_ptr<UniverseObject> ClientApp::GetUniverseObject(int object_id)
 { return GetUniverse().Objects().Object(object_id); }
 
 ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
@@ -65,7 +65,7 @@ ObjectMap& ClientApp::EmpireKnownObjects(int empire_id) {
     return m_universe.Objects();
 }
 
-boost::shared_ptr<UniverseObject> ClientApp::EmpireKnownObject(int object_id, int empire_id)
+std::shared_ptr<UniverseObject> ClientApp::EmpireKnownObject(int object_id, int empire_id)
 { return EmpireKnownObjects(empire_id).Object(object_id); }
 
 const OrderSet& ClientApp::Orders() const
@@ -125,14 +125,14 @@ OrderSet& ClientApp::Orders()
 ClientNetworking& ClientApp::Networking()
 { return m_networking; }
 
-std::string ClientApp::GetVisibleObjectName(boost::shared_ptr<const UniverseObject> object) {
+std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) {
     if (!object) {
         ErrorLogger() << "ClientApp::GetVisibleObjectName(): expected non null object pointer.";
         return std::string();
     }
 
     std::string name_text = object->PublicName(m_empire_id);
-    if (boost::shared_ptr<const System> system = boost::dynamic_pointer_cast<const System>(object))
+    if (std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(object))
         name_text = system->ApparentName(m_empire_id);
 
     return name_text;
