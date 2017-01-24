@@ -1,12 +1,9 @@
 import random
-import itertools
 import freeorion as fo
 from util import MapGenerationError, report_error
-from galaxy_topology import get_systems_within_jumps
 import statistics
 import universe_tables
 from galaxy import DisjointSets
-
 
 
 class StarlaneAlteringMonsters(object):
@@ -84,7 +81,7 @@ def populate_monster_fleet(fleet_plan, system):
     print "Spawn", fleet_plan.name(), "at", fo.get_name(system)
 
 
-def generate_monsters(monster_freq, _systems, home_systems):
+def generate_monsters(monster_freq, systems):
     """
     Adds space monsters to systems.
     """
@@ -123,12 +120,6 @@ def generate_monsters(monster_freq, _systems, home_systems):
         return
 
     universe = fo.get_universe()
-
-    EMPIRE_TO_MONSTER_MIN_DIST = 2
-    empire_exclusions = set(itertools.chain.from_iterable(
-        get_systems_within_jumps(e, EMPIRE_TO_MONSTER_MIN_DIST)
-        for e in home_systems))
-    systems = [s for s in _systems if s not in empire_exclusions]
 
     # Fleet plans that include ships capable of altering starlanes.
     # @content_tag{CAN_ALTER_STARLANES} universe_generator special handling for fleets containing a hull design with this tag.
