@@ -2827,7 +2827,8 @@ void ServerApp::PostCombatProcessTurns() {
     }
 
     // execute all effects and update meters prior to production, research, etc.
-    Seed(CurrentTurn());
+    static boost::hash<std::string> pcpt_string_hash;
+    Seed(static_cast<unsigned int>(CurrentTurn()) + pcpt_string_hash(m_galaxy_setup_data.m_seed));
     m_universe.ApplyAllEffectsAndUpdateMeters(false);
 
     // regenerate system connectivity graph after executing effects, which may
