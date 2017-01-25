@@ -13,7 +13,7 @@ class FO_COMMON_API Fighter : public UniverseObject {
 public:
     Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage);
     Fighter();
-    ~Fighter() {}
+    ~Fighter();
 
     UniverseObjectType ObjectType() const override;
 

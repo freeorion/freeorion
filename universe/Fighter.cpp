@@ -24,6 +24,9 @@ Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species
     UniverseObject::Init();
 }
 
+Fighter::~Fighter()
+{}
+
 UniverseObjectType Fighter::ObjectType() const
 { return OBJ_FIGHTER; }
 

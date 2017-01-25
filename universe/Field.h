@@ -56,7 +56,7 @@ protected:
 #if BOOST_VERSION >= 106100
 public:
 #endif
-    ~Field() {}
+    ~Field();
 #if BOOST_VERSION >= 106100
 protected:
 #endif

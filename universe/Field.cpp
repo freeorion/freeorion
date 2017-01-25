@@ -42,6 +42,15 @@ Field::Field() :
     m_type_name("")
 {}
 
+#if BOOST_VERSION >= 106100
+public:
+#endif
+Field::~Field()
+{}
+#if BOOST_VERSION >= 106100
+protected:
+#endif
+
 Field::Field(const std::string& field_type, double x, double y, double radius) :
     UniverseObject("", x, y),
     m_type_name(field_type)
