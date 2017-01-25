@@ -741,8 +741,8 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         if (is_all_ready) {
             // TODO: merge this code with MPLobby::react(const StartMPGame& msg)
             // start game
-            
-            if (! m_lobby_data->m_new_game) {
+
+            if (!m_lobby_data->m_new_game) {
                 // Load game ...
                 std::string save_filename = (GetSaveDir() / m_lobby_data->m_save_game).string();
 
@@ -753,7 +753,6 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                              GetCombatLogManager(),     server.m_galaxy_setup_data);
                     int seed = 0;
                     try {
-                        DebugLogger() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed;
                         seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
                     } catch (...) {
                         try {
@@ -762,8 +761,9 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                             seed = static_cast<unsigned int>(h);
                         } catch (...) {}
                     }
+                    DebugLogger() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed << "  interpreted as actual seed: " << seed;
                     Seed(seed);
-                    
+
                 } catch (const std::exception&) {
                     SendMessageToAllPlayers(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), true));
                     return discard_event();
@@ -844,7 +844,6 @@ sc::result MPLobby::react(const StartMPGame& msg) {
                          GetCombatLogManager(),     server.m_galaxy_setup_data);
                 int seed = 0;
                 try {
-                    DebugLogger() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed;
                     seed = boost::lexical_cast<unsigned int>(server.m_galaxy_setup_data.m_seed);
                 } catch (...) {
                     try {
@@ -853,6 +852,7 @@ sc::result MPLobby::react(const StartMPGame& msg) {
                         seed = static_cast<unsigned int>(h);
                     } catch (...) {}
                 }
+                DebugLogger() << "Seeding with loaded galaxy seed: " << server.m_galaxy_setup_data.m_seed << "  interpreted as actual seed: " << seed;
                 Seed(seed);
 
             } catch (const std::exception&) {
