@@ -1,18 +1,18 @@
 #include "Random.h"
 
-#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/random/random_device.hpp>
 
 namespace {
     GeneratorType gen; // the one random number generator driving the distributions below
 }
 
 void Seed(unsigned int seed) {
-    gen.seed(static_cast<boost::mt19937::result_type>(seed));
+    gen.seed(static_cast<GeneratorType::result_type>(seed));
 }
 
 void ClockSeed() {
-    boost::posix_time::time_duration diff = boost::posix_time::microsec_clock::local_time().time_of_day();
-    gen.seed(static_cast<boost::mt19937::result_type>(diff.total_milliseconds()));
+    boost::random_device seed_seq;
+    gen.seed(seed_seq);
 }
 
 SmallIntDistType SmallIntDist(int min, int max)
