@@ -123,7 +123,7 @@ std::shared_ptr<UniverseObject> OwnedVisitor<T>::Visit(std::shared_ptr<T> obj) c
 {
     if (obj->OwnedBy(empire_id))
         return obj;
-    return std::shared_ptr<UniverseObject>();
+    return nullptr;
 }
 
 #endif // _Predicates_h_

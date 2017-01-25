@@ -230,12 +230,12 @@ std::shared_ptr<const Planet> MilitaryPanel::GetPlanet() const {
     std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
     if (!obj) {
         ErrorLogger() << "MilitaryPanel tried to get an object with an invalid m_planet_id";
-        return std::shared_ptr<const Planet>();
+        return nullptr;
     }
     std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj);
     if (!planet) {
         ErrorLogger() << "MilitaryPanel failed casting an object pointer to a Planet pointer";
-        return std::shared_ptr<const Planet>();
+        return nullptr;
     }
     return planet;
 }

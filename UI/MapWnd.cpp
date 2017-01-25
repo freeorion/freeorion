@@ -4245,7 +4245,7 @@ namespace {
         {
             return fleet;
         }
-        return std::shared_ptr<const Fleet>();
+        return nullptr;
     }
 
     /** If the \p fleet has orders and is departing from a valid system, return the system*/
@@ -4260,7 +4260,7 @@ namespace {
             ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
                           << " of a departing fleet named " << fleet->Name();
         }
-        return std::shared_ptr<const System>();
+        return nullptr;
     }
 
     /** If the \p fleet is stationary in a valid system, return the system*/
@@ -4275,7 +4275,7 @@ namespace {
             ErrorLogger() << "Couldn't get system with id " << fleet->SystemID()
                           << " of a stationary fleet named " << fleet->Name();
         }
-        return std::shared_ptr<const System>();
+        return nullptr;
     }
 
     /** If the \p fleet has a valid destination and it not at a system, return true*/

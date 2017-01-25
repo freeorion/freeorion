@@ -278,8 +278,7 @@ namespace {
         if (item.build_type == BT_SHIP) {
             const ShipDesign* design = GetShipDesign(item.design_id);
             if (!design) {
-                std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-                return browse_wnd;
+                return nullptr;
             }
 
             // create title, description, production time and cost, hull type
@@ -329,7 +328,7 @@ namespace {
 
         // other production item (?)
         else {
-            return std::shared_ptr<GG::BrowseInfoWnd>();
+            return nullptr;
         }
     }
 

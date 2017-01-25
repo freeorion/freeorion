@@ -138,28 +138,28 @@ Scroll* StyleFactory::NewMultiEditHScroll(Clr color, Clr interior) const
 { return NewScroll(HORIZONTAL, color, interior); }
 
 Button* StyleFactory::NewScrollUpButton(Clr color) const
-{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewScrollDownButton(Clr color) const
-{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewVScrollTabButton(Clr color) const
-{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
+{ return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE); }
 
 Button* StyleFactory::NewScrollLeftButton(Clr color) const
-{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewScrollRightButton(Clr color) const
-{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
+{ return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }
 
 Button* StyleFactory::NewHScrollTabButton(Clr color) const
-{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
+{ return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE); }
 
 Button* StyleFactory::NewVSliderTabButton(Clr color) const
-{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
+{ return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE); }
 
 Button* StyleFactory::NewHSliderTabButton(Clr color) const
-{ return NewButton("", std::shared_ptr<Font>(), color, CLR_BLACK, INTERACTIVE); }
+{ return NewButton("", nullptr, color, CLR_BLACK, INTERACTIVE); }
 
 Button* StyleFactory::NewSpinIncrButton(const std::shared_ptr<Font>& font, Clr color) const
 { return NewButton("+", font, color, CLR_BLACK, INTERACTIVE | REPEAT_BUTTON_DOWN); }

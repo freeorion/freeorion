@@ -40,7 +40,7 @@ namespace {
     std::shared_ptr<Fleet> CreateNewFleet(double x, double y, std::shared_ptr<Ship> ship) {
         Universe& universe = GetUniverse();
         if (!ship)
-            return std::shared_ptr<Fleet>();
+            return nullptr;
 
         std::shared_ptr<Fleet> fleet = universe.CreateFleet("", x, y, ship->Owner());
 
@@ -62,7 +62,7 @@ namespace {
      * the new ship a fleet.  All ships need to be within fleets. */
     std::shared_ptr<Fleet> CreateNewFleet(std::shared_ptr<System> system, std::shared_ptr<Ship> ship) {
         if (!system || !ship)
-            return std::shared_ptr<Fleet>();
+            return nullptr;
 
         // remove ship from old fleet / system, put into new system if necessary
         if (ship->SystemID() != system->ID()) {

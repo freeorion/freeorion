@@ -857,7 +857,7 @@ namespace {
         const FieldType* field_type = GetFieldType(field_type_name);
         if (!field_type) {
             ErrorLogger() << "CreateFieldImpl: couldn't get field type with name: " << field_type_name;
-            return std::shared_ptr<Field>();
+            return nullptr;
         }
 
         // check if the specified size is within sane limits, and reset its value if not
@@ -874,7 +874,7 @@ namespace {
         std::shared_ptr<Field> field = GetUniverse().CreateField(field_type->Name(), x, y, size);
         if (!field) {
             ErrorLogger() << "CreateFieldImpl: couldn't create field";
-            return std::shared_ptr<Field>();
+            return nullptr;
         }
 
         // get the localized version of the field type name and set that as the fields name

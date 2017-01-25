@@ -42,7 +42,7 @@ namespace {
 // CUI_MinRestoreButton
 ////////////////////////////////////////////////
 CUI_MinRestoreButton::CUI_MinRestoreButton() :
-    GG::Button("", std::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor()),
+    GG::Button("", nullptr, ClientUI::WndInnerBorderColor()),
     m_mode(MIN_BUTTON)
 { GG::Connect(LeftClickedSignal, &CUI_MinRestoreButton::Toggle, this); }
 
@@ -78,7 +78,7 @@ void CUI_MinRestoreButton::Toggle() {
 // CUI_PinButton
 ////////////////////////////////////////////////
 CUI_PinButton::CUI_PinButton() :
-    GG::Button("", std::shared_ptr<GG::Font>(), ClientUI::WndInnerBorderColor())
+    GG::Button("", nullptr, ClientUI::WndInnerBorderColor())
 {
     GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
     SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"   )));

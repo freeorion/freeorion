@@ -2564,7 +2564,6 @@ void Contains::Eval(const ScriptingContext& parent_context,
 
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects contained by the candidate
-        std::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, search_domain == MATCHES ? *matches.begin() : *non_matches.begin());
 
         // initialize subcondition candidates from local candidate's contents
@@ -2768,7 +2767,6 @@ void ContainedBy::Eval(const ScriptingContext& parent_context,
 
     } else if (search_domain_size == 1) {
         // evaluate subcondition on objects that contain the candidate
-        std::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, search_domain == MATCHES ? *matches.begin() : *non_matches.begin());
 
         // initialize subcondition candidates from local candidate's containers

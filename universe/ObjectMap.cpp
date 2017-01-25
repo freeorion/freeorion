@@ -217,7 +217,7 @@ std::shared_ptr<UniverseObject> ObjectMap::Remove(int id) {
     // search for object in objects map
     std::map<int, std::shared_ptr<UniverseObject>>::iterator it = m_objects.find(id);
     if (it == m_objects.end())
-        return std::shared_ptr<UniverseObject>();
+        return nullptr;
     //DebugLogger() << "Object was removed: " << it->second->Dump();
     // object found, so store pointer for later...
     std::shared_ptr<UniverseObject> result = it->second;
@@ -392,7 +392,7 @@ std::shared_ptr<UniverseObject> ObjectMap::ExistingObject(int id) {
     std::map<int, std::shared_ptr<UniverseObject>>::iterator it = m_existing_objects.find(id);
     if (it != m_existing_objects.end())
         return it->second;
-    return std::shared_ptr<UniverseObject>();
+    return nullptr;
 }
 
 // Static helpers

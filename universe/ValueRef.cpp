@@ -60,7 +60,7 @@ namespace {
             default:                                                type_string = "LocalCandidate"; break;
             }
             ErrorLogger() << "FollowReference : top level object (" << type_string << ") not defined in scripting context";
-            return std::shared_ptr<const UniverseObject>();
+            return nullptr;
         }
 
         while (first != last) {
@@ -70,7 +70,7 @@ namespace {
                     obj = GetPlanet(b->PlanetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a building, so can't get its planet.";
-                    obj = std::shared_ptr<const UniverseObject>();
+                    obj = nullptr;
                 }
             } else if (property_name == "System") {
                 if (obj)
@@ -82,7 +82,7 @@ namespace {
                     obj = GetFleet(s->FleetID());
                 } else {
                     ErrorLogger() << "FollowReference : object not a ship, so can't get its fleet";
-                    obj = std::shared_ptr<const UniverseObject>();
+                    obj = nullptr;
                 }
             }
             ++first;
@@ -137,7 +137,7 @@ namespace {
                     retval += "(" + boost::lexical_cast<std::string>(b->PlanetID()) + "): ";
                     obj = GetPlanet(b->PlanetID());
                 } else
-                    obj = std::shared_ptr<const UniverseObject>();
+                    obj = nullptr;
             } else if (property_name == "System") {
                 if (obj) {
                     retval += "(" + boost::lexical_cast<std::string>(obj->SystemID()) + "): ";
@@ -148,7 +148,7 @@ namespace {
                     retval += "(" + boost::lexical_cast<std::string>(s->FleetID()) + "): ";
                     obj = GetFleet(s->FleetID());
                 } else
-                    obj = std::shared_ptr<const UniverseObject>();
+                    obj = nullptr;
             }
 
             ++first;

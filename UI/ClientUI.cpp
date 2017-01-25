@@ -956,7 +956,7 @@ std::shared_ptr<GG::Texture> ClientUI::GetModuloTexture(const boost::filesystem:
     assert(0 <= n);
     TexturesAndDist prefixed_textures_and_dist = PrefixedTexturesAndDist(dir, prefix, mipmap);
     return prefixed_textures_and_dist.first.empty() ?
-        std::shared_ptr<GG::Texture>() :
+        nullptr :
         prefixed_textures_and_dist.first[n % prefixed_textures_and_dist.first.size()];
 }
 

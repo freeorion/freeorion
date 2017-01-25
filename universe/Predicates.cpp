@@ -16,7 +16,7 @@ UniverseObjectVisitor::~UniverseObjectVisitor()
 {}
 
 std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<UniverseObject> obj) const
-{ return std::shared_ptr<UniverseObject>(); }
+{ return nullptr; }
 
 std::shared_ptr<UniverseObject> UniverseObjectVisitor::Visit(std::shared_ptr<Building> obj) const
 { return Visit(std::static_pointer_cast<UniverseObject>(obj)); }
@@ -55,7 +55,7 @@ std::shared_ptr<UniverseObject> StationaryFleetVisitor::Visit(std::shared_ptr<Fl
          obj->TravelRoute().empty()) &&
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
-    return std::shared_ptr<UniverseObject>();
+    return nullptr;
 }
 
 ////////////////////////////////////////////////
@@ -74,7 +74,7 @@ std::shared_ptr<UniverseObject> OrderedMovingFleetVisitor::Visit(std::shared_ptr
         obj->SystemID() != INVALID_OBJECT_ID && 
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
-    return std::shared_ptr<UniverseObject>();
+    return nullptr;
 }
 
 ////////////////////////////////////////////////
@@ -92,5 +92,5 @@ std::shared_ptr<UniverseObject> MovingFleetVisitor::Visit(std::shared_ptr<Fleet>
         obj->SystemID() == INVALID_OBJECT_ID && 
         (empire_id == ALL_EMPIRES || (!obj->Unowned() && obj->Owner() == empire_id)))
         return obj;
-    return std::shared_ptr<UniverseObject>();
+    return nullptr;
 }

@@ -68,7 +68,7 @@ namespace {
 // FleetButton           //
 ///////////////////////////
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
-    GG::Button("", std::shared_ptr<GG::Font>(), GG::CLR_ZERO),
+    GG::Button("", nullptr, GG::CLR_ZERO),
     m_fleets(),
     m_icons(),
     m_selection_indicator(nullptr),
@@ -77,7 +77,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 { Init(fleet_IDs, size_type); }
 
 FleetButton::FleetButton(int fleet_id, SizeType size_type) :
-    GG::Button("", std::shared_ptr<GG::Font>(), GG::CLR_ZERO),
+    GG::Button("", nullptr, GG::CLR_ZERO),
     m_fleets(),
     m_icons(),
     m_selection_indicator(nullptr),
@@ -426,7 +426,7 @@ std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton:
         fleet_size = 1u; // because there's no zero-ship icon, and the one-ship icon is (as of this writing) blank, so is fitting for zero ships
 
     if (size_type == FleetButton::FLEET_BUTTON_NONE)
-        return std::shared_ptr<GG::Texture>();
+        return nullptr;
 
     if (size_type == FleetButton::FLEET_BUTTON_TINY) {
         if (fleet_size > 1u)
@@ -438,7 +438,7 @@ std::shared_ptr<GG::Texture> FleetSizeIcon(unsigned int fleet_size, FleetButton:
     std::string size_prefix = FleetIconSizePrefix(size_type);
 
     if (size_prefix.empty())
-        return std::shared_ptr<GG::Texture>();
+        return nullptr;
 
     std::shared_ptr<GG::Texture> texture_temp = ClientUI::GetClientUI()->GetModuloTexture(
         ClientUI::ArtDir() / "icons" / "fleet", (size_prefix + "tail-"), FleetSizeIconNumber(fleet_size), false);

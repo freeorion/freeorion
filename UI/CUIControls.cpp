@@ -219,7 +219,7 @@ bool SettableInWindowCUIButton::InWindow(const GG::Pt& pt) const {
 ///////////////////////////////////////
 CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_background,
                                GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE*/) :
-    Button("", std::shared_ptr<GG::Font>(), ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
+    Button("", nullptr, ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color(fill_background)
 { GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
@@ -601,7 +601,7 @@ void CUITabBar::DistinguishCurrentTab(const std::vector<GG::StateButton*>& tab_b
 ///////////////////////////////////////
 CUIScroll::ScrollTab::ScrollTab(GG::Orientation orientation, int scroll_width, GG::Clr color,
                                 GG::Clr border_color) :
-    Button("", std::shared_ptr<GG::Font>(), color),
+    Button("", nullptr, color),
     m_border_color(border_color),
     m_orientation(orientation),
     m_mouse_here(false),

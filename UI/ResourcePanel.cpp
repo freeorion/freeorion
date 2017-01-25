@@ -258,12 +258,12 @@ std::shared_ptr<const ResourceCenter> ResourcePanel::GetResCenter() const {
     std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {
         ErrorLogger() << "ResourcePanel tried to get an object with an invalid m_rescenter_id";
-        return std::shared_ptr<const ResourceCenter>();
+        return nullptr;
     }
     std::shared_ptr<const ResourceCenter> res = std::dynamic_pointer_cast<const ResourceCenter>(obj);
     if (!res) {
         ErrorLogger() << "ResourcePanel failed casting an object pointer to a ResourceCenter pointer";
-        return std::shared_ptr<const ResourceCenter>();
+        return nullptr;
     }
     return res;
 }

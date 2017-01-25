@@ -1276,14 +1276,14 @@ namespace {
 std::shared_ptr<const Ship> ValidSelectedColonyShip(int system_id) {
     // if not looking in a valid system, no valid colony ship can be available
     if (system_id == INVALID_OBJECT_ID)
-        return std::shared_ptr<const Ship>();
+        return nullptr;
 
     // is there a valid selected ship in the active FleetWnd?
     for (int ship_id : FleetUIManager::GetFleetUIManager().SelectedShipIDs())
         if (std::shared_ptr<const Ship> ship = GetShip(ship_id))
             if (ship->SystemID() == system_id && ship->CanColonize() && ship->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
                 return ship;
-    return std::shared_ptr<const Ship>();
+    return nullptr;
 }
 
 int AutomaticallyChosenColonyShip(int target_planet_id) {

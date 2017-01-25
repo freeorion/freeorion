@@ -149,7 +149,7 @@ namespace {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return std::shared_ptr<const UniverseObject>();
+            return nullptr;
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is

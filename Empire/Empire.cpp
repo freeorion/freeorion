@@ -2252,7 +2252,7 @@ float Empire::ProductionPoints() const
 const std::shared_ptr<ResourcePool> Empire::GetResourcePool(ResourceType resource_type) const {
     std::map<ResourceType, std::shared_ptr<ResourcePool>>::const_iterator it = m_resource_pools.find(resource_type);
     if (it == m_resource_pools.end())
-        return std::shared_ptr<ResourcePool>();
+        return nullptr;
     return it->second;
 }
 

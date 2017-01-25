@@ -93,7 +93,7 @@ public:
         // iterators in the range [begin(), end()].
         void Refresh() const {
             if (typename std::map<int, std::shared_ptr<T>>::iterator(*this) == (m_owner.Map<T>().end())) {
-                m_current_ptr = std::shared_ptr<T>();
+                m_current_ptr = nullptr;
             } else {
                 m_current_ptr = std::shared_ptr<T>(std::map<int, std::shared_ptr<T>>::iterator::operator*().second);
             }
@@ -155,7 +155,7 @@ public:
         // the range [begin(), end()].
         void Refresh() const {
             if (typename std::map<int, std::shared_ptr<T>>::const_iterator(*this) == (m_owner.Map<T>().end())) {
-                m_current_ptr = std::shared_ptr<T>();
+                m_current_ptr = nullptr;
             } else {
                 m_current_ptr = std::shared_ptr<T>(std::map<int, std::shared_ptr<T>>::const_iterator::operator*().second);
             }
@@ -494,7 +494,7 @@ std::shared_ptr<const T> ObjectMap::Object(int id) const {
     return std::shared_ptr<const T>(
         it != Map<typename boost::remove_const<T>::type>().end()
             ? it->second
-            : std::shared_ptr<const T>());
+            : nullptr);
 }
 
 template <class T>
@@ -504,8 +504,7 @@ std::shared_ptr<T> ObjectMap::Object(int id) {
     return std::shared_ptr<T>(
         it != Map<typename boost::remove_const<T>::type>().end()
             ? it->second
-            : std::shared_ptr<typename boost::remove_const<T>::type>()
-        );
+            : nullptr);
 }
 
 template <class T>
@@ -589,7 +588,7 @@ int ObjectMap::NumObjects() const
 template <class T>
 std::shared_ptr<T> ObjectMap::Insert(T* item, int empire_id /* = ALL_EMPIRES */) {
     if (!item)
-        return std::shared_ptr<T>();
+        return nullptr;
 
     std::shared_ptr<T> shared_item(item, UniverseObjectDeleter<T>);
     Insert(shared_item, empire_id);

@@ -415,7 +415,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             // if moved away any distance from a system, are no longer in that system
             if (cur_system && dist_travelled_this_step >= FLEET_MOVEMENT_EPSILON) {
                 prev_system = cur_system;
-                cur_system = std::shared_ptr<System>();
+                cur_system = nullptr;
             }
         }
 

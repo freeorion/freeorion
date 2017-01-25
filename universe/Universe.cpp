@@ -1113,7 +1113,7 @@ int Universe::GenerateObjectID() {
 template <class T>
 std::shared_ptr<T> Universe::Insert(T* obj) {
     if (!obj)
-        return std::shared_ptr<T>();
+        return nullptr;
 
     int id = GenerateObjectID();
     if (id != INVALID_OBJECT_ID) {
@@ -1125,7 +1125,7 @@ std::shared_ptr<T> Universe::Insert(T* obj) {
     // Realistically, we should probably do something a little more drastic in this case,
     // like terminate the program and call 911 or something.
     delete obj;
-    return std::shared_ptr<T>();
+    return nullptr;
 }
 
 template <class T>
@@ -1133,7 +1133,7 @@ std::shared_ptr<T> Universe::InsertID(T* obj, int id) {
     if (id == INVALID_OBJECT_ID)
         return Insert(obj);
     if (!obj || id >= MAX_ID)
-        return std::shared_ptr<T>();
+        return nullptr;
 
     obj->SetID(id);
     std::shared_ptr<T> result = m_objects.Insert(obj);
@@ -3642,7 +3642,7 @@ namespace {
         const Empire* empire = GetEmpire(empire_id);
         if (!empire) {
             DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return std::shared_ptr<const UniverseObject>();
+            return nullptr;
         }
         // get a source object, which is owned by the empire with the passed-in
         // empire id.  this is used in conditions to reference which empire is

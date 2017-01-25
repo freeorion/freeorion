@@ -65,8 +65,8 @@ struct ConditionBase;
 
 /** Same as ConditionDescription, but returns a string only with conditions that have not been met. */
 FO_COMMON_API std::string ConditionFailedDescription(const std::vector<ConditionBase*>& conditions,
-                                                     std::shared_ptr<const UniverseObject> candidate_object = std::shared_ptr<const UniverseObject>(),
-                                                     std::shared_ptr<const UniverseObject> source_object = std::shared_ptr<const UniverseObject>());
+                                                     std::shared_ptr<const UniverseObject> candidate_object = nullptr,
+                                                     std::shared_ptr<const UniverseObject> source_object = nullptr);
 
 /** Returns a single string which describes a vector of Conditions. If multiple
   * conditions are passed, they are treated as if they were contained by an And
@@ -78,8 +78,8 @@ FO_COMMON_API std::string ConditionFailedDescription(const std::vector<Condition
   * subconditions the candidate matches, and indicate if the overall combination
   * of conditions matches the object. */
 FO_COMMON_API std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
-                                               std::shared_ptr<const UniverseObject> candidate_object = std::shared_ptr<const UniverseObject>(),
-                                               std::shared_ptr<const UniverseObject> source_object = std::shared_ptr<const UniverseObject>());
+                                               std::shared_ptr<const UniverseObject> candidate_object = nullptr,
+                                               std::shared_ptr<const UniverseObject> source_object = nullptr);
 
 /** The base class for all Conditions. */
 struct FO_COMMON_API ConditionBase {
