@@ -1643,8 +1643,12 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     }
 
     // reasonably unpredictable but reproducible random seeding
-    const int base_seed = combat_info.objects.begin()->ID() + CurrentTurn();
-
+    int base_seed = 0;
+    if (GetOptionsDB().Get<bool>("reseed-prng-server")) {
+        //static boost::hash<std::string> cs_string_hash;
+        // todo: salt further with galaxy setup seed
+        base_seed = combat_info.objects.begin()->ID() + CurrentTurn();
+    }
 
     // compile list of valid objects to attack or be attacked in this combat
     AutoresolveInfo combat_state(combat_info);
@@ -1657,7 +1661,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     // action(s) such as shooting at target(s) or launching fighters
     int last_bout = 1;
     for (int bout = 1; bout <= GetUniverse().GetNumCombatRounds(); ++bout) {
-        Seed(base_seed + bout);    // ensure each combat bout produces different results
+        if (GetOptionsDB().Get<bool>("reseed-prng-server"))
+            Seed(base_seed + bout);    // ensure each combat bout produces different results
 
         // empires may have valid targets, but nothing to attack with.  If all
         // empires have no attackers or no valid targers, combat is over
