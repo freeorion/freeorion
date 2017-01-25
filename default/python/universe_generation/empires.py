@@ -113,7 +113,7 @@ class HomeSystemFinder(object):
             if system not in self.system_merit:
                 self.system_merit[system] = calculate_home_system_merit(system)
 
-        # The list of merits and systems reverse sorted by merit.
+        # The list of merits and systems sorted in descending order by merit.
         all_merit_system = sorted([(self.system_merit[s], s)
                                    for s in systems_pool], reverse=True)
 
