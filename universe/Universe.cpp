@@ -65,6 +65,7 @@ namespace {
         db.Add("effects-threads-ai",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,      RangedValidator<int>(1, 32));
         db.Add("effects-threads-server",    UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
         db.Add("effect-accounting",         UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),              true,   Validator<bool>());
+        db.Add("reseed-prng-server",        UserStringNop("OPTIONS_DB_PRNG_RESEEDING"),                 true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
