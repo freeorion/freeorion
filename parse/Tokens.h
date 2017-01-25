@@ -428,6 +428,7 @@
     (SpawnRate)                                 \
     (Special)                                   \
     (Species)                                   \
+    (SpeciesID)                                 \
     (SpeciesOpinion)                            \
     (SpeciesPlanetsBombed)                      \
     (SpeciesColoniesOwned)                      \

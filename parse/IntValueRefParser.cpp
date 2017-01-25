@@ -33,7 +33,7 @@ namespace {
                 |   tok.LastTurnBattleHere_
                 |   tok.LastTurnActiveInBattle_
                 |   tok.Orbit_
-                |   tok.Species_
+                |   tok.SpeciesID_
                 |   tok.TurnsSinceFocusChange_
                 |   tok.ETA_
                 ;

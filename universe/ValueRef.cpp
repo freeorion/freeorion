@@ -809,7 +809,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         else
             return ShipDesign::INVALID_DESIGN_ID;
 
-    } else if (property_name == "Species") {
+    } else if (property_name == "SpeciesID") {
         if (TemporaryPtr<const Planet> planet = boost::dynamic_pointer_cast<const Planet>(object))
             return GetSpeciesManager().GetSpeciesID(planet->SpeciesName());
         else if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(object))
