@@ -246,10 +246,8 @@ namespace {
         // production item is a building
         if (item.build_type == BT_BUILDING) {
             const BuildingType* building_type = GetBuildingType(item.name);
-            if (!building_type) {
-                std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-                return browse_wnd;
-            }
+            if (!building_type)
+                return nullptr;
 
             // create title, description, production time and cost
             const std::string& title = UserString(item.name);

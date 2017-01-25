@@ -114,10 +114,8 @@ namespace {
 std::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech_name, int empire_id) {
     const Empire* empire = GetEmpire(empire_id);
     const Tech* tech = GetTech(tech_name);
-    if (!tech) {
-        std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-        return browse_wnd;
-    }
+    if (!tech)
+        return nullptr;
 
     std::string main_text;
 

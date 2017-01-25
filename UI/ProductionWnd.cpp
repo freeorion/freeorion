@@ -248,10 +248,8 @@ namespace {
 
         if (elem.item.build_type == BT_BUILDING) {
             const BuildingType* building_type = GetBuildingType(elem.item.name);
-            if (!building_type) {
-                std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-                return browse_wnd;
-            }
+            if (!building_type)
+                return nullptr;
             main_text += UserString("OBJ_BUILDING") + "\n";
 
             item_name = UserString(elem.item.name);
@@ -264,10 +262,8 @@ namespace {
 
         } else if (elem.item.build_type == BT_SHIP) {
             const ShipDesign* design = GetShipDesign(elem.item.design_id);
-            if (!design) {
-                std::shared_ptr<GG::BrowseInfoWnd> browse_wnd;
-                return browse_wnd;
-            }
+            if (!design)
+                return nullptr;
             main_text += UserString("OBJ_SHIP") + "\n";
 
             item_name = design->Name(true);
