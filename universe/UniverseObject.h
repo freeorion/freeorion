@@ -200,14 +200,11 @@ protected:
 
     template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-#if BOOST_VERSION >= 106000
-public:
-#endif
-    virtual ~UniverseObject();
-#if BOOST_VERSION >= 106000
-protected:
-#endif
 
+public:
+    virtual ~UniverseObject();
+
+protected:
     /** returns new copy of this UniverseObject, limited to only copy data that
       * is visible to the empire with the specified \a empire_id as determined
       * by the detection and visibility system.  Caller takes ownership of

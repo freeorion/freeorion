@@ -126,15 +126,10 @@ protected:
 
     template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-#if BOOST_VERSION >= 106100
-public:
-#endif
-    ~Ship() {}
-#if BOOST_VERSION >= 106100
-protected:
-#endif
-    //@}
 
+public:
+    ~Ship() {}
+    //@}
 
 private:
     int             m_design_id;

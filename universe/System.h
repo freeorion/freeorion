@@ -143,14 +143,11 @@ protected:
 
     template <typename T> friend void UniverseObjectDeleter(T*);
     template <class T> friend void boost::python::detail::value_destroyer<false>::execute(T const volatile* p);
-#if BOOST_VERSION >= 106100
-public:
-#endif
-    ~System() {}
-#if BOOST_VERSION >= 106100
-protected:
-#endif
 
+public:
+    ~System() {}
+
+protected:
     /** Returns new copy of this System. */
     System* Clone(int empire_id = ALL_EMPIRES) const override;
     //@}
