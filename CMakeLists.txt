@@ -109,7 +109,7 @@ endif ()
 # Dependencies                         #
 ########################################
 set(MINIMUM_PYTHON_VERSION 2.7)
-set(MINIMUM_BOOST_VERSION 1.54.0)
+set(MINIMUM_BOOST_VERSION 1.56.0)
 
 find_package(Threads)
 find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
