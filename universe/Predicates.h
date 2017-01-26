@@ -2,13 +2,6 @@
 #define _Predicates_h_
 
 
-#include <boost/mpl/assert.hpp>
-#include <boost/pointer_cast.hpp>
-#include <boost/type_traits/add_pointer.hpp>
-#include <boost/type_traits/is_same.hpp>
-#include <boost/type_traits/remove_const.hpp>
-#include <boost/type_traits/remove_pointer.hpp>
-
 #include "../util/Export.h"
 
 #include <memory>
