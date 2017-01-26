@@ -2,7 +2,6 @@
 #include "Parse.h"
 #include "ParseImpl.h"
 
-#include "../universe/Universe.h"
 #include "../universe/UniverseGenerator.h"
 #include "../util/Directories.h"
 
