@@ -213,8 +213,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     LogDependencyVersions();
 
-    std::shared_ptr<GG::StyleFactory> style(new CUIStyle());
-    SetStyleFactory(style);
+    SetStyleFactory(std::make_shared<CUIStyle>());
 
     SetMinDragTime(0);
 
@@ -245,7 +244,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     GG::Wnd::SetDefaultBrowseInfoWnd(default_browse_info_wnd);
 
     std::shared_ptr<GG::Texture> cursor_texture = m_ui->GetTexture(ClientUI::ArtDir() / "cursors" / "default_cursor.png");
-    SetCursor(std::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
+    SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
     EnableKeyPressRepeat(GetOptionsDB().Get<int>("UI.keypress-repeat-delay"),

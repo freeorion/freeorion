@@ -607,7 +607,7 @@ void TextureManager::FreeTexture(const std::string& name)
 
 std::shared_ptr<Texture> TextureManager::LoadTexture(const boost::filesystem::path& path, bool mipmap)
 {
-    std::shared_ptr<Texture> temp(new Texture());
+    auto temp{std::make_shared<Texture>()};
     temp->Load(path, mipmap);
     return (m_textures[path.generic_string()] = temp);
 }

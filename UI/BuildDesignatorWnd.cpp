@@ -215,9 +215,9 @@ namespace {
                                              int empire_id, bool only_failed_conditions)
     {
         std::vector<Condition::ConditionBase*> location_conditions;
-        std::shared_ptr<Condition::ConditionBase> can_prod_ship_cond(new Condition::CanProduceShips());
+        auto can_prod_ship_cond{std::make_shared<Condition::CanProduceShips>()};
         location_conditions.push_back(can_prod_ship_cond.get());
-        std::shared_ptr<Condition::ConditionBase> ship_avail_cond(new Condition::OwnerHasShipDesignAvailable(ship_design_id));
+        auto ship_avail_cond{std::make_shared<Condition::OwnerHasShipDesignAvailable>(ship_design_id)};
         location_conditions.push_back(ship_avail_cond.get());
         std::shared_ptr<Condition::ConditionBase> can_colonize_cond;
         if (const ShipDesign* ship_design = GetShipDesign(ship_design_id)) {
@@ -269,9 +269,8 @@ namespace {
             }
 
             // create tooltip
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                ClientUI::BuildingIcon(item.name), title, main_text));
-            return browse_wnd;
+            return std::make_shared<IconTextBrowseWnd>(
+                ClientUI::BuildingIcon(item.name), title, main_text);
         }
 
         // production item is a ship
@@ -321,9 +320,8 @@ namespace {
                 }
 
             // create tooltip
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-                ClientUI::ShipDesignIcon(item.design_id), title, main_text));
-            return browse_wnd;
+            return std::make_shared<IconTextBrowseWnd>(
+                ClientUI::ShipDesignIcon(item.design_id), title, main_text);
         }
 
         // other production item (?)

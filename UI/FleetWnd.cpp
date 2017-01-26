@@ -887,35 +887,29 @@ void ShipDataPanel::Refresh() {
 
         entry.second->ClearBrowseInfoWnd();
         if (entry.first == METER_CAPACITY) {  // refers to damage
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new ShipDamageBrowseWnd(
+            entry.second->SetBrowseInfoWnd(std::make_shared<ShipDamageBrowseWnd>(
                 m_ship_id, entry.first));
-            entry.second->SetBrowseInfoWnd(browse_wnd);
 
         } else if (entry.first == METER_TROOPS) {
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+            entry.second->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
                 TroopIcon(), UserString("SHIP_TROOPS_TITLE"),
                 UserString("SHIP_TROOPS_STAT")));
-            entry.second->SetBrowseInfoWnd(browse_wnd);
 
         } else if (entry.first == METER_SECONDARY_STAT) {
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new ShipFightersBrowseWnd(
+            entry.second->SetBrowseInfoWnd(std::make_shared<ShipFightersBrowseWnd>(
                 m_ship_id, entry.first));
-            entry.second->SetBrowseInfoWnd(browse_wnd);
-            std::shared_ptr<GG::BrowseInfoWnd> detailed_wnd(new ShipFightersBrowseWnd(
-                m_ship_id, entry.first, true));
             entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
-            entry.second->SetBrowseInfoWnd(detailed_wnd, 1);
+            entry.second->SetBrowseInfoWnd(std::make_shared<ShipFightersBrowseWnd>(
+                m_ship_id, entry.first, true), 1);
 
         } else if (entry.first == METER_POPULATION) {
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+            entry.second->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
                 ColonyIcon(), UserString("SHIP_COLONY_TITLE"),
                 UserString("SHIP_COLONY_STAT")));
-            entry.second->SetBrowseInfoWnd(browse_wnd);
 
         } else {
-            std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new MeterBrowseWnd(
+            entry.second->SetBrowseInfoWnd(std::make_shared<MeterBrowseWnd>(
                 m_ship_id, entry.first, AssociatedMeterType(entry.first)));
-            entry.second->SetBrowseInfoWnd(browse_wnd);
         }
     }
 
@@ -1608,9 +1602,8 @@ void FleetDataPanel::UpdateAggressionToggle() {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetPassiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAggressiveMouseoverIcon()));
-        std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+        m_aggression_toggle->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
             FleetAggressiveIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
-        m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     } else if (aggression == FLEET_PASSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon()));
         if (m_new_fleet_drop_target)
@@ -1618,16 +1611,14 @@ void FleetDataPanel::UpdateAggressionToggle() {
         else
             m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetPassiveMouseoverIcon()));
-        std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+        m_aggression_toggle->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
             FleetPassiveIcon(), UserString("FW_PASSIVE"), UserString("FW_PASSIVE_DESC")));
-        m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     } else {    // aggression == INVALID_FLEET_AGGRESSION
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetAutoIcon()));
         m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
         m_aggression_toggle->SetRolloverGraphic (GG::SubTexture(FleetAutoMouseoverIcon()));
-        std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
+        m_aggression_toggle->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
             FleetPassiveIcon(), UserString("FW_AUTO"), UserString("FW_AUTO_DESC")));
-        m_aggression_toggle->SetBrowseInfoWnd(browse_wnd);
     }
 }
 

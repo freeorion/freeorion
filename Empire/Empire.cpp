@@ -1419,9 +1419,9 @@ Empire::Empire(const std::string& name, const std::string& player_name,
 }
 
 void Empire::Init() {
-    m_resource_pools[RE_RESEARCH] = std::shared_ptr<ResourcePool>(new ResourcePool(RE_RESEARCH));
-    m_resource_pools[RE_INDUSTRY] = std::shared_ptr<ResourcePool>(new ResourcePool(RE_INDUSTRY));
-    m_resource_pools[RE_TRADE] = std::shared_ptr<ResourcePool>(new ResourcePool(RE_TRADE));
+    m_resource_pools[RE_RESEARCH] = std::make_shared<ResourcePool>(RE_RESEARCH);
+    m_resource_pools[RE_INDUSTRY] = std::make_shared<ResourcePool>(RE_INDUSTRY);
+    m_resource_pools[RE_TRADE] = std::make_shared<ResourcePool>(RE_TRADE);
 
     m_eliminated = false;
 

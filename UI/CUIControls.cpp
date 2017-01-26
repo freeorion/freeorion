@@ -1460,8 +1460,8 @@ namespace {
             GetLayout()->SetColumnStretch(1, 1.0);
             if (!species_desc.empty()) {
                 SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new IconTextBrowseWnd(species_icon, localized_name,
-                                                                                            species_desc)));
+                SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(species_icon, localized_name,
+                                                                     species_desc));
             }
         }
     };

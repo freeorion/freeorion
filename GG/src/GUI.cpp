@@ -1288,7 +1288,7 @@ void GUI::MoveDown(Wnd* wnd)
 { if (wnd) s_impl->m_zlist.MoveDown(wnd); }
 
 std::shared_ptr<ModalEventPump> GUI::CreateModalEventPump(bool& done)
-{ return std::shared_ptr<ModalEventPump>(new ModalEventPump(done)); }
+{ return std::make_shared<ModalEventPump>(done); }
 
 void GUI::RegisterDragDropWnd(Wnd* wnd, const Pt& offset, Wnd* originating_wnd)
 {

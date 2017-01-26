@@ -40,7 +40,7 @@ MinimalGGApp::MinimalGGApp(int width, int height, bool calculate_FPS,
 {
     std::shared_ptr<GG::Texture> cursor_texture = GG::GetTextureManager().GetTexture(
         (boost::filesystem::path("../default") / "data" / "art" / "cursors" / "default_cursor.png").string(), false);
-    SetCursor(std::shared_ptr<GG::TextureCursor>(new GG::TextureCursor(cursor_texture, GG::Pt(GG::X(6), GG::Y(3)))));
+    SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
     GLInit();

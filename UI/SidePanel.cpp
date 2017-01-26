@@ -1874,7 +1874,7 @@ void SidePanel::PlanetPanel::Refresh() {
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
-            SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("METER_STEALTH"), info)));
+            SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("METER_STEALTH"), info));
         }
         else if (visibility == VIS_BASIC_VISIBILITY) {
             visibility_info = UserString("PL_BASIC_VISIBILITY");
@@ -1899,7 +1899,7 @@ void SidePanel::PlanetPanel::Refresh() {
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
-            SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(UserString("METER_STEALTH"), info)));
+            SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("METER_STEALTH"), info));
         }
     }
 
@@ -3119,7 +3119,7 @@ void SidePanel::RefreshImpl() {
     if (m_selection_enabled) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         if (empire_id != ALL_EMPIRES)
-            vistor = std::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(empire_id));
+            vistor = std::make_shared<OwnedVisitor<Planet>>(empire_id);
     }
     m_planet_panel_container->SetValidSelectionPredicate(vistor);
 
@@ -3327,7 +3327,7 @@ bool SidePanel::PlanetSelectable(int planet_id) const {
     std::shared_ptr<UniverseObjectVisitor> selectable_visitor;
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     if (empire_id != ALL_EMPIRES)
-        selectable_visitor = std::shared_ptr<UniverseObjectVisitor>(new OwnedVisitor<Planet>(empire_id));
+        selectable_visitor = std::make_shared<OwnedVisitor<Planet>>(empire_id);
 
     if (!selectable_visitor)
         return true;

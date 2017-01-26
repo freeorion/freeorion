@@ -75,7 +75,7 @@ extern "C" {
     GG_PLUGIN_API
     std::shared_ptr<GG::StyleFactory> GetStyleFactory()
     {
-        static std::shared_ptr<GG::StyleFactory> style_factory(new GG::StyleFactory());
+        static auto style_factor{std::make_shared<GG::StyleFactory>()};
         return style_factory;
     }
 }

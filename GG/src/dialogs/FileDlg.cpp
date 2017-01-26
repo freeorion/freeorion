@@ -548,7 +548,7 @@ void FileDlg::UpdateList()
         parse(m_file_filters[std::distance(m_filter_list->begin(), it)].second.c_str(), *(!ch_p(',') >> (+(anychar_p - ','))[append(filter_specs)]), space_p);
         file_filters.resize(filter_specs.size());
         for (std::size_t i = 0; i < filter_specs.size(); ++i) {
-            std::shared_ptr<std::vector<std::string>> non_wildcards(new std::vector<std::string>); // the parts of the filter spec that are not wildcards
+            auto non_wildcards{std::make_shared<std::vector<std::string>>()}; // the parts of the filter spec that are not wildcards
             parse(filter_specs[i].c_str(), *(*ch_p('*') >> (+(anychar_p - '*'))[append(*non_wildcards)]));
 
             if (non_wildcards->empty()) {

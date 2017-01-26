@@ -58,8 +58,7 @@ RunQueue<WorkItem>::RunQueue(unsigned n_threads) :
     boost::unique_lock<boost::shared_mutex> schedule_lock(m_schedule_mutex);
 
     for (unsigned i = 0U; i < n_threads; ++i) {
-        std::shared_ptr<ThreadQueue<WorkItem>> thread_queue(new ThreadQueue<WorkItem>(this));
-        m_thread_queues.push_back(thread_queue);
+        m_thread_queues.push_back(std::make_shared<ThreadQueue<WorkItem>>(this));
     }
 }
 

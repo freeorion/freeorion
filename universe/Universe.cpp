@@ -1850,10 +1850,10 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
 
     // prepopulate the cache for safe concurrent access
     for (int obj_id : m_objects.FindObjectIDs()) {
-        cached_source_condition_matches[obj_id] = std::shared_ptr<ConditionCache>(new ConditionCache);
+        cached_source_condition_matches[obj_id] = std::make_shared<ConditionCache>();
     }
 
-    cached_source_condition_matches[INVALID_OBJECT_ID] = std::shared_ptr<ConditionCache>(new ConditionCache);
+    cached_source_condition_matches[INVALID_OBJECT_ID] = std::make_shared<ConditionCache>();
 
     ConditionCache& invariant_condition_matches = *cached_source_condition_matches[INVALID_OBJECT_ID];
 
@@ -3515,7 +3515,7 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
-    std::shared_ptr<GraphImpl> new_graph_impl(new GraphImpl());
+    auto new_graph_impl{std::make_shared<GraphImpl>()};
     std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
     // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
     bool graph_changed = system_ids.size() != boost::num_vertices(m_graph_impl->system_graph);

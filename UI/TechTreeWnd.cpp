@@ -237,9 +237,8 @@ std::shared_ptr<GG::BrowseInfoWnd> TechPanelRowBrowseWnd(const std::string& tech
             % turns);
     }
 
-    std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(
-        ClientUI::TechIcon(tech_name), UserString(tech_name), main_text));
-    return browse_wnd;
+    return std::make_shared<IconTextBrowseWnd>(
+        ClientUI::TechIcon(tech_name), UserString(tech_name), main_text);
 }
 
 

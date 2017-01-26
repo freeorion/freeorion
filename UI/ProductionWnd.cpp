@@ -313,8 +313,7 @@ namespace {
             title_text = boost::lexical_cast<std::string>(elem.blocksize) + "x ";
         title_text += item_name;
 
-        std::shared_ptr<GG::BrowseInfoWnd> browse_wnd(new IconTextBrowseWnd(icon, title_text, main_text));
-        return browse_wnd;
+        return std::make_shared<IconTextBrowseWnd>(icon, title_text, main_text);
     }
 
     //////////////////////////////////////////////////

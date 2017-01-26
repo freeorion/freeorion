@@ -247,9 +247,9 @@ namespace {
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
-                    "", PlayerReadyBrowseWidth())));
+                    "", PlayerReadyBrowseWidth()));
                 if (HumanClientApp::GetApp()->Networking().PlayerIsHost(player_id)) {
                     push_back(new GG::StaticGraphic(GetHostTexture(),
                         GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
@@ -299,9 +299,9 @@ namespace {
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
-                    "", PlayerReadyBrowseWidth())));
+                    "", PlayerReadyBrowseWidth()));
             }
 
             // host
@@ -404,9 +404,9 @@ namespace {
                 push_back(new GG::StaticGraphic(GetReadyTexture(m_player_data.m_player_ready),
                     GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-                at(5)->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(new TextBrowseWnd(
+                at(5)->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
-                    "", PlayerReadyBrowseWidth())));
+                    "", PlayerReadyBrowseWidth()));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
             }
 
@@ -532,8 +532,7 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_browse_saves_btn = new CUIButton("...");
     m_save_file_text = new CUILabel("", GG::FORMAT_NOWRAP);
 
-    std::shared_ptr<GG::Texture> temp_tex(new GG::Texture());
-    m_preview_image = new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC);
+    m_preview_image = new GG::StaticGraphic(std::make_shared<GG::Texture>(), GG::GRAPHIC_FITGRAPHIC);
 
     m_players_lb_headers = new PlayerLabelRow();
     m_players_lb_headers->SetMinSize(GG::Pt(GG::X(0), PlayerRowHeight() + PlayerFontHeight()));

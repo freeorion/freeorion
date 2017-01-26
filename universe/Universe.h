@@ -480,7 +480,7 @@ private:
             m_data.resize(a_size);
             m_row_mutexes.resize(a_size);
             for (size_t i = old_size; i < a_size; ++i)
-                m_row_mutexes[i] = std::shared_ptr<boost::shared_mutex>(new boost::shared_mutex());
+                m_row_mutexes[i] = std::make_shared<boost::shared_mutex>();
         }
 
         std::vector< std::vector<T> > m_data;

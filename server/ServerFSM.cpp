@@ -291,7 +291,7 @@ sc::result Idle::react(const HostSPGame& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
-    std::shared_ptr<SinglePlayerSetupData> single_player_setup_data(new SinglePlayerSetupData);
+    auto single_player_setup_data{std::make_shared<SinglePlayerSetupData>()};
     std::string client_version_string;
     ExtractHostSPGameMessageData(message, *single_player_setup_data, client_version_string);
 
@@ -1501,7 +1501,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
 
     // extract client save information in message
     OrderSet received_orders;
-    std::shared_ptr<SaveGameUIData> ui_data(new SaveGameUIData);
+    auto ui_data{std::make_shared<SaveGameUIData>()};
     bool ui_data_available = false;
     std::string save_state_string;
     bool save_state_string_available = false;
