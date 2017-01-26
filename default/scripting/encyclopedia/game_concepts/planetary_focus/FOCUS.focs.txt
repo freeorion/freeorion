@@ -1,6 +1,6 @@
 Article
     name = "FOCUS_TITLE"
-    category = "CATEGORY_GAME_CONCEPTS"
+    category = "PLANETARY_FOCUS_TITLE"
     short_description = "FOCUS_TITLE"
     description = "FOCUS_TEXT"
-    icon = "icons/tech/basic_autofactories.png"
+    icon = "icons/meter/construction.png"

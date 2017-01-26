@@ -1,6 +1,6 @@
 Article
-    name = "TECHNOLOGIES_TITLE"
-    category = "CATEGORY_GAME_CONCEPTS"
+    name = "ENC_TECH"
+    category = "ENC_TECH"
     short_description = "TECHNOLOGIES_TITLE"
     description = "TECHNOLOGIES_TEXT"
     icon = "icons/meter/research.png"
