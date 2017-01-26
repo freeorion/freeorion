@@ -87,10 +87,11 @@ def min_planets_in_vicinity_limit(num_systems):
 
 class HomeSystemFinder(object):
     """Finds a set of home systems with a least ''num_home_systems'' systems."""
-    def __init__(self, _num_home_systems):
+    def __init__(self, _len_systems, _num_home_systems):
         # cache of sytem merits
         self.system_merit = {}
         self.num_home_systems = _num_home_systems
+        self.len_systems = _len_systems
 
     def find_home_systems_for_min_jump_distance(self, systems_pool, min_jumps):
         """
@@ -129,7 +130,7 @@ class HomeSystemFinder(object):
         # (999, 39) and (199, 19) the following was observered.  The distribution of candidate
         # length is a normal random variable with standard deviation approximately equal to
 
-        expected_len_candidate_std = (len(systems_pool) ** (1.0/3)) / 10.0 * 1.5
+        expected_len_candidate_std = (self.len_systems ** (1.0/2.0)) * 0.03
 
         # So if the mean of the length of the candidates is with 1/2 std of the target
         # num_home_systems then there is a 90% expectation of hitting the goal within 6 tries.
@@ -199,7 +200,7 @@ class HomeSystemFinder(object):
         return best_candidate
 
 
-def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_distance):
+def find_home_systems(len_systems, num_home_systems, pool_list, jump_distance, min_jump_distance):
     """
     Tries to find a specified number of home systems which are as far apart from each other as possible.
     Starts with the specified jump distance and reduces that limit until enough systems can be found or the
@@ -209,7 +210,7 @@ def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_dista
     of the pool for logging purposes as second element.
     """
 
-    finder = HomeSystemFinder(num_home_systems)
+    finder = HomeSystemFinder(len_systems, num_home_systems)
     # try to find home systems, decrease the min jumps until enough systems can be found, or the jump distance drops
     # below the specified minimum jump distance (which means failure)
     while jump_distance >= min_jump_distance:
@@ -384,7 +385,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
         # specify 0 as number of requested home systems to pick as much systems as possible
         (pool_matching_sys_limit, "pool of systems that meet at least the min systems limit"),
     ]
-    home_systems = find_home_systems(num_home_systems, pool_list, min_jumps, HS_MIN_DISTANCE_PRIORITY_LIMIT)
+    home_systems = find_home_systems(len(systems), num_home_systems, pool_list, min_jumps, HS_MIN_DISTANCE_PRIORITY_LIMIT)
 
     # check if the first attempt delivered a list with enough home systems
     # if not, we make our second attempt, this time disregarding the filtered pools and using all systems, starting
@@ -392,7 +393,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     # systems as possible
     if len(home_systems) < num_home_systems:
         print "Second attempt: trying to pick home systems from all systems"
-        home_systems = find_home_systems(num_home_systems, [(systems, "complete pool")], min_jumps, 1)
+        home_systems = find_home_systems(len(systems), num_home_systems, [(systems, "complete pool")], min_jumps, 1)
 
     # check if the selection process delivered a list with enough home systems
     # if not, our galaxy obviously is too crowded, report an error and return an empty list
