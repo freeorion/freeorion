@@ -154,7 +154,7 @@ namespace {
 class SaveFileColumn {
 public:
     static std::shared_ptr<std::vector<SaveFileColumn>> GetColumns(GG::X max_width) {
-        auto columns{std::make_shared<std::vector<SaveFileColumn>>()};
+        auto columns = std::make_shared<std::vector<SaveFileColumn>>();
         for (unsigned int i = 0; i < VALID_PREVIEW_COLUMN_COUNT; ++i)
             columns->push_back(GetColumn(VALID_PREVIEW_COLUMNS[i], max_width));
         return columns;
@@ -581,7 +581,7 @@ private:
         const std::shared_ptr<std::vector<SaveFileColumn>>& all_cols)
     {
         std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string> >("UI.save-file-dialog.columns");
-        auto columns{std::make_shared<std::vector<SaveFileColumn>>()};
+        auto columns = std::make_shared<std::vector<SaveFileColumn>>();
         for (const std::string& column_name : names) {
             bool found_col = false;
             for (const SaveFileColumn& column : *all_cols) {

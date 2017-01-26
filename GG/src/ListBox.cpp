@@ -2046,7 +2046,7 @@ struct ListBox::SelectionCache
 // TODO: change to unique_ptr with move mechanics or more the entire definition into the cpp file.
 std::shared_ptr<ListBox::SelectionCache> ListBox::CacheSelections()
 {
-    auto cache{std::make_shared<ListBox::SelectionCache>()};
+    auto cache = std::make_shared<ListBox::SelectionCache>();
     cache->caret = SafeDeref(m_caret, m_rows.end());
     for (const SelectionSet::value_type& sel : m_selections) {
         cache->selections.insert(*sel);

@@ -564,7 +564,7 @@ GalaxySetupWnd::GalaxySetupWnd() :
     m_number_ais_spin = new CUISpin<int>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
 
     // create a temporary texture and static graphic
-    static auto temp_tex{std::make_shared<GG::Texture>()};
+    static auto temp_tex = std::make_shared<GG::Texture>();
     m_preview_image =  new GG::StaticGraphic(temp_tex, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE); // create a blank graphic
 
     m_ok = new CUIButton(UserString("OK"));

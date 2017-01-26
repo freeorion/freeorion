@@ -780,7 +780,7 @@ public:
         m_are_widths_calculated = false;
 
         // Create the opening part of an open tag, like this: "<tag"
-        auto element{std::make_shared<Font::FormattingTag>(false)};
+        auto element = std::make_shared<Font::FormattingTag>(false);
         size_t tag_begin = m_text.size();
         size_t tag_name_begin = m_text.append("<").size();
         size_t tag_name_end = m_text.append(tag).size();
@@ -819,7 +819,7 @@ public:
         m_are_widths_calculated = false;
 
         // Create a close tag that looks like this: "</tag>"
-        auto element{std::make_shared<Font::FormattingTag>(true)};
+        auto element = std::make_shared<Font::FormattingTag>(true);
         size_t tag_begin = m_text.size();
         size_t tag_name_begin = m_text.append("</").size();
         size_t tag_name_end = m_text.append(tag).size();
@@ -839,7 +839,7 @@ public:
     {
         m_are_widths_calculated = false;
 
-        auto element{std::make_shared<Font::TextElement>(false, false)};
+        auto element = std::make_shared<Font::TextElement>(false, false);
         size_t begin = m_text.size();
         size_t end = m_text.append(text).size();
         element->text = Substring(m_text,
@@ -853,7 +853,7 @@ public:
     {
         m_are_widths_calculated = false;
 
-        auto element{std::make_shared<Font::TextElement>(true, false)};
+        auto element = std::make_shared<Font::TextElement>(true, false);
         size_t begin = m_text.size();
         size_t end = m_text.append(whitespace).size();
         element->text = Substring(m_text,
@@ -1503,7 +1503,7 @@ std::vector<std::shared_ptr<Font::TextElement>> Font::ExpensiveParseFromTextToTe
 
             // Open XML tag.
             if ((*it)[open_bracket_tag].matched) {
-                auto element{std::make_shared<Font::FormattingTag>(false)};
+                auto element = std::make_shared<Font::FormattingTag>(false);
                 element->text = Substring(text, (*it)[0]);
 
                 // Check open tags for submatches which are parameters.  For example a Color tag
@@ -1523,14 +1523,14 @@ std::vector<std::shared_ptr<Font::TextElement>> Font::ExpensiveParseFromTextToTe
 
             // Close XML tag
             } else if ((*it)[close_bracket_tag].matched) {
-                auto element{std::make_shared<Font::FormattingTag>(true)};
+                auto element = std::make_shared<Font::FormattingTag>(true);
                 element->text = Substring(text, (*it)[0]);
                 element->tag_name = Substring(text, (*it)[tag_name_tag]);
                 text_elements.push_back(element);
 
             // Whitespace element
             } else if ((*it)[whitespace_tag].matched) {
-                auto element{std::make_shared<Font::TextElement>(true, false)};
+                auto element = std::make_shared<Font::TextElement>(true, false);
                 element->text = Substring(text, (*it)[whitespace_tag]);
                 text_elements.push_back(element);
 
@@ -1544,7 +1544,7 @@ std::vector<std::shared_ptr<Font::TextElement>> Font::ExpensiveParseFromTextToTe
 
         // Basic text element.
         } else {
-            auto element{std::make_shared<Font::TextElement>(false, false)};
+            auto element = std::make_shared<Font::TextElement>(false, false);
             element->text = combined_text;
             text_elements.push_back(element);
         }

@@ -3515,7 +3515,7 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
-    auto new_graph_impl{std::make_shared<GraphImpl>()};
+    auto new_graph_impl = std::make_shared<GraphImpl>();
     std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
     // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
     bool graph_changed = system_ids.size() != boost::num_vertices(m_graph_impl->system_graph);

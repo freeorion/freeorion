@@ -215,9 +215,9 @@ namespace {
                                              int empire_id, bool only_failed_conditions)
     {
         std::vector<Condition::ConditionBase*> location_conditions;
-        auto can_prod_ship_cond{std::make_shared<Condition::CanProduceShips>()};
+        auto can_prod_ship_cond = std::make_shared<Condition::CanProduceShips>();
         location_conditions.push_back(can_prod_ship_cond.get());
-        auto ship_avail_cond{std::make_shared<Condition::OwnerHasShipDesignAvailable>(ship_design_id)};
+        auto ship_avail_cond = std::make_shared<Condition::OwnerHasShipDesignAvailable>(ship_design_id);
         location_conditions.push_back(ship_avail_cond.get());
         std::shared_ptr<Condition::ConditionBase> can_colonize_cond;
         if (const ShipDesign* ship_design = GetShipDesign(ship_design_id)) {
