@@ -4,8 +4,6 @@
 #include "RichText_p.h"
 #include "TagParser.h"
 
-#include <boost/foreach.hpp>
-
 #include <sstream>
 
 #include <boost/algorithm/string.hpp>
@@ -197,7 +195,7 @@ namespace GG {
         {
             typedef typename std::map<T, V>::value_type map_value;
             std::set<T> keys;
-            BOOST_FOREACH (const map_value& pair, arg_map) {
+            for (const map_value& pair : arg_map) {
                 keys.insert(pair.first);
             }
             return keys;
@@ -248,7 +246,7 @@ namespace GG {
 
             // The contract between RichText and block controls is this:
             // RichText tells them their width, and they determine their height.
-            BOOST_FOREACH (BlockControl* block, m_blocks) {
+            for (BlockControl* block : m_blocks) {
                 Pt size = block->SetMaxWidth(width);
                 block->MoveTo(pos);
                 pos.y += size.y;

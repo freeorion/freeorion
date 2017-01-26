@@ -1,7 +1,6 @@
 #include "TagParser.h"
 
 
-#include <boost/foreach.hpp>
 #include <boost/regex.hpp>
 
 namespace GG {
@@ -53,7 +52,7 @@ namespace GG {
 
                 // Filter out unregistered tags.
                 std::vector<RichTextTag> relevant_tags;
-                BOOST_FOREACH (const RichTextTag& tag, tags) {
+                for (const RichTextTag& tag : tags) {
                     if (m_known_tags.find(tag.tag) != m_known_tags.end()) {
                         AddWithPlaintextSquashing(relevant_tags, tag);
                     } else {

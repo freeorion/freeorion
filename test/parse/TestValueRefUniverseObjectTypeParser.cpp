@@ -252,14 +252,14 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserRootCandidateFleet) {
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserMalformed) {
-    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
+    for (const ReferenceType& reference : referenceTypes) {
         BOOST_CHECK_THROW(parse(reference.second, result), std::runtime_error);
         BOOST_CHECK(!result);
 
         BOOST_CHECK_THROW(parse(reference.second + ".", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        BOOST_FOREACH(const std::string& type, containerTypes) {
+        for (const std::string& type : containerTypes) {
             BOOST_CHECK_THROW(parse(reference.second + "." + type, result), std::runtime_error);
             BOOST_CHECK(!result);
 
@@ -330,7 +330,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleetShort) {
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
-    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
+    for (const StatisticType& statisticType : statisticTypes) {
         // eg: "Number"
         BOOST_CHECK_THROW(parse(statisticType.second, result), std::runtime_error);
         BOOST_CHECK(!result);
@@ -351,7 +351,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
         BOOST_CHECK_THROW(parse(statisticType.second + " Property =", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        BOOST_FOREACH(const std::string& attribute, attributes) {
+        for (const std::string& attribute : attributes) {
             // missing or incomplete condition
             // eg: "Mean Owner"
             BOOST_CHECK_THROW(parse(statisticType.second + " " + attribute, result), std::runtime_error);
@@ -369,7 +369,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
             BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute + " Condition =", result), std::runtime_error);
             BOOST_CHECK(!result);
 
-            BOOST_FOREACH(const std::string& containerType, containerTypes) {
+            for (const std::string& containerType : containerTypes) {
                 // eg: "Mean Fleet.Owner"
                 BOOST_CHECK_THROW(parse(statisticType.second + " " + containerType + "." + attribute, result), std::runtime_error);
                 BOOST_CHECK(!result);

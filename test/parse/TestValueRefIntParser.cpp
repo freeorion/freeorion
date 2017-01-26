@@ -649,8 +649,8 @@ BOOST_AUTO_TEST_CASE(IntVariableParserValue) {
 }
 
 BOOST_AUTO_TEST_CASE(IntVariableParserTypeless) {
-    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
-        BOOST_FOREACH(const std::string& attribute, attributes) {
+    for (const ReferenceType& reference : referenceTypes) {
+        for (const std::string& attribute : attributes) {
             std::string phrase = reference.second + "." + attribute;
             BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
             std::string property[] = {
@@ -674,9 +674,9 @@ BOOST_AUTO_TEST_CASE(IntVariableParserTypeless) {
 }
 
 BOOST_AUTO_TEST_CASE(IntVariableParserTyped) {
-    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
-        BOOST_FOREACH(const std::string& type, containerTypes) {
-            BOOST_FOREACH(const std::string& attribute, attributes) {
+    for (const ReferenceType& reference : referenceTypes) {
+        for (const std::string& type : containerTypes) {
+            for (const std::string& attribute : attributes) {
                 std::string phrase = reference.second + "." + type + "." + attribute;
                 BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
                 std::string property[] = {
@@ -761,7 +761,7 @@ BOOST_AUTO_TEST_CASE(IntArithmeticVariableParser) {
 
 BOOST_AUTO_TEST_CASE(IntVariableParserMalformed) {
     // All phrases are missing the attribute value.
-    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
+    for (const ReferenceType& reference : referenceTypes) {
         // eg: "Target"
         BOOST_CHECK_THROW(parse(reference.second, result), std::runtime_error);
         BOOST_CHECK(!result);
@@ -770,7 +770,7 @@ BOOST_AUTO_TEST_CASE(IntVariableParserMalformed) {
         BOOST_CHECK_THROW(parse(reference.second + ".", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        BOOST_FOREACH(const std::string& containerType, containerTypes) {
+        for (const std::string& containerType : containerTypes) {
             // eg: "RootCandidate.Planet"
             BOOST_CHECK_THROW(parse(reference.second + "." + containerType, result), std::runtime_error);
             BOOST_CHECK(!result);
@@ -785,8 +785,8 @@ BOOST_AUTO_TEST_CASE(IntVariableParserMalformed) {
 // XXX: Statistic COUNT, UNIQUE_COUNT and IF not tested.
 
 BOOST_AUTO_TEST_CASE(IntStatisticParserTypeless) {
-    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
-        BOOST_FOREACH(const std::string& attribute, attributes) {
+    for (const StatisticType& statisticType : statisticTypes) {
+        for (const std::string& attribute : attributes) {
             std::string property[] = { attribute };
 
             boost::array<std::string, 4> phrases = {{
@@ -800,7 +800,7 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTypeless) {
                 statisticType.second + " " + attribute + " All"
             }};
 
-            BOOST_FOREACH(const std::string& phrase, phrases) {
+            for (const std::string& phrase : phrases) {
                 BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
 
                 BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<int>), typeid(*result));
@@ -822,9 +822,9 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTypeless) {
 }
 
 BOOST_AUTO_TEST_CASE(IntStatisticParserTyped) {
-    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
-        BOOST_FOREACH(const std::string& containerType, containerTypes) {
-            BOOST_FOREACH(const std::string& attribute, attributes) {
+    for (const StatisticType& statisticType : statisticTypes) {
+        for (const std::string& containerType : containerTypes) {
+            for (const std::string& attribute : attributes) {
                 std::string property[] = {
                     containerType,
                     attribute
@@ -841,7 +841,7 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTyped) {
                     statisticType.second + " " + containerType + "." + attribute + " All"
                 }};
 
-                BOOST_FOREACH(const std::string& phrase, phrases) {
+                for (const std::string& phrase : phrases) {
                     BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
 
                     BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<int>), typeid(*result));
@@ -864,7 +864,7 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTyped) {
 }
 
 BOOST_AUTO_TEST_CASE(IntStatisticParserMalformed) {
-    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
+    for (const StatisticType& statisticType : statisticTypes) {
         // eg: "Number"
         BOOST_CHECK_THROW(parse(statisticType.second, result), std::runtime_error);
         BOOST_CHECK(!result);
@@ -885,7 +885,7 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserMalformed) {
         BOOST_CHECK_THROW(parse(statisticType.second + " Property =", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        BOOST_FOREACH(const std::string& attribute, attributes) {
+        for (const std::string& attribute : attributes) {
             // missing or incomplete condition
             // eg: "Mean Owner"
             BOOST_CHECK_THROW(parse(statisticType.second + " " + attribute, result), std::runtime_error);
@@ -903,7 +903,7 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserMalformed) {
             BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute + " Condition =", result), std::runtime_error);
             BOOST_CHECK(!result);
 
-            BOOST_FOREACH(const std::string& containerType, containerTypes) {
+            for (const std::string& containerType : containerTypes) {
                 // eg: "Mean Fleet.Owner"
                 BOOST_CHECK_THROW(parse(statisticType.second + " " + containerType + "." + attribute, result), std::runtime_error);
                 BOOST_CHECK(!result);

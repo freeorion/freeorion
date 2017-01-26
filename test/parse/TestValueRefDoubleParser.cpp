@@ -765,8 +765,8 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserValue) {
 }
 
 BOOST_AUTO_TEST_CASE(DoubleVariableParserTypeless) {
-    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
-        BOOST_FOREACH(const std::string& attribute, attributes) {
+    for (const ReferenceType& reference : referenceTypes) {
+        for (const std::string& attribute : attributes) {
             std::string phrase = reference.second + "." + attribute;
             BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
             std::string property[] = {
@@ -790,9 +790,9 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserTypeless) {
 }
 
 BOOST_AUTO_TEST_CASE(DoubleVariableParserTyped) {
-    BOOST_FOREACH(const ReferenceType& reference, referenceTypes) {
-        BOOST_FOREACH(const std::string& type, containerTypes) {
-            BOOST_FOREACH(const std::string& attribute, attributes) {
+    for (const ReferenceType& reference : referenceTypes) {
+        for (const std::string& type : containerTypes) {
+            for (const std::string& attribute : attributes) {
                 std::string phrase = reference.second + "." + type + "." + attribute;
                 BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
                 std::string property[] = {
@@ -820,8 +820,8 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserTyped) {
 // XXX: Statistic COUNT, UNIQUE_COUNT and IF not tested.
 
 BOOST_AUTO_TEST_CASE(DoubleStatisticParserTypeless) {
-    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
-        BOOST_FOREACH(const std::string& attribute, attributes) {
+    for (const StatisticType& statisticType : statisticTypes) {
+        for (const std::string& attribute : attributes) {
             std::string property[] = { attribute };
 
             boost::array<std::string, 4> phrases = {{
@@ -835,7 +835,7 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTypeless) {
                 statisticType.second + " " + attribute + " All"
             }};
 
-            BOOST_FOREACH(const std::string& phrase, phrases) {
+            for (const std::string& phrase : phrases) {
                 BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
 
                 BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<double>), typeid(*result));
@@ -857,9 +857,9 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTypeless) {
 }
 
 BOOST_AUTO_TEST_CASE(DoubleStatisticParserTyped) {
-    BOOST_FOREACH(const StatisticType& statisticType, statisticTypes) {
-        BOOST_FOREACH(const std::string& containerType, containerTypes) {
-            BOOST_FOREACH(const std::string& attribute, attributes) {
+    for (const StatisticType& statisticType : statisticTypes) {
+        for (const std::string& containerType : containerTypes) {
+            for (const std::string& attribute : attributes) {
                 std::string property[] = {
                     containerType,
                     attribute
@@ -876,7 +876,7 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTyped) {
                     statisticType.second + " " + containerType + "." + attribute + " All"
                 }};
 
-                BOOST_FOREACH(const std::string& phrase, phrases) {
+                for (const std::string& phrase : phrases) {
                     BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
 
                     BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<double>), typeid(*result));
