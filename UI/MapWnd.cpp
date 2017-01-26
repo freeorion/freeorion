@@ -785,9 +785,8 @@ MapWnd::MapWnd() :
     m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_menu->LeftClickedSignal, boost::bind(&MapWnd::ShowMenu, this));
     m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_menu->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC"))));
-
+    m_btn_menu->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
@@ -802,8 +801,8 @@ MapWnd::MapWnd() :
     m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_pedia->LeftClickedSignal, boost::bind(&MapWnd::TogglePedia, this));
     m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_pedia->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC"))));
+    m_btn_pedia->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
@@ -818,8 +817,8 @@ MapWnd::MapWnd() :
     m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_graphs->LeftClickedSignal, boost::bind(&MapWnd::ShowGraphs, this));
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_graphs->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC"))));
+    m_btn_graphs->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
@@ -834,8 +833,8 @@ MapWnd::MapWnd() :
     m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_design->LeftClickedSignal, boost::bind(&MapWnd::ToggleDesign, this));
     m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_design->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC"))));
+    m_btn_design->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
@@ -850,8 +849,8 @@ MapWnd::MapWnd() :
     m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_production->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_production->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC"))));
+    m_btn_production->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
@@ -866,8 +865,8 @@ MapWnd::MapWnd() :
     m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_research->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch, this));
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_research->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC"))));
+    m_btn_research->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
@@ -882,8 +881,8 @@ MapWnd::MapWnd() :
     m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_objects->LeftClickedSignal, boost::bind(&MapWnd::ToggleObjects, this));
     m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_objects->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC"))));
+    m_btn_objects->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),   boost::bind(&WndTop, m_toolbar),
@@ -898,8 +897,8 @@ MapWnd::MapWnd() :
     m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_empires->LeftClickedSignal, boost::bind(&MapWnd::ToggleEmpires, this));
     m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_empires->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC"))));
+    m_btn_empires->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
@@ -914,8 +913,8 @@ MapWnd::MapWnd() :
     m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_siterep->LeftClickedSignal, boost::bind(&MapWnd::ToggleSitRep, this));
     m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_siterep->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC"))));
+    m_btn_siterep->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
@@ -930,8 +929,8 @@ MapWnd::MapWnd() :
     m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_messages->LeftClickedSignal, boost::bind(&MapWnd::ToggleMessages, this));
     m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_messages->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC"))));
+    m_btn_messages->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC")));
 
     in_window_func =
         boost::bind(&InRect, boost::bind(&WndLeft, _1),  boost::bind(&WndTop, m_toolbar),
@@ -946,8 +945,8 @@ MapWnd::MapWnd() :
     m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
     GG::Connect(m_btn_moderator->LeftClickedSignal, boost::bind(&MapWnd::ToggleModeratorActions, this));
     m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_btn_moderator->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR_DESC"))));
+    m_btn_moderator->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR_DESC")));
 
 
     // resources
@@ -5300,9 +5299,10 @@ void MapWnd::ToggleAutoEndTurn() {
         m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "manual_turn_mouseover.png")));
 
         m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_btn_auto_turn->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-            new TextBrowseWnd(UserString("MAP_BTN_MANUAL_TURN_ADVANCE"), UserString("MAP_BTN_MANUAL_TURN_ADVANCE_DESC"))));
-
+        m_btn_auto_turn->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            UserString("MAP_BTN_MANUAL_TURN_ADVANCE"),
+            UserString("MAP_BTN_MANUAL_TURN_ADVANCE_DESC")
+        ));
     } else {
         m_auto_end_turn = true;
         m_btn_auto_turn->SetUnpressedGraphic(   GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn.png")));
@@ -5310,8 +5310,10 @@ void MapWnd::ToggleAutoEndTurn() {
         m_btn_auto_turn->SetRolloverGraphic(    GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "auto_turn_mouseover.png")));
 
         m_btn_auto_turn->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_btn_auto_turn->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-            new TextBrowseWnd(UserString("MAP_BTN_AUTO_ADVANCE_ENABLED"), UserString("MAP_BTN_AUTO_ADVANCE_ENABLED_DESC"))));
+        m_btn_auto_turn->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            UserString("MAP_BTN_AUTO_ADVANCE_ENABLED"),
+            UserString("MAP_BTN_AUTO_ADVANCE_ENABLED_DESC")
+        ));
     }
 }
 
@@ -5763,8 +5765,8 @@ void MapWnd::RefreshTradeResourceIndicator() {
     m_trade->SetValue(empire->ResourceStockpile(RE_TRADE));
     m_trade->ClearBrowseInfoWnd();
     m_trade->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_trade->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_TRADE_TITLE"), UserString("MAP_TRADE_TEXT"))));
+    m_trade->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_TRADE_TITLE"), UserString("MAP_TRADE_TEXT")));
 }
 
 void MapWnd::RefreshFleetResourceIndicator() {
@@ -5786,8 +5788,8 @@ void MapWnd::RefreshFleetResourceIndicator() {
     m_fleet->SetValue(total_fleet_count);
     m_fleet->ClearBrowseInfoWnd();
     m_fleet->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_fleet->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_FLEET_TITLE"), UserString("MAP_FLEET_TEXT"))));
+    m_fleet->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_FLEET_TITLE"), UserString("MAP_FLEET_TEXT")));
 }
 
 void MapWnd::RefreshResearchResourceIndicator() {
@@ -5806,9 +5808,10 @@ void MapWnd::RefreshResearchResourceIndicator() {
     double total_RP_wasted = total_RP_output - total_RP_spent;
     double total_RP_target_output = empire->GetResourcePool(RE_RESEARCH)->TargetOutput();
 
-    m_research->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new ResourceBrowseWnd(UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
-                              total_RP_spent, total_RP_output, total_RP_target_output)));
+    m_research->SetBrowseInfoWnd(std::make_shared<ResourceBrowseWnd>(
+        UserString("MAP_RESEARCH_TITLE"), UserString("RESEARCH_INFO_RP"),
+        total_RP_spent, total_RP_output, total_RP_target_output
+    ));
 
     if (total_RP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshResearchResourceIndicator: Showing Research Wasted Icon with RP spent: "
@@ -5816,11 +5819,11 @@ void MapWnd::RefreshResearchResourceIndicator() {
         m_research_wasted->Show();
         m_research_wasted->ClearBrowseInfoWnd();
         m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_research_wasted->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-            new TextBrowseWnd(UserString("MAP_RES_WASTED_TITLE"),
-                              boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
-                                % DoubleToString(total_RP_output, 3, false)
-                                % DoubleToString(total_RP_wasted, 3, false)))));
+        m_research_wasted->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            UserString("MAP_RES_WASTED_TITLE"),
+            boost::io::str(FlexibleFormat(UserString("MAP_RES_WASTED_TEXT"))
+                           % DoubleToString(total_RP_output, 3, false)
+                           % DoubleToString(total_RP_wasted, 3, false))));
     } else {
         m_research_wasted->Hide();
     }
@@ -5833,8 +5836,8 @@ void MapWnd::RefreshDetectionIndicator() {
     m_detection->SetValue(empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
     m_detection->ClearBrowseInfoWnd();
     m_detection->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_detection->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MAP_DETECTION_TITLE"), UserString("MAP_DETECTION_TEXT"))));
+    m_detection->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MAP_DETECTION_TITLE"), UserString("MAP_DETECTION_TEXT")));
 }
 
 void MapWnd::RefreshIndustryResourceIndicator() {
@@ -5853,9 +5856,9 @@ void MapWnd::RefreshIndustryResourceIndicator() {
     double total_PP_wasted = total_PP_output - total_PP_spent;
     double total_PP_target_output = empire->GetResourcePool(RE_INDUSTRY)->TargetOutput();
 
-    m_industry->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new ResourceBrowseWnd(UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
-                              total_PP_spent, total_PP_output, total_PP_target_output)));
+    m_industry->SetBrowseInfoWnd(std::make_shared<ResourceBrowseWnd>(
+        UserString("MAP_PRODUCTION_TITLE"), UserString("PRODUCTION_INFO_PP"),
+        total_PP_spent, total_PP_output, total_PP_target_output));
 
     if (total_PP_wasted > 0.05) {
         DebugLogger()  << "MapWnd::RefreshIndustryResourceIndicator: Showing Industry Wasted Icon with Industry spent: "
@@ -5863,11 +5866,11 @@ void MapWnd::RefreshIndustryResourceIndicator() {
         m_industry_wasted->Show();
         m_industry_wasted->ClearBrowseInfoWnd();
         m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-        m_industry_wasted->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-            new TextBrowseWnd(UserString("MAP_PROD_WASTED_TITLE"),
-                              boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
-                                % DoubleToString(total_PP_output, 3, false)
-                                % DoubleToString(total_PP_wasted, 3, false)))));
+        m_industry_wasted->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            UserString("MAP_PROD_WASTED_TITLE"),
+            boost::io::str(FlexibleFormat(UserString("MAP_PROD_WASTED_TEXT"))
+                           % DoubleToString(total_PP_output, 3, false)
+                           % DoubleToString(total_PP_wasted, 3, false))));
     } else {
         m_industry_wasted->Hide();
     }
@@ -5907,8 +5910,8 @@ void MapWnd::RefreshPopulationIndicator() {
     }
 
     m_population->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_population->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new CensusBrowseWnd(UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts)));
+    m_population->SetBrowseInfoWnd(std::make_shared<CensusBrowseWnd>(
+        UserString("MAP_POPULATION_DISTRIBUTION"), population_counts, tag_counts));
 }
 
 void MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools() {

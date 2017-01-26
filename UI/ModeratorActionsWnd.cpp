@@ -51,8 +51,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction_mouseover.png")));
 
     m_no_action_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_no_action_button->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MOD_NONE"), UserString("MOD_NONE"))));
+    m_no_action_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MOD_NONE"), UserString("MOD_NONE")));
     AttachChild(m_no_action_button);
     GG::Connect(m_no_action_button->LeftClickedSignal,  &ModeratorActionsWnd::NoActionClicked,      this);
 
@@ -63,8 +63,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar_mouseover.png")));
 
     m_create_system_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_create_system_button->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MOD_CREATE_SYSTEM"), UserString("MOD_CREATE_SYSTEM"))));
+    m_create_system_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MOD_CREATE_SYSTEM"), UserString("MOD_CREATE_SYSTEM")));
     AttachChild(m_create_system_button);
 
     GG::Connect(m_create_system_button->LeftClickedSignal,  &ModeratorActionsWnd::CreateSystemClicked,  this);
@@ -89,8 +89,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet_mouseover.png")));
 
     m_create_planet_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_create_planet_button->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET"))));
+    m_create_planet_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET")));
     AttachChild(m_create_planet_button);
     GG::Connect(m_create_planet_button->LeftClickedSignal,  &ModeratorActionsWnd::CreatePlanetClicked,  this);
 
@@ -129,8 +129,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete_mouseover.png")));
 
     m_delete_object_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_delete_object_button->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MOD_DESTROY"), UserString("MOD_DESTROY"))));
+    m_delete_object_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MOD_DESTROY"), UserString("MOD_DESTROY")));
     AttachChild(m_delete_object_button);
     GG::Connect(m_delete_object_button->LeftClickedSignal,  &ModeratorActionsWnd::DeleteObjectClicked,  this);
 
@@ -141,8 +141,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner_mouseover.png")));
 
     m_set_owner_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_set_owner_button->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MOD_SET_OWNER"), UserString("MOD_SET_OWNER"))));
+    m_set_owner_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MOD_SET_OWNER"), UserString("MOD_SET_OWNER")));
     AttachChild(m_set_owner_button);
 
     GG::Connect(m_set_owner_button->LeftClickedSignal,      &ModeratorActionsWnd::SetOwnerClicked,      this);
@@ -158,8 +158,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane_mouseover.png")));
 
     m_add_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_add_starlane_button->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MOD_ADD_STARLANE"), UserString("MOD_ADD_STARLANE"))));
+    m_add_starlane_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MOD_ADD_STARLANE"), UserString("MOD_ADD_STARLANE")));
     AttachChild(m_add_starlane_button);
     GG::Connect(m_add_starlane_button->LeftClickedSignal,&ModeratorActionsWnd::AddStarlane,         this);
 
@@ -170,8 +170,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane_mouseover.png")));
 
     m_remove_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_remove_starlane_button->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new TextBrowseWnd(UserString("MOD_REMOVE_STARLANE"), UserString("MOD_REMOVE_STARLANE"))));
+    m_remove_starlane_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("MOD_REMOVE_STARLANE"), UserString("MOD_REMOVE_STARLANE")));
     AttachChild(m_remove_starlane_button);
     GG::Connect(m_remove_starlane_button->LeftClickedSignal,&ModeratorActionsWnd::RemoveStarlane,   this);
 

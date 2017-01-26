@@ -284,8 +284,8 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     const BuildingType* type = GetBuildingType(building_type);
     const std::string& desc = type ? type->Description() : "";
 
-    SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-        new IconTextBrowseWnd(texture, UserString(building_type), UserString(desc))));
+    SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+        texture, UserString(building_type), UserString(desc)));
 
     m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
@@ -371,8 +371,8 @@ void BuildingIndicator::Refresh() {
         if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !type->Effects().empty())
             desc += "\n" + Dump(type->Effects());
 
-        SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(texture, UserString(type->Name()), desc)));
+        SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+            texture, UserString(type->Name()), desc));
     }
 
     if (building && building->OrderedScrapped()) {

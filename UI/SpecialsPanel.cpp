@@ -95,10 +95,8 @@ void SpecialsPanel::Update() {
             desc += "\n" + Dump(special->Effects());
         }
 
-        graphic->SetBrowseInfoWnd(std::shared_ptr<GG::BrowseInfoWnd>(
-            new IconTextBrowseWnd(ClientUI::SpecialIcon(special->Name()),
-                                  UserString(special->Name()),
-                                  desc)));
+        graphic->SetBrowseInfoWnd(std::make_shared<IconTextBrowseWnd>(
+            ClientUI::SpecialIcon(special->Name()), UserString(special->Name()), desc));
         m_icons[entry.first] = graphic;
 
         graphic->InstallEventFilter(this);
