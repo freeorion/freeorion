@@ -24,12 +24,19 @@
 #if defined(_MSC_VER)
 #  if (_MSC_VER == 1900)
 namespace boost {
+    template<>
     const volatile UniverseObject*  get_pointer(const volatile UniverseObject* p) { return p; }
+    template<>
     const volatile Fleet*           get_pointer(const volatile Fleet* p) { return p; }
+    template<>
     const volatile Ship*            get_pointer(const volatile Ship* p) { return p; }
+    template<>
     const volatile Planet*          get_pointer(const volatile Planet* p) { return p; }
+    template<>
     const volatile System*          get_pointer(const volatile System* p) { return p; }
+    template<>
     const volatile Field*           get_pointer(const volatile Field* p) { return p; }
+    template<>
     const volatile Building*        get_pointer(const volatile Building* p) { return p; }
     template<>
     const volatile Universe*        get_pointer<const volatile Universe>(const volatile Universe* p) { return p; }
