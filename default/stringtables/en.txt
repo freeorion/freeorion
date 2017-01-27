@@ -2634,7 +2634,8 @@ Unused Production
 # %3% number of production points transferred to the imperial stockpile.
 MAP_PROD_WASTED_TEXT
 '''Total Production : %1%
-Transfer to Stockpile: %3%
+Stockpile Yield Ratio: %3%
+Transfer to Stockpile: %4%
 Wasted Production : %2%
 
 
