@@ -731,7 +731,7 @@ std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     if (std::abs(top) < 10)
         top = 0;
 
-    return std::make_pair(left, top);
+    return {left, top};
 }
 
 std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
@@ -741,14 +741,14 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     if (!fullscreen) {
         width = GetOptionsDB().Get<int>("app-width-windowed");
         height = GetOptionsDB().Get<int>("app-height-windowed");
-        return std::make_pair(width, height);
+        return {width, height};
     }
 
     bool reset_fullscreen = GetOptionsDB().Get<bool>("reset-fullscreen-size");
     if (!reset_fullscreen) {
         width = GetOptionsDB().Get<int>("app-width");
         height = GetOptionsDB().Get<int>("app-height");
-        return std::make_pair(width, height);
+        return {width, height};
     }
 
     GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
@@ -756,7 +756,7 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     GetOptionsDB().Set("app-width", Value(default_resolution.x));
     GetOptionsDB().Set("app-height", Value(default_resolution.y));
     GetOptionsDB().Commit();
-    return std::make_pair(Value(default_resolution.x), Value(default_resolution.y));
+    return {Value(default_resolution.x), Value(default_resolution.y)};
 }
 
 void HumanClientApp::Reinitialize() {
@@ -1021,7 +1021,7 @@ namespace {
                 { continue; }
 
                 std::time_t t = last_write_time(file_path);
-                files_by_write_time.insert(std::make_pair(t, file_path));
+                files_by_write_time.insert({t, file_path});
             }
 
             //DebugLogger() << "files by write time:";

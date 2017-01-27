@@ -75,7 +75,7 @@ namespace {
                     boost::asio::ip::address address = m_server_name == "localhost" ?
                         boost::asio::ip::address::from_string("127.0.0.1") :
                         m_sender_endpoint.address();
-                    m_servers.push_back(std::make_pair(address, m_server_name));
+                    m_servers.push_back({address, m_server_name});
                 }
                 m_receive_successful = false;
                 m_server_name = "";

@@ -1043,7 +1043,7 @@ ClientUI::TexturesAndDist ClientUI::PrefixedTexturesAndDist(const boost::filesys
     const std::string KEY = dir.string() + "/" + prefix;
     PrefixedTextures::iterator prefixed_textures_it = m_prefixed_textures.find(KEY);
     if (prefixed_textures_it == m_prefixed_textures.end()) {
-        prefixed_textures_it = m_prefixed_textures.insert(std::make_pair(KEY, TexturesAndDist())).first;
+        prefixed_textures_it = m_prefixed_textures.insert({KEY, TexturesAndDist()}).first;
         std::vector<std::shared_ptr<GG::Texture>>& textures = prefixed_textures_it->second.first;
         std::shared_ptr<SmallIntDistType>& rand_int = prefixed_textures_it->second.second;
         fs::directory_iterator end_it;

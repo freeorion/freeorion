@@ -117,7 +117,7 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
 
     } else {    // (not a fan) store a list of complete lines / triangles
         // if storing a filled_shape, the first point in each triangle should be the centre of the arc
-        std::pair<GLfloat, GLfloat> first_point = std::make_pair(static_cast<GLfloat>(center_x), static_cast<GLfloat>(center_y));
+        std::pair<GLfloat, GLfloat> first_point = {static_cast<GLfloat>(center_x), static_cast<GLfloat>(center_y)};
         // (not used for non-filled-shape)
 
         // angles in between theta1 and theta2, if any

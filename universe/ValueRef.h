@@ -938,7 +938,7 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
 
         typename std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
         if (hist_it == histogram.end())
-            hist_it = histogram.insert(std::make_pair(property_value, 0)).first;
+            hist_it = histogram.insert({property_value, 0}).first;
         unsigned int& num_seen = hist_it->second;
 
         num_seen++;
@@ -1028,7 +1028,7 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
 
                 typename std::map<T, unsigned int>::iterator hist_it = histogram.find(property_value);
                 if (hist_it == histogram.end())
-                    hist_it = histogram.insert(std::make_pair(property_value, 0)).first;
+                    hist_it = histogram.insert({property_value, 0}).first;
                 unsigned int& num_seen = hist_it->second;
 
                 num_seen++;

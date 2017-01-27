@@ -156,7 +156,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
     // put into multimap to sort by population, ascending
     std::multimap<float, std::string> counts_species;
     for (const std::map<std::string, float>::value_type& entry : population_counts)
-    { counts_species.insert(std::make_pair(entry.second, entry.first)); }
+    { counts_species.insert({entry.second, entry.first}); }
 
     // add species rows
     for (std::multimap<float, std::string>::const_reverse_iterator it = counts_species.rbegin();

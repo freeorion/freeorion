@@ -275,8 +275,7 @@ namespace {
         default_file_name += DESIGN_FILENAME_EXTENSION;
 
         std::vector<std::pair<std::string, std::string> > filters;
-        filters.push_back(std::make_pair(UserString("SHIP_DESIGN_FILES"),
-                                         "*" + DESIGN_FILENAME_EXTENSION));
+        filters.push_back({UserString("SHIP_DESIGN_FILES"), "*" + DESIGN_FILENAME_EXTENSION});
 
         try {
             FileDlg dlg(PathString(designs_dir_path),
@@ -486,7 +485,7 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
 PartsListBox::PartsListBox(void) :
     CUIListBox(),
     m_part_classes_shown(),
-    m_availabilities_shown(std::make_pair(false, false)),
+    m_availabilities_shown{false, false},
     m_show_superfluous_parts(true),
     m_previous_num_columns(-1)
 {
@@ -555,7 +554,7 @@ PartGroupsType PartsListBox::GroupAvailableDisplayableParts(const Empire* empire
         }
 
         for (ShipSlotType slot_type : part->MountableSlotTypes())
-        { part_groups[std::make_pair(part_class, slot_type)].push_back(part); }
+        { part_groups[{part_class, slot_type}].push_back(part); }
     }
     return part_groups;
 }
@@ -579,7 +578,7 @@ bool LocationASubsumesLocationB(const Condition::ConditionBase* check_part_loc, 
 bool PartALocationSubsumesPartB(const PartType* check_part, const PartType* ref_part) {
     static std::map<std::pair<std::string, std::string>, bool> part_loc_comparison_map;
 
-    std::pair<std::string, std::string> part_pair = std::make_pair(check_part->Name(), ref_part->Name());
+    std::pair<std::string, std::string> part_pair = {check_part->Name(), ref_part->Name()};
     std::map<std::pair<std::string, std::string>, bool>::iterator map_it = part_loc_comparison_map.find(part_pair);
     if (map_it != part_loc_comparison_map.end())
         return map_it->second;
@@ -743,7 +742,7 @@ void PartsListBox::Populate() {
             if (already_added.find(part) != already_added.end())
                 continue;
             already_added.insert(part);
-            sorted_group.insert(std::make_pair(GetMainStat(part), part));
+            sorted_group.insert({GetMainStat(part), part});
         }
 
         // take the sorted parts and make UI elements (technically rows) for the PartsListBox
@@ -1458,7 +1457,7 @@ const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 BasesListBox::BasesListBox(const std::string& drop_type) :
     QueueListBox(drop_type,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
-    m_availabilities_shown(std::make_pair(false, false)),
+    m_availabilities_shown{false, false},
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false),
     m_showing_saved_designs(false),
@@ -2968,7 +2967,7 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
     // if any of the pair == -1, no swap!
 
     if (!part)
-        return std::make_pair(-1, -1);
+        return {-1, -1};
 
     // check if adding the part would cause the design to have multiple different types of hangar (which is not allowed)
     if (part->Class() == PC_FIGHTER_HANGAR) {
@@ -2977,7 +2976,7 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
             if (!existing_part || existing_part->Class() != PC_FIGHTER_HANGAR)
                 continue;
             if (existing_part->Name() != part->Name())
-                return std::make_pair(-1, -1);  // conflict; new part can't be added
+                return {-1, -1};  // conflict; new part can't be added
         }
     }
 
@@ -2987,7 +2986,7 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
             continue;   // skip incompatible slots
 
         if (!slot->GetPart())
-            return std::make_pair(-1, -1);  // empty slot that can hold part. no swapping needed.
+            return {-1, -1};  // empty slot that can hold part. no swapping needed.
     }
 
 
@@ -3006,11 +3005,11 @@ std::pair<int, int> DesignWnd::MainPanel::FindSlotForPartWithSwapping(const Part
                 continue;   // only consider moving into empty slots
 
             if (m_slots[i]->GetPart()->CanMountInSlotType(m_slots[j]->SlotType()))
-                return std::make_pair(i, j);    // other slot can hold current part to make room for new part
+                return {i, j};    // other slot can hold current part to make room for new part
         }
     }
 
-    return std::make_pair(-1, -1);
+    return {-1, -1};
 }
 
 void DesignWnd::MainPanel::ClearParts() {
