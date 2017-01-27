@@ -224,7 +224,7 @@ void Edit::SetText(const std::string& str)
     // make sure the change in text did not make the cursor or view position invalid
     if (Text().empty() || GetLineData().empty() || GetLineData()[0].char_data.size() < m_cursor_pos.first) {
         m_first_char_shown = CP0;
-        m_cursor_pos = std::make_pair(CP0, CP0);
+        m_cursor_pos = {CP0, CP0};
     }
 
     m_recently_edited = true;

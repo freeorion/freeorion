@@ -256,7 +256,7 @@ GUIImpl::GUIImpl() :
     m_key_press_repeat_delay(250),
     m_key_press_repeat_interval(66),
     m_last_key_press_repeat_time(0),
-    m_last_pressed_key_code_point(std::make_pair(GGK_UNKNOWN, 0u)),
+    m_last_pressed_key_code_point{GGK_UNKNOWN, 0u},
     m_prev_key_press_time(-1),
     m_mouse_button_down_repeat_delay(250),
     m_mouse_button_down_repeat_interval(66),
@@ -651,7 +651,7 @@ void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModK
     m_browse_info_wnd.reset();
     m_browse_info_mode = -1;
     m_browse_target = nullptr;
-    m_last_pressed_key_code_point = std::make_pair(key, key_code_point);
+    m_last_pressed_key_code_point = {key, key_code_point};
     m_last_key_press_repeat_time = 0;
     m_prev_key_press_time = curr_ticks;
 
@@ -663,7 +663,7 @@ void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModK
         // capslock, or which side of the keyboard's CTRL, SHIFT, etc.
         // was pressed, but the accelerators don't
         Flags<ModKey> massaged_mods = MassagedAccelModKeys(mod_keys);
-        if (m_accelerators.find(std::make_pair(key, massaged_mods))
+        if (m_accelerators.find({key, massaged_mods})
             != m_accelerators.end())
         {
             processed = GUI::s_gui->AcceleratorSignal(key, massaged_mods)();
@@ -752,7 +752,7 @@ void GUIImpl::ClearState()
     m_mod_keys = Flags<ModKey>();
     m_last_mouse_button_down_repeat_time = 0;
     m_last_key_press_repeat_time = 0;
-    m_last_pressed_key_code_point = std::make_pair(GGK_UNKNOWN, 0u);
+    m_last_pressed_key_code_point = {GGK_UNKNOWN, 0u};
 
     m_prev_wnd_drag_position = Pt();
     m_browse_info_wnd.reset();
@@ -1012,7 +1012,7 @@ std::set<std::pair<StrSize, StrSize> > GUI::FindWordsStringIndices(const std::st
         std::advance(word_pos_it, match_result.length());
         StrSize end_idx(std::distance(str.begin(), word_pos_it.base()));
 
-        retval.insert(std::make_pair(start_idx, end_idx));
+        retval.insert({start_idx, end_idx});
     }
     return retval;
 }
@@ -1062,7 +1062,7 @@ GUI::const_accel_iterator GUI::accel_end() const
 
 GUI::AcceleratorSignalType& GUI::AcceleratorSignal(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/) const
 {
-    std::shared_ptr<AcceleratorSignalType>& sig_ptr = s_impl->m_accelerator_sigs[std::make_pair(key, mod_keys)];
+    std::shared_ptr<AcceleratorSignalType>& sig_ptr = s_impl->m_accelerator_sigs[{key, mod_keys}];
     if (!sig_ptr)
         sig_ptr.reset(new AcceleratorSignalType());
     if (INSTRUMENT_ALL_SIGNALS)
@@ -1205,7 +1205,7 @@ void GUI::Register(Wnd* wnd)
 void GUI::RegisterModal(Wnd* wnd)
 {
     if (wnd && wnd->Modal()) {
-        s_impl->m_modal_wnds.push_back(std::make_pair(wnd, wnd));
+        s_impl->m_modal_wnds.push_back({wnd, wnd});
         wnd->HandleEvent(WndEvent(WndEvent::GainingFocus));
     }
 }
@@ -1362,13 +1362,13 @@ GUI::accel_iterator GUI::accel_end()
 void GUI::SetAccelerator(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/)
 {
     mod_keys = MassagedAccelModKeys(mod_keys);
-    s_impl->m_accelerators.insert(std::make_pair(key, mod_keys));
+    s_impl->m_accelerators.insert({key, mod_keys});
 }
 
 void GUI::RemoveAccelerator(Key key, Flags<ModKey> mod_keys/* = MOD_KEY_NONE*/)
 {
     mod_keys = MassagedAccelModKeys(mod_keys);
-    s_impl->m_accelerators.erase(std::make_pair(key, mod_keys));
+    s_impl->m_accelerators.erase({key, mod_keys});
 }
 
 void GUI::RemoveAccelerator(accel_iterator it)

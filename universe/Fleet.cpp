@@ -542,12 +542,12 @@ std::pair<int, int> Fleet::ETA() const
 std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const {
     // check that path exists.  if empty, there was no valid route or some other problem prevented pathing
     if (move_path.empty())
-        return std::make_pair(ETA_UNKNOWN, ETA_UNKNOWN);
+        return {ETA_UNKNOWN, ETA_UNKNOWN};
 
     // check for single node in path.  return the single node's eta as both .first and .second (likely indicates that fleet couldn't move)
     if (move_path.size() == 1) {
         const MovePathNode& node = *move_path.begin();
-        return std::make_pair(node.eta, node.eta);
+        return {node.eta, node.eta};
     }
 
     // general case: there is a multi-node path.  return the ETA of the first object node, and the ETA of the last node
@@ -561,7 +561,7 @@ std::pair<int, int> Fleet::ETA(const std::list<MovePathNode>& move_path) const {
         }
     }
 
-    return std::make_pair(last_stop_eta, first_stop_eta);
+    return {last_stop_eta, first_stop_eta};
 }
 
 float Fleet::Fuel() const {

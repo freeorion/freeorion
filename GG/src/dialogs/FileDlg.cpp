@@ -615,7 +615,7 @@ void FileDlg::UpdateList()
                     std::string row_text = "[" + it->path().filename().string() + "]";
 #endif
                     row->push_back(GetStyleFactory()->NewTextControl(row_text, m_font, m_text_color, FORMAT_NOWRAP));
-                    sorted_rows.insert(std::make_pair(row_text, row));
+                    sorted_rows.insert({row_text, row});
                 }
             } catch (const fs::filesystem_error&) {
             }
@@ -640,7 +640,7 @@ void FileDlg::UpdateList()
                         if (meets_filters) {
                             ListBox::Row* row = new ListBox::Row();
                             row->push_back(GetStyleFactory()->NewTextControl(it->path().filename().string(), m_font, m_text_color, FORMAT_NOWRAP));
-                            sorted_rows.insert(std::make_pair(it->path().filename().string(), row));
+                            sorted_rows.insert({it->path().filename().string(), row});
                         }
                     }
                 } catch (const fs::filesystem_error&) {

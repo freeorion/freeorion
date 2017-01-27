@@ -759,7 +759,7 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
     // and adjusting all the dragged rows relative to wnd.
     std::map<GG::Y, SelectionSet::iterator> selections_Y_sorted;
     for (SelectionSet::iterator sel_it = m_selections.begin(); sel_it != m_selections.end(); ++sel_it) {
-        selections_Y_sorted.insert(std::make_pair((**sel_it)->Top(), sel_it));
+        selections_Y_sorted.insert({(**sel_it)->Top(), sel_it});
     }
 
     Y vertical_offset = offset.y;

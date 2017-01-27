@@ -162,14 +162,14 @@ HueSaturationPicker::HueSaturationPicker(X x, Y y, X w, Y h) :
     const int SAMPLES = 100;
     const double INCREMENT = 1.0 / (SAMPLES + 1);
     const double VALUE = 1.0;
-    m_vertices.resize(SAMPLES, std::vector<std::pair<double, double> >(2 * (SAMPLES + 1)));
+    m_vertices.resize(SAMPLES, std::vector<std::pair<double, double>>(2 * (SAMPLES + 1)));
     m_colors.resize(SAMPLES, std::vector<Clr>(2 * (SAMPLES + 1)));
     for (int col = 0; col < SAMPLES; ++col) {
         for (int row = 0; row < SAMPLES + 1; ++row) {
-            m_vertices[col][2 * row] = std::make_pair(col * INCREMENT, row * INCREMENT);
-            m_vertices[col][2 * row + 1] = std::make_pair((col + 1) * INCREMENT, row * INCREMENT);
-            m_colors[col][2 * row] = Convert(HSVClr(col * INCREMENT, 1.0 - row * INCREMENT, VALUE));
-            m_colors[col][2 * row + 1] = Convert(HSVClr((col + 1) * INCREMENT, 1.0 - row * INCREMENT, VALUE));
+            m_vertices[col][2 * row] =      {col * INCREMENT, row * INCREMENT};
+            m_vertices[col][2 * row + 1] =  {(col + 1) * INCREMENT, row * INCREMENT};
+            m_colors[col][2 * row] =        Convert(HSVClr(col * INCREMENT, 1.0 - row * INCREMENT, VALUE));
+            m_colors[col][2 * row + 1] =    Convert(HSVClr((col + 1) * INCREMENT, 1.0 - row * INCREMENT, VALUE));
         }
     }
 }

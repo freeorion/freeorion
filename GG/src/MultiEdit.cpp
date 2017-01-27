@@ -273,7 +273,7 @@ void MultiEdit::SelectAll()
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
-    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+    this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
 }
 
 void MultiEdit::DeselectAll()
@@ -282,7 +282,7 @@ void MultiEdit::DeselectAll()
     m_cursor_end = m_cursor_begin;
 
     CPSize cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
-    this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
+    this->m_cursor_pos = {cursor_pos, cursor_pos};
 }
 
 void MultiEdit::SetText(const std::string& str)
@@ -359,7 +359,7 @@ void MultiEdit::SetText(const std::string& str)
         m_cursor_begin = m_cursor_end; // eliminate any hiliting
 
         CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
-        this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
+        this->m_cursor_pos = {cursor_pos, cursor_pos};
 
         m_contents_sz = GetFont()->TextExtent(GetLineData());
 
@@ -729,7 +729,7 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
-    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+    this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
     //std::cout << "cursor pos: " << this->m_cursor_pos.first << std::endl;
 }
 
@@ -781,7 +781,7 @@ void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 
     //std::cout << "MultiEdit::LDrag cursor covers code points: " << begin_cursor_pos << " to " << end_cursor_pos << std::endl << std::flush;
 
-    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+    this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
 
     // if dragging past the currently visible text, adjust
     // the view so more text can be selected
@@ -1022,7 +1022,7 @@ void MultiEdit::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> 
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
-    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+    this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
 
     AdjustView();
     if (emit_signal)
@@ -1099,7 +1099,7 @@ void MultiEdit::ClearSelected()
 
     CPSize cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
     //std::cout << "got cursor pos: " << cursor_pos << std::endl;
-    this->m_cursor_pos = std::make_pair(cursor_pos, cursor_pos);
+    this->m_cursor_pos = {cursor_pos, cursor_pos};
 }
 
 void MultiEdit::AdjustView()
@@ -1397,7 +1397,7 @@ void MultiEdit::AcceptPastedText(const std::string& text)
 
     CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
     CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
-    this->m_cursor_pos = std::make_pair(begin_cursor_pos, end_cursor_pos);
+    this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
 
     //std::cout << "after converting cursor begin/end to cursor pos, cursor pos: " << m_cursor_pos.first << " - " << m_cursor_pos.second << std::endl;
 
