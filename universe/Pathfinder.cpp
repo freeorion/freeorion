@@ -501,7 +501,7 @@ namespace {
                 int sys_id_2 = sys_id_property_map[sys_graph_index_2];
 
                 // look up lane between systems
-                TemporaryPtr<const System> system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
+                boost::shared_ptr<const System> system1 = GetEmpireKnownSystem(sys_id_1, m_empire_id);
                 if (!system1) {
                     ErrorLogger() << "EdgeDescriptor::operator() couldn't find system with id " << sys_id_1;
                     return false;
@@ -572,10 +572,10 @@ Pathfinder::~Pathfinder() {
 }
 
 namespace {
-    TemporaryPtr<const Fleet> FleetFromObject(TemporaryPtr<const UniverseObject> obj) {
-        TemporaryPtr<const Fleet> retval = boost::dynamic_pointer_cast<const Fleet>(obj);
+    boost::shared_ptr<const Fleet> FleetFromObject(boost::shared_ptr<const UniverseObject> obj) {
+        boost::shared_ptr<const Fleet> retval = boost::dynamic_pointer_cast<const Fleet>(obj);
         if (!retval) {
-            if (TemporaryPtr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj))
+            if (boost::shared_ptr<const Ship> ship = boost::dynamic_pointer_cast<const Ship>(obj))
                 retval = GetFleet(ship->FleetID());
         }
         return retval;
@@ -587,12 +587,12 @@ double Pathfinder::LinearDistance(int system1_id, int system2_id) const {
 }
 
 double Pathfinder::PathfinderImpl::LinearDistance(int system1_id, int system2_id) const {
-    TemporaryPtr<const System> system1 = GetSystem(system1_id);
+    boost::shared_ptr<const System> system1 = GetSystem(system1_id);
     if (!system1) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system1_id;
         throw std::out_of_range("system1_id invalid");
     }
-    TemporaryPtr<const System> system2 = GetSystem(system2_id);
+    boost::shared_ptr<const System> system2 = GetSystem(system2_id);
     if (!system2) {
         ErrorLogger() << "Universe::LinearDistance passed invalid system id: " << system2_id;
         throw std::out_of_range("system2_id invalid");
@@ -656,16 +656,16 @@ int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const
 }
 
 int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    boost::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
     if (!obj1)
         return INT_MAX;
 
-    TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    boost::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
     if (!obj2)
         return INT_MAX;
 
-    TemporaryPtr<const System> system_one = GetSystem(obj1->SystemID());
-    TemporaryPtr<const System> system_two = GetSystem(obj2->SystemID());
+    boost::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
+    boost::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
 
     if (system_one && system_two) {
         // both condition-matching object and candidate are / in systems.
@@ -685,7 +685,7 @@ int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int o
         // just object one is / in a system.
         // TODO generalize Object to report multiple systems for things
         // like fleets in transit
-        if (TemporaryPtr<const Fleet> fleet = FleetFromObject(obj2)) {
+        if (boost::shared_ptr<const Fleet> fleet = FleetFromObject(obj2)) {
             // other object is a fleet that is between systems
             // need to check shortest path from systems on either side of starlane fleet is on
             short jumps1 = -1, jumps2 = -1;
@@ -708,7 +708,7 @@ int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int o
 
     } else if (system_two) {
         // just object two is a system.
-        if (TemporaryPtr<const Fleet> fleet = FleetFromObject(obj1)) {
+        if (boost::shared_ptr<const Fleet> fleet = FleetFromObject(obj1)) {
             // other object is a fleet that is between systems
             // need to check shortest path from systems on either side of starlane fleet is on
             short jumps1 = -1, jumps2 = -1;
@@ -731,8 +731,8 @@ int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int o
     } else {
         // neither object is / in a system
 
-        TemporaryPtr<const Fleet> fleet_one = FleetFromObject(obj1);
-        TemporaryPtr<const Fleet> fleet_two = FleetFromObject(obj2);
+        boost::shared_ptr<const Fleet> fleet_one = FleetFromObject(obj1);
+        boost::shared_ptr<const Fleet> fleet_two = FleetFromObject(obj2);
 
         if (fleet_one && fleet_two) {
             // both objects are / in a fleet.
@@ -812,25 +812,25 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
     // If one or both objects are (in) a fleet between systems, use the destination system
     // and add the distance from the fleet to the destination system, essentially calculating
     // the distance travelled until both could be in the same system.
-    TemporaryPtr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
+    boost::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
     if (!obj1)
         return -1;
 
-    TemporaryPtr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
+    boost::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
     if (!obj2)
         return -1;
 
-    TemporaryPtr<const System> system_one = GetSystem(obj1->SystemID());
-    TemporaryPtr<const System> system_two = GetSystem(obj2->SystemID());
+    boost::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
+    boost::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
     std::pair< std::list< int >, double > path_len_pair;
     double dist1(0.0), dist2(0.0);
-    TemporaryPtr<const Fleet> fleet;
+    boost::shared_ptr<const Fleet> fleet;
 
     if (!system_one) {
         fleet = FleetFromObject(obj1);
         if (!fleet)
             return -1;
-        if (TemporaryPtr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+        if (boost::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
             system_one = next_sys;
             dist1 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
         }
@@ -840,7 +840,7 @@ double Pathfinder::PathfinderImpl::ShortestPathDistance(int object1_id, int obje
         fleet = FleetFromObject(obj2);
         if (!fleet)
             return -1;
-        if (TemporaryPtr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
+        if (boost::shared_ptr<const System> next_sys = GetSystem(fleet->NextSystemID())) {
             system_two = next_sys;
             dist2 = std::sqrt(pow((next_sys->X() - fleet->X()), 2) + pow((next_sys->Y() - fleet->Y()), 2));
         }
@@ -910,7 +910,7 @@ bool Pathfinder::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
 }
 
 bool Pathfinder::PathfinderImpl::SystemHasVisibleStarlanes(int system_id, int empire_id) const {
-    if (TemporaryPtr<const System> system = GetEmpireKnownSystem(system_id, empire_id))
+    if (boost::shared_ptr<const System> system = GetEmpireKnownSystem(system_id, empire_id))
         if (!system->StarlanesWormholes().empty())
             return true;
     return false;
@@ -939,7 +939,7 @@ int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y) const {
     double min_dist2 = DBL_MAX;
     int min_dist2_sys_id = INVALID_OBJECT_ID;
 
-    std::vector<TemporaryPtr<System> > systems = Objects().FindObjects<System>();
+    std::vector<boost::shared_ptr<System> > systems = Objects().FindObjects<System>();
 
     for (auto const &system : systems)
     {
@@ -990,8 +990,8 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
     // add edges for all starlanes
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
         int system1_id = system_ids[system1_index];
-        TemporaryPtr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
-        //TemporaryPtr<const System> & system1 = systems[system1_index];
+        boost::shared_ptr<const System> system1 = GetEmpireKnownSystem(system1_id, for_empire_id);
+        //boost::shared_ptr<const System> & system1 = systems[system1_index];
 
         // add edges and edge weights
         for (auto const & lane_dest : system1->StarlanesWormholes()) {
