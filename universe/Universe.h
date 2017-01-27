@@ -157,7 +157,7 @@ public:
     std::set<std::string>   GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
     /** Return the Pathfinder */
-    boost::shared_ptr<const Pathfinder> GetPathfinder() const {return m_pathfinder;}
+    std::shared_ptr<const Pathfinder> GetPathfinder() const {return m_pathfinder;}
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
@@ -390,7 +390,7 @@ public:
 private:
     /* Pathfinder setup for the viewing empire
      */
-    boost::shared_ptr<Pathfinder> const m_pathfinder;
+    std::shared_ptr<Pathfinder> const m_pathfinder;
 
     /** Inserts object \a obj into the universe; returns a std::shared_ptr
       * to the inserted object. */
