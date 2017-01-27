@@ -83,7 +83,7 @@ namespace {
      * @return The first matched pedia category for this set of tags,
      *          or empty string if there are no matches.
      */
-    std::string TaggedCategory(const std::set<std::string>& tags) {
+    std::string DetermineCustomCategory(const std::set<std::string>& tags) {
         if (tags.empty())
             return EMPTY_STRING;
 
@@ -204,7 +204,7 @@ namespace {
 
         } else if (dir_name == "ENC_SHIP_PART") {
             for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager()) {
-                std::string custom_category = TaggedCategory(entry.second->Tags());
+                std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
                                                 {LinkTaggedText(VarText::SHIP_PART_TAG, entry.first) + "\n",
@@ -214,7 +214,7 @@ namespace {
 
         } else if (dir_name == "ENC_SHIP_HULL") {
             for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager()) {
-                std::string custom_category = TaggedCategory(entry.second->Tags());
+                std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
                                                 {LinkTaggedText(VarText::SHIP_HULL_TAG, entry.first) + "\n",
@@ -229,7 +229,7 @@ namespace {
                 userstring_tech_names[UserString(tech_name)] = tech_name;
             }
             for (std::map<std::string, std::string>::value_type& tech_name : userstring_tech_names) {
-                std::string custom_category = TaggedCategory(GetTech(tech_name.second)->Tags());
+                std::string custom_category = DetermineCustomCategory(GetTech(tech_name.second)->Tags());
                 if (custom_category.empty()) {
                     // already iterating over userstring-looked-up names, so don't need to re-look-up-here
                     sorted_entries_list.insert({tech_name.first,
@@ -240,7 +240,7 @@ namespace {
 
         } else if (dir_name == "ENC_BUILDING_TYPE") {
             for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
-                std::string custom_category = TaggedCategory(entry.second->Tags());
+                std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
                                                 {LinkTaggedText(VarText::BUILDING_TYPE_TAG, entry.first) + "\n",
@@ -257,7 +257,7 @@ namespace {
 
         } else if (dir_name == "ENC_SPECIES") {
             for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager()) {
-                std::string custom_category = TaggedCategory(entry.second->Tags());
+                std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
                                                 {LinkTaggedText(VarText::SPECIES_TAG, entry.first) + "\n",
@@ -325,7 +325,7 @@ namespace {
 
         } else if (dir_name == "ENC_FIELD_TYPE") {
             for (const std::map<std::string, FieldType*>::value_type& entry : GetFieldTypeManager()) {
-                std::string custom_category = TaggedCategory(entry.second->Tags());
+                std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
                                                 {LinkTaggedText(VarText::FIELD_TYPE_TAG, entry.first) + "\n",
@@ -453,32 +453,32 @@ namespace {
 
             // part types
             for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager())
-                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] = {VarText::SHIP_PART_TAG, entry.first};
 
             // hull types
             for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager())
-                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] = {VarText::SHIP_HULL_TAG, entry.first};
 
             // techs
             for (const std::string& tech_name : GetTechManager().TechNames())
-                if (TaggedCategory(GetTech(tech_name)->Tags()) == dir_name)
+                if (DetermineCustomCategory(GetTech(tech_name)->Tags()) == dir_name)
                     dir_entries[UserString(tech_name)] = {VarText::TECH_TAG, tech_name};
 
             // building types
             for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager())
-                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] = {VarText::BUILDING_TYPE_TAG, entry.first};
 
             // species
             for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager())
-                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] = {VarText::SPECIES_TAG, entry.first};
 
             // field types
             for (const std::map<std::string, FieldType*>::value_type& entry : GetFieldTypeManager())
-                if (TaggedCategory(entry.second->Tags()) == dir_name)
+                if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] = {VarText::FIELD_TYPE_TAG, entry.first};
 
             // Add sorted entries
