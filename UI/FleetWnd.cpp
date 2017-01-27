@@ -3673,7 +3673,7 @@ namespace {
         if (!fleet)
             return "";
 
-        int nearest_system_id(GetUniverse().GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y()));
+        int nearest_system_id(GetPathfinder()->NearestSystemTo(fleet->X(), fleet->Y()));
         if (std::shared_ptr<const System> system = GetSystem(nearest_system_id)) {
             const std::string& sys_name = system->ApparentName(client_empire_id);
             return sys_name;

@@ -197,7 +197,7 @@ std::string UniverseObject::Dump() const {
             os << "  at: " << sys_name;
     } else {
         os << "  at: (" << this->X() << ", " << this->Y() << ")";
-        int near_id = GetUniverse().GetPathfinder()->NearestSystemTo(this->X(), this->Y());
+        int near_id = GetPathfinder()->NearestSystemTo(this->X(), this->Y());
         std::shared_ptr<const System> system = GetSystem(near_id);
         if (system) {
             const std::string& sys_name = system->Name();

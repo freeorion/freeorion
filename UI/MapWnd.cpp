@@ -4840,7 +4840,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
             start_system = fleet->NextSystemID();
 
         // get path to destination...
-        std::list<int> route = GetUniverse().GetPathfinder()->ShortestPath(start_system, system_id, empire_id).first;
+        std::list<int> route = GetPathfinder()->ShortestPath(start_system, system_id, empire_id).first;
         if (append && !fleet->TravelRoute().empty()) {
             std::list<int> old_route(fleet->TravelRoute());
             old_route.erase(--old_route.end()); //end of old is begin of new
@@ -6477,7 +6477,7 @@ void MapWnd::DispatchFleetsExploring() {
                 if (systems_order_sent.find(system_supply.first) != systems_order_sent.end())
                     continue; //someone already went there this turn
 
-                std::pair<std::list<int>, double> pair = GetUniverse().GetPathfinder()->ShortestPath(fleet->SystemID(), system_supply.first, empire_id);
+                std::pair<std::list<int>, double> pair = GetPathfinder()->ShortestPath(fleet->SystemID(), system_supply.first, empire_id);
 
                 //we check for the fuel.
                 bool is_doable_for_fuel = true;
