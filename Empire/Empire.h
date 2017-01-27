@@ -313,7 +313,6 @@ public:
     const GG::Clr&          Color() const;                              ///< Returns the Empire's color
 
     int                     CapitalID() const;                          ///< Returns the numeric ID of the empire's capital
-    int                     StockpileID(ResourceType res) const;        ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
     std::string             Dump() const;
 

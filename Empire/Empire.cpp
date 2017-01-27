@@ -1495,21 +1495,6 @@ const GG::Clr& Empire::Color() const
 int Empire::CapitalID() const
 { return m_capital_id; }
 
-int Empire::StockpileID(ResourceType res) const {
-    switch (res) {
-    case RE_TRADE:
-        return m_capital_id;
-        break;
-    case RE_INDUSTRY:
-        return IMPERIAL_OBJECT_ID;
-        break;
-    case RE_RESEARCH:
-    default:
-        return INVALID_OBJECT_ID;
-        break;
-    }
-}
-
 std::string Empire::Dump() const {
     std::string retval = "Empire name: " + m_name +
                          " ID: "+ boost::lexical_cast<std::string>(m_id) +
@@ -3388,15 +3373,6 @@ void Empire::InitResourcePools() {
     m_resource_pools[RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);
     m_resource_pools[RE_TRADE]->SetConnectedSupplyGroups(sets_set);
 
-
-    // set stockpile object locations for each resource, ensuring those systems exist
-    //static std::vector<ResourceType> res_type_vec {RE_INDUSTRY, RE_TRADE, RE_RESEARCH};
-    for (ResourceType res_type : {RE_INDUSTRY, RE_TRADE, RE_RESEARCH}) {
-        int stockpile_object_id = INVALID_OBJECT_ID;
-        if (TemporaryPtr<const UniverseObject> stockpile_obj = GetUniverseObject(StockpileID(res_type)))
-            stockpile_object_id = stockpile_obj->ID();
-        m_resource_pools[res_type]->SetStockpileObject(stockpile_object_id);
-    }
 }
 
 void Empire::UpdateResourcePools() {

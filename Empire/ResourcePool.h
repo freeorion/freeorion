@@ -25,7 +25,6 @@ public:
 
     /** \name Accessors */ //@{
     const std::vector<int>&         ObjectIDs() const;                      ///< returns UniverseObject IDs in this ResourcePool
-    int                             StockpileObjectID() const;              ///< returns ID of object that contains this ResourcePool's stockpile
 
     float                           StockpileAssigned() const;              ///< returns current assigned amount of resource to use from the stockpile
     float                           Stockpile() const;                      ///< returns current stockpiled amount of resource
@@ -52,12 +51,6 @@ public:
       * have no common systems. */
     void        SetConnectedSupplyGroups(const std::set<std::set<int> >& connected_system_groups);
 
-   /** specifies which object has access to the resource stockpile.  Objects in
-     * a supply group with the object that can access the stockpile can store
-     * resources in and extract resources from the stockpile.  stockpiled
-     * resources are saved from turn to turn. */
-    void        SetStockpileObject(int stockpile_object_id);
-
     void        SetStockpileAssigned(float d); ///< sets currently assigned amount of resource to use from the stockpile
     void        SetStockpile(float d);      ///< sets current sockpiled amount of resource
 
@@ -71,7 +64,6 @@ private:
     std::set<std::set<int> >                m_connected_system_groups;                          ///< sets of systems between and in which objects can share this pool's resource
     std::map<std::set<int>, float>          m_connected_object_groups_resource_output;          ///< cached map from connected group of objects that can share resources, to how much resource is output by ResourceCenters in the group.  regenerated during update from other state information.
     std::map<std::set<int>, float>          m_connected_object_groups_resource_target_output;   ///< cached map from connected group of objects that can share resources, to how much resource would, if all meters equaled their target meters, be output by ResourceCenters in the group.  regenerated during update from other state information.
-    int                                     m_stockpile_object_id;                              ///< object id where stockpile for this pool is located
     float                                   m_stockpile;                                        ///< current stockpiled amount of resource
     //XXX serialization issues? put this in ProductionQueue instead?
     float                                   m_stockpile_assigned;                               ///< current assigned amount of resource to use from the stockpile for production
@@ -123,7 +115,6 @@ void ResourcePool::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_type)
         & BOOST_SERIALIZATION_NVP(m_object_ids)
         & BOOST_SERIALIZATION_NVP(m_stockpile)
-        & BOOST_SERIALIZATION_NVP(m_stockpile_object_id)
         & BOOST_SERIALIZATION_NVP(m_connected_system_groups);
 }
 

@@ -12,22 +12,17 @@
 // ResourcePool
 //////////////////////////////////////////////////
 ResourcePool::ResourcePool() :
-    m_stockpile_object_id(INVALID_OBJECT_ID),
     m_stockpile(0.0),
     m_type(INVALID_RESOURCE_TYPE)
 {}
 
 ResourcePool::ResourcePool(ResourceType type) :
-    m_stockpile_object_id(INVALID_OBJECT_ID),
     m_stockpile(0.0),
     m_type(type)
 {}
 
 const std::vector<int>& ResourcePool::ObjectIDs() const
 { return m_object_ids; }
-
-int ResourcePool::StockpileObjectID() const
-{ return m_stockpile_object_id; }
 
 float ResourcePool::StockpileAssigned() const
 { return m_stockpile_assigned; }
@@ -86,58 +81,17 @@ float ResourcePool::TotalAvailable() const {
 
 
 std::map<std::set<int>, float> ResourcePool::Available() const {
-    std::map<std::set<int>, float> retval = m_connected_object_groups_resource_output;
-
-    if (INVALID_OBJECT_ID == m_stockpile_object_id)
-        return retval;  // early exit for no stockpile
-
-    if (IMPERIAL_OBJECT_ID == m_stockpile_object_id) {
-        // maybe use for_each here??
-        for (std::map<std::set<int>, float>::iterator map_it = retval.begin(); map_it != retval.end(); ++map_it) {
-            map_it->second += m_stockpile;
-        }
-        return retval;
-    }
-
-    // find group that contains the stockpile, and add the stockpile to that group's production to give its availability
-    for (std::map<std::set<int>, float>::value_type& entry : retval) {
-        const std::set<int>& group = entry.first;
-        if (group.find(m_stockpile_object_id) != group.end()) {
-            entry.second += m_stockpile;
-            break;  // assuming stockpile is on only one group
-        }
-    }
-    return retval;
+    return m_connected_object_groups_resource_output;
 }
 
 float ResourcePool::GroupAvailable(int object_id) const {
     DebugLogger() << "ResourcePool::GroupAvailable(" << object_id << ")";
-    // available is stockpile + production in this group
-
-    if (m_stockpile_object_id == INVALID_OBJECT_ID)
-        return GroupOutput(object_id);
-
-    // need to find if stockpile object is in the requested object's group
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output) {
-        const std::set<int>& group = entry.first;
-        if (group.find(object_id) != group.end()) {
-            // found group for requested object.  is stockpile also in this group?
-            if (group.find(m_stockpile_object_id) != group.end())
-                return entry.second + m_stockpile;    // yes; add stockpile to production to return available
-            else
-                return entry.second;                  // no; just return production as available
-        }
-    }
-
-    // default return case:
-    DebugLogger() << "ResourcePool::GroupAvailable passed unknown object id: " << object_id;
-    return 0.0;
+    return GroupOutput(object_id);
 }
 
 std::string ResourcePool::Dump() const {
     std::string retval = "ResourcePool type = " + boost::lexical_cast<std::string>(m_type) +
                          " stockpile = " + boost::lexical_cast<std::string>(m_stockpile) +
-                         " stockpile_object_id = " + boost::lexical_cast<std::string>(m_stockpile_object_id) +
                          " object_ids: ";
     for (int obj_id : m_object_ids)
         retval += boost::lexical_cast<std::string>(obj_id) + ", ";
@@ -149,9 +103,6 @@ void ResourcePool::SetObjects(const std::vector<int>& object_ids)
 
 void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int> >& connected_system_groups)
 { m_connected_system_groups = connected_system_groups; }
-
-void ResourcePool::SetStockpileObject(int stockpile_object_id)
-{ m_stockpile_object_id = stockpile_object_id; }
 
 void ResourcePool::SetStockpileAssigned(float d)
 { m_stockpile_assigned = d; }
