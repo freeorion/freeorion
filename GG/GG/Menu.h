@@ -57,35 +57,12 @@ struct GG_API MenuItem
     typedef boost::signals2::signal<void ()>    SelectedSignalType;
     //@}
 
-    /** \name Slot Types */ ///@{
-    typedef SelectedIDSignalType::slot_type SelectedIDSlotType; ///< type of functor(s) invoked on a SelectedSignalType
-    typedef SelectedSignalType::slot_type   SelectedSlotType;   ///< type of functor(s) invoked on a SelectedSignalType
-    //@}
-
     /** \name Structors */ ///@{
     MenuItem();
 
     MenuItem(const std::string& str, int id, bool disable, bool check);
 
     explicit MenuItem(bool separator);
-
-    /** Ctor that allows direct attachment of this item's signal to a "slot"
-        function or functor */
-    MenuItem(const std::string& str, int id, bool disable, bool check, const SelectedIDSlotType& slot);
-
-    /** Ctor that allows direct attachment of this item's signal to a "slot"
-        function or functor */
-    MenuItem(const std::string& str, int id, bool disable, bool check, const SelectedSlotType& slot);
-
-    /** Ctor that allows direct attachment of this item's signal to a "slot"
-        member function of a specific object */
-    template <class T1, class T2>
-    MenuItem(const std::string& str, int id, bool disable, bool check, void (T1::* slot)(int), T2* obj);
-
-    /** Ctor that allows direct attachment of this item's signal to a "slot"
-        member function of a specific object */
-    template <class T1, class T2>
-    MenuItem(const std::string& str, int id, bool disable, bool check, void (T1::* slot)(), T2* obj);
 
     virtual ~MenuItem();
     //@}
@@ -107,9 +84,6 @@ struct GG_API MenuItem
     std::vector<MenuItem> next_level; ///< submenu off of this menu item; may be emtpy
 };
 
-
-struct SetFontAction;
-struct SetTextColorAction;
 
 /** \brief A menu bar control providing "browse" updates to user navigation of
     the menu.
@@ -221,9 +195,6 @@ private:
     MenuItem                  m_menu_data;      ///< this is not just a single menu item; the next_level element represents the entire menu
     std::vector<TextControl*> m_menu_labels;    ///< the text for each top-level menu item
     std::size_t               m_caret;          ///< the currently indicated top-level menu (open or under the cursor)
-
-    friend struct SetFontAction;
-    friend struct SetTextColorAction;
 };
 
 
@@ -324,25 +295,5 @@ private:
 
 } // namespace GG
 
-// template implemetations
-template <class T1, class T2>
-GG::MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, void (T1::* slot)(int), T2* obj) :
-    SelectedIDSignal(new SelectedIDSignalType()),
-    SelectedSignal(new SelectedSignalType()),
-    label(str), 
-    item_ID(id), 
-    disabled(disable), 
-    checked(check)
-{ SelectedIDSignal->connect(boost::bind(slot, obj, _1)); }
-
-template <class T1, class T2>
-GG::MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, void (T1::* slot)(), T2* obj) :
-    SelectedIDSignal(new SelectedIDSignalType()),
-    SelectedSignal(new SelectedSignalType()),
-    label(str), 
-    item_ID(id), 
-    disabled(disable), 
-    checked(check)
-{ SelectedSignal->connect(boost::bind(slot, obj)); }
 
 #endif

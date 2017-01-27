@@ -53,12 +53,7 @@ namespace {
 // GG::MenuItem
 ////////////////////////////////////////////////
 MenuItem::MenuItem() :
-    SelectedIDSignal(new SelectedIDSignalType()),
-    SelectedSignal(new SelectedSignalType()),
-    item_ID(0),
-    disabled(false),
-    checked(false),
-    separator(false)
+    MenuItem("", 0, true, false)
 {}
 
 MenuItem::MenuItem(bool separator) :
@@ -79,40 +74,6 @@ MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check) :
     checked(check),
     separator(false)
 {
-    if (INSTRUMENT_ALL_SIGNALS) {
-        Connect(*SelectedIDSignal, MenuSignalEcho("MenuItem::SelectedIDSignal"));
-        Connect(*SelectedSignal, MenuSignalEcho("MenuItem::SelectedSignal"));
-    }
-}
-
-MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, const SelectedIDSlotType& slot) :
-    SelectedIDSignal(new SelectedIDSignalType()),
-    SelectedSignal(new SelectedSignalType()),
-    label(str),
-    item_ID(id),
-    disabled(disable),
-    checked(check),
-    separator(false)
-{
-    SelectedIDSignal->connect(slot);
-
-    if (INSTRUMENT_ALL_SIGNALS) {
-        Connect(*SelectedIDSignal, MenuSignalEcho("MenuItem::SelectedIDSignal"));
-        Connect(*SelectedSignal, MenuSignalEcho("MenuItem::SelectedSignal"));
-    }
-}
-
-MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check, const SelectedSlotType& slot) :
-    SelectedIDSignal(new SelectedIDSignalType()),
-    SelectedSignal(new SelectedSignalType()),
-    label(str),
-    item_ID(id),
-    disabled(disable),
-    checked(check),
-    separator(false)
-{
-    SelectedSignal->connect(slot);
-
     if (INSTRUMENT_ALL_SIGNALS) {
         Connect(*SelectedIDSignal, MenuSignalEcho("MenuItem::SelectedIDSignal"));
         Connect(*SelectedSignal, MenuSignalEcho("MenuItem::SelectedSignal"));
@@ -251,7 +212,6 @@ void MenuBar::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
                     (*m_menu_data.next_level[i].SelectedIDSignal)(m_menu_data.next_level[i].item_ID);
                     (*m_menu_data.next_level[i].SelectedSignal)();
                 } else {
-                    MenuItem popup_data;
                     PopupMenu menu(m_menu_labels[i]->Left(), m_menu_labels[i]->Bottom(), m_font, m_menu_data.next_level[i], m_text_color, m_border_color, m_int_color);
                     menu.SetHiliteColor(m_hilite_color);
                     menu.SetSelectedTextColor(m_sel_text_color);
