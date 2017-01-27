@@ -33,7 +33,7 @@ class System;
 class FO_COMMON_API Pathfinder {
 public:
 
-    typedef boost::shared_ptr<const Pathfinder> ConstPtr;
+    typedef std::shared_ptr<const Pathfinder> ConstPtr;
 
     /** \name Structors */ //@{
     Pathfinder();

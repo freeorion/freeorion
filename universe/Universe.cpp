@@ -2738,7 +2738,7 @@ void Universe::EffectDestroy(int object_id, int source_object_id) {
 
 void Universe::InitializeSystemGraph(int for_empire_id) {
     std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
-    std::vector<boost::shared_ptr<const System> > systems;
+    std::vector<std::shared_ptr<const System> > systems;
     for (size_t system1_index = 0; system1_index < system_ids.size(); ++system1_index) {
         int system1_id = system_ids[system1_index];
         systems.push_back(GetEmpireKnownSystem(system1_id, for_empire_id));
