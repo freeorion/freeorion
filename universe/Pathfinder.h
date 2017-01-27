@@ -1,8 +1,6 @@
 #ifndef _Pathfinder_h_
 #define _Pathfinder_h_
 
-#include "Enums.h"
-#include "ObjectMap.h"
 #include "UniverseObject.h"
 
 #include <boost/unordered_map.hpp>
@@ -16,16 +14,6 @@
 #  undef GetObject
 #  undef GetObjectA
 #endif
-
-struct UniverseObjectVisitor;
-class XMLElement;
-class System;
-
-class Empire;
-struct UniverseObjectVisitor;
-class XMLElement;
-class ShipDesign;
-class System;
 
 /** The Pathfinder  class contains the locations of systems, the
   * starlanes and functions to determine pathing and trip duration

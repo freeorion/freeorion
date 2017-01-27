@@ -26,25 +26,8 @@
 #include "Enums.h"
 #include "Pathfinder.h"
 
-#include <boost/algorithm/string/classification.hpp>
-#include <boost/algorithm/string/split.hpp>
-#include <boost/filesystem/fstream.hpp>
-#include <boost/graph/adjacency_list.hpp>
-#include <boost/graph/breadth_first_search.hpp>
-#include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <boost/graph/filtered_graph.hpp>
-#include <boost/noncopyable.hpp>
-#include <boost/optional/optional.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/thread/condition_variable.hpp>
-#include <boost/thread/locks.hpp>
-#include <boost/thread/shared_mutex.hpp>
 #include <boost/timer.hpp>
-
-#include <algorithm>
-#include <cmath>
-#include <list>
-#include <stdexcept>
 
 
 #if defined(_MSC_VER)
