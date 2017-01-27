@@ -71,16 +71,24 @@ namespace {
     const std::string TAG_ALWAYS_REPORT = "CTRL_ALWAYS_REPORT";
     /** @content_tag{CTRL_EXTINCT} Added to both a species and their colony building.  Handles display in planet suitability report. **/
     const std::string TAG_EXTINCT = "CTRL_EXTINCT";
-    /** @content_tag{PEDIA_} Prefix to define a category for the article of the containing content definition. **/
+    /** @content_tag{PEDIA_} Defines an encyclopedia category for the generated article of the containing content definition.  The category name should be postfixed to this tag. **/
     const std::string TAG_PEDIA_PREFIX = "PEDIA_";
 }
 
 namespace {
-    /** Checks content tags for pedia category, returns category of first match */
+    /** @brief Checks content tags for a custom defined pedia category.
+     * 
+     * @param[in,out] tags content tags to check for a matching pedia prefix tag
+     * 
+     * @return The first matched pedia category for this set of tags,
+     *          or empty string if there are no matches.
+     */
     std::string TaggedCategory(const std::set<std::string>& tags) {
         if (tags.empty())
             return EMPTY_STRING;
 
+        // for each tag, check if it starts with the prefix
+        // when a match is found, return the match (without the prefix portion)
         for (const std::string& tag : tags)
             if (boost::starts_with(tag, TAG_PEDIA_PREFIX))
                 return boost::replace_first_copy(tag, TAG_PEDIA_PREFIX, EMPTY_STRING);
@@ -439,7 +447,8 @@ namespace {
             //for (auto str : GetStringTable().
 
         } else {
-            // Add articles for content tagged definitions
+            // Any content definitions (FOCS files) that define a pedia category
+            // should have their pedia article added to this category.
             std::map<std::string, std::pair<std::string, std::string>> dir_entries;
 
             // part types
