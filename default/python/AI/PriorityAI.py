@@ -76,6 +76,10 @@ def calculate_priorities():
     foAI.foAIstate.set_priority(PriorityType.RESEARCH_SHIPS, _calculate_ships_priority())
     foAI.foAIstate.set_priority(PriorityType.RESEARCH_DEFENSE, 0)
     prioritiees_timer.end()
+    # priorities_timer is file scope in order to capture times from different functions
+    # in this file, but it produces output each turn.  It needs to be cleared
+    # once per turn so that the aggregate times only reflect this turn.
+    prioritiees_timer.clear_data()
 
 
 def _calculate_industry_priority():  # currently only used to print status

@@ -44,7 +44,7 @@ class DummyTimer(object):
     def end(self):
         pass
 
-    def clear(self):
+    def clear_data(self):
         pass
 
     def print_flat(self):
@@ -98,6 +98,5 @@ class AILogTimer(Timer):
             for header, val in zip(self.headers, [turn] + [x[1] for x in self.timers]):
                 row.append('%*s ' % (len(header) - 2, int(val)))
             self._write(''.join(row))
-        self.timers = []  # clear times
 
 AITimer = AILogTimer if USE_TIMERS else DummyTimer

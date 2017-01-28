@@ -168,6 +168,10 @@ def get_invasion_fleets():
     AIstate.invasionTargetedSystemIDs = list(all_invasion_targeted_system_ids)
     invasion_timer.stop(section_name="evaluating %d target planets" % (len(evaluated_planet_ids)))
     invasion_timer.end()
+    # invasion_timer is file scope in order to capture times from different functions
+    # in this file, but it produces output each turn.  It needs to be cleared
+    # once per turn so that the aggregate times only reflect this turn.
+    invasion_timer.clear_data()
 
 
 def get_invasion_targeted_planet_ids(planet_ids, mission_type):

@@ -551,6 +551,10 @@ def get_colony_fleets():
     foAI.foAIstate.colonisableOutpostIDs.clear()
     foAI.foAIstate.colonisableOutpostIDs.update(sorted_outposts)
     colonization_timer.end()
+    # colonization_timer is file scope in order to capture times from different functions
+    # in this file, but it produces output each turn.  It needs to be cleared
+    # once per turn so that the aggregate times only reflect this turn.
+    colonization_timer.clear_data()
 
 
 def assign_colonisation_values(planet_ids, mission_type, species, empire, detail=None,

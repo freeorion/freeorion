@@ -81,8 +81,8 @@ class Timer(object):
         if not dont_print:
             self.print_flat()
 
-    def clear(self):
+    def clear_data(self):
         """
-        Clear timers.
+        Clear timer data.
         """
         self.timers = []

@@ -251,7 +251,10 @@ def generateOrders():  # pylint: disable=invalid-name
             print_error(e, location=action.__name__)
     main_timer.end()
     turn_timer.end()
-    turn_timer.clear()
+    # Turn timer is file scope in order to capture times from different functions
+    # in this file, but it produces output each turn.  It needs to be cleared
+    # once per turn so that the aggregate times only reflect this turn.
+    turn_timer.clear_data()
     turn_timer.start("Server_Processing")
 
     try:
