@@ -102,6 +102,7 @@
     (Else)                                      \
     (Empire)                                    \
     (EmpireMeter)                               \
+    (EmpireMeterValue)                          \
     (EmpireShipsDestroyed)                      \
     (Endpoint)                                  \
     (EnemyOf)                                   \

@@ -1757,6 +1757,22 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return part_type->Capacity();
 
     }
+    else if (variable_name == "EmpireMeterValue") {
+        int empire_id = ALL_EMPIRES;
+        if (m_int_ref1)
+            empire_id = m_int_ref1->Eval(context);
+        Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return -1.0;
+
+        std::string empire_meter_name;
+        if (m_string_ref1)
+            empire_meter_name = m_string_ref1->Eval(context);
+        Meter * meter = empire->GetMeter(empire_meter_name);
+        if (!meter)
+            return 0.0;
+        return meter->Current();
+    }
     else if (variable_name == "DirectDistanceBetween") {
         int object1_id = INVALID_OBJECT_ID;
         if (m_int_ref1)
