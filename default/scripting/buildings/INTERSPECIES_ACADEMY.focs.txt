@@ -2,7 +2,7 @@ BuildingType
     name = "BLD_INTERSPECIES_ACADEMY"
     description = "BLD_INTERSPECIES_ACADEMY_DESC"
     buildcost = 100
-    buildtime = 3
+    buildtime = 1
     location = AND [
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
@@ -10,46 +10,35 @@ BuildingType
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-                OwnedBy empire = Source.Owner
-                Species
-            ]
-            activation = Source
-            effects = [
-                GenerateSitRepMessage
-                    message = "Additional stoyield is now sdfaf"
-                    label = "EFFECT_BLACKHOLE_LABEL"
-                    empire = Source.Owner
-            ]
-        EffectsGroup
-            scope = And [
-                Object id = Source.PlanetID
-                Planet
-                OwnedBy empire = Source.Owner
-                Species
-            ]
-            activation = Source
-            //stackinggroup = "[[BLD_INTERSPECIES_ACADEMY_SPECIES_STACK(Source.Planet.Species)]]"
-            priority = [[EARLY_PRIORITY]]
-            //                    message = "Additional effect by the %species% on %system% joining the design academy. Imperial stockpile yield is now %rawtext%"
+                //stackinggroup = "[[BLD_INTERSPECIES_ACADEMY_SPECIES_STACK(Source.Planet.Species)]]"
+
+                //                    message = "Additional effect by the %species% on %system% joining the design academy. Imperial stockpile yield is now %rawtext%"
 //                                    tag = "system" data = Source.SystemID
   //                      tag = "species" data = Source.Planet.Species
 
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+                OwnedBy empire = Source.Owner
+                Species
+            ]
+            activation = Source
+            priority = [[EARLY_PRIORITY]]
             effects = [
-                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_STORAGE_YIELD" value = Value + 0.2
                 GenerateSitRepMessage
-                    message = "Additional effect by species %rawtext%"
+                    message = "Additional effect by the %species% on %system% joining the design academy. Imperial stockpile yield is now %rawtext%"
                     label = "EFFECT_BLACKHOLE_LABEL"
+                    NoStringtableLookup
                     icon = "icons/building/blackhole.png"
                     parameters = [
-                        tag = "rawtext" data = Source.Planet.Species // gibt nummer der species
+                        tag = "system" data = Source.SystemID
+                        tag = "species" data = Source.Planet.Species
+                        tag = "rawtext" data = "??" // data = EmpireMeter meter = "METER_IMPERIAL_PP_STORAGE_YIELD"
                     ]
                     empire = Source.Owner
+                SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_STORAGE_YIELD" value = Value + 0.05
             ]
-            // Source.Planet.Species gives the id number; the species tag needs literal like "SP_TRITH"
     ]
     icon = "icons/building/science-institute.png"
 
