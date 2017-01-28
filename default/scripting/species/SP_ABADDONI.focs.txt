@@ -27,14 +27,22 @@ Species
         [[AVERAGE_SUPPLY]]
         [[BAD_DEFENSE_TROOPS]]
         [[BAD_OFFENSE_TROOPS]]
+        EffectsGroup
+            scope = Source
+            activation = Turn high = 1
+            effects = [
+                GiveEmpireTech name = "GRO_SUBTER_HAB" empire = Target.Owner
+           ]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
+        [[BROAD_EP]]
         [[STANDARD_SHIP_SHIELDS]]
     ]
 
-    [[INFERNO_STANDARD_EP]]
+    [[INFERNO_BROAD_EP]]
 
     graphic = "icons/species/abaddonnian.png"
 
