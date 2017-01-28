@@ -9,8 +9,11 @@
 #include "../universe/Fleet.h"
 #include "../universe/Enums.h"
 #include "../util/AppInterface.h"
+#include "../util/Serialize.h"
 #include "../util/Logger.h"
 
+#include <boost/serialization/map.hpp>
+#include <boost/serialization/set.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
@@ -277,7 +280,7 @@ void SupplyManager::Update() {
     // can't exchange with any other systems.
 
     // which systems can share resources depends on system supply ranges, which
-    // systems have obstructions to supply propagation for reach empire, and
+    // systems have obstructions to supply propagation for each empire, and
     // the ranges and obstructions of other empires' supply, as only one empire
     // can supply each system or propagate along each starlane. one empire's
     // propagating supply can push back another's, if the pusher's range is
@@ -783,3 +786,21 @@ void SupplyManager::Update() {
         }
     }
 }
+
+template <class Archive>
+void SupplyManager::serialize(Archive& ar, const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
+        & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
+        & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
+        & BOOST_SERIALIZATION_NVP(m_resource_supply_groups)
+        & BOOST_SERIALIZATION_NVP(m_propagated_supply_ranges)
+        & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_ranges)
+        & BOOST_SERIALIZATION_NVP(m_propagated_supply_distances)
+        & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_distances);
+}
+
+template void SupplyManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void SupplyManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void SupplyManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void SupplyManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
