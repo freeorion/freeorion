@@ -54,7 +54,7 @@ script:
   - >
     if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
       docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake /src
-      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . --target apidoc-deploy
+      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build -E "TRAVIS=${TRAVIS}" freeorion/freeorion-travis-build cmake --build . --target apidoc-deploy
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" && -z "${BUILD_APIDOC}" ]]; then
