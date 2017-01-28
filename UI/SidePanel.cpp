@@ -55,7 +55,7 @@ namespace {
     std::map<std::pair<int,int>,float>          colony_projections;
     std::map<std::pair<std::string,int>,float>  species_colony_projections;
 
-    /** @content_tag(CTRL_ALWAYS_BOMBARD} Select this ship during automatic ship selection for bombard, regardless of any tags **/
+    /** @content_tag{CTRL_ALWAYS_BOMBARD} Select this ship during automatic ship selection for bombard, regardless of any tags **/
     const std::string TAG_BOMBARD_ALWAYS = "CTRL_ALWAYS_BOMBARD";
     /** @content_tag{CTRL_BOMBARD_} Prefix tag allowing automatic ship selection for bombard, must post-fix a valid planet tag **/
     const std::string TAG_BOMBARD_PREFIX = "CTRL_BOMBARD_";
