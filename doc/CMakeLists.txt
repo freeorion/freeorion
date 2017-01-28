@@ -28,7 +28,7 @@ if(DOXYGEN_FOUND)
     )
     add_dependencies(doc cpp-apidoc)
 
-    if(GIT_FOUND AND (DEFINED ENV{TRAVIS}))
+    if(GIT_FOUND)
         set(FreeOrion_APIDOC_GIT_REMOTE https://github.com/freeorion/freeorion.github.io.git)
         set(FreeOrion_APIDOC_GIT_LOCAL  ${CMAKE_CURRENT_BINARY_DIR}/apidoc-deploy.git)
         set(FreeOrion_CPP_APIDOC_PATH   cppapi/master)
