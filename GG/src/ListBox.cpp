@@ -1035,7 +1035,10 @@ void ListBox::Clear()
     m_first_col_shown = 0;
     m_selections.clear();
     m_old_sel_row = m_rows.end();
+    m_old_rdown_row = m_rows.end();
     m_lclick_row = m_rows.end();
+    m_rclick_row = m_rows.end();
+    m_last_row_browsed = m_rows.end();
 
     if (!m_keep_col_widths) { // remove column widths and alignments, if needed
         m_col_widths.clear();
