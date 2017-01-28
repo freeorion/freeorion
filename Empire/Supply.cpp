@@ -18,14 +18,124 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
-SupplyManager::SupplyManager() :
+
+class SupplyManager::SupplyManagerImpl {
+public:
+    /** \name Structors */ //@{
+    SupplyManagerImpl();
+    SupplyManagerImpl& operator=(const SupplyManagerImpl& rhs);
+    //@}
+
+    /** \name Accessors */ //@{
+    /** Returns set of directed starlane traversals along which supply can flow.
+      * Results are pairs of system ids of start and end system of traversal. */
+    const std::map<int, std::set<std::pair<int, int> > >&   SupplyStarlaneTraversals() const;
+    const std::set<std::pair<int, int> >&                   SupplyStarlaneTraversals(int empire_id) const;
+
+    /** Returns set of directed starlane traversals along which supply could
+      * flow for this empire, but which can't due to some obstruction in one
+      * of the systems. */
+    const std::map<int, std::set<std::pair<int, int> > >&   SupplyObstructedStarlaneTraversals() const;
+    const std::set<std::pair<int, int> >&                   SupplyObstructedStarlaneTraversals(int empire_id) const;
+
+    /** Returns set of system ids where fleets can be supplied by this empire
+      * (as determined by object supply meters and rules of supply propagation
+      * and blockade). */
+    const std::map<int, std::set<int> >&                    FleetSupplyableSystemIDs() const;
+    const std::set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
+    std::set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
+    int                                                     EmpireThatCanSupplyAt(int system_id) const;
+
+    /** Returns set of sets of systems that can share industry (systems in
+      * separate groups are blockaded or otherwise separated). */
+    const std::map<int, std::set<std::set<int> > >&         ResourceSupplyGroups() const;
+    const std::set<std::set<int> >&                         ResourceSupplyGroups(int empire_id) const;
+
+    /** Returns the range from each system some empire can propagate supply.*/
+    const std::map<int, float>&                             PropagatedSupplyRanges() const;
+    /** Returns the range from each system that the empire with id \a empire_id
+      * can propagate supply.*/
+    const std::map<int, float>&                             PropagatedSupplyRanges(int empire_id) const;
+
+    /** Returns the distance from each system some empire is away
+      * from its closest source of supply without passing
+      * through obstructed systems for that empire. */
+    const std::map<int, float>&                             PropagatedSupplyDistances() const;
+    /** Returns the distance from each system for the empire with id
+      * \a empire_id to the closest source of supply without passing
+      * through obstructed systems for that empire. */
+    const std::map<int, float>&                             PropagatedSupplyDistances(int empire_id) const;
+
+    /** Returns true if system with id \a system_id is fleet supplyable or in
+      * one of the resource supply groups for empire with id \a empire_id */
+    bool        SystemHasFleetSupply(int system_id, int empire_id) const;
+    bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
+
+    std::string Dump(int empire_id = ALL_EMPIRES) const;
+    //@}
+
+    /** \name Mutators */ //@{
+    /** Calculates systems at which fleets of empires can be supplied, and
+      * groups of systems that can exchange resources, and the starlane
+      * traversals used to do so. */
+    void    Update();
+    //@}
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+
+private:
+    /** ordered pairs of system ids between which a starlane runs that can be
+        used to convey resources between systems. indexed first by empire id. */
+    std::map<int, std::set<std::pair<int, int> > >  m_supply_starlane_traversals;
+
+    /** ordered pairs of system ids between which a starlane could be used to
+        convey resources between system, but is not because something is
+        obstructing the resource flow.  That is, the resource flow isn't limited
+        by range, but by something blocking its flow. */
+    std::map<int, std::set<std::pair<int, int> > >  m_supply_starlane_obstructed_traversals;
+
+    /** ids of systems where fleets can be resupplied. indexed by empire id. */
+    std::map<int, std::set<int> >                   m_fleet_supplyable_system_ids;
+
+    /** sets of system ids that are connected by supply lines and are able to
+        share resources between systems or between objects in systems. indexed
+        by empire id. */
+    std::map<int, std::set<std::set<int> > >        m_resource_supply_groups;
+
+    /** for whichever empire can propagate supply into this system, what is the
+        additional range from this system that empire can propagate supply */
+    std::map<int, float>                            m_propagated_supply_ranges;
+
+    /** for each empire, what systems it can propagate supply into, and how many
+      * further supply jumps it could propagate past this system, if not blocked
+      * from doing so by supply obstructions. */
+    std::map<int, std::map<int, float>>             m_empire_propagated_supply_ranges;
+
+    /** for whichever empire can propagate supply into this system, how far
+      * that system is from the closest source of supply for that empire, along
+      * possible supply propgation connections (ie. not though a supply
+      * obstructed system for that empire) */
+    std::map<int, float>                            m_propagated_supply_distances;
+
+    /** for each empire, what systems it can propagate supply into, and how far
+      * that system is from the closest source of supply for that empire, along
+      * possible supply propgation connections (ie. not though a supply
+      * obstructed system) */
+    std::map<int, std::map<int, float>>             m_empire_propagated_supply_distances;
+
+};
+
+
+SupplyManager::SupplyManagerImpl::SupplyManagerImpl() :
     m_supply_starlane_traversals(),
     m_supply_starlane_obstructed_traversals(),
     m_fleet_supplyable_system_ids(),
     m_resource_supply_groups()
 {}
 
-SupplyManager& SupplyManager::operator=(const SupplyManager& rhs) {
+SupplyManager::SupplyManagerImpl& SupplyManager::SupplyManagerImpl::operator=(const SupplyManagerImpl& rhs) {
     m_supply_starlane_traversals =              rhs.m_supply_starlane_traversals;
     m_supply_starlane_obstructed_traversals =   rhs.m_supply_starlane_obstructed_traversals;
     m_fleet_supplyable_system_ids =             rhs.m_fleet_supplyable_system_ids;
@@ -40,37 +150,37 @@ namespace {
     static const std::map<int, float> EMPTY_INT_FLOAT_MAP;
 }
 
-const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyStarlaneTraversals() const
+const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyManagerImpl::SupplyStarlaneTraversals() const
 { return m_supply_starlane_traversals; }
 
-const std::set<std::pair<int, int>>& SupplyManager::SupplyStarlaneTraversals(int empire_id) const {
+const std::set<std::pair<int, int>>& SupplyManager::SupplyManagerImpl::SupplyStarlaneTraversals(int empire_id) const {
     std::map<int, std::set<std::pair<int, int>>>::const_iterator it = m_supply_starlane_traversals.find(empire_id);
     if (it != m_supply_starlane_traversals.end())
         return it->second;
     return EMPTY_INT_PAIR_SET;
 }
 
-const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyObstructedStarlaneTraversals() const
+const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyManagerImpl::SupplyObstructedStarlaneTraversals() const
 { return m_supply_starlane_obstructed_traversals; }
 
-const std::set<std::pair<int, int>>& SupplyManager::SupplyObstructedStarlaneTraversals(int empire_id) const {
+const std::set<std::pair<int, int>>& SupplyManager::SupplyManagerImpl::SupplyObstructedStarlaneTraversals(int empire_id) const {
     std::map<int, std::set<std::pair<int, int>>>::const_iterator it = m_supply_starlane_obstructed_traversals.find(empire_id);
     if (it != m_supply_starlane_obstructed_traversals.end())
         return it->second;
     return EMPTY_INT_PAIR_SET;
 }
 
-const std::map<int, std::set<int>>& SupplyManager::FleetSupplyableSystemIDs() const
+const std::map<int, std::set<int>>& SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs() const
 { return m_fleet_supplyable_system_ids; }
 
-const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) const {
+const std::set<int>& SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs(int empire_id) const {
     std::map<int, std::set<int>>::const_iterator it = m_fleet_supplyable_system_ids.find(empire_id);
     if (it != m_fleet_supplyable_system_ids.end())
         return it->second;
     return EMPTY_INT_SET;
 }
 
-std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const {
+std::set<int> SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const {
     std::set<int> retval = FleetSupplyableSystemIDs(empire_id);
     if (!include_allies)
         return retval;
@@ -86,7 +196,7 @@ std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool includ
     return retval;
 }
 
-int SupplyManager::EmpireThatCanSupplyAt(int system_id) const {
+int SupplyManager::SupplyManagerImpl::EmpireThatCanSupplyAt(int system_id) const {
     for (const std::map<int, std::set<int>>::value_type& entry : m_fleet_supplyable_system_ids) {
         if (entry.second.find(system_id) != entry.second.end())
             return entry.first;
@@ -94,22 +204,22 @@ int SupplyManager::EmpireThatCanSupplyAt(int system_id) const {
     return ALL_EMPIRES;
 }
 
-const std::map<int, std::set<std::set<int>>>& SupplyManager::ResourceSupplyGroups() const
+const std::map<int, std::set<std::set<int>>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups() const
 { return m_resource_supply_groups; }
 
-const std::set<std::set<int>>& SupplyManager::ResourceSupplyGroups(int empire_id) const {
+const std::set<std::set<int>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups(int empire_id) const {
     std::map<int, std::set<std::set<int>>>::const_iterator it = m_resource_supply_groups.find(empire_id);
     if (it != m_resource_supply_groups.end())
         return it->second;
     return EMPTY_INT_SET_SET;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyRanges() const {
+const std::map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyRanges() const {
     std::cout << "BLAAAAH" << std::endl;
     return m_propagated_supply_ranges;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id) const
+const std::map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyRanges(int empire_id) const
 {
     auto emp_it = m_empire_propagated_supply_ranges.find(empire_id);
     if (emp_it == m_empire_propagated_supply_ranges.end())
@@ -117,19 +227,19 @@ const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id)
     return emp_it->second;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyDistances() const {
+const std::map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyDistances() const {
     std::cout << "GLAARB" << std::endl;
     return m_propagated_supply_distances;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyDistances(int empire_id) const {
+const std::map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyDistances(int empire_id) const {
     auto emp_it = m_empire_propagated_supply_distances.find(empire_id);
     if (emp_it == m_empire_propagated_supply_distances.end())
         return EMPTY_INT_FLOAT_MAP;
     return emp_it->second;
 }
 
-bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
+bool SupplyManager::SupplyManagerImpl::SystemHasFleetSupply(int system_id, int empire_id) const {
     if (system_id == INVALID_OBJECT_ID)
         return false;
     if (empire_id == ALL_EMPIRES)
@@ -143,7 +253,7 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
     return false;
 }
 
-bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const {
+bool SupplyManager::SupplyManagerImpl::SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const {
     if (!include_allies)
         return SystemHasFleetSupply(system_id, empire_id);
     if (system_id == INVALID_OBJECT_ID)
@@ -169,7 +279,7 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool incl
     return false;
 }
 
-std::string SupplyManager::Dump(int empire_id) const {
+std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
     std::string retval;
 
     try {
@@ -267,7 +377,7 @@ namespace {
     }
 }
 
-void SupplyManager::Update() {
+void SupplyManager::SupplyManagerImpl::Update() {
     m_supply_starlane_traversals.clear();
     m_supply_starlane_obstructed_traversals.clear();
     m_fleet_supplyable_system_ids.clear();
@@ -788,7 +898,7 @@ void SupplyManager::Update() {
 }
 
 template <class Archive>
-void SupplyManager::serialize(Archive& ar, const unsigned int version)
+void SupplyManager::SupplyManagerImpl::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
         & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
@@ -799,6 +909,86 @@ void SupplyManager::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_propagated_supply_distances)
         & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_distances);
 }
+
+template void SupplyManager::SupplyManagerImpl::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+template void SupplyManager::SupplyManagerImpl::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+template void SupplyManager::SupplyManagerImpl::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+template void SupplyManager::SupplyManagerImpl::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
+
+////////////////////////////////////////
+// Supply Manager
+////////////////////////////////////////
+
+SupplyManager::SupplyManager() :
+    pimpl(new SupplyManagerImpl)
+{}
+
+// Required to call pimpl destructor.
+SupplyManager::~SupplyManager() {}
+
+SupplyManager& SupplyManager::operator=(const SupplyManager& rhs) {
+    pimpl->operator=(*rhs.pimpl);
+    return *this;
+}
+
+const std::map<int, std::set<std::pair<int, int> > >&   SupplyManager::SupplyStarlaneTraversals() const
+{ return pimpl->SupplyStarlaneTraversals(); }
+
+const std::set<std::pair<int, int> >&                   SupplyManager::SupplyStarlaneTraversals(int empire_id) const
+{ return pimpl->SupplyStarlaneTraversals(empire_id); }
+
+const std::map<int, std::set<std::pair<int, int> > >&   SupplyManager::SupplyObstructedStarlaneTraversals() const
+{ return pimpl->SupplyObstructedStarlaneTraversals(); }
+
+const std::set<std::pair<int, int> >&                   SupplyManager::SupplyObstructedStarlaneTraversals(int empire_id) const
+{ return pimpl->SupplyObstructedStarlaneTraversals(empire_id); }
+
+const std::map<int, std::set<int> >&                    SupplyManager::FleetSupplyableSystemIDs() const
+{ return pimpl->FleetSupplyableSystemIDs(); }
+
+const std::set<int>&                                    SupplyManager::FleetSupplyableSystemIDs(int empire_id) const
+{ return pimpl->FleetSupplyableSystemIDs(empire_id); }
+
+std::set<int>                                           SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const
+{ return pimpl->FleetSupplyableSystemIDs(empire_id, include_allies); }
+
+int                                                     SupplyManager::EmpireThatCanSupplyAt(int system_id) const
+{ return pimpl->EmpireThatCanSupplyAt(system_id); }
+
+const std::map<int, std::set<std::set<int> > >&         SupplyManager::ResourceSupplyGroups() const
+{ return pimpl->ResourceSupplyGroups(); }
+
+const std::set<std::set<int> >&                         SupplyManager::ResourceSupplyGroups(int empire_id) const
+{ return pimpl->ResourceSupplyGroups(empire_id); }
+
+const std::map<int, float>&                             SupplyManager::PropagatedSupplyRanges() const
+{ return pimpl->PropagatedSupplyRanges(); }
+
+const std::map<int, float>&                             SupplyManager::PropagatedSupplyRanges(int empire_id) const
+{ return pimpl->PropagatedSupplyRanges(empire_id); }
+
+const std::map<int, float>&                             SupplyManager::PropagatedSupplyDistances() const
+{ return pimpl->PropagatedSupplyDistances(); }
+
+const std::map<int, float>&                             SupplyManager::PropagatedSupplyDistances(int empire_id) const
+{ return pimpl->PropagatedSupplyDistances(empire_id); }
+
+bool                                                    SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const
+{ return pimpl->SystemHasFleetSupply(system_id, empire_id); }
+
+bool                                                    SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const
+{ return pimpl->SystemHasFleetSupply(system_id, empire_id, include_allies); }
+
+std::string                                             SupplyManager::Dump(int empire_id /*= ALL_EMPIRES*/) const
+{ return pimpl->Dump(empire_id); }
+
+void                                                    SupplyManager::Update()
+{ return pimpl->Update(); }
+
+template <class Archive>
+void SupplyManager::serialize(Archive& ar, const unsigned int version)
+{ pimpl->serialize(ar, version); }
 
 template void SupplyManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
 template void SupplyManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
