@@ -25,7 +25,6 @@ public:
     /// Constructor for local browsing
     /// @param extension The extension to enforce on the file name
     /// @param load If set to true, only allow choosing existing files
-    /// @param relative Return a relative file name
     SaveFileDialog(const std::string& extension, bool load = false);
 
     /// Contruct for getting the previews from the server
