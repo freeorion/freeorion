@@ -1492,7 +1492,7 @@ std::shared_ptr<const UniverseObject> Empire::Source() const {
     }
 
     // Find any object owned by the empire
-    // TODO determine if ExistingObjectsUnOrderedBegin() is faster and acceptable
+    // TODO determine if ExistingObjects() is faster and acceptable
     for (std::shared_ptr<const UniverseObject> obj_it : Objects()) {
         if (obj_it->OwnedBy(m_id)) {
             m_source_id = obj_it->ID();
@@ -1517,8 +1517,20 @@ std::string Empire::Dump() const {
 }
 
 void Empire::SetCapitalID(int id) {
-    m_capital_id = id;
-    m_source_id = id;
+    m_capital_id = INVALID_OBJECT_ID;
+    m_source_id = INVALID_OBJECT_ID;
+
+    if (id == INVALID_OBJECT_ID)
+        return;
+
+    // Verify that the capital exists and is owned by the empire
+    auto possible_capital {Objects().ExistingObject(id)};
+    if (possible_capital && possible_capital->OwnedBy(m_id))
+        m_capital_id = id;
+
+    auto possible_source = GetUniverseObject(id);
+    if (possible_source && possible_source->OwnedBy(m_id))
+        m_source_id = id;
 }
 
 Meter* Empire::GetMeter(const std::string& name) {
