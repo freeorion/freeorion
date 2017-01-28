@@ -1524,7 +1524,7 @@ void Empire::SetCapitalID(int id) {
         return;
 
     // Verify that the capital exists and is owned by the empire
-    auto possible_capital {Objects().ExistingObject(id)};
+    auto possible_capital = Objects().ExistingObject(id);
     if (possible_capital && possible_capital->OwnedBy(m_id))
         m_capital_id = id;
 
