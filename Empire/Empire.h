@@ -317,12 +317,9 @@ public:
     int                     CapitalID() const;                          ///< Returns the numeric ID of the empire's capital
     int                     StockpileID(ResourceType res) const;        ///< Returns the numeric ID of the empire's stockpile location for the resource of type \a res
 
-    /** Return an object id that is owned by the empire or
-        INVALID_OBJECT_ID. SourceID() is safe to call with a null this
-        pointer. */
+    /** Return an object id that is owned by the empire or INVALID_OBJECT_ID. */
     int                     SourceID() const;
-    /** Return an object that is owned by the empire or null.  Source() is
-        safe to call with a null this pointer. */
+    /** Return an object that is owned by the empire or null.*/
     std::shared_ptr<const UniverseObject> Source() const;
 
     std::string             Dump() const;

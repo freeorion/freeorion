@@ -16,6 +16,7 @@
 #include <vector>
 
 class Empire;
+class UniverseObject;
 
 struct FO_COMMON_API DiplomaticStatusUpdateInfo {
     DiplomaticStatusUpdateInfo();
@@ -43,6 +44,8 @@ public:
     /** \name Accessors */ //@{
     /** Returns the empire whose ID is \a ID, or 0 if none exists. */
     const Empire*       GetEmpire(int id) const;
+    /** Return the empire source or nullptr if the empire or source doesn't exist.*/
+    std::shared_ptr<const UniverseObject> GetSource(int id) const;
     const std::string&  GetEmpireName(int id) const;
 
     const_iterator      begin() const;

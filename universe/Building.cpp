@@ -243,7 +243,7 @@ float BuildingType::ProductionCost(int empire_id, int location_id) const {
         if (!location)
             return 999999.9f;    // arbitrary large number
 
-        std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
+        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
         if (!source || m_production_cost->SourceInvariant())
             return 999999.9f;
 
@@ -267,7 +267,7 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
         if (!location)
             return 9999;    // arbitrary large number
 
-        std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
+        std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
         if (!source || m_production_time->SourceInvariant())
             return 9999;
 
@@ -285,7 +285,7 @@ bool BuildingType::ProductionLocation(int empire_id, int location_id) const {
     if (!location)
         return false;
 
-    std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
+    std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
     if (!source)
         return false;
 
@@ -300,7 +300,7 @@ bool BuildingType::EnqueueLocation(int empire_id, int location_id) const {
     if (!location)
         return false;
 
-    std::shared_ptr<const UniverseObject> source = GetEmpire(empire_id)->Source();
+    std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
     if (!source)
         return false;
 

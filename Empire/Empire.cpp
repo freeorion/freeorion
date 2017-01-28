@@ -1476,10 +1476,7 @@ int Empire::SourceID() const {
 }
 
 std::shared_ptr<const UniverseObject> Empire::Source() const {
-    // Make it safe to use with a null this pointer.
-    // This generates a compiler warning, but it enables the natural line of code of
-    // "GetEmpire(id)->Source()" without requiring an intervening null check
-    if (!this || m_eliminated)
+    if (m_eliminated)
         return nullptr;
 
     // Use the current source if valid
