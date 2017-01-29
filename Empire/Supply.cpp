@@ -79,6 +79,18 @@ public:
       * groups of systems that can exchange resources, and the starlane
       * traversals used to do so. */
     void    Update();
+
+    /** Part of the Update function.*/
+    void    ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
+        const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
+        std::map<int, std::set<int>>& empire_supply_unobstructed_systems);
+
+    std::map<int, std::map<int, std::pair<float, float>>> PropagateSupplyAlongUnobstructedStarlanes(
+        const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
+        std::map<int, std::set<int>>& empire_supply_unobstructed_systems);
+
+    void DetermineSupplyConnectedSystemGroups(
+        const std::map<int, std::map<int, std::pair<float, float>>>& empire_propagating_supply_ranges) ;
     //@}
 
     friend class boost::serialization::access;
@@ -377,64 +389,20 @@ namespace {
     }
 }
 
-void SupplyManager::SupplyManagerImpl::Update() {
-    m_supply_starlane_traversals.clear();
-    m_supply_starlane_obstructed_traversals.clear();
-    m_fleet_supplyable_system_ids.clear();
-    m_resource_supply_groups.clear();
-    m_propagated_supply_ranges.clear();
+void SupplyManager::SupplyManagerImpl::ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
+    const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
+    std::map<int, std::set<int>>& empire_supply_unobstructed_systems)
+{
 
-    // for each empire, need to get a set of sets of systems that can exchange
-    // resources.  some sets may be just one system, in which resources can be
-    // exchanged between UniverseObjects producing or consuming them, but which
-    // can't exchange with any other systems.
-
-    // which systems can share resources depends on system supply ranges, which
-    // systems have obstructions to supply propagation for each empire, and
-    // the ranges and obstructions of other empires' supply, as only one empire
-    // can supply each system or propagate along each starlane. one empire's
-    // propagating supply can push back another's, if the pusher's range is
-    // larger.
-
-    // map from empire id to map from system id to range (in starlane jumps)
-    // that supply can be propagated out of that system by that empire.
-    std::map<int, std::map<int, float>> empire_system_supply_ranges;
-    // map from empire id to which systems are obstructed for it for supply
-    // propagation
-    std::map<int, std::set<int>> empire_supply_unobstructed_systems;
-    // map from empire id to map from system id to sum of supply source ranges
-    // owned by empire in that in system
-    std::map<int, std::map<int, float>> empire_system_supply_range_sums;
-
-    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
-        const Empire* empire = entry.second;
-        empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
-        empire_supply_unobstructed_systems[entry.first] = empire->SupplyUnobstructedSystems();
-
-        //std::stringstream ss;
-        //for (int system_id : empire_supply_unobstructed_systems[entry.first])
-        //{ ss << system_id << ", "; }
-        //DebugLogger() << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
-    }
-    for (auto empire_id_pair : empire_system_supply_ranges) {
-        for (auto sys_id_pair : empire_id_pair.second) {
-            empire_system_supply_range_sums[empire_id_pair.first][sys_id_pair.first] =
-                EmpireTotalSupplyRangeSumInSystem(empire_id_pair.first, sys_id_pair.first);
-        }
-    }
-
-
-    /////
-    // probably temporary: additional restriction here for supply propagation
-    // but not for general system obstruction as determind within Empire::UpdateSupplyUnobstructedSystems
-    /////
     const std::vector<std::shared_ptr<Fleet>> fleets = GetUniverse().Objects().FindObjects<Fleet>();
 
     for (const std::map<int, Empire*>::value_type& entry : Empires()) {
         int empire_id = entry.first;
-        const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
+
+        // Find systems containing armed aggressive fleets from own empire.
         std::set<int> systems_containing_friendly_fleets;
 
+        const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
         for (std::shared_ptr<const Fleet> fleet : fleets) {
             int system_id = fleet->SystemID();
             if (system_id == INVALID_OBJECT_ID) {
@@ -454,7 +422,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
         std::set<int> systems_where_others_have_supply_sources_and_current_empire_doesnt;
         // add all systems where others have supply
-        for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_system_supply_ranges) {
+        for (const std::map<int, std::map<int, float>>::value_type& empire_supply : empire_system_supply_ranges) {
             if (empire_supply.first == empire_id || empire_supply.first == ALL_EMPIRES)
                 continue;
 
@@ -482,10 +450,22 @@ void SupplyManager::SupplyManagerImpl::Update() {
                 empire_supply_unobstructed_systems[empire_id].erase(system_id);
         }
     }
-    /////
-    // end probably temporary...
-    /////
+}
 
+std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
+    const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
+    std::map<int, std::set<int>>& empire_supply_unobstructed_systems
+)
+{
+    // map from empire id to map from system id to sum of supply source ranges
+    // owned by empire in that in system
+    std::map<int, std::map<int, float>> empire_system_supply_range_sums;
+    for (auto empire_id_pair : empire_system_supply_ranges) {
+        for (auto sys_id_pair : empire_id_pair.second) {
+            empire_system_supply_range_sums[empire_id_pair.first][sys_id_pair.first] =
+                EmpireTotalSupplyRangeSumInSystem(empire_id_pair.first, sys_id_pair.first);
+        }
+    }
 
     // system connections each empire can see / use for supply propagation
     std::map<int, std::map<int, std::set<int>>> empire_visible_starlanes;
@@ -781,51 +761,18 @@ void SupplyManager::SupplyManagerImpl::Update() {
         empire_propagating_supply_ranges = empire_propagating_supply_ranges_next;
     }
 
-    //// DEBUG
-    //DebugLogger() << "SuppolyManager::Update: after removing conflicts, empires can provide supply to the following system ids:";
-    //for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_propagating_supply_ranges) {
-    //    int empire_id = empire_supply.first;
-    //    std::stringstream ss;
-    //    for (std::map<int, float>::value_type& supply_range : empire_supply.second) {
-    //        ss << supply_range.first << " (" << supply_range.second << "),  ";
-    //    }
-    //    DebugLogger() << "empire: " << empire_id << ":  " << ss.str();
-    //}
-    //// END DEBUG
+    return empire_propagating_supply_ranges;
+}
 
-    // record which systems are fleet supplyable by each empire (after resolving conflicts in each system)
-    for (const std::map<int, std::map<int, std::pair<float, float>>>::value_type& empire_supply : empire_propagating_supply_ranges) {
-        int empire_id = empire_supply.first;
-        for (const std::map<int, std::pair<float, float>>::value_type& supply_range : empire_supply.second) {
-            if (supply_range.second.first < 0.0f)
-                continue;   // negative supply doesn't count... zero does (it just reaches)
-            m_fleet_supplyable_system_ids[empire_id].insert(supply_range.first);
-
-            // should be only one empire per system at this point, but use max just to be safe...
-            m_propagated_supply_ranges[supply_range.first] =
-                std::max(supply_range.second.first, m_propagated_supply_ranges[supply_range.first]);
-            m_empire_propagated_supply_ranges[empire_id][supply_range.first] =
-                m_propagated_supply_ranges[supply_range.first];
-
-            // should be only one empire per system at this point, but use max just to be safe...
-            m_propagated_supply_distances[supply_range.first] =
-                std::max(supply_range.second.second, m_propagated_supply_distances[supply_range.first]);
-            m_empire_propagated_supply_distances[empire_id][supply_range.first] =
-                m_propagated_supply_distances[supply_range.first];
-        }
-
-        //DebugLogger() << "For empire: " << empire_id << " system supply distances: ";
-        //for (auto entry : m_empire_propagated_supply_distances[empire_id]) {
-        //    DebugLogger() << entry.first << " : " << entry.second;
-        //}
-    }
-
+void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups(
+    const std::map<int, std::map<int, std::pair<float, float>>>& empire_propagating_supply_ranges)
+{
     // determine supply-connected groups of systems for each empire.
     // need to merge interconnected supply groups into as few sets of mutually-
     // supply-exchanging systems as possible.  This requires finding the
     // connected components of an undirected graph, where the node
     // adjacency are the directly-connected systems determined above.
-    for (std::map<int, std::map<int, std::pair<float, float>>>::value_type& empire_supply : empire_propagating_supply_ranges) {
+    for (const std::map<int, std::map<int, std::pair<float, float>>>::value_type& empire_supply : empire_propagating_supply_ranges) {
         int empire_id = empire_supply.first;
 
         // assemble all direct connections between systems from remaining traversals
@@ -895,6 +842,105 @@ void SupplyManager::SupplyManagerImpl::Update() {
             m_resource_supply_groups[empire_id].insert(component_set.second);
         }
     }
+
+}
+
+void SupplyManager::SupplyManagerImpl::Update() {
+    m_supply_starlane_traversals.clear();
+    m_supply_starlane_obstructed_traversals.clear();
+    m_fleet_supplyable_system_ids.clear();
+    m_resource_supply_groups.clear();
+    m_propagated_supply_ranges.clear();
+
+    // for each empire, need to get a set of sets of systems that can exchange
+    // resources.  some sets may be just one system, in which resources can be
+    // exchanged between UniverseObjects producing or consuming them, but which
+    // can't exchange with any other systems.
+
+    // which systems can share resources depends on system supply ranges, which
+    // systems have obstructions to supply propagation for each empire, and
+    // the ranges and obstructions of other empires' supply, as only one empire
+    // can supply each system or propagate along each starlane. one empire's
+    // propagating supply can push back another's, if the pusher's range is
+    // larger.
+
+    // map from empire id to map from system id to range (in starlane jumps)
+    // that supply can be propagated out of that system by that empire.
+    std::map<int, std::map<int, float> > empire_system_supply_ranges;
+    // map from empire id to which systems are obstructed for it for supply
+    // propagation
+    std::map<int, std::set<int> > empire_supply_unobstructed_systems;
+
+    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
+        const Empire* empire = entry.second;
+        empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
+        empire_supply_unobstructed_systems[entry.first] = empire->SupplyUnobstructedSystems();
+
+        //std::stringstream ss;
+        //for (int system_id : empire_supply_unobstructed_systems[entry.first])
+        //{ ss << system_id << ", "; }
+        //DebugLogger() << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
+    }
+
+    /////
+    // probably temporary: additional restriction here for supply propagation
+    // but not for general system obstruction as determind within Empire::UpdateSupplyUnobstructedSystems
+    /////
+    ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
+        empire_system_supply_ranges,
+        empire_supply_unobstructed_systems);
+    /////
+    // end probably temporary...
+    /////
+
+
+    // Calculate for each empire the supply available at each system
+    std::map<int, std::map<int, std::pair<float, float>>>&& empire_propagating_supply_ranges =
+        PropagateSupplyAlongUnobstructedStarlanes(
+            empire_system_supply_ranges,
+            empire_supply_unobstructed_systems);
+
+
+    //// DEBUG
+    //DebugLogger() << "SuppolyManager::Update: after removing conflicts, empires can provide supply to the following system ids:";
+    //for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_propagating_supply_ranges) {
+    //    int empire_id = empire_supply.first;
+    //    std::stringstream ss;
+    //    for (std::map<int, float>::value_type& supply_range : empire_supply.second) {
+    //        ss << supply_range.first << " (" << supply_range.second << "),  ";
+    //    }
+    //    DebugLogger() << "empire: " << empire_id << ":  " << ss.str();
+    //}
+    //// END DEBUG
+
+    // record which systems are fleet supplyable by each empire (after resolving conflicts in each system)
+    for (const std::map<int, std::map<int, std::pair<float, float>>>::value_type& empire_supply : empire_propagating_supply_ranges) {
+        int empire_id = empire_supply.first;
+        for (const std::map<int, std::pair<float, float>>::value_type& supply_range : empire_supply.second) {
+            if (supply_range.second.first < 0.0f)
+                continue;   // negative supply doesn't count... zero does (it just reaches)
+            m_fleet_supplyable_system_ids[empire_id].insert(supply_range.first);
+
+            // should be only one empire per system at this point, but use max just to be safe...
+            m_propagated_supply_ranges[supply_range.first] =
+                std::max(supply_range.second.first, m_propagated_supply_ranges[supply_range.first]);
+            m_empire_propagated_supply_ranges[empire_id][supply_range.first] =
+                m_propagated_supply_ranges[supply_range.first];
+
+            // should be only one empire per system at this point, but use max just to be safe...
+            m_propagated_supply_distances[supply_range.first] =
+                std::max(supply_range.second.second, m_propagated_supply_distances[supply_range.first]);
+            m_empire_propagated_supply_distances[empire_id][supply_range.first] =
+                m_propagated_supply_distances[supply_range.first];
+        }
+
+        //DebugLogger() << "For empire: " << empire_id << " system supply distances: ";
+        //for (auto entry : m_empire_propagated_supply_distances[empire_id]) {
+        //    DebugLogger() << entry.first << " : " << entry.second;
+        //}
+    }
+
+    DetermineSupplyConnectedSystemGroups(empire_propagating_supply_ranges);
 }
 
 template <class Archive>
