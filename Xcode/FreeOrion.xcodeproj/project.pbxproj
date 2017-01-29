@@ -323,6 +323,7 @@
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
 		CE0ED5F91BCFE16E00375001 /* AIWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */; };
 		CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */; };
+		CE2BAD8F1E3E43E40085A4DC /* Pathfinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */; };
 		CE2C454D1C65036F0085A4DC /* ResourceBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */; };
 		CE2C454E1C6503990085A4DC /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
 		CE3102B61DBFD0730085A4DC /* DeferredLayout.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE3102B51DBFD0730085A4DC /* DeferredLayout.cpp */; };
@@ -1088,6 +1089,8 @@
 		CE0ED5F81BCFE16E00375001 /* AIWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIWrapper.h; sourceTree = "<group>"; };
 		CE13B48D1C8CB0CF0085A4DC /* CommonParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonParams.h; sourceTree = "<group>"; };
 		CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonParamsParser.cpp; sourceTree = "<group>"; };
+		CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pathfinder.cpp; sourceTree = "<group>"; };
+		CE2BAD8E1E3E43E40085A4DC /* Pathfinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pathfinder.h; sourceTree = "<group>"; };
 		CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceBrowseWnd.cpp; sourceTree = "<group>"; };
 		CE2C454C1C65036F0085A4DC /* ResourceBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceBrowseWnd.h; sourceTree = "<group>"; };
 		CE3102B41DBFD05B0085A4DC /* DeferredLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredLayout.h; sourceTree = "<group>"; };
@@ -1831,6 +1834,8 @@
 				471D5CF80A98A3F900DA9C21 /* Meter.h */,
 				82592EF3147E387100B840A5 /* ObjectMap.cpp */,
 				82592EF4147E387100B840A5 /* ObjectMap.h */,
+				CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */,
+				CE2BAD8E1E3E43E40085A4DC /* Pathfinder.h */,
 				471D5CFC0A98A3F900DA9C21 /* Planet.cpp */,
 				471D5CFD0A98A3F900DA9C21 /* Planet.h */,
 				471D5CFE0A98A3F900DA9C21 /* PopCenter.cpp */,
@@ -2594,6 +2599,7 @@
 				47103BF40CF04E5900A7DF2B /* Order.cpp in Sources */,
 				47103BF50CF04E5900A7DF2B /* OrderSet.cpp in Sources */,
 				47103BF60CF04E5900A7DF2B /* Random.cpp in Sources */,
+				CE2BAD8F1E3E43E40085A4DC /* Pathfinder.cpp in Sources */,
 				47103BF70CF04E5900A7DF2B /* SitRepEntry.cpp in Sources */,
 				47103BF80CF04E5900A7DF2B /* VarText.cpp in Sources */,
 				47103BF90CF04E5900A7DF2B /* XMLDoc.cpp in Sources */,
