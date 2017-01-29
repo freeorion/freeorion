@@ -15,6 +15,7 @@
 #include <ctime>
 
 #include "Export.h"
+#include "pcg_random.hpp"
 
 /** \file
  *
@@ -31,7 +32,13 @@
  * call the Random*() functions.
  */
 
-typedef boost::mt19937                                                          GeneratorType;
+#ifdef __SIZEOF_INT128__
+/** If native 128-bit integers are available, use them. 64-bit output. */
+typedef pcg64                                                                   GeneratorType;
+#else
+/** Otherwise, use a different algorithm using 64-bit integers and 32-bit output. */
+typedef pcg32_k2                                                                GeneratorType;
+#endif
 typedef boost::variate_generator<GeneratorType&, boost::uniform_smallint<> >    SmallIntDistType;
 typedef boost::variate_generator<GeneratorType&, boost::uniform_int<> >         IntDistType;
 typedef boost::variate_generator<GeneratorType&, boost::uniform_real<> >        DoubleDistType;
@@ -41,7 +48,7 @@ typedef boost::variate_generator<GeneratorType&, boost::normal_distribution<> > 
 FO_COMMON_API void Seed(unsigned int seed);
 
 /** seeds the underlying random number generator used to drive all random number distributions with 
-    the current clock time */
+    /dev/random or equivalent */
 FO_COMMON_API void ClockSeed();
 
 /** returns a functor that provides a uniform distribution of small
