@@ -104,14 +104,14 @@ public:
      * level.
      *
      * @param aggr The new aggression level.  The value should be one of
-     *      ::Aggression.
+     *      Aggression.
      */
     void SetAggression(int aggr);
 
 protected:
     /** @brief The current aggressiveness of this AI
      *
-     * The value should be one of ::Aggression.
+     * The value should be one of Aggression.
      */
     int m_aggression;
 };
