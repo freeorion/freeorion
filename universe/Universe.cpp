@@ -1976,35 +1976,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     std::list<std::vector<std::shared_ptr<const UniverseObject>>> tech_sources;
     for (std::map<int, Empire*>::value_type& entry : Empires()) {
         const Empire* empire = entry.second;
-        int source_id = empire->CapitalID();
-        std::shared_ptr<const UniverseObject> source = m_objects.Object(source_id);
-        if (source_id == INVALID_OBJECT_ID ||
-            !source ||
-            !source->Unowned() || // TODO: Don't forget to fix this!
-            !source->OwnedBy(empire->EmpireID()))
-        {
-            // find alternate object owned by this empire to act as source
-            // first try to get a planet
-            std::vector<std::shared_ptr<UniverseObject>> empire_planets = m_objects.FindObjects(OwnedVisitor<Planet>(empire->EmpireID()));
-            if (!empire_planets.empty()) {
-                source = *empire_planets.begin();
-                source_id = source->ID();
-            } else {
-                // if no planet, use any owned object
-                std::vector<std::shared_ptr<UniverseObject>> empire_objects = m_objects.FindObjects(OwnedVisitor<UniverseObject>(empire->EmpireID()));
-                if (!empire_objects.empty()) {
-                    source = *empire_objects.begin();
-                    source_id = source->ID();
-                } else {
-                    continue;   // can't do techs for this empire
-                }
-            }
-        }
-
-        if (!source) {
-            ErrorLogger() << "somehow to to storing targets and causes of tech effectsgroup without a source...?";
+        std::shared_ptr<const UniverseObject> source = empire->Source();
+        if (!source)
             continue;
-        }
 
         tech_sources.push_back(std::vector<std::shared_ptr<const UniverseObject>>(1U, source));
         for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
@@ -3634,34 +3608,6 @@ const bool& Universe::UniverseObjectSignalsInhibited()
 void Universe::InhibitUniverseObjectSignals(bool inhibit)
 { m_inhibit_universe_object_signals = inhibit; }
 
-namespace {
-    // Looks like there are at least 4 SourceForEmpire functions lying around:
-    // one in ShipDesign, one in Tech, one in Building, one here...
-    // TODO: Eliminate duplication
-    std::shared_ptr<const UniverseObject> SourceForEmpire(int empire_id) {
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire) {
-            DebugLogger() << "SourceForEmpire: Unable to get empire with ID: " << empire_id;
-            return nullptr;
-        }
-        // get a source object, which is owned by the empire with the passed-in
-        // empire id.  this is used in conditions to reference which empire is
-        // doing the building.  Ideally this will be the capital, but any object
-        // owned by the empire will work.
-        std::shared_ptr<const UniverseObject> source = GetUniverseObject(empire->CapitalID());
-        // no capital?  scan through all objects to find one owned by this empire
-        if (!source) {
-            for (std::shared_ptr<const UniverseObject> obj : Objects()) {
-                if (obj->OwnedBy(empire_id)) {
-                    source = obj;
-                    break;
-                }
-            }
-        }
-        return source;
-    }
-}
-
 void Universe::UpdateStatRecords() {
     int current_turn = CurrentTurn();
     if (current_turn == INVALID_GAME_TURN)
@@ -3670,9 +3616,13 @@ void Universe::UpdateStatRecords() {
         m_stat_records.clear();
 
     std::map<int, std::shared_ptr<const UniverseObject>> empire_sources;
-
     for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
-        empire_sources[empire_entry.first] = SourceForEmpire(empire_entry.first);
+        std::shared_ptr<const UniverseObject> source = empire_entry.second->Source();
+        if (!source) {
+            ErrorLogger() << "Universe::UpdateStatRecords() unable to find source for empire.  Skipping.";
+            continue;
+        }
+        empire_sources[empire_entry.first] = source;
     }
 
     // process each stat

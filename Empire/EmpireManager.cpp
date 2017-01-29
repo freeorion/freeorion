@@ -46,6 +46,11 @@ const Empire* EmpireManager::GetEmpire(int id) const {
     return it == m_empire_map.end() ? nullptr : it->second;
 }
 
+std::shared_ptr<const UniverseObject> EmpireManager::GetSource(int id) const {
+    auto it = m_empire_map.find(id);
+    return it != m_empire_map.end() ? it->second->Source() : nullptr;
+}
+
 const std::string& EmpireManager::GetEmpireName(int id) const {
     const_iterator it = m_empire_map.find(id);
     return it == m_empire_map.end() ? EMPTY_STRING : it->second->Name();

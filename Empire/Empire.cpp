@@ -1400,6 +1400,7 @@ namespace {
 Empire::Empire() :
     m_id(ALL_EMPIRES),
     m_capital_id(INVALID_OBJECT_ID),
+    m_source_id(INVALID_OBJECT_ID),
     m_research_queue(m_id),
     m_production_queue(m_id)
 { Init(); }
@@ -1411,6 +1412,7 @@ Empire::Empire(const std::string& name, const std::string& player_name,
     m_player_name(player_name),
     m_color(color),
     m_capital_id(INVALID_OBJECT_ID),
+    m_source_id(INVALID_OBJECT_ID),
     m_research_queue(m_id),
     m_production_queue(m_id)
 {
@@ -1468,6 +1470,40 @@ int Empire::StockpileID(ResourceType res) const {
     }
 }
 
+int Empire::SourceID() const {
+    std::shared_ptr<const UniverseObject> good_source = Source();
+    return good_source ? good_source->ID() : INVALID_OBJECT_ID;
+}
+
+std::shared_ptr<const UniverseObject> Empire::Source() const {
+    if (m_eliminated)
+        return nullptr;
+
+    // Use the current source if valid
+    auto valid_current_source = GetUniverseObject(m_source_id);
+    if (valid_current_source && valid_current_source->OwnedBy(m_id))
+        return valid_current_source;
+
+    // Try the capital
+    auto capital_as_source = GetUniverseObject(m_capital_id);
+    if (capital_as_source && capital_as_source->OwnedBy(m_id)) {
+        m_source_id = m_capital_id;
+        return capital_as_source;
+    }
+
+    // Find any object owned by the empire
+    // TODO determine if ExistingObjects() is faster and acceptable
+    for (std::shared_ptr<const UniverseObject> obj_it : Objects()) {
+        if (obj_it->OwnedBy(m_id)) {
+            m_source_id = obj_it->ID();
+            return (obj_it);
+        }
+    }
+
+    m_source_id = INVALID_OBJECT_ID;
+    return nullptr;
+}
+
 std::string Empire::Dump() const {
     std::string retval = "Empire name: " + m_name +
                          " ID: "+ boost::lexical_cast<std::string>(m_id) +
@@ -1480,8 +1516,22 @@ std::string Empire::Dump() const {
     return retval;
 }
 
-void Empire::SetCapitalID(int id)
-{ m_capital_id = id; }
+void Empire::SetCapitalID(int id) {
+    m_capital_id = INVALID_OBJECT_ID;
+    m_source_id = INVALID_OBJECT_ID;
+
+    if (id == INVALID_OBJECT_ID)
+        return;
+
+    // Verify that the capital exists and is owned by the empire
+    auto possible_capital = Objects().ExistingObject(id);
+    if (possible_capital && possible_capital->OwnedBy(m_id))
+        m_capital_id = id;
+
+    auto possible_source = GetUniverseObject(id);
+    if (possible_source && possible_source->OwnedBy(m_id))
+        m_source_id = id;
+}
 
 Meter* Empire::GetMeter(const std::string& name) {
     std::map<std::string, Meter>::iterator it = m_meters.find(name);
