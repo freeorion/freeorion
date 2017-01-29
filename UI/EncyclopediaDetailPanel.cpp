@@ -454,32 +454,32 @@ namespace {
             // part types
             for (const std::map<std::string, PartType*>::value_type& entry : GetPartTypeManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
-                    dir_entries[UserString(entry.first)] = {VarText::SHIP_PART_TAG, entry.first};
+                    dir_entries[UserString(entry.first)] = std::make_pair(VarText::SHIP_PART_TAG, entry.first);
 
             // hull types
             for (const std::map<std::string, HullType*>::value_type& entry : GetHullTypeManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
-                    dir_entries[UserString(entry.first)] = {VarText::SHIP_HULL_TAG, entry.first};
+                    dir_entries[UserString(entry.first)] = std::make_pair(VarText::SHIP_HULL_TAG, entry.first);
 
             // techs
             for (const std::string& tech_name : GetTechManager().TechNames())
                 if (DetermineCustomCategory(GetTech(tech_name)->Tags()) == dir_name)
-                    dir_entries[UserString(tech_name)] = {VarText::TECH_TAG, tech_name};
+                    dir_entries[UserString(tech_name)] = std::make_pair(VarText::TECH_TAG, tech_name);
 
             // building types
             for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
-                    dir_entries[UserString(entry.first)] = {VarText::BUILDING_TYPE_TAG, entry.first};
+                    dir_entries[UserString(entry.first)] = std::make_pair(VarText::BUILDING_TYPE_TAG, entry.first);
 
             // species
             for (const std::map<std::string, Species*>::value_type& entry : GetSpeciesManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
-                    dir_entries[UserString(entry.first)] = {VarText::SPECIES_TAG, entry.first};
+                    dir_entries[UserString(entry.first)] = std::make_pair(VarText::SPECIES_TAG, entry.first);
 
             // field types
             for (const std::map<std::string, FieldType*>::value_type& entry : GetFieldTypeManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
-                    dir_entries[UserString(entry.first)] = {VarText::FIELD_TYPE_TAG, entry.first};
+                    dir_entries[UserString(entry.first)] = std::make_pair(VarText::FIELD_TYPE_TAG, entry.first);
 
             // Add sorted entries
             for (std::map<std::string, std::pair<std::string, std::string>>::value_type& entry : dir_entries) {
