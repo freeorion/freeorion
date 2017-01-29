@@ -1980,6 +1980,49 @@ void Empire::Win(const std::string& reason) {
     }
 }
 
+namespace
+{
+    std::vector<int> ExistingObjectsKnownToEmpire(int id) {
+        const Universe& universe = GetUniverse();
+        const ObjectMap& empire_known_objects = EmpireKnownObjects(id);
+
+        // get ids of objects partially or better visible to this empire.
+        auto known_objects_vec = empire_known_objects.FindObjectIDs();
+        const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(id);
+
+        std::vector<int> known_objects;
+
+        // exclude objects known to have been destroyed (or rather, include ones that aren't known by this empire to be destroyed)
+        for (int object_id : known_objects_vec)
+            if (known_destroyed_objects.find(object_id) == known_destroyed_objects.end())
+                known_objects.push_back(object_id);
+        return known_objects;
+    }
+}
+
+void Empire::UpdateSystemToStealthAndSupplyRange() {
+
+    m_system_to_stealth_supply.clear();
+
+    // as of this writing, only planets can generate supply propagation
+    for (int object_id : ExistingObjectsKnownToEmpire(EmpireID())) {
+        std::shared_ptr<const Planet> planet = GetPlanet(object_id);
+        std::shared_ptr<const UniverseObject> obj = planet;
+        // Check is it an owned planet with a valid id and a supply meter.
+        if (!planet
+            || !planet->OwnedBy(EmpireID())
+            || (planet->SystemID() == INVALID_OBJECT_ID)
+            || !obj->GetMeter(METER_SUPPLY))
+        { continue; }
+
+        // TODO: Why is this NextTurn Supply?
+        float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
+        float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
+
+        m_system_to_stealth_supply[planet->SystemID()].insert(std::make_pair(stealth, supply_range));
+    }
+}
+
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_supply_system_ranges.clear();

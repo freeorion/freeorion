@@ -11,6 +11,7 @@
 
 #include <deque>
 #include <string>
+#include <unordered_map>
 
 struct ItemSpec;
 class ShipDesign;
@@ -509,6 +510,8 @@ public:
     void        UpdateSystemSupplyRanges(const std::set<int>& known_objects);
     /** Calculates ranges that systems can send fleet and resource supplies. */
     void        UpdateSystemSupplyRanges();
+    /** Calculates stealth and range that systems can send fleet and resource supplies. */
+    void        UpdateSystemToStealthAndSupplyRange();
     /** Calculates systems that can propagate supply (fleet or resource) using
       * the specified set of \a known_systems */
     void        UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems);
@@ -695,6 +698,10 @@ private:
     // cached calculation results, returned by reference
     std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
     std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
+
+    /** A map from system id to a set of supply stealth and range.*/
+    std::unordered_map<int, std::set<std::pair<float, float>>> m_system_to_stealth_supply;
+
     std::map<int, std::set<int> >   m_available_system_exit_lanes;  ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
     std::map<int, std::set<int> >   m_pending_system_exit_lanes;    ///< pending updates to m_available_system_exit_lanes
 
