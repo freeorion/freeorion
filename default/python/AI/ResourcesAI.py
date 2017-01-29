@@ -628,7 +628,7 @@ def set_planet_resource_foci():
 
         reporter.print_table(priority_ratio)
 
-        resource_timer.end()
+        resource_timer.stop_and_print()
         # resource_timer is file scope in order to capture times from different functions
         # in this file, but it produces output each turn.  It needs to be cleared
         # once per turn so that the aggregate times only reflect this turn.

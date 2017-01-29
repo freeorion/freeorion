@@ -550,7 +550,7 @@ def get_colony_fleets():
     # export outposts for other AI modules
     foAI.foAIstate.colonisableOutpostIDs.clear()
     foAI.foAIstate.colonisableOutpostIDs.update(sorted_outposts)
-    colonization_timer.end()
+    colonization_timer.stop_and_print()
     # colonization_timer is file scope in order to capture times from different functions
     # in this file, but it produces output each turn.  It needs to be cleared
     # once per turn so that the aggregate times only reflect this turn.

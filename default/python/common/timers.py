@@ -73,13 +73,12 @@ class Timer(object):
 
         self._print_timer_table(time_table)
 
-    def end(self, dont_print=False):
+    def stop_and_print(self):
         """
-        Stop timer, output flat result if dont_print is False.
+        Stop timer, output flat result.
         """
         self.stop()
-        if not dont_print:
-            self.print_flat()
+        self.print_flat()
 
     def clear_data(self):
         """

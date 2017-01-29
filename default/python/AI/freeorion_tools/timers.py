@@ -41,7 +41,7 @@ class DummyTimer(object):
     def start(self, *args, **kwargs):
         pass
 
-    def end(self):
+    def stop_and_print(self):
         pass
 
     def clear_data(self):
@@ -80,12 +80,12 @@ class AILogTimer(Timer):
             f.write(text)
             f.write('\n')
 
-    def end(self):
+    def stop_and_print(self):
         """
-        Stop timer, output result, clear checks.
+        Stop timer, output result.
         If dumping to file, if headers are not match to prev, new header line will be added.
         """
-        Timer.end(self)
+        Timer.stop_and_print(self)
 
         if self.write_log and DUMP_TO_FILE:
             turn = fo.currentTurn()

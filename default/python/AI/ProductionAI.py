@@ -60,7 +60,7 @@ def find_best_designs_this_turn():
     if fo.currentTurn() % 10 == 0:
         design_timer.start('Printing')
         ShipDesignAI.Cache.print_best_designs()
-    design_timer.end()
+    design_timer.stop_and_print()
 
 
 def get_design_cost(design, pid):  # TODO: Use new framework

@@ -249,8 +249,9 @@ def generateOrders():  # pylint: disable=invalid-name
             main_timer.stop()
         except Exception as e:
             print_error(e, location=action.__name__)
-    main_timer.end()
-    turn_timer.end()
+    main_timer.stop_and_print()
+    turn_timer.stop_and_print()
+
     # Turn timer is file scope in order to capture times from different functions
     # in this file, but it produces output each turn.  It needs to be cleared
     # once per turn so that the aggregate times only reflect this turn.
