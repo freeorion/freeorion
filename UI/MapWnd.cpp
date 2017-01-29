@@ -198,7 +198,7 @@ namespace {
 
     // returns an int-int pair that doesn't depend on the order of parameters
     std::pair<int, int> UnorderedIntPair(int one, int two)
-    { return std::make_pair(std::min(one, two), std::max(one, two)); }
+    { return {std::min(one, two), std::max(one, two)}; }
 
     /* Returns fractional distance along line segment between two points that a
      * third point between them is.assumes the "mid" point is between the
@@ -220,7 +220,7 @@ namespace {
     std::pair<double, double> PositionFractionalAtDistanceBetweenPoints(double X1, double Y1, double X2, double Y2, double dist) {
         double newX = X1 + (X2 - X1) * dist;
         double newY = Y1 + (Y2 - Y1) * dist;
-        return std::make_pair(newX, newY);
+        return {newX, newY};
     }
 
     /* Returns apparent map X and Y position of an object at universe position
@@ -242,7 +242,7 @@ namespace {
         std::shared_ptr<const UniverseObject> next = GetEmpireKnownObject(lane.second, empire_id);
         if (!next || !prev) {
             ErrorLogger() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
-            return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+            return {UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION};
         }
 
         // get fractional distance along lane that fleet's universe position is
@@ -666,7 +666,7 @@ MapWnd::MapWnd() :
     m_system_fleet_insert_remove_signals(),
     m_fleet_lines(),
     m_projected_fleet_lines(),
-    m_line_between_systems(std::make_pair(INVALID_OBJECT_ID, INVALID_OBJECT_ID)),
+    m_line_between_systems{INVALID_OBJECT_ID, INVALID_OBJECT_ID},
     m_star_core_quad_vertices(),
     m_star_halo_quad_vertices(),
     m_galaxy_gas_quad_vertices(),
@@ -2868,7 +2868,7 @@ namespace GetPathsThroughSupplyLanes {
         for (int terminal_point : terminal_points)
         {
             try_next.push_back(PrevCurrInfo(terminal_point, terminal_point, terminal_point));
-            visited.insert(std::make_pair(terminal_point, PathInfo(terminal_point)));
+            visited.insert({terminal_point, PathInfo(terminal_point)});
         }
 
         // Find all reachable midpoints where paths from two different
@@ -2896,7 +2896,7 @@ namespace GetPathsThroughSupplyLanes {
                 // the same originating terminal point as the current
                 // system.
                 if (previous == visited.end()) {
-                    visited.insert(std::make_pair(next, PathInfo(curr.curr, curr.origin)));
+                    visited.insert({next, PathInfo(curr.curr, curr.origin)});
                     try_next.push_back(PrevCurrInfo(curr.curr, next, curr.origin));
 
                 // next has an ancester so it was visited. Modify the
@@ -2979,16 +2979,13 @@ namespace GetPathsThroughSupplyLanes {
 }
 
 namespace {
-
     /** Look a \p kkey in \p mmap and if not found allocate a new
         shared_ptr with the default constructor.*/
     template <typename Map>
     typename Map::mapped_type& lookup_or_make_shared(Map& mmap, typename Map::key_type const& kkey) {
         typename Map::iterator map_it = mmap.find(kkey);
         if (map_it == mmap.end()) {
-            map_it = mmap.insert(map_it,
-                                 std::make_pair(kkey,
-                                                std::make_shared<typename Map::mapped_type::element_type>()));
+            map_it = mmap.insert(map_it, {kkey, std::make_shared<typename Map::mapped_type::element_type>()});
             if (map_it == mmap.end())
                 ErrorLogger() << "Unable to insert new empty set into map.";
         }
@@ -3064,8 +3061,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
 
         for (const std::set<std::pair<int, int>>::value_type& supply_lane : resource_supply_lanes_directed) {
-            resource_supply_lanes_undirected.insert(std::make_pair(supply_lane.first, supply_lane.second));
-            resource_supply_lanes_undirected.insert(std::make_pair(supply_lane.second, supply_lane.first));
+            resource_supply_lanes_undirected.insert({supply_lane.first, supply_lane.second});
+            resource_supply_lanes_undirected.insert({supply_lane.second, supply_lane.first});
         }
 
         // For each pool of resources find all paths available through
@@ -3184,8 +3181,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                     //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
 
-                    std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
-                    std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+                    std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
+                    std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
 
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
                     if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
@@ -3206,15 +3203,15 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // render half-starlane from the current start_system to the current dest_system?
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
-            if (rendered_half_starlanes.find(std::make_pair(start_system->ID(), dest_system->ID())) ==
+            if (rendered_half_starlanes.find({start_system->ID(), dest_system->ID()}) ==
                 rendered_half_starlanes.end())
             {
                 // NOTE: this will never find a preexisting half lane   NOTE LATER: I probably wrote that comment, but have no idea what it means...
                 //std::cout << "half lane not found... considering possible half lanes to add" << std::endl;
 
                 // scan through possible empires to have a half-lane here and add a half-lane if one is found
-                std::pair<int, int> lane_forward = std::make_pair(start_system->ID(), dest_system->ID());
-                //std::pair<int, int> lane_backward = std::make_pair(dest_system->ID(), start_system->ID());
+                std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
+                //std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
                 LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
                 GG::Clr lane_colour;
                 if ( (this_client_empire) &&(res_group_core_members.find(start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
@@ -3255,7 +3252,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
                     if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
                         // found an empire that has a half lane here, so add it.
-                        rendered_half_starlanes.insert(std::make_pair(start_system->ID(), dest_system->ID()));  // inserted as ordered pair, so both directions can have different half-lanes
+                        rendered_half_starlanes.insert({start_system->ID(), dest_system->ID()});  // inserted as ordered pair, so both directions can have different half-lanes
 
                         m_starlane_vertices.store(lane_endpoints.X1,
                                                   lane_endpoints.Y1);
@@ -3489,7 +3486,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
 
         // find this empires entry for this location, if any
-        std::pair<int, std::pair<float, float> > key = std::make_pair(obj->Owner(), std::make_pair(X, Y));
+        std::pair<int, std::pair<float, float> > key{obj->Owner(), {X, Y}};
         std::map<std::pair<int, std::pair<float, float> >, float>::iterator range_it =
             empire_position_max_detection_ranges.find(key);
         if (range_it != empire_position_max_detection_ranges.end()) {
@@ -3518,7 +3515,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
         GG::Pt lr = circle_centre + GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
 
-        circles[circle_colour].push_back(std::make_pair(ul, lr));
+        circles[circle_colour].push_back({ul, lr});
 
         //std::cout << "adding radii circle at: " << circle_centre << " for empire: " << it->first.first << std::endl;
     }
@@ -3566,9 +3563,9 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         std::size_t radii_end_index = m_visibility_radii_vertices.size();
         std::size_t border_end_index = m_visibility_radii_border_vertices.size();
 
-        m_radii_radii_vertices_indices_runs.push_back(std::make_pair(
-            std::make_pair(radii_start_index, radii_end_index - radii_start_index),
-            std::make_pair(border_start_index, border_end_index - border_start_index)));
+        m_radii_radii_vertices_indices_runs.push_back({
+            {radii_start_index, radii_end_index - radii_start_index},
+            {border_start_index, border_end_index - border_start_index}});
     }
 
     m_visibility_radii_border_vertices.createServerBuffer();
@@ -4203,7 +4200,7 @@ void MapWnd::DoFleetButtonsLayout() {
 
 std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<const Fleet> fleet) const {
     if (!fleet) {
-        return std::make_pair(UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION);
+        return {UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION};
     }
 
     // get endpoints of lane on screen, store in UnorderedIntPair which can be looked up in MapWnd's map of starlane endpoints
@@ -4216,7 +4213,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<c
         // couldn't find an entry for the lane this fleet is one, so just
         // return actual position of fleet on starlane - ignore the distance
         // away from the star centre at which starlane endpoints should appear
-        return std::make_pair<double, double>(fleet->X(), fleet->Y());
+        return {fleet->X(), fleet->Y()};
     }
 
     // return apparent position of fleet on starlane
@@ -4226,8 +4223,8 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<c
 
 namespace {
 
-    typedef boost::unordered_map<std::pair<int, int>, std::vector<int> > SystemXEmpireToFleetsMap;
-    typedef boost::unordered_map<std::pair<std::pair<double, double>, int>, std::vector<int> > LocationXEmpireToFleetsMap;
+    typedef boost::unordered_map<std::pair<int, int>, std::vector<int>> SystemXEmpireToFleetsMap;
+    typedef boost::unordered_map<std::pair<std::pair<double, double>, int>, std::vector<int>> LocationXEmpireToFleetsMap;
 
     /** Return fleet if \p obj is not destroyed, not stale, a fleet and not empty.*/
     std::shared_ptr<const Fleet> IsQualifiedFleet(const std::shared_ptr<const UniverseObject>& obj,
@@ -4320,17 +4317,17 @@ void MapWnd::DeferredRefreshFleetButtons() {
 
         // Collect fleets with a travel route just departing.
         if (std::shared_ptr<const System> departure_system = IsDepartingFromSystem(fleet)) {
-            departing_fleets[std::make_pair(departure_system->ID(), fleet->Owner())].push_back(fleet->ID());
+            departing_fleets[{departure_system->ID(), fleet->Owner()}].push_back(fleet->ID());
 
             // Collect stationary fleets by system.
         } else if (std::shared_ptr<const System> stationary_system = IsStationaryInSystem(fleet)) {
             // DebugLogger() << fleet->Name() << " is Stationary." ;
-            stationary_fleets[std::make_pair(stationary_system->ID(), fleet->Owner())].push_back(fleet->ID());
+            stationary_fleets[{stationary_system->ID(), fleet->Owner()}].push_back(fleet->ID());
 
             // Collect traveling fleets between systems by location
         } else if (IsMoving(fleet)) {
             // DebugLogger() << fleet->Name() << " is on the move." ;
-            moving_fleets[std::make_pair(std::make_pair(fleet->X(), fleet->Y()), fleet->Owner())].push_back(fleet->ID());
+            moving_fleets[{{fleet->X(), fleet->Y()}, fleet->Owner()}].push_back(fleet->ID());
         } else {
             ErrorLogger() << "Fleet "<< fleet->Name() << " is not stationary, departing from a system or in transit."
                           << " final dest id is " << fleet->FinalDestinationID()
@@ -5217,7 +5214,7 @@ void MapWnd::Sanitize() {
 
     m_fleets_exploring.clear();
 
-    m_line_between_systems = std::make_pair(INVALID_OBJECT_ID, INVALID_OBJECT_ID);
+    m_line_between_systems = {INVALID_OBJECT_ID, INVALID_OBJECT_ID};
 }
 
 bool MapWnd::ReturnToMap() {
@@ -5966,7 +5963,7 @@ namespace {
         // get systems, store alphabetized
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
         for (std::shared_ptr<const System> system : Objects().FindObjects<System>()) {
-            system_names_ids.insert(std::make_pair(system->Name(), system->ID()));
+            system_names_ids.insert({system->Name(), system->ID()});
         }
         return system_names_ids;
     }
@@ -5983,7 +5980,7 @@ namespace {
         std::set<std::pair<std::string, int>, CustomRowCmp> system_names_ids;
         for (int system_id : system_ids) {
             if (std::shared_ptr<const System> sys = GetSystem(system_id))
-                system_names_ids.insert(std::make_pair(sys->Name(), sys->ID()));
+                system_names_ids.insert({sys->Name(), sys->ID()});
         }
 
         return system_names_ids;
