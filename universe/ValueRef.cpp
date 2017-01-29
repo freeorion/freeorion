@@ -1763,7 +1763,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
             empire_id = m_int_ref1->Eval(context);
         Empire* empire = GetEmpire(empire_id);
         if (!empire)
-            return -1.0;
+            return 0.0;
 
         std::string empire_meter_name;
         if (m_string_ref1)
