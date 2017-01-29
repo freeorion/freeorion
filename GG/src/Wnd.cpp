@@ -111,30 +111,6 @@ namespace {
     const int DEFAULT_LAYOUT_BORDER_MARGIN = 0;
     const int DEFAULT_LAYOUT_CELL_MARGIN = 5;
 
-    struct WndSizeFunctor
-    {
-        std::string operator()(const Wnd* wnd)
-        {
-            if (!wnd)
-                return "";
-            std::stringstream stream;
-            stream << "(" << wnd->Width() << ", " << wnd->Height() << ")";
-            return stream.str();
-        }
-    };
-
-    struct WndClientSizeFunctor
-    {
-        std::string operator()(const Wnd* wnd)
-        {
-            if (!wnd)
-                return "";
-            std::stringstream stream;
-            stream << "(" << wnd->ClientWidth() << ", " << wnd->ClientHeight() << ")";
-            return stream.str();
-        }
-    };
-
     struct ForwardToParentException {};
 }
 

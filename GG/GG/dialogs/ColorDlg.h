@@ -208,14 +208,6 @@ public:
     static const std::size_t INVALID_COLOR_BUTTON;
 
 private:
-    struct ColorButtonClickFunctor
-    {
-        ColorButtonClickFunctor(std::size_t id, ColorDlg* picker_);
-        void operator()();
-        const std::size_t button_id;
-        ColorDlg* picker;
-    };
-
     enum {R, G, B, A, H, S, V};
 
     void Init(const std::shared_ptr<Font>& font);
@@ -265,8 +257,6 @@ private:
     Clr                       m_text_color;
 
     static std::vector<Clr>   s_custom_colors;
-
-    friend struct ColorButtonClickFunctor;
 };
 
 } // namespace GG

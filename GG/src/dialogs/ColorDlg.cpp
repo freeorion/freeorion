@@ -486,16 +486,6 @@ void ColorDlg::ColorDisplay::Render()
 }
 
 
-// ColorDlg::ColorButtonClickFunctor
-ColorDlg::ColorButtonClickFunctor::ColorButtonClickFunctor(std::size_t id, ColorDlg* picker_) :
-    button_id(id),
-    picker(picker_)
-{}
-
-void ColorDlg::ColorButtonClickFunctor::operator()()
-{ picker->ColorButtonClicked(button_id); }
-
-
 // ColorDlg
 
 // static(s)
@@ -703,7 +693,7 @@ void ColorDlg::Init(const std::shared_ptr<Font>& font)
 void ColorDlg::ConnectSignals()
 {
     for (std::size_t i = 0; i < m_color_buttons.size(); ++i) {
-        Connect(m_color_buttons[i]->LeftClickedSignal, ColorButtonClickFunctor(i, this));
+        Connect(m_color_buttons[i]->LeftClickedSignal, [this, i](){ this->ColorButtonClicked(i); });
     }
     Connect(m_sliders[R]->SlidSignal, &ColorDlg::RedSliderChanged, this);
     Connect(m_sliders[G]->SlidSignal, &ColorDlg::GreenSliderChanged, this);

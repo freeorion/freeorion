@@ -439,17 +439,6 @@ protected:
     //@}
 
 private:
-    class ButtonClickedFunctor // for catching button-click signals from the contained buttons
-    {
-    public:
-        ButtonClickedFunctor(RadioButtonGroup* group, StateButton* button, std::size_t index);
-        void operator()(bool checked);
-    private:
-        RadioButtonGroup* m_group;
-        StateButton*      m_button;
-        std::size_t       m_index;
-    };
-
     void ConnectSignals();
     void SetCheckImpl(std::size_t index, bool signal);
     void Reconnect();
@@ -460,8 +449,6 @@ private:
     bool                    m_expand_buttons;
     bool                    m_expand_buttons_proportionally;
     bool                    m_render_outline;
-
-    friend class ButtonClickedFunctor;
 };
 
 } // namespace GG

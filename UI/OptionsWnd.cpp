@@ -183,78 +183,6 @@ namespace {
         return false;
     }
 
-    template <class T>
-    struct SetOptionFunctor
-    {
-        SetOptionFunctor(const std::string& option_name) : m_option_name(option_name) {}
-        void operator()(const T& value) { GetOptionsDB().Set(m_option_name, value); }
-        const std::string m_option_name;
-    };
-
-    template <>
-    struct SetOptionFunctor<GG::Clr>
-    {
-        SetOptionFunctor(const std::string& option_name) : m_option_name(option_name) {}
-        void operator()(const GG::Clr& clr) { GetOptionsDB().Set<StreamableColor>(m_option_name, clr); }
-        const std::string m_option_name;
-    };
-
-    template <>
-    struct SetOptionFunctor<std::string>
-    {
-        SetOptionFunctor(const std::string& option_name, GG::Edit* edit = nullptr, OptionsWnd::StringValidator string_validator = nullptr) :
-            m_option_name(option_name), m_edit(edit), m_string_validator(string_validator)
-        { assert(bool(m_edit) == bool(m_string_validator)); }
-
-        void operator()(const std::string& str) {
-            if (m_string_validator && !m_string_validator(str)) {
-                if (m_edit)
-                    m_edit->SetTextColor(GG::CLR_RED);
-            } else {
-                if (m_edit)
-                    m_edit->SetTextColor(ClientUI::TextColor());
-                GetOptionsDB().Set<std::string>(m_option_name, str);
-            }
-        }
-        const std::string m_option_name;
-        GG::Edit* m_edit;
-        OptionsWnd::StringValidator m_string_validator;
-    };
-
-    struct ResolutionDropListIndexSetOptionFunctor {
-        ResolutionDropListIndexSetOptionFunctor(GG::DropDownList* drop_list) :
-            m_drop_list(drop_list)
-        {}
-
-        void operator()(GG::ListBox::iterator it) {
-            const GG::ListBox::Row* row = *it;
-            if (!m_drop_list || it == m_drop_list->end() || !row) {
-                ErrorLogger() << "ResolutionDropListIndexSetOptionFunctor couldn't get row from passed ListBox iterator";
-                return;
-            }
-            int w, h, bpp;
-            using namespace boost::spirit::classic;
-            rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)] >> str_p(" @ ") >> int_p[assign_a(bpp)];
-            parse(row->Name().c_str(), resolution_p);
-            GetOptionsDB().Set<int>("app-width", w);
-            GetOptionsDB().Set<int>("app-height", h);
-            GetOptionsDB().Set<int>("color-depth", bpp);
-        }
-
-        GG::DropDownList* m_drop_list;
-    };
-
-    struct LimitFPSSetOptionFunctor {
-        LimitFPSSetOptionFunctor(GG::Spin<double>* max_fps_spin) :
-            m_max_fps_spin(max_fps_spin)
-        {}
-        void operator()(bool b) {
-            DebugLogger() << "LimitFPSSetOptionFunction: bool: " << b;
-            m_max_fps_spin->Disable(!b);
-        }
-        GG::Spin<double>* m_max_fps_spin;
-    };
-
     // Small window that will grab a unique key press.
     class KeyPressCatcher : public GG::Wnd {
         GG::Key                 m_key;
@@ -772,7 +700,7 @@ GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     button->SetCheck(GetOptionsDB().Get<bool>(option_name));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(button->CheckedSignal, SetOptionFunctor<bool>(option_name));
+    GG::Connect(button->CheckedSignal, [option_name](const bool& value){ GetOptionsDB().Set(option_name, value); });
     return button;
 }
 
@@ -867,7 +795,7 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(spin->ValueChangedSignal, SetOptionFunctor<int>(option_name));
+    GG::Connect(spin->ValueChangedSignal, [option_name](const int& value){ GetOptionsDB().Set(option_name, value); });
     return spin;
 }
 
@@ -903,7 +831,7 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(spin->ValueChangedSignal, SetOptionFunctor<double>(option_name));
+    GG::Connect(spin->ValueChangedSignal, [option_name](const double& value){ GetOptionsDB().Set(option_name, value); });
     return spin;
 }
 
@@ -989,7 +917,14 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(edit->EditedSignal, SetOptionFunctor<std::string>(option_name, edit, string_validator));
+    GG::Connect(edit->EditedSignal, [option_name, edit, string_validator](const std::string& str) {
+        if (string_validator && !string_validator(str)) {
+            edit->SetTextColor(GG::CLR_RED);
+        } else {
+            edit->SetTextColor(ClientUI::TextColor());
+            GetOptionsDB().Set<std::string>(option_name, str);
+        }
+    });
     GG::Connect(button->LeftClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory, relative_path));
     if (string_validator && !string_validator(edit->Text()))
         edit->SetTextColor(GG::CLR_RED);
@@ -1038,7 +973,9 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
     color_selector->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(color_selector->ColorChangedSignal, SetOptionFunctor<GG::Clr>(option_name));
+    GG::Connect(color_selector->ColorChangedSignal, [option_name](const GG::Clr& clr) {
+        GetOptionsDB().Set<StreamableColor>(option_name, clr);
+    });
 }
 
 void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
@@ -1151,7 +1088,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
     //GG::Spin<double>* max_fps_spin = 
     DoubleOption(page, indentation_level,  "max-fps",          UserString("OPTIONS_MAX_FPS"));
-    //GG::Connect(limit_FPS_button->CheckedSignal, LimitFPSSetOptionFunctor(max_fps_spin));
+    //GG::Connect(limit_FPS_button->CheckedSignal, [max_fps_spin](bool checked) { max_fps_spin->Disable(!checked); });
     //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
     //limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
@@ -1168,7 +1105,20 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     page->Insert(row);
     GG::Connect(apply_button->LeftClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
 
-    GG::Connect(drop_list->SelChangedSignal, ResolutionDropListIndexSetOptionFunctor(drop_list));
+    GG::Connect(drop_list->SelChangedSignal, [drop_list](GG::ListBox::iterator it) {
+        if (it == drop_list->end())
+            return;
+        const GG::ListBox::Row* row = *it;
+        if (!row)
+            return;
+        int w, h, bpp;
+        using namespace boost::spirit::classic;
+        rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)] >> str_p(" @ ") >> int_p[assign_a(bpp)];
+        parse(row->Name().c_str(), resolution_p);
+        GetOptionsDB().Set<int>("app-width", w);
+        GetOptionsDB().Set<int>("app-height", h);
+        GetOptionsDB().Set<int>("color-depth", bpp);
+    });
 }
 
 void OptionsWnd::HotkeysPage()

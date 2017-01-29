@@ -544,21 +544,6 @@ void BeveledTabRepresenter::Render(const StateButton& button) const
 ////////////////////////////////////////////////
 // GG::RadioButtonGroup
 ////////////////////////////////////////////////
-// ButtonClickedFunctor
-RadioButtonGroup::ButtonClickedFunctor::ButtonClickedFunctor(RadioButtonGroup* group, StateButton* button, std::size_t index) :
-    m_group(group),
-    m_button(button),
-    m_index(index)
-{}
-
-void RadioButtonGroup::ButtonClickedFunctor::operator()(bool checked)
-{
-    if (checked)
-        m_group->SetCheckImpl(m_index, true);
-    else
-        m_button->SetCheck(true);
-}
-
 // ButtonSlot
 RadioButtonGroup::ButtonSlot::ButtonSlot(StateButton* button_) :
     button(button_)
@@ -798,9 +783,12 @@ const std::vector<RadioButtonGroup::ButtonSlot>& RadioButtonGroup::ButtonSlots()
 void RadioButtonGroup::ConnectSignals()
 {
     for (std::size_t i = 0; i < m_button_slots.size(); ++i) {
-        m_button_slots[i].connection =
-            Connect(m_button_slots[i].button->CheckedSignal,
-                    ButtonClickedFunctor(this, m_button_slots[i].button, i));
+        m_button_slots[i].connection = Connect(m_button_slots[i].button->CheckedSignal, [this, i](bool checked) {
+            if (checked)
+                this->SetCheckImpl(i, true);
+            else
+                this->m_button_slots[i].button->SetCheck(true);
+        });
     }
     SetCheck(m_checked_button);
 }
