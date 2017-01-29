@@ -999,31 +999,31 @@ void ShipDataPanel::Init() {
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
     std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
-    meters_icons.push_back(std::make_pair(METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)));
+    meters_icons.push_back({METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)});
     if (ship->IsArmed())
-        meters_icons.push_back(std::make_pair(METER_CAPACITY,       DamageIcon()));
+        meters_icons.push_back({METER_CAPACITY,       DamageIcon()});
     if (ship->HasFighters())
-        meters_icons.push_back(std::make_pair(METER_SECONDARY_STAT, FightersIcon()));
+        meters_icons.push_back({METER_SECONDARY_STAT, FightersIcon()});
     if (ship->HasTroops())
-        meters_icons.push_back(std::make_pair(METER_TROOPS,         TroopIcon()));
+        meters_icons.push_back({METER_TROOPS,         TroopIcon()});
     if (ship->CanColonize())
-        meters_icons.push_back(std::make_pair(METER_POPULATION,     ColonyIcon()));
+        meters_icons.push_back({METER_POPULATION,     ColonyIcon()});
     if (ship->CurrentMeterValue(METER_INDUSTRY) > 0.0f)
-        meters_icons.push_back(std::make_pair(METER_INDUSTRY,       IndustryIcon()));
+        meters_icons.push_back({METER_INDUSTRY,       IndustryIcon()});
     if (ship->CurrentMeterValue(METER_RESEARCH) > 0.0f)
-        meters_icons.push_back(std::make_pair(METER_RESEARCH,       ResearchIcon()));
+        meters_icons.push_back({METER_RESEARCH,       ResearchIcon()});
     if (ship->CurrentMeterValue(METER_TRADE) > 0.0f)
-        meters_icons.push_back(std::make_pair(METER_TRADE,          TradeIcon()));
+        meters_icons.push_back({METER_TRADE,          TradeIcon()});
 
-    meters_icons.push_back(std::make_pair(METER_SHIELD,     ClientUI::MeterIcon(METER_SHIELD)));
-    meters_icons.push_back(std::make_pair(METER_FUEL,       ClientUI::MeterIcon(METER_FUEL)));
-    meters_icons.push_back(std::make_pair(METER_DETECTION,  ClientUI::MeterIcon(METER_DETECTION)));
-    meters_icons.push_back(std::make_pair(METER_STEALTH,    ClientUI::MeterIcon(METER_STEALTH)));
-    meters_icons.push_back(std::make_pair(METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)));
+    meters_icons.push_back({METER_SHIELD,     ClientUI::MeterIcon(METER_SHIELD)});
+    meters_icons.push_back({METER_FUEL,       ClientUI::MeterIcon(METER_FUEL)});
+    meters_icons.push_back({METER_DETECTION,  ClientUI::MeterIcon(METER_DETECTION)});
+    meters_icons.push_back({METER_STEALTH,    ClientUI::MeterIcon(METER_STEALTH)});
+    meters_icons.push_back({METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)});
 
     for (std::pair<MeterType, std::shared_ptr<GG::Texture>>& entry : meters_icons) {
         StatisticIcon* icon = new StatisticIcon(entry.second, 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-        m_stat_icons.push_back(std::make_pair(entry.first, icon));
+        m_stat_icons.push_back({entry.first, icon});
         AttachChild(icon);
         icon->SetBrowseModeTime(tooltip_delay);
     }
@@ -1680,30 +1680,30 @@ void FleetDataPanel::Init() {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
         std::vector<boost::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
-        meters_icons_browsetext.push_back(boost::make_tuple(METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY"));
+        meters_icons_browsetext.push_back({METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY"});
         if (fleet->HasArmedShips())
-            meters_icons_browsetext.push_back(boost::make_tuple(METER_CAPACITY, DamageIcon(), "FW_FLEET_DAMAGE_SUMMARY"));
+            meters_icons_browsetext.push_back({METER_CAPACITY, DamageIcon(), "FW_FLEET_DAMAGE_SUMMARY"});
         if (fleet->HasFighterShips())
-            meters_icons_browsetext.push_back(boost::make_tuple(METER_SECONDARY_STAT, FightersIcon(), "FW_FLEET_FIGHTER_SUMMARY"));
+            meters_icons_browsetext.push_back({METER_SECONDARY_STAT, FightersIcon(), "FW_FLEET_FIGHTER_SUMMARY"});
         if (fleet->HasTroopShips())
-            meters_icons_browsetext.push_back(boost::make_tuple(METER_TROOPS, TroopIcon(), "FW_FLEET_TROOP_SUMMARY"));
+            meters_icons_browsetext.push_back({METER_TROOPS, TroopIcon(), "FW_FLEET_TROOP_SUMMARY"});
         if (fleet->HasColonyShips())
-            meters_icons_browsetext.push_back(boost::make_tuple(METER_POPULATION, ColonyIcon(), "FW_FLEET_COLONY_SUMMARY"));
+            meters_icons_browsetext.push_back({METER_POPULATION, ColonyIcon(), "FW_FLEET_COLONY_SUMMARY"});
         if (fleet->ResourceOutput(RE_INDUSTRY) > 0.0f)
-            meters_icons_browsetext.push_back(boost::make_tuple(METER_INDUSTRY, IndustryIcon(), "FW_FLEET_INDUSTRY_SUMMARY"));
+            meters_icons_browsetext.push_back({METER_INDUSTRY, IndustryIcon(), "FW_FLEET_INDUSTRY_SUMMARY"});
         if (fleet->ResourceOutput(RE_RESEARCH) > 0.0f)
-            meters_icons_browsetext.push_back(boost::make_tuple(METER_RESEARCH, ResearchIcon(), "FW_FLEET_RESEARCH_SUMMARY"));
+            meters_icons_browsetext.push_back({METER_RESEARCH, ResearchIcon(), "FW_FLEET_RESEARCH_SUMMARY"});
         if (fleet->ResourceOutput(RE_TRADE) > 0.0f)
-            meters_icons_browsetext.push_back(boost::make_tuple(METER_TRADE, TradeIcon(), "FW_FLEET_TRADE_SUMMARY"));
+            meters_icons_browsetext.push_back({METER_TRADE, TradeIcon(), "FW_FLEET_TRADE_SUMMARY"});
 
-        meters_icons_browsetext.push_back(boost::make_tuple(METER_STRUCTURE, ClientUI::MeterIcon(METER_STRUCTURE), "FW_FLEET_STRUCTURE_SUMMARY"));
-        meters_icons_browsetext.push_back(boost::make_tuple(METER_SHIELD, ClientUI::MeterIcon(METER_SHIELD), "FW_FLEET_SHIELD_SUMMARY"));
-        meters_icons_browsetext.push_back(boost::make_tuple(METER_FUEL, ClientUI::MeterIcon(METER_FUEL), "FW_FLEET_FUEL_SUMMARY"));
-        meters_icons_browsetext.push_back(boost::make_tuple(METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY"));
+        meters_icons_browsetext.push_back({METER_STRUCTURE, ClientUI::MeterIcon(METER_STRUCTURE), "FW_FLEET_STRUCTURE_SUMMARY"});
+        meters_icons_browsetext.push_back({METER_SHIELD, ClientUI::MeterIcon(METER_SHIELD), "FW_FLEET_SHIELD_SUMMARY"});
+        meters_icons_browsetext.push_back({METER_FUEL, ClientUI::MeterIcon(METER_FUEL), "FW_FLEET_FUEL_SUMMARY"});
+        meters_icons_browsetext.push_back({METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY"});
 
         for (const boost::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
             StatisticIcon* icon = new StatisticIcon(entry.get<1>(), 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back(std::make_pair(entry.get<0>(), icon));
+            m_stat_icons.push_back({entry.get<0>(), icon});
             icon->SetBrowseModeTime(tooltip_delay);
             icon->SetBrowseText(UserString(entry.get<2>()));
             icon->InstallEventFilter(this);
@@ -2732,7 +2732,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     // stat icon for fleet count
     StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false,
                                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back(std::make_pair(METER_SIZE, icon));
+    m_stat_icons.push_back({METER_SIZE, icon});
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
     AttachChild(icon);
@@ -2740,7 +2740,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     // stat icon for fleet damage
     icon = new StatisticIcon(DamageIcon(), 0, 0, false,
                              GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back(std::make_pair(METER_CAPACITY, icon));
+    m_stat_icons.push_back({METER_CAPACITY, icon});
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
     AttachChild(icon);
@@ -2748,7 +2748,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     // stat icon for fleet flighters
     icon = new StatisticIcon(FightersIcon(), 0, 0, false,
                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back(std::make_pair(METER_SECONDARY_STAT, icon));
+    m_stat_icons.push_back({METER_SECONDARY_STAT, icon});
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_FIGHTER_SUMMARY"));
     AttachChild(icon);
@@ -2756,7 +2756,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     // stat icon for fleet structure
     icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
                              GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back(std::make_pair(METER_STRUCTURE, icon));
+    m_stat_icons.push_back({METER_STRUCTURE, icon});
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
     AttachChild(icon);
@@ -2764,7 +2764,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     // stat icon for fleet shields
     icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false,
                              GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back(std::make_pair(METER_SHIELD, icon));
+    m_stat_icons.push_back({METER_SHIELD, icon});
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
     AttachChild(icon);
@@ -2772,7 +2772,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     // stat icon for fleet troops
     icon = new StatisticIcon(TroopIcon(), 0, 0, false,
                              GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back(std::make_pair(METER_TROOPS, icon));
+    m_stat_icons.push_back({METER_TROOPS, icon});
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
     AttachChild(icon);
@@ -2780,7 +2780,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     // stat icon for colonist capacity
     icon = new StatisticIcon(ColonyIcon(), 0, 0, false,
                                 GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back(std::make_pair(METER_POPULATION, icon));
+    m_stat_icons.push_back({METER_POPULATION, icon});
     icon->SetBrowseModeTime(tooltip_delay);
     icon->SetBrowseText(UserString("FW_FLEET_COLONY_SUMMARY"));
     AttachChild(icon);
@@ -2932,9 +2932,8 @@ void FleetWnd::Refresh() {
             continue;
 
         fleets_that_exist.insert(fleet_id);
-        fleet_locations_ids.insert(
-            std::make_pair(std::make_pair(fleet->SystemID(), GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()))),
-                           fleet_id));
+        fleet_locations_ids.insert({{fleet->SystemID(), GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()))},
+                                    fleet_id});
 
     }
 
@@ -2948,8 +2947,8 @@ void FleetWnd::Refresh() {
             continue;
 
         selected_fleet_locations_ids.insert(
-            std::make_pair(std::make_pair(fleet->SystemID(), GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()))),
-                           fleet_id));
+            {{fleet->SystemID(), GG::Pt(GG::X(fleet->X()), GG::Y(fleet->Y()))},
+             fleet_id});
     }
 
     // Determine FleetWnd location.
@@ -2959,7 +2958,7 @@ void FleetWnd::Refresh() {
     // Otherwise, is the current location a system?  Use that location.
     // Otherwise remove all fleets as all fleets have gone in separate directions.
 
-    std::pair<int, GG::Pt> location(std::make_pair(INVALID_OBJECT_ID, GG::Pt(GG::X0, GG::Y0)));
+    std::pair<int, GG::Pt> location{INVALID_OBJECT_ID, GG::Pt(GG::X0, GG::Y0)};
     if (!fleet_locations_ids.empty()
         && (fleet_locations_ids.count(fleet_locations_ids.begin()->first) == fleet_locations_ids.size()))
     {
@@ -2972,7 +2971,7 @@ void FleetWnd::Refresh() {
         location = selected_fleet_locations_ids.begin()->first;
 
     } else if (std::shared_ptr<System> system = GetSystem(m_system_id))
-        location = std::make_pair(m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y())));
+        location = {m_system_id, GG::Pt(GG::X(system->X()), GG::Y(system->Y()))};
 
     else {
         fleet_locations_ids.clear();

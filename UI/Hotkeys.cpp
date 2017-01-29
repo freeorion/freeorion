@@ -71,7 +71,7 @@ std::map<std::string, Hotkey>* Hotkey::s_hotkeys = nullptr;
 void Hotkey::AddHotkey(const std::string& name, const std::string& description, GG::Key key, GG::Flags<GG::ModKey> mod) {
     if (!s_hotkeys)
         s_hotkeys = new std::map<std::string, Hotkey>;
-    s_hotkeys->insert(std::make_pair(name, Hotkey(name, description, key, mod)));
+    s_hotkeys->insert({name, Hotkey(name, description, key, mod)});
 }
 
 std::string Hotkey::HotkeyToString(GG::Key key, GG::Flags<GG::ModKey> mod) {
@@ -100,7 +100,7 @@ std::string Hotkey::ToString() const
 
 std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::string& str) {
     if (str.empty())
-        return std::make_pair(GG::GGK_NONE, GG::Flags<GG::ModKey>());
+        return {GG::GGK_NONE, GG::Flags<GG::ModKey>()};
 
     // Strip whitespace
     std::string copy = str;
@@ -130,7 +130,7 @@ std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::s
             }
         } catch (...) {
             ErrorLogger() << "Unable make flag from string: " << str;
-            return std::make_pair(GG::GGK_NONE, GG::Flags<GG::ModKey>());
+            return {GG::GGK_NONE, GG::Flags<GG::ModKey>()};
         }
     }
 
@@ -210,7 +210,7 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
         }
         std::string option_string = db.Get<std::string>(options_db_name);
 
-        std::pair<GG::Key, GG::Flags<GG::ModKey> > key_modkey_pair = std::make_pair(GG::GGK_NONE, GG::MOD_KEY_NONE);
+        std::pair<GG::Key, GG::Flags<GG::ModKey>> key_modkey_pair = {GG::GGK_NONE, GG::MOD_KEY_NONE};
         try {
             key_modkey_pair = HotkeyFromString(option_string);
         } catch (...) {

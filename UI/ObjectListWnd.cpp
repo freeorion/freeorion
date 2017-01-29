@@ -44,7 +44,7 @@ namespace {
             {"SIZE_AS_DOUBLE",   8*12}};
 
         for (unsigned int i = default_columns_widths.size(); i < NUM_COLUMNS; ++i)
-            default_columns_widths.push_back(std::make_pair("", 8*12));   // arbitrary default width
+            default_columns_widths.push_back({"", 8*12});   // arbitrary default width
 
         for (unsigned int i = 0; i < default_columns_widths.size(); ++i) {
             db.Add<std::string>("UI.objects-list-info-col-" + boost::lexical_cast<std::string>(i),
@@ -109,51 +109,51 @@ namespace {
         static std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*> col_types;
         if (col_types.empty()) {
             // General
-            col_types[std::make_pair(UserStringNop("NAME"),                 "")] =  StringValueRef("Name");
-            col_types[std::make_pair(UserStringNop("OBJECT_TYPE"),          "")] =  UserStringValueRef("TypeName");
-            col_types[std::make_pair(UserStringNop("ID"),                   "")] =  StringCastedValueRef<int>("ID");
-            col_types[std::make_pair(UserStringNop("CREATION_TURN"),        "")] =  StringCastedValueRef<int>("CreationTurn");
-            col_types[std::make_pair(UserStringNop("AGE"),                  "")] =  StringCastedValueRef<int>("Age");
-            col_types[std::make_pair(UserStringNop("SYSTEM"),               "")] =  ObjectNameValueRef("SystemID");
-            col_types[std::make_pair(UserStringNop("STAR_TYPE"),            "")] =  UserStringCastedValueRef<StarType>("StarType");
-            col_types[std::make_pair(UserStringNop("BUILDING_TYPE"),        "")] =  UserStringValueRef("BuildingType");
-            col_types[std::make_pair(UserStringNop("LAST_TURN_BATTLE_HERE"),"")] =  StringCastedValueRef<int>("LastTurnBattleHere");
-            col_types[std::make_pair(UserStringNop("NUM_SPECIALS"),         "")] =  StringCastedValueRef<int>("NumSpecials");
+            col_types[{UserStringNop("NAME"),                 ""}] =  StringValueRef("Name");
+            col_types[{UserStringNop("OBJECT_TYPE"),          ""}] =  UserStringValueRef("TypeName");
+            col_types[{UserStringNop("ID"),                   ""}] =  StringCastedValueRef<int>("ID");
+            col_types[{UserStringNop("CREATION_TURN"),        ""}] =  StringCastedValueRef<int>("CreationTurn");
+            col_types[{UserStringNop("AGE"),                  ""}] =  StringCastedValueRef<int>("Age");
+            col_types[{UserStringNop("SYSTEM"),               ""}] =  ObjectNameValueRef("SystemID");
+            col_types[{UserStringNop("STAR_TYPE"),            ""}] =  UserStringCastedValueRef<StarType>("StarType");
+            col_types[{UserStringNop("BUILDING_TYPE"),        ""}] =  UserStringValueRef("BuildingType");
+            col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),""}] =  StringCastedValueRef<int>("LastTurnBattleHere");
+            col_types[{UserStringNop("NUM_SPECIALS"),         ""}] =  StringCastedValueRef<int>("NumSpecials");
             // empire
-            col_types[std::make_pair(UserStringNop("SUPPLYING_EMPIRE"),     "")] =  EmpireNameValueRef("SupplyingEmpire");
-            col_types[std::make_pair(UserStringNop("OWNER"),                "")] =  EmpireNameValueRef("Owner");
-            col_types[std::make_pair(UserStringNop("PRODUCED_BY"),          "")] =  EmpireNameValueRef("ProducedByEmpireID");
+            col_types[{UserStringNop("SUPPLYING_EMPIRE"),     ""}] =  EmpireNameValueRef("SupplyingEmpire");
+            col_types[{UserStringNop("OWNER"),                ""}] =  EmpireNameValueRef("Owner");
+            col_types[{UserStringNop("PRODUCED_BY"),          ""}] =  EmpireNameValueRef("ProducedByEmpireID");
 
             // planet
-            col_types[std::make_pair(UserStringNop("SPECIES"),                      UserStringNop("PLANETS_SUBMENU"))] =UserStringValueRef("Species");
-            col_types[std::make_pair(UserStringNop("FOCUS"),                        UserStringNop("PLANETS_SUBMENU"))] =UserStringValueRef("Focus");
-            col_types[std::make_pair(UserStringNop("PREFERRED_FOCUS"),              UserStringNop("PLANETS_SUBMENU"))] =UserStringValueRef("PreferredFocus");
-            col_types[std::make_pair(UserStringNop("TURNS_SINCE_FOCUS_CHANGE"),     UserStringNop("PLANETS_SUBMENU"))] =StringCastedValueRef<int>("TurnsSinceFocusChange");
-            col_types[std::make_pair(UserStringNop("SIZE_AS_DOUBLE"),               UserStringNop("PLANETS_SUBMENU"))] =StringCastedValueRef<double>("SizeAsDouble");
-            col_types[std::make_pair(UserStringNop("NEXT_TURN_POP_GROWTH"),         UserStringNop("PLANETS_SUBMENU"))] =StringCastedValueRef<double>("NextTurnPopGrowth");
-            col_types[std::make_pair(UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE"),  UserStringNop("PLANETS_SUBMENU"))] =StringCastedValueRef<double>("DistanceFromOriginalType");
-            col_types[std::make_pair(UserStringNop("PLANET_TYPE"),                  UserStringNop("PLANETS_SUBMENU"))] =UserStringCastedValueRef<PlanetType>("PlanetType");
-            col_types[std::make_pair(UserStringNop("ORIGINAL_TYPE"),                UserStringNop("PLANETS_SUBMENU"))] =UserStringCastedValueRef<PlanetType>("OriginalType");
-            col_types[std::make_pair(UserStringNop("NEXT_TOWARDS_ORIGINAL_TYPE"),   UserStringNop("PLANETS_SUBMENU"))] =UserStringCastedValueRef<PlanetType>("NextCloserToOriginalPlanetType");
-            col_types[std::make_pair(UserStringNop("PLANET_SIZE"),                  UserStringNop("PLANETS_SUBMENU"))] =UserStringCastedValueRef<PlanetSize>("PlanetSize");
-            col_types[std::make_pair(UserStringNop("PLANET_ENVIRONMENT"),           UserStringNop("PLANETS_SUBMENU"))] =UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
-            col_types[std::make_pair(UserStringNop("SUPPLY_RANGE"),                 UserStringNop("PLANETS_SUBMENU"))] =StringCastedValueRef<double>("PropagatedSupplyRange");
+            col_types[{UserStringNop("SPECIES"),                      UserStringNop("PLANETS_SUBMENU")}] =UserStringValueRef("Species");
+            col_types[{UserStringNop("FOCUS"),                        UserStringNop("PLANETS_SUBMENU")}] =UserStringValueRef("Focus");
+            col_types[{UserStringNop("PREFERRED_FOCUS"),              UserStringNop("PLANETS_SUBMENU")}] =UserStringValueRef("PreferredFocus");
+            col_types[{UserStringNop("TURNS_SINCE_FOCUS_CHANGE"),     UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<int>("TurnsSinceFocusChange");
+            col_types[{UserStringNop("SIZE_AS_DOUBLE"),               UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("SizeAsDouble");
+            col_types[{UserStringNop("NEXT_TURN_POP_GROWTH"),         UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("NextTurnPopGrowth");
+            col_types[{UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE"),  UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("DistanceFromOriginalType");
+            col_types[{UserStringNop("PLANET_TYPE"),                  UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetType>("PlanetType");
+            col_types[{UserStringNop("ORIGINAL_TYPE"),                UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetType>("OriginalType");
+            col_types[{UserStringNop("NEXT_TOWARDS_ORIGINAL_TYPE"),   UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetType>("NextCloserToOriginalPlanetType");
+            col_types[{UserStringNop("PLANET_SIZE"),                  UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetSize>("PlanetSize");
+            col_types[{UserStringNop("PLANET_ENVIRONMENT"),           UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
+            col_types[{UserStringNop("SUPPLY_RANGE"),                 UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("PropagatedSupplyRange");
 
             // ship/fleet
-            col_types[std::make_pair(UserStringNop("SPECIES"),                      UserStringNop("FLEETS_SUBMENU"))] = UserStringValueRef("Species");
-            col_types[std::make_pair(UserStringNop("DESIGN_WND_DESIGN_NAME"),       UserStringNop("FLEETS_SUBMENU"))] = DesignNameValueRef("DesignID");
-            col_types[std::make_pair(UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE"),   UserStringNop("FLEETS_SUBMENU"))] = StringCastedValueRef<int>("LastTurnActiveInBattle");
-            col_types[std::make_pair(UserStringNop("ARRIVED_ON_TURN"),              UserStringNop("FLEETS_SUBMENU"))] = StringCastedValueRef<int>("ArrivedOnTurn");
-            col_types[std::make_pair(UserStringNop("ETA"),                          UserStringNop("FLEETS_SUBMENU"))] = StringCastedValueRef<int>("ETA");
-            col_types[std::make_pair(UserStringNop("FINAL_DEST"),                   UserStringNop("FLEETS_SUBMENU"))] = ObjectNameValueRef("FinalDestinationID");
-            col_types[std::make_pair(UserStringNop("NEXT_SYSTEM"),                  UserStringNop("FLEETS_SUBMENU"))] = ObjectNameValueRef("NextSystemID");
-            col_types[std::make_pair(UserStringNop("PREV_SYSTEM"),                  UserStringNop("FLEETS_SUBMENU"))] = ObjectNameValueRef("PreviousSystemID");
-            col_types[std::make_pair(UserStringNop("NEAREST_SYSTEM"),               UserStringNop("FLEETS_SUBMENU"))] = ObjectNameValueRef("NearestSystemID");
+            col_types[{UserStringNop("SPECIES"),                      UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");
+            col_types[{UserStringNop("DESIGN_WND_DESIGN_NAME"),       UserStringNop("FLEETS_SUBMENU")}] = DesignNameValueRef("DesignID");
+            col_types[{UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE"),   UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnActiveInBattle");
+            col_types[{UserStringNop("ARRIVED_ON_TURN"),              UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("ArrivedOnTurn");
+            col_types[{UserStringNop("ETA"),                          UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("ETA");
+            col_types[{UserStringNop("FINAL_DEST"),                   UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("FinalDestinationID");
+            col_types[{UserStringNop("NEXT_SYSTEM"),                  UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NextSystemID");
+            col_types[{UserStringNop("PREV_SYSTEM"),                  UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("PreviousSystemID");
+            col_types[{UserStringNop("NEAREST_SYSTEM"),               UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NearestSystemID");
 
             for (MeterType meter = MeterType(0); meter <= METER_SPEED;  // the meter(s) after METER_SPEED are part-specific
                  meter = MeterType(meter + 1))
             {
-                col_types[std::make_pair(boost::lexical_cast<std::string>(meter),   UserStringNop("METERS_SUBMENU"))] = StringCastedValueRef<double>(ValueRef::MeterToName(meter));
+                col_types[{boost::lexical_cast<std::string>(meter),   UserStringNop("METERS_SUBMENU")}] = StringCastedValueRef<double>(ValueRef::MeterToName(meter));
             }
         }
         return col_types;

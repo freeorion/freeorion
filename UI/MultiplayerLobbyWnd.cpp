@@ -854,13 +854,13 @@ void MultiPlayerLobbyWnd::PlayerDataChangedLocally() {
         if (const EmptyPlayerRow* empty_row = dynamic_cast<const EmptyPlayerRow*>(player_row)) {
             // empty rows that have been changed to Add AI need to be sent so the server knows to add an AI player.
             if (empty_row->m_player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                m_lobby_data.m_players.push_back(std::make_pair(Networking::INVALID_PLAYER_ID, player_row->m_player_data));
+                m_lobby_data.m_players.push_back({Networking::INVALID_PLAYER_ID, player_row->m_player_data});
 
             // empty rows that are still showing no player don't need to be sent to the server.
 
         } else {
             // all other row types pass along data directly
-            m_lobby_data.m_players.push_back(std::make_pair(player_row->m_player_id, player_row->m_player_data));
+            m_lobby_data.m_players.push_back({player_row->m_player_id, player_row->m_player_data});
         }
     }
 

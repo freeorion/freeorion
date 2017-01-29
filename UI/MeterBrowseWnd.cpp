@@ -309,7 +309,7 @@ namespace DualMeter {
         if (!target_meter)
             projected = current;
 
-        return boost::make_tuple(current, projected, target);
+        return {current, projected, target};
     }
 }
 
@@ -494,7 +494,7 @@ void MeterBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
         value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
-        m_effect_labels_and_values.push_back(std::make_pair(label, value));
+        m_effect_labels_and_values.push_back({label, value});
 
         top += m_row_height;
     }
@@ -609,7 +609,7 @@ void ShipDamageBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         value->MoveTo(GG::Pt(MeterBrowseLabelWidth(), top));
         value->Resize(GG::Pt(MeterBrowseValueWidth(), m_row_height));
         AttachChild(value);
-        m_effect_labels_and_values.push_back(std::make_pair(label, value));
+        m_effect_labels_and_values.push_back({label, value});
 
         top += m_row_height;
     }
@@ -887,7 +887,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
     hangar_summary->MoveTo(GG::Pt(ROW_WIDTH + EDGE_PAD, top));
     hangar_summary->Resize(GG::Pt(ROW_WIDTH, m_row_height));
     AttachChild(hangar_summary);
-    m_effect_labels_and_values.push_back(std::make_pair(bay_summary, hangar_summary));
+    m_effect_labels_and_values.push_back({bay_summary, hangar_summary});
 
     top += m_row_height;
 
@@ -916,7 +916,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         damage_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
         damage_value->SetFont(ClientUI::GetBoldFont());
         AttachChild(damage_value);
-        m_effect_labels_and_values.push_back(std::make_pair(damage_label, damage_value));
+        m_effect_labels_and_values.push_back({damage_label, damage_value});
 
         top += m_row_height;
     } else {
@@ -973,7 +973,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         detail_summary_launch->Resize(GG::Pt(VALUE_WIDTH + EDGE_PAD + (LABEL_WIDTH / 2), m_row_height));
         detail_summary_launch->SetFont(ClientUI::GetBoldFont());
         AttachChild(detail_summary_launch);
-        m_effect_labels_and_values.push_back(std::make_pair(detail_summary_damage, detail_summary_launch));
+        m_effect_labels_and_values.push_back({detail_summary_damage, detail_summary_launch});
 
         top += m_row_height;
 
@@ -1007,7 +1007,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             formula_value->MoveTo(GG::Pt(left, top));
             formula_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
             AttachChild(formula_value);
-            m_effect_labels_and_values.push_back(std::make_pair(formula_label, formula_value));
+            m_effect_labels_and_values.push_back({formula_label, formula_value});
             left += VALUE_WIDTH + EDGE_PAD;
 
             // launched fighters label
@@ -1025,7 +1025,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
             launch_value->MoveTo(GG::Pt(left, top));
             launch_value->Resize(GG::Pt(VALUE_WIDTH, m_row_height));
             AttachChild(launch_value);
-            m_effect_labels_and_values.push_back(std::make_pair(launch_label, launch_value));
+            m_effect_labels_and_values.push_back({launch_label, launch_value});
 
             top += m_row_height;
             left = GG::X0;
