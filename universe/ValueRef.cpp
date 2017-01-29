@@ -1768,7 +1768,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         std::string empire_meter_name;
         if (m_string_ref1)
             empire_meter_name = m_string_ref1->Eval(context);
-        Meter * meter = empire->GetMeter(empire_meter_name);
+        Meter* meter = empire->GetMeter(empire_meter_name);
         if (!meter)
             return 0.0;
         return meter->Current();
