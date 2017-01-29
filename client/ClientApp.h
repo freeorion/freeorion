@@ -62,7 +62,7 @@ public:
 
     /** @brief Return the player statuses in game
      *
-     * @return Return a map containing ::PlayerStatus instances as value and
+     * @return Return a map containing PlayerStatus instances as value and
      *      their player identifier as key.
      *
      * @{ */
@@ -183,7 +183,7 @@ public:
 
     /** @brief Return the UniverseObject @a object_id if known by @a empire_id
      *
-     * @param object An UniverseObject identifier.
+     * @param object_id An UniverseObject identifier.
      * @param empire_id An empire identifier.
      *
      * @return A pointer to the UniverseObject, that is identified by

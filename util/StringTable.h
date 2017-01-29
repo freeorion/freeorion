@@ -28,8 +28,8 @@
 //! EXIT<br>
 //! Exit the program<br>
 //! <br>
-//! #These are comments<br>
-//! #these are more comments<br>
+//! # These are comments<br>
+//! # these are more comments<br>
 //! TEST_ONE<br>
 //! test one<br>
 //! TEST TWO<br>

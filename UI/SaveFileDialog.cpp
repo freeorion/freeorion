@@ -517,7 +517,8 @@ public:
     { return GG::Y(ClientUI::Pts() * 2); }
 
     /// Loads preview data on all save files in a directory specidifed by path.
-    /// @param [in] path The path of the directory
+    /// @param[in] path The path of the directory
+    /// @param[in] extension File name extension to filter by
     void LoadSaveGamePreviews(const fs::path& path, const std::string& extension) {
         LoadDirectories(path);
 

@@ -65,6 +65,7 @@ private:
 };
 
 /// Get the value of column name in this preview
+/// @param full FullPreview to match for column @p name
 /// \param name The name of the column
 /// \param thin If true, tries to make the value less wide
 FO_COMMON_API std::string ColumnInPreview(const FullPreview& full, const std::string& name, bool thin = true);

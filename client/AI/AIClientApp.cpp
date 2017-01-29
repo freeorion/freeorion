@@ -30,13 +30,11 @@ namespace {
 
     /** AddTraitBypassOption creates a set of options for debugging of
         the form:
-        AI.config.trait.<trait name>.force  -- If true use the following options to bypass the trait
-        AI.config.trait.<trait name>.all    -- If present use this value for all of the AIs not individually set
-        AI.config.trait.<trait name>.AI_1   -- Use for AI_1
-        .
-        .
-        .
-        AI.config.trait.<trait name>.AI_40  -- Use for AI_40
+        AI.config.trait.\<trait name\>.force  -- If true use the following options to bypass the trait
+        AI.config.trait.\<trait name\>.all    -- If present use this value for all of the AIs not individually set
+        AI.config.trait.\<trait name\>.AI_1   -- Use for AI_1
+        ...
+        AI.config.trait.\<trait name\>.AI_40  -- Use for AI_40
      */
     template <typename T>
     void AddTraitBypassOption(OptionsDB& db, std::string const & root, std::string ROOT,
