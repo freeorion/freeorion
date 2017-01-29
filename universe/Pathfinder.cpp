@@ -962,7 +962,7 @@ void Pathfinder::InitializeSystemGraph(const std::vector<int> system_ids, int fo
 
 void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id) {
     typedef boost::graph_traits<GraphImpl::SystemGraph>::edge_descriptor EdgeDescriptor;
-    auto new_graph_impl{std::make_shared<GraphImpl>()};
+    auto new_graph_impl = std::make_shared<GraphImpl>();
     // std::vector<int> system_ids = ::EmpireKnownObjects(for_empire_id).FindObjectIDs<System>();
     // NOTE: this initialization of graph_changed prevents testing for edges between nonexistant vertices
     bool graph_changed = system_ids.size() != boost::num_vertices(m_graph_impl->system_graph);
@@ -1056,14 +1056,14 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(int 
         for (auto const &empire : Empires()) {
             int empire_id = empire.first;
             GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_id);
-            auto filtered_graph_ptr{std::make_shared<GraphImpl::EmpireViewSystemGraph>(m_graph_impl->system_graph, filter)};
+            auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(m_graph_impl->system_graph, filter);
             m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
 
     } else {
         // all empires share a single filtered graph, filtered by the for_empire_id
         GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, for_empire_id);
-        auto filtered_graph_ptr{std::make_shared<GraphImpl::EmpireViewSystemGraph>(m_graph_impl->system_graph, filter)};
+        auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(m_graph_impl->system_graph, filter);
 
         for (auto const &empire : Empires()) {
             int empire_id = empire.first;
