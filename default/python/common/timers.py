@@ -38,9 +38,10 @@ class Timer(object):
         """
         # TODO: Convert to use table code from here /python/common/print_utils.py#L116
 
-        if not self.timers:
+        if not time_table:
+            print "NOT Time Table"
             return
-        max_header = max(len(x[0]) for x in self.timers)
+        max_header = max(len(x[0]) for x in time_table)
         line_max_size = max_header + 14
         print
         print 'Timing for %s:' % self.timer_name
@@ -50,7 +51,7 @@ class Timer(object):
             print "%-*s %8d msec" % (max_header, name, val)
 
         print '-' * line_max_size
-        print ("Total: %8d msec" % sum(x[1] for x in self.timers)).rjust(line_max_size)
+        print ("Total: %8d msec" % sum(x[1] for x in time_table)).rjust(line_max_size)
 
     def print_flat(self):
         """
