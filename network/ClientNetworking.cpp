@@ -10,7 +10,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
 
@@ -43,7 +42,7 @@ namespace {
             using namespace boost::asio::ip;
             udp::resolver resolver(*m_io_service);
             udp::resolver::query query(udp::v4(), "255.255.255.255",
-                                       boost::lexical_cast<std::string>(Networking::DiscoveryPort()),
+                                       std::to_string(Networking::DiscoveryPort()),
                                        resolver_query_base::address_configured |
                                        resolver_query_base::numeric_service);
             udp::resolver::iterator end_it;
@@ -169,7 +168,7 @@ bool ClientNetworking::ConnectToServer(
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
     tcp::resolver::query query(tcp::v4(), ip_address,
-                               boost::lexical_cast<std::string>(Networking::MessagePort()),
+                               std::to_string(Networking::MessagePort()),
                                boost::asio::ip::resolver_query_base::numeric_service);
 
     tcp::resolver::iterator end_it;
