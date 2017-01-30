@@ -1487,6 +1487,9 @@ Active/Désactive l'affichage des rapports d'erreurs (pour développeurs).
 OPTIONS_DB_EFFECT_ACCOUNTING
 Active/Désactive la tabulation de la comptabilité des effets lors de l'actualisation des statistiques de jeu.
 
+OPTIONS_DB_PRNG_RESEEDING
+Active/Désactive la re-génération d'un nombre de graine aléatoire lors de chaque tour, avec des caractéristiques prévisibles et reproductibles.
+
 OPTIONS_DB_UI_SITREP_ICONSIZE
 Définit la largeur et la hauteur des icônes du Rapport de Situation; par défaut 16 (min 12, max 64).
 
@@ -3756,8 +3759,8 @@ Astronef - Équipement
 ENC_SHIP_HULL
 Astronef - Coque
 
-ENC_TECH
-Technologie
+ENC_TECH  # translated
+Technologies
 
 ENC_SPECIAL
 Particularité Planétaire ou Spatiale
@@ -3889,6 +3892,9 @@ ENC_HOMEWORLDS
 
 ENC_TEXTURES  # translated
 [Test - Textures]
+
+#ENC_TEXTURE_INFO
+#%4% -- %1% x %2% px @ %3% BPP<img src = "%4%"></img>
 
 ENC_INDEX
 Index de l'Encyclopédie
@@ -4272,9 +4278,6 @@ CATEGORY_GUIDES  # translated
 CATEGORY_GAME_CONCEPTS
 *Concepts de jeu*
 
-CATEGORY_USER_INTERFACE  # translated
-*Interface*
-
 GROWTH_ARTICLE_SHORT_DESC
 Croissance
 
@@ -4298,6 +4301,60 @@ Indicateurs
 
 POPULATION_TITLE_SHORT_DESC  # translated
 Population
+
+MANAGEMENT_TITLE_SHORT_DESC
+Gestion
+
+
+##
+## Encyclopedia subcategories
+##
+
+# In Guides category
+
+INTERFACE_TITLE
+*Interface*
+
+INTERFACE_TEXT
+Liste non-exhaustive des fonctionnalités de l'Interface de FreeOrion :
+
+# In Game Concepts category
+
+DIPLOMACY_TITLE
+Diplomatie
+
+DIPLOMACY_TEXT
+Liste non-exhaustive des aspects de Diplomatie :
+
+METABOLISM_TITLE
+Métabolisme
+
+METABOLISM_TEXT
+Les différents types de métabolisme des [[encyclopedia ENC_SPECIES]]s peuplant la galaxie sont listés ci-dessous.
+
+PLANET_MANAGEMENT_TITLE
+Gestion Planétaire
+
+PLANET_MANAGEMENT_TEXT
+Liste non-exhaustive des aspects de Gestion Planétaire :
+
+PLANETARY_FOCUS_TITLE
+Focus Planétaire
+
+PLANETARY_FOCUS_TEXT
+Liste non-exhaustive des réglages de Focus Planétaire :
+
+SHIP_MANAGEMENT_TITLE
+Gestion des Astronefs
+
+SHIP_MANAGEMENT_TEXT
+Liste non-exhaustive des caractéristiques de Gestion des Astronefs :
+
+SPECIES_TRAITS_TITLE
+Attributs d'Espèce
+
+SPECIES_TRAITS_TEXT
+Liste non-exhaustive des Attributs d'Espèce :
 
 
 ##
@@ -4410,7 +4467,7 @@ METER_RESEARCH_VALUE_LABEL
 Recherche
 
 METER_RESEARCH_VALUE_DESC
-'''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles [[encyclopedia TECHNOLOGIES_TITLE]].
+'''La Recherche, mesurée en Points de Recherche (PR), est utilisée par toutes les planètes de l'empire pour la découverte de nouvelles [[encyclopedia ENC_TECH]].
 
 La Recherche qui n'est allouée à aucune technologie durant un tour est perdue (recherche gaspillée). L'assimilation complète de chaque technologie nécessite un nombre minimal de tours. Par exemple, si une technologie consomme 20 PR et requiert 5 tours, un maximum de 4 PR seulement par tour peut lui être consacré.
 Les PR sont affectés aux technologies à acquérir selon leur position dans la file d'attente : la technologie en tête de file est prioritaire. Les PR restants sont alloués au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des technologies dans la file d'attente peut être modifié : les technologies que vous jugez prioritaires peuvent ainsi être déplacées en tête de file.
@@ -4554,7 +4611,7 @@ OUTPOSTS_TEXT
 Les Avant-Postes sont des stations inhabitées pouvant être implantées en des lieux trop hostiles pour la survie d'une colonie. Ils n'ont pas de population et ne produisent en principe aucune ressource, mais peuvent cependant contribuer aux lignes d'[[metertype METER_SUPPLY]] de l'empire (à l'aide de la technologie appropriée) et augmenter sa zone de détection. Des colonies peuvent être fondées sur les planètes déjà pourvues d'un Avant-Poste. Pour construire un Avant-Poste, il suffit de placer un [[shippart CO_OUTPOST_POD]] sur un astronef. Des Avant-Postes sont également créés lorsque la population d'une colonie tombe à zéro, quelle qu'en soit la raison.
 
 FOCUS_TITLE
-Focus Planétaire
+Focus
 
 FOCUS_TEXT
 '''Chaque planète dispose d'un réglage 'Focus', indiquant quel domaine sera privilégié par ses habitants, comme l'[[metertype METER_INDUSTRY]] ou la [[metertype METER_RESEARCH]]. Toutes les possibilités de Focus ne sont pas toujours disponibles, ces dernières dépendant parfois de l'espèce peuplant la planète, d'une technologie encore inconnue, ou bien d'autres facteurs tels que la présence d'une [[encyclopedia ENC_SPECIAL]].
@@ -4688,7 +4745,7 @@ XENOPHOBIC_SPECIES_TITLE
 Xénophobe
 
 XENOPHOBIC_SPECIES_TEXT
-'''Les espèces xénophobes utilisent une partie de leur Industrie pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de Métabolisme Autosuffisant considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa population maximale (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
+'''Les espèces xénophobes utilisent une partie de leur Industrie pour harceler les autres espèces se trouvant aux alentours. En conséquence, les espèces sujettes à ce harcèlement développeront un malus industriel. Une espèce Xénophobe et de [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] considère la présence d'espèces étrangères aux alentours comme une entrave à son équilibre naturel, ce qui entraîne une diminution de sa population maximale (il n'est toujours pas déterminé si cela est dû à des effets directs ou bien au fait que l'espèce gaspille des ressources dans le harcèlement des espèces étrangères).
 
 La technologie [[tech CON_CONC_CAMP]] est disponible par défaut pour les espèces xénophobes.'''
 
@@ -4699,11 +4756,11 @@ FLEET_UPKEEP_TEXT
 Le coût d'une flotte est supérieure à la somme des coûts de tous ses astronefs réunis, en raison des coûts opérationnels et de gestion de l'ensemble des astronefs. Lorsqu'un nouvel astronef est produit, le coût de ce dernier augmente de 1% multiplié par le nombre d'astronefs dont l'empire est déjà propriétaire. Les coûts du [[shippart CO_COLONY_POD]], [[shippart CO_SUSPEND_ANIM_POD]], [[shippart CO_OUTPOST_POD]] et de toutes les structures de colonisation augmentent quant à eux de 6% multiplié par le nombre de planètes que l'empire possède.
 
 EVACUATION_TITLE
-Évacuation
+Plan d'Évacuation
 
 EVACUATION_TEXT
-'''La construction d'un projet d'[[buildingtype BLD_EVACUATION]] retire toute la population d'une planète. À chaque tour, une partie de la population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[metertype METER_SUPPLY]], l'une d'entre elles sera choisie au hasard et la population y sera déplacée. Si aucune planète appropriée n'est disponible, la population évacuée disparaîtra dans l'espace infini.
-Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que le processus d'[[buildingtype BLD_EVACUATION]] est terminé.'''
+'''La construction d'un [[buildingtype BLD_EVACUATION]] retire toute la population d'une planète. À chaque tour, une partie de la population est évacuée. S'il existe des planètes de l'empire colonisées par la même espèce, ayant de l'espace libre et étant connectées aux lignes d'[[metertype METER_SUPPLY]], l'une d'entre elles sera choisie au hasard et la population y sera déplacée. Si aucune planète appropriée n'est disponible, la population évacuée disparaîtra dans l'espace infini.
+Durant une évacuation, la production tombe à zéro. Quand une colonie est vidée de toute population, elle retourne à l'état d'[[encyclopedia OUTPOSTS_TITLE]]. L'empire en est toujours propriétaire, et peut lancer une nouvelle colonisation dès que le [[buildingtype BLD_EVACUATION]] est automatiquement détruit.'''
 
 AI_LEVELS_TITLE
 Niveaux d'Agressivité de l'IA
@@ -4768,7 +4825,7 @@ Au lancement d'une nouvelle partie, un clic-droit sur les modèles [[DESIGN_WND_
 
 Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] affiche comme son nom l'indique les équipements. Ceux dont la technologie associée a été recherchée et assimilée sont disponibles et peuvent être intégrés dans un modèle d'astronef. D'autres équipements sont indisponibles si aucune [[metertype METER_RESEARCH]] n'a encore été effectuée concernant la technologie associée ou si cet équipement est seulement utilisable par les monstres.
 
-Les filtres "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" et "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" des panneaux [[DESIGN_WND_STARTS]] et [[DESIGN_WND_PART_PALETTE_TITLE]] affichent respectivement les items que l'empire peut utiliser ou non dans la conception d'astronef. Certains items indisponibles peuvent être débloqués via la [[METER_RESEARCH]] des [[encyclopedia TECHNOLOGIES_TITLE]] associées.
+Les filtres "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" et "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" des panneaux [[DESIGN_WND_STARTS]] et [[DESIGN_WND_PART_PALETTE_TITLE]] affichent respectivement les items que l'empire peut utiliser ou non dans la conception d'astronef. Certains items indisponibles peuvent être débloqués via la [[METER_RESEARCH]] des [[encyclopedia ENC_TECH]] associées.
 
 Le panneau [[DESIGN_WND_PART_PALETTE_TITLE]] propose également des filtres pour afficher/cacher les équipements par catégorie.
 
@@ -4816,13 +4873,7 @@ FIELDS_TITLE
 Régions Interstellaires
 
 FIELDS_TEXT
-Il existe plus d'un [[encyclopedia ENC_FIELD_TYPE]] interstellaires, ayant chacune une apparence diffuse et différente. Un clic-droit sur l'un de ces objets à partir de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] affiche une petite vignette identifiant son type et un lien vers l'Encyclopédie afin d'en découvrir la nature.
-
-METABOLISM_TITLE
-Métabolisme
-
-METABOLISM_TEXT
-'''Les différents types de métabolisme des espèces peuplant la galaxie sont listés ci-dessous.'''
+Il existe plus d'un Type de Régions interstellaires, ayant chacun une apparence diffuse et différente. Un clic-droit sur l'un de ces objets à partir de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]] affiche une petite vignette identifiant son type et un lien vers l'Encyclopédie afin d'en découvrir la nature.
 
 
 ##
@@ -4836,7 +4887,7 @@ DETAILED_PEDIA_REFERENCE
 [[GENERAL_PEDIA_REFERENCE]] L'Encyclopédie peut être affichée/cachée via l'icône violette surmontée d'un point d'interrogation, située dans la partie supérieure droite de la [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]]. Les hyperliens ainsi que les flèches dans le coin inférieur droit de la Fenêtre Encyclopédie permettent de naviguer dans cette dernière.
 
 GREETINGS_GUIDE_TITLE
-*Bienvenue!*
+**Bienvenue!**
 
 GREETINGS_INTRO
 Salutations Noble Voyageur Cosmique, et Bienvenue dans l'Univers Freeorion!
@@ -4857,13 +4908,13 @@ Des informations complémentaires sont disponibles sur le site web freeorion.org
 '''
 
 QUICK_START_GUIDE_TITLE
-*Guide de Démarrage Rapide*
+**Guide de Démarrage Rapide**
 
 QUICK_START_GUIDE_TEXT
 '''Voici une brève introduction au gameplay de Freeorion. Ce guide in-game, ajouté récemment, est pour le moment assez sommaire mais sera complété au fil des versions. Un guide plus conséquent est disponible sur le site freeorion.org, (URL actuelle: http://freeorion.org/index.php/V0.4_Quick_Play_Guide )
 
 [[DETAILED_PEDIA_REFERENCE]]
-Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_GAME_CONCEPTS]] et les sections [[encyclopedia CATEGORY_USER_INTERFACE]] et [[encyclopedia CATEGORY_GUIDES]] récemment ajoutées.
+Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_GAME_CONCEPTS]] et les sections récemment ajoutées dans le chapitre [[encyclopedia CATEGORY_GUIDES]].
 
 '''
 
@@ -5933,7 +5984,7 @@ BEGINNER_HINT_17
 17: Les [[metertype METER_SHIELD]] d'astronef constituent une défense contre chaque tir ennemi, réduisant les [[encyclopedia DAMAGE_TITLE]] subis de la valeur de solidité du Bouclier de l'astronef. La solidité d'un Bouclier peut être affecté par divers facteurs comme les tempêtes spatiales, le type d'étoile au sein du système, ou la proximité d'une Planète Capitale d'un Empire ayant été capturée.
 
 BEGINNER_HINT_18
-18: [[encyclopedia FOCUS_TITLE]] - Faites attention au réglage du Focus de chaque nouvelle planète intégrant votre empire, que ce soit par l'établissement d'une nouvelle colonie ou bien par conquête militaire. Ce réglage détermine si la planète privilégie l'Industrie, la Recherche ou la Défense. À mesure que la partie avance, de nouvelles possibilités de Focus peuvent être débloquées si les [[encyclopedia TECHNOLOGIES_TITLE]] requises sont maîtrisées, tandis que différentes espèces peuvent avoir différents types de Focus disponibles.
+18: [[encyclopedia FOCUS_TITLE]] - Faites attention au réglage du Focus de chaque nouvelle planète intégrant votre empire, que ce soit par l'établissement d'une nouvelle colonie ou bien par conquête militaire. Ce réglage détermine si la planète privilégie l'Industrie, la Recherche ou la Défense. À mesure que la partie avance, de nouvelles possibilités de Focus peuvent être débloquées si les [[encyclopedia ENC_TECH]] requises sont maîtrisées, tandis que différentes espèces peuvent avoir différents types de Focus disponibles.
 
 BEGINNER_HINT_19
 19: Une nouvelle colonie peut être établie sur un [[encyclopedia OUTPOSTS_TITLE]] en y construisant une structure 'Colonie' ou bien à l'aide d'un astronef [[predefinedshipdesign SD_COLONY_SHIP]]. La plupart des structures 'Colonie' requièrent une connection d'[[metertype METER_SUPPLY]] à une planète présentant un indicateur [[metertype METER_HAPPINESS]] d'au moins 5, et une Population supérieure ou égale à 3. Lorsqu'une nouvelle espèce est débloquée, par exemple via la recherche de la technologie [[tech PRO_EXOBOTS]], ce pré-requis ne s'applique pas pour leur structure 'Colonie'.
@@ -10383,10 +10434,10 @@ Des expérimentations ingénieuses conjuguées au perfectionnement des infrastru
 ##
 
 BLD_EVACUATION
-Évacuation
+Système d'Évacuation
 
 BLD_EVACUATION_DESC
-Extrait la population de cette planète sur plusieurs tours. Si une planète de remplacement avec un [[encyclopedia ENVIRONMENT_TITLE]] approprié est disponible et déjà peuplée par la même espèce, tout en disposant de suffisamment de place libre, la population y sera transférée.
+Extrait la population de cette planète sur plusieurs tours selon un [[encyclopedia EVACUATION_TITLE]] prédéfini. Si une planète de remplacement avec un [[encyclopedia ENVIRONMENT_TITLE]] approprié est disponible et déjà peuplée par la même espèce, tout en disposant de suffisamment de place libre, la population y sera transférée.
 
 BLD_OBSERVATORY
 Observatoire
@@ -10852,7 +10903,7 @@ BLD_COLONY_BASE
 Colonisateur Stellaire
 
 BLD_COLONY_BASE_DESC
-Crée un astronef [[predefinedshipdesign SD_COLONY_BASE]] permettant de coloniser une autre planète du même système stellaire. Ne peut être construit que dans une colonie dont la Population est supérieure ou égale à 3.
+Crée un astronef [[predefinedshipdesign SD_COLONY_BASE]] permettant de coloniser une autre planète du même système stellaire. [[MIN_POPULATION_THREE_REQUIRED]].
 
 BLD_EXPERIMENTOR_OUTPOST
 Avant-Poste Expérimentateur
