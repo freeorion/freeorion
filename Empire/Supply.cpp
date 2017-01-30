@@ -864,6 +864,11 @@ void SupplyManager::SupplyManagerImpl::Update() {
     // propagating supply can push back another's, if the pusher's range is
     // larger.
 
+
+    // Map from empire id to a map from system id to the stealth and supply ranges of empire
+    // objects in that system.
+    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> empire_to_system_to_stealth_supply;
+
     // map from empire id to map from system id to range (in starlane jumps)
     // that supply can be propagated out of that system by that empire.
     std::map<int, std::map<int, float> > empire_system_supply_ranges;
@@ -871,10 +876,12 @@ void SupplyManager::SupplyManagerImpl::Update() {
     // propagation
     std::map<int, std::set<int> > empire_supply_unobstructed_systems;
 
-    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
-        const Empire* empire = entry.second;
-        empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
-        empire_supply_unobstructed_systems[entry.first] = empire->SupplyUnobstructedSystems();
+    for (const auto& entry : Empires()) {
+        const auto empire_id = entry.first;
+        const auto& empire = entry.second;
+        empire_to_system_to_stealth_supply[empire_id] = empire->SystemToStealthAndSupplyRange();
+        empire_system_supply_ranges[empire_id] = empire->SystemSupplyRanges();
+        empire_supply_unobstructed_systems[empire_id] = empire->SupplyUnobstructedSystems();
 
         //std::stringstream ss;
         //for (int system_id : empire_supply_unobstructed_systems[entry.first])

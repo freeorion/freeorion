@@ -2244,6 +2244,9 @@ void Empire::UpdateAvailableLanes() {
     m_pending_system_exit_lanes.clear(); // TODO: consider: not really necessary, & may be more efficient to not clear.
 }
 
+const std::unordered_map<int, std::set<std::pair<float, float>>>& Empire::SystemToStealthAndSupplyRange() const
+{ return m_system_to_stealth_supply; }
+
 const std::map<int, float>& Empire::SystemSupplyRanges() const
 { return m_supply_system_ranges; }
 

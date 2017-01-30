@@ -396,6 +396,9 @@ public:
       * propagate supply. */
     const std::map<int, float>&             SystemSupplyRanges() const;
 
+    /** Return a map from system id to an ordered set of pairs of stealth and supply range.*/
+    const std::unordered_map<int, std::set<std::pair<float, float>>>& SystemToStealthAndSupplyRange() const;
+
     /** Returns set of system ids that are able to propagate supply from one
       * system to the next, or at which supply can be delivered to fleets if
       * supply can reach the system from elsewhere, or in which planets can
