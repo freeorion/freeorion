@@ -345,7 +345,7 @@ std::string Number::Description(bool negated/* = false*/) const {
     std::string high_str = (m_high ? (m_high->ConstantExpr() ?
                                       boost::lexical_cast<std::string>(m_high->Eval()) :
                                       m_high->Description())
-                                   : boost::lexical_cast<std::string>(INT_MAX));
+                                   : std::to_string(INT_MAX));
 
     const std::string& description_str = (!negated)
         ? UserString("DESC_NUMBER")
@@ -2141,11 +2141,11 @@ std::string HasSpecial::Description(bool negated/* = false*/) const {
 
     if (m_since_turn_low || m_since_turn_high) {
         // turn range has been specified; must indicate in description
-        std::string low_str = boost::lexical_cast<std::string>(BEFORE_FIRST_TURN);
+        std::string low_str = std::to_string(BEFORE_FIRST_TURN);
         if (m_since_turn_low)
             low_str = m_since_turn_low->Description();
 
-        std::string high_str = boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN);
+        std::string high_str = std::to_string(IMPOSSIBLY_LARGE_TURN);
         if (m_since_turn_high)
             high_str = m_since_turn_high->Description();
 
@@ -2185,8 +2185,8 @@ std::string HasSpecial::Dump() const {
     std::string name_str = (m_name ? m_name->Dump() : "");
 
     if (m_since_turn_low || m_since_turn_high) {
-        std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump() : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
-        std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump() : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
+        std::string low_dump = (m_since_turn_low ? m_since_turn_low->Dump() : std::to_string(BEFORE_FIRST_TURN));
+        std::string high_dump = (m_since_turn_high ? m_since_turn_high->Dump() : std::to_string(IMPOSSIBLY_LARGE_TURN));
         return DumpIndent() + "HasSpecialSinceTurn name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
     }
 
@@ -2423,11 +2423,11 @@ std::string CreatedOnTurn::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     boost::lexical_cast<std::string>(m_low->Eval()) :
                                     m_low->Description())
-                                 : boost::lexical_cast<std::string>(BEFORE_FIRST_TURN));
+                                 : std::to_string(BEFORE_FIRST_TURN));
     std::string high_str = (m_high ? (m_high->ConstantExpr() ?
                                       boost::lexical_cast<std::string>(m_high->Eval()) :
                                       m_high->Description())
-                                   : boost::lexical_cast<std::string>(IMPOSSIBLY_LARGE_TURN));
+                                   : std::to_string(IMPOSSIBLY_LARGE_TURN));
     return str(FlexibleFormat((!negated)
             ? UserString("DESC_CREATED_ON_TURN")
             : UserString("DESC_CREATED_ON_TURN_NOT"))
@@ -4129,7 +4129,7 @@ std::string Enqueued::Description(bool negated/* = false*/) const {
                     boost::lexical_cast<std::string>(m_low->Eval()) :
                     m_low->Description();
     }
-    std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
+    std::string high_str = std::to_string(INT_MAX);
     if (m_high) {
         high_str = m_high->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_high->Eval()) :
@@ -4780,7 +4780,7 @@ std::string DesignHasPart::Description(bool negated/* = false*/) const {
                     boost::lexical_cast<std::string>(m_low->Eval()) :
                     m_low->Description();
     }
-    std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
+    std::string high_str = std::to_string(INT_MAX);
     if (m_high) {
         high_str = m_high->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_high->Eval()) :
@@ -4940,7 +4940,7 @@ std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
                     boost::lexical_cast<std::string>(m_low->Eval()) :
                     m_low->Description();
     }
-    std::string high_str = boost::lexical_cast<std::string>(INT_MAX);
+    std::string high_str = std::to_string(INT_MAX);
     if (m_high) {
         high_str = m_high->ConstantExpr() ?
                     boost::lexical_cast<std::string>(m_high->Eval()) :
