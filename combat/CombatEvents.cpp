@@ -41,7 +41,7 @@ namespace {
 
     std::string WrapWithTagAndId(const std::string& meat, const std::string& tag, int id) {
         std::stringstream ss;
-        ss << "<" << tag << " " << boost::lexical_cast<std::string>(id) << ">" << meat << "</" << tag << ">";
+        ss << "<" << tag << " " << std::to_string(id) << ">" << meat << "</" << tag << ">";
         return ss.str();
     }
 
