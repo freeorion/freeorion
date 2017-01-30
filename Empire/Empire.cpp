@@ -771,7 +771,7 @@ std::string ProductionQueue::ProductionItem::Dump() const {
     if (!name.empty())
         retval += "name: " + name;
     if (design_id != ShipDesign::INVALID_DESIGN_ID)
-        retval += "id: " + boost::lexical_cast<std::string>(design_id);
+        retval += "id: " + std::to_string(design_id);
     return retval;
 }
 
@@ -851,8 +851,8 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int empir
 
 std::string ProductionQueue::Element::Dump() const {
     std::string retval = "ProductionQueue::Element (" + item.Dump() + ") (" +
-        boost::lexical_cast<std::string>(blocksize) + ") x" + boost::lexical_cast<std::string>(ordered) + " ";
-    retval += " (remaining: " + boost::lexical_cast<std::string>(remaining) + ") ";
+        std::to_string(blocksize) + ") x" + std::to_string(ordered) + " ";
+    retval += " (remaining: " + std::to_string(remaining) + ") ";
     return retval;
 }
 
@@ -1506,8 +1506,8 @@ std::shared_ptr<const UniverseObject> Empire::Source() const {
 
 std::string Empire::Dump() const {
     std::string retval = "Empire name: " + m_name +
-                         " ID: "+ boost::lexical_cast<std::string>(m_id) +
-                         " Capital ID: " + boost::lexical_cast<std::string>(m_capital_id);
+                         " ID: " + std::to_string(m_id) +
+                         " Capital ID: " + std::to_string(m_capital_id);
     retval += " meters:\n";
     for (const std::map<std::string, Meter>::value_type& meter : m_meters) {
         retval += UserString(meter.first) + ": " +
@@ -2967,7 +2967,7 @@ void Empire::CheckProductionProgress() {
                 break;
             }
             case BT_SHIP: {
-                build_description = "Ships(s) with design id " + boost::lexical_cast<std::string>(elem.item.design_id);
+                build_description = "Ships(s) with design id " + std::to_string(elem.item.design_id);
                 break;
             }
             default: 
