@@ -77,6 +77,25 @@ namespace {
     }
 
     template <typename T>
+    ValueRef::Variable<std::string>* StringCastedComplexValueRef(const std::string& token,
+                                                                 ValueRef::ValueRefBase<int>* int_ref1 = nullptr,
+                                                                 ValueRef::ValueRefBase<int>* int_ref2 = nullptr,
+                                                                 ValueRef::ValueRefBase<int>* int_ref3 = nullptr,
+                                                                 ValueRef::ValueRefBase<std::string>* string_ref1 = nullptr,
+                                                                 ValueRef::ValueRefBase<std::string>* string_ref2 = nullptr)
+    {
+        return new ValueRef::StringCast<T>(
+            new ValueRef::ComplexVariable<T>(token, int_ref1, int_ref2, int_ref3, string_ref1, string_ref2));
+    }
+
+    ValueRef::Variable<std::string>* SystemSupplyRangeValueRef() {
+        return StringCastedComplexValueRef<double>(
+            "SystemSupplyRange",
+            nullptr,
+            new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
+    }
+
+    template <typename T>
     ValueRef::Variable<std::string>* UserStringCastedValueRef(const std::string& token) {
         return new ValueRef::UserStringLookup(
             new ValueRef::StringCast<T>(
@@ -121,6 +140,7 @@ namespace {
             col_types[{UserStringNop("NUM_SPECIALS"),         ""}] =  StringCastedValueRef<int>("NumSpecials");
             // empire
             col_types[{UserStringNop("SUPPLYING_EMPIRE"),     ""}] =  EmpireNameValueRef("SupplyingEmpire");
+            col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),  ""}] =  SystemSupplyRangeValueRef();
             col_types[{UserStringNop("OWNER"),                ""}] =  EmpireNameValueRef("Owner");
             col_types[{UserStringNop("PRODUCED_BY"),          ""}] =  EmpireNameValueRef("ProducedByEmpireID");
 
