@@ -11,6 +11,7 @@
 
 #include <deque>
 #include <string>
+#include <unordered_set>
 #include <unordered_map>
 
 struct ItemSpec;
@@ -396,6 +397,9 @@ public:
       * propagate supply. */
     const std::map<int, float>&             SystemSupplyRanges() const;
 
+    /** Returns the systems in which this empire is blockading supply.*/
+    const std::unordered_set<int>& SupplyBlockadedSystems() const;
+
     /** Return a map from system id to an ordered set of pairs of stealth and supply range.*/
     const std::unordered_map<int, std::set<std::pair<float, float>>>& SystemToStealthAndSupplyRange() const;
 
@@ -513,6 +517,8 @@ public:
     void        UpdateSystemSupplyRanges(const std::set<int>& known_objects);
     /** Calculates ranges that systems can send fleet and resource supplies. */
     void        UpdateSystemSupplyRanges();
+    /** Calculates the systems in which this empire is blockading supply. */
+    void        UpdateSupplyBlockadedSystems();
     /** Calculates stealth and range that systems can send fleet and resource supplies. */
     void        UpdateSystemToStealthAndSupplyRange();
     /** Calculates systems that can propagate supply (fleet or resource) using
@@ -701,6 +707,9 @@ private:
     // cached calculation results, returned by reference
     std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
     std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
+
+    /** System id where this empire is blockading/protecting supply.*/
+    std::unordered_set<int>         m_systems_with_empire_owned_blockading_fleets;
 
     /** A map from system id to a set of supply stealth and range.*/
     std::unordered_map<int, std::set<std::pair<float, float>>> m_system_to_stealth_supply;
