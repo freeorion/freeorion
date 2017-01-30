@@ -961,7 +961,7 @@ void InitEmpires(const std::map<int, PlayerSetupData>& player_setup_data)
         }
 
         // set generic default empire name
-        std::string empire_name = UserString("EMPIRE") + boost::lexical_cast<std::string>(empire_id);
+        std::string empire_name = UserString("EMPIRE") + std::to_string(empire_id);
 
         DebugLogger() << "Universe::InitEmpires creating new empire" << " with ID: " << empire_id
                       << " for player: " << player_name << " (with player id: " << player_id << ")";
