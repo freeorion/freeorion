@@ -1982,12 +1982,13 @@ void Empire::Win(const std::string& reason) {
 
 namespace
 {
+    template <typename T>
     std::vector<int> ExistingObjectsKnownToEmpire(int id) {
         const Universe& universe = GetUniverse();
         const ObjectMap& empire_known_objects = EmpireKnownObjects(id);
 
         // get ids of objects partially or better visible to this empire.
-        auto known_objects_vec = empire_known_objects.FindObjectIDs();
+        auto known_objects_vec = empire_known_objects.FindObjectIDs<T>();
         const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(id);
 
         std::vector<int> known_objects;
@@ -2005,7 +2006,7 @@ void Empire::UpdateSystemToStealthAndSupplyRange() {
     m_system_to_stealth_supply.clear();
 
     // as of this writing, only planets can generate supply propagation
-    for (int object_id : ExistingObjectsKnownToEmpire(EmpireID())) {
+    for (int object_id : ExistingObjectsKnownToEmpire<Planet>(EmpireID())) {
         std::shared_ptr<const Planet> planet = GetPlanet(object_id);
         std::shared_ptr<const UniverseObject> obj = planet;
         // Check is it an owned planet with a valid id and a supply meter.
