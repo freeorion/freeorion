@@ -71,30 +71,30 @@ public:
     float                       SpecialCapacity(const std::string& name) const;     ///> returns the capacity of the special with name \a name or 0 if that special is not present
 
     /** Returns all tags this object has. */
-    virtual std::set<std::string> Tags() const;
+    virtual std::set<std::string>   Tags() const;
 
     /** Returns true iff this object has the tag with the indicated \a name. */
-    virtual bool HasTag(const std::string& name) const;
+    virtual bool                HasTag(const std::string& name) const;
 
-    virtual UniverseObjectType ObjectType() const;
+    virtual UniverseObjectType  ObjectType() const;
 
     /** Outputs textual description of object to logger. */
-    virtual std::string Dump() const;
+    virtual std::string         Dump() const;
 
     /** Returns id of the object that directly contains this object, if any, or
         INVALID_OBJECT_ID if this object is not contained by any other. */
-    virtual int ContainerObjectID() const;
+    virtual int                 ContainerObjectID() const;
 
     /** Returns ids of objects contained within this object. */
-    virtual const std::set<int>& ContainedObjectIDs() const;
+    virtual const std::set<int>&ContainedObjectIDs() const;
 
     /** Returns true if there is an object with id \a object_id is contained
         within this UniverseObject. */
-    virtual bool Contains(int object_id) const;
+    virtual bool                Contains(int object_id) const;
 
     /* Returns true if there is an object with id \a object_id that contains
        this UniverseObject. */
-    virtual bool ContainedBy(int object_id) const;
+    virtual bool                ContainedBy(int object_id) const;
 
     std::set<int>               VisibleContainedObjectIDs(int empire_id) const; ///< returns the subset of contained object IDs that is visible to empire with id \a empire_id
 
@@ -105,7 +105,7 @@ public:
 
     /** Returns an estimate of the next turn's current value of the specified
         meter \a type. */
-    virtual float NextTurnCurrentMeterValue(MeterType type) const;
+    virtual float               NextTurnCurrentMeterValue(MeterType type) const;
 
     Visibility                  GetVisibility(int empire_id) const; ///< returns the visibility status of this universe object relative to the input empire.
 

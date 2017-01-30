@@ -44,7 +44,6 @@ public:
 
     Meter* GetMeter(MeterType type) override;
 
-
     std::vector<std::string> AvailableFoci() const override;
 
     const std::string& FocusIcon(const std::string& focus_name) const override;
@@ -120,7 +119,7 @@ public:
 
     void            SetSurfaceTexture(const std::string& texture);
 
-    void ResetTargetMaxUnpairedMeters() override;
+    void            ResetTargetMaxUnpairedMeters() override;
     //@}
 
     static int      TypeDifference(PlanetType type1, PlanetType type2);
