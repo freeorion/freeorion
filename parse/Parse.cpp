@@ -359,7 +359,7 @@ namespace parse {
                                 ++it, ++replace_number)
                             {
                                 // not using %1% (and boost::fmt) because the replaced text may itself have %s inside it that will get eaten
-                                boost::replace_all(replacement, "@" + boost::lexical_cast<std::string>(replace_number) + "@", boost::copy_range<std::string>(*it));
+                                boost::replace_all(replacement, "@" + std::to_string(replace_number) + "@", boost::copy_range<std::string>(*it));
                             }
                         }
                         text.replace(position, matched_text.length(), replacement);
