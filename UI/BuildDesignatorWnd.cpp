@@ -142,7 +142,7 @@ namespace {
             if (empire) {
                 std::pair<double, int> cost_time = empire->ProductionCostAndTime(m_item, m_location_id);
                 cost_text = DoubleToString(cost_time.first, 3, false);
-                time_text = boost::lexical_cast<std::string>(cost_time.second);
+                time_text = std::to_string(cost_time.second);
             }
 
             m_icon = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
@@ -259,7 +259,7 @@ namespace {
             int production_time = building_type->ProductionTime(empire_id, candidate_object_id);
 
             main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
+            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
 
             // show build conditions
             const std::string& enqueue_and_location_condition_failed_text = EnqueueAndLocationConditionDescription(item.name, candidate_object_id, empire_id, true);
@@ -288,7 +288,7 @@ namespace {
             int production_time = design->ProductionTime(empire_id, candidate_object_id);
 
             main_text += "\n\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_COST") + ": " + DoubleToString(total_cost, 3, false);
-            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + boost::lexical_cast<std::string>(production_time);
+            main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PROD_TIME") + ": " + std::to_string(production_time);
             main_text += "\n\n" + UserString("ENC_SHIP_HULL") + ": " + UserString(design->Hull());
 
             // load ship parts, stack ship parts that are used multiple times
@@ -307,7 +307,7 @@ namespace {
                 if (ship_part_names[part_name_count.first] == 1)
                     ship_parts_formatted += (UserString(part_name_count.first) + ", ");
                 else
-                    ship_parts_formatted += (UserString(part_name_count.first) + " x" + boost::lexical_cast<std::string>(part_name_count.second) + ", ");
+                    ship_parts_formatted += (UserString(part_name_count.first) + " x" + std::to_string(part_name_count.second) + ", ");
             }
 
             main_text += "\n" + UserString("PRODUCTION_WND_TOOLTIP_PARTS") + ": " + ship_parts_formatted.substr(0, ship_parts_formatted.length() - 2);
@@ -348,7 +348,7 @@ namespace {
             SetChildClippingMode(ClipToClient);
 
             if (m_item.build_type == BT_SHIP) {
-                SetDragDropDataType(boost::lexical_cast<std::string>(m_item.design_id));
+                SetDragDropDataType(std::to_string(m_item.design_id));
             } else {
                 SetDragDropDataType(m_item.name);
             }
@@ -1073,7 +1073,7 @@ void BuildDesignatorWnd::SetBuild(int queue_idx) {
             assert(building_type);
             m_build_selector->DisplayBuildingTypeSignal(building_type);
         } else if (buildType == BT_SHIP) {
-            const ShipDesign* design = GetShipDesign(boost::lexical_cast<int>(queue[queue_idx].item.design_id));
+            const ShipDesign* design = GetShipDesign(queue[queue_idx].item.design_id);
             assert(design);
             m_build_selector->DisplayShipDesignSignal(design);
         }
