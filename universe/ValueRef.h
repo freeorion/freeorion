@@ -753,6 +753,10 @@ double Variable<double>::Eval(const ScriptingContext& context) const;
 template <>
 int Variable<int>::Eval(const ScriptingContext& context) const;
 
+template <>
+std::vector<std::string> Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+
+
 template <class T>
 template <class Archive>
 void Variable<T>::serialize(Archive& ar, const unsigned int version)

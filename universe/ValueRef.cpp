@@ -912,6 +912,63 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 }
 
 template <>
+std::vector<std::string> Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const
+{
+    const std::string& property_name = m_property_name.back();
+
+    IF_CURRENT_VALUE(std::vector<std::string>)
+
+
+    if (m_ref_type == NON_OBJECT_REFERENCE) {
+        // add more non-object reference int functions here
+        ErrorLogger() << "std::vector<std::string>::Eval unrecognized non-object property: " << TraceReference(m_property_name, m_ref_type, context);
+        if (context.source)
+            ErrorLogger() << "source: " << context.source->ObjectType() << " "
+                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
+        else
+            ErrorLogger() << "source (none)";
+
+        return {};
+    }
+
+    std::shared_ptr<const UniverseObject> object =
+        FollowReference(m_property_name.begin(), m_property_name.end(), m_ref_type, context);
+    if (!object) {
+        ErrorLogger() << "Variable<int>::Eval unable to follow reference: " << TraceReference(m_property_name, m_ref_type, context);
+        if (context.source)
+            ErrorLogger() << "source: " << context.source->ObjectType() << " "
+                          << context.source->ID() << " ( " << context.source->Name() << " ) ";
+        else
+            ErrorLogger() << "source (none)";
+
+        return {};
+    }
+
+    if (property_name == "Tags") {
+        return std::vector<std::string>(object->Tags().begin(), object->Tags().end());
+    }
+    else if (property_name == "Specials") {
+        std::vector<std::string> retval;
+        for (auto spec : object->Specials())
+            retval.push_back(spec.first);
+        return retval;
+    }
+    else if (property_name == "AvailableFoci") {
+        if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
+            return planet->AvailableFoci();
+    }
+
+    ErrorLogger() << "std::vector<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
+    if (context.source)
+        ErrorLogger() << "source: " << context.source->ObjectType() << " "
+                      << context.source->ID() << " ( " << context.source->Name() << " ) ";
+    else
+        ErrorLogger() << "source (none)";
+
+    return {};
+}
+
+template <>
 std::string Variable<std::string>::Eval(const ScriptingContext& context) const
 {
     const std::string& property_name = m_property_name.back();
