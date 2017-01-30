@@ -307,7 +307,7 @@ namespace {
 
         std::string title_text;
         if (elem.blocksize > 1)
-            title_text = boost::lexical_cast<std::string>(elem.blocksize) + "x ";
+            title_text = std::to_string(elem.blocksize) + "x ";
         title_text += item_name;
 
         return std::make_shared<IconTextBrowseWnd>(icon, title_text, main_text);
