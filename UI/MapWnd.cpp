@@ -2032,7 +2032,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 
 
         // render ETA number in white with black shadows
-        std::string text = "<s>" + boost::lexical_cast<std::string>(vert.eta) + "</s>";
+        std::string text = "<s>" + std::to_string(vert.eta) + "</s>";
         glColor(GG::CLR_WHITE);
         // TODO cache the text_elements
         std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements = font->ExpensiveParseFromTextToTextElements(text, flags);
@@ -2343,7 +2343,7 @@ void MapWnd::InitTurn() {
 
     // set turn button to current turn
     m_btn_turn->SetText(boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) %
-                                       boost::lexical_cast<std::string>(turn_number)));
+                                       std::to_string(turn_number)));
     MoveChildUp(m_btn_turn);
 
 
@@ -3033,7 +3033,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
             // std::string this_pool = "( ";
             for (int object_id : available_pp_group.first) {
-                // this_pool += boost::lexical_cast<std::string>(object_id) +", ";
+                // this_pool += std::to_string(object_id) +", ";
 
                 std::shared_ptr<const Planet> planet = GetPlanet(object_id);
                 if (!planet)
