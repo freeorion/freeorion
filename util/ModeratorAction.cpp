@@ -34,7 +34,7 @@ void Moderator::DestroyUniverseObject::Execute() const
 
 std::string Moderator::DestroyUniverseObject::Dump() const {
     std::string retval = "Moderator::DestroyUniverseObject object_id = "
-                       + boost::lexical_cast<std::string>(m_object_id);
+                       + std::to_string(m_object_id);
     return retval;
 }
 
@@ -60,9 +60,9 @@ void Moderator::SetOwner::Execute() const {
 
 std::string Moderator::SetOwner::Dump() const {
     std::string retval = "Moderator::SetOwner object_id = "
-                       + boost::lexical_cast<std::string>(m_object_id)
+                       + std::to_string(m_object_id)
                        + " new_owner_empire_id = "
-                       + boost::lexical_cast<std::string>(m_new_owner_empire_id);
+                       + std::to_string(m_new_owner_empire_id);
     return retval;
 }
 
@@ -236,7 +236,7 @@ void Moderator::CreatePlanet::Execute() const {
 
 std::string Moderator::CreatePlanet::Dump() const {
     std::string retval = "Moderator::CreatePlanet system_id = "
-                       + boost::lexical_cast<std::string>(m_system_id)
+                       + std::to_string(m_system_id)
                        + " planet_type = "
                        + boost::lexical_cast<std::string>(m_planet_type)
                        + " planet_size = "
