@@ -32,7 +32,6 @@
 #include <GG/Exception.h>
 
 #include <boost/utility/enable_if.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/mpl/assert.hpp>
 
 #include <cassert>
@@ -304,7 +303,7 @@ public:
         m_flags(flag.m_value)
     {
         if (!FlagSpec<FlagType>::instance().contains(flag))
-            throw UnknownFlag("Invalid flag with value " + boost::lexical_cast<std::string>(flag.m_value));
+            throw UnknownFlag("Invalid flag with value " + std::to_string(flag.m_value));
     }
     //@}
 
