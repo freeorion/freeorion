@@ -78,8 +78,6 @@ private:
 
     void    TechLeftClickedSlot(const std::string& tech_name,
                                 const GG::Flags<GG::ModKey>& modkeys);
-    void    TechRightClickedSlot(const std::string& tech_name,
-                                 const GG::Flags<GG::ModKey>& modkeys);
     void    TechDoubleClickedSlot(const std::string& tech_name,
                                   const GG::Flags<GG::ModKey>& modkeys);
     void    TechPediaDisplaySlot(const std::string& tech_name);

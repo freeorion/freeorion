@@ -475,7 +475,6 @@ public:
     std::set<TechStatus>    GetTechStatusesShown() const;
 
     mutable TechTreeWnd::TechClickSignalType    TechLeftClickedSignal;
-    mutable TechTreeWnd::TechClickSignalType    TechRightClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
     mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
     //@}
@@ -540,8 +539,6 @@ private:
 
     void TechLeftClickedSlot(const std::string& tech_name,
                              const GG::Flags<GG::ModKey>& modkeys);
-    void TechRightClickedSlot(const std::string& tech_name,
-                              const GG::Flags<GG::ModKey>& modkeys);
     void TechDoubleClickedSlot(const std::string& tech_name,
                                const GG::Flags<GG::ModKey>& modkeys);
     void TechPediaDisplaySlot(const std::string& tech_name);
@@ -621,7 +618,6 @@ public:
     int             FontSize() const;
 
     mutable TechTreeWnd::TechClickSignalType    TechLeftClickedSignal;
-    mutable TechTreeWnd::TechClickSignalType    TechRightClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
     mutable TechTreeWnd::TechSignalType         TechPediaDisplaySignal;
 
@@ -879,8 +875,6 @@ void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG:
 void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
                                                  GG::Flags<GG::ModKey> mod_keys)
 {
-    TechRightClickedSignal(m_tech_name, mod_keys);
-
     GG::MenuItem menu_contents;
     if (!(m_enqueued) && !(m_status == TS_COMPLETE))
         menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
@@ -1392,7 +1386,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         tech_panel->MoveTo(GG::Pt(node->GetX(), node->GetY()));
         m_layout_surface->AttachChild(tech_panel);
         GG::Connect(tech_panel->TechLeftClickedSignal,      &TechTreeWnd::LayoutPanel::TechLeftClickedSlot,     this);
-        GG::Connect(tech_panel->TechRightClickedSignal,     &TechTreeWnd::LayoutPanel::TechRightClickedSlot,    this);
         GG::Connect(tech_panel->TechDoubleClickedSignal,    &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
         GG::Connect(tech_panel->TechPediaDisplaySignal,     &TechTreeWnd::LayoutPanel::TechPediaDisplaySlot,    this);
 
@@ -1457,10 +1450,6 @@ void TechTreeWnd::LayoutPanel::TechLeftClickedSlot(const std::string& tech_name,
     m_selected_tech_name = tech_name;
     TechLeftClickedSignal(tech_name, modkeys);
 }
-
-void TechTreeWnd::LayoutPanel::TechRightClickedSlot(const std::string& tech_name,
-                                                    const GG::Flags<GG::ModKey>& modkeys)
-{ TechRightClickedSignal(tech_name, modkeys); }
 
 void TechTreeWnd::LayoutPanel::TechDoubleClickedSlot(const std::string& tech_name,
                                                      const GG::Flags<GG::ModKey>& modkeys)
@@ -1541,7 +1530,6 @@ public:
     //@}
 
     mutable TechClickSignalType TechLeftClickedSignal;  ///< emitted when a technology is single-left-clicked
-    mutable TechClickSignalType TechRightClickedSignal; ///< emitted when a technology is single-right-clicked
     mutable TechClickSignalType TechDoubleClickedSignal;///< emitted when a technology is double-clicked
     mutable TechSignalType      TechPediaDisplaySignal; ///< emitted when requesting a pedia lookup
 
@@ -1985,14 +1973,12 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
 
     m_layout_panel = new LayoutPanel(w, h);
     GG::Connect(m_layout_panel->TechLeftClickedSignal,  &TechTreeWnd::TechLeftClickedSlot,      this);
-    GG::Connect(m_layout_panel->TechRightClickedSignal, &TechTreeWnd::TechRightClickedSlot,     this);
     GG::Connect(m_layout_panel->TechDoubleClickedSignal,&TechTreeWnd::TechDoubleClickedSlot,    this);
     GG::Connect(m_layout_panel->TechPediaDisplaySignal, &TechTreeWnd::TechPediaDisplaySlot,     this);
     AttachChild(m_layout_panel);
 
     m_tech_list = new TechListBox(w, h);
     GG::Connect(m_tech_list->TechLeftClickedSignal,     &TechTreeWnd::TechLeftClickedSlot,      this);
-    GG::Connect(m_tech_list->TechRightClickedSignal,    &TechTreeWnd::TechRightClickedSlot,     this);
     GG::Connect(m_tech_list->TechDoubleClickedSignal,   &TechTreeWnd::TechDoubleClickedSlot,    this);
     GG::Connect(m_tech_list->TechPediaDisplaySignal,    &TechTreeWnd::TechPediaDisplaySlot,     this);
 
@@ -2261,10 +2247,6 @@ void TechTreeWnd::TechLeftClickedSlot(const std::string& tech_name,
         TechSelectedSignal(tech_name);
     }
 }
-
-void TechTreeWnd::TechRightClickedSlot(const std::string& tech_name,
-                                       const GG::Flags<GG::ModKey>& modkeys)
-{}
 
 void TechTreeWnd::TechDoubleClickedSlot(const std::string& tech_name,
                                         const GG::Flags<GG::ModKey>& modkeys)
