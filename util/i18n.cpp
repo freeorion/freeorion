@@ -145,7 +145,7 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
     // early termination if magnitude is 0
     if (mag == 0.0) {
         std::string format;
-        format += "%1." + boost::lexical_cast<std::string>(digits - 1) + "f";
+        format += "%1." + std::to_string(digits - 1) + "f";
         text += (boost::format(format) % mag).str();
         return text;
     }
@@ -213,8 +213,8 @@ std::string DoubleToString(double val, int digits, bool always_show_sign) {
 
 
     std::string format;
-    format += "%" + boost::lexical_cast<std::string>(digits) + "." +
-                    boost::lexical_cast<std::string>(fractionDigits) + "f";
+    format += "%" + std::to_string(digits) + "." +
+                    std::to_string(fractionDigits) + "f";
     text += (boost::format(format) % mag).str();
 
     // append base scale SI prefix (as postfix)
