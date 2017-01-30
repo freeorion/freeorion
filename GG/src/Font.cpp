@@ -873,10 +873,10 @@ public:
     /** Add open color tag.*/
     void AddOpenTag(const Clr& color)
     {
-        std::vector<std::string> params = { boost::lexical_cast<std::string>(static_cast<int>(color.r)),
-                                            boost::lexical_cast<std::string>(static_cast<int>(color.g)),
-                                            boost::lexical_cast<std::string>(static_cast<int>(color.b)),
-                                            boost::lexical_cast<std::string>(static_cast<int>(color.a)) };
+        std::vector<std::string> params = { std::to_string(color.r),
+                                            std::to_string(color.g),
+                                            std::to_string(color.b),
+                                            std::to_string(color.a) };
 
         AddOpenTag("rgba", &params);
     }
