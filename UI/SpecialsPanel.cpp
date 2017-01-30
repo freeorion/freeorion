@@ -87,7 +87,7 @@ void SpecialsPanel::Update() {
             desc += "\n" + boost::io::str(FlexibleFormat(UserString("SPECIAL_CAPACITY")) % DoubleToString(entry.second.second, 2, false));
 
         if (entry.second.first > 0)
-            desc += "\n" + boost::io::str(FlexibleFormat(UserString("ADDED_ON_TURN")) % boost::lexical_cast<std::string>(entry.second.first));
+            desc += "\n" + boost::io::str(FlexibleFormat(UserString("ADDED_ON_TURN")) % entry.second.first);
         else
             desc += "\n" + UserString("ADDED_ON_INITIAL_TURN");
 
