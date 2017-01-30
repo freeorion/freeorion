@@ -41,9 +41,9 @@ About::About():
     }
     fin.close();
 
-    GG::Connect(m_done_btn->LeftClickedSignal, &About::OnDone, this);
-    GG::Connect(m_license->LeftClickedSignal, &About::OnLicense, this);
-    GG::Connect(m_vision->LeftClickedSignal, &About::OnVision, this);
+    GG::Connect(m_done_btn->LeftClickedSignal, boost::bind(&GG::Wnd::EndRun, this));
+    GG::Connect(m_license->LeftClickedSignal, &About::ShowLicense, this);
+    GG::Connect(m_vision->LeftClickedSignal, &About::ShowVision, this);
 }
 
 About::~About()
@@ -53,16 +53,13 @@ void About::KeyPress (GG::Key key, boost::uint32_t key_code_point,
                       GG::Flags<GG::ModKey> mod_keys)
 {
     if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE))
-        OnDone();
+        EndRun();
 }
 
-void About::OnDone()
-{ m_done = true; }
-
-void About::OnLicense()
+void About::ShowLicense()
 { m_info->SetText(m_license_str); }
 
-void About::OnVision()
+void About::ShowVision()
 { m_info->SetText(UserString("FREEORION_VISION")); }
 
 void About::DoLayout() {

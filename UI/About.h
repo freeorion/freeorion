@@ -18,12 +18,9 @@ public:
     void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 //!@}
 
-//! \name Event Handlers
-//!@{
-    void OnDone();      //!< when 'Done' button is pressed
-    void OnLicense();   //!< when 'License' button is pressed
-    void OnVision();    //!< when 'Vision' button is pressed
-//!@}
+    void ShowLicense();
+
+    void ShowVision();
 
 private:
     void DoLayout();
