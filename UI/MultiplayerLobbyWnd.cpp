@@ -692,7 +692,7 @@ namespace {
     void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
         DebugLogger() << "PlayerSetupData:";
         for (const std::pair<int, PlayerSetupData>& entry : psd)
-            DebugLogger() << boost::lexical_cast<std::string>(entry.first) << " : "
+            DebugLogger() << std::to_string(entry.first) << " : "
                                    << entry.second.m_player_name << ", "
                                    << entry.second.m_client_type << ", "
                                    << entry.second.m_starting_species_name
