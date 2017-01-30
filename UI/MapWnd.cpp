@@ -6217,49 +6217,49 @@ namespace {
 void MapWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(this, &MapWnd::ReturnToMap,            "map.return_to_map",
+    hkm->Connect(boost::bind(&MapWnd::ReturnToMap, this), "map.return_to_map",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::OpenMessages,           "map.open_chat",
+    hkm->Connect(boost::bind(&MapWnd::OpenMessages, this), "map.open_chat",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::EndTurn,                "map.end_turn",
+    hkm->Connect(boost::bind(&MapWnd::EndTurn, this), "map.end_turn",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ToggleSitRep,           "map.sit_rep",
+    hkm->Connect(boost::bind(&MapWnd::ToggleSitRep, this), "map.sit_rep",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ToggleResearch,         "map.research",
+    hkm->Connect(boost::bind(&MapWnd::ToggleResearch, this), "map.research",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ToggleProduction,       "map.production",
+    hkm->Connect(boost::bind(&MapWnd::ToggleProduction, this), "map.production",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ToggleDesign,           "map.design",
+    hkm->Connect(boost::bind(&MapWnd::ToggleDesign, this), "map.design",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ToggleObjects,          "map.objects",
+    hkm->Connect(boost::bind(&MapWnd::ToggleObjects, this), "map.objects",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ToggleMessages,         "map.messages",
+    hkm->Connect(boost::bind(&MapWnd::ToggleMessages, this), "map.messages",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ToggleEmpires,          "map.empires",
+    hkm->Connect(boost::bind(&MapWnd::ToggleEmpires, this), "map.empires",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::TogglePedia,            "map.pedia",
+    hkm->Connect(boost::bind(&MapWnd::TogglePedia, this), "map.pedia",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ShowGraphs,             "map.graphs",
+    hkm->Connect(boost::bind(&MapWnd::ShowGraphs, this), "map.graphs",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ShowMenu,               "map.menu",
+    hkm->Connect(boost::bind(&MapWnd::ShowMenu, this), "map.menu",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in",
+    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "map.zoom_in",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::KeyboardZoomIn,         "map.zoom_in_alt",
+    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "map.zoom_in_alt",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out",
+    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "map.zoom_out",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::KeyboardZoomOut,        "map.zoom_out_alt",
+    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "map.zoom_out_alt",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToHomeSystem,       "map.zoom_home_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToHomeSystem, this), "map.zoom_home_system",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToPrevSystem,       "map.zoom_prev_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevSystem, this), "map.zoom_prev_system",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToNextSystem,       "map.zoom_next_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToNextSystem, this), "map.zoom_next_system",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToPrevOwnedSystem,  "map.zoom_prev_owned_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevOwnedSystem, this), "map.zoom_prev_owned_system",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToNextOwnedSystem,  "map.zoom_next_owned_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToNextOwnedSystem, this), "map.zoom_next_owned_system",
                  new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
 
     // the list of windows for which the fleet shortcuts are blacklisted.
@@ -6268,13 +6268,13 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     bl.push_back(m_production_wnd);
     bl.push_back(m_design_wnd);
 
-    hkm->Connect(this, &MapWnd::ZoomToPrevFleet,        "map.zoom_prev_fleet",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevFleet, this), "map.zoom_prev_fleet",
                  new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToNextFleet,        "map.zoom_next_fleet",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToNextFleet, this), "map.zoom_next_fleet",
                  new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToPrevIdleFleet,    "map.zoom_prev_idle_fleet",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevIdleFleet, this), "map.zoom_prev_idle_fleet",
                  new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &MapWnd::ZoomToNextIdleFleet,    "map.zoom_next_idle_fleet",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToNextIdleFleet, this), "map.zoom_next_idle_fleet",
                  new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
 
     hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(50)),   "map.pan_right",
@@ -6293,16 +6293,16 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
 
 
     // these are general-use hotkeys, only connected here as a convenient location to do so once.
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CutFocusWndText,              "cut");
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::CopyFocusWndText,             "copy");
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::PasteFocusWndClipboardText,   "paste");
+    hkm->Connect(boost::bind(&GG::GUI::CutFocusWndText, GG::GUI::GetGUI()), "cut");
+    hkm->Connect(boost::bind(&GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()), "copy");
+    hkm->Connect(boost::bind(&GG::GUI::PasteFocusWndClipboardText, GG::GUI::GetGUI()), "paste");
 
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::FocusWndSelectAll,            "select_all");
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::FocusWndDeselect,             "deselect");
+    hkm->Connect(boost::bind(&GG::GUI::FocusWndSelectAll, GG::GUI::GetGUI()), "select_all");
+    hkm->Connect(boost::bind(&GG::GUI::FocusWndDeselect, GG::GUI::GetGUI()), "deselect");
 
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::SetPrevFocusWndInCycle,       "focus_prev_wnd",
+    hkm->Connect(boost::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "focus_prev_wnd",
                  new NoModalWndsOpenCondition());
-    hkm->Connect(GG::GUI::GetGUI(), &GG::GUI::SetNextFocusWndInCycle,       "focus_next_wnd",
+    hkm->Connect(boost::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "focus_next_wnd",
                  new NoModalWndsOpenCondition());
 
     hkm->RebuildShortcuts();

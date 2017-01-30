@@ -1107,13 +1107,13 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
 void TechTreeWnd::LayoutPanel::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(this, &TechTreeWnd::LayoutPanel::TreeZoomInKeyboard,   "map.zoom_in",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "map.zoom_in",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &TechTreeWnd::LayoutPanel::TreeZoomInKeyboard,   "map.zoom_in_alt",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInKeyboard, this), "map.zoom_in_alt",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard,  "map.zoom_out",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "map.zoom_out",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
-    hkm->Connect(this, &TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard,  "map.zoom_out_alt",
+    hkm->Connect(boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutKeyboard, this), "map.zoom_out_alt",
                  new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
 
     hkm->RebuildShortcuts();
