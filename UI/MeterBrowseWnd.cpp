@@ -46,7 +46,7 @@ namespace {
             else if (number < 0)
                 prepend_text = "-";
         }
-        return prepend_text + boost::lexical_cast<std::string>(number);
+        return prepend_text + std::to_string(number);
     }
 
     /** Returns a string representation of @p number wrapped in GG RGBA tags for @p clr.
