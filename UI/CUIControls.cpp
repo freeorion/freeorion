@@ -17,7 +17,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/dialogs/ColorDlg.h>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <boost/regex.hpp>
 
@@ -2037,7 +2036,7 @@ void FPSIndicator::Render() {
             m_displayed_FPS = new_FPS;
             // Keep the ss width uniform (2) to prevent re-layout when size changes cause ChildSizeOrMinSizeOrMaxSizeChanged()
             std::stringstream ss;
-            ss << std::setw(2) << std::right << boost::lexical_cast<std::string>(m_displayed_FPS);
+            ss << std::setw(2) << std::right << std::to_string(m_displayed_FPS);
             ChangeTemplatedText(ss.str(), 0);
         }
         TextControl::Render();
