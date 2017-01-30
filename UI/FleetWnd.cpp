@@ -119,7 +119,7 @@ namespace {
             else if (eta.second == Fleet::ETA_OUT_OF_RANGE)
                 next_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
             else
-                next_eta_text = boost::lexical_cast<std::string>(eta.second);
+                next_eta_text = std::to_string(eta.second);
 
             // final destination
             std::string final_eta_text;
@@ -130,7 +130,7 @@ namespace {
             else if (eta.first == Fleet::ETA_OUT_OF_RANGE)
                 final_eta_text = UserString("FW_FLEET_ETA_OUT_OF_RANGE");
             else
-                final_eta_text = boost::lexical_cast<std::string>(eta.first);
+                final_eta_text = std::to_string(eta.first);
 
             if (ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID()))
                 retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_TO")) %
@@ -1318,7 +1318,7 @@ void FleetDataPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& 
             ship_ids.push_back(ship_row->ShipID());
     std::string id_list;
     for (int ship_id : ship_ids)
-        id_list += boost::lexical_cast<std::string>(ship_id) + " ";
+        id_list += std::to_string(ship_id) + " ";
     DebugLogger() << "FleetWnd::AcceptDrops found " << ship_ids.size() << " ship ids: " << id_list;
 
     if (ship_ids.empty())
