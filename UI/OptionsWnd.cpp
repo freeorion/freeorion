@@ -8,7 +8,6 @@
 #include "ClientUI.h"
 #include "CUISpin.h"
 #include "CUISlider.h"
-#include "GraphicsSystem.h"
 #include "Sound.h"
 #include "Hotkeys.h"
 
