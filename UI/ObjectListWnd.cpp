@@ -88,9 +88,9 @@ namespace {
             new ValueRef::ComplexVariable<T>(token, int_ref1, int_ref2, int_ref3, string_ref1, string_ref2));
     }
 
-    ValueRef::Variable<std::string>* SystemSupplyRangeValueRef() {
+    ValueRef::Variable<std::string>* SystemSupplyRangeValueRef(bool propegated = false) {
         return StringCastedComplexValueRef<double>(
-            "SystemSupplyRange",
+            propegated ? "PropegatedSystemSupplyRange" :"SystemSupplyRange",
             nullptr,
             new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
     }
@@ -140,7 +140,8 @@ namespace {
             col_types[{UserStringNop("NUM_SPECIALS"),         ""}] =  StringCastedValueRef<int>("NumSpecials");
             // empire
             col_types[{UserStringNop("SUPPLYING_EMPIRE"),     ""}] =  EmpireNameValueRef("SupplyingEmpire");
-            col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),  ""}] =  SystemSupplyRangeValueRef();
+            col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),  ""}] =  SystemSupplyRangeValueRef(false);
+            col_types[{UserStringNop("PROPAGATED_SUPPLY_RANGE"),""}]= SystemSupplyRangeValueRef(true);
             col_types[{UserStringNop("OWNER"),                ""}] =  EmpireNameValueRef("Owner");
             col_types[{UserStringNop("PRODUCED_BY"),          ""}] =  EmpireNameValueRef("ProducedByEmpireID");
 
