@@ -2127,13 +2127,6 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     // get all fleets, or just those visible to this client's empire
     const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
-    // get empire supply ranges
-    std::map<int, std::map<int, float> > empire_system_supply_ranges;
-    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
-        const Empire* empire = entry.second;
-        empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
-    }
-
     // find systems that contain fleets that can either maintain supply or block supply.
     // to affect supply in either manner, a fleet must be armed & aggressive, & must be not
     // trying to depart the systme.  Qualifying enemy fleets will blockade if no friendly fleets
