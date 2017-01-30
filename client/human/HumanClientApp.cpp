@@ -520,7 +520,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
             PlayerSetupData ai_setup_data;
 
-            ai_setup_data.m_player_name = "AI_" + boost::lexical_cast<std::string>(ai_i);
+            ai_setup_data.m_player_name = "AI_" + std::to_string(ai_i);
             ai_setup_data.m_empire_name.clear();                // leave blank, to be set by server in Universe::GenerateEmpires
             ai_setup_data.m_empire_color = GG::CLR_ZERO;        // to be set by server
             ai_setup_data.m_starting_species_name.clear();      // leave blank, to be set by server
