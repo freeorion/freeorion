@@ -36,7 +36,6 @@
 #include <string>
 #include <utility>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/python.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/tuple.hpp>
@@ -757,7 +756,7 @@ namespace {
         // check if we got a fleet name...
         if (name.empty()) {
             // ...no name has been specified, so we have to generate one using the new fleet id
-            fleet->Rename(UserString("OBJ_FLEET") + " " + boost::lexical_cast<std::string>(fleet->ID()));
+            fleet->Rename(UserString("OBJ_FLEET") + " " + std::to_string(fleet->ID()));
         }
 
         // return fleet ID
@@ -823,7 +822,7 @@ namespace {
                 ship->Rename(empire->NewShipName());
             } else {
                 // ...no, so construct a name using the new ships id
-                ship->Rename(UserString("OBJ_SHIP") + " " + boost::lexical_cast<std::string>(ship->ID()));
+                ship->Rename(UserString("OBJ_SHIP") + " " + std::to_string(ship->ID()));
             }
         } else {
             // ...yes, name has been specified, so use it
