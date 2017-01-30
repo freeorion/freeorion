@@ -957,7 +957,7 @@ namespace {
             boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
             std::string sources_ids;
             for (std::shared_ptr<const UniverseObject> obj : *m_sources) {
-                sources_ids += obj->Name() + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                sources_ids += obj->Name() + " (" + std::to_string(obj->ID()) + ")  ";
             }
             DebugLogger() << "StoreTargetsAndCausesOfEffectsGroups: effects_group: " << m_effects_group->AccountingLabel()
                           << "  specific_cause: " << m_specific_cause_name
@@ -976,7 +976,7 @@ namespace {
             ScriptingContext source_context(source);
             int source_object_id = (source ? source->ID() : INVALID_OBJECT_ID);
             ScopedTimer update_timer("... StoreTargetsAndCausesOfEffectsGroups done processing source " +
-                                     boost::lexical_cast<std::string>(source_object_id) +
+                                     std::to_string(source_object_id) +
                                      " cause: " + m_specific_cause_name);
 
             // skip inactive sources
