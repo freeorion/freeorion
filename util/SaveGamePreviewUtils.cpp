@@ -11,12 +11,10 @@
 #include "ScopedTimer.h"
 #include "Version.h"
 
-#include <boost/lexical_cast.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/iostreams/filter/zlib.hpp>
 #include <boost/iostreams/filtering_streambuf.hpp>
@@ -178,7 +176,7 @@ std::string ColumnInPreview(const FullPreview& full, const std::string& name, bo
     } else if (name == "empire") {
         return full.preview.main_player_empire_name;
     } else if (name == "turn") {
-        return boost::lexical_cast<std::string>(full.preview.current_turn);
+        return std::to_string(full.preview.current_turn);
     } else if (name == "time") {
         if (thin) {
             return split_time(full.preview.save_time);
@@ -188,7 +186,7 @@ std::string ColumnInPreview(const FullPreview& full, const std::string& name, bo
     } else if (name == "file") {
         return full.filename;
     } else if (name == "galaxy_size") {
-        return boost::lexical_cast<std::string>(full.galaxy.m_size);
+        return std::to_string(full.galaxy.m_size);
     } else if (name == "seed") {
         return full.galaxy.m_seed;
     } else if (name == "galaxy_age") {
@@ -208,9 +206,9 @@ std::string ColumnInPreview(const FullPreview& full, const std::string& name, bo
     } else if (name == "ai_aggression") {
         return TextForAIAggression(full.galaxy.m_ai_aggr);
     } else if (name == "number_of_empires") {
-        return boost::lexical_cast<std::string>(full.preview.number_of_empires);
+        return std::to_string(full.preview.number_of_empires);
     } else if (name == "number_of_humans") {
-        return boost::lexical_cast<std::string>(full.preview.number_of_human_players);
+        return std::to_string(full.preview.number_of_human_players);
     } else {
         ErrorLogger() << "FullPreview::Value Error: no such preview field: " << name;
         return "??";
