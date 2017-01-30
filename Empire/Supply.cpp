@@ -842,7 +842,20 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups(
             m_resource_supply_groups[empire_id].insert(component_set.second);
         }
     }
+}
 
+namespace {
+    /** Return a map from empire id to detection strength.*/
+    std::unordered_map<int, float> EmpireToDetectionStrengths() {
+        std::unordered_map<int, float> retval;
+        for (const auto& entry : Empires()) {
+            const auto  empire_id = entry.first;
+            const auto& empire = entry.second;
+            const auto  meter = empire->GetMeter("METER_DETECTION_STRENGTH");
+            retval[empire_id] = meter ? meter->Current() : 0.0f;
+        }
+        return retval;
+    }
 }
 
 void SupplyManager::SupplyManagerImpl::Update() {
@@ -875,6 +888,9 @@ void SupplyManager::SupplyManagerImpl::Update() {
     // map from empire id to which systems are obstructed for it for supply
     // propagation
     std::map<int, std::set<int> > empire_supply_unobstructed_systems;
+
+    /** Map from empire id to detection strength.*/
+    auto empire_to_detection = EmpireToDetectionStrengths();
 
     for (const auto& entry : Empires()) {
         const auto empire_id = entry.first;
