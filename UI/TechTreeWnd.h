@@ -68,7 +68,6 @@ public:
     void            TogglePedia();
     //@}
 
-    mutable TechSignalType          TechBrowsedSignal;
     mutable TechSignalType          TechSelectedSignal;
     mutable QueueAddTechsSignalType AddTechsToQueueSignal;
 
@@ -77,7 +76,6 @@ private:
     class LayoutPanel;
     class TechListBox;
 
-    void    TechBrowsedSlot(const std::string& tech_name);
     void    TechLeftClickedSlot(const std::string& tech_name,
                                 const GG::Flags<GG::ModKey>& modkeys);
     void    TechRightClickedSlot(const std::string& tech_name,

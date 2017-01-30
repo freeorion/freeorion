@@ -474,7 +474,6 @@ public:
     std::set<std::string>   GetCategoriesShown() const;
     std::set<TechStatus>    GetTechStatusesShown() const;
 
-    mutable TechTreeWnd::TechSignalType         TechBrowsedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechLeftClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechRightClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
@@ -539,7 +538,6 @@ private:
 
     void ScrolledSlot(int, int, int, int);
 
-    void TechBrowsedSlot(const std::string& tech_name);
     void TechLeftClickedSlot(const std::string& tech_name,
                              const GG::Flags<GG::ModKey>& modkeys);
     void TechRightClickedSlot(const std::string& tech_name,
@@ -622,7 +620,6 @@ public:
     void            Select(bool select);
     int             FontSize() const;
 
-    mutable TechTreeWnd::TechSignalType         TechBrowsedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechLeftClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechRightClickedSignal;
     mutable TechTreeWnd::TechClickSignalType    TechDoubleClickedSignal;
@@ -912,15 +909,11 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
 void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { TechDoubleClickedSignal(m_tech_name, mod_keys); }
 
-void TechTreeWnd::LayoutPanel::TechPanel::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    TechBrowsedSignal(m_tech_name);
-    m_browse_highlight = true;
-}
+void TechTreeWnd::LayoutPanel::TechPanel::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
+{ m_browse_highlight = true; }
 
-void TechTreeWnd::LayoutPanel::TechPanel::MouseLeave() {
-    TechBrowsedSignal("");
-    m_browse_highlight = false;
-}
+void TechTreeWnd::LayoutPanel::TechPanel::MouseLeave()
+{ m_browse_highlight = false; }
 
 void TechTreeWnd::LayoutPanel::TechPanel::Select(bool select)
 { m_selected = select; }
@@ -1398,7 +1391,6 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         TechPanel* tech_panel = m_techs[tech_name];
         tech_panel->MoveTo(GG::Pt(node->GetX(), node->GetY()));
         m_layout_surface->AttachChild(tech_panel);
-        GG::Connect(tech_panel->TechBrowsedSignal,          &TechTreeWnd::LayoutPanel::TechBrowsedSlot,         this);
         GG::Connect(tech_panel->TechLeftClickedSignal,      &TechTreeWnd::LayoutPanel::TechLeftClickedSlot,     this);
         GG::Connect(tech_panel->TechRightClickedSignal,     &TechTreeWnd::LayoutPanel::TechRightClickedSlot,    this);
         GG::Connect(tech_panel->TechDoubleClickedSignal,    &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
@@ -1452,9 +1444,6 @@ void TechTreeWnd::LayoutPanel::ScrolledSlot(int, int, int, int) {
     m_scroll_position_x = m_hscroll->PosnRange().first;
     m_scroll_position_y = m_vscroll->PosnRange().first;
 }
-
-void TechTreeWnd::LayoutPanel::TechBrowsedSlot(const std::string& tech_name)
-{ TechBrowsedSignal(tech_name); }
 
 void TechTreeWnd::LayoutPanel::TechLeftClickedSlot(const std::string& tech_name,
                                                    const GG::Flags<GG::ModKey>& modkeys)
@@ -1551,7 +1540,6 @@ public:
     void    HideStatus(TechStatus status);
     //@}
 
-    mutable TechSignalType      TechBrowsedSignal;      ///< emitted when the mouse rolls over a technology
     mutable TechClickSignalType TechLeftClickedSignal;  ///< emitted when a technology is single-left-clicked
     mutable TechClickSignalType TechRightClickedSignal; ///< emitted when a technology is single-right-clicked
     mutable TechClickSignalType TechDoubleClickedSignal;///< emitted when a technology is double-clicked
@@ -1996,7 +1984,6 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     Sound::TempUISoundDisabler sound_disabler;
 
     m_layout_panel = new LayoutPanel(w, h);
-    GG::Connect(m_layout_panel->TechBrowsedSignal,      &TechTreeWnd::TechBrowsedSlot,          this);
     GG::Connect(m_layout_panel->TechLeftClickedSignal,  &TechTreeWnd::TechLeftClickedSlot,      this);
     GG::Connect(m_layout_panel->TechRightClickedSignal, &TechTreeWnd::TechRightClickedSlot,     this);
     GG::Connect(m_layout_panel->TechDoubleClickedSignal,&TechTreeWnd::TechDoubleClickedSlot,    this);
@@ -2004,7 +1991,6 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     AttachChild(m_layout_panel);
 
     m_tech_list = new TechListBox(w, h);
-    GG::Connect(m_tech_list->TechBrowsedSignal,         &TechTreeWnd::TechBrowsedSlot,          this);
     GG::Connect(m_tech_list->TechLeftClickedSignal,     &TechTreeWnd::TechLeftClickedSlot,      this);
     GG::Connect(m_tech_list->TechRightClickedSignal,    &TechTreeWnd::TechRightClickedSlot,     this);
     GG::Connect(m_tech_list->TechDoubleClickedSignal,   &TechTreeWnd::TechDoubleClickedSlot,    this);
@@ -2264,9 +2250,6 @@ void TechTreeWnd::TogglePedia() {
 
 bool TechTreeWnd::PediaVisible()
 { return m_enc_detail_panel->Visible(); }
-
-void TechTreeWnd::TechBrowsedSlot(const std::string& tech_name)
-{ TechBrowsedSignal(tech_name); }
 
 void TechTreeWnd::TechLeftClickedSlot(const std::string& tech_name,
                                   const GG::Flags<GG::ModKey>& modkeys)
