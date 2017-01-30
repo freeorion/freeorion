@@ -295,11 +295,11 @@ template <class T>
 struct FO_COMMON_API ComplexVariable : public Variable<T>
 {
     explicit ComplexVariable(const std::string& variable_name,
-                             ValueRefBase<int>* int_ref1 = 0,
-                             ValueRefBase<int>* int_ref2 = 0,
-                             ValueRefBase<int>* int_ref3 = 0,
-                             ValueRefBase<std::string>* string_ref1 = 0,
-                             ValueRefBase<std::string>* string_ref2 = 0);
+                             ValueRefBase<int>* int_ref1 = nullptr,
+                             ValueRefBase<int>* int_ref2 = nullptr,
+                             ValueRefBase<int>* int_ref3 = nullptr,
+                             ValueRefBase<std::string>* string_ref1 = nullptr,
+                             ValueRefBase<std::string>* string_ref2 = nullptr);
 
     ~ComplexVariable();
 
