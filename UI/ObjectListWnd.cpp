@@ -60,20 +60,26 @@ namespace {
 
     ValueRef::Variable<std::string>* StringValueRef(const std::string& token) {
         return new ValueRef::Variable<std::string>(
-            ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token));
+            ValueRef::SOURCE_REFERENCE, token);
     }
 
     ValueRef::Variable<std::string>* UserStringValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup(
+        return new ValueRef::UserStringLookup<std::string>(
             new ValueRef::Variable<std::string>(
-                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)));
+                ValueRef::SOURCE_REFERENCE, token));
+    }
+
+    ValueRef::Variable<std::string>* UserStringVecValueRef(const std::string& token) {
+        return new ValueRef::UserStringLookup<std::vector<std::string>>(
+            new ValueRef::Variable<std::vector<std::string>>(
+                ValueRef::SOURCE_REFERENCE, token));
     }
 
     template <typename T>
     ValueRef::Variable<std::string>* StringCastedValueRef(const std::string& token) {
         return new ValueRef::StringCast<T>(
             new ValueRef::Variable<T>(
-                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)));
+                ValueRef::SOURCE_REFERENCE, token));
     }
 
     template <typename T>
@@ -97,30 +103,30 @@ namespace {
 
     template <typename T>
     ValueRef::Variable<std::string>* UserStringCastedValueRef(const std::string& token) {
-        return new ValueRef::UserStringLookup(
+        return new ValueRef::UserStringLookup<std::string>(
             new ValueRef::StringCast<T>(
                 new ValueRef::Variable<T>(
-                    ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token))));
+                    ValueRef::SOURCE_REFERENCE, token)));
     }
 
     ValueRef::Variable<std::string>* ObjectNameValueRef(const std::string& token) {
         return new ValueRef::NameLookup(
             new ValueRef::Variable<int>(
-                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)),
+                ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::OBJECT_NAME);
     }
 
     ValueRef::Variable<std::string>* EmpireNameValueRef(const std::string& token) {
         return new ValueRef::NameLookup(
             new ValueRef::Variable<int>(
-                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)),
+                ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::EMPIRE_NAME);
     }
 
     ValueRef::Variable<std::string>* DesignNameValueRef(const std::string& token) {
         return new ValueRef::NameLookup(
             new ValueRef::Variable<int>(
-                ValueRef::SOURCE_REFERENCE, std::vector<std::string>(1u, token)),
+                ValueRef::SOURCE_REFERENCE, token),
             ValueRef::NameLookup::SHIP_DESIGN_NAME);
     }
 
@@ -138,8 +144,8 @@ namespace {
             col_types[{UserStringNop("BUILDING_TYPE"),        ""}] =  UserStringValueRef("BuildingType");
             col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),""}] =  StringCastedValueRef<int>("LastTurnBattleHere");
             col_types[{UserStringNop("NUM_SPECIALS"),         ""}] =  StringCastedValueRef<int>("NumSpecials");
-            col_types[{UserStringNop("SPECIALS"),             ""}] =  StringCastedValueRef<std::vector<std::string>>("Specials");
-            col_types[{UserStringNop("TAGS"),                 ""}] = StringCastedValueRef<std::vector<std::string>>("Tags");
+            col_types[{UserStringNop("SPECIALS"),             ""}] =  UserStringVecValueRef("Specials");
+            col_types[{UserStringNop("TAGS"),                 ""}] =  UserStringVecValueRef("Tags");
             // empire
             col_types[{UserStringNop("SUPPLYING_EMPIRE"),     ""}] =  EmpireNameValueRef("SupplyingEmpire");
             col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),  ""}] =  SystemSupplyRangeValueRef(false);
@@ -161,7 +167,7 @@ namespace {
             col_types[{UserStringNop("PLANET_SIZE"),                  UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetSize>("PlanetSize");
             col_types[{UserStringNop("PLANET_ENVIRONMENT"),           UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
             col_types[{UserStringNop("SUPPLY_RANGE"),                 UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("PropagatedSupplyRange");
-            col_types[{UserStringNop("AVAILABLE_FOCI"),               UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<std::vector<std::string>>("AvailableFoci");
+            col_types[{UserStringNop("AVAILABLE_FOCI"),               UserStringNop("PLANETS_SUBMENU")}] =UserStringVecValueRef("AvailableFoci");
 
             // ship/fleet
             col_types[{UserStringNop("SPECIES"),                      UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");

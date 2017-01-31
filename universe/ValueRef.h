@@ -424,10 +424,12 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/** Looks up a string ValueRef and returns the UserString equivalent. */
+/** Looks up a string ValueRef or vector of string ValueRefs, and returns
+  * and returns the UserString equivalent(s). */
+template <class FromType>
 struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
-    UserStringLookup(Variable<std::string>* value_ref);
-    UserStringLookup(ValueRefBase<std::string>* value_ref);
+    UserStringLookup(Variable<FromType>* value_ref);
+    UserStringLookup(ValueRefBase<FromType>* value_ref);
     ~UserStringLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
@@ -448,11 +450,11 @@ struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
-    const ValueRefBase<std::string>* GetValueRef() const
+    const ValueRefBase<FromType>* GetValueRef() const
     { return m_value_ref; }
 
 private:
-    ValueRefBase<std::string>* m_value_ref;
+    ValueRefBase<FromType>* m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -756,7 +758,6 @@ int Variable<int>::Eval(const ScriptingContext& context) const;
 template <>
 std::vector<std::string> Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
-
 template <class T>
 template <class Archive>
 void Variable<T>::serialize(Archive& ar, const unsigned int version)
@@ -770,9 +771,8 @@ void Variable<T>::serialize(Archive& ar, const unsigned int version)
 // Statistic                                             //
 ///////////////////////////////////////////////////////////
 template <class T>
-Statistic<T>::Statistic(ValueRefBase<T>* value_ref,
-                                  StatisticType stat_type,
-                                  Condition::ConditionBase* sampling_condition) :
+Statistic<T>::Statistic(ValueRefBase<T>* value_ref, StatisticType stat_type,
+                        Condition::ConditionBase* sampling_condition) :
     Variable<T>(NON_OBJECT_REFERENCE, ""),
     m_stat_type(stat_type),
     m_sampling_condition(sampling_condition),
@@ -814,8 +814,8 @@ bool Statistic<T>::operator==(const ValueRefBase<T>& rhs) const
 
 template <class T>
 void Statistic<T>::GetConditionMatches(const ScriptingContext& context,
-                                                 Condition::ObjectSet& condition_targets,
-                                                 Condition::ConditionBase* condition) const
+                                       Condition::ObjectSet& condition_targets,
+                                       Condition::ConditionBase* condition) const
 {
     condition_targets.clear();
     if (!condition)
@@ -825,8 +825,8 @@ void Statistic<T>::GetConditionMatches(const ScriptingContext& context,
 
 template <class T>
 void Statistic<T>::GetObjectPropertyValues(const ScriptingContext& context,
-                                                     const Condition::ObjectSet& objects,
-                                                     std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
+                                           const Condition::ObjectSet& objects,
+                                           std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
 {
     object_property_values.clear();
 
@@ -1570,8 +1570,108 @@ void StringCast<FromType>::serialize(Archive& ar, const unsigned int version)
 ///////////////////////////////////////////////////////////
 // UserStringLookup                                      //
 ///////////////////////////////////////////////////////////
+template <class FromType>
+UserStringLookup<FromType>::UserStringLookup(Variable<FromType>* value_ref) :
+    Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
+    m_value_ref(value_ref)
+{}
+
+template <class FromType>
+UserStringLookup<FromType>::UserStringLookup(ValueRefBase<FromType>* value_ref) :
+    Variable<std::string>(NON_OBJECT_REFERENCE),
+    m_value_ref(value_ref)
+{}
+
+template <class FromType>
+UserStringLookup<FromType>::~UserStringLookup()
+{
+    delete m_value_ref;
+}
+
+template <class FromType>
+bool UserStringLookup<FromType>::operator==(const ValueRefBase<std::string>& rhs) const {
+    if (&rhs == this)
+        return true;
+    if (typeid(rhs) != typeid(*this))
+        return false;
+    const UserStringLookup& rhs_ =
+        static_cast<const UserStringLookup&>(rhs);
+
+    if (m_value_ref == rhs_.m_value_ref) {
+        // check next member
+    }
+    else if (!m_value_ref || !rhs_.m_value_ref) {
+        return false;
+    }
+    else {
+        if (*m_value_ref != *(rhs_.m_value_ref))
+            return false;
+    }
+
+    return true;
+}
+
+template <class FromType>
+std::string UserStringLookup<FromType>::Eval(const ScriptingContext& context) const {
+    if (!m_value_ref)
+        return "";
+    std::string ref_val = boost::lexical_cast<std::string>(m_value_ref->Eval(context));
+    if (ref_val.empty() || !UserStringExists(ref_val))
+        return "";
+    return UserString(ref_val);
+}
+
+template <>
+std::string UserStringLookup<std::string>::Eval(const ScriptingContext& context) const;
+
+template <>
+std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+
+template <class FromType>
+bool UserStringLookup<FromType>::RootCandidateInvariant() const
+{
+    return m_value_ref->RootCandidateInvariant();
+}
+
+template <class FromType>
+bool UserStringLookup<FromType>::LocalCandidateInvariant() const
+{
+    return !m_value_ref || m_value_ref->LocalCandidateInvariant();
+}
+
+template <class FromType>
+bool UserStringLookup<FromType>::TargetInvariant() const
+{
+    return !m_value_ref || m_value_ref->TargetInvariant();
+}
+
+template <class FromType>
+bool UserStringLookup<FromType>::SourceInvariant() const
+{
+    return !m_value_ref || m_value_ref->SourceInvariant();
+}
+
+template <class FromType>
+std::string UserStringLookup<FromType>::Description() const
+{
+    return m_value_ref->Description();
+}
+
+template <class FromType>
+std::string UserStringLookup<FromType>::Dump() const
+{
+    return m_value_ref->Dump();
+}
+
+template <class FromType>
+void UserStringLookup<FromType>::SetTopLevelContent(const std::string& content_name) {
+    if (m_value_ref)
+        m_value_ref->SetTopLevelContent(content_name);
+}
+
+template <class FromType>
 template <class Archive>
-void UserStringLookup::serialize(Archive& ar, const unsigned int version)
+void UserStringLookup<FromType>::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase<std::string>)
         & BOOST_SERIALIZATION_NVP(m_value_ref);
@@ -1723,10 +1823,10 @@ template <>
 std::string Operation<std::string>::Eval(const ScriptingContext& context) const;
 
 template <>
-double      Operation<double>::Eval(const ScriptingContext& context) const;
+double Operation<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-int         Operation<int>::Eval(const ScriptingContext& context) const;
+int Operation<int>::Eval(const ScriptingContext& context) const;
 
 template <class T>
 bool Operation<T>::RootCandidateInvariant() const

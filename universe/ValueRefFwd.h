@@ -36,7 +36,7 @@ namespace ValueRef {
     };
     template <class FromType, class ToType> struct StaticCast;
     template <class FromType> struct StringCast;
-    struct UserStringLookup;
+    template <class FromType> struct UserStringLookup;
     struct NameLookup;
     template <class T> struct Operation;
     enum OpType {

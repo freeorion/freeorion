@@ -2329,40 +2329,8 @@ std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& c
 ///////////////////////////////////////////////////////////
 // UserStringLookup                                      //
 ///////////////////////////////////////////////////////////
-UserStringLookup::UserStringLookup(Variable<std::string>* value_ref) :
-    Variable<std::string>(value_ref->GetReferenceType(), value_ref->PropertyName()),
-    m_value_ref(value_ref)
-{}
-
-UserStringLookup::UserStringLookup(ValueRefBase<std::string>* value_ref) :
-    Variable<std::string>(NON_OBJECT_REFERENCE),
-    m_value_ref(value_ref)
-{}
-
-UserStringLookup::~UserStringLookup()
-{ delete m_value_ref; }
-
-bool UserStringLookup::operator==(const ValueRefBase<std::string>& rhs) const {
-    if (&rhs == this)
-        return true;
-    if (typeid(rhs) != typeid(*this))
-        return false;
-    const UserStringLookup& rhs_ =
-        static_cast<const UserStringLookup&>(rhs);
-
-    if (m_value_ref == rhs_.m_value_ref) {
-        // check next member
-    } else if (!m_value_ref || !rhs_.m_value_ref) {
-        return false;
-    } else {
-        if (*m_value_ref != *(rhs_.m_value_ref))
-            return false;
-    }
-
-    return true;
-}
-
-std::string UserStringLookup::Eval(const ScriptingContext& context) const {
+template <>
+std::string UserStringLookup<std::string>::Eval(const ScriptingContext& context) const {
     if (!m_value_ref)
         return "";
     std::string ref_val = m_value_ref->Eval(context);
@@ -2371,27 +2339,20 @@ std::string UserStringLookup::Eval(const ScriptingContext& context) const {
     return UserString(ref_val);
 }
 
-bool UserStringLookup::RootCandidateInvariant() const
-{ return m_value_ref->RootCandidateInvariant(); }
-
-bool UserStringLookup::LocalCandidateInvariant() const
-{ return !m_value_ref || m_value_ref->LocalCandidateInvariant(); }
-
-bool UserStringLookup::TargetInvariant() const
-{ return !m_value_ref || m_value_ref->TargetInvariant(); }
-
-bool UserStringLookup::SourceInvariant() const
-{ return !m_value_ref || m_value_ref->SourceInvariant(); }
-
-std::string UserStringLookup::Description() const
-{ return m_value_ref->Description(); }
-
-std::string UserStringLookup::Dump() const
-{ return m_value_ref->Dump(); }
-
-void UserStringLookup::SetTopLevelContent(const std::string& content_name) {
-    if (m_value_ref)
-        m_value_ref->SetTopLevelContent(content_name);
+template <>
+std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingContext& context) const {
+    if (!m_value_ref)
+        return "";
+    std::vector<std::string> ref_vals = m_value_ref->Eval(context);
+    if (ref_vals.empty())
+        return "";
+    std::string retval;
+    for (auto val : ref_vals) {
+        if (val.empty() || !UserStringExists(val))
+            continue;
+        retval += UserString(val) + " ";
+    }
+    return retval;
 }
 
 /////////////////////////////////////////////////////
