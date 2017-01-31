@@ -11,6 +11,7 @@
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/scoped_ptr.hpp>
 
 #include <list>
 #include <map>
@@ -27,6 +28,7 @@ struct UniverseObjectVisitor;
 class XMLElement;
 class ShipDesign;
 class System;
+class Pathfinder;
 namespace Condition {
     struct ConditionBase;
     typedef std::vector<std::shared_ptr<const UniverseObject>> ObjectSet;
@@ -154,83 +156,8 @@ public:
       * that the empire with id \a empire_id can see this turn. */
     std::set<std::string>   GetObjectVisibleSpecialsByEmpire(int object_id, int empire_id) const;
 
-    /** Returns the straight-line distance between the objects with the given
-      * IDs. \throw std::out_of_range This function will throw if either object
-      * ID is out of range. */
-    double                  LinearDistance(int object1_id, int object2_id) const;
-
-    /** Returns the number of starlane jumps between the systems with the given
-      * IDs. If there is no path between the systems, -1 is returned.
-      * \throw std::out_of_range This function will throw if either system
-      * ID is not a valid system id. */
-    short                   JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
-
-    /** Returns the number of starlane jumps between any two objects, accounting
-      * for cases where one or the other are fleets / ships on starlanes between
-      * systems. Returns INT_MAX when no path exists, or either object does not
-      * exist. */
-    int                     JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
-
-
-    /** Returns the sequence of systems, including \a system1_id and
-      * \a system2_id, that defines the shortest path from \a system1 to
-      * \a system2, and the distance travelled to get there.  If no such path
-      * exists, the list will be empty.  Note that the path returned may be via
-      * one or more starlane, or may be "offroad".  The path is calculated
-      * using the visibility for empire \a empire_id, or without regard to
-      * visibility if \a empire_id == ALL_EMPIRES.
-      * \throw std::out_of_range This function will throw if either system ID
-      * is out of range, or if the empire ID is not known. */
-    std::pair<std::list<int>, double>
-                            ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
-
-    /** Returns the shortest starlane path distance between any two objects, accounting
-      * for cases where one or the other are fleets / ships on starlanes between
-      * systems. Returns -1 when no path exists, or either object does not
-      * exist. */
-    double                  ShortestPathDistance(int object1_id, int object2_id) const;
-
-    /** Returns the sequence of systems, including \a system1 and \a system2,
-      * that defines the path with the fewest jumps from \a system1 to
-      * \a system2, and the number of jumps to get there.  If no such path
-      * exists, the list will be empty.  The path is calculated using the
-      * visibility for empire \a empire_id, or without regard to visibility if
-      * \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
-      * will throw if either system ID is out of range or if the empire ID is
-      * not known. */
-    std::pair<std::list<int>, int>
-                            LeastJumpsPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES,
-                                           int max_jumps = INT_MAX) const;
-
-    /** Returns whether there is a path known to empire \a empire_id between
-      * system \a system1 and system \a system2.  The path is calculated using
-      * the visibility for empire \a empire_id, or without regard to visibility
-      * if \a empire_id == ALL_EMPIRES.  \throw std::out_of_range This function
-      * will throw if either system ID is out of range or if the empire ID is
-      * not known. */
-    bool                    SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
-
-    /** Returns true iff \a system is reachable from another system (i.e. it
-      * has at least one known starlane to it).   This does not guarantee that
-      * the system is reachable from any specific other system, as two separate
-      * groups of locally but not globally interconnected systems may exist.
-      * The starlanes considered depend on their visibility for empire
-      * \a empire_id, or without regard to visibility if
-      * \a empire_id == ALL_EMPIRES. */
-    bool                    SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
-
-    /** Returns the systems that are one starlane hop away from system
-      * \a system.  The returned systems are indexed by distance from
-      * \a system.  The neighborhood is calculated using the visibility
-      * for empire \a empire_id, or without regard to visibility if
-      * \a empire_id == ALL_EMPIRES.
-      * \throw std::out_of_range This function will throw if the  system
-      * ID is out of range. */
-    std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
-
-    /** Returns the id of the System object that is closest to the specified
-      * (\a x, \a y) location on the map, by direct-line distance. */
-    int                                     NearestSystemTo(double x, double y) const;
+    /** Return the Pathfinder */
+    std::shared_ptr<const Pathfinder> GetPathfinder() const {return m_pathfinder;}
 
     /** Returns map, indexed by object id, to map, indexed by MeterType,
       * to vector of EffectAccountInfo for the meter, in order effects
@@ -461,32 +388,9 @@ public:
     //@}
 
 private:
-    /// minimal public interface for distance caches
-    template <class T> struct distance_matrix_storage {
-        typedef T value_type;
-        typedef std::vector<T>& row_ref;
-
-        distance_matrix_storage() {};
-        distance_matrix_storage(const distance_matrix_storage<T>& src)
-        { resize(src.m_data.size()); };
-
-        size_t size() 
-        { return m_data.size(); }
-
-        void resize(size_t a_size) {
-            const size_t old_size = size();
-
-            m_data.clear();
-            m_data.resize(a_size);
-            m_row_mutexes.resize(a_size);
-            for (size_t i = old_size; i < a_size; ++i)
-                m_row_mutexes[i] = std::make_shared<boost::shared_mutex>();
-        }
-
-        std::vector< std::vector<T> > m_data;
-        std::vector<std::shared_ptr<boost::shared_mutex>> m_row_mutexes;
-        boost::shared_mutex m_mutex;
-    };
+    /* Pathfinder setup for the viewing empire
+     */
+    std::shared_ptr<Pathfinder> const m_pathfinder;
 
     /** Inserts object \a obj into the universe; returns a std::shared_ptr
       * to the inserted object. */
@@ -499,8 +403,6 @@ private:
       * to be consistent on client and server */
     template <class T>
     std::shared_ptr<T> InsertID(T* obj, int id);
-
-    struct GraphImpl;
 
     /** Clears \a targets_causes, and then populates with all
       * EffectsGroups and their targets in the known universe. */
@@ -548,14 +450,6 @@ private:
 
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
     std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
-
-    mutable distance_matrix_storage<short>  m_system_jumps;             ///< indexed by system graph index (not system id), caches the smallest number of jumps to travel between all the systems
-
-    /** A graph in which the systems are vertices and the starlanes are edges.
-     */
-    std::shared_ptr<GraphImpl> m_graph_impl;
-
-    boost::unordered_map<int, size_t>       m_system_id_to_graph_index;
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter

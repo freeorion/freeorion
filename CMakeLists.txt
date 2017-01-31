@@ -232,6 +232,7 @@ set (freeorioncommon_HEADER
     universe/System.h
     universe/Tech.h
     universe/Universe.h
+    universe/Pathfinder.h
     universe/UniverseObject.h
     universe/ValueRef.h
     universe/ValueRefFwd.h
@@ -294,6 +295,7 @@ set (freeorioncommon_SOURCE
     universe/System.cpp
     universe/Tech.cpp
     universe/Universe.cpp
+    universe/Pathfinder.cpp
     universe/UniverseObject.cpp
     universe/ValueRef.cpp
     util/AppInterface.cpp

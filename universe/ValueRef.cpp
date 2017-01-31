@@ -9,6 +9,7 @@
 #include "Species.h"
 #include "System.h"
 #include "Field.h"
+#include "Pathfinder.h"
 #include "Universe.h"
 #include "UniverseObject.h"
 #include "Condition.h"
@@ -858,7 +859,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         if (object->SystemID() != INVALID_OBJECT_ID)
             return object->SystemID();
 
-        return GetUniverse().NearestSystemTo(object->X(), object->Y());
+        return GetPathfinder()->NearestSystemTo(object->X(), object->Y());
 
     } else if (property_name == "NumShips") {
         if (std::shared_ptr<const Fleet> fleet = std::dynamic_pointer_cast<const Fleet>(object))
@@ -1678,7 +1679,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
 
-        int retval = GetUniverse().JumpDistanceBetweenObjects(object1_id, object2_id);
+        int retval = GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id);
         if (retval == INT_MAX)
             return -1;
         return retval;
@@ -1699,7 +1700,7 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         //    empire_id = m_int_ref3->Eval(context);
 
 
-        int retval = GetUniverse().JumpDistanceBetweenObjects(object1_id, object2_id/*, empire_id*/);
+        int retval = GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id/*, empire_id*/);
         if (retval == INT_MAX)
             return -1;
         return retval;
@@ -1872,7 +1873,7 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         if (m_int_ref2)
             object2_id = m_int_ref2->Eval(context);
 
-        return GetUniverse().ShortestPathDistance(object1_id, object2_id);
+        return GetPathfinder()->ShortestPathDistance(object1_id, object2_id);
 
     }
     else if (variable_name == "SpeciesEmpireOpinion") {

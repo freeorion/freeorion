@@ -223,6 +223,9 @@
     <ClInclude Include="..\..\Empire\Supply.h">
       <Filter>Header Files\Empire</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\universe\Pathfinder.h">
+      <Filter>Header Files\universe</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
@@ -398,6 +401,9 @@
     </ClCompile>
     <ClCompile Include="..\..\Empire\Supply.cpp">
       <Filter>Source Files\Empire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\universe\Pathfinder.cpp">
+      <Filter>Source Files\universe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

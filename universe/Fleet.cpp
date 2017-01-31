@@ -4,6 +4,7 @@
 #include "ShipDesign.h"
 #include "Ship.h"
 #include "System.h"
+#include "Pathfinder.h"
 #include "Universe.h"
 #include "Enums.h"
 #include "../util/i18n.h"
@@ -25,7 +26,7 @@ namespace {
     const double FLEET_MOVEMENT_EPSILON = 0.1;  // how close a fleet needs to be to a system to have arrived in the system
 
     bool SystemHasNoVisibleStarlanes(int system_id, int empire_id)
-    { return !GetUniverse().SystemHasVisibleStarlanes(system_id, empire_id); }
+    { return !GetPathfinder()->SystemHasVisibleStarlanes(system_id, empire_id); }
 
     template<typename IT>
     double PathLength (const IT& begin, const IT& end) {
@@ -153,7 +154,7 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
                 ShortenRouteToEndAtSystem(travel_route, moving_to);
                 if (!travel_route.empty() && travel_route.front() != 0 && travel_route.size() != copied_fleet_route.size()) {
                     try {
-                        travel_distance -= GetUniverse().ShortestPath(travel_route.back(),
+                        travel_distance -= GetPathfinder()->ShortestPath(travel_route.back(),
                                                                       copied_fleet_route.back()).second;
                     } catch (...) {
                         DebugLogger() << "Fleet::Copy couldn't find route to system(s):"
@@ -1046,7 +1047,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 
         std::pair<std::list<int>, double> path;
         try {
-            path = GetUniverse().ShortestPath(m_prev_system, target_system_id, this->Owner());
+            path = GetPathfinder()->ShortestPath(m_prev_system, target_system_id, this->Owner());
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's previous: " << m_prev_system << " or moving to: " << target_system_id;
@@ -1086,7 +1087,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
     if (this->CanChangeDirectionEnRoute()) {
         std::pair<std::list<int>, double> path1;
         try {
-            path1 = GetUniverse().ShortestPath(m_next_system, dest_system_id, this->Owner());
+            path1 = GetPathfinder()->ShortestPath(m_next_system, dest_system_id, this->Owner());
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;
@@ -1107,7 +1108,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
 
         std::pair<std::list<int>, double> path2;
         try {
-            path2 = GetUniverse().ShortestPath(m_prev_system, dest_system_id, this->Owner());
+            path2 = GetPathfinder()->ShortestPath(m_prev_system, dest_system_id, this->Owner());
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's previous: " << m_prev_system << " or destination: " << dest_system_id;
@@ -1137,7 +1138,7 @@ void Fleet::CalculateRouteTo(int target_system_id) {
         // Cannot change direction. Must go to the end of the current starlane
         std::pair<std::list<int>, double> path;
         try {
-            path = GetUniverse().ShortestPath(m_next_system, dest_system_id, this->Owner());
+            path = GetPathfinder()->ShortestPath(m_next_system, dest_system_id, this->Owner());
         } catch (...) {
             DebugLogger() << "Fleet::CalculateRoute couldn't find route to system(s):"
                           << " fleet's next: " << m_next_system << " or destination: " << dest_system_id;

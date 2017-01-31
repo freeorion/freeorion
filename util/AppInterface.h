@@ -98,6 +98,10 @@ inline SupplyManager& GetSupplyManager()
 inline Universe& GetUniverse()
 { return IApp::GetApp()->GetUniverse(); }
 
+/** Accessor for the App's universe object */
+inline std::shared_ptr<const Pathfinder> GetPathfinder()
+{ return IApp::GetApp()->GetUniverse().GetPathfinder(); }
+
 /** Accessor for all (on server) or all known (on client) objects ObjectMap */
 inline ObjectMap& Objects()
 { return IApp::GetApp()->GetUniverse().Objects(); }

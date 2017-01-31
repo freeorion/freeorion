@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -184,6 +184,7 @@
     <ClInclude Include="..\..\universe\System.h" />
     <ClInclude Include="..\..\universe\Tech.h" />
     <ClInclude Include="..\..\universe\Universe.h" />
+    <ClInclude Include="..\..\universe\Pathfinder.h" />
     <ClInclude Include="..\..\universe\UniverseObject.h" />
     <ClInclude Include="..\..\universe\ValueRef.h" />
     <ClInclude Include="..\..\universe\ValueRefFwd.h" />
@@ -245,6 +246,7 @@
     <ClCompile Include="..\..\universe\System.cpp" />
     <ClCompile Include="..\..\universe\Tech.cpp" />
     <ClCompile Include="..\..\universe\Universe.cpp" />
+    <ClCompile Include="..\..\universe\Pathfinder.cpp" />
     <ClCompile Include="..\..\universe\UniverseObject.cpp" />
     <ClCompile Include="..\..\universe\ValueRef.cpp" />
     <ClCompile Include="..\..\util\AppInterface.cpp" />
