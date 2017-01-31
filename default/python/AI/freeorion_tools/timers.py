@@ -56,6 +56,9 @@ class DummyTimer(object):
     def print_aggregate(self):
         pass
 
+    def print_statistics(self):
+        pass
+
 
 class AILogTimer(Timer):
     """A Timer with a FO AI engine dependent extension that logs timer results to a file each turn.
