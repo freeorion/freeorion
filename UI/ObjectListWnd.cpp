@@ -138,6 +138,8 @@ namespace {
             col_types[{UserStringNop("BUILDING_TYPE"),        ""}] =  UserStringValueRef("BuildingType");
             col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),""}] =  StringCastedValueRef<int>("LastTurnBattleHere");
             col_types[{UserStringNop("NUM_SPECIALS"),         ""}] =  StringCastedValueRef<int>("NumSpecials");
+            col_types[{UserStringNop("SPECIALS"),             ""}] =  StringCastedValueRef<std::vector<std::string>>("Specials");
+            col_types[{UserStringNop("TAGS"),                 ""}] = StringCastedValueRef<std::vector<std::string>>("Tags");
             // empire
             col_types[{UserStringNop("SUPPLYING_EMPIRE"),     ""}] =  EmpireNameValueRef("SupplyingEmpire");
             col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),  ""}] =  SystemSupplyRangeValueRef(false);
@@ -159,6 +161,7 @@ namespace {
             col_types[{UserStringNop("PLANET_SIZE"),                  UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetSize>("PlanetSize");
             col_types[{UserStringNop("PLANET_ENVIRONMENT"),           UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
             col_types[{UserStringNop("SUPPLY_RANGE"),                 UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("PropagatedSupplyRange");
+            col_types[{UserStringNop("AVAILABLE_FOCI"),               UserStringNop("PLANETS_SUBMENU")}] = StringCastedValueRef<std::vector<std::string>>("AvailableFoci");
 
             // ship/fleet
             col_types[{UserStringNop("SPECIES"),                      UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");
