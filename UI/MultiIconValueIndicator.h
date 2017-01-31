@@ -13,10 +13,12 @@ class StatisticIcon;
   * will present the appropriate values for each. */
 class MultiIconValueIndicator : public GG::Wnd {
 public:
-    MultiIconValueIndicator(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType> >& meter_types);
-    MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<std::pair<MeterType, MeterType> >& meter_types);
-    MultiIconValueIndicator(GG::X w); ///< initializes with no icons shown
-    virtual ~MultiIconValueIndicator();
+    /** Initializes with no icons shown. */
+    MultiIconValueIndicator(GG::X w);
+
+    MultiIconValueIndicator(GG::X w, int object_id, const std::vector<std::pair<MeterType, MeterType>>& meter_types);
+
+    MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids, const std::vector<std::pair<MeterType, MeterType>>& meter_types);
 
     bool            Empty();
 
@@ -33,8 +35,6 @@ public:
     void            ClearToolTip(MeterType meter_type);
 
 private:
-    void            Init();
-
     std::vector<StatisticIcon*>                         m_icons;
     const std::vector<std::pair<MeterType, MeterType> > m_meter_types;
     std::vector<int>                                    m_object_ids;

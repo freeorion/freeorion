@@ -22,36 +22,22 @@ namespace {
     { return GG::Y(IconSpacing()*2); }
 }
 
+MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
+    MultiIconValueIndicator(w, {}, {})
+{}
+
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id,
-                                                 const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
-    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
-    m_icons(),
-    m_meter_types(meter_types),
-    m_object_ids()
-{
-    m_object_ids.push_back(object_id);
-    Init();
-}
+                                                 const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
+    MultiIconValueIndicator(w, {{object_id}}, meter_types)
+{}
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids,
-                                                 const std::vector<std::pair<MeterType, MeterType> >& meter_types) :
+                                                 const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
     m_icons(),
     m_meter_types(meter_types),
     m_object_ids(object_ids)
-{ Init(); }
-
-MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
-    GG::Wnd(GG::X0, GG::Y0, w, GG::Y1, GG::INTERACTIVE),
-    m_icons(),
-    m_meter_types(),
-    m_object_ids()
-{ Init(); }
-
-MultiIconValueIndicator::~MultiIconValueIndicator()
-{}  // nothing needs deleting, as all contained indicators are childs and auto deleted
-
-void MultiIconValueIndicator::Init() {
+{
     SetName("MultiIconValueIndicator");
 
     GG::X x(EDGE_PAD);
