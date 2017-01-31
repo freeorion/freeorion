@@ -16,24 +16,11 @@
   along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <GG/DrawUtil.h>
-#include <GG/MultiEdit.h>
-#include <GG/WndEvent.h>
-#include <GG/Layout.h>
-#include <GG/GUI.h>
-
-#include <algorithm>
-#include <vector>
-#include <set>
-
 #include "Hotkeys.h"
 
 #include "../util/OptionsDB.h"
-#include "../util/i18n.h"
 #include "../util/Logger.h"
 
-#include <sstream>
-#include <cctype>
 
 /// A helper class that stores both a connection and the
 /// conditions in which it should be on.

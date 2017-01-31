@@ -18,11 +18,7 @@
 #ifndef _Hotkey_h_
 #define _Hotkey_h_
 
-#include <GG/DrawUtil.h>
-#include <GG/MultiEdit.h>
 #include <GG/Wnd.h>
-#include <GG/WndEvent.h>
-#include <GG/Layout.h>
 #include <GG/GUI.h>
 #include <boost/signals2/shared_connection_block.hpp>
 
