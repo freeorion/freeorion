@@ -4,18 +4,62 @@ BuildingType
     buildcost = 100
     buildtime = 1
     location = AND [
+        // Homeworld
         Species
         Not Contains Building name = "BLD_INTERSPECIES_ACADEMY"
         OwnedBy empire = Source.Owner
+        Happiness low = 20
+        Not WithinStarlaneJumps jumps = 3 condition = And [
+            System
+            Contains And [
+                Building name = "BLD_INTERSPECIES_ACADEMY"
+                OwnedBy empire = Source.Owner
+            ]
+        ]
+        Number low = 0 high = 0 condition = And [
+            Building name = "BLD_INTERSPECIES_ACADEMY"
+            Species name = RootCandidate.Species
+            OwnedBy empire = RootCandidate.Owner
+        ]
+        Number low = 0 high = 0 condition = Described description = "Academies of this species already exist in the empire" condition = And [
+            Planet
+            Enqueued type = Building name = "BLD_INTERSPECIES_ACADEMY"
+            Species name = RootCandidate.Species
+            OwnedBy empire = RootCandidate.Owner
+            Not Object id = RootCandidate.PlanetID
+        ]
+        Number low = 0 high = 6 condition = And [
+            Building name = "BLD_INTERSPECIES_ACADEMY"
+            OwnedBy empire = Source.Owner
+        ]
+        
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
-                //stackinggroup = "[[BLD_INTERSPECIES_ACADEMY_SPECIES_STACK(Source.Planet.Species)]]"
-
-                //                    message = "Additional effect by the %species% on %system% joining the design academy. Imperial stockpile yield is now %rawtext%"
-//                                    tag = "system" data = Source.SystemID
-  //                      tag = "species" data = Source.Planet.Species
-
+        EffectsGroup 
+            scope = NumberOf number = 1 condition = And [
+                Building name = "BLD_INTERSPECIES_ACADEMY"
+                OwnedBy empire = Source.Owner
+                Not Object id = Source.ID
+                Species name = Source.Planet.Species
+            ]
+            activation = And [
+                Source
+                Random probability = 0.3
+            ]
+            effects = [
+                GenerateSitRepMessage
+                    message = "Destroying fake duplicate design academy %planet%."
+                    label = "EFFECT_BLACKHOLE_LABEL"
+                    NoStringtableLookup
+                    icon = "icons/building/blackhole.png"
+                    parameters = [
+                        tag = "planet" data = Target.PlanetID
+                    ]
+                    empire = Source.Owner
+                Destroy
+            ]
+            
         EffectsGroup
             scope = And [
                 Object id = Source.PlanetID
@@ -24,26 +68,23 @@ BuildingType
                 Species
             ]
             activation = Source
-            priority = [[EARLY_PRIORITY]]
+            priority = [[LATE_PRIORITY]]
             effects = [
                 GenerateSitRepMessage
-                    message = "Additional effect by the %species% on %system% joining the design academy. Imperial stockpile yield is now %rawtext%"
+                    message = "Additional effect by the %species% on %planet% joining the design academy. Each design academy adds 0.05 to %rawtext%"
                     label = "EFFECT_BLACKHOLE_LABEL"
                     NoStringtableLookup
                     icon = "icons/building/blackhole.png"
                     parameters = [
-                        tag = "system" data = Source.SystemID
+                        tag = "planet" data = Source.PlanetID
                         tag = "species" data = Source.Planet.Species
-                        tag = "rawtext" data = "??" // data = EmpireMeter meter = "METER_IMPERIAL_PP_STORAGE_YIELD"
+                        tag = "rawtext" data = EmpireMeterValue empire = Source.Owner meter = "METER_IMPERIAL_PP_STORAGE_YIELD"
                     ]
                     empire = Source.Owner
                 SetEmpireMeter empire = Source.Owner meter = "METER_IMPERIAL_PP_STORAGE_YIELD" value = Value + 0.05
             ]
     ]
     icon = "icons/building/science-institute.png"
-
-BLD_INTERSPECIES_ACADEMY_SPECIES_STACK
-'''BLD_INTERSPECIES_ACADEMY_@1@_STACK'''
 
 #include "/scripting/common/base_prod.macros"
 
