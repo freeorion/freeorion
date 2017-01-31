@@ -26,6 +26,9 @@
 #include <GG/GUI.h>
 #include <boost/signals2/shared_connection_block.hpp>
 
+#include <functional>
+#include <initializer_list>
+
 
 class OptionsDB;
 
@@ -118,126 +121,81 @@ public:
     GG::Flags<GG::ModKey>   m_mod_keys_default;
 };
 
-/// A simple functor returning a boolean value. The children will be
-/// used to check simply if a condition is fullfilled as a prelude to
-/// activate a signal.
-///
-/// @todo Write functions that make it easier to create complex
-/// or-stuff ?
-class HotkeyCondition {
-protected:
-    friend class HotkeyManager;
-    HotkeyCondition() {}
-
-public:
-    virtual bool IsActive() const = 0;
-    virtual ~HotkeyCondition() {}
-};
 
 /// On only when no modal Wnds are open
-class NoModalWndsOpenCondition : public HotkeyCondition {
-public:
-    NoModalWndsOpenCondition() {};
-
-    bool IsActive() const  override {
-        return !GG::GUI::GetGUI()->ModalWndsOpen();
-    };
+inline bool NoModalWndsOpenCondition() {
+    return !GG::GUI::GetGUI()->ModalWndsOpen();
 };
 
 /// On when the given window is visible
-class VisibleWindowCondition : public HotkeyCondition {
-protected:
-    const GG::Wnd* target;
-
+class VisibleWindowCondition {
 public:
     VisibleWindowCondition(const GG::Wnd* tg) :
         target(tg)
     {}
 
-    bool IsActive() const override {
-        if (!target)
-            return false;
-        return target->Visible();
+    bool operator()() const {
+        return target && target->Visible();
     };
+
+private:
+    const GG::Wnd* target;
 };
 
 /// On when the given windows are invisible
-class InvisibleWindowCondition : public HotkeyCondition {
-protected:
-    std::list<const GG::Wnd*> m_blacklist;
-
+class InvisibleWindowCondition {
 public:
-    InvisibleWindowCondition(const GG::Wnd* w1, const GG::Wnd* w2 = nullptr,
-                             const GG::Wnd* w3 = nullptr, const GG::Wnd* w4 = nullptr);
-    InvisibleWindowCondition(const std::list<const GG::Wnd*>& bl);
+    InvisibleWindowCondition(std::initializer_list<const GG::Wnd*> bl);
 
-    bool IsActive() const override;
+    bool operator()() const;
+
+private:
+    std::list<const GG::Wnd*> m_blacklist;
 };
 
 /// On when the given window is visible
-class FocusWindowCondition : public HotkeyCondition {
-protected:
-    const GG::Wnd* target;
-
+class FocusWindowCondition {
 public:
     FocusWindowCondition(const GG::Wnd* tg) :
         target(tg)
     {}
 
-    bool IsActive() const override {
-        if (!target)
-            return false;
+    bool operator()() const {
         const GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
-        return target == foc;
+        return target && target == foc;
     };
+
+private:
+    const GG::Wnd* target;
 };
 
 template<class W>
-class FocusWindowIsA : public HotkeyCondition {
+class FocusWindowIsA {
 public:
-    FocusWindowIsA() {};
-
-    bool IsActive() const override {
+    bool operator()() const {
         const GG::Wnd* foc = GG::GUI::GetGUI()->FocusWnd();
-        //std::cout << "Focus: " << foc << std::endl;
-        if (dynamic_cast<const W*>(foc))
-            return true;
-        return false;
+        return (nullptr != dynamic_cast<const W*>(foc));
     };
 };
 
-class OrCondition : public HotkeyCondition {
-protected:
-    std::list<HotkeyCondition*> m_conditions;
+class OrCondition {
 public:
-    OrCondition(HotkeyCondition* c1, HotkeyCondition* c2,
-                HotkeyCondition* c3 = nullptr,
-                HotkeyCondition* c4 = nullptr,
-                HotkeyCondition* c5 = nullptr,
-                HotkeyCondition* c6 = nullptr,
-                HotkeyCondition* c7 = nullptr,
-                HotkeyCondition* c8 = nullptr);
+    OrCondition(std::initializer_list<std::function<bool()>> conditions);
 
-    virtual ~OrCondition();
+    bool operator()() const;
 
-    bool IsActive() const override;
+private:
+    std::list<std::function<bool()>> m_conditions;
 };
 
-class AndCondition : public HotkeyCondition {
-protected:
-    std::list<HotkeyCondition*> m_conditions;
+class AndCondition {
 public:
-    AndCondition(HotkeyCondition* c1, HotkeyCondition* c2,
-                 HotkeyCondition* c3 = nullptr,
-                 HotkeyCondition* c4 = nullptr,
-                 HotkeyCondition* c5 = nullptr,
-                 HotkeyCondition* c6 = nullptr,
-                 HotkeyCondition* c7 = nullptr,
-                 HotkeyCondition* c8 = nullptr);
+    AndCondition(std::initializer_list<std::function<bool()>> conditions);
 
-    virtual ~AndCondition();
+    bool operator()() const;
 
-    bool IsActive() const override;
+private:
+    std::list<std::function<bool()>> m_conditions;
 };
 
 class HotkeyManager {
@@ -254,7 +212,7 @@ public:
     static HotkeyManager* GetManager();
 
     /// Connects a named shortcut to the target slot in the target instance.
-    void Connect(boost::function<bool()> func, const std::string& name, HotkeyCondition* cond = nullptr)
+    void Connect(std::function<bool()> func, const std::string& name, std::function<bool()> cond = nullptr)
     { AddConditionalConnection(name, GG::Connect(NamedSignal(name), func), cond); };
 
 
@@ -271,7 +229,7 @@ private:
     /// Add the given conditional connection.
     void AddConditionalConnection(const std::string& name,
                                   const boost::signals2::connection& conn,
-                                  HotkeyCondition* cond);
+                                  std::function<bool()> cond);
 
     struct ConditionalConnection;
     typedef std::list<ConditionalConnection> ConditionalConnectionList;

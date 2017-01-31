@@ -308,11 +308,11 @@ void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager *hkm = HotkeyManager::GetManager();
 
     hkm->Connect(boost::bind(&HumanClientApp::ExitGame, this),          "exit",
-                 new NoModalWndsOpenCondition());
+                 NoModalWndsOpenCondition);
     hkm->Connect(boost::bind(&HumanClientApp::QuitGame, this),          "quit",
-                 new NoModalWndsOpenCondition());
+                 NoModalWndsOpenCondition);
     hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "fullscreen",
-                 new NoModalWndsOpenCondition());
+                 NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();
 }

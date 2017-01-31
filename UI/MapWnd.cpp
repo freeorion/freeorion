@@ -6202,13 +6202,13 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
 namespace {
     /// On when the MapWnd window is visible and not covered
     //  by one of the full screen covering windows
-    class NotCoveredMapWndCondition : public HotkeyCondition {
+    class NotCoveredMapWndCondition {
     protected:
         const MapWnd& target;
 
     public:
         NotCoveredMapWndCondition(const MapWnd& tg) : target(tg) {}
-        bool IsActive() const override {
+        bool operator()() const {
             return target.Visible() && !target.InResearchViewMode() && !target.InDesignViewMode();
         };
     };
@@ -6218,78 +6218,75 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
     hkm->Connect(boost::bind(&MapWnd::ReturnToMap, this), "map.return_to_map",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::OpenMessages, this), "map.open_chat",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::EndTurn, this), "map.end_turn",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleSitRep, this), "map.sit_rep",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleResearch, this), "map.research",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleProduction, this), "map.production",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleDesign, this), "map.design",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleObjects, this), "map.objects",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleMessages, this), "map.messages",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ToggleEmpires, this), "map.empires",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::TogglePedia, this), "map.pedia",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ShowGraphs, this), "map.graphs",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ShowMenu, this), "map.menu",
-                 new AndCondition(new VisibleWindowCondition(this), new NoModalWndsOpenCondition()));
+                 AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "map.zoom_in",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "map.zoom_in_alt",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "map.zoom_out",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "map.zoom_out_alt",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ZoomToHomeSystem, this), "map.zoom_home_system",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ZoomToPrevSystem, this), "map.zoom_prev_system",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ZoomToNextSystem, this), "map.zoom_next_system",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ZoomToPrevOwnedSystem, this), "map.zoom_prev_owned_system",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ZoomToNextOwnedSystem, this), "map.zoom_next_owned_system",
-                 new AndCondition(new NotCoveredMapWndCondition(*this), new NoModalWndsOpenCondition()));
+                 AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
 
     // the list of windows for which the fleet shortcuts are blacklisted.
-    std::list<const GG::Wnd*> bl;
-    bl.push_back(m_research_wnd);
-    bl.push_back(m_production_wnd);
-    bl.push_back(m_design_wnd);
+    std::initializer_list<const GG::Wnd*> bl = {m_research_wnd, m_production_wnd, m_design_wnd};
 
     hkm->Connect(boost::bind(&MapWnd::ZoomToPrevFleet, this), "map.zoom_prev_fleet",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ZoomToNextFleet, this), "map.zoom_next_fleet",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ZoomToPrevIdleFleet, this), "map.zoom_prev_idle_fleet",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::ZoomToNextIdleFleet, this), "map.zoom_next_idle_fleet",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
     hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(50)),   "map.pan_right",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(-50)),  "map.pan_left",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(50)),   "map.pan_down",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(-50)),  "map.pan_up",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
     hkm->Connect(boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale"), "map.toggle_scale_line",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale-circle"), "map.toggle_scale_circle",
-                 new AndCondition(new OrCondition(new InvisibleWindowCondition(bl), new VisibleWindowCondition(this)), new NoModalWndsOpenCondition()));
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
 
     // these are general-use hotkeys, only connected here as a convenient location to do so once.
@@ -6301,9 +6298,9 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(boost::bind(&GG::GUI::FocusWndDeselect, GG::GUI::GetGUI()), "deselect");
 
     hkm->Connect(boost::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "focus_prev_wnd",
-                 new NoModalWndsOpenCondition());
+                 NoModalWndsOpenCondition);
     hkm->Connect(boost::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "focus_next_wnd",
-                 new NoModalWndsOpenCondition());
+                 NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();
 }

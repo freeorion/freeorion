@@ -41,14 +41,14 @@ struct HotkeyManager::ConditionalConnection {
     /// Block or unblocks the connection based on condition.
     void UpdateConnection() {
         if (connection.connected()) {
-            if (!condition || condition->IsActive())
+            if (!condition || condition())
                 blocker.unblock();
             else
                 blocker.block();
         }
     };
 
-    ConditionalConnection(const boost::signals2::connection& conn, HotkeyCondition* cond) :
+    ConditionalConnection(const boost::signals2::connection& conn, std::function<bool()> cond) :
         condition(cond),
         connection(conn),
         blocker(connection)
@@ -57,7 +57,7 @@ struct HotkeyManager::ConditionalConnection {
     }
 
     /// The condition. If null, always on.
-    std::shared_ptr<HotkeyCondition> condition;
+    std::function<bool()> condition;
 
     boost::signals2::connection connection;
     boost::signals2::shared_connection_block blocker;
@@ -328,23 +328,11 @@ void Hotkey::ClearHotkey(const Hotkey& old_hotkey)
 //////////////////////////////////////////////////////////////////////
 // InvisibleWindowCondition
 //////////////////////////////////////////////////////////////////////
-InvisibleWindowCondition::InvisibleWindowCondition(const GG::Wnd* w1, const GG::Wnd* w2,
-                                                   const GG::Wnd* w3, const GG::Wnd* w4)
-{
-    m_blacklist.push_back(w1);
-    if (w2)
-        m_blacklist.push_back(w2);
-    if (w3)
-        m_blacklist.push_back(w3);
-    if (w4)
-        m_blacklist.push_back(w4);
-}
-
-InvisibleWindowCondition::InvisibleWindowCondition(const std::list<const GG::Wnd*>& bl) :
+InvisibleWindowCondition::InvisibleWindowCondition(std::initializer_list<const GG::Wnd*> bl) :
     m_blacklist(bl)
 {}
 
-bool InvisibleWindowCondition::IsActive() const {
+bool InvisibleWindowCondition::operator()() const {
     for (const GG::Wnd* wnd : m_blacklist) {
         if (wnd->Visible())
             return false;
@@ -352,79 +340,38 @@ bool InvisibleWindowCondition::IsActive() const {
     return true;
 }
 
+
 //////////////////////////////////////////////////////////////////////
 // OrCondition
 //////////////////////////////////////////////////////////////////////
-OrCondition::OrCondition(HotkeyCondition* c1, HotkeyCondition* c2,
-                         HotkeyCondition* c3, HotkeyCondition* c4,
-                         HotkeyCondition* c5, HotkeyCondition* c6,
-                         HotkeyCondition* c7, HotkeyCondition* c8)
-{
-    m_conditions.push_back(c1);
-    m_conditions.push_back(c2);
-    if (c3)
-        m_conditions.push_back(c3);
-    if (c4)
-        m_conditions.push_back(c4);
-    if (c5)
-        m_conditions.push_back(c5);
-    if (c6)
-        m_conditions.push_back(c6);
-    if (c7)
-        m_conditions.push_back(c7);
-    if (c8)
-        m_conditions.push_back(c8);
-}
+OrCondition::OrCondition(std::initializer_list<std::function<bool()>> conditions) :
+    m_conditions(conditions)
+{}
 
-bool OrCondition::IsActive() const {
-    for (HotkeyCondition* cond : m_conditions) {
-        if (cond->IsActive())
+bool OrCondition::operator()() const {
+    for (auto cond : m_conditions) {
+        if (cond())
             return true;
     }
     return false;
 }
 
-OrCondition::~OrCondition() {
-    for (HotkeyCondition* cond : m_conditions)
-    { delete cond; }
-}
 
 //////////////////////////////////////////////////////////////////////
 // AndCondition
 //////////////////////////////////////////////////////////////////////
-AndCondition::AndCondition(HotkeyCondition* c1, HotkeyCondition* c2,
-                           HotkeyCondition* c3, HotkeyCondition* c4,
-                           HotkeyCondition* c5, HotkeyCondition* c6,
-                           HotkeyCondition* c7, HotkeyCondition* c8)
-{
-    m_conditions.push_back(c1);
-    m_conditions.push_back(c2);
-    if (c3)
-        m_conditions.push_back(c3);
-    if (c4)
-        m_conditions.push_back(c4);
-    if (c5)
-        m_conditions.push_back(c5);
-    if (c6)
-        m_conditions.push_back(c6);
-    if (c7)
-        m_conditions.push_back(c7);
-    if (c8)
-        m_conditions.push_back(c8);
-}
+AndCondition::AndCondition(std::initializer_list<std::function<bool()>> conditions) :
+    m_conditions(conditions)
+{}
 
-bool AndCondition::IsActive() const {
-    for (HotkeyCondition* cond : m_conditions) {
-        if (!cond->IsActive())
+bool AndCondition::operator()() const {
+    for (auto cond : m_conditions) {
+        if (!cond())
             return false;
     }
     return true;
 }
 
-AndCondition::~AndCondition() {
-    for (HotkeyCondition* cond : m_conditions)
-    { delete cond; }
-}
 
 //////////////////////////////////////////////////////////////////////
 // HotkeyManager
@@ -467,7 +414,7 @@ void HotkeyManager::RebuildShortcuts() {
 
 void HotkeyManager::AddConditionalConnection(const std::string& name,
                                              const boost::signals2::connection& conn,
-                                             HotkeyCondition* cond)
+                                             std::function<bool()> cond)
 {
     ConditionalConnectionList& list = m_connections[name];
     list.push_back(ConditionalConnection(conn, cond));
