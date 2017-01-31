@@ -1,20 +1,20 @@
 #ifndef _OptionsWnd_h_
 #define _OptionsWnd_h_
 
-#include <utility>
-#include <vector>
 #include <boost/filesystem/path.hpp>
 #include <GG/GGFwd.h>
 
 #include "CUIWnd.h"
 #include "Sound.h"
 
+#include <functional>
+#include <utility>
+#include <vector>
+
 
 //! This is a dialog box that allows the user to control certain basic game parameters, such as sound and music
 class OptionsWnd : public CUIWnd {
 public:
-    typedef bool (*StringValidator)(const std::string& file);
-
     //! \name Structors
     //!@{
     OptionsWnd();
@@ -80,10 +80,10 @@ private:
     void                VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
                                      const std::string& volume_option_name, const std::string& text, bool toggle_value,
                                      SoundOptionsFeedback &fb);
-    void                FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator, bool directory, bool relative_path);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, StringValidator string_validator = nullptr);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, StringValidator string_validator = nullptr);
-    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator = nullptr);
+    void                FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, std::function<bool (const std::string&)> string_validator, bool directory, bool relative_path);
+    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, std::function<bool (const std::string&)> string_validator = nullptr);
+    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::pair<std::string, std::string>& filter, std::function<bool (const std::string&)> string_validator = nullptr);
+    void                FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path, const std::vector<std::pair<std::string, std::string> >& filters, std::function<bool (const std::string&)> string_validator = nullptr);
     void                DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path);
     void                SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
     void                ColorOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);

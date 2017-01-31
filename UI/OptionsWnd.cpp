@@ -887,7 +887,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
 
 void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const fs::path& path,
                                 const std::vector<std::pair<std::string, std::string> >& filters,
-                                StringValidator string_validator, bool directory, bool relative_path)
+                                std::function<bool (const std::string&)> string_validator, bool directory, bool relative_path)
 {
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
     GG::Edit* edit = new CUIEdit(GetOptionsDB().Get<std::string>(option_name));
@@ -930,15 +930,15 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
 }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
-                            StringValidator string_validator/* = 0*/)
+                            std::function<bool (const std::string&)> string_validator/* = 0*/)
 { FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string> >(), string_validator); }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
-                            const std::pair<std::string, std::string>& filter, StringValidator string_validator/* = 0*/)
+                            const std::pair<std::string, std::string>& filter, std::function<bool (const std::string&)> string_validator/* = 0*/)
 { FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string> >(1, filter), string_validator); }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
-                            const std::vector<std::pair<std::string, std::string> >& filters, StringValidator string_validator/* = 0*/)
+                            const std::vector<std::pair<std::string, std::string> >& filters, std::function<bool (const std::string&)> string_validator/* = 0*/)
 { FileOptionImpl(page, indentation_level, option_name, text, path, filters, string_validator, false, false); }
 
 void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
