@@ -11,7 +11,6 @@ class Timer(object):
         self.end_time = None
         self.section_name = None
         self.timers = []
-        self.log_name = None
 
     def stop(self, section_name=''):
         """

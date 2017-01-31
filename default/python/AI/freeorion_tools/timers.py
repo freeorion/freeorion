@@ -72,6 +72,7 @@ class AILogTimer(Timer):
         Timer.__init__(self, timer_name)
         self.headers = None
         self.write_log = write_log
+        self.log_name = None
 
     def _write(self, text):
         if not _get_timers_dir():
