@@ -146,6 +146,7 @@ namespace {
             col_types[{UserStringNop("NUM_SPECIALS"),         ""}] =  StringCastedValueRef<int>("NumSpecials");
             col_types[{UserStringNop("SPECIALS"),             ""}] =  UserStringVecValueRef("Specials");
             col_types[{UserStringNop("TAGS"),                 ""}] =  UserStringVecValueRef("Tags");
+
             // empire
             col_types[{UserStringNop("SUPPLYING_EMPIRE"),     ""}] =  EmpireNameValueRef("SupplyingEmpire");
             col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),  ""}] =  SystemSupplyRangeValueRef(false);
@@ -179,6 +180,8 @@ namespace {
             col_types[{UserStringNop("NEXT_SYSTEM"),                  UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NextSystemID");
             col_types[{UserStringNop("PREV_SYSTEM"),                  UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("PreviousSystemID");
             col_types[{UserStringNop("NEAREST_SYSTEM"),               UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NearestSystemID");
+            col_types[{UserStringNop("HULL"),                         UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Hull");
+            col_types[{UserStringNop("PARTS"),                        UserStringNop("FLEETS_SUBMENU")}] = UserStringVecValueRef("Parts");
 
             for (MeterType meter = MeterType(0); meter <= METER_SPEED;  // the meter(s) after METER_SPEED are part-specific
                  meter = MeterType(meter + 1))

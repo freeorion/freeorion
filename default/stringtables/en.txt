@@ -5088,6 +5088,12 @@ Preferred Focus
 AVAILABLE_FOCI
 Available Foci
 
+PARTS
+Parts
+
+HULL
+Hull
+
 OBJECT_TYPE
 Type
 

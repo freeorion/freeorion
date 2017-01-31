@@ -960,6 +960,11 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(const Scriptin
         if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
             return planet->AvailableFoci();
     }
+    else if (property_name == "Parts") {
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+            if (const ShipDesign* design = ship->Design())
+                return design->Parts();
+    }
 
     ErrorLogger() << "std::vector<std::string>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
     if (context.source)
@@ -1022,6 +1027,11 @@ std::string Variable<std::string>::Eval(const ScriptingContext& context) const
             return planet->SpeciesName();
         else if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->SpeciesName();
+
+    } else if (property_name == "Hull") {
+        if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
+            if (const ShipDesign* design = ship->Design())
+                return design->Hull();
 
     } else if (property_name == "BuildingType") {
         if (std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(object))
