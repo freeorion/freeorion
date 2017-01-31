@@ -945,7 +945,10 @@ std::vector<std::string> Variable<std::vector<std::string>>::Eval(const Scriptin
     }
 
     if (property_name == "Tags") {
-        return std::vector<std::string>(object->Tags().begin(), object->Tags().end());
+        std::vector<std::string> retval;
+        for (auto tag : object->Tags())
+            retval.push_back(tag);
+        return retval;
     }
     else if (property_name == "Specials") {
         std::vector<std::string> retval;
@@ -2307,6 +2310,20 @@ std::string StringCast<int>::Eval(const ScriptingContext& context) const
     }
 
     return boost::lexical_cast<std::string>(temp);
+}
+
+template <>
+std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const
+{
+    if (!m_value_ref)
+        return "";
+    std::vector<std::string> temp = m_value_ref->Eval(context);
+
+    // concatenate strings into one big string
+    std::string retval;
+    for (auto str : temp)
+        retval += str + " ";
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////

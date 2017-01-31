@@ -1526,6 +1526,9 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const;
 template <>
 std::string StringCast<int>::Eval(const ScriptingContext& context) const;
 
+template <>
+std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+
 template <class FromType>
 bool StringCast<FromType>::RootCandidateInvariant() const
 { return m_value_ref->RootCandidateInvariant(); }
