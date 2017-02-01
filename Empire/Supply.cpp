@@ -81,10 +81,6 @@ public:
     void    Update();
 
     /** Part of the Update function.*/
-    void    ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
-        const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
-        std::map<int, std::set<int>>& empire_supply_unobstructed_systems);
-
     std::map<int, std::map<int, std::pair<float, float>>> PropagateSupplyAlongUnobstructedStarlanes(
         const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
         std::map<int, std::set<int>>& empire_supply_unobstructed_systems);
@@ -389,15 +385,22 @@ namespace {
     }
 }
 
-void SupplyManager::SupplyManagerImpl::ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
-    const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
-    std::map<int, std::set<int>>& empire_supply_unobstructed_systems)
+namespace {
+    /** Parts of the Update function that don't depend on SupplyManager.*/
+
+std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
+    const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
 {
+    // Map from Empire to Systems where only other empires have supply sources and there is no
+    // friendly fleet.  This is used to help the AI until it can full manage supply mechanics
+    std::unordered_map<int, std::vector<int>> empire_to_colony_disrupted_systems;
 
     const std::vector<std::shared_ptr<Fleet>> fleets = GetUniverse().Objects().FindObjects<Fleet>();
 
     for (const std::map<int, Empire*>::value_type& entry : Empires()) {
         int empire_id = entry.first;
+
+        auto& self_protected_supply = empire_to_colony_disrupted_systems[empire_id];
 
         // Find systems containing armed aggressive fleets from own empire.
         std::set<int> systems_containing_friendly_fleets;
@@ -447,9 +450,22 @@ void SupplyManager::SupplyManagerImpl::ObstructSupplyIfAggresiveArmedFleetOccupi
         // supply is obstructed
         for (int system_id : systems_where_others_have_supply_sources_and_current_empire_doesnt) {
             if (systems_containing_friendly_fleets.find(system_id) == systems_containing_friendly_fleets.end())
-                empire_supply_unobstructed_systems[empire_id].erase(system_id);
+                self_protected_supply.push_back(system_id);
         }
     }
+    return empire_to_colony_disrupted_systems;
+}
+
+void ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
+    const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
+    std::map<int, std::set<int>>& empire_supply_unobstructed_systems)
+{
+    for (auto& empire_to_colony_disrupted_systems : CalculateColonyDisruptedSupply(empire_system_supply_ranges)) {
+        for (auto system_id: empire_to_colony_disrupted_systems.second)
+            empire_supply_unobstructed_systems.erase(system_id);
+    }
+}
+
 }
 
 std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
