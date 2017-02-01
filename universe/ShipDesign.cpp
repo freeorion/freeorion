@@ -330,13 +330,20 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
         if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
 
+        const auto arbitrary_large_number = 999999.9f;
+
         std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
-        if (!location)
-            return 999999.9f;    // arbitrary large number
+        if (!location) {
+            ErrorLogger() << "Location is missing using production cost of " << arbitrary_large_number;
+            return arbitrary_large_number;
+        }
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_production_cost->SourceInvariant())
-            return 999999.9f;
+        if (!source && !m_production_cost->SourceInvariant()) {
+            ErrorLogger() << "Source is expected but missing using production cost of "
+                          << arbitrary_large_number;
+            return arbitrary_large_number;
+        }
 
         ScriptingContext context(source, location);
 
@@ -345,6 +352,8 @@ float PartType::ProductionCost(int empire_id, int location_id) const {
 }
 
 int PartType::ProductionTime(int empire_id, int location_id) const {
+    const auto arbitrary_large_number = 9999;
+
     if (CHEAP_AND_FAST_SHIP_PRODUCTION || !m_production_time) {
         return 1;
     } else {
@@ -352,12 +361,17 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
             return m_production_time->Eval();
 
         std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
-        if (!location)
-            return 9999;    // arbitrary large number
+        if (!location) {
+            ErrorLogger() << "Location is missing using production time of " << arbitrary_large_number;
+            return arbitrary_large_number;
+        }
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_production_time->SourceInvariant())
-            return 9999;
+        if (!source && !m_production_time->SourceInvariant()) {
+            ErrorLogger() << "Source is expected but missing using production time of "
+                          << arbitrary_large_number;
+            return arbitrary_large_number;
+        }
 
         ScriptingContext context(source, location);
 
@@ -421,13 +435,20 @@ float HullType::ProductionCost(int empire_id, int location_id) const {
         if (m_production_cost->ConstantExpr())
             return static_cast<float>(m_production_cost->Eval());
 
+        const auto arbitrary_large_number = 999999.9f;
+
         std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
-        if (!location)
-            return 999999.9f;    // arbitrary large number
+        if (!location) {
+            ErrorLogger() << "Location is missing using production cost of " << arbitrary_large_number;
+            return arbitrary_large_number;
+        }
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_production_cost->SourceInvariant())
-            return 999999.9f;
+        if (!source && !m_production_cost->SourceInvariant()) {
+            ErrorLogger() << "Source is expected but missing using production cost of "
+                          << arbitrary_large_number;
+            return arbitrary_large_number;
+        }
 
         ScriptingContext context(source, location);
 
@@ -442,13 +463,20 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
         if (m_production_time->ConstantExpr())
             return m_production_time->Eval();
 
+        const auto arbitrary_large_number = 999999;
+
         std::shared_ptr<UniverseObject> location = GetUniverseObject(location_id);
-        if (!location)
-            return 9999;    // arbitrary large number
+        if (!location) {
+            ErrorLogger() << "Location is missing using production time of " << arbitrary_large_number;
+            return arbitrary_large_number;
+        }
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_production_time->SourceInvariant())
-            return 999999;
+        if (!source && !m_production_time->SourceInvariant()) {
+            ErrorLogger() << "Source is expected but missing using production time of "
+                          << arbitrary_large_number;
+            return arbitrary_large_number;
+        }
 
         ScriptingContext context(source, location);
 
