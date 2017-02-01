@@ -2,7 +2,7 @@
 
 #include "Logger.h"
 
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/trim.hpp>
 
 #include <stdexcept>
 

@@ -45,7 +45,9 @@
 #include <GG/Texture.h>
 
 #include <boost/algorithm/clamp.hpp>
-#include <boost/algorithm/string.hpp>
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/algorithm/string/replace.hpp>
+
 
 using boost::io::str;
 

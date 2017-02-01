@@ -19,9 +19,10 @@
 #include "../util/OptionsDB.h"
 #include "../util/MultiplayerCommon.h"
 
-#include <boost/algorithm/string.hpp>
-#include <boost/spirit/include/classic.hpp>
 #include <GG/GUI.h>
+
+#include <boost/algorithm/string/predicate.hpp>
+#include <boost/spirit/include/classic.hpp>
 
 
 namespace {

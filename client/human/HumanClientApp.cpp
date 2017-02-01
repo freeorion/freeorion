@@ -36,15 +36,16 @@
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
 
+#include <boost/algorithm/string/trim.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/algorithm/string.hpp>
 
 #include <sstream>
+
 
 namespace fs = boost::filesystem;
 

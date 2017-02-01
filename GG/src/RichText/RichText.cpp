@@ -4,10 +4,9 @@
 #include "RichText_p.h"
 #include "TagParser.h"
 
+#include <cctype>
 #include <sstream>
 
-#include <boost/algorithm/string.hpp>
-#include <cctype>
 
 namespace {
     using namespace GG;

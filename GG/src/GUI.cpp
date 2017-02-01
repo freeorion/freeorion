@@ -47,9 +47,9 @@
 # endif
 #endif
 
+#include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
 #include <boost/thread.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/xpressive/xpressive.hpp>
 
 #include <cassert>

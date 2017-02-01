@@ -9,8 +9,8 @@
 #include "i18n.h"
 #include "Logger.h"
 
+#include <boost/algorithm/string/split.hpp>
 #include <boost/static_assert.hpp>
-#include <boost/algorithm/string.hpp>
 #include <boost/spirit/include/classic.hpp>
 
 #include <map>
