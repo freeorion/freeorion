@@ -400,7 +400,11 @@ public:
         if (!m_scanline_shader) {
             boost::filesystem::path shader_path = GetRootDataDir() / "default" / "shaders" / "scanlines.frag";
             std::string shader_text;
-            ReadFile(shader_path, shader_text);
+            if (!ReadFile(shader_path, shader_text)) {
+                ErrorLogger() << "ScanlineRenderer failed to read shader at path " << shader_path.string();
+                m_failed_init = true;
+                return;
+            }
             m_scanline_shader = ShaderProgram::shaderProgramFactory("", shader_text);
 
             if (!m_scanline_shader) {
