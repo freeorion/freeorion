@@ -16,7 +16,7 @@ from turn_state import state
 
 from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
                      FocusType, ShipRoleType, ShipDesignTypes)
-from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error, Timer
+from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complete, print_error, AITimer
 from common.print_utils import Table, Sequence, Text
 from AIDependencies import INVALID_ID
 
@@ -30,7 +30,7 @@ _CHAT_DEBUG = False
 
 def find_best_designs_this_turn():
     """Calculate the best designs for each ship class available at this turn."""
-    design_timer = Timer('ShipDesigner')
+    design_timer = AITimer('ShipDesigner')
     design_timer.start('Updating cache for new turn')
     ShipDesignAI.Cache.update_for_new_turn()
     _design_cache.clear()
@@ -60,7 +60,7 @@ def find_best_designs_this_turn():
     if fo.currentTurn() % 10 == 0:
         design_timer.start('Printing')
         ShipDesignAI.Cache.print_best_designs()
-    design_timer.end()
+    design_timer.stop_print_and_clear()
 
 
 def get_design_cost(design, pid):  # TODO: Use new framework

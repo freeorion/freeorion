@@ -28,13 +28,13 @@ import ResearchAI
 import ResourcesAI
 import TechsListsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, Timer, init_handlers
+from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, AITimer, init_handlers
 from common.listeners import listener
 from character.character_module import Aggression
 from character.character_strings_module import get_trait_name_aggression, possible_capitals
 
-main_timer = Timer('timer', write_log=True)
-turn_timer = Timer('bucket', write_log=True)
+main_timer = AITimer('timer', write_log=True)
+turn_timer = AITimer('bucket', write_log=True)
 
 using_statprof = False
 try:
@@ -249,8 +249,8 @@ def generateOrders():  # pylint: disable=invalid-name
             main_timer.stop()
         except Exception as e:
             print_error(e, location=action.__name__)
-    main_timer.end()
-    turn_timer.end()
+    main_timer.stop_print_and_clear()
+    turn_timer.stop_print_and_clear()
     turn_timer.start("Server_Processing")
 
     try:

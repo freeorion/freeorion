@@ -16,10 +16,10 @@ import ColonisationAI
 import MilitaryAI
 from EnumsAI import MissionType, PriorityType
 import CombatRatingsAI
-from freeorion_tools import tech_is_complete, Timer
+from freeorion_tools import tech_is_complete, AITimer
 from AIDependencies import INVALID_ID
 
-invasion_timer = Timer('get_invasion_fleets()', write_log=False)
+invasion_timer = AITimer('get_invasion_fleets()', write_log=False)
 
 
 def get_invasion_fleets():
@@ -167,7 +167,7 @@ def get_invasion_fleets():
     # export invasion targeted systems for other AI modules
     AIstate.invasionTargetedSystemIDs = list(all_invasion_targeted_system_ids)
     invasion_timer.stop(section_name="evaluating %d target planets" % (len(evaluated_planet_ids)))
-    invasion_timer.end()
+    invasion_timer.stop_print_and_clear()
 
 
 def get_invasion_targeted_planet_ids(planet_ids, mission_type):

@@ -12,10 +12,10 @@ import TechsListsAI
 import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
-from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, Timer
+from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer
 from AIDependencies import INVALID_ID, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP
 
-colonization_timer = Timer('getColonyFleets()')
+colonization_timer = AITimer('getColonyFleets()')
 
 
 empire_colonizers = {}
@@ -550,7 +550,7 @@ def get_colony_fleets():
     # export outposts for other AI modules
     foAI.foAIstate.colonisableOutpostIDs.clear()
     foAI.foAIstate.colonisableOutpostIDs.update(sorted_outposts)
-    colonization_timer.end()
+    colonization_timer.stop_print_and_clear()
 
 
 def assign_colonisation_values(planet_ids, mission_type, species, empire, detail=None,

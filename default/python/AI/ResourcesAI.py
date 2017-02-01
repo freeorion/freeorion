@@ -18,9 +18,9 @@ import random
 import ColonisationAI
 import AIDependencies
 import CombatRatingsAI
-from freeorion_tools import tech_is_complete, Timer
+from freeorion_tools import tech_is_complete, AITimer
 
-resource_timer = Timer('timer_bucket')
+resource_timer = AITimer('timer_bucket')
 
 # Local Constants
 INDUSTRY = FocusType.FOCUS_INDUSTRY
@@ -628,7 +628,7 @@ def set_planet_resource_foci():
 
         reporter.print_table(priority_ratio)
 
-        resource_timer.end()
+        resource_timer.stop_print_and_clear()
 
     Reporter.print_resource_ai_footer()
 

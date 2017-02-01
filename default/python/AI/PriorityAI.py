@@ -14,10 +14,10 @@ import ResearchAI
 import AIDependencies
 from turn_state import state
 from EnumsAI import PriorityType, MissionType, EmpireProductionTypes, get_priority_production_types, ShipRoleType
-from freeorion_tools import Timer, tech_is_complete
+from freeorion_tools import AITimer, tech_is_complete
 from AIDependencies import INVALID_ID
 
-prioritiees_timer = Timer('calculate_priorities()')
+prioritiees_timer = AITimer('calculate_priorities()')
 
 allottedInvasionTargets = 0
 allottedColonyTargets = 0
@@ -75,7 +75,7 @@ def calculate_priorities():
     foAI.foAIstate.set_priority(PriorityType.RESEARCH_ECONOMICS, 0)
     foAI.foAIstate.set_priority(PriorityType.RESEARCH_SHIPS, _calculate_ships_priority())
     foAI.foAIstate.set_priority(PriorityType.RESEARCH_DEFENSE, 0)
-    prioritiees_timer.end()
+    prioritiees_timer.stop_print_and_clear()
 
 
 def _calculate_industry_priority():  # currently only used to print status
