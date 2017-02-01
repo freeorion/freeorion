@@ -38,7 +38,6 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/xpressive/regex_actions.hpp>
-#include <boost/assign/list_of.hpp>
 #include <boost/unordered_set.hpp>
 
 #include <cmath>
@@ -246,18 +245,18 @@ namespace {
     const double ITALICS_SLANT_ANGLE = 12; // degrees
     const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
 
-    const std::vector<std::pair<boost::uint32_t, boost::uint32_t> > PRINTABLE_ASCII_ALPHA_RANGES = boost::assign::list_of
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x41, 0x5B))
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x61, 0x7B));
+    const std::vector<std::pair<boost::uint32_t, boost::uint32_t>> PRINTABLE_ASCII_ALPHA_RANGES{
+        {0x41, 0x5B},
+        {0x61, 0x7B}};
 
-    const std::vector<std::pair<boost::uint32_t, boost::uint32_t> > PRINTABLE_ASCII_NONALPHA_RANGES = boost::assign::list_of
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x09, 0x0D))
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x20, 0x21))
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x30, 0x3A))
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x21, 0x30))
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x3A, 0x41))
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x5B, 0x61))
-        (std::pair<boost::uint32_t, boost::uint32_t>(0x7B, 0x7F));
+    const std::vector<std::pair<boost::uint32_t, boost::uint32_t>> PRINTABLE_ASCII_NONALPHA_RANGES{
+        {0x09, 0x0D},
+        {0x20, 0x21},
+        {0x30, 0x3A},
+        {0x21, 0x30},
+        {0x3A, 0x41},
+        {0x5B, 0x61},
+        {0x7B, 0x7F}};
 }
 
 ///////////////////////////////////////

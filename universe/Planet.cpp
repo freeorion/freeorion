@@ -18,7 +18,6 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 
-#include <boost/assign/list_of.hpp>
 
 namespace {
     // high tilt is arbitrarily taken to mean 45 degrees or more

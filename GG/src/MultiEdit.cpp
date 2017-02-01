@@ -31,8 +31,6 @@
 #include <GG/WndEvent.h>
 #include <GG/utf8/checked.h>
 
-#include <boost/assign/list_of.hpp>
-
 
 using namespace GG;
 

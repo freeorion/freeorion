@@ -3,7 +3,6 @@
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
-#include <boost/assign/list_of.hpp>
 #include <boost/preprocessor/stringize.hpp>
 #include <boost/spirit/include/phoenix.hpp>
 

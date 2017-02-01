@@ -27,8 +27,6 @@
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
 
-#include <boost/assign/list_of.hpp>
-
 
 using namespace GG;
 

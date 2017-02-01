@@ -31,8 +31,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/Texture.h>
 
-#include <boost/assign/list_of.hpp>
-
 #include <cmath>
 
 
