@@ -43,6 +43,7 @@
 
 #include <cmath>
 #include <cctype>
+#include <iterator>
 #include <numeric>
 #include <sstream>
 
@@ -368,10 +369,10 @@ void Font::Substring::Bind(const std::string& str_)
 }
 
 std::string::const_iterator Font::Substring::begin() const
-{ return boost::next(str->begin(), first); }
+{ return std::next(str->begin(), first); }
 
 std::string::const_iterator Font::Substring::end() const
-{ return boost::next(str->begin(), second); }
+{ return std::next(str->begin(), second); }
 
 bool Font::Substring::empty() const
 { return first == second; }
@@ -785,8 +786,8 @@ public:
         size_t tag_name_begin = m_text.append("<").size();
         size_t tag_name_end = m_text.append(tag).size();
         element->tag_name = Substring(m_text,
-                                      boost::next(m_text.begin(), tag_name_begin),
-                                      boost::next(m_text.begin(), tag_name_end));
+                                      std::next(m_text.begin(), tag_name_begin),
+                                      std::next(m_text.begin(), tag_name_end));
 
         // If there are params add them, like this: "<tag param1 param2"
         if (params) {
@@ -796,16 +797,16 @@ public:
                 size_t param_end = m_text.append(param).size();
 
                 element->params.push_back(Substring(m_text,
-                                                    boost::next(m_text.begin(), param_begin),
-                                                    boost::next(m_text.begin(), param_end)));
+                                                    std::next(m_text.begin(), param_begin),
+                                                    std::next(m_text.begin(), param_end)));
             }
         }
 
         // Create the close part of an open tag to complete the tag, like this:"<tag param1 param2>"
         size_t tag_end = m_text.append(">").size();
         element->text = Substring(m_text,
-                                  boost::next(m_text.begin(), tag_begin),
-                                  boost::next(m_text.begin(), tag_end));
+                                  std::next(m_text.begin(), tag_begin),
+                                  std::next(m_text.begin(), tag_end));
 
         m_text_elements.push_back(element);
     }
@@ -825,12 +826,12 @@ public:
         size_t tag_name_end = m_text.append(tag).size();
         size_t tag_end = m_text.append(">").size();
         element->text = Substring(m_text,
-                                  boost::next(m_text.begin(), tag_begin),
-                                  boost::next(m_text.begin(), tag_end));
+                                  std::next(m_text.begin(), tag_begin),
+                                  std::next(m_text.begin(), tag_end));
 
         element->tag_name = Substring(m_text,
-                                      boost::next(m_text.begin(), tag_name_begin),
-                                      boost::next(m_text.begin(), tag_name_end));
+                                      std::next(m_text.begin(), tag_name_begin),
+                                      std::next(m_text.begin(), tag_name_end));
         m_text_elements.push_back(element);
     }
 
@@ -843,8 +844,8 @@ public:
         size_t begin = m_text.size();
         size_t end = m_text.append(text).size();
         element->text = Substring(m_text,
-                                  boost::next(m_text.begin(), begin),
-                                  boost::next(m_text.begin(), end));
+                                  std::next(m_text.begin(), begin),
+                                  std::next(m_text.begin(), end));
         m_text_elements.push_back(element);
     }
 
@@ -857,8 +858,8 @@ public:
         size_t begin = m_text.size();
         size_t end = m_text.append(whitespace).size();
         element->text = Substring(m_text,
-                                  boost::next(m_text.begin(), begin),
-                                  boost::next(m_text.begin(), end));
+                                  std::next(m_text.begin(), begin),
+                                  std::next(m_text.begin(), end));
         m_text_elements.push_back(element);
     }
 
@@ -1536,7 +1537,7 @@ std::vector<std::shared_ptr<Font::TextElement>> Font::ExpensiveParseFromTextToTe
 
                 // If the last character of a whitespace element is a line ending then create a
                 // newline TextElement.
-                char last_char = *boost::prior(element->text.end());
+                char last_char = *std::prev(element->text.end());
                 if (last_char == '\n' || last_char == '\f' || last_char == '\r') {
                     text_elements.push_back(std::make_shared<Font::TextElement>(false, true));
                 }
@@ -1620,8 +1621,8 @@ void Font::ChangeTemplatedText(
 
                 change_of_len = new_text.size() - sub_len;
                 (*te_it)->text = Substring(text,
-                                           boost::next(text.begin(), ii_sub_begin),
-                                           boost::next(text.begin(), ii_sub_begin + new_text.size()));
+                                           std::next(text.begin(), ii_sub_begin),
+                                           std::next(text.begin(), ii_sub_begin + new_text.size()));
                 break;
             }
             ++curr_offset;
@@ -1642,8 +1643,8 @@ void Font::ChangeTemplatedText(
             size_t ii_sub_begin = (*te_it)->text.begin() - text.begin();
             size_t ii_sub_end = (*te_it)->text.end() - text.begin();
             (*te_it)->text = Substring(text,
-                                       boost::next(text.begin(), ii_sub_begin + change_of_len),
-                                       boost::next(text.begin(), ii_sub_end + change_of_len));
+                                       std::next(text.begin(), ii_sub_begin + change_of_len),
+                                       std::next(text.begin(), ii_sub_end + change_of_len));
 
             ++te_it;
         }

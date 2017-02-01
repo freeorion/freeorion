@@ -23,11 +23,13 @@
 #include "EmpireManager.h"
 #include "Supply.h"
 
-#include <algorithm>
-
 #include <boost/lexical_cast.hpp>
 #include <boost/timer.hpp>
 #include "boost/date_time/posix_time/posix_time.hpp"
+
+#include <algorithm>
+#include <iterator>
+
 
 namespace {
     const float EPSILON = 0.01f;
@@ -321,9 +323,7 @@ bool ResearchQueue::Paused(const std::string& tech_name) const {
 bool ResearchQueue::Paused(int idx) const {
     if (idx >= static_cast<int>(m_queue.size()))
         return false;
-    const_iterator it = begin();
-    std::advance(it, idx);
-    return it->paused;
+    return std::next(begin(), idx)->paused;
 }
 
 int ResearchQueue::ProjectsInProgress() const

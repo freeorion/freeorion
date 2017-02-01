@@ -33,6 +33,9 @@
 
 #include <boost/optional/optional.hpp>
 
+#include <iterator>
+
+
 using namespace GG;
 
 class ModalListPicker : public Control
@@ -198,8 +201,8 @@ void ModalListPicker::ModalInit()
             m_lb_wnd->BringRowIntoView(--m_lb_wnd->end());
         } else if (current_ii >= half_shown) {
             m_lb_wnd->SetFirstRowShown(
-                boost::next(m_lb_wnd->begin(),
-                            current_ii - half_shown + even_extra_one));
+                std::next(m_lb_wnd->begin(),
+                          current_ii - half_shown + even_extra_one));
         }
     }
 
@@ -332,14 +335,14 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     switch (key) {
     case GGK_UP: // arrow-up (not numpad arrow)
         if (CurrentItem() != LB()->end() && CurrentItem() != LB()->begin()) {
-            DropDownList::iterator prev_it(boost::prior(CurrentItem()));
+            DropDownList::iterator prev_it{std::prev(CurrentItem())};
             LB()->BringRowIntoView(prev_it);
             return prev_it;
         }
         break;
     case GGK_DOWN: // arrow-down (not numpad arrow)
         if (CurrentItem() != LB()->end() && CurrentItem() != --LB()->end()) {
-            DropDownList::iterator next_it(boost::next(CurrentItem()));
+            DropDownList::iterator next_it(std::next(CurrentItem()));
             LB()->BringRowIntoView(next_it);
             return next_it;
         }
@@ -489,7 +492,7 @@ std::size_t DropDownList::IteratorToIndex(iterator it) const
 { return it == m_modal_picker->LB()->end() ? -1 : std::distance(m_modal_picker->LB()->begin(), it); }
 
 DropDownList::iterator DropDownList::IndexToIterator(std::size_t n) const
-{ return n < LB()->NumRows() ? boost::next(m_modal_picker->LB()->begin(), n) : m_modal_picker->LB()->end(); }
+{ return n < LB()->NumRows() ? std::next(m_modal_picker->LB()->begin(), n) : m_modal_picker->LB()->end(); }
 
 bool DropDownList::Empty() const
 { return LB()->Empty(); }
@@ -507,7 +510,7 @@ bool DropDownList::Selected(iterator it) const
 { return LB()->Selected(it); }
 
 bool DropDownList::Selected(std::size_t n) const
-{ return n < LB()->NumRows() ? LB()->Selected(boost::next(m_modal_picker->LB()->begin(), n)) : false; }
+{ return n < LB()->NumRows() ? LB()->Selected(std::next(m_modal_picker->LB()->begin(), n)) : false; }
 
 Clr DropDownList::InteriorColor() const
 { return LB()->InteriorColor(); }
@@ -748,7 +751,7 @@ void DropDownList::Select(iterator it)
 { m_modal_picker->Select(it); }
 
 void DropDownList::Select(std::size_t n)
-{ m_modal_picker->Select(n < LB()->NumRows() ? boost::next(LB()->begin(), n) : LB()->end()); }
+{ m_modal_picker->Select(n < LB()->NumRows() ? std::next(LB()->begin(), n) : LB()->end()); }
 
 void DropDownList::SetInteriorColor(Clr c)
 { LB()->SetInteriorColor(c); }

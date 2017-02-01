@@ -29,6 +29,7 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/locale.hpp>
 
+#include <iterator>
 #include <sstream>
 
 std::vector<std::string> SpecialNames();
@@ -2043,7 +2044,7 @@ public:
         if (!this->Empty())
             this->BringRowIntoView(--this->end());
         if (first_visible_queue_row < this->NumRows())
-            this->BringRowIntoView(boost::next(this->begin(), first_visible_queue_row));
+            this->BringRowIntoView(std::next(this->begin(), first_visible_queue_row));
     }
 
     void            UpdateObjectPanel(int object_id = INVALID_OBJECT_ID) {
@@ -2468,9 +2469,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         default: {
             int id = popup.MenuID();
             if (id > MENUITEM_SET_FOCUS_BASE && id <= menuitem_id) {
-                std::map<std::string, int>::iterator it = all_foci.begin();
-                std::advance(it, id - MENUITEM_SET_FOCUS_BASE - 1);
-                std::string focus = it->first;
+                std::string focus = std::next(all_foci.begin(), id - MENUITEM_SET_FOCUS_BASE - 1)->first;
                 for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
                     ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
                     if (row) {
@@ -2482,9 +2481,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     }
                 }
             } else if (id > MENUITEM_SET_SHIP_BASE && id <= ship_menuitem_id) {
-                std::map<int, int>::iterator it = avail_designs.begin();
-                std::advance(it, id - MENUITEM_SET_SHIP_BASE - 1);
-                int ship_design = it->first;
+                int ship_design = std::next(avail_designs.begin(), id - MENUITEM_SET_SHIP_BASE - 1)->first;
                 bool needs_queue_update(false);
                 for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
                     ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
@@ -2500,9 +2497,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 if (needs_queue_update)
                     cur_empire->UpdateProductionQueue();
             } else if (id > MENUITEM_SET_BUILDING_BASE && id <= bld_menuitem_id) {
-                std::map<std::string, int>::iterator it = avail_blds.begin();
-                std::advance(it, id - MENUITEM_SET_BUILDING_BASE - 1);
-                std::string bld = it->first;
+                std::string bld = std::next(avail_blds.begin(), id - MENUITEM_SET_BUILDING_BASE - 1)->first;
                 bool needs_queue_update(false);
                 for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
                     ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);

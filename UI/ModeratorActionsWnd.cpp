@@ -11,6 +11,9 @@
 #include "TextBrowseWnd.h"
 #include <GG/Button.h>
 
+#include <iterator>
+
+
 namespace {
     const GG::X CONTROL_WIDTH(32);
     const GG::Y CONTROL_HEIGHT(32);
@@ -373,7 +376,5 @@ int ModeratorActionsWnd::EmpireIDFromIndex(std::size_t i) const {
     if (i == static_cast<std::size_t>(-1) ||
         i >= static_cast<std::size_t>(Empires().NumEmpires()))
     { return ALL_EMPIRES; }
-    EmpireManager::const_iterator it = Empires().begin();
-    std::advance(it, i);
-    return it->first;
+    return std::next(Empires().begin(), i)->first;
 }

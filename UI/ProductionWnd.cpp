@@ -24,6 +24,7 @@
 #include <boost/cast.hpp>
 
 #include <cmath>
+#include <iterator>
 
 
 namespace {
@@ -1010,12 +1011,12 @@ void ProductionWnd::UpdateQueue() {
 
     // If we were not at the bottom then keep the same first row position
     else if (!initial_last_visible_row_is_end && initial_offset_from_begin < queue_lb->NumRows())
-        queue_lb->SetFirstRowShown(boost::next(queue_lb->begin(), initial_offset_from_begin));
+        queue_lb->SetFirstRowShown(std::next(queue_lb->begin(), initial_offset_from_begin));
 
     // otherwise keep the same relative position from the bottom to
     // preserve the end of list dead space
     else if (initial_offset_to_end < queue_lb->NumRows())
-        queue_lb->SetFirstRowShown(boost::next(queue_lb->begin(), queue_lb->NumRows() -  initial_offset_to_end));
+        queue_lb->SetFirstRowShown(std::next(queue_lb->begin(), queue_lb->NumRows() - initial_offset_to_end));
     else
         queue_lb->SetFirstRowShown(queue_lb->begin());
 }

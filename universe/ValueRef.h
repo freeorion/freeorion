@@ -11,8 +11,10 @@
 #include <boost/any.hpp>
 #include <boost/format.hpp>
 
+#include <iterator>
 #include <map>
 #include <set>
+
 
 class UniverseObject;
 
@@ -1802,9 +1804,7 @@ T Operation<T>::Eval(const ScriptingContext& context) const
             if (m_operands.empty())
                 return T(-1);   // should be INVALID_T of enum types
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            typename std::vector<ValueRefBase<T>*>::const_iterator it = m_operands.begin();
-            std::advance(it, idx);
-            ValueRefBase<T>* vr = *it;
+            ValueRefBase<T>* vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return T(-1);   // should be INVALID_T of enum types
             return vr->Eval(context);

@@ -26,6 +26,9 @@
 #include <GG/Layout.h>
 #include <GG/StaticGraphic.h>
 
+#include <iterator>
+
+
 namespace {
     const std::string PROD_PEDIA_WND_NAME = "production.pedia";
     const std::string PROD_SELECTOR_WND_NAME = "production.selector";
@@ -844,13 +847,13 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
     // If we were not at the bottom then keep the same first row position
     else if (!initial_last_visible_row_is_end && initial_offset_from_begin < m_buildable_items->NumRows())
         m_buildable_items->SetFirstRowShown(
-            boost::next(m_buildable_items->begin(), initial_offset_from_begin));
+            std::next(m_buildable_items->begin(), initial_offset_from_begin));
 
     // otherwise keep the same relative position from the bottom to
     // preserve the end of list dead space
     else if (initial_offset_to_end < m_buildable_items->NumRows())
         m_buildable_items->SetFirstRowShown(
-            boost::next(m_buildable_items->begin(), m_buildable_items->NumRows() -  initial_offset_to_end));
+            std::next(m_buildable_items->begin(), m_buildable_items->NumRows() -  initial_offset_to_end));
     else
         m_buildable_items->SetFirstRowShown(m_buildable_items->begin());
 }

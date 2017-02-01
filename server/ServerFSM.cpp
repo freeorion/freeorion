@@ -22,6 +22,9 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/thread/thread.hpp>
 
+#include <iterator>
+
+
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
@@ -127,9 +130,7 @@ namespace {
         if (!validNames.empty()) {
             // pick a name from the list of empire names
             int empire_name_idx = RandSmallInt(0, static_cast<int>(validNames.size()) - 1);
-            std::set<std::string>::iterator it = validNames.begin();
-            std::advance(it, empire_name_idx);
-            return *it;
+            return *std::next(validNames.begin(), empire_name_idx);
         } else {
             // use a generic name
             return UserString("EMPIRE");

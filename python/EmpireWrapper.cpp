@@ -22,6 +22,7 @@
 #include <boost/python/tuple.hpp>
 #include <boost/python/to_python_converter.hpp>
 
+#include <iterator>
 #include <memory>
 
 
@@ -66,9 +67,7 @@ namespace {
         static SitRepEntry EMPTY_ENTRY;
         if (index < 0 || index >= empire.NumSitRepEntries())
             return EMPTY_ENTRY;
-        Empire::SitRepItr it = empire.SitRepBegin();
-        std::advance(it, index);
-        return *it;
+        return *std::next(empire.SitRepBegin(), index);
     }
     boost::function<const SitRepEntry&(const Empire&, int)> GetEmpireSitRepFunc =                       GetSitRep;
 

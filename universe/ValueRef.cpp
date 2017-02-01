@@ -26,6 +26,8 @@
 #include <boost/algorithm/string/split.hpp>
 #include <boost/algorithm/string.hpp>
 
+#include <iterator>
+
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
@@ -2019,11 +2021,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         std::vector<std::string> all_enqueued_techs = queue.AllEnqueuedProjects();
         if (all_enqueued_techs.empty())
             return "";
-        std::vector<std::string>::const_iterator tech_it = all_enqueued_techs.begin();
         std::size_t idx = RandSmallInt(0, static_cast<int>(all_enqueued_techs.size()) - 1);
-        std::advance(tech_it, idx);
-        return *tech_it;
-
+        return *std::next(all_enqueued_techs.begin(), idx);
     } else if (variable_name == "LowestCostResearchableTech") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
@@ -2086,11 +2085,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         std::vector<std::string> researchable_techs = TechsResearchableByEmpire(empire_id);
         if (researchable_techs.empty())
             return "";
-        std::vector<std::string>::const_iterator tech_it = researchable_techs.begin();
         std::size_t idx = RandSmallInt(0, static_cast<int>(researchable_techs.size()) - 1);
-        std::advance(tech_it, idx);
-        return *tech_it;
-
+        return *std::next(researchable_techs.begin(), idx);
     } else if (variable_name == "RandomCompleteTech") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
@@ -2105,11 +2101,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         std::vector<std::string> complete_techs = TechsResearchedByEmpire(empire_id);
         if (complete_techs.empty())
             return "";
-        std::vector<std::string>::const_iterator tech_it = complete_techs.begin();
         std::size_t idx = RandSmallInt(0, static_cast<int>(complete_techs.size()) - 1);
-        std::advance(tech_it, idx);
-        return *tech_it;
-
+        return *std::next(complete_techs.begin(), idx);
     } else if (variable_name == "LowestCostTransferrableTech") {
         int empire1_id = ALL_EMPIRES;
         if (m_int_ref1) {
@@ -2128,10 +2121,8 @@ std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) 
         std::vector<std::string> sendable_techs = TransferrableTechs(empire1_id, empire2_id);
         if (sendable_techs.empty())
             return "";
-        std::vector<std::string>::const_iterator tech_it = sendable_techs.begin();
         std::size_t idx = RandSmallInt(0, static_cast<int>(sendable_techs.size()) - 1);
-        std::advance(tech_it, idx);
-        return *tech_it;
+        return *std::next(sendable_techs.begin(), idx);
 
     } else if (variable_name == "HighestCostTransferrableTech") {
         int empire1_id = ALL_EMPIRES;
@@ -2478,9 +2469,7 @@ std::string Operation<std::string>::Eval(const ScriptingContext& context) const
         if (m_operands.empty())
             return "";
         unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-        std::vector<ValueRefBase<std::string>*>::const_iterator it = m_operands.begin();
-        std::advance(it, idx);
-        ValueRefBase<std::string>* vr = *it;
+        ValueRefBase<std::string>* vr = *std::next(m_operands.begin(), idx);
         if (!vr)
             return "";
         return vr->Eval(context);
@@ -2583,9 +2572,7 @@ double      Operation<double>::Eval(const ScriptingContext& context) const
             if (m_operands.empty())
                 return 0.0;
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            std::vector<ValueRefBase<double>*>::const_iterator it = m_operands.begin();
-            std::advance(it, idx);
-            ValueRefBase<double>* vr = *it;
+            ValueRefBase<double>* vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0.0;
             return vr->Eval(context);
@@ -2678,9 +2665,7 @@ int         Operation<int>::Eval(const ScriptingContext& context) const
             if (m_operands.empty())
                 return 0;
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            std::vector<ValueRefBase<int>*>::const_iterator it = m_operands.begin();
-            std::advance(it, idx);
-            ValueRefBase<int>* vr = *it;
+            ValueRefBase<int>* vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0;
             return vr->Eval(context);

@@ -21,6 +21,8 @@
 
 #include "../network/Message.h"
 
+#include <iterator>
+
 
 ////////////////////////////////////////////////
 // CombatInfo
@@ -1243,13 +1245,7 @@ namespace {
 
             // select target object
             int target_idx = RandInt(0, valid_target_ids.size() - 1);
-            std::set<int>::const_iterator target_it = valid_target_ids.begin();
-            std::advance(target_it, target_idx);
-            if (target_it == valid_target_ids.end()) {
-                ErrorLogger() << "AutoResolveCombat couldn't pick a target id";
-                continue;
-            }
-            int target_id = *target_it;
+            int target_id = *std::next(valid_target_ids.begin(), target_idx);
 
             std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
             if (!target) {

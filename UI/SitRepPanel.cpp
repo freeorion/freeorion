@@ -16,6 +16,8 @@
 
 #include <boost/lexical_cast.hpp>
 
+#include <iterator>
+
 
 namespace {
     const int sitrep_row_margin(1);
@@ -451,7 +453,7 @@ void SitRepPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
         Update();
         if (!m_sitreps_lb->Empty())
-            m_sitreps_lb->SetFirstRowShown(boost::next(m_sitreps_lb->begin(), first_visible_queue_row));
+            m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_queue_row));
     }
 }
 
@@ -782,7 +784,7 @@ void SitRepPanel::Update() {
     { m_sitreps_lb->Insert(new SitRepRow(width, GG::Y(ClientUI::Pts()*2), sitrep)); }
 
     if (m_sitreps_lb->NumRows() > first_visible_row) {
-        m_sitreps_lb->SetFirstRowShown(boost::next(m_sitreps_lb->begin(), first_visible_row));
+        m_sitreps_lb->SetFirstRowShown(std::next(m_sitreps_lb->begin(), first_visible_row));
     } else if (!m_sitreps_lb->Empty()) {
         m_sitreps_lb->BringRowIntoView(--m_sitreps_lb->end());
     }

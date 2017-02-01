@@ -15,6 +15,9 @@
 
 #include <boost/filesystem/fstream.hpp>
 
+#include <iterator>
+
+
 /////////////////////////////////////////////////
 // FocusType                                   //
 /////////////////////////////////////////////////
@@ -406,9 +409,7 @@ const std::string& SpeciesManager::RandomSpeciesName() const {
         return EMPTY_STRING;
 
     int species_idx = RandSmallInt(0, static_cast<int>(m_species.size()) - 1);
-    std::map<std::string, Species*>::const_iterator it = m_species.begin();
-    std::advance(it, species_idx);
-    return it->first;
+    return std::next(m_species.begin(), species_idx)->first;
 }
 
 const std::string& SpeciesManager::RandomPlayableSpeciesName() const {
@@ -416,9 +417,7 @@ const std::string& SpeciesManager::RandomPlayableSpeciesName() const {
         return EMPTY_STRING;
 
     int species_idx = RandSmallInt(0, NumPlayableSpecies() - 1);
-    playable_iterator it = playable_begin();
-    std::advance(it, species_idx);
-    return it->first;
+    return std::next(playable_begin(), species_idx)->first;
 }
 
 const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
@@ -427,9 +426,7 @@ const std::string& SpeciesManager::SequentialPlayableSpeciesName(int id) const {
 
     int species_idx = id % NumPlayableSpecies();
     DebugLogger() << "SpeciesManager::SequentialPlayableSpeciesName has " << NumPlayableSpecies() << " and is given id " << id << " yielding index " << species_idx;
-    playable_iterator it = playable_begin();
-    std::advance(it, species_idx);
-    return it->first;
+    return std::next(playable_begin(), species_idx)->first;
 }
 
 void SpeciesManager::ClearSpeciesHomeworlds() {

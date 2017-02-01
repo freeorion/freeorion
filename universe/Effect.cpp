@@ -27,6 +27,8 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include <cctype>
+#include <iterator>
+
 
 using boost::io::str;
 using boost::lexical_cast;
@@ -2648,9 +2650,8 @@ void SetDestination::Execute(const ScriptingContext& context) const {
 
     // "randomly" pick a destination
     int destination_idx = RandSmallInt(0, valid_locations.size() - 1);
-    Condition::ObjectSet::iterator obj_it = valid_locations.begin();
-    std::advance(obj_it, destination_idx);
-    std::shared_ptr<UniverseObject> destination = std::const_pointer_cast<UniverseObject>(*obj_it);
+    std::shared_ptr<UniverseObject> destination = std::const_pointer_cast<UniverseObject>(
+        *std::next(valid_locations.begin(), destination_idx));
     int destination_system_id = destination->SystemID();
 
     // early exit if destination is not / in a system

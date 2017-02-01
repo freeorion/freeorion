@@ -33,6 +33,7 @@
 
 #include <boost/cast.hpp>
 
+#include <iterator>
 #include <numeric>
 
 
@@ -634,7 +635,7 @@ ListBox::const_iterator ListBox::end() const
 const ListBox::Row& ListBox::GetRow(std::size_t n) const
 {
     assert(n < m_rows.size());
-    return **boost::next(m_rows.begin(), n);
+    return **std::next(m_rows.begin(), n);
 }
 
 ListBox::iterator ListBox::Caret() const
@@ -1139,7 +1140,7 @@ ListBox::iterator ListBox::end()
 ListBox::Row& ListBox::GetRow(std::size_t n)
 {
     assert(n < m_rows.size());
-    return **boost::next(m_rows.begin(), n);
+    return **std::next(m_rows.begin(), n);
 }
 
 void ListBox::SetSelections(const SelectionSet& s, bool signal/* = false*/)
@@ -1189,7 +1190,7 @@ void ListBox::BringRowIntoView(iterator it)
         {
             last_row_found = true;
             if (it2 != m_rows.begin())
-                last_row_y_offset = y_offset - (*boost::prior(it2))->Height();
+                last_row_y_offset = y_offset - (*std::prev(it2))->Height();
         }
 
         y_offset += (*it2)->Height();
@@ -1510,7 +1511,7 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
         case GGK_PAGEUP: // page up key (not numpad key)
             if (m_caret != m_rows.end()) {
                 Y space = ClientSize().y;
-                while (m_caret != m_rows.begin() && 0 < (space -= (*boost::prior(m_caret))->Height())) {
+                while (m_caret != m_rows.begin() && 0 < (space -= (*std::prev(m_caret))->Height())) {
                     --m_caret;
                 }
             }
@@ -1539,7 +1540,7 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
 
             --m_first_col_shown;
             std::list<GG::Wnd*>::const_iterator first_row_first_child((*m_first_row_shown)->GetLayout()->Children().begin());
-            GG::Wnd* first_shown_cell(*boost::next(first_row_first_child, m_first_col_shown));
+            GG::Wnd* first_shown_cell{*std::next(first_row_first_child, m_first_col_shown)};
             GG::X new_scroll_offset(first_shown_cell->UpperLeft().x - UpperLeft().x - GG::X(BORDER_THICK));
             m_hscroll->ScrollTo(Value(new_scroll_offset));
             SignalScroll(*m_hscroll, true);
@@ -1553,7 +1554,7 @@ void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mo
 
             ++m_first_col_shown;
             std::list<GG::Wnd*>::const_iterator first_row_first_child((*m_first_row_shown)->GetLayout()->Children().begin());
-            GG::Wnd* first_shown_cell(*boost::next(first_row_first_child, m_first_col_shown));
+            GG::Wnd* first_shown_cell{*std::next(first_row_first_child, m_first_col_shown)};
             GG::X new_scroll_offset(first_shown_cell->UpperLeft().x - UpperLeft().x - GG::X(BORDER_THICK));
             m_hscroll->ScrollTo(Value(new_scroll_offset));
             SignalScroll(*m_hscroll, true);
@@ -1635,7 +1636,7 @@ void ListBox::TimerFiring(unsigned int ticks, Timer* timer)
                 m_first_row_shown != m_rows.end() &&
                 m_first_row_shown != m_rows.begin()) {
                 m_vscroll->ScrollTo(m_vscroll->PosnRange().first -
-                                    Value((*boost::prior(m_first_row_shown))->Height()));
+                                    Value((*std::prev(m_first_row_shown))->Height()));
                 SignalScroll(*m_vscroll, true);
             }
             if (m_auto_scrolling_down) {
@@ -2426,7 +2427,7 @@ ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y clie
 {
     Y available_space = client_height - (*bottom_row)->Height();
     iterator it = bottom_row;
-    while (it != m_rows.begin() && (*boost::prior(it))->Height() <= available_space) {
+    while (it != m_rows.begin() && (*std::prev(it))->Height() <= available_space) {
         available_space -= (*--it)->Height();
     }
     return it;

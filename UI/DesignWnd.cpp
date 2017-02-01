@@ -35,6 +35,7 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include <algorithm>
+#include <iterator>
 
 namespace {
     const std::string   PART_CONTROL_DROP_TYPE_STRING = "Part Control";
@@ -1600,7 +1601,7 @@ void BasesListBox::Populate() {
         if (!Empty())
             BringRowIntoView(--end());
         if (first_visible_row < NumRows())
-            BringRowIntoView(boost::next(begin(), first_visible_row));
+            BringRowIntoView(std::next(begin(), first_visible_row));
     }
 
     if (m_showing_saved_designs)
