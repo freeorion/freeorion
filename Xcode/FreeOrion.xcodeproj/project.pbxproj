@@ -650,7 +650,6 @@
 		471023A60CEF3AAC00A7DF2B /* ListBox.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ListBox.cpp; sourceTree = "<group>"; };
 		471023A70CEF3AAC00A7DF2B /* Menu.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Menu.cpp; sourceTree = "<group>"; };
 		471023A80CEF3AAC00A7DF2B /* MultiEdit.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiEdit.cpp; sourceTree = "<group>"; };
-		471023B30CEF3AAC00A7DF2B /* Plugin.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Plugin.cpp; sourceTree = "<group>"; };
 		471023B50CEF3AAC00A7DF2B /* PtRect.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PtRect.cpp; sourceTree = "<group>"; };
 		471023B70CEF3AAC00A7DF2B /* Scroll.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Scroll.cpp; sourceTree = "<group>"; };
 		471023BA0CEF3AAC00A7DF2B /* SDLGUI.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SDLGUI.cpp; sourceTree = "<group>"; };
@@ -1476,7 +1475,6 @@
 				471023A60CEF3AAC00A7DF2B /* ListBox.cpp */,
 				471023A70CEF3AAC00A7DF2B /* Menu.cpp */,
 				471023A80CEF3AAC00A7DF2B /* MultiEdit.cpp */,
-				471023B30CEF3AAC00A7DF2B /* Plugin.cpp */,
 				471023B50CEF3AAC00A7DF2B /* PtRect.cpp */,
 				CE61839C1BB80D2E00952BEA /* RichText */,
 				471023B70CEF3AAC00A7DF2B /* Scroll.cpp */,
