@@ -257,16 +257,19 @@ void SupplyManager::Update() {
             }
         }
 
-        std::set<int> systems_where_others_have_supply_sources_and_current_empire_doesnt;
-        // add all systems where others have supply
+        std::set<int> systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt;
+        // add all systems where hostile_others have supply
         for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_system_supply_ranges) {
             if (empire_supply.first == empire_id || empire_supply.first == ALL_EMPIRES)
+                continue;
+
+            if (Empires().GetDiplomaticStatus(empire_id, empire_supply.first) != DIPLO_WAR)
                 continue;
 
             for (const std::map<int, float>::value_type& supply_range : empire_supply.second) {
                 if (supply_range.second <= 0.0f)
                     continue;
-                systems_where_others_have_supply_sources_and_current_empire_doesnt.insert(supply_range.first);
+                systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt.insert(supply_range.first);
             }
         }
         // remove systems were this empire has supply
@@ -275,14 +278,14 @@ void SupplyManager::Update() {
             for (const std::map<int, float>::value_type& supply_range : it->second) {
                 if (supply_range.second <= 0.0f)
                     continue;
-                systems_where_others_have_supply_sources_and_current_empire_doesnt.erase(supply_range.first);
+                systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt.erase(supply_range.first);
             }
         }
 
         // for systems where others have supply sources and this empire doesn't
         // and where this empire has no fleets...
         // supply is obstructed
-        for (int system_id : systems_where_others_have_supply_sources_and_current_empire_doesnt) {
+        for (int system_id : systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt) {
             if (systems_containing_friendly_fleets.find(system_id) == systems_containing_friendly_fleets.end())
                 empire_supply_unobstructed_systems[empire_id].erase(system_id);
         }
@@ -399,20 +402,19 @@ void SupplyManager::Update() {
             if (empire_ranges_here.size() == 1 && empire_ranges_here.begin()->second.size() < 2)
                 continue;   // only one empire has supply here
 
-            // remove supply for all empires except the top-ranged empire here
-            // if there is a tie for top-ranged, remove all
-            std::map<float, std::set<int> >::reverse_iterator range_empire_it = empire_ranges_here.rbegin();
-            int top_range_empire_id = ALL_EMPIRES;
-            if (range_empire_it->second.size() == 1)
-                top_range_empire_id = *(range_empire_it->second.begin());
-            //DebugLogger() << "top ranged empire here: " << top_range_empire_id;
+            // remove range entries and traversals for all empires hostile to any of the top empires
+            const auto & top_empires = empire_ranges_here.rbegin()->second;
 
-            // remove range entries and traversals for all but the top empire
-            // (or all empires if there is no single top empire)
             for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_propagating_supply_ranges) {
                 int empire_id = empire_supply.first;
-                if (empire_id == top_range_empire_id)
-                    continue;   // this is the top empire, so leave as the sole empire supplying here
+
+                // Dont remove if none of the top empires are hostile to this empire.
+                if (std::none_of(top_empires.begin(), top_empires.end(),
+                                 [empire_id](int a_top_empire_id) {
+                                     return (empire_id == a_top_empire_id) ? false :
+                                         Empires().GetDiplomaticStatus(empire_id, a_top_empire_id) == DIPLO_WAR;
+                                 }))
+                { continue; }
 
                 // remove from range entry...
                 std::map<int, float>& empire_ranges = empire_supply.second;
@@ -448,13 +450,13 @@ void SupplyManager::Update() {
             }
 
             //// DEBUG
-            //DebugLogger() << "after culling empires ranges at system " << sys_id << ":";
-            //for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_propagating_supply_ranges) {
+            // DebugLogger() << "after culling empires ranges at system " << sys_id << ":";
+            // for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_propagating_supply_ranges) {
             //    std::map<int, float>& system_ranges = empire_supply.second;
             //    std::map<int, float>::iterator range_it = system_ranges.find(sys_id);
             //    if (range_it != system_ranges.end())
             //        DebugLogger() << empire_supply.first << " : " << range_it->second;
-            //}
+            // }
             //// END DEBUG
         }
 
@@ -468,7 +470,7 @@ void SupplyManager::Update() {
         // for sources of supply of at least the minimum range for this
         // iteration that are in the current map, give adjacent systems one
         // less supply in the next iteration (unless as much or more is already
-        // there)
+        // there for a hostile empire)
         for (const std::map<int, std::map<int, float>>::value_type& empire_supply : empire_propagating_supply_ranges) {
             int empire_id = empire_supply.first;
             //DebugLogger() << ">-< Doing supply propagation for empire " << empire_id << " >-<";
@@ -499,12 +501,14 @@ void SupplyManager::Update() {
                     // propagation not obstructed.
 
 
-                    // does another empire already have as much or more supply here from a previous iteration?
+                    // does another hostile empire already have as much or more supply here from a previous iteration?
                     float other_empire_biggest_range = -10000.0f;   // arbitrary big numbeer
                     for (const std::map<int, std::map<int, float>>::value_type& other_empire_supply : empire_propagating_supply_ranges) {
                         int other_empire_id = other_empire_supply.first;
-                        if (other_empire_id == empire_id)
-                            continue;
+                        if ((other_empire_id == empire_id)
+                            || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_WAR)
+                        { continue; }
+
                         const std::map<int, float>& prev_other_empire_sys_ranges = other_empire_supply.second;
                         std::map<int, float>::const_iterator prev_other_empire_range_it = prev_other_empire_sys_ranges.find(lane_end_sys_id);
                         if (prev_other_empire_range_it == prev_other_empire_sys_ranges.end())
