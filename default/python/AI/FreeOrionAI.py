@@ -98,6 +98,9 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
 @chat_on_error
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     """Called by client to when resume a loaded game."""
+    if fo.getEmpire().eliminated:
+        print "This empire has been eliminated. Ignoring resume loaded game."
+        return
     turn_timer.start("Server Processing")
 
     global foAIstate
