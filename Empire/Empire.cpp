@@ -2152,19 +2152,22 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 
         //DebugLogger() << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
         if ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive()) {
-            if (fleet->OwnedBy(m_id)) {
-                if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
+            int fleet_owner = fleet->Owner();
+            auto is_hostile = fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR;
+            auto is_stopped = fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID();
+            auto is_blockading = fleet->ArrivalStarlane() == system_id;
+            if (!is_hostile) {
+                if (is_stopped) {
                     systems_containing_friendly_fleets.insert(system_id);
-                    if (fleet->ArrivalStarlane()==system_id)
+                    if (is_blockading)
                         unrestricted_friendly_systems.insert(system_id);
                     else
                         systems_with_lane_preserving_fleets.insert(system_id);
                 }
-            } else if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
-                int fleet_owner = fleet->Owner();
-                if (fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR) {
+            } else if (is_stopped) {
+                if (is_hostile) {
                     systems_containing_obstructing_objects.insert(system_id);
-                    if (fleet->ArrivalStarlane() == system_id)
+                    if (is_blockading)
                         unrestricted_obstruction_systems.insert(system_id);
                 }
             }
