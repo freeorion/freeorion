@@ -23,4 +23,4 @@ def redirect_logging_to_freeorion_logger():
     sys.stderr = ErrLogger()
     print 'Python stdout and stderr redirected'
 
-redirect_logging_to_freeorion_logger()
+
