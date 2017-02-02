@@ -339,11 +339,11 @@ bool Number::operator==(const ConditionBase& rhs) const {
 
 std::string Number::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
-                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    std::to_string(m_low->Eval()) :
                                     m_low->Description())
                                  : "0");
     std::string high_str = (m_high ? (m_high->ConstantExpr() ?
-                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      std::to_string(m_high->Eval()) :
                                       m_high->Description())
                                    : std::to_string(INT_MAX));
 
@@ -547,12 +547,12 @@ std::string Turn::Description(bool negated/* = false*/) const {
     std::string low_str;
     if (m_low)
         low_str = (m_low->ConstantExpr() ?
-                   boost::lexical_cast<std::string>(m_low->Eval()) :
+                   std::to_string(m_low->Eval()) :
                    m_low->Description());
     std::string high_str;
     if (m_high)
         high_str = (m_high->ConstantExpr() ?
-                    boost::lexical_cast<std::string>(m_high->Eval()) :
+                    std::to_string(m_high->Eval()) :
                     m_high->Description());
     std::string description_str;
     if (m_low && m_high)
@@ -914,7 +914,7 @@ bool SortedNumberOf::SourceInvariant() const
           (!m_condition || m_condition->SourceInvariant())); }
 
 std::string SortedNumberOf::Description(bool negated/* = false*/) const {
-    std::string number_str = m_number->ConstantExpr() ? boost::lexical_cast<std::string>(m_number->Dump()) : m_number->Description();
+    std::string number_str = m_number->ConstantExpr() ? m_number->Dump() : m_number->Description();
 
     if (m_sorting_method == SORT_RANDOM) {
         return str(FlexibleFormat((!negated)
@@ -924,7 +924,7 @@ std::string SortedNumberOf::Description(bool negated/* = false*/) const {
                    % number_str
                    % m_condition->Description());
     } else {
-        std::string sort_key_str = m_sort_key->ConstantExpr() ? boost::lexical_cast<std::string>(m_sort_key->Dump()) : m_sort_key->Description();
+        std::string sort_key_str = m_sort_key->ConstantExpr() ? m_sort_key->Dump() : m_sort_key->Description();
 
         std::string description_str, temp;
         switch (m_sorting_method) {
@@ -1481,7 +1481,7 @@ std::string Homeworld::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += m_names[i]->ConstantExpr() ?
-                        UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
+                        UserString(m_names[i]->Eval()) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
             values_str += ", ";
@@ -1945,7 +1945,7 @@ std::string Building::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += m_names[i]->ConstantExpr() ?
-                        UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
+                        UserString(m_names[i]->Eval()) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
             values_str += ", ";
@@ -2421,11 +2421,11 @@ bool CreatedOnTurn::SourceInvariant() const
 
 std::string CreatedOnTurn::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
-                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    std::to_string(m_low->Eval()) :
                                     m_low->Description())
                                  : std::to_string(BEFORE_FIRST_TURN));
     std::string high_str = (m_high ? (m_high->ConstantExpr() ?
-                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      std::to_string(m_high->Eval()) :
                                       m_high->Description())
                                    : std::to_string(IMPOSSIBLY_LARGE_TURN));
     return str(FlexibleFormat((!negated)
@@ -3831,7 +3831,7 @@ std::string Species::Description(bool negated/* = false*/) const {
         values_str = "(" + UserString("CONDITION_ANY") +")";
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += m_names[i]->ConstantExpr() ?
-                        UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
+                        UserString(m_names[i]->Eval()) :
                         m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
             values_str += ", ";
@@ -4126,13 +4126,13 @@ std::string Enqueued::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
     if (m_low) {
         low_str = m_low->ConstantExpr() ?
-                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                    std::to_string(m_low->Eval()) :
                     m_low->Description();
     }
     std::string high_str = std::to_string(INT_MAX);
     if (m_high) {
         high_str = m_high->ConstantExpr() ?
-                    boost::lexical_cast<std::string>(m_high->Eval()) :
+                    std::to_string(m_high->Eval()) :
                     m_high->Description();
     }
     std::string what_str;
@@ -4142,7 +4142,7 @@ std::string Enqueued::Description(bool negated/* = false*/) const {
             what_str = UserString(what_str);
     } else if (m_design_id) {
         what_str = m_design_id->ConstantExpr() ?
-                    boost::lexical_cast<std::string>(m_design_id->Eval()) :
+                    std::to_string(m_design_id->Eval()) :
                     m_design_id->Description();
     }
     std::string description_str;
@@ -4335,7 +4335,7 @@ std::string FocusType::Description(bool negated/* = false*/) const {
     std::string values_str;
     for (unsigned int i = 0; i < m_names.size(); ++i) {
         values_str += m_names[i]->ConstantExpr() ?
-            UserString(boost::lexical_cast<std::string>(m_names[i]->Eval())) :
+            UserString(m_names[i]->Eval()) :
             m_names[i]->Description();
         if (2 <= m_names.size() && i < m_names.size() - 2) {
             values_str += ", ";
@@ -4777,13 +4777,13 @@ std::string DesignHasPart::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
     if (m_low) {
         low_str = m_low->ConstantExpr() ?
-                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                    std::to_string(m_low->Eval()) :
                     m_low->Description();
     }
     std::string high_str = std::to_string(INT_MAX);
     if (m_high) {
         high_str = m_high->ConstantExpr() ?
-                    boost::lexical_cast<std::string>(m_high->Eval()) :
+                    std::to_string(m_high->Eval()) :
                     m_high->Description();
     };
     std::string name_str;
@@ -4937,7 +4937,7 @@ std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
     std::string low_str = "1";
     if (m_low) {
         low_str = m_low->ConstantExpr() ?
-                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                    std::to_string(m_low->Eval()) :
                     m_low->Description();
     }
     std::string high_str = std::to_string(INT_MAX);
@@ -5187,7 +5187,7 @@ bool NumberedShipDesign::SourceInvariant() const
 
 std::string NumberedShipDesign::Description(bool negated/* = false*/) const {
     std::string id_str = m_design_id->ConstantExpr() ?
-                            boost::lexical_cast<std::string>(m_design_id->Eval()) :
+                            std::to_string(m_design_id->Eval()) :
                             m_design_id->Description();
 
     return str(FlexibleFormat((!negated)
@@ -5515,11 +5515,11 @@ bool MeterValue::SourceInvariant() const
 
 std::string MeterValue::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
-                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    std::to_string(m_low->Eval()) :
                                     m_low->Description())
                                  : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
     std::string high_str = (m_high ? (m_high->ConstantExpr() ?
-                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      std::to_string(m_high->Eval()) :
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
 
@@ -5844,11 +5844,11 @@ std::string EmpireMeterValue::Description(bool negated/* = false*/) const {
             empire_str = m_empire_id->Description();
     }
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
-                                    boost::lexical_cast<std::string>(m_low->Eval()) :
+                                    std::to_string(m_low->Eval()) :
                                     m_low->Description())
                                  : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
     std::string high_str = (m_high ? (m_high->ConstantExpr() ?
-                                      boost::lexical_cast<std::string>(m_high->Eval()) :
+                                      std::to_string(m_high->Eval()) :
                                       m_high->Description())
                                    : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
     return str(FlexibleFormat((!negated)
@@ -5984,10 +5984,10 @@ bool EmpireStockpileValue::SourceInvariant() const
 
 std::string EmpireStockpileValue::Description(bool negated/* = false*/) const {
     std::string low_str = m_low->ConstantExpr() ?
-                            boost::lexical_cast<std::string>(m_low->Eval()) :
+                            std::to_string(m_low->Eval()) :
                             m_low->Description();
     std::string high_str = m_high->ConstantExpr() ?
-                            boost::lexical_cast<std::string>(m_high->Eval()) :
+                            std::to_string(m_high->Eval()) :
                             m_high->Description();
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_EMPIRE_STOCKPILE_VALUE")
@@ -6654,7 +6654,7 @@ bool WithinStarlaneJumps::SourceInvariant() const
 { return m_jumps->SourceInvariant() && m_condition->SourceInvariant(); }
 
 std::string WithinStarlaneJumps::Description(bool negated/* = false*/) const {
-    std::string value_str = m_jumps->ConstantExpr() ? boost::lexical_cast<std::string>(m_jumps->Eval()) : m_jumps->Description();
+    std::string value_str = m_jumps->ConstantExpr() ? std::to_string(m_jumps->Eval()) : m_jumps->Description();
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_WITHIN_STARLANE_JUMPS")
         : UserString("DESC_WITHIN_STARLANE_JUMPS_NOT"))
