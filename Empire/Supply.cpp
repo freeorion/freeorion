@@ -561,6 +561,15 @@ void RemoveSystemFromTraversals(
     }
 }
 
+/** Add an obstructed traversal.*/
+void AddObstructedTraversal(
+    const int sys_id, const int end_sys_id,
+    const std::set<int>& supply_unobstructed_systems,
+    const std::set<std::pair<int, int>>& lane_traversals,
+    std::set<std::pair<int, int>>& obstructed_traversals)
+{
+    obstructed_traversals.insert(std::make_pair(sys_id, end_sys_id));
+}
 }
 
 std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
@@ -724,7 +733,10 @@ std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManag
                     if (unobstructed_systems.find(lane_end_sys_id) == unobstructed_systems.end()) {
                         // propagation obstructed!
                         //DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to not being on unobstructed systems";
-                        m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+                        AddObstructedTraversal(system_id, lane_end_sys_id,
+                                               empire_supply_unobstructed_systems[empire_id],
+                                               m_supply_starlane_traversals[empire_id],
+                                               m_supply_starlane_obstructed_traversals[empire_id]);
                         continue;
                     }
                     // propagation not obstructed.
@@ -748,7 +760,10 @@ std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManag
 
                     // if so, add a blocked traversal and continue
                     if (range_after_one_more_jump <= other_empire_biggest_range) {
-                        m_supply_starlane_obstructed_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
+                        AddObstructedTraversal(system_id, lane_end_sys_id,
+                                               empire_supply_unobstructed_systems[empire_id],
+                                               m_supply_starlane_traversals[empire_id],
+                                               m_supply_starlane_obstructed_traversals[empire_id]);
                         //DebugLogger() << "Added obstructed traversal from " << system_id << " to " << lane_end_sys_id << " due to other empire biggest range being " << other_empire_biggest_range;
                         continue;
                     }
