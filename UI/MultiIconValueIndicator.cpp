@@ -28,7 +28,7 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w) :
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, int object_id,
                                                  const std::vector<std::pair<MeterType, MeterType>>& meter_types) :
-    MultiIconValueIndicator(w, {{object_id}}, meter_types)
+    MultiIconValueIndicator(w, std::vector<int>{object_id}, meter_types)
 {}
 
 MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>& object_ids,
