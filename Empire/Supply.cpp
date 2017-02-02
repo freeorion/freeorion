@@ -528,6 +528,39 @@ float ComputeSupplyBonuses(const int empire_id, const int sys_id, std::pair<floa
     return bonus;
 }
 
+/** Remove \p sys_id from unobstructed_systems, remove all startlanes that arrive or depart sys_id
+    from lane_traversals and remove obstructed traversals that depart this system.*/
+void RemoveSystemFromTraversals(
+    const int sys_id,
+    std::set<int>& supply_unobstructed_systems,
+    std::set<std::pair<int, int>>& lane_traversals,
+    std::set<std::pair<int, int>>& obstructed_traversals)
+{
+    // Remove from unobstructed systems
+    supply_unobstructed_systems.erase(sys_id);
+
+    std::set<std::pair<int, int> > lane_traversals_initial = lane_traversals;
+    std::set<std::pair<int, int> > obstrcuted_traversals_initial = obstructed_traversals;
+
+    // remove from traversals departing from or going to this system for this empire,
+    // and set any traversals going to this system as obstructed
+    for (const std::set<std::pair<int, int>>::value_type& lane : lane_traversals_initial) {
+        if (lane.first == sys_id) {
+            lane_traversals.erase(std::make_pair(sys_id, lane.second));
+        }
+        if (lane.second == sys_id) {
+            lane_traversals.erase(std::make_pair(lane.first, sys_id));
+            obstructed_traversals.insert(std::make_pair(lane.first, sys_id));
+        }
+    }
+
+    // remove obstructed traverals departing from this system
+    for (const std::set<std::pair<int, int>>::value_type& lane : obstrcuted_traversals_initial) {
+        if (lane.first == sys_id)
+            obstructed_traversals.erase(std::make_pair(lane.first, lane.second));
+    }
+}
+
 }
 
 std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
@@ -636,33 +669,10 @@ std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManag
                 std::map<int, std::pair<float, float>>& empire_ranges = empire_supply.second;
                 empire_ranges.erase(sys_id);
 
+                RemoveSystemFromTraversals(sys_id, empire_supply_unobstructed_systems[empire_id],
+                                           m_supply_starlane_traversals[empire_id],
+                                           m_supply_starlane_obstructed_traversals[empire_id]);
                 //DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
-
-                // Remove from unobstructed systems
-                empire_supply_unobstructed_systems[empire_id].erase(sys_id);
-
-                std::set<std::pair<int, int>>& lane_traversals = m_supply_starlane_traversals[empire_id];
-                std::set<std::pair<int, int>> lane_traversals_initial = lane_traversals;
-                std::set<std::pair<int, int>>& obstructed_traversals = m_supply_starlane_obstructed_traversals[empire_id];
-                std::set<std::pair<int, int>> obstrcuted_traversals_initial = obstructed_traversals;
-
-                // remove from traversals departing from or going to this system for this empire,
-                // and set any traversals going to this system as obstructed
-                for (const std::set<std::pair<int, int>>::value_type& lane : lane_traversals_initial) {
-                    if (lane.first == sys_id) {
-                        lane_traversals.erase(std::make_pair(sys_id, lane.second));
-                    }
-                    if (lane.second == sys_id) {
-                        lane_traversals.erase(std::make_pair(lane.first, sys_id));
-                        obstructed_traversals.insert(std::make_pair(lane.first, sys_id));
-                    }
-                }
-
-                // remove obstructed traverals departing from this system
-                for (const std::set<std::pair<int, int>>::value_type& lane : obstrcuted_traversals_initial) {
-                    if (lane.first == sys_id)
-                        obstructed_traversals.erase(std::make_pair(lane.first, lane.second));
-                }
             }
 
             //// DEBUG
