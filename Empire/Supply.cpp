@@ -469,6 +469,65 @@ void ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
     }
 }
 
+/** Return a bonus value applied to supply to reduce likelyhood of ties. */
+// TODO consider either exposing this in the GUI or removing it to improve the transparency of the
+// supply mechanic.
+float ComputeSupplyBonuses(const int empire_id, const int sys_id, std::pair<float, float> range_and_distance,
+                           std::map<int, std::map<int, float>>& empire_system_supply_range_sums)
+{
+    // stuff to break ties...
+    float bonus = 0.0f;
+
+    // empires with visibility into system
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(sys_id, empire_id);
+    if (vis >= VIS_PARTIAL_VISIBILITY)
+        bonus += 0.02f;
+    else if (vis == VIS_BASIC_VISIBILITY)
+        bonus += 0.01f;
+
+    // empires with ships / planets in system (that haven't already made it obstructed for another empire)
+    bool has_ship = false, has_outpost = false, has_colony = false;
+    if (std::shared_ptr<const System> sys = GetSystem(sys_id)) {
+        std::vector<int> obj_ids;
+        std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
+        for (std::shared_ptr<UniverseObject> obj : Objects().FindObjects(obj_ids)) {
+            if (!obj)
+                continue;
+            if (!obj->OwnedBy(empire_id))
+                continue;
+            if (obj->ObjectType() == OBJ_SHIP) {
+                has_ship = true;
+                continue;
+            }
+            if (obj->ObjectType() == OBJ_PLANET) {
+                if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(obj)) {
+                    if (!planet->SpeciesName().empty())
+                        has_colony = true;
+                    else
+                        has_outpost = true;
+                    continue;
+                }
+            }
+        }
+    }
+    if (has_ship)
+        bonus += 0.1f;
+    if (has_colony)
+        bonus += 0.5f;
+    else if (has_outpost)
+        bonus += 0.3f;
+
+    // sum of all supply sources in this system
+    bonus += empire_system_supply_range_sums[empire_id][sys_id] / 1000.0f;
+
+    // distance to supply source from here
+    float propagated_distance_to_supply_source = std::max(1.0f, range_and_distance.second);
+    bonus += 0.0001f / propagated_distance_to_supply_source;
+
+    // todo: other bonuses?
+    return bonus;
+}
+
 }
 
 std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
@@ -545,52 +604,13 @@ std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManag
                 if (empire_supply_it == empire_supply.second.end())
                     continue;
 
-                // stuff to break ties...
-                float bonus = 0.0f;
-
-                // empires with ships / planets in system
-                bool has_ship = false, has_outpost = false, has_colony = false;
-                if (std::shared_ptr<const System> sys = GetSystem(sys_id)) {
-                    std::vector<int> obj_ids;
-                    std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
-                    for (std::shared_ptr<UniverseObject> obj : Objects().FindObjects(obj_ids)) {
-                        if (!obj)
-                            continue;
-                        if (!obj->OwnedBy(empire_id))
-                            continue;
-                        if (obj->ObjectType() == OBJ_SHIP) {
-                            has_ship = true;
-                            continue;
-                        }
-                        if (obj->ObjectType() == OBJ_PLANET) {
-                            if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(obj)) {
-                                if (!planet->SpeciesName().empty())
-                                    has_colony = true;
-                                else
-                                    has_outpost = true;
-                                continue;
-                            }
-                        }
-                    }
-
-                }
-                if (has_ship)
-                    bonus += 0.1f;
-                if (has_colony)
-                    bonus += 0.5f;
-                else if (has_outpost)
-                    bonus += 0.3f;
-
-                // sum of all supply sources in this system
-                bonus += empire_system_supply_range_sums[empire_id][sys_id] / 1000.0f;
-
-                // distance to supply source from here
-                float propagated_distance_to_supply_source = std::max(1.0f, empire_supply_it->second.second);
-                bonus += 0.0001f / propagated_distance_to_supply_source;
-
                 // store ids of empires indexed by adjusted propgated range, in order to sort by range
                 float propagated_range = empire_supply_it->second.first;
-                empire_ranges_here[propagated_range + bonus].insert(empire_id);
+                empire_ranges_here[
+                    propagated_range
+                    + ComputeSupplyBonuses(empire_id, sys_id,
+                                           empire_supply_it->second, empire_system_supply_range_sums)
+                ].insert(empire_supply.first);
             }
 
             if (empire_ranges_here.empty())
