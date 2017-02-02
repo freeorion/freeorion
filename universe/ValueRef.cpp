@@ -285,7 +285,7 @@ template <>
 std::string Constant<int>::Description() const
 {
     if (std::abs(m_value) < 1000)
-        return boost::lexical_cast<std::string>(m_value);
+        return std::to_string(m_value);
     return DoubleToString(m_value, 3, false);
 }
 
