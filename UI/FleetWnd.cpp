@@ -29,10 +29,10 @@
 #include <GG/Enum.h>
 
 #include <boost/cast.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/tuple/tuple.hpp>
 
+#include <unordered_set>
 
 
 namespace {
@@ -2920,7 +2920,7 @@ void FleetWnd::Refresh() {
     boost::unordered_multimap<std::pair<int, GG::Pt>, int> selected_fleet_locations_ids;
 
     // Check all fleets in initial_fleet_ids and keep those that exist.
-    boost::unordered_set<int> fleets_that_exist;
+    std::unordered_set<int> fleets_that_exist;
     for (int fleet_id : initial_fleet_ids) {
         // skip known destroyed and stale info objects
         if (this_client_known_destroyed_objects.find(fleet_id) != this_client_known_destroyed_objects.end())

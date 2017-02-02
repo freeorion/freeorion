@@ -35,10 +35,9 @@
 #include <GG/Control.h>
 #include <GG/Timer.h>
 
-#include <boost/unordered_set.hpp>
-
 #include <memory>
 #include <set>
+#include <unordered_set>
 
 
 namespace GG {
@@ -224,7 +223,7 @@ public:
         { return boost::hash<const Row*>()(*it); }
     };
 
-    typedef boost::unordered_set<iterator, IteratorHash> SelectionSet;
+    typedef std::unordered_set<iterator, IteratorHash> SelectionSet;
 
     /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */

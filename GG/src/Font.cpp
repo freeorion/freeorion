@@ -38,13 +38,13 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/xpressive/regex_actions.hpp>
-#include <boost/unordered_set.hpp>
 
-#include <cmath>
 #include <cctype>
+#include <cmath>
 #include <iterator>
 #include <numeric>
 #include <sstream>
+#include <unordered_set>
 
 #define DEBUG_DETERMINELINES 0
 
@@ -493,7 +493,7 @@ namespace {
         regular expression.*/
     class CompiledRegex {
     public:
-        CompiledRegex(const boost::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
+        CompiledRegex(const std::unordered_set<std::string>& known_tags, bool strip_unpaired_tags) :
             m_text(nullptr),
             m_known_tags(&known_tags),
             m_ignore_tags(false),
@@ -581,7 +581,7 @@ namespace {
         }
 
         const std::string* m_text;
-        const boost::unordered_set<std::string>* m_known_tags;
+        const std::unordered_set<std::string>* m_known_tags;
         bool m_ignore_tags;
 
         // m_tag_stack is used to track XML opening/closing tags.
@@ -629,7 +629,7 @@ namespace {
 
     private:
         // set of tags known to the handler
-        boost::unordered_set<std::string> m_known_tags;
+        std::unordered_set<std::string> m_known_tags;
 
         // Compiled regular expression including tag stack
         CompiledRegex m_regex_w_tags;

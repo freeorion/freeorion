@@ -869,7 +869,7 @@ void SaveFileDialog::AskDelete() {
         if (Prompt (question)) {
             fs::remove(chosen);
             // Move selection to next if any or previous, if any
-            GG::ListBox::SelectionSet::iterator it = m_file_list->Selections().begin();
+            GG::ListBox::SelectionSet::const_iterator it = m_file_list->Selections().begin();
             if (it != m_file_list->Selections().end()) {
                 GG::ListBox::iterator row_it = *it;
                 GG::ListBox::iterator next(row_it);

@@ -51,7 +51,6 @@
 
 #include <boost/timer.hpp>
 #include <boost/graph/graph_concepts.hpp>
-#include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/optional/optional.hpp>
 #include <boost/locale.hpp>
@@ -62,9 +61,10 @@
 #include <GG/WndEvent.h>
 #include <GG/Layout.h>
 
-#include <vector>
 #include <deque>
+#include <unordered_set>
 #include <valarray>
+#include <vector>
 
 namespace {
     const double    ZOOM_STEP_SIZE = std::pow(2.0, 1.0/4.0);
@@ -2813,8 +2813,8 @@ namespace GetPathsThroughSupplyLanes {
 
      */
     void GetPathsThroughSupplyLanes(
-        boost::unordered_set<int>& good_path,
-        const boost::unordered_set<int>& terminal_points,
+        std::unordered_set<int>& good_path,
+        const std::unordered_set<int>& terminal_points,
         const SupplyLaneMMap& supply_lanes);
 
     
@@ -2839,8 +2839,8 @@ namespace GetPathsThroughSupplyLanes {
     };
 
     void GetPathsThroughSupplyLanes(
-        boost::unordered_set<int> & good_path,
-        const boost::unordered_set<int> & terminal_points,
+        std::unordered_set<int> & good_path,
+        const std::unordered_set<int> & terminal_points,
         const SupplyLaneMMap& supply_lanes)
     {
         good_path.clear();
@@ -2949,7 +2949,7 @@ namespace GetPathsThroughSupplyLanes {
         // path.
 
         // All visited systems on the path(s) from this midpoint not yet processed.
-        boost::unordered_set<int> unprocessed;
+        std::unordered_set<int> unprocessed;
 
         for (int reachable_midpoint : reachable_midpoints) {
             boost::unordered_map<int, PathInfo>::const_iterator previous_ii_sys;
@@ -3015,9 +3015,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
     boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_group_cores;
 
-    boost::unordered_set<int>                           res_group_core_members;
+    std::unordered_set<int> res_group_core_members;
     boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
-    std::shared_ptr<boost::unordered_set<int>> under_alloc_res_grp_core_members;
+    std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
 
     if (this_client_empire) {
         const ProductionQueue& queue = this_client_empire->GetProductionQueue();
@@ -3080,12 +3080,12 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
             // Convert res_pool_system.second from set<int> to
             // unordered_set<int> to improve lookup speed.
-            boost::unordered_set<int> terminal_points;
+            std::unordered_set<int> terminal_points;
             for (int system_id : *(res_pool_system.second)) {
                 terminal_points.insert(system_id);
             }
 
-            boost::unordered_set<int> paths;
+            std::unordered_set<int> paths;
             GetPathsThroughSupplyLanes::GetPathsThroughSupplyLanes(
                 paths, terminal_points, resource_supply_lanes_undirected);
 
@@ -3110,7 +3110,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>::iterator group_core_it = res_group_cores.find(available_pp_group.first);
                 if (group_core_it != res_group_cores.end()) {
                     if (!under_alloc_res_grp_core_members)
-                        under_alloc_res_grp_core_members = std::make_shared<boost::unordered_set<int>>();
+                        under_alloc_res_grp_core_members = std::make_shared<std::unordered_set<int>>();
                     under_alloc_res_grp_core_members->insert(group_core_it->second->begin(), group_core_it->second->end());
                 }
             }
@@ -4116,7 +4116,7 @@ void MapWnd::DoFleetButtonsLayout() {
     const int SYSTEM_ICON_SIZE = SystemIconSize();
 
     // position departing fleet buttons
-    for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
+    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
         // calculate system icon position
         std::shared_ptr<const System> system = GetSystem(departing_fleet_button.first);
         if (!system) {
@@ -4145,7 +4145,7 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position stationary fleet buttons
-    for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
+    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
         // calculate system icon position
         std::shared_ptr<const System> system = GetSystem(stationary_fleet_button.first);
         if (!system) {
@@ -4174,7 +4174,7 @@ void MapWnd::DoFleetButtonsLayout() {
     }
 
     // position moving fleet buttons
-    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
+    for (boost::unordered_map<std::pair<double, double>, std::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
         for (FleetButton* fb : moving_fleet_button.second) {
             const GG::Pt FLEET_BUTTON_SIZE = fb->Size();
             std::shared_ptr<const Fleet> fleet;
@@ -4357,7 +4357,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
 
 template <typename K>
 void MapWnd::CreateFleetButtonsOfType (
-    boost::unordered_map<K, boost::unordered_set<FleetButton*> >& type_fleet_buttons,
+    boost::unordered_map<K, std::unordered_set<FleetButton*> >& type_fleet_buttons,
     const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
     const FleetButton::SizeType & fleet_button_size)
 {
@@ -4388,19 +4388,19 @@ void MapWnd::CreateFleetButtonsOfType (
 void MapWnd::DeleteFleetButtons() {
     m_fleet_buttons.clear();            // duplicates pointers in following containers
 
-    for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
+    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
         for (FleetButton* button : stationary_fleet_button.second)
             delete button;
     }
     m_stationary_fleet_buttons.clear();
 
-    for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
+    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
         for (FleetButton* button : departing_fleet_button.second)
             delete button;
     }
     m_departing_fleet_buttons.clear();
 
-    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
+    for (boost::unordered_map<std::pair<double, double>, std::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
         for (FleetButton* button : moving_fleet_button.second)
             delete button;
     }
@@ -5074,17 +5074,17 @@ void MapWnd::RefreshFleetButtonSelectionIndicators() {
     //std::cout << "MapWnd::RefreshFleetButtonSelectionIndicators()" << std::endl;
 
     // clear old selection indicators
-    for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
+    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& stationary_fleet_button : m_stationary_fleet_buttons) {
         for (FleetButton* button : stationary_fleet_button.second)
             button->SetSelected(false);
     }
 
-    for (boost::unordered_map<int, boost::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
+    for (boost::unordered_map<int, std::unordered_set<FleetButton*>>::value_type& departing_fleet_button : m_departing_fleet_buttons) {
         for (FleetButton* button : departing_fleet_button.second)
             button->SetSelected(false);
     }
 
-    for (boost::unordered_map<std::pair<double, double>, boost::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
+    for (boost::unordered_map<std::pair<double, double>, std::unordered_set<FleetButton*>>::value_type& moving_fleet_button : m_moving_fleet_buttons) {
         for (FleetButton* button : moving_fleet_button.second)
             button->SetSelected(false);
     }
@@ -5976,7 +5976,7 @@ namespace {
         std::vector<std::shared_ptr<UniverseObject>> owned_planets = Objects().FindObjects(OwnedVisitor<Planet>(empire_id));
 
         // get IDs of systems that contain any owned planets
-        boost::unordered_set<int> system_ids;
+        std::unordered_set<int> system_ids;
         for (std::shared_ptr<UniverseObject> obj : owned_planets)
         { system_ids.insert(obj->SystemID()); }
 
