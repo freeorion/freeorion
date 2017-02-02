@@ -36,6 +36,7 @@ public:
       * and blockade). */
     const std::map<int, std::set<int> >&                    FleetSupplyableSystemIDs() const;
     const std::set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
+    std::set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
     int                                                     EmpireThatCanSupplyAt(int system_id) const;
 
     /** Returns set of sets of systems that can share industry (systems in
@@ -52,6 +53,7 @@ public:
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;
+    bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
 
     std::string Dump(int empire_id = ALL_EMPIRES) const;
     //@}

@@ -244,7 +244,7 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
 
     // determine all systems where fleet(s) can be resupplied if fuel runs out
     const Empire* empire = GetEmpire(this->Owner());
-    const std::set<int>& fleet_supplied_systems = GetSupplyManager().FleetSupplyableSystemIDs(this->Owner());
+    const std::set<int> fleet_supplied_systems = GetSupplyManager().FleetSupplyableSystemIDs(this->Owner(), true);
     const std::set<int>& unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
 
     // determine if, given fuel available and supplyable systems, fleet will ever be able to move
@@ -820,7 +820,7 @@ void Fleet::MovementPhase() {
 
     // if owner of fleet can resupply ships at the location of this fleet, then
     // resupply all ships in this fleet
-    if (GetSupplyManager().SystemHasFleetSupply(fleet->SystemID(), fleet->Owner())) {
+    if (GetSupplyManager().SystemHasFleetSupply(fleet->SystemID(), fleet->Owner(), true)) {
         for (std::shared_ptr<Ship> ship : ships) {
             ship->Resupply();
         }
@@ -943,7 +943,7 @@ void Fleet::MovementPhase() {
                 // TODO: Notify the suer with a sitrep?
             }
 
-            bool resupply_here = GetSupplyManager().SystemHasFleetSupply(system->ID(), this->Owner());
+            bool resupply_here = GetSupplyManager().SystemHasFleetSupply(system->ID(), this->Owner(), true);
 
             // if this system can provide supplies, reset consumed fuel and refuel ships
             if (resupply_here) {

@@ -68,6 +68,22 @@ const std::set<int>& SupplyManager::FleetSupplyableSystemIDs(int empire_id) cons
     return EMPTY_INT_SET;
 }
 
+std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const {
+    std::set<int> retval = FleetSupplyableSystemIDs(empire_id);
+    if (!include_allies)
+        return retval;
+
+    // add supplyable systems of all allies
+    for (auto empire_id_sys_id_set : m_fleet_supplyable_system_ids) {
+        int other_empire_id = empire_id_sys_id_set.first;
+        const std::set<int>& systems = empire_id_sys_id_set.second;
+        if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_PEACE)
+            continue;
+        retval.insert(systems.begin(), systems.end());
+    }
+    return retval;
+}
+
 int SupplyManager::EmpireThatCanSupplyAt(int system_id) const {
     for (const std::map<int, std::set<int>>::value_type& entry : m_fleet_supplyable_system_ids) {
         if (entry.second.find(system_id) != entry.second.end())
@@ -108,6 +124,32 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
     const std::set<int>& sys_set = it->second;
     if (sys_set.find(system_id) != sys_set.end())
         return true;
+    return false;
+}
+
+bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const {
+    if (!include_allies)
+        return SystemHasFleetSupply(system_id, empire_id);
+    if (system_id == INVALID_OBJECT_ID)
+        return false;
+    if (empire_id == ALL_EMPIRES)
+        return false;
+
+    std::set<int> empire_ids{empire_id};
+    for (auto e_pair : Empires()) {
+        if (Empires().GetDiplomaticStatus(empire_id, e_pair.first) == DIPLO_PEACE)
+            empire_ids.insert(e_pair.first);
+    }
+
+    for (auto id : empire_ids) {
+        auto sys_set_it = m_fleet_supplyable_system_ids.find(id);
+        if (sys_set_it == m_fleet_supplyable_system_ids.end())
+            continue;
+        auto sys_set = sys_set_it->second;
+        if (sys_set.find(system_id) != sys_set.end())
+            return true;
+    }
+
     return false;
 }
 
