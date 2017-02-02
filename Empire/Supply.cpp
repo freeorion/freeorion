@@ -459,7 +459,7 @@ std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
     return empire_to_colony_disrupted_systems;
 }
 
-void ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
+void ObstructSupplyIfUncontestedHostileSupplySource(
     const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
     std::map<int, std::set<int>>& empire_supply_unobstructed_systems)
 {
@@ -984,7 +984,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
     // probably temporary: additional restriction here for supply propagation
     // but not for general system obstruction as determind within Empire::UpdateSupplyUnobstructedSystems
     /////
-    ObstructSupplyIfAggresiveArmedFleetOccupiesSystemWithNoSupply(
+    ObstructSupplyIfUncontestedHostileSupplySource(
         empire_system_supply_ranges,
         empire_supply_unobstructed_systems);
     /////
