@@ -4,26 +4,36 @@ import sys
 import os
 
 file_name = sys.argv[1]
-file_obj = open(file_name, 'r')
+tag_comment = "@content_tag{"
+match_found = False
+collected_data = []
+buff = []
 
-tag_comment = "content_tag{"
-tag_match = 0
+# dedent doxygen tag documentation
+with open(file_name, 'r') as f:
+    # sys.stderr.write("checking file: " + file_name + '\n')
+    for line in f:
+        line = line.rstrip('\n')
+        # doxygen wont document this alias if it is indented
+        if tag_comment in line:
+            line_content = line.split(tag_comment, 1)[1]
+            collected_data.append('## ' + tag_comment + line_content)
+            match_found = True
+        elif collected_data:
+            # catch subsequent comment lines to allow for multi-line in python
+            if '# ' in line:
+                line_content = line.split('# ', 1)[1]
+                collected_data.append(line_content)
+                buff.append('# \n')  # must replace with same number of lines
+            else:
+                # finally finish this line
+                buff.append(' '.join(collected_data) + '\n')
+                collected_data = []
+        else:
+            buff.append(line + '\n')
 
-# check for match
-line = file_obj.readline()
-while line and not tag_match:
-    if tag_comment in line:
-        tag_match = 1
-    line = file_obj.readline()
-file_obj.close()
-
-# output file
-file_obj = open(file_name, 'r')
-line = file_obj.readline()
-while line and tag_match:
-    # doxygen wont document this alias if it is indented
-    if tag_comment in line:
-        line = line.strip() + '\n'
-    sys.stdout.write(line)
-    line = file_obj.readline()
-file_obj.close()
+# Output the entire file if it contains a match
+# entire file is needed for context
+if match_found:
+    sys.stdout.write('\n'.join(buff))
+    sys.stdout.write('\n')
