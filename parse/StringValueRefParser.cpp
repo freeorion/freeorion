@@ -93,7 +93,7 @@ namespace { struct string_parser_rules {
                     |   tok.ThisTech_
                     |   tok.ThisSpecies_
                     |   tok.ThisSpecial_
-                   ) [ _val = new_<ValueRef::Constant<std::string> >("CurrentContent") ]
+                   ) [ _val = new_<ValueRef::Constant<std::string> >(std::string("CurrentContent")) ]
                 ;
 
             free_variable

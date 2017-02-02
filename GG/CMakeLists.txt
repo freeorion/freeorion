@@ -58,6 +58,10 @@ if (MSVC)
     set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
     set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
     set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+    add_definitions(
+        -DUNICODE
+        -D_UNICODE
+    )
 endif ()
 
 include_directories(

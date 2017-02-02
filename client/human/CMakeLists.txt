@@ -8,6 +8,7 @@ find_package(SDL2 REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
+find_package(PNG REQUIRED)
 
 include_directories(
     SYSTEM
@@ -16,6 +17,7 @@ include_directories(
     ${SDL2_INCLUDE_DIR}
     ${OGG_INCLUDE_DIR}
     ${VORBIS_INCLUDE_DIR}
+    ${PNG_INCLUDE_DIR}
 )
 
 add_definitions(-DFREEORION_BUILD_HUMAN)
@@ -170,6 +172,7 @@ set(freeorion_LINK_LIBS
     ${SDL2_LIBRARY}
     ${OGG_LIBRARY}
     ${VORBIS_LIBRARIES}
+    ${PNG_LIBRARIES}
     ${ZLIB_LIBRARY}
     ${Boost_LOCALE_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
