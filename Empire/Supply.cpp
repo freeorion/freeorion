@@ -570,6 +570,33 @@ void AddObstructedTraversal(
 {
     obstructed_traversals.insert(std::make_pair(sys_id, end_sys_id));
 }
+
+/** Add a traversal */
+void AddTraversal(
+    const int sys_id, const int end_sys_id,
+    const std::set<int>& supply_unobstructed_systems,
+    std::set<std::pair<int, int>>& lane_traversals,
+    std::set<std::pair<int, int>>& obstructed_traversals)
+{
+
+    //DebugLogger() << "Added traversal from " << sys_id << " to " << end_sys_id;
+    // always record a traversal, so connectivity is calculated properly
+    lane_traversals.insert(std::make_pair(sys_id, end_sys_id));
+
+    // erase any previous obstructed traversal that just succeeded
+    if (obstructed_traversals.find(std::make_pair(sys_id, end_sys_id)) !=
+        obstructed_traversals.end())
+    {
+        //DebugLogger() << "Removed obstructed traversal from " << sys_id << " to " << end_sys_id;
+        obstructed_traversals.erase(std::make_pair(sys_id, end_sys_id));
+    }
+    if (obstructed_traversals.find(std::make_pair(end_sys_id, sys_id)) !=
+        obstructed_traversals.end())
+    {
+        //DebugLogger() << "Removed obstructed traversal from " << end_sys_id << " to " << sys_id;
+        obstructed_traversals.erase(std::make_pair(end_sys_id, sys_id));
+    }
+}
 }
 
 std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
@@ -796,23 +823,11 @@ std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManag
                             //DebugLogger() << " ... distance decreased!";
                         }
                     }
-                    // always record a traversal, so connectivity is calculated properly
-                    m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
-                    //DebugLogger() << "Added traversal from " << system_id << " to " << lane_end_sys_id;
 
-                    // erase any previous obstructed traversal that just succeeded
-                    if (m_supply_starlane_obstructed_traversals[empire_id].find(std::make_pair(system_id, lane_end_sys_id)) !=
-                        m_supply_starlane_obstructed_traversals[empire_id].end())
-                    {
-                        //DebugLogger() << "Removed obstructed traversal from " << system_id << " to " << lane_end_sys_id;
-                        m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(system_id, lane_end_sys_id));
-                    }
-                    if (m_supply_starlane_obstructed_traversals[empire_id].find(std::make_pair(lane_end_sys_id, system_id)) !=
-                        m_supply_starlane_obstructed_traversals[empire_id].end())
-                    {
-                        //DebugLogger() << "Removed obstructed traversal from " << lane_end_sys_id << " to " << system_id;
-                        m_supply_starlane_obstructed_traversals[empire_id].erase(std::make_pair(lane_end_sys_id, system_id));
-                    }
+                    AddTraversal(system_id, lane_end_sys_id,
+                                 empire_supply_unobstructed_systems[empire_id],
+                                 m_supply_starlane_traversals[empire_id],
+                                 m_supply_starlane_obstructed_traversals[empire_id]);
                 }
             }
         }
