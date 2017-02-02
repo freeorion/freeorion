@@ -879,14 +879,14 @@ protected:
         KeyPress(), not KeyRelease(); in fact, by default no Wnd class does
         anything at all on a KeyRelease event.  \note \a key_code_point will
         be zero if Unicode support is unavailable. */
-    virtual void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    virtual void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
     /** Respond to up-keystrokes (focus window only).  A window may receive
         KeyRelease() messages passed up to it from its children.  For
         instance, Control-derived classes pass KeyRelease() messages to their
         Parent() windows by default.  \note \a key_code_point will be zero if
         Unicode support is unavailable. */
-    virtual void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+    virtual void KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
     /** Respond to text input regardless of the method. Focus window only.
         A window may receive TextInput() messages passed up to it from its

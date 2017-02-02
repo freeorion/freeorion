@@ -770,7 +770,7 @@ void SaveFileDialog::ModalInit() {
     GG::GUI::GetGUI()->SetFocusWnd(m_name_edit);
 }
 
-void SaveFileDialog::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys ) {
+void SaveFileDialog::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys ) {
     // Return without filename
     if (key == GG::GGK_ESCAPE) {
         Cancel();

@@ -31,7 +31,7 @@ DEALINGS IN THE SOFTWARE.
 #ifndef UTF8_FOR_CPP_CORE_H_2675DCD0_9480_4c0c_B92A_CC14C027B731
 #define UTF8_FOR_CPP_CORE_H_2675DCD0_9480_4c0c_B92A_CC14C027B731
 
-#include <boost/cstdint.hpp>
+#include <cstdint>
 
 #include <iterator>
 
@@ -39,10 +39,10 @@ namespace utf8
 {
     // The typedefs for 8-bit, 16-bit and 32-bit unsigned integers
     // You may need to change them to match your system. 
-    // These typedefs have the same names as ones from cstdint, or boost/cstdint
-    typedef boost::uint8_t  uint8_t;
-    typedef boost::uint16_t uint16_t;
-    typedef boost::uint32_t uint32_t;
+    // These typedefs have the same names as ones from cstdint
+    typedef std::uint8_t  uint8_t;
+    typedef std::uint16_t uint16_t;
+    typedef std::uint32_t uint32_t;
 
 // Helper code - not intended to be directly called by the library users. May be changed at any time
 namespace internal

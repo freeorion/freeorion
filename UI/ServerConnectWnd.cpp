@@ -113,7 +113,7 @@ GG::Rect ServerConnectWnd::CalculatePosition() const {
     return GG::Rect(new_ul, new_ul + new_sz);
 }
 
-void ServerConnectWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
         OkClicked();
     } else if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed

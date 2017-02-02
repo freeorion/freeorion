@@ -148,7 +148,7 @@ protected:
     //@}
 
     /** \name Mutators */ ///@{
-    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
 
@@ -369,7 +369,7 @@ Edit* Spin<T>::GetEdit() const
 { return m_edit; }
 
 template<class T>
-void Spin<T>::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Spin<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     switch (key) {
     case GGK_HOME:

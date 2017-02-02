@@ -49,8 +49,8 @@ About::About():
 About::~About()
 {}
 
-void About::KeyPress (GG::Key key, boost::uint32_t key_code_point,
-                      GG::Flags<GG::ModKey> mod_keys)
+void About::KeyPress(GG::Key key, std::uint32_t key_code_point,
+                     GG::Flags<GG::ModKey> mod_keys)
 {
     if ((key == GG::GGK_RETURN) || (key == GG::GGK_ESCAPE))
         EndRun();

@@ -194,7 +194,7 @@ protected:
     void LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys) override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void TextInput(const std::string* text) override;
     void GainingFocus() override;
     void LosingFocus() override;
@@ -242,7 +242,7 @@ private:
 };
 
 void GG_API GetTranslatedCodePoint(Key key,
-                                   boost::uint32_t key_code_point,
+                                   std::uint32_t key_code_point,
                                    Flags<ModKey> mod_keys,
                                    std::string& translated_code_point);
 

@@ -86,7 +86,7 @@ public:
     //@}
 
     //! \name Mutators //@{
-    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     //@}
 
     /** emitted when user presses enter/return while entering text */
@@ -124,7 +124,7 @@ MessageWndEdit::MessageWndEdit() :
     m_last_game_word()
 {}
 
-void MessageWndEdit::KeyPress(GG::Key key, boost::uint32_t key_code_point,
+void MessageWndEdit::KeyPress(GG::Key key, std::uint32_t key_code_point,
                               GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {

@@ -62,11 +62,11 @@ namespace GG { namespace detail {
 using namespace GG;
 
 namespace {
-    const boost::uint32_t WIDE_SPACE = ' ';
-    const boost::uint32_t WIDE_NEWLINE = '\n';
-    const boost::uint32_t WIDE_CR = '\r';
-    const boost::uint32_t WIDE_FF = '\f';
-    const boost::uint32_t WIDE_TAB = '\t';
+    const std::uint32_t WIDE_SPACE = ' ';
+    const std::uint32_t WIDE_NEWLINE = '\n';
+    const std::uint32_t WIDE_CR = '\r';
+    const std::uint32_t WIDE_FF = '\f';
+    const std::uint32_t WIDE_TAB = '\t';
 
     const std::string ITALIC_TAG = "i";
     const std::string SHADOW_TAG = "s";
@@ -245,11 +245,11 @@ namespace {
     const double ITALICS_SLANT_ANGLE = 12; // degrees
     const double ITALICS_FACTOR = 1.0 / tan((90 - ITALICS_SLANT_ANGLE) * 3.1415926 / 180.0); // factor used to shear glyphs ITALICS_SLANT_ANGLE degrees CW from straight up
 
-    const std::vector<std::pair<boost::uint32_t, boost::uint32_t>> PRINTABLE_ASCII_ALPHA_RANGES{
+    const std::vector<std::pair<std::uint32_t, std::uint32_t>> PRINTABLE_ASCII_ALPHA_RANGES{
         {0x41, 0x5B},
         {0x61, 0x7B}};
 
-    const std::vector<std::pair<boost::uint32_t, boost::uint32_t>> PRINTABLE_ASCII_NONALPHA_RANGES{
+    const std::vector<std::pair<std::uint32_t, std::uint32_t>> PRINTABLE_ASCII_NONALPHA_RANGES{
         {0x09, 0x0D},
         {0x20, 0x21},
         {0x30, 0x3A},
@@ -1163,7 +1163,7 @@ X Font::RenderText(const Pt& pt_, const std::string& text) const
     RenderState render_state;
 
     for (std::string::const_iterator text_it = text.begin(); text_it != text.end();) {
-        boost::uint32_t c = utf8::next (text_it, text.end());
+        std::uint32_t c = utf8::next(text_it, text.end());
         GlyphMap::const_iterator it = m_glyphs.find(c);
         if (it == m_glyphs.end()) {
             pt.x += m_space_width; // move forward by the extent of the character when a whitespace or unprintable glyph is requested
@@ -1252,7 +1252,7 @@ void Font::PreRenderText(const Pt& ul, const Pt& lr, const std::string& text, Fl
             for (std::shared_ptr<FormattingTag> tag : char_data.tags) {
                 HandleTag(tag, orig_color, render_state);
             }
-            boost::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
+            std::uint32_t c = utf8::peek_next(text.begin() + Value(char_data.string_index), string_end_it);
             assert((text[Value(char_data.string_index)] == '\n') == (c == WIDE_NEWLINE));
             if (c == WIDE_NEWLINE)
                 continue;
@@ -1370,7 +1370,7 @@ void Font::ClearKnownTags()
     RegisterDefaultTags();
 }
 
-void Font::ThrowBadGlyph(const std::string& format_str, boost::uint32_t c)
+void Font::ThrowBadGlyph(const std::string& format_str, std::uint32_t c)
 {
     boost::format format(isprint(c) ? "%c" : "U+%x");
     throw BadGlyph(boost::io::str(boost::format(format_str) % boost::io::str(format % c)));
@@ -1580,7 +1580,7 @@ void Font::FillTemplatedText(
 
             // Find and set the width of the character glyph.
             elem->widths.push_back(X0);
-            boost::uint32_t c = utf8::next(it, end_it);
+            std::uint32_t c = utf8::next(it, end_it);
             if (c != WIDE_NEWLINE) {
                 GlyphMap::const_iterator it = m_glyphs.find(c);
                 // use a space when an unrendered glyph is requested (the
@@ -1696,7 +1696,7 @@ std::vector<Font::LineData> Font::DetermineLines(const std::string& text, Flags<
             std::string::const_iterator end_it = elem->text.end();
             while (it != end_it) {
                 StrSize char_index(std::distance(elem->text.begin(), it));
-                boost::uint32_t c = utf8::next(it, end_it);
+                std::uint32_t c = utf8::next(it, end_it);
                 StrSize char_size = std::distance(elem->text.begin(), it) - char_index;
                 if (c != WIDE_CR && c != WIDE_FF) {
                     X advance_position = x + m_space_width;
@@ -1905,7 +1905,7 @@ void Font::Init(FT_Face& face)
     m_shadow_offset = 1.0;
 
     // we always need these whitespace, number, and punctuation characters
-    std::vector<std::pair<boost::uint32_t, boost::uint32_t> > range_vec(
+    std::vector<std::pair<std::uint32_t, std::uint32_t>> range_vec(
         PRINTABLE_ASCII_NONALPHA_RANGES.begin(),
         PRINTABLE_ASCII_NONALPHA_RANGES.end());
 
@@ -1916,7 +1916,7 @@ void Font::Init(FT_Face& face)
                          PRINTABLE_ASCII_ALPHA_RANGES.begin(),
                          PRINTABLE_ASCII_ALPHA_RANGES.end());
     } else {
-        typedef std::pair<boost::uint32_t, boost::uint32_t> Pair;
+        typedef std::pair<std::uint32_t, std::uint32_t> Pair;
         for (std::size_t i = 0; i < m_charsets.size(); ++i) {
             range_vec.push_back(Pair(m_charsets[i].m_first_char, m_charsets[i].m_last_char));
         }
@@ -1927,25 +1927,25 @@ void Font::Init(FT_Face& face)
     glGetIntegerv(GL_MAX_TEXTURE_SIZE, &GL_TEX_MAX_SIZE);
     const std::size_t TEX_MAX_SIZE = GL_TEX_MAX_SIZE;
 
-    std::map<boost::uint32_t, TempGlyphData> temp_glyph_data;
+    std::map<std::uint32_t, TempGlyphData> temp_glyph_data;
 
     // Start with width and height of 16,
     // increase them as needed.
     // We will lay out the glyphs on the texture side by side
     // until the width would reach TEX_MAX_SIZE, then go to the next row.
     // QUESTION: Would a more square-like shape be better for the texture?
-    Buffer2d<boost::uint16_t> buffer(X(16), Y(16), 0);
+    Buffer2d<std::uint16_t> buffer(X(16), Y(16), 0);
 
     X x = X0;
     Y y = Y0;
     X max_x = X0;
     Y max_y = Y0;
-    for (const std::pair<boost::uint32_t, boost::uint32_t>& range : range_vec) {
-        boost::uint32_t low = range.first;
-        boost::uint32_t high = range.second;
+    for (const std::pair<std::uint32_t, std::uint32_t>& range : range_vec) {
+        std::uint32_t low = range.first;
+        std::uint32_t high = range.second;
 
         // copy glyph images
-        for (boost::uint32_t c = low; c < high; ++c) {
+        for (std::uint32_t c = low; c < high; ++c) {
             if (temp_glyph_data.find(c) == temp_glyph_data.end() && GenerateGlyph(face, c)) {
                 const FT_Bitmap& glyph_bitmap = face->glyph->bitmap;
                 if ((glyph_bitmap.width > TEX_MAX_SIZE) | (glyph_bitmap.rows > TEX_MAX_SIZE)) {
@@ -1965,13 +1965,13 @@ void Font::Init(FT_Face& face)
                     max_y = y + Y(glyph_bitmap.rows + 1); //Leave a one pixel gap between glyphs
                 }
 
-                boost::uint8_t*  src_start = glyph_bitmap.buffer;
+                std::uint8_t*  src_start = glyph_bitmap.buffer;
                 // Resize buffer to fit new data
                 buffer.at(x + X(glyph_bitmap.width), y + Y(glyph_bitmap.rows)) = 0;
 
                 for (unsigned int row = 0; row < glyph_bitmap.rows; ++row) {
-                    boost::uint8_t*  src = src_start + row * glyph_bitmap.pitch;
-                    boost::uint16_t* dst = &buffer.get(x, y + Y(row));
+                    std::uint8_t*  src = src_start + row * glyph_bitmap.pitch;
+                    std::uint16_t* dst = &buffer.get(x, y + Y(row));
                     // Rows are always contiguous, so we can copy along a row using simple incrementation
                     for (unsigned int col = 0; col < glyph_bitmap.width; ++col) {
 #ifdef __BIG_ENDIAN__
@@ -2003,7 +2003,7 @@ void Font::Init(FT_Face& face)
                     (unsigned char*)buffer.Buffer(), GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, 2);
 
     // create Glyph objects from temp glyph data
-    for (const std::map<boost::uint32_t, TempGlyphData>::value_type& glyph_data : temp_glyph_data)
+    for (const std::map<std::uint32_t, TempGlyphData>::value_type& glyph_data : temp_glyph_data)
         m_glyphs[glyph_data.first] = Glyph(m_texture, glyph_data.second.ul, glyph_data.second.lr, glyph_data.second.y_offset, glyph_data.second.left_b, glyph_data.second.adv);
 
     // record the width of the space character
@@ -2012,7 +2012,7 @@ void Font::Init(FT_Face& face)
     m_space_width = glyph_it->second.advance;
 }
 
-bool Font::GenerateGlyph(FT_Face face, boost::uint32_t ch)
+bool Font::GenerateGlyph(FT_Face face, std::uint32_t ch)
 {
     bool retval = true;
 

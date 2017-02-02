@@ -32,8 +32,6 @@
 
 #include <GG/Base.h>
 
-#include <boost/cstdint.hpp>
-
 #include <set>
 
 
@@ -48,11 +46,11 @@ namespace GG {
 struct GG_API UnicodeCharset
 {
     UnicodeCharset();
-    UnicodeCharset(std::string script_name, boost::uint32_t first_char, boost::uint32_t last_char);
+    UnicodeCharset(std::string script_name, std::uint32_t first_char, std::uint32_t last_char);
 
     std::string m_script_name;
-    boost::uint32_t m_first_char;
-    boost::uint32_t m_last_char;
+    std::uint32_t m_first_char;
+    std::uint32_t m_last_char;
 };
 
 /** Returns true iff all of \a lhs's and \a rhs's members compare equal. */
@@ -70,7 +68,7 @@ GG_API std::set<UnicodeCharset> UnicodeCharsetsToRender(const std::string& str);
 
 /** Returns the UnicodeCharset in which \a c can be found, or 0 if no such
     UnicodeCharset exists. */
-GG_API const UnicodeCharset* CharsetContaining(boost::uint32_t c);
+GG_API const UnicodeCharset* CharsetContaining(std::uint32_t c);
 
 /** Returns the UnicodeCharset called \a name, or 0 if no such UnicodeCharset
     exists. */

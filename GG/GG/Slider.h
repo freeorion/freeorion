@@ -120,7 +120,7 @@ protected:
 
     /** \name Mutators */ ///@{
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     bool EventFilter(Wnd* w, const WndEvent& event) override;
 
     void MoveTabToPosn(); ///< moves the tab to the current logical position
@@ -320,7 +320,7 @@ void Slider<T>::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 { SlideToImpl(m_posn < PtToPosn(pt) ? m_posn + PageSize() : m_posn - PageSize(), true); }
 
 template <class T>
-void Slider<T>::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void Slider<T>::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         switch (key) {

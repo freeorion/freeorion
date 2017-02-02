@@ -428,7 +428,7 @@ void SitRepPanel::DoLayout() {
     SetMinSize(GG::Pt(6*BUTTON_WIDTH, 6*BUTTON_HEIGHT));
 }
 
-void SitRepPanel::KeyPress(GG::Key key, boost::uint32_t key_code_point,
+void SitRepPanel::KeyPress(GG::Key key, std::uint32_t key_code_point,
                            GG::Flags<GG::ModKey> mod_keys)
 {
     switch (key) {

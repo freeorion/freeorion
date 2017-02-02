@@ -39,7 +39,7 @@ UnicodeCharset::UnicodeCharset() :
     m_last_char(0)
 {}
 
-UnicodeCharset::UnicodeCharset(std::string script_name, boost::uint32_t first_char, boost::uint32_t last_char) :
+UnicodeCharset::UnicodeCharset(std::string script_name, std::uint32_t first_char, std::uint32_t last_char) :
     m_script_name(script_name),
     m_first_char(first_char),
     m_last_char(last_char + 1)
@@ -215,7 +215,7 @@ std::set<UnicodeCharset> GG::UnicodeCharsetsToRender(const std::string& str)
     return retval;
 }
 
-const UnicodeCharset* GG::CharsetContaining(boost::uint32_t c)
+const UnicodeCharset* GG::CharsetContaining(std::uint32_t c)
 {
     static std::vector<const UnicodeCharset*> s_charset_blocks;
     if (s_charset_blocks.empty()) {

@@ -56,7 +56,7 @@ public:
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
     { OnExit(); }
 
-    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
+    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
         if (key == GG::GGK_ESCAPE)
             OnExit();
     }
@@ -344,7 +344,7 @@ void IntroScreen::OnExitGame() {
     GG::GUI::GetGUI()->Exit(0);
 }
 
-void IntroScreen::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void IntroScreen::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::GGK_ESCAPE)
         OnExitGame();
 }

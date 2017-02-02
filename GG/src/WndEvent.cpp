@@ -159,7 +159,7 @@ WndEvent::WndEvent(EventType type, const Pt& pt, Wnd* drag_wnd, Flags<ModKey> mo
     m_acceptable_drop_wnds[drag_wnd] = false;
 }
 
-WndEvent::WndEvent(EventType type, Key key, boost::uint32_t code_point, Flags<ModKey> mod_keys) :
+WndEvent::WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModKey> mod_keys) :
     m_type(type),
     m_key(key),
     m_key_code_point(code_point),
@@ -212,7 +212,7 @@ const Pt& WndEvent::Point() const
 Key WndEvent::GetKey() const
 { return m_key; }
 
-boost::uint32_t WndEvent::KeyCodePoint() const
+std::uint32_t WndEvent::KeyCodePoint() const
 { return m_key_code_point; }
 
 Flags<ModKey> WndEvent::ModKeys() const

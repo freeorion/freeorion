@@ -116,7 +116,7 @@ public:
     WndEvent(EventType type, const Pt& pt, const std::vector<Wnd*>& drag_drop_wnds, Flags<ModKey> mod_keys);
     WndEvent(EventType type, const Pt& pt, const std::map<Wnd*, Pt>& drag_drop_wnds, Flags<ModKey> mod_keys);
     WndEvent(EventType type, const Pt& pt, Wnd* drag_wnd, Flags<ModKey> mod_keys);
-    WndEvent(EventType type, Key key, boost::uint32_t code_point, Flags<ModKey> mod_keys);
+    WndEvent(EventType type, Key key, std::uint32_t code_point, Flags<ModKey> mod_keys);
     WndEvent(EventType type, unsigned int ticks, Timer* timer);
     WndEvent(EventType type, const std::string* text);
     explicit WndEvent(EventType type);
@@ -126,7 +126,14 @@ public:
     EventType                   Type() const;           ///< returns the type of the WndEvent
     const Pt&                   Point() const;          ///< returns the point at which the event took place, if any
     Key                         GetKey() const;         ///< returns the key pressed or released in the WndEvent, if any
-    boost::uint32_t             KeyCodePoint() const;   ///< returns the Unicode code point for the key pressed or released in the WndEvent, if any.  \note This may be zero, even in a KeyPress or KeyRelease event, if Unicode support is unavailable.
+
+    /** Returns the Unicode code point for the key pressed or released in the
+        WndEvent, if any.
+
+        @note  This may be zero, even in a KeyPress or KeyRelease event, if
+        Unicode support is unavailable. */
+    std::uint32_t KeyCodePoint() const;
+
     Flags<ModKey>               ModKeys() const;        ///< returns the modifiers to the WndEvent's keypress, if any
     const Pt&                   DragMove() const;       ///< returns the amount of drag movement represented by the WndEvent, if any
     int                         WheelMove() const;      ///< returns the ammount of mouse wheel movement represented by the WndEvent, if any
@@ -142,7 +149,9 @@ private:
     EventType                   m_type;
     Pt                          m_point;
     Key                         m_key;
-    boost::uint32_t             m_key_code_point;
+
+    std::uint32_t m_key_code_point;
+
     Flags<ModKey>               m_mod_keys;
     Pt                          m_drag_move;
     int                         m_wheel_move;

@@ -151,8 +151,11 @@ struct GG::GUIImpl
     void HandleMouseDrag(         unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
     void HandleMouseButtonRelease(unsigned int mouse_button, const GG::Pt& pos, int curr_ticks);
     void HandleIdle(             Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_ticks);
-    void HandleKeyPress(         Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
-    void HandleKeyRelease(       Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+
+    void HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+
+    void HandleKeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks);
+
     void HandleTextInput(        const std::string* text);
     void HandleMouseMove(        Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
     void HandleMouseWheel(       Flags<ModKey> mod_keys, const GG::Pt& pos, const Pt& rel, int curr_ticks);
@@ -176,8 +179,9 @@ struct GG::GUIImpl
     int          m_key_press_repeat_delay;          // see note above GUI class definition
     int          m_key_press_repeat_interval;
     int          m_last_key_press_repeat_time;      // last time of a simulated key press message
-    std::pair<Key, boost::uint32_t>
-                 m_last_pressed_key_code_point;
+
+    std::pair<Key, std::uint32_t> m_last_pressed_key_code_point;
+
     int          m_prev_key_press_time;             // the time of the most recent key press
 
     int          m_mouse_button_down_repeat_delay;      // see note above GUI class definition
@@ -645,7 +649,7 @@ void GUIImpl::HandleIdle(Flags<ModKey> mod_keys, const GG::Pt& pos, int curr_tic
     }
 }
 
-void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
+void GUIImpl::HandleKeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
 {
     key = KeyMappedKey(key, m_key_map);
     m_browse_info_wnd.reset();
@@ -674,7 +678,7 @@ void GUIImpl::HandleKeyPress(Key key, boost::uint32_t key_code_point, Flags<ModK
             WndEvent::KeyPress, key, key_code_point, mod_keys));
 }
 
-void GUIImpl::HandleKeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
+void GUIImpl::HandleKeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys, int curr_ticks)
 {
     key = KeyMappedKey(key, m_key_map);
     m_last_key_press_repeat_time = 0;
@@ -1085,7 +1089,7 @@ void GUI::SaveWndAsPNG(const Wnd* wnd, const std::string& filename) const
 void GUI::operator()()
 { Run(); }
 
-void GUI::HandleGGEvent(EventType event, Key key, boost::uint32_t key_code_point,
+void GUI::HandleGGEvent(EventType event, Key key, std::uint32_t key_code_point,
                         Flags<ModKey> mod_keys, const Pt& pos, const Pt& rel, const std::string* text)
 {
     s_impl->m_mod_keys = mod_keys;

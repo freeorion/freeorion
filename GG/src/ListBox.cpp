@@ -1469,7 +1469,7 @@ bool ListBox::AutoScrollingLeft() const
 bool ListBox::AutoScrollingRight() const
 { return m_auto_scrolling_right; }
 
-void ListBox::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         bool bring_caret_into_view = true;

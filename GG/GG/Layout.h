@@ -238,8 +238,8 @@ public:
 protected:
     /** \name Mutators */ ///@{
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
-    void KeyRelease(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyRelease(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     virtual void DoLayout(Pt ul, Pt lr);
 

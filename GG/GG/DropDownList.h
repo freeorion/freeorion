@@ -222,7 +222,7 @@ public:
 protected:
     /** \name Mutators */ ///@{
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
 
     ListBox*        LB();                ///< returns the ListBox used to render the selected row and the popup list

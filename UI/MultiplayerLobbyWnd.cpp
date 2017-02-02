@@ -14,20 +14,9 @@
 #include "Hotkeys.h"
 #include "Sound.h"
 
-#if defined(_MSC_VER)
-  // HACK! this keeps VC 7.x from barfing when it sees "typedef __int64 int64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  if defined(int64_t)
-#    undef int64_t
-#  endif
-#elif defined(WIN32)
-  // HACK! this keeps gcc 3.x from barfing when it sees "typedef long long uint64_t;"
-  // in boost/cstdint.h when compiling under windows
-#  define BOOST_MSVC -1
-#endif
-
 #include <boost/cast.hpp>
 #include <boost/serialization/vector.hpp>
+
 
 namespace {
     // Margin between text and row edge.
@@ -657,7 +646,7 @@ void MultiPlayerLobbyWnd::Render() {
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
-void MultiPlayerLobbyWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) &&
          GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit)
     {

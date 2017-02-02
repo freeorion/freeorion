@@ -68,7 +68,7 @@ std::size_t ThreeButtonDlg::EscapeButton() const
 void ThreeButtonDlg::Render()
 { FlatRectangle(UpperLeft(), LowerRight(), m_color, m_border_color, 1); }
 
-void ThreeButtonDlg::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void ThreeButtonDlg::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (key == GGK_RETURN || key == GGK_KP_ENTER) {
         if (m_default == 0)

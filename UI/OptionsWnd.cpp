@@ -185,7 +185,7 @@ namespace {
     // Small window that will grab a unique key press.
     class KeyPressCatcher : public GG::Wnd {
         GG::Key                 m_key;
-        boost::uint32_t         m_code_point;
+        std::uint32_t m_code_point;
         GG::Flags<GG::ModKey>   m_mods;
 
     public:
@@ -196,7 +196,7 @@ namespace {
         void Render() override
         {}
 
-        void KeyPress(GG::Key key, boost::uint32_t key_code_point,
+        void KeyPress(GG::Key key, std::uint32_t key_code_point,
                       GG::Flags<GG::ModKey> mod_keys) override
         {
             m_key = key;
@@ -1134,7 +1134,7 @@ void OptionsWnd::HotkeysPage()
 OptionsWnd::~OptionsWnd()
 {}
 
-void OptionsWnd::KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
+void OptionsWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys)
 {
     if (key == GG::GGK_ESCAPE || key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) // Same behaviour as if "done" was pressed
         DoneClicked();

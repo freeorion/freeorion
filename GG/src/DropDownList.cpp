@@ -84,7 +84,7 @@ public:
     /** A common KeyPress() for both ModalListPicker and its DropDownList.
         Examine \p key and return the new list iterator or none.*/
     boost::optional<DropDownList::iterator> KeyPressCommon(
-        Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys);
+        Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys);
 
     /** A common MouseWheel() for both ModalListPicker and its DropDownList.
         Examine \p pt and \p move and then return the new list iterator or none.*/
@@ -92,9 +92,9 @@ public:
         const Pt& pt, int move, Flags<ModKey> mod_keys);
 
 protected:
-    /** ModalListPicker needs to process its own key press events because modal windows in GG
-        can't have parents. */
-    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    /** ModalListPicker needs to process its own key press events because modal
+        windows in GG can't have parents. */
+    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
     /** ModalListPicker needs to process its own mouse events because modal windows in GG can't
         have parents.*/
@@ -311,7 +311,7 @@ void ModalListPicker::CorrectListSize() {
 }
 
 boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
-    Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
+    Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     bool numlock_on = mod_keys & MOD_KEY_NUM;
     if (!numlock_on) {
@@ -438,7 +438,7 @@ void ModalListPicker::LBSelChangedSlot(const ListBox::SelectionSet& rows)
 void ModalListPicker::LBLeftClickSlot(ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 { EndRun(); }
 
-void ModalListPicker::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void ModalListPicker::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     SignalChanged(Select(KeyPressCommon(key, key_code_point, mod_keys)));
 }
@@ -812,7 +812,7 @@ void DropDownList::LClick(const Pt& pt, Flags<ModKey> mod_keys)
     DropDownOpenedSignal(false);
 }
 
-void DropDownList::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void DropDownList::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (!Disabled()) {
         boost::optional<DropDownList::iterator> key_selected = m_modal_picker->KeyPressCommon(key, key_code_point, mod_keys);

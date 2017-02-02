@@ -36,11 +36,6 @@
 
 #include <GG/dialogs/ThreeButtonDlg.h>
 
-// HACK! MSVC #defines int64_t to be __int64, which breaks the code in boost's cstdint.hpp
-#ifdef int64_t
-#undef int64_t
-#endif
-
 #include <boost/cast.hpp>
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
@@ -205,7 +200,7 @@ void FileDlg::Render()
     }
 }
 
-void FileDlg::KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys)
+void FileDlg::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
 {
     if (key == GGK_RETURN || key == GGK_KP_ENTER)
         OkHandler(false);

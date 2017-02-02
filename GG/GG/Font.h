@@ -663,7 +663,7 @@ public:
         character (if possible), or as a Unicode code point.  \a format_str
         should contain the Boost.Format positional notation formatting tag
         "%1%" where the code point should appear. */
-    static void ThrowBadGlyph(const std::string& format_str, boost::uint32_t c);
+    static void ThrowBadGlyph(const std::string& format_str, std::uint32_t c);
 
 protected:
     /** \name Structors */ ///@{
@@ -687,13 +687,15 @@ private:
         X           width;         ///< The width of the glyph only
     };
 
-    typedef boost::unordered_map<boost::uint32_t, Glyph> GlyphMap;
+    typedef boost::unordered_map<std::uint32_t, Glyph> GlyphMap;
 
     FT_Error          GetFace(FT_Face& face);
     FT_Error          GetFace(const std::vector<unsigned char>& file_contents, FT_Face& face);
     void              CheckFace(FT_Face font, FT_Error error);
     void              Init(FT_Face& font);
-    bool              GenerateGlyph(FT_Face font, boost::uint32_t ch);
+
+    bool GenerateGlyph(FT_Face font, std::uint32_t ch);
+
     void              ValidateFormat(Flags<TextFormat>& format) const;
 
     X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state, RenderCache& cache) const;

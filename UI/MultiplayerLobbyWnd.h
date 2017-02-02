@@ -30,7 +30,7 @@ public:
 
     void Render() override;
 
-    void KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
+    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
     void            ChatMessage(int player_id, const std::string& msg);
     void            LobbyUpdate(const MultiplayerLobbyData& lobby_data);

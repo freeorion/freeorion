@@ -202,7 +202,7 @@ public:
     //@}
 
     void Render() override;
-    void KeyPress(Key key, boost::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
     //@}
 
     static const std::size_t INVALID_COLOR_BUTTON;

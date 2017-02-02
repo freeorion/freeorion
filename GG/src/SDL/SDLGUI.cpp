@@ -694,7 +694,7 @@ void SDLGUI::HandleSystemEvents()
         bool send_to_gg = false;
         EventType gg_event = MOUSEMOVE;
         Key key = GGK_UNKNOWN;
-        boost::uint32_t key_code_point = 0;
+        std::uint32_t key_code_point = 0;
         Flags<ModKey> mod_keys = GetSDLModKeys();
         // In GiGi some events contain mouse position info,
         // where the corresponding sdl event does not.
