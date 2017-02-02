@@ -3,6 +3,9 @@
 
 #include <GG/Wnd.h>
 
+/** @content_tag{CTRL_SKIP_REDUNDANT_FILTER} Never hide this part during redundant part filtering **/
+const std::string TAG_SKIP_REDUNDANT_FILTER = "CTRL_SKIP_REDUNDANT_FILTER";
+
 class EncyclopediaDetailPanel;
 
 /** Lets the player design ships */
