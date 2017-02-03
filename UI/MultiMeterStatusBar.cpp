@@ -129,6 +129,8 @@ void MultiMeterStatusBar::Render() {
     // lines for 20, 40, 60, 80 etc.
     int num_segments = num_full_increments * 5;
     GG::GL2DVertexBuffer bar_verts;
+    if (num_segments == 0)
+        num_segments = 1;
     bar_verts.reserve(num_segments - 1);
     for (int ii_div_line = 1; ii_div_line <= (num_segments -1); ++ii_div_line) {
         bar_verts.store(BAR_LEFT + ii_div_line*BAR_MAX_LENGTH/num_segments, TOP);
