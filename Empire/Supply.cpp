@@ -381,7 +381,7 @@ void SupplyManager::Update() {
         // but the empire with the highest supply range in each system
         for (int sys_id : systems_with_supply_in_them) {
             // sort empires by range in this system
-            std::map<float, std::set<int> > empire_ranges_here;
+            std::map<float, std::set<int>> empire_ranges_here;
             for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_propagating_supply_ranges) {
                 int empire_id = empire_supply.first;
                 std::map<int, float>::const_iterator empire_supply_it = empire_supply.second.find(sys_id);
@@ -392,14 +392,14 @@ void SupplyManager::Update() {
                 // stuff to break ties...
                 float bonus = 0.0f;
 
-                // empires with visibility into system
-                Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(sys_id, empire_id);
-                if (vis >= VIS_PARTIAL_VISIBILITY)
-                    bonus += 0.02f;
-                else if (vis == VIS_BASIC_VISIBILITY)
-                    bonus += 0.01f;
+                //// empires with visibility into system
+                //Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(sys_id, empire_id);
+                //if (vis >= VIS_PARTIAL_VISIBILITY)
+                //    bonus += 0.02f;
+                //else if (vis == VIS_BASIC_VISIBILITY)
+                //    bonus += 0.01f;
 
-                // empires with ships / planets in system (that haven't already made it obstructed for another empire)
+                // empires with ships / planets in system
                 bool has_ship = false, has_outpost = false, has_colony = false;
                 if (std::shared_ptr<const System> sys = GetSystem(sys_id)) {
                     std::vector<int> obj_ids;
@@ -423,6 +423,7 @@ void SupplyManager::Update() {
                             }
                         }
                     }
+
                 }
                 if (has_ship)
                     bonus += 0.1f;
@@ -431,7 +432,9 @@ void SupplyManager::Update() {
                 else if (has_outpost)
                     bonus += 0.3f;
 
-                // todo: other bonuses?
+                // starlane length to adjacent supplied system
+
+
 
                 empire_ranges_here[empire_supply_it->second + bonus].insert(empire_supply.first);
             }
@@ -518,7 +521,7 @@ void SupplyManager::Update() {
             const std::set<int>& unobstructed_systems = empire_supply_unobstructed_systems[empire_id];
 
             for (const std::map<int, float>::value_type& supply_range : empire_supply.second) {
-                // does the source system has enough supply range to propagate outwards?
+                // does the source system have enough supply range to propagate outwards?
                 float range = supply_range.second;
                 if (range != range_to_spread)
                     continue;
