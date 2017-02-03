@@ -53,8 +53,6 @@ namespace {
 
         /**Resize and clear all mutexes.  Assumes that table is locked.*/
         void resize(size_t a_size) {
-            const size_t old_size = size();
-
             m_data.clear();
             m_data.resize(a_size);
             m_row_mutexes.resize(a_size);
