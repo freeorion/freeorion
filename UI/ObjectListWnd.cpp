@@ -1762,11 +1762,11 @@ public:
         m_obj_deleted_connection = GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &ObjectListBox::UniverseObjectDeleted,  this);
     }
 
-    virtual ~ObjectListBox() {
+    virtual         ~ObjectListBox() {
         delete m_filter_condition;
     }
 
-    void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
+    void            SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
         const GG::Pt old_size = Size();
         Wnd::SizeMove(ul, lr);
         if (old_size != Size()) {
@@ -1839,7 +1839,7 @@ public:
         m_object_change_connections.clear();
     }
 
-    bool ObjectShown(std::shared_ptr<const UniverseObject> obj, bool assume_visible_without_checking = false) {
+    bool            ObjectShown(std::shared_ptr<const UniverseObject> obj, bool assume_visible_without_checking = false) {
         if (!obj)
             return false;
 
