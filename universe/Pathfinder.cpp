@@ -161,7 +161,7 @@ namespace {
         /** Retrieve a single row at \p ii.
           * On cache miss call \p fill_row which must fill the row
           * at \p ii with NN items.
-          * On cache hit call \p see_row to handle the cache hit
+          * On cache hit call \p use_row to handle the cache hit
           * Throws if index is out of range or if \p fill_row
           * does not fill the row  on a cache miss.
           */
@@ -205,9 +205,6 @@ namespace {
     private:
         Storage& m_storage;
     };
-
-
-
 }
 
 
@@ -570,6 +567,7 @@ class Pathfinder::PathfinderImpl {
 
     boost::unordered_multimap<int, int> Neighbors(
         int system_id, size_t n_outer = 1, size_t n_inner = 0) const;
+
     /** When a cache hit occurs use \p row to populate and return the
         multimap for Neighbors.*/
      void NeighborsCacheHit(
@@ -582,10 +580,12 @@ class Pathfinder::PathfinderImpl {
         std::vector<std::shared_ptr<const UniverseObject> > & far,
         std::vector<std::shared_ptr<const UniverseObject> > & candidates,
         std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
+
     /**Return true if \p system_id is within \p jumps of any of \p others*/
     bool WithinJumpsOfOthers(
         int jumps, int system_id,
         std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
+
     /** If any of \p others are within \p jumps of \p ii return true in \p answer.*/
     void WithinJumpsOfOthersCacheHit(
         bool * const answer, int jumps,
@@ -698,12 +698,14 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
 }
 
 namespace {
-    /**ObjectLocation can be nowhere, one system or two systems in the
+    /**ObjectSystemIDType abstracts the location of a UniverseObject.
+
+       ObjectSystemIDType can be nowhere, one system or two systems in the
        case of a ship or fleet in transit.
        The returned variant is
-       void() -- nowhere
-       System -- somewhere
-       pair of Systems  -- in transit
+       void()              -- nowhere
+       System id           -- somewhere
+       pair of System ids  -- in transit
 
        Using float to represent no location instead of wrapping the whole
        Variant in boost::optional allows the visitors to be more
@@ -711,10 +713,13 @@ namespace {
        int.  The type should really be void.
 
     */
+
+    // A constant to indate a UniverseObject is nowhere.
     typedef void (*NowhereType)();
     void Nowhere() {}
     typedef boost::variant<NowhereType, int, std::pair<int, int > > ObjectSystemIDType;
 
+    /** Return the location of \p obj.*/
     ObjectSystemIDType ObjectSystemID(std::shared_ptr<const UniverseObject> obj) {
         if (!obj)
             return &Nowhere;
@@ -728,10 +733,11 @@ namespace {
         if (fleet)
             return std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
 
-        ErrorLogger() << "ObjectLocation unable to locate " << obj->Name() << "(" << obj->ID() << ")";
+        ErrorLogger() << "ObjectSystemIDType unable to locate " << obj->Name() << "(" << obj->ID() << ")";
         return &Nowhere;
     }
 
+    /** Return the location of the object with id \p object_id.*/
     ObjectSystemIDType ObjectSystemID(int object_id) {
         std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
         return ObjectSystemID(obj);
@@ -739,13 +745,20 @@ namespace {
 
 }
 
+/** JumpDistanceSys1Visitor and JumpDistanceSys2Visitor are variant visitors
+    that can be used to determine the distance between a pair of objects
+    locations represented as ObjectSystemIDs.*/
+
+/** JumpDistanceSys2Visitor determines the distance between \p _sys_id1 and the
+    ObjectSystemID that it is visiting.*/
 struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     JumpDistanceSys2Visitor(Pathfinder::PathfinderImpl const & _pf, int _sys_id1) :
         pf(_pf), sys_id1(_sys_id1) {}
 
+    /** Return the maximum distance if this end is nowhere.  */
     int operator()(NowhereType) const { return INT_MAX; }
 
-    /** Simple case of two system ids */
+    /** Simple case of two system ids, return the distance between systems.*/
     int operator()(int sys_id2) const {
         short sjumps = -1;
         try {
@@ -759,7 +772,8 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
         return jumps;
     }
 
-    /** A single system id and a fleet with two locations*/
+    /** A single system id and a fleet with two locations.  For an object in
+        transit return the distance to the closest system.*/
     int operator()(std::pair<int, int> prev_next) const {
         short sjumps1 = -1, sjumps2 = -1;
         int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
@@ -781,16 +795,26 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     int sys_id1;
 };
 
+/** JumpDistanceSys1Visitor visits the first system and uses
+    JumpDistanceSysVisitor2 to determines the distance between \p _sys_id2 and
+    the ObjectSystemID that it is visiting.*/
 struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
     JumpDistanceSys1Visitor(Pathfinder::PathfinderImpl const & _pf,
                             ObjectSystemIDType const &_sys2_ids) :
         pf(_pf), sys2_ids(_sys2_ids) {}
 
+    /** Return the maximum distance if the first object is nowhere.*/
     int operator()(NowhereType) const { return INT_MAX; }
+
+    /** For a single system, return the application of JumpDistanceSys2Visitor
+        to the second system.*/
     int operator()(int sys_id1) const {
         JumpDistanceSys2Visitor visitor(pf, sys_id1);
         return boost::apply_visitor(visitor, sys2_ids);
     }
+
+    /** For an object in transit, apply the JumpDistanceSys2Visitor and return
+        the shortest distance.*/
     int operator()(std::pair<int, int> prev_next) const {
         short sjumps1 = -1, sjumps2 = -1;
         int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
@@ -988,8 +1012,8 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
 }
 
 
-/**Examine a single universe object and determine if it is within jumps
-   of any object in others.*/
+/** Examine a single universe object and determine if it is within jumps
+    of any object in others.*/
 struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersObjectVisitor(Pathfinder::PathfinderImpl const & _pf,
                              int _jumps,
@@ -1010,8 +1034,9 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     int jumps;
     std::vector<std::shared_ptr<const UniverseObject> > const & others;
 };
-/*Examine a single other in the cache to see if any of its locations
-  are within jumps*/
+
+/** Examine a single other in the cache to see if any of its locations
+    are within jumps*/
 struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersOtherVisitor(Pathfinder::PathfinderImpl const & _pf,
                             int _jumps,
@@ -1117,7 +1142,7 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
         return false;
     }
 
-    //Examine
+    // Examine the cache to see if \p system_id is within \p jumps of \p others
     bool within_jumps(false);
     distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
     cache.examine_row(system_index,
