@@ -1586,7 +1586,7 @@ private:
     void                        ButtonRightClicked(int column_id) {
         if (column_id < 0 || column_id >= static_cast<int>(m_controls.size()))
             return;
-        GG::Button* clicked_button = m_controls[column_id];
+        GG::Button* clicked_button = m_controls[column_id+1];
         if (!clicked_button)
             return;
 
