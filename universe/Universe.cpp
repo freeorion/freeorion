@@ -1187,8 +1187,8 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
             continue;
 
         tech_sources.push_back(std::vector<std::shared_ptr<const UniverseObject>>(1U, source));
-        for (Empire::TechItr tech_it = empire->TechBegin(); tech_it != empire->TechEnd(); ++tech_it) {
-            const Tech* tech = GetTech(*tech_it);
+        for (const std::string& tech_name : empire->AvailableTechs()) {
+            const Tech* tech = GetTech(tech_name);
             if (!tech) continue;
 
             for (std::shared_ptr<Effect::EffectsGroup> effects_group : tech->Effects()) {
