@@ -145,6 +145,8 @@ std::string Tech::Dump() const {
 }
 
 float Tech::ResearchCost(int empire_id) const {
+    const auto arbitrary_large_number = 999999.9f;
+
     if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_cost) {
         return 1.0;
 
@@ -152,12 +154,12 @@ float Tech::ResearchCost(int empire_id) const {
         return m_research_cost->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
-        return 999999.9f;
+        return arbitrary_large_number;
 
     } else {
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source || m_research_cost->SourceInvariant())
-            return 999999.9f;
+        if (!source && !m_research_cost->SourceInvariant())
+            return arbitrary_large_number;
 
         ScriptingContext context(source);
         return m_research_cost->Eval(context);
@@ -168,6 +170,8 @@ float Tech::PerTurnCost(int empire_id) const
 { return ResearchCost(empire_id) / std::max(1, ResearchTime(empire_id)); }
 
 int Tech::ResearchTime(int empire_id) const {
+    const auto arbitrary_large_number = 9999;
+
     if (CHEAP_AND_FAST_TECH_RESEARCH || !m_research_turns) {
         return 1;
 
@@ -175,12 +179,12 @@ int Tech::ResearchTime(int empire_id) const {
             return m_research_turns->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
-        return 9999;
+        return arbitrary_large_number;
 
     } else {
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source || m_research_turns->SourceInvariant())
-            return 9999;
+        if (!source && !m_research_turns->SourceInvariant())
+            return arbitrary_large_number;
 
         ScriptingContext context(source);
 
