@@ -53,7 +53,7 @@ namespace {
 // GG::MenuItem
 ////////////////////////////////////////////////
 MenuItem::MenuItem() :
-    MenuItem("", 0, true, false)
+    MenuItem("", 0, false, false)
 {}
 
 MenuItem::MenuItem(bool separator) :
