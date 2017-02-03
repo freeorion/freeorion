@@ -810,18 +810,11 @@ void Ship::ClampMeters() {
 // Free Functions //
 ////////////////////
 std::string NewMonsterName() {
-    static std::vector<std::string> monster_names;
+    static std::vector<std::string> monster_names = UserStringList("MONSTER_NAMES");
     static std::map<std::string, int> monster_names_used;
-    if (monster_names.empty()) {
-        // load monster names from stringtable
-        std::list<std::string> monster_names_list;
-        UserStringList("MONSTER_NAMES", monster_names_list);
 
-        monster_names.reserve(monster_names_list.size());
-        std::copy(monster_names_list.begin(), monster_names_list.end(), std::back_inserter(monster_names));
-        if (monster_names.empty()) // safety check to ensure not leaving list empty in case of stringtable failure
-            monster_names.push_back(UserString("MONSTER"));
-    }
+    if (monster_names.empty())
+        monster_names.push_back(UserString("MONSTER"));
 
     // select name randomly from list
     int monster_name_index = RandSmallInt(0, static_cast<int>(monster_names.size()) - 1);

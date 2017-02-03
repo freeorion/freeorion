@@ -601,11 +601,6 @@ void PartsListBox::CullSuperfluousParts(std::vector<const PartType* >& this_grou
                                         ShipPartClass pclass, int empire_id, int loc_id)
 {
     /// This is not merely a check for obsolescence; see PartsListBox::Populate for more info
-
-    static std::list<std::string> redundancy_exclusion_list;
-    if (redundancy_exclusion_list.empty())
-        UserStringList("FUNCTIONAL_SHIP_PART_REDUNDANCY_SKIP_LIST", redundancy_exclusion_list);
-
     static float min_bargain_ratio = -1.0;
     static float max_cost_ratio = -1.0;
     static float max_time_ratio = -1.0;

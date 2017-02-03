@@ -144,9 +144,7 @@ namespace {
     }
 
     std::string GenerateSystemName() {
-        static std::list<std::string> star_names;
-        if (star_names.empty())
-            UserStringList("STAR_NAMES", star_names);
+        static std::vector<std::string> star_names = UserStringList("STAR_NAMES");
 
         // pick a name for the system
         for (const std::string& star_name : star_names) {

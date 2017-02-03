@@ -2710,17 +2710,9 @@ void Empire::AddExploredSystem(int ID) {
 }
 
 std::string Empire::NewShipName() {
-    static std::vector<std::string> ship_names;
-    if (ship_names.empty()) {
-        // load potential names from stringtable
-        std::list<std::string> ship_names_list;
-        UserStringList("SHIP_NAMES", ship_names_list);
-
-        ship_names.reserve(ship_names_list.size());
-        std::copy(ship_names_list.begin(), ship_names_list.end(), std::back_inserter(ship_names));
-        if (ship_names.empty()) // safety check to ensure not leaving list empty in case of stringtable failure
-            ship_names.push_back(UserString("OBJ_SHIP"));
-    }
+    static std::vector<std::string> ship_names = UserStringList("SHIP_NAMES");
+    if (ship_names.empty())
+        ship_names.push_back(UserString("OBJ_SHIP"));
 
     // select name randomly from list
     int ship_name_idx = RandSmallInt(0, static_cast<int>(ship_names.size()) - 1);

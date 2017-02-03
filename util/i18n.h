@@ -2,7 +2,7 @@
 #define _I18N_h_
 
 #include <string>
-#include <list>
+#include <vector>
 
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
@@ -12,8 +12,8 @@
 /** Returns a language-specific string for the key-string \a str */
 FO_COMMON_API const std::string& UserString(const std::string& str);
 
-/** Returns a language-specific list of strings for the key-string \a str_list */
-FO_COMMON_API void UserStringList(const std::string& str_list, std::list<std::string>& strings);
+/** Returns a language-specific vector of strings for given @a key. */
+FO_COMMON_API std::vector<std::string> UserStringList(const std::string& key);
 
 /** Returns true iff a user-string exists for the key string \a str */
 FO_COMMON_API bool UserStringExists(const std::string& str);

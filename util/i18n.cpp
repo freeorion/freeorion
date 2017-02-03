@@ -60,12 +60,14 @@ const std::string& UserString(const std::string& str) {
     return GetDefaultStringTable().String(str);
 }
 
-void UserStringList(const std::string& str_list, std::list<std::string>& strings) {
-    std::istringstream template_stream(UserString(str_list));
+std::vector<std::string> UserStringList(const std::string& key) {
+    std::vector<std::string> result;
+    std::istringstream template_stream(UserString(key));
     std::string item;
     while (std::getline(template_stream, item)) {
-        strings.push_back(item);
+        result.push_back(item);
     }
+    return result;
 }
 
 bool UserStringExists(const std::string& str) {

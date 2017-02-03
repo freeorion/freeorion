@@ -75,10 +75,8 @@ namespace {
     }
 
     boost::python::list GetUserStringList(const std::string& list_key) {
-        std::list<std::string> retval;
-        UserStringList(list_key, retval);
         boost::python::list ret_list;
-        for (const std::string& string : retval)
+        for (const std::string& string : UserStringList(list_key))
             ret_list.append(string);
         return ret_list;
     }

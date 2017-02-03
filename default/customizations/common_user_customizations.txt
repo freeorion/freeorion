@@ -28,16 +28,6 @@ FUNCTIONAL_MAX_TIME_RATIO
 1.0
 
 
-## Some parts have special Effects and so may be preferred to be excluded from the redundancy
-## checks, which do not consider such Effects.  Parts on this list will be excluded from Redundancy checks.
-## The SH_MULTISPEC shield part is one such part; it as a strong stealth Effect, but unless excluded
-## here the Black Shield can suppress it as redundant.
-
-FUNCTIONAL_SHIP_PART_REDUNDANCY_SKIP_LIST
-'''SH_MULTISPEC
-'''
-
-
 ## FUNCTIONAL_SITREP_PRIORITY_ORDER is an ordered, whitespace separated list, prioritizing
 ## these sitreps to be presented in the SitrepPanel in the order set below.
 ## Sitreps not specified below will appear in the SitrepPanel following those below.
