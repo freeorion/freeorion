@@ -154,16 +154,12 @@ float Tech::ResearchCost(int empire_id) const {
         return m_research_cost->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "Empire id is missing using research cost of " << arbitrary_large_number;
         return arbitrary_large_number;
 
     } else {
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_research_cost->SourceInvariant()) {
-            ErrorLogger() << "Source is expected but missing using research cost of "
-                          << arbitrary_large_number;
+        if (!source && !m_research_cost->SourceInvariant())
             return arbitrary_large_number;
-        }
 
         ScriptingContext context(source);
         return m_research_cost->Eval(context);
@@ -183,16 +179,12 @@ int Tech::ResearchTime(int empire_id) const {
             return m_research_turns->Eval();
 
     } else if (empire_id == ALL_EMPIRES) {
-        ErrorLogger() << "Empire id is missing using research time of " << arbitrary_large_number;
         return arbitrary_large_number;
 
     } else {
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_research_turns->SourceInvariant()) {
-            ErrorLogger() << "Source is expected but missing using research time of "
-                          << arbitrary_large_number;
+        if (!source && !m_research_turns->SourceInvariant())
             return arbitrary_large_number;
-        }
 
         ScriptingContext context(source);
 

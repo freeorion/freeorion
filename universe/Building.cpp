@@ -246,11 +246,8 @@ float BuildingType::ProductionCost(int empire_id, int location_id) const {
             return arbitrary_large_number;
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_production_cost->SourceInvariant()) {
-            ErrorLogger() << "Source is expected but missing using production cost of "
-                          << arbitrary_large_number;
+        if (!source && !m_production_cost->SourceInvariant())
             return arbitrary_large_number;
-        }
 
         ScriptingContext context(source, location);
 
@@ -275,11 +272,8 @@ int BuildingType::ProductionTime(int empire_id, int location_id) const {
             return arbitrary_large_number;
 
         std::shared_ptr<const UniverseObject> source = Empires().GetSource(empire_id);
-        if (!source && !m_production_time->SourceInvariant()) {
-            ErrorLogger() << "Source is expected but missing using production time of "
-                          << arbitrary_large_number;
+        if (!source && !m_production_time->SourceInvariant())
             return arbitrary_large_number;
-        }
 
         ScriptingContext context(source, location);
 
