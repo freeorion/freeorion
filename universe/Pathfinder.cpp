@@ -74,9 +74,9 @@ namespace {
     /**distance_matrix_cache is a cache of symmetric hop distances
        based on distance_matrix_storage.
 
-    It enforces the locking convention with get_or_row_lock which
-    returns either a single intgral value or an entire write locked
-    row.
+    It enforces the locking convention with get_T which returns either a single
+    integral value or calls a cache miss handler to fill an entire write locked
+    row with data and then returns the requested value.
 
     All operations first lock the table and then when necessary the row.
     */
