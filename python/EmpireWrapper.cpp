@@ -87,11 +87,12 @@ namespace {
     typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
 
     std::vector<IntPair> obstructedStarlanesP(const Empire& empire) {
-        const std::set<IntPair>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
+        const auto& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
         std::vector<IntPair> retval;
+        // TODO remove this try catch.  It was introduced in a large AI commit a7dfe4c5b8.
         try {
-            for (const std::pair<int, int>& lane : laneset)
-            { retval.push_back(lane); }
+            for (const auto& lane : laneset)
+            { retval.push_back(lane.first); }
         } catch (...) {
         }
         return retval;

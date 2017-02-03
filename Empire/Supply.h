@@ -4,13 +4,33 @@
 #include "../util/Export.h"
 
 #include <boost/serialization/access.hpp>
+#include <boost/functional/hash.hpp>
 
 #include <map>
 #include <set>
 #include <string>
 #include <memory>
+#include <unordered_set>
+#include <unordered_map>
 
 extern const int ALL_EMPIRES;
+
+// Inject a ordered pair hash into std namespace so that it is the default specialization of
+// std::hash(pair).  If this is a problem with other uses of hased pairs, then
+// directly use OrderedPairHash in the unordered_xs.
+
+namespace std {
+    template <typename T1, typename T2> struct hash<std::pair<T1, T2>> {
+        std::size_t operator()(pair<T1, T2> const& x) const {
+            std::size_t seed{0};
+            // Use boost::hash_combine vs XOR so that the hash is order dependent.
+            boost::hash_combine(seed, x.first);
+            boost::hash_combine(seed, x.second);
+            return seed;
+        }
+    };
+}
+
 
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
@@ -22,16 +42,17 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    /** Returns set of directed starlane traversals along which supply can flow.
-      * Results are pairs of system ids of start and end system of traversal. */
-    const std::map<int, std::set<std::pair<int, int>>>&     SupplyStarlaneTraversals() const;
-    const std::set<std::pair<int, int>>&                    SupplyStarlaneTraversals(int empire_id) const;
+    /** Returns set of directed starlane traversals along which supply can flow,
+      * along with their stealth.  Results are pairs of system ids of start and
+      * end system of traversal. */
+    const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>&   SupplyStarlaneTraversals() const;
+    const std::unordered_map<std::pair<int, int>, float>&                            SupplyStarlaneTraversals(int empire_id) const;
 
     /** Returns set of directed starlane traversals along which supply could
-      * flow for this empire, but which can't due to some obstruction in one
-      * of the systems. */
-    const std::map<int, std::set<std::pair<int, int>>>&     SupplyObstructedStarlaneTraversals() const;
-    const std::set<std::pair<int, int>>&                    SupplyObstructedStarlaneTraversals(int empire_id) const;
+      * flow for this empire along with its stealth, but which can't due to some
+      * obstruction in one of the systems. */
+    const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>&   SupplyObstructedStarlaneTraversals() const;
+    const std::unordered_map<std::pair<int, int> ,float>&                            SupplyObstructedStarlaneTraversals(int empire_id) const;
 
     /** Returns set of system ids where fleets can be supplied by this empire
       * (as determined by object supply meters and rules of supply propagation

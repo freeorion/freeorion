@@ -14,6 +14,8 @@
 
 #include <boost/serialization/map.hpp>
 #include <boost/serialization/set.hpp>
+#include <boost/serialization/unordered_map.hpp>
+#include <boost/serialization/unordered_set.hpp>
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
@@ -27,16 +29,17 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    /** Returns set of directed starlane traversals along which supply can flow.
-      * Results are pairs of system ids of start and end system of traversal. */
-    const std::map<int, std::set<std::pair<int, int> > >&   SupplyStarlaneTraversals() const;
-    const std::set<std::pair<int, int> >&                   SupplyStarlaneTraversals(int empire_id) const;
+    /** Returns set of directed starlane traversals along which supply can flow,
+      * along with their stealth.  Results are pairs of system ids of start and
+      * end system of traversal. */
+    const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>&   SupplyStarlaneTraversals() const;
+    const std::unordered_map<std::pair<int, int>, float>&                            SupplyStarlaneTraversals(int empire_id) const;
 
     /** Returns set of directed starlane traversals along which supply could
-      * flow for this empire, but which can't due to some obstruction in one
-      * of the systems. */
-    const std::map<int, std::set<std::pair<int, int> > >&   SupplyObstructedStarlaneTraversals() const;
-    const std::set<std::pair<int, int> >&                   SupplyObstructedStarlaneTraversals(int empire_id) const;
+      * flow for this empire along with its stealth, but which can't due to some
+      * obstruction in one of the systems. */
+    const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>&   SupplyObstructedStarlaneTraversals() const;
+    const std::unordered_map<std::pair<int, int> ,float>&                            SupplyObstructedStarlaneTraversals(int empire_id) const;
 
     /** Returns set of system ids where fleets can be supplied by this empire
       * (as determined by object supply meters and rules of supply propagation
@@ -96,13 +99,13 @@ public:
 private:
     /** ordered pairs of system ids between which a starlane runs that can be
         used to convey resources between systems. indexed first by empire id. */
-    std::map<int, std::set<std::pair<int, int> > >  m_supply_starlane_traversals;
+    std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>  m_supply_starlane_traversals;
 
     /** ordered pairs of system ids between which a starlane could be used to
         convey resources between system, but is not because something is
         obstructing the resource flow.  That is, the resource flow isn't limited
         by range, but by something blocking its flow. */
-    std::map<int, std::set<std::pair<int, int> > >  m_supply_starlane_obstructed_traversals;
+    std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>  m_supply_starlane_obstructed_traversals;
 
     /** ids of systems where fleets can be resupplied. indexed by empire id. */
     std::map<int, std::set<int> >                   m_fleet_supplyable_system_ids;
@@ -156,26 +159,27 @@ namespace {
     static const std::set<std::set<int>> EMPTY_INT_SET_SET;
     static const std::set<std::pair<int, int>> EMPTY_INT_PAIR_SET;
     static const std::map<int, float> EMPTY_INT_FLOAT_MAP;
+    static const std::unordered_map<std::pair<int, int>, float> EMPTY_MAP_PAIR_INT_TO_FLOAT;
 }
 
-const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyManagerImpl::SupplyStarlaneTraversals() const
+const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& SupplyManager::SupplyManagerImpl::SupplyStarlaneTraversals() const
 { return m_supply_starlane_traversals; }
 
-const std::set<std::pair<int, int>>& SupplyManager::SupplyManagerImpl::SupplyStarlaneTraversals(int empire_id) const {
-    std::map<int, std::set<std::pair<int, int>>>::const_iterator it = m_supply_starlane_traversals.find(empire_id);
+const std::unordered_map<std::pair<int, int>, float>& SupplyManager::SupplyManagerImpl::SupplyStarlaneTraversals(int empire_id) const {
+    const auto it = m_supply_starlane_traversals.find(empire_id);
     if (it != m_supply_starlane_traversals.end())
         return it->second;
-    return EMPTY_INT_PAIR_SET;
+    return EMPTY_MAP_PAIR_INT_TO_FLOAT;
 }
 
-const std::map<int, std::set<std::pair<int, int>>>& SupplyManager::SupplyManagerImpl::SupplyObstructedStarlaneTraversals() const
+const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& SupplyManager::SupplyManagerImpl::SupplyObstructedStarlaneTraversals() const
 { return m_supply_starlane_obstructed_traversals; }
 
-const std::set<std::pair<int, int>>& SupplyManager::SupplyManagerImpl::SupplyObstructedStarlaneTraversals(int empire_id) const {
-    std::map<int, std::set<std::pair<int, int>>>::const_iterator it = m_supply_starlane_obstructed_traversals.find(empire_id);
+const std::unordered_map<std::pair<int, int>, float>& SupplyManager::SupplyManagerImpl::SupplyObstructedStarlaneTraversals(int empire_id) const {
+    const auto it = m_supply_starlane_obstructed_traversals.find(empire_id);
     if (it != m_supply_starlane_obstructed_traversals.end())
         return it->second;
-    return EMPTY_INT_PAIR_SET;
+    return EMPTY_MAP_PAIR_INT_TO_FLOAT;
 }
 
 const std::map<int, std::set<int>>& SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs() const
@@ -303,9 +307,9 @@ std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
 
                 retval += "\nTraversals from here to: ";
 
-                for (const std::set<std::pair<int, int>>::value_type& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
-                    if (trav.first == sys->ID()) {
-                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.second);
+                for (const auto& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
+                    if (trav.first.first == sys->ID()) {
+                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first.second);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -313,9 +317,9 @@ std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
                 retval += "\n";
 
                 retval += "Traversals to here from: ";
-                for (const std::set<std::pair<int, int>>::value_type& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
-                    if (trav.second == sys->ID()) {
-                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first);
+                for (const auto& trav : m_supply_starlane_traversals.at(empire_supply.first)) {
+                    if (trav.first.second == sys->ID()) {
+                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first.first);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -323,9 +327,9 @@ std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
                 retval += "\n";
 
                 retval += "Blocked Traversals from here to: ";
-                for (const std::set<std::pair<int, int>>::value_type& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
-                    if (trav.first == sys->ID()) {
-                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.second);
+                for (const auto& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
+                    if (trav.first.first == sys->ID()) {
+                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first.second);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -333,9 +337,9 @@ std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
                 retval += "\n";
 
                 retval += "Blocked Traversals to here from: ";
-                for (const std::set<std::pair<int, int>>::value_type& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
-                    if (trav.second == sys->ID()) {
-                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first);
+                for (const auto& trav : m_supply_starlane_obstructed_traversals.at(empire_supply.first)) {
+                    if (trav.first.second == sys->ID()) {
+                        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first.first);
                         if (obj)
                             retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
@@ -533,31 +537,31 @@ float ComputeSupplyBonuses(const int empire_id, const int sys_id, std::pair<floa
 void RemoveSystemFromTraversals(
     const int sys_id,
     std::set<int>& supply_unobstructed_systems,
-    std::set<std::pair<int, int>>& lane_traversals,
-    std::set<std::pair<int, int>>& obstructed_traversals)
+    std::unordered_map<std::pair<int, int>, float>& lane_traversals,
+    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
 {
     // Remove from unobstructed systems
     supply_unobstructed_systems.erase(sys_id);
 
-    std::set<std::pair<int, int> > lane_traversals_initial = lane_traversals;
-    std::set<std::pair<int, int> > obstrcuted_traversals_initial = obstructed_traversals;
+    auto lane_traversals_initial = lane_traversals;
+    auto obstrcuted_traversals_initial = obstructed_traversals;
 
     // remove from traversals departing from or going to this system for this empire,
     // and set any traversals going to this system as obstructed
-    for (const std::set<std::pair<int, int>>::value_type& lane : lane_traversals_initial) {
-        if (lane.first == sys_id) {
-            lane_traversals.erase(std::make_pair(sys_id, lane.second));
+    for (const auto& lane : lane_traversals_initial) {
+        if (lane.first.first == sys_id) {
+            lane_traversals.erase(std::make_pair(sys_id, lane.first.second));
         }
-        if (lane.second == sys_id) {
-            lane_traversals.erase(std::make_pair(lane.first, sys_id));
-            obstructed_traversals.insert(std::make_pair(lane.first, sys_id));
+        if (lane.first.second == sys_id) {
+            lane_traversals.erase(std::make_pair(lane.first.first, sys_id));
+            obstructed_traversals.insert(std::make_pair(std::make_pair(lane.first.first, sys_id), 0.0f));
         }
     }
 
     // remove obstructed traverals departing from this system
-    for (const std::set<std::pair<int, int>>::value_type& lane : obstrcuted_traversals_initial) {
-        if (lane.first == sys_id)
-            obstructed_traversals.erase(std::make_pair(lane.first, lane.second));
+    for (const auto& lane : obstrcuted_traversals_initial) {
+        if (lane.first.first == sys_id)
+            obstructed_traversals.erase(std::make_pair(lane.first.first, lane.first.second));
     }
 }
 
@@ -565,23 +569,23 @@ void RemoveSystemFromTraversals(
 void AddObstructedTraversal(
     const int sys_id, const int end_sys_id,
     const std::set<int>& supply_unobstructed_systems,
-    const std::set<std::pair<int, int>>& lane_traversals,
-    std::set<std::pair<int, int>>& obstructed_traversals)
+    const std::unordered_map<std::pair<int, int>, float>& lane_traversals,
+    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
 {
-    obstructed_traversals.insert(std::make_pair(sys_id, end_sys_id));
+    obstructed_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
 }
 
 /** Add a traversal */
 void AddTraversal(
     const int sys_id, const int end_sys_id,
     const std::set<int>& supply_unobstructed_systems,
-    std::set<std::pair<int, int>>& lane_traversals,
-    std::set<std::pair<int, int>>& obstructed_traversals)
+    std::unordered_map<std::pair<int, int>, float>& lane_traversals,
+    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
 {
 
     //DebugLogger() << "Added traversal from " << sys_id << " to " << end_sys_id;
     // always record a traversal, so connectivity is calculated properly
-    lane_traversals.insert(std::make_pair(sys_id, end_sys_id));
+    lane_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
 
     // erase any previous obstructed traversal that just succeeded
     if (obstructed_traversals.find(std::make_pair(sys_id, end_sys_id)) !=
@@ -851,10 +855,10 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups(
         int empire_id = empire_supply.first;
 
         // assemble all direct connections between systems from remaining traversals
-        std::map<int, std::set<int>> supply_groups_map;
-        for (const std::set<std::pair<int, int>>::value_type& lane : m_supply_starlane_traversals[empire_id]) {
-            supply_groups_map[lane.first].insert(lane.second);
-            supply_groups_map[lane.second].insert(lane.first);
+        std::map<int, std::set<int> > supply_groups_map;
+        for (const auto& lane : m_supply_starlane_traversals[empire_id]) {
+            supply_groups_map[lane.first.first].insert(lane.first.second);
+            supply_groups_map[lane.first.second].insert(lane.first.first);
         }
 
         // also add connections from all fleet-supplyable systems to themselves, so that
@@ -1076,16 +1080,16 @@ SupplyManager& SupplyManager::operator=(const SupplyManager& rhs) {
     return *this;
 }
 
-const std::map<int, std::set<std::pair<int, int> > >&   SupplyManager::SupplyStarlaneTraversals() const
+const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>&   SupplyManager::SupplyStarlaneTraversals() const
 { return pimpl->SupplyStarlaneTraversals(); }
 
-const std::set<std::pair<int, int> >&                   SupplyManager::SupplyStarlaneTraversals(int empire_id) const
+const std::unordered_map<std::pair<int, int>, float>&                   SupplyManager::SupplyStarlaneTraversals(int empire_id) const
 { return pimpl->SupplyStarlaneTraversals(empire_id); }
 
-const std::map<int, std::set<std::pair<int, int> > >&   SupplyManager::SupplyObstructedStarlaneTraversals() const
+const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>&   SupplyManager::SupplyObstructedStarlaneTraversals() const
 { return pimpl->SupplyObstructedStarlaneTraversals(); }
 
-const std::set<std::pair<int, int> >&                   SupplyManager::SupplyObstructedStarlaneTraversals(int empire_id) const
+const std::unordered_map<std::pair<int, int>, float>&                   SupplyManager::SupplyObstructedStarlaneTraversals(int empire_id) const
 { return pimpl->SupplyObstructedStarlaneTraversals(empire_id); }
 
 const std::map<int, std::set<int> >&                    SupplyManager::FleetSupplyableSystemIDs() const

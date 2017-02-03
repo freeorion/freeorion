@@ -3265,12 +3265,12 @@ namespace {
         // Convert supply starlanes to non-directional.  This saves half
         // of the lookups.
         GetPathsThroughSupplyLanes::SupplyLaneMMap resource_supply_lanes_undirected;
-        const std::set<std::pair<int, int>>
+        const auto&
             resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(empire_id);
 
-        for (const std::set<std::pair<int, int>>::value_type& supply_lane : resource_supply_lanes_directed) {
-            resource_supply_lanes_undirected.insert({supply_lane.first, supply_lane.second});
-            resource_supply_lanes_undirected.insert({supply_lane.second, supply_lane.first});
+        for (const auto& supply_lane : resource_supply_lanes_directed) {
+            resource_supply_lanes_undirected.insert({supply_lane.first.first, supply_lane.first.second});
+            resource_supply_lanes_undirected.insert({supply_lane.first.second, supply_lane.first.first});
         }
 
         // For each pool of resources find all paths available through
@@ -3416,7 +3416,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
                 for (std::map<int, Empire*>::value_type& entry : Empires()) {
                     Empire* empire = entry.second;
-                    const std::set<std::pair<int, int>>& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
+                    const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
 
                     //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
 
@@ -3485,7 +3485,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 for (std::map<int, Empire*>::value_type& entry : Empires()) {
                     Empire* empire = entry.second;
-                    const std::set<std::pair<int, int>>& resource_obstructed_supply_lanes =
+                    const auto& resource_obstructed_supply_lanes =
                         GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
 
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
