@@ -294,7 +294,6 @@ public:
     friend class EmpireManager;
 
     /** \name Iterator Types */ //@{
-    typedef std::set<std::string>::const_iterator       BuildingTypeItr;
     typedef std::set<int>::const_iterator               SystemIDItr;
     typedef std::list<int>::const_iterator              ShipDesignItr;
     typedef std::vector<SitRepEntry>::const_iterator    SitRepItr;
@@ -326,7 +325,9 @@ public:
     /** Returns the set of Tech names available to this empire. */
     const std::set<std::string>& AvailableTechs() const;
 
-    const std::set<std::string>&    AvailableBuildingTypes() const;     ///< Returns the set of all available building types.
+    /** Returns the set of BuildingType names availble to this empire. */
+    const std::set<std::string>& AvailableBuildingTypes() const;
+
     std::set<int>                   AvailableShipDesigns() const;       ///< Returns the set of ship design ids of this empire that the empire can actually build
     const std::set<int>&            ShipDesigns() const;                ///< Returns the set of all ship design ids of this empire
     const std::set<std::string>&    AvailableShipParts() const;         ///< Returns the set of ship part names this empire that the empire can currently build
@@ -403,8 +404,6 @@ public:
     const std::map<int, std::set<int> >     KnownStarlanes() const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
     const std::map<int, std::set<int> >     VisibleStarlanes() const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
-    BuildingTypeItr         AvailableBuildingTypeBegin() const; ///< starting iterator for building types this empire can produce
-    BuildingTypeItr         AvailableBuildingTypeEnd() const;   ///< end iterator for building types
     ShipDesignItr           ShipDesignBegin() const;            ///< starting iterator for ship designs this empire has on file.  individual designs may or may not be producible for this empire
     ShipDesignItr           ShipDesignEnd() const;              ///< end iterator for ship designs
     SitRepItr               SitRepBegin() const;                ///< starting iterator for sitrep entries for this empire

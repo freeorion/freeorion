@@ -2213,12 +2213,6 @@ const bool Empire::UnrestrictedLaneTravel(int start_system_id, int dest_system_i
     return false;
 }
 
-Empire::BuildingTypeItr Empire::AvailableBuildingTypeBegin() const
-{ return m_available_building_types.begin(); }
-
-Empire::BuildingTypeItr Empire::AvailableBuildingTypeEnd() const
-{ return m_available_building_types.end(); }
-
 const std::set<int>& Empire::ExploredSystems() const
 { return m_explored_systems; }
 
