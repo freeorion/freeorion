@@ -1051,15 +1051,14 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     std::vector<std::shared_ptr<const UniverseObject> > const & others,
     size_t ii, const distance_matrix_storage<short>::row_ref row) const {
 
-    // Check if any of the others are within jumps of candidate
+    // Check if any of the others are within jumps of candidate, by looping
+    // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
     *answer = false;
-    for (std::vector<std::shared_ptr<const UniverseObject> >::const_iterator other = others.begin();
-         other != others.end(); ++other) {
-
+    for (const auto& other : others) {
         WithinJumpsOfOthersOtherVisitor visitor(*this, jumps, row);
-        ObjectSystemIDType other_systems = ObjectSystemID(*other);
+        ObjectSystemIDType other_systems = ObjectSystemID(other);
         bool other_within_jumps = boost::apply_visitor(visitor, other_systems);
-        if (other_within_jumps){
+        if (other_within_jumps) {
             *answer = true;
             return;
         }
@@ -1092,15 +1091,14 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     near.reserve(near.size() + size);
     far.reserve(near.size() + size);
 
-    for (std::vector<std::shared_ptr<const UniverseObject> >::iterator candidate = candidates.begin();
-         candidate != candidates.end(); ++candidate) {
-        ObjectSystemIDType candidate_systems = ObjectSystemID(*candidate);
+    for (const auto& candidate : candidates) {
+        ObjectSystemIDType candidate_systems = ObjectSystemID(candidate);
         bool is_near = boost::apply_visitor(visitor, candidate_systems);
 
         if (is_near)
-            near.push_back(*candidate);
+            near.push_back(candidate);
         else
-            far.push_back(*candidate);
+            far.push_back(candidate);
     }
 }
 
