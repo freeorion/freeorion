@@ -1754,6 +1754,9 @@ std::set<int> Empire::AvailableShipDesigns() const {
     return retval;
 }
 
+const std::vector<int>& Empire::OrderedShipDesigns() const
+{ return m_ship_designs_ordered; }
+
 bool Empire::ShipDesignAvailable(int ship_design_id) const {
     //// if design isn't kept by this empire, it can't be built.
     //if (!ShipDesignKept(ship_design_id))
@@ -2272,12 +2275,6 @@ const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
     return retval;
 }
 
-Empire::ShipDesignItr Empire::ShipDesignBegin() const
-{ return m_ship_designs_ordered.begin(); }
-
-Empire::ShipDesignItr Empire::ShipDesignEnd() const
-{ return m_ship_designs_ordered.end(); }
-
 Empire::SitRepItr Empire::SitRepBegin() const
 { return m_sitrep_entries.begin(); }
 
@@ -2725,7 +2722,7 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
-            std::list<int>::iterator point = m_ship_designs_ordered.end();
+            std::vector<int>::iterator point = m_ship_designs_ordered.end();
             bool is_at_end_of_list = (next_design_id == ShipDesign::INVALID_DESIGN_ID);
             if (!is_at_end_of_list)
                 point = std::find(m_ship_designs_ordered.begin(), m_ship_designs_ordered.end(), next_design_id);
@@ -2784,7 +2781,8 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
 void Empire::RemoveShipDesign(int ship_design_id) {
     if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
         m_ship_designs.erase(ship_design_id);
-        m_ship_designs_ordered.remove(ship_design_id);
+        m_ship_designs_ordered.erase(
+            std::remove(m_ship_designs_ordered.begin(), m_ship_designs_ordered.end(), ship_design_id), m_ship_designs_ordered.end());
         ShipDesignsChangedSignal();
     } else {
         DebugLogger() << "Empire::RemoveShipDesign: this empire did not have design with id " << ship_design_id;

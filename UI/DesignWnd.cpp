@@ -193,10 +193,8 @@ namespace {
                 DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
                 for (std::map<std::string, ShipDesign*>::value_type& entry : *this) {
                     bool already_got = false;
-                    for (Empire::ShipDesignItr it = empire->ShipDesignBegin();
-                        it != empire->ShipDesignEnd(); ++it)
-                    {
-                        const ShipDesign& ship_design = *GetShipDesign(*it);
+                    for (int id : empire->OrderedShipDesigns()) {
+                        const ShipDesign& ship_design = *GetShipDesign(id);
                         if (ship_design == *(entry.second)) {
                             already_got = true;
                             break;
@@ -1708,8 +1706,7 @@ void BasesListBox::PopulateWithCompletedDesigns() {
 
     if (empire) {
         // add rows for designs this empire is keeping
-        for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
-            int design_id = *it;
+        for (int design_id : empire->OrderedShipDesigns()) {
             bool available = empire->ShipDesignAvailable(design_id);
             const ShipDesign* design = GetShipDesign(design_id);
             if (!design || !design->Producible())
@@ -2815,10 +2812,8 @@ bool DesignWnd::MainPanel::CurrentDesignIsRegistered(std::string& design_name) {
     }
 
     if (std::shared_ptr<const ShipDesign> cur_design = GetIncompleteDesign()) {
-        for (Empire::ShipDesignItr it = empire->ShipDesignBegin();
-             it != empire->ShipDesignEnd(); ++it)
-        {
-            const ShipDesign& ship_design = *GetShipDesign(*it);
+        for (int design_id : empire->OrderedShipDesigns()) {
+            const ShipDesign& ship_design = *GetShipDesign(design_id);
             if (ship_design == *cur_design.get()) {
                 design_name = ship_design.Name();
                 return true;
@@ -2845,8 +2840,8 @@ void DesignWnd::MainPanel::ReregisterDesigns() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id); // may return 0
     if (empire) {
-        for (Empire::ShipDesignItr it = empire->ShipDesignBegin(); it != empire->ShipDesignEnd(); ++it) {
-            if (const ShipDesign* design = GetShipDesign(*it)) {
+        for (int design_id : empire->OrderedShipDesigns()) {
+            if (const ShipDesign* design = GetShipDesign(design_id)) {
                 std::string dump_str = GetCleanDesignDump(design);
                 m_completed_design_dump_strings.insert(dump_str); //no need to validate
             }
