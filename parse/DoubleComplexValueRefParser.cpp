@@ -1,6 +1,9 @@
 #include "ValueRefParserImpl.h"
 
 namespace parse {
+    const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
+    const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
+
     struct double_complex_parser_rules {
         double_complex_parser_rules() {
             qi::_1_type _1;
@@ -55,7 +58,7 @@ namespace parse {
 
             species_empire_opinion
                 = (
-                    (  tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesEmpireOpinion") ]
+                    (  tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_EMPIRE_OPINION) ]
                        >  parse::label(Species_token) >  string_value_ref [ _d = _1 ]
                     )
                   >> parse::label(Empire_token)  >  simple_int [ _b = _1 ]
@@ -64,7 +67,7 @@ namespace parse {
 
             species_species_opinion
                 = (
-                    (   tok.SpeciesOpinion_ [ _a = construct<std::string>("SpeciesSpeciesOpinion") ]
+                    (   tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_SPECIES_OPINION) ]
                       >  parse::label(Species_token) >  string_value_ref [ _d = _1 ]
                     )
                   >> parse::label(Species_token) >  string_value_ref [ _e = _1 ]
