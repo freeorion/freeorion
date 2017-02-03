@@ -110,8 +110,9 @@ void MultiMeterStatusBar::Render() {
         y += BAR_HEIGHT + BAR_PAD;
     }
 
-    // Find the largest value to be displayed to determine the scale factor
-    double largest_value = 0;
+    // Find the largest value to be displayed to determine the scale factor.  Must be greater than
+    // zero so that there is at least one segment drawn.
+    double largest_value = 0.1;
     for (unsigned int i = 0; i < m_initial_values.size(); ++i) {
         if ((m_initial_values[i] != Meter::INVALID_VALUE) && (m_initial_values[i] > largest_value))
             largest_value = m_initial_values[i];
@@ -127,12 +128,12 @@ void MultiMeterStatusBar::Render() {
         num_full_increments * MULTI_METER_STATUS_BAR_DISPLAYED_METER_RANGE_INCREMENT;
 
     // lines for 20, 40, 60, 80 etc.
-    int num_segments = num_full_increments * 5;
     GG::GL2DVertexBuffer bar_verts;
+    unsigned int num_segments = num_full_increments * 5;
     bar_verts.reserve(num_segments - 1);
-    for (int ii_div_line = 1; ii_div_line <= (num_segments -1); ++ii_div_line) {
-        bar_verts.store(BAR_LEFT + ii_div_line*BAR_MAX_LENGTH/num_segments, TOP);
-        bar_verts.store(BAR_LEFT + ii_div_line*BAR_MAX_LENGTH/num_segments, y - BAR_PAD);
+    for (unsigned int ii_div_line = 1; ii_div_line <= (num_segments - 1); ++ii_div_line) {
+        bar_verts.store(Value(BAR_LEFT) + ii_div_line*Value(BAR_MAX_LENGTH)/num_segments, TOP);
+        bar_verts.store(Value(BAR_LEFT) + ii_div_line*Value(BAR_MAX_LENGTH)/num_segments, y - BAR_PAD);
     }
     bar_verts.activate();
 
