@@ -782,11 +782,11 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     int     next_sys_id =               INVALID_OBJECT_ID;
 
     const Empire* empire = GetEmpire(empireID);
-    std::set<int> unobstructed;
+    const std::set<int>* unobstructed;
     bool s_flag = false;
     bool calc_s_flag = false;
     if (empire) {
-        unobstructed = empire->SupplyUnobstructedSystems();
+        unobstructed = &empire->SupplyUnobstructedSystems();
         calc_s_flag = true;
         //s_flag = ((first_node.object_id != INVALID_OBJECT_ID) && unobstructed.find(first_node.object_id)==unobstructed.end());
     }
@@ -838,7 +838,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         // 3) Add points for line segment to list of Vertices
         bool b_flag = node.post_blockade;
         s_flag = s_flag || (calc_s_flag &&
-            ((node.object_id != INVALID_OBJECT_ID) && unobstructed.find(node.object_id)==unobstructed.end()));
+            ((node.object_id != INVALID_OBJECT_ID) && unobstructed->find(node.object_id)==unobstructed->end()));
         vertices.push_back(Vertex(start_xy.first,   start_xy.second,    prev_eta,   false,          b_flag, s_flag));
         vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta,   node.turn_end,  b_flag, s_flag));
 

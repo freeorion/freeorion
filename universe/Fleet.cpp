@@ -812,10 +812,7 @@ void Fleet::MovementPhase() {
     }
 
     Empire* empire = GetEmpire(fleet->Owner());
-    std::set<int> supply_unobstructed_systems;
-    if (empire)
-        supply_unobstructed_systems.insert(empire->SupplyUnobstructedSystems().begin(),
-                                           empire->SupplyUnobstructedSystems().end());
+    const std::set<int>& supply_unobstructed_systems = empire ? empire->SupplyUnobstructedSystems() : EMPTY_SET;
 
     std::vector<std::shared_ptr<Ship>> ships = Objects().FindObjects<Ship>(m_ships);
 
@@ -1179,7 +1176,7 @@ bool Fleet::BlockadedAtSystem(int start_system_id, int dest_system_id) const {
 
     const Empire* empire = GetEmpire(this->Owner());
     if (empire) {
-        std::set<int> unobstructed_systems = empire->SupplyUnobstructedSystems();
+        const std::set<int>& unobstructed_systems = empire->SupplyUnobstructedSystems();
         if (unobstructed_systems.find(start_system_id) != unobstructed_systems.end())
             return false;
         if (empire->UnrestrictedLaneTravel(start_system_id, dest_system_id)) {
