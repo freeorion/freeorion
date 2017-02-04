@@ -418,6 +418,53 @@ std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>
     return system_to_empire_to_stealth_supply;
 }
 
+/** Return a map from system to blockading fleet's empire id.
+
+    The fleets determined to be blocking by this function may be different than
+    blocking fleets determined by an empire, because a blockading fleet may not
+    be visible to a given empire.
+ */
+std::unordered_map<int, std::unordered_set<int>> CalculateSystemToBlockadingFleetsEmpireIDs() {
+
+    std::unordered_map<int, std::unordered_set<int>> system_to_blockading_fleets_empire_ids;
+
+    // For a fleet to be blockading it must be in an aggresive stance, armed
+    // with direct weapons or fighters, present in a system and have
+    // unrestricted starlane access.  Whether a fleet is blockading a particular
+    // empire is determined by their diplomatic status.
+
+    // Unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
+    // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
+    // before you, or be in cahoots with someone who did.
+
+    // TODO: the previous message about unrestricted lane access is repeated in enough locations to warrant its
+    // own function in the Fleet class.
+
+    for (auto system_it : Objects().ExistingSystems()) {
+        auto system = std::dynamic_pointer_cast<const System>(system_it.second);
+
+        if (!system)
+            continue;
+
+        for (auto fleet_it : Objects().FindObjects(system->FleetIDs())) {
+            auto fleet = std::dynamic_pointer_cast<const Fleet>(fleet_it);
+            if (!fleet || fleet->SystemID() != system -> SystemID())
+                continue;
+
+            auto is_aggressive = ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive());
+            int fleet_owner = fleet->Owner();
+            auto is_stopped = fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID();
+            auto is_unrestricted = fleet->ArrivalStarlane() == fleet->SystemID();
+            auto is_blockading = is_aggressive && is_stopped && is_unrestricted;
+
+            if (!is_blockading)
+                continue;
+
+            system_to_blockading_fleets_empire_ids[system->SystemID()].insert(fleet->Owner());
+        }
+    }
+    return system_to_blockading_fleets_empire_ids;
+}
 std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
     const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
 {
@@ -987,6 +1034,12 @@ void SupplyManager::SupplyManagerImpl::Update() {
     // objects in that system.
     std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> system_to_empire_to_stealth_supply
         = CalculateSystemToEmpireToStealthSupply();
+
+    // Map from system to blockading fleets.
+    // These fleets will differ from the empire's known blockading fleets, because an empire may
+    // not be able to detect all fleets.
+    std::unordered_map<int, std::unordered_set<int>> system_to_blockading_fleets_empire_ids
+        = CalculateSystemToBlockadingFleetsEmpireIDs();
 
     // Map from empire id to a map from system id to the stealth and supply ranges of empire
     // objects in that system.
