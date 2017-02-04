@@ -22,27 +22,27 @@ public:
     /** \name Accessors */ //@{
     /** Returns set of directed starlane traversals along which supply can flow.
       * Results are pairs of system ids of start and end system of traversal. */
-    const std::map<int, std::set<std::pair<int, int> > >&   SupplyStarlaneTraversals() const;
-    const std::set<std::pair<int, int> >&                   SupplyStarlaneTraversals(int empire_id) const;
+    const std::map<int, std::set<std::pair<int, int>>>&     SupplyStarlaneTraversals() const;
+    const std::set<std::pair<int, int>>&                    SupplyStarlaneTraversals(int empire_id) const;
 
     /** Returns set of directed starlane traversals along which supply could
       * flow for this empire, but which can't due to some obstruction in one
       * of the systems. */
-    const std::map<int, std::set<std::pair<int, int> > >&   SupplyObstructedStarlaneTraversals() const;
-    const std::set<std::pair<int, int> >&                   SupplyObstructedStarlaneTraversals(int empire_id) const;
+    const std::map<int, std::set<std::pair<int, int>>>&     SupplyObstructedStarlaneTraversals() const;
+    const std::set<std::pair<int, int>>&                    SupplyObstructedStarlaneTraversals(int empire_id) const;
 
     /** Returns set of system ids where fleets can be supplied by this empire
       * (as determined by object supply meters and rules of supply propagation
       * and blockade). */
-    const std::map<int, std::set<int> >&                    FleetSupplyableSystemIDs() const;
+    const std::map<int, std::set<int>>&                     FleetSupplyableSystemIDs() const;
     const std::set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
     std::set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
     int                                                     EmpireThatCanSupplyAt(int system_id) const;
 
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */
-    const std::map<int, std::set<std::set<int> > >&         ResourceSupplyGroups() const;
-    const std::set<std::set<int> >&                         ResourceSupplyGroups(int empire_id) const;
+    const std::map<int, std::set<std::set<int>>>&           ResourceSupplyGroups() const;
+    const std::set<std::set<int>>&                          ResourceSupplyGroups(int empire_id) const;
 
     /** Returns the range from each system some empire can propagate supply.*/
     const std::map<int, float>&                             PropagatedSupplyRanges() const;
@@ -68,21 +68,21 @@ public:
 private:
     /** ordered pairs of system ids between which a starlane runs that can be
         used to convey resources between systems. indexed first by empire id. */
-    std::map<int, std::set<std::pair<int, int> > >  m_supply_starlane_traversals;
+    std::map<int, std::set<std::pair<int, int>>>  m_supply_starlane_traversals;
 
     /** ordered pairs of system ids between which a starlane could be used to
         convey resources between system, but is not because something is
         obstructing the resource flow.  That is, the resource flow isn't limited
         by range, but by something blocking its flow. */
-    std::map<int, std::set<std::pair<int, int> > >  m_supply_starlane_obstructed_traversals;
+    std::map<int, std::set<std::pair<int, int>>>  m_supply_starlane_obstructed_traversals;
 
     /** ids of systems where fleets can be resupplied. indexed by empire id. */
-    std::map<int, std::set<int> >                   m_fleet_supplyable_system_ids;
+    std::map<int, std::set<int>>                   m_fleet_supplyable_system_ids;
 
     /** sets of system ids that are connected by supply lines and are able to
         share resources between systems or between objects in systems. indexed
         by empire id. */
-    std::map<int, std::set<std::set<int> > >        m_resource_supply_groups;
+    std::map<int, std::set<std::set<int>>>        m_resource_supply_groups;
 
     /** for whichever empire can propagate supply into this system, what is the
         additional range from this system that empire can propagate supply */
