@@ -500,17 +500,16 @@ std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>
     return system_to_empire_to_stealth_supply;
 }
 
-/** Return a map from system to blockading fleet's empire id.
+/** Return sets of contestings and blockading fleet's empire ids.
 
     The fleets determined to be blocking by this function may be different than
     blocking fleets determined by an empire, because a blockading fleet may not
     be visible to a given empire.
  */
-std::pair<std::unordered_map<int, std::unordered_set<int>>,
-          std::unordered_map<int, std::unordered_set<int>>> CalculateSystemToBlockadingFleetsEmpireIDs()
+std::pair<std::unordered_set<int>, std::unordered_set<int>> CalculateBlockadingFleetsEmpireIDs(const System& system)
 {
-    std::unordered_map<int, std::unordered_set<int>> system_to_contesting_fleets_empire_ids;
-    std::unordered_map<int, std::unordered_set<int>> system_to_blockading_fleets_empire_ids;
+    std::unordered_set<int> contesting_fleets_empire_ids;
+    std::unordered_set<int> blockading_fleets_empire_ids;
 
     // For a fleet to be blockading or contesting it must be in an aggresive stance, armed with
     // direct weapons or fighters, present in a system.  If more than one mutually hostile fleet is
@@ -524,29 +523,53 @@ std::pair<std::unordered_map<int, std::unordered_set<int>>,
     // TODO: the previous message about unrestricted lane access is repeated in enough locations to warrant its
     // own function in the Fleet class.
 
+    for (auto fleet_it : Objects().FindObjects(system.FleetIDs())) {
+        auto fleet = std::dynamic_pointer_cast<const Fleet>(fleet_it);
+        if (!fleet || fleet->SystemID() != system.SystemID())
+            continue;
+
+        auto is_aggressive = ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive());
+        auto is_stopped = fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID();
+        auto is_unrestricted = fleet->ArrivalStarlane() == fleet->SystemID();
+        auto is_contesting = is_aggressive && is_stopped;
+        auto is_blockading = is_aggressive && is_stopped && is_unrestricted;
+
+        if (is_contesting)
+            contesting_fleets_empire_ids.insert(fleet->Owner());
+
+        if (is_blockading)
+            blockading_fleets_empire_ids.insert(fleet->Owner());
+    }
+    return std::make_pair<>(contesting_fleets_empire_ids, blockading_fleets_empire_ids);
+}
+
+/** Return a map from system to blockading fleet's empire id.
+
+    The fleets determined to be blocking by this function may be different than
+    blocking fleets determined by an empire, because a blockading fleet may not
+    be visible to a given empire.
+ */
+std::pair<std::unordered_map<int, std::unordered_set<int>>,
+          std::unordered_map<int, std::unordered_set<int>>> CalculateSystemToBlockadingFleetsEmpireIDs()
+{
+    std::unordered_map<int, std::unordered_set<int>> system_to_contesting_fleets_empire_ids;
+    std::unordered_map<int, std::unordered_set<int>> system_to_blockading_fleets_empire_ids;
+
     for (auto system_it : Objects().ExistingSystems()) {
         auto system = std::dynamic_pointer_cast<const System>(system_it.second);
 
         if (!system)
             continue;
 
-        for (auto fleet_it : Objects().FindObjects(system->FleetIDs())) {
-            auto fleet = std::dynamic_pointer_cast<const Fleet>(fleet_it);
-            if (!fleet || fleet->SystemID() != system -> SystemID())
-                continue;
+        std::unordered_set<int> contesting_empires;
+        std::unordered_set<int> blockading_empires;
+        std::tie(contesting_empires, blockading_empires) = CalculateBlockadingFleetsEmpireIDs(*system);
 
-            auto is_aggressive = ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive());
-            auto is_stopped = fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID();
-            auto is_unrestricted = fleet->ArrivalStarlane() == fleet->SystemID();
-            auto is_contesting = is_aggressive && is_stopped;
-            auto is_blockading = is_aggressive && is_stopped && is_unrestricted;
+        if (!contesting_empires.empty())
+            system_to_contesting_fleets_empire_ids[system->SystemID()]= contesting_empires;
 
-            if (is_contesting)
-                system_to_contesting_fleets_empire_ids[system->SystemID()].insert(fleet->Owner());
-
-            if (is_blockading)
-                system_to_blockading_fleets_empire_ids[system->SystemID()].insert(fleet->Owner());
-        }
+        if (!blockading_empires.empty())
+            system_to_blockading_fleets_empire_ids[system->SystemID()] = blockading_empires;
     }
     return std::make_pair<>(system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids);
 }
