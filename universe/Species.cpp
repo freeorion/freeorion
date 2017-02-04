@@ -516,10 +516,8 @@ void SpeciesManager::ClearSpeciesOpinions() {
 void SpeciesManager::UpdatePopulationCounter() {
     // ships of each species and design
     m_species_object_populations.clear();
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator obj_it = Objects().ExistingObjectsBegin();
-         obj_it != Objects().ExistingObjectsEnd(); ++obj_it)
-    {
-        std::shared_ptr<UniverseObject> obj = obj_it->second;
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingObjects()) {
+        std::shared_ptr<UniverseObject> obj = entry.second;
         if (obj->ObjectType() != OBJ_PLANET && obj->ObjectType() != OBJ_POP_CENTER)
             continue;
 

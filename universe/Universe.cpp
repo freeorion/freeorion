@@ -657,8 +657,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     // when iterating over the list in the following code
     std::vector<std::shared_ptr<UniverseObject>> object_ptrs = m_objects.FindObjects(objects_vec);
     if (objects_vec.empty()) {
-        object_ptrs.reserve(m_objects.NumExistingObjects());
-        std::transform(Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(),
+        object_ptrs.reserve(m_objects.ExistingObjects().size());
+        std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
                        std::back_inserter(object_ptrs),
                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second, _1));
     }

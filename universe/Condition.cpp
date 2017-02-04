@@ -35,10 +35,10 @@ bool UserStringExists(const std::string& str);
 
 namespace {
     void AddAllObjectsSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingObjects());
-        std::transform( Objects().ExistingObjectsBegin(), Objects().ExistingObjectsEnd(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingObjects().size());
+        std::transform(Objects().ExistingObjects().begin(), Objects().ExistingObjects().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
