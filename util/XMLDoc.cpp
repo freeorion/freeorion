@@ -68,8 +68,6 @@
  */
 
 namespace {
-    const std::string INDENT_STR = "  "; // indents are 2 spaces
-
     using namespace boost::spirit::classic;
 
     typedef chset<unsigned char> chset_t;
@@ -130,8 +128,7 @@ std::string XMLElement::WriteElement(int indent/* = 0*/, bool whitespace/* = tru
 std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, bool whitespace/* = true*/) const
 {
     if (whitespace)
-        for (int i = 0; i < indent; ++i)
-            os << INDENT_STR;
+        os << std::string(indent * 2, ' ');
     os << '<' << m_tag;
     for (const std::map<std::string, std::string>::value_type& attribute : attributes)
         os << ' ' << attribute.first << "=\"" << attribute.second << "\"";
@@ -151,9 +148,7 @@ std::ostream& XMLElement::WriteElement(std::ostream& os, int indent/* = 0*/, boo
         for (const XMLElement& child : children)
             child.WriteElement(os, indent + 1, whitespace);
         if (whitespace && !children.empty()) {
-            for (int i = 0; i < indent; ++i) {
-                os << INDENT_STR;
-            }
+            os << std::string(indent * 2, ' ');
         }
         os << "</" << m_tag << ">";
         if (whitespace) os << "\n";
