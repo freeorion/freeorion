@@ -34,12 +34,6 @@ namespace {
         return retval;
     }
 
-    struct PushBack {
-        PushBack(std::vector<std::string>& string_vec) : m_string_vec(string_vec) {}
-        void operator()(const char* first, const char* last) const {m_string_vec.push_back(std::string(first, last));}
-        std::vector<std::string>& m_string_vec;
-    };
-
     void StripQuotation(std::string& str) {
         using namespace boost::algorithm;
         if (starts_with(str, "\"") && ends_with(str, "\"")) {
