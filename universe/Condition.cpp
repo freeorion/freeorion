@@ -77,10 +77,10 @@ namespace {
     }
 
     void AddResCenterSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingResourceCenters());
-        std::transform( Objects().ExistingResourceCentersBegin(), Objects().ExistingResourceCentersEnd(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingResourceCenters().size());
+        std::transform(Objects().ExistingResourceCenters().begin(), Objects().ExistingResourceCenters().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddShipSet(Condition::ObjectSet& condition_non_targets) {

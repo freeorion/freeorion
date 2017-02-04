@@ -3300,13 +3300,11 @@ void Empire::SetPlayerName(const std::string& player_name)
 void Empire::InitResourcePools() {
     // get this empire's owned resource centers and ships (which can both produce resources)
     std::vector<int> res_centers;
-    res_centers.reserve(Objects().NumExistingResourceCenters());
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingResourceCentersBegin();
-         it != Objects().ExistingResourceCentersEnd(); ++it)
-    {
-        if (!it->second->OwnedBy(m_id))
+    res_centers.reserve(Objects().ExistingResourceCenters().size());
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingResourceCenters()) {
+        if (!entry.second->OwnedBy(m_id))
             continue;
-        res_centers.push_back(it->first);
+        res_centers.push_back(entry.first);
     }
     for (std::map<int, std::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingShipsBegin();
          it != Objects().ExistingShipsEnd(); ++it)

@@ -278,12 +278,8 @@ public:
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingObjects()
     { return m_existing_objects; }
 
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingResourceCentersBegin()
-    { return m_existing_resource_centers.begin(); }
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingResourceCentersEnd()
-    { return m_existing_resource_centers.end(); }
-    int NumExistingResourceCenters()
-    {return m_existing_resource_centers.size(); }
+    const std::map<int, std::shared_ptr<UniverseObject>>& ExistingResourceCenters()
+    { return m_existing_resource_centers; }
 
     std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingPopCentersBegin()
     { return m_existing_pop_centers.begin(); }
