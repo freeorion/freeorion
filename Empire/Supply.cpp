@@ -20,6 +20,7 @@
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
 
+#include <algorithm>
 
 class SupplyManager::SupplyManagerImpl {
 public:
@@ -390,7 +391,32 @@ namespace {
 }
 
 namespace {
-    /** Parts of the Update function that don't depend on SupplyManager.*/
+/** Parts of the Update function that don't depend on SupplyManager.*/
+
+/** Return a map from system id to empire id to the stealth and supply of a supply generating object.*/
+std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> CalculateSystemToEmpireToStealthSupply() {
+    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> system_to_empire_to_stealth_supply;
+
+    // as of this writing, only planets can generate supply propagation
+    for (auto planet_it : Objects().ExistingPlanets()) {
+        std::shared_ptr<const UniverseObject> obj = planet_it.second;
+        std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj);
+        // Check is it an owned planet with a valid id and a supply meter.
+        if (!planet
+            || (planet->SystemID() == INVALID_OBJECT_ID)
+            || planet->Unowned()
+            || !obj->GetMeter(METER_SUPPLY))
+        { continue; }
+
+        // TODO: Why is this NextTurn Supply?
+        float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
+        float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
+
+        system_to_empire_to_stealth_supply[planet->SystemID()][planet->Owner()]
+            .insert(std::make_pair(stealth, supply_range));
+    }
+    return system_to_empire_to_stealth_supply;
+}
 
 std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
     const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
@@ -956,6 +982,11 @@ void SupplyManager::SupplyManagerImpl::Update() {
     // propagating supply can push back another's, if the pusher's range is
     // larger.
 
+
+    // Map from system id to a map from empire id to the stealth and supply ranges of empire
+    // objects in that system.
+    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> system_to_empire_to_stealth_supply
+        = CalculateSystemToEmpireToStealthSupply();
 
     // Map from empire id to a map from system id to the stealth and supply ranges of empire
     // objects in that system.
