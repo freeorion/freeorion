@@ -393,6 +393,77 @@ namespace {
 namespace {
 /** Parts of the Update function that don't depend on SupplyManager.*/
 
+/** Return a bonus value applied to supply to reduce likelyhood of ties. */
+// TODO consider either exposing this in the GUI or removing it to improve the transparency of the
+// supply mechanic.
+/** Return the portion of the supply bonus known from the empire and system.*/
+float ComputeInitialSupplyBonuses(const int empire_id, const int sys_id)
+{
+    // stuff to break ties...
+    float bonus = 0.0f;
+
+    // empires with visibility into system
+    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(sys_id, empire_id);
+    if (vis >= VIS_PARTIAL_VISIBILITY)
+        bonus += 0.02f;
+    else if (vis == VIS_BASIC_VISIBILITY)
+        bonus += 0.01f;
+
+    // empires with ships / planets in system (that haven't already made it obstructed for another empire)
+    bool has_ship = false, has_outpost = false, has_colony = false;
+    if (std::shared_ptr<const System> sys = GetSystem(sys_id)) {
+        std::vector<int> obj_ids;
+        std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
+        for (std::shared_ptr<UniverseObject> obj : Objects().FindObjects(obj_ids)) {
+            if (!obj)
+                continue;
+            if (!obj->OwnedBy(empire_id))
+                continue;
+            if (obj->ObjectType() == OBJ_SHIP) {
+                has_ship = true;
+                continue;
+            }
+            if (obj->ObjectType() == OBJ_PLANET) {
+                if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(obj)) {
+                    if (!planet->SpeciesName().empty())
+                        has_colony = true;
+                    else
+                        has_outpost = true;
+                    continue;
+                }
+            }
+        }
+    }
+    if (has_ship)
+        bonus += 0.1f;
+    if (has_colony)
+        bonus += 0.5f;
+    else if (has_outpost)
+        bonus += 0.3f;
+
+    return bonus;
+}
+
+/** Return the supply bonus accounting for the propagted range and distance.*/
+float ComputeSupplyBonuses(const int empire_id, const int sys_id, std::pair<float, float> range_and_distance,
+                           std::map<int, std::map<int, float>>& empire_system_supply_range_sums)
+{
+    // stuff to break ties...
+    float bonus = ComputeInitialSupplyBonuses(empire_id, sys_id);
+
+    // sum of all supply sources in this system
+    bonus += empire_system_supply_range_sums[empire_id][sys_id] / 1000.0f;
+
+    // distance to supply source from here
+    float propagated_distance_to_supply_source = std::max(1.0f, range_and_distance.second);
+    bonus += 0.0001f / propagated_distance_to_supply_source;
+
+    // todo: other bonuses?
+    return bonus;
+}
+
+
+
 /** Return a map from empire id to the stealth and supply of a supply generating object.*/
 std::unordered_map<int, std::set<std::pair<float, float>>> CalculateEmpireToStealthSupply(const System& system) {
     std::unordered_map<int, std::set<std::pair<float, float>>> empire_to_stealth_supply;
@@ -410,6 +481,8 @@ std::unordered_map<int, std::set<std::pair<float, float>>> CalculateEmpireToStea
         // TODO: Why is this NextTurn Supply?
         float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
         float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
+        // TODO: Where is the best place to apply the bonus?
+        stealth += ComputeInitialSupplyBonuses(planet->Owner(), system.SystemID());
 
         empire_to_stealth_supply[planet->Owner()].insert(std::make_pair(stealth, supply_range));
     }
@@ -478,7 +551,7 @@ std::pair<std::unordered_map<int, std::unordered_set<int>>,
     }
     return std::make_pair<>(system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids);
 }
-    
+
 /** Return a map from system to blockading colony's empire id.
 
     A colony's ability to blockade supply was added to relax requirements on the AI understanding
@@ -603,65 +676,6 @@ void ObstructSupplyIfUncontestedHostileSupplySource(
         for (auto system_id: empire_to_colony_disrupted_systems.second)
             empire_supply_unobstructed_systems.erase(system_id);
     }
-}
-
-/** Return a bonus value applied to supply to reduce likelyhood of ties. */
-// TODO consider either exposing this in the GUI or removing it to improve the transparency of the
-// supply mechanic.
-float ComputeSupplyBonuses(const int empire_id, const int sys_id, std::pair<float, float> range_and_distance,
-                           std::map<int, std::map<int, float>>& empire_system_supply_range_sums)
-{
-    // stuff to break ties...
-    float bonus = 0.0f;
-
-    // empires with visibility into system
-    Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(sys_id, empire_id);
-    if (vis >= VIS_PARTIAL_VISIBILITY)
-        bonus += 0.02f;
-    else if (vis == VIS_BASIC_VISIBILITY)
-        bonus += 0.01f;
-
-    // empires with ships / planets in system (that haven't already made it obstructed for another empire)
-    bool has_ship = false, has_outpost = false, has_colony = false;
-    if (std::shared_ptr<const System> sys = GetSystem(sys_id)) {
-        std::vector<int> obj_ids;
-        std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
-        for (std::shared_ptr<UniverseObject> obj : Objects().FindObjects(obj_ids)) {
-            if (!obj)
-                continue;
-            if (!obj->OwnedBy(empire_id))
-                continue;
-            if (obj->ObjectType() == OBJ_SHIP) {
-                has_ship = true;
-                continue;
-            }
-            if (obj->ObjectType() == OBJ_PLANET) {
-                if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(obj)) {
-                    if (!planet->SpeciesName().empty())
-                        has_colony = true;
-                    else
-                        has_outpost = true;
-                    continue;
-                }
-            }
-        }
-    }
-    if (has_ship)
-        bonus += 0.1f;
-    if (has_colony)
-        bonus += 0.5f;
-    else if (has_outpost)
-        bonus += 0.3f;
-
-    // sum of all supply sources in this system
-    bonus += empire_system_supply_range_sums[empire_id][sys_id] / 1000.0f;
-
-    // distance to supply source from here
-    float propagated_distance_to_supply_source = std::max(1.0f, range_and_distance.second);
-    bonus += 0.0001f / propagated_distance_to_supply_source;
-
-    // todo: other bonuses?
-    return bonus;
 }
 
 /** Remove \p sys_id from unobstructed_systems, remove all startlanes that arrive or depart sys_id
@@ -1107,6 +1121,8 @@ void SupplyManager::SupplyManagerImpl::Update() {
     std::unordered_map<int, std::unordered_set<int>> system_blockading_colony_empire_ids
         = CalculateSystemToBlockadingColonyEmpireIDs(system_to_empire_to_stealth_supply,
                                                      system_to_contesting_fleets_empire_ids);
+
+
 
     // Map from empire id to a map from system id to the stealth and supply ranges of empire
     // objects in that system.
