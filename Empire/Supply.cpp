@@ -393,13 +393,12 @@ namespace {
 namespace {
 /** Parts of the Update function that don't depend on SupplyManager.*/
 
-/** Return a map from system id to empire id to the stealth and supply of a supply generating object.*/
-std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> CalculateSystemToEmpireToStealthSupply() {
-    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> system_to_empire_to_stealth_supply;
+/** Return a map from empire id to the stealth and supply of a supply generating object.*/
+std::unordered_map<int, std::set<std::pair<float, float>>> CalculateEmpireToStealthSupply(const System& system) {
+    std::unordered_map<int, std::set<std::pair<float, float>>> empire_to_stealth_supply;
 
     // as of this writing, only planets can generate supply propagation
-    for (auto planet_it : Objects().ExistingPlanets()) {
-        std::shared_ptr<const UniverseObject> obj = planet_it.second;
+    for (auto obj : Objects().FindObjects(system.PlanetIDs())) {
         std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj);
         // Check is it an owned planet with a valid id and a supply meter.
         if (!planet
@@ -412,9 +411,20 @@ std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>
         float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
         float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
 
-        system_to_empire_to_stealth_supply[planet->SystemID()][planet->Owner()]
-            .insert(std::make_pair(stealth, supply_range));
+        empire_to_stealth_supply[planet->Owner()].insert(std::make_pair(stealth, supply_range));
     }
+    return empire_to_stealth_supply;
+}
+
+
+/** Return a map from system id to empire id to the stealth and supply of a supply generating object.*/
+std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> CalculateSystemToEmpireToStealthSupply() {
+    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> system_to_empire_to_stealth_supply;
+
+    for (auto system_it : Objects().ExistingSystems())
+        if (auto system = std::dynamic_pointer_cast<const System>(system_it.second))
+            system_to_empire_to_stealth_supply[system->SystemID()] = CalculateEmpireToStealthSupply(*system);
+
     return system_to_empire_to_stealth_supply;
 }
 
