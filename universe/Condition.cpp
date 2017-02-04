@@ -70,10 +70,10 @@ namespace {
     }
 
     void AddPopCenterSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPopCenters());
-        std::transform( Objects().ExistingPopCentersBegin(), Objects().ExistingPopCentersEnd(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingPopCenters().size());
+        std::transform(Objects().ExistingPopCenters().begin(), Objects().ExistingPopCenters().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddResCenterSet(Condition::ObjectSet& condition_non_targets) {

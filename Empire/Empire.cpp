@@ -3319,12 +3319,10 @@ void Empire::InitResourcePools() {
 
     // get this empire's owned population centers
     std::vector<int> pop_centers;
-    pop_centers.reserve(Objects().NumExistingPopCenters());
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingPopCentersBegin();
-         it != Objects().ExistingPopCentersEnd(); ++it)
-    {
-        if (it->second->OwnedBy(m_id))
-            pop_centers.push_back(it->first);
+    pop_centers.reserve(Objects().ExistingPopCenters().size());
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingPopCenters()) {
+        if (entry.second->OwnedBy(m_id))
+            pop_centers.push_back(entry.first);
     }
     m_population_pool.SetPopCenters(pop_centers);
 
