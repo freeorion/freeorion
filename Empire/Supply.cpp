@@ -468,6 +468,52 @@ std::pair<std::unordered_map<int, std::unordered_set<int>>,
     }
     return std::make_pair<>(system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids);
 }
+    
+/** Return a map from system to blockading colony's empire id.
+
+    A colony's ability to blockade supply was added to relax requirements on the AI understanding
+    supply mechanics.  It may be removed in future.
+
+    The systems determined to be blocked by this function may be different than
+    determined by an empire, because empires don't have complete visibility.
+ */
+std::unordered_map<int, std::unordered_set<int>> CalculateSystemToBlockadingColonyEmpireIDs(
+    const std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>>&
+    system_to_empire_to_stealth_supply,
+    const std::unordered_map<int, std::unordered_set<int>>& system_to_contesting_fleets_empire_ids)
+{
+
+    std::unordered_map<int, std::unordered_set<int>> system_to_blockading_colony_empire_ids;
+
+    for (auto system_to_empire_to_stealth_supply_it : system_to_empire_to_stealth_supply) {
+        auto system_id = system_to_empire_to_stealth_supply_it.first;
+        auto empires = system_to_empire_to_stealth_supply_it.second;
+
+        // Check that only a single empire has supply in system.
+        if (empires.size() != 1)
+            continue;
+        auto empire = GetEmpire(empires.begin()->first);
+        if (!empire)
+            continue;
+        auto empire_id = empire->EmpireID();
+
+        // Are any hostile fleets contesting control of this system?
+        auto fleets_it = system_to_contesting_fleets_empire_ids.find(system_id);
+        if (fleets_it == system_to_contesting_fleets_empire_ids.end())
+            continue;
+
+        if (std::none_of(
+                fleets_it->second.begin(), fleets_it->second.end(),
+                [=](int fleet_owner) {
+                    return ((fleet_owner != empire_id)
+                            && (Empires().GetDiplomaticStatus(empire_id, fleet_owner) == DIPLO_WAR));
+                }))
+            system_to_blockading_colony_empire_ids[system_id].insert(empire_id);
+    }
+
+    return system_to_blockading_colony_empire_ids;
+}
+
 std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
     const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
 {
@@ -1045,6 +1091,12 @@ void SupplyManager::SupplyManagerImpl::Update() {
     std::unordered_map<int, std::unordered_set<int>> system_to_blockading_fleets_empire_ids;
     std::tie(system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids)
         = CalculateSystemToBlockadingFleetsEmpireIDs();
+
+    // Map from the system to empire id of colonies that are blockading.
+    // Note: This was an addition to ease the AI requirements of the supply mechanic.
+    std::unordered_map<int, std::unordered_set<int>> system_blockading_colony_empire_ids
+        = CalculateSystemToBlockadingColonyEmpireIDs(system_to_empire_to_stealth_supply,
+                                                     system_to_contesting_fleets_empire_ids);
 
     // Map from empire id to a map from system id to the stealth and supply ranges of empire
     // objects in that system.
