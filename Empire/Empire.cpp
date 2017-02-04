@@ -3424,12 +3424,10 @@ void Empire::UpdateOwnedObjectCounters() {
     // colonies of each species, and unspecified outposts
     m_species_colonies_owned.clear();
     m_outposts_owned = 0;
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator planet_it = Objects().ExistingPlanetsBegin();
-         planet_it != Objects().ExistingPlanetsEnd(); ++planet_it)
-    {
-        if (!planet_it->second->OwnedBy(this->EmpireID()))
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingPlanets()) {
+        if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
-        std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(planet_it->second);
+        std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(entry.second);
         if (!planet)
             continue;
         if (planet->SpeciesName().empty())

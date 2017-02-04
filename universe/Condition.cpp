@@ -63,10 +63,10 @@ namespace {
     }
 
     void AddPlanetSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingPlanets());
-        std::transform( Objects().ExistingPlanetsBegin(), Objects().ExistingPlanetsEnd(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingPlanets().size());
+        std::transform(Objects().ExistingPlanets().begin(), Objects().ExistingPlanets().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddPopCenterSet(Condition::ObjectSet& condition_non_targets) {

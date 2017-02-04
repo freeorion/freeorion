@@ -290,12 +290,8 @@ public:
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingFleets()
     { return m_existing_fleets; }
 
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingPlanetsBegin()
-    { return m_existing_planets.begin(); }
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingPlanetsEnd()
-    { return m_existing_planets.end(); }
-    int NumExistingPlanets()
-    {return m_existing_planets.size(); }
+    const std::map<int, std::shared_ptr<UniverseObject>>& ExistingPlanets()
+    { return m_existing_planets; }
 
     std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingSystemsBegin()
     { return m_existing_systems.begin(); }

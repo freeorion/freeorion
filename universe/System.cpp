@@ -236,10 +236,8 @@ const std::string& System::ApparentName(int empire_id, bool blank_unexplored_and
 
     if (m_star == STAR_NONE) {
         // determine if there are any planets in the system
-        for (std::map<int, std::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingPlanetsBegin();
-             it != Objects().ExistingPlanetsEnd(); ++it)
-        {
-            if (it->second->SystemID() == this->ID())
+        for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingPlanets()) {
+            if (entry.second->SystemID() == this->ID())
                 return this->PublicName(empire_id);
         }
         if (blank_unexplored_and_none) {
