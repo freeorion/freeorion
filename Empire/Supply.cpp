@@ -464,8 +464,8 @@ float ComputeSupplyBonuses(const int empire_id, const int sys_id, std::pair<floa
 
 
 /** Return a map from empire id to the stealth and supply of a supply generating object.*/
-std::unordered_map<int, std::set<std::pair<float, float>>> CalculateEmpireToStealthSupply(const System& system) {
-    std::unordered_map<int, std::set<std::pair<float, float>>> empire_to_stealth_supply;
+boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>> CalculateEmpireToStealthSupply(const System& system) {
+    boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>> empire_to_stealth_supply = boost::none;
 
     // as of this writing, only planets can generate supply propagation
     for (auto obj : Objects().FindObjects(system.PlanetIDs())) {
@@ -483,8 +483,11 @@ std::unordered_map<int, std::set<std::pair<float, float>>> CalculateEmpireToStea
         // TODO: Where is the best place to apply the bonus?
         stealth += ComputeInitialSupplyBonuses(planet->Owner(), system.SystemID());
 
-        empire_to_stealth_supply[planet->Owner()].insert(std::make_pair(stealth, supply_range));
+        if (!empire_to_stealth_supply)
+            empire_to_stealth_supply = std::unordered_map<int, std::set<std::pair<float, float>>>();
+        (*empire_to_stealth_supply)[planet->Owner()].insert(std::make_pair(stealth, supply_range));
     }
+
     return empire_to_stealth_supply;
 }
 
@@ -493,9 +496,12 @@ std::unordered_map<int, std::set<std::pair<float, float>>> CalculateEmpireToStea
 std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> CalculateSystemToEmpireToStealthSupply() {
     std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> system_to_empire_to_stealth_supply;
 
-    for (auto system_it : Objects().ExistingSystems())
-        if (auto system = std::dynamic_pointer_cast<const System>(system_it.second))
-            system_to_empire_to_stealth_supply[system->SystemID()] = CalculateEmpireToStealthSupply(*system);
+    for (auto system_it : Objects().ExistingSystems()) {
+        if (auto system = std::dynamic_pointer_cast<const System>(system_it.second)) {
+            if (auto stealth_supply = CalculateEmpireToStealthSupply(*system))
+                system_to_empire_to_stealth_supply[system->SystemID()] = *stealth_supply;
+        }
+    }
 
     return system_to_empire_to_stealth_supply;
 }
@@ -506,10 +512,10 @@ std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>
     blocking fleets determined by an empire, because a blockading fleet may not
     be visible to a given empire.
  */
-std::pair<std::unordered_set<int>, std::unordered_set<int>> CalculateBlockadingFleetsEmpireIDs(const System& system)
+std::pair<boost::optional<std::unordered_set<int>>, boost::optional<std::unordered_set<int>>> CalculateBlockadingFleetsEmpireIDs(const System& system)
 {
-    std::unordered_set<int> contesting_fleets_empire_ids;
-    std::unordered_set<int> blockading_fleets_empire_ids;
+    boost::optional<std::unordered_set<int>> contesting_fleets_empire_ids;
+    boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
 
     // For a fleet to be blockading or contesting it must be in an aggresive stance, armed with
     // direct weapons or fighters, present in a system.  If more than one mutually hostile fleet is
@@ -534,12 +540,19 @@ std::pair<std::unordered_set<int>, std::unordered_set<int>> CalculateBlockadingF
         auto is_contesting = is_aggressive && is_stopped;
         auto is_blockading = is_aggressive && is_stopped && is_unrestricted;
 
-        if (is_contesting)
-            contesting_fleets_empire_ids.insert(fleet->Owner());
+        if (is_contesting) {
+            if (!contesting_fleets_empire_ids)
+                contesting_fleets_empire_ids = std::unordered_set<int>();
+            contesting_fleets_empire_ids->insert(fleet->Owner());
+        }
 
-        if (is_blockading)
-            blockading_fleets_empire_ids.insert(fleet->Owner());
+        if (is_blockading) {
+            if (!blockading_fleets_empire_ids)
+                blockading_fleets_empire_ids = std::unordered_set<int>();
+            blockading_fleets_empire_ids->insert(fleet->Owner());
+        }
     }
+
     return std::make_pair<>(contesting_fleets_empire_ids, blockading_fleets_empire_ids);
 }
 
@@ -561,15 +574,15 @@ std::pair<std::unordered_map<int, std::unordered_set<int>>,
         if (!system)
             continue;
 
-        std::unordered_set<int> contesting_empires;
-        std::unordered_set<int> blockading_empires;
+        boost::optional<std::unordered_set<int>> contesting_empires;
+        boost::optional<std::unordered_set<int>> blockading_empires;
         std::tie(contesting_empires, blockading_empires) = CalculateBlockadingFleetsEmpireIDs(*system);
 
-        if (!contesting_empires.empty())
-            system_to_contesting_fleets_empire_ids[system->SystemID()]= contesting_empires;
+        if (contesting_empires && !contesting_empires->empty())
+            system_to_contesting_fleets_empire_ids[system->SystemID()]= *contesting_empires;
 
-        if (!blockading_empires.empty())
-            system_to_blockading_fleets_empire_ids[system->SystemID()] = blockading_empires;
+        if (blockading_empires && !blockading_empires->empty())
+            system_to_blockading_fleets_empire_ids[system->SystemID()] = *blockading_empires;
     }
     return std::make_pair<>(system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids);
 }
@@ -587,21 +600,19 @@ std::pair<std::unordered_map<int, std::unordered_set<int>>,
  */
 boost::optional<int> CalculateBlockadingColonyEmpireID(
     const System& system,
-    const std::unordered_map<int, std::set<std::pair<float, float>>>&
-    empire_to_stealth_supply,
-    const std::unordered_set<int>& contesting_fleets_empire_ids)
+    const boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>>& empire_to_stealth_supply,
+    const boost::optional<std::unordered_set<int>>& contesting_fleets_empire_ids)
 {
-
-    std::unordered_map<int, std::unordered_set<int>> system_to_blockading_colony_empire_ids;
-
     // Check that only a single empire has supply in system.
-    if (empire_to_stealth_supply.size() != 1)
+    if (!empire_to_stealth_supply || empire_to_stealth_supply->size() != 1)
         return boost::none;
-    auto empire_id = empire_to_stealth_supply.begin()->first;
+    auto empire_id = empire_to_stealth_supply->begin()->first;
 
     // Are any hostile fleets contesting control of this system?
+    if (!contesting_fleets_empire_ids)
+        return empire_id;
     if (std::none_of(
-            contesting_fleets_empire_ids.begin(), contesting_fleets_empire_ids.end(),
+            contesting_fleets_empire_ids->begin(), contesting_fleets_empire_ids->end(),
             [=](int fleet_owner) {
                 return ((fleet_owner != empire_id)
                         && (Empires().GetDiplomaticStatus(empire_id, fleet_owner) == DIPLO_WAR));
@@ -648,6 +659,46 @@ std::unordered_map<int, std::unordered_set<int>> CalculateSystemToBlockadingColo
 
     return system_to_blockading_colony_empire_ids;
 }
+
+/** SupplySystemPOD contains all of the data needs to resolve one systems supply conflicts. */
+struct SupplySystemPOD {
+    boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>> empire_to_stealth_supply;
+    boost::optional<std::unordered_set<int>> contesting_empires;
+    boost::optional<std::unordered_set<int>> blockading_empires;
+    boost::optional<int> colony_blockading_empires;
+};
+
+boost::optional<SupplySystemPOD> CalculateInitialSupply(const System &system) {
+    auto stealth_supply = CalculateEmpireToStealthSupply(system);
+
+    boost::optional<std::unordered_set<int>> contesting_empires;
+    boost::optional<std::unordered_set<int>> blockading_empires;
+    std::tie(contesting_empires, blockading_empires) = CalculateBlockadingFleetsEmpireIDs(system);
+
+    auto blockading_colony = CalculateBlockadingColonyEmpireID(system, stealth_supply, contesting_empires);
+
+    if (!stealth_supply && !contesting_empires && !blockading_empires && !blockading_colony)
+        return boost::none;
+
+    return SupplySystemPOD({stealth_supply, contesting_empires, blockading_empires, blockading_colony});
+}
+
+/** Return a map from system id to SupplySystemPOD. */
+std::unordered_map<int, SupplySystemPOD> CalculateInitialSupply() {
+    std::unordered_map<int, SupplySystemPOD> system_to_supply_pod;
+
+    for (auto system_it : Objects().ExistingSystems()) {
+        auto system = std::dynamic_pointer_cast<const System>(system_it.second);
+        if (!system)
+            continue;
+
+        if (auto pod = CalculateInitialSupply(*system))
+            system_to_supply_pod[system->SystemID()] = *pod;
+    }
+
+    return system_to_supply_pod;
+}
+
 
 std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
     const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
@@ -1174,6 +1225,9 @@ void SupplyManager::SupplyManagerImpl::Update() {
         = CalculateSystemToBlockadingColonyEmpireIDs(system_to_empire_to_stealth_supply,
                                                      system_to_contesting_fleets_empire_ids);
 
+
+    //Map from system id to SupplySystemPOD containing all data needed to evaluate supply in one system.
+    std::unordered_map<int, SupplySystemPOD> system_to_initial_supply_pod = CalculateInitialSupply();
 
 
     // Map from empire id to a map from system id to the stealth and supply ranges of empire
