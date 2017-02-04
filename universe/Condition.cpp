@@ -49,8 +49,8 @@ namespace {
     }
 
     void AddFieldSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFields());
-        std::transform( Objects().ExistingFieldsBegin(), Objects().ExistingFieldsEnd(),
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingFields().size());
+        std::transform( Objects().ExistingFields().begin(), Objects().ExistingFields().end(),
                         std::back_inserter(condition_non_targets),
                         boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
