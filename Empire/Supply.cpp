@@ -412,26 +412,25 @@ float ComputeInitialSupplyBonuses(const int empire_id, const int sys_id)
     // empires with ships / planets in system (that haven't already made it obstructed for another empire)
     bool has_ship = false, has_outpost = false, has_colony = false;
     if (std::shared_ptr<const System> sys = GetSystem(sys_id)) {
-        std::vector<int> obj_ids;
-        std::copy(sys->ContainedObjectIDs().begin(), sys->ContainedObjectIDs().end(), std::back_inserter(obj_ids));
-        for (std::shared_ptr<UniverseObject> obj : Objects().FindObjects(obj_ids)) {
-            if (!obj)
-                continue;
-            if (!obj->OwnedBy(empire_id))
-                continue;
-            if (obj->ObjectType() == OBJ_SHIP) {
+
+        for (auto ship : Objects().FindObjects(sys->ShipIDs())) {
+            if (ship && ship->OwnedBy(empire_id)) {
                 has_ship = true;
+                break;
+            }
+        }
+
+        for (auto obj : Objects().FindObjects(sys->PlanetIDs())) {
+            std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(obj);
+            if (!planet || !planet->OwnedBy(empire_id))
                 continue;
+
+            if (!planet->SpeciesName().empty()) {
+                    has_colony = true;
+                    break;
             }
-            if (obj->ObjectType() == OBJ_PLANET) {
-                if (std::shared_ptr<Planet> planet = std::dynamic_pointer_cast<Planet>(obj)) {
-                    if (!planet->SpeciesName().empty())
-                        has_colony = true;
-                    else
-                        has_outpost = true;
-                    continue;
-                }
-            }
+
+            has_outpost = true;
         }
     }
     if (has_ship)
