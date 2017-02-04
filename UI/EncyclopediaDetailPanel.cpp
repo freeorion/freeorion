@@ -2149,11 +2149,8 @@ namespace {
 
         // ships of this design
         std::vector<std::shared_ptr<const Ship>> design_ships;
-        for (std::map<int, std::shared_ptr<UniverseObject>>::iterator
-             ship_it = Objects().ExistingShipsBegin();
-             ship_it != Objects().ExistingShipsEnd(); ++ship_it)
-        {
-            std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(ship_it->second);
+        for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingShips()) {
+            std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(entry.second);
             if (ship && ship->DesignID() == design_id)
                 design_ships.push_back(ship);
         }

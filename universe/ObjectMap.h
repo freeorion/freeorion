@@ -284,12 +284,8 @@ public:
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingPopCenters()
     { return m_existing_pop_centers; }
 
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingShipsBegin()
-    { return m_existing_ships.begin(); }
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingShipsEnd()
-    { return m_existing_ships.end(); }
-    int NumExistingShips()
-    {return m_existing_ships.size(); }
+    const std::map<int, std::shared_ptr<UniverseObject>>& ExistingShips()
+    { return m_existing_ships; }
 
     std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingFleetsBegin()
     { return m_existing_fleets.begin(); }

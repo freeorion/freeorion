@@ -84,10 +84,10 @@ namespace {
     }
 
     void AddShipSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingShips());
-        std::transform( Objects().ExistingShipsBegin(), Objects().ExistingShipsEnd(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingShips().size());
+        std::transform(Objects().ExistingShips().begin(), Objects().ExistingShips().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddSystemSet(Condition::ObjectSet& condition_non_targets) {

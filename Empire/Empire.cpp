@@ -3306,12 +3306,10 @@ void Empire::InitResourcePools() {
             continue;
         res_centers.push_back(entry.first);
     }
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingShipsBegin();
-         it != Objects().ExistingShipsEnd(); ++it)
-    {
-        if (!it->second->OwnedBy(m_id))
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingShips()) {
+        if (!entry.second->OwnedBy(m_id))
             continue;
-        res_centers.push_back(it->first);
+        res_centers.push_back(entry.first);
     }
     m_resource_pools[RE_RESEARCH]->SetObjects(res_centers);
     m_resource_pools[RE_INDUSTRY]->SetObjects(res_centers);
@@ -3395,12 +3393,10 @@ void Empire::UpdateOwnedObjectCounters() {
     // ships of each species and design
     m_species_ships_owned.clear();
     m_ship_designs_owned.clear();
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator ship_it = Objects().ExistingShipsBegin();
-         ship_it != Objects().ExistingShipsEnd(); ++ship_it)
-    {
-        if (!ship_it->second->OwnedBy(this->EmpireID()))
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingShips()) {
+        if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
-        std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(ship_it->second);
+        std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(entry.second);
         if (!ship)
             continue;
         if (!ship->SpeciesName().empty())
