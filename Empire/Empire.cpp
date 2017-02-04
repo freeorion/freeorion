@@ -3331,10 +3331,8 @@ void Empire::InitResourcePools() {
     // set non-blockadeable resource pools to share resources between all systems
     std::set<std::set<int> > sets_set;
     std::set<int> all_systems_set;
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator it = Objects().ExistingSystemsBegin();
-         it != Objects().ExistingSystemsEnd(); ++it)
-    {
-        all_systems_set.insert(it->first);
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingSystems()) {
+        all_systems_set.insert(entry.first);
     }
     sets_set.insert(all_systems_set);
     m_resource_pools[RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);

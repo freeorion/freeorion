@@ -91,8 +91,8 @@ namespace {
     }
 
     void AddSystemSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingSystems());
-        std::transform( Objects().ExistingSystemsBegin(), Objects().ExistingSystemsEnd(),
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingSystems().size());
+        std::transform( Objects().ExistingSystems().begin(), Objects().ExistingSystems().end(),
                         std::back_inserter(condition_non_targets),
                         boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
