@@ -56,10 +56,10 @@ namespace {
     }
 
     void AddFleetSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingFleets());
-        std::transform( Objects().ExistingFleetsBegin(), Objects().ExistingFleetsEnd(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingFleets().size());
+        std::transform(Objects().ExistingFleets().begin(), Objects().ExistingFleets().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddPlanetSet(Condition::ObjectSet& condition_non_targets) {

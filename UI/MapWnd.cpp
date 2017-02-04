@@ -4305,11 +4305,9 @@ void MapWnd::DeferredRefreshFleetButtons() {
     SystemXEmpireToFleetsMap   stationary_fleets;
     LocationXEmpireToFleetsMap moving_fleets;
 
-    for (std::map<int, std::shared_ptr<UniverseObject>>::const_iterator candidate_it = Objects().ExistingFleetsBegin();
-         candidate_it != Objects().ExistingFleetsEnd(); ++candidate_it)
-    {
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingFleets()) {
         std::shared_ptr<const Fleet> fleet = IsQualifiedFleet(
-            candidate_it->second, client_empire_id,
+            entry.second, client_empire_id,
             this_client_known_destroyed_objects, this_client_stale_object_info);
 
         if (!fleet)
