@@ -3436,12 +3436,10 @@ void Empire::UpdateOwnedObjectCounters() {
 
     // buildings of each type
     m_building_types_owned.clear();
-    for (std::map<int, std::shared_ptr<UniverseObject>>::iterator building_it = Objects().ExistingBuildingsBegin();
-         building_it != Objects().ExistingBuildingsEnd(); ++building_it)
-    {
-        if (!building_it->second->OwnedBy(this->EmpireID()))
+    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingBuildings()) {
+        if (!entry.second->OwnedBy(this->EmpireID()))
             continue;
-        std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(building_it->second);
+        std::shared_ptr<const Building> building = std::dynamic_pointer_cast<const Building>(entry.second);
         if (!building)
             continue;
         m_building_types_owned[building->BuildingTypeName()]++;

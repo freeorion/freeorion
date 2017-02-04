@@ -296,12 +296,8 @@ public:
     const std::map<int, std::shared_ptr<UniverseObject>>& ExistingSystems()
     { return m_existing_systems; }
 
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingBuildingsBegin()
-    { return m_existing_buildings.begin(); }
-    std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingBuildingsEnd()
-    { return m_existing_buildings.end(); }
-    int NumExistingBuildings()
-    {return m_existing_buildings.size(); }
+    const std::map<int, std::shared_ptr<UniverseObject>>& ExistingBuildings()
+    { return m_existing_buildings; }
 
     std::map<int, std::shared_ptr<UniverseObject>>::iterator ExistingFieldsBegin()
     { return m_existing_fields.begin(); }

@@ -42,10 +42,10 @@ namespace {
     }
 
     void AddBuildingSet(Condition::ObjectSet& condition_non_targets) {
-        condition_non_targets.reserve(condition_non_targets.size() + Objects().NumExistingBuildings());
-        std::transform( Objects().ExistingBuildingsBegin(), Objects().ExistingBuildingsEnd(),
-                        std::back_inserter(condition_non_targets),
-                        boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
+        condition_non_targets.reserve(condition_non_targets.size() + Objects().ExistingBuildings().size());
+        std::transform(Objects().ExistingBuildings().begin(), Objects().ExistingBuildings().end(),
+                       std::back_inserter(condition_non_targets),
+                       boost::bind(&std::map<int, std::shared_ptr<UniverseObject>>::value_type::second,_1));
     }
 
     void AddFieldSet(Condition::ObjectSet& condition_non_targets) {
