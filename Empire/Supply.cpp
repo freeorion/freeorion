@@ -391,7 +391,7 @@ void SupplyManager::Update() {
 
                 // todo: other bonuses?
 
-                empire_ranges_here[empire_supply_it->second].insert(empire_supply.first + bonus);
+                empire_ranges_here[empire_supply_it->second + bonus].insert(empire_supply.first);
             }
 
             if (empire_ranges_here.empty())
