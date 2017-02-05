@@ -139,20 +139,20 @@ bool operator!=(const Message& lhs, const Message& rhs)
 void swap(Message& lhs, Message& rhs)
 { lhs.Swap(rhs); }
 
-void BufferToHeader(const int* header_buf, Message& message) {
-    message.m_type = static_cast<Message::MessageType>(header_buf[0]);
-    message.m_sending_player = header_buf[1];
-    message.m_receiving_player = header_buf[2];
-    message.m_synchronous_response = (header_buf[3] != 0);
-    message.m_message_size = header_buf[4];
+void BufferToHeader(const Message::HeaderBuffer& buffer, Message& message) {
+    message.m_type = static_cast<Message::MessageType>(buffer[0]);
+    message.m_sending_player = buffer[1];
+    message.m_receiving_player = buffer[2];
+    message.m_synchronous_response = (buffer[3] != 0);
+    message.m_message_size = buffer[4];
 }
 
-void HeaderToBuffer(const Message& message, int* header_buf) {
-    header_buf[0] = message.Type();
-    header_buf[1] = message.SendingPlayer();
-    header_buf[2] = message.ReceivingPlayer();
-    header_buf[3] = message.SynchronousResponse();
-    header_buf[4] = message.Size();
+void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer) {
+    buffer[0] = message.Type();
+    buffer[1] = message.SendingPlayer();
+    buffer[2] = message.ReceivingPlayer();
+    buffer[3] = message.SynchronousResponse();
+    buffer[4] = message.Size();
 }
 
 ////////////////////////////////////////////////

@@ -36,7 +36,7 @@ private:
 
 namespace {
     void WriteMessage(boost::asio::ip::tcp::socket& socket, const Message& message) {
-        int header_buf[5];
+        Message::HeaderBuffer header_buf;
         HeaderToBuffer(message, header_buf);
         std::vector<boost::asio::const_buffer> buffers;
         buffers.push_back(boost::asio::buffer(header_buf));
@@ -261,9 +261,9 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         }
     } else {
         m_new_connection = false;
-        assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE);
-        if (static_cast<int>(bytes_transferred) == HEADER_SIZE) {
-            BufferToHeader(m_incoming_header_buffer.data(), m_incoming_message);
+        assert(bytes_transferred <= Message::HeaderBufferSize);
+        if (bytes_transferred == Message::HeaderBufferSize) {
+            BufferToHeader(m_incoming_header_buffer, m_incoming_message);
             m_incoming_message.Resize(m_incoming_header_buffer[4]);
             boost::asio::async_read(
                 m_socket,

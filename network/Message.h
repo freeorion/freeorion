@@ -11,9 +11,11 @@
 #undef int64_t
 #endif
 
-#include <string>
+#include <array>
 #include <map>
+#include <string>
 #include <vector>
+
 
 class EmpireManager;
 class SupplyManager;
@@ -38,12 +40,6 @@ namespace Moderator {
     class ModeratorAction;
 }
 
-/** Fills in the relevant portions of \a message with the values in the buffer \a header_buf. */
-FO_COMMON_API void BufferToHeader(const int* header_buf, Message& message);
-
-/** Fills \a header_buf from the relevant portions of \a message. */
-FO_COMMON_API void HeaderToBuffer(const Message& message, int* header_buf);
-
 /** Encapsulates a variable-length char buffer containing a message to be passed
   * among the server and one or more clients.  Note that std::string is often
   * thread unsafe on many platforms, so a dynamically allocated char array is
@@ -51,6 +47,11 @@ FO_COMMON_API void HeaderToBuffer(const Message& message, int* header_buf);
   * misbehave as well.) */
 class FO_COMMON_API Message {
 public:
+    typedef std::array<int, 5> HeaderBuffer;
+
+    constexpr static size_t HeaderBufferSize =
+        std::tuple_size<HeaderBuffer>::value * sizeof(HeaderBuffer::value_type);
+
     /** Represents the type of the message */
     GG_CLASS_ENUM(MessageType,
         UNDEFINED = 0,
@@ -150,8 +151,14 @@ private:
 
     boost::shared_array<char> m_message_text;
 
-    friend void BufferToHeader(const int* header_buf, Message& message);
+    friend void BufferToHeader(const HeaderBuffer&, Message&);
 };
+
+/** Fills in the relevant portions of \a message with the values in the buffer \a buffer. */
+FO_COMMON_API void BufferToHeader(const Message::HeaderBuffer& buffer, Message& message);
+
+/** Fills \a header_buf from the relevant portions of \a message. */
+FO_COMMON_API void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer);
 
 bool operator==(const Message& lhs, const Message& rhs);
 bool operator!=(const Message& lhs, const Message& rhs);

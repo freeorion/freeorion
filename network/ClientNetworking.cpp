@@ -21,9 +21,6 @@ using namespace Networking;
 namespace {
     const bool TRACE_EXECUTION = false;
 
-    const int HEADER_SIZE = std::tuple_size<ClientNetworking::MessageHeaderBuffer>::value *
-                            sizeof(ClientNetworking::MessageHeaderBuffer::value_type);
-
     /** A simple client that broadcasts UDP datagrams on the local network for
         FreeOrion servers, and reports any it finds. */
     class ServerDiscoverer {
@@ -369,11 +366,11 @@ void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, 
         throw boost::system::system_error(error);
         return;
     }
-    assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE);
-    if (static_cast<int>(bytes_transferred) != HEADER_SIZE)
+    assert(bytes_transferred <= Message::HeaderBufferSize);
+    if (bytes_transferred != Message::HeaderBufferSize)
         return;
 
-    BufferToHeader(m_incoming_header.data(), m_incoming_message);
+    BufferToHeader(m_incoming_header, m_incoming_message);
     m_incoming_message.Resize(m_incoming_header[4]);
     boost::asio::async_read(
         m_socket,
@@ -397,8 +394,8 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::
         return;
     }
 
-    assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE + m_outgoing_header[4]);
-    if (static_cast<int>(bytes_transferred) != HEADER_SIZE + m_outgoing_header[4])
+    assert(static_cast<int>(bytes_transferred) <= static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[4]);
+    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[4])
         return;
 
     m_outgoing_messages.pop_front();
@@ -407,7 +404,7 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::
 }
 
 void ClientNetworking::AsyncWriteMessage() {
-    HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header.data());
+    HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header);
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
     buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
