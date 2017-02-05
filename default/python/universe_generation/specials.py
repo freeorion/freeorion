@@ -22,7 +22,7 @@ def calculate_number_of_specials_to_place(objs):
     return [1 if random.random() > REPEAT_RATE[1] else
             2 if random.random() > REPEAT_RATE[2] else
             3 if random.random() > REPEAT_RATE[3] else 4
-            for __ in objs]
+            for _ in objs]
 
 
 def place_special(specials, obj):
@@ -45,7 +45,6 @@ def place_special(specials, obj):
             chance -= threshold
             continue
 
-        # All prerequisites and the test have been met, now add this special to this universe object.
         fo.add_special(obj, special)
         print "Special", special, "added to", fo.get_name(obj)
 
@@ -100,7 +99,6 @@ def distribute_specials(specials_freq, universe_objects):
     # appart.  Place a special on each one.  Repeat until you run out of specials or objects.
     GALAXY_DECOUPLING_DISTANCE = 6
 
-    i_cache = 0
     while obj_tuple_needing_specials:
         systems_needing_specials = defaultdict(set)
         for (obj, system, specials_count) in obj_tuple_needing_specials:
@@ -124,7 +122,6 @@ def distribute_specials(specials_freq, universe_objects):
                 if neighbor in systems_needing_specials:
                     systems_needing_specials.pop(neighbor)
 
-        i_cache += 1
         print("Caching specials_locations() at {} of {} remaining locations.".
               format(str(len(candidates)), str(len(obj_tuple_needing_specials) + len(candidates))))
         # Get the locations at which each special can be placed
@@ -151,6 +148,7 @@ def distribute_specials(specials_freq, universe_objects):
                 statistics.specials_repeat_dist[0] += 1
                 continue
 
+            # All prerequisites and the test have been met, now add this special to this universe object.
             track_num_placed[obj] += place_special(local_specials, obj)
 
     for num_placed in track_num_placed.values():
