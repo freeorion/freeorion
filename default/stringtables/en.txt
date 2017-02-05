@@ -136,6 +136,12 @@ Resume
 DIFFICULTY
 Difficulty
 
+X
+X Position
+
+Y
+Y Position
+
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
 NEW_FLEET_NAME
@@ -5117,6 +5123,9 @@ System Supply Range
 
 PROPAGATED_SUPPLY_RANGE
 Propagated Supply Range
+
+PROPAGATED_SUPPLY_DISTANCE
+Propagated Supply Distance
 
 ETA
 Turns To Destination

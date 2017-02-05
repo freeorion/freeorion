@@ -709,6 +709,13 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
+
+    } else if (property_name == "PropagatedSupplyDistance") {
+        const std::map<int, float>& ranges = GetSupplyManager().PropagatedSupplyDistances();
+        std::map<int, float>::const_iterator range_it = ranges.find(object->SystemID());
+        if (range_it == ranges.end())
+            return 0.0;
+        return range_it->second;
     }
 
     ErrorLogger() << "Variable<double>::Eval unrecognized object property: "
@@ -1277,6 +1284,8 @@ namespace {
             return GetSupplyManager().PropagatedSupplyRanges(empire_id);
         if (parsed_map_name == "SystemSupplyRange")
             return empire->SystemSupplyRanges();
+        if (parsed_map_name == "PropegatedSupplyDistance")
+            return GetSupplyManager().PropagatedSupplyDistances(empire_id);
 
         return EMPTY_INT_FLOAT_MAP;
     }
@@ -1750,7 +1759,8 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
 
     // empire properties indexed by integers
     if (variable_name == "PropegatedSystemSupplyRange" ||
-        variable_name == "SystemSupplyRange")
+        variable_name == "SystemSupplyRange" ||
+        variable_name == "PropegatedSystemSupplyDistance")
     {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {

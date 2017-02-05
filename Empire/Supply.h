@@ -50,6 +50,15 @@ public:
       * can propagate supply.*/
     const std::map<int, float>&                             PropagatedSupplyRanges(int empire_id) const;
 
+    /** Returns the distance from each system some empire is away
+      * from its closest source of supply without passing
+      * through obstructed systems for that empire. */
+    const std::map<int, float>&                             PropagatedSupplyDistances() const;
+    /** Returns the distance from each system for the empire with id
+      * \a empire_id to the closest source of supply without passing
+      * through obstructed systems for that empire. */
+    const std::map<int, float>&                             PropagatedSupplyDistances(int empire_id) const;
+
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;
@@ -68,21 +77,21 @@ public:
 private:
     /** ordered pairs of system ids between which a starlane runs that can be
         used to convey resources between systems. indexed first by empire id. */
-    std::map<int, std::set<std::pair<int, int>>>  m_supply_starlane_traversals;
+    std::map<int, std::set<std::pair<int, int>>>    m_supply_starlane_traversals;
 
     /** ordered pairs of system ids between which a starlane could be used to
         convey resources between system, but is not because something is
         obstructing the resource flow.  That is, the resource flow isn't limited
         by range, but by something blocking its flow. */
-    std::map<int, std::set<std::pair<int, int>>>  m_supply_starlane_obstructed_traversals;
+    std::map<int, std::set<std::pair<int, int>>>    m_supply_starlane_obstructed_traversals;
 
     /** ids of systems where fleets can be resupplied. indexed by empire id. */
-    std::map<int, std::set<int>>                   m_fleet_supplyable_system_ids;
+    std::map<int, std::set<int>>                    m_fleet_supplyable_system_ids;
 
     /** sets of system ids that are connected by supply lines and are able to
         share resources between systems or between objects in systems. indexed
         by empire id. */
-    std::map<int, std::set<std::set<int>>>        m_resource_supply_groups;
+    std::map<int, std::set<std::set<int>>>          m_resource_supply_groups;
 
     /** for whichever empire can propagate supply into this system, what is the
         additional range from this system that empire can propagate supply */
@@ -92,6 +101,19 @@ private:
       * further supply jumps it could propagate past this system, if not blocked
       * from doing so by supply obstructions. */
     std::map<int, std::map<int, float>>             m_empire_propagated_supply_ranges;
+
+    /** for whichever empire can propagate supply into this system, how far
+      * that system is from the closest source of supply for that empire, along
+      * possible supply propgation connections (ie. not though a supply
+      * obstructed system for that empire) */
+    std::map<int, float>                            m_propagated_supply_distances;
+
+    /** for each empire, what systems it can propagate supply into, and how far
+      * that system is from the closest source of supply for that empire, along
+      * possible supply propgation connections (ie. not though a supply
+      * obstructed system) */
+    std::map<int, std::map<int, float>>             m_empire_propagated_supply_distances;
+
 
     friend class boost::serialization::access;
     template <class Archive>

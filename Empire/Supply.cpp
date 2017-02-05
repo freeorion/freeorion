@@ -113,6 +113,18 @@ const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id)
     return emp_it->second;
 }
 
+const std::map<int, float>& SupplyManager::PropagatedSupplyDistances() const
+{
+    return m_propagated_supply_distances;
+}
+
+const std::map<int, float>& SupplyManager::PropagatedSupplyDistances(int empire_id) const {
+    auto emp_it = m_empire_propagated_supply_distances.find(empire_id);
+    if (emp_it == m_empire_propagated_supply_distances.end())
+        return EMPTY_INT_FLOAT_MAP;
+    return emp_it->second;
+}
+
 bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const {
     if (system_id == INVALID_OBJECT_ID)
         return false;
@@ -659,9 +671,18 @@ void SupplyManager::Update() {
             if (supply_range.second.first < 0.0f)
                 continue;   // negative supply doesn't count... zero does (it just reaches)
             m_fleet_supplyable_system_ids[empire_id].insert(supply_range.first);
+
             // should be only one empire per system at this point, but use max just to be safe...
-            m_propagated_supply_ranges[supply_range.first] = std::max(supply_range.second.first, m_propagated_supply_ranges[supply_range.first]);
-            m_empire_propagated_supply_ranges[empire_id][supply_range.first] = m_propagated_supply_ranges[supply_range.first];
+            m_propagated_supply_ranges[supply_range.first] =
+                std::max(supply_range.second.first, m_propagated_supply_ranges[supply_range.first]);
+            m_empire_propagated_supply_ranges[empire_id][supply_range.first] =
+                m_propagated_supply_ranges[supply_range.first];
+
+            // should be only one empire per system at this point, but use max just to be safe...
+            m_propagated_supply_distances[supply_range.first] =
+                std::max(supply_range.second.second, m_propagated_supply_distances[supply_range.first]);
+            m_empire_propagated_supply_distances[empire_id][supply_range.first] =
+                m_propagated_supply_distances[supply_range.first];
         }
     }
 

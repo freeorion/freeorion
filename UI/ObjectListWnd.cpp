@@ -102,6 +102,12 @@ namespace {
             new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
     }
 
+    ValueRef::Variable<std::string>* SystemSupplyDistanceValueRef() {
+        return StringCastedComplexValueRef<double>("PropagatedSupplyDistance",
+            nullptr,
+            new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
+    }
+
     template <typename T>
     ValueRef::Variable<std::string>* UserStringCastedValueRef(const std::string& token) {
         return new ValueRef::UserStringLookup<std::string>(
@@ -135,54 +141,56 @@ namespace {
         static std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*> col_types;
         if (col_types.empty()) {
             // General
-            col_types[{UserStringNop("NAME"),                 ""}] =  StringValueRef("Name");
-            col_types[{UserStringNop("OBJECT_TYPE"),          ""}] =  UserStringValueRef("TypeName");
-            col_types[{UserStringNop("ID"),                   ""}] =  StringCastedValueRef<int>("ID");
-            col_types[{UserStringNop("CREATION_TURN"),        ""}] =  StringCastedValueRef<int>("CreationTurn");
-            col_types[{UserStringNop("AGE"),                  ""}] =  StringCastedValueRef<int>("Age");
-            col_types[{UserStringNop("SYSTEM"),               ""}] =  ObjectNameValueRef("SystemID");
-            col_types[{UserStringNop("STAR_TYPE"),            ""}] =  UserStringCastedValueRef<StarType>("StarType");
-            col_types[{UserStringNop("BUILDING_TYPE"),        ""}] =  UserStringValueRef("BuildingType");
-            col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),""}] =  StringCastedValueRef<int>("LastTurnBattleHere");
-            col_types[{UserStringNop("NUM_SPECIALS"),         ""}] =  StringCastedValueRef<int>("NumSpecials");
-            col_types[{UserStringNop("SPECIALS"),             ""}] =  UserStringVecValueRef("Specials");
-            col_types[{UserStringNop("TAGS"),                 ""}] =  UserStringVecValueRef("Tags");
-
+            col_types[{UserStringNop("NAME"),                   ""}] =  StringValueRef("Name");
+            col_types[{UserStringNop("OBJECT_TYPE"),            ""}] =  UserStringValueRef("TypeName");
+            col_types[{UserStringNop("ID"),                     ""}] =  StringCastedValueRef<int>("ID");
+            col_types[{UserStringNop("CREATION_TURN"),          ""}] =  StringCastedValueRef<int>("CreationTurn");
+            col_types[{UserStringNop("AGE"),                    ""}] =  StringCastedValueRef<int>("Age");
+            col_types[{UserStringNop("SYSTEM"),                 ""}] =  ObjectNameValueRef("SystemID");
+            col_types[{UserStringNop("STAR_TYPE"),              ""}] =  UserStringCastedValueRef<StarType>("StarType");
+            col_types[{UserStringNop("BUILDING_TYPE"),          ""}] =  UserStringValueRef("BuildingType");
+            col_types[{UserStringNop("LAST_TURN_BATTLE_HERE"),  ""}] =  StringCastedValueRef<int>("LastTurnBattleHere");
+            col_types[{UserStringNop("NUM_SPECIALS"),           ""}] =  StringCastedValueRef<int>("NumSpecials");
+            col_types[{UserStringNop("SPECIALS"),               ""}] =  UserStringVecValueRef("Specials");
+            col_types[{UserStringNop("TAGS"),                   ""}] =  UserStringVecValueRef("Tags");
+            col_types[{UserStringNop("X"),                      ""}] =  StringCastedValueRef<double>("X");
+            col_types[{UserStringNop("Y"),                      ""}] =  StringCastedValueRef<double>("Y");
             // empire
-            col_types[{UserStringNop("SUPPLYING_EMPIRE"),     ""}] =  EmpireNameValueRef("SupplyingEmpire");
-            col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),  ""}] =  SystemSupplyRangeValueRef(false);
-            col_types[{UserStringNop("PROPAGATED_SUPPLY_RANGE"),""}]= SystemSupplyRangeValueRef(true);
-            col_types[{UserStringNop("OWNER"),                ""}] =  EmpireNameValueRef("Owner");
-            col_types[{UserStringNop("PRODUCED_BY"),          ""}] =  EmpireNameValueRef("ProducedByEmpireID");
+            col_types[{UserStringNop("SUPPLYING_EMPIRE"),       ""}] =  EmpireNameValueRef("SupplyingEmpire");
+            col_types[{UserStringNop("SYSTEM_SUPPLY_RANGE"),    ""}] =  SystemSupplyRangeValueRef(false);
+            col_types[{UserStringNop("PROPAGATED_SUPPLY_RANGE"),""}] =  SystemSupplyRangeValueRef(true);
+            col_types[{UserStringNop("PROPAGATED_SUPPLY_DISTANCE"),""}]=SystemSupplyDistanceValueRef();
+            col_types[{UserStringNop("OWNER"),                  ""}] =  EmpireNameValueRef("Owner");
+            col_types[{UserStringNop("PRODUCED_BY"),            ""}] =  EmpireNameValueRef("ProducedByEmpireID");
 
             // planet
-            col_types[{UserStringNop("SPECIES"),                      UserStringNop("PLANETS_SUBMENU")}] =UserStringValueRef("Species");
-            col_types[{UserStringNop("FOCUS"),                        UserStringNop("PLANETS_SUBMENU")}] =UserStringValueRef("Focus");
-            col_types[{UserStringNop("PREFERRED_FOCUS"),              UserStringNop("PLANETS_SUBMENU")}] =UserStringValueRef("PreferredFocus");
-            col_types[{UserStringNop("TURNS_SINCE_FOCUS_CHANGE"),     UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<int>("TurnsSinceFocusChange");
-            col_types[{UserStringNop("SIZE_AS_DOUBLE"),               UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("SizeAsDouble");
-            col_types[{UserStringNop("NEXT_TURN_POP_GROWTH"),         UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("NextTurnPopGrowth");
-            col_types[{UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE"),  UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("DistanceFromOriginalType");
-            col_types[{UserStringNop("PLANET_TYPE"),                  UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetType>("PlanetType");
-            col_types[{UserStringNop("ORIGINAL_TYPE"),                UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetType>("OriginalType");
-            col_types[{UserStringNop("NEXT_TOWARDS_ORIGINAL_TYPE"),   UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetType>("NextCloserToOriginalPlanetType");
-            col_types[{UserStringNop("PLANET_SIZE"),                  UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetSize>("PlanetSize");
-            col_types[{UserStringNop("PLANET_ENVIRONMENT"),           UserStringNop("PLANETS_SUBMENU")}] =UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
-            col_types[{UserStringNop("SUPPLY_RANGE"),                 UserStringNop("PLANETS_SUBMENU")}] =StringCastedValueRef<double>("PropagatedSupplyRange");
-            col_types[{UserStringNop("AVAILABLE_FOCI"),               UserStringNop("PLANETS_SUBMENU")}] =UserStringVecValueRef("AvailableFoci");
+            col_types[{UserStringNop("SPECIES"),                    UserStringNop("PLANETS_SUBMENU")}]= UserStringValueRef("Species");
+            col_types[{UserStringNop("FOCUS"),                      UserStringNop("PLANETS_SUBMENU")}]= UserStringValueRef("Focus");
+            col_types[{UserStringNop("PREFERRED_FOCUS"),            UserStringNop("PLANETS_SUBMENU")}]= UserStringValueRef("PreferredFocus");
+            col_types[{UserStringNop("TURNS_SINCE_FOCUS_CHANGE"),   UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<int>("TurnsSinceFocusChange");
+            col_types[{UserStringNop("SIZE_AS_DOUBLE"),             UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("SizeAsDouble");
+            col_types[{UserStringNop("NEXT_TURN_POP_GROWTH"),       UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("NextTurnPopGrowth");
+            col_types[{UserStringNop("DISTANCE_FROM_ORIGINAL_TYPE"),UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("DistanceFromOriginalType");
+            col_types[{UserStringNop("PLANET_TYPE"),                UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetType>("PlanetType");
+            col_types[{UserStringNop("ORIGINAL_TYPE"),              UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetType>("OriginalType");
+            col_types[{UserStringNop("NEXT_TOWARDS_ORIGINAL_TYPE"), UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetType>("NextCloserToOriginalPlanetType");
+            col_types[{UserStringNop("PLANET_SIZE"),                UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetSize>("PlanetSize");
+            col_types[{UserStringNop("PLANET_ENVIRONMENT"),         UserStringNop("PLANETS_SUBMENU")}]= UserStringCastedValueRef<PlanetEnvironment>("PlanetEnvironment");
+            col_types[{UserStringNop("SUPPLY_RANGE"),               UserStringNop("PLANETS_SUBMENU")}]= StringCastedValueRef<double>("PropagatedSupplyRange");
+            col_types[{UserStringNop("AVAILABLE_FOCI"),             UserStringNop("PLANETS_SUBMENU")}]= UserStringVecValueRef("AvailableFoci");
 
             // ship/fleet
-            col_types[{UserStringNop("SPECIES"),                      UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");
-            col_types[{UserStringNop("DESIGN_WND_DESIGN_NAME"),       UserStringNop("FLEETS_SUBMENU")}] = DesignNameValueRef("DesignID");
-            col_types[{UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE"),   UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnActiveInBattle");
-            col_types[{UserStringNop("ARRIVED_ON_TURN"),              UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("ArrivedOnTurn");
-            col_types[{UserStringNop("ETA"),                          UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("ETA");
-            col_types[{UserStringNop("FINAL_DEST"),                   UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("FinalDestinationID");
-            col_types[{UserStringNop("NEXT_SYSTEM"),                  UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NextSystemID");
-            col_types[{UserStringNop("PREV_SYSTEM"),                  UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("PreviousSystemID");
-            col_types[{UserStringNop("NEAREST_SYSTEM"),               UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NearestSystemID");
-            col_types[{UserStringNop("HULL"),                         UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Hull");
-            col_types[{UserStringNop("PARTS"),                        UserStringNop("FLEETS_SUBMENU")}] = UserStringVecValueRef("Parts");
+            col_types[{UserStringNop("SPECIES"),                    UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Species");
+            col_types[{UserStringNop("DESIGN_WND_DESIGN_NAME"),     UserStringNop("FLEETS_SUBMENU")}] = DesignNameValueRef("DesignID");
+            col_types[{UserStringNop("LAST_TURN_ACTIVE_IN_BATTLE"), UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("LastTurnActiveInBattle");
+            col_types[{UserStringNop("ARRIVED_ON_TURN"),            UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("ArrivedOnTurn");
+            col_types[{UserStringNop("ETA"),                        UserStringNop("FLEETS_SUBMENU")}] = StringCastedValueRef<int>("ETA");
+            col_types[{UserStringNop("FINAL_DEST"),                 UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("FinalDestinationID");
+            col_types[{UserStringNop("NEXT_SYSTEM"),                UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NextSystemID");
+            col_types[{UserStringNop("PREV_SYSTEM"),                UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("PreviousSystemID");
+            col_types[{UserStringNop("NEAREST_SYSTEM"),             UserStringNop("FLEETS_SUBMENU")}] = ObjectNameValueRef("NearestSystemID");
+            col_types[{UserStringNop("HULL"),                       UserStringNop("FLEETS_SUBMENU")}] = UserStringValueRef("Hull");
+            col_types[{UserStringNop("PARTS"),                      UserStringNop("FLEETS_SUBMENU")}] = UserStringVecValueRef("Parts");
 
             for (MeterType meter = MeterType(0); meter <= METER_SPEED;  // the meter(s) after METER_SPEED are part-specific
                  meter = MeterType(meter + 1))
