@@ -147,7 +147,7 @@ private:
 template <class T>
 struct FO_COMMON_API Constant : public ValueRefBase<T>
 {
-    Constant(T value);
+    explicit Constant(T value);
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
 
@@ -191,9 +191,8 @@ private:
 template <class T>
 struct FO_COMMON_API Variable : public ValueRefBase<T>
 {
+    explicit Variable(ReferenceType ref_type, const std::string& property_name = "");
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
-
-    Variable(ReferenceType ref_type, const std::string& property_name = "");
 
     bool operator==(const ValueRefBase<T>& rhs) const override;
 
@@ -430,8 +429,8 @@ private:
   * and returns the UserString equivalent(s). */
 template <class FromType>
 struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
-    UserStringLookup(Variable<FromType>* value_ref);
-    UserStringLookup(ValueRefBase<FromType>* value_ref);
+    explicit UserStringLookup(Variable<FromType>* value_ref);
+    explicit UserStringLookup(ValueRefBase<FromType>* value_ref);
     ~UserStringLookup();
 
     bool operator==(const ValueRefBase<std::string>& rhs) const override;
