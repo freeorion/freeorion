@@ -130,21 +130,19 @@ class HomeSystemFinder(object):
         # (999, 39) and (199, 19) the following was observered.  The distribution of candidate
         # length is a normal random variable with standard deviation approximately equal to
 
-        expected_len_candidate_std = (self.len_systems ** (1.0/2.0)) * 0.03
+        # expected_len_candidate_std = (self.len_systems ** (1.0/2.0)) * 0.03
 
-        # So if the mean of the length of the candidates is with 1/2 std of the target
-        # num_home_systems then there is a 90% expectation of hitting the goal within 6 tries.
-        # Otherwise quit and try an easier problem.
-        lowest_continuable_mean_len_of_candidates = (self.num_home_systems - 0.5 * expected_len_candidate_std)
-        print ("Len systems pool {}. Threshold STD is {}. Low threshold {}".format(
-            len(systems_pool), expected_len_candidate_std, lowest_continuable_mean_len_of_candidates))
+        # which is about 1 for 1000 systems.  It is likely that anylen(candidate) is within 1
+        # standard deviation of the expected len(candidate)
 
-        lens_of_failed_candidates = []
+        # If we are within the miss_threshold of the target then try up to num_complete_misses more times.
+        miss_threshold = 3
+        num_complete_misses_remaining = 4
 
         # Cap the number of attempts to the smaller of the number of systems in the pool, or 100
         attempts = min(100, len(systems_pool))
 
-        while attempts:
+        while attempts and num_complete_misses_remaining:
             # use a local pool of all candidate systems better than the worst threshold merit
             all_merit_system = [(m, s) for (m, s) in all_merit_system if m > current_merit_lower_bound]
             local_pool = {s for (m, s) in all_merit_system}
@@ -167,15 +165,11 @@ class HomeSystemFinder(object):
                 # remove all neighbors from the local pool
                 local_pool -= set(get_systems_within_jumps(member, min_jumps))
 
+            # Count complete misses when number of candidates is not close to the target.
+            if len(candidate) < (self.num_home_systems - miss_threshold):
+                num_complete_misses_remaining -= 1
+
             if len(candidate) < self.num_home_systems:
-
-                # Break if the normal distribution of failed candidates is too much smaller than
-                # the target number of systems
-                lens_of_failed_candidates.append(len(candidate))
-                mean_len_of_failed_candidates = sum(lens_of_failed_candidates) / float(len(lens_of_failed_candidates))
-                if mean_len_of_failed_candidates < lowest_continuable_mean_len_of_candidates:
-                    break
-
                 continue
 
             # Calculate the merit of the current attempt.  If it is the best so far
@@ -191,7 +185,6 @@ class HomeSystemFinder(object):
                        "{}".format(current_merit_lower_bound, merit))
                 current_merit_lower_bound = merit
                 best_candidate = [s for (_, s) in merit_system]
-                lens_of_failed_candidates = []
 
                 # Quit sucessfully if the lowest merit system meets the minimum threshold
                 if merit >= min_planets_in_vicinity_limit(get_systems_within_jumps(system, HS_VICINITY_RANGE)):
