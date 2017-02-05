@@ -5,6 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 36 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = "LRN_TRANSLING_THT"
     unlock = Item type = building name = "BLD_XENORESURRECTION_LAB"
     graphic = "icons/tech/xenoarchaeology.png"

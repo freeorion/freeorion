@@ -5,6 +5,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 80 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "LRN_FORCE_FIELD"
     effectsgroups =
         EffectsGroup
@@ -26,6 +27,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 120 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_PLAN_BARRIER_SHLD_1"
     effectsgroups =
         EffectsGroup
@@ -47,6 +49,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 240 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_PLAN_BARRIER_SHLD_2"
     effectsgroups =
         EffectsGroup
@@ -68,6 +71,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 10
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_PLAN_BARRIER_SHLD_3"
     effectsgroups =
         EffectsGroup
@@ -89,6 +93,7 @@ Tech
     category = "DEFENSE_CATEGORY"
     researchcost = 1200* [[TECH_COST_MULTIPLIER]]
     researchturns = 12
+    tags = [ "PEDIA_DEFENSE_CATEGORY" ]
     prerequisites = "DEF_PLAN_BARRIER_SHLD_4"
     effectsgroups =
         EffectsGroup

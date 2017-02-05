@@ -1,0 +1,6 @@
+Article
+    name = "SHIELD_PART_TECHS"
+    category = "SHIP_PARTS_CATEGORY"
+    short_description = "SHIELD_PART_TECHS"
+    description = "SHIELD_PART_TECHS_DESC"
+    icon = "icons/ship_parts/defense_grid.png"

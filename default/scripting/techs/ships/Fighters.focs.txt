@@ -5,6 +5,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 6 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_FIGHTER_TECHS" ]
     prerequisites = "SHP_ROOT_AGGRESSION"
     unlock = [
         Item type = ShipPart name = "FT_BAY_1"
@@ -21,6 +22,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 20 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_FIGHTER_TECHS" ]
     prerequisites = [
         "SHP_WEAPON_2_1"
         "SHP_FIGHTERS_1"
@@ -51,6 +53,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 100 * [[TECH_COST_MULTIPLIER]]
     researchturns = 2
+    tags = [ "PEDIA_FIGHTER_TECHS" ]
     prerequisites = [
         "SHP_WEAPON_3_1"
         "SHP_FIGHTERS_2"
@@ -81,6 +84,7 @@ Tech
     category = "SHIP_WEAPONS_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_FIGHTER_TECHS" ]
     prerequisites = [
         "SHP_WEAPON_4_1"
         "SHP_FIGHTERS_3"

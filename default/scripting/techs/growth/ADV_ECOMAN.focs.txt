@@ -5,7 +5,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    tags = "THEORY"
+    tags = [ "PEDIA_GROWTH_CATEGORY" "THEORY" ]
     prerequisites = "GRO_SUBTER_HAB"
     graphic = "icons/tech/advanced_eco_man.png"
 

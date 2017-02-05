@@ -5,6 +5,7 @@ Tech
     category = "SHIP_HULLS_CATEGORY"
     researchcost = 200 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_ORGANIC_HULL_TECHS" ]
     prerequisites = [
         "SHP_BIOADAPTIVE_SPEC"
         "SHP_CONT_BIOADAPT"

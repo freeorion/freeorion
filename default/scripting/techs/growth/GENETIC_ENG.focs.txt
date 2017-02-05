@@ -5,7 +5,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 4 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
-    tags = "THEORY"
+    tags = [ "PEDIA_GROWTH_CATEGORY" "THEORY" ]
     graphic = "icons/tech/genetic_engineering.png"
 
 #include "/scripting/common/base_prod.macros"

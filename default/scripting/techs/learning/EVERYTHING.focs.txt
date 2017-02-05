@@ -5,7 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 400 * [[TECH_COST_MULTIPLIER]]
     researchturns = 6
-    tags = "THEORY"
+    tags = [ "PEDIA_LEARNING_CATEGORY" "THEORY" ]
     prerequisites = "LRN_GRAVITONICS"
     graphic = "icons/tech/the_theory_of_everything.png"
 

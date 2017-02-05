@@ -5,6 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 400 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
+    tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = [
         "LRN_GATEWAY_VOID"
         "LRN_QUANT_NET"

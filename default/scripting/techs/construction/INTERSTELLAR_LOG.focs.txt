@@ -5,6 +5,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = "CON_ORBITAL_CON"
     effectsgroups = EffectsGroup
             scope = And [

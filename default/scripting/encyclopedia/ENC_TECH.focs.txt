@@ -1,6 +1,6 @@
 Article
     name = "ENC_TECH"
     category = "ENC_TECH"
-    short_description = "TECHNOLOGIES_TITLE"
-    description = "TECHNOLOGIES_TEXT"
+    short_description = "ENC_TECH"
+    description = "ENC_TECH_DESC"
     icon = "icons/meter/research.png"

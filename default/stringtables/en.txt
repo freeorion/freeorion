@@ -3771,6 +3771,14 @@ Ship Hull
 ENC_TECH
 Technologies
 
+ENC_TECH_DESC
+'''New effects, improved planetary stats, buildings, and ship parts can be unlocked by researching the associated technologies.
+
+Completing [[metertype METER_RESEARCH]] on a technology that unlocks an item will only give an empire the knowledge of how to construct that item. Actually constructing such an item may have other requirements, such as access to a certain resource.
+If an item has been unlocked and is not available to build, the additional requirements can be checked by displaying the hover text on the items listing in the Production window (with [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] selected).
+
+Generally, an item unlocked by a newly researched technology does not require [[metertype METER_SUPPLY]] line connections to be available or active (e.g. a building or a planetary meter improvement). However, if a tech which improves a ship part is researched (e.g. a weapon), the already-existing ships must be in supply range, stationary, and not in combat, in order to receive the upgrade during the following turn.'''
+
 ENC_SPECIAL
 Special
 
@@ -4652,17 +4660,6 @@ Protection Focus
 
 PROTECTION_FOCUS_TEXT
 The Protection focus represents a planet wholly focused on defending itself. [[metertype METER_TROOPS]], Planetary [[metertype METER_DEFENSE]], and Planetary [[metertype METER_SHIELD]] are doubled.
-
-TECHNOLOGIES_TITLE
-Technologies
-
-TECHNOLOGIES_TEXT
-'''New effects, improved planetary stats, buildings, and ship parts can be unlocked by researching the associated technologies.
-
-Completing [[metertype METER_RESEARCH]] on a technology that unlocks an item will only give an empire the knowledge of how to construct that item. Actually constructing such an item may have other requirements, such as access to a certain resource.
-If an item has been unlocked and is not available to build, the additional requirements can be checked by displaying the hover text on the items listing in the Production window (with [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] selected).
-
-Generally, an item unlocked by a newly researched technology does not require [[metertype METER_SUPPLY]] line connections to be available or active (e.g. a building or a planetary meter improvement). However, if a tech which improves a ship part is researched (e.g. a weapon), the already-existing ships must be in supply range, stationary, and not in combat, in order to receive the upgrade during the following turn.'''
 
 ARMOR_TITLE
 Armor Plating
@@ -8851,30 +8848,146 @@ DESC_HAS_TAG_NOT
 LEARNING_CATEGORY
 Learning
 
+LEARNING_CATEGORY_DESC
+Technologies related to learning.
+
 PRODUCTION_CATEGORY
 Production
+
+PRODUCTION_CATEGORY_DESC
+Technologies related to production.
 
 CONSTRUCTION_CATEGORY
 Construction
 
+CONSTRUCTION_CATEGORY_DESC
+Technologies related to construction.
+
 GROWTH_CATEGORY
 Growth
+
+GROWTH_CATEGORY_DESC
+Technologies related to growth.
 
 SHIP_HULLS_CATEGORY
 Ship Hulls
 
+SHIP_HULLS_CATEGORY_DESC
+Technologies related to Ship Hulls
+
+ASTEROID_HULL_TECHS
+Asteroid Line
+
+ASTEROID_HULL_TECHS_DESC
+Technologies related to the Asteroid line of ship hulls.
+
+ENERGY_HULL_TECHS
+Energy Line
+
+ENERGY_HULL_TECHS_DESC
+Technologies related to the Energy line of ship hulls.
+
+ORGANIC_HULL_TECHS
+Organic Line
+
+ORGANIC_HULL_TECHS_DESC
+Technologies related to the Organic line of ship hulls.
+
+ROBOTIC_HULL_TECHS
+Robotic Line
+
+ROBOTIC_HULL_TECHS_DESC
+Technologies related to the Robotic line of ship hulls.
+
 SHIP_PARTS_CATEGORY
-Engineering
+Ship Engineering
+
+SHIP_PARTS_CATEGORY_DESC
+Technologies related to ship engineering.
+
+SHIELD_PART_TECHS
+Shields
+
+SHIELD_PART_TECHS_DESC
+Technologies related to ship shield parts.
+
+ENGINE_PART_TECHS
+Engines
+
+ENGINE_PART_TECHS_DESC
+Technologies related to ship engine parts.
+
+FUEL_PART_TECHS
+Fuel
+
+FUEL_PART_TECHS_DESC
+Technologies related to ship fuel parts.
+
+ARMOR_PART_TECHS
+Armor
+
+ARMOR_PART_TECHS_DESC
+Technologies related to ship armor parts.
+
+STEALTH_PART_TECHS
+Stealth
+
+STEALTH_PART_TECHS_DESC
+Technologies related to ship stealth parts.
+
+DETECTION_PART_TECHS
+Detection
+
+DETECTION_PART_TECHS_DESC
+Technologies related to ship detection parts.
+
+DAMAGE_CONTROL_PART_TECHS
+Damage Control
+
+DAMAGE_CONTROL_PART_TECHS_DESC
+Technologies related to ship damage control.
 
 SHIP_WEAPONS_CATEGORY
 Ship Weapons
 
+SHIP_WEAPONS_CATEGORY_DESC
+Technologies related to ship weapons.
+
+SR_WEAPON_TECHS
+Short-Range Weapons
+
+SR_WEAPON_TECHS_DESC
+Technologies related to short-range ship weapons.
+
+FIGHTER_TECHS
+Fighters
+
+FIGHTER_TECHS_DESC
+Technologies related to ship based fighters.
+
+BOMBARD_WEAPON_TECHS
+Bombardment
+
+BOMBARD_WEAPON_TECHS_DESC
+Technologies related to ship weapons for bombardment.
+
 DEFENSE_CATEGORY
 Defense
+
+DEFENSE_CATEGORY_DESC
+Technologies related to planet and system defense.
 
 SPY_CATEGORY
 Intelligence
 
+SPY_CATEGORY_DESC
+Technologies related to intelligence.
+
+EXTINCT_SPECIES_TECHS
+Extinct Species
+
+EXTINCT_SPECIES_TECHS_DESC
+Technologies related to extinct species.
 
 ##
 ## Technology theories

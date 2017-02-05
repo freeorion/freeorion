@@ -8,7 +8,7 @@ Tech
         HasTag name = "TELEPATHIC"
     ])
     researchturns = 4
-    tags = "THEORY"
+    tags = [ "PEDIA_LEARNING_CATEGORY" "THEORY" ]
     prerequisites = "LRN_TRANSLING_THT"
     graphic = "icons/tech/psionics.png"
 

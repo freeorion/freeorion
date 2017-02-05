@@ -5,6 +5,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
+    tags = [ "PEDIA_GROWTH_CATEGORY" ]
     prerequisites = [
         "GRO_SYMBIOTIC_BIO"
         "GRO_GENETIC_MED"

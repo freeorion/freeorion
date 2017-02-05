@@ -5,6 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 12 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_LEARNING_CATEGORY" ]
     effectsgroups = [
         EffectsGroup
             scope = And [

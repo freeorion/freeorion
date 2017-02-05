@@ -1,0 +1,6 @@
+Article
+    name = "PRODUCTION_CATEGORY"
+    category = "ENC_TECH"
+    short_description = "PRODUCTION_CATEGORY"
+    description = "PRODUCTION_CATEGORY_DESC"
+    icon = "icons/tech/categories/production.png"

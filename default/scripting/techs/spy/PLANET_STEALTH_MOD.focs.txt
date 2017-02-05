@@ -6,6 +6,7 @@ Tech
     researchcost = 1
     researchturns = 1
     Unresearchable
+    tags = [ "PEDIA_SPY_CATEGORY" ]
     effectsgroups =
         EffectsGroup
             scope = OR [

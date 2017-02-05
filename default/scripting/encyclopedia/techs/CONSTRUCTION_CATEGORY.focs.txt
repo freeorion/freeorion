@@ -1,0 +1,6 @@
+Article
+    name = "CONSTRUCTION_CATEGORY"
+    category = "ENC_TECH"
+    short_description = "CONSTRUCTION_CATEGORY"
+    description = "CONSTRUCTION_CATEGORY_DESC"
+    icon = "icons/tech/categories/construction.png"

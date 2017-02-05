@@ -5,7 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 500 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
-    tags = "THEORY"
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" "THEORY" ]
     prerequisites = [
         "PRO_NDIM_ASSMB"
         "PRO_SINGULAR_GEN"

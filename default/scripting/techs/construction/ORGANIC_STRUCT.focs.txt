@@ -5,6 +5,7 @@ Tech
     category = "CONSTRUCTION_CATEGORY"
     researchcost = 150 * [[TECH_COST_MULTIPLIER]]
     researchturns = 8
+    tags = [ "PEDIA_CONSTRUCTION_CATEGORY" ]
     prerequisites = [
         "CON_CONTGRAV_ARCH"
         "CON_FRC_ENRG_STRC"

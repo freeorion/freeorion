@@ -5,6 +5,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 250 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
+    tags = [ "PEDIA_GROWTH_CATEGORY" ]
     prerequisites = "PRO_MICROGRAV_MAN"
     effectsgroups = [
         EffectsGroup

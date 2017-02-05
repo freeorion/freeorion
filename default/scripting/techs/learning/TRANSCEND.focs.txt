@@ -5,6 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 500 * GalaxySize * [[TECH_COST_MULTIPLIER]]
     researchturns = 20
+    tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = [
         "CON_TRANS_ARCH"
         "LRN_PSY_DOM"

@@ -5,6 +5,7 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 125 * [[TECH_COST_MULTIPLIER]]
     researchturns = 3
+    tags = [ "PEDIA_SPY_CATEGORY" ]
     prerequisites = "CON_FRC_ENRG_STRC"
     effectsgroups =
         EffectsGroup

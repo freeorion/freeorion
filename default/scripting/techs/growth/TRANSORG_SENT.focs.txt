@@ -5,7 +5,7 @@ Tech
     category = "GROWTH_CATEGORY"
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 7
-    tags = "THEORY"
+    tags = [ "PEDIA_GROWTH_CATEGORY" "THEORY" ]
     prerequisites = [
         "GRO_TERRAFORM"
     ]

@@ -5,6 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = "PRO_SENTIENT_AUTOMATION"
     unlock = Item type = Building name = "BLD_COL_EXOBOT"
 

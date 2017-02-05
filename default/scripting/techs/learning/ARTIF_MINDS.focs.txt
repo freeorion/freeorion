@@ -5,6 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 25 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = "LRN_ALGO_ELEGANCE"
     effectsgroups = [
         EffectsGroup

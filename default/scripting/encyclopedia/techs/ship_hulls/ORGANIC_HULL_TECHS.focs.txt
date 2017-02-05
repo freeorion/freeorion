@@ -1,0 +1,6 @@
+Article
+    name = "ORGANIC_HULL_TECHS"
+    category = "SHIP_HULLS_CATEGORY"
+    short_description = "ORGANIC_HULL_TECHS"
+    description = "ORGANIC_HULL_TECHS_DESC"
+    icon = "icons//ship_hulls/organic_hull_small.png"

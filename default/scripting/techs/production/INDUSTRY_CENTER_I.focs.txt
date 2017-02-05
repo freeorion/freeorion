@@ -5,6 +5,7 @@ Tech
     category = "PRODUCTION_CATEGORY"
     researchcost = 30 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = [ "PEDIA_PRODUCTION_CATEGORY" ]
     prerequisites = "PRO_ROBOTIC_PROD"
     unlock = Item type = Building name = "BLD_INDUSTRY_CENTER"
     graphic = "icons/tech/industrial_centre_i.png"

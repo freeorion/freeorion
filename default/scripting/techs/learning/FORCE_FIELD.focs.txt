@@ -5,6 +5,7 @@ Tech
     category = "LEARNING_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_LEARNING_CATEGORY" ]
     prerequisites = "LRN_ARTIF_MINDS"
     unlock = Item type = ShipPart name = "SH_DEFENSE_GRID"
     effectsgroups = [

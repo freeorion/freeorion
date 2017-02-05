@@ -5,6 +5,7 @@ Tech
     category = "SHIP_HULLS_CATEGORY"
     researchcost = 120 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
+    tags = [ "PEDIA_ENERGY_HULL_TECHS" ]
     prerequisites = [
         "SHP_FRC_ENRG_COMP"
     ]

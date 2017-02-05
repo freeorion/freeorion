@@ -5,6 +5,7 @@ Tech
     category = "SPY_CATEGORY"
     researchcost = 50 * [[TECH_COST_MULTIPLIER]]
     researchturns = 5
+    tags = [ "PEDIA_SPY_CATEGORY" ]
     prerequisites = "SHP_GAL_EXPLO"
     unlock = [
         Item type = ShipPart name = "DT_DETECTOR_2"
