@@ -4,7 +4,8 @@
 #include "Message.h"
 #include "MessageQueue.h"
 
-#include <boost/array.hpp>
+#include <array>
+
 // boost::aiso pulls in windows.h which in turn defines the macros Message,
 // MessageBox, min and max. Disabling the generation of the min and max macros
 // and undefining those should avoid name collisions with std c++ library and
@@ -52,7 +53,8 @@ class ClientNetworking {
 public:
     /** The type of list returned by a call to DiscoverLANServers(). */
     typedef std::vector<std::pair<boost::asio::ip::address, std::string> >  ServerList;
-    typedef boost::array<int, 5>                                            MessageHeaderBuffer;
+
+    typedef std::array<int, 5> MessageHeaderBuffer;
 
     /** \name Structors */ //@{
     ClientNetworking();

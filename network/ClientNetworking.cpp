@@ -21,7 +21,7 @@ using namespace Networking;
 namespace {
     const bool TRACE_EXECUTION = false;
 
-    const int HEADER_SIZE = ClientNetworking::MessageHeaderBuffer::static_size *
+    const int HEADER_SIZE = std::tuple_size<ClientNetworking::MessageHeaderBuffer>::value *
                             sizeof(ClientNetworking::MessageHeaderBuffer::value_type);
 
     /** A simple client that broadcasts UDP datagrams on the local network for
@@ -112,7 +112,9 @@ namespace {
         boost::asio::io_service*       m_io_service;
         boost::asio::deadline_timer    m_timer;
         boost::asio::ip::udp::socket   m_socket;
-        boost::array<char, 1024>       m_recv_buf;
+
+        std::array<char, 1024> m_recv_buf;
+
         boost::asio::ip::udp::endpoint m_sender_endpoint;
         bool                           m_receive_successful;
         std::string                    m_server_name;
@@ -371,7 +373,7 @@ void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, 
     if (static_cast<int>(bytes_transferred) != HEADER_SIZE)
         return;
 
-    BufferToHeader(m_incoming_header.c_array(), m_incoming_message);
+    BufferToHeader(m_incoming_header.data(), m_incoming_message);
     m_incoming_message.Resize(m_incoming_header[4]);
     boost::asio::async_read(
         m_socket,
@@ -405,7 +407,7 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::
 }
 
 void ClientNetworking::AsyncWriteMessage() {
-    HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header.c_array());
+    HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header.data());
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
     buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),

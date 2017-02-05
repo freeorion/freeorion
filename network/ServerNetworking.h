@@ -3,12 +3,12 @@
 
 #include "Message.h"
 
-#include <boost/array.hpp>
 #include <boost/asio.hpp>
 #include <boost/function.hpp>
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/signals2/signal.hpp>
 
+#include <array>
 #include <memory>
 #include <queue>
 #include <set>
@@ -219,7 +219,7 @@ public:
                   MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
 
 private:
-    typedef boost::array<int, 5> MessageHeaderBuffer;
+    typedef std::array<int, 5> MessageHeaderBuffer;
 
     PlayerConnection(boost::asio::io_service& io_service, MessageAndConnectionFn nonplayer_message_callback,
                      MessageAndConnectionFn player_message_callback, ConnectionFn disconnected_callback);
@@ -242,7 +242,7 @@ private:
 
     enum {
         HEADER_SIZE =
-        MessageHeaderBuffer::static_size * sizeof(MessageHeaderBuffer::value_type)
+        std::tuple_size<MessageHeaderBuffer>::value * sizeof(MessageHeaderBuffer::value_type)
     };
 
     friend class ServerNetworking;

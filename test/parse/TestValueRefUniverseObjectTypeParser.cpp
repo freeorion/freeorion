@@ -43,10 +43,10 @@ struct ValueRefUniverseObjectTypeFixture {
     typedef std::pair<ValueRef::ReferenceType, std::string> ReferenceType;
     typedef std::pair<ValueRef::StatisticType, std::string> StatisticType;
 
-    static const boost::array<ReferenceType, 4>  referenceTypes;
-    static const boost::array<StatisticType, 1>  statisticTypes;
-    static const boost::array<std::string, 3>  containerTypes;
-    static const boost::array<std::string, 1> attributes;
+    static const std::array<ReferenceType, 4> referenceTypes;
+    static const std::array<StatisticType, 1> statisticTypes;
+    static const std::array<std::string, 3> containerTypes;
+    static const std::array<std::string, 1> attributes;
 
     ValueRef::ValueRefBase<UniverseObjectType>* result;
     const ValueRef::Operation<UniverseObjectType>* operation1;
@@ -60,24 +60,24 @@ struct ValueRefUniverseObjectTypeFixture {
     const ValueRef::Variable<UniverseObjectType>* variable;
 };
 
-const boost::array<ValueRefUniverseObjectTypeFixture::StatisticType, 1> ValueRefUniverseObjectTypeFixture::statisticTypes = {{
+const std::array<ValueRefUniverseObjectTypeFixture::StatisticType, 1> ValueRefUniverseObjectTypeFixture::statisticTypes = {{
     std::make_pair(ValueRef::MODE,    "Mode")
 }};
 
-const boost::array<ValueRefUniverseObjectTypeFixture::ReferenceType, 4>  ValueRefUniverseObjectTypeFixture::referenceTypes = {{
+const std::array<ValueRefUniverseObjectTypeFixture::ReferenceType, 4> ValueRefUniverseObjectTypeFixture::referenceTypes = {{
     std::make_pair(ValueRef::SOURCE_REFERENCE, "Source"),
     std::make_pair(ValueRef::EFFECT_TARGET_REFERENCE, "Target"),
     std::make_pair(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "LocalCandidate"),
     std::make_pair(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE, "RootCandidate")
 }};
 
-const boost::array<std::string, 3> ValueRefUniverseObjectTypeFixture::containerTypes = {{
+const std::array<std::string, 3> ValueRefUniverseObjectTypeFixture::containerTypes = {{
     "Fleet",
     "Planet",
     "System"
 }};
 
-const boost::array<std::string, 1> ValueRefUniverseObjectTypeFixture::attributes = {{
+const std::array<std::string, 1> ValueRefUniverseObjectTypeFixture::attributes = {{
     "ObjectType"
 }};
 

@@ -30,7 +30,8 @@ private:
 
     boost::asio::ip::udp::socket   m_socket;
     boost::asio::ip::udp::endpoint m_remote_endpoint;
-    boost::array<char, 32>         m_recv_buffer;
+
+    std::array<char, 32> m_recv_buffer;
 };
 
 namespace {
@@ -262,7 +263,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         m_new_connection = false;
         assert(static_cast<int>(bytes_transferred) <= HEADER_SIZE);
         if (static_cast<int>(bytes_transferred) == HEADER_SIZE) {
-            BufferToHeader(m_incoming_header_buffer.c_array(), m_incoming_message);
+            BufferToHeader(m_incoming_header_buffer.data(), m_incoming_message);
             m_incoming_message.Resize(m_incoming_header_buffer[4]);
             boost::asio::async_read(
                 m_socket,

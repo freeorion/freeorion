@@ -61,10 +61,10 @@ struct ValueRefIntFixture: boost::unit_test::test_observer {
     typedef std::pair<ValueRef::ReferenceType, std::string> ReferenceType;
     typedef std::pair<ValueRef::StatisticType, std::string> StatisticType;
 
-    static const boost::array<ReferenceType, 4>  referenceTypes;
-    static const boost::array<StatisticType, 9>  statisticTypes;
-    static const boost::array<std::string, 3>  containerTypes;
-    static const boost::array<std::string, 13> attributes;
+    static const std::array<ReferenceType, 4> referenceTypes;
+    static const std::array<StatisticType, 9> statisticTypes;
+    static const std::array<std::string, 3> containerTypes;
+    static const std::array<std::string, 13> attributes;
 
     ValueRef::ValueRefBase<int>* result;
     const ValueRef::Operation<int>* operation1;
@@ -78,14 +78,14 @@ struct ValueRefIntFixture: boost::unit_test::test_observer {
     const ValueRef::Variable<int>* variable;
 };
 
-const boost::array<ValueRefIntFixture::ReferenceType, 4>  ValueRefIntFixture::referenceTypes = {{
+const std::array<ValueRefIntFixture::ReferenceType, 4> ValueRefIntFixture::referenceTypes = {{
     std::make_pair(ValueRef::SOURCE_REFERENCE, "Source"),
     std::make_pair(ValueRef::EFFECT_TARGET_REFERENCE, "Target"),
     std::make_pair(ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE, "LocalCandidate"),
     std::make_pair(ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE, "RootCandidate")
 }};
 
-const boost::array<ValueRefIntFixture::StatisticType, 9> ValueRefIntFixture::statisticTypes = {{
+const std::array<ValueRefIntFixture::StatisticType, 9> ValueRefIntFixture::statisticTypes = {{
     std::make_pair(ValueRef::MAX,     "Max"),
     std::make_pair(ValueRef::MEAN,    "Mean"),
     std::make_pair(ValueRef::MIN,     "Min"),
@@ -97,13 +97,13 @@ const boost::array<ValueRefIntFixture::StatisticType, 9> ValueRefIntFixture::sta
     std::make_pair(ValueRef::SUM,     "Sum")
 }};
 
-const boost::array<std::string, 3> ValueRefIntFixture::containerTypes = {{
+const std::array<std::string, 3> ValueRefIntFixture::containerTypes = {{
     "Fleet",
     "Planet",
     "System"
 }};
 
-const boost::array<std::string, 13> ValueRefIntFixture::attributes = {{
+const std::array<std::string, 13> ValueRefIntFixture::attributes = {{
     "Age",
     "CreationTurn",
     "DesignID",
@@ -789,7 +789,7 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTypeless) {
         for (const std::string& attribute : attributes) {
             std::string property[] = { attribute };
 
-            boost::array<std::string, 4> phrases = {{
+            std::array<std::string, 4> phrases = {{
                 // long variant
                 statisticType.second + " Property = " + attribute + " Condition = All",
                 // Check variant with missing "Condition =" keyword.
@@ -830,7 +830,7 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTyped) {
                     attribute
                 };
 
-                boost::array<std::string, 4> phrases = {{
+                std::array<std::string, 4> phrases = {{
                     // long variant
                     statisticType.second + " Property = " + containerType + "." + attribute + " Condition = All",
                     // Check variant with missing "Condition =" keyword.
