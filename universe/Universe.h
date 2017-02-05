@@ -11,7 +11,6 @@
 #include <boost/numeric/ublas/symmetric.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/thread/shared_mutex.hpp>
-#include <boost/scoped_ptr.hpp>
 
 #include <list>
 #include <map>

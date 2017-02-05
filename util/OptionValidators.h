@@ -3,11 +3,13 @@
 
 #include <boost/any.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/scoped_ptr.hpp>
+
 #include <cmath>
-#include <string>
+#include <memory>
 #include <set>
+#include <string>
 #include <vector>
+
 
 // these are needed by the StepValidator
 namespace details {
@@ -177,7 +179,7 @@ struct DiscreteValidator : public Validator<T>
 };
 
 /// a Validator that performs a logical OR of two validators.
-/** Stores and owns clones of the provided validators in boost::scoped_ptrs.
+/** Stores and owns clones of the provided validators in std::unique_ptr.
  *  Always calls m_validator_a->Validate(). Only calls m_validator_b->Validate()
  *  if the first one throws. */
 template <class T>
@@ -204,8 +206,8 @@ struct OrValidator : public Validator<T>
     OrValidator* Clone() const override
     { return new OrValidator<T>(*m_validator_a.get(), *m_validator_b.get()); }
 
-    const boost::scoped_ptr<Validator<T> > m_validator_a;
-    const boost::scoped_ptr<Validator<T> > m_validator_b;
+    const std::unique_ptr<Validator<T>> m_validator_a;
+    const std::unique_ptr<Validator<T>> m_validator_b;
 };
 
 #endif // _OptionValidators_h_

@@ -34,7 +34,8 @@
 #include <GG/ListBox.h>
 #include <GG/GLClientAndServerBuffer.h>
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
+
 
 class ModalListPicker;
 
@@ -236,8 +237,7 @@ protected:
 private:
     const ListBox*  LB() const;
 
-    // TODO use C++11 unique_ptr
-    boost::scoped_ptr<ModalListPicker> const    m_modal_picker;
+    std::unique_ptr<ModalListPicker> const m_modal_picker;
 };
 
 } // namespace GG

@@ -2,8 +2,10 @@
 #define _AIClientApp_h_
 
 #include "../ClientApp.h"
+
+#include <memory>
 #include <vector>
-#include <boost/scoped_ptr.hpp>
+
 
 class AIBase;
 class PythonAI;
@@ -40,7 +42,9 @@ private:
     void                HandleMessage(const Message& msg);
 
 
-    boost::scoped_ptr<PythonAI> m_AI;     ///< implementation of AI logic
+    /** Implementation of AI logic. */
+    std::unique_ptr<PythonAI> m_AI;
+
     std::string         m_player_name;
     int                 m_max_aggression;
 };

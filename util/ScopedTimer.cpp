@@ -201,7 +201,7 @@ public:
     // Pointer to table of sections.
     // Sections are only allocated when the first section is created, to minimize overhead of a
     // section-less timer.
-    boost::scoped_ptr<Sections> m_sections;
+    std::unique_ptr<Sections> m_sections;
 
 };
 

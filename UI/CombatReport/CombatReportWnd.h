@@ -3,7 +3,8 @@
 
 #include "../CUIWnd.h"
 
-#include <boost/scoped_ptr.hpp>
+#include <memory>
+
 
 /// Shows a report on a combat
 class CombatReportWnd : public CUIWnd {
@@ -21,8 +22,7 @@ public:
 
 private:
     class Impl;
-
-    boost::scoped_ptr<Impl> m_impl;
+    std::unique_ptr<Impl> m_impl;
 };
 
 #endif // COMBATREPORTDLG_H

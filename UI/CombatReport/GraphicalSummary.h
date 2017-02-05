@@ -31,7 +31,9 @@ public:
 private:
     std::vector<SideBar*>        m_side_boxes;
     std::map<int, CombatSummary> m_summaries;
-    boost::scoped_ptr<BarSizer>  m_sizer;
+
+    std::unique_ptr<BarSizer> m_sizer;
+
     OptionsBar*                  m_options_bar; // Is a child window->GG handles memory
 
     void HandleButtonChanged();

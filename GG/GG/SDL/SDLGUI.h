@@ -185,7 +185,11 @@ private:
     SDL_Window*     m_window; ///< The sdl window
     SDL_GLContext   m_gl_context; //< The OpenGL context
     bool            m_done; //< Set true true when we should exit.
-    boost::scoped_ptr<Framebuffer>  m_framebuffer; //< virtual screen for fake fullscreen. Null if m_fake_mode_change == false
+
+    /** Virtual screen for fake fullscreen.  Equals nullptr ifi
+        m_fake_mode_change == false. */
+    std::unique_ptr<Framebuffer> m_framebuffer;
+
     std::map<SDL_Keycode, Key>      m_key_map; //< a mapping from sdl keycodes to GiGi keys
 };
 

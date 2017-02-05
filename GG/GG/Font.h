@@ -37,11 +37,12 @@
 #include <GG/Texture.h>
 #include <GG/UnicodeCharsets.h>
 
-#include <set>
-#include <stack>
-
 #include <boost/unordered_map.hpp>
 #include <boost/graph/graph_concepts.hpp>
+
+#include <memory>
+#include <set>
+#include <stack>
 
 
 struct FT_FaceRec_;
@@ -305,7 +306,7 @@ public:
 
     private:
         class Impl;
-        boost::scoped_ptr<Impl> const m_impl;
+        std::unique_ptr<Impl> const m_impl;
     };
 
     /** \brief The type of TextElement that represents a text formatting
@@ -434,12 +435,12 @@ public:
      */
     struct RenderCache
     {
-        boost::scoped_ptr<GL2DVertexBuffer> vertices;
-        boost::scoped_ptr<GLTexCoordBuffer> coordinates;
-        boost::scoped_ptr<GLRGBAColorBuffer> colors;
+        std::unique_ptr<GL2DVertexBuffer> vertices;
+        std::unique_ptr<GLTexCoordBuffer> coordinates;
+        std::unique_ptr<GLRGBAColorBuffer> colors;
 
-        boost::scoped_ptr<GL2DVertexBuffer> underline_vertices;
-        boost::scoped_ptr<GLRGBAColorBuffer> underline_colors;
+        std::unique_ptr<GL2DVertexBuffer> underline_vertices;
+        std::unique_ptr<GLRGBAColorBuffer> underline_colors;
 
         RenderCache();
 
