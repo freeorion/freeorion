@@ -68,13 +68,13 @@ void initialize_nonnumeric_expression_parsers<std::string>(
 }
 
 namespace {
-    const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
-
     struct string_parser_rules {
         string_parser_rules() {
             qi::_1_type _1;
             qi::_val_type _val;
             using phoenix::new_;
+
+            static const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
 
             const parse::lexer& tok = parse::lexer::instance();
 

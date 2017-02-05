@@ -1,9 +1,6 @@
 #include "ValueRefParserImpl.h"
 
 namespace parse {
-    const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
-    const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
-
     struct double_complex_parser_rules {
         double_complex_parser_rules() {
             qi::_1_type _1;
@@ -16,6 +13,9 @@ namespace parse {
             qi::_val_type _val;
             using phoenix::construct;
             using phoenix::new_;
+
+            static const std::string TOK_SPECIES_EMPIRE_OPINION{"SpeciesEmpireOpinion"};
+            static const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
 
             const parse::lexer& tok =                                                   parse::lexer::instance();
             const int_rule& simple_int =                                                int_simple();
