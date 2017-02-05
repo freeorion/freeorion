@@ -95,8 +95,8 @@ public:
     std::string Dump() const override;
 
 private:
-    double m_id_1;
-    double m_id_2;
+    int m_id_1;
+    int m_id_2;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -117,8 +117,8 @@ public:
     std::string Dump() const override;
 
 private:
-    double m_id_1;
-    double m_id_2;
+    int m_id_1;
+    int m_id_2;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -162,9 +162,9 @@ public:
     std::string Dump() const override;
 
 private:
-    int m_system_id;
-    PlanetType m_planet_type;
-    PlanetSize m_planet_size;
+    int         m_system_id;
+    PlanetType  m_planet_type;
+    PlanetSize  m_planet_size;
 
     friend class boost::serialization::access;
     template <class Archive>
