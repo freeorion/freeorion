@@ -260,27 +260,6 @@ namespace {
         return special->SpawnLimit();
     }
 
-    bool SpecialLocation(const std::string special_name, int object_id) {
-        // get special and check if it exists
-        const Special* special = GetSpecial(special_name);
-        if (!special) {
-            ErrorLogger() << "SpecialLocation: couldn't get special " << special_name;
-            return false;
-        }
-
-        // get the universe object to test and check if it exists
-        std::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
-        if (!obj) {
-            ErrorLogger() << "SpecialLocation: Couldn't get object with ID " << object_id;
-            return false;
-        }
-
-        // get special location condition and evaluate it with the specified universe object
-        // if no location condition has been defined, no object matches
-        const Condition::ConditionBase* location_test = special->Location();
-        return (location_test && location_test->Eval(obj));
-    }
-
     list SpecialLocations(const std::string special_name, list object_ids) {
         // get special and check if it exists
         const Special* special = GetSpecial(special_name);
@@ -1303,7 +1282,6 @@ namespace FreeOrionPython {
 
         def("special_spawn_rate",                   SpecialSpawnRate);
         def("special_spawn_limit",                  SpecialSpawnLimit);
-        def("special_location",                     SpecialLocation);
         def("special_locations",                    SpecialLocations);
         def("special_has_location",                 SpecialHasLocation);
         def("get_all_specials",                     GetAllSpecials);
