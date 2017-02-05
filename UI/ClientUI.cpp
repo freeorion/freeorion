@@ -986,7 +986,9 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path&
     std::shared_ptr<GG::Texture> retval;
     try {
         retval = HumanClientApp::GetApp()->GetTexture(path, mipmap);
-    } catch(...) {
+    } catch(const std::exception& e) {
+        ErrorLogger() << "Unable to load texture \"" + path.generic_string() + "\"\n"
+            "reason: " << e.what();
         retval = HumanClientApp::GetApp()->GetTexture(ClientUI::ArtDir() / "misc" / "missing.png", mipmap);
     }
 #ifdef FREEORION_MACOSX
