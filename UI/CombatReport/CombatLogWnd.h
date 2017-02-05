@@ -36,11 +36,12 @@ public:
     /* The window may have becomem visible.*/
     void HandleMadeVisible();
 
-    class CombatLogWndImpl;
+    class Impl;
+
 private:
-    //TODO C++11 unique_ptr
-    friend class CombatLogWndImpl;
-    const boost::scoped_ptr<CombatLogWndImpl> pimpl;
+    friend class Impl;
+
+    boost::scoped_ptr<Impl> const m_impl;
 
     /// The number of pixels to leave between the text and the frame.
     static const int MARGIN = 5;

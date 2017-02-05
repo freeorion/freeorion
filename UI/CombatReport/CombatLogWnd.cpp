@@ -19,9 +19,9 @@
 #include "../AccordionPanel.h"
 #include "../../Empire/Empire.h"
 
-class CombatLogWnd::CombatLogWndImpl {
+class CombatLogWnd::Impl {
 public:
-    CombatLogWndImpl(CombatLogWnd& _log);
+    Impl(CombatLogWnd& _log);
 
     /** \name Accessors */ ///@{
     GG::Pt MinUsableSize() const;
@@ -108,7 +108,7 @@ namespace {
     /// and expanding into specifics.
     class CombatLogAccordionPanel : public AccordionPanel {
         public:
-        CombatLogAccordionPanel(GG::X w, CombatLogWnd::CombatLogWndImpl &log_,
+        CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl &log_,
                                 int viewing_empire_id_, ConstCombatEventPtr event_);
         ~CombatLogAccordionPanel();
 
@@ -116,7 +116,7 @@ namespace {
         /** toggles panel expanded or collapsed */
         void ToggleExpansion();
 
-        CombatLogWnd::CombatLogWndImpl & log;
+        CombatLogWnd::Impl & log;
         int viewing_empire_id;
         ConstCombatEventPtr event;
         LinkText* title;
@@ -127,7 +127,7 @@ namespace {
 
     };
 
-    CombatLogAccordionPanel::CombatLogAccordionPanel(GG::X w, CombatLogWnd::CombatLogWndImpl& log_,
+    CombatLogAccordionPanel::CombatLogAccordionPanel(GG::X w, CombatLogWnd::Impl& log_,
                                                      int viewing_empire_id_, ConstCombatEventPtr event_) :
         AccordionPanel(w, GG::Y(ClientUI::Pts()), true),
         log(log_),
@@ -139,7 +139,7 @@ namespace {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
         GG::Connect(m_expand_button->LeftClickedSignal, &CombatLogAccordionPanel::ToggleExpansion, this);
-        GG::Connect(this->ExpandCollapseSignal, &CombatLogWnd::CombatLogWndImpl::HandleWndChanged, &log);
+        GG::Connect(this->ExpandCollapseSignal, &CombatLogWnd::Impl::HandleWndChanged, &log);
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -178,17 +178,17 @@ namespace {
 
 }
 
-CombatLogWnd::CombatLogWndImpl::CombatLogWndImpl(CombatLogWnd& _wnd) :
+CombatLogWnd::Impl::Impl(CombatLogWnd& _wnd) :
     m_wnd(_wnd),
     m_text_format_flags(GG::FORMAT_WORDBREAK| GG::FORMAT_LEFT | GG::FORMAT_TOP),
     m_font(ClientUI::GetFont())
 { }
 
-GG::Pt CombatLogWnd::CombatLogWndImpl::MinUsableSize() const {
+GG::Pt CombatLogWnd::Impl::MinUsableSize() const {
     return GG::Pt(m_font->SpaceWidth()*20, m_font->Lineskip()*10);
 }
 
-void CombatLogWnd::CombatLogWndImpl::HandleWndChanged()
+void CombatLogWnd::Impl::HandleWndChanged()
 { m_wnd.RequirePreRender(); }
 
 
@@ -293,13 +293,13 @@ namespace {
                 HandleMaybeVisible();
         }
 
-        boost::scoped_ptr<std::string> m_text;
+        std::unique_ptr<std::string> m_text;
         std::vector<boost::signals2::connection> m_signals;
     };
 
 }
 
-LinkText * CombatLogWnd::CombatLogWndImpl::DecorateLinkText(std::string const & text) {
+LinkText * CombatLogWnd::Impl::DecorateLinkText(std::string const & text) {
     LazyScrollerLinkText * links = new LazyScrollerLinkText(m_wnd, GG::X0, GG::Y0, text, m_font, GG::CLR_WHITE);
 
     links->SetTextFormat(m_text_format_flags);
@@ -312,15 +312,15 @@ LinkText * CombatLogWnd::CombatLogWndImpl::DecorateLinkText(std::string const & 
     links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
     links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
     links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);
-    GG::Connect(links->ChangedSignal,           &CombatLogWnd::CombatLogWndImpl::HandleWndChanged,         this);
+    GG::Connect(links->ChangedSignal, &CombatLogWnd::Impl::HandleWndChanged, this);
 
     return links;
 }
 
 /** Fill \p new_logs with pointers to the flat log contents of \p
     event using the pre-calculated \p details.*/
-void CombatLogWnd::CombatLogWndImpl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id, std::vector<GG::Wnd*> &new_logs,
-                                                          ConstCombatEventPtr& event, std::string& details)
+void CombatLogWnd::Impl::PopulateWithFlatLogs(GG::X w, int viewing_empire_id, std::vector<GG::Wnd*> &new_logs,
+                                              ConstCombatEventPtr& event, std::string& details)
 {
     if (!details.empty()) {
         new_logs.push_back(DecorateLinkText(details));
@@ -337,8 +337,8 @@ void CombatLogWnd::CombatLogWndImpl::PopulateWithFlatLogs(GG::X w, int viewing_e
 
 
 // Returns either a simple LinkText for a simple log or a CombatLogAccordionPanel for a complex log
-std::vector<GG::Wnd*> CombatLogWnd::CombatLogWndImpl::MakeCombatLogPanel(GG::X w, int viewing_empire_id,
-                                                                         ConstCombatEventPtr event)
+std::vector<GG::Wnd*> CombatLogWnd::Impl::MakeCombatLogPanel(GG::X w, int viewing_empire_id,
+                                                             ConstCombatEventPtr event)
 {
     std::vector<GG::Wnd *> new_logs;
 
@@ -367,15 +367,15 @@ std::vector<GG::Wnd*> CombatLogWnd::CombatLogWndImpl::MakeCombatLogPanel(GG::X w
 }
 
 
-void CombatLogWnd::CombatLogWndImpl::AddRow(GG::Wnd* wnd) {
+void CombatLogWnd::Impl::AddRow(GG::Wnd* wnd) {
     if (GG::Layout* layout = m_wnd.GetLayout())
         layout->Add(wnd, layout->Rows(), 0);
 }
 
-void CombatLogWnd::CombatLogWndImpl::SetFont(std::shared_ptr<GG::Font> font)
+void CombatLogWnd::Impl::SetFont(std::shared_ptr<GG::Font> font)
 { m_font = font; }
 
-void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
+void CombatLogWnd::Impl::SetLog(int log_id) {
     boost::optional<const CombatLog&> log = GetCombatLog(log_id);
     if (!log) {
         ErrorLogger() << "Couldn't find combat log with id: " << log_id;
@@ -435,20 +435,20 @@ void CombatLogWnd::CombatLogWndImpl::SetLog(int log_id) {
 // Forward request to private implementation
 CombatLogWnd::CombatLogWnd(GG::X w, GG::Y h) :
     GG::Wnd(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-    pimpl(new CombatLogWndImpl(*this))
+    m_impl(new Impl(*this))
 {
     SetName("CombatLogWnd");
 }
 
-// This virtual destructor must exist to ensure that the pimpl is destroyed.
+// This virtual destructor must exist to ensure that the m_impl is destroyed.
 CombatLogWnd::~CombatLogWnd()
 {}
 
 void CombatLogWnd::SetFont(std::shared_ptr<GG::Font> font)
-{ pimpl->SetFont(font); }
+{ m_impl->SetFont(font); }
 
 void CombatLogWnd::SetLog(int log_id)
-{ pimpl->SetLog(log_id); }
+{ m_impl->SetLog(log_id); }
 
 GG::Pt CombatLogWnd::ClientUpperLeft() const
 { return UpperLeft() + GG::Pt(GG::X(MARGIN), GG::Y(MARGIN)); }
@@ -457,10 +457,10 @@ GG::Pt CombatLogWnd::ClientLowerRight() const
 { return LowerRight() - GG::Pt(GG::X(MARGIN), GG::Y(MARGIN)); }
 
 GG::Pt CombatLogWnd::MinUsableSize() const
-{ return pimpl->MinUsableSize(); }
+{ return m_impl->MinUsableSize(); }
 
 void CombatLogWnd::HandleMadeVisible()
-{ return pimpl->HandleWndChanged(); }
+{ return m_impl->HandleWndChanged(); }
 
 void CombatLogWnd::PreRender() {
     GG::Wnd::PreRender();
@@ -474,7 +474,7 @@ void CombatLogWnd::PreRender() {
 
     TODO: Fix intial size of CombatReport from (30,15) to its actual first displayed size.*/
     GG::Pt size = Size();
-    Resize(size + GG::Pt(2*pimpl->m_font->SpaceWidth(), GG::Y0));
+    Resize(size + GG::Pt(2 * m_impl->m_font->SpaceWidth(), GG::Y0));
     GG::GUI::PreRenderWindow(this);
     Resize(size);
     GG::GUI::PreRenderWindow(this);
