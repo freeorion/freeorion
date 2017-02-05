@@ -764,6 +764,124 @@ void AddTraversal(
         obstructed_traversals.erase(std::make_pair(end_sys_id, sys_id));
     }
 }
+
+/** Resolve the supply conflicts in a single system and return the maxiumum supply range and any
+    empire that need their traversals updated. */
+std::pair<float, std::unordered_set<int>> ContestSystem(
+    SupplySystemPOD& pod, const System& system,
+    const std::unordered_map<int, float>& empire_to_detection,
+    std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& supply_starlane_traversals,
+    std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& supply_starlane_obstructed_traversals)
+{
+    // Supply resolution works as follows.  Each supply source has a (stealth, range).  Each empire
+    // has a detection stength.  A supply source with greater range will remove another supply
+    // source if its empire's detection strength is greater that the other's stealth.
+
+    // Keep a list of empires that might need traversals removed
+    std::unordered_set<int> empires_needing_traversal_adjustment;
+
+    // There are no empires here.
+    if (!pod.empire_to_stealth_supply || pod.empire_to_stealth_supply->empty()
+        || (pod.empire_to_stealth_supply->size() == 1 && pod.empire_to_stealth_supply->begin()->second.empty()))
+    { return std::make_pair(0.0f, empires_needing_traversal_adjustment); }
+
+    // There is one empire here.
+    if (pod.empire_to_stealth_supply->size() == 1) {
+        auto supply_range_of_only_empire = pod.empire_to_stealth_supply->begin()->second.begin()->second;
+        return std::make_pair(supply_range_of_only_empire, empires_needing_traversal_adjustment);
+    }
+
+    // Sort by range using tuples of (range, stealth, empire id)
+    std::set<std::tuple<float, float, int>> range_stealth_empire_id;
+    for (auto it : *pod.empire_to_stealth_supply) {
+        auto empire_id = it.first;
+        for (auto jt : it.second)
+            range_stealth_empire_id.insert(std::make_tuple(jt.second, jt.first, empire_id));
+    }
+
+    auto max_supply_range = std::get<0>(*range_stealth_empire_id.begin());
+
+    auto &keepers = *pod.empire_to_stealth_supply;
+    keepers.clear();
+
+    while (!range_stealth_empire_id.empty()) {
+        // Compare the candidate with the greatest range to determine if it should be kept and if
+        // each other supply source should be kept or removed from further supply resolutions.
+        auto candidate = *range_stealth_empire_id.rbegin();
+        float candidate_range, candidate_stealth;
+        int candidate_empire_id;
+        std::tie(candidate_range, candidate_stealth, candidate_empire_id) = candidate;
+        range_stealth_empire_id.erase(std::next(range_stealth_empire_id.rbegin()).base());
+
+        auto candidate_detection_it = empire_to_detection.find(candidate_empire_id);
+        if (candidate_detection_it == empire_to_detection.end()) {
+            ErrorLogger() << "Candidate supply has an empire id " << candidate_empire_id
+                          << " with no detection strength. Skipping...";
+            continue;
+        }
+        auto candidate_detection = candidate_detection_it->second;
+
+        // Conditionally add candidate to the keepers.  It might be removed if tied for range.
+        bool is_keep_candidate = true;
+
+        // A list of individual others to remove from the list.
+        std::vector<std::set<std::tuple<float, float, int>>::reverse_iterator> remove_this_pass;
+
+        for (auto other_it = range_stealth_empire_id.rbegin();
+             other_it != range_stealth_empire_id.rend(); ++other_it)
+        {
+            float other_range, other_stealth;
+            int other_empire_id;
+            std::tie(other_range, other_stealth, other_empire_id) = *other_it;
+
+            // Note: All other_range are <= candidate_range
+
+            // If the other is of the same empire and has less stealth then it can't improve
+            // supply, so remove it.
+            if (other_empire_id == candidate_empire_id) {
+                if (other_stealth <= candidate_stealth)
+                    remove_this_pass.push_back(other_it);
+                continue;
+            }
+
+            // If other can't be detected then skip it
+            if (other_stealth > candidate_detection)
+                continue;
+
+            // If other is not hostile to candidate empire then skip it
+            if (Empires().GetDiplomaticStatus(candidate_empire_id, other_empire_id) != DIPLO_WAR)
+                continue;
+
+            // If other has the same range then remove both the candidate and the other
+            if (other_range == candidate_range) {
+                is_keep_candidate = false;
+                remove_this_pass.push_back(other_it);
+                continue;
+            }
+
+            // All remaining others are detectable, hostile and have less range so remove them.
+            remove_this_pass.push_back(other_it);
+        }
+
+        if (is_keep_candidate)
+            keepers[candidate_empire_id].insert(std::make_pair(candidate_stealth, candidate_range));
+        else
+            empires_needing_traversal_adjustment.insert(candidate_empire_id);
+
+
+        for (auto removed_other : remove_this_pass) {
+            int other_empire_id;
+            std::tie(std::ignore, std::ignore, other_empire_id) = *removed_other;
+            empires_needing_traversal_adjustment.insert(other_empire_id);
+
+            // Remove the collected reverse iterator.  Should be O(1).
+            range_stealth_empire_id.erase(std::next(removed_other).base());
+        }
+    }
+
+    return std::make_pair(max_supply_range, empires_needing_traversal_adjustment);
+}
+
 std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
     const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
 {
