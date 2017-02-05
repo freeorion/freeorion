@@ -699,7 +699,71 @@ std::unordered_map<int, SupplySystemPOD> CalculateInitialSupply() {
     return system_to_supply_pod;
 }
 
+/** Remove \p sys_id from unobstructed_systems, remove all startlanes that arrive or depart sys_id
+    from lane_traversals and remove obstructed traversals that depart this system.*/
+void RemoveSystemFromTraversals(
+    const int sys_id,
+    std::unordered_map<std::pair<int, int>, float>& lane_traversals,
+    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
+{
+    auto lane_traversals_initial = lane_traversals;
+    auto obstructed_traversals_initial = obstructed_traversals;
 
+    // remove from traversals departing from or going to this system for this empire,
+    // and set any traversals going to this system as obstructed
+    for (const auto& lane : lane_traversals_initial) {
+        if (lane.first.first == sys_id) {
+            lane_traversals.erase(std::make_pair(sys_id, lane.first.second));
+        }
+        if (lane.first.second == sys_id) {
+            lane_traversals.erase(std::make_pair(lane.first.first, sys_id));
+            obstructed_traversals.insert(std::make_pair(std::make_pair(lane.first.first, sys_id), 0.0f));
+        }
+    }
+
+    // remove obstructed traverals departing from this system
+    for (const auto& lane : obstructed_traversals_initial) {
+        if (lane.first.first == sys_id)
+            obstructed_traversals.erase(std::make_pair(lane.first.first, lane.first.second));
+    }
+}
+
+/** Add an obstructed traversal.*/
+void AddObstructedTraversal(
+    const int sys_id, const int end_sys_id,
+    const std::set<int>& supply_unobstructed_systems,
+    const std::unordered_map<std::pair<int, int>, float>& lane_traversals,
+    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
+{
+    obstructed_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
+}
+
+/** Add a traversal */
+void AddTraversal(
+    const int sys_id, const int end_sys_id,
+    const std::set<int>& supply_unobstructed_systems,
+    std::unordered_map<std::pair<int, int>, float>& lane_traversals,
+    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
+{
+
+    //DebugLogger() << "Added traversal from " << sys_id << " to " << end_sys_id;
+    // always record a traversal, so connectivity is calculated properly
+    lane_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
+
+    // erase any previous obstructed traversal that just succeeded
+    if (obstructed_traversals.find(std::make_pair(sys_id, end_sys_id)) !=
+        obstructed_traversals.end())
+    {
+        //DebugLogger() << "Removed obstructed traversal from " << sys_id << " to " << end_sys_id;
+        obstructed_traversals.erase(std::make_pair(sys_id, end_sys_id));
+    }
+    if (obstructed_traversals.find(std::make_pair(end_sys_id, sys_id)) !=
+        obstructed_traversals.end())
+    {
+        //DebugLogger() << "Removed obstructed traversal from " << end_sys_id << " to " << sys_id;
+        obstructed_traversals.erase(std::make_pair(end_sys_id, sys_id));
+    }
+}
 std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
     const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
 {
@@ -781,75 +845,6 @@ void ObstructSupplyIfUncontestedHostileSupplySource(
     }
 }
 
-/** Remove \p sys_id from unobstructed_systems, remove all startlanes that arrive or depart sys_id
-    from lane_traversals and remove obstructed traversals that depart this system.*/
-void RemoveSystemFromTraversals(
-    const int sys_id,
-    std::set<int>& supply_unobstructed_systems,
-    std::unordered_map<std::pair<int, int>, float>& lane_traversals,
-    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
-{
-    // Remove from unobstructed systems
-    supply_unobstructed_systems.erase(sys_id);
-
-    auto lane_traversals_initial = lane_traversals;
-    auto obstrcuted_traversals_initial = obstructed_traversals;
-
-    // remove from traversals departing from or going to this system for this empire,
-    // and set any traversals going to this system as obstructed
-    for (const auto& lane : lane_traversals_initial) {
-        if (lane.first.first == sys_id) {
-            lane_traversals.erase(std::make_pair(sys_id, lane.first.second));
-        }
-        if (lane.first.second == sys_id) {
-            lane_traversals.erase(std::make_pair(lane.first.first, sys_id));
-            obstructed_traversals.insert(std::make_pair(std::make_pair(lane.first.first, sys_id), 0.0f));
-        }
-    }
-
-    // remove obstructed traverals departing from this system
-    for (const auto& lane : obstrcuted_traversals_initial) {
-        if (lane.first.first == sys_id)
-            obstructed_traversals.erase(std::make_pair(lane.first.first, lane.first.second));
-    }
-}
-
-/** Add an obstructed traversal.*/
-void AddObstructedTraversal(
-    const int sys_id, const int end_sys_id,
-    const std::set<int>& supply_unobstructed_systems,
-    const std::unordered_map<std::pair<int, int>, float>& lane_traversals,
-    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
-{
-    obstructed_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
-}
-
-/** Add a traversal */
-void AddTraversal(
-    const int sys_id, const int end_sys_id,
-    const std::set<int>& supply_unobstructed_systems,
-    std::unordered_map<std::pair<int, int>, float>& lane_traversals,
-    std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
-{
-
-    //DebugLogger() << "Added traversal from " << sys_id << " to " << end_sys_id;
-    // always record a traversal, so connectivity is calculated properly
-    lane_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
-
-    // erase any previous obstructed traversal that just succeeded
-    if (obstructed_traversals.find(std::make_pair(sys_id, end_sys_id)) !=
-        obstructed_traversals.end())
-    {
-        //DebugLogger() << "Removed obstructed traversal from " << sys_id << " to " << end_sys_id;
-        obstructed_traversals.erase(std::make_pair(sys_id, end_sys_id));
-    }
-    if (obstructed_traversals.find(std::make_pair(end_sys_id, sys_id)) !=
-        obstructed_traversals.end())
-    {
-        //DebugLogger() << "Removed obstructed traversal from " << end_sys_id << " to " << sys_id;
-        obstructed_traversals.erase(std::make_pair(end_sys_id, sys_id));
-    }
-}
 }
 
 std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
@@ -958,8 +953,10 @@ std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManag
                 std::map<int, std::pair<float, float>>& empire_ranges = empire_supply.second;
                 empire_ranges.erase(sys_id);
 
-                RemoveSystemFromTraversals(sys_id, empire_supply_unobstructed_systems[empire_id],
-                                           m_supply_starlane_traversals[empire_id],
+                // Remove from unobstructed systems
+                empire_supply_unobstructed_systems[empire_id].erase(sys_id);
+
+                RemoveSystemFromTraversals(sys_id, m_supply_starlane_traversals[empire_id],
                                            m_supply_starlane_obstructed_traversals[empire_id]);
                 //DebugLogger() << "... removed empire " << empire_id << " system " << sys_id << " supply.";
             }
