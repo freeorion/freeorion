@@ -20,9 +20,9 @@ public:
     void            SetLog(int log_id);
 
 private:
-    class CombatReportPrivate;
+    class Impl;
 
-    boost::scoped_ptr<CombatReportPrivate> m_impl;
+    boost::scoped_ptr<Impl> m_impl;
 };
 
 #endif // COMBATREPORTDLG_H

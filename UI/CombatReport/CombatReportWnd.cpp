@@ -15,9 +15,9 @@
 #include <GG/Layout.h>
 
 // The implementation class for CombatReportWnd
-class CombatReportWnd::CombatReportPrivate {
+class CombatReportWnd::Impl {
 public:
-    CombatReportPrivate(CombatReportWnd& wnd):
+    Impl(CombatReportWnd& wnd):
         m_wnd(wnd),
         m_tabs(new GG::TabWnd(GG::X0, GG::Y0, GG::X1, GG::Y1, ClientUI::GetFont(),
                               ClientUI::CtrlColor(), ClientUI::TextColor())),
@@ -33,18 +33,18 @@ public:
         m_tabs->AddWnd(m_log_scroller, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
 
-        GG::Connect(m_log->LinkClickedSignal,       &CombatReportPrivate::HandleLinkClick,          this);
-        GG::Connect(m_log->LinkDoubleClickedSignal, &CombatReportPrivate::HandleLinkDoubleClick,    this);
-        GG::Connect(m_log->LinkRightClickedSignal,  &CombatReportPrivate::HandleLinkDoubleClick,    this);
-        GG::Connect(m_log->WndChangedSignal,        &CombatReportPrivate::HandleWindowChanged,      this);
+        GG::Connect(m_log->LinkClickedSignal,       &Impl::HandleLinkClick,          this);
+        GG::Connect(m_log->LinkDoubleClickedSignal, &Impl::HandleLinkDoubleClick,    this);
+        GG::Connect(m_log->LinkRightClickedSignal,  &Impl::HandleLinkDoubleClick,    this);
+        GG::Connect(m_log->WndChangedSignal,        &Impl::HandleWindowChanged,      this);
 
         // Catch the window-changed signal from the tab bar so that layout
         // updates can be performed for the newly-selected window.
-        GG::Connect(m_tabs->TabChangedSignal, &CombatReportPrivate::HandleTabChanged, this);
+        GG::Connect(m_tabs->TabChangedSignal, &Impl::HandleTabChanged, this);
 
         // This can be called whether m_graphical is the selected window or
         // not, but it will still only use the min size of the selected window.
-        GG::Connect(m_graphical->MinSizeChangedSignal, &CombatReportPrivate::UpdateMinSize, this);
+        GG::Connect(m_graphical->MinSizeChangedSignal, &Impl::UpdateMinSize, this);
     }
 
     void SetLog(int log_id) {
@@ -119,7 +119,7 @@ public:
             }
 
         } catch (const boost::bad_lexical_cast&) {
-            ErrorLogger() << "CombatReportPrivate::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
+            ErrorLogger() << "CombatReport::HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
         }
 
     }
@@ -207,7 +207,7 @@ CombatReportWnd::CombatReportWnd(const std::string& config_name) :
            GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | CLOSABLE,
            config_name, false),
     m_impl(nullptr)
-{ m_impl.reset(new CombatReportPrivate(*this)); }
+{ m_impl.reset(new Impl(*this)); }
 
 CombatReportWnd::~CombatReportWnd()
 {}
