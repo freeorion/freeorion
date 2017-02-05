@@ -304,8 +304,8 @@ public:
         TextAndElementsAssembler& AddOpenTag(const Clr& color);
 
     private:
-        class TextAndElementsAssemblerImpl;
-        boost::scoped_ptr<TextAndElementsAssemblerImpl> const pimpl;
+        class Impl;
+        boost::scoped_ptr<Impl> const m_impl;
     };
 
     /** \brief The type of TextElement that represents a text formatting
