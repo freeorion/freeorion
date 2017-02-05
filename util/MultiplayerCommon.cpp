@@ -33,6 +33,12 @@ namespace {
         db.Add<std::string>("resource-dir",         UserStringNop("OPTIONS_DB_RESOURCE_DIR"),          PathString(GetRootDataDir() / "default"));
         db.Add<std::string>('S', "save-dir",        UserStringNop("OPTIONS_DB_SAVE_DIR"),              PathString(GetUserDataDir() / "save"));
         db.Add<std::string>("log-level",            UserStringNop("OPTIONS_DB_LOG_LEVEL"),             "DEBUG");
+        db.Add<std::string>( "logging.directory",
+                             UserStringNop("OPTIONS_DB_LOG_DIR"),
+                             PathString(GetUserDataDir() / "logs"));
+        db.Add<unsigned int>("logging.rotate-mb",
+                             UserStringNop("OPTIONS_DB_LOG_ROTATE_SIZE"),
+                             25, RangedValidator<unsigned int>(1, 1000));
         db.Add<std::string>("stringtable-filename", UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),  PathString(GetRootDataDir() / "default" / "stringtables" / "en.txt"));
         db.Add("binary-serialization",              UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),  false);
 
