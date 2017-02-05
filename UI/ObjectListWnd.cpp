@@ -289,7 +289,7 @@ namespace {
     const std::string FILTER_OPTIONS_WND_NAME = "object-list-filter";
 
     template <class enumT>
-    ValueRef::ValueRefBase<enumT>*          CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
+    ValueRef::ValueRefBase<enumT>*  CopyEnumValueRef(const ValueRef::ValueRefBase<enumT>* const value_ref) {
         if (const ValueRef::Constant<enumT>* constant =
             dynamic_cast<const ValueRef::Constant<enumT>*>(value_ref))
         { return new ValueRef::Constant<enumT>(constant->Value()); }
@@ -298,7 +298,7 @@ namespace {
 
     std::map<std::string, std::string> object_list_cond_description_map;
 
-    const std::string&                      ConditionClassName(const Condition::ConditionBase* const condition) {
+    const std::string&              ConditionClassName(const Condition::ConditionBase* const condition) {
         if (dynamic_cast<const Condition::All* const>(condition))
             return ALL_CONDITION;
         else if (dynamic_cast<const Condition::EmpireAffiliation* const>(condition))
@@ -356,7 +356,7 @@ namespace {
     }
 
     template <typename enumT>
-    std::vector<std::string> StringsFromEnums(const std::vector<enumT>& enum_vals) {
+    std::vector<std::string>        StringsFromEnums(const std::vector<enumT>& enum_vals) {
         std::vector<std::string> retval;
         for (const enumT& enum_val : enum_vals)
             retval.push_back(boost::lexical_cast<std::string>(enum_val));
@@ -2209,7 +2209,7 @@ private:
             Refresh();
     }
 
-    void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj)
+    void            UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj)
     { if (obj) RemoveObjectRow(obj->ID()); }
 
     std::map<int, boost::signals2::connection>          m_object_change_connections;
