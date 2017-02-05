@@ -142,6 +142,9 @@ X Position
 Y
 Y Position
 
+INVALID_POSITION
+Unknown Position
+
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
 NEW_FLEET_NAME

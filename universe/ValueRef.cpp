@@ -27,6 +27,7 @@
 #include <boost/algorithm/string/split.hpp>
 
 #include <iterator>
+#include <iomanip>
 
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
@@ -2298,6 +2299,19 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     if (!m_value_ref)
         return "";
     double temp = m_value_ref->Eval(context);
+
+    // special case for a few sub-value-refs to help with UI representation
+    if (Variable<double>* int_var = dynamic_cast<Variable<double>*>(m_value_ref)) {
+        if (int_var->PropertyName().back() == "X" || int_var->PropertyName().back() == "Y") {
+            if (temp == UniverseObject::INVALID_POSITION)
+                return UserString("INVALID_POSITION");
+
+            std::stringstream ss;
+            ss << std::setprecision(6) << temp;
+            return ss.str();
+        }
+    }
+
     return DoubleToString(temp, 3, false);
 }
 
