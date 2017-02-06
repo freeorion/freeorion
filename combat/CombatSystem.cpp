@@ -87,8 +87,8 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
             continue;
         }
 
-        std::string ship_known = "At " + system->Name() + " Ship " + boost::lexical_cast<std::string>(ship_id) + " owned by empire " +
-                                    boost::lexical_cast<std::string>(ship->Owner()) + " visible to empires: ";
+        std::string ship_known = "At " + system->Name() + " Ship " + std::to_string(ship_id) + " owned by empire " +
+                                    std::to_string(ship->Owner()) + " visible to empires: ";
         for (int empire_id : empire_ids) {
             if (empire_id == ALL_EMPIRES)
                 continue;
@@ -99,7 +99,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
                         Empires().GetDiplomaticStatus(empire_id, fleet->Owner()) == DIPLO_WAR)))
             {
                 empire_known_objects[empire_id].Insert(GetEmpireKnownShip(ship->ID(), empire_id));}
-                ship_known += boost::lexical_cast<std::string>(empire_id) + ", ";
+                ship_known += std::to_string(empire_id) + ", ";
         }
         if (verbose_logging)
             DebugLogger() << ship_known;
@@ -108,15 +108,15 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
     // planets
     for (std::shared_ptr<Planet> planet : planets) {
         int planet_id = planet->ID();
-        std::string planet_known = "At " + system->Name() + " Planet " + boost::lexical_cast<std::string>(planet_id) + " owned by empire " +
-                                    boost::lexical_cast<std::string>(planet->Owner()) + " visible to empires: ";
+        std::string planet_known = "At " + system->Name() + " Planet " + std::to_string(planet_id) + " owned by empire " +
+                                    std::to_string(planet->Owner()) + " visible to empires: ";
 
         for (int empire_id : empire_ids) {
             if (empire_id == ALL_EMPIRES)
                 continue;
             if (GetUniverse().GetObjectVisibilityByEmpire(planet_id, empire_id) > VIS_BASIC_VISIBILITY) {
                 empire_known_objects[empire_id].Insert(GetEmpireKnownPlanet(planet->ID(), empire_id));
-                planet_known += boost::lexical_cast<std::string>(empire_id) + ", ";
+                planet_known += std::to_string(empire_id) + ", ";
             }
         }
         if (verbose_logging)
@@ -1088,7 +1088,7 @@ namespace {
                  it != combat_info.objects.const_end(); ++it)
             {
                 std::shared_ptr<const UniverseObject> obj = *it;
-                std::string obj_status = "Considerting object " + obj->Name() + " owned by " + boost::lexical_cast<std::string>(obj->Owner());
+                std::string obj_status = "Considerting object " + obj->Name() + " owned by " + std::to_string(obj->Owner());
                 if (ObjectCanAttack(obj)) {
                     if (verbose_logging)
                         obj_status += "... can attack";
@@ -1113,7 +1113,7 @@ namespace {
                 std::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
                 if (verbose_logging)
                     DebugLogger() << "Considering attackability of object " << obj->Name() 
-                                  << " owned by " << boost::lexical_cast<std::string>(obj->Owner());
+                                  << " owned by " << std::to_string(obj->Owner());
 
                 std::string obj_status = "object: " + obj->Name() + " attackable by ";
                 std:: string empire_list;
@@ -1127,9 +1127,9 @@ namespace {
                         }
 
                     } else {
-                        empire_list_all += boost::lexical_cast<std::string>(attacking_empire_id) + ", ";
+                        empire_list_all += std::to_string(attacking_empire_id) + ", ";
                         if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
-                            empire_list += boost::lexical_cast<std::string>(attacking_empire_id) + ", ";
+                            empire_list += std::to_string(attacking_empire_id) + ", ";
                             empire_infos[attacking_empire_id].target_ids.insert(object_id);
                         }
                     }
@@ -1171,14 +1171,14 @@ namespace {
                 if (target->ObjectType() == OBJ_SHIP) {
                     valid_target_ids.insert(target_id);
                 } else if (verbose_logging) {
-                    invalid_target_ids += boost::lexical_cast<std::string>(target_id) + " ";
+                    invalid_target_ids += std::to_string(target_id) + " ";
                 }
             } else if (attacker->ObjectType() == OBJ_FIGHTER) {
                 // fighters can't attack planets
                 if (target->ObjectType() != OBJ_PLANET) {
                     valid_target_ids.insert(target_id);
                 } else if (verbose_logging) {
-                    invalid_target_ids += boost::lexical_cast<std::string>(target_id) + " ";
+                    invalid_target_ids += std::to_string(target_id) + " ";
                 }
             }
         }
@@ -1235,7 +1235,7 @@ namespace {
             if (verbose_logging) { 
                 std::string id_list;
                 for (int target_id : valid_target_ids)
-                { id_list += boost::lexical_cast<std::string>(target_id) + " "; }
+                { id_list += std::to_string(target_id) + " "; }
 
                 DebugLogger() << "Valid targets for attacker with id: " << attacker->ID()
                 << " owned by empire: " << attacker_owner_id

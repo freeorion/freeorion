@@ -123,12 +123,12 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
                     if (person.attributes.count("name"))
                         credit += person.attributes.at("name");
                     if (person.attributes.count("nick") && person.attributes.at("nick").length() > 0) {
-                        credit += " <rgba 153 153 153 " + boost::lexical_cast<std::string>(transparency) +">(";
+                        credit += " <rgba 153 153 153 " + std::to_string(transparency) +">(";
                         credit += person.attributes.at("nick");
                         credit += ")</rgba>";
                     }
                     if (person.attributes.count("task") && person.attributes.at("task").length() > 0) {
-                        credit += " - <rgba 204 204 204 " + boost::lexical_cast<std::string>(transparency) +">";
+                        credit += " - <rgba 204 204 204 " + std::to_string(transparency) +">";
                         credit += person.attributes.at("task");
                         credit += "</rgba>";
                     }

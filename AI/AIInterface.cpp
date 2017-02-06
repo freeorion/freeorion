@@ -22,7 +22,6 @@
 #include "../util/OrderSet.h"
 
 #include <boost/timer.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/python/str.hpp>
 
 
@@ -81,7 +80,7 @@ namespace AIInterface {
         if (it != players.end())
             return it->second.name;
         else {
-            DebugLogger() << "AIInterface::PlayerName(" << boost::lexical_cast<std::string>(player_id) << ") - passed an invalid player_id";
+            DebugLogger() << "AIInterface::PlayerName(" << std::to_string(player_id) << ") - passed an invalid player_id";
             throw std::invalid_argument("AIInterface::PlayerName : given invalid player_id");
         }
     }
@@ -116,7 +115,7 @@ namespace AIInterface {
     int EmpirePlayerID(int empire_id) {
         int player_id = AIClientApp::GetApp()->EmpirePlayerID(empire_id);
         if (-1 == player_id)
-            DebugLogger() << "AIInterface::EmpirePlayerID(" << boost::lexical_cast<std::string>(empire_id) << ") - passed an invalid empire_id";
+            DebugLogger() << "AIInterface::EmpirePlayerID(" << std::to_string(empire_id) << ") - passed an invalid empire_id";
         return player_id;
     }
 

@@ -14,7 +14,6 @@
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
-#include <boost/lexical_cast.hpp>
 
 SupplyManager::SupplyManager() :
     m_supply_starlane_traversals(),
@@ -172,12 +171,12 @@ std::string SupplyManager::Dump(int empire_id) const {
         for (const std::map<int, std::set<int>>::value_type& empire_supply : m_fleet_supplyable_system_ids) {
             if (empire_id != ALL_EMPIRES && empire_supply.first != empire_id)
                 continue;
-            retval += "Supplyable systems for empire " + boost::lexical_cast<std::string>(empire_supply.first) + "\n";
+            retval += "Supplyable systems for empire " + std::to_string(empire_supply.first) + "\n";
             for (int system_id : empire_supply.second) {
                 std::shared_ptr<const System> sys = GetSystem(system_id);
                 if (!sys)
                     continue;
-                retval += "\n" + sys->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(sys->ID()) + ") ";
+                retval += "\n" + sys->PublicName(empire_id) + " (" + std::to_string(sys->ID()) + ") ";
 
                 retval += "\nTraversals from here to: ";
 
@@ -185,7 +184,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                     if (trav.first == sys->ID()) {
                         std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.second);
                         if (obj)
-                            retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                            retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
@@ -195,7 +194,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                     if (trav.second == sys->ID()) {
                         std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first);
                         if (obj)
-                            retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                            retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
@@ -205,7 +204,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                     if (trav.first == sys->ID()) {
                         std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.second);
                         if (obj)
-                            retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                            retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
@@ -215,7 +214,7 @@ std::string SupplyManager::Dump(int empire_id) const {
                     if (trav.second == sys->ID()) {
                         std::shared_ptr<const UniverseObject> obj = GetUniverseObject(trav.first);
                         if (obj)
-                            retval += obj->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(obj->ID()) + ")  ";
+                            retval += obj->PublicName(empire_id) + " (" + std::to_string(obj->ID()) + ")  ";
                     }
                 }
                 retval += "\n";
@@ -225,14 +224,14 @@ std::string SupplyManager::Dump(int empire_id) const {
         }
 
         for (const std::map<int, std::set<std::set<int>>>::value_type& empire_supply : m_resource_supply_groups) {
-            retval += "Supply groups for empire " + boost::lexical_cast<std::string>(empire_supply.first) + "\n";
+            retval += "Supply groups for empire " + std::to_string(empire_supply.first) + "\n";
             for (const std::set<std::set<int>>::value_type& system_group : empire_supply.second) {
                 retval += "group: ";
                 for (int system_id : system_group) {
                     std::shared_ptr<const System> sys = GetSystem(system_id);
                     if (!sys)
                         continue;
-                    retval += "\n" + sys->PublicName(empire_id) + " (" + boost::lexical_cast<std::string>(sys->ID()) + ") ";
+                    retval += "\n" + sys->PublicName(empire_id) + " (" + std::to_string(sys->ID()) + ") ";
                 }
                 retval += "\n";
             }

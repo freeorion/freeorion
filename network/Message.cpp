@@ -215,7 +215,7 @@ Message JoinGameMessage(const std::string& player_name, Networking::ClientType c
 
 Message HostIDMessage(int host_player_id) {
     return Message(Message::HOST_ID, Networking::INVALID_PLAYER_ID, Networking::INVALID_PLAYER_ID,
-                   boost::lexical_cast<std::string>(host_player_id));
+                   std::to_string(host_player_id));
 }
 
 Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
@@ -517,7 +517,7 @@ Message RequestNewObjectIDMessage(int sender)
 
 Message DispatchObjectIDMessage(int player_id, int new_id) {
     return Message(Message::DISPATCH_NEW_OBJECT_ID, Networking::INVALID_PLAYER_ID, player_id,
-                   boost::lexical_cast<std::string>(new_id), true);
+                   std::to_string(new_id), true);
 }
 
 Message RequestNewDesignIDMessage(int sender)
@@ -525,7 +525,7 @@ Message RequestNewDesignIDMessage(int sender)
 
 Message DispatchDesignIDMessage(int player_id, int new_id) {
     return Message(Message::DISPATCH_NEW_DESIGN_ID, Networking::INVALID_PLAYER_ID, player_id,
-                   boost::lexical_cast<std::string>(new_id), true);
+                   std::to_string(new_id), true);
 }
 
 Message HostSaveGameInitiateMessage(int sender, const std::string& filename)

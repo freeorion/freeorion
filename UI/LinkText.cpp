@@ -489,7 +489,7 @@ std::string LinkTaggedText(const std::string& tag, const std::string& stringtabl
 { return "<" + tag + " " + stringtable_entry + ">" + UserString(stringtable_entry) + "</" + tag + ">"; }
 
 std::string LinkTaggedIDText(const std::string& tag, int id, const std::string& text)
-{ return "<" + tag + " " + boost::lexical_cast<std::string>(id) + ">" + text + "</" + tag + ">"; }
+{ return "<" + tag + " " + std::to_string(id) + ">" + text + "</" + tag + ">"; }
 
 std::string LinkTaggedPresetText(const std::string& tag, const std::string& stringtable_entry, const std::string& display_text)
 { return "<" + tag + " " + stringtable_entry + ">" + display_text + "</" + tag + ">"; }

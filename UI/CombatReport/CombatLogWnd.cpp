@@ -92,7 +92,7 @@ namespace {
             std::string owner_string;
             if (const Empire* owner = GetEmpire(it->first))
                 owner_string = GG::RgbaTag(owner->Color()) + "<" + VarText::EMPIRE_ID_TAG + " "
-                    + boost::lexical_cast<std::string>(owner->EmpireID()) + ">" + owner->Name()
+                    + std::to_string(owner->EmpireID()) + ">" + owner->Name()
                     + "</" + VarText::EMPIRE_ID_TAG + ">" + "</rgba>";
             else
                 owner_string = GG::RgbaTag(ClientUI::DefaultLinkColor()) + UserString("NEUTRAL")  + "</rgba>";

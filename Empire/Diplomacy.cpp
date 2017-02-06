@@ -1,7 +1,5 @@
 #include "Diplomacy.h"
 
-#include <boost/lexical_cast.hpp>
-
 extern const int ALL_EMPIRES;
 
 DiplomaticMessage::DiplomaticMessage() :
@@ -27,8 +25,8 @@ bool operator!=(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs)
 
 std::string DiplomaticMessage::Dump() const {
     std::string retval;
-    retval += "Dimplomatic message from : " + boost::lexical_cast<std::string>(m_sender_empire) +
-              " to: " + boost::lexical_cast<std::string>(m_recipient_empire) +
+    retval += "Dimplomatic message from : " + std::to_string(m_sender_empire) +
+              " to: " + std::to_string(m_recipient_empire) +
               " about: ";
     switch (m_type) {
     case WAR_DECLARATION:   retval += "War Declaration";    break;

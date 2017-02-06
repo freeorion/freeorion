@@ -556,10 +556,10 @@ OptionsWnd::OptionsWnd():
     current_page = CreatePage(UserString("OPTIONS_PAGE_OBJECTS_WINDOW"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_COLUMNS"));
     for (unsigned int i = 0; i < 12u; ++i) {
-        std::string col_width_opt_name = "UI.objects-list-width-col-" + boost::lexical_cast<std::string>(i);
+        std::string col_width_opt_name = "UI.objects-list-width-col-" + std::to_string(i);
         if (!GetOptionsDB().OptionExists(col_width_opt_name))
             break;
-        std::string col_opt_name = "UI.objects-list-info-col-" + boost::lexical_cast<std::string>(i);
+        std::string col_opt_name = "UI.objects-list-info-col-" + std::to_string(i);
         if (!GetOptionsDB().OptionExists(col_opt_name))
             break;
         std::string col_contents = GetOptionsDB().GetValueString(col_opt_name);

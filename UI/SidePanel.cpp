@@ -765,7 +765,7 @@ namespace {
         int SystemID() const { return m_system_id; }
 
         SortKeyType SortKey(std::size_t column) const override
-        { return GetSystem(m_system_id)->Name() + boost::lexical_cast<std::string>(m_system_id); }
+        { return GetSystem(m_system_id)->Name() + std::to_string(m_system_id); }
 
     private:
         int m_system_id;
@@ -1854,7 +1854,7 @@ void SidePanel::PlanetPanel::Refresh() {
             Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_BASIC_VISIBILITY);
             if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
                 visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SEEN")) %
-                                                                        boost::lexical_cast<std::string>(last_turn_visible_it->second));
+                                                                        std::to_string(last_turn_visible_it->second));
             }
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SEEN");
@@ -1885,7 +1885,7 @@ void SidePanel::PlanetPanel::Refresh() {
             Universe::VisibilityTurnMap::const_iterator last_turn_visible_it = visibility_turn_map.find(VIS_PARTIAL_VISIBILITY);
             if (last_turn_visible_it != visibility_turn_map.end() && last_turn_visible_it->second > 0) {
                 visibility_info += "  " + boost::io::str(FlexibleFormat(UserString("PL_LAST_TURN_SCANNED")) %
-                                                                        boost::lexical_cast<std::string>(last_turn_visible_it->second));
+                                                                        std::to_string(last_turn_visible_it->second));
             }
             else {
                 visibility_info += "  " + UserString("PL_NEVER_SCANNED");

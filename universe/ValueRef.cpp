@@ -126,7 +126,7 @@ namespace {
         }
         if (obj) {
             retval += UserString(boost::lexical_cast<std::string>(obj->ObjectType())) + " "
-                    + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " ) ";
+                    + std::to_string(obj->ID()) + " ( " + obj->Name() + " ) ";
             initial_obj = obj;
         }
         retval += " | ";
@@ -138,18 +138,18 @@ namespace {
             retval += " " + property_name + " ";
             if (property_name == "Planet") {
                 if (std::shared_ptr<const Building> b = std::dynamic_pointer_cast<const Building>(obj)) {
-                    retval += "(" + boost::lexical_cast<std::string>(b->PlanetID()) + "): ";
+                    retval += "(" + std::to_string(b->PlanetID()) + "): ";
                     obj = GetPlanet(b->PlanetID());
                 } else
                     obj = nullptr;
             } else if (property_name == "System") {
                 if (obj) {
-                    retval += "(" + boost::lexical_cast<std::string>(obj->SystemID()) + "): ";
+                    retval += "(" + std::to_string(obj->SystemID()) + "): ";
                     obj = GetSystem(obj->SystemID());
                 }
             } else if (property_name == "Fleet") {
                 if (std::shared_ptr<const Ship> s = std::dynamic_pointer_cast<const Ship>(obj))  {
-                    retval += "(" + boost::lexical_cast<std::string>(s->FleetID()) + "): ";
+                    retval += "(" + std::to_string(s->FleetID()) + "): ";
                     obj = GetFleet(s->FleetID());
                 } else
                     obj = nullptr;
@@ -159,7 +159,7 @@ namespace {
 
             if (obj && initial_obj != obj) {
                 retval += "  Referenced Object: " + UserString(boost::lexical_cast<std::string>(obj->ObjectType())) + " "
-                        + boost::lexical_cast<std::string>(obj->ID()) + " ( " + obj->Name() + " )";
+                        + std::to_string(obj->ID()) + " ( " + obj->Name() + " )";
             }
             retval += " | ";
         }
@@ -286,7 +286,7 @@ template <>
 std::string Constant<int>::Description() const
 {
     if (std::abs(m_value) < 1000)
-        return boost::lexical_cast<std::string>(m_value);
+        return std::to_string(m_value);
     return DoubleToString(m_value, 3, false);
 }
 
@@ -619,7 +619,7 @@ StarType Variable<StarType>::Eval(const ScriptingContext& context) const
     ErrorLogger() << "Variable<StarType>::Eval unrecognized object property: " << TraceReference(m_property_name, m_ref_type, context);
     if (context.source)
         ErrorLogger() << "source: " << context.source->ObjectType() << " "
-                      << boost::lexical_cast<std::string>(context.source->ID()) << " ( " << context.source->Name() << " ) ";
+                      << std::to_string(context.source->ID()) << " ( " << context.source->Name() << " ) ";
     else
         ErrorLogger() << "source (none)";
 
@@ -2335,7 +2335,7 @@ std::string StringCast<int>::Eval(const ScriptingContext& context) const
         }
     }
 
-    return boost::lexical_cast<std::string>(temp);
+    return std::to_string(temp);
 }
 
 template <>

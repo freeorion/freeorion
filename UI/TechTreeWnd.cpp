@@ -924,7 +924,7 @@ void TechTreeWnd::LayoutPanel::TechPanel::Update() {
         if (queue_it != queue.end()) {
             m_eta = queue_it->turns_left;
             if (m_eta != -1)
-                m_eta_text = boost::lexical_cast<std::string>(m_eta);
+                m_eta_text = std::to_string(m_eta);
             else
                 m_eta_text.clear();
         }
@@ -1632,14 +1632,14 @@ TechTreeWnd::TechListBox::TechRow::TechRow(GG::X w, const std::string& tech_name
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
+    std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID())));
     text = new CUILabel(cost_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
     text->SetChildClippingMode(ClipToWindow);
     push_back(text);
 
-    std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
+    std::string time_str = std::to_string(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
     text = new CUILabel(time_str + just_pad + just_pad, GG::FORMAT_RIGHT);
     text->SetResetMinSize(false);
     text->ClipText(true);
@@ -1665,11 +1665,11 @@ void TechTreeWnd::TechListBox::TechRow::Update() {
     // TODO replace string padding with new TextFormat flag
     std::string just_pad = "    ";
 
-    std::string cost_str = boost::lexical_cast<std::string>(static_cast<int>(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID()) + 0.5));
+    std::string cost_str = std::to_string(std::lround(this_row_tech->ResearchCost(HumanClientApp::GetApp()->EmpireID())));
     if (GG::Button* cost_btn = dynamic_cast<GG::Button*>((size() >= 3) ? at(2) : nullptr))
         cost_btn->SetText(cost_str + just_pad + just_pad);
 
-    std::string time_str = boost::lexical_cast<std::string>(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
+    std::string time_str = std::to_string(this_row_tech->ResearchTime(HumanClientApp::GetApp()->EmpireID()));
     if (GG::Button* time_btn = dynamic_cast<GG::Button*>((size() >= 4) ? at(3) : nullptr))
         time_btn->SetText(time_str + just_pad + just_pad);
 }

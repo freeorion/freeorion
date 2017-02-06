@@ -100,7 +100,7 @@ namespace {
         DebugLogger() << "PlayerSetupData:";
         for (const std::pair<int, PlayerSetupData>& entry : psd) {
             std::stringstream ss;
-            ss << boost::lexical_cast<std::string>(entry.first) << " : "
+            ss << std::to_string(entry.first) << " : "
                << entry.second.m_player_name << ", ";
             switch (entry.second.m_client_type) {
             case Networking::CLIENT_TYPE_AI_PLAYER:         ss << "AI_PLAYER, ";    break;
@@ -668,7 +668,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.m_empire_color == GG::Clr(0, 0, 0, 0))
                 psd.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players);
             if (psd.m_player_name.empty())
-                psd.m_player_name = UserString("AI_PLAYER") + "_" + boost::lexical_cast<std::string>(AI_count++);
+                psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(AI_count++);
             if (psd.m_empire_name.empty())
                 psd.m_empire_name = GenerateEmpireName(m_lobby_data->m_players);
             if (psd.m_starting_species_name.empty()) {
@@ -682,7 +682,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             if (psd.m_empire_color == GG::Clr(0, 0, 0, 0))
                 psd.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players);
             if (psd.m_player_name.empty())
-                psd.m_player_name = UserString("PLAYER") + "_" + boost::lexical_cast<std::string>(nameless_player_count++);
+                psd.m_player_name = UserString("PLAYER") + "_" + std::to_string(nameless_player_count++);
             if (psd.m_empire_name.empty())
                 psd.m_empire_name = psd.m_player_name;
             if (psd.m_starting_species_name.empty())
@@ -925,15 +925,15 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     for (PlayerSetupData& psd : players) {
         if (psd.m_player_name.empty()) {
             if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                psd.m_player_name = "AI_" + boost::lexical_cast<std::string>(player_num++);
+                psd.m_player_name = "AI_" + std::to_string(player_num++);
             else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                psd.m_player_name = "Human_Player_" + boost::lexical_cast<std::string>(player_num++);
+                psd.m_player_name = "Human_Player_" + std::to_string(player_num++);
             else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-                psd.m_player_name = "Observer_" + boost::lexical_cast<std::string>(player_num++);
+                psd.m_player_name = "Observer_" + std::to_string(player_num++);
             else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-                psd.m_player_name = "Moderator_" + boost::lexical_cast<std::string>(player_num++);
+                psd.m_player_name = "Moderator_" + std::to_string(player_num++);
             else
-                psd.m_player_name = "Player_" + boost::lexical_cast<std::string>(player_num++);
+                psd.m_player_name = "Player_" + std::to_string(player_num++);
         }
     }
 

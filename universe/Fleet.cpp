@@ -15,7 +15,6 @@
 #include "../Empire/Supply.h"
 
 #include <boost/bind.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/timer.hpp>
 
 #include <cmath>
@@ -1377,7 +1376,7 @@ std::string Fleet::GenerateFleetName() {
     }
 
     if (all_monster)
-        return boost::io::str(FlexibleFormat(UserString("NEW_MONSTER_FLEET_NAME")) % boost::lexical_cast<std::string>(ID()));
+        return boost::io::str(FlexibleFormat(UserString("NEW_MONSTER_FLEET_NAME")) % ID());
 
     bool all_colony(true);
     it = ships.begin();
@@ -1390,7 +1389,7 @@ std::string Fleet::GenerateFleetName() {
     }
 
     if (all_colony)
-        return boost::io::str(FlexibleFormat(UserString("NEW_COLONY_FLEET_NAME")) % boost::lexical_cast<std::string>(ID()));
+        return boost::io::str(FlexibleFormat(UserString("NEW_COLONY_FLEET_NAME")) % ID());
 
     bool all_non_coms(true);
     it = ships.begin();
@@ -1403,7 +1402,7 @@ std::string Fleet::GenerateFleetName() {
     }
 
     if (all_non_coms)
-        return boost::io::str(FlexibleFormat(UserString("NEW_RECON_FLEET_NAME")) % boost::lexical_cast<std::string>(ID()));
+        return boost::io::str(FlexibleFormat(UserString("NEW_RECON_FLEET_NAME")) % ID());
 
     bool all_troop(true);
     it = ships.begin();
@@ -1416,7 +1415,7 @@ std::string Fleet::GenerateFleetName() {
     }
 
     if (all_troop)
-        return boost::io::str(FlexibleFormat(UserString("NEW_TROOP_FLEET_NAME")) % boost::lexical_cast<std::string>(ID()));
+        return boost::io::str(FlexibleFormat(UserString("NEW_TROOP_FLEET_NAME")) % ID());
 
     bool all_bombard(true);
     it = ships.begin();
@@ -1429,7 +1428,7 @@ std::string Fleet::GenerateFleetName() {
     }
 
     if (all_bombard)
-        return boost::io::str(FlexibleFormat(UserString("NEW_BOMBARD_FLEET_NAME")) % boost::lexical_cast<std::string>(ID()));
+        return boost::io::str(FlexibleFormat(UserString("NEW_BOMBARD_FLEET_NAME")) % ID());
 
     bool mixed_combat(true);
     it = ships.begin();
@@ -1442,10 +1441,10 @@ std::string Fleet::GenerateFleetName() {
     }
 
     if (mixed_combat)
-        return boost::io::str(FlexibleFormat(UserString("NEW_BATTLE_FLEET_NAME")) % boost::lexical_cast<std::string>(ID()));
+        return boost::io::str(FlexibleFormat(UserString("NEW_BATTLE_FLEET_NAME")) % ID());
 
 
-    return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % boost::lexical_cast<std::string>(ID()));
+    return boost::io::str(FlexibleFormat(UserString("NEW_FLEET_NAME")) % ID());
 }
 
 void Fleet::SetGiveToEmpire(int empire_id) {

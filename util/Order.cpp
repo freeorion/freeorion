@@ -17,8 +17,6 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 
-#include <boost/lexical_cast.hpp>
-
 #include <fstream>
 #include <vector>
 
@@ -371,7 +369,7 @@ void FleetMoveOrder::ExecuteImpl() const {
 
     std::string waypoints;
     for (int waypoint : route_list) {
-        waypoints += std::string(" ") + boost::lexical_cast<std::string>(waypoint);
+        waypoints += std::string(" ") + std::to_string(waypoint);
     }
     DebugLogger() << "FleetMoveOrder::ExecuteImpl Setting route of fleet " << fleet->ID() << " to " << waypoints;
 

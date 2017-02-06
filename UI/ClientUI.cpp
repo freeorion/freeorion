@@ -455,7 +455,7 @@ namespace {
                            stringtable_charsets.begin(), stringtable_charsets.end(),
                            std::back_inserter(retval));
 
-            std::string message_text = "Loading " + boost::lexical_cast<std::string>(retval.size()) + " Unicode charsets: ";
+            std::string message_text = "Loading " + std::to_string(retval.size()) + " Unicode charsets: ";
             for (const GG::UnicodeCharset& cs : retval)
             { message_text += cs.m_script_name + ", "; }
 

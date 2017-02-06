@@ -102,7 +102,7 @@ std::string Special::Dump() const {
         retval += DumpIndent() + "stealth = " + m_stealth->Dump() + "\n";
 
     retval += DumpIndent() + "spawnrate = " + boost::lexical_cast<std::string>(m_spawn_rate) + "\n"
-           +  DumpIndent() + "spawnlimit = " + boost::lexical_cast<std::string>(m_spawn_limit) + "\n";
+           +  DumpIndent() + "spawnlimit = " + std::to_string(m_spawn_limit) + "\n";
 
     if (m_initial_capacity) {
         retval += DumpIndent() + "initialcapacity = ";
