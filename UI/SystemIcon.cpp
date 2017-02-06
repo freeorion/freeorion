@@ -204,6 +204,10 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size, boo
         text_color = ClientUI::TextColor();
     }
 
+    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+        wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
+    }
+
     GG::TextControl* text = new GG::TextControl(
         GG::X0, GG::Y0, GG::X1, GG::Y1, "<s>" + wrapped_system_name + "</s>", font, text_color);
     AttachChild(text);

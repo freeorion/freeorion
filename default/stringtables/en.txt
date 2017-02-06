@@ -1272,6 +1272,9 @@ Sets the color of the scan-line shading over ship/fleet graphics on the fleet wi
 OPTIONS_DB_SHOW_FLEET_ETA
 Show fleet ETA (for moving fleets) in Fleet Window
 
+OPTIONS_DB_SHOW_IDS_AFTER_NAMES
+Show ids after object names
+
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Sets size of system selection indicator, relative to system icon size.
 
@@ -2518,6 +2521,9 @@ Verbose logging for debugging
 
 OPTIONS_VERBOSE_SITREP_DESC
 Situation reports with errors
+
+OPTIONS_SHOW_IDS_AFTER_NAMES
+IDs after names
 
 OPTIONS_EFFECT_ACCOUNTING
 Effect accounting

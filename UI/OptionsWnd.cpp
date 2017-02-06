@@ -505,6 +505,7 @@ OptionsWnd::OptionsWnd():
     BoolOption(current_page,   0, "UI.dump-effects-descriptions",          UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
     BoolOption(current_page,   0, "verbose-logging",                       UserString("OPTIONS_VERBOSE_LOGGING_DESC"));
     BoolOption(current_page,   0, "verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page,   0, "UI.show-id-after-names",                UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
 
     m_tabs->SetCurrentWnd(0);
 
