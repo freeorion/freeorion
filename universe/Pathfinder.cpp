@@ -262,8 +262,7 @@ namespace SystemPathing {
               m_level_complete(false)
         {}
 
-        void initialize_vertex(const Vertex& v, const Graph& g)
-        {}
+        void initialize_vertex(const Vertex& v, const Graph& g) {}
 
         void discover_vertex(const Vertex& v, const Graph& g) {
             m_predecessors[static_cast<int>(v)] = m_source;
@@ -621,8 +620,8 @@ Pathfinder::Pathfinder() :
     pimpl(new PathfinderImpl)
 {}
 
-Pathfinder::~Pathfinder() {
-}
+Pathfinder::~Pathfinder()
+{}
 
 namespace {
     std::shared_ptr<const Fleet> FleetFromObject(std::shared_ptr<const UniverseObject> obj) {
@@ -753,7 +752,8 @@ namespace {
     GeneralizedLocation that it is visiting.*/
 struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     JumpDistanceSys2Visitor(const Pathfinder::PathfinderImpl& _pf, int _sys_id1) :
-        pf(_pf), sys_id1(_sys_id1) {}
+        pf(_pf), sys_id1(_sys_id1)
+    {}
 
     /** Return the maximum distance if this end is nowhere.  */
     int operator()(std::nullptr_t) const { return INT_MAX; }
@@ -801,7 +801,8 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
 struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
     JumpDistanceSys1Visitor(const Pathfinder::PathfinderImpl& _pf,
                             const GeneralizedLocationType&_sys2_ids) :
-        pf(_pf), sys2_ids(_sys2_ids) {}
+        pf(_pf), sys2_ids(_sys2_ids)
+    {}
 
     /** Return the maximum distance if the first object is nowhere.*/
     int operator()(std::nullptr_t) const { return INT_MAX; }
@@ -1017,9 +1018,9 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
 struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersObjectVisitor(const Pathfinder::PathfinderImpl& _pf,
                                      int _jumps,
-                                     const std::vector<std::shared_ptr<const UniverseObject>>& _others
-                                    ) :
-        pf(_pf), jumps(_jumps), others(_others) {}
+                                     const std::vector<std::shared_ptr<const UniverseObject>>& _others) :
+        pf(_pf), jumps(_jumps), others(_others)
+    {}
 
     bool operator()(std::nullptr_t) const { return false; }
     bool operator()(int sys_id) const {
@@ -1040,8 +1041,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
 struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersOtherVisitor(const Pathfinder::PathfinderImpl& _pf,
                                     int _jumps,
-                                    const distance_matrix_storage<short>::row_ref _row
-                                   ) :
+                                    const distance_matrix_storage<short>::row_ref _row) :
         pf(_pf), jumps(_jumps), row(_row)
     {}
 
