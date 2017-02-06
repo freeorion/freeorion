@@ -136,6 +136,15 @@ Reprendre
 DIFFICULTY
 Difficulté
 
+X
+Position X
+
+Y
+Position Y
+
+INVALID_POSITION
+Position inconnue
+
 # Name for a newly created general purpose fleet.
 # %1% represents a unique number.
 NEW_FLEET_NAME
@@ -349,7 +358,7 @@ SD_SCOUT_4_DESC
 Petit astronef économique mais non-armé, equipé d'un [[metertype METER_DETECTION]] de dernière génération, conçu pour la reconnaissance et l'exploration. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ENG_SCOUT
-Éclaireur Energy
+Éclaireur Énergie
 
 SD_ENG_SCOUT_DESC
 Astronef compact et rapide mais non-armé, conçu pour la reconnaissance et l'exploration. [[SHIPDESIGN_DETECTION_RESEARCH_TIPS]] [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]
@@ -475,7 +484,7 @@ SD_OUTPOST_SHIP_DESC
 Astronef non-armé [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ORG_OUTPOST_SHIP
-Bâtisseur Galactique Organic
+Bâtisseur Galactique Organique
 
 SD_ORG_OUTPOST_SHIP_DESC
 Astronef organique non-armé [[SHIPDESIGN_OUTPOSTS_CAPACITY]]. [[BLD_SHIPYARD_BASE_ORG_ORB_INC_REQUIRED]]
@@ -3762,6 +3771,14 @@ Astronef - Coque
 ENC_TECH  # translated
 Technologies
 
+ENC_TECH_DESC
+'''De nouveaux effets, indicateurs planétaires améliorés, structures, et équipements d'astronef peuvent être débloqués via la [[metertype METER_RESEARCH]] des technologies associées.
+
+Effectuer la [[METER_RESEARCH]] d'une technologie débloquant un objet donnera uniquement à l'empire la connaissance des modalités de production de cet objet. La production effective d'un objet peut être soumise à d'autres conditions, tel l'accès à certaines ressources.
+Si un objet a été débloqué mais ne peut pas être produit, les conditions additionnelles de production peuvent être consultées en affichant la bulle d'aide de l'objet en question dans la liste de la Fenêtre Production (survol souris + filtre "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" activé).
+
+En général, la disponibilité ou l'activation d'un objet débloqué par la [[METER_RESEARCH]] d'une technologie ne nécessite pas de connection aux lignes d'[[metertype METER_SUPPLY]] (par exemple une structure ou une amélioration d'un indicateur planétaire). Toutefois, si une technologie améliorant un équipement d'astronef est recherchée puis assimilée (par exemple un armement), les astronefs déjà existants doivent se trouver dans une zone d'approvisionnement, être stationnaires et ne pas être en situation de combat, afin de recevoir l'amélioration au cours du tour suivant.'''
+
 ENC_SPECIAL
 Particularité Planétaire ou Spatiale
 
@@ -4644,17 +4661,6 @@ Focus Protection
 PROTECTION_FOCUS_TEXT
 Privilégier la Protection consiste pour une planète à se consacrer entièrement à sa propre défense. Ses effectifs d'[[metertype METER_TROOPS]], sa capacité de [[metertype METER_DEFENSE]], et la solidité de ses [[metertype METER_SHIELD]] sont par conséquent doublés.
 
-TECHNOLOGIES_TITLE  # translated
-Technologies
-
-TECHNOLOGIES_TEXT
-'''De nouveaux effets, indicateurs planétaires améliorés, structures, et équipements d'astronef peuvent être débloqués via la [[metertype METER_RESEARCH]] des technologies associées.
-
-Effectuer la [[METER_RESEARCH]] d'une technologie débloquant un objet donnera uniquement à l'empire la connaissance des modalités de production de cet objet. La production effective d'un objet peut être soumise à d'autres conditions, tel l'accès à certaines ressources.
-Si un objet a été débloqué mais ne peut pas être produit, les conditions additionnelles de production peuvent être consultées en affichant la bulle d'aide de l'objet en question dans la liste de la Fenêtre Production (survol souris + filtre "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" activé).
-
-En général, la disponibilité ou l'activation d'un objet débloqué par la [[METER_RESEARCH]] d'une technologie ne nécessite pas de connection aux lignes d'[[metertype METER_SUPPLY]] (par exemple une structure ou une amélioration d'un indicateur planétaire). Toutefois, si une technologie améliorant un équipement d'astronef est recherchée puis assimilée (par exemple un armement), les astronefs déjà existants doivent se trouver dans une zone d'approvisionnement, être stationnaires et ne pas être en situation de combat, afin de recevoir l'amélioration au cours du tour suivant.'''
-
 ARMOR_TITLE
 Blindage
 
@@ -5085,6 +5091,15 @@ Focus
 PREFERRED_FOCUS
 Focus favori
 
+AVAILABLE_FOCI
+Foci disponibles
+
+PARTS
+Équipements
+
+HULL
+Coque
+
 OBJECT_TYPE  # translated
 Type
 
@@ -5107,7 +5122,10 @@ SYSTEM_SUPPLY_RANGE
 Portée Approvisionnement Système
 
 PROPAGATED_SUPPLY_RANGE
-Portée Approvisionnement Propagée
+Portée Approvisionnement Propagé
+
+PROPAGATED_SUPPLY_DISTANCE
+Distance Approvisionnement Propagé
 
 ETA
 Tours avant Destination
@@ -5171,6 +5189,13 @@ Croiss. Pop. au Prochain Tour
 
 NUM_SPECIALS
 Nombre de Particularités
+
+SPECIALS
+Particularités
+
+TAGS  # translated
+Tags
+
 
 
 ##
@@ -8070,6 +8095,9 @@ nom du type de structure
 DESC_VAR_FOCUS  # translated
 focus
 
+DESC_VAR_AVAILABLE_FOCI
+foci disponibles
+
 DESC_VAR_OWNERLEASTEXPENSIVEENQUEUEDTECH
 technologie la moins coûteuse mise en attente de recherche
 
@@ -8820,30 +8848,146 @@ DESC_HAS_TAG_NOT
 LEARNING_CATEGORY
 Connaissance
 
+LEARNING_CATEGORY_DESC
+Technologies relatives à la Connaissance.
+
 PRODUCTION_CATEGORY  # translated
 Production
+
+PRODUCTION_CATEGORY_DESC
+Technologies relatives à la Production.
 
 CONSTRUCTION_CATEGORY  # translated
 Construction
 
+CONSTRUCTION_CATEGORY_DESC
+Technologies relatives à la Construction.
+
 GROWTH_CATEGORY
 Croissance
+
+GROWTH_CATEGORY_DESC
+Technologies relatives à la Croissance.
 
 SHIP_HULLS_CATEGORY
 Coques Astronef
 
+SHIP_HULLS_CATEGORY_DESC
+Technologies relatives aux Coques d'Astronef.
+
+ASTEROID_HULL_TECHS
+Classe Astéroïde
+
+ASTEROID_HULL_TECHS_DESC
+Technologies relatives à la classe Asteroïde des coques d'astronef.
+
+ENERGY_HULL_TECHS
+Classe Énergie
+
+ENERGY_HULL_TECHS_DESC
+Technologies relatives à la classe Énergie des coques d'astronef.
+
+ORGANIC_HULL_TECHS
+Classe Organique
+
+ORGANIC_HULL_TECHS_DESC
+Technologies relatives à la classe Organique des coques d'astronef.
+
+ROBOTIC_HULL_TECHS
+Classe Robotique
+
+ROBOTIC_HULL_TECHS_DESC
+Technologies relatives à la classe Robotique des coques d'astronef.
+
 SHIP_PARTS_CATEGORY
-Ingénierie
+Ingénierie Astronef
+
+SHIP_PARTS_CATEGORY_DESC
+Technologies relatives à l'ingénierie des astronefs.
+
+SHIELD_PART_TECHS
+Boucliers
+
+SHIELD_PART_TECHS_DESC
+Technologies relatives aux équipements en bouclier des astronefs.
+
+ENGINE_PART_TECHS
+Motorisation
+
+ENGINE_PART_TECHS_DESC
+Technologies relatives aux équipements en motorisation des astronefs.
+
+FUEL_PART_TECHS
+Carburant
+
+FUEL_PART_TECHS_DESC
+Technologies relatives aux équipements en carburant des astronefs.
+
+ARMOR_PART_TECHS
+Blindage
+
+ARMOR_PART_TECHS_DESC
+Technologies relatives aux équipements en blindage des astronefs.
+
+STEALTH_PART_TECHS
+Furtivité
+
+STEALTH_PART_TECHS_DESC
+Technologies relatives aux équipements en furtivité des astronefs.
+
+DETECTION_PART_TECHS
+Détection
+
+DETECTION_PART_TECHS_DESC
+Technologies relatives aux équipements en détection des astronefs.
+
+DAMAGE_CONTROL_PART_TECHS
+Contrôle des Dégâts
+
+DAMAGE_CONTROL_PART_TECHS_DESC
+Technologies relatives au contrôle des dégâts sur les astronefs.
 
 SHIP_WEAPONS_CATEGORY
 Armements Astronef
 
+SHIP_WEAPONS_CATEGORY_DESC
+Technologies relatives aux armements d'astronef.
+
+SR_WEAPON_TECHS
+Armements Courte-Portée
+
+SR_WEAPON_TECHS_DESC
+Technologies relatives aux armements de courte-portée des astronefs.
+
+FIGHTER_TECHS
+Chasseurs
+
+FIGHTER_TECHS_DESC
+Technologies relatives aux chasseurs d'astronef.
+
+BOMBARD_WEAPON_TECHS
+Bombardement
+
+BOMBARD_WEAPON_TECHS_DESC
+Technologies relatives aux armes de bombardement des astronefs.
+
 DEFENSE_CATEGORY
 Défense
+
+DEFENSE_CATEGORY_DESC
+Technologies relatives à la défense des planètes et systèmes.
 
 SPY_CATEGORY
 Ruse
 
+SPY_CATEGORY_DESC
+Technologies relatives à la ruse et au renseignement.
+
+EXTINCT_SPECIES_TECHS
+Espèces Éteintes
+
+EXTINCT_SPECIES_TECHS_DESC
+Technologies relatives aux espèces éteintes.
 
 ##
 ## Technology theories
@@ -10800,7 +10944,7 @@ BLD_PLANET_DRIVE_DESC
 
 En raison d'un manque de précision du dispositif de navigation, une [[buildingtype BLD_PLANET_BEACON]], ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]], est nécessaire et doit se trouver à l'arrivée de la Voie spatiale empruntée. L'un comme l'autre s'auto-détruiront une fois utilisés, afin que la planète puisse événtuellement se déplacer vers un autre système si nécessaire.
 
-Pour utiliser le Navigateur Planétaire, une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système adjacent de destination, ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]] doit s'y trouver. Enfin, la planète migrante doit être réglée sur le Focus Navigation Planétaire, afin qu'elle se dirige vers le système de destination. Il est à noter que le Navigateur ne fonctionnera pas durant le tour où s'achève sa construction, ou durant lequel un astronef équipé du dispositif arrive dans le système de destination. Enfin, un [[buildingtype BLD_TRANSFORMER]] est en mesure de reproduire les effets d'un Navigateur Planétaire.'''
+Pour utiliser le Navigateur Planétaire, une [[buildingtype BLD_PLANET_BEACON]] doit être construite dans le système adjacent de destination, ou bien un astronef équipé d'une [[shippart SP_PLANET_BEACON]] doit s'y trouver, tandis que la planète migrante doit être réglée sur le Focus Navigation Planétaire, afin qu'elle se dirige vers le système de destination. Il est à noter que la balise doit se trouver dans le système de destination depuis au moins un tour: le Navigateur ne fonctionnera donc pas durant le tour où sa construction est achevée, ou durant lequel un astronef équipé du dispositif arrive dans le système de destination. D'autre part, un [[buildingtype BLD_TRANSFORMER]] est en mesure de reproduire les effets d'un Navigateur Planétaire.'''
 
 BLD_PLANET_BEACON
 Balise Planétaire
@@ -12055,7 +12199,7 @@ Sa [[metertype METER_STRUCTURE]] est faible, sa [[metertype METER_STEALTH]] est 
 [[BLD_SHIPYARD_BASE_ENRG_COMP_THREE_STARS_REQUIRED]]'''
 
 SH_ENERGY_FRIGATE
-Frégate Energy
+Frégate Énergie
 
 SH_ENERGY_FRIGATE_DESC
 '''Cette coque très rapide combine l'énergie compressée et la technologie militaire afin de créer un astronef d'attaque véloce mais fragile.
