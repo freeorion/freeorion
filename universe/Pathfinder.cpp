@@ -1081,10 +1081,9 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
     answer = false;
     for (const auto& other : others) {
-        WithinJumpsOfOthersOtherVisitor visitor(*this, jumps, row);
-        GeneralizedLocationType other_systems = GeneralizedLocation(other);
-        bool other_within_jumps = boost::apply_visitor(visitor, other_systems);
-        if (other_within_jumps) {
+        WithinJumpsOfOthersOtherVisitor check_if_location_is_within_jumps(*this, jumps, row);
+        GeneralizedLocationType location = GeneralizedLocation(other);
+        if (boost::apply_visitor(check_if_location_is_within_jumps, location)) {
             answer = true;
             return;
         }
