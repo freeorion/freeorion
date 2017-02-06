@@ -240,14 +240,9 @@ void PopulationPanel::DoLayout() {
 }
 
 std::shared_ptr<const PopCenter> PopulationPanel::GetPopCenter() const {
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_popcenter_id);
-    if (!obj) {
-        ErrorLogger() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
-        return nullptr;
-    }
-    std::shared_ptr<const PopCenter> pop = std::dynamic_pointer_cast<const PopCenter>(obj);
+    std::shared_ptr<const PopCenter> pop = ::GetPopCenter(m_popcenter_id);
     if (!pop) {
-        ErrorLogger() << "PopulationPanel failed casting an object pointer to a PopCenter pointer";
+        ErrorLogger() << "PopulationPanel tried to get an object with an invalid m_popcenter_id";
         return nullptr;
     }
     return pop;

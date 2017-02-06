@@ -49,9 +49,8 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
         // special case for population meter for an indicator showing only a
         // single popcenter: icon is species icon, rather than generic pop icon
         if (PRIMARY_METER_TYPE == METER_POPULATION && m_object_ids.size() == 1) {
-            if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin()))
-                if (std::shared_ptr<const PopCenter> pc = std::dynamic_pointer_cast<const PopCenter>(obj))
-                    texture = ClientUI::SpeciesIcon(pc->SpeciesName());
+	    if (std::shared_ptr<const PopCenter> pc = GetPopCenter(*m_object_ids.begin()))
+		texture = ClientUI::SpeciesIcon(pc->SpeciesName());
         }
 
         m_icons.push_back(new StatisticIcon(texture, 0.0, 3, false,
@@ -145,16 +144,13 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     GG::MenuItem menu_contents;
     std::string species_name;
 
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*m_object_ids.begin());
-    if (meter_type == METER_POPULATION && obj && m_object_ids.size() == 1) {
-        std::shared_ptr<const PopCenter> pc = std::dynamic_pointer_cast<const PopCenter>(obj);
-        if (pc) {
-            species_name = pc->SpeciesName();
-            if (!species_name.empty()) {
-                std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-                menu_contents.next_level.push_back(GG::MenuItem(species_label, 1, false, false));
-            }
-        }
+    std::shared_ptr<const PopCenter> pc = GetPopCenter(*m_object_ids.begin());
+    if (meter_type == METER_POPULATION && pc && m_object_ids.size() == 1) {
+	species_name = pc->SpeciesName();
+	if (!species_name.empty()) {
+	    std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
+	    menu_contents.next_level.push_back(GG::MenuItem(species_label, 1, false, false));
+	}
     }
 
     if (!meter_title.empty()) {

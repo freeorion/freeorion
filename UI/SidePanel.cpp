@@ -2390,12 +2390,7 @@ void SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot(GG::DropDownList:
         return;
     }
 
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_planet_id);
-    if (!obj) {
-        ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't get object with id " << m_planet_id;
-        return;
-    }
-    std::shared_ptr<const ResourceCenter> res = std::dynamic_pointer_cast<const ResourceCenter>(obj);
+    std::shared_ptr<const ResourceCenter> res = GetResourceCenter(m_planet_id);
     if (!res) {
         ErrorLogger() << "PlanetPanel::FocusDropListSelectionChanged couldn't convert object with id " << m_planet_id << " to a ResourceCenter";
         return;

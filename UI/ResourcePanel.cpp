@@ -255,14 +255,9 @@ void ResourcePanel::DoLayout() {
 }
 
 std::shared_ptr<const ResourceCenter> ResourcePanel::GetResCenter() const {
-    std::shared_ptr<const UniverseObject> obj = GetUniverseObject(m_rescenter_id);
-    if (!obj) {
-        ErrorLogger() << "ResourcePanel tried to get an object with an invalid m_rescenter_id";
-        return nullptr;
-    }
-    std::shared_ptr<const ResourceCenter> res = std::dynamic_pointer_cast<const ResourceCenter>(obj);
+    std::shared_ptr<const ResourceCenter> res = GetResourceCenter(m_rescenter_id);
     if (!res) {
-        ErrorLogger() << "ResourcePanel failed casting an object pointer to a ResourceCenter pointer";
+        ErrorLogger() << "ResourcePanel tried to get an object with an invalid m_rescenter_id";
         return nullptr;
     }
     return res;
