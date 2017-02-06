@@ -574,12 +574,11 @@ class Pathfinder::PathfinderImpl {
          boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
          size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
-    void WithinJumpsOfOthers(
+    std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+    WithinJumpsOfOthers(
         int jumps,
-        std::vector<std::shared_ptr<const UniverseObject>>& near,
-        std::vector<std::shared_ptr<const UniverseObject>>& far,
-        std::vector<std::shared_ptr<const UniverseObject>>& candidates,
-        const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
+        const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+        const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const;
 
     /**Return true if \p system_id is within \p jumps of any of \p others*/
     bool WithinJumpsOfOthers(
@@ -1091,32 +1090,29 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     }
 }
 
-void Pathfinder::WithinJumpsOfOthers(
+std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+Pathfinder::WithinJumpsOfOthers(
     int jumps,
-    std::vector<std::shared_ptr<const UniverseObject>>& near,
-    std::vector<std::shared_ptr<const UniverseObject>>& far,
-    std::vector<std::shared_ptr<const UniverseObject>>& candidates,
-    const std::vector<std::shared_ptr<const UniverseObject>>& others) const
+    const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+    const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const
 {
-    pimpl->WithinJumpsOfOthers(jumps, near, far, candidates, others);
+    return pimpl->WithinJumpsOfOthers(jumps, candidates, stationary);
 }
 
-void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
+std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps,
-    std::vector<std::shared_ptr<const UniverseObject>>& near,
-    std::vector<std::shared_ptr<const UniverseObject>>& far,
-    std::vector<std::shared_ptr<const UniverseObject>>& candidates_,
-    const std::vector<std::shared_ptr<const UniverseObject>>& others) const
+    const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+    const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const
 {
     // Examine each candidate and transfer those within jumps of the
     // others into near.
     // near or far may be the same as candidates.
-    WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, others);
-    std::vector<std::shared_ptr<const UniverseObject>> candidates;
-    candidates.swap(candidates_);
+    WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, stationary);
+    std::vector<std::shared_ptr<const UniverseObject>> near, far;
     size_t size = candidates.size();
-    near.reserve(near.size() + size);
-    far.reserve(near.size() + size);
+    near.reserve(size);
+    far.reserve(size);
 
     for (const auto& candidate : candidates) {
         GeneralizedLocationType candidate_systems = GeneralizedLocation(candidate);
@@ -1127,6 +1123,8 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
         else
             far.push_back(candidate);
     }
+
+    return std::make_pair(near, far);
 }
 
 bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(

@@ -105,15 +105,13 @@ public:
     //the AI's is the same as ALL_EMPIRES
     std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
-    /** Returns the \p near and \p far objects from the \p candidates that are
-        within \p jumps of the \p others.
-        The \p candidates are modified and transfered to the \near vector.*/
-    void WithinJumpsOfOthers(
-        int jumps,
-        std::vector<std::shared_ptr<const UniverseObject>>& near,
-        std::vector<std::shared_ptr<const UniverseObject>>& far,
-        std::vector<std::shared_ptr<const UniverseObject>>& candidates,
-        const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
+    /** Returns the partition (near, far) of the \p candidate objects into two sets, those that are within \p
+        jumps of the \p stationary objects and that are not.*/
+    std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+        WithinJumpsOfOthers(
+            int jumps,
+            const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+            const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const;
 
     /** Returns the id of the System object that is closest to the specified
       * (\a x, \a y) location on the map, by direct-line distance. */

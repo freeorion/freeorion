@@ -6606,9 +6606,9 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         ObjectSet subcondition_matches;
         m_condition->Eval(local_context, subcondition_matches);
         int jump_limit = m_jumps->Eval(local_context);
-        ObjectSet &from_set( search_domain == Condition::MATCHES ? matches : non_matches);
+        ObjectSet &from_set(search_domain == Condition::MATCHES ? matches : non_matches);
 
-        GetUniverse().GetPathfinder()->WithinJumpsOfOthers(jump_limit, matches, non_matches, from_set, subcondition_matches);
+        std::tie(matches, non_matches) = GetPathfinder()->WithinJumpsOfOthers(jump_limit, from_set, subcondition_matches);
 
     } else {
         // re-evaluate contained objects for each candidate object
@@ -6659,11 +6659,15 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     if (jump_limit < 0)
         return false;
 
-    ObjectSet near;
-    ObjectSet one;
-    one.push_back(candidate);
-    GetUniverse().GetPathfinder()->WithinJumpsOfOthers(jump_limit, near, one, one, subcondition_matches);
-    return !near.empty();
+    ObjectSet candidate_set;
+    candidate_set.push_back(candidate);
+
+    // candidate objects within jumps of subcondition_matches objects
+    ObjectSet near_objs;
+
+    std::tie(near_objs, std::ignore) =
+        GetPathfinder()->WithinJumpsOfOthers(jump_limit, candidate_set, subcondition_matches);
+    return !near_objs.empty();
 }
 
 void WithinStarlaneJumps::SetTopLevelContent(const std::string& content_name) {
