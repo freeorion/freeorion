@@ -703,26 +703,18 @@ namespace {
        GeneralizedLocationType can be nowhere, one system or two systems in the
        case of a ship or fleet in transit.
        The returned variant is
-       void()              -- nowhere
+       null_ptr            -- nowhere
        System id           -- somewhere
        pair of System ids  -- in transit
 
-       Using float to represent no location instead of wrapping the whole
-       Variant in boost::optional allows the visitors to be more
-       uniform.  The type needed to be not implicitly convertible to
-       int.  The type should really be void.
-
     */
 
-    // A constant to indate a UniverseObject is nowhere.
-    typedef void (*NowhereType)();
-    void Nowhere() {}
-    typedef boost::variant<NowhereType, int, std::pair<int, int >> GeneralizedLocationType;
+    typedef boost::variant<std::nullptr_t, int, std::pair<int, int>> GeneralizedLocationType;
 
     /** Return the location of \p obj.*/
     GeneralizedLocationType GeneralizedLocation(std::shared_ptr<const UniverseObject> obj) {
         if (!obj)
-            return &Nowhere;
+            return nullptr;
 
         int system_id = obj->SystemID();
         std::shared_ptr<const System> system = GetSystem(system_id);
@@ -734,7 +726,7 @@ namespace {
             return std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
 
         ErrorLogger() << "GeneralizedLocationType unable to locate " << obj->Name() << "(" << obj->ID() << ")";
-        return &Nowhere;
+        return nullptr;
     }
 
     /** Return the location of the object with id \p object_id.*/
@@ -756,7 +748,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
         pf(_pf), sys_id1(_sys_id1) {}
 
     /** Return the maximum distance if this end is nowhere.  */
-    int operator()(NowhereType) const { return INT_MAX; }
+    int operator()(std::nullptr_t) const { return INT_MAX; }
 
     /** Simple case of two system ids, return the distance between systems.*/
     int operator()(int sys_id2) const {
@@ -804,7 +796,7 @@ struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
         pf(_pf), sys2_ids(_sys2_ids) {}
 
     /** Return the maximum distance if the first object is nowhere.*/
-    int operator()(NowhereType) const { return INT_MAX; }
+    int operator()(std::nullptr_t) const { return INT_MAX; }
 
     /** For a single system, return the application of JumpDistanceSys2Visitor
         to the second system.*/
@@ -1021,7 +1013,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
                                     ) :
         pf(_pf), jumps(_jumps), others(_others) {}
 
-    bool operator()(NowhereType) const { return false; }
+    bool operator()(std::nullptr_t) const { return false; }
     bool operator()(int sys_id) const {
         bool retval = pf.WithinJumpsOfOthers(jumps, sys_id, others);
         return retval;
@@ -1057,7 +1049,7 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
         return retval;
     }
 
-    bool operator()(NowhereType) const { return false; }
+    bool operator()(std::nullptr_t) const { return false; }
     bool operator()(int sys_id) const {
         return single_result(sys_id);
     }
