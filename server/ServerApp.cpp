@@ -2761,31 +2761,53 @@ void ServerApp::ProcessCombats() {
 }
 
 void ServerApp::UpdateMonsterTravelRestrictions() {
-    //std::vector<Fleet*> all_fleets =  m_universe.Objects().FindObjects<Fleet>;
-    for (std::shared_ptr<const System> system : m_universe.Objects().FindObjects<System>()) {
+    for (auto const &maybe_system : m_universe.Objects().ExistingSystems()) {
+        std::shared_ptr<const System> system = std::dynamic_pointer_cast<const System>(maybe_system.second);
+        if (!system) {
+            ErrorLogger() << "Non System object in ExistingSystems with id = " << maybe_system.second->ID();
+            continue;
+        }
+
         bool unrestricted_monsters_present = false;
+        bool empires_present = false;
         bool unrestricted_empires_present = false;
-        std::vector<int> restricted_monsters;
-        for (std::shared_ptr<const Fleet> fleet : m_universe.Objects().FindObjects<Fleet>()) {
+        std::vector<std::shared_ptr<Fleet>> monsters;
+        for (auto maybe_fleet : m_universe.Objects().FindObjects(system->FleetIDs())) {
+            std::shared_ptr<Fleet> fleet = std::dynamic_pointer_cast<Fleet>(maybe_fleet);
+            if (!fleet) {
+                ErrorLogger() << "Non Fleet object in system(" << system->ID()
+                              << ") fleets with id = " << maybe_fleet->ID();
+                continue;
+            }
             // will not require visibility for empires to block clearing of monster travel restrictions
             // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for 
             // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
             // before you, or be in cahoots with someone who did.
-            bool unrestricted = (fleet->ArrivalStarlane() == system->ID()) && fleet->Aggressive() && (fleet->HasArmedShips() || fleet->HasFighterShips());
+            bool unrestricted = ((fleet->ArrivalStarlane() == system->ID())
+                                 && fleet->Aggressive()
+                                 && (fleet->HasArmedShips() || fleet->HasFighterShips()));
             if (fleet->Unowned()) {
+                monsters.push_back(fleet);
                 if (unrestricted)
                     unrestricted_monsters_present = true;
-                else
-                    restricted_monsters.push_back(fleet->ID());
-            } else if (unrestricted) {
-                unrestricted_empires_present = true;
+            } else {
+                empires_present = true;
+                if (unrestricted)
+                    unrestricted_empires_present = true;
             }
         }
-        if (unrestricted_monsters_present || !unrestricted_empires_present) {
-            for (int monster_id : restricted_monsters) {
-                std::shared_ptr<Fleet> monster_fleet = GetFleet(monster_id);
-                // even if it was a diff test that made monster restricted, we will set arrival lane
-                monster_fleet->SetArrivalStarlane(monster_fleet->SystemID()); 
+
+        // Prevent monsters from leaving any empire blockade.
+        if (unrestricted_empires_present) {
+            for (auto &monster_fleet : monsters) {
+                monster_fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
+            }
+        }
+
+        // Break monster blockade after combat.
+        if (empires_present && unrestricted_monsters_present) {
+            for (auto &monster_fleet : monsters) {
+                monster_fleet->SetArrivalStarlane(INVALID_OBJECT_ID);
             }
         }
     }
