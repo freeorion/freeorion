@@ -744,7 +744,7 @@ namespace {
 /** JumpDistanceSys2Visitor determines the distance between \p _sys_id1 and the
     GeneralizedLocation that it is visiting.*/
 struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
-    JumpDistanceSys2Visitor(Pathfinder::PathfinderImpl const & _pf, int _sys_id1) :
+    JumpDistanceSys2Visitor(const Pathfinder::PathfinderImpl& _pf, int _sys_id1) :
         pf(_pf), sys_id1(_sys_id1) {}
 
     /** Return the maximum distance if this end is nowhere.  */
@@ -755,7 +755,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
         short sjumps = -1;
         try {
             sjumps = pf.JumpDistanceBetweenSystems(sys_id1, sys_id2);
-        } catch (std::out_of_range const &) {
+        } catch (const std::out_of_range&) {
             ErrorLogger() << "JumpsBetweenObjects caught out of range exception sys_id1 = "
                           << sys_id1 << " sys_id2 = " << sys_id2;
             return INT_MAX;
@@ -783,7 +783,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
         int jumps = std::min(jumps1, jumps2);
         return jumps;
    }
-    Pathfinder::PathfinderImpl const & pf;
+    const Pathfinder::PathfinderImpl& pf;
     int sys_id1;
 };
 
@@ -791,8 +791,8 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     JumpDistanceSysVisitor2 to determines the distance between \p _sys_id2 and
     the GeneralizedLocation that it is visiting.*/
 struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
-    JumpDistanceSys1Visitor(Pathfinder::PathfinderImpl const & _pf,
-                            GeneralizedLocationType const &_sys2_ids) :
+    JumpDistanceSys1Visitor(const Pathfinder::PathfinderImpl& _pf,
+                            const GeneralizedLocationType&_sys2_ids) :
         pf(_pf), sys2_ids(_sys2_ids) {}
 
     /** Return the maximum distance if the first object is nowhere.*/
@@ -1007,9 +1007,9 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
 /** Examine a single universe object and determine if it is within jumps
     of any object in others.*/
 struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
-    WithinJumpsOfOthersObjectVisitor(Pathfinder::PathfinderImpl const & _pf,
+    WithinJumpsOfOthersObjectVisitor(const Pathfinder::PathfinderImpl& _pf,
                                      int _jumps,
-                                     std::vector<std::shared_ptr<const UniverseObject>> const & _others
+                                     const std::vector<std::shared_ptr<const UniverseObject>>& _others
                                     ) :
         pf(_pf), jumps(_jumps), others(_others) {}
 
@@ -1022,9 +1022,9 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
         return pf.WithinJumpsOfOthers(jumps, prev_next.first, others)
             || pf.WithinJumpsOfOthers(jumps, prev_next.second, others);
     }
-    Pathfinder::PathfinderImpl const & pf;
+    const Pathfinder::PathfinderImpl& pf;
     int jumps;
-    std::vector<std::shared_ptr<const UniverseObject>> const & others;
+    const std::vector<std::shared_ptr<const UniverseObject>>& others;
 };
 
 /** Examine a single other in the cache to see if any of its locations
@@ -1155,7 +1155,7 @@ int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y) const {
 
     std::vector<std::shared_ptr<System>> systems = Objects().FindObjects<System>();
 
-    for (auto const &system : systems)
+    for (auto const& system : systems)
     {
         double xs = system->X();
         double ys = system->Y();
@@ -1211,7 +1211,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
         //std::shared_ptr<const System> & system1 = systems[system1_index];
 
         // add edges and edge weights
-        for (auto const & lane_dest : system1->StarlanesWormholes()) {
+        for (auto const& lane_dest : system1->StarlanesWormholes()) {
             // get id in universe of system at other end of lane
             const int lane_dest_id = lane_dest.first;
             // skip null lanes and only add edges in one direction, to avoid
@@ -1278,7 +1278,7 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(int 
 
     if (for_empire_id == ALL_EMPIRES) {
         // all empires get their own, accurately filtered graph
-        for (auto const &empire : Empires()) {
+        for (auto const& empire : Empires()) {
             int empire_id = empire.first;
             GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_id);
             auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(m_graph_impl->system_graph, filter);
@@ -1290,7 +1290,7 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(int 
         GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, for_empire_id);
         auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(m_graph_impl->system_graph, filter);
 
-        for (auto const &empire : Empires()) {
+        for (auto const& empire : Empires()) {
             int empire_id = empire.first;
             m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
