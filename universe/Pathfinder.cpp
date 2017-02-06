@@ -102,6 +102,11 @@ namespace {
 
         public:
 
+        // Note: The signatures for the cache miss handler and the cache hit handler have a void
+        // return type, because this code can not anticipate all expected return types.  In order
+        // to return a result function the calling code will need to bind the return parameter to
+        // the function so that the function still has the required signature.
+
         /// Cache miss handler
         typedef boost::function<void (size_t &/*ii*/, Row /*row*/)> cache_miss_handler;
 
@@ -586,6 +591,9 @@ class Pathfinder::PathfinderImpl {
         const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
 
     /** If any of \p others are within \p jumps of \p ii return true in \p answer.
+
+        The return value must be in a parameter so that after being bound to \p answer and \p jumps
+        the function signature is that required by the cache_hit_handler type.
      */
     void WithinJumpsOfOthersCacheHit(
         bool& answer, int jumps,
