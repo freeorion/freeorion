@@ -699,9 +699,9 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
 }
 
 namespace {
-    /**ObjectSystemIDType abstracts the location of a UniverseObject.
+    /**GeneralizedLocationType abstracts the location of a UniverseObject.
 
-       ObjectSystemIDType can be nowhere, one system or two systems in the
+       GeneralizedLocationType can be nowhere, one system or two systems in the
        case of a ship or fleet in transit.
        The returned variant is
        void()              -- nowhere
@@ -718,10 +718,10 @@ namespace {
     // A constant to indate a UniverseObject is nowhere.
     typedef void (*NowhereType)();
     void Nowhere() {}
-    typedef boost::variant<NowhereType, int, std::pair<int, int >> ObjectSystemIDType;
+    typedef boost::variant<NowhereType, int, std::pair<int, int >> GeneralizedLocationType;
 
     /** Return the location of \p obj.*/
-    ObjectSystemIDType ObjectSystemID(std::shared_ptr<const UniverseObject> obj) {
+    GeneralizedLocationType GeneralizedLocation(std::shared_ptr<const UniverseObject> obj) {
         if (!obj)
             return &Nowhere;
 
@@ -734,24 +734,24 @@ namespace {
         if (fleet)
             return std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
 
-        ErrorLogger() << "ObjectSystemIDType unable to locate " << obj->Name() << "(" << obj->ID() << ")";
+        ErrorLogger() << "GeneralizedLocationType unable to locate " << obj->Name() << "(" << obj->ID() << ")";
         return &Nowhere;
     }
 
     /** Return the location of the object with id \p object_id.*/
-    ObjectSystemIDType ObjectSystemID(int object_id) {
+    GeneralizedLocationType GeneralizedLocation(int object_id) {
         std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
-        return ObjectSystemID(obj);
+        return GeneralizedLocation(obj);
     }
 
 }
 
 /** JumpDistanceSys1Visitor and JumpDistanceSys2Visitor are variant visitors
     that can be used to determine the distance between a pair of objects
-    locations represented as ObjectSystemIDs.*/
+    locations represented as GeneralizedLocations.*/
 
 /** JumpDistanceSys2Visitor determines the distance between \p _sys_id1 and the
-    ObjectSystemID that it is visiting.*/
+    GeneralizedLocation that it is visiting.*/
 struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
     JumpDistanceSys2Visitor(Pathfinder::PathfinderImpl const & _pf, int _sys_id1) :
         pf(_pf), sys_id1(_sys_id1) {}
@@ -798,10 +798,10 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
 
 /** JumpDistanceSys1Visitor visits the first system and uses
     JumpDistanceSysVisitor2 to determines the distance between \p _sys_id2 and
-    the ObjectSystemID that it is visiting.*/
+    the GeneralizedLocation that it is visiting.*/
 struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
     JumpDistanceSys1Visitor(Pathfinder::PathfinderImpl const & _pf,
-                            ObjectSystemIDType const &_sys2_ids) :
+                            GeneralizedLocationType const &_sys2_ids) :
         pf(_pf), sys2_ids(_sys2_ids) {}
 
     /** Return the maximum distance if the first object is nowhere.*/
@@ -835,7 +835,7 @@ struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
         return jumps;
     }
     Pathfinder::PathfinderImpl const & pf;
-    ObjectSystemIDType const & sys2_ids;
+    GeneralizedLocationType const & sys2_ids;
 };
 
 int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
@@ -843,8 +843,8 @@ int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const
 }
 
 int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    ObjectSystemIDType obj1 = ObjectSystemID(object1_id);
-    ObjectSystemIDType obj2 = ObjectSystemID(object2_id);
+    GeneralizedLocationType obj1 = GeneralizedLocation(object1_id);
+    GeneralizedLocationType obj2 = GeneralizedLocation(object2_id);
     JumpDistanceSys1Visitor visitor(*this, obj2);
     return boost::apply_visitor(visitor, obj1);
 }
@@ -1082,7 +1082,7 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     answer = false;
     for (const auto& other : others) {
         WithinJumpsOfOthersOtherVisitor visitor(*this, jumps, row);
-        ObjectSystemIDType other_systems = ObjectSystemID(other);
+        GeneralizedLocationType other_systems = GeneralizedLocation(other);
         bool other_within_jumps = boost::apply_visitor(visitor, other_systems);
         if (other_within_jumps) {
             answer = true;
@@ -1119,7 +1119,7 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     far.reserve(near.size() + size);
 
     for (const auto& candidate : candidates) {
-        ObjectSystemIDType candidate_systems = ObjectSystemID(candidate);
+        GeneralizedLocationType candidate_systems = GeneralizedLocation(candidate);
         bool is_near = boost::apply_visitor(visitor, candidate_systems);
 
         if (is_near)
