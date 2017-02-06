@@ -168,8 +168,7 @@ namespace {
         for (const std::map<std::set<int>, float>::value_type& objects_pp : prodQueue.AvailablePP(industry_pool)) {
             std::set<int> planetSet;
             for (int object_id : objects_pp.first) {
-                std::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
-                if (/* std::shared_ptr<const Planet> planet = */ std::dynamic_pointer_cast<const Planet>(location))
+                if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                     planetSet.insert(object_id);
             }
             if (!planetSet.empty())
@@ -186,8 +185,7 @@ namespace {
         for (const std::map<std::set<int>, float>::value_type& objects_pp : objectsWithAllocatedPP) {
             std::set<int> planetSet;
             for (int object_id : objects_pp.first) {
-                std::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
-                if (/* std::shared_ptr<const Planet> planet = */ std::dynamic_pointer_cast<const Planet>(location))
+                if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                     planetSet.insert(object_id);
             }
             if (!planetSet.empty())
@@ -205,8 +203,7 @@ namespace {
         for (const std::set<int>&  objects : objectsWithWastedPP) {
                  std::set<int> planetSet;
                  for (int object_id : objects) {
-                     std::shared_ptr<UniverseObject> location = GetUniverseObject(object_id);
-                     if (/* std::shared_ptr<const Planet> planet = */ std::dynamic_pointer_cast<const Planet>(location))
+                     if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                          planetSet.insert(object_id);
                  }
                  if (!planetSet.empty())
