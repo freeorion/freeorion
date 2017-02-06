@@ -64,9 +64,9 @@ namespace {
         }
 
         /**N x N table of hop distances in row column form.*/
-        std::vector< std::vector<T> > m_data;
+        std::vector< std::vector<T>> m_data;
         /**Per row mutexes.*/
-        std::vector< std::shared_ptr<boost::shared_mutex> > m_row_mutexes;
+        std::vector< std::shared_ptr<boost::shared_mutex>> m_row_mutexes;
         /**Table mutex*/
         boost::shared_mutex m_mutex;
     };
@@ -475,7 +475,7 @@ namespace {
     /////////////////////////////////////////////
     struct GraphImpl {
         typedef boost::property<vertex_system_id_t, int,
-                                boost::property<boost::vertex_index_t, int> >   vertex_property_t;  ///< a system graph property map type
+                                boost::property<boost::vertex_index_t, int>>   vertex_property_t;  ///< a system graph property map type
         typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
 
         // declare main graph types, including properties declared above
@@ -530,7 +530,7 @@ namespace {
             int                     m_empire_id;
         };
         typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
-        typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph> > EmpireViewSystemGraphMap;
+        typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph>> EmpireViewSystemGraphMap;
 
         // declare property map types for properties declared above
         typedef boost::property_map<SystemGraph, vertex_system_id_t>::const_type        ConstSystemIDPropertyMap;
@@ -576,15 +576,15 @@ class Pathfinder::PathfinderImpl {
 
     void WithinJumpsOfOthers(
         int jumps,
-        std::vector<std::shared_ptr<const UniverseObject> > & near,
-        std::vector<std::shared_ptr<const UniverseObject> > & far,
-        std::vector<std::shared_ptr<const UniverseObject> > & candidates,
-        std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
+        std::vector<std::shared_ptr<const UniverseObject>> & near,
+        std::vector<std::shared_ptr<const UniverseObject>> & far,
+        std::vector<std::shared_ptr<const UniverseObject>> & candidates,
+        std::vector<std::shared_ptr<const UniverseObject>> const & others) const;
 
     /**Return true if \p system_id is within \p jumps of any of \p others*/
     bool WithinJumpsOfOthers(
         int jumps, int system_id,
-        std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
+        std::vector<std::shared_ptr<const UniverseObject>> const & others) const;
 
     /** If any of \p others are within \p jumps of \p ii return true in \p answer.
 
@@ -592,7 +592,7 @@ class Pathfinder::PathfinderImpl {
      */
     void WithinJumpsOfOthersCacheHit(
         bool* const answer, int jumps,
-        std::vector<std::shared_ptr<const UniverseObject> > const & others,
+        std::vector<std::shared_ptr<const UniverseObject>> const & others,
         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
     int NearestSystemTo(double x, double y) const;
@@ -680,7 +680,7 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
         return 0;
 
     try {
-        distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
+        distance_matrix_cache< distance_matrix_storage<short>> cache(m_system_jumps);
 
         size_t system1_index = m_system_id_to_graph_index.at(system1_id);
         size_t system2_index = m_system_id_to_graph_index.at(system2_id);
@@ -720,7 +720,7 @@ namespace {
     // A constant to indate a UniverseObject is nowhere.
     typedef void (*NowhereType)();
     void Nowhere() {}
-    typedef boost::variant<NowhereType, int, std::pair<int, int > > ObjectSystemIDType;
+    typedef boost::variant<NowhereType, int, std::pair<int, int >> ObjectSystemIDType;
 
     /** Return the location of \p obj.*/
     ObjectSystemIDType ObjectSystemID(std::shared_ptr<const UniverseObject> obj) {
@@ -1020,7 +1020,7 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
 struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersObjectVisitor(Pathfinder::PathfinderImpl const & _pf,
                                      int _jumps,
-                                     std::vector<std::shared_ptr<const UniverseObject> > const & _others
+                                     std::vector<std::shared_ptr<const UniverseObject>> const & _others
                                     ) :
         pf(_pf), jumps(_jumps), others(_others) {}
 
@@ -1035,7 +1035,7 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     }
     Pathfinder::PathfinderImpl const & pf;
     int jumps;
-    std::vector<std::shared_ptr<const UniverseObject> > const & others;
+    std::vector<std::shared_ptr<const UniverseObject>> const & others;
 };
 
 /** Examine a single other in the cache to see if any of its locations
@@ -1076,7 +1076,7 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
 void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
     bool* const answer, // answer constant pointer to a non-constant bool
     int jumps,
-    const std::vector<std::shared_ptr<const UniverseObject> >& others,
+    const std::vector<std::shared_ptr<const UniverseObject>>& others,
     size_t ii, const distance_matrix_storage<short>::row_ref row) const
 {
     // Check if any of the others are within jumps of candidate, by looping
@@ -1095,26 +1095,26 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
 
 void Pathfinder::WithinJumpsOfOthers(
     int jumps,
-    std::vector<std::shared_ptr<const UniverseObject> >& near,
-    std::vector<std::shared_ptr<const UniverseObject> >& far,
-    std::vector<std::shared_ptr<const UniverseObject> >& candidates,
-    const std::vector<std::shared_ptr<const UniverseObject> >& others) const
+    std::vector<std::shared_ptr<const UniverseObject>>& near,
+    std::vector<std::shared_ptr<const UniverseObject>>& far,
+    std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+    const std::vector<std::shared_ptr<const UniverseObject>>& others) const
 {
     pimpl->WithinJumpsOfOthers(jumps, near, far, candidates, others);
 }
 
 void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps,
-    std::vector<std::shared_ptr<const UniverseObject> >& near,
-    std::vector<std::shared_ptr<const UniverseObject> >& far,
-    std::vector<std::shared_ptr<const UniverseObject> >& candidates_,
-    const std::vector<std::shared_ptr<const UniverseObject> >& others) const
+    std::vector<std::shared_ptr<const UniverseObject>>& near,
+    std::vector<std::shared_ptr<const UniverseObject>>& far,
+    std::vector<std::shared_ptr<const UniverseObject>>& candidates_,
+    const std::vector<std::shared_ptr<const UniverseObject>>& others) const
 {
     // Examine each candidate and transfer those within jumps of the
     // others into near.
     // near or far may be the same as candidates.
     WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, others);
-    std::vector<std::shared_ptr<const UniverseObject> > candidates;
+    std::vector<std::shared_ptr<const UniverseObject>> candidates;
     candidates.swap(candidates_);
     size_t size = candidates.size();
     near.reserve(near.size() + size);
@@ -1133,7 +1133,7 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
 
 bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps, int system_id,
-    const std::vector<std::shared_ptr<const UniverseObject> >& others) const
+    const std::vector<std::shared_ptr<const UniverseObject>>& others) const
 {
     if (others.empty())
         return false;
@@ -1148,7 +1148,7 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
 
     // Examine the cache to see if \p system_id is within \p jumps of \p others
     bool within_jumps(false);
-    distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
+    distance_matrix_cache< distance_matrix_storage<short>> cache(m_system_jumps);
     cache.examine_row(system_index,
                       boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
                       boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
@@ -1165,7 +1165,7 @@ int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y) const {
     double min_dist2 = DBL_MAX;
     int min_dist2_sys_id = INVALID_OBJECT_ID;
 
-    std::vector<std::shared_ptr<System> > systems = Objects().FindObjects<System>();
+    std::vector<std::shared_ptr<System>> systems = Objects().FindObjects<System>();
 
     for (auto const &system : systems)
     {
