@@ -19,7 +19,6 @@
 #include "CUIControls.h"
 
 #include <boost/optional.hpp>
-#include <boost/tuple/tuple.hpp>
 
 namespace {
     /** Returns text wrapped in GG RGBA tags for specified colour */
@@ -266,7 +265,7 @@ namespace DualMeter {
 
     /** Return the triplet of {Current, Projected, Target} meter value for the pair of meters \p
         actual_meter_type and \p target_meter_type associated with \p obj. */
-    boost::tuple<float, float, float> CurrentProjectedTarget(
+    std::tuple<float, float, float> CurrentProjectedTarget(
         const UniverseObject& obj, const MeterType& actual_meter_type, const MeterType& target_meter_type)
     {
         const Meter* actual_meter = obj.GetMeter(actual_meter_type);
@@ -335,23 +334,23 @@ void MeterBrowseWnd::UpdateSummary() {
             return;
         }
 
-        boost::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
+        std::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
             *obj, m_primary_meter_type, m_secondary_meter_type);
 
-        m_current_value->SetText(DoubleToString(boost::get<0>(current_projected_target), 3, false));
-        m_next_turn_value->SetText(DoubleToString(boost::get<1>(current_projected_target), 3, false));
-        float primary_change = boost::get<1>(current_projected_target) - boost::get<0>(current_projected_target);
+        m_current_value->SetText(DoubleToString(std::get<0>(current_projected_target), 3, false));
+        m_next_turn_value->SetText(DoubleToString(std::get<1>(current_projected_target), 3, false));
+        float primary_change = std::get<1>(current_projected_target) - std::get<0>(current_projected_target);
         m_change_value->SetText(ColouredNumber(primary_change));
 
         // target or max meter total for breakdown summary
-        breakdown_total = boost::get<2>(current_projected_target);
+        breakdown_total = std::get<2>(current_projected_target);
         breakdown_meter_name = MeterToUserString(m_secondary_meter_type);
     } else {
-        boost::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
+        std::tuple<float, float, float> current_projected_target = DualMeter::CurrentProjectedTarget(
             *obj, m_primary_meter_type, m_secondary_meter_type);
 
         // unpaired meter total for breakdown summary
-        breakdown_total = boost::get<0>(current_projected_target);
+        breakdown_total = std::get<0>(current_projected_target);
         breakdown_meter_name = MeterToUserString(m_primary_meter_type);
     }
 

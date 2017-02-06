@@ -3,7 +3,7 @@
 #include "../util/Logger.h"
 
 #include <boost/algorithm/string/classification.hpp>
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 #include <boost/xpressive/xpressive.hpp>
 
 
@@ -259,7 +259,7 @@ void parse::report_error_::generate_error_string(const token_iterator& first,
             text_it = text_it_copy;
     }
 
-    boost::tie(line_start, line_number) = line_start_and_line_number(text_it);
+    std::tie(line_start, line_number) = line_start_and_line_number(text_it);
     std::size_t column_number = std::distance(line_start, text_it);
     //DebugLogger() << "generate_error_string found line number: " << line_number << " column number: " << column_number;
 

@@ -391,21 +391,21 @@ void TextControl::Clear()
 void TextControl::Insert(CPSize pos, char c)
 {
     std::size_t line;
-    boost::tie(line, pos) = LinePositionOf(pos, m_line_data);
+    std::tie(line, pos) = LinePositionOf(pos, m_line_data);
     Insert(line, pos, c);
 }
 
 void TextControl::Insert(CPSize pos, const std::string& s)
 {
     std::size_t line;
-    boost::tie(line, pos) = LinePositionOf(pos, m_line_data);
+    std::tie(line, pos) = LinePositionOf(pos, m_line_data);
     Insert(line, pos, s);
 }
 
 void TextControl::Erase(CPSize pos, CPSize num/* = CP1*/)
 {
     std::size_t line;
-    boost::tie(line, pos) = LinePositionOf(pos, m_line_data);
+    std::tie(line, pos) = LinePositionOf(pos, m_line_data);
     Erase(line, pos, num);
 }
 

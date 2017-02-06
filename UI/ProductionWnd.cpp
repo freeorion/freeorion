@@ -334,7 +334,7 @@ namespace {
             float total_cost(1.0f);
             int minimum_turns(1);
             if (empire)
-                boost::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
+                std::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
             total_cost *= elem.blocksize;
 
             float per_turn_cost = total_cost / std::max(1, minimum_turns);

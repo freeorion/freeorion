@@ -272,7 +272,7 @@ namespace {
             std::pair<ProductionQueue::ProductionItem, int> key(queue_element.item, location_id);
             float item_cost;
             int build_turns;
-            boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+            std::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             //DebugLogger() << "item " << queue_element.item.name << " costs " << item_cost << " for " << build_turns << " turns";
 
             float element_this_turn_limit = CalculateProductionPerTurnLimit(queue_element, item_cost, build_turns);
@@ -950,7 +950,7 @@ ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
 
         float item_cost;
         int build_turns;
-        boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
+        std::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
 
         item_cost *= it->blocksize;
         float maxPerTurn = item_cost / std::max(build_turns, 1);
@@ -1174,7 +1174,7 @@ void ProductionQueue::Update() {
             std::pair<ProductionQueue::ProductionItem, int> key(element.item, location_id);
             float item_cost;
             int build_turns;
-            boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+            std::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
             float total_item_cost = item_cost * element.blocksize;
 
             float additional_pp_to_complete_element = total_item_cost * (1.0f - element.progress); // additional PP, beyond already-accumulated PP to finish this element once
@@ -1300,7 +1300,7 @@ ProductionQueue::iterator ProductionQueue::UnderfundedProject() {
 
         float item_cost;
         int build_turns;
-        boost::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
+        std::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
 
         item_cost *= it->blocksize;
         float maxPerTurn = item_cost / std::max(build_turns,1);
@@ -1804,7 +1804,7 @@ float Empire::ProductionStatus(int i) const {
     float item_progress = m_production_queue[i].progress;
     float item_cost;
     int item_time;
-    boost::tie(item_cost, item_time) = this->ProductionCostAndTime(m_production_queue[i]);
+    std::tie(item_cost, item_time) = this->ProductionCostAndTime(m_production_queue[i]);
     return item_progress * item_cost * m_production_queue[i].blocksize;
 }
 
@@ -2941,7 +2941,7 @@ void Empire::CheckProductionProgress() {
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
         std::pair<ProductionQueue::ProductionItem, int> key(elem.item, location_id);
 
-        boost::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
+        std::tie(item_cost, build_turns) = queue_item_costs_and_times[key];
         if (item_cost < 0.01f || build_turns < 1) {
             ErrorLogger() << "Empire::CheckProductionProgress got strang cost/time: " << item_cost << " / " << build_turns;
             break;

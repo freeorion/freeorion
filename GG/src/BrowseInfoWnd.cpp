@@ -31,7 +31,7 @@
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
 
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 
 
 using namespace GG;

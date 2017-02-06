@@ -590,7 +590,7 @@ WeaponFireEvent::WeaponFireEvent() :
 
 WeaponFireEvent::WeaponFireEvent(
     int bout_, int round_, int attacker_id_, int target_id_, const std::string& weapon_name_,
-    const boost::tuple<float, float, float>& power_shield_damage,
+    const std::tuple<float, float, float>& power_shield_damage,
     int attacker_owner_id_, int target_owner_id_) :
     bout(bout_),
     round(round_),
@@ -602,7 +602,7 @@ WeaponFireEvent::WeaponFireEvent(
     damage(),
     attacker_owner_id(attacker_owner_id_),
     target_owner_id(target_owner_id_)
-{ boost::tie(power, shield, damage) = power_shield_damage; }
+{ std::tie(power, shield, damage) = power_shield_damage; }
 
 std::string WeaponFireEvent::DebugString() const {
     std::stringstream ss;
@@ -958,7 +958,7 @@ void WeaponsPlatformEvent::AddEvent(
     events[target_id_].push_back(
         std::make_shared<WeaponFireEvent>(
             bout, round_, attacker_id, target_id_, weapon_name_,
-            boost::tie(power_, shield_, damage_),
+            std::tie(power_, shield_, damage_),
             attacker_owner_id, target_owner_id_));
 }
 

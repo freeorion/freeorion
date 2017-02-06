@@ -5,7 +5,7 @@
 #include <GG/BrowseInfoWnd.h>
 
 #include "../universe/EnumsFwd.h"
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 
 class UniverseObject;
 
@@ -13,7 +13,7 @@ namespace DualMeter {
 
     /** Return the triplet of {Current, Projected, Target} meter value for the pair of meters \p
         actual_meter_type and \p target_meter_type associated with \p obj. */
-    boost::tuple<float, float, float> CurrentProjectedTarget(
+    std::tuple<float, float, float> CurrentProjectedTarget(
         const UniverseObject& obj, const MeterType& actual_meter_type, const MeterType& target_meter_type);
 }
 

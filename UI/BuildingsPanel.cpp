@@ -149,7 +149,7 @@ void BuildingsPanel::Update() {
         double total_cost;
         int total_turns;
         double turn_spending = elem.allocated_pp;
-        boost::tie(total_cost, total_turns) = empire->ProductionCostAndTime(elem);
+        std::tie(total_cost, total_turns) = empire->ProductionCostAndTime(elem);
 
         double progress = std::max(0.0f, empire->ProductionStatus(queue_index));
         double turns_completed = progress / std::max(total_cost, 1.0);

@@ -6,7 +6,7 @@
 #include <memory>
 #include <set>
 
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/export.hpp>
 
@@ -222,7 +222,7 @@ struct FO_COMMON_API WeaponFireEvent : public CombatEvent {
         is the maximum that some compilers that emulate variadic templates support.
      */
     WeaponFireEvent(int bout, int round, int attacker_id, int target_id, const std::string &weapon_name,
-                    const boost::tuple<float, float, float> &power_shield_damage,
+                    const std::tuple<float, float, float> &power_shield_damage,
                     int attacker_owner_id_, int target_owner_id_);
 
     virtual ~WeaponFireEvent()

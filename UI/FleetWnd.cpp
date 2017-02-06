@@ -30,7 +30,7 @@
 
 #include <boost/cast.hpp>
 #include <boost/unordered_map.hpp>
-#include <boost/tuple/tuple.hpp>
+#include <tuple>
 
 #include <unordered_set>
 
@@ -1660,7 +1660,7 @@ void FleetDataPanel::Init() {
     } else if (std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-        std::vector<boost::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
+        std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
         meters_icons_browsetext.push_back({METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY"});
         if (fleet->HasArmedShips())
             meters_icons_browsetext.push_back({METER_CAPACITY, DamageIcon(), "FW_FLEET_DAMAGE_SUMMARY"});
@@ -1682,11 +1682,11 @@ void FleetDataPanel::Init() {
         meters_icons_browsetext.push_back({METER_FUEL, ClientUI::MeterIcon(METER_FUEL), "FW_FLEET_FUEL_SUMMARY"});
         meters_icons_browsetext.push_back({METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY"});
 
-        for (const boost::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
-            StatisticIcon* icon = new StatisticIcon(entry.get<1>(), 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-            m_stat_icons.push_back({entry.get<0>(), icon});
+        for (const std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
+            StatisticIcon* icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+            m_stat_icons.push_back({std::get<0>(entry), icon});
             icon->SetBrowseModeTime(tooltip_delay);
-            icon->SetBrowseText(UserString(entry.get<2>()));
+            icon->SetBrowseText(UserString(std::get<2>(entry)));
             icon->InstallEventFilter(this);
             AttachChild(icon);
             icon->SetBrowseModeTime(tooltip_delay);
@@ -2961,7 +2961,7 @@ void FleetWnd::Refresh() {
 
     // Use fleets that are at the determined location
     boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator fleets_at_location_begin, fleets_at_location_end;
-    boost::tie(fleets_at_location_begin, fleets_at_location_end) = fleet_locations_ids.equal_range(location);
+    std::tie(fleets_at_location_begin, fleets_at_location_end) = fleet_locations_ids.equal_range(location);
 
     for (boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator it = fleets_at_location_begin;
          it != fleets_at_location_end; ++it)
@@ -2998,7 +2998,7 @@ void FleetWnd::Refresh() {
 
     boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator
         selected_fleets_at_location_begin, selected_fleets_at_location_end;
-    boost::tie(selected_fleets_at_location_begin, selected_fleets_at_location_end) =
+    std::tie(selected_fleets_at_location_begin, selected_fleets_at_location_end) =
         selected_fleet_locations_ids.equal_range(location);
 
     for (boost::unordered_multimap<std::pair<int, GG::Pt>, int>::const_iterator it = selected_fleets_at_location_begin;
