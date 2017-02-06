@@ -1200,6 +1200,9 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
     GraphImpl::EdgeWeightPropertyMap edge_weight_map =
         boost::get(boost::edge_weight, new_graph_impl->system_graph);
 
+    const GraphImpl::EdgeWeightPropertyMap& current_edge_weight_map =
+        boost::get(boost::edge_weight, m_graph_impl->system_graph);
+
     // add vertices to graph for all systems
     for (size_t system_index = 0; system_index < system_ids.size(); ++system_index) {
         // add a vertex to the graph for this system, and assign it the system's universe ID as a property
@@ -1241,7 +1244,14 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
                 } else {                        // if this is a starlane
                     edge_weight_map[add_edge_result.first] = LinearDistance(system1_id, lane_dest_id);
                 }
-                graph_changed = graph_changed || !boost::edge(system1_index, lane_dest_graph_index, m_graph_impl->system_graph).second;
+
+                if (!graph_changed) {
+                    const auto maybe_current_edge = boost::edge(system1_index, lane_dest_graph_index, m_graph_impl->system_graph);
+                    // Does the current edge exist with the same weight in the old graph
+                    graph_changed = (!maybe_current_edge.second
+                                     || (edge_weight_map[add_edge_result.first]
+                                         != current_edge_weight_map[maybe_current_edge.first]));
+                }
             }
         }
     }
