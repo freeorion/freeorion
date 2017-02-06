@@ -586,9 +586,12 @@ class Pathfinder::PathfinderImpl {
         int jumps, int system_id,
         std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
 
-    /** If any of \p others are within \p jumps of \p ii return true in \p answer.*/
+    /** If any of \p others are within \p jumps of \p ii return true in \p answer.
+
+        \p answer is a constant pointer to a non-constant bool so that boost::bind
+     */
     void WithinJumpsOfOthersCacheHit(
-        bool * const answer, int jumps,
+        bool* const answer, int jumps,
         std::vector<std::shared_ptr<const UniverseObject> > const & others,
         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
@@ -1016,9 +1019,9 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
     of any object in others.*/
 struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersObjectVisitor(Pathfinder::PathfinderImpl const & _pf,
-                             int _jumps,
-                             std::vector<std::shared_ptr<const UniverseObject> > const & _others
-                            ) :
+                                     int _jumps,
+                                     std::vector<std::shared_ptr<const UniverseObject> > const & _others
+                                    ) :
         pf(_pf), jumps(_jumps), others(_others) {}
 
     bool operator()(NowhereType) const { return false; }
@@ -1039,9 +1042,9 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
     are within jumps*/
 struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
     WithinJumpsOfOthersOtherVisitor(Pathfinder::PathfinderImpl const & _pf,
-                            int _jumps,
-                            const distance_matrix_storage<short>::row_ref _row
-                            ) :
+                                    int _jumps,
+                                    const distance_matrix_storage<short>::row_ref _row
+                                   ) :
         pf(_pf), jumps(_jumps), row(_row) {}
 
     bool single_result(int other_id) const {
@@ -1071,11 +1074,11 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
 
 
 void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
-    bool * const answer,
+    bool* const answer, // answer constant pointer to a non-constant bool
     int jumps,
-    std::vector<std::shared_ptr<const UniverseObject> > const & others,
-    size_t ii, const distance_matrix_storage<short>::row_ref row) const {
-
+    const std::vector<std::shared_ptr<const UniverseObject> >& others,
+    size_t ii, const distance_matrix_storage<short>::row_ref row) const
+{
     // Check if any of the others are within jumps of candidate, by looping
     // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
     *answer = false;
@@ -1092,20 +1095,21 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
 
 void Pathfinder::WithinJumpsOfOthers(
     int jumps,
-    std::vector<std::shared_ptr<const UniverseObject> > & near,
-    std::vector<std::shared_ptr<const UniverseObject> > & far,
-    std::vector<std::shared_ptr<const UniverseObject> > & candidates,
-    std::vector<std::shared_ptr<const UniverseObject> > const & others) const {
+    std::vector<std::shared_ptr<const UniverseObject> >& near,
+    std::vector<std::shared_ptr<const UniverseObject> >& far,
+    std::vector<std::shared_ptr<const UniverseObject> >& candidates,
+    const std::vector<std::shared_ptr<const UniverseObject> >& others) const
+{
     pimpl->WithinJumpsOfOthers(jumps, near, far, candidates, others);
 }
 
 void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps,
-    std::vector<std::shared_ptr<const UniverseObject> > & near,
-    std::vector<std::shared_ptr<const UniverseObject> > & far,
-    std::vector<std::shared_ptr<const UniverseObject> > & candidates_,
-    std::vector<std::shared_ptr<const UniverseObject> > const & others) const {
-
+    std::vector<std::shared_ptr<const UniverseObject> >& near,
+    std::vector<std::shared_ptr<const UniverseObject> >& far,
+    std::vector<std::shared_ptr<const UniverseObject> >& candidates_,
+    const std::vector<std::shared_ptr<const UniverseObject> >& others) const
+{
     // Examine each candidate and transfer those within jumps of the
     // others into near.
     // near or far may be the same as candidates.
@@ -1129,8 +1133,8 @@ void Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
 
 bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     int jumps, int system_id,
-    std::vector<std::shared_ptr<const UniverseObject> > const & others) const {
-
+    const std::vector<std::shared_ptr<const UniverseObject> >& others) const
+{
     if (others.empty())
         return false;
 
