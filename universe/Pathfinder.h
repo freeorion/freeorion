@@ -135,11 +135,8 @@ public:
     //@}
 
     class PathfinderImpl;
+private:
     const std::unique_ptr<PathfinderImpl> pimpl;
-
-    /* friend class boost::serialization::access; */
-    /* template <class Archive> */
-    /* void serialize(Archive& ar, const unsigned int version); */
 };
 
 #endif // _Pathfinder_h_
