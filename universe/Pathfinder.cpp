@@ -587,11 +587,9 @@ class Pathfinder::PathfinderImpl {
         std::vector<std::shared_ptr<const UniverseObject>> const & others) const;
 
     /** If any of \p others are within \p jumps of \p ii return true in \p answer.
-
-        \p answer is a constant pointer to a non-constant bool so that boost::bind
      */
     void WithinJumpsOfOthersCacheHit(
-        bool* const answer, int jumps,
+        bool& answer, int jumps,
         std::vector<std::shared_ptr<const UniverseObject>> const & others,
         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
@@ -1074,20 +1072,20 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
 
 
 void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
-    bool* const answer, // answer constant pointer to a non-constant bool
+    bool& answer,
     int jumps,
     const std::vector<std::shared_ptr<const UniverseObject>>& others,
     size_t ii, const distance_matrix_storage<short>::row_ref row) const
 {
     // Check if any of the others are within jumps of candidate, by looping
     // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
-    *answer = false;
+    answer = false;
     for (const auto& other : others) {
         WithinJumpsOfOthersOtherVisitor visitor(*this, jumps, row);
         ObjectSystemIDType other_systems = ObjectSystemID(other);
         bool other_within_jumps = boost::apply_visitor(visitor, other_systems);
         if (other_within_jumps) {
-            *answer = true;
+            answer = true;
             return;
         }
     }
@@ -1152,7 +1150,7 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     cache.examine_row(system_index,
                       boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
                       boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
-                                  &within_jumps, jumps, others, _1, _2));
+                                  boost::ref(within_jumps), jumps, others, _1, _2));
     return within_jumps;
 }
 
