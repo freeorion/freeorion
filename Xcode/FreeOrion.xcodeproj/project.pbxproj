@@ -1094,61 +1094,12 @@
 		CE2C454C1C65036F0085A4DC /* ResourceBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResourceBrowseWnd.h; sourceTree = "<group>"; };
 		CE3102B41DBFD05B0085A4DC /* DeferredLayout.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DeferredLayout.h; sourceTree = "<group>"; };
 		CE3102B51DBFD0730085A4DC /* DeferredLayout.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DeferredLayout.cpp; sourceTree = "<group>"; };
-		CE594BA51CB2D1360085A4DC /* algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = algorithm.hpp; sourceTree = "<group>"; };
-		CE594BA61CB2D1360085A4DC /* bit_aligned_pixel_iterator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bit_aligned_pixel_iterator.hpp; sourceTree = "<group>"; };
-		CE594BA71CB2D1360085A4DC /* bit_aligned_pixel_reference.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = bit_aligned_pixel_reference.hpp; sourceTree = "<group>"; };
-		CE594BA81CB2D1360085A4DC /* channel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = channel.hpp; sourceTree = "<group>"; };
-		CE594BA91CB2D1360085A4DC /* channel_algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = channel_algorithm.hpp; sourceTree = "<group>"; };
-		CE594BAA1CB2D1360085A4DC /* cmyk.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = cmyk.hpp; sourceTree = "<group>"; };
-		CE594BAB1CB2D1360085A4DC /* color_base.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = color_base.hpp; sourceTree = "<group>"; };
-		CE594BAC1CB2D1360085A4DC /* color_base_algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = color_base_algorithm.hpp; sourceTree = "<group>"; };
 		CE594BAD1CB2D1360085A4DC /* color_convert.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = color_convert.hpp; sourceTree = "<group>"; };
-		CE594BAE1CB2D1360085A4DC /* deprecated.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = deprecated.hpp; sourceTree = "<group>"; };
-		CE594BAF1CB2D1360085A4DC /* device_n.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = device_n.hpp; sourceTree = "<group>"; };
-		CE594BB21CB2D1360085A4DC /* algorithm.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = algorithm.hpp; sourceTree = "<group>"; };
-		CE594BB31CB2D1360085A4DC /* any_image.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = any_image.hpp; sourceTree = "<group>"; };
-		CE594BB41CB2D1360085A4DC /* any_image_view.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = any_image_view.hpp; sourceTree = "<group>"; };
-		CE594BB51CB2D1360085A4DC /* apply_operation.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = apply_operation.hpp; sourceTree = "<group>"; };
-		CE594BB61CB2D1360085A4DC /* apply_operation_base.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = apply_operation_base.hpp; sourceTree = "<group>"; };
-		CE594BB71CB2D1360085A4DC /* dynamic_at_c.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = dynamic_at_c.hpp; sourceTree = "<group>"; };
-		CE594BB81CB2D1360085A4DC /* dynamic_image_all.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = dynamic_image_all.hpp; sourceTree = "<group>"; };
-		CE594BB91CB2D1360085A4DC /* image_view_factory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = image_view_factory.hpp; sourceTree = "<group>"; };
-		CE594BBA1CB2D1360085A4DC /* reduce.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = reduce.hpp; sourceTree = "<group>"; };
-		CE594BBB1CB2D1360085A4DC /* variant.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = variant.hpp; sourceTree = "<group>"; };
-		CE594BBD1CB2D1360085A4DC /* dynamic_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = dynamic_io.hpp; sourceTree = "<group>"; };
-		CE594BBE1CB2D1360085A4DC /* io_error.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = io_error.hpp; sourceTree = "<group>"; };
-		CE594BBF1CB2D1360085A4DC /* jpeg_dynamic_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = jpeg_dynamic_io.hpp; sourceTree = "<group>"; };
-		CE594BC01CB2D1360085A4DC /* jpeg_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = jpeg_io.hpp; sourceTree = "<group>"; };
-		CE594BC11CB2D1360085A4DC /* jpeg_io_private.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = jpeg_io_private.hpp; sourceTree = "<group>"; };
 		CE594BC21CB2D1360085A4DC /* png_dynamic_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = png_dynamic_io.hpp; sourceTree = "<group>"; };
 		CE594BC31CB2D1360085A4DC /* png_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = png_io.hpp; sourceTree = "<group>"; };
 		CE594BC41CB2D1360085A4DC /* png_io_private.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = png_io_private.hpp; sourceTree = "<group>"; };
-		CE594BC51CB2D1360085A4DC /* tiff_dynamic_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tiff_dynamic_io.hpp; sourceTree = "<group>"; };
-		CE594BC61CB2D1360085A4DC /* tiff_io.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tiff_io.hpp; sourceTree = "<group>"; };
-		CE594BC71CB2D1360085A4DC /* gil_all.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gil_all.hpp; sourceTree = "<group>"; };
-		CE594BC81CB2D1360085A4DC /* gil_concept.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gil_concept.hpp; sourceTree = "<group>"; };
-		CE594BC91CB2D1360085A4DC /* gil_config.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gil_config.hpp; sourceTree = "<group>"; };
-		CE594BCA1CB2D1360085A4DC /* gray.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gray.hpp; sourceTree = "<group>"; };
 		CE594BCB1CB2D1360085A4DC /* gray_alpha.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = gray_alpha.hpp; sourceTree = "<group>"; };
-		CE594BCC1CB2D1360085A4DC /* image.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = image.hpp; sourceTree = "<group>"; };
-		CE594BCD1CB2D1360085A4DC /* image_view.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = image_view.hpp; sourceTree = "<group>"; };
-		CE594BCE1CB2D1360085A4DC /* image_view_factory.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = image_view_factory.hpp; sourceTree = "<group>"; };
-		CE594BCF1CB2D1360085A4DC /* iterator_from_2d.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = iterator_from_2d.hpp; sourceTree = "<group>"; };
-		CE594BD01CB2D1360085A4DC /* locator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = locator.hpp; sourceTree = "<group>"; };
-		CE594BD11CB2D1360085A4DC /* metafunctions.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = metafunctions.hpp; sourceTree = "<group>"; };
-		CE594BD21CB2D1360085A4DC /* packed_pixel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = packed_pixel.hpp; sourceTree = "<group>"; };
-		CE594BD31CB2D1360085A4DC /* pixel.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = pixel.hpp; sourceTree = "<group>"; };
-		CE594BD41CB2D1360085A4DC /* pixel_iterator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = pixel_iterator.hpp; sourceTree = "<group>"; };
-		CE594BD51CB2D1360085A4DC /* pixel_iterator_adaptor.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = pixel_iterator_adaptor.hpp; sourceTree = "<group>"; };
-		CE594BD61CB2D1360085A4DC /* planar_pixel_iterator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = planar_pixel_iterator.hpp; sourceTree = "<group>"; };
-		CE594BD71CB2D1360085A4DC /* planar_pixel_reference.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = planar_pixel_reference.hpp; sourceTree = "<group>"; };
-		CE594BD81CB2D1360085A4DC /* position_iterator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = position_iterator.hpp; sourceTree = "<group>"; };
-		CE594BD91CB2D1360085A4DC /* rgb.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = rgb.hpp; sourceTree = "<group>"; };
-		CE594BDA1CB2D1360085A4DC /* rgba.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = rgba.hpp; sourceTree = "<group>"; };
-		CE594BDB1CB2D1360085A4DC /* step_iterator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = step_iterator.hpp; sourceTree = "<group>"; };
 		CE594BDC1CB2D1360085A4DC /* typedefs.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = typedefs.hpp; sourceTree = "<group>"; };
-		CE594BDD1CB2D1360085A4DC /* utilities.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = utilities.hpp; sourceTree = "<group>"; };
-		CE594BDE1CB2D1360085A4DC /* virtual_locator.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = virtual_locator.hpp; sourceTree = "<group>"; };
 		CE6183961BB80D1300952BEA /* GGFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GGFwd.h; sourceTree = "<group>"; };
 		CE6183981BB80D1300952BEA /* BlockControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockControl.h; sourceTree = "<group>"; };
 		CE6183991BB80D1300952BEA /* ImageBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImageBlock.h; sourceTree = "<group>"; };
@@ -1466,7 +1417,7 @@
 				471023A10CEF3AAC00A7DF2B /* Edit.cpp */,
 				471023A20CEF3AAC00A7DF2B /* EventPump.cpp */,
 				471023A30CEF3AAC00A7DF2B /* Font.cpp */,
-				CE594BA41CB2D1360085A4DC /* GIL */,
+				CE594BA41CB2D1360085A4DC /* gilext */,
 				8257A8D61A90BA610006777D /* GLClientAndServerBuffer.cpp */,
 				2F60966A12EEAF0200F58913 /* GroupBox.cpp */,
 				471023A40CEF3AAC00A7DF2B /* GUI.cpp */,
@@ -2202,88 +2153,23 @@
 			name = Utils;
 			sourceTree = "<group>";
 		};
-		CE594BA41CB2D1360085A4DC /* GIL */ = {
+		CE594BA41CB2D1360085A4DC /* gilext */ = {
 			isa = PBXGroup;
 			children = (
-				CE594BA51CB2D1360085A4DC /* algorithm.hpp */,
-				CE594BA61CB2D1360085A4DC /* bit_aligned_pixel_iterator.hpp */,
-				CE594BA71CB2D1360085A4DC /* bit_aligned_pixel_reference.hpp */,
-				CE594BA81CB2D1360085A4DC /* channel.hpp */,
-				CE594BA91CB2D1360085A4DC /* channel_algorithm.hpp */,
-				CE594BAA1CB2D1360085A4DC /* cmyk.hpp */,
-				CE594BAB1CB2D1360085A4DC /* color_base.hpp */,
-				CE594BAC1CB2D1360085A4DC /* color_base_algorithm.hpp */,
 				CE594BAD1CB2D1360085A4DC /* color_convert.hpp */,
-				CE594BAE1CB2D1360085A4DC /* deprecated.hpp */,
-				CE594BAF1CB2D1360085A4DC /* device_n.hpp */,
-				CE594BB01CB2D1360085A4DC /* extension */,
-				CE594BC71CB2D1360085A4DC /* gil_all.hpp */,
-				CE594BC81CB2D1360085A4DC /* gil_concept.hpp */,
-				CE594BC91CB2D1360085A4DC /* gil_config.hpp */,
-				CE594BCA1CB2D1360085A4DC /* gray.hpp */,
-				CE594BCB1CB2D1360085A4DC /* gray_alpha.hpp */,
-				CE594BCC1CB2D1360085A4DC /* image.hpp */,
-				CE594BCD1CB2D1360085A4DC /* image_view.hpp */,
-				CE594BCE1CB2D1360085A4DC /* image_view_factory.hpp */,
-				CE594BCF1CB2D1360085A4DC /* iterator_from_2d.hpp */,
-				CE594BD01CB2D1360085A4DC /* locator.hpp */,
-				CE594BD11CB2D1360085A4DC /* metafunctions.hpp */,
-				CE594BD21CB2D1360085A4DC /* packed_pixel.hpp */,
-				CE594BD31CB2D1360085A4DC /* pixel.hpp */,
-				CE594BD41CB2D1360085A4DC /* pixel_iterator.hpp */,
-				CE594BD51CB2D1360085A4DC /* pixel_iterator_adaptor.hpp */,
-				CE594BD61CB2D1360085A4DC /* planar_pixel_iterator.hpp */,
-				CE594BD71CB2D1360085A4DC /* planar_pixel_reference.hpp */,
-				CE594BD81CB2D1360085A4DC /* position_iterator.hpp */,
-				CE594BD91CB2D1360085A4DC /* rgb.hpp */,
-				CE594BDA1CB2D1360085A4DC /* rgba.hpp */,
-				CE594BDB1CB2D1360085A4DC /* step_iterator.hpp */,
-				CE594BDC1CB2D1360085A4DC /* typedefs.hpp */,
-				CE594BDD1CB2D1360085A4DC /* utilities.hpp */,
-				CE594BDE1CB2D1360085A4DC /* virtual_locator.hpp */,
-			);
-			path = GIL;
-			sourceTree = "<group>";
-		};
-		CE594BB01CB2D1360085A4DC /* extension */ = {
-			isa = PBXGroup;
-			children = (
-				CE594BB11CB2D1360085A4DC /* dynamic_image */,
 				CE594BBC1CB2D1360085A4DC /* io */,
+				CE594BCB1CB2D1360085A4DC /* gray_alpha.hpp */,
+				CE594BDC1CB2D1360085A4DC /* typedefs.hpp */,
 			);
-			path = extension;
-			sourceTree = "<group>";
-		};
-		CE594BB11CB2D1360085A4DC /* dynamic_image */ = {
-			isa = PBXGroup;
-			children = (
-				CE594BB21CB2D1360085A4DC /* algorithm.hpp */,
-				CE594BB31CB2D1360085A4DC /* any_image.hpp */,
-				CE594BB41CB2D1360085A4DC /* any_image_view.hpp */,
-				CE594BB51CB2D1360085A4DC /* apply_operation.hpp */,
-				CE594BB61CB2D1360085A4DC /* apply_operation_base.hpp */,
-				CE594BB71CB2D1360085A4DC /* dynamic_at_c.hpp */,
-				CE594BB81CB2D1360085A4DC /* dynamic_image_all.hpp */,
-				CE594BB91CB2D1360085A4DC /* image_view_factory.hpp */,
-				CE594BBA1CB2D1360085A4DC /* reduce.hpp */,
-				CE594BBB1CB2D1360085A4DC /* variant.hpp */,
-			);
-			path = dynamic_image;
+			path = gilext;
 			sourceTree = "<group>";
 		};
 		CE594BBC1CB2D1360085A4DC /* io */ = {
 			isa = PBXGroup;
 			children = (
-				CE594BBD1CB2D1360085A4DC /* dynamic_io.hpp */,
-				CE594BBE1CB2D1360085A4DC /* io_error.hpp */,
-				CE594BBF1CB2D1360085A4DC /* jpeg_dynamic_io.hpp */,
-				CE594BC01CB2D1360085A4DC /* jpeg_io.hpp */,
-				CE594BC11CB2D1360085A4DC /* jpeg_io_private.hpp */,
 				CE594BC21CB2D1360085A4DC /* png_dynamic_io.hpp */,
 				CE594BC31CB2D1360085A4DC /* png_io.hpp */,
 				CE594BC41CB2D1360085A4DC /* png_io_private.hpp */,
-				CE594BC51CB2D1360085A4DC /* tiff_dynamic_io.hpp */,
-				CE594BC61CB2D1360085A4DC /* tiff_io.hpp */,
 			);
 			path = io;
 			sourceTree = "<group>";

@@ -308,8 +308,8 @@
     libraries.  See http://boost.org/more/getting_started/index.html for
     details on building Boost.  There are often pre-built binaries available
     for download for the latest Microsoft C++ compiler.  The built-in image
-    loader only supports PNG and TIFF formats, using a modified version of
-    Boost.GIL from Boost 1.37.
+    loader only supports PNG and TIFF formats, using Boost.GIL with custom
+    extensions.
 
     GG uses CMake to generate makefiles, MSVC and XCode projects files, etc.
     Here is the quick-and-dirty info on using CMake.  Download and install

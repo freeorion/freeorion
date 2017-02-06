@@ -30,21 +30,15 @@
 #include <GG/utf8/checked.h>
 
 #include <boost/filesystem/operations.hpp>
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
-# pragma GCC diagnostic push
-# pragma GCC diagnostic ignored "-Wunused-local-typedefs"
-#endif
-#include "GIL/extension/dynamic_image/any_image.hpp"
-#if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)
-# pragma GCC diagnostic pop
-#endif
-#if GG_HAVE_LIBPNG
-# include "GIL/extension/io/png_dynamic_io.hpp"
-#endif
+#include <boost/gil/extension/dynamic_image/any_image.hpp>
 #if GG_HAVE_LIBTIFF
-# include "GIL/extension/io/tiff_dynamic_io.hpp"
+# include <boost/gil/extension/io/tiff_dynamic_io.hpp>
 #endif
 #include <boost/algorithm/string/case_conv.hpp>
+
+#if GG_HAVE_LIBPNG
+# include "gilext/io/png_dynamic_io.hpp"
+#endif
 
 #include <iostream>
 #include <iomanip>

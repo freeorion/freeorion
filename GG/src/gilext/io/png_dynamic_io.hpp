@@ -32,11 +32,11 @@
 #include <stdio.h>
 #include <boost/mpl/bool.hpp>
 #include <boost/shared_ptr.hpp>
-#include "../dynamic_image/dynamic_image_all.hpp"
-#include "io_error.hpp"
+#include <boost/gil/extension/dynamic_image/dynamic_image_all.hpp>
+#include <boost/gil/extension/io/io_error.hpp>
+#include <boost/gil/extension/io/dynamic_io.hpp>
 #include "png_io.hpp"
 #include "png_io_private.hpp"
-#include "dynamic_io.hpp"
 
 namespace boost { namespace gil {
 

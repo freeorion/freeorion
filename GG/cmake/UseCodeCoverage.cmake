@@ -83,7 +83,7 @@ function(ENABLE_COVERAGE)
         # Capture gcov line counters
         COMMAND ${LCOV_EXECUTABLE} --quiet --directory . --capture --output-file ${COVERAGE_INFO}
         # Filter out undesirable code
-        COMMAND ${LCOV_EXECUTABLE} --quiet --remove ${COVERAGE_INFO} '/usr/include/*' 'GG/utf8/*' 'src/GIL/*' 'test/*' --output-file ${COVERAGE_CLEANED}
+        COMMAND ${LCOV_EXECUTABLE} --quiet --remove ${COVERAGE_INFO} '/usr/include/*' 'GG/utf8/*' 'src/gilext/*' 'test/*' --output-file ${COVERAGE_CLEANED}
         DEPENDS ${CMAKE_PROJECT_NAME}_coverage_clear
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Capture code coverage line counters"

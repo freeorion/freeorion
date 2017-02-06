@@ -11,8 +11,8 @@
 */
 /*************************************************************************************************/
 
-#ifndef GIL_PNG_IO_PRIVATE_H
-#define GIL_PNG_IO_PRIVATE_H
+#ifndef GILEXT_PNG_IO_PRIVATE_H
+#define GILEXT_PNG_IO_PRIVATE_H
 
 /// \file
 /// \brief  Internal support for reading and writing PNG files
@@ -23,8 +23,11 @@
 #include <algorithm>
 #include <vector>
 #include <boost/static_assert.hpp>
-#include "../../gil_all.hpp"
-#include "io_error.hpp"
+#include <boost/gil/gil_all.hpp>
+#include <boost/gil/extension/io/io_error.hpp>
+#include "../color_convert.hpp"
+#include "../gray_alpha.hpp"
+#include "../typedefs.hpp"
 
 namespace boost { namespace gil {
 

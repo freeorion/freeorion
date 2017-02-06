@@ -10,15 +10,14 @@
 
 /*************************************************************************************************/
 
-#ifndef GIL_PNG_IO_H
-#define GIL_PNG_IO_H
+#ifndef GILEXT_PNG_IO_H
+#define GILEXT_PNG_IO_H
 
 /// \file
 /// \brief  Support for reading and writing PNG files
 ///         Requires libpng and zlib!
 //
 // We are currently providing the following functions:
-// point2<std::ptrdiff_t>    png_read_dimensions(const char*)
 // template <typename View>  void png_read_view(const char*,const View&)
 // template <typename View>  void png_read_image(const char*,image<View>&)
 // template <typename View>  void png_write_view(const char*,const View&)
@@ -32,30 +31,15 @@
 #include <stdio.h>
 #include <string>
 extern "C" {
-#include "png.h"
+#include <png.h>
 }
 #include <boost/static_assert.hpp>
-#include "../../gil_config.hpp"
-#include "../../utilities.hpp"
-#include "io_error.hpp"
+#include <boost/gil/gil_config.hpp>
+#include <boost/gil/utilities.hpp>
+#include <boost/gil/extension/io/io_error.hpp>
 #include "png_io_private.hpp"
 
 namespace boost { namespace gil {
-
-/// \ingroup PNG_IO
-/// \brief Returns the width and height of the PNG file at the specified location.
-/// Throws std::ios_base::failure if the location does not correspond to a valid PNG file
-inline point2<std::ptrdiff_t> png_read_dimensions(const char *filename) {
-    detail::png_reader m(filename);
-    return m.get_dimensions();
-}
-
-/// \ingroup PNG_IO
-/// \brief Returns the width and height of the PNG file at the specified location.
-/// Throws std::ios_base::failure if the location does not correspond to a valid PNG file
-inline point2<std::ptrdiff_t> png_read_dimensions(const std::string& filename) {
-    return png_read_dimensions(filename.c_str());
-}
 
 /// \ingroup PNG_IO
 /// \brief Determines whether the given view type is supported for reading
