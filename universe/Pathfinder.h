@@ -110,10 +110,10 @@ public:
         The \p candidates are modified and transfered to the \near vector.*/
     void WithinJumpsOfOthers(
         int jumps,
-        std::vector<std::shared_ptr<const UniverseObject> > & near,
-        std::vector<std::shared_ptr<const UniverseObject> > & far,
-        std::vector<std::shared_ptr<const UniverseObject> > & candidates,
-        std::vector<std::shared_ptr<const UniverseObject> > const & others) const;
+        std::vector<std::shared_ptr<const UniverseObject>>& near,
+        std::vector<std::shared_ptr<const UniverseObject>>& far,
+        std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+        const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
 
     /** Returns the id of the System object that is closest to the specified
       * (\a x, \a y) location on the map, by direct-line distance. */

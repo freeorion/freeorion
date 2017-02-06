@@ -576,21 +576,21 @@ class Pathfinder::PathfinderImpl {
 
     void WithinJumpsOfOthers(
         int jumps,
-        std::vector<std::shared_ptr<const UniverseObject>> & near,
-        std::vector<std::shared_ptr<const UniverseObject>> & far,
-        std::vector<std::shared_ptr<const UniverseObject>> & candidates,
-        std::vector<std::shared_ptr<const UniverseObject>> const & others) const;
+        std::vector<std::shared_ptr<const UniverseObject>>& near,
+        std::vector<std::shared_ptr<const UniverseObject>>& far,
+        std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+        const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
 
     /**Return true if \p system_id is within \p jumps of any of \p others*/
     bool WithinJumpsOfOthers(
         int jumps, int system_id,
-        std::vector<std::shared_ptr<const UniverseObject>> const & others) const;
+        const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
 
     /** If any of \p others are within \p jumps of \p ii return true in \p answer.
      */
     void WithinJumpsOfOthersCacheHit(
         bool& answer, int jumps,
-        std::vector<std::shared_ptr<const UniverseObject>> const & others,
+        const std::vector<std::shared_ptr<const UniverseObject>>& others,
         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
     int NearestSystemTo(double x, double y) const;
@@ -834,8 +834,8 @@ struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
         int jumps = std::min(jumps1, jumps2);
         return jumps;
     }
-    Pathfinder::PathfinderImpl const & pf;
-    GeneralizedLocationType const & sys2_ids;
+    const Pathfinder::PathfinderImpl& pf;
+    const GeneralizedLocationType& sys2_ids;
 };
 
 int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
@@ -1039,11 +1039,12 @@ struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
 /** Examine a single other in the cache to see if any of its locations
     are within jumps*/
 struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
-    WithinJumpsOfOthersOtherVisitor(Pathfinder::PathfinderImpl const & _pf,
+    WithinJumpsOfOthersOtherVisitor(const Pathfinder::PathfinderImpl& _pf,
                                     int _jumps,
                                     const distance_matrix_storage<short>::row_ref _row
                                    ) :
-        pf(_pf), jumps(_jumps), row(_row) {}
+        pf(_pf), jumps(_jumps), row(_row)
+    {}
 
     bool single_result(int other_id) const {
         int index;
@@ -1065,7 +1066,7 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
         return single_result(prev_next.first)
             || single_result(prev_next.second);
     }
-    Pathfinder::PathfinderImpl const & pf;
+    const Pathfinder::PathfinderImpl& pf;
     int jumps;
     const distance_matrix_storage<short>::row_ref row;
 };
@@ -1145,7 +1146,7 @@ bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
 
     // Examine the cache to see if \p system_id is within \p jumps of \p others
     bool within_jumps(false);
-    distance_matrix_cache< distance_matrix_storage<short>> cache(m_system_jumps);
+    distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
     cache.examine_row(system_index,
                       boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
                       boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
