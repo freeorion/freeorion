@@ -95,15 +95,15 @@ namespace {
             new ValueRef::ComplexVariable<T>(token, int_ref1, int_ref2, int_ref3, string_ref1, string_ref2));
     }
 
-    ValueRef::Variable<std::string>* SystemSupplyRangeValueRef(bool propegated = false) {
+    ValueRef::Variable<std::string>* SystemSupplyRangeValueRef(bool propagated = false) {
         return StringCastedComplexValueRef<double>(
-            propegated ? "PropegatedSystemSupplyRange" :"SystemSupplyRange",
+            propagated ? "PropagatedSystemSupplyRange" :"SystemSupplyRange",
             nullptr,
             new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
     }
 
     ValueRef::Variable<std::string>* SystemSupplyDistanceValueRef() {
-        return StringCastedComplexValueRef<double>("PropagatedSupplyDistance",
+        return StringCastedComplexValueRef<double>("PropagatedSystemSupplyDistance",
             nullptr,
             new ValueRef::Variable<int>(ValueRef::SOURCE_REFERENCE, "SystemID"));
     }

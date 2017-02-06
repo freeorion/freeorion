@@ -101,8 +101,10 @@ const std::set<std::set<int>>& SupplyManager::ResourceSupplyGroups(int empire_id
     return EMPTY_INT_SET_SET;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyRanges() const
-{ return m_propagated_supply_ranges; }
+const std::map<int, float>& SupplyManager::PropagatedSupplyRanges() const {
+    std::cout << "BLAAAAH" << std::endl;
+    return m_propagated_supply_ranges;
+}
 
 const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id) const
 {
@@ -112,8 +114,8 @@ const std::map<int, float>& SupplyManager::PropagatedSupplyRanges(int empire_id)
     return emp_it->second;
 }
 
-const std::map<int, float>& SupplyManager::PropagatedSupplyDistances() const
-{
+const std::map<int, float>& SupplyManager::PropagatedSupplyDistances() const {
+    std::cout << "GLAARB" << std::endl;
     return m_propagated_supply_distances;
 }
 
@@ -578,7 +580,7 @@ void SupplyManager::Update() {
                 // what starlanes can be used to propagate supply?
                 int system_id = supply_range.first;
 
-                //DebugLogger() << "propagating from system " << system_id << " which has range: " << range;
+                //DebugLogger() << "propagating from system " << system_id << " which has range: " << range << " and distance: " << distance_to_supply_source;
 
                 // attempt to propagate to all adjacent systems...
                 for (int lane_end_sys_id : empire_visible_starlanes[empire_id][system_id]) {
@@ -617,14 +619,29 @@ void SupplyManager::Update() {
                     float lane_length = DistanceBetweenObjects(system_id, lane_end_sys_id);
                     float distance_to_supply_source_after_next_lane = lane_length + distance_to_supply_source;
 
-                    // if propagating supply would increase the range of the adjacent system, do so.
+                    //DebugLogger() << "Attempting to propagate into system: " << lane_end_sys_id << " the new range: " << range_after_one_more_jump << " and distance: " << distance_to_supply_source_after_next_lane;
+
+                    // if propagating supply would increase the range of the adjacent system,
+                    // or decrease the distance to the adjacent system from a supply source...
                     std::map<int, std::pair<float, float>>::const_iterator prev_range_it = prev_sys_ranges.find(lane_end_sys_id);
-                    if (prev_range_it == prev_sys_ranges.end() || range_after_one_more_jump > prev_range_it->second.first) {
-                        empire_propagating_supply_ranges_next[empire_id][lane_end_sys_id].first = range_after_one_more_jump;
-                    }
-                    // if propagating supply would decrease the distance to a supply source, do so
-                    if (prev_range_it == prev_sys_ranges.end() || distance_to_supply_source_after_next_lane < prev_range_it->second.second) {
-                        empire_propagating_supply_ranges_next[empire_id][lane_end_sys_id].second = distance_to_supply_source_after_next_lane;
+                    if (prev_range_it == prev_sys_ranges.end()) {
+                        empire_propagating_supply_ranges_next[empire_id][lane_end_sys_id] =
+                            {range_after_one_more_jump, distance_to_supply_source_after_next_lane};
+                        //DebugLogger() << " ... default case: no previous entry.";
+
+                    } else {
+                        //DebugLogger() << " ... previous entry values: " << prev_range_it->second.first << " and " << prev_range_it->second.second;
+
+                        if (range_after_one_more_jump > prev_range_it->second.first) {
+                            empire_propagating_supply_ranges_next[empire_id][lane_end_sys_id].first =
+                                range_after_one_more_jump;
+                            //DebugLogger() << " ... range increased!";
+                        }
+                        if (distance_to_supply_source_after_next_lane < prev_range_it->second.second) {
+                            empire_propagating_supply_ranges_next[empire_id][lane_end_sys_id].second =
+                                distance_to_supply_source_after_next_lane;
+                            //DebugLogger() << " ... distance decreased!";
+                        }
                     }
                     // always record a traversal, so connectivity is calculated properly
                     m_supply_starlane_traversals[empire_id].insert(std::make_pair(system_id, lane_end_sys_id));
@@ -683,6 +700,11 @@ void SupplyManager::Update() {
             m_empire_propagated_supply_distances[empire_id][supply_range.first] =
                 m_propagated_supply_distances[supply_range.first];
         }
+
+        //DebugLogger() << "For empire: " << empire_id << " system supply distances: ";
+        //for (auto entry : m_empire_propagated_supply_distances[empire_id]) {
+        //    DebugLogger() << entry.first << " : " << entry.second;
+        //}
     }
 
     // determine supply-connected groups of systems for each empire.

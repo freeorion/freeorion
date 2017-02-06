@@ -1281,11 +1281,11 @@ namespace {
         if (!empire)
             return EMPTY_INT_FLOAT_MAP;
 
-        if (parsed_map_name == "PropegatedSystemSupplyRange")
+        if (parsed_map_name == "PropagatedSystemSupplyRange")
             return GetSupplyManager().PropagatedSupplyRanges(empire_id);
         if (parsed_map_name == "SystemSupplyRange")
             return empire->SystemSupplyRanges();
-        if (parsed_map_name == "PropegatedSupplyDistance")
+        if (parsed_map_name == "PropagatedSystemSupplyDistance")
             return GetSupplyManager().PropagatedSupplyDistances(empire_id);
 
         return EMPTY_INT_FLOAT_MAP;
@@ -1759,9 +1759,9 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
     const std::string& variable_name = m_property_name.back();
 
     // empire properties indexed by integers
-    if (variable_name == "PropegatedSystemSupplyRange" ||
+    if (variable_name == "PropagatedSystemSupplyRange" ||
         variable_name == "SystemSupplyRange" ||
-        variable_name == "PropegatedSystemSupplyDistance")
+        variable_name == "PropagatedSystemSupplyDistance")
     {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1) {
