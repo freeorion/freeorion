@@ -1568,6 +1568,9 @@ void SidePanel::PlanetPanel::Refresh() {
         wrapped_planet_name = "<i>" + wrapped_planet_name + "</i>";
     if (has_shipyard)
         wrapped_planet_name = "<u>" + wrapped_planet_name + "</u>";
+    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+        wrapped_planet_name = wrapped_planet_name + " (" + std::to_string(m_planet_id) + ")";
+    }
 
     // set name
     m_planet_name->SetText("<s>" + wrapped_planet_name + "</s>");

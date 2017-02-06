@@ -108,7 +108,10 @@ namespace {
             std::pair<int, int> eta = fleet->ETA();       // .first is turns to final destination.  .second is turns to next system on route
 
             // name of final destination
-            const std::string& dest_name = dest_sys->ApparentName(client_empire_id);
+            std::string dest_name = dest_sys->ApparentName(client_empire_id);
+            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+                dest_name = dest_name + " (" + std::to_string(dest_sys->ID()) + ")";
+            }
 
             // next system on path
             std::string next_eta_text;
@@ -146,7 +149,11 @@ namespace {
             }
 
         } else if (cur_sys) {
-            const std::string& cur_system_name = cur_sys->ApparentName(client_empire_id);
+            std::string cur_system_name = cur_sys->ApparentName(client_empire_id);
+            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+                cur_system_name = cur_system_name + " (" + std::to_string(cur_sys->ID()) + ")";
+            }
+
             if (ClientUI::GetClientUI()->GetMapWnd()->IsFleetExploring(fleet->ID())) {
                 if (fleet->Fuel() == fleet->MaxFuel())
                     retval = boost::io::str(FlexibleFormat(UserString("FW_FLEET_EXPLORING_WAITING")));
@@ -860,12 +867,16 @@ void ShipDataPanel::Refresh() {
 
     // name and design name update
     const std::string& ship_name = ship->PublicName(empire_id);
+    std::string id_name_part;
+    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+        id_name_part = " (" + std::to_string(m_ship_id) + ")";
+    }
     if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
         const Empire* ship_owner_empire = GetEmpire(ship->Owner());
         const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
-        m_ship_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_SHIP")) % owner_name));
+        m_ship_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_SHIP")) % owner_name) + id_name_part);
     } else {
-        m_ship_name_text->SetText(ship_name);
+        m_ship_name_text->SetText(ship_name + id_name_part);
     }
 
     if (m_design_name_text) {
@@ -982,6 +993,10 @@ void ShipDataPanel::Init() {
     std::string ship_name;
     if (ship)
         ship_name = ship->Name();
+
+    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+        ship_name = ship_name + " (" + std::to_string(m_ship_id) + ")";
+    }
 
     m_ship_name_text = new CUILabel(ship_name, GG::FORMAT_LEFT);
     AttachChild(m_ship_name_text);
@@ -1457,12 +1472,19 @@ void FleetDataPanel::Refresh() {
     } else if (std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         // set fleet name and destination text
-        const std::string& fleet_name = fleet->PublicName(client_empire_id);
+        std::string fleet_name = fleet->PublicName(client_empire_id);
         if (!fleet->Unowned() && fleet_name == UserString("FW_FOREIGN_FLEET")) {
             const Empire* ship_owner_empire = GetEmpire(fleet->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
-            m_fleet_name_text->SetText(boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name));
+            std::string fleet_name = boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name);
+            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+                fleet_name = fleet_name + " (" + std::to_string(m_fleet_id) + ")";
+            }
+            m_fleet_name_text->SetText(fleet_name);
         } else {
+            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+                fleet_name = fleet_name + " (" + std::to_string(m_fleet_id) + ")";
+            }
             m_fleet_name_text->SetText(fleet_name);
         }
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
