@@ -957,8 +957,8 @@ void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, const
 void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
     GG::ListBox::Row* row = new GG::ListBox::Row();
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
-    ColorSelector* color_selector = new ColorSelector(GetOptionsDB().Get<StreamableColor>(option_name).ToClr(),
-                                                      GetOptionsDB().GetDefault<StreamableColor>(option_name).ToClr());
+    ColorSelector* color_selector = new ColorSelector(GetOptionsDB().Get<GG::Clr>(option_name),
+                                                      GetOptionsDB().GetDefault<GG::Clr>(option_name));
     color_selector->Resize(GG::Pt(color_selector->Width(), GG::Y(ClientUI::Pts() + 4)));
     color_selector->SetMaxSize(GG::Pt(color_selector->MaxSize().x, color_selector->Size().y));
     GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2);
@@ -974,7 +974,7 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     GG::Connect(color_selector->ColorChangedSignal, [option_name](const GG::Clr& clr) {
-        GetOptionsDB().Set<StreamableColor>(option_name, clr);
+        GetOptionsDB().Set<GG::Clr>(option_name, clr);
     });
 }
 

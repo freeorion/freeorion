@@ -66,18 +66,18 @@ fs::path    ClientUI::SoundDir()                { return GetResourceDir() / "dat
 int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("UI.font-size"); }
 int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
 
-GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<StreamableColor>("UI.text-color").ToClr(); }
-GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<StreamableColor>("UI.default-link-color").ToClr(); }
-GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<StreamableColor>("UI.rollover-link-color").ToClr(); }
+GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("UI.text-color"); }
+GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("UI.default-link-color"); }
+GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("UI.rollover-link-color"); }
 
 // windows
-GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<StreamableColor>("UI.wnd-color").ToClr(); }
-GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<StreamableColor>("UI.wnd-outer-border-color").ToClr(); }
-GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<StreamableColor>("UI.wnd-inner-border-color").ToClr(); }
+GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("UI.wnd-color"); }
+GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<GG::Clr>("UI.wnd-outer-border-color"); }
+GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<GG::Clr>("UI.wnd-inner-border-color"); }
 
 // controls
-GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-color").ToClr(); }
-GG::Clr     ClientUI::CtrlBorderColor()         { return GetOptionsDB().Get<StreamableColor>("UI.ctrl-border-color").ToClr(); }
+GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<GG::Clr>("UI.ctrl-color"); }
+GG::Clr     ClientUI::CtrlBorderColor()         { return GetOptionsDB().Get<GG::Clr>("UI.ctrl-border-color"); }
 GG::Clr     ClientUI::ButtonHiliteColor() {
     GG::Clr colour = CtrlColor();
     AdjustBrightness(colour, 50);
@@ -92,14 +92,14 @@ GG::Clr     ClientUI::ButtonHiliteBorderColor() {
 
 int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>("UI.scroll-width"); }
 
-GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<StreamableColor>("UI.dropdownlist-arrow-color").ToClr(); }
+GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<GG::Clr>("UI.dropdownlist-arrow-color"); }
 
-GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<StreamableColor>("UI.edit-hilite").ToClr(); }
+GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<GG::Clr>("UI.edit-hilite"); }
 
-GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-increase-color").ToClr(); }
-GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<StreamableColor>("UI.stat-decrease-color").ToClr(); }
+GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<GG::Clr>("UI.stat-increase-color"); }
+GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<GG::Clr>("UI.stat-decrease-color"); }
 
-GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<StreamableColor>("UI.state-button-color").ToClr(); }
+GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<GG::Clr>("UI.state-button-color"); }
 
 int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("UI.system-icon-size"); }
 int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold"); }
@@ -107,7 +107,7 @@ int         ClientUI::SystemCircleSize()                { return static_cast<int
 int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("UI.system-selection-indicator-size")); }
 int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("UI.system-selection-indicator-rpm"); }
 
-GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<StreamableColor>("UI.system-name-unowned-color").ToClr(); }
+GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<GG::Clr>("UI.system-name-unowned-color"); }
 
 double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("UI.tiny-fleet-button-minimum-zoom"); }
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
@@ -336,14 +336,14 @@ std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
 
 
 // tech screen
-GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<StreamableColor>("UI.known-tech").ToClr(); }
-GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<StreamableColor>("UI.known-tech-border").ToClr(); }
-GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<StreamableColor>("UI.researchable-tech").ToClr(); }
-GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<StreamableColor>("UI.researchable-tech-border").ToClr(); }
-GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech").ToClr(); }
-GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<StreamableColor>("UI.unresearchable-tech-border").ToClr(); }
-GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress-background").ToClr(); }
-GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<StreamableColor>("UI.tech-progress").ToClr(); }
+GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<GG::Clr>("UI.known-tech"); }
+GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("UI.known-tech-border"); }
+GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<GG::Clr>("UI.researchable-tech"); }
+GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<GG::Clr>("UI.researchable-tech-border"); }
+GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<GG::Clr>("UI.unresearchable-tech"); }
+GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<GG::Clr>("UI.unresearchable-tech-border"); }
+GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<GG::Clr>("UI.tech-progress-background"); }
+GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<GG::Clr>("UI.tech-progress"); }
 
 GG::Clr     ClientUI::CategoryColor(const std::string& category_name) {
     const TechCategory* category = GetTechCategory(category_name);
@@ -504,34 +504,34 @@ namespace {
         db.Add("UI.title-font-size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            17,                     RangedValidator<int>(4, 40));
 
         // colors
-        db.Add("UI.wnd-color",                  UserStringNop("OPTIONS_DB_UI_WND_COLOR"),                  StreamableColor(GG::Clr(35, 35, 35, 240)),      Validator<StreamableColor>());
-        db.Add("UI.wnd-outer-border-color",     UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),     StreamableColor(GG::Clr(64, 64, 64, 255)),      Validator<StreamableColor>());
-        db.Add("UI.wnd-inner-border-color",     UserStringNop("OPTIONS_DB_UI_WND_INNER_BORDER_COLOR"),     StreamableColor(GG::Clr(192, 192, 192, 255)),   Validator<StreamableColor>());
+        db.Add("UI.wnd-color",                  UserStringNop("OPTIONS_DB_UI_WND_COLOR"),                  GG::Clr(35, 35, 35, 240),    Validator<GG::Clr>());
+        db.Add("UI.wnd-outer-border-color",     UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),     GG::Clr(64, 64, 64, 255),    Validator<GG::Clr>());
+        db.Add("UI.wnd-inner-border-color",     UserStringNop("OPTIONS_DB_UI_WND_INNER_BORDER_COLOR"),     GG::Clr(192, 192, 192, 255), Validator<GG::Clr>());
 
-        db.Add("UI.ctrl-color",                 UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                 StreamableColor(GG::Clr(15, 15, 15, 255)),      Validator<StreamableColor>());
-        db.Add("UI.ctrl-border-color",          UserStringNop("OPTIONS_DB_UI_CTRL_BORDER_COLOR"),          StreamableColor(GG::Clr(124, 124, 124, 255)),   Validator<StreamableColor>());
+        db.Add("UI.ctrl-color",                 UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                 GG::Clr(15, 15, 15, 255),    Validator<GG::Clr>());
+        db.Add("UI.ctrl-border-color",          UserStringNop("OPTIONS_DB_UI_CTRL_BORDER_COLOR"),          GG::Clr(124, 124, 124, 255), Validator<GG::Clr>());
 
-        db.Add("UI.dropdownlist-arrow-color",   UserStringNop("OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR"),   StreamableColor(GG::Clr(130, 130, 0, 255)),     Validator<StreamableColor>());
+        db.Add("UI.dropdownlist-arrow-color",   UserStringNop("OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR"),   GG::Clr(130, 130, 0, 255),   Validator<GG::Clr>());
 
-        db.Add("UI.edit-hilite",                UserStringNop("OPTIONS_DB_UI_EDIT_HILITE"),                StreamableColor(GG::Clr(43, 81, 102, 255)),     Validator<StreamableColor>());
+        db.Add("UI.edit-hilite",                UserStringNop("OPTIONS_DB_UI_EDIT_HILITE"),                GG::Clr(43, 81, 102, 255),   Validator<GG::Clr>());
 
-        db.Add("UI.stat-increase-color",        UserStringNop("OPTIONS_DB_UI_STAT_INCREASE_COLOR"),        StreamableColor(GG::Clr(0, 255, 0, 255)),       Validator<StreamableColor>());
-        db.Add("UI.stat-decrease-color",        UserStringNop("OPTIONS_DB_UI_STAT_DECREASE_COLOR"),        StreamableColor(GG::Clr(255, 0, 0, 255)),       Validator<StreamableColor>());
+        db.Add("UI.stat-increase-color",        UserStringNop("OPTIONS_DB_UI_STAT_INCREASE_COLOR"),        GG::Clr(0, 255, 0, 255),     Validator<GG::Clr>());
+        db.Add("UI.stat-decrease-color",        UserStringNop("OPTIONS_DB_UI_STAT_DECREASE_COLOR"),        GG::Clr(255, 0, 0, 255),     Validator<GG::Clr>());
 
-        db.Add("UI.state-button-color",         UserStringNop("OPTIONS_DB_UI_STATE_BUTTON_COLOR"),         StreamableColor(GG::Clr(0, 127, 0, 255)),       Validator<StreamableColor>());
+        db.Add("UI.state-button-color",         UserStringNop("OPTIONS_DB_UI_STATE_BUTTON_COLOR"),         GG::Clr(0, 127, 0, 255),     Validator<GG::Clr>());
 
-        db.Add("UI.text-color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 StreamableColor(GG::Clr(255, 255, 255, 255)),   Validator<StreamableColor>());
-        db.Add("UI.default-link-color",         UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         StreamableColor(GG::Clr(80, 255, 128, 255)),    Validator<StreamableColor>());
-        db.Add("UI.rollover-link-color",        UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        StreamableColor(GG::Clr(192, 80, 255, 255)),    Validator<StreamableColor>());
+        db.Add("UI.text-color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 GG::Clr(255, 255, 255, 255), Validator<GG::Clr>());
+        db.Add("UI.default-link-color",         UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
+        db.Add("UI.rollover-link-color",        UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
 
-        db.Add("UI.known-tech",                 UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"),                 StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
-        db.Add("UI.known-tech-border",          UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),          StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
-        db.Add("UI.researchable-tech",          UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"),          StreamableColor(GG::Clr(48, 48, 48, 255)),      Validator<StreamableColor>());
-        db.Add("UI.researchable-tech-border",   UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"),   StreamableColor(GG::Clr(164, 164, 164, 255)),   Validator<StreamableColor>());
-        db.Add("UI.unresearchable-tech",        UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"),        StreamableColor(GG::Clr(30, 30, 30, 255)),      Validator<StreamableColor>());
-        db.Add("UI.unresearchable-tech-border", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"), StreamableColor(GG::Clr(86, 86, 86, 255)),      Validator<StreamableColor>());
-        db.Add("UI.tech-progress-background",   UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"),   StreamableColor(GG::Clr(72, 72, 72, 255)),      Validator<StreamableColor>());
-        db.Add("UI.tech-progress",              UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"),              StreamableColor(GG::Clr(40, 40, 40, 255)),      Validator<StreamableColor>());
+        db.Add("UI.known-tech",                 UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"),                 GG::Clr(72, 72, 72, 255),    Validator<GG::Clr>());
+        db.Add("UI.known-tech-border",          UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),          GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
+        db.Add("UI.researchable-tech",          UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"),          GG::Clr(48, 48, 48, 255),    Validator<GG::Clr>());
+        db.Add("UI.researchable-tech-border",   UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"),   GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
+        db.Add("UI.unresearchable-tech",        UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"),        GG::Clr(30, 30, 30, 255),    Validator<GG::Clr>());
+        db.Add("UI.unresearchable-tech-border", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"), GG::Clr(86, 86, 86, 255),    Validator<GG::Clr>());
+        db.Add("UI.tech-progress-background",   UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"),   GG::Clr(72, 72, 72, 255),    Validator<GG::Clr>());
+        db.Add("UI.tech-progress",              UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"),              GG::Clr(40, 40, 40, 255),    Validator<GG::Clr>());
 
         // misc
         db.Add("UI.scroll-width",               UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),               14,         RangedValidator<int>(8, 30));
@@ -1075,48 +1075,32 @@ int FontBasedUpscale(int x) {
     return retval;
 }
 
-StreamableColor::StreamableColor() :
-    r(0),
-    g(0),
-    b(0),
-    a(0)
-{}
+namespace GG {
+    std::ostream& operator<<(std::ostream& os, const Clr& clr) {
+        os << "(" << clr.r << "," << clr.g << "," << clr.b << "," << clr.a << ")";
+        return os;
+    }
 
-StreamableColor::StreamableColor(const GG::Clr& clr) :
-    r(clr.r),
-    g(clr.g),
-    b(clr.b),
-    a(clr.a)
-{}
-
-GG::Clr StreamableColor::ToClr() const
-{ return GG::Clr(r, g, b, a); }
-
-std::ostream& operator<<(std::ostream& os, const StreamableColor& clr) {
-    os << "(" << clr.r << "," << clr.g << "," << clr.b << "," << clr.a << ")";
-    return os;
+    std::istream& operator>>(std::istream& is, Clr& clr) {
+        using namespace boost::spirit::classic;
+        rule<> color_p =
+            ch_p('(') >> *space_p >>
+            int_p[assign(clr.r)] >> *space_p >> ',' >> *space_p >>
+            int_p[assign(clr.g)] >> *space_p >> ',' >> *space_p >>
+            int_p[assign(clr.b)] >> *space_p >> ',' >> *space_p >>
+            int_p[assign(clr.a)] >> *space_p >> ')';
+        std::string str;
+        char c;
+        do {
+            is >> c;
+            str += c;
+        } while (is && c != ')');
+        if (!parse(str.c_str(), color_p).full ||
+            clr.r < 0 || 255 < clr.r ||
+            clr.g < 0 || 255 < clr.g ||
+            clr.b < 0 || 255 < clr.b ||
+            clr.a < 0 || 255 < clr.a)
+            is.setstate(std::ios_base::failbit);
+        return is;
+    }
 }
-
-std::istream& operator>>(std::istream& is, StreamableColor& clr) {
-    using namespace boost::spirit::classic;
-    rule<> color_p =
-        ch_p('(') >> *space_p >>
-        int_p[assign(clr.r)] >> *space_p >> ',' >> *space_p >>
-        int_p[assign(clr.g)] >> *space_p >> ',' >> *space_p >>
-        int_p[assign(clr.b)] >> *space_p >> ',' >> *space_p >>
-        int_p[assign(clr.a)] >> *space_p >> ')';
-    std::string str;
-    char c;
-    do {
-        is >> c;
-        str += c;
-    } while (is && c != ')');
-    if (!parse(str.c_str(), color_p).full ||
-        clr.r < 0 || 255 < clr.r ||
-        clr.g < 0 || 255 < clr.g ||
-        clr.b < 0 || 255 < clr.b ||
-        clr.a < 0 || 255 < clr.a)
-        is.setstate(std::ios_base::failbit);
-    return is;
-}
-

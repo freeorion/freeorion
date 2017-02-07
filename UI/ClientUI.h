@@ -232,18 +232,10 @@ private:
     static ClientUI*    s_the_UI;           //!< pointer to the one and only ClientUI object
 };
 
-/** This exists as a way of allowing UI colors to be specified on the command
-  * line with one option and "(r,g,b,a)", instead of one option per color
-  * channel.  GG::Clr is not streamable using the normal means, due to what
-  * appears to be a bug in MSVC 7.1. */
-struct StreamableColor {
-    StreamableColor();
-    StreamableColor(const GG::Clr& clr);
-    GG::Clr ToClr() const;
-    int r, g, b, a;
-};
-std::ostream& operator<<(std::ostream& os, const StreamableColor& clr);
-std::istream& operator>>(std::istream& is, StreamableColor& clr);
+namespace GG {
+    std::ostream& operator<<(std::ostream& os, const Clr& clr);
+    std::istream& operator>>(std::istream& is, Clr& clr);
+}
 
 /** Increases the given value when font size is larger than 12 */
 int FontBasedUpscale(int x);

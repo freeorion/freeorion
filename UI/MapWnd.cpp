@@ -117,14 +117,14 @@ namespace {
         db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.fleet-supply-line-dot-spacing",  UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
-        db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            StreamableColor(GG::Clr(72,  72,  72,  255)),   Validator<StreamableColor>());
+        db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
 
         db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
 
         db.Add("UI.system-fog-of-war",              UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                      true,       Validator<bool>());
         db.Add("UI.system-fog-of-war-spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),              4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
-        db.Add("UI.system-fog-of-war-clr",          UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_CLR"),                  StreamableColor(GG::Clr(36, 36, 36, 192)),      Validator<StreamableColor>());
-        db.Add("UI.field-fog-of-war-clr",           UserStringNop("OPTIONS_DB_UI_FIELD_FOG_CLR"),                   StreamableColor(GG::Clr(0, 0, 0, 64)),          Validator<StreamableColor>());
+        db.Add("UI.system-fog-of-war-clr",          UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_CLR"),                  GG::Clr(36, 36, 36, 192),       Validator<GG::Clr>());
+        db.Add("UI.field-fog-of-war-clr",           UserStringNop("OPTIONS_DB_UI_FIELD_FOG_CLR"),                   GG::Clr(0, 0, 0, 64),           Validator<GG::Clr>());
 
         db.Add("UI.system-icon-size",               UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                14,         RangedValidator<int>(8, 50));
 
@@ -136,7 +136,7 @@ namespace {
         db.Add("UI.system-selection-indicator-size",UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"), 1.625,      RangedStepValidator<double>(0.125, 0.5, 5));
         db.Add("UI.system-selection-indicator-rpm", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"),  12,         RangedValidator<int>(1, 60));
 
-        db.Add("UI.system-name-unowned-color",      UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       StreamableColor(GG::Clr(160, 160, 160, 255)),   Validator<StreamableColor>());
+        db.Add("UI.system-name-unowned-color",      UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       GG::Clr(160, 160, 160, 255),    Validator<GG::Clr>());
 
         db.Add("UI.tiny-fleet-button-minimum-zoom", UserStringNop("OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM"),      0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.small-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"),     1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
@@ -1792,7 +1792,7 @@ void MapWnd::RenderFields() {
         glBindTexture(GL_TEXTURE_2D, 0);
         //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
-        m_scanline_shader.SetColor(GetOptionsDB().Get<StreamableColor>("UI.field-fog-of-war-clr").ToClr()); 
+        m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("UI.field-fog-of-war-clr"));
         m_scanline_shader.StartUsing();
 
         glDrawArrays(GL_TRIANGLES, 0, m_field_scanline_circles.size());
@@ -1921,7 +1921,7 @@ void MapWnd::RenderSystems() {
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
         glLineWidth(1.5f);
-        glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
+        glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
 
         for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
             const SystemIcon* icon = system_icon.second;
@@ -1942,7 +1942,7 @@ void MapWnd::RenderSystems() {
             if (fog_scanlines
                 && (universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) <= VIS_BASIC_VISIBILITY))
             {
-                m_scanline_shader.SetColor(GetOptionsDB().Get<StreamableColor>("UI.system-fog-of-war-clr").ToClr());
+                m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("UI.system-fog-of-war-clr"));
                 m_scanline_shader.RenderCircle(circle_ul, circle_lr);
             }
 
@@ -1950,7 +1950,7 @@ void MapWnd::RenderSystems() {
             if (circles) {
                 if (std::shared_ptr<const System> system = GetSystem(system_icon.first)) {
                     if (system->NumStarlanes() > 0) {
-                        glColor(GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr());
+                        glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
 
                         int empire_id = GetSupplyManager().EmpireThatCanSupplyAt(system_icon.first);
                         if (empire_id != ALL_EMPIRES) {
@@ -1984,7 +1984,7 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
                              double thickness, bool coloured, bool doBase) {
     if (vertices.size() && (colours.size() || !coloured) && (coloured || doBase)) {
         // render starlanes with vertex buffer (and possibly colour buffer)
-        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
+        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
 
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
@@ -3221,7 +3221,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // temp storage
     std::set<std::pair<int, int> >  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
-    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<StreamableColor>("UI.unowned-starlane-colour").ToClr();
+    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
