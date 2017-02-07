@@ -286,14 +286,14 @@ namespace {
         return !initially_enabled;
     }
 
-    const std::string FLEET_DETAIL_SHIP_COUNT{"MAP_FLEET_SHIP_COUNT"};
-    const std::string FLEET_DETAIL_ARMED_COUNT{"MAP_FLEET_ARMED_COUNT"};
-    const std::string FLEET_DETAIL_SLOT_COUNT{"MAP_FLEET_SLOT_COUNT"};
-    const std::string FLEET_DETAIL_PART_COUNT{"MAP_FLEET_PART_COUNT"};
-    const std::string FLEET_DETAIL_UNARMED_COUNT{"MAP_FLEET_UNARMED_COUNT"};
-    const std::string FLEET_DETAIL_COLONY_COUNT{"MAP_FLEET_COLONY_COUNT"};
-    const std::string FLEET_DETAIL_CARRIER_COUNT{"MAP_FLEET_CARRIER_COUNT"};
-    const std::string FLEET_DETAIL_TROOP_COUNT{"MAP_FLEET_TROOP_COUNT"};
+    const std::string FLEET_DETAIL_SHIP_COUNT{UserStringNop("MAP_FLEET_SHIP_COUNT")};
+    const std::string FLEET_DETAIL_ARMED_COUNT{UserStringNop("MAP_FLEET_ARMED_COUNT")};
+    const std::string FLEET_DETAIL_SLOT_COUNT{UserStringNop("MAP_FLEET_SLOT_COUNT")};
+    const std::string FLEET_DETAIL_PART_COUNT{UserStringNop("MAP_FLEET_PART_COUNT")};
+    const std::string FLEET_DETAIL_UNARMED_COUNT{UserStringNop("MAP_FLEET_UNARMED_COUNT")};
+    const std::string FLEET_DETAIL_COLONY_COUNT{UserStringNop("MAP_FLEET_COLONY_COUNT")};
+    const std::string FLEET_DETAIL_CARRIER_COUNT{UserStringNop("MAP_FLEET_CARRIER_COUNT")};
+    const std::string FLEET_DETAIL_TROOP_COUNT{UserStringNop("MAP_FLEET_TROOP_COUNT")};
 
 
     /** BrowseInfoWnd for the fleet icon tooltip */
