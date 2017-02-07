@@ -6659,8 +6659,7 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     if (jump_limit < 0)
         return false;
 
-    ObjectSet candidate_set;
-    candidate_set.push_back(candidate);
+    ObjectSet candidate_set{candidate};
 
     // candidate objects within jumps of subcondition_matches objects
     ObjectSet near_objs;

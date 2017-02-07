@@ -1124,7 +1124,7 @@ Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
             far.push_back(candidate);
     }
 
-    return std::make_pair(near, far);
+    return {near, far};
 }
 
 bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
