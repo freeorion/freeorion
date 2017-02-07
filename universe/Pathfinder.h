@@ -3,12 +3,12 @@
 
 #include "UniverseObject.h"
 
-#include <boost/unordered_set.hpp>
 #include <boost/unordered_map.hpp>
 
 #include <vector>
 #include <map>
 #include <set>
+#include <unordered_set>
 
 #ifdef FREEORION_WIN32
 // because the linker gets confused about Win32 API functions...
@@ -108,7 +108,7 @@ public:
 
     /** Returns the system ids \p near of sytems that are within \p
         jumps of the \p candidates system ids.*/
-    void WithinJumps(size_t jumps, boost::unordered_set<int> & near, std::vector<int> const & candidates) const;
+    void WithinJumps(size_t jumps, std::unordered_set<int>& near, const std::vector<int>& candidates) const;
 
     /** Returns the partition (near, far) of the \p candidate objects into two sets, those that are within \p
         jumps of the \p stationary objects and that are not.*/

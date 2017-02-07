@@ -576,9 +576,9 @@ class Pathfinder::PathfinderImpl {
          boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
          size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
-    void WithinJumps(size_t jumps, boost::unordered_set<int> & near, std::vector<int> const & candidates) const;
+    void WithinJumps(size_t jumps, std::unordered_set<int>& near, const std::vector<int>& candidates) const;
     void WithinJumpsCacheHit(
-        boost::unordered_set<int> * result, size_t jump_limit,
+        std::unordered_set<int>* result, size_t jump_limit,
         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
     std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
@@ -1016,39 +1016,36 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
 
 
 void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
-    boost::unordered_set<int> * result, size_t jump_limit,
+    std::unordered_set<int>* result, size_t jump_limit,
     size_t ii, const distance_matrix_storage<short>::row_ref row) const {
 
     // Scan the LUT of system ids and add any result from the row within
     // the neighborhood range to the results.
-    for (boost::unordered_map<int, size_t>::const_iterator it = m_system_id_to_graph_index.begin();
-         it != m_system_id_to_graph_index.end(); ++it ) {
-        size_t hops = row[it->second];
-        if (hops <= jump_limit) {
-            result->insert(it->first);
-        }
+    for (auto it : m_system_id_to_graph_index) {
+        size_t hops = row[it.second];
+        if (hops <= jump_limit)
+            result->insert(it.first);
     }
 }
 
-void Pathfinder::WithinJumps(size_t jumps, boost::unordered_set<int> & near, std::vector<int> const & candidates) const {
+void Pathfinder::WithinJumps(size_t jumps, std::unordered_set<int>& near, const std::vector<int>& candidates) const {
     pimpl->WithinJumps(jumps, near, candidates);
 }
 
 void Pathfinder::PathfinderImpl::WithinJumps(
-    size_t jumps, boost::unordered_set<int> & near, std::vector<int> const & candidates) const {
+    size_t jumps, std::unordered_set<int>& near, const std::vector<int>& candidates) const
+{
     distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
-    for (std::vector<int>::const_iterator candidate = candidates.begin();
-         candidate != candidates.end(); ++candidate) {
-
+    for (auto candidate : candidates) {
         size_t system_index;
         try {
-            system_index = m_system_id_to_graph_index.at(*candidate);
+            system_index = m_system_id_to_graph_index.at(candidate);
         } catch (const std::out_of_range& e) {
-            ErrorLogger() << "Passed invalid system id: " << *candidate;
+            ErrorLogger() << "Passed invalid system id: " << candidate;
             continue;
         }
 
-        near.insert(*candidate);
+        near.insert(candidate);
         if (jumps == 0)
             continue;
 
