@@ -42,13 +42,6 @@ class WndEvent;
 class GG_API OverlayWnd : public Wnd
 {
 public:
-    /** \name Signal Types */ ///@{
-    /** Emitted when the currently-selected Wnd has changed; the new selected
-        Wnd's index in the group is provided (this may be NO_WND if no Wnd is
-        currently selected). */
-    typedef boost::signals2::signal<void (std::size_t)> TabChangedSignalType;
-    //@}
-
     /** \name Structors */ ///@{
     OverlayWnd(X x, Y y, X w, Y h, Flags<WndFlag> flags = NO_WND_FLAGS);
 
