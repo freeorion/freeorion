@@ -576,7 +576,7 @@ class Pathfinder::PathfinderImpl {
          boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
          size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
-    void WithinJumps(size_t jumps, std::unordered_set<int>& near, const std::vector<int>& candidates) const;
+    std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
     void WithinJumpsCacheHit(
         std::unordered_set<int>* result, size_t jump_limit,
         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
@@ -1028,13 +1028,14 @@ void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
     }
 }
 
-void Pathfinder::WithinJumps(size_t jumps, std::unordered_set<int>& near, const std::vector<int>& candidates) const {
-    pimpl->WithinJumps(jumps, near, candidates);
+std::unordered_set<int> Pathfinder::WithinJumps(size_t jumps, const std::vector<int>& candidates) const {
+    return pimpl->WithinJumps(jumps, candidates);
 }
 
-void Pathfinder::PathfinderImpl::WithinJumps(
-    size_t jumps, std::unordered_set<int>& near, const std::vector<int>& candidates) const
+std::unordered_set<int> Pathfinder::PathfinderImpl::WithinJumps(
+    size_t jumps, const std::vector<int>& candidates) const
 {
+    std::unordered_set<int> near;
     distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
     for (auto candidate : candidates) {
         size_t system_index;
@@ -1054,6 +1055,7 @@ void Pathfinder::PathfinderImpl::WithinJumps(
                           boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsCacheHit, this,
                                       &near, jumps, _1, _2));
     }
+    return near;
 }
 
 

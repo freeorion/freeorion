@@ -943,14 +943,13 @@ namespace {
         list py_systems;
         boost::python::stl_input_iterator<int> end;
 
-        std::unordered_set<int> near;
         std::vector<int> systems;
 
         for (boost::python::stl_input_iterator<int> id(sys_ids); id != end; ++id) {
             systems.push_back(*id);
         }
 
-        GetPathfinder()->WithinJumps(jumps, near, systems);
+        auto near = GetPathfinder()->WithinJumps(jumps, systems);
 
         for (auto ii : near) {
             py_systems.append(ii);

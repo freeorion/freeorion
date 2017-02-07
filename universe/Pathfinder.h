@@ -106,9 +106,9 @@ public:
     //the AI's is the same as ALL_EMPIRES
     std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
 
-    /** Returns the system ids \p near of sytems that are within \p
-        jumps of the \p candidates system ids.*/
-    void WithinJumps(size_t jumps, std::unordered_set<int>& near, const std::vector<int>& candidates) const;
+    /** Returns the system ids of systems that are within \p jumps of the \p
+        candidates system ids.*/
+    std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
 
     /** Returns the partition (near, far) of the \p candidate objects into two sets, those that are within \p
         jumps of the \p stationary objects and that are not.*/
