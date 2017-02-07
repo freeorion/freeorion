@@ -132,7 +132,8 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
     DebugLogger() << "Compiling save empire and preview data";
     std::map<int, SaveGameEmpireData> empire_save_game_data = CompileSaveGameEmpireData(empire_manager);
     SaveGamePreviewData save_preview_data;
-    CompileSaveGamePreviewData(server_save_game_data, player_save_game_data, empire_save_game_data, save_preview_data);
+    CompileSaveGamePreviewData(server_save_game_data, player_save_game_data,
+                               empire_save_game_data, save_preview_data);
 
 
     // reinterpret save game data as header data for uncompressed header
@@ -168,6 +169,8 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 
         if (use_binary) {
             DebugLogger() << "Creating binary oarchive";
+            save_preview_data.SetBinary(true);
+
             freeorion_bin_oarchive boa(ofs);
             boa << BOOST_SERIALIZATION_NVP(save_preview_data);
             boa << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
@@ -187,7 +190,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
             // main archive is uncompressed serialized header data first
             // then contains a string for compressed second archive
             // that contains the main gamestate info
-
+            save_preview_data.SetBinary(false);
 
             // allocate buffers for serialized gamestate
             DebugLogger() << "Allocating buffers for XML serialization...";

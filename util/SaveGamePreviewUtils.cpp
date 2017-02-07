@@ -29,7 +29,9 @@ namespace fs = boost::filesystem;
 
 namespace {
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
-    const std::string SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed, and the main gamestate information is stored as zlib-comprssed XML archive in the last entry in the main archive.");
+    const std::string XML_SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed, and the main gamestate information is stored as zlib-comprssed XML archive in the last entry in the main archive.");
+    const std::string BIN_SAVE_FILE_DESCRIPTION("This is binary archive FreeOrion saved game.");
+
     /// Splits time and date on separate lines for an ISO datetime string
     std::string split_time(const std::string& time) {
         std::string result = time;
@@ -103,7 +105,7 @@ namespace {
 
 SaveGamePreviewData::SaveGamePreviewData() :
     magic_number(PREVIEW_PRESENT_MARKER),
-    description(SAVE_FILE_DESCRIPTION),
+    description(),
     freeorion_version(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     main_player_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
@@ -115,12 +117,14 @@ SaveGamePreviewData::SaveGamePreviewData() :
 bool SaveGamePreviewData::Valid() const
 { return magic_number == SaveGamePreviewData::PREVIEW_PRESENT_MARKER && current_turn >= -1; }
 
+void SaveGamePreviewData::SetBinary(bool bin)
+{ description = bin ? BIN_SAVE_FILE_DESCRIPTION : XML_SAVE_FILE_DESCRIPTION; }
+
 template<class Archive>
 void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
 {
     if (version >= 2) {
         if (Archive::is_saving::value) {
-            description = SAVE_FILE_DESCRIPTION;
             freeorion_version = FreeOrionVersionString();
         }
         ar & BOOST_SERIALIZATION_NVP(description)

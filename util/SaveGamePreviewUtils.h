@@ -20,7 +20,9 @@
   * Stored the beginning of a savefile for quick access. */
 struct FO_COMMON_API SaveGamePreviewData {
     SaveGamePreviewData();      /// Initialize with unknown markers.
+
     bool Valid() const;         /// Checks that this is a valid preview
+    void SetBinary(bool bin = true);         /// Sets the description string appropriate for a binary or XML save file header
 
     static const short  PREVIEW_PRESENT_MARKER = 0xDA;  /// A marker for the presence of the header
     short               magic_number;                   /// This should always contain PREVIEW_PRESENT_MARKER
