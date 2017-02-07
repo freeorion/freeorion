@@ -780,7 +780,7 @@ struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
         try {
             if (prev_sys_id != INVALID_OBJECT_ID)
                 sjumps1 = pf.JumpDistanceBetweenSystems(sys_id1, prev_sys_id);
-            if (next_sys_id!= INVALID_OBJECT_ID)
+            if (next_sys_id != INVALID_OBJECT_ID)
                 sjumps2 = pf.JumpDistanceBetweenSystems(sys_id1, next_sys_id);
         } catch (...) {
             ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
@@ -838,9 +838,8 @@ struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
     const GeneralizedLocationType& sys2_ids;
 };
 
-int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    return pimpl->JumpDistanceBetweenObjects(object1_id, object2_id);
-}
+int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const
+{ return pimpl->JumpDistanceBetweenObjects(object1_id, object2_id); }
 
 int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
     GeneralizedLocationType obj1 = GeneralizedLocation(object1_id);
@@ -1072,8 +1071,7 @@ struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
 
 
 void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
-    bool& answer,
-    int jumps,
+    bool& answer, int jumps,
     const std::vector<std::shared_ptr<const UniverseObject>>& others,
     size_t ii, const distance_matrix_storage<short>::row_ref row) const
 {
@@ -1105,9 +1103,8 @@ Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
     const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
     const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const
 {
-    // Examine each candidate and transfer those within jumps of the
-    // others into near.
-    // near or far may be the same as candidates.
+    // Examine each candidate and copy those within jumps of the
+    // others into near and the rest into far.
     WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, stationary);
     std::vector<std::shared_ptr<const UniverseObject>> near, far;
     size_t size = candidates.size();
