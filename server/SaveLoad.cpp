@@ -167,7 +167,82 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
             throw std::runtime_error(UNABLE_TO_OPEN_FILE);
         pos_before_writing = ofs.tellp();
 
-        if (use_binary) {
+        bool save_completed_as_xml = false;
+
+        if (!use_binary) {
+            // Attempt compressed XML serialization
+
+            try {
+                // Two-tier serialization:
+                // main archive is uncompressed serialized header data first
+                // then contains a string for compressed second archive
+                // that contains the main gamestate info
+                save_preview_data.SetBinary(false);
+
+                // allocate buffers for serialized gamestate
+                DebugLogger() << "Allocating buffers for XML serialization...";
+                std::string serial_str, compressed_str;
+                try {
+                    DebugLogger() << "String Max Size: " << serial_str.max_size();
+                    std::string::size_type capacity = std::min(serial_str.max_size(),
+                        static_cast<std::string::size_type>(std::pow(2.0, 29.0)));
+                    DebugLogger() << "Reserving Capacity:: " << capacity;
+                    serial_str.reserve(capacity);
+                    compressed_str.reserve(std::pow(2.0, 26.0));
+                }
+                catch (...) {
+                    DebugLogger() << "Unable to preallocate full serialization buffers. Attempting serialization with dynamic buffer allocation.";
+                }
+
+                // wrap buffer string in iostream::stream to receive serialized data
+                typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
+                InsertDevice serial_inserter(serial_str);
+                boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
+
+                // create archive with (preallocated) buffer...
+                freeorion_xml_oarchive xoa(s_sink);
+                // serialize main gamestate info
+                xoa << BOOST_SERIALIZATION_NVP(player_save_game_data);
+                xoa << BOOST_SERIALIZATION_NVP(empire_manager);
+                xoa << BOOST_SERIALIZATION_NVP(species_manager);
+                xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
+                Serialize(xoa, universe);
+                s_sink.flush();
+
+                // wrap gamestate string in iostream::stream to extract serialized data
+                typedef boost::iostreams::basic_array_source<char> SourceDevice;
+                SourceDevice source(serial_str.data(), serial_str.size());
+                boost::iostreams::stream<SourceDevice> s_source(source);
+
+                // wrap compresed buffer string in iostream::streams to receive compressed string
+                InsertDevice compressed_inserter(compressed_str);
+                boost::iostreams::stream<InsertDevice> c_sink(compressed_inserter);
+
+                // compression-filter gamestate into compressed string
+                boost::iostreams::filtering_ostreambuf o;
+                o.push(boost::iostreams::zlib_compressor());
+                o.push(c_sink);
+                boost::iostreams::copy(s_source, o);
+                c_sink.flush();
+
+                // write to save file: uncompressed header serialized data, with compressed main archive string at end...
+                freeorion_xml_oarchive xoa2(ofs);
+                // serialize uncompressed save header info
+                xoa2 << BOOST_SERIALIZATION_NVP(save_preview_data);
+                xoa2 << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
+                xoa2 << BOOST_SERIALIZATION_NVP(server_save_game_data);
+                xoa2 << BOOST_SERIALIZATION_NVP(player_save_header_data);
+                xoa2 << BOOST_SERIALIZATION_NVP(empire_save_game_data);
+                // append compressed gamestate info
+                xoa2 << BOOST_SERIALIZATION_NVP(compressed_str);
+
+                save_completed_as_xml = true;
+            } catch (...) {
+                save_completed_as_xml = false;  // redundant, but here for clarity
+            }
+        }
+
+        if (!save_completed_as_xml) {
             DebugLogger() << "Creating binary oarchive";
             save_preview_data.SetBinary(true);
 
@@ -184,69 +259,6 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
             boa << BOOST_SERIALIZATION_NVP(combat_log_manager);
             Serialize(boa, universe);
             DebugLogger() << "Done serializing";
-
-        } else {
-            // Two-tier serialization:
-            // main archive is uncompressed serialized header data first
-            // then contains a string for compressed second archive
-            // that contains the main gamestate info
-            save_preview_data.SetBinary(false);
-
-            // allocate buffers for serialized gamestate
-            DebugLogger() << "Allocating buffers for XML serialization...";
-            std::string serial_str, compressed_str;
-            try {
-                DebugLogger() << "String Max Size: " << serial_str.max_size();
-                std::string::size_type capacity = std::min(serial_str.max_size(),
-                                                           static_cast<std::string::size_type>(std::pow(2.0, 29.0)));
-                DebugLogger() << "Reserving Capacity:: " << capacity;
-                serial_str.reserve(    capacity);
-                compressed_str.reserve(std::pow(2.0, 26.0));
-            } catch (...) {
-                DebugLogger() << "Unable to preallocate full serialization buffers. Attempting serialization with dynamic buffer allocation.";
-            }
-
-            // wrap buffer string in iostream::stream to receive serialized data
-            typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
-            InsertDevice serial_inserter(serial_str);
-            boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
-
-            // create archive with (preallocated) buffer...
-            freeorion_xml_oarchive xoa(s_sink);
-            // serialize main gamestate info
-            xoa << BOOST_SERIALIZATION_NVP(player_save_game_data);
-            xoa << BOOST_SERIALIZATION_NVP(empire_manager);
-            xoa << BOOST_SERIALIZATION_NVP(species_manager);
-            xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
-            Serialize(xoa, universe);
-            s_sink.flush();
-
-            // wrap gamestate string in iostream::stream to extract serialized data
-            typedef boost::iostreams::basic_array_source<char> SourceDevice;
-            SourceDevice source(serial_str.data(), serial_str.size());
-            boost::iostreams::stream<SourceDevice> s_source(source);
-
-            // wrap compresed buffer string in iostream::streams to receive compressed string
-            InsertDevice compressed_inserter(compressed_str);
-            boost::iostreams::stream<InsertDevice> c_sink(compressed_inserter);
-
-            // compression-filter gamestate into compressed string
-            boost::iostreams::filtering_ostreambuf o;
-            o.push(boost::iostreams::zlib_compressor());
-            o.push(c_sink);
-            boost::iostreams::copy(s_source, o);
-            c_sink.flush();
-
-            // write to save file: uncompressed header serialized data, with compressed main archive string at end...
-            freeorion_xml_oarchive xoa2(ofs);
-            // serialize uncompressed save header info
-            xoa2 << BOOST_SERIALIZATION_NVP(save_preview_data);
-            xoa2 << BOOST_SERIALIZATION_NVP(galaxy_setup_data);
-            xoa2 << BOOST_SERIALIZATION_NVP(server_save_game_data);
-            xoa2 << BOOST_SERIALIZATION_NVP(player_save_header_data);
-            xoa2 << BOOST_SERIALIZATION_NVP(empire_save_game_data);
-            // append compressed gamestate info
-            xoa2 << BOOST_SERIALIZATION_NVP(compressed_str);
         }
 
         ofs.flush();
