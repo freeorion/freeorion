@@ -6591,36 +6591,6 @@ bool WithinStarlaneJumps::operator==(const ConditionBase& rhs) const {
     return true;
 }
 
-namespace {
-    struct WithinStarlaneJumpsSimpleMatch {
-        WithinStarlaneJumpsSimpleMatch(const ObjectSet& from_objects, int jump_limit) :
-            m_from_objects(from_objects),
-            m_jump_limit(jump_limit)
-        {}
-
-        bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
-            if (!candidate)
-                return false;
-            if (m_from_objects.empty())
-                return false;
-            if (m_jump_limit < 0)
-                return false;
-
-            // is candidate object close enough to any subcondition matches?
-            for (std::shared_ptr<const UniverseObject> obj : m_from_objects) {
-                int jumps = GetPathfinder()->JumpDistanceBetweenObjects(obj->ID(), candidate->ID());
-                if (jumps != -1 && jumps <= m_jump_limit)
-                    return true;
-            }
-
-            return false;
-        }
-
-        const ObjectSet& m_from_objects;
-        int m_jump_limit;
-    };
-}
-
 void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
                                ObjectSet& matches, ObjectSet& non_matches,
                                SearchDomain search_domain/* = NON_MATCHES*/) const
@@ -6636,8 +6606,10 @@ void WithinStarlaneJumps::Eval(const ScriptingContext& parent_context,
         ObjectSet subcondition_matches;
         m_condition->Eval(local_context, subcondition_matches);
         int jump_limit = m_jumps->Eval(local_context);
+        ObjectSet &from_set(search_domain == Condition::MATCHES ? matches : non_matches);
 
-        EvalImpl(matches, non_matches, search_domain, WithinStarlaneJumpsSimpleMatch(subcondition_matches, jump_limit));
+        std::tie(matches, non_matches) = GetPathfinder()->WithinJumpsOfOthers(jump_limit, from_set, subcondition_matches);
+
     } else {
         // re-evaluate contained objects for each candidate object
         ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
@@ -6680,9 +6652,21 @@ bool WithinStarlaneJumps::Match(const ScriptingContext& local_context) const {
     // get subcondition matches
     ObjectSet subcondition_matches;
     m_condition->Eval(local_context, subcondition_matches);
-    int jump_limit = m_jumps->Eval(local_context);
+    if (subcondition_matches.empty())
+        return false;
 
-    return WithinStarlaneJumpsSimpleMatch(subcondition_matches, jump_limit)(candidate);
+    int jump_limit = m_jumps->Eval(local_context);
+    if (jump_limit < 0)
+        return false;
+
+    ObjectSet candidate_set{candidate};
+
+    // candidate objects within jumps of subcondition_matches objects
+    ObjectSet near_objs;
+
+    std::tie(near_objs, std::ignore) =
+        GetPathfinder()->WithinJumpsOfOthers(jump_limit, candidate_set, subcondition_matches);
+    return !near_objs.empty();
 }
 
 void WithinStarlaneJumps::SetTopLevelContent(const std::string& content_name) {

@@ -101,7 +101,17 @@ public:
       * \a empire_id == ALL_EMPIRES.
       * \throw std::out_of_range This function will throw if the  system
       * ID is out of range. */
+    //TODO empire_id is never set to anything other than self, which in
+    //the AI's is the same as ALL_EMPIRES
     std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+
+    /** Returns the partition (near, far) of the \p candidate objects into two sets, those that are within \p
+        jumps of the \p stationary objects and that are not.*/
+    std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+        WithinJumpsOfOthers(
+            int jumps,
+            const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+            const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const;
 
     /** Returns the id of the System object that is closest to the specified
       * (\a x, \a y) location on the map, by direct-line distance. */
@@ -124,13 +134,9 @@ public:
 
     //@}
 
-private:
     class PathfinderImpl;
-    std::unique_ptr<PathfinderImpl> const pimpl;
-
-    /* friend class boost::serialization::access; */
-    /* template <class Archive> */
-    /* void serialize(Archive& ar, const unsigned int version); */
+private:
+    const std::unique_ptr<PathfinderImpl> pimpl;
 };
 
 #endif // _Pathfinder_h_

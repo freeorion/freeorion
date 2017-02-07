@@ -16,6 +16,7 @@
 #include <boost/graph/filtered_graph.hpp>
 #include <boost/thread/locks.hpp>
 #include <boost/thread/shared_mutex.hpp>
+#include <boost/variant/variant.hpp>
 
 #include <algorithm>
 #include <stdexcept>
@@ -61,9 +62,9 @@ namespace {
         }
 
         /**N x N table of hop distances in row column form.*/
-        std::vector< std::vector<T> > m_data;
+        std::vector< std::vector<T>> m_data;
         /**Per row mutexes.*/
-        std::vector< std::shared_ptr<boost::shared_mutex> > m_row_mutexes;
+        std::vector< std::shared_ptr<boost::shared_mutex>> m_row_mutexes;
         /**Table mutex*/
         boost::shared_mutex m_mutex;
     };
@@ -98,6 +99,11 @@ namespace {
         }
 
         public:
+
+        // Note: The signatures for the cache miss handler and the cache hit handler have a void
+        // return type, because this code can not anticipate all expected return types.  In order
+        // to return a result function the calling code will need to bind the return parameter to
+        // the function so that the function still has the required signature.
 
         /// Cache miss handler
         typedef boost::function<void (size_t &/*ii*/, Row /*row*/)> cache_miss_handler;
@@ -155,12 +161,53 @@ namespace {
             }
         }
 
+        /** Retrieve a single row at \p ii.
+          * On cache miss call \p fill_row which must fill the row
+          * at \p ii with NN items.
+          * On cache hit call \p use_row to handle the cache hit
+          * Throws if index is out of range or if \p fill_row
+          * does not fill the row  on a cache miss.
+          */
+        void examine_row(size_t ii, cache_miss_handler fill_row, cache_hit_handler use_row) const {
+            boost::shared_lock<boost::shared_mutex> guard(m_storage.m_mutex);
+
+            size_t NN = m_storage.size();
+            if (ii >= NN) {
+                ErrorLogger() << "distance_matrix_cache::get_row passed invalid index: "
+                              << ii << " matrix size: " << NN;
+                throw std::out_of_range("row index is invalid.");
+            }
+            {
+                boost::shared_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                const Row &row_data = m_storage.m_data[ii];
+
+                if (NN == row_data.size())
+                    return use_row(ii, row_data);
+            }
+            {
+                boost::unique_lock<boost::shared_mutex> row_guard(*m_storage.m_row_mutexes[ii]);
+                Row &row_data = m_storage.m_data[ii];
+
+                if (NN == row_data.size()) {
+                    return use_row(ii, row_data);
+                } else {
+                    fill_row(ii, row_data);
+                    if (row_data.size() != NN) {
+                        std::stringstream ss;
+                        ss << "Cache miss handler only filled cache row with "
+                           << row_data.size() << " items when " << NN
+                           << " items where expected ";
+                        ErrorLogger() << ss.str();
+                        throw std::range_error(ss.str());
+                    }
+                    return use_row(ii, row_data);
+                }
+            }
+        }
+
     private:
         Storage& m_storage;
     };
-
-
-
 }
 
 
@@ -213,8 +260,7 @@ namespace SystemPathing {
               m_level_complete(false)
         {}
 
-        void initialize_vertex(const Vertex& v, const Graph& g)
-        {}
+        void initialize_vertex(const Vertex& v, const Graph& g) {}
 
         void discover_vertex(const Vertex& v, const Graph& g) {
             m_predecessors[static_cast<int>(v)] = m_source;
@@ -431,7 +477,7 @@ namespace {
     /////////////////////////////////////////////
     struct GraphImpl {
         typedef boost::property<vertex_system_id_t, int,
-                                boost::property<boost::vertex_index_t, int> >   vertex_property_t;  ///< a system graph property map type
+                                boost::property<boost::vertex_index_t, int>>   vertex_property_t;  ///< a system graph property map type
         typedef boost::property<boost::edge_weight_t, double>                   edge_property_t;    ///< a system graph property map type
 
         // declare main graph types, including properties declared above
@@ -486,7 +532,7 @@ namespace {
             int                     m_empire_id;
         };
         typedef boost::filtered_graph<SystemGraph, EdgeVisibilityFilter> EmpireViewSystemGraph;
-        typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph> > EmpireViewSystemGraphMap;
+        typedef std::map<int, std::shared_ptr<EmpireViewSystemGraph>> EmpireViewSystemGraphMap;
 
         // declare property map types for properties declared above
         typedef boost::property_map<SystemGraph, vertex_system_id_t>::const_type        ConstSystemIDPropertyMap;
@@ -512,6 +558,7 @@ class Pathfinder::PathfinderImpl {
     double LinearDistance(int object1_id, int object2_id) const;
     short JumpDistanceBetweenSystems(int system1_id, int system2_id) const;
     int JumpDistanceBetweenObjects(int object1_id, int object2_id) const;
+
     std::pair<std::list<int>, double> ShortestPath(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
     double ShortestPathDistance(int object1_id, int object2_id) const;
     std::pair<std::list<int>, int> LeastJumpsPath(
@@ -519,6 +566,36 @@ class Pathfinder::PathfinderImpl {
     bool SystemsConnected(int system1_id, int system2_id, int empire_id = ALL_EMPIRES) const;
     bool SystemHasVisibleStarlanes(int system_id, int empire_id = ALL_EMPIRES) const;
     std::multimap<double, int> ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+
+    boost::unordered_multimap<int, int> Neighbors(
+        int system_id, size_t n_outer = 1, size_t n_inner = 0) const;
+
+    /** When a cache hit occurs use \p row to populate and return the
+        multimap for Neighbors.*/
+     void NeighborsCacheHit(
+         boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
+         size_t ii, const distance_matrix_storage<short>::row_ref row) const;
+
+    std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+    WithinJumpsOfOthers(
+        int jumps,
+        const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+        const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const;
+
+    /**Return true if \p system_id is within \p jumps of any of \p others*/
+    bool WithinJumpsOfOthers(
+        int jumps, int system_id,
+        const std::vector<std::shared_ptr<const UniverseObject>>& others) const;
+
+    /** If any of \p others are within \p jumps of \p ii return true in \p answer.
+
+        The return value must be in a parameter so that after being bound to \p answer and \p jumps
+        the function signature is that required by the cache_hit_handler type.
+     */
+    void WithinJumpsOfOthersCacheHit(
+        bool& answer, int jumps,
+        const std::vector<std::shared_ptr<const UniverseObject>>& others,
+        size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
     int NearestSystemTo(double x, double y) const;
     void InitializeSystemGraph(const std::vector<int> system_ids, int for_empire_id = ALL_EMPIRES);
@@ -541,8 +618,8 @@ Pathfinder::Pathfinder() :
     pimpl(new PathfinderImpl)
 {}
 
-Pathfinder::~Pathfinder() {
-}
+Pathfinder::~Pathfinder()
+{}
 
 namespace {
     std::shared_ptr<const Fleet> FleetFromObject(std::shared_ptr<const UniverseObject> obj) {
@@ -605,7 +682,7 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
         return 0;
 
     try {
-        distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
+        distance_matrix_cache< distance_matrix_storage<short>> cache(m_system_jumps);
 
         size_t system1_index = m_system_id_to_graph_index.at(system1_id);
         size_t system2_index = m_system_id_to_graph_index.at(system2_id);
@@ -625,122 +702,149 @@ short Pathfinder::PathfinderImpl::JumpDistanceBetweenSystems(int system1_id, int
     }
 }
 
-int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    return pimpl->JumpDistanceBetweenObjects(object1_id, object2_id);
+namespace {
+    /**GeneralizedLocationType abstracts the location of a UniverseObject.
+
+       GeneralizedLocationType can be nowhere, one system or two systems in the
+       case of a ship or fleet in transit.
+       The returned variant is
+       null_ptr            -- nowhere
+       System id           -- somewhere
+       pair of System ids  -- in transit
+
+    */
+
+    typedef boost::variant<std::nullptr_t, int, std::pair<int, int>> GeneralizedLocationType;
+
+    /** Return the location of \p obj.*/
+    GeneralizedLocationType GeneralizedLocation(std::shared_ptr<const UniverseObject> obj) {
+        if (!obj)
+            return nullptr;
+
+        int system_id = obj->SystemID();
+        std::shared_ptr<const System> system = GetSystem(system_id);
+        if (system)
+            return system_id;
+
+        std::shared_ptr<const Fleet> fleet = FleetFromObject(obj);
+        if (fleet)
+            return std::make_pair(fleet->PreviousSystemID(), fleet->NextSystemID());
+
+        ErrorLogger() << "GeneralizedLocationType unable to locate " << obj->Name() << "(" << obj->ID() << ")";
+        return nullptr;
+    }
+
+    /** Return the location of the object with id \p object_id.*/
+    GeneralizedLocationType GeneralizedLocation(int object_id) {
+        std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
+        return GeneralizedLocation(obj);
+    }
+
 }
 
-int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
-    std::shared_ptr<const UniverseObject> obj1 = GetUniverseObject(object1_id);
-    if (!obj1)
-        return INT_MAX;
+/** JumpDistanceSys1Visitor and JumpDistanceSys2Visitor are variant visitors
+    that can be used to determine the distance between a pair of objects
+    locations represented as GeneralizedLocations.*/
 
-    std::shared_ptr<const UniverseObject> obj2 = GetUniverseObject(object2_id);
-    if (!obj2)
-        return INT_MAX;
+/** JumpDistanceSys2Visitor determines the distance between \p _sys_id1 and the
+    GeneralizedLocation that it is visiting.*/
+struct JumpDistanceSys2Visitor : public boost::static_visitor<int> {
+    JumpDistanceSys2Visitor(const Pathfinder::PathfinderImpl& _pf, int _sys_id1) :
+        pf(_pf), sys_id1(_sys_id1)
+    {}
 
-    std::shared_ptr<const System> system_one = GetSystem(obj1->SystemID());
-    std::shared_ptr<const System> system_two = GetSystem(obj2->SystemID());
+    /** Return the maximum distance if this end is nowhere.  */
+    int operator()(std::nullptr_t) const { return INT_MAX; }
 
-    if (system_one && system_two) {
-        // both condition-matching object and candidate are / in systems.
-        // can just find the shortest path between the two systems
-        short jumps = -1;
+    /** Simple case of two system ids, return the distance between systems.*/
+    int operator()(int sys_id2) const {
+        short sjumps = -1;
         try {
-            jumps = JumpDistanceBetweenSystems(system_one->ID(), system_two->ID());
+            sjumps = pf.JumpDistanceBetweenSystems(sys_id1, sys_id2);
+        } catch (const std::out_of_range&) {
+            ErrorLogger() << "JumpsBetweenObjects caught out of range exception sys_id1 = "
+                          << sys_id1 << " sys_id2 = " << sys_id2;
+            return INT_MAX;
+        }
+        int jumps = (sjumps == -1) ? INT_MAX : static_cast<int>(sjumps);
+        return jumps;
+    }
+
+    /** A single system id and a fleet with two locations.  For an object in
+        transit return the distance to the closest system.*/
+    int operator()(std::pair<int, int> prev_next) const {
+        short sjumps1 = -1, sjumps2 = -1;
+        int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
+        try {
+            if (prev_sys_id != INVALID_OBJECT_ID)
+                sjumps1 = pf.JumpDistanceBetweenSystems(sys_id1, prev_sys_id);
+            if (next_sys_id != INVALID_OBJECT_ID)
+                sjumps2 = pf.JumpDistanceBetweenSystems(sys_id1, next_sys_id);
         } catch (...) {
             ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
         }
-        if (jumps != -1)    // if jumps is -1, no path exists between the systems
-            return static_cast<int>(jumps);
-        else
-            return INT_MAX;
+        int jumps1 = (sjumps1 == -1) ? INT_MAX : static_cast<int>(sjumps1);
+        int jumps2 = (sjumps2 == -1) ? INT_MAX : static_cast<int>(sjumps2);
 
-    } else if (system_one) {
-        // just object one is / in a system.
-        // TODO generalize Object to report multiple systems for things
-        // like fleets in transit
-        if (std::shared_ptr<const Fleet> fleet = FleetFromObject(obj2)) {
-            // other object is a fleet that is between systems
-            // need to check shortest path from systems on either side of starlane fleet is on
-            short jumps1 = -1, jumps2 = -1;
-            try {
-                if (fleet->PreviousSystemID() != -1)
-                    jumps1 = JumpDistanceBetweenSystems(system_one->ID(), fleet->PreviousSystemID());
-                if (fleet->NextSystemID() != -1)
-                    jumps2 = JumpDistanceBetweenSystems(system_one->ID(), fleet->NextSystemID());
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, jumps2));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
-        }
+        int jumps = std::min(jumps1, jumps2);
+        return jumps;
+   }
+    const Pathfinder::PathfinderImpl& pf;
+    int sys_id1;
+};
 
-    } else if (system_two) {
-        // just object two is a system.
-        if (std::shared_ptr<const Fleet> fleet = FleetFromObject(obj1)) {
-            // other object is a fleet that is between systems
-            // need to check shortest path from systems on either side of starlane fleet is on
-            short jumps1 = -1, jumps2 = -1;
-            try {
-                if (fleet->PreviousSystemID() != -1)
-                    jumps1 = JumpDistanceBetweenSystems(system_two->ID(), fleet->PreviousSystemID());
-                if (fleet->NextSystemID() != -1)
-                    jumps2 = JumpDistanceBetweenSystems(system_two->ID(), fleet->NextSystemID());
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, jumps2));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
-        }
-    } else {
-        // neither object is / in a system
+/** JumpDistanceSys1Visitor visits the first system and uses
+    JumpDistanceSysVisitor2 to determines the distance between \p _sys_id2 and
+    the GeneralizedLocation that it is visiting.*/
+struct JumpDistanceSys1Visitor : public boost::static_visitor<int> {
+    JumpDistanceSys1Visitor(const Pathfinder::PathfinderImpl& _pf,
+                            const GeneralizedLocationType&_sys2_ids) :
+        pf(_pf), sys2_ids(_sys2_ids)
+    {}
 
-        std::shared_ptr<const Fleet> fleet_one = FleetFromObject(obj1);
-        std::shared_ptr<const Fleet> fleet_two = FleetFromObject(obj2);
+    /** Return the maximum distance if the first object is nowhere.*/
+    int operator()(std::nullptr_t) const { return INT_MAX; }
 
-        if (fleet_one && fleet_two) {
-            // both objects are / in a fleet.
-            // need to check all combinations of systems on either sides of
-            // starlanes condition-matching object and candidate are on
-            int fleet_one_prev_system_id = fleet_one->PreviousSystemID();
-            int fleet_one_next_system_id = fleet_one->NextSystemID();
-            int fleet_two_prev_system_id = fleet_two->PreviousSystemID();
-            int fleet_two_next_system_id = fleet_two->NextSystemID();
-            short jumps1 = -1, jumps2 = -1, jumps3 = -1, jumps4 = -1;
-            try {
-                if (fleet_one_prev_system_id != -1 && fleet_two_prev_system_id != -1)
-                    jumps1 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_prev_system_id);
-                if (fleet_one_prev_system_id != -1 && fleet_two_next_system_id != -1)
-                    jumps2 = JumpDistanceBetweenSystems(fleet_one_prev_system_id, fleet_two_next_system_id);
-                if (fleet_one_next_system_id != -1 && fleet_two_prev_system_id != -1)
-                    jumps3 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_prev_system_id);
-                if (fleet_one_next_system_id != -1 && fleet_two_next_system_id != -1)
-                    jumps4 = JumpDistanceBetweenSystems(fleet_one_next_system_id, fleet_two_next_system_id);
-            } catch (...) {
-                ErrorLogger() << "JumpsBetweenObjects caught exception when calling JumpDistanceBetweenSystems";
-            }
-            int jumps = static_cast<int>(std::max(jumps1, std::max(jumps2, std::max(jumps3, jumps4))));
-            if (jumps != -1) {
-                return jumps - 1;
-            } else {
-                // no path
-                return INT_MAX;
-            }
-        }
+    /** For a single system, return the application of JumpDistanceSys2Visitor
+        to the second system.*/
+    int operator()(int sys_id1) const {
+        JumpDistanceSys2Visitor visitor(pf, sys_id1);
+        return boost::apply_visitor(visitor, sys2_ids);
     }
-    return INT_MAX;
-}
 
+    /** For an object in transit, apply the JumpDistanceSys2Visitor and return
+        the shortest distance.*/
+    int operator()(std::pair<int, int> prev_next) const {
+        short sjumps1 = -1, sjumps2 = -1;
+        int prev_sys_id = prev_next.first, next_sys_id = prev_next.second;
+        if (prev_sys_id != INVALID_OBJECT_ID) {
+            JumpDistanceSys2Visitor visitor(pf, prev_sys_id);
+            sjumps1 = boost::apply_visitor(visitor, sys2_ids);
+        }
+        if (next_sys_id!= INVALID_OBJECT_ID) {
+            JumpDistanceSys2Visitor visitor(pf, next_sys_id);
+            sjumps2 = boost::apply_visitor(visitor, sys2_ids);
+        }
+
+        int jumps1 = (sjumps1 == -1) ? INT_MAX : static_cast<int>(sjumps1);
+        int jumps2 = (sjumps2 == -1) ? INT_MAX : static_cast<int>(sjumps2);
+
+        int jumps = std::min(jumps1, jumps2);
+        return jumps;
+    }
+    const Pathfinder::PathfinderImpl& pf;
+    const GeneralizedLocationType& sys2_ids;
+};
+
+int Pathfinder::JumpDistanceBetweenObjects(int object1_id, int object2_id) const
+{ return pimpl->JumpDistanceBetweenObjects(object1_id, object2_id); }
+
+int Pathfinder::PathfinderImpl::JumpDistanceBetweenObjects(int object1_id, int object2_id) const {
+    GeneralizedLocationType obj1 = GeneralizedLocation(object1_id);
+    GeneralizedLocationType obj2 = GeneralizedLocation(object2_id);
+    JumpDistanceSys1Visitor visitor(*this, obj2);
+    return boost::apply_visitor(visitor, obj1);
+}
 
 std::pair<std::list<int>, double> Pathfinder::ShortestPath(int system1_id, int system2_id, int empire_id/* = ALL_EMPIRES*/) const {
     return pimpl->ShortestPath(system1_id, system2_id, empire_id);
@@ -905,6 +1009,145 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
     return std::multimap<double, int>();
 }
 
+
+/** Examine a single universe object and determine if it is within jumps
+    of any object in others.*/
+struct WithinJumpsOfOthersObjectVisitor : public boost::static_visitor<bool> {
+    WithinJumpsOfOthersObjectVisitor(const Pathfinder::PathfinderImpl& _pf,
+                                     int _jumps,
+                                     const std::vector<std::shared_ptr<const UniverseObject>>& _others) :
+        pf(_pf), jumps(_jumps), others(_others)
+    {}
+
+    bool operator()(std::nullptr_t) const { return false; }
+    bool operator()(int sys_id) const {
+        bool retval = pf.WithinJumpsOfOthers(jumps, sys_id, others);
+        return retval;
+    }
+    bool operator()(std::pair<int, int> prev_next) const {
+        return pf.WithinJumpsOfOthers(jumps, prev_next.first, others)
+            || pf.WithinJumpsOfOthers(jumps, prev_next.second, others);
+    }
+    const Pathfinder::PathfinderImpl& pf;
+    int jumps;
+    const std::vector<std::shared_ptr<const UniverseObject>>& others;
+};
+
+/** Examine a single other in the cache to see if any of its locations
+    are within jumps*/
+struct WithinJumpsOfOthersOtherVisitor : public boost::static_visitor<bool> {
+    WithinJumpsOfOthersOtherVisitor(const Pathfinder::PathfinderImpl& _pf,
+                                    int _jumps,
+                                    const distance_matrix_storage<short>::row_ref _row) :
+        pf(_pf), jumps(_jumps), row(_row)
+    {}
+
+    bool single_result(int other_id) const {
+        int index;
+        try {
+            index = pf.m_system_id_to_graph_index.at(other_id);
+        } catch (const std::out_of_range& e) {
+            ErrorLogger() << "Passed invalid system id: " << other_id;
+            return false;
+        }
+        bool retval = (row[index] <= jumps);
+        return retval;
+    }
+
+    bool operator()(std::nullptr_t) const { return false; }
+    bool operator()(int sys_id) const {
+        return single_result(sys_id);
+    }
+    bool operator()(std::pair<int, int> prev_next) const {
+        return single_result(prev_next.first)
+            || single_result(prev_next.second);
+    }
+    const Pathfinder::PathfinderImpl& pf;
+    int jumps;
+    const distance_matrix_storage<short>::row_ref row;
+};
+
+
+void Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit(
+    bool& answer, int jumps,
+    const std::vector<std::shared_ptr<const UniverseObject>>& others,
+    size_t ii, const distance_matrix_storage<short>::row_ref row) const
+{
+    // Check if any of the others are within jumps of candidate, by looping
+    // through all of the others and applying the WithinJumpsOfOthersOtherVisitor.
+    answer = false;
+    for (const auto& other : others) {
+        WithinJumpsOfOthersOtherVisitor check_if_location_is_within_jumps(*this, jumps, row);
+        GeneralizedLocationType location = GeneralizedLocation(other);
+        if (boost::apply_visitor(check_if_location_is_within_jumps, location)) {
+            answer = true;
+            return;
+        }
+    }
+}
+
+std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+Pathfinder::WithinJumpsOfOthers(
+    int jumps,
+    const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+    const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const
+{
+    return pimpl->WithinJumpsOfOthers(jumps, candidates, stationary);
+}
+
+std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
+Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
+    int jumps,
+    const std::vector<std::shared_ptr<const UniverseObject>>& candidates,
+    const std::vector<std::shared_ptr<const UniverseObject>>& stationary) const
+{
+    // Examine each candidate and copy those within jumps of the
+    // others into near and the rest into far.
+    WithinJumpsOfOthersObjectVisitor visitor(*this, jumps, stationary);
+    std::vector<std::shared_ptr<const UniverseObject>> near, far;
+    size_t size = candidates.size();
+    near.reserve(size);
+    far.reserve(size);
+
+    for (const auto& candidate : candidates) {
+        GeneralizedLocationType candidate_systems = GeneralizedLocation(candidate);
+        bool is_near = boost::apply_visitor(visitor, candidate_systems);
+
+        if (is_near)
+            near.push_back(candidate);
+        else
+            far.push_back(candidate);
+    }
+
+    return {near, far};
+}
+
+bool Pathfinder::PathfinderImpl::WithinJumpsOfOthers(
+    int jumps, int system_id,
+    const std::vector<std::shared_ptr<const UniverseObject>>& others) const
+{
+    if (others.empty())
+        return false;
+
+    size_t system_index;
+    try {
+        system_index = m_system_id_to_graph_index.at(system_id);
+    } catch (const std::out_of_range& e) {
+        ErrorLogger() << "Passed invalid system id: " << system_id;
+        return false;
+    }
+
+    // Examine the cache to see if \p system_id is within \p jumps of \p others
+    bool within_jumps(false);
+    distance_matrix_cache<distance_matrix_storage<short>> cache(m_system_jumps);
+    cache.examine_row(system_index,
+                      boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
+                      boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsOfOthersCacheHit, this,
+                                  boost::ref(within_jumps), jumps, others, _1, _2));
+    return within_jumps;
+}
+
+
 int Pathfinder::NearestSystemTo(double x, double y) const {
     return pimpl->NearestSystemTo(x, y);
 }
@@ -913,9 +1156,9 @@ int Pathfinder::PathfinderImpl::NearestSystemTo(double x, double y) const {
     double min_dist2 = DBL_MAX;
     int min_dist2_sys_id = INVALID_OBJECT_ID;
 
-    std::vector<std::shared_ptr<System> > systems = Objects().FindObjects<System>();
+    std::vector<std::shared_ptr<System>> systems = Objects().FindObjects<System>();
 
-    for (auto const &system : systems)
+    for (auto const& system : systems)
     {
         double xs = system->X();
         double ys = system->Y();
@@ -951,6 +1194,9 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
     GraphImpl::EdgeWeightPropertyMap edge_weight_map =
         boost::get(boost::edge_weight, new_graph_impl->system_graph);
 
+    const GraphImpl::EdgeWeightPropertyMap& current_edge_weight_map =
+        boost::get(boost::edge_weight, m_graph_impl->system_graph);
+
     // add vertices to graph for all systems
     for (size_t system_index = 0; system_index < system_ids.size(); ++system_index) {
         // add a vertex to the graph for this system, and assign it the system's universe ID as a property
@@ -968,7 +1214,7 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
         //std::shared_ptr<const System> & system1 = systems[system1_index];
 
         // add edges and edge weights
-        for (auto const & lane_dest : system1->StarlanesWormholes()) {
+        for (auto const& lane_dest : system1->StarlanesWormholes()) {
             // get id in universe of system at other end of lane
             const int lane_dest_id = lane_dest.first;
             // skip null lanes and only add edges in one direction, to avoid
@@ -992,7 +1238,14 @@ void Pathfinder::PathfinderImpl::InitializeSystemGraph(const std::vector<int> sy
                 } else {                        // if this is a starlane
                     edge_weight_map[add_edge_result.first] = LinearDistance(system1_id, lane_dest_id);
                 }
-                graph_changed = graph_changed || !boost::edge(system1_index, lane_dest_graph_index, m_graph_impl->system_graph).second;
+
+                if (!graph_changed) {
+                    const auto maybe_current_edge = boost::edge(system1_index, lane_dest_graph_index, m_graph_impl->system_graph);
+                    // Does the current edge exist with the same weight in the old graph
+                    graph_changed = (!maybe_current_edge.second
+                                     || (edge_weight_map[add_edge_result.first]
+                                         != current_edge_weight_map[maybe_current_edge.first]));
+                }
             }
         }
     }
@@ -1028,7 +1281,7 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(int 
 
     if (for_empire_id == ALL_EMPIRES) {
         // all empires get their own, accurately filtered graph
-        for (auto const &empire : Empires()) {
+        for (auto const& empire : Empires()) {
             int empire_id = empire.first;
             GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, empire_id);
             auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(m_graph_impl->system_graph, filter);
@@ -1040,7 +1293,7 @@ void Pathfinder::PathfinderImpl::UpdateEmpireVisibilityFilteredSystemGraphs(int 
         GraphImpl::EdgeVisibilityFilter filter(&m_graph_impl->system_graph, for_empire_id);
         auto filtered_graph_ptr = std::make_shared<GraphImpl::EmpireViewSystemGraph>(m_graph_impl->system_graph, filter);
 
-        for (auto const &empire : Empires()) {
+        for (auto const& empire : Empires()) {
             int empire_id = empire.first;
             m_graph_impl->empire_system_graph_views[empire_id] = filtered_graph_ptr;
         }
