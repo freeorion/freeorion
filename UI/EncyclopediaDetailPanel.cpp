@@ -872,6 +872,8 @@ void EncyclopediaDetailPanel::HandleLinkClick(const std::string& link_type, cons
             this->SetText(data, false);
         } else if (link_type == TextLinker::GRAPH_TAG) {
             this->SetGraph(data);
+        } else if (link_type == TextLinker::URL_TAG) {
+            HumanClientApp::GetApp()->OpenURL(data);
         }
 
     } catch (const boost::bad_lexical_cast&) {

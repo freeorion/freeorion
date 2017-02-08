@@ -63,6 +63,7 @@ public:
 
     static const std::string ENCYCLOPEDIA_TAG;
     static const std::string GRAPH_TAG;
+    static const std::string URL_TAG;
 
 protected:
     void        Render_();
