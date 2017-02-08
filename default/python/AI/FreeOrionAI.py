@@ -4,7 +4,8 @@ import pickle  # Python object serialization library
 import sys
 import random
 
-from common import configure_logging
+from common.configure_logging import redirect_logging_to_freeorion_logger
+redirect_logging_to_freeorion_logger()
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
 
@@ -28,7 +29,7 @@ import ResearchAI
 import ResourcesAI
 import TechsListsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import UserStringList, chat_on_error, print_error, UserString, handle_debug_chat, AITimer, init_handlers
+from freeorion_tools import chat_on_error, print_error, handle_debug_chat, AITimer, init_handlers
 from common.listeners import listener
 from character.character_module import Aggression
 from character.character_strings_module import get_trait_name_aggression, possible_capitals
@@ -48,6 +49,7 @@ except ImportError:
 user_dir = fo.getUserDataDir()
 print "Path to folder for user specific data: %s" % user_dir
 print 'Python paths', sys.path
+
 
 # Mock to have proper inspection and autocomplete for this variable
 class AIStateMock(AIstate.AIstate):
@@ -204,7 +206,7 @@ def generateOrders():  # pylint: disable=invalid-name
     # This code block is required for correct AI work.
     print "Meter / Resource Pool updating..."
     fo.initMeterEstimatesDiscrepancies()
-    fo.updateMeterEstimates(0)
+    fo.updateMeterEstimates(False)
     fo.updateResourcePools()
 
     turn = fo.currentTurn()
