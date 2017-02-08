@@ -71,6 +71,8 @@ namespace {
     const std::string ITALIC_TAG = "i";
     const std::string SHADOW_TAG = "s";
     const std::string UNDERLINE_TAG = "u";
+    const std::string SUPERSCRIPT_TAG = "sup";
+    const std::string SUBSCRIPT_TAG = "sub";
     const std::string RGBA_TAG = "rgba";
     const std::string ALIGN_LEFT_TAG = "left";
     const std::string ALIGN_CENTER_TAG = "center";
@@ -649,10 +651,12 @@ namespace {
     // Registers the default action and known tags.
     int RegisterDefaultTags()
     {
-        StaticTagHandler().Insert("i");
-        StaticTagHandler().Insert("s");
-        StaticTagHandler().Insert("u");
-        StaticTagHandler().Insert("rgba");
+        StaticTagHandler().Insert(ITALIC_TAG);
+        StaticTagHandler().Insert(SHADOW_TAG);
+        StaticTagHandler().Insert(UNDERLINE_TAG);
+        StaticTagHandler().Insert(SUPERSCRIPT_TAG);
+        StaticTagHandler().Insert(SUBSCRIPT_TAG);
+        StaticTagHandler().Insert(RGBA_TAG);
         StaticTagHandler().Insert(ALIGN_LEFT_TAG);
         StaticTagHandler().Insert(ALIGN_CENTER_TAG);
         StaticTagHandler().Insert(ALIGN_RIGHT_TAG);
@@ -965,7 +969,8 @@ bool Font::LineData::Empty() const
 Font::RenderState::RenderState() :
     use_italics(0),
     use_shadow(0),
-    draw_underline(0)
+    draw_underline(0),
+    super_sub_shift(0)
 {
     // Initialize the color stack with the current color
     GLfloat current[4];
@@ -976,7 +981,8 @@ Font::RenderState::RenderState() :
 Font::RenderState::RenderState (Clr color):
     use_italics(0),
     use_shadow(0),
-    draw_underline(0)
+    draw_underline(0),
+    super_sub_shift(0)
 {
     PushColor(color.r, color.g, color.b, color.a);
 }
@@ -1903,6 +1909,8 @@ void Font::Init(FT_Face& face)
     m_italics_offset = Value(ITALICS_FACTOR * m_height / 2.0);
     // shadow info
     m_shadow_offset = 1.0;
+    // super/subscript
+    m_super_sub_offset = Value(m_height / 4.0);
 
     // we always need these whitespace, number, and punctuation characters
     std::vector<std::pair<std::uint32_t, std::uint32_t>> range_vec(
@@ -2066,22 +2074,26 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
         format &= ~FORMAT_LINEWRAP;
 }
 
-void Font::StoreGlyphImpl(Font::RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph, int x_top_offset) const {
+void Font::StoreGlyphImpl(Font::RenderCache& cache, GG::Clr color, const Pt& pt,
+                          const Glyph& glyph, int x_top_offset, int y_shift) const
+{
     cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.left_bearing + x_top_offset, pt.y + glyph.y_offset);
+    cache.vertices->store(pt.x + glyph.left_bearing + x_top_offset, pt.y + glyph.y_offset + y_shift);
     cache.colors->store(color);
 
     cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[1]);
-    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + x_top_offset, pt.y + glyph.y_offset);
+    cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing + x_top_offset,
+                          pt.y + glyph.y_offset + y_shift);
     cache.colors->store(color);
 
     cache.coordinates->store(glyph.sub_texture.TexCoords()[2], glyph.sub_texture.TexCoords()[3]);
     cache.vertices->store(pt.x + glyph.sub_texture.Width() + glyph.left_bearing - x_top_offset,
-                                        pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+                          pt.y + glyph.sub_texture.Height() + glyph.y_offset + y_shift);
     cache.colors->store(color);
 
     cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[3]);
-    cache.vertices->store(pt.x + glyph.left_bearing - x_top_offset, pt.y + glyph.sub_texture.Height() + glyph.y_offset);
+    cache.vertices->store(pt.x + glyph.left_bearing - x_top_offset,
+                          pt.y + glyph.sub_texture.Height() + glyph.y_offset + y_shift);
     cache.colors->store(color);
 }
 
@@ -2108,6 +2120,7 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
 {
     int italic_top_offset = 0;
     int shadow_offset = 0;
+    int super_sub_offset = 0;
 
     if (render_state && render_state->use_italics) {
         // Should we enable sub pixel italics offsets?
@@ -2116,23 +2129,29 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
     if (render_state && render_state->use_shadow) {
         shadow_offset = static_cast<int>(m_shadow_offset);
     }
+    if (render_state) {
+        super_sub_offset = -static_cast<int>(render_state->super_sub_shift * m_super_sub_offset);
+    }
 
     // render shadows?
     if (shadow_offset > 0) {
-        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X1, Y0), glyph, italic_top_offset);
-        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, Y1), glyph, italic_top_offset);
-        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(-X1, Y0), glyph, italic_top_offset);
-        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, -Y1), glyph, italic_top_offset);
+        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X1, Y0), glyph, italic_top_offset, super_sub_offset);
+        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, Y1), glyph, italic_top_offset, super_sub_offset);
+        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(-X1, Y0), glyph, italic_top_offset, super_sub_offset);
+        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, -Y1), glyph, italic_top_offset, super_sub_offset);
         if (render_state && render_state->draw_underline) {
-            StoreUnderlineImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, Y1), glyph, m_descent, m_height, Y(m_underline_height), Y(m_underline_offset));
-            StoreUnderlineImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, -Y1), glyph, m_descent, m_height, Y(m_underline_height), Y(m_underline_offset));
+            StoreUnderlineImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, Y1), glyph, m_descent,
+                               m_height, Y(m_underline_height), Y(m_underline_offset));
+            StoreUnderlineImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, -Y1), glyph, m_descent,
+                               m_height, Y(m_underline_height), Y(m_underline_offset));
         }
     }
 
     // render main text
-    StoreGlyphImpl(cache, render_state->CurrentColor(), pt, glyph, italic_top_offset);
+    StoreGlyphImpl(cache, render_state->CurrentColor(), pt, glyph, italic_top_offset, super_sub_offset);
     if (render_state && render_state->draw_underline) {
-        StoreUnderlineImpl(cache, render_state->CurrentColor(), pt, glyph, m_descent, m_height, Y(m_underline_height), Y(m_underline_offset));
+        StoreUnderlineImpl(cache, render_state->CurrentColor(), pt, glyph, m_descent,
+                           m_height, Y(m_underline_height), Y(m_underline_offset));
     }
 
     return glyph.advance;
@@ -2164,6 +2183,18 @@ void Font::HandleTag(const std::shared_ptr<FormattingTag>& tag, double* orig_col
             }
         } else {
             ++render_state.use_shadow;
+        }
+    } else if (tag->tag_name == SUPERSCRIPT_TAG) {
+        if (tag->close_tag) {
+            --render_state.super_sub_shift;
+        } else {
+            ++render_state.super_sub_shift;
+        }
+    } else if (tag->tag_name == SUBSCRIPT_TAG) {
+        if (tag->close_tag) {
+            ++render_state.super_sub_shift;
+        } else {
+            --render_state.super_sub_shift;
         }
     } else if (tag->tag_name == RGBA_TAG) {
         if (tag->close_tag) {

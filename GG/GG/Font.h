@@ -410,6 +410,9 @@ public:
         /** The count of open \<u> tags seen since the last \</u> seen. */
         std::size_t     draw_underline;
 
+        /** The count of open \<super> (positive) minus \<sub> tags seen. */
+        int             super_sub_shift;
+
         /** The stack of text color indexes (as set by previous tags). */
         std::stack<int> color_index_stack;
 
@@ -699,10 +702,14 @@ private:
 
     void              ValidateFormat(Flags<TextFormat>& format) const;
 
-    X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state, RenderCache& cache) const;
-    void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph, int x_top_offset) const;
-    void              StoreUnderlineImpl(RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph,
-                                         Y descent, Y height, Y underline_height, Y underline_offset) const;
+    X                 StoreGlyph(const Pt& pt, const Glyph& glyph, const RenderState* render_state,
+                                 RenderCache& cache) const;
+    void              StoreGlyphImpl(RenderCache& cache, GG::Clr color, const Pt& pt,
+                                     const Glyph& glyph, int x_top_offset,
+                                     int y_shift) const;
+    void              StoreUnderlineImpl(RenderCache& cache, GG::Clr color, const Pt& pt,
+                                         const Glyph& glyph, Y descent, Y height,
+                                         Y underline_height, Y underline_offset) const;
 
     void              HandleTag(const std::shared_ptr<FormattingTag>& tag, double* orig_color,
                                 RenderState& render_state) const;
@@ -721,6 +728,7 @@ private:
     double               m_underline_offset; ///< Amount below the baseline that the underline sits
     double               m_underline_height; ///< Height (thickness) of underline
     double               m_italics_offset;   ///< Amount that the top of an italicized glyph is left of the bottom
+    double               m_super_sub_offset; ///< Ammount to shift super or subscript text
     double               m_shadow_offset;    ///< Amount that shadows rendered under texts are displaced from the text
     X                    m_space_width; ///< The width of the glyph for the space character
     GlyphMap             m_glyphs;      ///< The locations of the images of each glyph within the textures
@@ -893,6 +901,7 @@ GG::Font::Font(const std::string& font_filename, unsigned int pts,
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
+    m_super_sub_offset(0.0),
     m_shadow_offset(0.0),
     m_space_width(0)
 {
@@ -918,6 +927,7 @@ GG::Font::Font(const std::string& font_filename, unsigned int pts,
     m_underline_offset(0.0),
     m_underline_height(0.0),
     m_italics_offset(0.0),
+    m_super_sub_offset(0.0),
     m_shadow_offset(0.0),
     m_space_width(0)
 {
