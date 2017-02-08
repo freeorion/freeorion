@@ -348,7 +348,10 @@ void TextLinker::FindLinks() {
                         m_links.push_back(link);
                         link = Link();
                     } else {
-                        link.data = tag->params[0];
+                        if (!tag->params.empty())
+                            link.data = tag->params[0];
+                        else
+                            link.data.clear();
                         link.text_posn.first = Value(curr_char.string_index);
                         for (std::shared_ptr<GG::Font::FormattingTag> itag : curr_char.tags) {
                             link.text_posn.first -= Value(itag->StringSize());
@@ -528,4 +531,5 @@ void RegisterLinkTags() {
 
     GG::Font::RegisterKnownTag(TextLinker::ENCYCLOPEDIA_TAG);
     GG::Font::RegisterKnownTag(TextLinker::GRAPH_TAG);
+    //GG::Font::RegisterKnownTag(TextLinker::URL_TAG);
 }
