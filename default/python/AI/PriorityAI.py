@@ -231,7 +231,7 @@ def _calculate_colonisation_priority():
     colony_cost = AIDependencies.COLONY_POD_COST * (1 + AIDependencies.COLONY_POD_UPKEEP * num_colonies)
     turns_to_build = 8  # TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_MILITARY)
-    allotted_portion = ([[[0.6, 0.8], [0.3, 0.4]], [[0.8, 0.9], [0.3, 0.4]]][galaxy_is_sparse]
+    allotted_portion = ([[[0.6, 0.8], [0.3, 0.4]], [[0.8, 0.9], [0.4, 0.6]]][galaxy_is_sparse]
                        [any(enemies_sighted)])
     allotted_portion = foAI.foAIstate.character.preferred_colonization_portion(allotted_portion)
     # if ( foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
