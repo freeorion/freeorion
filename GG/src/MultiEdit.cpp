@@ -698,13 +698,15 @@ namespace {
 
 std::pair<CPSize, CPSize> MultiEdit::GetDoubleButtonDownWordIndices(CPSize char_index)
 {
+    //std::cout << "GetDoubleButtonDownWordIndices index: " << Value(char_index) << std::endl;
     unsigned int ticks = GUI::GetGUI()->Ticks();
     if (ticks - this->m_last_button_down_time <= GUI::GetGUI()->DoubleClickInterval())
         m_in_double_click_mode = true;
     this->m_last_button_down_time = ticks;
     this->m_double_click_cursor_pos = std::pair<CPSize, CPSize>(CP0, CP0);
     if (m_in_double_click_mode) {
-        std::set<std::pair<CPSize, CPSize>> words;// =
+        //std::cout << "GetDoubleButtonDownWordIndices in double click mode!" << std::endl;
+        std::set<std::pair<CPSize, CPSize>> words =
             GUI::GetGUI()->FindWords(Text());
         std::set<std::pair<CPSize, CPSize>>::const_iterator it =
             std::find_if(words.begin(), words.end(), InRange(char_index));
@@ -725,10 +727,18 @@ void MultiEdit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     m_cursor_begin = m_cursor_end = click_pos;
     //std::cout << "click pos: " << click_pos.first << " / " << click_pos.second << std::endl;
 
-    CPSize begin_cursor_pos = CharIndexOf(m_cursor_begin.first, m_cursor_begin.second);
-    CPSize end_cursor_pos = CharIndexOf(m_cursor_end.first, m_cursor_end.second);
-    this->m_cursor_pos = {begin_cursor_pos, end_cursor_pos};
+    CPSize idx = CharIndexOf(click_pos.first, click_pos.second);
+    this->m_cursor_pos = {idx, idx};
     //std::cout << "cursor pos: " << this->m_cursor_pos.first << std::endl;
+
+    // double-click-drag whole-word selection disabled due to the following code
+    // resulting in weird highlighting glitches, possibly due to inconsistency
+    // between this->m_cursor_pos and  m_cursor_pos and m_cursor_end
+
+    //std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownWordIndices(idx);
+    ////std::cout << "Edit::LButtonDown got word indices: " << word_indices.first << ", " << word_indices.second << std::endl;
+    //if (word_indices.first != word_indices.second)
+    //    this->m_cursor_pos = word_indices;
 }
 
 void MultiEdit::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
