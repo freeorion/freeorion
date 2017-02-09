@@ -94,7 +94,7 @@ MeterBrowseWnd::MeterBrowseWnd(int object_id, MeterType primary_meter_type, Mete
     m_current_value(nullptr),
     m_next_turn_label(nullptr),
     m_next_turn_value(nullptr),
-    m_change_label(m_change_label),
+    m_change_label(nullptr),
     m_change_value(nullptr),
     m_meter_title(nullptr),
     m_row_height(1),
