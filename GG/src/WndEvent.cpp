@@ -242,3 +242,38 @@ Timer* WndEvent::GetTimer() const
 const std::string* WndEvent::GetText() const
 { return m_text; }
 
+std::string EventTypeName(const WndEvent& event) {
+    switch(event.Type()) {
+    case WndEvent::LButtonDown:     return "(LButtonDown)";
+    case WndEvent::LDrag:           return "(LDrag)";
+    case WndEvent::LButtonUp:       return "(LButtonUp)";
+    case WndEvent::LClick:          return "(LClick)";
+    case WndEvent::LDoubleClick:    return "(LDoubleClick)";
+    case WndEvent::MButtonDown:     return "(MButtonDown)";
+    case WndEvent::MDrag:           return "(MDrag)";
+    case WndEvent::MButtonUp:       return "(MButtonUp)";
+    case WndEvent::MClick:          return "(MClick)";
+    case WndEvent::MDoubleClick:    return "(MDoubleClick)";
+    case WndEvent::RButtonDown:     return "(RButtonDown)";
+    case WndEvent::RDrag:           return "(RDrag)";
+    case WndEvent::RButtonUp:       return "(RButtonUp)";
+    case WndEvent::RClick:          return "(RClick)";
+    case WndEvent::RDoubleClick:    return "(RDoubleClick)";
+    case WndEvent::MouseEnter:      return "(MouseEnter)";
+    case WndEvent::MouseHere:       return "(MouseHere)";
+    case WndEvent::MouseLeave:      return "(MouseLeave)";
+    case WndEvent::MouseWheel:      return "(MouseWheel)";
+    case WndEvent::DragDropEnter:   return "(DragDropEnter)";
+    case WndEvent::DragDropHere:    return "(DragDropHere)";
+    case WndEvent::CheckDrops:      return "(CheckDrops)";
+    case WndEvent::DragDropLeave:   return "(DragDropLeave)";
+    case WndEvent::DragDroppedOn:   return "(DragDroppedOn)";
+    case WndEvent::KeyPress:        return "(KeyPress)";
+    case WndEvent::KeyRelease:      return "(KeyRelease)";
+    case WndEvent::TextInput:       return "(TextInput)";
+    case WndEvent::GainingFocus:    return "(GainingFocus)";
+    case WndEvent::LosingFocus:     return "(LosingFocus)";
+    case WndEvent::TimerFiring:     return "(TimerFiring)";
+    default:                            return "(Unknown Event Type)";
+    }
+}

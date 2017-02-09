@@ -166,6 +166,8 @@ private:
     mutable std::map<const Wnd*, bool>  m_acceptable_drop_wnds;
 };
 
+GG_API std::string EventTypeName(const GG::WndEvent& event);
+
 } // namespace GG
 
 #endif
