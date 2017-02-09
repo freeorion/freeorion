@@ -275,6 +275,7 @@ void Sound::Impl::InitOpenAL() {
     ALCcontext *context;
     ALCdevice *device;
     ALenum error_code;
+    ALboolean status;
 
     device = alcOpenDevice(nullptr);
 
@@ -285,9 +286,19 @@ void Sound::Impl::InitOpenAL() {
     }
 
     context = alcCreateContext(device, nullptr);
+    if (!context) {
+        error_code = alGetError();
+        ErrorLogger() << "Unable to create OpenAL context: " << alGetString(error_code) << "\n";
+        alcCloseDevice(device);
+        m_initialized = false;
+        return;
+    }
 
-    if (!(context && (alcMakeContextCurrent(context) == AL_TRUE) && ((error_code = alGetError()) == AL_NO_ERROR) )) {
-        ErrorLogger() << "Unable to create OpenAL context : " << alGetString(error_code) << "\n";
+    status = alcMakeContextCurrent(context);
+    error_code = alGetError();
+    if (status != AL_TRUE || error_code != AL_NO_ERROR) {
+        ErrorLogger() << "Unable to make OpenAL context current: " << alGetString(error_code) << "\n";
+        alcDestroyContext(context);
         alcCloseDevice(device);
         m_initialized = false;
         return;
