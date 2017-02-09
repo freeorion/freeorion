@@ -66,9 +66,6 @@ namespace {
     GG::Y ListRowHeight()
     { return std::max(DataPanelIconSpace().y, LabelHeight() + StatIconSize().y) + 2*DATA_PANEL_BORDER + PAD; }
 
-    std::shared_ptr<GG::Texture> SpeedIcon()
-    { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "speed.png", true); }
-
     std::shared_ptr<GG::Texture> DamageIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "meter" / "damage.png", true); }
 
