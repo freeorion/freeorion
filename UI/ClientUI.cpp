@@ -469,7 +469,6 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add('c', "color-depth",      UserStringNop("OPTIONS_DB_COLOR_DEPTH"),           24,      RangedStepValidator<int>(8, 16, 32));
         db.Add("show-fps",              UserStringNop("OPTIONS_DB_SHOW_FPS"),              false);
         db.Add("limit-fps",             UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
         db.Add("max-fps",               UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,    RangedStepValidator<double>(1.0, 10.0, 240.0));

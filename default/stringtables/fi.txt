@@ -229,9 +229,6 @@ Asettaa sovelluksen leveyden ikkunassa.
 OPTIONS_DB_APP_HEIGHT_WINDOWED
 Asettaa sovelluksen korkeuden ikkunassa.
 
-OPTIONS_DB_COLOR_DEPTH
-Asettaa näytön värien syvyyden, bitteinä pikseliä kohti.
-
 OPTIONS_DB_SHOW_FPS
 FPS näkyvissä tai poissa näkyvistä.
 

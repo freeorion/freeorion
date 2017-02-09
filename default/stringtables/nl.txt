@@ -132,9 +132,6 @@ Zet horizontale toepassing resolutie.
 OPTIONS_DB_APP_HEIGHT
 Zet verticale toepassing resolutie.
 
-OPTIONS_DB_COLOR_DEPTH
-Zet kleurdiepte van het scerm, in bits per pixel.
-
 OPTIONS_DB_SHOW_FPS
 Zet FPS weergave aan of uit.
 

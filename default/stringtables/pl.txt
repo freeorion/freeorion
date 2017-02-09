@@ -188,9 +188,6 @@ Ustawia poziomą rozdzielczość (szerokość) okna aplikacji.
 OPTIONS_DB_APP_HEIGHT
 Ustawia pionową rozdzielczość (wysokość) okna aplikacji.
 
-OPTIONS_DB_COLOR_DEPTH
-Ustawia głębię kolorów ekranu, w bitach na piksel.
-
 OPTIONS_DB_SHOW_FPS
 Przełącza wyświetlanie ilości klatek na sekundę (FPS).
 

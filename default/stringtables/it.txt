@@ -385,9 +385,6 @@ Imposta la risoluzione orizzontale dell'applicazione in modalità finestra.
 OPTIONS_DB_APP_HEIGHT_WINDOWED
 Imposta la risoluzione verticale dell'applicazione in modalità finestra.
 
-OPTIONS_DB_COLOR_DEPTH
-Imposta la profondità di colore in bit.
-
 OPTIONS_DB_SHOW_FPS
 Attiva la visualizzazione dei FPS (1 o 0).
 

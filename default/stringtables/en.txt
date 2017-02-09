@@ -1080,9 +1080,6 @@ Sets horizontal position in windowed mode. Relative to primary monitor left.
 OPTIONS_DB_APP_TOP_WINDOWED
 Sets vertical position in windowed mode. Relative to primary monitor top.
 
-OPTIONS_DB_COLOR_DEPTH
-Sets screen color depth, in bits per pixel.
-
 OPTIONS_DB_SHOW_FPS
 Toggles FPS display on or off.
 

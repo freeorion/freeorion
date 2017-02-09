@@ -229,9 +229,6 @@ Nastaví šířku okna v módu hry "v okně".
 OPTIONS_DB_APP_HEIGHT_WINDOWED
 Nastaví výšku okna v módu hry "v okně".
 
-OPTIONS_DB_COLOR_DEPTH
-Nastavení barevné hloubky.
-
 OPTIONS_DB_SHOW_FPS
 Přepíná FPS zobrazení zapnout nebo vypnout.
 

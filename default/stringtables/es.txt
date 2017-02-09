@@ -314,9 +314,6 @@ Establece la resolución horizontal de la aplicación en modo ventana.
 OPTIONS_DB_APP_HEIGHT_WINDOWED
 Establece la resolución vertical de la aplicación en modo ventana.
 
-OPTIONS_DB_COLOR_DEPTH
-Establece la profundidad del color de la pantalla, en bits por pixel.
-
 OPTIONS_DB_SHOW_FPS
 Activa o desactiva los FPS
 

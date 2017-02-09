@@ -817,9 +817,6 @@ Setzt die horizontale Position im Fenstermodus relativ zum primären Monitor.
 OPTIONS_DB_APP_TOP_WINDOWED
 Setzt die vertikale Position im Fenstermodus relativ zum primären Monitor.
 
-OPTIONS_DB_COLOR_DEPTH
-Setzt die Farbtiefe in Bits pro Pixel.
-
 OPTIONS_DB_SHOW_FPS
 Schaltet die FPS Anzeige an oder aus.
 

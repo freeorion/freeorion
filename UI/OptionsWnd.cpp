@@ -1012,10 +1012,9 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     std::vector<std::string> resolutions = GG::GUI::GetGUI()->GetSupportedResolutions();
 
     // find text representation of current fullscreen resolution selection
-    int colour_depth = GetOptionsDB().Get<int>("color-depth");
     int width = GetOptionsDB().Get<int>("app-width");
     int height = GetOptionsDB().Get<int>("app-height");
-    std::string current_video_mode_str = boost::io::str(boost::format("%1% x %2% @ %3%") % width % height % colour_depth);
+    std::string current_video_mode_str = boost::io::str(boost::format("%1% x %2%") % width % height);
 
     // find which index in list, if any, represents current fullscreen resolution selection
     int current_resolution_index = -1, loop_res_index = 0;
@@ -1114,13 +1113,12 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
         const GG::ListBox::Row* row = *it;
         if (!row)
             return;
-        int w, h, bpp;
+        int w, h;
         using namespace boost::spirit::classic;
-        rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)] >> str_p(" @ ") >> int_p[assign_a(bpp)];
+        rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)];
         parse(row->Name().c_str(), resolution_p);
         GetOptionsDB().Set<int>("app-width", w);
         GetOptionsDB().Set<int>("app-height", h);
-        GetOptionsDB().Set<int>("color-depth", bpp);
     });
 }
 

@@ -630,9 +630,6 @@ OPTIONS_DB_APP_LEFT_WINDOWED
 OPTIONS_DB_APP_TOP_WINDOWED
 Устанавливает вертикальное положение в оконном режиме. По сравнению с верхнем краем монитора.
 
-OPTIONS_DB_COLOR_DEPTH
-Установить глубину цвета, в битах на пиксель.
-
 OPTIONS_DB_SHOW_FPS
 Включает отображение FPS (кадров в секунду).
 

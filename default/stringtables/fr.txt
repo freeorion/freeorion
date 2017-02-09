@@ -1080,9 +1080,6 @@ Fixe, en mode fenêtré, la position du bord gauche de la fenêtre de jeu par ra
 OPTIONS_DB_APP_TOP_WINDOWED
 Fixe, en mode fenêtré, la position du bord supérieur de la fenêtre de jeu par rapport au bord supérieur de l'écran.
 
-OPTIONS_DB_COLOR_DEPTH
-Règle la qualité des couleurs, en bits par pixel.
-
 OPTIONS_DB_SHOW_FPS
 Affiche/Cache le nombre d'images par seconde.
 

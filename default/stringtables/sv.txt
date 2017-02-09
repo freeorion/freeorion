@@ -120,9 +120,6 @@ OPTIONS_DB_APP_WIDTH
 OPTIONS_DB_APP_HEIGHT
 Ändrar lodrät programupplösning.
 
-OPTIONS_DB_COLOR_DEPTH
-Ändrar skärmens färgdjup, i bitar per pixel.
-
 OPTIONS_DB_SHOW_FPS
 Växlar mellan att visa FPS, på eller av.
 

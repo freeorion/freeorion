@@ -907,7 +907,7 @@ std::vector<std::string> SDLGUI::GetSupportedResolutions() const
             if (SDL_GetDisplayMode(m_display_id, i, &mode) != 0) {
                 SDL_Log("SDL_GetDisplayMode failed: %s", SDL_GetError());
             } else {
-                mode_vec.push_back(boost::io::str(boost::format("%1% x %2% @ %3%") % mode.w % mode.h % SDL_BITSPERPIXEL(mode.format)));
+                mode_vec.push_back(boost::io::str(boost::format("%1% x %2%") % mode.w % mode.h));
             }
         }
     }
