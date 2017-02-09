@@ -1077,7 +1077,7 @@ int FontBasedUpscale(int x) {
 
 namespace GG {
     std::ostream& operator<<(std::ostream& os, const Clr& clr) {
-        os << "(" << clr.r << "," << clr.g << "," << clr.b << "," << clr.a << ")";
+        os << "(" << +clr.r << "," << +clr.g << "," << +clr.b << "," << +clr.a << ")";
         return os;
     }
 
