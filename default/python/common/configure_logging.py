@@ -8,35 +8,68 @@ logging messages of levels warning and above are decorated with module name, fil
 
 Usage:
 
-import logging
-import utils.configure_logging
-< Use python logging or print and have it re-directed >
+from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
+redirect_logging_to_freeorion_logger(log_level)
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
-Notes on using the standard python logger:
-The python standard library is composed of two basic parts: loggers and handlers.
-Loggers generate the log and associate a whole bunch of level, timing, file, function and
-other information with the log.  Handlers do somthing like stream to file, console or email.
+Then use python logging or print and have it re-directed appropriately.
 
-* The simplest is to use the root logger.
+Notes on using the standard python logger: The python standard library is
+composed of two basic parts: loggers and handlers.  Loggers generate the log and
+associate level, timing, filename, function, line number and other information
+with the log.  Handlers convert the logging stream to file, console, email etc.
+
+* Using the root logger directly is the simplest way to log:
 logging.debug(msg)
 logging.info(msg)
 logging.warn(msg)
 logging.error(msg)
 logging.fatal(msg)
 
-* Loggers can have arbitrary hierarchical names,
-  created globally when you call getLogger() from anywhere.
+* The log level of the root logger can be changed with:
+
+logging.getLogger().setLevel(logging.WARN)
+
+* The log level of the root logger can be checked with:
+
+logging.getLogger().isEnableFor(logging.WARN)
+
+
+* One strength of the python standard logging library is the ability to create
+  arbitrary hierarchical loggers.  Loggers are created globally when getLogger()
+  is called with any string.  The hierarchical levels are dot seperated.  The
+  root logger is the empty string.  The following creates a logger:
+
 logging.getLogger("toplevel.2ndlevel")
 
-* Loggers can be filtered by log level.  For example turn off logging below warning level.
-  This is hierarchical.  The following turns off logging below warning level
-  for name.subname and also name.subname.subsubname.
-logging.getLogger(name.subname).setLevel(logging.WARN)
+* Loggers can be filtered by log level hierarchically.  The following turns off
+  logging below warning level for all loggers and then turns debug logging on
+  for "name.subname" and its children.  This means that the log stream only
+  contains logging for that one component.
 
-* Logger formats string using the old format style.
-  It only formats the string if that level of debugging is enabled.
+logging.getLogger().setLevel(logging.ERROR)
+logging.getLogger(name.subname).setLevel(logging.DEBUG)
+
+* Logger formats string using the old format style.  Importantly, it only
+  formats the string if that level of debugging is enabled.  This means that if
+  the formatting is left to the logging sub-system, then there is no overhead to
+  format the string if that log level is not enabled.
+
 logging("A formatted %s contained the number nine %d", "string", 9)
 
+
+* The following log levels have sinks in the game engine that write to the
+  logfiles and include their level.  They should be used as follows:
+
+FATAL   - used for errors that will crash the python engine.
+ERROR   - used of "major" unrecoverable errors which will affect game play.
+          For example being unable to place all the homeworlds.
+WARNING - used for "minor", recoverable errors.
+          For example not getting a ship object from a (supposedly valid) ship id.
+INFO    - used to report game state and progress.
+          For example showing a table about colonization possibilities or threat assessment.
+DEBUG   - used for low-level implementation or calculation details.
+          For example the calculations when rating a fleet.
 
 For more information see https://docs.python.org/2/howto/logging.html
 
@@ -68,7 +101,7 @@ class _streamlikeLogger(object):
             logging.INFO: freeorion_logger.info,
             logging.WARNING: freeorion_logger.warn,
             logging.ERROR: freeorion_logger.error,
-            logging.CRITICAL: freeorion_logger.fatal,
+            logging.FATAL: freeorion_logger.fatal,
             logging.NOTSET: freeorion_logger.debug
         }[level]
 
@@ -113,7 +146,7 @@ def _redirect_logging_to_freeorion_logger():
         logger.addHandler(_create_narrow_handler(logging.INFO))
         logger.addHandler(_create_narrow_handler(logging.WARNING))
         logger.addHandler(_create_narrow_handler(logging.ERROR))
-        logger.addHandler(_create_narrow_handler(logging.CRITICAL))
+        logger.addHandler(_create_narrow_handler(logging.FATAL))
         logger.addHandler(_create_narrow_handler(logging.NOTSET))
 
         logger.setLevel(logging.DEBUG)
