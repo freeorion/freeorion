@@ -148,7 +148,9 @@ Function .onInit
 
   uninst_onInit:
   ClearErrors
-  Exec "$$R0"
+  InitPluginsDir
+  CopyFiles "$$R0" "$$pluginsdir"
+  ExecWait '$$pluginsdir\Uninstall.exe _?=$$INSTDIR'
 
   fin_onInit:
 
