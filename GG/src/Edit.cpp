@@ -571,8 +571,8 @@ std::pair<CPSize, CPSize> Edit::GetDoubleButtonDownDragWordIndices(CPSize char_i
 {
     std::pair<CPSize, CPSize> retval(char_index, char_index);
 
-    std::set<std::pair<CPSize, CPSize> > words = GUI::GetGUI()->FindWords(Text());
-    std::set<std::pair<CPSize, CPSize> >::const_iterator it =
+    std::set<std::pair<CPSize, CPSize>> words = GUI::GetGUI()->FindWords(Text());
+    std::set<std::pair<CPSize, CPSize>>::const_iterator it =
         std::find_if(words.begin(), words.end(), InRange(char_index));
 
     if (it != words.end())
@@ -652,7 +652,7 @@ void GG::GetTranslatedCodePoint(Key key, std::uint32_t key_code_point, Flags<Mod
 }
 
 CPSize GG::NextWordEdgeFrom(const std::string& text, CPSize from_position, bool search_right) {
-    std::set<std::pair<CPSize, CPSize> > words = GUI::GetGUI()->FindWords(text);
+    std::set<std::pair<CPSize, CPSize>> words = GUI::GetGUI()->FindWords(text);
     CPSize retval = CP0;
 
     if (!search_right) {
@@ -700,7 +700,7 @@ CPSize GG::NextWordEdgeFrom(const std::string& text, CPSize from_position, bool 
 
         // start and the rightmost end, traverse the words leftwards
         // until past the reference point
-        for (std::set<std::pair<CPSize, CPSize> >::const_reverse_iterator rit = words.rbegin();
+        for (std::set<std::pair<CPSize, CPSize>>::const_reverse_iterator rit = words.rbegin();
             rit != words.rend(); ++rit)
         {
             if (rit->second < from_position) {

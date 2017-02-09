@@ -86,8 +86,8 @@ private:
 
     double m_hue;
     double m_saturation;
-    std::vector<std::vector<std::pair<double, double> > >  m_vertices;
-    std::vector<std::vector<Clr> > m_colors;
+    std::vector<std::vector<std::pair<double, double>>> m_vertices;
+    std::vector<std::vector<Clr>>                       m_colors;
 };
 
 

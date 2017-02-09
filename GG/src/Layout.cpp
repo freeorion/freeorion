@@ -128,9 +128,9 @@ Y Layout::MinimumRowHeight(std::size_t row) const
 X Layout::MinimumColumnWidth(std::size_t column) const
 { return X(m_column_params[column].min); }
 
-std::vector<std::vector<const Wnd*> > Layout::Cells() const
+std::vector<std::vector<const Wnd*>> Layout::Cells() const
 {
-    std::vector<std::vector<const Wnd*> > retval(m_cells.size());
+    std::vector<std::vector<const Wnd*>> retval(m_cells.size());
     for (std::size_t i = 0; i < m_cells.size(); ++i) {
         retval[i].resize(m_cells[i].size());
         for (std::size_t j = 0; j < m_cells[i].size(); ++j) {
@@ -140,9 +140,9 @@ std::vector<std::vector<const Wnd*> > Layout::Cells() const
     return retval;
 }
 
-std::vector<std::vector<Rect> > Layout::CellRects() const
+std::vector<std::vector<Rect>> Layout::CellRects() const
 {
-    std::vector<std::vector<Rect> > retval = RelativeCellRects();
+    std::vector<std::vector<Rect>> retval = RelativeCellRects();
     for (std::vector<Rect>& column : retval) {
         for (Rect& cell : column) {
             cell += ClientUpperLeft();
@@ -151,9 +151,9 @@ std::vector<std::vector<Rect> > Layout::CellRects() const
     return retval;
 }
 
-std::vector<std::vector<Rect> > Layout::RelativeCellRects() const
+std::vector<std::vector<Rect>> Layout::RelativeCellRects() const
 {
-    std::vector<std::vector<Rect> > retval(m_cells.size());
+    std::vector<std::vector<Rect>> retval(m_cells.size());
     for (std::size_t i = 0; i < m_cells.size(); ++i) {
         retval[i].resize(m_cells[i].size());
         for (std::size_t j = 0; j < m_cells[i].size(); ++j) {

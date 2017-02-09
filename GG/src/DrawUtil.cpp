@@ -47,9 +47,9 @@ namespace { // file-scope constants and functions
     unsigned int g_stencil_bit = 0;
 
     /// whenever points on the unit circle are calculated with expensive sin() and cos() calls, the results are cached here
-    std::map<int, std::valarray<double> > unit_circle_coords;
+    std::map<int, std::valarray<double>> unit_circle_coords;
     /// this doesn't serve as a cache, but does allow us to prevent numerous constructions and destructions of Clr valarrays.
-    std::map<int, std::valarray<Clr> > color_arrays;
+    std::map<int, std::valarray<Clr>> color_arrays;
 
     void Rectangle(Pt ul, Pt lr, Clr color, Clr border_color1, Clr border_color2, unsigned int bevel_thick,
                    bool bevel_left, bool bevel_top, bool bevel_right, bool bevel_bottom)

@@ -221,7 +221,7 @@ void FileDlg::SelectDirectories(bool directories)
 void FileDlg::AppendMissingSaveExtension(bool append)
 { m_append_missing_save_extension = append; }
 
-void FileDlg::SetFileFilters(const std::vector<std::pair<std::string, std::string> >& filters)
+void FileDlg::SetFileFilters(const std::vector<std::pair<std::string, std::string>>& filters)
 {
     m_file_filters = filters;
     PopulateFilters();
@@ -535,7 +535,7 @@ void FileDlg::UpdateList()
     rule<> wildcard = anychar_p;
 
     // define file filters based on the filter strings in the filter drop list
-    std::vector<rule<> > file_filters;
+    std::vector<rule<>> file_filters;
 
     DropDownList::iterator it = m_filter_list->CurrentItem();
     if (it != m_filter_list->end()) {

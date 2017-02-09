@@ -119,11 +119,11 @@ public:
     double           ColumnStretch(std::size_t column) const;  ///< returns the stretch factor for column \a column.  Note that \a column is not range-checked.
     Y                MinimumRowHeight(std::size_t row) const;  ///< returns the minimum height allowed for row \a row.  Note that \a row is not range-checked.
     X                MinimumColumnWidth(std::size_t column) const; ///< returns the minimum height allowed for column \a column.  Note that \a column is not range-checked.
-    std::vector<std::vector<const Wnd*> >
+    std::vector<std::vector<const Wnd*>>
                      Cells() const;                            ///< returns a matrix of the Wnds that can be found in each cell
-    std::vector<std::vector<Rect> >
+    std::vector<std::vector<Rect>>
                      CellRects() const;                        ///< returns a matrix of rectangles in screen space that cover the cells in which child Wnds are placed
-    std::vector<std::vector<Rect> >
+    std::vector<std::vector<Rect>>
                      RelativeCellRects() const;                ///< returns a matrix of rectangles in layout client space that cover the cells in which child Wnds are placed
 
     /** Returns true iff this layout will render an outline of itself; this is
@@ -286,7 +286,7 @@ private:
     void   ValidateAlignment(Flags<Alignment>& alignment);
     void   ChildSizeOrMinSizeChanged();
 
-    std::vector<std::vector<Wnd*> > m_cells;
+    std::vector<std::vector<Wnd*>>  m_cells;
     unsigned int                    m_border_margin;
     unsigned int                    m_cell_margin;
     std::vector<RowColParams>       m_row_params;

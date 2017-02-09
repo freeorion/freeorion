@@ -151,11 +151,11 @@ public:
 
     /** The type of iterator returned by non-const accel_begin() and
         accel_end(). */
-    typedef std::set<std::pair<Key, Flags<ModKey> > >::iterator accel_iterator;
+    typedef std::set<std::pair<Key, Flags<ModKey>>>::iterator accel_iterator;
 
     /** The type of iterator returned by const accel_begin() and
         accel_end(). */
-    typedef std::set<std::pair<Key, Flags<ModKey> > >::const_iterator const_accel_iterator;
+    typedef std::set<std::pair<Key, Flags<ModKey>>>::const_iterator const_accel_iterator;
 
     /** \name Structors */ ///@{
     virtual ~GUI();
@@ -200,27 +200,27 @@ public:
         this function to exist, but the notion of what a "word" is is so
         application-specific that it was placed here so that users can
         customize this behavior. */
-    virtual std::set<std::pair<CPSize, CPSize> >    FindWords(const std::string& str) const;
-    virtual std::set<std::pair<StrSize, StrSize> >  FindWordsStringIndices(const std::string& str) const;
+    virtual std::set<std::pair<CPSize, CPSize>>     FindWords(const std::string& str) const;
+    virtual std::set<std::pair<StrSize, StrSize>>   FindWordsStringIndices(const std::string& str) const;
     /** Returns true if \a word is a word that appears in \a str */
     virtual bool                                    ContainsWord(const std::string& str, const std::string& word) const;
 
     /** Returns the currently-installed style factory. */
-    const std::shared_ptr<StyleFactory>& GetStyleFactory() const;
+    const std::shared_ptr<StyleFactory>&    GetStyleFactory() const;
 
-    bool                                   RenderCursor() const; ///< returns true iff the GUI is responsible for rendering the cursor
+    bool                                    RenderCursor() const; ///< returns true iff the GUI is responsible for rendering the cursor
 
     /* Returns the currently-installed cursor. */
-    const std::shared_ptr<Cursor>& GetCursor() const;
+    const std::shared_ptr<Cursor>&          GetCursor() const;
 
     /** Returns an iterator to one past the first defined keyboard accelerator. */
-    const_accel_iterator accel_begin() const;
+    const_accel_iterator                    accel_begin() const;
 
     /** Returns an iterator to one past the last defined keyboard accelerator. */
-    const_accel_iterator accel_end() const;
+    const_accel_iterator                    accel_end() const;
 
     /** Returns the signal that is emitted when the requested keyboard accelerator is invoked. */
-    AcceleratorSignalType& AcceleratorSignal(Key key, Flags<ModKey> mod_keys = MOD_KEY_NONE) const;
+    AcceleratorSignalType&                  AcceleratorSignal(Key key, Flags<ModKey> mod_keys = MOD_KEY_NONE) const;
 
     /** Returns true iff keyboard accelerator signals fire while modal windows are open. */
     bool ModalAcceleratorSignalsEnabled() const;

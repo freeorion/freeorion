@@ -32,11 +32,13 @@ namespace GG {
     class TagParserImpl {
         public:
             //! Create a new parser that will consider the given tags as known, others as plaintext.
-          TagParserImpl(const std::set<std::string>& known_tags) : m_known_tags(known_tags) {}
+            TagParserImpl(const std::set<std::string>& known_tags) :
+                m_known_tags(known_tags)
+            {}
 
             //! Parses \a text into tags. All text is considered part of some tag, text outside known tags will be put in plaintext tags.
-          std::vector<RichTextTag> ParseTags(const std::string& text)
-          {
+            std::vector<RichTextTag> ParseTags(const std::string& text)
+            {
                 // A vector of all tags in the text.
                 std::vector<RichTextTag> tags;
 
@@ -44,7 +46,7 @@ namespace GG {
                     // Parse all text into tags.
                     ParseTagsImpl(text.begin(), text.end(), &tags);
                 } catch (const std::exception& ex) {
-                    // If an error was encountered, diaplay it in the text box.
+                    // If an error was encountered, display it in the text box.
                     tags.clear();
                     tags.push_back(CreateErrorTag(ex.what()));
                     return tags;
@@ -77,7 +79,7 @@ namespace GG {
                 boost::match_flag_type flags = boost::match_default;
 
                 // The regular expression for matching begin and end tags. Also extracts parameters from start tags.
-                typedef boost::basic_regex<char, boost::regex_traits<char> > regex;
+                typedef boost::basic_regex<char, boost::regex_traits<char>> regex;
                 const static regex tag("<(?<begin_tag>\\w+)( "
                                        "(?<params>[^>]+))?>|</"
                                        "(?<end_tag>\\w+)>");

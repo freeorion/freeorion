@@ -167,7 +167,7 @@ struct GG::GUIImpl
 
     ZList        m_zlist;                 // object that keeps the GUI windows in the correct depth ordering
     Wnd*         m_focus_wnd;             // GUI window that currently has the input focus (this is the base level focus window, used when no modal windows are active)
-    std::list<std::pair<Wnd*, Wnd*> >
+    std::list<std::pair<Wnd*, Wnd*>>
                  m_modal_wnds;            // modal GUI windows, and the window with focus for that modality (only the one in back is active, simulating a stack but allowing traversal of the list)
     bool         m_allow_modal_accelerator_signals; // iff true: keyboard accelerator signals will be output while modal window(s) is open
 
@@ -218,7 +218,7 @@ struct GG::GUIImpl
     std::map<const Wnd*, bool>
                  m_drag_drop_wnds_acceptable; // the Wnds being dragged and dropped, and whether they are acceptable for dropping over their current target.
 
-    std::set<std::pair<Key, Flags<ModKey> > >
+    std::set<std::pair<Key, Flags<ModKey>>>
                  m_accelerators;          // the keyboard accelerators
 
     /** The signals emitted by the keyboard accelerators. */
@@ -981,9 +981,9 @@ bool GUI::MouseLRSwapped() const
 const std::map<Key, Key>& GUI::KeyMap() const
 { return s_impl->m_key_map; }
 
-std::set<std::pair<CPSize, CPSize> > GUI::FindWords(const std::string& str) const
+std::set<std::pair<CPSize, CPSize>> GUI::FindWords(const std::string& str) const
 {
-    std::set<std::pair<CPSize, CPSize> > retval;
+    std::set<std::pair<CPSize, CPSize>> retval;
     utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
     utf8_wchar_iterator last(str.end(), str.begin(), str.end());
     word_regex_iterator it(first, last, DEFAULT_WORD_REGEX);
@@ -996,9 +996,9 @@ std::set<std::pair<CPSize, CPSize> > GUI::FindWords(const std::string& str) cons
     return retval;
 }
 
-std::set<std::pair<StrSize, StrSize> > GUI::FindWordsStringIndices(const std::string& str) const
+std::set<std::pair<StrSize, StrSize>> GUI::FindWordsStringIndices(const std::string& str) const
 {
-    std::set<std::pair<StrSize, StrSize> > retval;
+    std::set<std::pair<StrSize, StrSize>> retval;
 
     utf8_wchar_iterator first(str.begin(), str.begin(), str.end());
     utf8_wchar_iterator last(str.end(), str.begin(), str.end());

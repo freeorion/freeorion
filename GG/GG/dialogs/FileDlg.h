@@ -112,7 +112,7 @@ public:
         that is either a Targa or a PNG file.  Note that an empty filter is
         considered to match all files, so ("All Files", "") is perfectly
         correct. */
-    void SetFileFilters(const std::vector<std::pair<std::string, std::string> >& filters);
+    void SetFileFilters(const std::vector<std::pair<std::string, std::string>>& filters);
     //@}
 
     /** Returns the current directory (the one that will be used by default on
@@ -160,7 +160,7 @@ private:
     std::shared_ptr<Font> m_font;
 
     bool             m_save;
-    std::vector<std::pair<std::string, std::string> > 
+    std::vector<std::pair<std::string, std::string>>
                      m_file_filters;
     std::set<std::string>
                      m_result;
