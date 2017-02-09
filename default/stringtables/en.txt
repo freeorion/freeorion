@@ -1432,6 +1432,12 @@ Sets the root directory for the game resource files (game content and data files
 OPTIONS_DB_LOG_LEVEL
 Sets the level at or above which log messages will be output (levels in order of increasing verbosity: FATAL, ERROR, WARN, INFO, DEBUG, TRACE)
 
+OPTIONS_DB_LOG_DIR
+Directory to store log files.
+
+OPTIONS_DB_LOG_ROTATE_SIZE
+Approximate maximum size (in MegaBytes) for log files.
+
 OPTIONS_DB_STRINGTABLE_FILENAME
 Sets the language-specific string table filename.
 
