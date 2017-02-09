@@ -348,7 +348,8 @@ void Edit::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
     X click_xpos = ScreenToClient(pt).x; // x coord of click within text space
     CPSize idx = CharIndexOf(click_xpos);
     //std::cout << "Edit::LButtonDown got idx: " << idx << std::endl;
-    m_cursor_pos.first = m_cursor_pos.second = idx;
+    m_cursor_pos = {idx, idx};
+
     std::pair<CPSize, CPSize> word_indices = GetDoubleButtonDownWordIndices(idx);
     //std::cout << "Edit::LButtonDown got word indices: " << word_indices.first << ", " << word_indices.second << std::endl;
     if (word_indices.first != word_indices.second)
