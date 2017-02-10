@@ -119,7 +119,20 @@ class _SingleLevelFilter(logging.Filter):
         return record.levelno == self.level
 
 
-_error_formatter = logging.Formatter('Module %(module)s, File %(filename)s,  Function %(funcName)s():%(lineno)d  - %(message)s')
+class _Formatter(logging.Formatter):
+    """Use a format string similar to the backend log formatting, but include the logger name if it is not root."""
+    def __init__(self, fmt=None, datefmt=None):
+        self._fmt = '%(name)s %(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
+        super(_Formatter, self).__init__(fmt, datefmt)
+
+    def format(self, record):
+        """Select the correct log format and call logging.Formatter.format()"""
+        if record.name == 'root':
+            self._fmt = '%(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
+        else:
+            self._fmt = '%(name)s %(filename)s:%(funcName)s():%(lineno)d  - %(message)s'
+
+        return super(_Formatter, self).format(record)
 
 
 def _create_narrow_handler(level):
@@ -128,8 +141,7 @@ def _create_narrow_handler(level):
     h = logging.StreamHandler(_streamlikeLogger(level))
     h.addFilter(_SingleLevelFilter(level))
     h.setLevel(level)
-    if level > logging.INFO:
-        h.setFormatter(_error_formatter)
+    h.setFormatter(_Formatter())
     return h
 
 
