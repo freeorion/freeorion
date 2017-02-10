@@ -8,7 +8,6 @@
 #include "Empire/Empire.h"
 #include "universe/ValueRef.h"
 
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>
 #include <boost/filesystem/fstream.hpp>
