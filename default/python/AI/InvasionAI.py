@@ -19,6 +19,9 @@ import CombatRatingsAI
 from freeorion_tools import tech_is_complete, AITimer
 from AIDependencies import INVALID_ID
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
 MAX_BASE_TROOPERS_POOR_INVADERS = 10
 _TROOPS_SAFETY_MARGIN = 1  # try to send this amount of additional troops to account for uncertainties in calculation

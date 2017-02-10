@@ -23,6 +23,9 @@ from freeorion_tools import dict_from_map, ppstring, chat_human, tech_is_complet
 from common.print_utils import Table, Sequence, Text
 from AIDependencies import INVALID_ID
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 _best_military_design_rating_cache = {}  # indexed by turn, values are rating of the military design of the turn
 _design_cost_cache = {0: {(-1, -1): 0}}  # outer dict indexed by cur_turn (currently only one turn kept); inner dict indexed by (design_id, pid)
 

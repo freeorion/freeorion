@@ -7,6 +7,9 @@ from character.character_module import Aggression
 from character.character_strings_module import possible_greetings
 from freeorion_tools import UserStringList, chat_on_error
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 
 def handle_pregame_chat(sender_player_id, message_txt):
     if fo.playerIsAI(sender_player_id):

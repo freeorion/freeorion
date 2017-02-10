@@ -16,6 +16,9 @@ from turn_state import state
 from freeorion_tools import tech_is_complete, get_ai_tag_grade, chat_human
 from common.print_utils import print_in_columns
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 inProgressTechs = {}
 
 

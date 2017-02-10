@@ -5,7 +5,7 @@ import sys
 import random
 
 from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warning, error, fatal) = convenience_function_references_for_logger()
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 import logging
 logger = logging.getLogger(__name__)
 

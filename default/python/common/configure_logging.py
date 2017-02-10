@@ -175,6 +175,6 @@ redirect_logging_to_freeorion_logger()
 
 
 def convenience_function_references_for_logger(name=""):
-    """Return a tuple (debug, info, warning, error, fatal) of the ''name'' logger's convenience functions."""
+    """Return a tuple (debug, info, warn, error, fatal) of the ''name'' logger's convenience functions."""
     logger = logging.getLogger(name)
     return (logger.debug, logger.info, logger.warning, logger.error, logger.critical)

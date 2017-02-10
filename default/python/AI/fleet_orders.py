@@ -12,6 +12,10 @@ import CombatRatingsAI
 from freeorion_tools import print_error
 from universe_object import Fleet, System, Planet
 from AIDependencies import INVALID_ID
+
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 dumpTurn = 0
 
 

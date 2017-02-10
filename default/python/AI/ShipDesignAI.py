@@ -57,6 +57,9 @@ import FleetUtilsAI
 from AIDependencies import INVALID_ID
 from freeorion_tools import print_error, UserString, tech_is_complete
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 # Define meta classes for the ship parts  TODO storing as set may not be needed anymore
 ARMOUR = frozenset({fo.shipPartClass.armour})
 SHIELDS = frozenset({fo.shipPartClass.shields})

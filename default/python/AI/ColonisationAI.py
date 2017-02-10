@@ -17,6 +17,9 @@ from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, c
 from AIDependencies import (INVALID_ID, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
                             POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
+
 colonization_timer = AITimer('getColonyFleets()')
 
 

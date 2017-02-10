@@ -11,6 +11,8 @@ import PlanetUtilsAI
 from freeorion_tools import ppstring
 from AIDependencies import INVALID_ID, DRYDOCK_HAPPINESS_THRESHOLD
 
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 def create_move_orders_to_system(fleet, target):
     """

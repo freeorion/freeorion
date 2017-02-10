@@ -16,7 +16,7 @@ from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 import universe_statistics
 
-(debug, info, warning, error, fatal) = convenience_function_references_for_logger()
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
 
 class PyGalaxySetupData:

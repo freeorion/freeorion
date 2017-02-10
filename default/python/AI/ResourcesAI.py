@@ -21,6 +21,8 @@ import AIDependencies
 import CombatRatingsAI
 from common.print_utils import Table, Text, Float
 from freeorion_tools import tech_is_complete, AITimer
+from common.configure_logging import convenience_function_references_for_logger
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger(__name__)
 
 resource_timer = AITimer('timer_bucket')
 
