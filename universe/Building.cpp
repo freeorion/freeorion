@@ -165,8 +165,6 @@ void BuildingType::Init() {
 }
 
 std::string BuildingType::Dump() const {
-    using boost::lexical_cast;
-
     std::string retval = DumpIndent() + "BuildingType\n";
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
@@ -176,7 +174,8 @@ std::string BuildingType::Dump() const {
     if (m_production_time)
         retval += DumpIndent() + "buildtime = " + m_production_time->Dump() + "\n";
     retval += DumpIndent() + (m_producible ? "Producible" : "Unproducible") + "\n";
-    retval += DumpIndent() + "captureresult = " + lexical_cast<std::string>(m_capture_result) + "\n";
+    retval += DumpIndent() + "captureresult = " +
+        boost::lexical_cast<std::string>(m_capture_result) + "\n";
 
     if (!m_tags.empty()) {
         if (m_tags.size() == 1) {

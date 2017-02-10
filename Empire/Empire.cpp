@@ -1511,7 +1511,7 @@ std::string Empire::Dump() const {
     retval += " meters:\n";
     for (const std::map<std::string, Meter>::value_type& meter : m_meters) {
         retval += UserString(meter.first) + ": " +
-                  boost::lexical_cast<std::string>(meter.second.Initial()) + "\n";
+                  std::to_string(meter.second.Initial()) + "\n";
     }
     return retval;
 }

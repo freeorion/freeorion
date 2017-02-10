@@ -2159,11 +2159,11 @@ std::string HasSpecial::Description(bool negated/* = false*/) const {
 
     if (m_capacity_low || m_capacity_high) {
         // capacity range has been specified; must indicate in description
-        std::string low_str = boost::lexical_cast<std::string>(-FLT_MAX);
+        std::string low_str = std::to_string(-FLT_MAX);
         if (m_capacity_low)
             low_str = m_capacity_low->Description();
 
-        std::string high_str = boost::lexical_cast<std::string>(FLT_MAX);
+        std::string high_str = std::to_string(FLT_MAX);
         if (m_capacity_high)
             high_str = m_capacity_high->Description();
 
@@ -2191,8 +2191,8 @@ std::string HasSpecial::Dump() const {
     }
 
     if (m_capacity_low || m_capacity_high) {
-        std::string low_dump = (m_capacity_low ? m_capacity_low->Dump() : boost::lexical_cast<std::string>(-FLT_MAX));
-        std::string high_dump = (m_capacity_high ? m_capacity_high->Dump() : boost::lexical_cast<std::string>(FLT_MAX));
+        std::string low_dump = (m_capacity_low ? m_capacity_low->Dump() : std::to_string(-FLT_MAX));
+        std::string high_dump = (m_capacity_high ? m_capacity_high->Dump() : std::to_string(FLT_MAX));
         return DumpIndent() + "HasSpecialCapacity name = \"" + name_str + "\" low = " + low_dump + " high = " + high_dump;
     }
 
@@ -4943,7 +4943,7 @@ std::string DesignHasPartClass::Description(bool negated/* = false*/) const {
     std::string high_str = std::to_string(INT_MAX);
     if (m_high) {
         high_str = m_high->ConstantExpr() ?
-                    boost::lexical_cast<std::string>(m_high->Eval()) :
+                    std::to_string(m_high->Eval()) :
                     m_high->Description();
     }
     return str(FlexibleFormat((!negated)
@@ -5381,7 +5381,7 @@ std::string Chance::Description(bool negated/* = false*/) const {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_CHANCE_PERCENTAGE")
             : UserString("DESC_CHANCE_PERCENTAGE_NOT"))
-                % boost::lexical_cast<std::string>(std::max(0.0, std::min(m_chance->Eval(), 1.0)) * 100));
+                % std::to_string(std::max(0.0, std::min(m_chance->Eval(), 1.0)) * 100));
     } else {
         return str(FlexibleFormat((!negated)
             ? UserString("DESC_CHANCE")
@@ -5517,11 +5517,11 @@ std::string MeterValue::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     std::to_string(m_low->Eval()) :
                                     m_low->Description())
-                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
+                                 : std::to_string(-Meter::LARGE_VALUE));
     std::string high_str = (m_high ? (m_high->ConstantExpr() ?
                                       std::to_string(m_high->Eval()) :
                                       m_high->Description())
-                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+                                   : std::to_string(Meter::LARGE_VALUE));
 
     if (m_low && !m_high) {
         return str(FlexibleFormat((!negated) ?
@@ -5676,13 +5676,13 @@ std::string ShipPartMeterValue::Description(bool negated/* = false*/) const {
     if (m_low)
         low_str = m_low->Description();
     else
-        low_str = boost::lexical_cast<std::string>(-Meter::LARGE_VALUE);
+        low_str = std::to_string(-Meter::LARGE_VALUE);
 
     std::string high_str;
     if (m_high)
         high_str = m_high->Description();
     else
-        high_str = boost::lexical_cast<std::string>(Meter::LARGE_VALUE);
+        high_str = std::to_string(Meter::LARGE_VALUE);
 
     std::string part_str;
     if (m_part_name) {
@@ -5846,11 +5846,11 @@ std::string EmpireMeterValue::Description(bool negated/* = false*/) const {
     std::string low_str = (m_low ? (m_low->ConstantExpr() ?
                                     std::to_string(m_low->Eval()) :
                                     m_low->Description())
-                                 : boost::lexical_cast<std::string>(-Meter::LARGE_VALUE));
+                                 : std::to_string(-Meter::LARGE_VALUE));
     std::string high_str = (m_high ? (m_high->ConstantExpr() ?
                                       std::to_string(m_high->Eval()) :
                                       m_high->Description())
-                                   : boost::lexical_cast<std::string>(Meter::LARGE_VALUE));
+                                   : std::to_string(Meter::LARGE_VALUE));
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_EMPIRE_METER_VALUE_CURRENT")
         : UserString("DESC_EMPIRE_METER_VALUE_CURRENT_NOT"))
@@ -6529,7 +6529,7 @@ bool WithinDistance::SourceInvariant() const
 
 std::string WithinDistance::Description(bool negated/* = false*/) const {
     std::string value_str = m_distance->ConstantExpr() ?
-                                boost::lexical_cast<std::string>(m_distance->Eval()) :
+                                std::to_string(m_distance->Eval()) :
                                 m_distance->Description();
     return str(FlexibleFormat((!negated)
         ? UserString("DESC_WITHIN_DISTANCE")

@@ -124,7 +124,7 @@ float ResourcePool::GroupAvailable(int object_id) const {
 
 std::string ResourcePool::Dump() const {
     std::string retval = "ResourcePool type = " + boost::lexical_cast<std::string>(m_type) +
-                         " stockpile = " + boost::lexical_cast<std::string>(m_stockpile) +
+                         " stockpile = " + std::to_string(m_stockpile) +
                          " stockpile_object_id = " + std::to_string(m_stockpile_object_id) +
                          " object_ids: ";
     for (int obj_id : m_object_ids)
