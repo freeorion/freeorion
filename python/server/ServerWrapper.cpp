@@ -15,6 +15,7 @@
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
 #include "../../universe/Enums.h"
+#include "../../universe/ValueRef.h"
 
 #include "../../server/ServerApp.h"
 #include "../../util/Directories.h"
@@ -40,6 +41,7 @@
 #include <boost/python/list.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/extract.hpp>
+#include <boost/python/stl_iterator.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 
 #ifdef FREEORION_MACOSX
@@ -204,6 +206,41 @@ namespace {
         return species_list;
     }
 
+    //Checks the condition against many objects at once.
+    //Checking many systems is more efficient because for example monster fleet plans
+    //typically uses WithinStarLaneJumps to exclude placement near empires.
+    list FilterIDsWithCondition(const Condition::ConditionBase* cond, const list &obj_ids) {
+        list permitted_ids;
+
+        Condition::ObjectSet objs;
+        boost::python::stl_input_iterator<int> end;
+        for (boost::python::stl_input_iterator<int> id(obj_ids); id != end; ++id) {
+            if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*id))
+                objs.push_back(obj);
+            else
+                ErrorLogger() << "FilterIDsWithCondition:: Passed an invalid universe object id " << *id;
+        }
+        if (objs.empty()) {
+            ErrorLogger() << "FilterIDsWithCondition:: Couldn't get any valid objects";
+            return permitted_ids;
+        }
+
+        Condition::ObjectSet permitted_objs;
+
+        // get location condition and evaluate it with the specified universe object
+        // if no location condition has been defined, all objects matches
+        if (cond)
+            cond->Eval(ScriptingContext(), permitted_objs, objs);
+        else
+            permitted_objs = objs;
+
+        for (auto &obj : permitted_objs) {
+            permitted_ids.append(obj->ID());
+        }
+
+        return permitted_ids;
+    }
+
     // Wrappers for Specials / SpecialManager functions
     double SpecialSpawnRate(const std::string special_name) {
         const Special* special = GetSpecial(special_name);
@@ -223,25 +260,15 @@ namespace {
         return special->SpawnLimit();
     }
 
-    bool SpecialLocation(const std::string special_name, int object_id) {
+    list SpecialLocations(const std::string special_name, list object_ids) {
         // get special and check if it exists
         const Special* special = GetSpecial(special_name);
         if (!special) {
             ErrorLogger() << "SpecialLocation: couldn't get special " << special_name;
-            return false;
+            return list();
         }
 
-        // get the universe object to test and check if it exists
-        std::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
-        if (!obj) {
-            ErrorLogger() << "SpecialLocation: Couldn't get object with ID " << object_id;
-            return false;
-        }
-
-        // get special location condition and evaluate it with the specified universe object
-        // if no location condition has been defined, no object matches
-        const Condition::ConditionBase* location_test = special->Location();
-        return (location_test && location_test->Eval(obj));
+        return FilterIDsWithCondition(special->Location(), object_ids);
     }
 
     bool SpecialHasLocation(const std::string special_name) {
@@ -474,18 +501,8 @@ namespace {
         int SpawnLimit()
         { return m_monster_fleet_plan->SpawnLimit(); }
 
-        bool Location(int object_id) {
-            // get the universe object to test and check if it exists
-            std::shared_ptr<UniverseObject> obj = GetUniverseObject(object_id);
-            if (!obj) {
-                ErrorLogger() << "MonsterFleetPlanWrapper::Location: Couldn't get object with ID " << object_id;
-                return false;
-            }
-
-            // get location condition and evaluate it with the specified universe object
-            // if no location condition has been defined, any object matches
-            const Condition::ConditionBase* location_test = m_monster_fleet_plan->Location();
-            return (!location_test || location_test->Eval(obj));
+        list Locations(list systems) {
+            return FilterIDsWithCondition(m_monster_fleet_plan->Location(), systems);
         }
 
         const MonsterFleetPlan& GetMonsterFleetPlan()
@@ -905,6 +922,22 @@ namespace {
         return field->ID();
     }
 
+    // Return a list of system ids of universe objects with @p obj_ids.
+    list ObjectsGetSystems(list obj_ids) {
+        list py_systems;
+        boost::python::stl_input_iterator<int> end;
+        for (boost::python::stl_input_iterator<int> id(obj_ids);
+             id != end; ++id) {
+            if (std::shared_ptr<const UniverseObject> obj = GetUniverseObject(*id)) {
+                py_systems.append(obj->SystemID());
+            } else {
+                ErrorLogger() << "Passed an invalid universe object id " << *id;
+                py_systems.append(INVALID_OBJECT_ID);
+            }
+        }
+        return py_systems;
+    }
+
     // Wrappers for System class member functions
     StarType SystemGetStarType(int system_id) {
         std::shared_ptr<System> system = GetSystem(system_id);
@@ -1217,7 +1250,7 @@ namespace FreeOrionPython {
             .def("ship_designs",        &MonsterFleetPlanWrapper::ShipDesigns)
             .def("spawn_rate",          &MonsterFleetPlanWrapper::SpawnRate)
             .def("spawn_limit",         &MonsterFleetPlanWrapper::SpawnLimit)
-            .def("location",            &MonsterFleetPlanWrapper::Location);
+            .def("locations",           &MonsterFleetPlanWrapper::Locations);
 
         def("get_universe",                         GetUniverse,                    return_value_policy<reference_existing_object>());
         def("get_all_empires",                      GetAllEmpires);
@@ -1249,7 +1282,7 @@ namespace FreeOrionPython {
 
         def("special_spawn_rate",                   SpecialSpawnRate);
         def("special_spawn_limit",                  SpecialSpawnLimit);
-        def("special_location",                     SpecialLocation);
+        def("special_locations",                    SpecialLocations);
         def("special_has_location",                 SpecialHasLocation);
         def("get_all_specials",                     GetAllSpecials);
 
@@ -1290,6 +1323,8 @@ namespace FreeOrionPython {
         def("create_monster",                       CreateMonster);
         def("create_field",                         CreateField);
         def("create_field_in_system",               CreateFieldInSystem);
+
+        def("objs_get_systems",                     ObjectsGetSystems);
 
         def("sys_get_star_type",                    SystemGetStarType);
         def("sys_set_star_type",                    SystemSetStarType);

@@ -286,7 +286,8 @@ def stitching_positions(p1, p2):
     Returns a list of positions between p1 and p2 between MIN_SYSTEM_SEPARATION and MAX_STARLANE_LENGTH apart
     """
     if 2 * universe_tables.MIN_SYSTEM_SEPARATION >= universe_tables.MAX_STARLANE_LENGTH:
-        util.report_error("MAX_STARLANE_LENGTH must be twice MIN_SYSTEM_SEPARATION to allow extra positions to be added to enforce MAX_STARLANE_LENGTH")
+        util.report_error("MAX_STARLANE_LENGTH must be twice MIN_SYSTEM_SEPARATION to "
+                          "allow extra positions to be added to enforce MAX_STARLANE_LENGTH")
         return []
 
     max_dist = universe_tables.MAX_STARLANE_LENGTH
@@ -377,27 +378,6 @@ def calc_universe_width(shape, size):
     elif shape == fo.galaxyShape.disc:
         width *= 1.2
     return width
-
-
-def get_systems_within_jumps(origin_system, jumps):
-    """
-    Returns all systems within jumps jumps of system origin_system (including origin_system).
-    If jumps is 0, return list that only contains system origin_system.
-    If jumps is negative, return empty list.
-    """
-    if jumps < 0:
-        return []
-    matching_systems = [origin_system]
-    next_origin_systems = [origin_system]
-    while jumps > 0:
-        origin_systems = list(next_origin_systems)
-        next_origin_systems = []
-        for system in origin_systems:
-            neighbor_systems = [s for s in fo.sys_get_starlanes(system) if s not in matching_systems]
-            next_origin_systems.extend(neighbor_systems)
-            matching_systems.extend(neighbor_systems)
-        jumps -= 1
-    return matching_systems
 
 
 def spiral_galaxy_calc_positions(positions, adjacency_grid, arms, size, width):

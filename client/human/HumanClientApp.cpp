@@ -997,7 +997,7 @@ void HumanClientApp::HandleTurnUpdate()
 { UpdateCombatLogManager(); }
 
 void HumanClientApp::UpdateCombatLogManager() {
-    boost::optional<std::vector<int>> incomplete_ids { GetCombatLogManager().IncompleteLogIDs() };
+    boost::optional<std::vector<int>> incomplete_ids = GetCombatLogManager().IncompleteLogIDs();
     if (incomplete_ids)
         m_networking.SendMessage(RequestCombatLogsMessage(PlayerID(), *incomplete_ids));
 }

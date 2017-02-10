@@ -3,7 +3,7 @@ import random
 
 import freeorion as fo
 
-from galaxy import get_systems_within_jumps
+from galaxy_topology import get_systems_within_jumps
 from starsystems import star_types_real, pick_star_type
 from planets import calc_planet_size, calc_planet_type, planet_sizes_real, planet_types_real
 from names import get_name_list, random_name
@@ -71,19 +71,9 @@ def count_planets_in_systems(systems, planet_types_filter=HS_ACCEPTABLE_PLANET_T
     return num_planets
 
 
-def systems_min_jumps_away_from(systems_pool, min_jumps, chosen_systems):
-    """
-    Generator that returns systems randomly picked from a pool that are at least a certain jump distance away
-    from the group systems listed in chosen_systems.
-    """
-    # on generator initialization shuffle our pool of systems to randomize the order in which the systems are returned
-    random.shuffle(systems_pool)
-    # return systems that meet our condition until we have exhausted our pool
-    for candidate in systems_pool:
-        # check if our candidate is at least the specified min jump distance away from the systems in chosen_systems
-        # if yes, return candidate, otherwise continue with next candidate
-        if all(fo.jump_distance(candidate, system) >= min_jumps for system in chosen_systems):
-            yield candidate
+def calculate_home_system_merit(system):
+    """Calculate the system's merit as the number of planets within HS_VICINTIY_RANGE."""
+    return count_planets_in_systems(get_systems_within_jumps(system, HS_VICINITY_RANGE))
 
 
 def min_planets_in_vicinity_limit(num_systems):
@@ -95,26 +85,111 @@ def min_planets_in_vicinity_limit(num_systems):
     return min(HS_MIN_PLANETS_IN_VICINITY_TOTAL, num_systems * HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM)
 
 
-def find_home_systems_for_min_jump_distance(systems_pool, min_jumps):
-    """
-    Returns a list of home systems which are at least the specified minimum number of jumps apart,
-    picked randomly from the specified pool.
-    """
-    # make several attempts to find systems that match the condition of being at least min_jumps apart
-    # set the number of attempts to the number of systems in the pool, or 100 at max
-    attempts = min(100, len(systems_pool))
-    # store the result of all attempts in a list, so we can pick the attempt that yielded the largest set of systems
-    accepted_list = []
-    while attempts:
-        accepted = []
-        # get candidates that are at least min_jumps away from the systems we already accepted
-        for candidate in systems_min_jumps_away_from(systems_pool, min_jumps, accepted):
-            accepted.append(candidate)  # add the candidate to our list of accepted systems
-        # add the result of the current attempt to our list and continue with next attempt
-        accepted_list.append(accepted)
-        attempts -= 1
-    # return the result of the attempt that yielded the most systems
-    return max(accepted_list, key=len)
+class HomeSystemFinder(object):
+    """Finds a set of home systems with a least ''num_home_systems'' systems."""
+    def __init__(self, _num_home_systems):
+        # cache of sytem merits
+        self.system_merit = {}
+        self.num_home_systems = _num_home_systems
+
+    def find_home_systems_for_min_jump_distance(self, systems_pool, min_jumps):
+        """
+        Return a good list of home systems or an empty list if there are fewer than num_home_systems in the pool.
+
+        A good list of home systems are at least the specified minimum number of jumps apart,
+        with the best minimum system merit of all such lists picked randomly from the ''systems_pool''.
+
+        Algorithm:
+        Make several attempts to find systems that match the condition
+        of being at least min_jumps apart.
+        Use the minimum merit of the best num_home_system systems found
+        to compare the candidate with the current best set of systems.
+        On each attempt use the minimum merit of the current best set of home
+        systems to truncate the pool of candidates.
+        """
+
+        # precalculate the system merits
+        for system in systems_pool:
+            if system not in self.system_merit:
+                self.system_merit[system] = calculate_home_system_merit(system)
+
+        # The list of merits and systems sorted in descending order by merit.
+        all_merit_system = sorted([(self.system_merit[s], s)
+                                   for s in systems_pool], reverse=True)
+
+        current_merit_lower_bound = 0
+        best_candidate = []
+
+        # Cap the number of attempts when the found number of systems is less than the target
+        # num_home_systems because this indicates that the min_jumps is too large and/or the
+        # systems_pool is too small to ever succeed.
+
+        # From experimentation with cluster and 3 arm spiral galaxies, with low, med and high
+        # starlane density and (number of systems, number of home systems) pairs of (9999, 399),
+        # (999, 39) and (199, 19) the following was observered.  The distribution of candidate
+        # length is a normal random variable with standard deviation approximately equal to
+
+        # expected_len_candidate_std = (len(systems) ** (1.0/2.0)) * 0.03
+
+        # which is about 1 for 1000 systems.  It is likely that anylen(candidate) is within 1
+        # standard deviation of the expected len(candidate)
+
+        # If we are within the MISS_THRESHOLD of the target then try up to num_complete_misses more times.
+        MISS_THRESHOLD = 3
+        num_complete_misses_remaining = 4
+
+        # Cap the number of attempts to the smaller of the number of systems in the pool, or 100
+        attempts = min(100, len(systems_pool))
+
+        while attempts and num_complete_misses_remaining:
+            # use a local pool of all candidate systems better than the worst threshold merit
+            all_merit_system = [(m, s) for (m, s) in all_merit_system if m > current_merit_lower_bound]
+            local_pool = {s for (m, s) in all_merit_system}
+
+            if len(local_pool) < self.num_home_systems:
+                if not best_candidate:
+                    print ("Failing in find_home_systems_for_min_jump_distance because "
+                           "current_merit_lower_bound = {} trims local pool to {} systems "
+                           "which is less than num_home_systems {}.".format(
+                               current_merit_lower_bound, len(local_pool), self.num_home_systems))
+                break
+
+            attempts = min(attempts - 1, len(local_pool))
+
+            candidate = []
+            while local_pool:
+                member = random.choice(list(local_pool))
+                candidate.append(member)
+
+                # remove all neighbors from the local pool
+                local_pool -= set(get_systems_within_jumps(member, min_jumps))
+
+            # Count complete misses when number of candidates is not close to the target.
+            if len(candidate) < (self.num_home_systems - MISS_THRESHOLD):
+                num_complete_misses_remaining -= 1
+
+            if len(candidate) < self.num_home_systems:
+                continue
+
+            # Calculate the merit of the current attempt.  If it is the best so far
+            # keep it and update the merit_threshold
+            merit_system = sorted([(self.system_merit[s], s)
+                                   for s in candidate], reverse=True)[:self.num_home_systems]
+
+            (merit, system) = merit_system[-1]
+
+            # If we have a better candidate, set the new lower bound and try for a better candidate.
+            if merit > current_merit_lower_bound:
+                print ("Home system set merit lower bound improved from {} to "
+                       "{}".format(current_merit_lower_bound, merit))
+                current_merit_lower_bound = merit
+                best_candidate = [s for (_, s) in merit_system]
+
+                # Quit sucessfully if the lowest merit system meets the minimum threshold
+                if merit >= min_planets_in_vicinity_limit(get_systems_within_jumps(system, HS_VICINITY_RANGE)):
+                    break
+
+        return best_candidate
 
 
 def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_distance):
@@ -126,6 +201,8 @@ def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_dista
     This parameter contains a list of tuples, each tuple has a pool of systems as first element and a description
     of the pool for logging purposes as second element.
     """
+
+    finder = HomeSystemFinder(num_home_systems)
     # try to find home systems, decrease the min jumps until enough systems can be found, or the jump distance drops
     # below the specified minimum jump distance (which means failure)
     while jump_distance >= min_jump_distance:
@@ -142,7 +219,7 @@ def find_home_systems(num_home_systems, pool_list, jump_distance, min_jump_dista
                 continue
 
             # try to pick home systems
-            home_systems = find_home_systems_for_min_jump_distance(pool, jump_distance)
+            home_systems = finder.find_home_systems_for_min_jump_distance(pool, jump_distance)
             # check if we got enough
             if len(home_systems) >= num_home_systems:
                 # yes, we got what we need, return the home systems we found
@@ -280,7 +357,8 @@ def compile_home_system_list(num_home_systems, systems, gsd):
             pool_matching_sys_limit.append(system)
             if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
                 pool_matching_sys_and_planet_limit.append(system)
-    print len(pool_matching_sys_and_planet_limit), "systems meet the min systems and planets in the near vicinity limit"
+    print (len(pool_matching_sys_and_planet_limit),
+           "systems meet the min systems and planets in the near vicinity limit")
     print len(pool_matching_sys_limit), "systems meet the min systems in the near vicinity limit"
 
     # now try to pick the requested number of home systems
@@ -320,8 +398,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     if len(home_systems) > num_home_systems:
         # yes: calculate the number of planets in the near vicinity of each system
         # and store that value with each system in a map
-        hs_planets_in_vicinity_map = {s: count_planets_in_systems(get_systems_within_jumps(s, HS_VICINITY_RANGE))
-                                      for s in home_systems}
+        hs_planets_in_vicinity_map = {s: calculate_home_system_merit(s) for s in home_systems}
         # sort the home systems by the number of planets in their near vicinity using the map
         # now only pick the number of home systems we need, taking those with the highest number of planets
         home_systems = sorted(home_systems, key=hs_planets_in_vicinity_map.get, reverse=True)[:num_home_systems]

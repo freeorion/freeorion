@@ -115,7 +115,6 @@ def generate_monsters(monster_freq, systems):
     tracked_plan_tries = {name: 0 for name in nest_name_map.values()}
     tracked_plan_counts = {name: 0 for name in nest_name_map.values()}
     tracked_plan_valid_locations = {fp: 0 for fp in fleet_plans if fp.name() in tracked_plan_counts}
-    tracked_nest_valid_locations = {nest: 0 for nest in nest_name_map}
 
     if not fleet_plans:
         return
@@ -123,24 +122,21 @@ def generate_monsters(monster_freq, systems):
     universe = fo.get_universe()
 
     # Fleet plans that include ships capable of altering starlanes.
-    ## @content_tag{CAN_ALTER_STARLANES} universe_generator special handling for fleets containing a hull design with this tag.
+    # @content_tag{CAN_ALTER_STARLANES} universe_generator special handling for fleets containing a hull design with this tag.
     fleet_can_alter_starlanes = {fp for fp in fleet_plans
                                  if any([universe.getGenericShipDesign(design).hull_type.hasTag("CAN_ALTER_STARLANES")
                                          for design in fp.ship_designs()])}
 
     # dump a list of all monster fleets meeting these conditions and their properties to the log
     print "Monster fleets available for generation at game start:"
+    fp_location_cache = {}
     for fleet_plan in fleet_plans:
         print "...", fleet_plan.name(), ": spawn rate", fleet_plan.spawn_rate(),
         print "/ spawn limit", fleet_plan.spawn_limit(),
         print "/ effective chance", basic_chance * fleet_plan.spawn_rate(),
-
-        if len(systems) < 100:
-            # Note: The WithinStarlaneJumps condition in fp.location()
-            # is the most time costly function in universe generation
-            print "/ can be spawned at", len([s for s in systems if fleet_plan.location(s)]), "systems"
-        else:
-            print  # to terminate the print line
+        fp_location_cache[fleet_plan] = set(fleet_plan.locations(systems))
+        print ("/ can be spawned at", len(fp_location_cache[fleet_plan]),
+               "of", len(systems), "systems")
         if fleet_plan.name() in nest_name_map.values():
             statistics.tracked_monsters_chance[fleet_plan.name()] = basic_chance * fleet_plan.spawn_rate()
 
@@ -148,29 +144,25 @@ def generate_monsters(monster_freq, systems):
     # required to prevent their placement from disjoining the map
     starlane_altering_monsters = StarlaneAlteringMonsters(systems)
 
+    # collect info for tracked monster nest valid locations
+    planets = [p for s in systems for p in fo.sys_get_planets(s)]
+    tracked_nest_valid_locations = {nest: len(fo.special_locations(nest, planets))
+                                    for nest in nest_name_map}
+
     # for each system in the list that has been passed to this function, find a monster fleet that can be spawned at
     # the system and which hasn't already been added too many times, then attempt to add that monster fleet by
     # testing the spawn rate chance
+    random.shuffle(systems)
     for system in systems:
-        # collect info for tracked monster nest valid locations
-        for planet in fo.sys_get_planets(system):
-            for nest in tracked_nest_valid_locations:
-                # print "\t tracked monster check planet: %d size: %s for nest: %20s  | result: %s"
-                # % (planet, fo.planet_get_size(planet), nest, fo.special_location(nest, planet))
-                if fo.special_location(nest, planet):
-                    tracked_nest_valid_locations[nest] += 1
-
         # collect info for tracked monster valid locations
         for fp in tracked_plan_valid_locations:
-            if fp.location(system):
+            if system in fp_location_cache[fp]:
                 tracked_plan_valid_locations[fp] += 1
 
         # filter out all monster fleets whose location condition allows this system and whose counter hasn't reached 0.
-        # Note: The WithinStarlaneJumps condition in fp.location() is
-        # the most time costly function in universe generation.
         suitable_fleet_plans = [fp for fp in fleet_plans
-                                if spawn_limits[fp]
-                                and fp.location(system)
+                                if system in fp_location_cache[fp]
+                                and spawn_limits[fp]
                                 and (fp not in fleet_can_alter_starlanes
                                      or starlane_altering_monsters.can_place_at(system, fp))]
         # if there are no suitable monster fleets for this system, continue with the next
@@ -203,8 +195,8 @@ def generate_monsters(monster_freq, systems):
             # decrement counter for this monster fleet
             spawn_limits[fleet_plan] -= 1
 
-        except MapGenerationError as e:
-            report_error(str(e))
+        except MapGenerationError as err:
+            report_error(str(err))
             continue
 
     print "Actual # monster fleets placed: %d; Total Placement Expectation: %.1f" % (actual_tally, expectation_tally)
