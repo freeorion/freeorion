@@ -224,7 +224,7 @@ def generateOrders():  # pylint: disable=invalid-name
         declare_war_on_all()
         human_player = fo.empirePlayerID(1)
         greet = diplomatic_corp.get_first_turn_greet_message()
-        fo.sendChatMessage(human_player, '%s ([[%s]]): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
+        fo.sendChatMessage(human_player, '%s (%s): [[%s]]' % (empire.name, get_trait_name_aggression(foAIstate.character), greet))
 
     # turn cleanup !!! this was formerly done at start of every turn -- not sure why
     foAIstate.split_new_fleets()
