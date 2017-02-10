@@ -3,13 +3,15 @@ these methods in turn activate other portions of the python AI code."""
 import pickle  # Python object serialization library
 import sys
 import random
-
-from common.configure_logging import convenience_function_references_for_logger
-(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 import logging
-logger = logging.getLogger(__name__)
+
+from common.configure_logging import redirect_logging_to_freeorion_logger, convenience_function_references_for_logger
 
 import freeOrionAIInterface as fo  # interface used to interact with FreeOrion AI client  # pylint: disable=import-error
+
+log_level = logging.DEBUG if fo.getOptionsDBOptionBool("verbose-logging") else logging.INFO
+redirect_logging_to_freeorion_logger(log_level)
+(debug, info, warn, error, fatal) = convenience_function_references_for_logger()
 
 from common.option_tools import parse_config
 parse_config(fo.getOptionsDBOptionStr("ai-config"), fo.getUserConfigDir())

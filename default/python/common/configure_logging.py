@@ -81,7 +81,7 @@ log.
 """
 import sys
 import logging
-import freeorion_logger  # pylint: disable=import-error
+import freeorion_logger  # FreeOrion logger interface pylint: disable=import-error
 
 
 class _stdoutLikeStream(object):
@@ -150,7 +150,7 @@ def _create_narrow_handler(level):
     return h
 
 
-def redirect_logging_to_freeorion_logger():
+def redirect_logging_to_freeorion_logger(initial_log_level=logging.DEBUG):
     """Redirect stdout, stderr and the logging.logger to hosting process' freeorion_logger."""
 
     if not hasattr(redirect_logging_to_freeorion_logger, "only_redirect_once"):
@@ -166,12 +166,11 @@ def redirect_logging_to_freeorion_logger():
         logger.addHandler(_create_narrow_handler(logging.FATAL))
         logger.addHandler(_create_narrow_handler(logging.NOTSET))
 
-        logger.setLevel(logging.DEBUG)
-        logger.info("Root logger is redirected to ai process.")
+        logger.setLevel(initial_log_level)
+        logger.info("The python logger is initialized with a log level of %s",
+                    logging.getLevelName(logger.getEffectiveLevel()))
 
         redirect_logging_to_freeorion_logger.only_redirect_once = True
-
-redirect_logging_to_freeorion_logger()
 
 
 def convenience_function_references_for_logger(name=""):
