@@ -1,10 +1,9 @@
 # This Python file uses the following encoding: utf-8
 import re
-import sys
+import logging
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from functools import wraps
-from traceback import format_exc
 
 
 # color wrappers for chat:
@@ -94,27 +93,41 @@ def chat_on_error(function):
         try:
             return function(*args, **kw)
         except Exception as e:
-            print_error(e, location=function.__name__, trace=False)
+            logging.getLogger().exception(e)
             raise
     return wrapper
 
 
-def print_error(exception, location=None, trace=True):
-    """
-    Sends error to host chat and print its to log.
-    :param exception: message text or exception
-    :type exception: Exception
-    :param location: text that describes error location
-    :param trace: flag if print traceback
-    """
-    print "possible recipients host status: %s" % [(x, fo.playerIsHost(x)) for x in fo.allPlayerIDs()]
-    if location:
-        message = '%s in "%s": "%s"' % (UserString('AI_ERROR_MSG', 'AI_Error: AI script error'), location, exception)
-    else:
-        message = '%s: "%s"' % (fo.userString('AI_ERROR_MSG'), exception)
-    chat_human(RED % message)
-    if trace:
-        sys.stderr.write(format_exc())
+class ConsoleLogHandler(logging.Handler):
+    """A log handler to send errors to the console. """
+    def emit(self, record):
+        """Emit a record.
+
+        If a formatter is specified, it is used to format the record and then sent to human players. """
+        try:
+            human_ids = [x for x in fo.allPlayerIDs() if fo.playerIsHost(x)]
+            if not human_ids:
+                return
+            msg = self.format(record)
+
+            for human_id in human_ids:
+                fo.sendChatMessage(human_id, msg)
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        # Hide errors from within the ConsoleLogHandler
+        except:
+            self.handleError(record)
+
+# Create the log handler, format it and attach it to the root logger
+console_handler = ConsoleLogHandler()
+
+console_handler.setFormatter(
+    logging.Formatter(RED % ('%s : %%(filename)s:%%(funcName)s():%%(lineno)d  - %%(message)s'
+                             % fo.userString('AI_ERROR_MSG'))))
+
+console_handler.setLevel(logging.ERROR)
+
+logging.getLogger().addHandler(console_handler)
 
 
 def remove_tags(message):

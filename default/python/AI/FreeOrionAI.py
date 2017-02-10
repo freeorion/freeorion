@@ -31,7 +31,7 @@ import ResearchAI
 import ResourcesAI
 import TechsListsAI
 from AIDependencies import INVALID_ID
-from freeorion_tools import chat_on_error, print_error, handle_debug_chat, AITimer, init_handlers
+from freeorion_tools import chat_on_error, handle_debug_chat, AITimer, init_handlers
 from common.listeners import listener
 from character.character_module import Aggression
 from character.character_strings_module import get_trait_name_aggression, possible_capitals
@@ -248,7 +248,7 @@ def generateOrders():  # pylint: disable=invalid-name
             # not invalidate doneTurn()
             fo.doneTurn()
         except Exception as e:
-            print_error(e)
+            error(e, exc_info=True)
         return
 
     if empire.eliminated:
@@ -258,7 +258,7 @@ def generateOrders():  # pylint: disable=invalid-name
             # on last-seen gamestate if nothing can be ordered anyway...
             fo.doneTurn()
         except Exception as e:
-            print_error(e)
+            error(e, exc_info=True)
         return
 
     # This code block is required for correct AI work.
@@ -335,7 +335,7 @@ def generateOrders():  # pylint: disable=invalid-name
             action()
             main_timer.stop()
         except Exception as e:
-            print_error(e, location=action.__name__)
+            error(e, exc_info=True)
     main_timer.stop_print_and_clear()
     turn_timer.stop_print_and_clear()
     turn_timer.start("Server_Processing")
@@ -343,7 +343,7 @@ def generateOrders():  # pylint: disable=invalid-name
     try:
         fo.doneTurn()
     except Exception as e:
-        print_error(e)  # TODO move it to cycle above
+        error(e, exc_info=True)  # TODO move it to cycle above
 
     if using_statprof:
         try:

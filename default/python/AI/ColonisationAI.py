@@ -13,7 +13,7 @@ import TechsListsAI
 import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
-from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, print_error
+from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer
 from AIDependencies import (INVALID_ID, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP_MODIFIED_BY_SPECIES,
                             POP_SIZE_MOD_MAP_NOT_MODIFIED_BY_SPECIES)
 
@@ -1352,7 +1352,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
                                                                   starting_system=sys_id, species=this_spec,
                                                                   fleet_pool_set=fleet_pool, fleet_list=found_fleets)
         except Exception as e:
-            print_error(e)
+            error(e, exc_info=True)
             continue
         if not this_fleet_list:
             fleet_pool.update(found_fleets)  # just to be safe

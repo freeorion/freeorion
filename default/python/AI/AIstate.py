@@ -14,7 +14,7 @@ from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map, print_error
+from freeorion_tools import dict_from_map
 from universe_object import System
 from AIDependencies import INVALID_ID
 from character.character_module import create_character, Aggression
@@ -52,7 +52,7 @@ class ConversionError(Exception):
     Automatically logs and chats to the host if raised.
     """
     def __init__(self, msg=""):
-        print_error(msg)
+        error(msg, exc_info=True)
 
 
 def convert_to_version(state, version):

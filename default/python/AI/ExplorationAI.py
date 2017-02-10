@@ -5,7 +5,7 @@ from EnumsAI import MissionType
 import universe_object
 import MoveUtilsAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map, print_error
+from freeorion_tools import dict_from_map
 from AIDependencies import INVALID_ID
 
 from common.configure_logging import convenience_function_references_for_logger
@@ -58,7 +58,7 @@ def assign_scouts_to_explore_systems():
     if INVALID_ID in check_list:  # shouldn't normally happen, unless due to bug elsewhere
         for sys_list, name in [(foAI.foAIstate.needsEmergencyExploration, "foAI.foAIstate.needsEmergencyExploration"), (needs_vis, "needs_vis"), (explore_list, "explore_list")]:
             if INVALID_ID in sys_list:
-                print_error("INVALID_ID found in " + name)
+                error("INVALID_ID found in " + name, exc_info=True)
     needs_coverage = [sys_id for sys_id in check_list if sys_id not in already_covered and sys_id != INVALID_ID]  # emergency coverage can be due to invasion detection trouble, etc.
     print "Needs coverage: %s" % needs_coverage
 
