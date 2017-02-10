@@ -1,6 +1,6 @@
 import random
 
-from common import configure_logging
+from common.configure_logging import convenience_function_references_for_logger
 
 import freeorion as fo
 
@@ -15,6 +15,8 @@ from specials import distribute_specials
 from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
 import universe_statistics
+
+(debug, info, warning, error, fatal) = convenience_function_references_for_logger()
 
 
 class PyGalaxySetupData:

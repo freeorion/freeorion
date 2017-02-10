@@ -1,5 +1,4 @@
-"""
-configure_logging redirects print and the logger to use the freeorion server.
+"""configure_logging redirects print and the logger to use the freeorion server.
 
 Output redirected to the freeorion server prints in the appropriate log:
 freeorion.log freeoriond.log or AI_<N>.log.
@@ -71,7 +70,13 @@ INFO    - used to report game state and progress.
 DEBUG   - used for low-level implementation or calculation details.
           For example the calculations when rating a fleet.
 
-For more information see https://docs.python.org/2/howto/logging.html
+For more information about the python standard library logger see
+https://docs.python.org/2/howto/logging.html
+
+The function convenience_function_references_for_logger(name) returns the
+specific logging functions from the logger ''name'' which can be bound to
+convenient local functions, to avoid calling name.error() to produce an error
+log.
 
 """
 import sys
@@ -145,10 +150,10 @@ def _create_narrow_handler(level):
     return h
 
 
-def _redirect_logging_to_freeorion_logger():
+def redirect_logging_to_freeorion_logger():
     """Redirect stdout, stderr and the logging.logger to hosting process' freeorion_logger."""
 
-    if not hasattr(_redirect_logging_to_freeorion_logger, "only_redirect_once"):
+    if not hasattr(redirect_logging_to_freeorion_logger, "only_redirect_once"):
         sys.stdout = _stdoutLikeStream()
         sys.stderr = _stderrLikeStream()
         print 'Python stdout and stderr are redirected to ai process.'
@@ -164,6 +169,12 @@ def _redirect_logging_to_freeorion_logger():
         logger.setLevel(logging.DEBUG)
         logger.info("Root logger is redirected to ai process.")
 
-        _redirect_logging_to_freeorion_logger.only_redirect_once = True
+        redirect_logging_to_freeorion_logger.only_redirect_once = True
 
-_redirect_logging_to_freeorion_logger()
+redirect_logging_to_freeorion_logger()
+
+
+def convenience_function_references_for_logger(name=""):
+    """Return a tuple (debug, info, warning, error, fatal) of the ''name'' logger's convenience functions."""
+    logger = logging.getLogger(name)
+    return (logger.debug, logger.info, logger.warning, logger.error, logger.critical)
