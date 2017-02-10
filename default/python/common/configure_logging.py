@@ -81,7 +81,35 @@ log.
 """
 import sys
 import logging
-import freeorion_logger  # FreeOrion logger interface pylint: disable=import-error
+
+try:
+    import freeorion_logger  # FreeOrion logger interface pylint: disable=import-error
+except ImportError as e:
+
+    # Create an alternative logger for use in testing when the server is unavailable
+    class _FreeOrionLoggerForTest(object):
+        """A stub freeorion_logger for testing"""
+        @staticmethod
+        def debug(msg):
+            print msg
+
+        @staticmethod
+        def info(msg):
+            print msg
+
+        @staticmethod
+        def warn(msg):
+            print msg
+
+        @staticmethod
+        def error(msg):
+            print >> sys.stderr, msg
+
+        @staticmethod
+        def fatal(msg):
+            print >> sys.stderr, msg
+
+    freeorion_logger = _FreeOrionLoggerForTest()
 
 
 class _stdoutLikeStream(object):
