@@ -506,30 +506,39 @@ namespace {
         float distance;
     };
 
+    // Implement the remaining relational operators.
+    using namespace std::rel_ops;
+
+    /** Return the SupplyMerit of a single universe object. This external "constructor" wrapper
+        that returns none on failure avoids having to throw on error in the real constrctor.*/
+    boost::optional<SupplyMerit> CalculateSupplyMerit(const std::shared_ptr<UniverseObject>& obj) {
+        // Check is it owned with a valid id and a supply meter.
+        if ((obj->SystemID() == INVALID_OBJECT_ID)
+            || obj->Unowned()
+            || !obj->GetMeter(METER_SUPPLY))
+        { return boost::none; }
+
+        // TODO: Why is this NextTurn Supply?
+        float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
+        return SupplyMerit(supply_range, obj->Owner(), obj->SystemID());
+    }
 
     /** Return a map from empire id to the stealth and supply of a supply generating object.*/
-    boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> CalculateEmpireToStealthSupply(const System& system) {
+    boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>>
+    CalculateEmpireToStealthSupply(const System& system) {
         boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>>
             empire_to_stealth_supply = boost::none;
 
         // as of this writing, only planets can generate supply propagation
         for (auto obj : Objects().FindObjects(system.PlanetIDs())) {
-            std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(obj);
-            // Check is it an owned planet with a valid id and a supply meter.
-            if (!planet
-                || (planet->SystemID() == INVALID_OBJECT_ID)
-                || planet->Unowned()
-                || !obj->GetMeter(METER_SUPPLY))
-            { continue; }
+            auto merit = CalculateSupplyMerit(obj);
+            if(!merit)
+                continue;
 
-            // TODO: Why is this NextTurn Supply?
-            float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
             float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
-            SupplyMerit merit(supply_range, planet->Owner(), system.SystemID());
-
             if (!empire_to_stealth_supply)
                 empire_to_stealth_supply = std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>();
-            (*empire_to_stealth_supply)[planet->Owner()].insert({stealth, merit});
+            (*empire_to_stealth_supply)[obj->Owner()].insert({stealth, *merit});
         }
 
         return empire_to_stealth_supply;
