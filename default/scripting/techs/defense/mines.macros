@@ -34,12 +34,12 @@ EG_SYSTEM_MINES
         EffectsGroup
             scope = And [
                 Ship
-            [[SYSTEM_MINES_SCOPE_@3@]]
-            Or [
-                Not Unowned
-                And [
-                    Unowned
-                    Not HasTag name = "UNOWNED_FRIENDLY"
+                [[SYSTEM_MINES_SCOPE_@3@]]
+                Or [
+                    Not Unowned
+                    And [
+                        Unowned
+                        Not HasTag name = "UNOWNED_FRIENDLY"
                     ]
                 ]
                 Structure low = @1@ + 0.0001
@@ -73,11 +73,11 @@ EG_SYSTEM_MINES
             scope = And [
                 Ship
                 [[SYSTEM_MINES_SCOPE_@3@]]
-            Or [
-                Not Unowned
-                And [
-                    Unowned
-                    Not HasTag name = "UNOWNED_FRIENDLY"
+                Or [
+                    Not Unowned
+                    And [
+                        Unowned
+                        Not HasTag name = "UNOWNED_FRIENDLY"
                     ]
                 ]
                 Structure low = @1@ + 0.0001
