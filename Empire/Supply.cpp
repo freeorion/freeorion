@@ -461,11 +461,56 @@ namespace {
         return bonus;
     }
 
+    /** SupplyMerit is the merit of a single supply source in a system.  In contested systems,
+        higher merit sources will win against lower merit sources.
+
+        A merit can be < zero merit if it's distance portion is positive, or bonus is negative
+    */
+    class SupplyMerit {
+        public:
+        SupplyMerit(float _range, int empire_id, int system_id) :
+            range{_range},
+            bonus{ComputeInitialSupplyBonuses(empire_id, system_id)},
+            distance(0.0f)
+        {}
+
+        SupplyMerit() :
+            range{0.0f},
+            bonus{0.0f},
+            distance(0.0f)
+        {}
+
+        SupplyMerit OneJumpLessMerit(float _dist) const {
+            auto other     = SupplyMerit();
+            other.range    = range - 1;
+            other.distance = distance + _dist;
+            return other;
+        }
+
+        friend bool operator<(const SupplyMerit& l, const SupplyMerit& r) {
+            // Note:: distance is reverse sorted to penalize distance sources.
+            return std::tie(l.range, l.bonus, r.distance) < std::tie(r.range, r.bonus, l.distance);
+        }
+
+        friend bool operator==(const SupplyMerit& l, const SupplyMerit& r) {
+            return std::tie(l.range, l.bonus, l.distance) == std::tie(r.range, r.bonus, r.distance);
+        }
+
+        private:
+        // Number of jumps that the supply can propagate.
+        // TODO Should this be unsigned int?
+        float range;
+        // A per system opaque bonus value;
+        float bonus;
+        // The distance along jumps that this supply source has already propagated,
+        float distance;
+    };
 
 
     /** Return a map from empire id to the stealth and supply of a supply generating object.*/
-    boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>> CalculateEmpireToStealthSupply(const System& system) {
-        boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>> empire_to_stealth_supply = boost::none;
+    boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> CalculateEmpireToStealthSupply(const System& system) {
+        boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>>
+            empire_to_stealth_supply = boost::none;
 
         // as of this writing, only planets can generate supply propagation
         for (auto obj : Objects().FindObjects(system.PlanetIDs())) {
@@ -480,12 +525,11 @@ namespace {
             // TODO: Why is this NextTurn Supply?
             float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
             float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
-            // TODO: Where is the best place to apply the bonus?
-            stealth += ComputeInitialSupplyBonuses(planet->Owner(), system.SystemID());
+            SupplyMerit merit(supply_range, planet->Owner(), system.SystemID());
 
             if (!empire_to_stealth_supply)
-                empire_to_stealth_supply = std::unordered_map<int, std::set<std::pair<float, float>>>();
-            (*empire_to_stealth_supply)[planet->Owner()].insert({stealth, supply_range});
+                empire_to_stealth_supply = std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>();
+            (*empire_to_stealth_supply)[planet->Owner()].insert({stealth, merit});
         }
 
         return empire_to_stealth_supply;
@@ -493,8 +537,8 @@ namespace {
 
 
     /** Return a map from system id to empire id to the stealth and supply of a supply generating object.*/
-    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> CalculateSystemToEmpireToStealthSupply() {
-        std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> system_to_empire_to_stealth_supply;
+    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> CalculateSystemToEmpireToStealthSupply() {
+        std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> system_to_empire_to_stealth_supply;
 
         for (auto system_it : Objects().ExistingSystems()) {
             if (auto system = std::dynamic_pointer_cast<const System>(system_it.second)) {
@@ -600,7 +644,7 @@ namespace {
     */
     boost::optional<int> CalculateBlockadingColonyEmpireID(
         const System& system,
-        const boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>>& empire_to_stealth_supply,
+        const boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>>& empire_to_stealth_supply,
         const boost::optional<std::unordered_set<int>>& contesting_fleets_empire_ids)
     {
         // Check that only a single empire has supply in system.
@@ -631,7 +675,7 @@ namespace {
         determined by an empire, because empires don't have complete visibility.
     */
     std::unordered_map<int, std::unordered_set<int>> CalculateSystemToBlockadingColonyEmpireIDs(
-        const std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>>&
+        const std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>>&
         system_to_empire_to_stealth_supply,
         const std::unordered_map<int, std::unordered_set<int>>& system_to_contesting_fleets_empire_ids)
     {
@@ -662,7 +706,7 @@ namespace {
 
     /** SupplySystemPOD contains all of the data needs to resolve one systems supply conflicts. */
     struct SupplySystemPOD {
-        boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>> empire_to_stealth_supply;
+        boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> empire_to_stealth_supply;
         boost::optional<std::unordered_set<int>> contesting_empires;
         boost::optional<std::unordered_set<int>> blockading_empires;
         boost::optional<int> colony_blockading_empires;
@@ -767,7 +811,7 @@ namespace {
 
     /** Resolve the supply conflicts in a single system and return the maxiumum supply range and any
         empires that need their traversals updated. */
-    std::pair<float, std::unordered_set<int>> ContestSystem(
+    std::pair<SupplyMerit, std::unordered_set<int>> ContestSystem(
         SupplySystemPOD& pod, const System& system,
         const std::unordered_map<int, float>& empire_to_detection,
         std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& supply_starlane_traversals,
@@ -783,7 +827,7 @@ namespace {
         // There are no empires here.
         if (!pod.empire_to_stealth_supply || pod.empire_to_stealth_supply->empty()
             || (pod.empire_to_stealth_supply->size() == 1 && pod.empire_to_stealth_supply->begin()->second.empty()))
-        { return {0.0f, empires_needing_traversal_adjustment}; }
+        { return {SupplyMerit(), empires_needing_traversal_adjustment}; }
 
         // There is one empire here.
         if (pod.empire_to_stealth_supply->size() == 1) {
@@ -792,26 +836,27 @@ namespace {
         }
 
         // Sort by range using tuples of (range, stealth, empire id)
-        std::set<std::tuple<float, float, int>> range_stealth_empire_id;
+        std::set<std::tuple<SupplyMerit, float, int>> merit_stealth_empire_id;
         for (auto it : *pod.empire_to_stealth_supply) {
             auto empire_id = it.first;
             for (auto jt : it.second)
-                range_stealth_empire_id.insert({jt.second, jt.first, empire_id});
+                merit_stealth_empire_id.insert({jt.second, jt.first, empire_id});
         }
 
-        auto max_supply_range = std::get<0>(*range_stealth_empire_id.begin());
+        auto max_supply_range = std::get<0>(*merit_stealth_empire_id.begin());
 
         auto &keepers = *pod.empire_to_stealth_supply;
         keepers.clear();
 
-        while (!range_stealth_empire_id.empty()) {
+        while (!merit_stealth_empire_id.empty()) {
             // Compare the candidate with the greatest range to determine if it should be kept and if
             // each other supply source should be kept or removed from further supply resolutions.
-            auto candidate = *range_stealth_empire_id.rbegin();
-            float candidate_range, candidate_stealth;
+            auto candidate = *merit_stealth_empire_id.rbegin();
+            SupplyMerit candidate_merit;
+            float candidate_stealth;
             int candidate_empire_id;
-            std::tie(candidate_range, candidate_stealth, candidate_empire_id) = candidate;
-            range_stealth_empire_id.erase(std::next(range_stealth_empire_id.rbegin()).base());
+            std::tie(candidate_merit, candidate_stealth, candidate_empire_id) = candidate;
+            merit_stealth_empire_id.erase(std::next(merit_stealth_empire_id.rbegin()).base());
 
             auto candidate_detection_it = empire_to_detection.find(candidate_empire_id);
             if (candidate_detection_it == empire_to_detection.end()) {
@@ -825,16 +870,17 @@ namespace {
             bool is_keep_candidate = true;
 
             // A list of individual others to remove from the list.
-            std::vector<std::set<std::tuple<float, float, int>>::reverse_iterator> remove_this_pass;
+            std::vector<std::set<std::tuple<SupplyMerit, float, int>>::reverse_iterator> remove_this_pass;
 
-            for (auto other_it = range_stealth_empire_id.rbegin();
-                 other_it != range_stealth_empire_id.rend(); ++other_it)
+            for (auto other_it = merit_stealth_empire_id.rbegin();
+                 other_it != merit_stealth_empire_id.rend(); ++other_it)
             {
-                float other_range, other_stealth;
+                SupplyMerit other_merit;
+                float other_stealth;
                 int other_empire_id;
-                std::tie(other_range, other_stealth, other_empire_id) = *other_it;
+                std::tie(other_merit, other_stealth, other_empire_id) = *other_it;
 
-                // Note: All other_range are <= candidate_range
+                // Note: All other_merit are <= candidate_merit
 
                 // If the other is of the same empire and has less stealth then it can't improve
                 // supply, so remove it.
@@ -853,7 +899,7 @@ namespace {
                     continue;
 
                 // If other has the same range then remove both the candidate and the other
-                if (other_range == candidate_range) {
+                if (other_merit == candidate_merit) {
                     is_keep_candidate = false;
                     remove_this_pass.push_back(other_it);
                     continue;
@@ -864,7 +910,7 @@ namespace {
             }
 
             if (is_keep_candidate)
-                keepers[candidate_empire_id].insert({candidate_stealth, candidate_range});
+                keepers[candidate_empire_id].insert({candidate_stealth, candidate_merit});
             else
                 empires_needing_traversal_adjustment.insert(candidate_empire_id);
 
@@ -875,7 +921,7 @@ namespace {
                 empires_needing_traversal_adjustment.insert(other_empire_id);
 
                 // Remove the collected reverse iterator.  Should be O(1).
-                range_stealth_empire_id.erase(std::next(removed_other).base());
+                merit_stealth_empire_id.erase(std::next(removed_other).base());
             }
         }
 
@@ -1346,7 +1392,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
     // Map from system id to a map from empire id to the stealth and supply ranges of empire
     // objects in that system.
-    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> system_to_empire_to_stealth_supply
+    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> system_to_empire_to_stealth_supply
         = CalculateSystemToEmpireToStealthSupply();
 
     // Map from system to blockading fleets.
