@@ -882,6 +882,29 @@ std::pair<float, std::unordered_set<int>> ContestSystem(
     return {max_supply_range, empires_needing_traversal_adjustment};
 }
 
+/** Adjust the supply lane traversals, after a system is contested. */
+void AdjustStarlaneTraversals(
+    std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& supply_starlane_traversals,
+    std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& supply_starlane_obstructed_traversals,
+    SupplySystemPOD& pod, const System& system,
+    const std::unordered_map<int, float>& empire_to_detection,
+    const std::unordered_set<int> & empires_needing_traversal_adjustment)
+{
+    // Check each empire that needs adjustment and if they have no more traversals in the SystemPOD
+    // remove them from the traversals maps.
+
+    for(auto empire_id : empires_needing_traversal_adjustment) {
+
+        // There no empires or empire id is not present
+        if (!pod.empire_to_stealth_supply || pod.empire_to_stealth_supply->empty()
+            || (pod.empire_to_stealth_supply->find(empire_id) == pod.empire_to_stealth_supply->end()))
+        {
+            RemoveSystemFromTraversals(system.SystemID(), supply_starlane_traversals[empire_id],
+                                       supply_starlane_obstructed_traversals[empire_id]);
+        }
+    }
+}
+
 std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
     const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
 {
