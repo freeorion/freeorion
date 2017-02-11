@@ -1054,6 +1054,20 @@ def generate_production_orders():
                 else:
                     print "Error failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
 
+    building_name = "BLD_XENORESURRECTION_LAB"
+    queued_xeno_lab_locs = [element.locationID for element in production_queue if element.name == building_name]
+    for pid in list(AIstate.popCtrIDs)+list(AIstate.outpostIDs):
+        if pid in queued_xeno_lab_locs or not empire.canBuild(fo.buildType.building, building_name, pid):
+            continue
+        res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
+        print "Enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
+        if res:
+            res = fo.issueRequeueProductionOrder(production_queue.size-1, 2)  # move to near front
+            print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
+            break
+        else:
+            print "Error failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
+
     queued_clny_bld_locs = [element.locationID for element in production_queue if element.name.startswith('BLD_COL_')]
     colony_bldg_entries = ([entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if entry[1][0] > 60 and
                            entry[0] not in queued_clny_bld_locs and entry[0] in ColonisationAI.empire_outpost_ids]

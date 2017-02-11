@@ -214,6 +214,9 @@ def survey_universe():
         active_growth_specials.clear()
         if tech_is_complete(TechsListsAI.EXOBOT_TECH_NAME):
             empire_colonizers["SP_EXOBOT"] = []  # get it into colonizer list even if no colony yet
+        for spec_name in AIDependencies.EXTINCT_SPECIES:
+            if empire.buildingTypeAvailable("BLD_COL_" + spec_name):
+                empire_colonizers["SP_" + spec_name] = []  # get it into colonizer list even if no colony yet
         AIstate.popCtrIDs[:] = []
         AIstate.popCtrSystemIDs[:] = []
         AIstate.outpostIDs[:] = []
