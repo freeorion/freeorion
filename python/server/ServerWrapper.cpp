@@ -949,10 +949,10 @@ namespace {
             systems.push_back(*id);
         }
 
-        auto near = GetPathfinder()->WithinJumps(jumps, systems);
+        auto systems_in_vicinity = GetPathfinder()->WithinJumps(jumps, systems);
 
-        for (auto ii : near) {
-            py_systems.append(ii);
+        for (auto system_id : systems_in_vicinity) {
+            py_systems.append(system_id);
         }
         return py_systems;
     }
@@ -1345,7 +1345,7 @@ namespace FreeOrionPython {
 
         def("objs_get_systems",                     ObjectsGetSystems);
 
-        def("systems_within_jumps",                 SystemsWithinJumps);
+        def("systems_within_jumps",                 SystemsWithinJumps, "Return all systems within ''jumps'' of the systems with ids ''sys_ids''");
 
         def("sys_get_star_type",                    SystemGetStarType);
         def("sys_set_star_type",                    SystemSetStarType);

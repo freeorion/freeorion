@@ -1021,10 +1021,10 @@ void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
 
     // Scan the LUT of system ids and add any result from the row within
     // the neighborhood range to the results.
-    for (auto it : m_system_id_to_graph_index) {
-        size_t hops = row[it.second];
+    for (auto system_id_and_ii : m_system_id_to_graph_index) {
+        size_t hops = row[system_id_and_ii.second];
         if (hops <= jump_limit)
-            result->insert(it.first);
+            result->insert(system_id_and_ii.first);
     }
 }
 
