@@ -485,7 +485,7 @@ boost::optional<std::unordered_map<int, std::set<std::pair<float, float>>>> Calc
 
         if (!empire_to_stealth_supply)
             empire_to_stealth_supply = std::unordered_map<int, std::set<std::pair<float, float>>>();
-        (*empire_to_stealth_supply)[planet->Owner()].insert(std::make_pair(stealth, supply_range));
+        (*empire_to_stealth_supply)[planet->Owner()].insert({stealth, supply_range});
     }
 
     return empire_to_stealth_supply;
@@ -553,7 +553,7 @@ std::pair<boost::optional<std::unordered_set<int>>, boost::optional<std::unorder
         }
     }
 
-    return std::make_pair<>(contesting_fleets_empire_ids, blockading_fleets_empire_ids);
+    return {contesting_fleets_empire_ids, blockading_fleets_empire_ids};
 }
 
 /** Return a map from system to blockading fleet's empire id.
@@ -584,7 +584,7 @@ std::pair<std::unordered_map<int, std::unordered_set<int>>,
         if (blockading_empires && !blockading_empires->empty())
             system_to_blockading_fleets_empire_ids[system->SystemID()] = *blockading_empires;
     }
-    return std::make_pair<>(system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids);
+    return {system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids};
 }
 
 /** Return an optional empire id if any empires colonies can blockade supply.
@@ -713,18 +713,18 @@ void RemoveSystemFromTraversals(
     // and set any traversals going to this system as obstructed
     for (const auto& lane : lane_traversals_initial) {
         if (lane.first.first == sys_id) {
-            lane_traversals.erase(std::make_pair(sys_id, lane.first.second));
+            lane_traversals.erase({sys_id, lane.first.second});
         }
         if (lane.first.second == sys_id) {
-            lane_traversals.erase(std::make_pair(lane.first.first, sys_id));
-            obstructed_traversals.insert(std::make_pair(std::make_pair(lane.first.first, sys_id), 0.0f));
+            lane_traversals.erase({lane.first.first, sys_id});
+            obstructed_traversals.insert({{lane.first.first, sys_id}, 0.0f});
         }
     }
 
     // remove obstructed traverals departing from this system
     for (const auto& lane : obstructed_traversals_initial) {
         if (lane.first.first == sys_id)
-            obstructed_traversals.erase(std::make_pair(lane.first.first, lane.first.second));
+            obstructed_traversals.erase(lane.first);
     }
 }
 
@@ -735,7 +735,7 @@ void AddObstructedTraversal(
     const std::unordered_map<std::pair<int, int>, float>& lane_traversals,
     std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
 {
-    obstructed_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
+    obstructed_traversals.insert({{sys_id, end_sys_id}, 0.0f});
 }
 
 /** Add a traversal */
@@ -748,25 +748,25 @@ void AddTraversal(
 
     //DebugLogger() << "Added traversal from " << sys_id << " to " << end_sys_id;
     // always record a traversal, so connectivity is calculated properly
-    lane_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
+    lane_traversals.insert({{sys_id, end_sys_id}, 0.0f});
 
     // erase any previous obstructed traversal that just succeeded
-    if (obstructed_traversals.find(std::make_pair(sys_id, end_sys_id)) !=
+    if (obstructed_traversals.find({sys_id, end_sys_id}) !=
         obstructed_traversals.end())
     {
         //DebugLogger() << "Removed obstructed traversal from " << sys_id << " to " << end_sys_id;
-        obstructed_traversals.erase(std::make_pair(sys_id, end_sys_id));
+        obstructed_traversals.erase({sys_id, end_sys_id});
     }
-    if (obstructed_traversals.find(std::make_pair(end_sys_id, sys_id)) !=
+    if (obstructed_traversals.find({end_sys_id, sys_id}) !=
         obstructed_traversals.end())
     {
         //DebugLogger() << "Removed obstructed traversal from " << end_sys_id << " to " << sys_id;
-        obstructed_traversals.erase(std::make_pair(end_sys_id, sys_id));
+        obstructed_traversals.erase({end_sys_id, sys_id});
     }
 }
 
 /** Resolve the supply conflicts in a single system and return the maxiumum supply range and any
-    empire that need their traversals updated. */
+    empires that need their traversals updated. */
 std::pair<float, std::unordered_set<int>> ContestSystem(
     SupplySystemPOD& pod, const System& system,
     const std::unordered_map<int, float>& empire_to_detection,
@@ -783,12 +783,12 @@ std::pair<float, std::unordered_set<int>> ContestSystem(
     // There are no empires here.
     if (!pod.empire_to_stealth_supply || pod.empire_to_stealth_supply->empty()
         || (pod.empire_to_stealth_supply->size() == 1 && pod.empire_to_stealth_supply->begin()->second.empty()))
-    { return std::make_pair(0.0f, empires_needing_traversal_adjustment); }
+    { return {0.0f, empires_needing_traversal_adjustment}; }
 
     // There is one empire here.
     if (pod.empire_to_stealth_supply->size() == 1) {
         auto supply_range_of_only_empire = pod.empire_to_stealth_supply->begin()->second.begin()->second;
-        return std::make_pair(supply_range_of_only_empire, empires_needing_traversal_adjustment);
+        return {supply_range_of_only_empire, empires_needing_traversal_adjustment};
     }
 
     // Sort by range using tuples of (range, stealth, empire id)
@@ -796,7 +796,7 @@ std::pair<float, std::unordered_set<int>> ContestSystem(
     for (auto it : *pod.empire_to_stealth_supply) {
         auto empire_id = it.first;
         for (auto jt : it.second)
-            range_stealth_empire_id.insert(std::make_tuple(jt.second, jt.first, empire_id));
+            range_stealth_empire_id.insert({jt.second, jt.first, empire_id});
     }
 
     auto max_supply_range = std::get<0>(*range_stealth_empire_id.begin());
@@ -864,7 +864,7 @@ std::pair<float, std::unordered_set<int>> ContestSystem(
         }
 
         if (is_keep_candidate)
-            keepers[candidate_empire_id].insert(std::make_pair(candidate_stealth, candidate_range));
+            keepers[candidate_empire_id].insert({candidate_stealth, candidate_range});
         else
             empires_needing_traversal_adjustment.insert(candidate_empire_id);
 
@@ -879,7 +879,7 @@ std::pair<float, std::unordered_set<int>> ContestSystem(
         }
     }
 
-    return std::make_pair(max_supply_range, empires_needing_traversal_adjustment);
+    return {max_supply_range, empires_needing_traversal_adjustment};
 }
 
 std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
