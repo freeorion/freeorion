@@ -2471,7 +2471,7 @@ void NameLookup::SetTopLevelContent(const std::string& content_name) {
 // Operation                                             //
 ///////////////////////////////////////////////////////////
 template <>
-std::string Operation<std::string>::Eval(const ScriptingContext& context) const
+std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const
 {
     if (m_op_type == PLUS) {
         return LHS()->Eval(context) + RHS()->Eval(context);
@@ -2524,7 +2524,7 @@ std::string Operation<std::string>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-double      Operation<double>::Eval(const ScriptingContext& context) const
+double      Operation<double>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
         case PLUS:
@@ -2610,7 +2610,7 @@ double      Operation<double>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-int         Operation<int>::Eval(const ScriptingContext& context) const
+int         Operation<int>::EvalImpl(const ScriptingContext& context) const
 {
     switch (m_op_type) {
         case PLUS:

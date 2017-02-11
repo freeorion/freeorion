@@ -558,11 +558,14 @@ struct FO_COMMON_API Operation : public ValueRefBase<T>
     const std::vector<ValueRefBase<T>*>& Operands() const;
 
 private:
-    void DetermineIfConstantExpr();
+    void    DetermineIfConstantExpr();
+    void    CacheConstValue();
+    T       EvalImpl(const ScriptingContext& context) const;
 
     OpType                          m_op_type;
     std::vector<ValueRefBase<T>*>   m_operands;
     bool                            m_constant_expr = false;
+    T                               m_cached_const_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1704,6 +1707,7 @@ Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand1, ValueRefBase<
     if (operand2)
         m_operands.push_back(operand2);
     DetermineIfConstantExpr();
+    CacheConstValue();
 }
 
 template <class T>
@@ -1714,6 +1718,7 @@ Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand) :
     if (operand)
         m_operands.push_back(operand);
     DetermineIfConstantExpr();
+    CacheConstValue();
 }
 
 template <class T>
@@ -1722,6 +1727,7 @@ Operation<T>::Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& ope
     m_operands(operands)
 {
     DetermineIfConstantExpr();
+    CacheConstValue();
 }
 
 template <class T>
@@ -1740,6 +1746,15 @@ void Operation<T>::DetermineIfConstantExpr()
             return;
         }
     }
+}
+
+template <class T>
+void Operation<T>::CacheConstValue()
+{
+    if (!m_constant_expr)
+        return;
+
+    m_cached_const_value = this->EvalImpl(ScriptingContext());
 }
 
 template <class T>
@@ -1807,6 +1822,14 @@ const std::vector<ValueRefBase<T>*>& Operation<T>::Operands() const
 template <class T>
 T Operation<T>::Eval(const ScriptingContext& context) const
 {
+    if (m_constant_expr)
+        return m_cached_const_value;
+    return this->EvalImpl(context);
+}
+
+template <class T>
+T Operation<T>::EvalImpl(const ScriptingContext& context) const
+{
     switch (m_op_type) {
         if (m_operands.empty())
             return T(-1);   // should be INVALID_T of enum types
@@ -1847,13 +1870,13 @@ T Operation<T>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-std::string Operation<std::string>::Eval(const ScriptingContext& context) const;
+std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
 
 template <>
-double Operation<double>::Eval(const ScriptingContext& context) const;
+double Operation<double>::EvalImpl(const ScriptingContext& context) const;
 
 template <>
-int Operation<int>::Eval(const ScriptingContext& context) const;
+int Operation<int>::EvalImpl(const ScriptingContext& context) const;
 
 template <class T>
 bool Operation<T>::RootCandidateInvariant() const
@@ -2164,7 +2187,8 @@ void Operation<T>::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ValueRefBase)
         & BOOST_SERIALIZATION_NVP(m_op_type)
         & BOOST_SERIALIZATION_NVP(m_operands)
-        & BOOST_SERIALIZATION_NVP(m_constant_expr);
+        & BOOST_SERIALIZATION_NVP(m_constant_expr)
+        & BOOST_SERIALIZATION_NVP(m_cached_const_value);
 }
 
 } // namespace ValueRef
