@@ -586,6 +586,9 @@ PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
 # </editor-fold>
 
 # <editor-fold desc="Extraordinary Species Rules">
+# tag used if species self-destructs on conquest
+TAG_DESTROYED_ON_CONQUEST = "DESTROYED_ON_CONQUEST"
+
 # some species have a fixed population
 SPECIES_FIXED_POPULATION = {
     # species_name: fixed_population_size

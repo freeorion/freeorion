@@ -272,9 +272,11 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
 
     species_name = planet.speciesName
     species = fo.getSpecies(species_name)
-    if not species:  # this call iterates over this Empire's available species with which it could colonize after an invasion
+    if not species or AIDependencies.TAG_DESTROYED_ON_CONQUEST in species.tags:
+        # this call iterates over this Empire's available species with which it could colonize after an invasion
         planet_eval = ColonisationAI.assign_colonisation_values([planet_id], MissionType.INVASION, None, empire, detail)
-        pop_val = max(0.75 * planet_eval.get(planet_id, [0])[0], ColonisationAI.evaluate_planet(planet_id, MissionType.OUTPOST, None, empire, detail))
+        pop_val = max(0.75 * planet_eval.get(planet_id, [0])[0],
+                      ColonisationAI.evaluate_planet(planet_id, MissionType.OUTPOST, None, empire, detail))
     else:
         pop_val = ColonisationAI.evaluate_planet(planet_id, MissionType.INVASION, species_name, empire, detail)
 
