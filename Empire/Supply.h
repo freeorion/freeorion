@@ -16,7 +16,7 @@
 extern const int ALL_EMPIRES;
 
 // Inject a ordered pair hash into std namespace so that it is the default specialization of
-// std::hash(pair).  If this is a problem with other uses of hased pairs, then
+// std::hash(pair).  If this is a problem with other uses of hashed pairs, then
 // directly use OrderedPairHash in the unordered_xs.
 
 namespace std {
