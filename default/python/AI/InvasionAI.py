@@ -284,6 +284,12 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
         bld_tally += bval
         detail.append("%s: %d" % (bldType, bval))
 
+    tech_tally = 0
+    for unlocked_tech in AIDependencies.SPECIES_TECH_UNLOCKS.get(species_name, []):
+        if not tech_is_complete(unlocked_tech):
+            rp_cost = fo.getTech(unlocked_tech).researchCost(empire_id)
+            tech_tally += rp_cost * 10
+
     p_sys_id = planet.systemID
     capitol_id = PlanetUtilsAI.get_capital()
     least_jumps_path = []
@@ -367,7 +373,8 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
         troop_cost = math.ceil(planned_troops/6.0) * (40*(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
     else:
         troop_cost = math.ceil(planned_troops/6.0) * (20*(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
-    planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, pop_val+supply_val+bld_tally+enemy_val-0.8*troop_cost)
+    base_score = pop_val + supply_val + bld_tally + tech_tally + enemy_val - 0.8*troop_cost
+    planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, base_score)
     if clear_path:
         planet_score *= 1.5
     if verbose:
