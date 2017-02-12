@@ -21,7 +21,7 @@ for line in lines:
                 if not ((i / k) % 2):
                     line_copy += line[cut_ranges[j][0]:cut_ranges[j][1]]
                 line_copy += line[cut_ranges[j][1]:cut_ranges[j + 1][0]]
-                k = k / 2
+                k /= 2
             if not ((i / k) % 2):
                 line_copy += line[cut_ranges[-1][0]:cut_ranges[-1][1]]
             line_copy += line[cut_ranges[-1][1]:-1]
@@ -30,4 +30,3 @@ for line in lines:
             print line_copy
     else:
         print line_copy
-

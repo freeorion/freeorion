@@ -3,7 +3,7 @@
 import sys
 
 if not 1 < len(sys.argv) or int(sys.argv[1]) < 0:
-    print 'Usage:',sys.argv[0],'highest_signal_arity'
+    print 'Usage:', sys.argv[0], 'highest_signal_arity'
     sys.exit(1)
 
 arity_to_generate = int(sys.argv[1])
@@ -19,12 +19,12 @@ for i in range(arity_to_generate + 1):
    modify it under the terms of the GNU Lesser General Public License
    as published by the Free Software Foundation; either version 2.1
    of the License, or (at your option) any later version.
-   
+
    This library is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
-    
+
    You should have received a copy of the GNU Lesser General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA
@@ -32,7 +32,7 @@ for i in range(arity_to_generate + 1):
 
    If you do not wish to comply with the terms of the LGPL please
    contact the author as other terms are available for a fee.
-    
+
    Zach Laine
    whatwasthataddress@gmail.com */
 

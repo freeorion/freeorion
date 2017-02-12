@@ -20,7 +20,7 @@ import sys
 from glob import glob
 import traceback
 
-dataDir = (os.environ.get('HOME', "") + "/.freeorion" ) if os.name != 'posix' else (os.environ.get('XDG_DATA_HOME', os.environ.get('HOME', "") + "/.local/share") + "/freeorion") 
+dataDir = (os.environ.get('HOME', "") + "/.freeorion") if os.name != 'posix' else (os.environ.get('XDG_DATA_HOME', os.environ.get('HOME', "") + "/.local/share") + "/freeorion")
 graphDir = dataDir
 
 fileRoot = "game1"
@@ -57,7 +57,7 @@ def parse_file(file_name, ai=True):
                     colors = line.split("EmpireColors:")[1].split()
                     if len(colors) == 4:
                         got_colors = True
-                        if type(colors[0]) == type("0"):
+                        if isinstance(colors[0], str):
                             details['color'] = tuple(map(lambda x: float(x) / 255.0, colors))
                         else:
                             details['color'] = tuple(map(lambda x: float(ord(x[0])) / 255.0, colors))
@@ -123,7 +123,7 @@ for lfile in logfiles:
 
 print
 for plotType in doPlotTypes:
-    
+
     print "--------------------"
     if plotType == "PP":
         caption = "Production"
@@ -141,13 +141,13 @@ for plotType in doPlotTypes:
     ymax = 0
     rankings = []
     turns = []
-    
+
     pdata = allData.get(playerName, {}).get(plotType, [])
     if pdata:
         ymin = min(ymin, min(pdata))
         ymax = max(ymax, max(pdata))
         turns = allData.get(playerName, {}).get('turnsP', [])
-        
+
     for empireName, data in allData.items():
         if empireName == playerName:
             continue
@@ -171,7 +171,7 @@ for plotType in doPlotTypes:
     title(caption + ' Progression')
     if ymax >= 100:
         ax.set_yscale('log', basey=10)
-      
+
     if playerName not in allData:
         print "\t\t\tcan't find playerData in allData\n"
     else:

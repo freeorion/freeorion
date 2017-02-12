@@ -25,8 +25,10 @@ def test_make_aggression_based_function_no_post_func():
     character = Character([Aggression(0)])
     assert table(character) == "prefix_BEGINNER"
 
+
 class UnknownTrait(Trait):
     pass
+
 
 def test_get_trait_name_aggression():
     """Check that asking for an unknown trait returns None"""

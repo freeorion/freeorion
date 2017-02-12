@@ -1,8 +1,10 @@
 import pytest
 from character.character_module import Trait, Character
 
+
 class LeftTrait(Trait):
     """A test trait"""
+
 
 class RightTrait(Trait):
     """A test Trait that injects values to be found by combiners"""
@@ -27,6 +29,7 @@ class RightTrait(Trait):
         """Use for max combiner"""
         return 10
 
+
 class OtherTrait(Trait):
     """A test trait"""
 
@@ -37,6 +40,7 @@ other_trait = OtherTrait()
 
 rejection_character = Character([left_trait, right_trait])
 permissive_character = Character([left_trait, other_trait])
+
 
 class TestCharacter(object):
     """Test the Character class which combines traits
@@ -67,10 +71,10 @@ class TestCharacter(object):
         assert rejection_character.military_safety_factor() == 10
 
     def test_preference_combiner(self):
-        assert permissive_character.preferred_research_cutoff([10, 11, 12]) == None
+        assert permissive_character.preferred_research_cutoff([10, 11, 12]) is None
         assert rejection_character.preferred_research_cutoff([10, 11, 12]) == 11
 
     def test_character_must_be_composed_of_traits(self):
         with pytest.raises(TypeError):
             not_a_trait = int(1)
-            bad_character = Character([LeftTrait, not_a_trait])
+            Character([LeftTrait, not_a_trait])

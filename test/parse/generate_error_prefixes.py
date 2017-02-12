@@ -20,6 +20,6 @@ for i in range(0, len(lines)):
             partial_line = line[0:-1]
         else:
             partial_line += ' ' + line[0:-1]
-        if not "Successful parse." in lines[i + 1] and not "All parses successful." in lines[i + 1] and not partial_line in all_partial_lines:
+        if "Successful parse." not in lines[i + 1] and "All parses successful." not in lines[i + 1] and partial_line not in all_partial_lines:
             print partial_line
             all_partial_lines.add(partial_line)
