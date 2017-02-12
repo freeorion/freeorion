@@ -43,18 +43,17 @@ doing the actual release.
 #### Preparations
 
 * [ ] Create a new GitHub Issue from `.github/RELEASE_TEMPLATE.md` and follow
-      instructions. ;)
+      instructions. :wink:
 * [ ] Determine initial milestones and dates for release.
 * [ ] Create release branch from development branch master by using:
-
 ```
 git checkout -b release-vX.Y.Z master
 ```
-* [ ] *on release branch HEAD* - Update version number in `CMakeLists.txt` to
-      `vX.Y.Z`, remove trailing `+` if needed.
-* [ ] *on release branch HEAD* - Remove `Supertesters` species.
-* [ ] *on master branch HEAD* - Update version number in `CMakeLists.txt` to
-      `vX.Y.Z+`.
+* [ ] *On release branch HEAD* - Update version number in `CMakeLists.txt` and
+      `cmake/make_versioncpp.py` to `vX.Y.Z`, remove trailing `+` if needed.
+* [ ] *On release branch HEAD* - Remove `Super Testers` species.
+* [ ] *On master branch HEAD* - Update version number in `CMakeLists.txt` and
+      `cmake/make_versioncpp.py` to `vX.Y.Z+`.
 * [ ] Push updated release and master branch to GitHub.
 * [ ] Update `ChangeLog.md`.
 
@@ -64,25 +63,28 @@ git checkout -b release-vX.Y.Z master
 <!-- Copy this section if you plan to release multiple release candidates -->
 
 * [ ] Integrate incoming bugfixes.
-* [ ] *on release branch HEAD* - Tag the release candidate by using:
+* [ ] Update `ChangeLog.md` again if needed.
+* [ ] *On release branch HEAD* - Tag the release candidate by using:
 ```
-git tag --annotate --message="X.Y.Z Release Candidate #"  vX.Y.ZRC#
+git tag --annotate --message="X.Y.Z Release Candidate #"  vX.Y.Z-rc#
 ```
 * [ ] Push release candidate tag to GitHub.
 * [ ] Build release candidate artifacts.
 * [ ] Upload release candidate artifacts to SourceForge.
-* [ ] Announce release candidate in `News` section of FreeOrion Wiki.
+* [ ] If this is the first release candidate, announce availability of
+      release candidates in `News` section of FreeOrion Wiki.
+* [ ] Announce release candidate on Twitter as @FreeOrion
 * [ ] Test release candidate.
 
 
 #### Declare release
 
-* [ ] Vote if there is another release candidate is needed or if the RC is
-      release ready.
-* [ ] *on release branch* - Tag the release from the latest release candidate
+* [ ] Determine if another release candidate is needed or if the latest release
+      candidate is ready to be declared as the official stable release.
+* [ ] *On release branch* - Tag the release from the latest release candidate
        by using:
 ```
-git tag --annotate --message="X.Y.Z Stable Release"  vX.Y.Z vX.Y.ZRC#
+git tag --annotate --message="X.Y.Z Stable Release"  vX.Y.Z
 ```
 * [ ] Push release tag to GitHub.
 * [ ] Write `Key Changes` description for GitHub releases page.
@@ -91,10 +93,12 @@ git tag --annotate --message="X.Y.Z Stable Release"  vX.Y.Z vX.Y.ZRC#
 * [ ] Update `Main` page of FreeOrion Wiki.
 * [ ] Update `Download` page of FreeOrion Wiki.
 * [ ] Announce release on Twitter as @FreeOrion
+* [ ] Announce release on YouTube.
 
 
 #### Cleanup
 
+* [ ] Cherry-pick updates of `ChangeLog.md` to master. 
 * [ ] Prune release candidate tags.
 * [ ] Prune release branch.
 
