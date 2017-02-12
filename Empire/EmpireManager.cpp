@@ -235,6 +235,12 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         }
         break;
     }
+    case DiplomaticMessage::ALLIES_PROPOSAL: {
+    }
+    case DiplomaticMessage::ACCEPT_ALLIES_PROPOSAL: {
+    }
+    case DiplomaticMessage::END_ALLIANCE_DECLARATION: {
+    }
     case DiplomaticMessage::CANCEL_PROPOSAL: {
         if (message_already_available &&
             existing_message.SenderEmpireID() == message.SenderEmpireID())
@@ -244,6 +250,8 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
             }
         }
         break;
+    }
+    case DiplomaticMessage::REJECT_PROPOSAL: {
     }
     default:
         break;
