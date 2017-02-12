@@ -631,6 +631,9 @@ PART_KRILL_SPAWNER = "SP_KRILL_SPAWNER"
 
 # <editor-fold desc="Effect Scripting for Shipdesigns">
 # <editor-fold desc="Tokens">
+# Syntax tokens
+IF = "IF"
+
 # known tokens the AI can handle
 REPAIR_PER_TURN = "REPAIR_PER_TURN"
 FUEL_PER_TURN = "FUEL_PER_TURN"
@@ -644,6 +647,7 @@ STRUCTURE = "STRUCTURE"
 DETECTION = "DETECTION"            # do only specify for hulls if irregular detection
 ORGANIC_GROWTH = "ORGANIC_GROWTH"  # structure for value is (per_turn, maximum)
 STACKING_RULES = "STACKING_RULES"  # expects a list of stacking rules
+TECH_COMPLETE = "TECH_COMPLETE"    # used as conditional effect: (TECH_COMPLETE, "tech_name", effect_value)
 # <editor-fold desc="Stacking rules">
 NO_EFFECT_WITH_CLOAKS = "NO_EFFECT_WITH_CLOAKS"  # part does not stack with cloak parts
 # </editor-fold>
