@@ -224,7 +224,7 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
         }
         break;
     }
-    case DiplomaticMessage::ACCEPT_PROPOSAL: {
+    case DiplomaticMessage::ACCEPT_PEACE_PROPOSAL: {
         if (message_already_available &&
             existing_message.SenderEmpireID() == message.RecipientEmpireID())
         {

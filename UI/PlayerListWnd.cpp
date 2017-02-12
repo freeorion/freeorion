@@ -61,6 +61,10 @@ namespace {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "peace.png");
         return retval;
     }
+    std::shared_ptr<GG::Texture> AlliedIcon() {
+        static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "allied.png");
+        return retval;
+    }
     std::shared_ptr<GG::Texture> UnknownIcon() {
         static std::shared_ptr<GG::Texture> retval = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "unknown.png");
         return retval;
@@ -180,6 +184,7 @@ namespace {
                 switch (m_diplo_status) {
                 case DIPLO_WAR:                 WarIcon()->OrthoBlit(    UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
                 case DIPLO_PEACE:               PeaceIcon()->OrthoBlit(  UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
+                case DIPLO_ALLIED:              AlliedIcon()->OrthoBlit( UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
                 case INVALID_DIPLOMATIC_STATUS: UnknownIcon()->OrthoBlit(UpperLeft() + m_diplo_status_icon_ul, UpperLeft() + m_diplo_status_icon_ul + ICON_SIZE); break;
                 default:    break;
                 }
@@ -733,7 +738,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         DiplomaticMessage existing_message = Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);
 
         // create popup menu with diplomacy options in it
-        if ( client_empire_id != ALL_EMPIRES) {
+        if (client_empire_id != ALL_EMPIRES) {
             if (diplo_status == DIPLO_WAR) {
                 if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
                     // who sent message?
@@ -747,8 +752,15 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 }
 
             } else if (diplo_status == DIPLO_PEACE) {
-                if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+                if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
+                    menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          6, false, false));
                     menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),          1, false, false));
+                } else if (existing_message.GetType() == DiplomaticMessage::ALLIES_PROPOSAL) {
+                    menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"), 2, false, false));
+                }
+
+            } else if (diplo_status == DIPLO_ALLIED) {
+
             }
         }
     }
@@ -772,10 +784,28 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         }
         case 3: {   // PEACE_ACCEPT
             net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             AcceptDiplomaticMessage(client_empire_id, clicked_empire_id)));
+                                             AcceptPeaceDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
         }
-        case 4: {   // PEACE_PROPOSAL_CANEL
+
+        case 6: {   // ALLIES_PROPOSAL
+            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
+                AlliesProposalDiplomaticMessage(client_empire_id, clicked_empire_id)));
+            break;
+        }
+        case 7: {   // ALLIES_ACCEPT
+            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
+                AcceptAlliesDiplomaticMessage(client_empire_id, clicked_empire_id)));
+            break;
+        }
+        case 8: {   // END_ALLIANCE_DECLARATION
+            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
+                EndAllianceDiplomaticMessage(client_empire_id, clicked_empire_id)));
+            break;
+
+        }
+
+        case 4: {   // PROPOSAL_CANCEL
             net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
                                              CancelDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;

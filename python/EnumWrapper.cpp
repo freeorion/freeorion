@@ -122,7 +122,7 @@ namespace FreeOrionPython {
             .value("noMessage",         DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
             .value("warDeclaration",    DiplomaticMessage::WAR_DECLARATION)
             .value("peaceProposal",     DiplomaticMessage::PEACE_PROPOSAL)
-            .value("acceptProposal",    DiplomaticMessage::ACCEPT_PROPOSAL)
+            .value("acceptProposal",    DiplomaticMessage::ACCEPT_PEACE_PROPOSAL)
             .value("cancelProposal",    DiplomaticMessage::CANCEL_PROPOSAL)
         ;
         enum_<CaptureResult>("captureResult")

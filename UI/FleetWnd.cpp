@@ -3318,8 +3318,9 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                 continue;
             if (peaceful_empires_in_system.find(obj->Owner()) != peaceful_empires_in_system.end())
                 continue;
-            if (Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) != DIPLO_PEACE)
-                continue;
+            if (Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) != DIPLO_PEACE &&
+                Empires().GetDiplomaticStatus(client_empire_id, obj->Owner()) != DIPLO_ALLIED)
+            { continue; }
             peaceful_empires_in_system.insert(obj->Owner());
         }
     }
