@@ -673,7 +673,7 @@ public:
 
         // update text
         std::string label_text = boost::io::str(FlexibleFormat(UserString("MAP_SCALE_INDICATOR")) %
-                                                boost::lexical_cast<std::string>(shown_length));
+                                                std::to_string(static_cast<int>(shown_length)));
         m_label->SetText(label_text);
         m_label->Resize(GG::Pt(GG::X(m_line_length), Height()));
     }

@@ -187,9 +187,9 @@ void Moderator::CreateSystem::Execute() const {
 
 std::string Moderator::CreateSystem::Dump() const {
     std::string retval = "Moderator::CreateSystem x = "
-                       + boost::lexical_cast<std::string>(m_x)
+                       + std::to_string(m_x)
                        + " y = "
-                       + boost::lexical_cast<std::string>(m_y)
+                       + std::to_string(m_y)
                        + " star_type = "
                        + boost::lexical_cast<std::string>(m_star_type);
     return retval;

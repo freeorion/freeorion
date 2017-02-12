@@ -1868,12 +1868,12 @@ void SidePanel::PlanetPanel::Refresh() {
             }
             else if (apparent_stealth > client_empire_detection_strength) {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_EXCEEDS_DETECTION")) %
-                                                boost::lexical_cast<std::string>(apparent_stealth)                  %
-                                                boost::lexical_cast<std::string>(client_empire_detection_strength));
+                                                std::to_string(apparent_stealth) %
+                                                std::to_string(client_empire_detection_strength));
             }
             else {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION")) %
-                                                boost::lexical_cast<std::string>(client_empire_detection_strength));
+                                                std::to_string(client_empire_detection_strength));
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;
@@ -1893,12 +1893,12 @@ void SidePanel::PlanetPanel::Refresh() {
 
             if (apparent_stealth > client_empire_detection_strength) {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_EXCEEDS_DETECTION")) %
-                                                boost::lexical_cast<std::string>(apparent_stealth)                  %
-                                                boost::lexical_cast<std::string>(client_empire_detection_strength));
+                                                std::to_string(apparent_stealth)                  %
+                                                std::to_string(client_empire_detection_strength));
             }
             else {
                 detection_info = boost::io::str(FlexibleFormat(UserString("PL_APPARENT_STEALTH_DOES_NOT_EXCEED_DETECTION")) %
-                                                boost::lexical_cast<std::string>(client_empire_detection_strength));
+                                                std::to_string(client_empire_detection_strength));
             }
 
             std::string info = visibility_info + "\n\n" + detection_info;

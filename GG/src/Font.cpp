@@ -2028,7 +2028,6 @@ bool Font::GenerateGlyph(FT_Face face, std::uint32_t ch)
     if (!face)
         throw BadFace("GG::Font::GetGlyphBitmap : invalid font or font face");
 
-    using boost::lexical_cast;
     FT_UInt index = FT_Get_Char_Index(face, ch);
     if (index) {
         if (FT_Load_Glyph(face, index, FT_LOAD_DEFAULT)) {

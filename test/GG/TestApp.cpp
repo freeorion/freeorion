@@ -9,7 +9,6 @@
 
 #include <GG/SDL/SDLGUI.h>
 
-#include <boost/lexical_cast.hpp>
 #include <boost/format.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>

@@ -29,8 +29,6 @@
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
-#include <boost/lexical_cast.hpp>
-
 
 using namespace GG;
 

@@ -26,7 +26,6 @@
 #include <GG/utf8/checked.h>
 
 #include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 
 namespace {
     bool PlaySounds()                   { return GetOptionsDB().Get<bool>("UI.sound.enabled"); }

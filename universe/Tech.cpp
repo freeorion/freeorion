@@ -12,7 +12,6 @@
 #include "ValueRef.h"
 #include "Enums.h"
 
-#include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 
 namespace {
@@ -85,8 +84,6 @@ void Tech::Init() {
 }
 
 std::string Tech::Dump() const {
-    using boost::lexical_cast;
-
     std::string retval = DumpIndent() + "Tech\n";
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
@@ -376,8 +373,7 @@ TechManager::TechManager() {
 #ifdef OUTPUT_TECH_LIST
     for (const Tech* tech : m_techs.get<NameIndex>()) {
         std::cerr << UserString(tech->Name()) << " (" 
-                  << UserString(tech->Category()) << " "
-                  << UserString(boost::lexical_cast<std::string>(tech->Type())) << ") - "
+                  << UserString(tech->Category()) << ") - "
                   << tech->Graphic() << std::endl;
     }
 #endif

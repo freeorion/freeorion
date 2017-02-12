@@ -17,7 +17,6 @@
 #include "../util/ScopedTimer.h"
 #include "../util/i18n.h"
 #include "../util/Version.h"
-#include <boost/lexical_cast.hpp>
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/serialization/deque.hpp>

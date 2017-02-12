@@ -190,8 +190,6 @@ FieldType::~FieldType()
 {}
 
 std::string FieldType::Dump() const {
-    using boost::lexical_cast;
-
     std::string retval = DumpIndent() + "FieldType\n";
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";

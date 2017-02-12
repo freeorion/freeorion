@@ -20,7 +20,6 @@
 #include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/docstring_options.hpp>
 #include <boost/mpl/vector.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/timer.hpp>
 #include <boost/python/list.hpp>
 #include <boost/python/extract.hpp>

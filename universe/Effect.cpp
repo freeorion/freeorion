@@ -31,7 +31,6 @@
 
 
 using boost::io::str;
-using boost::lexical_cast;
 
 extern int g_indent;
 
