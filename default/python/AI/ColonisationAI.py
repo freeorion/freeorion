@@ -1104,23 +1104,27 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
         if planet_id in species.homeworlds:  # TODO: check for homeworld growth focus
             pop_size_mod += 2
 
-        max_pop_size = pop_const_mod + planet_size * pop_size_mod * pop_tag_mod
-        detail.append(
-            "baseMaxPop %d + size*psm %d * %d * %.2f = %d" % (pop_const_mod, planet_size, pop_size_mod, pop_tag_mod, max_pop_size))
+        if planet.speciesName not in AIDependencies.SPECIES_FIXED_POPULATION:
+            max_pop_size = pop_const_mod + planet_size * pop_size_mod * pop_tag_mod
+            detail.append("baseMaxPop %d + size*psm %d * %d * %.2f = %d" % (
+                           pop_const_mod, planet_size, pop_size_mod, pop_tag_mod, max_pop_size))
 
-        for _special in set(planet.specials).intersection(AIDependencies.POP_FIXED_MOD_SPECIALS):
-            this_mod = sum(AIDependencies.POP_FIXED_MOD_SPECIALS[_special].get(int(psize), 0)
-                           for psize in [-1, planet.size])
-            detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
-            max_pop_size += this_mod
+            for _special in set(planet.specials).intersection(AIDependencies.POP_FIXED_MOD_SPECIALS):
+                this_mod = sum(AIDependencies.POP_FIXED_MOD_SPECIALS[_special].get(int(psize), 0)
+                               for psize in [-1, planet.size])
+                detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
+                max_pop_size += this_mod
 
-        for _special in set(planet.specials).intersection(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS):
-            this_mod = planet.size * sum(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special].get(int(psize), 0)
-                                         for psize in [-1, planet.size])
-            detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
-            max_pop_size += this_mod
+            for _special in set(planet.specials).intersection(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS):
+                this_mod = planet.size * sum(AIDependencies.POP_PROPORTIONAL_MOD_SPECIALS[_special].get(int(psize), 0)
+                                             for psize in [-1, planet.size])
+                detail.append("%s (maxPop%+.1f)" % (_special, this_mod))
+                max_pop_size += this_mod
 
-        detail.append("maxPop %.1f" % max_pop_size)
+            detail.append("maxPop %.1f" % max_pop_size)
+        else:
+            max_pop_size = AIDependencies.SPECIES_FIXED_POPULATION[planet.speciesName]
+            detail.append("Fixed max population of %.2f" % max_pop_size)
 
         for special in ["MINERALS_SPECIAL", "CRYSTALS_SPECIAL", "ELERIUM_SPECIAL"]:
             if special in planet_specials:
