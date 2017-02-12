@@ -117,6 +117,7 @@ namespace FreeOrionPython {
         enum_<DiplomaticStatus>("diplomaticStatus")
             .value("war",               DIPLO_WAR)
             .value("peace",             DIPLO_PEACE)
+            .value("allied",            DIPLO_ALLIED)
         ;
         enum_<DiplomaticMessage::DiplomaticMessageType>("diplomaticMessageType")
             .value("noMessage",             DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
