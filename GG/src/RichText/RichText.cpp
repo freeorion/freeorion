@@ -1,7 +1,6 @@
 
 #include <GG/RichText/RichText.h>
 
-#include "RichText_p.h"
 #include "TagParser.h"
 
 #include <cctype>

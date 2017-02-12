@@ -1157,7 +1157,6 @@
 		CE61839D1BB80D2E00952BEA /* BlockControl.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BlockControl.cpp; sourceTree = "<group>"; };
 		CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ImageBlock.cpp; sourceTree = "<group>"; };
 		CE61839F1BB80D2E00952BEA /* RichText.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RichText.cpp; sourceTree = "<group>"; };
-		CE6183A01BB80D2E00952BEA /* RichText_p.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RichText_p.h; sourceTree = "<group>"; };
 		CE6183A11BB80D2E00952BEA /* TagParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TagParser.cpp; sourceTree = "<group>"; };
 		CE6183A21BB80D2E00952BEA /* TagParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TagParser.h; sourceTree = "<group>"; };
 		CE6183A31BB80D2E00952BEA /* TextBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBlock.cpp; sourceTree = "<group>"; };
@@ -2305,7 +2304,6 @@
 				CE61839D1BB80D2E00952BEA /* BlockControl.cpp */,
 				CE61839E1BB80D2E00952BEA /* ImageBlock.cpp */,
 				CE61839F1BB80D2E00952BEA /* RichText.cpp */,
-				CE6183A01BB80D2E00952BEA /* RichText_p.h */,
 				CE6183A11BB80D2E00952BEA /* TagParser.cpp */,
 				CE6183A21BB80D2E00952BEA /* TagParser.h */,
 				CE6183A31BB80D2E00952BEA /* TextBlock.cpp */,
