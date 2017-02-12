@@ -14,18 +14,11 @@
 #include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/TabWnd.h>
-#include <GG/dialogs/ThreeButtonDlg.h>
-#include <GG/utf8/checked.h>
 
-#include <boost/cast.hpp>
 #include <boost/format.hpp>
 #include <boost/spirit/include/classic.hpp>
-#include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
-#include <boost/filesystem/convenience.hpp>
-#include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/system/system_error.hpp>
 
 
 namespace fs = boost::filesystem;

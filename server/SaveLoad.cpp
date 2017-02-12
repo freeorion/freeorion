@@ -22,9 +22,6 @@
 #include "../util/ScopedTimer.h"
 #include "../combat/CombatLogManager.h"
 
-#include <GG/utf8/checked.h>
-
-#include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/serialization/deque.hpp>
 #include <boost/serialization/list.hpp>

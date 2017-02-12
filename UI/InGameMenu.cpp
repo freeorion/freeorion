@@ -16,7 +16,6 @@
 #include <GG/Button.h>
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
-#include <GG/utf8/checked.h>
 
 #include <boost/filesystem/operations.hpp>
 

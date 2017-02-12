@@ -4,8 +4,6 @@
 #include "Directories.h"
 #include "../parse/Parse.h"
 
-#include <GG/utf8/checked.h>
-
 #include <boost/filesystem/fstream.hpp>
 #include <boost/xpressive/xpressive.hpp>
 #include <boost/algorithm/string/replace.hpp>

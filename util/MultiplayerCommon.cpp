@@ -15,17 +15,9 @@
 #endif
 
 
-#include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/system/system_error.hpp>
-
-#include <GG/utf8/checked.h>
-
-
 const std::string MP_SAVE_FILE_EXTENSION = ".mps";
 const std::string SP_SAVE_FILE_EXTENSION = ".sav";
 
-namespace fs = boost::filesystem;
 
 namespace {
     // command-line options
