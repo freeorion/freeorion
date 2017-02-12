@@ -752,6 +752,124 @@ namespace {
         return system_to_supply_pod;
     }
 
+    /** SupplyTranches are sets of supply sources divided by merit into tranches starting from the
+        maximum merit of one starlane hop reduction in merit magnitude.
+    */
+    class SupplyTranche {
+        public:
+        SupplyTranche(const SupplyMerit& threshold) :
+            m_lower_threshold(threshold),
+            m_system_to_source_to_merit_stealth_empire()
+        {}
+
+        void Add(int source_id, const SupplyMerit& merit, float stealth, int system_id, int empire_id) {
+            if (merit < m_lower_threshold) {
+                ErrorLogger() << "source lower than merit threshold";
+                return;
+            }
+            m_system_to_source_to_merit_stealth_empire[system_id].insert({source_id, {merit, stealth, empire_id}});
+        }
+
+        void Remove(int system_id, int source_id) {
+            auto system_it = m_system_to_source_to_merit_stealth_empire.find(system_id);
+            if (system_it == m_system_to_source_to_merit_stealth_empire.end())
+                return;
+
+            system_it->second.erase(source_id);
+        }
+
+        std::unordered_map<int, std::unordered_map<int, std::tuple<SupplyMerit, float, int>>>::iterator begin()
+        { return m_system_to_source_to_merit_stealth_empire.begin(); }
+
+        std::unordered_map<int, std::unordered_map<int, std::tuple<SupplyMerit, float, int>>>::iterator end()
+        { return m_system_to_source_to_merit_stealth_empire.end(); }
+
+        /** Return the threshold.*/
+        const SupplyMerit& Threshold() const
+        { return m_lower_threshold; }
+
+        private:
+        SupplyMerit m_lower_threshold;
+        std::unordered_map<int, std::unordered_map<int, std::tuple<SupplyMerit, float, int>>>
+        m_system_to_source_to_merit_stealth_empire;
+    };
+
+    class SupplyTranches {
+        public:
+        SupplyTranches() {
+            // Sort by SupplyMerit
+            std::map<SupplyMerit, std::shared_ptr<UniverseObject>> merit_and_source;
+            for (auto& id_to_obj_ptr : Objects().ExistingObjects()) {
+                auto maybe_merit = CalculateSupplyMerit(id_to_obj_ptr.second);
+                if(!maybe_merit)
+                    continue;
+                merit_and_source.insert({*maybe_merit, id_to_obj_ptr.second});
+            }
+
+            if (merit_and_source.empty()) {
+                return;
+            }
+
+            // Divide into tranches of the minimum drop in merit across a single starlane.
+            const auto max_merit = merit_and_source.rbegin()->first;
+
+            auto merit_source_it = merit_and_source.rbegin();
+            auto merit_threshold = max_merit.OneJumpLessMerit(0.0f);
+            auto tranche = SupplyTranche(merit_threshold);
+
+            SupplyMerit merit;
+            std::shared_ptr<UniverseObject> source;
+
+            while (merit_source_it != merit_and_source.rend()) {
+                std::tie(merit, source) = *merit_source_it;
+
+                if (merit <= merit_threshold) {
+                    // Start a new tranche: Save the old, change the threshold, start a new tranche
+                    m_tranches.push_back(tranche);
+                    merit_threshold = merit_threshold.OneJumpLessMerit(0.0f);
+                    tranche = SupplyTranche(merit_threshold);
+                }
+
+                // Add to the tranche
+                float stealth = source->GetMeter(METER_STEALTH) ? source->CurrentMeterValue(METER_STEALTH) : 0;
+                tranche.Add(source->ID(), merit, stealth, source->SystemID(), source->Owner());
+
+                ++merit_source_it;
+            }
+
+            // Create the remaining tranches down to zero merit.
+            auto zero_merit = SupplyMerit();
+            while (merit_threshold > zero_merit) {
+                merit_threshold = merit_threshold.OneJumpLessMerit(0.0f);
+                m_tranches.push_back(SupplyTranche(merit_threshold));
+            }
+        }
+
+        /** Return the tranche that would hold a source with \p merit.*/
+        SupplyTranche& operator[](const SupplyMerit& merit) {
+            auto zero_merit = SupplyMerit();
+            for (auto & tranche : m_tranches) {
+                if (tranche.Threshold() < merit || tranche.Threshold() == zero_merit)
+                    return tranche;
+            }
+            return m_tranches.back();
+        }
+
+        /** Return the \p ii th tranche. This does no bounds checking.*/
+        SupplyTranche& operator[](std::size_t ii)
+        { return m_tranches[ii]; }
+
+        std::size_t Size() const
+        { return m_tranches.size(); }
+
+        std::vector<SupplyTranche>::iterator begin() { return m_tranches.begin(); }
+        std::vector<SupplyTranche>::iterator end() { return m_tranches.end(); }
+
+        private:
+        std::vector<SupplyTranche> m_tranches;
+
+
+    };
     /** Remove \p sys_id from unobstructed_systems, remove all startlanes that arrive or depart sys_id
         from lane_traversals and remove obstructed traversals that depart this system.*/
     void RemoveSystemFromTraversals(
