@@ -35,8 +35,9 @@ std::string DiplomaticMessage::Dump() const {
     case ACCEPT_ALLIES_PROPOSAL:    retval += "Accept Allies Proposal";     break;
     case END_ALLIANCE_DECLARATION:  retval += "End Alliance Declaration";   break;
     case CANCEL_PROPOSAL:           retval += "Cancel Proposal";            break;
+    case REJECT_PROPOSAL:           retval += "Reject Proposal";            break;
     case INVALID_DIPLOMATIC_MESSAGE_TYPE:
-    default:                        retval += "Invalid / Unknown";  break;
+    default:                        retval += "Invalid / Unknown";          break;
     }
     return retval;
 }
