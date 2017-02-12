@@ -1044,7 +1044,7 @@ class ShipDesigner(object):
                 elif token == AIDependencies.STRUCTURE:
                     self.structure += value
                 else:
-                    print "WARNING: Failed to parse token: %s" % token
+                    raise NotImplementedError
             # if the hull has no special detection specified, then it has base detection.
             if is_hull and AIDependencies.DETECTION not in tokendict:
                 self.detection += AIDependencies.BASE_DETECTION
