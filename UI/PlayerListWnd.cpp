@@ -742,10 +742,12 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             if (diplo_status == DIPLO_WAR) {
                 if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
                     // who sent message?
-                    if (existing_message.SenderEmpireID() == client_empire_id)
-                        menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL_CANEL"), 4, false, false));
-                    else if (existing_message.SenderEmpireID() == clicked_empire_id)
+                    if (existing_message.SenderEmpireID() == client_empire_id) {
+                        menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL_CANCEL"),4, false, false));
+                    } else if (existing_message.SenderEmpireID() == clicked_empire_id) {
                         menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_ACCEPT"),         3, false, false));
+                        menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_REJECT"),         9, false, false));
+                    }
 
                 } else if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
                     menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"),           2, false, false));
@@ -754,13 +756,17 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             } else if (diplo_status == DIPLO_PEACE) {
                 if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
                     menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          6, false, false));
-                    menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),          1, false, false));
+
                 } else if (existing_message.GetType() == DiplomaticMessage::ALLIES_PROPOSAL) {
-                    menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"), 2, false, false));
+                    menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_ACCEPT"),            7, false, false));
+                    menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_REJECT"),            9, false, false));
                 }
+                menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),              1, false, false));
 
             } else if (diplo_status == DIPLO_ALLIED) {
-
+                //if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
+                    menu_contents.next_level.push_back(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), 8, false, false));
+                //}
             }
         }
     }
@@ -790,19 +796,18 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
         case 6: {   // ALLIES_PROPOSAL
             net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                AlliesProposalDiplomaticMessage(client_empire_id, clicked_empire_id)));
+                                             AlliesProposalDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
         }
         case 7: {   // ALLIES_ACCEPT
             net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                AcceptAlliesDiplomaticMessage(client_empire_id, clicked_empire_id)));
+                                             AcceptAlliesDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
         }
         case 8: {   // END_ALLIANCE_DECLARATION
             net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                EndAllianceDiplomaticMessage(client_empire_id, clicked_empire_id)));
+                                             EndAllianceDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
-
         }
 
         case 4: {   // PROPOSAL_CANCEL
@@ -810,6 +815,12 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                                              CancelDiplomaticMessage(client_empire_id, clicked_empire_id)));
             break;
         }
+        case 9: {   // PROPOSAL_REJECT
+            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
+                                             RejectProposalDiplomaticMessage(client_empire_id, clicked_empire_id)));
+            break;
+        }
+
         case 5: { // Pedia lookup
             ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id);
             break;

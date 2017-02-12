@@ -3299,11 +3299,26 @@ Declare War
 PEACE_PROPOSAL
 Propose Peace
 
-PEACE_PROPOSAL_CANEL
+PEACE_PROPOSAL_CANCEL
 Cancel Peace Proposal
 
 PEACE_ACCEPT
 Accept Peace Proposal
+
+PEACE_REJECT
+Reject Peace Proposal
+
+ALLIES_PROPOSAL
+Propose Alliance
+
+ALLIES_ACCEPT
+Accept Alliance Proposal
+
+ALLIES_REJECT
+Reject Alliance Proposal
+
+END_ALLIANCE_DECLARATION
+Declare End of Alliance
 
 
 ##

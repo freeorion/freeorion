@@ -62,3 +62,6 @@ DiplomaticMessage EndAllianceDiplomaticMessage(int sender_empire_id, int recipie
 DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
 { return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::CANCEL_PROPOSAL); }
 
+DiplomaticMessage RejectProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id)
+{ return DiplomaticMessage(sender_empire_id, recipient_empire_id, DiplomaticMessage::REJECT_PROPOSAL); }
+
