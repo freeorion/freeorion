@@ -1173,6 +1173,7 @@ void ListBox::BringRowIntoView(iterator it)
 
     Y y_offset(BORDER_THICK), it_y_offset(BORDER_THICK);
     Y first_row_y_offset(BORDER_THICK), last_row_y_offset(BORDER_THICK);
+    iterator it_end_row = --m_rows.end();
     iterator it2 = m_rows.begin();
     while ((it2 != m_rows.end()) && (!first_row_found || !last_row_found || !it_found)) {
         if (it2 == m_first_row_shown) {
@@ -1186,7 +1187,8 @@ void ListBox::BringRowIntoView(iterator it)
         }
 
         if (first_row_found && !last_row_found
-            && ((y_offset - first_row_y_offset) >= ClientHeight()))
+            && (((y_offset - first_row_y_offset + GG::Y(2 * BORDER_THICK)) >= ClientHeight())
+                || it2 == it_end_row))
         {
             last_row_found = true;
             if (it2 != m_rows.begin())
@@ -1200,7 +1202,7 @@ void ListBox::BringRowIntoView(iterator it)
     if (!it_found)
         return;
 
-    if (y_offset <= ClientHeight())
+    if (y_offset + GG::Y(BORDER_THICK) <= ClientHeight())
         SetFirstRowShown(begin());
 
     // Shift the view if 'it' is outside of [first_row .. last_row]
@@ -2425,7 +2427,7 @@ void ListBox::NormalizeRow(Row* row)
 
 ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height)
 {
-    Y available_space = client_height - (*bottom_row)->Height();
+    Y available_space = client_height - (*bottom_row)->Height() - GG::Y(2*BORDER_THICK);
     iterator it = bottom_row;
     while (it != m_rows.begin() && (*std::prev(it))->Height() <= available_space) {
         available_space -= (*--it)->Height();

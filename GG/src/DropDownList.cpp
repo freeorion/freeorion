@@ -294,13 +294,15 @@ void ModalListPicker::CorrectListSize() {
         // (width, prerender etc.) would mean this code could be reduced to
         // check height and resize list just once.
 
-        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows()) + 4;
+        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows())
+            + 4 * GG::Y(ListBox::BORDER_THICK);
         LB()->Resize(drop_down_size);
         if (!LB()->Selections().empty())
             LB()->BringRowIntoView(*(LB()->Selections().begin()));
         GUI::GetGUI()->PreRenderWindow(LB());
 
-        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows()) + 4;
+        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows())
+            + 4 * GG::Y(ListBox::BORDER_THICK);
         LB()->Resize(drop_down_size);
         if (!LB()->Selections().empty())
             LB()->BringRowIntoView(*(LB()->Selections().begin()));
