@@ -507,6 +507,11 @@ namespace {
             return std::tie(l.range, l.bonus, l.distance) == std::tie(r.range, r.bonus, r.distance);
         }
 
+        friend std::ostream& operator<<(std::ostream& os, const SupplyMerit& x) {
+            os << '(' << x.range << '/' << x.bonus << '/' << x.distance << ')';
+            return os;
+        }
+
         private:
         // Number of jumps that the supply can propagate.
         // TODO Should this be unsigned int?
