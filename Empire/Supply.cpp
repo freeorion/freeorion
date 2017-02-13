@@ -504,6 +504,7 @@ namespace {
             return std::tie(l.range, l.bonus, r.distance) < std::tie(r.range, r.bonus, l.distance);
         }
 
+        // TODO?: Should all merits with zero range be equal even if some have a positive bonus?
         friend bool operator==(const SupplyMerit& l, const SupplyMerit& r) {
             return std::tie(l.range, l.bonus, l.distance) == std::tie(r.range, r.bonus, r.distance);
         }
@@ -512,6 +513,15 @@ namespace {
             os << '(' << x.range << '/' << x.bonus << '/' << x.distance << ')';
             return os;
         }
+
+        float Range() const
+        {return range;}
+
+        float Bonus() const
+        {return bonus;}
+
+        float Distance() const
+        {return distance;}
 
         private:
         // Number of jumps that the supply can propagate.
