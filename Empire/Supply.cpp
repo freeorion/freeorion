@@ -878,6 +878,7 @@ namespace {
             SupplyMerit merit;
             std::shared_ptr<UniverseObject> source;
 
+            DebugLogger() << "SupplyTranches() adding " << merit_and_source.size() << " supply sources to tranches.";
             while (merit_source_it != merit_and_source.rend()) {
                 std::tie(merit, source) = *merit_source_it;
 
@@ -886,17 +887,20 @@ namespace {
                     m_tranches.insert({merit_threshold, tranche});
                     merit_threshold = merit_threshold.OneJumpLessMerit();
                     tranche = SupplyTranche(merit_threshold);
+                    DebugLogger() << "SupplyTranches() start new tranche with merit " << merit_threshold << ".";
                 }
 
                 // Add to the tranche
                 float stealth = source->GetMeter(METER_STEALTH) ? source->CurrentMeterValue(METER_STEALTH) : 0;
                 tranche.Add(source->ID(), merit, stealth, source->SystemID(), source->Owner());
+                DebugLogger() << "SupplyTranches() add " << merit << " to tranche with threshold " << merit_threshold;
 
                 ++merit_source_it;
             }
 
             m_tranches.insert({merit_threshold, tranche});
 
+            DebugLogger() << "SupplyTranches() built " << m_tranches.size() << " tranches with data.";
             // Create the remaining tranches down to lower of zero merit or the minimum detected
             // merit reduced by one jump of merit reduction.
             auto zero_merit = SupplyMerit();
@@ -905,7 +909,10 @@ namespace {
             while (merit_threshold > min_merit) {
                 merit_threshold = merit_threshold.OneJumpLessMerit();
                 m_tranches.insert({merit_threshold, SupplyTranche(merit_threshold)});
+                DebugLogger() << "SupplyTranches() add empty tranche built " << merit_threshold << " threshold.";
             }
+            DebugLogger() << "SupplyTranches() built " << m_tranches.size() << " tranches max merit "
+                          << m_max_merit << " min merit " << m_tranches.begin()->first;
         }
 
         /** Add these sources to the correct tranche*/
@@ -933,8 +940,12 @@ namespace {
                 return m_tranches.begin()->second;
             }
                 
+
+            DebugLogger() << "SupplyTranches()[" << merit << "] found " << it->first << " threshold. ";
+
             //Expected exit
             if (it->first >= merit.OneJumpLessMerit()) {
+                DebugLogger() << "SupplyTranches()[" << merit << "] returned " << it->first << " threshold. ";
                 return it->second;
             }
 
@@ -1865,10 +1876,11 @@ namespace {
 }
 
 void SupplyManager::SupplyManagerImpl::Update() {
-
+    DebugLogger() << "Entering SupplyManager update.";
     //TODO early exit when no supply sources
 
 
+    DebugLogger() << "SupplyManager::Update() starlanes.";
     // system connections each empire can see / use for supply propagation
     std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>> empire_to_system_to_starlanes;
     for (auto && entry : Empires()) {
@@ -1883,18 +1895,22 @@ void SupplyManager::SupplyManagerImpl::Update() {
         }
     }
 
+    DebugLogger() << "SupplyManager::Update() create PODs.";
     //Map from system id to SupplySystemPOD containing all data needed to evaluate supply in one system.
     std::unordered_map<int, SupplySystemPOD> system_to_supply_pod = CalculateInitialSupply();
 
+    DebugLogger() << "SupplyManager::Update() create tranches.";
     // Tranches of SupplyMerit sorted by merit.  Tranches are the size of a one supply hop change
     // in merit starting from the highest merit.  Each tranche of merits can be processed and then
     // propagated to adjacent systems and then never handled again.
     auto tranches = SupplyTranches();
 
+    DebugLogger() << "SupplyManager::Update() start grind.";
     // Process each tranche until the merit threshold is negative
     const auto lowest_merit = SupplyMerit().OneJumpLessMerit();
     auto merit_threshold = tranches.MaxMerit().OneJumpLessMerit();
     while (merit_threshold > lowest_merit) {
+        DebugLogger() << "SupplyManager::Update() do tranche with merit " << merit_threshold <<".";
 
         // In each system the supply sources from this tranche will compete and determine which
         // supply sources in that system win and are propagated further or lose and are removed
@@ -1902,6 +1918,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
         auto& tranche = tranches[merit_threshold];
         for (auto&& system_and_source_to_merit_stealth_empire : tranche) {
             auto system_id = system_and_source_to_merit_stealth_empire.first;
+            DebugLogger() << "SupplyManager::Update() contest system "<< system_id;
 
             // System data
             auto& pod = system_to_supply_pod[system_id];
@@ -1912,16 +1929,19 @@ void SupplyManager::SupplyManagerImpl::Update() {
             std::tie( winners, losers) =
                 ContestSystem(pod, system_id, system_and_source_to_merit_stealth_empire.second);
 
+            DebugLogger() << "SupplyManager::Update() remove losers in "<< system_id;
             // Remove the losers the tranches.
             for (auto&& loser : losers) {
                 tranches.Remove(system_id, loser.first, loser.second);
             }
 
+            DebugLogger() << "SupplyManager::Update() propagate winners in "<< system_id;
             // Propagate the winners
             auto propagated_winners = Propagate(
                 system_to_supply_pod, tranches, system_id,
                 winners, empire_to_system_to_starlanes);
 
+            DebugLogger() << "SupplyManager::Update() add winners in "<< system_id;
             if (propagated_winners)
                 tranches.Add(*propagated_winners);
         }
@@ -1932,6 +1952,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
     // Extract the information for each output map from system_to_supply_pod.
 
 
+    DebugLogger() << "SupplyManager::Update() extract basics.";
     /** ids of systems where fleets can be resupplied. indexed by empire id. */
     /*std::map<int, std::set<int>>                 */  m_fleet_supplyable_system_ids.clear();
 
@@ -1994,6 +2015,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
         by range, but by something blocking its flow. */
     /*std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>*/  m_supply_starlane_obstructed_traversals.clear();
 
+    DebugLogger() << "SupplyManager::Update() traversals.";
     // std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>>
     for (auto&& empire_and_system_to_starlanes : empire_to_system_to_starlanes) {
         int empire_id = empire_and_system_to_starlanes.first;
@@ -2036,11 +2058,15 @@ void SupplyManager::SupplyManagerImpl::Update() {
         }
     }
 
+    DebugLogger() << "SupplyManager::Update() supply groups.";
+
     /** sets of system ids that are connected by supply lines and are able to
         share resources between systems or between objects in systems. indexed
         by empire id. */
     /*std::map<int, std::set<std::set<int>>>      */  m_resource_supply_groups.clear();
     DetermineSupplyConnectedSystemGroups();
+
+    DebugLogger() << "Exiting SupplyManager update.";
 
 }
 
