@@ -866,10 +866,10 @@ namespace {
             }
 
             // Divide into tranches of the minimum drop in merit across a single starlane.
-            const auto max_merit = merit_and_source.rbegin()->first;
+            m_max_merit = merit_and_source.rbegin()->first;
 
             auto merit_source_it = merit_and_source.rbegin();
-            auto merit_threshold = max_merit.OneJumpLessMerit();
+            auto merit_threshold = m_max_merit.OneJumpLessMerit();
             auto tranche = SupplyTranche(merit_threshold);
 
             SupplyMerit merit;
@@ -948,8 +948,12 @@ namespace {
             operator[](merit).Remove(system_id, source_id);
         }
 
+        const SupplyMerit& MaxMerit() const
+        {return m_max_merit;}
+
         private:
         std::map<SupplyMerit, SupplyTranche> m_tranches;
+        SupplyMerit m_max_merit;
 
 
     };
