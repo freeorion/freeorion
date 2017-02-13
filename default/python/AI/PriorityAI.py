@@ -22,7 +22,6 @@ prioritiees_timer = AITimer('calculate_priorities()')
 allottedInvasionTargets = 0
 allottedColonyTargets = 0
 allotted_outpost_targets = 0
-scoutsNeeded = 0
 unmetThreat = 0
 
 
@@ -188,7 +187,6 @@ def _calculate_research_priority():
 
 def _calculate_exploration_priority():
     """Calculates the demand for scouts by unexplored systems."""
-    global scoutsNeeded
     empire = fo.getEmpire()
     num_unexplored_systems = len(ExplorationAI.borderUnexploredSystemIDs)  # len(foAI.foAIstate.get_explorable_systems(ExplorableSystemType.UNEXPLORED))
     num_scouts = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(
@@ -208,8 +206,9 @@ def _calculate_exploration_priority():
     # need_cap_B is to help regulate investment into scouting while the empire is small.
     # These caps could perhaps instead be tied more directly to military priority and
     # total empire production.
-    scoutsNeeded = max(0, min(4 + int(mil_ships / 5), 4 + int(fo.currentTurn() / 50), 2 + num_unexplored_systems**0.5) - num_scouts - queued_scout_ships)
-    exploration_priority = int(40 * scoutsNeeded)
+    desired_number_of_scouts = int(min(4 + mil_ships/5, 4 + fo.currentTurn()/50.0, 2 + num_unexplored_systems**0.5))
+    scouts_needed = max(0, desired_number_of_scouts - (num_scouts + queued_scout_ships))
+    exploration_priority = int(40 * scouts_needed)
 
     print
     print "Number of Scouts: %s" % num_scouts
