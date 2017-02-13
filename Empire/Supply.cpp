@@ -3,6 +3,7 @@
 #include "EmpireManager.h"
 #include "Empire.h"
 #include "../universe/Universe.h"
+#include "../universe/Pathfinder.h"
 #include "../universe/UniverseObject.h"
 #include "../universe/System.h"
 #include "../universe/Planet.h"
@@ -1196,6 +1197,77 @@ namespace {
             }
         }
         return {winners, losers};
+    }
+
+    /** Propagate the \p propagators from \p system_id through all starlanes visible to their
+        empire in \p empire_to_system_to_starlanes. Return the newly added supply elements.*/
+    boost::optional<std::map<SupplyMerit, std::tuple<int, float, int, int>>> Propagate(
+        std::unordered_map<int, SupplySystemPOD> system_to_supply_pod,
+        SupplyTranches& tranches,
+        const int system_id,
+        const std::vector<SupplyPODTuple>& propagators,
+        std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>>& empire_to_system_to_starlanes)
+    {
+        // Return a set of winners that will propagate further and a set of losers that will not.
+        boost::optional<std::map<SupplyMerit, std::tuple<int, float, int, int>>> retval;
+
+        // For each propagator
+        for (auto&& propagator : propagators) {
+
+            const SupplyMerit& merit = std::get<0>(propagator);
+            float stealth;
+            int source_id, empire_id;
+            std::tie(std::ignore, stealth, source_id, empire_id) = propagator;
+
+            // Follow all known starlanes.
+            const auto& endpoints = empire_to_system_to_starlanes[empire_id][system_id];
+            for (auto&& end_system : endpoints) {
+                auto& pod = system_to_supply_pod[end_system];
+
+                // boost::optional<std::set<std::tuple<SupplyMerit, float, int, int>>> merit_stealth_supply_empire;
+                // boost::optional<std::unordered_set<int>> contesting_empires;
+                // boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
+                // boost::optional<int> blockading_colonies_empire_id;
+
+                // Check for hostile blockading fleets that can detect this supply
+                if (pod.blockading_fleets_empire_ids) {
+                    if (std::any_of(
+                            pod.blockading_fleets_empire_ids->begin(), pod.blockading_fleets_empire_ids->end(),
+                            [&](int blockading_empire_id) {
+                                // Blockade if hostile and can detect
+                                auto blockading_detection = EmpireDetectionStrength(blockading_empire_id);
+                                return ((empire_id != blockading_empire_id)
+                                        && (Empires().GetDiplomaticStatus(empire_id, blockading_empire_id) == DIPLO_WAR)
+                                        && (blockading_detection > stealth));
+
+                            }))
+                    {
+                        // blockaded
+                        break;
+                    }
+                }
+
+                // Check for hostile blockading colonies regardless of detection strength
+                // Note: This is a temporary(?) workaround to ease AI development
+                if (pod.blockading_colonies_empire_id)
+                    break;
+
+                // Reduce the merit by the length of this starlane
+                auto reduced_merit = merit.OneJumpLessMerit(GetPathfinder()->LinearDistance(system_id, end_system));
+
+                // Insert the new data into the endpoint system's POD.
+                if (!pod.merit_stealth_supply_empire)
+                    pod.merit_stealth_supply_empire = std::set<SupplyPODTuple>();
+                pod.merit_stealth_supply_empire->insert({reduced_merit, stealth, source_id, empire_id});
+
+                // Add the new data into the list of changed supply
+                if (!retval)
+                    retval = std::map<SupplyMerit, std::tuple<int, float, int, int>>();
+                retval->insert({reduced_merit, {source_id, stealth, end_system, empire_id}});
+            }
+        }
+        return retval;
+    }
 
         // There is one empire here.
         // if (pod.empire_to_merit_stealth_supply->size() == 1) {
@@ -1297,7 +1369,6 @@ namespace {
         // }
 
         // return {max_supply_range, empires_needing_traversal_adjustment};
-    }
 
     /** Adjust the supply lane traversals, after a system is contested. */
     void AdjustStarlaneTraversals(
