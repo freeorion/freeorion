@@ -449,7 +449,8 @@ namespace {
     bool IsPlayerChanged(const PlayerSetupData& lhs, const PlayerSetupData& rhs) {
         return (lhs.m_client_type != rhs.m_client_type) ||
             (lhs.m_starting_species_name != rhs.m_starting_species_name) ||
-            (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id);
+            (lhs.m_save_game_empire_id != rhs.m_save_game_empire_id) ||
+            (lhs.m_empire_color != rhs.m_empire_color);
     }
 }
 
@@ -511,7 +512,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
     // check if new lobby data changed player setup data.  if so, need to echo
     // back to sender with updated lobby details.
-    bool player_setup_data_changed = (incoming_lobby_data.m_players != m_lobby_data->m_players);
+    bool player_setup_data_changed = false;
     // if got important lobby changes so players shoul reset their ready status
     bool has_important_changes = false;
 
@@ -521,205 +522,245 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // save files, save game empire data from the save file, player data)
     // during this copying and is updated below from the save file(s)
 
-    // TODO: ensure only the host can change anything other than a player's
-    // own details.  non-hosts should not be able to edit other players' info
-    // or the galaxy setup.
-    
-    // check if galaxy setup data changed
-    has_important_changes = has_important_changes || (m_lobby_data->m_seed != incoming_lobby_data.m_seed) ||
-        (m_lobby_data->m_size != incoming_lobby_data.m_size) ||
-        (m_lobby_data->m_shape != incoming_lobby_data.m_shape) ||
-        (m_lobby_data->m_age != incoming_lobby_data.m_age) ||
-        (m_lobby_data->m_starlane_freq != incoming_lobby_data.m_starlane_freq) ||
-        (m_lobby_data->m_planet_density != incoming_lobby_data.m_planet_density) ||
-        (m_lobby_data->m_specials_freq != incoming_lobby_data.m_specials_freq) ||
-        (m_lobby_data->m_monster_freq != incoming_lobby_data.m_monster_freq) ||
-        (m_lobby_data->m_native_freq != incoming_lobby_data.m_native_freq) ||
-        (m_lobby_data->m_ai_aggr != incoming_lobby_data.m_ai_aggr) ||
-        (m_lobby_data->m_new_game != incoming_lobby_data.m_new_game);
+    if (server.m_networking.PlayerIsHost(message.SendingPlayer())) {
 
-    if (player_setup_data_changed) {
-        if (m_lobby_data->m_players.size() != incoming_lobby_data.m_players.size()) {
-            has_important_changes = true; // drop ready at number of players changed
+        DebugLogger() << "Get message from host.";
+
+        static int AI_count = 1;
+        const GG::Clr CLR_NONE = GG::Clr(0, 0, 0, 0);
+
+        // assign unique names / colours to any lobby entry that lacks them, or
+        // remove empire / colours from observers
+        for (std::pair<int, PlayerSetupData>& entry : incoming_lobby_data.m_players) {
+            PlayerSetupData& psd = entry.second;
+            if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
+                psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+            {
+                psd.m_empire_color = CLR_NONE;
+                // On OSX the following two lines must not be included.
+                // Clearing empire name and starting species name from
+                // PlayerSetupData causes a weird crash (bus error) deep
+                // in GG code on OSX in the Multiplayer Lobby when selecting
+                // Observer or Moderator as client type.
+#ifndef FREEORION_MACOSX
+                psd.m_empire_name.clear();
+                psd.m_starting_species_name.clear();
+#endif
+                psd.m_save_game_empire_id = ALL_EMPIRES;
+
+            } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+                if (psd.m_empire_color == CLR_NONE)
+                    psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
+                if (psd.m_player_name.empty())
+                    // ToDo: Should we translate player_name?
+                    psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(AI_count++);
+                if (psd.m_empire_name.empty())
+                    psd.m_empire_name = GenerateEmpireName(incoming_lobby_data.m_players);
+                if (psd.m_starting_species_name.empty()) {
+                    if (m_lobby_data->m_seed!="")
+                        psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+                    else
+                        psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(AI_count);
+                }
+
+            } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                if (psd.m_empire_color == CLR_NONE)
+                    psd.m_empire_color = GetUnusedEmpireColour(incoming_lobby_data.m_players);
+                if (psd.m_empire_name.empty())
+                    psd.m_empire_name = psd.m_player_name;
+                if (psd.m_starting_species_name.empty())
+                    psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
+            }
+        }
+
+        bool has_collision = false;
+        // check for color and names
+        std::set<GG::Clr> psd_colors;
+        std::set<std::string> psd_names;
+        for (std::pair<int, PlayerSetupData>& player : incoming_lobby_data.m_players) {
+            if (psd_colors.count(player.second.m_empire_color) ||
+                psd_names.count(player.second.m_empire_name) ||
+                psd_names.count(player.second.m_player_name))
+            {
+                has_collision = true;
+                break;
+            } else {
+                psd_colors.emplace(player.second.m_empire_color);
+                psd_names.emplace(player.second.m_empire_name);
+                psd_names.emplace(player.second.m_player_name);
+            }
+        }
+
+        if (has_collision) {
+            player_setup_data_changed = true;
+            for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players) {
+                if (player.first == message.SendingPlayer()) {
+                    player.second.m_player_ready = false;
+                    break;
+                }
+            }
         } else {
-            for (std::pair<int, PlayerSetupData>& i_player : m_lobby_data->m_players) {
-                if (i_player.first < 0) // ignore changes in AI.
+
+            player_setup_data_changed = (incoming_lobby_data.m_players != m_lobby_data->m_players);
+
+            // check if galaxy setup data changed
+            has_important_changes = has_important_changes || (m_lobby_data->m_seed != incoming_lobby_data.m_seed) ||
+                (m_lobby_data->m_size != incoming_lobby_data.m_size) ||
+                (m_lobby_data->m_shape != incoming_lobby_data.m_shape) ||
+                (m_lobby_data->m_age != incoming_lobby_data.m_age) ||
+                (m_lobby_data->m_starlane_freq != incoming_lobby_data.m_starlane_freq) ||
+                (m_lobby_data->m_planet_density != incoming_lobby_data.m_planet_density) ||
+                (m_lobby_data->m_specials_freq != incoming_lobby_data.m_specials_freq) ||
+                (m_lobby_data->m_monster_freq != incoming_lobby_data.m_monster_freq) ||
+                (m_lobby_data->m_native_freq != incoming_lobby_data.m_native_freq) ||
+                (m_lobby_data->m_ai_aggr != incoming_lobby_data.m_ai_aggr) ||
+                (m_lobby_data->m_new_game != incoming_lobby_data.m_new_game);
+
+            if (player_setup_data_changed) {
+                if (m_lobby_data->m_players.size() != incoming_lobby_data.m_players.size()) {
+                    has_important_changes = true; // drop ready at number of players changed
+                } else {
+                    for (std::pair<int, PlayerSetupData>& i_player : m_lobby_data->m_players) {
+                        if (i_player.first < 0) // ignore changes in AI.
+                            continue;
+                        int player_id = i_player.first;
+                        bool is_found_player = false;
+                        for (std::pair<int, PlayerSetupData>& j_player : incoming_lobby_data.m_players) {
+                            if (player_id == j_player.first) {
+                                has_important_changes = has_important_changes || IsPlayerChanged(i_player.second, j_player.second);
+                                is_found_player = true;
+                                break;
+                            }
+                        }
+                        has_important_changes = has_important_changes || (! is_found_player);
+                    }
+                }
+            }
+
+            // GalaxySetupData
+            m_lobby_data->m_seed =           incoming_lobby_data.m_seed;
+            m_lobby_data->m_size =           incoming_lobby_data.m_size;
+            m_lobby_data->m_shape =          incoming_lobby_data.m_shape;
+            m_lobby_data->m_age =            incoming_lobby_data.m_age;
+            m_lobby_data->m_starlane_freq =  incoming_lobby_data.m_starlane_freq;
+            m_lobby_data->m_planet_density = incoming_lobby_data.m_planet_density;
+            m_lobby_data->m_specials_freq =  incoming_lobby_data.m_specials_freq;
+            m_lobby_data->m_monster_freq =   incoming_lobby_data.m_monster_freq;
+            m_lobby_data->m_native_freq =    incoming_lobby_data.m_native_freq;
+            m_lobby_data->m_ai_aggr     =    incoming_lobby_data.m_ai_aggr;
+
+            // directly configurable lobby data
+            m_lobby_data->m_new_game =       incoming_lobby_data.m_new_game;
+            m_lobby_data->m_players =        incoming_lobby_data.m_players;
+
+            LogPlayerSetupData(m_lobby_data->m_players);
+
+            // update player connection types according to modified lobby selections,
+            // while recording connections that are to be dropped
+            std::vector<PlayerConnectionPtr> player_connections_to_drop;
+            for (ServerNetworking::established_iterator player_connection_it = server.m_networking.established_begin();
+                 player_connection_it != server.m_networking.established_end(); ++player_connection_it)
+            {
+                PlayerConnectionPtr player_connection = *player_connection_it;
+                int player_id = player_connection->PlayerID();
+                if (player_id == Networking::INVALID_PLAYER_ID)
                     continue;
-                int player_id = i_player.first;
-                bool is_found_player = false;
+
+                // get lobby data for this player connection
+                bool found_player_lobby_data = false;
+                std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
+                while (player_setup_it != m_lobby_data->m_players.end()) {
+                    if (player_setup_it->first == player_id) {
+                        found_player_lobby_data = true;
+                        break;
+                    }
+                    ++player_setup_it;
+                }
+
+                // drop connections which have no lobby data
+                if (!found_player_lobby_data) {
+                    ErrorLogger() << "No player setup data for player " << player_id << " in MPLobby::react(const LobbyUpdate& msg)";
+                    player_connections_to_drop.push_back(player_connection);
+                    continue;
+                }
+
+                // get client type, and drop connections with invalid type, as that indicates a requested drop
+                Networking::ClientType client_type = player_setup_it->second.m_client_type;
+
+                if (client_type != Networking::INVALID_CLIENT_TYPE) {
+                    // update player connection type for lobby change
+                    player_connection->SetClientType(client_type);
+                } else {
+                    // drop connections for players who were dropped from lobby
+                    m_lobby_data->m_players.erase(player_setup_it);
+                    player_connections_to_drop.push_back(player_connection);
+                }
+            }
+
+            // drop players connections.  Doing this in separate loop to avoid messing
+            // up iteration above.  these disconnections will lead to Disconnect events
+            // being generated and MPLobby::react(Disconnect) being called.  If this
+            // disconnects the host, then a new host will be selected within that function.
+            for (PlayerConnectionPtr drop_con : player_connections_to_drop) {
+                server.m_networking.Disconnect(drop_con);
+            }
+
+            // remove empty lobby player entries.  these will occur if AIs are dropped
+            // from the lobby.  this will also occur when humans are dropped, but those
+            // cases should have been handled above when checking the lobby data for
+            // each player connection.
+            std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
+            while (player_setup_it != m_lobby_data->m_players.end()) {
+                if (player_setup_it->second.m_client_type == Networking::INVALID_CLIENT_TYPE) {
+                    std::list<std::pair<int, PlayerSetupData> >::iterator erase_it = player_setup_it;
+                    ++player_setup_it;
+                    m_lobby_data->m_players.erase(erase_it);
+                } else {
+                    ++player_setup_it;
+                }
+            }
+
+        }
+    } else {
+        // can change only himself
+        for (std::pair<int, PlayerSetupData>& i_player : m_lobby_data->m_players) {
+            if (i_player.first == message.SendingPlayer()) {
+                // found sender at m_lobby_data
                 for (std::pair<int, PlayerSetupData>& j_player : incoming_lobby_data.m_players) {
-                    if (player_id == j_player.first) {
-                        has_important_changes = has_important_changes || IsPlayerChanged(i_player.second, j_player.second);
-                        is_found_player = true;
+                    if (j_player.first == message.SendingPlayer()) {
+                        // found sender at incoming_lobby_data
+
+                        // check for color and names
+                        std::set<GG::Clr> psd_colors;
+                        std::set<std::string> psd_names;
+                        for (std::pair<int, PlayerSetupData>& k_player : m_lobby_data->m_players) {
+                            if (k_player.first != message.SendingPlayer()) {
+                                psd_colors.emplace(k_player.second.m_empire_color);
+                                psd_names.emplace(k_player.second.m_empire_name);
+                                psd_names.emplace(k_player.second.m_player_name);
+                            }
+                        }
+
+                        // if we have collision unset ready flag and ignore changes
+                        if (psd_colors.count(j_player.second.m_empire_color) ||
+                            psd_names.count(j_player.second.m_empire_name) ||
+                            psd_names.count(j_player.second.m_player_name))
+                        {
+                            i_player.second.m_player_ready = false;
+                            player_setup_data_changed = true;
+                        } else {
+                            has_important_changes = IsPlayerChanged(i_player.second, j_player.second);
+                            player_setup_data_changed = ! (i_player.second == j_player.second);
+
+                            i_player.second = std::move(j_player.second);
+                        }
+
                         break;
                     }
                 }
-                has_important_changes = has_important_changes || (! is_found_player);
-            }
-        }
-    }
-
-    // GalaxySetupData
-    m_lobby_data->m_seed =          incoming_lobby_data.m_seed;
-    m_lobby_data->m_size =          incoming_lobby_data.m_size;
-    m_lobby_data->m_shape =         incoming_lobby_data.m_shape;
-    m_lobby_data->m_age =           incoming_lobby_data.m_age;
-    m_lobby_data->m_starlane_freq = incoming_lobby_data.m_starlane_freq;
-    m_lobby_data->m_planet_density =incoming_lobby_data.m_planet_density;
-    m_lobby_data->m_specials_freq = incoming_lobby_data.m_specials_freq;
-    m_lobby_data->m_monster_freq =  incoming_lobby_data.m_monster_freq;
-    m_lobby_data->m_native_freq =   incoming_lobby_data.m_native_freq;
-    m_lobby_data->m_ai_aggr     =   incoming_lobby_data.m_ai_aggr;
-    
-    // directly configurable lobby data
-    m_lobby_data->m_new_game =      incoming_lobby_data.m_new_game;
-    m_lobby_data->m_players =       incoming_lobby_data.m_players;
-
-    LogPlayerSetupData(m_lobby_data->m_players);
-
-    // update player connection types according to modified lobby selections,
-    // while recording connections that are to be dropped
-    std::vector<PlayerConnectionPtr> player_connections_to_drop;
-    for (ServerNetworking::established_iterator player_connection_it = server.m_networking.established_begin();
-         player_connection_it != server.m_networking.established_end(); ++player_connection_it)
-    {
-        PlayerConnectionPtr player_connection = *player_connection_it;
-        int player_id = player_connection->PlayerID();
-        if (player_id == Networking::INVALID_PLAYER_ID)
-            continue;
-
-        // get lobby data for this player connection
-        bool found_player_lobby_data = false;
-        std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
-        while (player_setup_it != m_lobby_data->m_players.end()) {
-            if (player_setup_it->first == player_id) {
-                found_player_lobby_data = true;
                 break;
             }
-            ++player_setup_it;
         }
-
-        // drop connections which have no lobby data
-        if (!found_player_lobby_data) {
-            ErrorLogger() << "No player setup data for player " << player_id << " in MPLobby::react(const LobbyUpdate& msg)";
-            player_connections_to_drop.push_back(player_connection);
-            continue;
-        }
-
-        // get client type, and drop connections with invalid type, as that indicates a requested drop
-        Networking::ClientType client_type = player_setup_it->second.m_client_type;
-
-        if (client_type != Networking::INVALID_CLIENT_TYPE) {
-            // update player connection type for lobby change
-            player_connection->SetClientType(client_type);
-        } else {
-            // drop connections for players who were dropped from lobby
-            m_lobby_data->m_players.erase(player_setup_it);
-            player_connections_to_drop.push_back(player_connection);
-        }
-    }
-
-    // drop players connections.  Doing this in separate loop to avoid messing
-    // up iteration above.  these disconnections will lead to Disconnect events
-    // being generated and MPLobby::react(Disconnect) being called.  If this
-    // disconnects the host, then a new host will be selected within that function.
-    for (PlayerConnectionPtr drop_con : player_connections_to_drop) {
-        server.m_networking.Disconnect(drop_con);
-    }
-
-    // remove empty lobby player entries.  these will occur if AIs are dropped
-    // from the lobby.  this will also occur when humans are dropped, but those
-    // cases should have been handled above when checking the lobby data for
-    // each player connection.
-    std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
-    while (player_setup_it != m_lobby_data->m_players.end()) {
-        if (player_setup_it->second.m_client_type == Networking::INVALID_CLIENT_TYPE) {
-            std::list<std::pair<int, PlayerSetupData> >::iterator erase_it = player_setup_it;
-            ++player_setup_it;
-            m_lobby_data->m_players.erase(erase_it);
-        } else {
-            ++player_setup_it;
-        }
-    }
-
-    static int AI_count = 1;
-    static int nameless_player_count = 1;
-    std::map<GG::Clr, int> psd_colors;
-    // std::map<std::string, int> psd_player_names;
-    std::map<std::string, int> psd_empire_names;
-    std::set<int> conflicted_psd_ids;
-    const GG::Clr CLR_NONE = GG::Clr(0, 0, 0, 0);
-
-    // assign unique names / colours to any lobby entry that lacks them, or
-    // remove empire / colours from observers
-    for (std::pair<int, PlayerSetupData>& entry : m_lobby_data->m_players) {
-        PlayerSetupData& psd = entry.second;
-        if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER ||
-            psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-        {
-            psd.m_empire_color = CLR_NONE;
-            // On OSX the following two lines must not be included.
-            // Clearing empire name and starting species name from
-            // PlayerSetupData causes a weird crash (bus error) deep
-            // in GG code on OSX in the Multiplayer Lobby when selecting
-            // Observer or Moderator as client type.
-#ifndef FREEORION_MACOSX
-            psd.m_empire_name.clear();
-            psd.m_starting_species_name.clear();
-#endif
-            psd.m_save_game_empire_id = ALL_EMPIRES;
-
-        } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-            if (psd.m_empire_color == CLR_NONE)
-                psd.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players);
-            if (psd.m_player_name.empty())
-                psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(AI_count++);
-            if (psd.m_empire_name.empty())
-                psd.m_empire_name = GenerateEmpireName(m_lobby_data->m_players);
-            if (psd.m_starting_species_name.empty()) {
-                if (m_lobby_data->m_seed!="")
-                    psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
-                else
-                    psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(AI_count);
-            }
-
-        } else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            if (psd.m_empire_color == CLR_NONE)
-                psd.m_empire_color = GetUnusedEmpireColour(m_lobby_data->m_players);
-            if (psd.m_player_name.empty())
-                psd.m_player_name = UserString("PLAYER") + "_" + std::to_string(nameless_player_count++);
-            if (psd.m_empire_name.empty())
-                psd.m_empire_name = psd.m_player_name;
-            if (psd.m_starting_species_name.empty())
-                psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
-        }
-
-        if (psd.m_empire_color != CLR_NONE) {
-            if (!psd_colors.emplace(psd.m_empire_color, entry.first).second) {
-                conflicted_psd_ids.insert(psd_colors.at(psd.m_empire_color));
-                conflicted_psd_ids.insert(entry.first);
-            }
-        }
-        /* TODO require unique names, see: MPLobby::react(const JoinGame& msg)
-        if (!psd.m_player_name.empty()) {
-            if (!psd_player_names.emplace(psd.m_player_name, entry.first).second) {
-                conflicted_psd_ids.insert(psd_player_names.at(psd.m_player_name));
-                conflicted_psd_ids.insert(entry.first);
-            }
-        }
-        */
-        if (!psd.m_empire_name.empty()) {
-            if (!psd_empire_names.emplace(psd.m_empire_name, entry.first).second) {
-                conflicted_psd_ids.insert(psd_empire_names.at(psd.m_empire_name));
-                conflicted_psd_ids.insert(entry.first);
-            }
-        }
-    }
-
-    // set a player as "not ready" if they have a non-unique setting (from those required as unique)
-    for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players) {
-        if (conflicted_psd_ids.count(player.first))
-            player.second.m_player_ready = false;
     }
 
     // to determine if a new save file was selected, check if the selected file
@@ -799,14 +840,14 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     return discard_event();
                 }
             }
-            
+
             // copy locally stored data to common server fsm context so it can be
             // retreived in WaitingForMPGameJoiners
             context<ServerFSM>().m_lobby_data = m_lobby_data;
             context<ServerFSM>().m_player_save_game_data = m_player_save_game_data;
             context<ServerFSM>().m_server_save_game_data = m_server_save_game_data;
 
-            return transit<WaitingForMPGameJoiners>();            
+            return transit<WaitingForMPGameJoiners>();
         }
     }
 
