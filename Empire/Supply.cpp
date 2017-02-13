@@ -388,6 +388,17 @@ namespace {
         double dy = obj2->Y() - obj1->Y();
         return static_cast<float>(std::sqrt(dx*dx + dy*dy));
     }
+
+    /** Return a map from empire id to detection strength.*/
+    float EmpireDetectionStrength(const int empire_id) {
+        const auto empire = Empires().GetEmpire(empire_id);
+        if (!empire)
+            return 0.0f;
+
+        const auto meter = empire->GetMeter("METER_DETECTION_STRENGTH");
+        return meter ? meter->Current() : 0.0f;
+    }
+
 }
 
 namespace {
@@ -1025,8 +1036,7 @@ namespace {
               std::unordered_map<int, SupplyMerit>>
     ContestSystem(
         SupplySystemPOD& pod, const System& system,
-        const std::set<SupplyPODTuple>& candidates,
-        const std::unordered_map<int, float>& empire_to_detection)
+        const std::set<SupplyPODTuple>& candidates)
     {
         // Supply resolution works as follows.  Each supply source has a (merit,
         // stealth).  Each empire has a detection stength.  A supply source with
@@ -1062,8 +1072,7 @@ namespace {
             std::tie(std::ignore, candidate_stealth, candidate_source_id, candidate_empire_id) = candidate;
 
             // Find this empire's detection strength
-            auto candidate_detection_it = empire_to_detection.find(candidate_empire_id);
-            auto candidate_detection = (candidate_detection_it == empire_to_detection.end()) ? candidate_detection_it->second : 0;
+            auto candidate_detection = EmpireDetectionStrength(candidate_empire_id);
 
             if (pod.merit_stealth_supply_empire->find(candidate) == pod.merit_stealth_supply_empire->end()) {
                 ErrorLogger() << "Supply ContestSystem passed a candidate" << candidate_source_id
@@ -1107,9 +1116,7 @@ namespace {
 
                 // Other has greater or equal merit. So check if the other can remove the candidate.
                 if (other_merit >= candidate_merit) {
-                    auto other_detection_it = empire_to_detection.find(candidate_empire_id);
-                    auto other_detection = (other_detection_it == empire_to_detection.end())
-                        ? other_detection_it->second : 0;
+                    auto other_detection = EmpireDetectionStrength(other_empire_id);
 
                     // If other can't detected the candidate, skip it.
                     if (candidate_stealth > other_detection) {
