@@ -125,7 +125,7 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             if species:
                 for ship_id in fleet.shipIDs:
                     ship = universe.getShip(ship_id)
-                    if ship and foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles and species == ship.SpeciesName:
+                    if ship and foAI.foAIstate.get_ship_role(ship.design.id) in colonization_roles and species == ship.speciesName:
                         break
                 else:  # no suitable species found
                     continue

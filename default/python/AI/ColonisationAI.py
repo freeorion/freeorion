@@ -12,7 +12,7 @@ import TechsListsAI
 import MilitaryAI
 from turn_state import state
 from EnumsAI import MissionType, FocusType, EmpireProductionTypes, ShipRoleType, PriorityType
-from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer
+from freeorion_tools import dict_from_map, tech_is_complete, get_ai_tag_grade, cache_by_turn, AITimer, print_error
 from AIDependencies import INVALID_ID, POP_CONST_MOD_MAP, POP_SIZE_MOD_MAP
 
 colonization_timer = AITimer('getColonyFleets()')
@@ -1330,7 +1330,8 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
             this_fleet_list = FleetUtilsAI.get_fleets_for_mission(target_stats={}, min_stats={}, cur_stats={},
                                                                   starting_system=sys_id, species=this_spec,
                                                                   fleet_pool_set=fleet_pool, fleet_list=found_fleets)
-        except:
+        except Exception as e:
+            print_error(e)
             continue
         if not this_fleet_list:
             fleet_pool.update(found_fleets)  # just to be safe
