@@ -864,8 +864,8 @@ namespace {
 
                 if (merit <= merit_threshold) {
                     // Start a new tranche: Save the old, change the threshold, start a new tranche
-                    m_tranches.push_back(tranche);
-                    merit_threshold = merit_threshold.OneJumpLessMerit(0.0f);
+                    m_tranches.insert({merit_threshold, tranche});
+                    merit_threshold = merit_threshold.OneJumpLessMerit();
                     tranche = SupplyTranche(merit_threshold);
                 }
 
@@ -876,36 +876,47 @@ namespace {
                 ++merit_source_it;
             }
 
+            m_tranches.insert({merit_threshold, tranche});
+
             // Create the remaining tranches down to zero merit.
             auto zero_merit = SupplyMerit();
             while (merit_threshold > zero_merit) {
-                merit_threshold = merit_threshold.OneJumpLessMerit(0.0f);
-                m_tranches.push_back(SupplyTranche(merit_threshold));
+                merit_threshold = merit_threshold.OneJumpLessMerit();
+                m_tranches.insert({merit_threshold, SupplyTranche(merit_threshold)});
             }
         }
 
         /** Return the tranche that would hold a source with \p merit.*/
         SupplyTranche& operator[](const SupplyMerit& merit) {
-            auto zero_merit = SupplyMerit();
-            for (auto & tranche : m_tranches) {
-                if (tranche.Threshold() < merit || tranche.Threshold() == zero_merit)
-                    return tranche;
-            }
-            return m_tranches.back();
-        }
+            auto it = m_tranches.lower_bound(merit);
+            if (it != m_tranches.begin())
+                --it;
 
-        /** Return the \p ii th tranche. This does no bounds checking.*/
-        SupplyTranche& operator[](std::size_t ii)
-        { return m_tranches[ii]; }
+            //Expected exit
+            if (it->first > merit.OneJumpLessMerit())
+                return it->second;
+
+            if (it == m_tranches.begin()) {
+                ErrorLogger() << "Unable to find tranche for merit. Creating a less than zero tranche.";
+                auto lower_than_zero_merit = it->first.OneJumpLessMerit();
+                m_tranches.insert({lower_than_zero_merit, SupplyTranche(lower_than_zero_merit)});
+                return m_tranches.begin()->second;
+            }
+
+            // TODO sort out a fall back
+            throw "Unexpected merit";
+        }
 
         std::size_t Size() const
         { return m_tranches.size(); }
 
-        std::vector<SupplyTranche>::iterator begin() { return m_tranches.begin(); }
-        std::vector<SupplyTranche>::iterator end() { return m_tranches.end(); }
+        std::map<SupplyMerit, SupplyTranche>::iterator begin() { return m_tranches.begin(); }
+        std::map<SupplyMerit, SupplyTranche>::iterator end()   { return m_tranches.end(); }
+
+        // void Remove(const int system_id, const std::unordered_map<int, SupplyMerit>
 
         private:
-        std::vector<SupplyTranche> m_tranches;
+        std::map<SupplyMerit, SupplyTranche> m_tranches;
 
 
     };
