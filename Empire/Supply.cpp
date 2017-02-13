@@ -918,7 +918,9 @@ namespace {
         std::map<SupplyMerit, SupplyTranche>::iterator begin() { return m_tranches.begin(); }
         std::map<SupplyMerit, SupplyTranche>::iterator end()   { return m_tranches.end(); }
 
-        // void Remove(const int system_id, const std::unordered_map<int, SupplyMerit>
+        void Remove(const int system_id, int source_id, const SupplyMerit& merit) {
+            operator[](merit).Remove(system_id, source_id);
+        }
 
         private:
         std::map<SupplyMerit, SupplyTranche> m_tranches;
