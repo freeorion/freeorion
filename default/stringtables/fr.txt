@@ -1272,6 +1272,9 @@ Définit la couleur des rayures horizontales (brouillard de guerre) sur les astr
 OPTIONS_DB_SHOW_FLEET_ETA
 Afficher l'ETA d'une flotte (pour les flottes en mouvement) dans la Fenêtre Flottes.
 
+OPTIONS_DB_SHOW_IDS_AFTER_NAMES
+Afficher les IDs à la suite des noms des objets.
+
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
 Fixe la taille sur la carte galactique des cercles entourant les icônes de système stellaire sélectionnées, relativement à celle de ces dernières.
 
@@ -2519,6 +2522,9 @@ Journaux détaillés de débogage
 OPTIONS_VERBOSE_SITREP_DESC
 Affichage des rapports d'erreurs
 
+OPTIONS_SHOW_IDS_AFTER_NAMES
+IDs après noms
+
 OPTIONS_EFFECT_ACCOUNTING
 Comptabilité des effets
 
@@ -2690,11 +2696,29 @@ Commerce
 MAP_TRADE_TEXT
 Commerce total de l'empire (sans effet)
 
-MAP_FLEET_TITLE
-Flottes
+MAP_FLEET_SHIP_COUNT
+Total d'astronefs
 
-MAP_FLEET_TEXT
-Nombre total d'astronefs
+MAP_FLEET_ARMED_COUNT
+Astronefs armés
+
+MAP_FLEET_UNARMED_COUNT
+Astronefs non-armés
+
+MAP_FLEET_TROOP_COUNT
+Transporteurs d'Infanterie
+
+MAP_FLEET_COLONY_COUNT
+Astronefs colonisateurs
+
+MAP_FLEET_CARRIER_COUNT
+Transporteurs de Chasseurs
+
+MAP_FLEET_PART_COUNT
+Total Équipements d'astronef
+
+MAP_FLEET_SLOT_COUNT
+Total Niches d'Équipement
 
 
 ##
@@ -4917,7 +4941,7 @@ QUICK_START_GUIDE_TITLE
 **Guide de Démarrage Rapide**
 
 QUICK_START_GUIDE_TEXT
-'''Voici une brève introduction au gameplay de Freeorion. Ce guide in-game, ajouté récemment, est pour le moment assez sommaire mais sera complété au fil des versions. Un guide plus conséquent est disponible sur le site freeorion.org, (URL actuelle: http://freeorion.org/index.php/V0.4_Quick_Play_Guide )
+'''Voici une brève introduction au gameplay de Freeorion. Ce guide in-game, ajouté récemment, est pour le moment assez sommaire mais sera complété au fil des versions. Un guide plus conséquent est disponible sur le site freeorion.org, (URL actuelle: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>)
 
 [[DETAILED_PEDIA_REFERENCE]]
 Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_GAME_CONCEPTS]] et les sections récemment ajoutées dans le chapitre [[encyclopedia CATEGORY_GUIDES]].
