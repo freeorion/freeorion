@@ -360,14 +360,32 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
             supply_val *= 0.2
 
     threat_factor = min(1, 0.2*MilitaryAI.totMilRating/(sys_total_threat+0.001))**2  # devalue invasions that would require too much military force
-    build_time = 4
 
-    planned_troops = troops if system_secured else min(troops+max_jumps+build_time, max_troops)
-    if not tech_is_complete("SHP_ORG_HULL"):
-        troop_cost = math.ceil(planned_troops/6.0) * (40*(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
+    design_id, _, locs = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_INVASION)
+    if not locs or not universe.getPlanet(locs[0]):
+        # We are in trouble anyway, so just calculate whatever approximation...
+        build_time = 4
+        planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
+        troop_cost = math.ceil(planned_troops / 6.0) * 20 * FleetUtilsAI.get_fleet_upkeep()
     else:
-        troop_cost = math.ceil(planned_troops/6.0) * (20*(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
-    planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, pop_val+supply_val+bld_tally+enemy_val-0.8*troop_cost)
+        loc = locs[0]
+        species_here = universe.getPlanet(loc).speciesName
+        design = fo.getShipDesign(design_id)
+        cost_per_ship = design.productionCost(empire_id, loc)
+        build_time = design.productionTime(empire_id, loc)
+        troops_per_ship = CombatRatingsAI.weight_attack_troops(design.troopCapacity,
+                                                               CombatRatingsAI.get_species_troops_grade(species_here))
+        planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
+        ships_needed = math.ceil(planned_troops / float(troops_per_ship))
+        troop_cost = ships_needed * cost_per_ship  # fleet upkeep is already included in query from server
+
+    # apply some bias to expensive operations
+    normalized_cost = float(troop_cost) / max(empire.productionPoints, 1)
+    normalized_cost = max(1, normalized_cost)
+    cost_score = (normalized_cost**2 / 50.0) * troop_cost
+
+    base_score = max(0, pop_val + supply_val + bld_tally + enemy_val - cost_score)
+    planet_score = retaliation_risk_factor(planet.owner) * threat_factor * base_score
     if clear_path:
         planet_score *= 1.5
     if verbose:

@@ -6,6 +6,7 @@ import traceback
 from universe_object import Planet
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID
+import AIDependencies
 __designStats = {}
 
 
@@ -578,3 +579,8 @@ def get_max_fuel(fleet_id):
     """
     fleet = fo.getUniverse().getFleet(fleet_id)
     return fleet and fleet.maxFuel or 0.0
+
+
+def get_fleet_upkeep():
+    # TODO: Use new upkeep calculation
+    return 1 + AIDependencies.SHIP_UPKEEP * foAI.foAIstate.shipCount
