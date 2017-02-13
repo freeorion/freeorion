@@ -785,7 +785,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
             while (established_player_it != m_networking.established_end()) {
                 const PlayerConnectionPtr player_connection = *established_player_it;
                 ++established_player_it;
-                // if player is an AI, assign it to this 
+                // if player is an AI, assign it to this
                 if (player_connection->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
                     int player_id = player_connection->PlayerID();
                     player_id_to_save_game_data_index.push_back(std::make_pair(player_id, i));
@@ -937,7 +937,7 @@ namespace {
     {
         // For AI players, the multplayer setup data does not specify a
         // player ID because the AI processes aren't run until after the
-        // game settings are confirmed and the game started in the UI, 
+        // game settings are confirmed and the game started in the UI,
         // and thus the AI clients don't connect and get assigned player
         // ids until after the lobby setup is done.
         //
@@ -1388,6 +1388,16 @@ bool ServerApp::IsLocalHumanPlayer(int player_id) {
     PlayerConnectionPtr player_connection = *it;
     return ((player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) &&
             player_connection->IsLocalConnection());
+}
+
+bool ServerApp::IsAvailableName(const std::string& player_name) const {
+    for (ServerNetworking::const_established_iterator it = m_networking.established_begin();
+         it != m_networking.established_end(); ++it)
+    {
+        if ((*it)->PlayerName() == player_name)
+            return false;
+    }
+    return true;
 }
 
 Networking::ClientType ServerApp::GetEmpireClientType(int empire_id) const
@@ -2780,7 +2790,7 @@ void ServerApp::UpdateMonsterTravelRestrictions() {
                 continue;
             }
             // will not require visibility for empires to block clearing of monster travel restrictions
-            // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for 
+            // unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
             // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
             // before you, or be in cahoots with someone who did.
             bool unrestricted = ((fleet->ArrivalStarlane() == system->ID())

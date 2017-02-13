@@ -116,12 +116,17 @@ namespace {
         }
     }
 
-    std::string GenerateEmpireName(std::list<std::pair<int, PlayerSetupData> >& players) {
+    std::string GenerateEmpireName(const std::string& player_name,
+                                   std::list<std::pair<int, PlayerSetupData> >& players)
+    {
         // load default empire names
         static std::vector<std::string> empire_names = UserStringList("EMPIRE_NAMES");
         std::set<std::string> validNames(empire_names.begin(), empire_names.end());
         for (const std::pair<int, PlayerSetupData>& psd : players) {
             std::set<std::string>::iterator name_it = validNames.find(psd.second.m_empire_name);
+            if (name_it != validNames.end())
+                validNames.erase(name_it);
+            name_it = validNames.find(psd.second.m_player_name);
             if (name_it != validNames.end())
                 validNames.erase(name_it);
         }
@@ -130,8 +135,8 @@ namespace {
             int empire_name_idx = RandSmallInt(0, static_cast<int>(validNames.size()) - 1);
             return *std::next(validNames.begin(), empire_name_idx);
         } else {
-            // use a generic name
-            return UserString("EMPIRE");
+            // use a player_name as it unique among players
+            return player_name;
         }
     }
 
@@ -350,7 +355,7 @@ MPLobby::MPLobby(my_context c) :
     PlayerSetupData& player_setup_data = m_lobby_data->m_players.begin()->second;
 
     player_setup_data.m_player_name =           player_connection->PlayerName();
-    player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(m_lobby_data->m_players);
+    player_setup_data.m_empire_name =           (player_connection->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_connection->PlayerName() : GenerateEmpireName(player_setup_data.m_player_name, m_lobby_data->m_players);
     player_setup_data.m_empire_color =          EmpireColors().at(0);               // since the host is the first joined player, it can be assumed that no other player is using this colour (unlike subsequent join game message responses)
     player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
     // leaving save game empire id as default
@@ -465,7 +470,17 @@ sc::result MPLobby::react(const JoinGame& msg) {
     Networking::ClientType client_type;
     std::string client_version_string;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
-    // TODO: check if player name is unique.  If not, modify it slightly to be unique.
+
+    // Check if player name is unique or use AI prefix
+    std::string ai_prefix = UserString("AI_PLAYER") + "_";
+    if (! server.IsAvailableName(player_name) ||
+        (client_type != Networking::CLIENT_TYPE_AI_PLAYER && player_name.compare(0, ai_prefix.size(), ai_prefix) == 0 ))
+    {
+        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % player_name),
+                                                    true));
+        server.Networking().Disconnect(player_connection);
+        return discard_event();
+    }
 
     // assign unique player ID to newly connected player
     int player_id = server.m_networking.NewPlayerID();
@@ -481,7 +496,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     PlayerSetupData player_setup_data;
     player_setup_data.m_player_name =           player_name;
     player_setup_data.m_client_type =           client_type;
-    player_setup_data.m_empire_name =           (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(m_lobby_data->m_players);
+    player_setup_data.m_empire_name =           (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? player_name : GenerateEmpireName(player_name, m_lobby_data->m_players);
     player_setup_data.m_empire_color =          GetUnusedEmpireColour(m_lobby_data->m_players);
     if (m_lobby_data->m_seed!="")
         player_setup_data.m_starting_species_name = sm.RandomPlayableSpeciesName();
@@ -492,8 +507,14 @@ sc::result MPLobby::react(const JoinGame& msg) {
     m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
 
     // drop ready player flag at new player
-    for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players)
+    for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
+        if(plrs.second.m_empire_name == player_name) {
+            // change empire name
+            plrs.second.m_empire_name = (plrs.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? plrs.second.m_player_name : GenerateEmpireName(plrs.second.m_player_name, m_lobby_data->m_players);
+        }
+
         plrs.second.m_player_ready = false;
+    }
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
@@ -555,7 +576,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                     // ToDo: Should we translate player_name?
                     psd.m_player_name = UserString("AI_PLAYER") + "_" + std::to_string(AI_count++);
                 if (psd.m_empire_name.empty())
-                    psd.m_empire_name = GenerateEmpireName(incoming_lobby_data.m_players);
+                    psd.m_empire_name = GenerateEmpireName(psd.m_player_name, incoming_lobby_data.m_players);
                 if (psd.m_starting_species_name.empty()) {
                     if (m_lobby_data->m_seed!="")
                         psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();

@@ -126,6 +126,9 @@ public:
     /** Returns the player ID for the player controlling the empire with id \a
         empire_id */
     int EmpirePlayerID(int empire_id) const;
+
+    /** Checks if \a player_name are not used by other players. */
+    bool IsAvailableName(const std::string& player_name) const;
     //@}
 
 
