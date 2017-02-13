@@ -884,9 +884,12 @@ namespace {
 
             m_tranches.insert({merit_threshold, tranche});
 
-            // Create the remaining tranches down to zero merit.
+            // Create the remaining tranches down to lower of zero merit or the minimum detected
+            // merit reduced by one jump of merit reduction.
             auto zero_merit = SupplyMerit();
-            while (merit_threshold > zero_merit) {
+            const auto min_merit = std::min(zero_merit, merit_and_source.begin()->first).OneJumpLessMerit();
+
+            while (merit_threshold > min_merit) {
                 merit_threshold = merit_threshold.OneJumpLessMerit();
                 m_tranches.insert({merit_threshold, SupplyTranche(merit_threshold)});
             }
