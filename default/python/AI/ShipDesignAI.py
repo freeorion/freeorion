@@ -51,6 +51,7 @@ import traceback
 import math
 import AIstate
 import CombatRatingsAI
+import FleetUtilsAI
 from collections import Counter, defaultdict
 from AIDependencies import INVALID_ID
 from EnumsAI import ShipDesignTypes
@@ -1488,9 +1489,9 @@ class ShipDesigner(object):
         # TODO: Consider total pp production output as additional factor
         # TODO: Rethink about math and maybe work out a more accurate formula
         if self.consider_fleet_count:
-            return self.production_cost**(1 / (1 + foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
+            return self.production_cost**(1 / FleetUtilsAI.get_fleet_upkeep())
         else:
-            return self.production_cost / (1 + foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP)  # base cost
+            return self.production_cost / FleetUtilsAI.get_fleet_upkeep()  # base cost
 
     def _shield_factor(self):
         """Calculate the effective factor by which structure is increased by shields.
