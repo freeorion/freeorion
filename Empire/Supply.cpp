@@ -90,8 +90,7 @@ public:
         const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
         std::map<int, std::set<int>>& empire_supply_unobstructed_systems);
 
-    void DetermineSupplyConnectedSystemGroups(
-        const std::map<int, std::map<int, std::pair<float, float>>>& empire_propagating_supply_ranges) ;
+    void DetermineSupplyConnectedSystemGroups();
     //@}
 
     friend class boost::serialization::access;
@@ -1756,19 +1755,18 @@ std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManag
     return empire_propagating_supply_ranges;
 }
 
-void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups(
-    const std::map<int, std::map<int, std::pair<float, float>>>& empire_propagating_supply_ranges)
-{
+void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups() {
     // determine supply-connected groups of systems for each empire.
     // need to merge interconnected supply groups into as few sets of mutually-
     // supply-exchanging systems as possible.  This requires finding the
     // connected components of an undirected graph, where the node
     // adjacency are the directly-connected systems determined above.
-    for (const std::map<int, std::map<int, std::pair<float, float>>>::value_type& empire_supply : empire_propagating_supply_ranges) {
-        int empire_id = empire_supply.first;
+
+    for (auto&& empire : Empires()) {
+        int empire_id = empire.first;
 
         // assemble all direct connections between systems from remaining traversals
-        std::map<int, std::set<int> > supply_groups_map;
+        std::unordered_map<int, std::unordered_set<int> > supply_groups_map;
         for (const auto& lane : m_supply_starlane_traversals[empire_id]) {
             supply_groups_map[lane.first.first].insert(lane.first.second);
             supply_groups_map[lane.first.second].insert(lane.first.first);
@@ -1792,9 +1790,9 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups(
         std::vector<int> graph_id_to_sys_id;
         graph_id_to_sys_id.reserve(supply_groups_map.size());
 
-        std::map<int, int> sys_id_to_graph_id;
+        std::unordered_map<int, int> sys_id_to_graph_id;
         int graph_id = 0;
-        for (std::map<int, std::set<int>>::value_type& supply_group : supply_groups_map) {
+        for (auto&& supply_group : supply_groups_map) {
             int sys_id = supply_group.first;
             boost::add_vertex(graph);   // should add with index = graph_id
 
@@ -1805,7 +1803,7 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups(
 
         // add edges for all direct connections between systems
         // and add edges from fleet supplyable systems to themselves
-        for (std::map<int, std::set<int>>::value_type& supply_group : supply_groups_map) {
+        for (auto&& supply_group : supply_groups_map) {
             int start_graph_id = sys_id_to_graph_id[supply_group.first];
             for (int system_id : supply_group.second) {
                 int end_graph_id = sys_id_to_graph_id[system_id];
@@ -1822,7 +1820,7 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups(
         // output: std::map<int, std::set<std::set<int>>>& m_resource_supply_groups
 
         // first, sort into a map from component id to set of system ids in component
-        std::map<int, std::set<int>> component_sets_map;
+        std::unordered_map<int, std::set<int>> component_sets_map;
         for (std::size_t comp_graph_id = 0; comp_graph_id != components.size(); ++comp_graph_id) {
             int label = components[comp_graph_id];
             int sys_id = graph_id_to_sys_id[comp_graph_id];
@@ -1830,7 +1828,7 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups(
         }
 
         // copy sets in map into set of sets
-        for (std::map<int, std::set<int>>::value_type& component_set : component_sets_map) {
+        for (auto && component_set : component_sets_map) {
             m_resource_supply_groups[empire_id].insert(component_set.second);
         }
     }
@@ -1979,7 +1977,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
         //}
     }
 
-    DetermineSupplyConnectedSystemGroups(empire_propagating_supply_ranges);
+    DetermineSupplyConnectedSystemGroups();
 }
 
 template <class Archive>
