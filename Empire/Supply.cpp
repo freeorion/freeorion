@@ -491,7 +491,7 @@ namespace {
             distance(0.0f)
         {}
 
-        SupplyMerit OneJumpLessMerit(float _dist) const {
+        SupplyMerit OneJumpLessMerit(float _dist = 0.0f) const {
             auto other     = SupplyMerit();
             other.range    = range - 1;
             other.distance = distance + _dist;
@@ -853,7 +853,7 @@ namespace {
             const auto max_merit = merit_and_source.rbegin()->first;
 
             auto merit_source_it = merit_and_source.rbegin();
-            auto merit_threshold = max_merit.OneJumpLessMerit(0.0f);
+            auto merit_threshold = max_merit.OneJumpLessMerit();
             auto tranche = SupplyTranche(merit_threshold);
 
             SupplyMerit merit;
