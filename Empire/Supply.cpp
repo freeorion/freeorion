@@ -1083,8 +1083,9 @@ namespace {
     std::pair<std::vector<SupplyPODTuple>,
               std::unordered_map<int, SupplyMerit>>
     ContestSystem(
-        SupplySystemPOD& pod, const System& system,
-        const std::set<SupplyPODTuple>& candidates)
+        SupplySystemPOD& pod, int system_id,
+        const std::unordered_map<int, std::tuple<SupplyMerit, float, int>>& _candidates
+        )
     {
         // Supply resolution works as follows.  Each supply source has a (merit,
         // stealth).  Each empire has a detection stength.  A supply source with
@@ -1092,10 +1093,20 @@ namespace {
         // empire's detection strength is greater that the other's stealth and
         // the empires are hostile.
 
-        if (candidates.empty()) {
-            ErrorLogger() << "Supply ContestSystem passed " << candidates.size()
-                          << " candidates into system " << system.SystemID() << ".";
+        if (_candidates.empty()) {
+            ErrorLogger() << "Supply ContestSystem passed " << _candidates.size()
+                          << " candidates into system " << system_id << ".";
             return {{}, {}};
+        }
+
+        // Massage the _candidates into a sorted set of candidates.
+        std::set<SupplyPODTuple> candidates;
+        for (auto&& source_and_merit_stealth_empire : _candidates) {
+            candidates.insert(
+                {std::get<0>(source_and_merit_stealth_empire.second),
+                        std::get<1>(source_and_merit_stealth_empire.second),
+                        source_and_merit_stealth_empire.first,
+                        std::get<2>(source_and_merit_stealth_empire.second)});
         }
 
         // Sources that have been removed.
@@ -1108,7 +1119,7 @@ namespace {
         if (!pod.merit_stealth_supply_empire || pod.merit_stealth_supply_empire->empty()) {
             if (!candidates.empty())
                 ErrorLogger() << "Supply ContestSystem passed " << candidates.size()
-                              << " into empty system " << system.SystemID() << ".";
+                              << " into empty system " << system_id << ".";
             return {{}, {}};
         }
 
@@ -1124,7 +1135,7 @@ namespace {
 
             if (pod.merit_stealth_supply_empire->find(candidate) == pod.merit_stealth_supply_empire->end()) {
                 ErrorLogger() << "Supply ContestSystem passed a candidate" << candidate_source_id
-                              << " not present in system " << system.SystemID() << ". Skipping...";
+                              << " not present in system " << system_id << ". Skipping...";
                 continue;
             }
 
