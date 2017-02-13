@@ -664,14 +664,14 @@ namespace {
                 continue;
 
             boost::optional<std::unordered_set<int>> contesting_empires;
-            boost::optional<std::unordered_set<int>> blockading_empires;
-            std::tie(contesting_empires, blockading_empires) = CalculateBlockadingFleetsEmpireIDs(*system);
+            boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
+            std::tie(contesting_empires, blockading_fleets_empire_ids) = CalculateBlockadingFleetsEmpireIDs(*system);
 
             if (contesting_empires && !contesting_empires->empty())
                 system_to_contesting_fleets_empire_ids[system->SystemID()]= *contesting_empires;
 
-            if (blockading_empires && !blockading_empires->empty())
-                system_to_blockading_fleets_empire_ids[system->SystemID()] = *blockading_empires;
+            if (blockading_fleets_empire_ids && !blockading_fleets_empire_ids->empty())
+                system_to_blockading_fleets_empire_ids[system->SystemID()] = *blockading_fleets_empire_ids;
         }
         return {system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids};
     }
@@ -761,23 +761,23 @@ namespace {
         // TODO resort and add source id?
         boost::optional<std::set<std::tuple<SupplyMerit, float, int, int>>> merit_stealth_supply_empire;
         boost::optional<std::unordered_set<int>> contesting_empires;
-        boost::optional<std::unordered_set<int>> blockading_empires;
-        boost::optional<int> colony_blockading_empires;
+        boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
+        boost::optional<int> blockading_colonies_empire_id;
     };
 
     boost::optional<SupplySystemPOD> CalculateInitialSupply(const System &system) {
         auto stealth_supply = CalculateMeritStealthSupplyEmpire(system);
 
         boost::optional<std::unordered_set<int>> contesting_empires;
-        boost::optional<std::unordered_set<int>> blockading_empires;
-        std::tie(contesting_empires, blockading_empires) = CalculateBlockadingFleetsEmpireIDs(system);
+        boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
+        std::tie(contesting_empires, blockading_fleets_empire_ids) = CalculateBlockadingFleetsEmpireIDs(system);
 
         auto blockading_colony = CalculateBlockadingColonyEmpireID(system, stealth_supply, contesting_empires);
 
-        if (!stealth_supply && !contesting_empires && !blockading_empires && !blockading_colony)
+        if (!stealth_supply && !contesting_empires && !blockading_fleets_empire_ids && !blockading_colony)
             return boost::none;
 
-        return SupplySystemPOD({stealth_supply, contesting_empires, blockading_empires, blockading_colony});
+        return SupplySystemPOD({stealth_supply, contesting_empires, blockading_fleets_empire_ids, blockading_colony});
     }
 
     /** Return a map from system id to SupplySystemrPOD. */
@@ -935,15 +935,15 @@ namespace {
     //     auto stealth_supply = CalculateEmpireToStealthSupply(system);
 
     //     boost::optional<std::unordered_set<int>> contesting_empires;
-    //     boost::optional<std::unordered_set<int>> blockading_empires;
-    //     std::tie(contesting_empires, blockading_empires) = CalculateBlockadingFleetsEmpireIDs(system);
+    //     boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
+    //     std::tie(contesting_empires, blockading_fleets_empire_ids) = CalculateBlockadingFleetsEmpireIDs(system);
 
     //     auto blockading_colony = CalculateBlockadingColonyEmpireID(system, stealth_supply, contesting_empires);
 
-    //     if (!stealth_supply && !contesting_empires && !blockading_empires && !blockading_colony)
+    //     if (!stealth_supply && !contesting_empires && !blockading_fleets_empire_ids && !blockading_colony)
     //         return boost::none;
 
-    //     return SupplySystemPOD({stealth_supply, contesting_empires, blockading_empires, blockading_colony});
+    //     return SupplySystemPOD({stealth_supply, contesting_empires, blockading_fleets_empire_ids, blockading_colony});
     // }
 
     // // /** Return a map from system id to SupplySystemPOD. */
