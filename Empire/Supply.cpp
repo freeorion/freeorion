@@ -851,7 +851,10 @@ namespace {
 
     class SupplyTranches {
         public:
-        SupplyTranches() {
+        SupplyTranches() :
+            m_tranches{},
+            m_max_merit{SupplyMerit()}
+        {
             // Sort by SupplyMerit
             std::map<SupplyMerit, std::shared_ptr<UniverseObject>> merit_and_source;
             for (auto& id_to_obj_ptr : Objects().ExistingObjects()) {
@@ -923,19 +926,31 @@ namespace {
             if (it != m_tranches.begin())
                 --it;
 
+            if (it == m_tranches.end()) {
+                ErrorLogger() << "SupplyTranches()[" << merit << "] found end.";
+                auto merit_minus_one = merit.OneJumpLessMerit();
+                m_tranches.insert({merit_minus_one, SupplyTranche(merit_minus_one)});
+                return m_tranches.begin()->second;
+            }
+                
             //Expected exit
-            if (it->first > merit.OneJumpLessMerit())
+            if (it->first >= merit.OneJumpLessMerit()) {
                 return it->second;
+            }
 
             if (it == m_tranches.begin()) {
-                ErrorLogger() << "Unable to find tranche for merit. Creating a less than zero tranche.";
+                ErrorLogger() << "SupplyTranches()[" << merit << "] Unable to find tranche. Creating a less than zero tranche.";
                 auto lower_than_zero_merit = it->first.OneJumpLessMerit();
                 m_tranches.insert({lower_than_zero_merit, SupplyTranche(lower_than_zero_merit)});
                 return m_tranches.begin()->second;
             }
 
-            // TODO sort out a fall back
-            throw "Unexpected merit";
+            ErrorLogger() << "SupplyTranches()[" << merit << "] found nothing.  Max merit is " << m_max_merit
+                          << "Making a tranche for this merit. ";
+
+            auto merit_threshold = merit.OneJumpLessMerit();
+            m_tranches.insert({merit_threshold, SupplyTranche(merit_threshold)});
+            return m_tranches.begin()->second;
         }
 
         std::size_t Size() const
