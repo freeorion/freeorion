@@ -429,13 +429,29 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
                 continue
             else:
                 these_fleets = found_fleets
+
+        military_escort_fleets = MilitaryAI.get_military_support_for_invasion(sys_id)
+        if not military_escort_fleets:
+            print "Found Invasion fleets for target %s but have not enough military to support it." % planet
+            invasion_fleet_pool.update(found_fleets)
+            continue
+
+        # send invasion fleet
         target = universe_object.Planet(planet_id)
         print "assigning invasion fleets %s to target %s" % (these_fleets, target)
-        for fleetID in these_fleets:
-            fleet_mission = foAI.foAIstate.get_fleet_mission(fleetID)
+        for fleet_id in these_fleets:
+            fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
             fleet_mission.clear_fleet_orders()
             fleet_mission.clear_target()
             fleet_mission.set_target(mission_type, target)
+
+        # send military escort
+        system_to_secure = universe_object.System(sys_id)
+        for fleet_id in military_escort_fleets:
+            fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
+            fleet_mission.clear_fleet_orders()
+            fleet_mission.clear_target()
+            fleet_mission.set_target(MissionType.SECURE, system_to_secure)
 
 
 def assign_invasion_fleets_to_invade():
