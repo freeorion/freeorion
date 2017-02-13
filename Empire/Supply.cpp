@@ -203,7 +203,8 @@ std::set<int> SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs(int emp
     for (auto empire_id_sys_id_set : m_fleet_supplyable_system_ids) {
         int other_empire_id = empire_id_sys_id_set.first;
         const std::set<int>& systems = empire_id_sys_id_set.second;
-        if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_PEACE)
+        if (systems.empty() || ((empire_id != other_empire_id)
+                                && Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_PEACE))
             continue;
         retval.insert(systems.begin(), systems.end());
     }
@@ -277,7 +278,7 @@ bool SupplyManager::SupplyManagerImpl::SystemHasFleetSupply(int system_id, int e
 
     std::set<int> empire_ids{empire_id};
     for (auto e_pair : Empires()) {
-        if (Empires().GetDiplomaticStatus(empire_id, e_pair.first) == DIPLO_PEACE)
+        if (e_pair.first == empire_id || Empires().GetDiplomaticStatus(empire_id, e_pair.first) == DIPLO_PEACE)
             empire_ids.insert(e_pair.first);
     }
 
