@@ -895,6 +895,18 @@ namespace {
             }
         }
 
+        /** Add these sources to the correct tranche*/
+        void Add(std::map<SupplyMerit, std::tuple<int, float, int, int>>& merit_to_source_stealth_system_empire) {
+            for (auto&& merit_and_source_stealth_system_empire : merit_to_source_stealth_system_empire) {
+                operator[](merit_and_source_stealth_system_empire.first).Add(
+                    std::get<0>(merit_and_source_stealth_system_empire.second),
+                    merit_and_source_stealth_system_empire.first,
+                    std::get<1>(merit_and_source_stealth_system_empire.second),
+                    std::get<2>(merit_and_source_stealth_system_empire.second),
+                    std::get<3>(merit_and_source_stealth_system_empire.second));
+            }
+        }
+
         /** Return the tranche that would hold a source with \p merit.*/
         SupplyTranche& operator[](const SupplyMerit& merit) {
             auto it = m_tranches.lower_bound(merit);
