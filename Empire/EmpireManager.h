@@ -54,10 +54,11 @@ public:
     int                 NumEmpires() const;
 
     DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
-    bool                        DiplomaticMessageAvailable(int empire1, int empire2) const;
-    const DiplomaticMessage&    GetDiplomaticMessage(int empire1, int empire2) const;
+    bool                        DiplomaticMessageAvailable(int sender_id, int recipient_id) const;
+    const DiplomaticMessage&    GetDiplomaticMessage(int sender_id, int recipient_id) const;
 
     std::string         Dump() const;
+    std::string         DumpDiplomacy() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -72,7 +73,7 @@ public:
     void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
     void        HandleDiplomaticMessage(const DiplomaticMessage& message);
     void        SetDiplomaticMessage(const DiplomaticMessage& message);
-    void        RemoveDiplomaticMessage(int empire1, int empire2);
+    void        RemoveDiplomaticMessage(int sender_id, int recipient_id);
 
     void        ResetDiplomacy();
 
