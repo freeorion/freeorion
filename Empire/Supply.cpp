@@ -84,6 +84,7 @@ public:
       * groups of systems that can exchange resources, and the starlane
       * traversals used to do so. */
     void    Update();
+    void    UpdateOld();
 
     /** Part of the Update function.*/
     std::map<int, std::map<int, std::pair<float, float>>> PropagateSupplyAlongUnobstructedStarlanes(
@@ -1849,6 +1850,186 @@ namespace {
 }
 
 void SupplyManager::SupplyManagerImpl::Update() {
+
+    //TODO early exit when no supply sources
+
+
+    // system connections each empire can see / use for supply propagation
+    std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>> empire_to_system_to_starlanes;
+    for (auto && entry : Empires()) {
+        const Empire* empire = entry.second;
+        auto& per_empire = empire_to_system_to_starlanes[entry.first];
+        // Remake the std::maps into faster std::unordered_maps
+        // TODO push this improvement back into Empires.
+        for (auto && startpoint_and_endpoints: empire->KnownStarlanes()) {
+            for (auto&& endpoint : startpoint_and_endpoints.second) {
+                per_empire[startpoint_and_endpoints.first].insert(endpoint);
+            }
+        }
+    }
+
+    //Map from system id to SupplySystemPOD containing all data needed to evaluate supply in one system.
+    std::unordered_map<int, SupplySystemPOD> system_to_supply_pod = CalculateInitialSupply();
+
+    // Tranches of SupplyMerit sorted by merit.  Tranches are the size of a one supply hop change
+    // in merit starting from the highest merit.  Each tranche of merits can be processed and then
+    // propagated to adjacent systems and then never handled again.
+    auto tranches = SupplyTranches();
+
+    // Process each tranche until the merit threshold is negative
+    const auto lowest_merit = SupplyMerit().OneJumpLessMerit();
+    auto merit_threshold = tranches.MaxMerit().OneJumpLessMerit();
+    while (merit_threshold > lowest_merit) {
+
+        // In each system the supply sources from this tranche will compete and determine which
+        // supply sources in that system win and are propagated further or lose and are removed
+        // from consideration.
+        auto& tranche = tranches[merit_threshold];
+        for (auto&& system_and_source_to_merit_stealth_empire : tranche) {
+            auto system_id = system_and_source_to_merit_stealth_empire.first;
+
+            // System data
+            auto& pod = system_to_supply_pod[system_id];
+
+            // Contest each system
+            std::vector<SupplyPODTuple> winners;
+            std::unordered_map<int, SupplyMerit> losers;
+            std::tie( winners, losers) =
+                ContestSystem(pod, system_id, system_and_source_to_merit_stealth_empire.second);
+
+            // Remove the losers the tranches.
+            for (auto&& loser : losers) {
+                tranches.Remove(system_id, loser.first, loser.second);
+            }
+
+            // Propagate the winners
+            auto propagated_winners = Propagate(
+                system_to_supply_pod, tranches, system_id,
+                winners, empire_to_system_to_starlanes);
+
+            if (propagated_winners)
+                tranches.Add(*propagated_winners);
+        }
+
+        merit_threshold = merit_threshold.OneJumpLessMerit();
+    }
+
+    // Extract the information for each output map from system_to_supply_pod.
+
+
+    /** ids of systems where fleets can be resupplied. indexed by empire id. */
+    /*std::map<int, std::set<int>>                 */  m_fleet_supplyable_system_ids.clear();
+
+    /** for whichever empire can propagate supply into this system, what is the
+        additional range from this system that empire can propagate supply */
+    /*std::map<int, float>                          */  m_propagated_supply_ranges.clear();
+
+    /** for each empire, what systems it can propagate supply into, and how many
+      * further supply jumps it could propagate past this system, if not blocked
+      * from doing so by supply obstructions. */
+    /*std::map<int, std::map<int, float>>           */  m_empire_propagated_supply_ranges.clear();
+
+    /** for whichever empire can propagate supply into this system, how far
+      * that system is from the closest source of supply for that empire, along
+      * possible supply propgation connections (ie. not though a supply
+      * obstructed system for that empire) */
+    /*std::map<int, float>                          */  m_propagated_supply_distances.clear();
+
+    /** for each empire, what systems it can propagate supply into, and how far
+      * that system is from the closest source of supply for that empire, along
+      * possible supply propgation connections (ie. not though a supply
+      * obstructed system) */
+    /*std::map<int, std::map<int, float>>           */  m_empire_propagated_supply_distances.clear();
+
+    for (auto&& system_and_supply_pod : system_to_supply_pod) {
+        auto system_id = system_and_supply_pod.first;
+        auto& pod = system_and_supply_pod.second;
+
+        // Use the highest merit source as the sole source for now.
+        if (pod.merit_stealth_supply_empire && !pod.merit_stealth_supply_empire->empty()) {
+            const auto& highest = pod.merit_stealth_supply_empire->begin();
+            const SupplyMerit& merit = std::get<0>(*highest);
+            float stealth;
+            int source_id, empire_id;
+            std::tie(std::ignore, stealth, source_id, empire_id) = *highest;
+
+            m_fleet_supplyable_system_ids[empire_id].insert(system_id);
+
+            m_propagated_supply_ranges.insert({empire_id, merit.Range()});
+            m_empire_propagated_supply_ranges[empire_id].insert({system_id, merit.Range()});
+
+            m_propagated_supply_distances.insert({empire_id, merit.Distance()});
+            m_empire_propagated_supply_distances[empire_id].insert({system_id, merit.Distance()});
+        }
+    }
+
+        // boost::optional<std::set<std::tuple<SupplyMerit, float, int, int>>> merit_stealth_supply_empire;
+        // boost::optional<std::unordered_set<int>> contesting_empires;
+        // boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
+        // boost::optional<int> blockading_colonies_empire_id;
+
+
+        /** ordered pairs of system ids between which a starlane runs that can be
+        used to convey resources between systems. indexed first by empire id. */
+    /*std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>*/  m_supply_starlane_traversals.clear();
+
+    /** ordered pairs of system ids between which a starlane could be used to
+        convey resources between system, but is not because something is
+        obstructing the resource flow.  That is, the resource flow isn't limited
+        by range, but by something blocking its flow. */
+    /*std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>*/  m_supply_starlane_obstructed_traversals.clear();
+
+    // std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>>
+    for (auto&& empire_and_system_to_starlanes : empire_to_system_to_starlanes) {
+        int empire_id = empire_and_system_to_starlanes.first;
+
+        auto& fleet_supplyable_system_ids = m_fleet_supplyable_system_ids[empire_id];
+        auto& propagated_supply_ranges = m_propagated_supply_ranges[empire_id];
+        auto& empire_propagated_supply_ranges = m_empire_propagated_supply_ranges[empire_id];
+        auto& propagated_supply_distances = m_propagated_supply_distances[empire_id];
+        auto& empire_propagated_supply_distances = m_empire_propagated_supply_distances[empire_id];
+
+        auto& supply_starlane_traversals = m_supply_starlane_traversals[empire_id];
+        auto& supply_starlane_obstructed_traversals = m_supply_starlane_obstructed_traversals[empire_id];
+
+        for (auto&& start_id_and_endpoints : empire_and_system_to_starlanes.second) {
+            auto start_id = start_id_and_endpoints.first;
+            const auto& start_range_it = empire_propagated_supply_ranges.find(start_id);
+
+            // There is no supply in the starting system.
+            if (start_range_it == empire_propagated_supply_ranges.end())
+                continue;
+
+            auto start_range = start_range_it->second;
+
+            for (auto&& end_id : start_id_and_endpoints.second) {
+                const auto& end_range_it = empire_propagated_supply_ranges.find(end_id);
+
+                // There is no supply in the starting system.
+                auto end_range = (end_range_it != empire_propagated_supply_ranges.end()) ? end_range_it->second : 0.0f;
+
+                // If there is supply at both ends then it is traversable
+                if (start_range >= 1.0f  && end_range >= 0.0f)
+                    supply_starlane_traversals.insert({{start_id, end_id}, 0.0f});
+
+                // If there is surplus range >1.0f at the source end and 0.0f and the output end
+                // then it is obstructed.
+                if (start_range >= 1.0f  && end_range < 0.0f)
+                    supply_starlane_obstructed_traversals.insert({{start_id, end_id}, 0.0f});
+
+            }
+        }
+    }
+
+    /** sets of system ids that are connected by supply lines and are able to
+        share resources between systems or between objects in systems. indexed
+        by empire id. */
+    /*std::map<int, std::set<std::set<int>>>      */  m_resource_supply_groups.clear();
+    DetermineSupplyConnectedSystemGroups();
+
+}
+
+void SupplyManager::SupplyManagerImpl::UpdateOld() {
     m_supply_starlane_traversals.clear();
     m_supply_starlane_obstructed_traversals.clear();
     m_fleet_supplyable_system_ids.clear();
