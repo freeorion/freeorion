@@ -500,6 +500,7 @@ namespace {
         {}
 
         SupplyMerit OneJumpLessMerit(float _dist = 0.0f) const {
+            // TODO recalc local bonus factors.
             auto other     = SupplyMerit();
             other.range    = range - 1;
             other.distance = distance + _dist;
@@ -829,15 +830,17 @@ namespace {
         public:
         SupplyTranche(const SupplyMerit& threshold) :
             m_lower_threshold(threshold),
-            m_system_to_source_to_merit_stealth_empire()
+            m_system_to_source_to_merit_stealth_empire(),
+            m_num_sources{0}
         {}
 
         void Add(int source_id, const SupplyMerit& merit, float stealth, int system_id, int empire_id) {
             if (merit < m_lower_threshold) {
-                ErrorLogger() << "source lower than merit threshold";
+                ErrorLogger() << "source " << merit << " lower than merit threshold " << m_lower_threshold <<". Skipping ...";
                 return;
             }
             m_system_to_source_to_merit_stealth_empire[system_id].insert({source_id, {merit, stealth, empire_id}});
+            ++m_num_sources;
             DebugLogger() << "Tranche::Add() sys = " << system_id << " source = " << source_id
                           << " stealth = "<< stealth<< " empire = " << empire_id << " merit = "
                           << merit <<" new size = " << m_num_sources << ".";
@@ -849,6 +852,7 @@ namespace {
                 return;
 
             system_it->second.erase(source_id);
+            --m_num_sources;
         }
 
         std::unordered_map<int, std::unordered_map<int, std::tuple<SupplyMerit, float, int>>>::iterator begin()
@@ -871,6 +875,7 @@ namespace {
         SupplyMerit m_lower_threshold;
         std::unordered_map<int, std::unordered_map<int, std::tuple<SupplyMerit, float, int>>>
         m_system_to_source_to_merit_stealth_empire;
+        std::size_t m_num_sources;
     };
 
     class SupplyTranches {
@@ -880,7 +885,7 @@ namespace {
             m_max_merit{SupplyMerit()}
         {
             // Sort by SupplyMerit
-            std::map<SupplyMerit, std::shared_ptr<UniverseObject>> merit_and_source;
+            std::set<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>> merit_and_source;
             for (auto& id_to_obj_ptr : Objects().ExistingObjects()) {
                 // DebugLogger() << " Try merit for " << id_to_obj_ptr.second;
 
@@ -1215,6 +1220,10 @@ namespace {
                 DebugLogger() << " against other " << other_source_id << " from empire "
                               << other_empire_id << " with merit " << other_merit << " and "
                               << other_stealth << ".";
+                // Same source
+                if (other_source_id == candidate_source_id)
+                    continue;
+
                 // Same empire
                 if (other_empire_id == candidate_empire_id) {
                     // Other's merit and stealth are bigger so remove the candidate
@@ -1242,7 +1251,7 @@ namespace {
                 if (other_merit >= candidate_merit) {
                     auto other_detection = EmpireDetectionStrength(other_empire_id);
 
-                    // If other can't detected the candidate, skip it.
+                    // If other can't detect the candidate, skip it.
                     if (candidate_stealth > other_detection) {
                         // Intentional, do nothing and fall through for the equal merit case
                     }
@@ -1255,7 +1264,7 @@ namespace {
                     }
 
                     else {
-                        // All remaining candidates are detectable, hostile and have less range so remove them.
+                        // Detectable, hostile and have less merite so remove candidate.
                         DebugLogger() << " Lost to less merit. ";
                         is_keep_candidate = false;
                         continue;
@@ -1276,42 +1285,45 @@ namespace {
                         continue;
                     }
 
-                    // All remaining others are detectable, hostile and have less range so remove them.
+                    // All remaining others are detectable, hostile and have less merit so remove them.
                     DebugLogger() << " Won.";
                     marked_for_removals.push_back(other_it);
                 }
 
-                // Did the candidate win/lose?
-                if (is_keep_candidate)
-                    winners.push_back(candidate);
-                else
-                    losers.insert({candidate_source_id, candidate_merit});
-
-                // Were any of the others marked for removal
-                for (auto marked_for_removal : marked_for_removals) {
-                    const SupplyMerit& other_merit = std::get<0>(*other_it);
-                    int other_source_id, other_empire_id;
-                    std::tie(std::ignore, std::ignore, other_source_id, other_empire_id) = *other_it;
-
-                    losers.insert({other_source_id, other_merit});
-
-                    // Remove the collected **reverse** iterator.  Should be O(1).
-                    pod.merit_stealth_supply_empire->erase(std::next(marked_for_removal).base());
-                }
-
-                // If the candidate and any others tied for merit was removed stop checking for
-                // smaller others.
+                // If the candidate was removed stop checking to see if it can remove smaller merits
                 if (!is_keep_candidate)
                     break;
             }
+
+            // Did the candidate win/lose?
+            if (is_keep_candidate)
+                winners.push_back(candidate);
+            else
+                losers.insert({candidate_source_id, candidate_merit});
+
+            // Were any of the others marked for removal
+            for (auto marked : marked_for_removals) {
+                const SupplyMerit& marked_merit = std::get<0>(*marked);
+                int marked_source_id, marked_empire_id;
+                std::tie(std::ignore, std::ignore, marked_source_id, marked_empire_id) = *marked;
+
+                losers.insert({marked_source_id, marked_merit});
+
+                // Remove the collected **reverse** iterator.  Should be O(1).
+                pod.merit_stealth_supply_empire->erase(std::next(marked).base());
+            }
+
+            // Reset
+            is_keep_candidate = true;
+            marked_for_removals.clear();
         }
         return {winners, losers};
     }
 
     /** Propagate the \p propagators from \p system_id through all starlanes visible to their
         empire in \p empire_to_system_to_starlanes. Return the newly added supply elements.*/
-    boost::optional<std::map<SupplyMerit, std::tuple<int, float, int, int>>> Propagate(
-        std::unordered_map<int, SupplySystemPOD> system_to_supply_pod,
+    boost::optional<std::map<SupplyMerit, std::tuple<int, float, int, int>>> AttemptToPropagate(
+        std::unordered_map<int, SupplySystemPOD>& system_to_supply_pod,
         SupplyTranches& tranches,
         const int system_id,
         const std::vector<SupplyPODTuple>& propagators,
@@ -1363,6 +1375,11 @@ namespace {
 
                 // Reduce the merit by the length of this starlane
                 auto reduced_merit = merit.OneJumpLessMerit(GetPathfinder()->LinearDistance(system_id, end_system));
+
+                // This corresponds to a range of -1.
+                auto lowest_acceptable_merit = SupplyMerit().OneJumpLessMerit();
+                if (reduced_merit <= lowest_acceptable_merit)
+                    break;
 
                 // Insert the new data into the endpoint system's POD.
                 if (!pod.merit_stealth_supply_empire)
@@ -1956,7 +1973,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
     DebugLogger() << "SupplyManager::Update() start grind.";
     // Process each tranche until the merit threshold is negative
     const auto lowest_merit = SupplyMerit().OneJumpLessMerit();
-    auto merit_threshold = tranches.MaxMerit().OneJumpLessMerit();
+    auto merit_threshold = tranches.MaxMerit();
     while (merit_threshold > lowest_merit) {
         DebugLogger() << "SupplyManager::Update() do tranche with merit " << merit_threshold <<".";
 
@@ -1985,7 +2002,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
             DebugLogger() << "SupplyManager::Update() attempt propagate " << winners.size() << " winners in "<< system_id;
             // Propagate the winners
-            auto propagated_winners = Propagate(
+            auto propagated_winners = AttemptToPropagate(
                 system_to_supply_pod, tranches, system_id,
                 winners, empire_to_system_to_starlanes);
 
@@ -2041,6 +2058,10 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
             verifyType<Planet>(source_id, "planet");
             verifyType<System>(system_id, "system");
+
+            if (merit.Range() < 0.0f)
+                continue;
+
             DebugLogger() << "Added "<<merit<< " in system " << system_id << " for empire " << empire_id;
 
             m_fleet_supplyable_system_ids[empire_id].insert(system_id);
@@ -2085,30 +2106,32 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
         for (auto&& start_id_and_endpoints : empire_and_system_to_starlanes.second) {
             auto start_id = start_id_and_endpoints.first;
-            const auto& start_range_it = empire_propagated_supply_ranges.find(start_id);
 
             // There is no supply in the starting system.
-            if (start_range_it == empire_propagated_supply_ranges.end())
-                continue;
-
-            auto start_range = start_range_it->second;
+            const auto& start_range_it = empire_propagated_supply_ranges.find(start_id);
+            auto start_range = (start_range_it != empire_propagated_supply_ranges.end()) ? start_range_it->second : -1.0f;
 
             for (auto&& end_id : start_id_and_endpoints.second) {
-                const auto& end_range_it = empire_propagated_supply_ranges.find(end_id);
 
-                // There is no supply in the starting system.
-                auto end_range = (end_range_it != empire_propagated_supply_ranges.end()) ? end_range_it->second : 0.0f;
+                // There is no supply in the end system.
+                const auto& end_range_it = empire_propagated_supply_ranges.find(end_id);
+                auto end_range = (end_range_it != empire_propagated_supply_ranges.end()) ? end_range_it->second : -1.0f;
+
                 verifyType<System>(start_id, "start id");
                 verifyType<System>(end_id, "end id");
 
                 // If there is supply at both ends then it is traversable
-                if (start_range >= 1.0f  && end_range >= 0.0f)
+                if (start_range >= 0.0f  && end_range >= 0.0f) {
+                    DebugLogger() << " Good traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< ".";
                     supply_starlane_traversals.insert({{start_id, end_id}, 0.0f});
+                }
 
                 // If there is surplus range >1.0f at the source end and 0.0f and the output end
                 // then it is obstructed.
-                if (start_range >= 1.0f  && end_range < 0.0f)
+                if (start_range >= 1.0f  && end_range < 0.0f) {
+                    DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< ".";
                     supply_starlane_obstructed_traversals.insert({{start_id, end_id}, 0.0f});
+                }
 
             }
         }
