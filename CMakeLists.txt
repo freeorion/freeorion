@@ -369,6 +369,7 @@ add_subdirectory(parse)
 add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
+add_subdirectory(check)
 add_subdirectory(doc)
 
 ########################################
