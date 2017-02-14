@@ -214,105 +214,107 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
     int recipient_empire_id = message.RecipientEmpireID();
 
     DiplomaticStatus diplo_status = GetDiplomaticStatus(sender_empire_id, recipient_empire_id);
-    bool message_already_available = DiplomaticMessageAvailable(sender_empire_id, recipient_empire_id);
-    const DiplomaticMessage& existing_message = GetDiplomaticMessage(sender_empire_id, recipient_empire_id);
+    bool message_from_recipient_to_sender_available = DiplomaticMessageAvailable(sender_empire_id, recipient_empire_id);
+    const DiplomaticMessage& existing_message_from_recipient_to_sender = GetDiplomaticMessage(recipient_empire_id, sender_empire_id);
+    bool message_from_sender_to_recipient_available = DiplomaticMessageAvailable(recipient_empire_id, sender_empire_id);
 
     switch (message.GetType()) {
     case DiplomaticMessage::WAR_DECLARATION: {
         if (diplo_status == DIPLO_PEACE) {
+            // cancels any previous messages, sets empires at war
             RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+            RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
             SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_WAR);
         }
         break;
     }
+
     case DiplomaticMessage::PEACE_PROPOSAL: {
-        if (diplo_status == DIPLO_WAR && !message_already_available) {
+        if (diplo_status == DIPLO_WAR && !message_from_recipient_to_sender_available) {
             SetDiplomaticMessage(message);
-        } else if (diplo_status == DIPLO_WAR &&
-                   message_already_available &&
-                   existing_message.SenderEmpireID() == message.RecipientEmpireID())
-        {
-            if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
+
+        } else if (diplo_status == DIPLO_WAR && message_from_recipient_to_sender_available) {
+            if (existing_message_from_recipient_to_sender.GetType() ==
+                DiplomaticMessage::PEACE_PROPOSAL)
+            {
+                // somehow multiple peace proposals sent by players to eachother
+                // cancel and remove
+                RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
                 RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
                 SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
             }
         }
         break;
     }
+
     case DiplomaticMessage::ACCEPT_PEACE_PROPOSAL: {
-        if (message_already_available &&
-            existing_message.SenderEmpireID() == message.RecipientEmpireID())
+        if (message_from_recipient_to_sender_available &&
+            existing_message_from_recipient_to_sender.GetType() == DiplomaticMessage::PEACE_PROPOSAL)
         {
-            if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
-                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
-            }
-        }
-        break;
-    }
-    case DiplomaticMessage::ALLIES_PROPOSAL: {
-        if (diplo_status == DIPLO_PEACE && !message_already_available) {
-            SetDiplomaticMessage(message);
-        }
-        else if (diplo_status == DIPLO_PEACE &&
-            message_already_available &&
-            existing_message.SenderEmpireID() == message.RecipientEmpireID())
-        {
-            if (existing_message.GetType() == DiplomaticMessage::ALLIES_PROPOSAL) {
-                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_ALLIED);
-            }
-        }
-        break;
-    }
-    case DiplomaticMessage::ACCEPT_ALLIES_PROPOSAL: {
-        if (message_already_available &&
-            existing_message.SenderEmpireID() == message.RecipientEmpireID())
-        {
-            if (existing_message.GetType() == DiplomaticMessage::ALLIES_PROPOSAL) {
-                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_ALLIED);
-            }
-        }
-        break;
-    }
-    case DiplomaticMessage::END_ALLIANCE_DECLARATION: {
-        if (diplo_status == DIPLO_ALLIED) {
+            // one player proposed peace and the other accepted
+            RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
             RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
             SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
         }
         break;
     }
+
+    case DiplomaticMessage::ALLIES_PROPOSAL: {
+        if (diplo_status == DIPLO_PEACE && !message_from_recipient_to_sender_available) {
+            SetDiplomaticMessage(message);
+
+        } else if (diplo_status == DIPLO_PEACE && message_from_recipient_to_sender_available) {
+            if (existing_message_from_recipient_to_sender.GetType() ==
+                DiplomaticMessage::ALLIES_PROPOSAL)
+            {
+                // somehow multiple allies proposals sent by players to eachother
+                // cancel and remove
+                RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
+                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+                SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_ALLIED);
+            }
+        }
+        break;
+    }
+
+    case DiplomaticMessage::ACCEPT_ALLIES_PROPOSAL: {
+        if (message_from_recipient_to_sender_available &&
+            existing_message_from_recipient_to_sender.GetType() == DiplomaticMessage::ALLIES_PROPOSAL)
+        {
+            // one player proposed alliance and the other accepted
+            RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
+            RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_ALLIED);
+        }
+        break;
+    }
+
+    case DiplomaticMessage::END_ALLIANCE_DECLARATION: {
+        if (diplo_status == DIPLO_ALLIED) {
+            // cancels any previous messages, sets empires to peace
+            RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+            RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
+            SetDiplomaticStatus(sender_empire_id, recipient_empire_id, DIPLO_PEACE);
+        }
+        break;
+    }
+
     case DiplomaticMessage::CANCEL_PROPOSAL: {
-        if (message_already_available &&
-            existing_message.SenderEmpireID() == message.SenderEmpireID())
-        {
-            if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL ||
-                existing_message.GetType() == DiplomaticMessage::ALLIES_PROPOSAL)
-            {
-                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-            }
-        }
+        RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
         break;
     }
+
     case DiplomaticMessage::REJECT_PROPOSAL: {
-        if (message_already_available &&
-            existing_message.SenderEmpireID() == message.SenderEmpireID())
-        {
-            if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL ||
-                existing_message.GetType() == DiplomaticMessage::ALLIES_PROPOSAL)
-            {
-                RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
-            }
-        }
+        RemoveDiplomaticMessage(sender_empire_id, recipient_empire_id);
+        RemoveDiplomaticMessage(recipient_empire_id, sender_empire_id);
         break;
     }
+
     default:
         break;
     }
     DebugLogger() << "HandleDiplomaticMessage end";
     DebugLogger() << this->DumpDiplomacy();
-
 }
 
 void EmpireManager::ResetDiplomacy() {
