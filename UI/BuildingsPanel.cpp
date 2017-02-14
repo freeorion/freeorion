@@ -290,8 +290,15 @@ BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
     m_graphic = new GG::StaticGraphic(texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
     AttachChild(m_graphic);
 
-    m_progress_bar = new MultiTurnProgressBar(total_turns, turns_completed, total_cost, turn_spending, GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
-                                              ClientUI::TechWndProgressBarColor(), GG::LightColor(ClientUI::ResearchableTechFillColor()));
+    float next_progress = turn_spending / std::max(1.0, total_cost);
+
+    m_progress_bar = new MultiTurnProgressBar(total_turns,
+                                              turns_completed,
+                                              next_progress,
+                                              GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
+                                              ClientUI::TechWndProgressBarColor(),
+                                              GG::LightColor(ClientUI::ResearchableTechFillColor()));
+
     AttachChild(m_progress_bar);
 
     RequirePreRender();
