@@ -486,13 +486,20 @@ namespace {
             m_location_text->SetTextColor(location_clr);
         }
 
-        m_progress_bar = new MultiTurnProgressBar(m_total_turns, m_turns_completed + m_partially_complete_turn,
-                                                  m_total_cost, m_turn_spending,
+        float perc_complete = m_total_turns > 0 ?
+                              (m_turns_completed + m_partially_complete_turn) / m_total_turns :
+                              0.0f;
+        float next_progress = m_turn_spending / std::max(1.0, m_total_cost);
+        GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
+        if (m_in_progress)
+            outline_color = GG::LightColor(outline_color);
+
+        m_progress_bar = new MultiTurnProgressBar(m_total_turns,
+                                                  perc_complete,
+                                                  next_progress,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
-                                                  m_in_progress
-                                                    ? ClientUI::ResearchableTechFillColor()
-                                                    : GG::LightColor(ClientUI::ResearchableTechFillColor()));
+                                                  outline_color);
 
         double max_spending_per_turn = m_total_cost / m_total_turns;
         std::string turn_spending_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_TURN_COST_STR"))
