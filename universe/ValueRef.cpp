@@ -705,15 +705,15 @@ double Variable<double>::Eval(const ScriptingContext& context) const
             return ship->TotalWeaponsDamage();
 
     } else if (property_name == "PropagatedSupplyRange") {
-        const std::map<int, float>& ranges = GetSupplyManager().PropagatedSupplyRanges();
-        std::map<int, float>::const_iterator range_it = ranges.find(object->SystemID());
+        const auto& ranges = GetSupplyManager().PropagatedSupplyRanges();
+        const auto& range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
 
     } else if (property_name == "PropagatedSupplyDistance") {
-        const std::map<int, float>& ranges = GetSupplyManager().PropagatedSupplyDistances();
-        std::map<int, float>::const_iterator range_it = ranges.find(object->SystemID());
+        const auto& ranges = GetSupplyManager().PropagatedSupplyDistances();
+        const auto& range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
@@ -1219,6 +1219,7 @@ namespace {
     static std::map<std::string, int> EMPTY_STRING_INT_MAP;
     static std::map<int, int> EMPTY_INT_INT_MAP;
     static std::map<int, float> EMPTY_INT_FLOAT_MAP;
+    static std::unordered_map<int, float> EMPTY_INT_FLOAT_UNORDERED_MAP;
 
     const std::map<std::string, int>& GetEmpireStringIntMap(int empire_id, const std::string& parsed_map_name) {
         Empire* empire = GetEmpire(empire_id);
@@ -1276,10 +1277,10 @@ namespace {
         return EMPTY_INT_INT_MAP;
     }
 
-    const std::map<int, float>& GetEmpireIntFloatMap(int empire_id, const std::string& parsed_map_name) {
+    const std::unordered_map<int, float>& GetEmpireIntFloatMap(int empire_id, const std::string& parsed_map_name) {
         Empire* empire = GetEmpire(empire_id);
         if (!empire)
-            return EMPTY_INT_FLOAT_MAP;
+            return EMPTY_INT_FLOAT_UNORDERED_MAP;
 
         if (parsed_map_name == "PropagatedSystemSupplyRange")
             return GetSupplyManager().PropagatedSupplyRanges(empire_id);
@@ -1288,7 +1289,7 @@ namespace {
         if (parsed_map_name == "PropagatedSystemSupplyDistance")
             return GetSupplyManager().PropagatedSupplyDistances(empire_id);
 
-        return EMPTY_INT_FLOAT_MAP;
+        return EMPTY_INT_FLOAT_UNORDERED_MAP;
     }
 
     int GetIntEmpirePropertyNoKeyImpl(int empire_id, const std::string& parsed_property_name) {
@@ -1382,8 +1383,8 @@ namespace {
 
         // single empire
         if (empire_id != ALL_EMPIRES) {
-            const std::map<int, float>& map = GetEmpireIntFloatMap(empire_id, parsed_property_name);
-            std::map<int, float>::const_iterator it = map.find(map_key);
+            const auto& map = GetEmpireIntFloatMap(empire_id, parsed_property_name);
+            const auto& it = map.find(map_key);
             if (it == map.end())
                 return 0.0f;
             return it->second;
@@ -1391,8 +1392,8 @@ namespace {
 
         // all empires summed
         for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
-            const std::map<int, float>& map = GetEmpireIntFloatMap(empire_entry.first, parsed_property_name);
-            std::map<int, float>::const_iterator map_it = map.find(map_key);
+            const auto& map = GetEmpireIntFloatMap(empire_entry.first, parsed_property_name);
+            const auto& map_it = map.find(map_key);
             if (map_it != map.end())
                 sum += map_it->second;
         }

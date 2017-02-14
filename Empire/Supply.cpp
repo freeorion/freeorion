@@ -57,19 +57,19 @@ public:
     const std::set<std::set<int> >&                         ResourceSupplyGroups(int empire_id) const;
 
     /** Returns the range from each system some empire can propagate supply.*/
-    const std::map<int, float>&                             PropagatedSupplyRanges() const;
+    const std::unordered_map<int, float>&                             PropagatedSupplyRanges() const;
     /** Returns the range from each system that the empire with id \a empire_id
       * can propagate supply.*/
-    const std::map<int, float>&                             PropagatedSupplyRanges(int empire_id) const;
+    const std::unordered_map<int, float>&                             PropagatedSupplyRanges(int empire_id) const;
 
     /** Returns the distance from each system some empire is away
       * from its closest source of supply without passing
       * through obstructed systems for that empire. */
-    const std::map<int, float>&                             PropagatedSupplyDistances() const;
+    const std::unordered_map<int, float>&                             PropagatedSupplyDistances() const;
     /** Returns the distance from each system for the empire with id
       * \a empire_id to the closest source of supply without passing
       * through obstructed systems for that empire. */
-    const std::map<int, float>&                             PropagatedSupplyDistances(int empire_id) const;
+    const std::unordered_map<int, float>&                             PropagatedSupplyDistances(int empire_id) const;
 
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
@@ -88,7 +88,7 @@ public:
 
     /** Part of the Update function.*/
     std::map<int, std::map<int, std::pair<float, float>>> PropagateSupplyAlongUnobstructedStarlanes(
-        const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
+        const std::unordered_map<int, std::unordered_map<int, float>>& empire_system_supply_ranges,
         std::map<int, std::set<int>>& empire_supply_unobstructed_systems);
 
     void DetermineSupplyConnectedSystemGroups();
@@ -119,24 +119,24 @@ private:
 
     /** for whichever empire can propagate supply into this system, what is the
         additional range from this system that empire can propagate supply */
-    std::map<int, float>                            m_propagated_supply_ranges;
+    std::unordered_map<int, float>                            m_propagated_supply_ranges;
 
     /** for each empire, what systems it can propagate supply into, and how many
       * further supply jumps it could propagate past this system, if not blocked
       * from doing so by supply obstructions. */
-    std::map<int, std::map<int, float>>             m_empire_propagated_supply_ranges;
+    std::unordered_map<int, std::unordered_map<int, float>>             m_empire_propagated_supply_ranges;
 
     /** for whichever empire can propagate supply into this system, how far
       * that system is from the closest source of supply for that empire, along
       * possible supply propgation connections (ie. not though a supply
       * obstructed system for that empire) */
-    std::map<int, float>                            m_propagated_supply_distances;
+    std::unordered_map<int, float>                            m_propagated_supply_distances;
 
     /** for each empire, what systems it can propagate supply into, and how far
       * that system is from the closest source of supply for that empire, along
       * possible supply propgation connections (ie. not though a supply
       * obstructed system) */
-    std::map<int, std::map<int, float>>             m_empire_propagated_supply_distances;
+    std::unordered_map<int, std::unordered_map<int, float>>             m_empire_propagated_supply_distances;
 
 };
 
@@ -162,6 +162,7 @@ namespace {
     static const std::unordered_set<int> EMPTY_INT_UNORDERED_SET;
     static const std::set<std::pair<int, int>> EMPTY_INT_PAIR_SET;
     static const std::map<int, float> EMPTY_INT_FLOAT_MAP;
+    static const std::unordered_map<int, float> EMPTY_INT_FLOAT_UNORDERED_MAP;
     static const std::unordered_map<std::pair<int, int>, float> EMPTY_MAP_PAIR_INT_TO_FLOAT;
 }
 
@@ -230,28 +231,28 @@ const std::set<std::set<int>>& SupplyManager::SupplyManagerImpl::ResourceSupplyG
     return EMPTY_INT_SET_SET;
 }
 
-const std::map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyRanges() const {
+const std::unordered_map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyRanges() const {
     std::cout << "BLAAAAH" << std::endl;
     return m_propagated_supply_ranges;
 }
 
-const std::map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyRanges(int empire_id) const
+const std::unordered_map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyRanges(int empire_id) const
 {
     auto emp_it = m_empire_propagated_supply_ranges.find(empire_id);
     if (emp_it == m_empire_propagated_supply_ranges.end())
-        return EMPTY_INT_FLOAT_MAP;
+        return EMPTY_INT_FLOAT_UNORDERED_MAP;
     return emp_it->second;
 }
 
-const std::map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyDistances() const {
+const std::unordered_map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyDistances() const {
     std::cout << "GLAARB" << std::endl;
     return m_propagated_supply_distances;
 }
 
-const std::map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyDistances(int empire_id) const {
+const std::unordered_map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyDistances(int empire_id) const {
     auto emp_it = m_empire_propagated_supply_distances.find(empire_id);
     if (emp_it == m_empire_propagated_supply_distances.end())
-        return EMPTY_INT_FLOAT_MAP;
+        return EMPTY_INT_FLOAT_UNORDERED_MAP;
     return emp_it->second;
 }
 
@@ -1524,7 +1525,7 @@ namespace {
     }
 
     std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
-        const std::map<int, std::map<int, float>>& empire_system_supply_ranges)
+        const std::unordered_map<int, std::unordered_map<int, float>>& empire_system_supply_ranges)
     {
         // Map from Empire to Systems where only other empires have supply sources and there is no
         // friendly fleet.  This is used to help the AI until it can full manage supply mechanics
@@ -1560,7 +1561,7 @@ namespace {
 
             std::set<int> systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt;
             // add all systems where hostile_others have supply
-            for (const std::map<int, std::map<int, float>>::value_type& empire_supply : empire_system_supply_ranges) {
+            for (const auto& empire_supply : empire_system_supply_ranges) {
                 if (empire_supply.first == empire_id || empire_supply.first == ALL_EMPIRES)
                     continue;
 
@@ -1574,7 +1575,7 @@ namespace {
                 }
             }
             // remove systems were this empire has supply
-            std::map<int, std::map<int, float>>::const_iterator it = empire_system_supply_ranges.find(empire_id);
+            const auto& it = empire_system_supply_ranges.find(empire_id);
             if (it != empire_system_supply_ranges.end()) {
                 for (const std::map<int, float>::value_type& supply_range : it->second) {
                     if (supply_range.second <= 0.0f)
@@ -1595,7 +1596,7 @@ namespace {
     }
 
     void ObstructSupplyIfUncontestedHostileSupplySource(
-        const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
+        const std::unordered_map<int, std::unordered_map<int, float>>& empire_system_supply_ranges,
         std::map<int, std::set<int>>& empire_supply_unobstructed_systems)
     {
         for (auto& empire_to_colony_disrupted_systems : CalculateColonyDisruptedSupply(empire_system_supply_ranges)) {
@@ -1607,7 +1608,7 @@ namespace {
 }
 
 std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
-    const std::map<int, std::map<int, float>>& empire_system_supply_ranges,
+    const std::unordered_map<int, std::unordered_map<int, float>>& empire_system_supply_ranges,
     std::map<int, std::set<int>>& empire_supply_unobstructed_systems
 )
 {
@@ -1636,7 +1637,7 @@ std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManag
     std::map<int, std::map<int, std::pair<float, float>>> empire_propagating_supply_ranges;
     float max_range = 0.0f;
 
-    for (const std::map<int, std::map<int, float>>::value_type& empire_supply : empire_system_supply_ranges) {
+    for (const auto& empire_supply : empire_system_supply_ranges) {
         int empire_id = empire_supply.first;
         const std::set<int>& unobstructed_systems = empire_supply_unobstructed_systems[empire_id];
 
@@ -2200,7 +2201,7 @@ void SupplyManager::SupplyManagerImpl::UpdateOld() {
 
     // map from empire id to map from system id to range (in starlane jumps)
     // that supply can be propagated out of that system by that empire.
-    std::map<int, std::map<int, float> > empire_system_supply_ranges;
+    std::unordered_map<int, std::unordered_map<int, float> > empire_system_supply_ranges;
     // map from empire id to which systems are obstructed for it for supply
     // propagation
     std::map<int, std::set<int> > empire_supply_unobstructed_systems;
@@ -2347,16 +2348,16 @@ const std::map<int, std::set<std::set<int> > >&         SupplyManager::ResourceS
 const std::set<std::set<int> >&                         SupplyManager::ResourceSupplyGroups(int empire_id) const
 { return pimpl->ResourceSupplyGroups(empire_id); }
 
-const std::map<int, float>&                             SupplyManager::PropagatedSupplyRanges() const
+const std::unordered_map<int, float>&                             SupplyManager::PropagatedSupplyRanges() const
 { return pimpl->PropagatedSupplyRanges(); }
 
-const std::map<int, float>&                             SupplyManager::PropagatedSupplyRanges(int empire_id) const
+const std::unordered_map<int, float>&                             SupplyManager::PropagatedSupplyRanges(int empire_id) const
 { return pimpl->PropagatedSupplyRanges(empire_id); }
 
-const std::map<int, float>&                             SupplyManager::PropagatedSupplyDistances() const
+const std::unordered_map<int, float>&                             SupplyManager::PropagatedSupplyDistances() const
 { return pimpl->PropagatedSupplyDistances(); }
 
-const std::map<int, float>&                             SupplyManager::PropagatedSupplyDistances(int empire_id) const
+const std::unordered_map<int, float>&                             SupplyManager::PropagatedSupplyDistances(int empire_id) const
 { return pimpl->PropagatedSupplyDistances(empire_id); }
 
 bool                                                    SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const

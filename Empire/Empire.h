@@ -395,7 +395,7 @@ public:
 
     /** Returns distance in jumps away from each system that this empire can
       * propagate supply. */
-    const std::map<int, float>&             SystemSupplyRanges() const;
+    const std::unordered_map<int, float>&             SystemSupplyRanges() const;
 
     /** Returns the systems in which this empire is blockading supply.*/
     const std::unordered_set<int>& SupplyBlockadedSystems() const;
@@ -705,7 +705,7 @@ private:
     std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
 
     // cached calculation results, returned by reference
-    std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
+    std::unordered_map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
     std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
 
     /** System id where this empire is blockading/protecting supply.*/

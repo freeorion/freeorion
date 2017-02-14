@@ -2051,7 +2051,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
             float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
 
             // if this object can provide more supply range than the best previously checked object in this system, record its range as the new best for the system
-            std::map<int, float>::iterator system_it = m_supply_system_ranges.find(system_id);  // try to find a previous entry for this system's supply range
+            const auto& system_it = m_supply_system_ranges.find(system_id);  // try to find a previous entry for this system's supply range
             if (system_it == m_supply_system_ranges.end() || supply_range > system_it->second) {// if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
                 //std::cout << " ... object " << obj->Name() << " has resource supply range: " << resource_supply_range << std::endl;
                 m_supply_system_ranges[system_id] = supply_range;
@@ -2368,7 +2368,7 @@ void Empire::UpdateAvailableLanes() {
 const std::unordered_map<int, std::set<std::pair<float, float>>>& Empire::SystemToStealthAndSupplyRange() const
 { return m_system_to_stealth_supply; }
 
-const std::map<int, float>& Empire::SystemSupplyRanges() const
+const std::unordered_map<int, float>& Empire::SystemSupplyRanges() const
 { return m_supply_system_ranges; }
 
 const std::set<int>& Empire::SupplyUnobstructedSystems() const
