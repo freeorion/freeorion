@@ -10,6 +10,7 @@
 #include <boost/filesystem/fstream.hpp>
 
 namespace {
+    // sorted pair, so order of empire IDs specified doesn't matter
     std::pair<int, int> DiploKey(int id1, int ind2)
     { return std::make_pair(std::max(id1, ind2), std::min(id1, ind2)); }
 
@@ -95,7 +96,7 @@ std::string EmpireManager::DumpDiplomacy() const {
     for (auto message : m_diplomatic_messages) {
         retval += "From: " + std::to_string(message.first.first)
                + " to: " + std::to_string(message.first.second)
-               + " message:" + message.second.Dump();
+               + " message:" + message.second.Dump() + "\n";
     }
 
     return retval;
@@ -188,7 +189,7 @@ void EmpireManager::SetDiplomaticMessage(const DiplomaticMessage& message) {
     int empire2 = message.RecipientEmpireID();
     const DiplomaticMessage& initial_message = GetDiplomaticMessage(empire1, empire2);
     if (message != initial_message) {
-        m_diplomatic_messages[DiploKey(empire1, empire2)] = message;
+        m_diplomatic_messages[{empire1, empire2}] = message;
         DiplomaticMessageChangedSignal(empire1, empire2);
     }
 }
@@ -214,9 +215,9 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
     int recipient_empire_id = message.RecipientEmpireID();
 
     DiplomaticStatus diplo_status = GetDiplomaticStatus(sender_empire_id, recipient_empire_id);
-    bool message_from_recipient_to_sender_available = DiplomaticMessageAvailable(sender_empire_id, recipient_empire_id);
+    bool message_from_recipient_to_sender_available = DiplomaticMessageAvailable(recipient_empire_id, sender_empire_id); 
     const DiplomaticMessage& existing_message_from_recipient_to_sender = GetDiplomaticMessage(recipient_empire_id, sender_empire_id);
-    bool message_from_sender_to_recipient_available = DiplomaticMessageAvailable(recipient_empire_id, sender_empire_id);
+    bool message_from_sender_to_recipient_available = DiplomaticMessageAvailable(sender_empire_id, recipient_empire_id);
 
     switch (message.GetType()) {
     case DiplomaticMessage::WAR_DECLARATION: {
@@ -318,17 +319,17 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
 }
 
 void EmpireManager::ResetDiplomacy() {
+    // remove messages
     m_diplomatic_messages.clear();
-    m_empire_diplomatic_statuses.clear();
 
-    for (std::map<int, Empire*>::const_iterator emp1_it = m_empire_map.begin(); emp1_it != m_empire_map.end(); ++emp1_it) {
-        std::map<int, Empire*>::const_iterator emp2_it = emp1_it;
-        ++emp2_it;
-        for (; emp2_it != m_empire_map.end(); ++emp2_it) {
-            const std::pair<int, int> diplo_key = DiploKey(emp1_it->first, emp2_it->first);
+    // set all empires at peace with eachother (but not themselves)
+    m_empire_diplomatic_statuses.clear();
+    for (auto id_empire_1 : m_empire_map) {
+        for (auto id_empire_2 : m_empire_map) {
+            if (id_empire_1.first == id_empire_2.first)
+                continue;
+            const std::pair<int, int> diplo_key = DiploKey(id_empire_1.first, id_empire_2.first);
             m_empire_diplomatic_statuses[diplo_key] = DIPLO_PEACE;
-            m_diplomatic_messages[diplo_key] = DiplomaticMessage(diplo_key.first, diplo_key.second, 
-                                                                 DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE);
         }
     }
 }
