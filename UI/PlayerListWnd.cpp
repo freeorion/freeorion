@@ -722,53 +722,86 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
     if (!GetEmpire(clicked_empire_id)) {
         ErrorLogger() << "PlayerListWnd::PlayerRightClicked tried to look up empire id "
-                               << clicked_empire_id << " for player " << clicked_player_id
-                               << " but couldn't find such an empire";
+                      << clicked_empire_id << " for player " << clicked_player_id
+                      << " but couldn't find such an empire";
         return;
     }
 
     GG::MenuItem menu_contents;
-    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+    if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
+        client_empire_id != ALL_EMPIRES &&
+        clicked_empire_id != ALL_EMPIRES)
+    {
         // get diplomatic status between client and clicked empires
         DiplomaticStatus diplo_status = Empires().GetDiplomaticStatus(clicked_empire_id, client_empire_id);
         if (diplo_status == INVALID_DIPLOMATIC_STATUS && clicked_player_id != client_player_id) {
             ErrorLogger() << "PlayerListWnd::PlayerRightClicked found invalid diplomatic status between client and clicked empires.";
             return;
         }
-        DiplomaticMessage existing_message = Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);
+        const DiplomaticMessage& existing_message_from_clicked_empire_to_this_player =
+            Empires().GetDiplomaticMessage(clicked_empire_id, client_empire_id);
+        const DiplomaticMessage& existing_message_from_this_player_to_clicked_empire =
+            Empires().GetDiplomaticMessage(client_empire_id, clicked_empire_id);
 
-        // create popup menu with diplomacy options in it
-        if (client_empire_id != ALL_EMPIRES) {
-            if (diplo_status == DIPLO_WAR) {
-                if (existing_message.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
-                    // who sent message?
-                    if (existing_message.SenderEmpireID() == client_empire_id) {
-                        menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL_CANCEL"),4, false, false));
-                    } else if (existing_message.SenderEmpireID() == clicked_empire_id) {
-                        menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_ACCEPT"),         3, false, false));
-                        menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_REJECT"),         9, false, false));
-                    }
+        // decide what diplomatic commands to show in popup menu
+        bool show_peace_propose = false;
+        bool show_peace_cancel = false;
+        bool show_peace_reject = false;
+        bool show_peace_accept = false;
+        bool show_allies_end = false;
+        bool show_allies_propose = false;
+        bool show_allies_cancel = false;
+        bool show_allies_reject = false;
+        bool show_allies_accept = false;
+        bool show_declare_war = false;
 
-                } else if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
-                    menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"),           2, false, false));
-                }
+        if (existing_message_from_this_player_to_clicked_empire.GetType() == DiplomaticMessage::PEACE_PROPOSAL)
+            show_peace_cancel = true;
+        else if (existing_message_from_this_player_to_clicked_empire.GetType() == DiplomaticMessage::ALLIES_PROPOSAL)
+            show_allies_cancel = true;
 
-            } else if (diplo_status == DIPLO_PEACE) {
-                if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
-                    menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          6, false, false));
-
-                } else if (existing_message.GetType() == DiplomaticMessage::ALLIES_PROPOSAL) {
-                    menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_ACCEPT"),            7, false, false));
-                    menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_REJECT"),            9, false, false));
-                }
-                menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),              1, false, false));
-
-            } else if (diplo_status == DIPLO_ALLIED) {
-                //if (existing_message.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE) {
-                    menu_contents.next_level.push_back(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), 8, false, false));
-                //}
-            }
+        if (existing_message_from_clicked_empire_to_this_player.GetType() == DiplomaticMessage::PEACE_PROPOSAL) {
+            show_peace_accept = true;
+            show_peace_reject = true;
+        } else if (existing_message_from_clicked_empire_to_this_player.GetType() == DiplomaticMessage::ALLIES_PROPOSAL) {
+            show_allies_accept = true;
+            show_allies_reject = true;
         }
+
+        if (diplo_status == DIPLO_WAR) {
+            if (!show_peace_accept)
+                show_peace_propose = true;
+
+        } else if (diplo_status == DIPLO_PEACE) {
+            if (!show_allies_accept)
+                show_allies_propose = true;
+            show_declare_war = true;
+
+        } else if (diplo_status == DIPLO_ALLIED) {
+            show_allies_end = true;
+        }
+
+
+        if (show_peace_propose)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"),           2, false, false));
+        if (show_peace_cancel)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL_CANCEL"),    4, false, false));
+        if (show_peace_accept)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_ACCEPT"),             3, false, false));
+        if (show_peace_reject)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_REJECT"),             9, false, false));
+        if (show_allies_end)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), 8, false, false));
+        if (show_allies_propose)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          6, false, false));
+        if (show_allies_accept)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_ACCEPT"),            7, false, false));
+        if (show_allies_cancel)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_PROPOSAL_CANCEL"),   4, false, false));
+        if (show_allies_reject)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_REJECT"),            9, false, false));
+        if (show_declare_war)
+            menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),          1, false, false));
     }
 
     menu_contents.next_level.push_back(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), 5, false, false));
