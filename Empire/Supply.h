@@ -57,9 +57,9 @@ public:
     /** Returns set of system ids where fleets can be supplied by this empire
       * (as determined by object supply meters and rules of supply propagation
       * and blockade). */
-    const std::map<int, std::set<int>>&                     FleetSupplyableSystemIDs() const;
-    const std::set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
-    std::set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
+    const std::unordered_map<int, std::unordered_set<int>>&           FleetSupplyableSystemIDs() const;
+    const std::unordered_set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
+    std::unordered_set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
     int                                                     EmpireThatCanSupplyAt(int system_id) const;
 
     /** Returns set of sets of systems that can share industry (systems in

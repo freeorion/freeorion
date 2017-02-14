@@ -145,9 +145,9 @@ namespace {
 
     boost::function<std::map<int,int>(const Empire&)> jumpsToSuppliedSystemFunc =               &jumpsToSuppliedSystemP;
 
-    const std::set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
+    const std::unordered_set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
     { return GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); }
-    boost::function<const std::set<int>& (const Empire&)> empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
+    boost::function<const std::unordered_set<int>& (const Empire&)> empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
 
     typedef std::pair<float, int> FloatIntPair;
 
@@ -333,7 +333,7 @@ namespace FreeOrionPython {
             .add_property("fleetSupplyableSystemIDs",   make_function(
                                                             empireFleetSupplyableSystemIDsFunc,
                                                             return_value_policy<copy_const_reference>(),
-                                                            boost::mpl::vector<const std::set<int>&, const Empire& >()
+                                                            boost::mpl::vector<const std::unordered_set<int>&, const Empire& >()
                                                         ))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          return_internal_reference<>()))

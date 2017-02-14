@@ -46,9 +46,9 @@ public:
     /** Returns set of system ids where fleets can be supplied by this empire
       * (as determined by object supply meters and rules of supply propagation
       * and blockade). */
-    const std::map<int, std::set<int> >&                    FleetSupplyableSystemIDs() const;
-    const std::set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
-    std::set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
+    const std::unordered_map<int, std::unordered_set<int> >&          FleetSupplyableSystemIDs() const;
+    const std::unordered_set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
+    std::unordered_set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
     int                                                     EmpireThatCanSupplyAt(int system_id) const;
 
     /** Returns set of sets of systems that can share industry (systems in
@@ -110,7 +110,7 @@ private:
     std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>  m_supply_starlane_obstructed_traversals;
 
     /** ids of systems where fleets can be resupplied. indexed by empire id. */
-    std::map<int, std::set<int> >                   m_fleet_supplyable_system_ids;
+    std::unordered_map<int, std::unordered_set<int>> m_fleet_supplyable_system_ids;
 
     /** sets of system ids that are connected by supply lines and are able to
         share resources between systems or between objects in systems. indexed
@@ -159,6 +159,7 @@ SupplyManager::SupplyManagerImpl& SupplyManager::SupplyManagerImpl::operator=(co
 namespace {
     static const std::set<int> EMPTY_INT_SET;
     static const std::set<std::set<int>> EMPTY_INT_SET_SET;
+    static const std::unordered_set<int> EMPTY_INT_UNORDERED_SET;
     static const std::set<std::pair<int, int>> EMPTY_INT_PAIR_SET;
     static const std::map<int, float> EMPTY_INT_FLOAT_MAP;
     static const std::unordered_map<std::pair<int, int>, float> EMPTY_MAP_PAIR_INT_TO_FLOAT;
@@ -184,25 +185,25 @@ const std::unordered_map<std::pair<int, int>, float>& SupplyManager::SupplyManag
     return EMPTY_MAP_PAIR_INT_TO_FLOAT;
 }
 
-const std::map<int, std::set<int>>& SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs() const
+const std::unordered_map<int, std::unordered_set<int>>& SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs() const
 { return m_fleet_supplyable_system_ids; }
 
-const std::set<int>& SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs(int empire_id) const {
-    std::map<int, std::set<int>>::const_iterator it = m_fleet_supplyable_system_ids.find(empire_id);
+const std::unordered_set<int>& SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs(int empire_id) const {
+    const auto& it = m_fleet_supplyable_system_ids.find(empire_id);
     if (it != m_fleet_supplyable_system_ids.end())
         return it->second;
-    return EMPTY_INT_SET;
+    return EMPTY_INT_UNORDERED_SET;
 }
 
-std::set<int> SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const {
-    std::set<int> retval = FleetSupplyableSystemIDs(empire_id);
+std::unordered_set<int> SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const {
+    std::unordered_set<int> retval = FleetSupplyableSystemIDs(empire_id);
     if (!include_allies)
         return retval;
 
     // add supplyable systems of all allies
     for (auto empire_id_sys_id_set : m_fleet_supplyable_system_ids) {
         int other_empire_id = empire_id_sys_id_set.first;
-        const std::set<int>& systems = empire_id_sys_id_set.second;
+        const auto& systems = empire_id_sys_id_set.second;
         if (systems.empty() || ((empire_id != other_empire_id)
                                 && Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_PEACE))
             continue;
@@ -212,7 +213,7 @@ std::set<int> SupplyManager::SupplyManagerImpl::FleetSupplyableSystemIDs(int emp
 }
 
 int SupplyManager::SupplyManagerImpl::EmpireThatCanSupplyAt(int system_id) const {
-    for (const std::map<int, std::set<int>>::value_type& entry : m_fleet_supplyable_system_ids) {
+    for (const auto& entry : m_fleet_supplyable_system_ids) {
         if (entry.second.find(system_id) != entry.second.end())
             return entry.first;
     }
@@ -259,10 +260,10 @@ bool SupplyManager::SupplyManagerImpl::SystemHasFleetSupply(int system_id, int e
         return false;
     if (empire_id == ALL_EMPIRES)
         return false;
-    std::map<int, std::set<int>>::const_iterator it = m_fleet_supplyable_system_ids.find(empire_id);
+    const auto& it = m_fleet_supplyable_system_ids.find(empire_id);
     if (it == m_fleet_supplyable_system_ids.end())
         return false;
-    const std::set<int>& sys_set = it->second;
+    const auto& sys_set = it->second;
     if (sys_set.find(system_id) != sys_set.end())
         return true;
     return false;
@@ -298,7 +299,7 @@ std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
     std::string retval;
 
     try {
-        for (const std::map<int, std::set<int>>::value_type& empire_supply : m_fleet_supplyable_system_ids) {
+        for (const auto& empire_supply : m_fleet_supplyable_system_ids) {
             if (empire_id != ALL_EMPIRES && empire_supply.first != empire_id)
                 continue;
             retval += "Supplyable systems for empire " + std::to_string(empire_supply.first) + "\n";
@@ -2328,13 +2329,13 @@ const std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>&  
 const std::unordered_map<std::pair<int, int>, float>&                   SupplyManager::SupplyObstructedStarlaneTraversals(int empire_id) const
 { return pimpl->SupplyObstructedStarlaneTraversals(empire_id); }
 
-const std::map<int, std::set<int> >&                    SupplyManager::FleetSupplyableSystemIDs() const
+const std::unordered_map<int, std::unordered_set<int> >&          SupplyManager::FleetSupplyableSystemIDs() const
 { return pimpl->FleetSupplyableSystemIDs(); }
 
-const std::set<int>&                                    SupplyManager::FleetSupplyableSystemIDs(int empire_id) const
+const std::unordered_set<int>&                                    SupplyManager::FleetSupplyableSystemIDs(int empire_id) const
 { return pimpl->FleetSupplyableSystemIDs(empire_id); }
 
-std::set<int>                                           SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const
+std::unordered_set<int>                                           SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const
 { return pimpl->FleetSupplyableSystemIDs(empire_id, include_allies); }
 
 int                                                     SupplyManager::EmpireThatCanSupplyAt(int system_id) const

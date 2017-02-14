@@ -7333,8 +7333,8 @@ namespace {
                 return false;
 
             const SupplyManager& supply = GetSupplyManager();
-            const std::map<int, std::set<int> >& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
-            std::map<int, std::set<int> >::const_iterator it = empire_supplyable_systems.find(m_empire_id);
+            const auto& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
+            const auto& it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
                 return false;
             return it->second.find(candidate->SystemID()) != it->second.end();
