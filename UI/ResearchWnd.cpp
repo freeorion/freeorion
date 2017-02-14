@@ -172,11 +172,26 @@ namespace {
         m_name_text->SetChildClippingMode(ClipToClient);
         top += m_name_text->Height();
 
-        m_progress_bar = new MultiTurnProgressBar(tech ? tech->ResearchTime(m_empire_id) : 1,
-                                                  turns_completed, tech ? tech->ResearchCost(m_empire_id) : 0.0, turn_spending,
+        int total_time = 0;
+        float perc_complete = 0.0f;
+        float next_progress = 0.0f;
+        if (tech) {
+            total_time = tech->ResearchTime(m_empire_id);
+            perc_complete = total_time > 0 ? turns_completed / total_time : 0.0f;
+            float total_cost = tech->ResearchCost(m_empire_id);
+            next_progress = turn_spending / std::max(1.0f, total_cost);
+        }
+        GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
+        if (m_in_progress)
+            outline_color = GG::LightColor(outline_color);
+
+        m_progress_bar = new MultiTurnProgressBar(total_time,
+                                                  perc_complete,
+                                                  next_progress,
                                                   GG::LightColor(ClientUI::TechWndProgressBarBackgroundColor()),
                                                   ClientUI::TechWndProgressBarColor(),
-                                                  m_in_progress ? ClientUI::ResearchableTechFillColor() : GG::LightColor(ClientUI::ResearchableTechFillColor()) );
+                                                  outline_color);
+
         m_progress_bar->MoveTo(GG::Pt(left, top));
         m_progress_bar->Resize(GG::Pt(METER_WIDTH, METER_HEIGHT));
         top += m_progress_bar->Height() + MARGIN;
