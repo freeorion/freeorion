@@ -3311,6 +3311,9 @@ Reject Peace Proposal
 ALLIES_PROPOSAL
 Propose Alliance
 
+ALLIES_PROPOSAL_CANCEL
+Cancel Alliance Proposal
+
 ALLIES_ACCEPT
 Accept Alliance Proposal
 
