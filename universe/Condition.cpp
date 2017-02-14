@@ -7442,13 +7442,13 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const std::set<std::set<int> >& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
+            const auto& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
             if (groups.empty())
                 return false;
 
             // is candidate object connected to a subcondition matching object by resource supply?
             for (std::shared_ptr<const UniverseObject> from_object : m_from_objects) {
-                for (const std::set<int>& group : groups) {
+                for (const auto& group : groups) {
                     if (group.find(from_object->SystemID()) != group.end()) {
                         // found resource sharing group containing test object.  Does it also contain candidate?
                         if (group.find(candidate->SystemID()) != group.end())

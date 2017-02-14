@@ -135,8 +135,21 @@ std::string ResourcePool::Dump() const {
 void ResourcePool::SetObjects(const std::vector<int>& object_ids)
 { m_object_ids = object_ids; }
 
-void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int> >& connected_system_groups)
-{ m_connected_system_groups = connected_system_groups; }
+void ResourcePool::SetConnectedSupplyGroups(const std::vector<std::unordered_set<int>>& connected_system_groups)
+{
+    // TODO Using unordered sets of unordered sets is inefficient since the hash function must be
+    // order N.  Refactor this to have the external container be a vector, which can be iterated to
+    // find the object of interest.  For now transform the set.
+    // m_connected_system_groups = connected_system_groups;
+
+    m_connected_system_groups.clear();
+    for (auto& unordered_set : connected_system_groups) {
+        std::set<int> sorted;
+        for (auto x : unordered_set)
+            sorted.insert(x);
+        m_connected_system_groups.insert(sorted);
+    }
+}
 
 void ResourcePool::SetStockpileObject(int stockpile_object_id)
 { m_stockpile_object_id = stockpile_object_id; }
@@ -175,7 +188,7 @@ void ResourcePool::Update() {
 
         // is object's system in a system group?
         std::set<int> object_system_group;
-        for (const std::set<int>& sys_group : m_connected_system_groups) {
+        for (const auto& sys_group : m_connected_system_groups) {
             if (sys_group.find(object_system_id) != sys_group.end()) {
                 object_system_group = sys_group;
                 break;
