@@ -1,4 +1,16 @@
+find_package(CPPCheck)
 find_package(PEP8)
+
+if (CPPCHECK_FOUND)
+    add_custom_target(check-cpp
+        ${CPPCHECK_EXECUTABLE}
+            --quiet
+            --template=gcc
+            --std=c++11
+            ${PROJECT_SOURCE_DIR}
+        COMMENT "Check C++ for problematic code"
+    )
+endif ()
 
 if (PEP8_FOUND)
     configure_file(pep8.ini.in pep8.ini)
@@ -23,6 +35,10 @@ if (NOT TARGET check)
     add_custom_target(check
         COMMENT "Run code quality checks"
     )
+endif ()
+
+if (CPPCHECK_FOUND)
+    add_dependencies(check check-cpp)
 endif ()
 
 if (PEP8_FOUND)
