@@ -1841,6 +1841,18 @@ double ComplexVariable<double>::Eval(const ScriptingContext& context) const
         return part_type->Capacity();
 
     }
+    else if (variable_name == "PartSecondaryStat") {
+        std::string part_type_name;
+        if (m_string_ref1)
+            part_type_name = m_string_ref1->Eval(context);
+
+        const PartType* part_type = GetPartType(part_type_name);
+        if (!part_type)
+            return 0.0;
+
+        return part_type->SecondaryStat();
+
+    }
     else if (variable_name == "EmpireMeterValue") {
         int empire_id = ALL_EMPIRES;
         if (m_int_ref1)

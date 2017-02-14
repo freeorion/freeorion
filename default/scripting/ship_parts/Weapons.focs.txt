@@ -3,10 +3,13 @@ Part
     description = "SR_WEAPON_1_1_DESC"
     class = ShortRange
     damage = 3
+    NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_1_1)]]
     icon = "icons/ship_parts/mass-driver.png"
 
 Part
@@ -15,10 +18,13 @@ Part
     class = ShortRange
     damage = 1
     shots = 3
+    NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_0_1)]]
     icon = "icons/ship_parts/flak.png"
 
 Part
@@ -26,10 +32,13 @@ Part
     description = "SR_WEAPON_2_1_DESC"
     class = ShortRange
     damage = 5
+    NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_2_1)]]
     icon = "icons/ship_parts/laser.png"
 
 Part
@@ -37,10 +46,13 @@ Part
     description = "SR_WEAPON_3_1_DESC"
     class = ShortRange
     damage = 9
+    NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_3_1)]]
     icon = "icons/ship_parts/plasma.png"
 
 Part
@@ -48,10 +60,13 @@ Part
     description = "SR_WEAPON_4_1_DESC"
     class = ShortRange
     damage = 15
+    NoDefaultCapacityEffect
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
     location = OwnedBy empire = Source.Owner
+    effectsgroups =
+        [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_4_1)]]
     icon = "icons/ship_parts/death-ray.png"
 
 Part
@@ -110,3 +125,14 @@ Part
     icon = "icons/ship_parts/snowflake_laser.png"
 
 #include "/scripting/common/upkeep.macros"
+
+WEAPON_BASE_UNOWNED_EFFECTS
+'''        EffectsGroup
+            scope = Source
+            activation = Unowned    // if owned by a player, gets weapon meters set by effects in relevant techs
+            accountinglabel = "@1@"
+            effects = [
+                SetMaxCapacity partname = "@1@" value = Value + PartCapacity name = "@1@"
+                SetMaxSecondaryStat partname = "@1@" value = Value + PartSecondaryStat name = "@1@"
+            ]
+'''
