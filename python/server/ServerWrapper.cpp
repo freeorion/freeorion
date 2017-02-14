@@ -938,6 +938,25 @@ namespace {
         return py_systems;
     }
 
+    // Return all systems within \p jumps of \p sys_ids
+    list SystemsWithinJumps(size_t jumps, list sys_ids) {
+        list py_systems;
+        boost::python::stl_input_iterator<int> end;
+
+        std::vector<int> systems;
+
+        for (boost::python::stl_input_iterator<int> id(sys_ids); id != end; ++id) {
+            systems.push_back(*id);
+        }
+
+        auto systems_in_vicinity = GetPathfinder()->WithinJumps(jumps, systems);
+
+        for (auto system_id : systems_in_vicinity) {
+            py_systems.append(system_id);
+        }
+        return py_systems;
+    }
+
     // Wrappers for System class member functions
     StarType SystemGetStarType(int system_id) {
         std::shared_ptr<System> system = GetSystem(system_id);
@@ -1325,6 +1344,8 @@ namespace FreeOrionPython {
         def("create_field_in_system",               CreateFieldInSystem);
 
         def("objs_get_systems",                     ObjectsGetSystems);
+
+        def("systems_within_jumps",                 SystemsWithinJumps, "Return all systems within ''jumps'' of the systems with ids ''sys_ids''");
 
         def("sys_get_star_type",                    SystemGetStarType);
         def("sys_set_star_type",                    SystemSetStarType);

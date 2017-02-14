@@ -576,6 +576,11 @@ class Pathfinder::PathfinderImpl {
          boost::unordered_multimap<int, int>& result, size_t _n_outer, size_t _n_inner,
          size_t ii, const distance_matrix_storage<short>::row_ref row) const;
 
+    std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
+    void WithinJumpsCacheHit(
+        std::unordered_set<int>* result, size_t jump_limit,
+        size_t ii, const distance_matrix_storage<short>::row_ref row) const;
+
     std::pair<std::vector<std::shared_ptr<const UniverseObject>>, std::vector<std::shared_ptr<const UniverseObject>>>
     WithinJumpsOfOthers(
         int jumps,
@@ -1008,6 +1013,51 @@ std::multimap<double, int> Pathfinder::PathfinderImpl::ImmediateNeighbors(int sy
     }
     return std::multimap<double, int>();
 }
+
+
+void Pathfinder::PathfinderImpl::WithinJumpsCacheHit(
+    std::unordered_set<int>* result, size_t jump_limit,
+    size_t ii, const distance_matrix_storage<short>::row_ref row) const {
+
+    // Scan the LUT of system ids and add any result from the row within
+    // the neighborhood range to the results.
+    for (auto system_id_and_ii : m_system_id_to_graph_index) {
+        size_t hops = row[system_id_and_ii.second];
+        if (hops <= jump_limit)
+            result->insert(system_id_and_ii.first);
+    }
+}
+
+std::unordered_set<int> Pathfinder::WithinJumps(size_t jumps, const std::vector<int>& candidates) const {
+    return pimpl->WithinJumps(jumps, candidates);
+}
+
+std::unordered_set<int> Pathfinder::PathfinderImpl::WithinJumps(
+    size_t jumps, const std::vector<int>& candidates) const
+{
+    std::unordered_set<int> near;
+    distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
+    for (auto candidate : candidates) {
+        size_t system_index;
+        try {
+            system_index = m_system_id_to_graph_index.at(candidate);
+        } catch (const std::out_of_range& e) {
+            ErrorLogger() << "Passed invalid system id: " << candidate;
+            continue;
+        }
+
+        near.insert(candidate);
+        if (jumps == 0)
+            continue;
+
+        cache.examine_row(system_index,
+                          boost::bind(&Pathfinder::PathfinderImpl::HandleCacheMiss, this, _1, _2),
+                          boost::bind(&Pathfinder::PathfinderImpl::WithinJumpsCacheHit, this,
+                                      &near, jumps, _1, _2));
+    }
+    return near;
+}
+
 
 
 /** Examine a single universe object and determine if it is within jumps

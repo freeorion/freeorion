@@ -8,6 +8,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <unordered_set>
 
 #ifdef FREEORION_WIN32
 // because the linker gets confused about Win32 API functions...
@@ -104,6 +105,10 @@ public:
     //TODO empire_id is never set to anything other than self, which in
     //the AI's is the same as ALL_EMPIRES
     std::multimap<double, int>              ImmediateNeighbors(int system_id, int empire_id = ALL_EMPIRES) const;
+
+    /** Returns the system ids of systems that are within \p jumps of the \p
+        candidates system ids.*/
+    std::unordered_set<int> WithinJumps(size_t jumps, const std::vector<int>& candidates) const;
 
     /** Returns the partition (near, far) of the \p candidate objects into two sets, those that are within \p
         jumps of the \p stationary objects and that are not.*/

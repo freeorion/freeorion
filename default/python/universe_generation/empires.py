@@ -3,7 +3,6 @@ import random
 
 import freeorion as fo
 
-from galaxy_topology import get_systems_within_jumps
 from starsystems import star_types_real, pick_star_type
 from planets import calc_planet_size, calc_planet_type, planet_sizes_real, planet_types_real
 from names import get_name_list, random_name
@@ -73,7 +72,7 @@ def count_planets_in_systems(systems, planet_types_filter=HS_ACCEPTABLE_PLANET_T
 
 def calculate_home_system_merit(system):
     """Calculate the system's merit as the number of planets within HS_VICINTIY_RANGE."""
-    return count_planets_in_systems(get_systems_within_jumps(system, HS_VICINITY_RANGE))
+    return count_planets_in_systems(fo.systems_within_jumps(HS_VICINITY_RANGE, [system]))
 
 
 def min_planets_in_vicinity_limit(num_systems):
@@ -162,7 +161,7 @@ class HomeSystemFinder(object):
                 candidate.append(member)
 
                 # remove all neighbors from the local pool
-                local_pool -= set(get_systems_within_jumps(member, min_jumps))
+                local_pool -= set(fo.systems_within_jumps(min_jumps, [member]))
 
             # Count complete misses when number of candidates is not close to the target.
             if len(candidate) < (self.num_home_systems - MISS_THRESHOLD):
@@ -186,7 +185,7 @@ class HomeSystemFinder(object):
                 best_candidate = [s for (_, s) in merit_system]
 
                 # Quit sucessfully if the lowest merit system meets the minimum threshold
-                if merit >= min_planets_in_vicinity_limit(get_systems_within_jumps(system, HS_VICINITY_RANGE)):
+                if merit >= min_planets_in_vicinity_limit(fo.systems_within_jumps(HS_VICINITY_RANGE, [system])):
                     break
 
         return best_candidate
@@ -352,7 +351,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     pool_matching_sys_and_planet_limit = []
     pool_matching_sys_limit = []
     for system in systems:
-        systems_in_vicinity = get_systems_within_jumps(system, HS_VICINITY_RANGE)
+        systems_in_vicinity = fo.systems_within_jumps(HS_VICINITY_RANGE, [system])
         if len(systems_in_vicinity) >= HS_MIN_SYSTEMS_IN_VICINITY:
             pool_matching_sys_limit.append(system)
             if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
@@ -430,7 +429,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     print "Checking if home systems have the required minimum of planets within the near vicinity..."
     for home_system in home_systems:
         # calculate the number of missing planets, and add them if this number is > 0
-        systems_in_vicinity = get_systems_within_jumps(home_system, HS_VICINITY_RANGE)
+        systems_in_vicinity = fo.systems_within_jumps(HS_VICINITY_RANGE, [home_system])
         num_systems_in_vicinity = len(systems_in_vicinity)
         num_planets_in_vicinity = count_planets_in_systems(systems_in_vicinity)
         num_planets_to_add = min_planets_in_vicinity_limit(num_systems_in_vicinity) - num_planets_in_vicinity
