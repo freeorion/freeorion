@@ -471,16 +471,45 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string client_version_string;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
 
-    // Check if player name is unique or use AI prefix
+    std::string original_player_name = player_name;
+
     std::string ai_prefix = UserString("AI_PLAYER") + "_";
-    if (! server.IsAvailableName(player_name) ||
-        (client_type != Networking::CLIENT_TYPE_AI_PLAYER && player_name.compare(0, ai_prefix.size(), ai_prefix) == 0 ))
+    // Remove AI prefix to distinguish Human from AI.
+    if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
+        while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0 )
+            player_name.erase(0, ai_prefix.size());
+    }
+
+    std::string new_player_name = player_name;
+
+    bool collision = true;
+    int t = 1;
+    while (t < 200 && collision) // It should be enought
     {
-        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % player_name),
+        collision = false;
+        if (! server.IsAvailableName(new_player_name)) {
+            collision = true;
+        } else {
+            for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
+                if (plrs.second.m_empire_name == new_player_name) {
+                    collision = true;
+                    break;
+                }
+            }
+        }
+
+        if(collision)
+            new_player_name = player_name + std::to_string(++ t); // start alternative names from 2
+    }
+
+    if (collision) {
+        player_connection->SendMessage(ErrorMessage(str(FlexibleFormat(UserString("ERROR_PLAYER_NAME_ALREADY_USED")) % original_player_name),
                                                     true));
         server.Networking().Disconnect(player_connection);
         return discard_event();
     }
+
+    player_name = new_player_name;
 
     // assign unique player ID to newly connected player
     int player_id = server.m_networking.NewPlayerID();
