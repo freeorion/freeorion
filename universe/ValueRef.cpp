@@ -28,7 +28,6 @@
 
 #include <iomanip>
 #include <iterator>
-#include <limits>
 
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
@@ -2593,9 +2592,9 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
                     vals.insert(vr->Eval(context));
             }
             if (m_op_type == MINIMUM)
-                return vals.empty() ? std::numeric_limits<double>::min() : *vals.begin();
+                return vals.empty() ? 0.0 : *vals.begin();
             else
-                return vals.empty() ? std::numeric_limits<double>::max() : *vals.rbegin();
+                return vals.empty() ? 0.0 : *vals.rbegin();
             break;
         }
 
@@ -2690,9 +2689,9 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
                     vals.insert(vr->Eval(context));
             }
             if (m_op_type == MINIMUM)
-                return vals.empty() ? std::numeric_limits<int>::min() : *vals.begin();
+                return vals.empty() ? 0 : *vals.begin();
             else
-                return vals.empty() ? std::numeric_limits<int>::max() : *vals.rbegin();
+                return vals.empty() ? 0 : *vals.rbegin();
             break;
         }
 
