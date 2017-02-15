@@ -26,8 +26,9 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/split.hpp>
 
-#include <iterator>
 #include <iomanip>
+#include <iterator>
+#include <limits>
 
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
@@ -2585,14 +2586,18 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
             return std::cos(LHS()->Eval(context));              break;
 
         case MINIMUM:
-            return std::min(LHS()->Eval(context),
-                            RHS()->Eval(context));
+        case MAXIMUM: {
+            std::set<double> vals;
+            for (ValueRefBase<double>* vr : m_operands) {
+                if (vr)
+                    vals.insert(vr->Eval(context));
+            }
+            if (m_op_type == MINIMUM)
+                return vals.empty() ? std::numeric_limits<double>::min() : *vals.begin();
+            else
+                return vals.empty() ? std::numeric_limits<double>::max() : *vals.rbegin();
             break;
-
-        case MAXIMUM:
-            return std::max(LHS()->Eval(context),
-                            RHS()->Eval(context));
-            break;
+        }
 
         case RANDOM_UNIFORM: {
             double op1 = LHS()->Eval(context);
@@ -2678,14 +2683,18 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
         }
 
         case MINIMUM:
-            return std::min<int>(LHS()->Eval(context),
-                                 RHS()->Eval(context));
+        case MAXIMUM: {
+            std::set<int> vals;
+            for (ValueRefBase<int>* vr : m_operands) {
+                if (vr)
+                    vals.insert(vr->Eval(context));
+            }
+            if (m_op_type == MINIMUM)
+                return vals.empty() ? std::numeric_limits<int>::min() : *vals.begin();
+            else
+                return vals.empty() ? std::numeric_limits<int>::max() : *vals.rbegin();
             break;
-
-        case MAXIMUM:
-            return std::max<int>(LHS()->Eval(context),
-                                 RHS()->Eval(context));
-            break;
+        }
 
         case RANDOM_UNIFORM: {
             double op1 = LHS()->Eval(context);
