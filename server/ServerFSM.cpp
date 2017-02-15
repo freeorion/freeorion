@@ -473,10 +473,10 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     std::string original_player_name = player_name;
 
-    std::string ai_prefix = UserString("AI_PLAYER") + "_";
     // Remove AI prefix to distinguish Human from AI.
+    std::string ai_prefix = UserString("AI_PLAYER") + "_";
     if (client_type != Networking::CLIENT_TYPE_AI_PLAYER) {
-        while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0 )
+        while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
             player_name.erase(0, ai_prefix.size());
     }
 
@@ -484,22 +484,21 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     bool collision = true;
     int t = 1;
-    while (t < 200 && collision) // It should be enought
-    {
+    while (t < 200 && collision) { // It should be enough
         collision = false;
-        if (! server.IsAvailableName(new_player_name)) {
+        if (!server.IsAvailableName(new_player_name)) {
             collision = true;
         } else {
-            for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
-                if (plrs.second.m_empire_name == new_player_name) {
+            for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
+                if (plr.second.m_empire_name == new_player_name) {
                     collision = true;
                     break;
                 }
             }
         }
 
-        if(collision)
-            new_player_name = player_name + std::to_string(++ t); // start alternative names from 2
+        if (collision)
+            new_player_name = player_name + std::to_string(++t); // start alternative names from 2
     }
 
     if (collision) {
@@ -536,13 +535,13 @@ sc::result MPLobby::react(const JoinGame& msg) {
     m_lobby_data->m_players.push_back(std::make_pair(player_id, player_setup_data));
 
     // drop ready player flag at new player
-    for (std::pair<int, PlayerSetupData>& plrs : m_lobby_data->m_players) {
-        if(plrs.second.m_empire_name == player_name) {
+    for (std::pair<int, PlayerSetupData>& plr : m_lobby_data->m_players) {
+        if (plr.second.m_empire_name == player_name) {
             // change empire name
-            plrs.second.m_empire_name = (plrs.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? plrs.second.m_player_name : GenerateEmpireName(plrs.second.m_player_name, m_lobby_data->m_players);
+            plr.second.m_empire_name = (plr.second.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) ? plr.second.m_player_name : GenerateEmpireName(plr.second.m_player_name, m_lobby_data->m_players);
         }
 
-        plrs.second.m_player_ready = false;
+        plr.second.m_player_ready = false;
     }
 
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
@@ -607,7 +606,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 if (psd.m_empire_name.empty())
                     psd.m_empire_name = GenerateEmpireName(psd.m_player_name, incoming_lobby_data.m_players);
                 if (psd.m_starting_species_name.empty()) {
-                    if (m_lobby_data->m_seed!="")
+                    if (m_lobby_data->m_seed != "")
                         psd.m_starting_species_name = GetSpeciesManager().RandomPlayableSpeciesName();
                     else
                         psd.m_starting_species_name = GetSpeciesManager().SequentialPlayableSpeciesName(AI_count);
@@ -682,7 +681,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                                 break;
                             }
                         }
-                        has_important_changes = has_important_changes || (! is_found_player);
+                        has_important_changes = has_important_changes || (!is_found_player);
                     }
                 }
             }
@@ -718,7 +717,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
 
                 // get lobby data for this player connection
                 bool found_player_lobby_data = false;
-                std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
+                std::list<std::pair<int, PlayerSetupData>>::iterator player_setup_it = m_lobby_data->m_players.begin();
                 while (player_setup_it != m_lobby_data->m_players.end()) {
                     if (player_setup_it->first == player_id) {
                         found_player_lobby_data = true;
@@ -759,10 +758,10 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             // from the lobby.  this will also occur when humans are dropped, but those
             // cases should have been handled above when checking the lobby data for
             // each player connection.
-            std::list<std::pair<int, PlayerSetupData> >::iterator player_setup_it = m_lobby_data->m_players.begin();
+            std::list<std::pair<int, PlayerSetupData>>::iterator player_setup_it = m_lobby_data->m_players.begin();
             while (player_setup_it != m_lobby_data->m_players.end()) {
                 if (player_setup_it->second.m_client_type == Networking::INVALID_CLIENT_TYPE) {
-                    std::list<std::pair<int, PlayerSetupData> >::iterator erase_it = player_setup_it;
+                    std::list<std::pair<int, PlayerSetupData>>::iterator erase_it = player_setup_it;
                     ++player_setup_it;
                     m_lobby_data->m_players.erase(erase_it);
                 } else {
