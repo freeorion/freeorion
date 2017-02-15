@@ -80,7 +80,7 @@ EG_SYSTEM_MINES
                         Not HasTag name = "UNOWNED_FRIENDLY"
                     ]
                 ]
-                Structure low = @1@ + 0.0001
+                Structure high = @1@
             ]
             activation = Unowned
             stackinggroup = "DEF_MINES_DAMAGE_STACK"
