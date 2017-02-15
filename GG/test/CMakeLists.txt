@@ -25,7 +25,7 @@
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
 
-add_custom_target(check
+add_custom_target(unittest
     COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
     COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
 )
@@ -47,6 +47,6 @@ foreach(_TEST ${GiGi_TESTS})
         COMMAND test_${_TEST} --log_level=all --catch_system_error=yes
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
-    add_dependencies(check test_${_TEST})
-    add_coverage(test_${_TEST} check)
+    add_dependencies(unittest test_${_TEST})
+    add_coverage(test_${_TEST} unittest)
 endforeach()
