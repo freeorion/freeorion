@@ -280,6 +280,7 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg) {
 boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
+    Client().EndGame(true);
     return transit<IntroMenu>();
 }
 
