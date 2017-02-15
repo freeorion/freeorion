@@ -1,6 +1,6 @@
 # GG is a GUI for SDL and OpenGL.
 #
-# Copyright (C) 2017 Marcel Metz
+# Copyright (C) 2010 T. Zachary Laine
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
@@ -23,5 +23,30 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-add_subdirectory(acceptance)
-add_subdirectory(unit)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
+
+add_custom_target(unittest
+    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+    COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+)
+
+set(GiGi_TESTS
+)
+
+foreach(_TEST ${GiGi_TESTS})
+    add_executable(gg_unit_${_TEST} EXCLUDE_FROM_ALL ${_TEST}.cpp)
+    target_compile_definitions(gg_unit_${_TEST}
+        PRIVATE
+            -DBOOST_TEST_DYN_LINK
+            -DBOOST_TEST_MODULE="${_TEST}Module"
+    )
+    target_link_libraries(gg_unit_${_TEST} ${Boost_LIBRARIES} GiGi)
+
+    add_test(
+        NAME ${_TEST}
+        COMMAND gg_unit_${_TEST} --log_level=all --catch_system_error=yes
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+    add_dependencies(unittest gg_unit_${_TEST})
+    add_coverage(gg_unit_${_TEST} unittest)
+endforeach()
