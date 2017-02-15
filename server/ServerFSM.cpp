@@ -120,24 +120,23 @@ namespace {
                                    std::list<std::pair<int, PlayerSetupData> >& players)
     {
         // load default empire names
-        static std::vector<std::string> empire_names = UserStringList("EMPIRE_NAMES");
-        std::set<std::string> validNames(empire_names.begin(), empire_names.end());
+        std::vector<std::string> empire_names = UserStringList("EMPIRE_NAMES");
+        std::set<std::string> valid_names(empire_names.begin(), empire_names.end());
         for (const std::pair<int, PlayerSetupData>& psd : players) {
-            std::set<std::string>::iterator name_it = validNames.find(psd.second.m_empire_name);
-            if (name_it != validNames.end())
-                validNames.erase(name_it);
-            name_it = validNames.find(psd.second.m_player_name);
-            if (name_it != validNames.end())
-                validNames.erase(name_it);
+            std::set<std::string>::iterator name_it = valid_names.find(psd.second.m_empire_name);
+            if (name_it != valid_names.end())
+                valid_names.erase(name_it);
+            name_it = valid_names.find(psd.second.m_player_name);
+            if (name_it != valid_names.end())
+                valid_names.erase(name_it);
         }
-        if (!validNames.empty()) {
+        if (!valid_names.empty()) {
             // pick a name from the list of empire names
-            int empire_name_idx = RandSmallInt(0, static_cast<int>(validNames.size()) - 1);
-            return *std::next(validNames.begin(), empire_name_idx);
-        } else {
-            // use a player_name as it unique among players
-            return player_name;
+            int empire_name_idx = RandSmallInt(0, static_cast<int>(valid_names.size()) - 1);
+            return *std::next(valid_names.begin(), empire_name_idx);
         }
+        // use a player_name as it unique among players
+        return player_name;
     }
 
 
@@ -687,20 +686,20 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
             }
 
             // GalaxySetupData
-            m_lobby_data->m_seed =           incoming_lobby_data.m_seed;
-            m_lobby_data->m_size =           incoming_lobby_data.m_size;
-            m_lobby_data->m_shape =          incoming_lobby_data.m_shape;
-            m_lobby_data->m_age =            incoming_lobby_data.m_age;
-            m_lobby_data->m_starlane_freq =  incoming_lobby_data.m_starlane_freq;
+            m_lobby_data->m_seed           = incoming_lobby_data.m_seed;
+            m_lobby_data->m_size           = incoming_lobby_data.m_size;
+            m_lobby_data->m_shape          = incoming_lobby_data.m_shape;
+            m_lobby_data->m_age            = incoming_lobby_data.m_age;
+            m_lobby_data->m_starlane_freq  = incoming_lobby_data.m_starlane_freq;
             m_lobby_data->m_planet_density = incoming_lobby_data.m_planet_density;
-            m_lobby_data->m_specials_freq =  incoming_lobby_data.m_specials_freq;
-            m_lobby_data->m_monster_freq =   incoming_lobby_data.m_monster_freq;
-            m_lobby_data->m_native_freq =    incoming_lobby_data.m_native_freq;
-            m_lobby_data->m_ai_aggr     =    incoming_lobby_data.m_ai_aggr;
+            m_lobby_data->m_specials_freq  = incoming_lobby_data.m_specials_freq;
+            m_lobby_data->m_monster_freq   = incoming_lobby_data.m_monster_freq;
+            m_lobby_data->m_native_freq    = incoming_lobby_data.m_native_freq;
+            m_lobby_data->m_ai_aggr        = incoming_lobby_data.m_ai_aggr;
 
             // directly configurable lobby data
-            m_lobby_data->m_new_game =       incoming_lobby_data.m_new_game;
-            m_lobby_data->m_players =        incoming_lobby_data.m_players;
+            m_lobby_data->m_new_game       = incoming_lobby_data.m_new_game;
+            m_lobby_data->m_players        = incoming_lobby_data.m_players;
 
             LogPlayerSetupData(m_lobby_data->m_players);
 
