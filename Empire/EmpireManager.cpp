@@ -93,7 +93,7 @@ std::string EmpireManager::DumpDiplomacy() const {
         retval += "\n";
     }
     retval += "Diplomatic Messages:\n";
-    for (auto message : m_diplomatic_messages) {
+    for (const auto& message : m_diplomatic_messages) {
         retval += "From: " + std::to_string(message.first.first)
                + " to: " + std::to_string(message.first.second)
                + " message:" + message.second.Dump() + "\n";
