@@ -109,6 +109,9 @@ private:
         list location not tracking the anchor.*/
     void WindowResizedSlot(X x, Y y);
 
+    /** Used by CorrectListSize() to determine the list height from the current first shown row. */
+    void DetermineListHeight(Pt drop_down_size);
+
     ListBox*            m_lb_wnd;
     const size_t        m_num_shown_rows;
     const DropDownList* m_relative_to_wnd;
@@ -258,6 +261,28 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
         SelChangedSignal(*it);
 }
 
+void ModalListPicker::DetermineListHeight(Pt drop_down_size) {
+    // Determine the expected height
+    auto border_thick = 2 * GG::Y(ListBox::BORDER_THICK);
+    auto num_rows = std::min<int>(m_num_shown_rows, LB()->NumRows());
+    auto row_height = (*LB()->FirstRowShown())->Height();
+    auto expected_height = num_rows * row_height + border_thick;
+
+    // Shrink the height if too near app edge.
+    auto dist_to_app_edge = GUI::GetGUI()->AppHeight() - m_relative_to_wnd->Bottom();
+    if (expected_height > dist_to_app_edge && row_height > 0) {
+        auto reduced_num_rows = std::max(GG::Y(1), (dist_to_app_edge - border_thick) / row_height);
+        expected_height = reduced_num_rows * row_height + border_thick;
+    }
+
+    drop_down_size.y = expected_height;
+
+    LB()->Resize(drop_down_size);
+    if (!LB()->Selections().empty())
+        LB()->BringRowIntoView(*(LB()->Selections().begin()));
+    GUI::GetGUI()->PreRenderWindow(LB());
+}
+
 void ModalListPicker::CorrectListSize() {
     // reset size of displayed drop list based on number of shown rows set.
     // assumes that all rows have the same height.
@@ -294,19 +319,8 @@ void ModalListPicker::CorrectListSize() {
         // (width, prerender etc.) would mean this code could be reduced to
         // check height and resize list just once.
 
-        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows())
-            + 4 * GG::Y(ListBox::BORDER_THICK);
-        LB()->Resize(drop_down_size);
-        if (!LB()->Selections().empty())
-            LB()->BringRowIntoView(*(LB()->Selections().begin()));
-        GUI::GetGUI()->PreRenderWindow(LB());
-
-        drop_down_size.y = (*LB()->FirstRowShown())->Height() * std::min<int>(m_num_shown_rows, LB()->NumRows())
-            + 4 * GG::Y(ListBox::BORDER_THICK);
-        LB()->Resize(drop_down_size);
-        if (!LB()->Selections().empty())
-            LB()->BringRowIntoView(*(LB()->Selections().begin()));
-        GUI::GetGUI()->PreRenderWindow(LB());
+        DetermineListHeight(drop_down_size);
+        DetermineListHeight(drop_down_size);
 
         LB()->Hide();
     }
