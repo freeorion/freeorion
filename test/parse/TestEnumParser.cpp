@@ -1,6 +1,7 @@
 #include <boost/test/unit_test.hpp>
 
 #include "parse/EnumParser.h"
+#include "universe/Enums.h"
 
 struct EnumParserFixture {
     template <class Type>
@@ -111,21 +112,6 @@ BOOST_AUTO_TEST_CASE(CaptureResultParser) {
     result = INVALID_CAPTURE_RESULT;
     BOOST_CHECK(!parse("DoesNotExist", result));
     BOOST_CHECK(result == INVALID_CAPTURE_RESULT);
-}
-
-BOOST_AUTO_TEST_CASE(CombatFighterTypeParser) {
-    CombatFighterType result;
-
-    BOOST_CHECK(parse("Interceptor", result));
-    BOOST_CHECK(result == INTERCEPTOR);
-
-    BOOST_CHECK(parse("Bomber", result));
-    BOOST_CHECK(result == BOMBER);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_COMBAT_FIGHTER_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result));
-    BOOST_CHECK(result == INVALID_COMBAT_FIGHTER_TYPE);
 }
 
 BOOST_AUTO_TEST_CASE(EmpireAffiliationTypeParser) {
@@ -281,15 +267,10 @@ BOOST_AUTO_TEST_CASE(NonShipPartMeterTypeParser) {
     BOOST_CHECK(set_parse_nonship_meter("SetDetection", result));
     BOOST_CHECK(result == METER_DETECTION);
 
-    BOOST_CHECK(parse_nonship_meter("BattleSpeed", result));
-    BOOST_CHECK(result == METER_BATTLE_SPEED);
-    BOOST_CHECK(set_parse_nonship_meter("SetBattleSpeed", result));
-    BOOST_CHECK(result == METER_BATTLE_SPEED);
-
-    BOOST_CHECK(parse_nonship_meter("StarlaneSpeed", result));
-    BOOST_CHECK(result == METER_STARLANE_SPEED);
-    BOOST_CHECK(set_parse_nonship_meter("SetStarlaneSpeed", result));
-    BOOST_CHECK(result == METER_STARLANE_SPEED);
+    BOOST_CHECK(parse_nonship_meter("Speed", result));
+    BOOST_CHECK(result == METER_SPEED);
+    BOOST_CHECK(set_parse_nonship_meter("SetSpeed", result));
+    BOOST_CHECK(result == METER_SPEED);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_METER_TYPE;
@@ -437,16 +418,7 @@ BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
     BOOST_REQUIRE_MESSAGE(NUM_SHIP_PART_CLASSES == 13 + 1, "Untested enumeration value.");
 
     BOOST_CHECK(parse("ShortRange", result));
-    BOOST_CHECK(result == PC_SHORT_RANGE);
-
-    BOOST_CHECK(parse("Missiles", result));
-    BOOST_CHECK(result == PC_MISSILES);
-
-    BOOST_CHECK(parse("Fighters", result));
-    BOOST_CHECK(result == PC_FIGHTERS);
-
-    BOOST_CHECK(parse("PointDefense", result));
-    BOOST_CHECK(result == PC_POINT_DEFENSE);
+    BOOST_CHECK(result == PC_DIRECT_WEAPON);
 
     BOOST_CHECK(parse("Shield", result));
     BOOST_CHECK(result == PC_SHIELD);
@@ -469,11 +441,8 @@ BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
     BOOST_CHECK(parse("Colony", result));
     BOOST_CHECK(result == PC_COLONY);
 
-    BOOST_CHECK(parse("BattleSpeed", result));
-    BOOST_CHECK(result == PC_BATTLE_SPEED);
-
-    BOOST_CHECK(parse("StarlaneSpeed", result));
-    BOOST_CHECK(result == PC_STARLANE_SPEED);
+    BOOST_CHECK(parse("Speed", result));
+    BOOST_CHECK(result == PC_SPEED);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_SHIP_PART_CLASS;
@@ -493,21 +462,6 @@ BOOST_AUTO_TEST_CASE(ShipPartMeterTypeParser) {
     // XXX: No enum number value to validate enum coverage.
     //      Maybe the Meter enum should be split.
 
-    BOOST_CHECK(parse_ship_meter("Damage", result));
-    BOOST_CHECK(result == METER_DAMAGE);
-    BOOST_CHECK(set_parse_ship_meter("SetDamage", result));
-    BOOST_CHECK(result == METER_DAMAGE);
-
-    BOOST_CHECK(parse_ship_meter("ROF", result));
-    BOOST_CHECK(result == METER_ROF);
-    BOOST_CHECK(set_parse_ship_meter("SetROF", result));
-    BOOST_CHECK(result == METER_ROF);
-
-    BOOST_CHECK(parse_ship_meter("Range", result));
-    BOOST_CHECK(result == METER_RANGE);
-    BOOST_CHECK(set_parse_ship_meter("SetRange", result));
-    BOOST_CHECK(result == METER_RANGE);
-
     BOOST_CHECK(parse_ship_meter("Speed", result));
     BOOST_CHECK(result == METER_SPEED);
     BOOST_CHECK(set_parse_ship_meter("SetSpeed", result));
@@ -517,26 +471,6 @@ BOOST_AUTO_TEST_CASE(ShipPartMeterTypeParser) {
     BOOST_CHECK(result == METER_CAPACITY);
     BOOST_CHECK(set_parse_ship_meter("SetCapacity", result));
     BOOST_CHECK(result == METER_CAPACITY);
-
-    BOOST_CHECK(parse_ship_meter("AntiShipDamage", result));
-    BOOST_CHECK(result == METER_ANTI_SHIP_DAMAGE);
-    BOOST_CHECK(set_parse_ship_meter("SetAntiShipDamage", result));
-    BOOST_CHECK(result == METER_ANTI_SHIP_DAMAGE);
-
-    BOOST_CHECK(parse_ship_meter("AntiFighterDamage", result));
-    BOOST_CHECK(result == METER_ANTI_FIGHTER_DAMAGE);
-    BOOST_CHECK(set_parse_ship_meter("SetAntiFighterDamage", result));
-    BOOST_CHECK(result == METER_ANTI_FIGHTER_DAMAGE);
-
-    BOOST_CHECK(parse_ship_meter("LaunchRate", result));
-    BOOST_CHECK(result == METER_LAUNCH_RATE);
-    BOOST_CHECK(set_parse_ship_meter("SetLaunchRate", result));
-    BOOST_CHECK(result == METER_LAUNCH_RATE);
-
-    BOOST_CHECK(parse_ship_meter("FighterWeaponRange", result));
-    BOOST_CHECK(result == METER_FIGHTER_WEAPON_RANGE);
-    BOOST_CHECK(set_parse_ship_meter("SetFighterWeaponRange", result));
-    BOOST_CHECK(result == METER_FIGHTER_WEAPON_RANGE);
 }
 
 BOOST_AUTO_TEST_CASE(ShipSlotTypeParser) {
@@ -642,32 +576,6 @@ BOOST_AUTO_TEST_CASE(StarTypeParser) {
     result = NUM_STAR_TYPES;
     BOOST_CHECK(!parse("DoesNotExist", result));
     BOOST_CHECK(result == NUM_STAR_TYPES);
-}
-
-BOOST_AUTO_TEST_CASE(TechTypeParser) {
-    TechType result;
-
-    // Literal is number of tests, not number of enums.
-    BOOST_REQUIRE_MESSAGE(NUM_TECH_TYPES == 3, "Untested enumeration value.");
-
-    BOOST_CHECK(parse("Theory", result));
-    BOOST_CHECK(result == TT_THEORY);
-
-    BOOST_CHECK(parse("Application", result));
-    BOOST_CHECK(result == TT_APPLICATION);
-
-    BOOST_CHECK(parse("Refinement", result));
-    BOOST_CHECK(result == TT_REFINEMENT);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = INVALID_TECH_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result));
-    BOOST_CHECK(result == INVALID_TECH_TYPE);
-
-    // XXX: is not modifying result the correct behaviour?
-    result = NUM_TECH_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result));
-    BOOST_CHECK(result == NUM_TECH_TYPES);
 }
 
 BOOST_AUTO_TEST_CASE(UnlockableItemTypeParser)
