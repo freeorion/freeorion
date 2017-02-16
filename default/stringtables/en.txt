@@ -923,6 +923,9 @@ Python scripted turn events executed with errors. See log files for detailed err
 ERROR_PYTHON_AI_CRASHED
 Python AI for %1% crashed.
 
+ERROR_PLAYER_NAME_ALREADY_USED
+Player name %1% already in use.
+
 
 ##
 ## Command-line and options database entries
