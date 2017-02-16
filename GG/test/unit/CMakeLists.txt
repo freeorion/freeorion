@@ -34,7 +34,7 @@ set(GiGi_TESTS
 )
 
 foreach(_TEST ${GiGi_TESTS})
-    add_executable(gg_unit_${_TEST} EXCLUDE_FROM_ALL ${_TEST}.cpp)
+    add_executable(gg_unit_${_TEST} ${_TEST}.cpp)
     target_compile_definitions(gg_unit_${_TEST}
         PRIVATE
             -DBOOST_TEST_DYN_LINK
