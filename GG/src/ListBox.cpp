@@ -1218,12 +1218,13 @@ void ListBox::SetFirstRowShown(iterator it)
         return;
 
     RequirePreRender();
-    m_first_row_shown = it;
 
     AdjustScrolls(false);
 
-    if (!m_vscroll)
+    if (!m_vscroll && m_first_row_shown == m_rows.begin())
         return;
+
+    m_first_row_shown = m_vscroll ? it : m_rows.begin();
 
     Y acc(0);
     for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
