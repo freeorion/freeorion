@@ -6,6 +6,7 @@ BuildingType
     tags = "ORBITAL"
     location = And [
         Planet
+        OwnedBy empire = Source.Owner
         Not Contains Building name = "BLD_NEUTRONIUM_FORGE"
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -17,7 +18,6 @@ BuildingType
                 Building name = "BLD_NEUTRONIUM_EXTRACTOR"
                 Building name = "BLD_NEUTRONIUM_SYNTH"
             ]
-        OwnedBy empire = Source.Owner
         ]
         TargetPopulation low = 1
     ]
