@@ -8,8 +8,6 @@ macro (add_gigi_acceptance_test name)
         GiGiSDL
         ${OPENGL_gl_LIBRARY}
         ${OPENGL_glu_LIBRARY}
-        ${Boost_LIBRARIES}
-        ${ZLIB_LIBRARY}
         ${CMAKE_THREAD_LIBS_INIT}
         ${GLEW_LIBRARIES}
     )

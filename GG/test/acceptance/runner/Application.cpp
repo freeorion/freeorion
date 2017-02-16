@@ -1,16 +1,11 @@
 #include "Application.h"
 
-#include <GG/StyleFactory.h>
-#include <GG/dialogs/ThreeButtonDlg.h>
-#include <GG/dialogs/FileDlg.h>
 #include <GG/Texture.h>
 #include <GG/Cursor.h>
 
 #include <GG/SDL/SDLGUI.h>
 
 #include <boost/format.hpp>
-#include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/fstream.hpp>
 
 
 extern const unsigned char cursor_data[16 * 16 * 4];
