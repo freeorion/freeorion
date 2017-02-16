@@ -1,5 +1,4 @@
-#include "TestApp.h"
-#include "TestApp_p.h"
+#include "Application.h"
 
 #include <GG/StyleFactory.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
@@ -13,7 +12,25 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+
 extern const unsigned char cursor_data[16 * 16 * 4];
+
+class Application::Impl {
+    public:
+        Impl(Application* q, int argc, char** argv, unsigned width, unsigned height);
+
+        virtual ~Impl();
+
+        /// The given window will be made visible.
+        /// Then the event pump is started.
+        /// This method only returns once the application quits
+        void Run(GG::Wnd* wnd);
+
+    private:
+        class Application* const m_front;
+        class MinimalGGApp* m_app;
+};
+
 
 class MinimalGGApp : public GG::SDLGUI {
     public:
@@ -185,18 +202,18 @@ void MinimalGGApp::GLInit() {
 }
 
 
-TestApp::TestApp(int argc, char** argv, unsigned width, unsigned height) :
-    self(new TestAppImpl (this, argc, argv, width, height)) {
+Application::Application(int argc, char** argv, unsigned width, unsigned height) :
+    self(new Application::Impl (this, argc, argv, width, height)) {
 
 }
 
-void TestApp::Run(GG::Wnd* wnd) {
+void Application::Run(GG::Wnd* wnd) {
     self->Run(wnd);
 }
 
 
-TestAppImpl::TestAppImpl(TestApp* q, int argc, char** argv, unsigned width,
-                         unsigned height) :
+Application::Impl::Impl(Application* q, int argc, char** argv, unsigned width,
+                        unsigned height) :
     m_front(q),
     m_app(nullptr)
 {
@@ -221,10 +238,10 @@ TestAppImpl::TestAppImpl(TestApp* q, int argc, char** argv, unsigned width,
     }
 }
 
-TestAppImpl::~TestAppImpl()
+Application::Impl::~Impl()
 { delete m_app; }
 
-void TestAppImpl::Run(GG::Wnd* window) {
+void Application::Impl::Run(GG::Wnd* window) {
     try {
 
         m_app->Register(window);

@@ -8,9 +8,9 @@ include_directories(
 
 # Include some useful utilities from the main code
 set(GIGI_TEST_ACCEPTANCE_SOURCES
-    TestApp.cpp
-    TestDialog.cpp
-    ResourceCursor.cpp
+    runner/Application.cpp
+    runner/Dialog.cpp
+    runner/ResourceCursor.cpp
 )
 
 set(GIGI_TEST_ACCEPTANCE_LINK_LIBS

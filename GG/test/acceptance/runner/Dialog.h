@@ -1,13 +1,14 @@
-#ifndef TESTDIALOG_H
-#define TESTDIALOG_H
+#ifndef Dialog_h
+#define Dialog_h
 
 #include <GG/Wnd.h>
 #include <GG/FontFwd.h>
 
+
 //! A Simple resizable dialog with a single child that fills it.
-class TestDialog: public GG::Wnd{
+class Dialog: public GG::Wnd{
 public:
-    TestDialog(GG::Wnd* child, const std::shared_ptr<GG::Font>& font);
+    Dialog(GG::Wnd* child, const std::shared_ptr<GG::Font>& font);
 
     virtual void Render();
 
@@ -16,4 +17,4 @@ public:
     virtual void SizeMove( const GG::Pt& ul, const GG::Pt& lr);
 };
 
-#endif // TESTDIALOG_H
+#endif // Dialog_h
