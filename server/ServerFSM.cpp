@@ -478,12 +478,14 @@ sc::result MPLobby::react(const JoinGame& msg) {
         while (player_name.compare(0, ai_prefix.size(), ai_prefix) == 0)
             player_name.erase(0, ai_prefix.size());
     }
+    if(player_name.empty())
+        player_name = "_";
 
     std::string new_player_name = player_name;
 
     bool collision = true;
     int t = 1;
-    while (t < 200 && collision) { // It should be enough
+    while (t <= m_lobby_data->m_players.size() + 1 && collision) {
         collision = false;
         if (!server.IsAvailableName(new_player_name)) {
             collision = true;
@@ -772,42 +774,45 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     } else {
         // can change only himself
         for (std::pair<int, PlayerSetupData>& i_player : m_lobby_data->m_players) {
-            if (i_player.first == message.SendingPlayer()) {
-                // found sender at m_lobby_data
-                for (std::pair<int, PlayerSetupData>& j_player : incoming_lobby_data.m_players) {
-                    if (j_player.first == message.SendingPlayer()) {
-                        // found sender at incoming_lobby_data
+            if (i_player.first != message.SendingPlayer())
+                continue;
 
-                        // check for color and names
-                        std::set<GG::Clr> psd_colors;
-                        std::set<std::string> psd_names;
-                        for (std::pair<int, PlayerSetupData>& k_player : m_lobby_data->m_players) {
-                            if (k_player.first != message.SendingPlayer()) {
-                                psd_colors.emplace(k_player.second.m_empire_color);
-                                psd_names.emplace(k_player.second.m_empire_name);
-                                psd_names.emplace(k_player.second.m_player_name);
-                            }
-                        }
+            // found sender at m_lobby_data
+            for (std::pair<int, PlayerSetupData>& j_player : incoming_lobby_data.m_players) {
+                if (j_player.first != message.SendingPlayer())
+                    continue;
 
-                        // if we have collision unset ready flag and ignore changes
-                        if (psd_colors.count(j_player.second.m_empire_color) ||
-                            psd_names.count(j_player.second.m_empire_name) ||
-                            psd_names.count(j_player.second.m_player_name))
-                        {
-                            i_player.second.m_player_ready = false;
-                            player_setup_data_changed = true;
-                        } else {
-                            has_important_changes = IsPlayerChanged(i_player.second, j_player.second);
-                            player_setup_data_changed = ! (i_player.second == j_player.second);
+                // found sender at incoming_lobby_data
 
-                            i_player.second = std::move(j_player.second);
-                        }
+                // check for color and names
+                std::set<GG::Clr> psd_colors;
+                std::set<std::string> psd_names;
+                for (std::pair<int, PlayerSetupData>& k_player : m_lobby_data->m_players) {
+                    if (k_player.first == message.SendingPlayer())
+                        continue;
 
-                        break;
-                    }
+                    psd_colors.emplace(k_player.second.m_empire_color);
+                    psd_names.emplace(k_player.second.m_empire_name);
+                    psd_names.emplace(k_player.second.m_player_name);
                 }
+
+                // if we have collision unset ready flag and ignore changes
+                if (psd_colors.count(j_player.second.m_empire_color) ||
+                    psd_names.count(j_player.second.m_empire_name) ||
+                    psd_names.count(j_player.second.m_player_name))
+                {
+                    i_player.second.m_player_ready = false;
+                    player_setup_data_changed = true;
+                } else {
+                    has_important_changes = IsPlayerChanged(i_player.second, j_player.second);
+                    player_setup_data_changed = ! (i_player.second == j_player.second);
+
+                    i_player.second = std::move(j_player.second);
+                }
+
                 break;
             }
+            break;
         }
     }
 
