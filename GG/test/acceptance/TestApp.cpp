@@ -13,6 +13,8 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+extern const unsigned char cursor_data[16 * 16 * 4];
+
 class MinimalGGApp : public GG::SDLGUI {
     public:
         MinimalGGApp(int width, int height, bool calculate_FPS,
@@ -37,9 +39,14 @@ MinimalGGApp::MinimalGGApp(int width, int height, bool calculate_FPS,
     SDLGUI(width, height, calculate_FPS, name, x, y, fullscreen,
            fake_mode_change)
 {
-    std::shared_ptr<GG::Texture> cursor_texture = GG::GetTextureManager().GetTexture(
-        (boost::filesystem::path("../default") / "data" / "art" / "cursors" / "default_cursor.png").string(), false);
-    SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
+    std::shared_ptr<GG::Texture> cursor_texture = std::make_shared<GG::Texture>();
+
+    cursor_texture->Init(
+        GG::X(16), GG::Y(16), cursor_data, GL_RGBA, GL_UNSIGNED_BYTE, 1
+    );
+
+    GG::GetTextureManager().StoreTexture(cursor_texture, "test_cursor");
+    SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(1), GG::Y(1))));
     RenderCursor(true);
 
     GLInit();

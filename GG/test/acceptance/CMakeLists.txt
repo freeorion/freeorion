@@ -10,6 +10,7 @@ include_directories(
 set(GIGI_TEST_ACCEPTANCE_SOURCES
     TestApp.cpp
     TestDialog.cpp
+    ResourceCursor.cpp
 )
 
 set(GIGI_TEST_ACCEPTANCE_LINK_LIBS
