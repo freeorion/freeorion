@@ -846,7 +846,7 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTypeless) {
                         statistic->PropertyName().begin(), statistic->PropertyName().end(),
                         property, property + 1
                     );
-                    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
+                    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
                 }
 
                 delete result;
@@ -887,7 +887,7 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTyped) {
                             statistic->PropertyName().begin(), statistic->PropertyName().end(),
                             property, property + 2
                         );
-                        BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
+                        BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
                     }
 
                     delete result;

@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleet) {
         statistic->PropertyName().begin(), statistic->PropertyName().end(),
         property, property + 2
     );
-    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
+    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserPlanet) {
@@ -297,7 +297,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserPlanet) {
         statistic->PropertyName().begin(), statistic->PropertyName().end(),
         property, property + 2
     );
-    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
+    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserSystem) {
@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserSystem) {
         statistic->PropertyName().begin(), statistic->PropertyName().end(),
         property, property + 2
     );
-    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
+    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleetShort) {
@@ -327,7 +327,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleetShort) {
         statistic->PropertyName().begin(), statistic->PropertyName().end(),
         property, property + 2
     );
-    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->SamplingCondition())));
+    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
