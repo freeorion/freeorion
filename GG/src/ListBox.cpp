@@ -902,7 +902,7 @@ void ListBox::Render()
             RowAboveOrIsRow(curr_sel, last_visible_row, m_rows.end()))
         {
             top = std::max((*curr_sel)->Top(), cl_ul.y);
-            bottom = std::min(top + (*curr_sel)->Height(), cl_lr.y);
+            bottom = std::min((*curr_sel)->Top() + (*curr_sel)->Height(), cl_lr.y);
             FlatRectangle(Pt(cl_ul.x, top), Pt(cl_lr.x, bottom),
                           hilite_color_to_use, CLR_ZERO, 0);
         }
