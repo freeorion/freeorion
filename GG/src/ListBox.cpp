@@ -1209,7 +1209,7 @@ void ListBox::BringRowIntoView(iterator it)
     if (it_y_offset < first_row_y_offset)
         SetFirstRowShown(it);
     else if (it_y_offset >= last_row_y_offset)
-        SetFirstRowShown(FirstRowShownWhenBottomIs(it, ClientHeight()));
+        SetFirstRowShown(FirstRowShownWhenBottomIs(it));
 }
 
 void ListBox::SetFirstRowShown(iterator it)
@@ -2425,9 +2425,9 @@ void ListBox::NormalizeRow(Row* row)
     GUI::PreRenderWindow(row);
 }
 
-ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height)
+ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row)
 {
-    Y available_space = client_height - (*bottom_row)->Height() - GG::Y(2*BORDER_THICK);
+    Y available_space = ClientHeight() - (*bottom_row)->Height();
     iterator it = bottom_row;
     while (it != m_rows.begin() && (*std::prev(it))->Height() <= available_space) {
         available_space -= (*--it)->Height();
