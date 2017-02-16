@@ -1159,57 +1159,58 @@ void ListBox::SetSelections(const SelectionSet& s, bool signal/* = false*/)
 void ListBox::SetCaret(iterator it)
 { m_caret = it; }
 
-void ListBox::BringRowIntoView(iterator it)
+void ListBox::BringRowIntoView(iterator target)
 {
-    if (it == m_rows.end())
+    if (target == m_rows.end())
         return;
 
     // m_first_row_shown only equals end() if the list is empty, hence 'it' is invalid.
     if (m_first_row_shown == m_rows.end())
         return;
 
-    // Find the y offsets of the first and last shown rows and 'it'.
-    bool first_row_found(false), last_row_found(false), it_found(false);
+    // Find the y offsets of the first and last shown rows and target.
+    bool first_row_found(false), last_row_found(false), target_found(false);
 
-    Y y_offset(BORDER_THICK), it_y_offset(BORDER_THICK);
-    Y first_row_y_offset(BORDER_THICK), last_row_y_offset(BORDER_THICK);
-    iterator it_end_row = --m_rows.end();
-    iterator it2 = m_rows.begin();
-    while ((it2 != m_rows.end()) && (!first_row_found || !last_row_found || !it_found)) {
-        if (it2 == m_first_row_shown) {
-            first_row_y_offset = y_offset;
+    Y y_offset_top(Y0), y_offset_bot(Y0), target_y_offset(Y0);
+    Y first_row_y_offset(Y0), last_row_y_offset(Y0);
+    iterator final_row = --m_rows.end();
+    iterator it = m_rows.begin();
+    while ((it != m_rows.end()) && (!first_row_found || !last_row_found || !target_found)) {
+        y_offset_bot += (*it)->Height();
+
+        if (it == m_first_row_shown) {
+            first_row_y_offset = y_offset_top;
             first_row_found = true;
         }
 
-        if (it2 == it) {
-            it_y_offset = y_offset;
-            it_found = true;
+        if (it == target) {
+            target_y_offset = y_offset_top;
+            target_found = true;
         }
 
         if (first_row_found && !last_row_found
-            && (((y_offset - first_row_y_offset + GG::Y(2 * BORDER_THICK)) >= ClientHeight())
-                || it2 == it_end_row))
+            && (((y_offset_bot - first_row_y_offset) >= ClientHeight())
+                || it == final_row))
         {
             last_row_found = true;
-            if (it2 != m_rows.begin())
-                last_row_y_offset = y_offset - (*std::prev(it2))->Height();
+            last_row_y_offset = y_offset_top;
         }
 
-        y_offset += (*it2)->Height();
-        ++it2;
+        y_offset_top = y_offset_bot;
+        ++it;
     }
 
-    if (!it_found)
+    if (!target_found)
         return;
 
-    if (y_offset + GG::Y(BORDER_THICK) <= ClientHeight())
+    if (y_offset_bot <= ClientHeight())
         SetFirstRowShown(begin());
 
-    // Shift the view if 'it' is outside of [first_row .. last_row]
-    if (it_y_offset < first_row_y_offset)
-        SetFirstRowShown(it);
-    else if (it_y_offset >= last_row_y_offset)
-        SetFirstRowShown(FirstRowShownWhenBottomIs(it));
+    // Shift the view if target is outside of [first_row .. last_row]
+    if (target_y_offset < first_row_y_offset)
+        SetFirstRowShown(target);
+    else if (target_y_offset >= last_row_y_offset)
+        SetFirstRowShown(FirstRowShownWhenBottomIs(target));
 }
 
 void ListBox::SetFirstRowShown(iterator it)
