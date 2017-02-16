@@ -182,6 +182,33 @@ GG::Clr OpaqueColor(const GG::Clr& color)
     return retval;
 }
 
+void BufferStoreRectangle(GG::GL2DVertexBuffer& buffer,
+                          const GG::Rect& area,
+                          const GG::Rect& border_thickness)
+{
+        GG::X inner_x1(area.ul.x + border_thickness.ul.x);
+        GG::Y inner_y1(area.ul.y + border_thickness.ul.y);
+        GG::X inner_x2(area.lr.x - border_thickness.lr.x);
+        GG::Y inner_y2(area.lr.y - border_thickness.lr.y);
+
+        buffer.reserve(14);
+        buffer.store(inner_x2, inner_y1);
+        buffer.store(area.lr.x, area.ul.y);
+        buffer.store(inner_x1, inner_y1);
+        buffer.store(area.ul.x, area.ul.y);
+        buffer.store(inner_x1, inner_y2);
+        buffer.store(area.ul.x, area.lr.y);
+        buffer.store(inner_x2, inner_y2);
+        buffer.store(area.lr.x, area.lr.y);
+        buffer.store(inner_x2, inner_y1);
+        buffer.store(area.lr.x, area.ul.y);
+
+        buffer.store(inner_x2, inner_y1);
+        buffer.store(inner_x1, inner_y1);
+        buffer.store(inner_x1, inner_y2);
+        buffer.store(inner_x2, inner_y2);
+}
+
 void AngledCornerRectangle(const GG::Pt& ul, const GG::Pt& lr, GG::Clr color, GG::Clr border, int angle_offset, int thick,
                            bool upper_left_angled/* = true*/, bool lower_right_angled/* = true*/, bool draw_bottom/* = true*/)
 {
