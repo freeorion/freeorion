@@ -46,6 +46,7 @@ def place_special(specials, obj):
 
         fo.add_special(obj, special)
         print "Special", special, "added to", fo.get_name(obj)
+        statistics.specials_summary[special] += 1
 
         return 1
     return 0
