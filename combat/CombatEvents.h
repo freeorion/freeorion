@@ -282,30 +282,28 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
-/// Created when an fighter is destroyed
-struct FO_COMMON_API FighterAttackedEvent : public CombatEvent {
-    typedef std::shared_ptr<FighterAttackedEvent> FighterAttackedEventPtr;
 
-    FighterAttackedEvent();
+/**FightersAttackFightersEvent aggregates all the fighter on fighter combat for one bout.*/
+struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
+    FightersAttackFightersEvent();
 
-    FighterAttackedEvent(int bout_, int round_, int attacked_by_object_id_, int attacker_owner_empire_id_, int attacked_owner_id_);
+    FightersAttackFightersEvent(int bout);
 
-    virtual ~FighterAttackedEvent()
+    virtual ~FightersAttackFightersEvent()
     {}
 
     std::string DebugString() const override;
 
     std::string CombatLogDescription(int viewing_empire_id) const override;
 
-    boost::optional<int> PrincipalFaction(int viewing_empire_id) const override;
-
-    int bout;
-    int round;
-    int attacker_owner_empire_id;   // may be ALL_EMPIRES if attacking fighter was owned by no empire
-    int attacked_by_object_id;     // may be INVALID_OBJECT_ID if destroyed by another fighter
-    int attacked_owner_id;         // may be ALL_EMPIRES if destroyed fighter was owned by no empire
+    void AddEvent(int attacker_empire_, int target_empire_);
 
 private:
+    int bout;
+
+    // Store the number of each of the identical fighter combat events.
+    std::map<std::pair<int, int>, unsigned int> events;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
