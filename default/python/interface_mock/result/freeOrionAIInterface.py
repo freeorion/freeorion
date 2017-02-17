@@ -1274,11 +1274,11 @@ class hullType(object):
         return int()
 
     @property
-    def stealth(self):
+    def structure(self):
         return float()
 
     @property
-    def structure(self):
+    def stealth(self):
         return float()
 
     @property
@@ -1316,6 +1316,14 @@ class hullType(object):
         :rtype: int
         """
         return int()
+
+    def hasTag(self, string):
+        """
+        :param string:
+        :type string: str
+        :rtype: bool
+        """
+        return bool()
 
     def numSlotsOfSlotType(self, ship_slot_type):
         """
@@ -1646,6 +1654,10 @@ class shipDesign(object):
     @property
     def canColonize(self):
         return bool()
+
+    @property
+    def hull_type(self):
+        return hullType()
 
     @property
     def tradeGeneration(self):
@@ -2079,6 +2091,18 @@ class universe(object):
         """
         return IntVec()
 
+    def shortestPath(self, number1, number2, number3):
+        """
+        :param number1:
+        :type number1: int
+        :param number2:
+        :type number2: int
+        :param number3:
+        :type number3: int
+        :rtype: IntVec
+        """
+        return IntVec()
+
     def updateMeterEstimates(self, item_list):
         """
         :param item_list:
@@ -2123,17 +2147,15 @@ class universe(object):
         """
         return bool()
 
-    def shortestPath(self, number1, number2, number3):
+    def getGenericShipDesign(self, string):
         """
-        :param number1:
-        :type number1: int
-        :param number2:
-        :type number2: int
-        :param number3:
-        :type number3: int
-        :rtype: IntVec
+        Returns the ship design (ShipDesign) with the indicated name (string).
+
+        :param string:
+        :type string: str
+        :rtype: shipDesign
         """
-        return IntVec()
+        return shipDesign()
 
     def getVisibility(self, number1, number2):
         """
@@ -2346,8 +2368,8 @@ class fleet(universeObject):
         return IntSet()
 
     @property
-    def numShips(self):
-        return int()
+    def hasFighterShips(self):
+        return bool()
 
     @property
     def speed(self):
@@ -2355,6 +2377,10 @@ class fleet(universeObject):
 
     @property
     def previousSystemID(self):
+        return int()
+
+    @property
+    def numShips(self):
         return int()
 
     @property
@@ -2429,7 +2455,7 @@ class planet(universeObject, popCenter, resourceCenter):
 
     @property
     def OrbitalPeriod(self):
-        pass
+        return float()
 
     @property
     def counterClockwiseNextPlanetType(self):
@@ -2437,7 +2463,7 @@ class planet(universeObject, popCenter, resourceCenter):
 
     @property
     def RotationalPeriod(self):
-        pass
+        return float()
 
     @property
     def type(self):
@@ -2445,7 +2471,7 @@ class planet(universeObject, popCenter, resourceCenter):
 
     @property
     def InitialOrbitalPosition(self):
-        pass
+        return float()
 
     @property
     def size(self):
@@ -2471,9 +2497,9 @@ class planet(universeObject, popCenter, resourceCenter):
         """
         :param number:
         :type number: int
-        :rtype: object
+        :rtype: float
         """
-        return object()
+        return float()
 
 
 class ship(universeObject):
@@ -2644,6 +2670,7 @@ class aggression(Enum):
     aggressive = None  # aggression(4, "aggressive")
     maniacal = None  # aggression(5, "maniacal")
 
+
 aggression.invalid = aggression(-1, "invalid")
 aggression.beginner = aggression(0, "beginner")
 aggression.turtle = aggression(1, "turtle")
@@ -2660,6 +2687,7 @@ class buildType(Enum):
     building = None  # buildType(1, "building")
     ship = None  # buildType(2, "ship")
 
+
 buildType.building = buildType(1, "building")
 buildType.ship = buildType(2, "ship")
 
@@ -2671,6 +2699,7 @@ class captureResult(Enum):
     capture = None  # captureResult(0, "capture")
     destroy = None  # captureResult(1, "destroy")
     retain = None  # captureResult(2, "retain")
+
 
 captureResult.capture = captureResult(0, "capture")
 captureResult.destroy = captureResult(1, "destroy")
@@ -2687,6 +2716,7 @@ class diplomaticMessageType(Enum):
     acceptProposal = None  # diplomaticMessageType(2, "acceptProposal")
     cancelProposal = None  # diplomaticMessageType(3, "cancelProposal")
 
+
 diplomaticMessageType.noMessage = diplomaticMessageType(-1, "noMessage")
 diplomaticMessageType.warDeclaration = diplomaticMessageType(0, "warDeclaration")
 diplomaticMessageType.peaceProposal = diplomaticMessageType(1, "peaceProposal")
@@ -2700,6 +2730,7 @@ class diplomaticStatus(Enum):
 
     war = None  # diplomaticStatus(0, "war")
     peace = None  # diplomaticStatus(1, "peace")
+
 
 diplomaticStatus.war = diplomaticStatus(0, "war")
 diplomaticStatus.peace = diplomaticStatus(1, "peace")
@@ -2715,6 +2746,7 @@ class galaxySetupOption(Enum):
     medium = None  # galaxySetupOption(2, "medium")
     high = None  # galaxySetupOption(3, "high")
     random = None  # galaxySetupOption(4, "random")
+
 
 galaxySetupOption.invalid = galaxySetupOption(-1, "invalid")
 galaxySetupOption.none = galaxySetupOption(0, "none")
@@ -2739,6 +2771,7 @@ class galaxyShape(Enum):
     irregular = None  # galaxyShape(7, "irregular")
     ring = None  # galaxyShape(8, "ring")
     random = None  # galaxyShape(9, "random")
+
 
 galaxyShape.invalid = galaxyShape(-1, "invalid")
 galaxyShape.spiral2 = galaxyShape(0, "spiral2")
@@ -2791,6 +2824,7 @@ class meterType(Enum):
     detection = None  # meterType(31, "detection")
     speed = None  # meterType(32, "speed")
 
+
 meterType.targetPopulation = meterType(0, "targetPopulation")
 meterType.targetIndustry = meterType(1, "targetIndustry")
 meterType.targetResearch = meterType(2, "targetResearch")
@@ -2836,6 +2870,7 @@ class planetEnvironment(Enum):
     adequate = None  # planetEnvironment(3, "adequate")
     good = None  # planetEnvironment(4, "good")
 
+
 planetEnvironment.uninhabitable = planetEnvironment(0, "uninhabitable")
 planetEnvironment.hostile = planetEnvironment(1, "hostile")
 planetEnvironment.poor = planetEnvironment(2, "poor")
@@ -2856,6 +2891,7 @@ class planetSize(Enum):
     huge = None  # planetSize(5, "huge")
     asteroids = None  # planetSize(6, "asteroids")
     gasGiant = None  # planetSize(7, "gasGiant")
+
 
 planetSize.unknown = planetSize(-1, "unknown")
 planetSize.noWorld = planetSize(0, "noWorld")
@@ -2885,6 +2921,7 @@ class planetType(Enum):
     asteroids = None  # planetType(9, "asteroids")
     gasGiant = None  # planetType(10, "gasGiant")
 
+
 planetType.unknown = planetType(-1, "unknown")
 planetType.swamp = planetType(0, "swamp")
 planetType.toxic = planetType(1, "toxic")
@@ -2906,6 +2943,7 @@ class resourceType(Enum):
     industry = None  # resourceType(0, "industry")
     trade = None  # resourceType(1, "trade")
     research = None  # resourceType(2, "research")
+
 
 resourceType.industry = resourceType(0, "industry")
 resourceType.trade = resourceType(1, "trade")
@@ -2934,6 +2972,7 @@ class shipPartClass(Enum):
     trade = None  # shipPartClass(15, "trade")
     productionLocation = None  # shipPartClass(16, "productionLocation")
 
+
 shipPartClass.shortRange = shipPartClass(0, "shortRange")
 shipPartClass.fighterBay = shipPartClass(1, "fighterBay")
 shipPartClass.fighterHangar = shipPartClass(2, "fighterHangar")
@@ -2961,6 +3000,7 @@ class shipSlotType(Enum):
     internal = None  # shipSlotType(1, "internal")
     core = None  # shipSlotType(2, "core")
 
+
 shipSlotType.external = shipSlotType(0, "external")
 shipSlotType.internal = shipSlotType(1, "internal")
 shipSlotType.core = shipSlotType(2, "core")
@@ -2979,6 +3019,7 @@ class starType(Enum):
     neutron = None  # starType(5, "neutron")
     blackHole = None  # starType(6, "blackHole")
     noStar = None  # starType(7, "noStar")
+
 
 starType.unknown = starType(-1, "unknown")
 starType.blue = starType(0, "blue")
@@ -3000,6 +3041,7 @@ class techStatus(Enum):
     researchable = None  # techStatus(2, "researchable")
     complete = None  # techStatus(3, "complete")
 
+
 techStatus.unresearchable = techStatus(0, "unresearchable")
 techStatus.partiallyUnlocked = techStatus(1, "partiallyUnlocked")
 techStatus.researchable = techStatus(2, "researchable")
@@ -3016,6 +3058,7 @@ class unlockableItemType(Enum):
     shipHull = None  # unlockableItemType(2, "shipHull")
     shipDesign = None  # unlockableItemType(3, "shipDesign")
     tech = None  # unlockableItemType(4, "tech")
+
 
 unlockableItemType.invalid = unlockableItemType(-1, "invalid")
 unlockableItemType.building = unlockableItemType(0, "building")
@@ -3034,6 +3077,7 @@ class visibility(Enum):
     basic = None  # visibility(1, "basic")
     partial = None  # visibility(2, "partial")
     full = None  # visibility(3, "full")
+
 
 visibility.invalid = visibility(-1, "invalid")
 visibility.none = visibility(0, "none")
@@ -3098,13 +3142,6 @@ def empirePlayerID(number):
     return int()
 
 
-def getAIConfigStr():
-    """
-    :rtype: str
-    """
-    return str()
-
-
 def getAIDir():
     """
     :rtype: str
@@ -3160,6 +3197,50 @@ def getHullType(string):
     :rtype: hullType
     """
     return hullType()
+
+
+def getOptionsDBOptionBool(string):
+    """
+    Returns the bool value of option in OptionsDB or None if the option does not exist.
+
+    :param string:
+    :type string: str
+    :rtype: object
+    """
+    return object()
+
+
+def getOptionsDBOptionDouble(string):
+    """
+    Returns the double value of option in OptionsDB or None if the option does not exist.
+
+    :param string:
+    :type string: str
+    :rtype: object
+    """
+    return object()
+
+
+def getOptionsDBOptionInt(string):
+    """
+    Returns the integer value of option in OptionsDB or None if the option does not exist.
+
+    :param string:
+    :type string: str
+    :rtype: object
+    """
+    return object()
+
+
+def getOptionsDBOptionStr(string):
+    """
+    Returns the string value of option in OptionsDB or None if the option does not exist.
+
+    :param string:
+    :type string: str
+    :rtype: object
+    """
+    return object()
 
 
 def getPartType(string):

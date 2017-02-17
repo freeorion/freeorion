@@ -94,10 +94,12 @@ def handle_enum(info):
     for _, (value, text) in sorted(enum_dicts.items()):
         result.append('    %s = None  # %s(%s, "%s")' % (text, name, value, text))
     result.append('')
+    result.append('')  # two empty lines between enum and its items declaration
 
     for _, (value, text) in sorted(enum_dicts.items(), key=lambda x: x[1][0]):
         result.append('%s.%s = %s(%s, "%s")' % (name, text, name, value, text))
     return '\n'.join(result)
+
 
 known_types = {'boost_class',
                'enum',
@@ -152,8 +154,8 @@ def make_stub(data, result_path):
                 print "Unknown class attribute type", v['type']
 
     res = []
-    classes = sorted(classes, key=lambda x: len(x['parents']))  # put classes with no parents on first place
-    class_groups = groupby(classes, key=lambda x: x['parents'] and x['parents'][0] or '')
+    classes = sorted(classes, key=lambda class_: len(class_['parents']))  # put classes with no parents on first place
+    class_groups = groupby(classes, key=lambda class_: class_['parents'] and class_['parents'][0] or '')
 
     for name, group in class_groups:
         for cls in sorted(group, key=itemgetter('name')):
