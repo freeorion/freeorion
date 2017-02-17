@@ -9,10 +9,12 @@ BuildingType
         Planet type = Asteroids
         OwnedBy empire = Source.Owner
 
-        /* TODO: Check that one, seems to be weird */
-        Not Contains And [
-            Building name = "BLD_SHIPYARD_AST"
-            OwnedBy empire = Source.Owner
+        ContainedBy And [
+            System 
+            Contains And [
+                Building name = "BLD_SHIPYARD_BASE"
+                OwnedBy empire = Source.Owner
+            ]
         ]
     ]
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
