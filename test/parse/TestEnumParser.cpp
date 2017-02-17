@@ -676,8 +676,8 @@ BOOST_AUTO_TEST_CASE(UniverseObjectTypeParser)
     UniverseObjectType result;
 
     // Literal is number of tests, not number of enums.
-    // XXX: OBJ_FIELD has no token, so no test, +1
-    BOOST_REQUIRE_MESSAGE(NUM_OBJ_TYPES == 7 + 1, "Untested enumeration value.");
+    // XXX: OBJ_FIGHTER has no token, so no test, +1
+    BOOST_REQUIRE_MESSAGE(NUM_OBJ_TYPES == 8 + 1, "Untested enumeration value.");
 
     BOOST_CHECK(parse("Building", result));
     BOOST_CHECK(result == OBJ_BUILDING);
@@ -699,6 +699,9 @@ BOOST_AUTO_TEST_CASE(UniverseObjectTypeParser)
 
     BOOST_CHECK(parse("System", result));
     BOOST_CHECK(result == OBJ_SYSTEM);
+
+    BOOST_CHECK(parse("Field", result));
+    BOOST_CHECK(result == OBJ_FIELD);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_UNIVERSE_OBJECT_TYPE;
