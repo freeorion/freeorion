@@ -90,7 +90,8 @@ const std::array<std::string, 13> ValueRefStringFixture::attributes = {{
     "SystemID"
 }};
 
-BOOST_FIXTURE_TEST_SUITE(ValueRefStringParser, ValueRefStringFixture)
+
+BOOST_FIXTURE_TEST_SUITE(TestValueRefStringParser, ValueRefStringFixture)
 
 BOOST_AUTO_TEST_CASE(StringLiteralParserString) {
     BOOST_CHECK(parse("Tiny", result));

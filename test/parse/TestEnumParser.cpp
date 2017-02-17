@@ -92,7 +92,7 @@ struct EnumParserFixture {
     }
 };
 
-BOOST_FIXTURE_TEST_SUITE(EnumParser, EnumParserFixture)
+BOOST_FIXTURE_TEST_SUITE(TestEnumParser, EnumParserFixture)
 
 BOOST_AUTO_TEST_CASE(CaptureResultParser) {
     CaptureResult result;

@@ -1,34 +1,55 @@
-find_package (Boost REQUIRED COMPONENTS unit_test_framework)
+find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
 
-add_definitions(-DFREEORION_BUILD_SERVER)
+if (NOT TARGET unittest)
+    add_custom_target(unittest
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+        COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+    )
+endif ()
 
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}/../../
-)
-
-include_directories(
-    SYSTEM
-    ${Boost_UNIT_TEST_FRAMEWORK_INCLUDES}
-)
-
-add_executable(test_parsers_boost
+add_executable(fo_unittest_parse
     testmain.cpp
     CommonTest.cpp
-    TestEnumParser.cpp
-    TestValueRefDoubleParser.cpp
-    TestValueRefIntParser.cpp
-    TestValueRefStringParser.cpp
-    TestValueRefUniverseObjectTypeParser.cpp
 )
 
-target_link_libraries(test_parsers_boost
+target_compile_definitions(fo_unittest_parse
+    PRIVATE
+        -DFREEORION_BUILD_SERVER
+        -DBOOST_TEST_DYN_LINK
+)
+
+target_include_directories(fo_unittest_parse
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}
+        ${PROJECT_SOURCE_DIR}/GG/
+)
+
+target_link_libraries(fo_unittest_parse
     freeorioncommon
     freeorionparse
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
 )
 
-add_test(enum_parser                           ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test EnumParser)
-add_test(value_ref_double_parser               ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefDoubleParser)
-add_test(value_ref_int_parser                  ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefIntParser)
-add_test(value_ref_string_parser               ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefStringParser)
-add_test(value_ref_universe_object_type_parser ${CMAKE_BINARY_DIR}/test_parsers_boost --run_test ValueRefUniverseObjectTypeParser)
+add_dependencies(unittest
+    fo_unittest_parse
+)
+
+set(FO_TEST_PARSE
+    TestEnumParser
+    TestValueRefDoubleParser
+    TestValueRefIntParser
+    TestValueRefStringParser
+    TestValueRefUniverseObjectTypeParser
+)
+
+foreach(_TEST ${FO_TEST_PARSE})
+    target_sources(fo_unittest_parse
+        PRIVATE
+        ${_TEST}.cpp
+    )
+    add_test(
+        NAME ${_TEST}
+        COMMAND fo_unittest_parse --log_level=all "--run_test=${_TEST}" --catch_system_error=yes
+        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+    )
+endforeach ()

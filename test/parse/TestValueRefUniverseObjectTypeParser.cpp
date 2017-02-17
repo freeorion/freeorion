@@ -82,7 +82,8 @@ const std::array<std::string, 1> ValueRefUniverseObjectTypeFixture::attributes =
     "ObjectType"
 }};
 
-BOOST_FIXTURE_TEST_SUITE(ValueRefUniverseObjectTypeParser, ValueRefUniverseObjectTypeFixture)
+
+BOOST_FIXTURE_TEST_SUITE(TestValueRefUniverseObjectTypeParser, ValueRefUniverseObjectTypeFixture)
 
 BOOST_AUTO_TEST_CASE(UniverseObjectTypeLiteralParserBuilding) {
     BOOST_CHECK(parse("Building", result));

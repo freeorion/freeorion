@@ -1,5 +1,5 @@
-#define BOOST_TEST_DYN_LINK
-#define BOOST_TEST_MODULE "Freeorion parser unit/coverage tests"
+#define BOOST_TEST_MODULE "FreeOrion unit/coverage tests parser"
+
 #include <boost/test/unit_test.hpp>
 #include <boost/test/unit_test_monitor.hpp>
 #include <boost/test/output/compiler_log_formatter.hpp>

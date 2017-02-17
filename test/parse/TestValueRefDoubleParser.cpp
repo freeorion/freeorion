@@ -142,7 +142,8 @@ const std::array<std::string, 36> ValueRefDoubleFixture::attributes = {{
     "DistanceFromOriginalType"
 }};
 
-BOOST_FIXTURE_TEST_SUITE(ValueRefDoubleParser, ValueRefDoubleFixture)
+
+BOOST_FIXTURE_TEST_SUITE(TestValueRefDoubleParser, ValueRefDoubleFixture)
 
 BOOST_AUTO_TEST_CASE(DoubleLiteralParserInteger) {
     BOOST_CHECK(parse("7309", result));

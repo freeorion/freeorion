@@ -119,7 +119,8 @@ const std::array<std::string, 13> ValueRefIntFixture::attributes = {{
     "SystemID"
 }};
 
-BOOST_FIXTURE_TEST_SUITE(ValueRefIntParser, ValueRefIntFixture)
+
+BOOST_FIXTURE_TEST_SUITE(TestValueRefIntParser, ValueRefIntFixture)
 
 BOOST_AUTO_TEST_CASE(IntLiteralParserInteger) {
     BOOST_CHECK(parse("7309", result));
