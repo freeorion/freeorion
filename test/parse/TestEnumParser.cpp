@@ -490,19 +490,44 @@ BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
 BOOST_AUTO_TEST_CASE(ShipPartMeterTypeParser) {
     MeterType result;
 
-    // XXX: METER_SIZE not handled, still used?
     // XXX: No enum number value to validate enum coverage.
     //      Maybe the Meter enum should be split.
 
-    BOOST_CHECK(parse_ship_meter("Speed", result));
-    BOOST_CHECK(result == METER_SPEED);
-    BOOST_CHECK(set_parse_ship_meter("SetSpeed", result));
-    BOOST_CHECK(result == METER_SPEED);
+    BOOST_CHECK(parse_ship_meter("Damage", result));
+    BOOST_CHECK(result == METER_CAPACITY);
+    BOOST_CHECK(set_parse_ship_meter("SetDamage", result));
+    BOOST_CHECK(result == METER_CAPACITY);
 
     BOOST_CHECK(parse_ship_meter("Capacity", result));
     BOOST_CHECK(result == METER_CAPACITY);
     BOOST_CHECK(set_parse_ship_meter("SetCapacity", result));
     BOOST_CHECK(result == METER_CAPACITY);
+
+    BOOST_CHECK(parse_ship_meter("MaxDamage", result));
+    BOOST_CHECK(result == METER_MAX_CAPACITY);
+    BOOST_CHECK(set_parse_ship_meter("SetMaxDamage", result));
+    BOOST_CHECK(result == METER_MAX_CAPACITY);
+
+    BOOST_CHECK(parse_ship_meter("MaxCapacity", result));
+    BOOST_CHECK(result == METER_MAX_CAPACITY);
+    BOOST_CHECK(set_parse_ship_meter("SetMaxCapacity", result));
+    BOOST_CHECK(result == METER_MAX_CAPACITY);
+
+    BOOST_CHECK(set_parse_ship_meter("SetSecondaryStat", result));
+    BOOST_CHECK(result == METER_SECONDARY_STAT);
+
+    BOOST_CHECK(set_parse_ship_meter("SetMaxSecondaryStat", result));
+    BOOST_CHECK(result == METER_MAX_SECONDARY_STAT);
+
+    // XXX: is not modifying result the correct behaviour?
+    result = INVALID_METER_TYPE;
+    BOOST_CHECK(!set_parse_ship_meter("DoesNotExist", result));
+    BOOST_CHECK(result == INVALID_METER_TYPE);
+
+    // XXX: is not modifying result the correct behaviour?
+    result = NUM_METER_TYPES;
+    BOOST_CHECK(!set_parse_ship_meter("DoesNotExist", result));
+    BOOST_CHECK(result == NUM_METER_TYPES);
 }
 
 BOOST_AUTO_TEST_CASE(ShipSlotTypeParser) {
