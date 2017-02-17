@@ -110,7 +110,7 @@ private:
     void WindowResizedSlot(X x, Y y);
 
     /** Used by CorrectListSize() to determine the list height from the current first shown row. */
-    void DetermineListHeight(Pt drop_down_size);
+    Pt DetermineListHeight(const Pt& drop_down_size);
 
     ListBox*            m_lb_wnd;
     const size_t        m_num_shown_rows;
@@ -261,7 +261,9 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
         SelChangedSignal(*it);
 }
 
-void ModalListPicker::DetermineListHeight(Pt drop_down_size) {
+Pt ModalListPicker::DetermineListHeight(const Pt& _drop_down_size) {
+    auto drop_down_size = _drop_down_size;
+
     // Determine the expected height
     auto border_thick = 2 * GG::Y(ListBox::BORDER_THICK);
     auto num_rows = std::min<int>(m_num_shown_rows, LB()->NumRows());
@@ -281,6 +283,8 @@ void ModalListPicker::DetermineListHeight(Pt drop_down_size) {
     if (!LB()->Selections().empty())
         LB()->BringRowIntoView(*(LB()->Selections().begin()));
     GUI::GetGUI()->PreRenderWindow(LB());
+
+    return drop_down_size;
 }
 
 void ModalListPicker::CorrectListSize() {
@@ -319,7 +323,7 @@ void ModalListPicker::CorrectListSize() {
         // (width, prerender etc.) would mean this code could be reduced to
         // check height and resize list just once.
 
-        DetermineListHeight(drop_down_size);
+        drop_down_size = DetermineListHeight(drop_down_size);
         DetermineListHeight(drop_down_size);
 
         LB()->Hide();

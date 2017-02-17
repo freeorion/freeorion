@@ -1169,12 +1169,20 @@ void ListBox::BringRowIntoView(iterator target)
         return;
 
     // Find the y offsets of the first and last shown rows and target.
-    bool first_row_found(false), last_row_found(false), target_found(false);
+    auto first_row_found(false);
+    auto last_row_found(false);
+    auto target_found(false);
 
-    Y y_offset_top(Y0), y_offset_bot(Y0), target_y_offset(Y0);
-    Y first_row_y_offset(Y0), last_row_y_offset(Y0);
-    iterator final_row = --m_rows.end();
-    iterator it = m_rows.begin();
+    auto y_offset_top(Y0);
+    auto y_offset_bot(Y0);
+    auto target_y_offset(Y0);
+
+    auto first_row_y_offset(Y0);
+    auto last_row_y_offset(Y0);
+
+    auto final_row = --m_rows.end();
+    auto it = m_rows.begin();
+
     while ((it != m_rows.end()) && (!first_row_found || !last_row_found || !target_found)) {
         y_offset_bot += (*it)->Height();
 
