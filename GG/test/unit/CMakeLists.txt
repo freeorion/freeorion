@@ -64,7 +64,7 @@ foreach (_TEST ${GiGi_TESTS})
     )
     add_test(
         NAME ${_TEST}
-        COMMAND gg_unittest --log_level=all "--run_test=${_TEST}" --catch_system_error=yes
+        COMMAND gg_unittest --log_level=message "--run_test=${_TEST}" --catch_system_error=yes
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 endforeach ()

@@ -49,7 +49,7 @@ foreach(_TEST ${FO_TEST_PARSE})
     )
     add_test(
         NAME ${_TEST}
-        COMMAND fo_unittest_parse --log_level=all "--run_test=${_TEST}" --catch_system_error=yes
+        COMMAND fo_unittest_parse --log_level=message "--run_test=${_TEST}" --catch_system_error=yes
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
 endforeach ()
