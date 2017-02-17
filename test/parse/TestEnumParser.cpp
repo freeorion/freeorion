@@ -534,13 +534,16 @@ BOOST_AUTO_TEST_CASE(ShipSlotTypeParser) {
     ShipSlotType result;
 
     // Literal is number of tests, not number of enums.
-    BOOST_REQUIRE_MESSAGE(NUM_SHIP_SLOT_TYPES == 2, "Untested enumeration value.");
+    BOOST_REQUIRE_MESSAGE(NUM_SHIP_SLOT_TYPES == 3, "Untested enumeration value.");
 
     BOOST_CHECK(parse("External", result));
     BOOST_CHECK(result == SL_EXTERNAL);
 
     BOOST_CHECK(parse("Internal", result));
     BOOST_CHECK(result == SL_INTERNAL);
+
+    BOOST_CHECK(parse("Core", result));
+    BOOST_CHECK(result == SL_CORE);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_SHIP_SLOT_TYPE;
