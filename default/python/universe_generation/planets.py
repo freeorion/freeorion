@@ -29,10 +29,12 @@ planet_types_real = (fo.planetType.swamp, fo.planetType.radiated, fo.planetType.
 
 
 def base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, planet_size):
-    return (tables.DENSITY_MOD_TO_PLANET_SIZE_DIST[planet_density][planet_size]
-            + tables.STAR_TYPE_MOD_TO_PLANET_SIZE_DIST[star_type][planet_size]
-            + tables.ORBIT_MOD_TO_PLANET_SIZE_DIST[orbit][planet_size]
-            + tables.GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST[galaxy_shape][planet_size])
+    return sum((
+        tables.DENSITY_MOD_TO_PLANET_SIZE_DIST[planet_density][planet_size],
+        tables.STAR_TYPE_MOD_TO_PLANET_SIZE_DIST[star_type][planet_size],
+        tables.ORBIT_MOD_TO_PLANET_SIZE_DIST[orbit][planet_size],
+        tables.GALAXY_SHAPE_MOD_TO_PLANET_SIZE_DIST[galaxy_shape][planet_size]
+    ))
 
 
 def can_have_planets(star_type, orbits, planet_density, galaxy_shape):
@@ -59,8 +61,7 @@ def calc_planet_size(star_type, orbit, planet_density, galaxy_shape):
     try:
         max_roll = 0
         for size in planet_sizes_all:
-            roll = (random.randint(1, 100)
-                    + base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, size))
+            roll = (random.randint(1, 100) + base_chance_of_planet(planet_density, galaxy_shape, star_type, orbit, size))
             if max_roll < roll:
                 max_roll = roll
                 planet_size = size

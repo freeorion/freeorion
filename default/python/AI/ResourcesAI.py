@@ -82,10 +82,8 @@ class PlanetFocusManager(object):
         Return success or failure
         """
         info = self.raw_planet_info.get(pid)
-        success = bool(info is not None and
-                       (info.current_focus == focus
-                        or (focus in info.planet.availableFoci
-                            and fo.issueChangeFocusOrder(pid, focus))))
+        success = bool(info is not None and (
+            info.current_focus == focus or focus in info.planet.availableFoci and fo.issueChangeFocusOrder(pid, focus)))
         if success:
             if update and info.current_focus != focus:
                 universe = fo.getUniverse()
@@ -439,11 +437,8 @@ def set_planet_production_and_research_specials(focus_manager):
             if focus_manager.bake_future_focus(pid, INDUSTRY):
                 print "%s focus of planet %s (%d) (with Honeycomb) at Industry Focus" % (["set", "left"][info.current_focus == INDUSTRY], planet.name, pid)
                 continue
-        if ((([bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs) if bld.buildingTypeName in
-               ["BLD_CONC_CAMP", "BLD_CONC_CAMP_REMNANT"]])
-             or ([ccspec for ccspec in planet.specials if ccspec in
-                  ["CONC_CAMP_MASTER_SPECIAL", "CONC_CAMP_SLAVE_SPECIAL"]]))
-                and INDUSTRY in planet.availableFoci):
+        if ((([bld.buildingTypeName for bld in map(universe.getBuilding, planet.buildingIDs) if bld.buildingTypeName in ["BLD_CONC_CAMP", "BLD_CONC_CAMP_REMNANT"]]) or
+                ([ccspec for ccspec in planet.specials if ccspec in ["CONC_CAMP_MASTER_SPECIAL", "CONC_CAMP_SLAVE_SPECIAL"]])) and INDUSTRY in planet.availableFoci):
             if focus_manager.bake_future_focus(pid, INDUSTRY):
                 print "%s focus of planet %s (%d) (with Concentration Camps/Remnants) at Industry Focus" % (["set", "left"][info.current_focus == INDUSTRY], planet.name, pid)
                 continue
@@ -562,10 +557,10 @@ def set_planet_industry_and_research_foci(focus_manager, priority_ratio):
         # if focus_manager.current_focus[pid] == MFocus:
         # ii = max( ii, focus_manager.possible_output[MFocus][0] )
         if ((ratio > 2.0 and target_pp < 15 and got_algo) or
-            (ratio > 2.5 and target_pp < 25 and ii > 5 and got_algo) or
-            (ratio > 3.0 and target_pp < 40 and ii > 5 and got_algo) or
-            (ratio > 4.0 and target_pp < 100 and ii > 10) or
-            ((target_rp + rr - tr) / max(0.001, target_pp - ii + ri) > 2 * priority_ratio)):  # we already have algo elegance and more RP would be too expensive, or overkill
+                (ratio > 2.5 and target_pp < 25 and ii > 5 and got_algo) or
+                (ratio > 3.0 and target_pp < 40 and ii > 5 and got_algo) or
+                (ratio > 4.0 and target_pp < 100 and ii > 10) or
+                ((target_rp + rr - tr) / max(0.001, target_pp - ii + ri) > 2 * priority_ratio)):  # we already have algo elegance and more RP would be too expensive, or overkill
             if not printed_header:
                 printed_header = True
                 print "Rejecting further Research Focus choices as too expensive:"

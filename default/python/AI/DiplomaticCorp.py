@@ -113,8 +113,8 @@ class DiplomaticCorp(object):
 class BeginnerDiplomaticCorp(DiplomaticCorp):
     pass
 
+
 class ManiacalDiplomaticCorp(DiplomaticCorp):
     def __init__(self):
         DiplomaticCorp.__init__(self)
         self.be_chatty = False
-

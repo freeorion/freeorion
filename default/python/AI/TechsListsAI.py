@@ -49,8 +49,7 @@ class TechGroup(object):
 
     def _add_remaining(self):
         """Add all remaining techs in the tech group to self._tech_queue if not already contained."""
-        all_needed_techs = set(self.economy + self.weapon + self.armor
-                               + self.misc + self.defense + self.hull)
+        all_needed_techs = set(self.economy + self.weapon + self.armor + self.misc + self.defense + self.hull)
         remaining_techs = list(all_needed_techs - set(self._tech_queue))
         self._tech_queue.extend(remaining_techs)
 
@@ -190,6 +189,7 @@ class TechGroup1SparseB(TechGroup1):
             "SHP_ZORTRIUM_PLATE",
             "SHP_SPACE_FLUX_DRIVE"
         )
+
 
 class TechGroup1SparseC(TechGroup1):
     def __init__(self):

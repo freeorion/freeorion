@@ -37,6 +37,7 @@ def show_only_some(x, pos):
     else:
         return ''
 
+
 doPlotTypes = ["PP + 2RP"] + ["PP"] + ["RP"] + ["RP_Ratio"]  # +[ "ShipCount"]
 
 
@@ -80,6 +81,7 @@ def parse_file(file_name, ai=True):
                 if "Empire Ship Count:" in line:
                     data['ShipCount'].append(int(line.split("Empire Ship Count:")[1]))
         return data, details
+
 
 allData = {}
 species = {}

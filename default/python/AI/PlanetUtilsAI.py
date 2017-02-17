@@ -4,6 +4,7 @@ import ColonisationAI
 from freeorion_tools import print_error
 from AIDependencies import INVALID_ID
 
+
 def safe_name(univ_object):
     return (univ_object and univ_object.name) or "?"
 
@@ -109,8 +110,8 @@ def get_owned_planets_by_empire(planet_ids):
     for pid in planet_ids:
         planet = universe.getPlanet(pid)
         # even if our universe says we own it, if we can't see it we must have lost it
-        if (planet and not planet.unowned and planet.ownedBy(empire_id)
-                and universe.getVisibility(pid, empire_id) >= fo.visibility.partial):
+        if (planet and not planet.unowned and planet.ownedBy(empire_id) and
+                universe.getVisibility(pid, empire_id) >= fo.visibility.partial):
             result.append(pid)
     return result
 

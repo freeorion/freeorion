@@ -340,10 +340,8 @@ class AIFleetMission(object):
                     this_system_id = fleet_order.target.id
                     this_status = foAI.foAIstate.systemStatus.setdefault(this_system_id, {})
                     if this_status.get('monsterThreat', 0) > fo.currentTurn() * MilitaryAI.cur_best_mil_ship_rating() / 4.0:
-                        if (self.type not in (MissionType.MILITARY,
-                                              MissionType.SECURE) or
-                            fleet_order != self.orders[-1]  # if this move order is not this mil fleet's final destination, and blocked by Big Monster, release and hope for more effective reassignment
-                            ):
+                        # if this move order is not this mil fleet's final destination, and blocked by Big Monster, release and hope for more effective reassignment
+                        if self.type not in (MissionType.MILITARY, MissionType.SECURE) or fleet_order != self.orders[-1]:
                             print "Aborting mission due to being blocked by Big Monster at system %d, threat %d" % (this_system_id, foAI.foAIstate.systemStatus[this_system_id]['monsterThreat'])
                             print "Full set of orders were:"
                             for this_order in self.orders:
@@ -463,8 +461,9 @@ class AIFleetMission(object):
                 if repair_fleet_order and repair_fleet_order.is_valid():
                     self.orders.append(repair_fleet_order)
             cur_fighter_capacity, max_fighter_capacity = FleetUtilsAI.get_fighter_capacity_of_fleet(fleet_id)
-            if (fleet.fuel < fleet.maxFuel or cur_fighter_capacity < max_fighter_capacity
-                    and self.get_location_target().id not in fleet_supplyable_system_ids):
+            if (fleet.fuel < fleet.maxFuel or
+                    cur_fighter_capacity < max_fighter_capacity and
+                    self.get_location_target().id not in fleet_supplyable_system_ids):
                 resupply_fleet_order = MoveUtilsAI.get_resupply_fleet_order(self.fleet, self.get_location_target())
                 if resupply_fleet_order.is_valid():
                     self.orders.append(resupply_fleet_order)

@@ -460,7 +460,7 @@ class AIstate(object):
                 sys_status['myFleetRating'] = my_ratings_list and CombatRatingsAI.combine_ratings_list(my_ratings_list) or 0
                 sys_status['all_local_defenses'] = CombatRatingsAI.combine_ratings(sys_status['myFleetRating'], sys_status['mydefenses']['overall'])
             sys_status['neighbors'] = set(dict_from_map(universe.getSystemNeighborsMap(sys_id, self.empireID)))
-            
+
         for sys_id in system_id_list:
             sys_status = self.systemStatus[sys_id]
             neighbors = sys_status.get('neighbors', set())
@@ -475,7 +475,7 @@ class AIstate(object):
                     setb.update(self.systemStatus.get(sys2id, {}).get('neighbors', set()))
             jump2ring = jumps2 - neighbors - {sys_id}
             jump3ring = jumps3 - jumps2 - neighbors - {sys_id}
-            jump4ring = jumps4 - jumps3  - jumps2 - neighbors - {sys_id}
+            jump4ring = jumps4 - jumps3 - jumps2 - neighbors - {sys_id}
             sys_status['2jump_ring'] = jump2ring
             sys_status['3jump_ring'] = jump3ring
             sys_status['4jump_ring'] = jump4ring
@@ -687,7 +687,7 @@ class AIstate(object):
                 # Not at all sure how this came about, but was throwing off threat assessments
             if fleet_id not in ok_fleets:  # or fleet.empty:
                 if (fleet and self.__fleetRoleByID.get(fleet_id, -1) != -1 and fleet_id not in destroyed_object_ids and
-                                [ship_id for ship_id in fleet.shipIDs if ship_id not in destroyed_object_ids]):
+                        [ship_id for ship_id in fleet.shipIDs if ship_id not in destroyed_object_ids]):
                     if not just_resumed:
                         fleetsLostBySystem.setdefault(old_sys_id, []).append(max(old_rating, MilitaryAI.MinThreat))
                 if fleet_id in self.__fleetRoleByID:

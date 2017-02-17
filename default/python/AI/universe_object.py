@@ -2,6 +2,7 @@ import sys
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
 
+
 class UniverseObject(object):
     """Stores information about AI target - its id and type."""
 

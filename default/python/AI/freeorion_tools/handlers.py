@@ -34,5 +34,3 @@ def init_handlers(config_str, search_dir):
             print_exc()
             exit(1)
         register_pre_handler('generateOrders', charting_text)
-
-

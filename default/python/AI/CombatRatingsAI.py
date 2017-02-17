@@ -9,6 +9,7 @@ from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cach
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID
 
+
 def get_empire_standard_fighter():
     """Get the current empire standard fighter stats, i.e. the most common shiptype within the empire.
 
@@ -182,15 +183,15 @@ class ShipCombatStats(object):
             e_attacks, e_structure, e_shields = enemy_stats.get_basic_stats()
             if e_attacks:
                 e_num_attacks = sum(n for n in e_attacks.values())
-                e_total_attack = sum(n*dmg for dmg, n in e_attacks.iteritems())
+                e_total_attack = sum(n * dmg for dmg, n in e_attacks.iteritems())
                 e_avg_attack = e_total_attack / e_num_attacks
-                e_net_attack = sum(n*max(dmg - my_shields, .001) for dmg, n in e_attacks.iteritems())
-                e_net_attack = max(e_net_attack, .1*e_total_attack)
+                e_net_attack = sum(n * max(dmg - my_shields, .001) for dmg, n in e_attacks.iteritems())
+                e_net_attack = max(e_net_attack, .1 * e_total_attack)
                 shield_factor = e_total_attack / e_net_attack
                 my_structure *= max(1, shield_factor)
-            my_total_attack = sum(n*max(dmg - e_shields, .001) for dmg, n in my_attacks.iteritems())
+            my_total_attack = sum(n * max(dmg - e_shields, .001) for dmg, n in my_attacks.iteritems())
         else:
-            my_total_attack = sum(n*dmg for dmg, n in my_attacks.iteritems())
+            my_total_attack = sum(n * dmg for dmg, n in my_attacks.iteritems())
             my_structure += my_shields
 
         # consider fighter attacks
@@ -203,7 +204,7 @@ class ShipCombatStats(object):
         my_total_attack += fighter_damage_per_bout
 
         # consider fighter protection factor
-        fighters_shot_down = (1-survival_rate**2) * launched_1st_bout + (1-survival_rate) * launched_2nd_bout
+        fighters_shot_down = (1 - survival_rate**2) * launched_1st_bout + (1-survival_rate) * launched_2nd_bout
         damage_prevented = fighters_shot_down * e_avg_attack
         my_structure += damage_prevented
         return my_total_attack * my_structure
