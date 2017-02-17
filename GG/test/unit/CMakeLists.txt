@@ -25,28 +25,46 @@
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
 
-add_custom_target(unittest
-    COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-    COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+if (NOT TARGET unittest)
+    add_custom_target(unittest
+        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+        COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+    )
+endif ()
+
+add_executable(gg_unittest
+    main.cpp
+)
+
+target_compile_definitions(gg_unittest
+    PRIVATE
+        -DBOOST_TEST_DYN_LINK
+)
+
+target_link_libraries(gg_unittest
+    GiGi
+    ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
+)
+
+add_dependencies(unittest
+    gg_unittest
+)
+
+add_coverage(gg_unittest
+    unittest
 )
 
 set(GiGi_TESTS
 )
 
-foreach(_TEST ${GiGi_TESTS})
-    add_executable(gg_unit_${_TEST} ${_TEST}.cpp)
-    target_compile_definitions(gg_unit_${_TEST}
+foreach (_TEST ${GiGi_TESTS})
+    target_sources(gg_unittest
         PRIVATE
-            -DBOOST_TEST_DYN_LINK
-            -DBOOST_TEST_MODULE="${_TEST}Module"
+        ${_TEST}.cpp
     )
-    target_link_libraries(gg_unit_${_TEST} ${Boost_LIBRARIES} GiGi)
-
     add_test(
         NAME ${_TEST}
-        COMMAND gg_unit_${_TEST} --log_level=all --catch_system_error=yes
+        COMMAND gg_unittest --log_level=all "--run_test=${_TEST}" --catch_system_error=yes
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
-    add_dependencies(unittest gg_unit_${_TEST})
-    add_coverage(gg_unit_${_TEST} unittest)
-endforeach()
+endforeach ()
