@@ -8,7 +8,7 @@ if (NOT TARGET unittest)
 endif ()
 
 add_executable(fo_unittest_parse
-    testmain.cpp
+    main.cpp
     CommonTest.cpp
 )
 
