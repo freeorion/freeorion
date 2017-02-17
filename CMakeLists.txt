@@ -153,6 +153,11 @@ set_source_files_properties(
     GENERATED TRUE
 )
 
+if (BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(test)
+endif ()
+
 set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
 set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
 set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
@@ -578,7 +583,3 @@ cpack_add_component(
     HIDDEN
     REQUIRED
 )
-
-if (BUILD_TESTS)
-    add_subdirectory(test)
-endif ()
