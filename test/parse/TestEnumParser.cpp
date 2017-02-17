@@ -118,7 +118,7 @@ BOOST_AUTO_TEST_CASE(EmpireAffiliationTypeParser) {
     EmpireAffiliationType result;
 
     // Literal is number of tests, not number of enums.
-    BOOST_REQUIRE_MESSAGE(NUM_AFFIL_TYPES == 4, "Untested enumeration value.");
+    BOOST_REQUIRE_MESSAGE(NUM_AFFIL_TYPES == 7, "Untested enumeration value.");
 
     BOOST_CHECK(parse("TheEmpire", result));
     BOOST_CHECK(result == AFFIL_SELF);
@@ -131,6 +131,15 @@ BOOST_AUTO_TEST_CASE(EmpireAffiliationTypeParser) {
 
     BOOST_CHECK(parse("AnyEmpire", result));
     BOOST_CHECK(result == AFFIL_ANY);
+
+    BOOST_CHECK(parse("None", result));
+    BOOST_CHECK(result == AFFIL_NONE);
+
+    BOOST_CHECK(parse("CanSee", result));
+    BOOST_CHECK(result == AFFIL_CAN_SEE);
+
+    BOOST_CHECK(parse("HUMAN", result));
+    BOOST_CHECK(result == AFFIL_HUMAN);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_EMPIRE_AFFIL_TYPE;
