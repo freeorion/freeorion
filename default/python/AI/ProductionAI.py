@@ -97,10 +97,15 @@ def cur_best_military_design_rating():
         return _best_military_design_rating_cache[current_turn]
     priority = PriorityType.PRODUCTION_MILITARY
     if priority in _design_cache:
+        # TODO: rework the below code, CombatRatingsAI and possibly  WarShipDesigner so that the below uses a rating
+        # provided by CombatRatingsAI (so as to be more suitable for its actual use and to avoid making any assumptions
+        # about how the WarShipDesigner may apply cost adjustments to its rating).
         if _design_cache[priority] and _design_cache[priority][0]:
             rating, pid, design_id, cost = _design_cache[priority][0]
+            exponent = foAI.foAIstate.character.warship_adjusted_production_cost_exponent()
+            rating = max(rating*(cost**exponent), 0.001)
             _best_military_design_rating_cache[current_turn] = rating
-            return max(rating, 0.001)
+            return rating
         else:
             return 0.001
     else:
