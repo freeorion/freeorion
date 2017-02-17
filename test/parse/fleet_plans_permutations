@@ -1,8 +1,0 @@
-Fleet  Name = "Foo 0"  Ships = "Foo"
-Fleet  Name = "Foo 0"  "Foo"
-Fleet  "Foo 0"  Ships = "Foo"
-Fleet  "Foo 0"  "Foo"
-Fleet  Name = "Foo 1"  Ships = [ "Foo" "Foo" ]
-Fleet  Name = "Foo 1"  [ "Foo" "Foo" ]
-Fleet  "Foo 1"  Ships = [ "Foo" "Foo" ]
-Fleet  "Foo 1"  [ "Foo" "Foo" ]
