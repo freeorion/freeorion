@@ -423,11 +423,16 @@ BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
     ShipPartClass result;
 
     // Literal is number of tests, not number of enums.
-    // XXX: PC_GENERAL has no token, so no test, +1
-    BOOST_REQUIRE_MESSAGE(NUM_SHIP_PART_CLASSES == 13 + 1, "Untested enumeration value.");
+    BOOST_REQUIRE_MESSAGE(NUM_SHIP_PART_CLASSES == 17, "Untested enumeration value.");
 
     BOOST_CHECK(parse("ShortRange", result));
     BOOST_CHECK(result == PC_DIRECT_WEAPON);
+
+    BOOST_CHECK(parse("FighterBay", result));
+    BOOST_CHECK(result == PC_FIGHTER_BAY);
+
+    BOOST_CHECK(parse("FighterHangar", result));
+    BOOST_CHECK(result == PC_FIGHTER_HANGAR);
 
     BOOST_CHECK(parse("Shield", result));
     BOOST_CHECK(result == PC_SHIELD);
@@ -452,6 +457,24 @@ BOOST_AUTO_TEST_CASE(ShipPartsClassParser) {
 
     BOOST_CHECK(parse("Speed", result));
     BOOST_CHECK(result == PC_SPEED);
+
+    BOOST_CHECK(parse("General", result));
+    BOOST_CHECK(result == PC_GENERAL);
+
+    BOOST_CHECK(parse("Bombard", result));
+    BOOST_CHECK(result == PC_BOMBARD);
+
+    BOOST_CHECK(parse("Industry", result));
+    BOOST_CHECK(result == PC_INDUSTRY);
+
+    BOOST_CHECK(parse("Research", result));
+    BOOST_CHECK(result == PC_RESEARCH);
+
+    BOOST_CHECK(parse("Trade", result));
+    BOOST_CHECK(result == PC_TRADE);
+
+    BOOST_CHECK(parse("ProductionLocation", result));
+    BOOST_CHECK(result == PC_PRODUCTION_LOCATION);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_SHIP_PART_CLASS;
