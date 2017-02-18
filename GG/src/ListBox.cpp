@@ -902,7 +902,7 @@ void ListBox::Render()
             RowAboveOrIsRow(curr_sel, last_visible_row, m_rows.end()))
         {
             top = std::max((*curr_sel)->Top(), cl_ul.y);
-            bottom = std::min(top + (*curr_sel)->Height(), cl_lr.y);
+            bottom = std::min((*curr_sel)->Top() + (*curr_sel)->Height(), cl_lr.y);
             FlatRectangle(Pt(cl_ul.x, top), Pt(cl_lr.x, bottom),
                           hilite_color_to_use, CLR_ZERO, 0);
         }
@@ -1159,55 +1159,66 @@ void ListBox::SetSelections(const SelectionSet& s, bool signal/* = false*/)
 void ListBox::SetCaret(iterator it)
 { m_caret = it; }
 
-void ListBox::BringRowIntoView(iterator it)
+void ListBox::BringRowIntoView(iterator target)
 {
-    if (it == m_rows.end())
+    if (target == m_rows.end())
         return;
 
     // m_first_row_shown only equals end() if the list is empty, hence 'it' is invalid.
     if (m_first_row_shown == m_rows.end())
         return;
 
-    // Find the y offsets of the first and last shown rows and 'it'.
-    bool first_row_found(false), last_row_found(false), it_found(false);
+    // Find the y offsets of the first and last shown rows and target.
+    auto first_row_found(false);
+    auto last_row_found(false);
+    auto target_found(false);
 
-    Y y_offset(BORDER_THICK), it_y_offset(BORDER_THICK);
-    Y first_row_y_offset(BORDER_THICK), last_row_y_offset(BORDER_THICK);
-    iterator it2 = m_rows.begin();
-    while ((it2 != m_rows.end()) && (!first_row_found || !last_row_found || !it_found)) {
-        if (it2 == m_first_row_shown) {
-            first_row_y_offset = y_offset;
+    auto y_offset_top(Y0);
+    auto y_offset_bot(Y0);
+    auto target_y_offset(Y0);
+
+    auto first_row_y_offset(Y0);
+    auto last_row_y_offset(Y0);
+
+    auto final_row = --m_rows.end();
+    auto it = m_rows.begin();
+
+    while ((it != m_rows.end()) && (!first_row_found || !last_row_found || !target_found)) {
+        y_offset_bot += (*it)->Height();
+
+        if (it == m_first_row_shown) {
+            first_row_y_offset = y_offset_top;
             first_row_found = true;
         }
 
-        if (it2 == it) {
-            it_y_offset = y_offset;
-            it_found = true;
+        if (it == target) {
+            target_y_offset = y_offset_top;
+            target_found = true;
         }
 
         if (first_row_found && !last_row_found
-            && ((y_offset - first_row_y_offset) >= ClientHeight()))
+            && (((y_offset_bot - first_row_y_offset) >= ClientHeight())
+                || it == final_row))
         {
             last_row_found = true;
-            if (it2 != m_rows.begin())
-                last_row_y_offset = y_offset - (*std::prev(it2))->Height();
+            last_row_y_offset = y_offset_top;
         }
 
-        y_offset += (*it2)->Height();
-        ++it2;
+        y_offset_top = y_offset_bot;
+        ++it;
     }
 
-    if (!it_found)
+    if (!target_found)
         return;
 
-    if (y_offset <= ClientHeight())
+    if (y_offset_bot <= ClientHeight())
         SetFirstRowShown(begin());
 
-    // Shift the view if 'it' is outside of [first_row .. last_row]
-    if (it_y_offset < first_row_y_offset)
-        SetFirstRowShown(it);
-    else if (it_y_offset >= last_row_y_offset)
-        SetFirstRowShown(FirstRowShownWhenBottomIs(it, ClientHeight()));
+    // Shift the view if target is outside of [first_row .. last_row]
+    if (target_y_offset < first_row_y_offset)
+        SetFirstRowShown(target);
+    else if (target_y_offset >= last_row_y_offset)
+        SetFirstRowShown(FirstRowShownWhenBottomIs(target));
 }
 
 void ListBox::SetFirstRowShown(iterator it)
@@ -1216,12 +1227,13 @@ void ListBox::SetFirstRowShown(iterator it)
         return;
 
     RequirePreRender();
-    m_first_row_shown = it;
 
     AdjustScrolls(false);
 
-    if (!m_vscroll)
+    if (!m_vscroll && m_first_row_shown == m_rows.begin())
         return;
+
+    m_first_row_shown = m_vscroll ? it : m_rows.begin();
 
     Y acc(0);
     for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
@@ -2385,9 +2397,9 @@ void ListBox::NormalizeRow(Row* row)
     GUI::PreRenderWindow(row);
 }
 
-ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row, Y client_height)
+ListBox::iterator ListBox::FirstRowShownWhenBottomIs(iterator bottom_row)
 {
-    Y available_space = client_height - (*bottom_row)->Height();
+    Y available_space = ClientHeight() - (*bottom_row)->Height();
     iterator it = bottom_row;
     while (it != m_rows.begin() && (*std::prev(it))->Height() <= available_space) {
         available_space -= (*--it)->Height();
