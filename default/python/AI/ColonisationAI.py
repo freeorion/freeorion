@@ -641,7 +641,7 @@ def get_base_outpost_defense_value():
     # for now, just combing these for rough composite factor
     # since outposts have no infrastructure (until late game at least), many of these have less weight
     # than for colonies
-    result = 3 * (0.1 + net_count) * (1 + regen_count / 3.0) * (1 + garrison_count / 6.0) * (1 + shield_count / 3.0)
+    result = 3 * (0.1 + net_count) * (1 + regen_count/3.0) * (1 + garrison_count/6.0) * (1 + shield_count/3.0)
 
     return result
 

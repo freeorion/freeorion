@@ -366,7 +366,7 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
     if not tech_is_complete("SHP_ORG_HULL"):
         troop_cost = math.ceil(planned_troops/6.0) * (40 * (1 + foAI.foAIstate.shipCount*AIDependencies.SHIP_UPKEEP))
     else:
-        troop_cost = math.ceil(planned_troops / 6.0) * (20 * (1 + foAI.foAIstate.shipCount*AIDependencies.SHIP_UPKEEP))
+        troop_cost = math.ceil(planned_troops/6.0) * (20 * (1 + foAI.foAIstate.shipCount*AIDependencies.SHIP_UPKEEP))
     planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, pop_val + supply_val + bld_tally + enemy_val - 0.8*troop_cost)
     if clear_path:
         planet_score *= 1.5

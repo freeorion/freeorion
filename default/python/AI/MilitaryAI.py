@@ -534,7 +534,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         ot_sys_alloc = 0
         ot_sys_threat = [(o_s_id, safety_factor * combine_ratings(systems_status.get(o_s_id, {}).get('fleetThreat', 0), systems_status.get(o_s_id, {}).get('monsterThreat', 0) + systems_status.get(o_s_id, {}).get('planetThreat', 0))) for o_s_id in explo_target_ids]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
-        tot_cur_alloc = sum([0.8 * already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
+        tot_cur_alloc = sum(0.8 * already_assigned_rating[sid] for sid, thrt in ot_sys_threat)
         # intentionally after tallies, but perhaps should be before
         # this supply threat calc intentionally uses a lower multiplier 0.25
         ot_sys_threat = [(sys_id, sys_threat + enemy_sup_factor[sys_id] * 0.25 * enemy_rating) for sys_id, sys_threat in ot_sys_threat]
@@ -577,7 +577,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         ot_sys_alloc = 0
         ot_sys_threat = [(o_s_id, threat_bias + safety_factor*combine_ratings(systems_status.get(o_s_id, {}).get('fleetThreat', 0), systems_status.get(o_s_id, {}).get('monsterThreat', 0) + systems_status.get(o_s_id, {}).get('planetThreat', 0))) for o_s_id in border_targets]
         totot_sys_threat = sum([thrt for sid, thrt in ot_sys_threat])
-        tot_cur_alloc = sum([0.8 * already_assigned_rating[sid] for sid, thrt in ot_sys_threat])
+        tot_cur_alloc = sum(0.8 * already_assigned_rating[sid] for sid, thrt in ot_sys_threat)
         # do not add enemy supply threat here
         for sid, thrt in ot_sys_threat:
             cur_alloc = already_assigned_rating[sid]
