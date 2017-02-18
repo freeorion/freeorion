@@ -608,23 +608,37 @@ private:
 /** Displays progress that is divided over mulitple turns, as in the Research and Production screens. */
 class MultiTurnProgressBar : public GG::Control {
 public:
-    /** \name Structors */ //@{
-    MultiTurnProgressBar(int total_turns, double turns_completed, double total_cost, double turn_spending,
-                         const GG::Clr& bar_color, const GG::Clr& background, const GG::Clr& outline_color);
+    /** @name Structors */ //@{
+    /** Ctor
+    * @param[in] num_segments Number of segments in the bar
+    * @param[in] percent_completed Percent(0.0-1.0) of bar to fill,
+    * @param[in] percent_predicted Percent(0.0-1.0) of bar to fill after
+    *               @p percent_completed.  Not to exceed 1.0 after addition
+    *               to @p percent_completed
+    * @param[in] bar_color Color for @p percent_completed, adjusted to lighter
+    *               color for @p percent_predicted
+    * @param[in] bg_color Color for background of this control
+    * @param[in] outline_color Color for the border.  Adjusted to darker color
+    *               for segment lines within @p percent_completed portion.
+    *               Adjusted to lighter color for segment lines after
+    *               @p percent_completed portion
+    */
+    MultiTurnProgressBar(int num_segments, float percent_completed,
+                         float percent_predicted, const GG::Clr& bar_color,
+                         const GG::Clr& bg_color, const GG::Clr& outline_color);
     //@}
 
-    /** \name Mutators */ //@{
+    /** @name Mutators */ //@{
     void Render() override;
     //@}
 
 private:
-    int     m_total_turns;
-    double  m_turns_completed;
-    double  m_total_cost;
-    double  m_turn_spending;
-    GG::Clr m_bar_color;
-    GG::Clr m_background;
-    GG::Clr m_outline_color;
+    int m_num_segments;
+    float m_perc_completed;
+    float m_perc_predicted;
+    GG::Clr m_clr_bar;
+    GG::Clr m_clr_bg;
+    GG::Clr m_clr_outline;
 };
 
 /** Displays current rendering frames per second. */

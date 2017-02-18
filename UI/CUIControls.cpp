@@ -19,6 +19,7 @@
 
 #include <boost/format.hpp>
 #include <boost/regex.hpp>
+#include <boost/algorithm/clamp.hpp>
 
 #include <limits>
 #include <iomanip>
@@ -1930,81 +1931,123 @@ void ProductionInfoPanel::DoLayout() {
 //////////////////////////////////////////////////
 // MultiTurnProgressBar
 //////////////////////////////////////////////////
-MultiTurnProgressBar::MultiTurnProgressBar(int total_turns, double turns_completed, double total_cost, double turn_spending,
-                                           const GG::Clr& bar_color, const GG::Clr& background,
+MultiTurnProgressBar::MultiTurnProgressBar(int num_segments,
+                                           float percent_completed,
+                                           float percent_predicted,
+                                           const GG::Clr& bar_color,
+                                           const GG::Clr& bg_color,
                                            const GG::Clr& outline_color) :
     Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
-    m_total_turns(std::max(1, total_turns)),
-    m_turns_completed(std::max(0.0, std::min<double>(turns_completed, m_total_turns))),
-    m_total_cost(total_cost),
-    m_turn_spending(turn_spending),
-    m_bar_color(bar_color),
-    m_background(background),
-    m_outline_color(outline_color)
-{}
+    m_num_segments(num_segments),
+    m_perc_completed(percent_completed),
+    m_perc_predicted(percent_predicted),
+    m_clr_bar(bar_color),
+    m_clr_bg(bg_color),
+    m_clr_outline(outline_color)
+{
+    // validate percentage values
+    if (m_perc_completed < 0.0f || m_perc_predicted < 0.0f ||
+        (m_perc_completed + m_perc_predicted) > 1.0f)
+    {
+        WarnLogger() << "Values not within percent range, clamping: "
+                     << m_perc_completed << ", " << m_perc_predicted;
+        boost::algorithm::clamp(m_perc_completed, 0.0f, 1.0f);
+        boost::algorithm::clamp(m_perc_predicted, 0.0f, 1.0f);
+    }
+}
 
 void MultiTurnProgressBar::Render() {
-    GG::Pt ul = UpperLeft(), lr = LowerRight();
-    bool segmented = true;
-    if (Width() / m_total_turns < 3)
-        segmented = false;
+    GG::Pt ul(UpperLeft());
+    GG::Pt lr(LowerRight());
+    GG::Y bottom(lr.y);
+    GG::Rect border_rect({GG::X1, GG::Y1}, {GG::X1, GG::Y1});
 
-    // draw background over whole area
-    FlatRectangle(ul, lr, m_background, m_outline_color, 1);
+    // background
+    GG::GL2DVertexBuffer bg_verts;
+    BufferStoreRectangle(bg_verts, {ul, lr}, border_rect);
 
-    // draw predicted bar of next turn
-    GG::X completed_bar_width(std::max(1.0, Value(Width() * m_turns_completed / m_total_turns)));
-    GG::X predicted_bar_width(Value(Width() * (m_turn_spending / m_total_cost)));
+    // define completed and predicted bar sizes
+    GG::X comp_width(Width() * m_perc_completed);
+    GG::X pred_width(Width() * m_perc_predicted);
+    // maximum lower right points to lower right of control
+    GG::Rect comp_rect(ul, {std::min(lr.x, ul.x + comp_width), bottom});
+    GG::Rect pred_rect({std::max(ul.x, comp_rect.lr.x - 1), ul.y},
+                       {std::min(lr.x, comp_rect.lr.x + pred_width), bottom});
 
-    if (predicted_bar_width > 3) {
-        GG::Pt predicted_bar_ul(ul.x + completed_bar_width - 1, ul.y);
-        GG::Pt predicted_bar_lr;
-        if ((completed_bar_width + predicted_bar_width) > Width()) // cut if beyond right border
-            predicted_bar_lr = GG::Pt(ul.x + Width(), lr.y);
-        else
-            predicted_bar_lr = GG::Pt(ul.x + completed_bar_width + predicted_bar_width, lr.y);
-        FlatRectangle(predicted_bar_ul, predicted_bar_lr, GG::LightColor(m_bar_color), m_outline_color, 1);
-    }
+    // predicted progress
+    GG::GL2DVertexBuffer pred_verts;
+    if (m_perc_predicted > 0.0f)
+        BufferStoreRectangle(pred_verts, pred_rect, border_rect);
 
-    // draw completed portion bar
-    if (completed_bar_width > 3) {
-        GG::Pt bar_lr(ul.x + completed_bar_width, lr.y);
-        FlatRectangle(ul, bar_lr, m_bar_color, m_outline_color, 1);
-    }
+    // completed progress
+    GG::GL2DVertexBuffer comp_verts;
+    if (m_perc_completed > 0.0f)
+        BufferStoreRectangle(comp_verts, comp_rect, border_rect);
 
-    // draw segment separators
-    if (segmented) {
-        GG::GL2DVertexBuffer verts;
-        GG::GLRGBAColorBuffer colours;
-        verts.reserve(2*m_total_turns);
-        colours.reserve(2*m_total_turns);
+    // segment lines
+    GG::GL2DVertexBuffer segment_verts;
+    GG::GLRGBAColorBuffer segment_colors;
+    if (m_num_segments > 1) {
+        segment_verts.reserve(2 * m_num_segments);
+        segment_colors.reserve(2 * m_num_segments);
 
-        GG::Clr current_colour = GG::DarkColor(m_bar_color);
+        GG::Clr current_colour(GG::DarkColor(m_clr_bar));
 
-        for (int n = 1; n < m_total_turns; ++n) {
-            GG::X separator_x = ul.x + Width() * n / m_total_turns;
-            if (separator_x > ul.x + completed_bar_width)
-                current_colour = GG::LightColor(m_background);
-            verts.store(separator_x, ul.y);
-            verts.store(separator_x, lr.y);
-            colours.store(current_colour);
-            colours.store(current_colour);
+        for (int n = 1; n < m_num_segments; ++n) {
+            GG::X separator_x(ul.x + Width() * n / m_num_segments);
+            if (separator_x > comp_rect.lr.x)
+                current_colour = GG::LightColor(m_clr_bg);
+            segment_verts.store(separator_x, ul.y);
+            segment_verts.store(separator_x, lr.y);
+            segment_colors.store(current_colour);
+            segment_colors.store(current_colour);
         }
-
-        verts.activate();
-        colours.activate();
-
-        glDisable(GL_TEXTURE_2D);
-        glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
-        glEnableClientState(GL_VERTEX_ARRAY);
-        glEnableClientState(GL_COLOR_ARRAY);
-        glDisableClientState(GL_TEXTURE_COORD_ARRAY);
-
-        glDrawArrays(GL_LINES, 0, verts.size());
-
-        glPopClientAttrib();
-        glEnable(GL_TEXTURE_2D);
     }
+
+    glDisable(GL_TEXTURE_2D);
+    glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glDisableClientState(GL_COLOR_ARRAY);
+    glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+
+    // draw background
+    if (!bg_verts.empty()) {
+        bg_verts.activate();
+        glColor(m_clr_outline);
+        glDrawArrays(GL_QUAD_STRIP, 0, 10);
+        glColor(m_clr_bg);
+        glDrawArrays(GL_QUADS, 10, 4);
+    }
+
+    // draw predicated progress
+    if (!pred_verts.empty()) {
+        pred_verts.activate();
+        glColor(m_clr_outline);
+        glDrawArrays(GL_QUAD_STRIP, 0, 10);
+        glColor(GG::LightColor(m_clr_bar));
+        glDrawArrays(GL_QUADS, 10, 4);
+    }
+
+    // draw completed progress
+    if (!comp_verts.empty()) {
+        comp_verts.activate();
+        glColor(m_clr_outline);
+        glDrawArrays(GL_QUAD_STRIP, 0, 10);
+        glColor(m_clr_bar);
+        glDrawArrays(GL_QUADS, 10, 4);
+    }
+
+    // draw segment lines
+    glEnableClientState(GL_COLOR_ARRAY);
+    if (!segment_verts.empty() && !segment_colors.empty()) {
+        segment_verts.activate();
+        segment_colors.activate();
+        glDrawArrays(GL_LINES, 0, segment_verts.size());
+    }
+
+    glPopClientAttrib();
+    glEnable(GL_TEXTURE_2D);
+
 }
 
 

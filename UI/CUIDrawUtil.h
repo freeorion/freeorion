@@ -25,6 +25,16 @@ void AdjustBrightness(GG::Clr& color, double amount, bool jointly_capped=false);
 /** returns fully opaque (max alpha channel) version of the color */
 GG::Clr OpaqueColor(const GG::Clr& color);
 
+/** Stores verticies in CCW order that outline a rectangle
+ * @param[out] buffer Buffer to store verticies
+ * @param[in] area Outside corners of rectangle
+ * @param[in] border_thickness Thickness of border for each corner, drawn
+ *              towards the interior of @p area.
+ */
+void BufferStoreRectangle(GG::GL2DVertexBuffer& buffer,
+                          const GG::Rect& area,
+                          const GG::Rect& border_thickness);
+
 /** Using immediate GL calls, renders a rectangle whose upper left and lower
   * right corners are angled.  If \a upper_left_angled == false, the upper left
   * corner is drawn as a normal corner */
