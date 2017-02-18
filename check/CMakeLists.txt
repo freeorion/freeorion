@@ -1,5 +1,5 @@
 find_package(CPPCheck)
-find_package(PEP8)
+find_package(PyCodestyle)
 
 if (CPPCHECK_FOUND)
     add_custom_target(check-cpp
@@ -12,13 +12,13 @@ if (CPPCHECK_FOUND)
     )
 endif ()
 
-if (PEP8_FOUND)
+if (PYCODESTYLE_FOUND)
     configure_file(pep8.ini.in pep8.ini)
     # The script wrapper discards the exit code of `pep8` to allow
     # continuing the build even when there are errors found by `pep8`.
     file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/pep8.cmake"
         "execute_process(
-            COMMAND \"${PEP8_EXECUTABLE}\" \"--config=${CMAKE_CURRENT_BINARY_DIR}/pep8.ini\"
+            COMMAND \"${PYCODESTYLE_EXECUTABLE}\" \"--config=${CMAKE_CURRENT_BINARY_DIR}/pep8.ini\"
                 \"${PROJECT_SOURCE_DIR}\"
             WORKING_DIRECTORY \"${CMAKE_CURRENT_BINARY_DIR}\")
     ")
@@ -41,6 +41,6 @@ if (CPPCHECK_FOUND)
     add_dependencies(check check-cpp)
 endif ()
 
-if (PEP8_FOUND)
+if (PYCODESTYLE_FOUND)
     add_dependencies(check check-pep8)
 endif ()
