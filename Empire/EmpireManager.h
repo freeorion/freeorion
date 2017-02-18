@@ -58,7 +58,6 @@ public:
     const DiplomaticMessage&    GetDiplomaticMessage(int sender_id, int recipient_id) const;
 
     std::string         Dump() const;
-    std::string         DumpDiplomacy() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -95,6 +94,8 @@ public:
 
 private:
     EmpireManager();
+
+    std::string DumpDiplomacy() const;
 
     /** Adds the given empire to the manager. */
     void        InsertEmpire(Empire* empire);
