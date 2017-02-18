@@ -1,6 +1,6 @@
 import os
 from inspect import getdoc, isroutine
-from generate_stub import make_stub
+from generate_mock import make_mock
 
 
 def get_member_info(member):
@@ -26,7 +26,6 @@ def get_member_info(member):
             info['value'] = member
     else:
         print '>>>', type(member), "of", member
-        print
     return info
 
 
@@ -106,7 +105,7 @@ switcher = {
 }
 
 
-def _inspect(obj, *instances):
+def _inspect(obj, instances):
     data = []
 
     for name, member in getmembers(obj):
@@ -117,7 +116,10 @@ def _inspect(obj, *instances):
             pass
         else:
             print "Unknown", name, type(member), member
-    for instance in instances:
+    for i, instance in enumerate(instances, start=2):
+        if isinstance(instance, (basestring, int, long, float)):
+            print "Argument number %s(1-based) is builtin python instance: (%s) %s" % (i, type(instance), instance)
+            continue
         try:
             data.append(inspect_instance(instance))
         except Exception as e:
@@ -126,9 +128,18 @@ def _inspect(obj, *instances):
     return data
 
 
-def inspect(obj, *instances):
+def inspect(obj, instances, classes_to_ignore=tuple()):
+    """
+    Inspect interface and generate mock. writes its logs to freeoriond.log
+
+    :param obj: main interface module (freeOrionAIInterface for AI)
+    :param instances:  list of instances, required to get more detailed information about them
+    :param classes_to_ignore: classes that should not to be reported when check for missed instances done.
+                              this argument required because some classes present in interface
+                              but have no methods, to get their instances.
+    """
     print "\n\nStart generating skeleton for %s\n\n" % obj.__name__
     folder_name = os.path.join(os.path.dirname(__file__), 'result')
     result_path = os.path.join(folder_name, '%s.py' % obj.__name__)
-    make_stub(_inspect(obj, *instances), result_path)
+    make_mock(_inspect(obj, instances), result_path, classes_to_ignore)
     print "Skeleton written to %s" % result_path

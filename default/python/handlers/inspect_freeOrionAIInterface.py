@@ -1,6 +1,7 @@
 import PlanetUtilsAI
 import freeOrionAIInterface as fo
 
+from common.listeners import register_pre_handler
 from interface_mock import inspect
 
 
@@ -38,39 +39,46 @@ def inspect_ai_interface():
 
     inspect(
         fo,
-        meter,
-        part_meters,
-        color,
-        universe,
-        fleet,
-        planet,
-        universe.getSystem(planet.systemID),
-        ship,
-        empire,
-        design,
-        tech,
-        tech_spec,
-        fo.getFieldType('FLD_ION_STORM'),
-        fo.getBuildingType('BLD_SHIPYARD_BASE'),
-        fo.getGalaxySetupData(),
-        fo.getHullType('SH_XENTRONIUM'),
-        fo.getPartType('SR_WEAPON_1_1'),
-        fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
-        fo.getSpecies('SP_ABADDONI'),
-        fo.getTech('SHP_WEAPON_4_1'),
-        fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptProposal),
-        fleets_int_vector,
-        part_type,
-        prod_queue,
-        prod_queue.allocatedPP,
-        prod_queue[0],
-        research_queue,
-        research_queue[0],
-        empire.getSitRep(0),
-        universe.getBuilding(building),
+        [
+            meter,
+            part_meters,
+            color,
+            universe,
+            fleet,
+            planet,
+            universe.getSystem(planet.systemID),
+            ship,
+            empire,
+            design,
+            tech,
+            tech_spec,
+            fo.getFieldType('FLD_ION_STORM'),
+            fo.getBuildingType('BLD_SHIPYARD_BASE'),
+            fo.getGalaxySetupData(),
+            fo.getHullType('SH_XENTRONIUM'),
+            fo.getPartType('SR_WEAPON_1_1'),
+            fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
+            fo.getSpecies('SP_ABADDONI'),
+            fo.getTech('SHP_WEAPON_4_1'),
+            fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptProposal),
+            fleets_int_vector,
+            part_type,
+            prod_queue,
+            prod_queue.allocatedPP,
+            prod_queue[0],
+            research_queue,
+            research_queue[0],
+            empire.getSitRep(0),
+            universe.getBuilding(building)
+        ],
+        classes_to_ignore=(
+            'IntSet', 'StringSet', 'IntIntMap', 'ShipSlotVec', 'VisibilityIntMap', 'IntDblMap',
+            'IntBoolMap', 'ItemSpecVec', 'PairIntInt_IntMap', 'IntSetSet', 'StringVec',
+            'IntPairVec', 'IntFltMap', 'MeterTypeStringPair', 'MeterTypeMeterMap', 'universeObject',
+            # this item cannot be get from generate orders
+            'diplomaticStatusUpdate',
+        )
     )
     exit(1)  # exit game to main menu no need to play anymore.
-
-from common.listeners import register_pre_handler
 
 register_pre_handler('generateOrders', inspect_ai_interface)

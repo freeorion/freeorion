@@ -107,7 +107,7 @@ known_types = {'boost_class',
                'instance'}
 
 
-def make_stub(data, result_path):
+def make_mock(data, result_path, classes_to_ignore):
     groups = {}
     for info in data:
         if info['type'] in known_types:
@@ -121,16 +121,8 @@ def make_stub(data, result_path):
     enums = sorted(groups['enum'], key=itemgetter('name'))
     enums_names = [x['name'] for x in enums]
 
-    not_required_instances = (
-        ['IntSet', 'StringSet', 'IntIntMap', 'ShipSlotVec', 'VisibilityIntMap', 'IntDblMap',
-         'IntBoolMap', 'ItemSpecVec', 'PairIntInt_IntMap', 'IntSetSet', 'StringVec',
-         'IntPairVec', 'IntFltMap', 'MeterTypeStringPair', 'MeterTypeMeterMap', 'universeObject',
-         # this item cannot be get from generate orders
-         'diplomaticStatusUpdate',
-         ])
-
-    missed_instances = instance_names.symmetric_difference(clases_map).difference(not_required_instances)
-    print "Classes without instances:", ', '.join(sorted(missed_instances))
+    missed_instances = instance_names.symmetric_difference(clases_map).difference(classes_to_ignore)
+    print "Classes without instances (%s):" % len(missed_instances), ', '.join(sorted(missed_instances))
 
     for instance in groups.get('instance', []):
         class_name = instance['class_name']
