@@ -212,8 +212,8 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     m_textures[SPIRAL_4] =    ClientUI::GetTexture(ClientUI::ArtDir() / "gp_spiral4.png");
     m_textures[CLUSTER] =     ClientUI::GetTexture(ClientUI::ArtDir() / "gp_cluster.png");
     m_textures[ELLIPTICAL] =  ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
-    m_textures[DISC] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_elliptical.png");
-    m_textures[BOX] =         ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
+    m_textures[DISC] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_disc.png");
+    m_textures[BOX] =         ClientUI::GetTexture(ClientUI::ArtDir() / "gp_box.png");
     m_textures[IRREGULAR] =   ClientUI::GetTexture(ClientUI::ArtDir() / "gp_irregular.png");
     m_textures[RING] =        ClientUI::GetTexture(ClientUI::ArtDir() / "gp_ring.png");
     m_textures[RANDOM] =      ClientUI::GetTexture(ClientUI::ArtDir() / "gp_random.png");

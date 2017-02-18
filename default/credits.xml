@@ -132,5 +132,8 @@
       <PERSON name="Jean-Charles Schmidt"     nick="Ouaz"             task="French Translation"/>
       <PERSON name=""                         nick="evzorge"          task="Russian Translation"/>
     </GROUP>
+    <GROUP name="INCLUDED CONTENT">
+      <PERSON name="Adam Evans"               nick="http://www.flickr.com/photos/8269775@N05"   task="Andromeda Galaxy (with h-alpha).jpg (modified)"/>
+    </GROUP>
   </CREDITS>
 </XMLDoc>
