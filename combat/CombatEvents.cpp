@@ -801,10 +801,12 @@ std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire
 
     // Use show_events_for_empire to show events in this order: viewing empire, ALL_EMPIRES and
     // then the remainder.
-    auto show_events_for_empire = [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id](boost::optional<int> show_attacker)
-        {
-            int attacker_empire, target_empire;
-            for (const auto& index_and_event: events_to_show) {
+    auto show_events_for_empire =
+        [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id]
+        (boost::optional<int> show_attacker) {
+            int attacker_empire;
+            int target_empire;
+            for (const auto& index_and_event : events_to_show) {
                 std::tie(attacker_empire, target_empire) = index_and_event.first;
 
                 // Skip if this is not the particular attacker requested
