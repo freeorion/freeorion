@@ -176,9 +176,9 @@ namespace {
       * location and the amount of minerals and industry produced in the group).
       * Elements will not receive funding if they cannot be produced by the
       * empire with the indicated \a empire_id this turn at their build location. */
-    void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp,
-                                     const std::vector<std::set<int> >& queue_element_resource_sharing_object_groups,
-                                     ProductionQueue::QueueType& queue, std::map<std::set<int>, float>& allocated_pp,
+    void SetProdQueueElementSpending(std::map<ResourcePool::key_type, float> available_pp,
+                                     const std::vector<ResourcePool::key_type>& queue_element_resource_sharing_object_groups,
+                                     ProductionQueue::QueueType& queue, std::map<ResourcePool::key_type, float>& allocated_pp,
                                      int& projects_in_progress, int empire_id)
     {
         //DebugLogger() << "========SetProdQueueElementSpending========";
@@ -228,15 +228,15 @@ namespace {
             }
 
             // get resource sharing group and amount of resource available to build this item
-            const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
-            if (group.empty()) {
+            const auto& group = queue_element_resource_sharing_object_groups[i];
+            if (group->empty()) {
                 //DebugLogger() << "resource sharing group for queue element is empty.  not allocating any resources to element";
                 queue_element.allocated_pp = 0.0f;
                 ++i;
                 continue;
             }
 
-            std::map<std::set<int>, float>::iterator available_pp_it = available_pp.find(group);
+            const auto& available_pp_it = available_pp.find(group);
             if (available_pp_it == available_pp.end()) {
                 // item is not being built at an object that has access to resources, so it can't be produced.
                 //DebugLogger() << "no resource sharing group for production queue element";
@@ -871,50 +871,50 @@ int ProductionQueue::ProjectsInProgress() const
 float ProductionQueue::TotalPPsSpent() const {
     // add up allocated PP from all resource sharing object groups
     float retval = 0.0f;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_object_group_allocated_pp)
+    for (const auto& entry : m_object_group_allocated_pp)
     { retval += entry.second; }
     return retval;
 }
 
-std::map<std::set<int>, float> ProductionQueue::AvailablePP(
+std::map<ResourcePool::key_type, float> ProductionQueue::AvailablePP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
 {
-    std::map<std::set<int>, float> retval;
     if (!industry_pool) {
         ErrorLogger() << "ProductionQueue::AvailablePP passed invalid industry resource pool";
-        return retval;
+        return {};
     }
 
+    std::map<ResourcePool::key_type, float> retval;
     // determine available PP (ie. industry) in each resource sharing group of systems
-    for (std::map<std::set<int>, float>::value_type& ind : industry_pool->Available()) {
+    for (auto& ind : industry_pool->Available()) {
         // get group of systems in industry pool
-        const std::set<int>& group = ind.first;
+        const auto& group = ind.first;
         retval[group] = ind.second;
     }
 
     return retval;
 }
 
-const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
+const std::map<ResourcePool::key_type, float>& ProductionQueue::AllocatedPP() const
 { return m_object_group_allocated_pp; }
 
-std::set<std::set<int> > ProductionQueue::ObjectsWithWastedPP(
+std::set<ResourcePool::key_type> ProductionQueue::ObjectsWithWastedPP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
 {
-    std::set<std::set<int> > retval;
     if (!industry_pool) {
         ErrorLogger() << "ProductionQueue::ObjectsWithWastedPP passed invalid industry resource pool";
-        return retval;
+        return {};
     }
 
-    for (std::map<std::set<int>, float>::value_type& avail_pp : AvailablePP(industry_pool)) {
+    std::set<ResourcePool::key_type> retval;
+    for (auto& avail_pp : AvailablePP(industry_pool)) {
         //std::cout << "available PP groups size: " << avail_pp.first.size() << " pp: " << avail_pp.second << std::endl;
 
         if (avail_pp.second <= 0)
             continue;   // can't waste if group has no PP
-        const std::set<int>& group = avail_pp.first;
+        const auto& group = avail_pp.first;
         // find this group's allocated PP
-        std::map<std::set<int>, float>::const_iterator alloc_it = m_object_group_allocated_pp.find(group);
+        const auto& alloc_it = m_object_group_allocated_pp.find(group);
         // is less allocated than is available?  if so, some is wasted
         if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_pp.second)
             retval.insert(avail_pp.first);
@@ -980,28 +980,32 @@ void ProductionQueue::Update() {
 
     ScopedTimer update_timer("ProductionQueue::Update");
 
-    std::map<std::set<int>, float> available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+    const auto& available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
 
     // determine which resource sharing group each queue item is located in
-    std::vector<std::set<int> > queue_element_groups;
+    std::vector<ResourcePool::key_type> queue_element_groups;
     for (const ProductionQueue::Element& element : m_queue) {
         // get location object for element
         int location_id = element.location;
 
         // search through groups to find object
-        for (std::map<std::set<int>, float>::const_iterator groups_it = available_pp.begin();
-             true; ++groups_it)
+        for (auto groups_it = available_pp.begin(); true; ++groups_it)
         {
             if (groups_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
-                queue_element_groups.push_back(std::set<int>());
+
+                //TODO Danger makeing a new set?
+                ErrorLogger() << "Expected to find " << location_id << " in resource pool.  Adding a dummy item.";
+                auto single_item_group = std::make_shared<std::unordered_set<int>>();
+                single_item_group->insert(location_id);
+                queue_element_groups.push_back(single_item_group);
                 break;
             }
 
             // check if location object id is in this group
-            const std::set<int>& group = groups_it->first;
-            std::set<int>::const_iterator set_it = group.find(location_id);
-            if (set_it != group.end()) {
+            const auto& group = groups_it->first;
+            const auto& set_it = group->find(location_id);
+            if (set_it != group->end()) {
                 // system is in this group.
                 queue_element_groups.push_back(group);  // record this discovery
                 break;                                  // stop searching for a group containing a system, since one has been found
@@ -1019,7 +1023,7 @@ void ProductionQueue::Update() {
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
     bool simulate_future = false;
-    for (std::map<std::set<int>, float>::value_type& available : available_pp) {
+    for (auto& available : available_pp) {
         if (available.second > EPSILON) {
             simulate_future = true;
             break;
@@ -1045,7 +1049,7 @@ void ProductionQueue::Update() {
 
     // duplicate production queue state for future simulation
     QueueType sim_queue = m_queue;
-    std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;
+    auto sim_queue_element_groups = queue_element_groups;
     std::vector<int>            simulation_results(sim_queue.size(), -1);
     std::vector<unsigned int>   sim_queue_original_indices(sim_queue.size());
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
@@ -1069,14 +1073,14 @@ void ProductionQueue::Update() {
     // also remove from simulated queue any items that are located in a resource
     // sharing object group that is empty or that does not have any PP available
     for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-        const std::set<int>& group = queue_element_groups[sim_queue_original_indices[i]];
+        const auto& group = queue_element_groups[sim_queue_original_indices[i]];
 
         // if any removal condition is met, remove item from queue
         bool remove = false;
-        if (group.empty() || !empire->ProducibleItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
+        if (group->empty() || !empire->ProducibleItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
             remove = true;
         } else {
-            std::map<std::set<int>, float>::const_iterator available_it = available_pp.find(group);
+            const auto available_it = available_pp.find(group);
             if (available_it == available_pp.end() || available_it->second < EPSILON)                   // missing group or non-empty group with no PP available
                 remove = true;
         }
@@ -1119,7 +1123,7 @@ void ProductionQueue::Update() {
     dp_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
 
     //invert lookup direction of sim_queue_element_groups:
-    std::map< std::set<int>, std::vector<int>  > elements_by_group;
+    std::map<ResourcePool::key_type, std::vector<int>> elements_by_group;
     for (unsigned int i = 0; i < dpsim_queue.size(); ++i)
         elements_by_group[sim_queue_element_groups[i]].push_back(i);
 
@@ -1138,7 +1142,7 @@ void ProductionQueue::Update() {
 
 
     // within each group, allocate PP to queue items
-    for (const std::map<std::set<int>, float>::value_type& group : available_pp) {
+    for (const auto& group : available_pp) {
         unsigned int first_turn_pp_available = 1; //the first turn any pp in this resource group is available to the next item for this group
         unsigned int turn_jump = 0;
         //pp_still_available[turn-1] gives the PP still available in this resource pool at turn "turn"
@@ -3496,10 +3500,10 @@ void Empire::InitResourcePools() {
     m_resource_pools[RE_INDUSTRY]->SetConnectedSupplyGroups(GetSupplyManager().ResourceSupplyGroups(m_id));
 
     // set non-blockadeable resource pools to share resources between all systems
-    std::vector<std::unordered_set<int>> sets_set;
-    std::unordered_set<int> all_systems_set;
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingSystems()) {
-        all_systems_set.insert(entry.first);
+    std::vector<ResourcePool::key_type> sets_set;
+    auto all_systems_set = std::make_shared<std::unordered_set<int>>();
+    for (const auto& entry : Objects().ExistingSystems()) {
+        all_systems_set->insert(entry.first);
     }
     sets_set.push_back(all_systems_set);
     m_resource_pools[RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);

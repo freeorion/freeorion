@@ -7449,9 +7449,9 @@ namespace {
             // is candidate object connected to a subcondition matching object by resource supply?
             for (std::shared_ptr<const UniverseObject> from_object : m_from_objects) {
                 for (const auto& group : groups) {
-                    if (group.find(from_object->SystemID()) != group.end()) {
+                    if (group->find(from_object->SystemID()) != group->end()) {
                         // found resource sharing group containing test object.  Does it also contain candidate?
-                        if (group.find(candidate->SystemID()) != group.end())
+                        if (group->find(candidate->SystemID()) != group->end())
                             return true;    // test object and candidate object are in same resourse sharing group
                         else
                             // test object is not in resource sharing group with candidate

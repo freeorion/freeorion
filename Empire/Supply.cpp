@@ -18,6 +18,8 @@
 #include <boost/serialization/set.hpp>
 #include <boost/serialization/unordered_map.hpp>
 #include <boost/serialization/unordered_set.hpp>
+#include <boost/serialization/shared_ptr.hpp>
+
 #include <boost/graph/connected_components.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/graph/connected_components.hpp>
@@ -54,8 +56,8 @@ public:
 
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */
-    const std::unordered_map<int, std::vector<std::unordered_set<int> > >&         ResourceSupplyGroups() const;
-    const std::vector<std::unordered_set<int> >&                         ResourceSupplyGroups(int empire_id) const;
+    const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>& ResourceSupplyGroups() const;
+    const std::vector<std::shared_ptr<const std::unordered_set<int>>>&                          ResourceSupplyGroups(int empire_id) const;
 
     /** Returns the range from each system some empire can propagate supply.*/
     const std::unordered_map<int, float>&                             PropagatedSupplyRanges() const;
@@ -116,7 +118,7 @@ private:
     /** sets of system ids that are connected by supply lines and are able to
         share resources between systems or between objects in systems. indexed
         by empire id. */
-    std::unordered_map<int, std::vector<std::unordered_set<int> > >        m_resource_supply_groups;
+    std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>  m_resource_supply_groups;
 
     /** for whichever empire can propagate supply into this system, what is the
         additional range from this system that empire can propagate supply */
@@ -161,7 +163,7 @@ namespace {
     static const std::set<int> EMPTY_INT_SET;
     static const std::set<std::set<int>> EMPTY_INT_SET_SET;
     static const std::unordered_set<int> EMPTY_INT_UNORDERED_SET;
-    static const std::vector<std::unordered_set<int>> EMPTY_INT_VECTOR_UNORDERED_SET;
+    static const std::vector<std::shared_ptr<const std::unordered_set<int>>> EMPTY_INT_VECTOR_SHARED_UNORDERED_SET;
     static const std::set<std::pair<int, int>> EMPTY_INT_PAIR_SET;
     static const std::map<int, float> EMPTY_INT_FLOAT_MAP;
     static const std::unordered_map<int, float> EMPTY_INT_FLOAT_UNORDERED_MAP;
@@ -223,14 +225,14 @@ int SupplyManager::SupplyManagerImpl::EmpireThatCanSupplyAt(int system_id) const
     return ALL_EMPIRES;
 }
 
-const std::unordered_map<int, std::vector<std::unordered_set<int>>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups() const
+const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups() const
 { return m_resource_supply_groups; }
 
-const std::vector<std::unordered_set<int>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups(int empire_id) const {
+const std::vector<std::shared_ptr<const std::unordered_set<int>>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups(int empire_id) const {
     const auto& it = m_resource_supply_groups.find(empire_id);
     if (it != m_resource_supply_groups.end())
         return it->second;
-    return EMPTY_INT_VECTOR_UNORDERED_SET;
+    return EMPTY_INT_VECTOR_SHARED_UNORDERED_SET;
 }
 
 const std::unordered_map<int, float>& SupplyManager::SupplyManagerImpl::PropagatedSupplyRanges() const {
@@ -361,7 +363,7 @@ std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
             retval += "Supply groups for empire " + std::to_string(empire_supply.first) + "\n";
             for (const auto& system_group : empire_supply.second) {
                 retval += "group: ";
-                for (int system_id : system_group) {
+                for (int system_id : *system_group) {
                     std::shared_ptr<const System> sys = GetSystem(system_id);
                     if (!sys)
                         continue;
@@ -1916,11 +1918,13 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups() {
         // output: std::map<int, std::set<std::set<int>>>& m_resource_supply_groups
 
         // first, sort into a map from component id to set of system ids in component
-        std::unordered_map<int, std::unordered_set<int>> component_sets_map;
+        std::unordered_map<int, std::shared_ptr<std::unordered_set<int>>> component_sets_map;
         for (std::size_t comp_graph_id = 0; comp_graph_id != components.size(); ++comp_graph_id) {
             int label = components[comp_graph_id];
             int sys_id = graph_id_to_sys_id[comp_graph_id];
-            component_sets_map[label].insert(sys_id);
+            if (component_sets_map.find(label) == component_sets_map.end())
+                component_sets_map.insert({label, std::make_shared<std::unordered_set<int>>()});
+            component_sets_map[label]->insert(sys_id);
         }
 
         // copy sets in map into set of sets
@@ -2344,10 +2348,10 @@ std::unordered_set<int>                                           SupplyManager:
 int                                                     SupplyManager::EmpireThatCanSupplyAt(int system_id) const
 { return pimpl->EmpireThatCanSupplyAt(system_id); }
 
-const std::unordered_map<int, std::vector<std::unordered_set<int>>>&         SupplyManager::ResourceSupplyGroups() const
+const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>&         SupplyManager::ResourceSupplyGroups() const
 { return pimpl->ResourceSupplyGroups(); }
 
-const std::vector<std::unordered_set<int>>&                         SupplyManager::ResourceSupplyGroups(int empire_id) const
+const std::vector<std::shared_ptr<const std::unordered_set<int>>>&                         SupplyManager::ResourceSupplyGroups(int empire_id) const
 { return pimpl->ResourceSupplyGroups(empire_id); }
 
 const std::unordered_map<int, float>&                             SupplyManager::PropagatedSupplyRanges() const

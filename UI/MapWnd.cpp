@@ -3211,8 +3211,8 @@ namespace {
     }
 
     void GetResPoolLaneInfo(int empire_id,
-                            boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>& res_pool_systems,
-                            boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>& res_group_cores,
+                            boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>>& res_pool_systems,
+                            boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>>& res_group_cores,
                             std::unordered_set<int>& res_group_core_members,
                             boost::unordered_map<int, std::shared_ptr<std::set<int>>>& member_to_core,
                             std::shared_ptr<std::unordered_set<int>>& under_alloc_res_grp_core_members)
@@ -3229,18 +3229,18 @@ namespace {
             return;
 
         const ProductionQueue& queue = empire->GetProductionQueue();
-        const std::map<std::set<int>, float>& allocated_pp(queue.AllocatedPP());
-        const std::map<std::set<int>, float> available_pp(empire->GetResourcePool(RE_INDUSTRY)->Available());
+        const auto& allocated_pp(queue.AllocatedPP());
+        const auto& available_pp(empire->GetResourcePool(RE_INDUSTRY)->Available());
 
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
-        for (const std::map<std::set<int>, float>::value_type& available_pp_group : available_pp) {
+        for (const auto& available_pp_group : available_pp) {
             float group_pp = available_pp_group.second;
             if (group_pp < 1e-4f)
                 continue;
 
             // std::string this_pool = "( ";
-            for (int object_id : available_pp_group.first) {
+            for (int object_id : *available_pp_group.first) {
                 // this_pool += std::to_string(object_id) +", ";
 
                 std::shared_ptr<const Planet> planet = GetPlanet(object_id);
@@ -3276,8 +3276,8 @@ namespace {
         // For each pool of resources find all paths available through
         // the supply network.
 
-        for (boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>::value_type& res_pool_system : res_pool_systems) {
-            std::shared_ptr<std::set<int>>& group_core = lookup_or_make_shared(res_group_cores, res_pool_system.first);
+        for (boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>>::value_type& res_pool_system : res_pool_systems) {
+            auto& group_core = lookup_or_make_shared(res_group_cores, res_pool_system.first);
 
             // All individual resource system are included in the
             // network on their own.
@@ -3307,14 +3307,14 @@ namespace {
         }
 
         // Take note of all systems of under allocated resource groups.
-        for (const std::map<std::set<int>, float>::value_type& available_pp_group : available_pp) {
+        for (const auto& available_pp_group : available_pp) {
             float group_pp = available_pp_group.second;
             if (group_pp < 1e-4f)
                 continue;
 
-            std::map<std::set<int>, float>::const_iterator allocated_it = allocated_pp.find(available_pp_group.first);
+            const auto& allocated_it = allocated_pp.find(available_pp_group.first);
             if (allocated_it == allocated_pp.end() || (group_pp > allocated_it->second + 0.05)) {
-                boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>::iterator group_core_it = res_group_cores.find(available_pp_group.first);
+                boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>>::iterator group_core_it = res_group_cores.find(available_pp_group.first);
                 if (group_core_it != res_group_cores.end()) {
                     if (!under_alloc_res_grp_core_members)
                         under_alloc_res_grp_core_members = std::make_shared<std::unordered_set<int>>();
@@ -3347,9 +3347,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     // Get info about rendered empire resource starlanes
 
     // map keyed by ResourcePool (set of objects) to the corresponding set of system ids
-    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_pool_systems;
+    boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>> res_pool_systems;
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_group_cores;
+    boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>> res_group_cores;
     std::unordered_set<int> res_group_core_members;
     boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
     std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
@@ -6414,16 +6414,16 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     const std::shared_ptr<ResourcePool> pool = empire->GetResourcePool(RE_INDUSTRY);
     if (!pool)
         return false;
-    std::set<std::set<int>> wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
+    const auto& wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
     if (wasted_PP_objects.empty())
         return false;
 
     // pick first object in first group
-    const std::set<int>& obj_group = *wasted_PP_objects.begin();
-    if (obj_group.empty())
+    const auto& obj_group = *wasted_PP_objects.begin();
+    if (obj_group->empty())
         return false; // shouldn't happen?
-    for (const std::set<int>& obj_ids : wasted_PP_objects) {
-        for (int obj_id : obj_ids) {
+    for (const auto& obj_ids : wasted_PP_objects) {
+        for (int obj_id : *obj_ids) {
             std::shared_ptr<const UniverseObject> obj = GetUniverseObject(obj_id);
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.

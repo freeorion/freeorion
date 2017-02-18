@@ -169,9 +169,9 @@ namespace {
         const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planetsWithAvailablePP;
-        for (const std::map<std::set<int>, float>::value_type& objects_pp : prodQueue.AvailablePP(industry_pool)) {
+        for (const auto& objects_pp : prodQueue.AvailablePP(industry_pool)) {
             std::set<int> planetSet;
-            for (int object_id : objects_pp.first) {
+            for (int object_id : *objects_pp.first) {
                 if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                     planetSet.insert(object_id);
             }
@@ -185,10 +185,10 @@ namespace {
     std::map<std::set<int>, float> PlanetsWithAllocatedPP_P(const Empire& empire) {
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planetsWithAllocatedPP;
-        std::map<std::set<int>, float> objectsWithAllocatedPP = prodQueue.AllocatedPP();
-        for (const std::map<std::set<int>, float>::value_type& objects_pp : objectsWithAllocatedPP) {
+        const auto& objectsWithAllocatedPP = prodQueue.AllocatedPP();
+        for (const auto& objects_pp : objectsWithAllocatedPP) {
             std::set<int> planetSet;
-            for (int object_id : objects_pp.first) {
+            for (int object_id : *objects_pp.first) {
                 if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                     planetSet.insert(object_id);
             }
@@ -203,10 +203,10 @@ namespace {
         const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::set<std::set<int> > planetsWithWastedPP;
-        std::set<std::set<int> > objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
-        for (const std::set<int>&  objects : objectsWithWastedPP) {
+        const auto& objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
+        for (const auto&  objects : objectsWithWastedPP) {
                  std::set<int> planetSet;
-                 for (int object_id : objects) {
+                 for (int object_id : *objects) {
                      if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                          planetSet.insert(object_id);
                  }

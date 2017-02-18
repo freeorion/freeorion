@@ -224,15 +224,15 @@ struct FO_COMMON_API ProductionQueue {
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP available in those groups of objects */
-    std::map<std::set<int>, float> AvailablePP(const std::shared_ptr<ResourcePool>& industry_pool) const;
+    std::map<ResourcePool::key_type, float> AvailablePP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
       * in systems in the group. */
-    const std::map<std::set<int>, float>&  AllocatedPP() const;
+    const std::map<ResourcePool::key_type, float>&  AllocatedPP() const;
 
     /** Returns sets of object ids that have more available than allocated PP */
-    std::set<std::set<int>> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
+    std::set<ResourcePool::key_type> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
 
     // STL container-like interface
@@ -277,7 +277,7 @@ struct FO_COMMON_API ProductionQueue {
 private:
     QueueType                       m_queue;
     int                             m_projects_in_progress;
-    std::map<std::set<int>, float>  m_object_group_allocated_pp;
+    std::map<ResourcePool::key_type, float>  m_object_group_allocated_pp;
     int                             m_empire_id;
 
     friend class boost::serialization::access;

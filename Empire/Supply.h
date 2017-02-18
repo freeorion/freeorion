@@ -64,8 +64,8 @@ public:
 
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */
-    const std::unordered_map<int, std::vector<std::unordered_set<int>>>& ResourceSupplyGroups() const;
-    const std::vector<std::unordered_set<int>>&                          ResourceSupplyGroups(int empire_id) const;
+    const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>& ResourceSupplyGroups() const;
+    const std::vector<std::shared_ptr<const std::unordered_set<int>>>&                          ResourceSupplyGroups(int empire_id) const;
 
     /** Returns the range from each system some empire can propagate supply.*/
     const std::unordered_map<int, float>&                             PropagatedSupplyRanges() const;
