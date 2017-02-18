@@ -5294,7 +5294,7 @@ void MapWnd::SelectedShipsChanged() {
         selected_ship_ids = fleet_wnd->SelectedShipIDs();
 
     // if old and new sets of selected fleets are the same, don't need to change anything
-    if (selected_ship_ids == m_selected_fleet_ids)
+    if (selected_ship_ids == m_selected_ship_ids)
         return;
 
     // set new selected fleets
