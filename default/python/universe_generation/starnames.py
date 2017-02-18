@@ -53,7 +53,7 @@ def cluster_stars(positions, num_star_groups):
     """
     Returns a list, same size as positions argument, containing indices from 0 to num_star_groups.
     """
-    
+
     if num_star_groups > len(positions):
         return [[pos] for pos in positions]
     centers = [[pos[0], pos[1]] for pos in random.sample(positions, num_star_groups)]

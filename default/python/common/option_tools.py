@@ -1,7 +1,7 @@
 import os
 import sys
 from ConfigParser import SafeConfigParser
-from collections import OrderedDict as odict
+from collections import OrderedDict
 
 AI_SUB_DIR = 'AI'
 DEFAULT_SUB_DIR = os.path.join(AI_SUB_DIR, 'default')
@@ -15,8 +15,8 @@ TIMERS_DUMP_FOLDER = 'timers_dump_folder'
 HANDLERS = 'handlers'
 
 
-flat_options = odict()
-sectioned_options = odict()
+flat_options = OrderedDict()
+sectioned_options = OrderedDict()
 
 
 def _get_option_file(config_dir):
@@ -30,15 +30,15 @@ def _get_option_file(config_dir):
 
 
 def _get_default_file_path(config_dir):
-    CONFIG_DEFAULT_DIR = os.path.join(config_dir, DEFAULT_SUB_DIR)
+    config_default_dir = os.path.join(config_dir, DEFAULT_SUB_DIR)
 
     try:
-        if os.path.isdir(config_dir) and not os.path.isdir(CONFIG_DEFAULT_DIR):
-            os.makedirs(CONFIG_DEFAULT_DIR)
+        if os.path.isdir(config_dir) and not os.path.isdir(config_default_dir):
+            os.makedirs(config_default_dir)
     except OSError:
-        sys.stderr.write("AI Config Error: could not create path %s\n" % CONFIG_DEFAULT_DIR)
+        sys.stderr.write("AI Config Error: could not create path %s\n" % config_default_dir)
         return config_dir
-    return CONFIG_DEFAULT_DIR
+    return config_default_dir
 
 
 def _get_preset_default_ai_options():
@@ -47,17 +47,19 @@ def _get_preset_default_ai_options():
     each sub-dict corresponds to a config file section
     :return:
     """
-    return odict([
-        (TIMER_SECTION, odict([
-            (TIMERS_USE_TIMERS, False),
-            (TIMERS_TO_FILE, False),
-            (TIMERS_DUMP_FOLDER, 'timers')
-        ])
-         ),
-        ('main', odict([
-            (HANDLERS, '')
-        ])
-         )  # module names in handler directory, joined by space
+    return OrderedDict([
+        (
+            TIMER_SECTION, OrderedDict([
+                (TIMERS_USE_TIMERS, False),
+                (TIMERS_TO_FILE, False),
+                (TIMERS_DUMP_FOLDER, 'timers')
+            ])
+        ),
+        (
+            'main', OrderedDict([
+                (HANDLERS, '')
+            ])
+        )  # module names in handler directory, joined by space
     ])
 
 
@@ -120,7 +122,7 @@ def parse_config(option_string, config_dir):
             sys.stderr.write("AI Config Error; could NOT read config file(s): %s\n"
                              % list(set(config_files).difference(configs_read)))
     for section in config.sections():
-        sectioned_options.setdefault(section, odict())
+        sectioned_options.setdefault(section, OrderedDict())
         for k, v in config.items(section):
             flat_options[k] = v
             sectioned_options[section][k] = v

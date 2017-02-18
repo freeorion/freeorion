@@ -306,7 +306,7 @@ def generate_production_orders():
                         cost, time = empire.productionCostAndTime(production_queue[production_queue.size - 1])
                         building_expense += cost / time
 
-            if (total_pp > 40 or ((current_turn > 40) and (ColonisationAI.empire_status.get('industrialists', 0) >= 20))) and ("BLD_INDUSTRY_CENTER" in possible_building_types) and ("BLD_INDUSTRY_CENTER" not in (capital_buildings+queued_building_names)) and (building_expense < building_ratio*total_pp):
+            if (total_pp > 40 or ((current_turn > 40) and (ColonisationAI.empire_status.get('industrialists', 0) >= 20))) and ("BLD_INDUSTRY_CENTER" in possible_building_types) and ("BLD_INDUSTRY_CENTER" not in (capital_buildings + queued_building_names)) and (building_expense < building_ratio * total_pp):
                 res = fo.issueEnqueueBuildingProductionOrder("BLD_INDUSTRY_CENTER", homeworld.id)
                 print "Enqueueing BLD_INDUSTRY_CENTER, with result %d" % res
                 if res:
@@ -398,7 +398,7 @@ def generate_production_orders():
                         if num_needed > 1:
                             fo.issueChangeProductionQuantityOrder(production_queue.size - 1, 1, num_needed)
                         cost, time = empire.productionCostAndTime(production_queue[production_queue.size - 1])
-                        defense_allocation += production_queue[production_queue.size - 1].blocksize * cost/time
+                        defense_allocation += production_queue[production_queue.size - 1].blocksize * cost / time
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                         break
 
@@ -596,7 +596,7 @@ def generate_production_orders():
                             else:
                                 builder_loc_choices.append(sys_id)
                                 need_yard[sys_id] = pid
-                yard_locs.extend((colonizer_loc_choices+builder_loc_choices)[:1])  # add at most one of these non top pilot locs
+                yard_locs.extend((colonizer_loc_choices + builder_loc_choices)[:1])  # add at most one of these non top pilot locs
             new_yard_count = len(queued_building_locs)
             for sys_id in yard_locs:  # build at most 2 new asteroid yards at a time
                 if new_yard_count >= 2:
@@ -764,7 +764,7 @@ def generate_production_orders():
                     print "problem queueing %s at planet %s" % (building_name, planet_used)
 
     building_name = "BLD_BLACK_HOLE_POW_GEN"
-    if empire.buildingTypeAvailable(building_name) and  foAI.foAIstate.character.may_build_building(building_name):
+    if empire.buildingTypeAvailable(building_name) and foAI.foAIstate.character.may_build_building(building_name):
         already_got_one = False
         for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
             planet = universe.getPlanet(pid)
@@ -915,7 +915,7 @@ def generate_production_orders():
         c_pop = planet.currentMeterValue(fo.meterType.population)
         t_ind = planet.currentMeterValue(fo.meterType.targetIndustry)
         c_ind = planet.currentMeterValue(fo.meterType.industry)
-        pop_disqualified = (c_pop <= 32) or (c_pop < 0.9*t_pop)
+        pop_disqualified = (c_pop <= 32) or (c_pop < 0.9 * t_pop)
         built_camp = False
         this_spec = planet.speciesName
         safety_margin_met = ((this_spec in ColonisationAI.empire_colonizers and (len(state.get_empire_planets_with_species(this_spec)) + len(colony_ship_map.get(this_spec, [])) >= 2)) or (c_pop >= 50))
@@ -1056,7 +1056,7 @@ def generate_production_orders():
 
     building_name = "BLD_XENORESURRECTION_LAB"
     queued_xeno_lab_locs = [element.locationID for element in production_queue if element.name == building_name]
-    for pid in list(AIstate.popCtrIDs)+list(AIstate.outpostIDs):
+    for pid in list(AIstate.popCtrIDs) + list(AIstate.outpostIDs):
         if pid in queued_xeno_lab_locs or not empire.canBuild(fo.buildType.building, building_name, pid):
             continue
         res = fo.issueEnqueueBuildingProductionOrder(building_name, pid)
@@ -1177,13 +1177,13 @@ def generate_production_orders():
             loc = random.choice(build_choices)
             prod_time = best_design.productionTime(empire.empireID, loc)
             prod_cost = best_design.productionCost(empire.empireID, loc)
-            troopers_needed = max(0, int(min(0.99 + (current_turn/20.0 - total_available_troops)/max(2, prod_time - 1), total_military_ships/3 - total_troop_ships)))
+            troopers_needed = max(0, int(min(0.99 + (current_turn/20.0 - total_available_troops) / max(2, prod_time - 1), total_military_ships/3 - total_troop_ships)))
             ship_number = troopers_needed
             per_turn_cost = (float(prod_cost) / prod_time)
-            if troopers_needed > 0 and total_pp > 3*per_turn_cost*queued_troop_ships and foAI.foAIstate.character.may_produce_troops():
+            if troopers_needed > 0 and total_pp > 3 * per_turn_cost * queued_troop_ships and foAI.foAIstate.character.may_produce_troops():
                 retval = fo.issueEnqueueShipProductionOrder(best_design_id, loc)
                 if retval != 0:
-                    print "forcing %d new ship(s) to production queue: %s; per turn production cost %.1f" % (ship_number, best_design.name, ship_number*per_turn_cost)
+                    print "forcing %d new ship(s) to production queue: %s; per turn production cost %.1f" % (ship_number, best_design.name, ship_number * per_turn_cost)
                     print
                     if ship_number > 1:
                         fo.issueChangeProductionQuantityOrder(production_queue.size - 1, 1, ship_number)
@@ -1268,7 +1268,7 @@ def generate_production_orders():
             species_map.setdefault(this_spec, []).append(loc)
         colony_build_choices = []
         for pid, (score, this_spec) in foAI.foAIstate.colonisablePlanetIDs.items():
-            colony_build_choices.extend(int(math.ceil(score))*[pid2 for pid2 in species_map.get(this_spec, []) if pid2 in planet_set])
+            colony_build_choices.extend(int(math.ceil(score)) * [pid2 for pid2 in species_map.get(this_spec, []) if pid2 in planet_set])
 
         local_priorities = {}
         local_priorities.update(filtered_priorities)
@@ -1469,7 +1469,7 @@ def _print_production_queue(after_turn=False):
             element.name,
             universe.getPlanet(element.locationID),
             "%dx %d" % (element.remaining, element.blocksize),
-            "%.1f / %.1f" %(element.progress, cost),
+            "%.1f / %.1f" % (element.progress, cost),
             "%.1f" % element.allocation,
             "%d" % element.turnsLeft,
         ])

@@ -71,6 +71,7 @@ def inspect_ai_interface():
     )
     exit(1)  # exit game to main menu no need to play anymore.
 
+
 from common.listeners import register_pre_handler
 
 register_pre_handler('generateOrders', inspect_ai_interface)

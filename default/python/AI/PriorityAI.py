@@ -116,7 +116,7 @@ def _calculate_research_priority():
     mgrav_prod_tech = AIDependencies.PRO_MICROGRAV_MAN
     got_mgrav_prod = tech_is_complete(mgrav_prod_tech)
     # got_solar_gen = tech_is_complete(AIDependencies.PRO_SOL_ORB_GEN)
-    
+
     milestone_techs = ["PRO_SENTIENT_AUTOMATION", "LRN_DISTRIB_THOUGHT", "LRN_QUANT_NET", "SHP_WEAPON_2_4", "SHP_WEAPON_3_2", "SHP_WEAPON_4_2"]
     milestones_done = [mstone for mstone in milestone_techs if tech_is_complete(mstone)]
     print "Research Milestones accomplished at turn %d: %s" % (current_turn, milestones_done)
@@ -166,7 +166,7 @@ def _calculate_research_priority():
             research_priority *= 0.5
         else:
             research_priority *= 0.8
-                
+
     if ((tech_is_complete("SHP_WEAPON_2_4") or
          tech_is_complete("SHP_WEAPON_4_1")) and
             tech_is_complete(AIDependencies.PROD_AUTO_NAME)):
@@ -179,7 +179,7 @@ def _calculate_research_priority():
     print "Research Production (current/target) : ( %.1f / %.1f )" % (total_rp, target_rp)
     print "Priority for Research: %d (new target ~ %d RP)" % (research_priority, total_pp * research_priority / industry_priority)
 
-    if len(enemies_sighted) < (2 + current_turn/20.0):  # TODO: adjust for colonisation priority
+    if len(enemies_sighted) < (2 + current_turn / 20.0):  # TODO: adjust for colonisation priority
         research_priority *= 1.2
     if (current_turn > 20) and (len(recent_enemies) > 3):
         research_priority *= 0.8
@@ -231,8 +231,7 @@ def _calculate_colonisation_priority():
     colony_cost = AIDependencies.COLONY_POD_COST * (1 + AIDependencies.COLONY_POD_UPKEEP * num_colonies)
     turns_to_build = 8  # TODO: check for susp anim pods, build time 10
     mil_prio = foAI.foAIstate.get_priority(PriorityType.PRODUCTION_MILITARY)
-    allotted_portion = ([[[0.6, 0.8], [0.3, 0.4]], [[0.8, 0.9], [0.4, 0.6]]][galaxy_is_sparse]
-                       [any(enemies_sighted)])
+    allotted_portion = ([[[0.6, 0.8], [0.3, 0.4]], [[0.8, 0.9], [0.4, 0.6]]][galaxy_is_sparse][any(enemies_sighted)])
     allotted_portion = foAI.foAIstate.character.preferred_colonization_portion(allotted_portion)
     # if ( foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_PRODUCTION_COLONISATION)
     # > 2 * foAI.foAIstate.get_priority(AIPriorityType.PRIORITY_PRODUCTION_MILITARY)):
@@ -252,8 +251,7 @@ def _calculate_colonisation_priority():
 
     if num_colonies > colony_growth_barrier:
         return 0.0
-    num_colonisable_planet_ids = len([pid for (pid, (score, _)) in foAI.foAIstate.colonisablePlanetIDs.items()
-                                   if score > 60][:allottedColonyTargets + 2])
+    num_colonisable_planet_ids = len([pid for (pid, (score, _)) in foAI.foAIstate.colonisablePlanetIDs.items() if score > 60][:allottedColonyTargets + 2])
     if num_colonisable_planet_ids == 0:
         return 1
 
@@ -321,11 +319,11 @@ def _calculate_outpost_priority():
 
 def _calculate_invasion_priority():
     """Calculates the demand for troop ships by opponent planets."""
-    
+
     global allottedInvasionTargets
     if not foAI.foAIstate.character.may_invade():
         return 0
-    
+
     empire = fo.getEmpire()
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
     multiplier = 1
@@ -333,7 +331,7 @@ def _calculate_invasion_priority():
     colony_growth_barrier = foAI.foAIstate.character.max_number_colonies()
     if num_colonies > colony_growth_barrier:
         return 0.0
-    
+
     if len(foAI.foAIstate.colonisablePlanetIDs) > 0:
         best_colony_score = max(2, foAI.foAIstate.colonisablePlanetIDs.items()[0][1][0])
     else:
@@ -385,7 +383,7 @@ def _calculate_invasion_priority():
             invasion_priority *= 1.5
     if not enemies_sighted:
         invasion_priority *= 1.5
-        
+
     if invasion_priority < 0:
         return 0
 
@@ -400,7 +398,7 @@ def _calculate_military_priority():
     capital_id = PlanetUtilsAI.get_capital()
     if capital_id is None or capital_id == INVALID_ID:
         return 0  # no capitol (not even a capitol-in-the-making), means can't produce any ships
-        
+
     have_l1_weaps = (tech_is_complete("SHP_WEAPON_1_4") or
                      (tech_is_complete("SHP_WEAPON_1_3") and tech_is_complete("SHP_MIL_ROBO_CONT")) or
                      tech_is_complete("SHP_WEAPON_2_1") or
@@ -408,7 +406,7 @@ def _calculate_military_priority():
     have_l2_weaps = (tech_is_complete("SHP_WEAPON_2_3") or
                      tech_is_complete("SHP_WEAPON_4_1"))
     enemies_sighted = foAI.foAIstate.misc.get('enemies_sighted', {})
-        
+
     allotted_invasion_targets = 1 + int(fo.currentTurn()/25)
     target_planet_ids = [pid for pid, pscore, trp in AIstate.invasionTargets[:allotted_invasion_targets]] + [pid for pid, pscore in foAI.foAIstate.colonisablePlanetIDs.items()[:allottedColonyTargets]] + [pid for pid, pscore in foAI.foAIstate.colonisableOutpostIDs.items()[:allottedColonyTargets]]
 
@@ -458,7 +456,7 @@ def _calculate_military_priority():
     fmt_string = "Calculating Military Priority:  min(t,40) + max(0,75 * ships_needed) \n\t  Priority: %d  \t ships_needed: %d \t defense_ships_needed: %d \t curShipRating: %.0f \t l1_weaps: %s \t enemies_sighted: %s"
     print fmt_string % (military_priority, ships_needed, defense_ships_needed, cur_ship_rating, have_l1_weaps, enemies_sighted)
     print "Source of milship demand: ", ships_needed_allocation
-    
+
     military_priority *= foAI.foAIstate.character.military_priority_scaling()
     return max(military_priority, 0)
 

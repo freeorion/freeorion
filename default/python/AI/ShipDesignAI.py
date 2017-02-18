@@ -221,22 +221,22 @@ class ShipDesignCache(object):
             print classname
             cache_name = print_dict[classname]
             for consider_fleet in cache_name:
-                print 4*" ", consider_fleet
+                print 4 * " ", consider_fleet
                 cache_upkeep = cache_name[consider_fleet]
                 for req_tuple in cache_upkeep:
-                    print 8*" ", req_tuple
+                    print 8 * " ", req_tuple
                     cache_reqs = cache_upkeep[req_tuple]
                     for tech_tuple in cache_reqs:
-                        print 12*" ", tech_tuple, " # relevant tech upgrades"
+                        print 12 * " ", tech_tuple, " # relevant tech upgrades"
                         cache_techs = cache_reqs[tech_tuple]
                         for species_tuple in cache_techs:
-                            print 16*" ", species_tuple, " # relevant species stats"
+                            print 16 * " ", species_tuple, " # relevant species stats"
                             cache_species = cache_techs[species_tuple]
                             for av_parts in cache_species:
-                                print 20*" ", av_parts
+                                print 20 * " ", av_parts
                                 cache_parts = cache_species[av_parts]
                                 for hullname in sorted(cache_parts, reverse=True, key=lambda x: cache_parts[x][0]):
-                                    print 24*" ", hullname, ":",
+                                    print 24 * " ", hullname, ":",
                                     print cache_parts[hullname]
         self.last_printed = copy.deepcopy(self.best_designs)
 
@@ -450,9 +450,9 @@ class ShipDesignCache(object):
                             else:
                                 a = old_part
                                 b = new_part
-                            if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name]
-                                    and {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes}
-                                    and self.production_time[pid][a.name] <= self.production_time[pid][b.name]):
+                            if (self.production_cost[pid][a.name] <= self.production_cost[pid][b.name] and
+                                    {x for x in a.mountableSlotTypes} >= {x for x in b.mountableSlotTypes} and
+                                    self.production_time[pid][a.name] <= self.production_time[pid][b.name]):
                                 self.strictly_worse_parts[a.name].append(b.name)
                                 print "Part %s is strictly worse than part %s" % (b.name, a.name)
                     break
@@ -645,9 +645,9 @@ class AdditionalSpecifications(object):
             n = 0
             d = 0
             for dmg, count in enemy_attack_stats.iteritems():
-                d += dmg*count
+                d += dmg * count
                 n += count
-            self.avg_enemy_weapon_strength = d/n
+            self.avg_enemy_weapon_strength = d / n
 
         print enemy_attack_stats, self.max_enemy_weapon_strength
 
@@ -976,8 +976,8 @@ class ShipDesigner(object):
                 elif token == AIDependencies.FUEL_PER_TURN:
                     self.fuel_per_turn = max(self.fuel_per_turn + value, self.fuel)
                 elif token == AIDependencies.STEALTH_MODIFIER:
-                    if not (AIDependencies.NO_EFFECT_WITH_CLOAKS in tokendict.get(AIDependencies.STACKING_RULES, [])
-                            and self._partclass_in_design(STEALTH)):
+                    if not (AIDependencies.NO_EFFECT_WITH_CLOAKS in tokendict.get(AIDependencies.STACKING_RULES, []) and
+                            self._partclass_in_design(STEALTH)):
                         self.stealth += value
                 # STACKING_RULES configures NO_EFFECT_WITH_CLOAKS -> ignore
                 elif token == AIDependencies.STACKING_RULES:
@@ -1232,8 +1232,7 @@ class ShipDesigner(object):
             # TODO: Check for redundance of weapons with new tech upgrade system
             # TODO: Check for redundance of hangars
             # TODO Remember to use secondaryStat as well for weapons/hangars
-            check_for_redundance = (ARMOUR | ENGINES | FUEL | SHIELDS
-                                    | STEALTH | DETECTION | TROOPS | FIGHTER_BAY) & self.useful_part_classes
+            check_for_redundance = (ARMOUR | ENGINES | FUEL | SHIELDS | STEALTH | DETECTION | TROOPS | FIGHTER_BAY) & self.useful_part_classes
             for slottype in part_dict:
                 partclass_dict = defaultdict(list)
                 for tup in part_dict[slottype]:
@@ -1253,9 +1252,9 @@ class ShipDesigner(object):
                         cost_a = local_cost_cache.get(a.name, a.productionCost(empire_id, self.pid))
                         for b in shipPartsPerClass:
                             cost_b = local_cost_cache.get(b.name, b.productionCost(empire_id, self.pid))
-                            if (b is not a
-                                    and (b.capacity/cost_b - a.capacity/cost_a) > -1e-6
-                                    and b.capacity >= a.capacity):
+                            if (b is not a and
+                                    b.capacity / cost_b - a.capacity / cost_a > -1e-6 and
+                                    b.capacity >= a.capacity):
                                 if verbose:
                                     print "removing %s because %s is better." % (a.name, b.name)
                                 part_dict[slottype].remove((a.name, a))
@@ -1281,7 +1280,7 @@ class ShipDesigner(object):
         :param num_slots: number of slots to fill
         :return: list of int: the number of parts used in the design (indexed in order as in available_parts)
         """
-        return len(available_parts)*[0] + [num_slots]  # corresponds to an entirely empty design
+        return len(available_parts) * [0] + [num_slots]  # corresponds to an entirely empty design
 
     def _combinatorial_filling(self, available_parts):
         """Fill the design using a combinatorial approach.
@@ -1668,7 +1667,10 @@ class MilitaryShipDesigner(WarShipDesigner):
         parts = [get_part_type(part) for part in available_parts]
         weapons = [part for part in parts if part.partClass in WEAPONS]
         armours = [part for part in parts if part.partClass in ARMOUR]
-        cap = lambda x: x.capacity
+
+        def cap(x):
+            return x.capacity
+
         if weapons:
             weapon_part = max(weapons, key=self._calculate_weapon_strength)
             weapon = weapon_part.name
@@ -1685,17 +1687,17 @@ class MilitaryShipDesigner(WarShipDesigner):
                 ch = Cache.production_cost[self.pid].get(self.hull.name,
                                                          self.hull.productionCost(fo.empireID(), self.pid))
                 if ca == cw:
-                    n = (s+h/a)/2
+                    n = (s + h/a) / 2
                 else:
                     p1 = a*s*ca + a*ch
-                    p2 = math.sqrt(a * (ca*s + ch) * (a*s*cw+a*ch+h*cw-h*ca))
-                    p3 = a*(ca-cw)
-                    n = max((p1+p2)/p3, (p1-p2)/p3)
+                    p2 = math.sqrt(a * (ca*s + ch) * (a*s*cw + a*ch + h*cw - h*ca))
+                    p3 = a * (ca-cw)
+                    n = max((p1+p2) / p3, (p1-p2) / p3)
                 n = int(round(n))
                 n = max(n, 1)
                 n = min(n, s)
                 # print "estimated weapon slots for %s: %d" % (self.hull.name, n)
-                ret_val[idxarmour] = s-n
+                ret_val[idxarmour] = s - n
                 ret_val[idxweapon] = n
             else:
                 ret_val[idxweapon] = num_slots
@@ -1709,7 +1711,7 @@ class MilitaryShipDesigner(WarShipDesigner):
 
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
-        return self.structure*self._total_dmg()*(1+self.shields/10)
+        return self.structure * self._total_dmg() * (1 + self.shields/10)
 
 
 class CarrierShipDesigner(WarShipDesigner):
@@ -1799,7 +1801,7 @@ class CarrierShipDesigner(WarShipDesigner):
         return best_rating, best_partlist
 
     def _calc_rating_for_name(self):
-        base_rating = self.structure*self._total_dmg()*(1+self.shields/10)
+        base_rating = self.structure * self._total_dmg() * (1 + self.shields/10)
         fighter_rating = self.fighter_capacity * self.fighter_launch_rate * (.1+self.fighter_damage)
         return base_rating + fighter_rating
 
@@ -1825,14 +1827,15 @@ class TroopShipDesignerBaseClass(ShipDesigner):
         if self.troops == 0:
             return INVALID_DESIGN_RATING
         else:
-            return self.troops/self._adjusted_production_cost()
+            return self.troops / self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
         # fill completely with biggest troop pods. If none are available for this slot type, leave empty.
         troop_pods = [get_part_type(part) for part in available_parts if get_part_type(part).partClass in TROOPS]
-        ret_val = (len(available_parts)+1)*[0]
+        ret_val = (len(available_parts)+1) * [0]
         if troop_pods:
-            cap = lambda x: x.capacity
+            def cap(x):
+                return x.capacity
             biggest_troop_pod = max(troop_pods, key=cap).name
             try:  # we could use an if-check here but since we usually have troop pods for the slot, try is faster
                 idx = available_parts.index(biggest_troop_pod)
@@ -1909,11 +1912,11 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
     def _rating_function(self):
         if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
             return INVALID_DESIGN_RATING
-        return self.colonisation*(1+0.002*(self.speed-75))/self.production_cost
+        return self.colonisation * (1 + 0.002*(self.speed - 75)) / self.production_cost
 
     def _starting_guess(self, available_parts, num_slots):
         # we want to use one and only one of the best colo pods
-        ret_val = (len(available_parts)+1)*[0]
+        ret_val = (len(available_parts)+1) * [0]
         if num_slots == 0:
             return ret_val
         parts = [get_part_type(part) for part in available_parts]
@@ -1973,7 +1976,7 @@ class OrbitalColonisationShipDesigner(ColonisationShipDesignerBaseClass):
     def _rating_function(self):
         if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
             return INVALID_DESIGN_RATING
-        return self.colonisation/self.production_cost
+        return self.colonisation / self.production_cost
 
 
 class OutpostShipDesignerBaseClass(ShipDesigner):
@@ -1997,7 +2000,7 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
     def _rating_function(self):
         if self.colonisation != 0:
             return INVALID_DESIGN_RATING
-        return (1+0.002*(self.speed-75))/self.production_cost
+        return (1 + 0.002*(self.speed - 75)) / self.production_cost
 
     def _class_specific_filter(self, partname_dict):
         # filter all colo pods
@@ -2009,7 +2012,7 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
 
     def _starting_guess(self, available_parts, num_slots):
         # use one outpost pod as starting guess
-        ret_val = (len(available_parts)+1)*[0]
+        ret_val = (len(available_parts)+1) * [0]
         if num_slots == 0:
             return ret_val
         parts = [get_part_type(part) for part in available_parts]
@@ -2046,7 +2049,7 @@ class OrbitalOutpostShipDesigner(OutpostShipDesignerBaseClass):
     def _rating_function(self):
         if self.colonisation != 0:
             return INVALID_DESIGN_RATING
-        return 1/self.production_cost
+        return 1 / self.production_cost
 
 
 class StandardOutpostShipDesigner(OutpostShipDesignerBaseClass):
@@ -2088,7 +2091,7 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
         if self.speed > 10:
             return INVALID_DESIGN_RATING
         total_dmg = self._total_dmg_vs_shields()
-        return (1+total_dmg*self.structure)/self._adjusted_production_cost()
+        return (1 + total_dmg*self.structure) / self._adjusted_production_cost()
 
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
@@ -2150,7 +2153,7 @@ class KrillSpawnerShipDesigner(ShipDesigner):
 
     def _starting_guess(self, available_parts, num_slots):
         # starting guess is a design completely empty except for the krill spawner part.
-        ret_val = (len(available_parts)+1)*[0]
+        ret_val = (len(available_parts)+1) * [0]
         if num_slots == 0:
             return ret_val
         if AIDependencies.PART_KRILL_SPAWNER not in available_parts:
@@ -2165,7 +2168,7 @@ class KrillSpawnerShipDesigner(ShipDesigner):
 def _create_ship_design(design_name, hull_name, part_names, model="fighter",
                         description="", icon="", name_desc_in_string_table=False,
                         verbose=False):
-    """This is basically a wrapper around fo.issueCreateShipDesignOrder to 
+    """This is basically a wrapper around fo.issueCreateShipDesignOrder to
     also update the cache.
 
     :param design_name: the name of the design
@@ -2320,7 +2323,7 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
     --> diff = {1:2, 2:{3:4}}
 
     :type dict_new: dict
-    :type dict  _old: dict
+    :type dict_old: dict
     :param dict_diff: Difference between dict_old and dict_new, modified and filled within this function
     :type dict_diff: dict
     :param diff_level_threshold: Depth to next diff up to which non-diff entries are stored in dict_diff
@@ -2330,7 +2333,7 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
     NO_DIFF = 9999
     min_diff_level = NO_DIFF
     for key, value in dict_new.iteritems():
-        if not key in dict_old:
+        if key not in dict_old:
             dict_diff[key] = copy.deepcopy(value)
             min_diff_level = 0
         elif isinstance(value, dict):
@@ -2338,7 +2341,7 @@ def recursive_dict_diff(dict_new, dict_old, dict_diff, diff_level_threshold=0):
             min_diff_level = min(min_diff_level, this_diff_level)
             if this_diff_level > NO_DIFF and min_diff_level > diff_level_threshold:
                 del dict_diff[key]
-        elif not key in dict_old or value != dict_old[key]:
+        elif key not in dict_old or value != dict_old[key]:
                 dict_diff[key] = copy.deepcopy(value)
                 min_diff_level = 0
     return min_diff_level

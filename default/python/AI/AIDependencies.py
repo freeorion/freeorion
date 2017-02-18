@@ -793,5 +793,3 @@ PART_EFFECTS = {
 # </editor-fold>
 
 # </editor-fold>
-
-

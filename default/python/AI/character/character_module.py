@@ -150,7 +150,7 @@ class Trait(object):
         """Return True if permitted to explore system with the given monster threat."""
         return True
 
-    def may_surge_industry(self, totalPP, totalRP):  # pylint: disable=no-self-use,unused-argument
+    def may_surge_industry(self, total_pp, total_rp):  # pylint: disable=no-self-use,unused-argument
         """Return True if permitted to surge industry as used in PriorityAI.py"""
         return True
 
@@ -316,8 +316,8 @@ class Aggression(Trait):
         return 2 + ((0.5 + self.aggression) ** 2) * fo.currentTurn() / 50.0
 
     def may_invade(self):
-        return (self.aggression > fo.aggression.turtle
-                and not (self.aggression == fo.aggression.beginner and fo.currentTurn() < 150))
+        return (self.aggression > fo.aggression.turtle and
+                not (self.aggression == fo.aggression.beginner and fo.currentTurn() < 150))
 
     def may_invade_with_bases(self):
         return self.aggression > fo.aggression.typical
@@ -410,8 +410,7 @@ class Aggression(Trait):
                                            "LRN_TRANSCEND": fo.aggression.typical}
 
     def may_research_tech_classic(self, tech):
-        return (type(self).TECH_LOWER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.beginner)
-                <= self.aggression <=
+        return (type(self).TECH_LOWER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.beginner) <= self.aggression <=
                 type(self).TECH_UPPER_THRESHOLD_CLASSIC_STATIC.get(tech, fo.aggression.maniacal))
 
     def attitude_to_empire(self, other_empire_id, diplomatic_logs):
@@ -497,9 +496,8 @@ class EmpireIDTrait(Trait):
         return self._modulo_two_choice(alternatives)
 
     def may_travel_beyond_supply(self, distance):
-        return (distance < 2
-                or distance <= 2 and self.aggression >= fo.aggression.typical
-                or self.aggression >= fo.aggression.aggressive)
+        return (distance < 2 or distance <= 2 and self.aggression >= fo.aggression.typical or
+                self.aggression >= fo.aggression.aggressive)
 
     # TODO remove this function as soon as old style research is gone
     # It defeats the orthogonality goal of character components for little gain
@@ -543,6 +541,7 @@ def _make_single_function_combiner(funcnamei, f_combo):
         return f_combo([getattr(x, funcnamei)(*args, **kwargs) for x in self.traits])
     return func
 
+
 # Create combiners for traits that all must be true
 for funcname in ["may_explore_system", "may_surge_industry", "may_maximize_research", "may_invade",
                  "may-invade_with_bases", "may_build_building", "may_produce_troops",
@@ -573,8 +572,10 @@ def average_not_none(llin):
         return 0
     return sum(ll) / float(len(ll))
 
+
 for funcname in ["attitude_to_empire"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, average_not_none))
+
 
 # Create combiners for traits that use the geometic mean of all not None results
 def geometric_mean_not_none(llin):
@@ -587,8 +588,10 @@ def geometric_mean_not_none(llin):
         return 1
     return math.exp(sum(map(math.log, ll)) / float(len(ll)))
 
+
 for funcname in ["warship_adjusted_production_cost_exponent"]:
     setattr(Character, funcname, _make_single_function_combiner(funcname, geometric_mean_not_none))
+
 
 def _make_most_preferred_combiner(funcnamei):
     """Make a combiner that runs the preference function for each trait and
@@ -603,6 +606,7 @@ def _make_most_preferred_combiner(funcnamei):
         return Counter.most_common(Counter(prefs), 1)[0][0]
     return _most_preferred
 
+
 # Create combiners for traits deal with preference
 for funcname in ["preferred_research_cutoff", "preferred_colonization_portion",
                  "preferred_outpost_portion", "preferred_building_ratio", "preferred_discount_multiplier"]:
@@ -616,9 +620,9 @@ def create_character(aggression=fo.aggression.maniacal, empire_id=0):
 
     # Check the optionsDB for the trait bypass values and create
     # the character.
-    NO_VALUE = -1
-    bypassed_aggression = get_trait_bypass_value("aggression", aggression, NO_VALUE)
-    bypassed_empire_id = get_trait_bypass_value("empire-id", empire_id, NO_VALUE)
+    no_value = -1
+    bypassed_aggression = get_trait_bypass_value("aggression", aggression, no_value)
+    bypassed_empire_id = get_trait_bypass_value("empire-id", empire_id, no_value)
 
     return Character([Aggression(bypassed_aggression), EmpireIDTrait(bypassed_empire_id, bypassed_aggression)])
 

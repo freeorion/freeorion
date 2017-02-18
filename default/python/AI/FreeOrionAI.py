@@ -56,6 +56,7 @@ class AIStateMock(AIstate.AIstate):
     def __init__(self):
         pass
 
+
 # AIstate
 foAIstate = AIStateMock()
 diplomatic_corp = None
@@ -96,6 +97,7 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     global diplomatic_corp
     diplomatic_corp = diplomatic_corp_configs.get(aggression_trait.key, DiplomaticCorp.DiplomaticCorp)()
     TechsListsAI.test_tech_integrity()
+
 
 @chat_on_error
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name

@@ -26,8 +26,8 @@ def create_move_orders_to_system(fleet, target):
     # TODO: add priority
     starting_system = fleet.get_system()  # current fleet location or current target system if on starlane
     # if the mission does not end at the targeted system, make sure we can actually return to supply after moving.
-    ensure_return = target.id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs
-                                         + AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
+    ensure_return = target.id not in set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs +
+                                         AIstate.invasionTargetedSystemIDs + AIstate.blockadeTargetedSystemIDs)
     system_targets = can_travel_to_system(fleet.id, starting_system, target, ensure_return=ensure_return)
     result = [fleet_orders.OrderMove(fleet, system) for system in system_targets]
     if not result and starting_system.id != target.id:
@@ -84,10 +84,10 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
         elif target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3):
             print "target in Ring 2, has enough aggression"
     if (not unsupplied_stops or not ensure_return or
-        target_sys_id in fleet_supplyable_system_ids and len(unsupplied_stops) <= fuel
-        or target_sys_id in ColonisationAI.annexable_ring1 and len(unsupplied_stops) < fuel
-        or target_sys_id in ColonisationAI.annexable_ring2 and foAI.foAIstate.character.may_travel_beyond_supply(2) and len(unsupplied_stops) < fuel - 1
-        or target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3) and len(unsupplied_stops) < fuel - 2):
+        target_sys_id in fleet_supplyable_system_ids and len(unsupplied_stops) <= fuel or
+            target_sys_id in ColonisationAI.annexable_ring1 and len(unsupplied_stops) < fuel or
+            target_sys_id in ColonisationAI.annexable_ring2 and foAI.foAIstate.character.may_travel_beyond_supply(2) and len(unsupplied_stops) < fuel - 1 or
+            target_sys_id in ColonisationAI.annexable_ring3 and foAI.foAIstate.character.may_travel_beyond_supply(3) and len(unsupplied_stops) < fuel - 2):
         return [universe_object.System(sid) for sid in short_path]
     else:
         # print " getting path from 'can_travel_to_system_and_return_to_resupply' ",
@@ -97,7 +97,7 @@ def can_travel_to_system(fleet_id, from_system_target, to_system_target, ensure_
 def can_travel_to_system_and_return_to_resupply(fleet_id, from_system_target, to_system_target):
     """
     Filter systems where fleet can travel from starting system. # TODO rename function
-    
+
     :param fleet_id:
     :type fleet_id: int
     :param from_system_target:
@@ -177,9 +177,9 @@ def get_best_drydock_system_id(start_system_id, fleet_id):
             continue
         for pid in pids:
             planet = universe.getPlanet(pid)
-            if (planet
-                  and planet.currentMeterValue(fo.meterType.happiness) >= DRYDOCK_HAPPINESS_THRESHOLD
-                  and planet.currentMeterValue(fo.meterType.targetHappiness) >= DRYDOCK_HAPPINESS_THRESHOLD):
+            if (planet and
+                    planet.currentMeterValue(fo.meterType.happiness) >= DRYDOCK_HAPPINESS_THRESHOLD and
+                    planet.currentMeterValue(fo.meterType.targetHappiness) >= DRYDOCK_HAPPINESS_THRESHOLD):
                 drydock_system_ids.add(sys_id)
                 break
 

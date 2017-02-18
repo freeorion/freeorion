@@ -71,9 +71,9 @@ def tech_is_complete(tech):
 def ppstring(foo):
     """
     Returns a string version of lists, dicts, sets, such that entries with special characters will be
-    printed in legible string format rather than as hex escape characters, i.e., 
+    printed in legible string format rather than as hex escape characters, i.e.,
     ['Asimov α'] rather than ['Asimov \xce\xb1']."""
-    
+
     if isinstance(foo, list):
         return "[" + ",".join(map(ppstring, foo)) + "]"
     elif isinstance(foo, dict):

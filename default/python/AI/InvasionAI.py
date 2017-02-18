@@ -359,15 +359,15 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
         else:
             supply_val *= 0.2
 
-    threat_factor = min(1, 0.2*MilitaryAI.totMilRating/(sys_total_threat+0.001))**2  # devalue invasions that would require too much military force
+    threat_factor = min(1, 0.2 * MilitaryAI.totMilRating / (sys_total_threat + 0.001))**2  # devalue invasions that would require too much military force
     build_time = 4
 
-    planned_troops = troops if system_secured else min(troops+max_jumps+build_time, max_troops)
+    planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
     if not tech_is_complete("SHP_ORG_HULL"):
-        troop_cost = math.ceil(planned_troops/6.0) * (40*(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
+        troop_cost = math.ceil(planned_troops/6.0) * (40 * (1 + foAI.foAIstate.shipCount*AIDependencies.SHIP_UPKEEP))
     else:
-        troop_cost = math.ceil(planned_troops/6.0) * (20*(1+foAI.foAIstate.shipCount * AIDependencies.SHIP_UPKEEP))
-    planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, pop_val+supply_val+bld_tally+enemy_val-0.8*troop_cost)
+        troop_cost = math.ceil(planned_troops/6.0) * (20 * (1 + foAI.foAIstate.shipCount*AIDependencies.SHIP_UPKEEP))
+    planet_score = retaliation_risk_factor(planet.owner) * threat_factor * max(0, pop_val + supply_val + bld_tally + enemy_val - 0.8*troop_cost)
     if clear_path:
         planet_score *= 1.5
     if verbose:
@@ -399,7 +399,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         found_fleets = []
         found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': ptroops}
-        target_stats = {'rating': 10, 'troopCapacity': ptroops+1}
+        target_stats = {'rating': 10, 'troopCapacity': ptroops + 1}
         these_fleets = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
                                                            starting_system=sys_id, fleet_pool_set=invasion_fleet_pool,
                                                            fleet_list=found_fleets)

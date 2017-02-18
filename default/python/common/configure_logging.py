@@ -21,5 +21,3 @@ def redirect_logging_to_freeorion_logger():
     sys.stdout = DbgLogger()
     sys.stderr = ErrLogger()
     print 'Python stdout and stderr redirected'
-
-

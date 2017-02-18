@@ -1,3 +1,5 @@
+from operator import itemgetter
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.print_utils import Table, Text, Sequence, Bool
 import sys
@@ -770,11 +772,11 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
     cur_best_mil_ship_rating = max(MilitaryAI.cur_best_mil_ship_rating(), 0.001)
     fleet_threat_ratio = (sys_status.get('fleetThreat', 0) - myrating) / float(cur_best_mil_ship_rating)
     monster_threat_ratio = sys_status.get('monsterThreat', 0) / float(cur_best_mil_ship_rating)
-    neighbor_threat_ratio = ((sys_status.get('neighborThreat', 0)) / float(cur_best_mil_ship_rating)) + \
-                            min(0, fleet_threat_ratio)  # last portion gives credit for inner extra defenses
+    neighbor_threat_ratio = (sys_status.get('neighborThreat', 0) / float(cur_best_mil_ship_rating) +
+                             min(0, fleet_threat_ratio))  # last portion gives credit for inner extra defenses
     myrating = sys_status.get('my_neighbor_rating', 0)
     jump2_threat_ratio = ((max(0, sys_status.get('jump2_threat', 0) - myrating) / float(cur_best_mil_ship_rating)) +
-                         min(0, neighbor_threat_ratio))  # last portion gives credit for inner extra defenses
+                          min(0, neighbor_threat_ratio))  # last portion gives credit for inner extra defenses
 
     thrt_factor = 1.0
     ship_limit = 2 * (2 ** (fo.currentTurn() / 40.0))
@@ -913,7 +915,7 @@ def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
                 detail.append("%s %.1f" % (special, fort_val))
             elif special == "HONEYCOMB_SPECIAL":
                 honey_val = 0.3 * (AIDependencies.HONEYCOMB_IND_MULTIPLIER * AIDependencies.INDUSTRY_PER_POP *
-                                 empire_status['industrialists'] * discount_multiplier)
+                                   empire_status['industrialists'] * discount_multiplier)
                 retval += honey_val
                 detail.append("%s %.1f" % (special, honey_val))
         if planet.size == fo.planetSize.asteroids:
@@ -1353,7 +1355,9 @@ def _print_empire_species_roster():
     species_table = Table(header, table_name="Empire species roster Turn %d" % fo.currentTurn())
     for species_name, planet_ids in state.get_empire_planets_by_species().items():
         species_tags = fo.getSpecies(species_name).tags
-        grade_symbol = lambda x: grade_map.get(get_ai_tag_grade(species_tags, x).upper(), "o")
+
+        def grade_symbol(x):
+            return grade_map.get(get_ai_tag_grade(species_tags, x).upper(), "o")
         is_colonizer = species_name in empire_colonizers
         number_of_shipyards = len(empire_ship_builders.get(species_name, []))
         this_row = [species_name, planet_ids, is_colonizer, number_of_shipyards]
@@ -1384,10 +1388,12 @@ def __print_candidate_table(candidates, mission):
     universe = fo.getUniverse()
     if mission == 'Colonization':
         col1 = Text('(Score, Species)')
-        col1_value = lambda x: (x[0], x[1])
+
+        def col1_value(x):
+            return x[0], x[1]
     elif mission == 'Outposts':
         col1 = Text('Score')
-        col1_value = lambda x: x[0]
+        col1_value = itemgetter(0)
     else:
         print >> sys.stderr, "__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission)
         return
