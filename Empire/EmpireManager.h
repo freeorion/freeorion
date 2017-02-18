@@ -54,6 +54,8 @@ public:
     int                 NumEmpires() const;
 
     DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
+    std::set<int>               GetEmpireIDsWithDiplomaticStatusWithEmpire(int empire_id,
+                                                                           DiplomaticStatus diplo_status) const;
     bool                        DiplomaticMessageAvailable(int sender_id, int recipient_id) const;
     const DiplomaticMessage&    GetDiplomaticMessage(int sender_id, int recipient_id) const;
 

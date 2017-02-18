@@ -161,6 +161,24 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) co
     return INVALID_DIPLOMATIC_STATUS;
 }
 
+std::set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(int empire_id,
+                                                                        DiplomaticStatus diplo_status) const
+{
+    std::set<int> retval;
+    if (empire_id == ALL_EMPIRES || diplo_status == INVALID_DIPLOMATIC_STATUS)
+        return retval;
+    // find ids of empires with the specified diplomatic status with the specified empire
+    for (auto const& id_pair_status : m_empire_diplomatic_statuses) {
+        if (id_pair_status.second != diplo_status)
+            continue;
+        if (id_pair_status.first.first == empire_id)
+            retval.insert(id_pair_status.first.second);
+        else if (id_pair_status.first.second == empire_id)
+            retval.insert(id_pair_status.first.first);
+    }
+    return retval;
+}
+
 bool EmpireManager::DiplomaticMessageAvailable(int sender_id, int recipient_id) const {
     auto it = m_diplomatic_messages.find({sender_id, recipient_id});
     return it != m_diplomatic_messages.end() &&
