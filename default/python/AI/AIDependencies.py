@@ -77,21 +77,21 @@ INVALID_ID = -1
 # boni that scale with planet size
 POP_SIZE_MOD_MAP = {
     # "Effect": [uninhab, hostile, poor, adequate, good]
-    "environment_bonus": [0, -4, -2, 0, 3],
-    "GRO_SUBTER_HAB": [0, 1, 1, 1, 1],
+    "environment_bonus": [0,-4,-2, 0, 3],
+    "GRO_SUBTER_HAB":    [0, 1, 1, 1, 1],
     "GRO_SYMBIOTIC_BIO": [0, 0, 1, 1, 1],
     "GRO_XENO_GENETICS": [0, 1, 2, 2, 0],
-    "GRO_XENO_HYBRID": [0, 2, 1, 0, 0],
-    "GRO_CYBORG": [0, 2, 0, 0, 0],
-    "CON_NDIM_STRUC": [0, 2, 2, 2, 2],
-    "CON_ORBITAL_HAB": [0, 1, 1, 1, 1],
+    "GRO_XENO_HYBRID":   [0, 2, 1, 0, 0],
+    "GRO_CYBORG":        [0, 2, 0, 0, 0],
+    "CON_NDIM_STRUC":    [0, 2, 2, 2, 2],
+    "CON_ORBITAL_HAB":   [0, 1, 1, 1, 1],
 }
 
 # flat boni not dependent on size
 POP_CONST_MOD_MAP = {
     # "Source": [uninhab, hostile, poor, adequate, good]
-    "GRO_PLANET_ECOL": [0, 0, 0, 1, 1],
-    "GRO_SYMBIOTIC_BIO": [0, 0, 0, -1, -1],
+    "GRO_PLANET_ECOL":   [0, 0, 0, 1, 1],
+    "GRO_SYMBIOTIC_BIO": [0, 0, 0,-1,-1],
 }
 # </editor-fold>
 
@@ -115,37 +115,37 @@ EXTINCT_SPECIES = [
 # TODO (Morlic): Consider using only 1 dict with tuple for (Capacity, SecondaryStat) effects
 PILOT_DAMAGE_MODIFIER_DICT = {
     # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
-    "NO": {},
-    "BAD": {"SR_WEAPON_1_1": -1, "SR_WEAPON_2_1": -2, "SR_WEAPON_3_1": -3, "SR_WEAPON_4_1": -5},
-    "GOOD": {"SR_WEAPON_1_1": 1, "SR_WEAPON_2_1": 2, "SR_WEAPON_3_1": 3, "SR_WEAPON_4_1": 5},
-    "GREAT": {"SR_WEAPON_1_1": 2, "SR_WEAPON_2_1": 4, "SR_WEAPON_3_1": 6, "SR_WEAPON_4_1": 10},
-    "ULTIMATE": {"SR_WEAPON_1_1": 3, "SR_WEAPON_2_1": 6, "SR_WEAPON_3_1": 9, "SR_WEAPON_4_1": 15, "SR_WEAPON_0_1": 1},
+    "NO":       {},
+    "BAD":      {"SR_WEAPON_1_1": -1, "SR_WEAPON_2_1": -2, "SR_WEAPON_3_1": -3, "SR_WEAPON_4_1": -5},
+    "GOOD":     {"SR_WEAPON_1_1":  1, "SR_WEAPON_2_1":  2, "SR_WEAPON_3_1":  3, "SR_WEAPON_4_1": 5},
+    "GREAT":    {"SR_WEAPON_1_1":  2, "SR_WEAPON_2_1":  4, "SR_WEAPON_3_1":  6, "SR_WEAPON_4_1": 10},
+    "ULTIMATE": {"SR_WEAPON_1_1":  3, "SR_WEAPON_2_1":  6, "SR_WEAPON_3_1":  9, "SR_WEAPON_4_1": 15, "SR_WEAPON_0_1": 1},
 }
 
 PILOT_ROF_MODIFIER_DICT = {
     # TRAIT:    {weapon_name: effect, weapon_name2: effect2,...}
-    "NO": {},
-    "BAD": {"SR_WEAPON_0_1": -1},
-    "GOOD": {"SR_WEAPON_0_1": 1},
-    "GREAT": {"SR_WEAPON_0_1": 2},
+    "NO":       {},
+    "BAD":      {"SR_WEAPON_0_1": -1},
+    "GOOD":     {"SR_WEAPON_0_1": 1},
+    "GREAT":    {"SR_WEAPON_0_1": 2},
     "ULTIMATE": {"SR_WEAPON_0_1": 3},
 }
 
 PILOT_FIGHTERDAMAGE_MODIFIER_DICT = {
     # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
-    "NO": {},
-    "BAD": {"FT_HANGAR_1": -1, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
-    "GOOD": {"FT_HANGAR_1": 1, "FT_HANGAR_2": 2, "FT_HANGAR_3": 3, "FT_HANGAR_4": 4},
-    "GREAT": {"FT_HANGAR_1": 2, "FT_HANGAR_2": 4, "FT_HANGAR_3": 6, "FT_HANGAR_4": 8},
-    "ULTIMATE": {"FT_HANGAR_1": 3, "FT_HANGAR_2": 6, "FT_HANGAR_3": 9, "FT_HANGAR_4": 12},
+    "NO":       {},
+    "BAD":      {"FT_HANGAR_1": -1, "FT_HANGAR_2": -2, "FT_HANGAR_3": -3, "FT_HANGAR_4": -4},
+    "GOOD":     {"FT_HANGAR_1":  1, "FT_HANGAR_2":  2, "FT_HANGAR_3":  3, "FT_HANGAR_4": 4},
+    "GREAT":    {"FT_HANGAR_1":  2, "FT_HANGAR_2":  4, "FT_HANGAR_3":  6, "FT_HANGAR_4": 8},
+    "ULTIMATE": {"FT_HANGAR_1":  3, "FT_HANGAR_2":  6, "FT_HANGAR_3":  9, "FT_HANGAR_4": 12},
 }
 
 PILOT_FIGHTER_CAPACITY_MODIFIER_DICT = {
     # TRAIT:    {hangar_name: effect, hangar_name2: effect2,...}
-    "NO": {},
-    "BAD": {},
-    "GOOD": {},
-    "GREAT": {},
+    "NO":       {},
+    "BAD":      {},
+    "GOOD":     {},
+    "GREAT":    {},
     "ULTIMATE": {},
 }
 # </editor-fold>
