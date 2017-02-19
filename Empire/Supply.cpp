@@ -12,6 +12,7 @@
 #include "../util/AppInterface.h"
 #include "../util/Serialize.h"
 #include "../util/Logger.h"
+#include "../util/ScopedTimer.h"
 
 #include <boost/serialization/vector.hpp>
 #include <boost/serialization/map.hpp>
@@ -1949,6 +1950,8 @@ namespace {
 }
 
 void SupplyManager::SupplyManagerImpl::Update() {
+    SectionedScopedTimer timer("SupplyManager::Update", boost::chrono::microseconds(100));
+    timer.EnterSection("update starlanes");
     DebugLogger() << "Entering SupplyManager update.";
     //TODO early exit when no supply sources
 
@@ -1968,16 +1971,19 @@ void SupplyManager::SupplyManagerImpl::Update() {
         }
     }
 
+    timer.EnterSection("initial supply");
     DebugLogger() << "SupplyManager::Update() create PODs.";
     //Map from system id to SupplySystemPOD containing all data needed to evaluate supply in one system.
     std::unordered_map<int, SupplySystemPOD> system_to_supply_pod = CalculateInitialSupply();
 
+    timer.EnterSection("create tranches");
     DebugLogger() << "SupplyManager::Update() create tranches.";
     // Tranches of SupplyMerit sorted by merit.  Tranches are the size of a one supply hop change
     // in merit starting from the highest merit.  Each tranche of merits can be processed and then
     // propagated to adjacent systems and then never handled again.
     auto tranches = SupplyTranches();
 
+    timer.EnterSection("grind");
     DebugLogger() << "SupplyManager::Update() start grind.";
     // Process each tranche until the merit threshold is negative
     const auto lowest_merit = SupplyMerit().OneJumpLessMerit();
@@ -2026,6 +2032,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
     // Extract the information for each output map from system_to_supply_pod.
 
+    timer.EnterSection("extract");
 
     DebugLogger() << "SupplyManager::Update() extract basics.";
     /** ids of systems where fleets can be resupplied. indexed by empire id. */
@@ -2098,6 +2105,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
         by range, but by something blocking its flow. */
     /*std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>*/  m_supply_starlane_obstructed_traversals.clear();
 
+    timer.EnterSection("update traversals");
     DebugLogger() << "SupplyManager::Update() traversals.";
     // std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>>
     for (auto&& empire_and_system_to_starlanes : empire_to_system_to_starlanes) {
@@ -2145,6 +2153,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
         }
     }
 
+    timer.EnterSection("group");
     DebugLogger() << "SupplyManager::Update() supply groups.";
 
     /** sets of system ids that are connected by supply lines and are able to
