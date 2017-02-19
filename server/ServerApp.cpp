@@ -170,7 +170,10 @@ void ServerApp::operator()()
 
 void ServerApp::SignalHandler(const boost::system::error_code& error, int signal_number) {
     if (!error)
-        Exit(1);
+        throw NormalExitException();
+
+    ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
+    Exit(1);
 }
 
 void ServerApp::Exit(int code) {
