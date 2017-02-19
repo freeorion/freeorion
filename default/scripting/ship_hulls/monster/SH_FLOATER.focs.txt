@@ -13,6 +13,7 @@ Hull
     buildCost = 1
     buildTime = 2
     Unproducible
+    tags = [ "PEDIA_HULL_MONSTER_TREE" ]
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
@@ -23,7 +24,7 @@ Hull
             scope = And [
                 Object id = Source.SystemID
                 System
-                Star type = [Blue White Yellow Orange Red]                
+                Star type = [Blue White Yellow Orange Red]
                 Not Number low = 2 condition = And [
                     Ship
                     Monster

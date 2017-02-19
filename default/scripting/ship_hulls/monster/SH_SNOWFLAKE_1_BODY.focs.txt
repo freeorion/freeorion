@@ -14,6 +14,7 @@ Hull
     buildCost = 1
     buildTime = 1
     Unproducible
+    tags = [ "PEDIA_HULL_MONSTER_SNOWFLAKE" ]
     location = All
     effectsgroups = [
         EffectsGroup    // remove self and recreate on first turn, so that it starts with age 0
