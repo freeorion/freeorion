@@ -433,7 +433,7 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
         return;
     }
     DebugLogger() << "ServerApp::HandleShutdownMessage shutting down";
-    Exit(1);
+    Exit(0);
 }
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
@@ -447,7 +447,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
         if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
             DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
                                    << "connected player, who is local and so the request is being honored; server shutting down.";
-                                   Exit(1);
+                                   Exit(0);
         } else {
             ErrorLogger() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                             << msg.Type() << "\" for a non-player Message.  Terminating connection.";
