@@ -77,6 +77,10 @@ protected:
 
     static IApp* s_app; ///< a IApp pointer to the singleton instance of the app
 
+    // NormalExitException is used to break out of the run loop, without calling
+    // terminate and failing to unroll the stack.
+    class NormalExitException {};
+
 private:
     const IApp& operator=(const IApp&); // disabled
     IApp(const IApp&); // disabled

@@ -151,7 +151,7 @@ ServerApp::ServerApp() :
 
     if (!m_python_server.Initialize()) {
         ErrorLogger() << "Server's python interpreter failed to initialize.";
-        Exit(1);
+        Exit(0);
     }
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
@@ -162,6 +162,7 @@ ServerApp::~ServerApp() {
     m_python_server.Finalize();
     CleanupAIs();
     delete m_fsm;
+    DebugLogger() << "Server exited cleanly.";
 }
 
 void ServerApp::operator()()
@@ -169,13 +170,18 @@ void ServerApp::operator()()
 
 void ServerApp::SignalHandler(const boost::system::error_code& error, int signal_number) {
     if (!error)
-        Exit(1);
+        throw NormalExitException();
+
+    ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
+    Exit(1);
 }
 
 void ServerApp::Exit(int code) {
     DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     CleanupAIs();
-    exit(code);
+    if (code)
+        exit(code);
+    throw NormalExitException();
 }
 
 namespace {
@@ -314,13 +320,15 @@ int ServerApp::GetNewDesignID()
 
 void ServerApp::Run() {
     DebugLogger() << "FreeOrion server waiting for network events";
-    std::cout << "FreeOrion server waiting for network events" << std::endl;
-    while (1) {
-        if (m_io_service.run_one())
-            m_networking.HandleNextEvent();
-        else
-            break;
-    }
+    try {
+        while (1) {
+            if (m_io_service.run_one())
+                m_networking.HandleNextEvent();
+            else
+                break;
+        }
+    } catch (const NormalExitException&)
+    {}
 }
 
 void ServerApp::CleanupAIs() {
@@ -424,7 +432,7 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
         return;
     }
     DebugLogger() << "ServerApp::HandleShutdownMessage shutting down";
-    Exit(1);
+    Exit(0);
 }
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
@@ -438,7 +446,7 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
         if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
             DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
                                    << "connected player, who is local and so the request is being honored; server shutting down.";
-                                   Exit(1);
+                                   Exit(0);
         } else {
             ErrorLogger() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                             << msg.Type() << "\" for a non-player Message.  Terminating connection.";
@@ -1266,7 +1274,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Exiting.";
-            Exit(1);
+            Exit(0);
         }
     }
 
@@ -1319,7 +1327,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                Exit(1);
+                Exit(0);
             }
         }
     }
