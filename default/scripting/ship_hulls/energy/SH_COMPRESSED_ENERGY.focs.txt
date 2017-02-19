@@ -8,7 +8,7 @@ Hull
     slots = Slot type = External position = (0.65, 0.40)
     buildCost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
-    tags = [ "ENERGY_HULL" ]
+    tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"
