@@ -567,7 +567,6 @@
 		34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeMultiplayerCommon.cpp; sourceTree = "<group>"; };
 		34C44959118271590071E09A /* SerializeOrderSet.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeOrderSet.cpp; sourceTree = "<group>"; };
 		34C4495B118271590071E09A /* SerializeUniverse.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SerializeUniverse.cpp; sourceTree = "<group>"; };
-		34C4495C118271590071E09A /* SerializeUniverseExports.ipp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = SerializeUniverseExports.ipp; sourceTree = "<group>"; };
 		34C4495D118271590071E09A /* Version.cpp.in */ = {isa = PBXFileReference; explicitFileType = sourcecode.cpp; fileEncoding = 4; path = Version.cpp.in; sourceTree = "<group>"; };
 		34C9B34311DA2E95003695F4 /* ClrConstants.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ClrConstants.cpp; sourceTree = "<group>"; };
 		34C9B34711DA2ECA003695F4 /* ClrConstants.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ClrConstants.h; sourceTree = "<group>"; };
@@ -1870,7 +1869,6 @@
 				34C44958118271590071E09A /* SerializeMultiplayerCommon.cpp */,
 				34C44959118271590071E09A /* SerializeOrderSet.cpp */,
 				34C4495B118271590071E09A /* SerializeUniverse.cpp */,
-				34C4495C118271590071E09A /* SerializeUniverseExports.ipp */,
 				471D5D360A98A3F900DA9C21 /* SitRepEntry.cpp */,
 				471D5D370A98A3F900DA9C21 /* SitRepEntry.h */,
 				471D5CDC0A98A3F900DA9C21 /* StringTable.cpp */,
