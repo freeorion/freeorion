@@ -11,6 +11,7 @@ Hull
         ]
     buildCost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 3
+    tags = [ "PEDIA_HULL_LINE_ROBOTIC" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"

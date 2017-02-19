@@ -11,6 +11,7 @@ Hull
     ]
     buildCost = 11 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "PEDIA_HULL_LINE_ROBOTIC" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
@@ -28,7 +29,6 @@ Hull
             activation = Not Stationary
             accountinglabel = "SPATIAL_FLUX_MALUS"
             effects = SetStealth value = Value - 30
-            
         EffectsGroup
             scope = Source
             activation = Not Aggressive
