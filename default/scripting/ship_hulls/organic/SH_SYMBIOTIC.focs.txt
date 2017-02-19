@@ -13,7 +13,7 @@ Hull
     ]
     buildCost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 4
-    tags = [ "ORGANIC_HULL" ]
+    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" ]
     location = And [
 //        Contains And [
 //            Building name = "BLD_SHIPYARD_ORG_CELL_GRO_CHAMB"
