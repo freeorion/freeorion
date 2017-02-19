@@ -3795,6 +3795,9 @@ Ship Part
 ENC_SHIP_HULL
 Ship Hull
 
+ENC_SHIP_HULL_DESC
+Ship Hulls
+
 ENC_TECH
 Technologies
 

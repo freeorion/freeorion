@@ -8,6 +8,7 @@ Hull
     slots = Slot type = Internal position = (0.50, 0.50)
     buildCost = 1
     buildTime = 3
+    tags = [ "PEDIA_HULL_LINE_GENERIC" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
         [[REGULAR_HULL_DETECTION]]
