@@ -7874,6 +7874,80 @@ Partial
 VIS_FULL_VISIBILITY
 Full
 
+# Ship hull categories
+
+HULL_LINE_GENERIC
+Hull Line: Generic
+
+HULL_LINE_GENERIC_DESC
+Generic line of ship hulls with no specialty
+
+HULL_LINE_ASTEROIDS
+Hull Line: [[PT_ASTEROIDS]]
+
+HULL_LINE_ASTEROIDS_DESC
+Line of hulls modelled from and utilizing [[PT_ASTEROIDS]].
+
+HULL_LINE_ENERGY
+Hull Line: Energy
+
+HULL_LINE_ENERGY_DESC
+Line of hulls designed from, or utilizing, a high energy density.
+
+HULL_LINE_ORGANIC
+Hull Line: Organic
+
+HULL_LINE_ORGANIC_DESC
+Line of hulls composed of organic materials.
+
+HULL_LINE_ROBOTIC
+Hull Line: Robotic
+
+HULL_LINE_ROBOTIC_DESC
+Line of hulls with a heavy emphasis on artificial intelligence and automation.
+
+HULL_MONSTER
+Monster Bodies
+
+HULL_MONSTER_DESC
+Bodies used in monster designs
+
+HULL_MONSTER_GUARD
+Guardian Bodies
+
+HULL_MONSTER_GUARD_DESC
+Bodies used in guardian class monster designs
+
+HULL_MONSTER_JUGGERNAUT
+Juggernaut Bodies
+
+HULL_MONSTER_JUGGERNAUT_DESC
+Bodies used in juggernaut monster designs
+
+HULL_MONSTER_KRAKEN
+Kraken Bodies
+
+HULL_MONSTER_KRAKEN_DESC
+Bodies used in kraken monster designs
+
+HULL_MONSTER_KRILL
+Krill Bodies
+
+HULL_MONSTER_KRILL_DESC
+Bodies used in krill monster designs
+
+HULL_MONSTER_SNOWFLAKE
+Snowflake Bodies
+
+HULL_MONSTER_SNOWFLAKE_DESC
+Bodies used in snowflake monster designs
+
+HULL_MONSTER_TREE
+Tree Bodies
+
+HULL_MONSTER_TREE_DESC
+Bodies used in tree monster designs
+
 
 ##
 ## FOCS value references, effects & condition descriptions
