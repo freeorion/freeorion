@@ -290,7 +290,8 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
     for unlocked_tech in AIDependencies.SPECIES_TECH_UNLOCKS.get(species_name, []):
         if not tech_is_complete(unlocked_tech):
             rp_cost = fo.getTech(unlocked_tech).researchCost(empire_id)
-            tech_tally += rp_cost * 10
+            tech_tally += rp_cost * 4
+            detail.append("%s: %d" % (unlocked_tech, rp_cost * 4))
 
     p_sys_id = planet.systemID
     capitol_id = PlanetUtilsAI.get_capital()
