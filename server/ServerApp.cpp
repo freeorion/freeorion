@@ -155,7 +155,7 @@ ServerApp::ServerApp() :
 
     if (!m_python_server.Initialize()) {
         ErrorLogger() << "Server's python interpreter failed to initialize.";
-        Exit(1);
+        Exit(0);
     }
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
@@ -1275,7 +1275,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Exiting.";
-            Exit(1);
+            Exit(0);
         }
     }
 
@@ -1328,7 +1328,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                Exit(1);
+                Exit(0);
             }
         }
     }
