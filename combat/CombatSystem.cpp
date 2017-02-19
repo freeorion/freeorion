@@ -532,7 +532,7 @@ namespace {
 
     void AttackFighterFighter(std::shared_ptr<Fighter> attacker, const PartAttackInfo& weapon, std::shared_ptr<Fighter> target,
                               CombatInfo& combat_info, int bout, int round,
-                              AttacksEventPtr &attacks_event)
+                              std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
         if (!attacker || !target) return;
 
@@ -543,15 +543,14 @@ namespace {
             target->SetDestroyed();
         }
 
-        CombatEventPtr attack_event = std::make_shared<FighterAttackedEvent>(
-            bout, round, INVALID_OBJECT_ID, attacker->Owner(), target->Owner());
-        attacks_event->AddEvent(attack_event);
+        fighter_on_fighter_event->AddEvent(attacker->Owner(), target->Owner());
     }
 
     void Attack(std::shared_ptr<UniverseObject>& attacker, const PartAttackInfo& weapon,
                 std::shared_ptr<UniverseObject>& target, CombatInfo& combat_info, int bout, int round,
                 AttacksEventPtr &attacks_event,
-                WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event)
+                WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event,
+                std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
         std::shared_ptr<Ship> attack_ship = std::dynamic_pointer_cast<Ship>(attacker);
         std::shared_ptr<Planet> attack_planet = std::dynamic_pointer_cast<Planet>(attacker);
@@ -577,7 +576,7 @@ namespace {
         } else if (attack_fighter && target_planet) {
             // Fighters can't attack planets
         } else if (attack_fighter && target_fighter) {
-            AttackFighterFighter(attack_fighter, weapon, target_fighter, combat_info, bout, round, attacks_event);
+            AttackFighterFighter(attack_fighter, weapon, target_fighter, combat_info, bout, round, fighter_on_fighter_event);
         }
     }
 
@@ -1192,7 +1191,8 @@ namespace {
     void ShootAllWeapons(std::shared_ptr<UniverseObject>& attacker, const std::vector<PartAttackInfo>& weapons,
                          AutoresolveInfo& combat_state, int bout, int round,
                          AttacksEventPtr &attacks_event,
-                         WeaponsPlatformEvent::WeaponsPlatformEventPtr &platform_event)
+                         WeaponsPlatformEvent::WeaponsPlatformEventPtr &platform_event,
+                         std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
         bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
                                GetOptionsDB().Get<bool>("verbose-combat-logging");
@@ -1256,7 +1256,8 @@ namespace {
                 DebugLogger() << "Target: " << target->Name();
 
             // do actual attacks
-            Attack(attacker, weapon, target, combat_state.combat_info, bout, round, attacks_event, platform_event);
+            Attack(attacker, weapon, target, combat_state.combat_info, bout, round, attacks_event,
+                   platform_event, fighter_on_fighter_event);
 
         } // end for over weapons
     }
@@ -1481,6 +1482,10 @@ namespace {
         CombatEventPtr attacks_event_cast = std::static_pointer_cast<CombatEvent, AttacksEvent>(attacks_event);
         bout_event->AddEvent(attacks_event_cast);
 
+        auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>(bout);
+        auto fighter_on_fighter_event_cast = std::static_pointer_cast<CombatEvent, FightersAttackFightersEvent>(fighter_on_fighter_event);
+        bout_event->AddEvent(fighter_on_fighter_event_cast);
+
         int round = 1;  // counter of events during the current combat bout
 
         // Planets are processed first so that they still have full power as intended,
@@ -1508,7 +1513,7 @@ namespace {
                 = std::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
             CombatEventPtr platform_event_cast = std::static_pointer_cast<CombatEvent, WeaponsPlatformEvent>(platform_event);
             attacks_event->AddEvent(platform_event_cast);
-            ShootAllWeapons(attacker, weapons, combat_state, bout, round++, attacks_event, platform_event);
+            ShootAllWeapons(attacker, weapons, combat_state, bout, round++, attacks_event, platform_event, fighter_on_fighter_event);
         }
 
         // now process ship and fighter attacks
@@ -1534,7 +1539,7 @@ namespace {
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker);  // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with PC_DIRECT_WEAPON part class
             WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
                 = std::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
-            ShootAllWeapons(attacker, weapons, combat_state, bout, round++, attacks_event, platform_event);
+            ShootAllWeapons(attacker, weapons, combat_state, bout, round++, attacks_event, platform_event, fighter_on_fighter_event);
             if (!platform_event->AreSubEventsEmpty(attacker->Owner())) {
                 CombatEventPtr platform_event_cast =
                     std::static_pointer_cast<CombatEvent, WeaponsPlatformEvent>(platform_event);

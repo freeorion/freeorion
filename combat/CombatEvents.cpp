@@ -763,73 +763,106 @@ void IncapacitationEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchi
 template
 void IncapacitationEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
+
 //////////////////////////////////////////
-///////// FighterAttackedEvent ////////
+///////// FightersAttackFightersEvent ////
 //////////////////////////////////////////
-FighterAttackedEvent::FighterAttackedEvent() :
+
+FightersAttackFightersEvent::FightersAttackFightersEvent() :
     bout(-1),
-    round(-1),
-    attacker_owner_empire_id(ALL_EMPIRES),
-    attacked_by_object_id(INVALID_OBJECT_ID),
-    attacked_owner_id(ALL_EMPIRES)
+    events()
 {}
 
-FighterAttackedEvent::FighterAttackedEvent(int bout_, int round_, int attacked_by_object_id_,
-                                                 int attacker_owner_empire_id_, int attacked_owner_id_) :
+FightersAttackFightersEvent::FightersAttackFightersEvent(int bout_) :
     bout(bout_),
-    round(round_),
-    attacker_owner_empire_id(attacker_owner_empire_id_),
-    attacked_by_object_id(attacked_by_object_id_),
-    attacked_owner_id(attacked_owner_id_)
+    events()
 {}
 
-std::string FighterAttackedEvent::DebugString() const {
+void FightersAttackFightersEvent::AddEvent(int attacker_empire_, int target_empire_)
+{ events[{attacker_empire_, target_empire_}] += 1; }
+
+std::string FightersAttackFightersEvent::DebugString() const {
     std::stringstream ss;
-    ss << "rnd: " << round << " : "
-       << attacked_by_object_id << " -> (Fighter of Empire " << attacked_owner_id << ")"
-       << " by object owned by empire " << attacker_owner_empire_id
-       << " at bout " << bout << " round " << round;
+    ss << "FightersAttackFightersEvent: ";
+    for (const auto& index_and_event: events) {
+        ss << index_and_event.second << " repeated fighters from empire " << index_and_event.first.first
+           << " attacking fighters from empire " << index_and_event.first.second << ", ";
+    }
     return ss.str();
 }
 
-std::string FighterAttackedEvent::CombatLogDescription(int viewing_empire_id) const {
-    std::string attacked_by = FighterOrPublicNameLink(viewing_empire_id, attacked_by_object_id, attacker_owner_empire_id);
-    std::string empire_coloured_attacked_fighter = EmpireColorWrappedText(attacked_owner_id, UserString("OBJ_FIGHTER"));
+std::string FightersAttackFightersEvent::CombatLogDescription(int viewing_empire_id) const {
+    if (events.empty())
+        return "";
 
-    const std::string& template_str = UserString("ENC_COMBAT_ATTACK_SIMPLE_STR");
+    const auto& events_to_show = events;
+    auto num_events_remaining = events.size();
+    std::stringstream ss;
 
-    return str(FlexibleFormat(template_str)
-                                % attacked_by
-                                % empire_coloured_attacked_fighter);
+    // Use show_events_for_empire to show events in this order: viewing empire, ALL_EMPIRES and
+    // then the remainder.
+    auto show_events_for_empire =
+        [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id]
+        (boost::optional<int> show_attacker) {
+            int attacker_empire;
+            int target_empire;
+            for (const auto& index_and_event : events_to_show) {
+                std::tie(attacker_empire, target_empire) = index_and_event.first;
+
+                // Skip if this is not the particular attacker requested
+                if (show_attacker && *show_attacker != attacker_empire)
+                    continue;
+
+                // Skip if no particular attacker was requested and this empire is the viewing
+                // empire or ALL_EMPIRES
+                if (!show_attacker && (attacker_empire == viewing_empire_id || attacker_empire == ALL_EMPIRES))
+                    continue;
+
+                auto count = std::to_string(index_and_event.second);
+                const auto&& attacker_link = FighterOrPublicNameLink(
+                    viewing_empire_id, INVALID_OBJECT_ID, attacker_empire);
+                const auto&& target_link = FighterOrPublicNameLink(
+                    viewing_empire_id, INVALID_OBJECT_ID, target_empire);
+                const std::string& template_str = UserString("ENC_COMBAT_ATTACK_REPEATED_STR");
+
+                ss << str(FlexibleFormat(template_str) % count % attacker_link % target_link);
+                if (--num_events_remaining > 0)
+                    ss << "\n";
+            }
+        };
+
+    // Sort the events by viewing empire, then ALL_EMPIRES and then other empires.
+    show_events_for_empire(viewing_empire_id);
+    show_events_for_empire(ALL_EMPIRES);
+    show_events_for_empire(boost::none);
+
+    return ss.str();
 }
 
-boost::optional<int> FighterAttackedEvent::PrincipalFaction(int viewing_empire_id) const {
-    return attacker_owner_empire_id;
-}
 
 template <class Archive>
-void FighterAttackedEvent::serialize (Archive& ar, const unsigned int version) {
+void FightersAttackFightersEvent::serialize(Archive& ar, const unsigned int version) {
     ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
     ar & BOOST_SERIALIZATION_NVP(bout)
-       & BOOST_SERIALIZATION_NVP(round)
-       & BOOST_SERIALIZATION_NVP(attacker_owner_empire_id)
-       & BOOST_SERIALIZATION_NVP(attacked_by_object_id)
-       & BOOST_SERIALIZATION_NVP(attacked_owner_id);
+       & BOOST_SERIALIZATION_NVP(events);
 }
 
-BOOST_CLASS_EXPORT(FighterAttackedEvent)
+BOOST_CLASS_VERSION(FightersAttackFightersEvent, 4)
+BOOST_CLASS_EXPORT(FightersAttackFightersEvent)
 
 template
-void FighterAttackedEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+void FightersAttackFightersEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
 
 template
-void FighterAttackedEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+void FightersAttackFightersEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
 
 template
-void FighterAttackedEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+void FightersAttackFightersEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
 
 template
-void FighterAttackedEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+void FightersAttackFightersEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+
 
 //////////////////////////////////////////
 /////////// FighterLaunchEvent ///////////
