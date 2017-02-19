@@ -74,10 +74,6 @@ namespace {
             }
         }
     }
-
-    // NormalExitException is used to break out of the run loop, without called terminate and
-    // failing to unroll the stack.
-    class NormalExitException {};
 };
 
 ////////////////////////////////////////////////
