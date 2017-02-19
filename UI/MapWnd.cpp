@@ -2686,7 +2686,7 @@ void MapWnd::InitTurn() {
 
 void MapWnd::MidTurnUpdate() {
     DebugLogger() << "MapWnd::MidTurnUpdate";
-    ScopedTimer timer("MapWnd::MidTurnUpdate", true);
+    SectionedScopedTimer timer("MapWnd::MidTurnUpdate", boost::chrono::microseconds(100));
 
     GetUniverse().InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
@@ -2705,7 +2705,8 @@ void MapWnd::MidTurnUpdate() {
 
 void MapWnd::InitTurnRendering() {
     DebugLogger() << "MapWnd::InitTurnRendering";
-    ScopedTimer timer("MapWnd::InitTurnRendering", true);
+    SectionedScopedTimer timer("MapWnd::InitTurnRendering", boost::chrono::microseconds(100));
+    timer.EnterSection("init");
 
     // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
@@ -2810,7 +2811,7 @@ void MapWnd::InitTurnRendering() {
 
 void MapWnd::InitSystemRenderingBuffers() {
     DebugLogger() << "MapWnd::InitSystemRenderingBuffers";
-    ScopedTimer timer("MapWnd::InitSystemRenderingBuffers", true);
+    SectionedScopedTimer timer("MapWnd::InitSystemRenderingBuffers", boost::chrono::microseconds(100));
 
     // clear out all the old buffers
     ClearSystemRenderingBuffers();
@@ -3327,7 +3328,8 @@ namespace {
 
 void MapWnd::InitStarlaneRenderingBuffers() {
     DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
-    ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", true);
+    SectionedScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", boost::chrono::microseconds(100));
+    timer.EnterSection("client collection");
 
     // clear old buffers
     ClearStarlaneRenderingBuffers();
@@ -3357,6 +3359,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                        member_to_core, under_alloc_res_grp_core_members);
 
 
+    //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
+    timer.EnterSection("general");
 
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
     m_starlane_endpoints.clear();
@@ -3511,6 +3515,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         }
     }
 
+    timer.EnterSection("fill buffers");
 
     // fill new buffers
     m_starlane_vertices.createServerBuffer();
@@ -3559,7 +3564,7 @@ LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1,
 
 void MapWnd::InitFieldRenderingBuffers() {
     DebugLogger() << "MapWnd::InitFieldRenderingBuffers";
-    ScopedTimer timer("MapWnd::InitFieldRenderingBuffers", true);
+    SectionedScopedTimer timer("MapWnd::InitFieldRenderingBuffers", boost::chrono::microseconds(100));
 
     ClearFieldRenderingBuffers();
 
@@ -3668,7 +3673,7 @@ void MapWnd::ClearFieldRenderingBuffers() {
 void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     DebugLogger() << "MapWnd::InitVisibilityRadiiRenderingBuffers";
     //std::cout << "InitVisibilityRadiiRenderingBuffers" << std::endl;
-    ScopedTimer timer("MapWnd::InitVisibilityRadiiRenderingBuffers", true);
+    SectionedScopedTimer timer("MapWnd::InitVisibilityRadiiRenderingBuffers", boost::chrono::microseconds(100));
 
     ClearVisibilityRadiiRenderingBuffers();
 
@@ -4046,6 +4051,7 @@ void MapWnd::ReselectLastSystem() {
 }
 
 void MapWnd::SelectSystem(int system_id) {
+    SectionedScopedTimer timer("MapWnd::SelectSystem", boost::chrono::microseconds(100));
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
     std::shared_ptr<const System> system = GetSystem(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
@@ -4134,13 +4140,15 @@ void MapWnd::ReselectLastFleet() {
     }
 }
 
-void MapWnd::SelectPlanet(int planetID)
-{ m_production_wnd->SelectPlanet(planetID); }   // calls SidePanel::SelectPlanet()
+void MapWnd::SelectPlanet(int planet_id) {
+    SectionedScopedTimer timer("MapWnd::SelectPlanet", boost::chrono::microseconds(100));
+}
 
 void MapWnd::SelectFleet(int fleet_id)
 { SelectFleet(GetFleet(fleet_id)); }
 
 void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
+    SectionedScopedTimer timer("MapWnd::SelectFleet", boost::chrono::microseconds(100));
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     if (!fleet) {
@@ -4531,7 +4539,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
         return;
     m_deferred_refresh_fleet_buttons = false;
 
-    ScopedTimer timer("RefreshFleetButtons()");
+    SectionedScopedTimer timer("MapWnd::DeferredRefreshFleetButtons", boost::chrono::microseconds(100));
 
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
@@ -4645,7 +4653,7 @@ void MapWnd::DeleteFleetButtons() {
 }
 
 void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("RemoveFleetsStateChangedSignal()", true);
+    SectionedScopedTimer timer("MapWnd::RemoveFleetsStateChangedSignal", boost::chrono::microseconds(100));
     for (std::shared_ptr<Fleet> fleet : fleets) {
         boost::unordered_map<int, boost::signals2::connection>::iterator
             found_signal = m_fleet_state_change_signals.find(fleet->ID());
@@ -4657,7 +4665,7 @@ void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fl
 }
 
 void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("AddFleetsStateChangedSignal()", true);
+    SectionedScopedTimer timer("MapWnd::AddFleetsStateChangedSignal", boost::chrono::microseconds(100));
     for (std::shared_ptr<Fleet> fleet : fleets) {
         m_fleet_state_change_signals[fleet->ID()] =
             GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
@@ -4665,20 +4673,20 @@ void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet
 }
 
 void MapWnd::FleetsInsertedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("FleetsInsertedSignalHandler()", true);
+    SectionedScopedTimer timer("MapWnd::FleetsInsertedSignalHandler", boost::chrono::microseconds(100));
     RefreshFleetButtons();
     RemoveFleetsStateChangedSignal(fleets);
     AddFleetsStateChangedSignal(fleets);
 }
 
 void MapWnd::FleetsRemovedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("FleetsRemovedSignalHandler()", true);
+    SectionedScopedTimer timer("MapWnd::FleetsRemovedSignalHandler", boost::chrono::microseconds(100));
     RefreshFleetButtons();
     RemoveFleetsStateChangedSignal(fleets);
 }
 
 void MapWnd::RefreshFleetSignals() {
-    ScopedTimer timer("RefreshFleetSignals()", true);
+    SectionedScopedTimer timer("MapWnd::RefreshFleetSignals", boost::chrono::microseconds(100));
     // disconnect old fleet statechangedsignal connections
     for (boost::unordered_map<int, boost::signals2::connection>::value_type& con : m_fleet_state_change_signals)
     { con.second.disconnect(); }
@@ -5286,7 +5294,7 @@ void MapWnd::SelectedFleetsChanged() {
 }
 
 void MapWnd::SelectedShipsChanged() {
-    ScopedTimer timer("MapWnd::SelectedShipsChanged", true);
+    SectionedScopedTimer timer("MapWnd::SelectedShipsChanged", boost::chrono::microseconds(100));
 
     // get selected ships
     std::set<int> selected_ship_ids;
