@@ -1005,6 +1005,17 @@ class ShipDesigner(object):
             if is_hull and AIDependencies.DETECTION not in tokendict:
                 self.detection += AIDependencies.BASE_DETECTION
 
+        # TODO establish framework for conditional effects and get rid of this
+        if self.hull.name == "SH_SPATIAL_FLUX":
+            self.stealth += 10
+            relevant_stealth_techs = [
+                "SPY_STEALTH_PART_1", "SPY_STEALTH_PART_2",
+                "SPY_STEALTH_PART_3", "SPY_STEALTH_4",
+            ]
+            completed_techs = [tech for tech in relevant_stealth_techs
+                               if tech_is_complete(tech)]
+            self.stealth += 10 * len(completed_techs)
+
         if self.hull.name not in AIDependencies.HULL_EFFECTS:
             self.detection += AIDependencies.BASE_DETECTION
         else:
