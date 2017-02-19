@@ -148,11 +148,8 @@ bool SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool incl
     if (empire_id == ALL_EMPIRES)
         return false;
 
-    std::set<int> empire_ids{empire_id};
-    for (auto e_pair : Empires()) {
-        if (Empires().GetDiplomaticStatus(empire_id, e_pair.first) == DIPLO_PEACE)
-            empire_ids.insert(e_pair.first);
-    }
+    std::set<int> empire_ids = Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DIPLO_ALLIED);
+    empire_ids.insert(empire_id);
 
     for (auto id : empire_ids) {
         auto sys_set_it = m_fleet_supplyable_system_ids.find(id);
