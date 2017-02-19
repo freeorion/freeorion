@@ -55,6 +55,8 @@ public:
 
     void LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) override
     { OnExit(); }
+    void MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys) override
+    { m_scroll_offset -= move * 2000; }
 
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override {
         if (key == GG::GGK_ESCAPE)
@@ -69,10 +71,11 @@ private:
     XMLElement                  m_credits;
     int                         m_cx, m_cy, m_cw, m_ch, m_co;
     int                         m_start_time;
+    int                         m_scroll_offset = 0;
     int                         m_render;
     int                         m_display_list_id;
     int                         m_credits_height;
-    std::shared_ptr<GG::Font> m_font;
+    std::shared_ptr<GG::Font>   m_font;
 };
 
 CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &credits, int cx, int cy, int cw, int ch, int co) :
@@ -159,7 +162,7 @@ void CreditsWnd::Render() {
         glEndList();
     }
     //time passed
-    int ticks_delta = GG::GUI::GetGUI()->Ticks() - m_start_time;
+    int ticks_delta = GG::GUI::GetGUI()->Ticks() - m_start_time + m_scroll_offset;
 
     //draw background
     GG::FlatRectangle(ul, lr, GG::FloatClr(0.0f, 0.0f, 0.0f, 0.5f), GG::CLR_ZERO, 0);
