@@ -3368,10 +3368,12 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
         int system_id = system_icon.first;
 
+        timer.EnterSection("destroyed");
         // skip systems that don't actually exist
         if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
             continue;
 
+        timer.EnterSection("get system");
         std::shared_ptr<const System> start_system = GetSystem(system_id);
         if (!start_system) {
             ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
@@ -3385,10 +3387,12 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
             int lane_end_sys_id = render_lane.first;
 
+            timer.EnterSection("destroyed");
             // skip lanes to systems that don't actually exist
             if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
                 continue;
 
+            timer.EnterSection("get system");
             std::shared_ptr<const System> dest_system = GetSystem(render_lane.first);
             if (!dest_system)
                 continue;
@@ -3400,6 +3404,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
             if (m_starlane_endpoints.find(lane) == m_starlane_endpoints.end()) {
                 //std::cout << "adding full length lane" << std::endl;
+                timer.EnterSection("add full lane end points");
 
                 // get and store universe position endpoints for this starlane.  make sure to store in the same order
                 // as the system ids in the lane id pair
@@ -3409,6 +3414,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     m_starlane_endpoints[lane] = StarlaneEndPointsFromSystemPositions(dest_system->X(), dest_system->Y(), start_system->X(), start_system->Y());
 
 
+                timer.EnterSection("add full lane vertices");
                 // add vertices for this full-length starlane
                 m_starlane_vertices.store(static_cast<float>(m_starlane_endpoints[lane].X1),
                                           static_cast<float>(m_starlane_endpoints[lane].Y1));
@@ -3420,6 +3426,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
                 for (std::map<int, Empire*>::value_type& entry : Empires()) {
                     Empire* empire = entry.second;
+
+                    timer.EnterSection("add full lane get traversals");
                     const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
 
                     //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
@@ -3427,6 +3435,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
                     std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
 
+                    timer.EnterSection("add full lane double search");
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
                     if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
                         lane_colour = empire->Color();
@@ -3446,18 +3455,23 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             // render half-starlane from the current start_system to the current dest_system?
 
             // check that this lane isn't already going to be rendered.  skip it if it is.
+            timer.EnterSection("add half lane entry search");
             if (rendered_half_starlanes.find({start_system->ID(), dest_system->ID()}) ==
                 rendered_half_starlanes.end())
             {
+                timer.EnterSection("add half lane");
                 // NOTE: this will never find a preexisting half lane   NOTE LATER: I probably wrote that comment, but have no idea what it means...
                 //std::cout << "half lane not found... considering possible half lanes to add" << std::endl;
 
                 // scan through possible empires to have a half-lane here and add a half-lane if one is found
                 std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
                 //std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
+                timer.EnterSection("add half lane end points");
                 LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
                 GG::Clr lane_colour;
+                timer.EnterSection("group core search");
                 if ( (this_client_empire) &&(res_group_core_members.find(start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
+                    timer.EnterSection("under alloc search");
                     lane_colour = this_client_empire->Color();
                     float indicatorExtent = 0.5f;
                     if (under_alloc_res_grp_core_members
@@ -3470,6 +3484,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                         (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
                         !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
                         (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
+                    timer.EnterSection("group core double search");
                     boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator start_core = member_to_core.find(start_system->ID());
                     boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator dest_core = member_to_core.find(dest_system->ID());
                     if (start_core != member_to_core.end() && dest_core != member_to_core.end()
@@ -3478,6 +3493,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     {
                         indicatorExtent = 0.2f;
                     }
+                    timer.EnterSection("group core store vertices");
                     m_RC_starlane_vertices.store(lane_endpoints.X1,
                                                  lane_endpoints.Y1);
                     m_RC_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicatorExtent + lane_endpoints.X1,   // part way along starlane
@@ -3487,16 +3503,22 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                     m_RC_starlane_colors.store(lane_colour);
                 }
 
+                timer.EnterSection("final four");
                 for (std::map<int, Empire*>::value_type& entry : Empires()) {
                     Empire* empire = entry.second;
+
+                    timer.EnterSection("final four get obstructed");
                     const auto& resource_obstructed_supply_lanes =
                         GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
 
+                    timer.EnterSection("final four search obstructed");
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
                     if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
                         // found an empire that has a half lane here, so add it.
+                    timer.EnterSection("final four insert");
                         rendered_half_starlanes.insert({start_system->ID(), dest_system->ID()});  // inserted as ordered pair, so both directions can have different half-lanes
 
+                        timer.EnterSection("final four vertices");
                         m_starlane_vertices.store(lane_endpoints.X1,
                                                   lane_endpoints.Y1);
                         m_starlane_vertices.store((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f,   // half way along starlane
