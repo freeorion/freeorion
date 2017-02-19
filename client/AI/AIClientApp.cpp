@@ -99,7 +99,9 @@ void AIClientApp::operator()()
 
 void AIClientApp::Exit(int code) {
     DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
-    exit(code);
+    if (code)
+        exit(code);
+    throw NormalExitException();
 }
 
 int AIClientApp::EffectsProcessingThreads() const
@@ -142,6 +144,8 @@ void AIClientApp::Run() {
                     throw;
             }
         }
+    } catch (const NormalExitException&) {
+        // intentionally empty.
     } catch (boost::python::error_already_set) {
         HandlePythonAICrash();
     }
