@@ -106,8 +106,7 @@ build_sys = sys.argv[2]
 
 # A list of tuples containing generators
 generators = [
-    Generator('util/Version.cpp.in', 'util/Version.cpp'),
-    Generator('doc/apidoc-commit-message.in', 'doc/apidoc-commit-message')
+    Generator('util/Version.cpp.in', 'util/Version.cpp')
 ]
 if system() == 'Windows':
     generators.append(NsisInstScriptGenerator('Installer/FreeOrion_Install_Script.nsi.in',
