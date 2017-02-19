@@ -91,7 +91,7 @@ AIClientApp::~AIClientApp() {
     if (Networking().Connected())
         Networking().DisconnectFromServer();
 
-    DebugLogger() << "Shutting down " + PlayerName() + " ai client.";
+    DebugLogger() << "Shut down " + PlayerName() + " ai client.";
 }
 
 void AIClientApp::operator()()
