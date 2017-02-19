@@ -74,6 +74,10 @@ namespace {
             }
         }
     }
+
+    // NormalExitException is used to break out of the run loop, without called terminate and
+    // failing to unroll the stack.
+    class NormalExitException {};
 };
 
 ////////////////////////////////////////////////
@@ -162,6 +166,7 @@ ServerApp::~ServerApp() {
     m_python_server.Finalize();
     CleanupAIs();
     delete m_fsm;
+    DebugLogger() << "Server exited cleanly.";
 }
 
 void ServerApp::operator()()
@@ -175,7 +180,9 @@ void ServerApp::SignalHandler(const boost::system::error_code& error, int signal
 void ServerApp::Exit(int code) {
     DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
     CleanupAIs();
-    exit(code);
+    if (code)
+        exit(code);
+    throw NormalExitException();
 }
 
 namespace {
@@ -314,13 +321,15 @@ int ServerApp::GetNewDesignID()
 
 void ServerApp::Run() {
     DebugLogger() << "FreeOrion server waiting for network events";
-    std::cout << "FreeOrion server waiting for network events" << std::endl;
-    while (1) {
-        if (m_io_service.run_one())
-            m_networking.HandleNextEvent();
-        else
-            break;
-    }
+    try {
+        while (1) {
+            if (m_io_service.run_one())
+                m_networking.HandleNextEvent();
+            else
+                break;
+        }
+    } catch (const NormalExitException&)
+    {}
 }
 
 void ServerApp::CleanupAIs() {
