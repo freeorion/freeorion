@@ -484,7 +484,7 @@ sc::result MPLobby::react(const JoinGame& msg) {
     std::string new_player_name = player_name;
 
     bool collision = true;
-    int t = 1;
+    std::size_t t = 1;
     while (t <= m_lobby_data->m_players.size() + 1 && collision) {
         collision = false;
         if (!server.IsAvailableName(new_player_name)) {
