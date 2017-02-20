@@ -833,7 +833,7 @@ MapWnd::MovementLineData::MovementLineData() :
 {}
 
 MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
-                                           const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
+                                           const std::unordered_map<std::pair<int, int>, LaneEndpoints, UnorderedPairHash, UnorderedPairEqual>& lane_end_points_map,
                                            GG::Clr colour_/*= GG::CLR_WHITE*/, int empireID /*= ALL_EMPIRES*/) :
     path(path_),
     colour(colour_)
@@ -899,7 +899,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         std::pair<int, int> lane_ids = UnorderedIntPair(prev_sys_id, next_sys_id);
 
         // get lane end points
-        std::map<std::pair<int, int>, LaneEndpoints>::const_iterator ends_it = lane_end_points_map.find(lane_ids);
+        const auto& ends_it = lane_end_points_map.find(lane_ids);
         if (ends_it == lane_end_points_map.end()) {
             ErrorLogger() << "couldn't get endpoints of lane for move line";
             break;
@@ -3469,7 +3469,7 @@ void MapWnd::InitStarlaneEndPoints() {
                 continue;
 
             // check that this lane isn't already in map / being rendered.
-            std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID()); 
+            std::pair<int, int> lane = {start_system->ID(), dest_system->ID()};
 
             if (m_starlane_endpoints.find(lane) != m_starlane_endpoints.end())
                 continue;
@@ -3479,9 +3479,9 @@ void MapWnd::InitStarlaneEndPoints() {
             // get and store universe position endpoints for this starlane.  make sure to store in the same order
             // as the system ids in the lane id pair
             if (start_system->ID() == lane.first)
-                m_starlane_endpoints.insert({lane, LaneEndpoints(start_system, dest_system)});
+                m_starlane_endpoints.insert(std::make_pair(lane, LaneEndpoints(start_system, dest_system)));
             else
-                m_starlane_endpoints.insert({lane, LaneEndpoints(dest_system, start_system)});
+                m_starlane_endpoints.insert(std::make_pair(lane, LaneEndpoints(dest_system, start_system)));
         }
     }
 }
@@ -4583,7 +4583,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<c
     std::pair<int, int> lane = UnorderedIntPair(sys1_id, sys2_id);
 
     // get apparent positions of endpoints for this lane that have been pre-calculated
-    std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find(lane);
+    const auto& endpoints_it = m_starlane_endpoints.find(lane);
     if (endpoints_it == m_starlane_endpoints.end()) {
         // couldn't find an entry for the lane this fleet is one, so just
         // return actual position of fleet on starlane - ignore the distance
