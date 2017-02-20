@@ -704,7 +704,9 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->TotalWeaponsDamage();
 
-    } else if (property_name == "PropagatedSupplyRange") {
+    } /* TODO remove these properties from the parser? or find a way to represent a multivalent result.
+
+        else if (property_name == "PropagatedSupplyRange") {
         const auto& ranges = GetSupplyManager().PropagatedSupplyRanges();
         const auto& range_it = ranges.find(object->SystemID());
         if (range_it == ranges.end())
@@ -717,7 +719,7 @@ double Variable<double>::Eval(const ScriptingContext& context) const
         if (range_it == ranges.end())
             return 0.0;
         return range_it->second;
-    }
+        }*/
 
     ErrorLogger() << "Variable<double>::Eval unrecognized object property: "
                   << TraceReference(m_property_name, m_ref_type, context);
@@ -785,9 +787,12 @@ int Variable<int>::Eval(const ScriptingContext& context) const
 
     if (property_name == "Owner") {
         return object->Owner();
-    } else if (property_name == "SupplyingEmpire") {
-        return GetSupplyManager().EmpireThatCanSupplyAt(object->SystemID());
-    } else if (property_name == "ID") {
+    }
+    /* TODO replace with multi-valent result.
+else if (property_name == "SupplyingEmpire") {
+      return GetSupplyManager().EmpireThatCanSupplyAt(object->SystemID());
+    } */
+    else if (property_name == "ID") {
         return object->ID();
     } else if (property_name == "CreationTurn") {
         return object->CreationTurn();

@@ -2029,12 +2029,12 @@ void MapWnd::RenderSystems() {
                     if (system->NumStarlanes() > 0) {
                         glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
 
-                        if (m_supply_lane_empire_id) {
-                            int empire_id = GetSupplyManager().EmpireThatCanSupplyAt(system_icon.first);
-                            if ((empire_id == m_supply_lane_empire_id) && (empire_id != ALL_EMPIRES)) {
-                                if (Empire* empire = GetEmpire(empire_id)) {
+                        // If the active supply viewing empire has supply here color the circle
+                        if (m_supply_lane_empire_id && *m_supply_lane_empire_id != ALL_EMPIRES) {
+                            const auto& supply_map = GetSupplyManager().FleetSupplyableSystemIDs(*m_supply_lane_empire_id);
+                            if (supply_map.find(system_icon.first) != supply_map.end()) {
+                                if (Empire* empire = GetEmpire(*m_supply_lane_empire_id))
                                     glColor(empire->Color());
-                                }
                             }
                         }
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);

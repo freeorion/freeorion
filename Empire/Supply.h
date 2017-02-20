@@ -60,23 +60,16 @@ public:
     const std::unordered_map<int, std::unordered_set<int>>&           FleetSupplyableSystemIDs() const;
     const std::unordered_set<int>&                                    FleetSupplyableSystemIDs(int empire_id) const;
     std::unordered_set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
-    int                                                     EmpireThatCanSupplyAt(int system_id) const;
 
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */
     const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>& ResourceSupplyGroups() const;
     const std::vector<std::shared_ptr<const std::unordered_set<int>>>&                          ResourceSupplyGroups(int empire_id) const;
 
-    /** Returns the range from each system some empire can propagate supply.*/
-    const std::unordered_map<int, float>&                             PropagatedSupplyRanges() const;
     /** Returns the range from each system that the empire with id \a empire_id
       * can propagate supply.*/
     const std::unordered_map<int, float>&                             PropagatedSupplyRanges(int empire_id) const;
 
-    /** Returns the distance from each system some empire is away
-      * from its closest source of supply without passing
-      * through obstructed systems for that empire. */
-    const std::unordered_map<int, float>&                             PropagatedSupplyDistances() const;
     /** Returns the distance from each system for the empire with id
       * \a empire_id to the closest source of supply without passing
       * through obstructed systems for that empire. */
