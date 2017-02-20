@@ -3500,11 +3500,12 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* client_empire = GetEmpire(client_empire_id);
+
+    const Empire* observed_empire = (m_supply_lane_empire_id ? GetEmpire(*m_supply_lane_empire_id) : client_empire);
 
     const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
     const Empire* this_client_empire = GetEmpire(client_empire_id);
-
-
 
     // Get info about rendered empire resource starlanes
 
@@ -3515,7 +3516,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     std::unordered_set<int> res_group_core_members;
     boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
     std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
-    GetResPoolLaneInfo(client_empire_id, res_pool_systems, res_group_cores, res_group_core_members,
+    GetResPoolLaneInfo(observed_empire->EmpireID(), res_pool_systems, res_group_cores, res_group_core_members,
                        member_to_core, under_alloc_res_grp_core_members);
 
 
@@ -3569,7 +3570,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
         /** Compute the length, width and color of a half lane from start to end.*/
         auto compute_half_starlane_extent =
-            [&timer, this, &this_client_empire, &res_group_core_members, &under_alloc_res_grp_core_members, &member_to_core]
+            [&timer, this, &observed_empire, &res_group_core_members, &under_alloc_res_grp_core_members, &member_to_core]
             (const std::shared_ptr<const System>& half_start_system, const std::shared_ptr<const System>& half_end_system)
             {
                 // render half-starlane from the current start_system to the current dest_system?
@@ -3584,20 +3585,20 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 GG::Clr lane_colour;
                 timer.EnterSection("group core search");
-                if ((this_client_empire) && (res_group_core_members.find(half_start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
+                if ((observed_empire) && (res_group_core_members.find(half_start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for observed_empire -- highlight
                     timer.EnterSection("under alloc search");
-                    lane_colour = this_client_empire->Color();
+                    lane_colour = observed_empire->Color();
                     float indicatorExtent = 0.5f;
                     if (under_alloc_res_grp_core_members
                         && (under_alloc_res_grp_core_members->find(half_start_system->ID()) != under_alloc_res_grp_core_members->end() ) )
                     {
-                        GG::Clr eclr= this_client_empire->Color();
+                        GG::Clr eclr= observed_empire->Color();
                         lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
                     }
-                    /*if ((this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
-                      (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
-                      !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
-                      (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
+                    /*if ((observed_empire->SupplyObstructedStarlaneTraversals().find(lane_forward) != observed_empire->SupplyObstructedStarlaneTraversals().end()) ||
+                      (observed_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != observed_empire->SupplyObstructedStarlaneTraversals().end()) ||
+                      !( (observed_empire->SupplyStarlaneTraversals().find(lane_forward) != observed_empire->SupplyStarlaneTraversals().end()) ||
+                      (observed_empire->SupplyStarlaneTraversals().find(lane_backward) != observed_empire->SupplyStarlaneTraversals().end())   )  ) */
                     timer.EnterSection("group core double search");
 
                     // Are both systems core systems, not in the same supply group?
