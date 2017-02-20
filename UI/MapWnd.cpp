@@ -2964,6 +2964,14 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_star_circle_vertices.clear();
 }
 
+void MapWnd::ChangeSupplyLaneRenderedEmpire(int empire_id) {
+    // Update supply lane rendering if it changed.
+    auto m_supply_lane_empire_id_old = m_supply_lane_empire_id;
+    m_supply_lane_empire_id = (empire_id != ALL_EMPIRES) ? boost::optional<int>(empire_id) : boost::none;
+    if (m_supply_lane_empire_id != m_supply_lane_empire_id_old)
+        InitStarlaneRenderingBuffers();
+}
+
 namespace GetPathsThroughSupplyLanes {
     // SupplyLaneMap map keyed by system containing all systems
     // corresponding to valid supply lane destinations
@@ -4092,16 +4100,11 @@ void MapWnd::SelectSystem(int system_id) {
         system_id = INVALID_OBJECT_ID;
     }
 
-
     if (system) {
         // ensure meter estimates are up to date, particularly for which ship is selected
         GetUniverse().UpdateMeterEstimates(system_id, true);
 
-        // // If the selected system is owned then display the supply lanes for the owner.
-        auto m_supply_lane_empire_id_old = m_supply_lane_empire_id;
-        m_supply_lane_empire_id = (system->Owner() != ALL_EMPIRES) ? boost::optional<int>(system->Owner()) : boost::none;
-        if (m_supply_lane_empire_id != m_supply_lane_empire_id_old)
-            InitStarlaneRenderingBuffers();
+        ChangeSupplyLaneRenderedEmpire(system->Owner());
     }
 
     if (SidePanel::SystemID() != system_id) {
@@ -4186,11 +4189,7 @@ void MapWnd::SelectPlanet(int planet_id) {
     if (!planet)
         return;
 
-    // If the selected planet is owned then display the supply lanes for the owner.
-    auto m_supply_lane_empire_id_old = m_supply_lane_empire_id;
-    m_supply_lane_empire_id = (planet->Owner() != ALL_EMPIRES) ? boost::optional<int>(planet->Owner()) : boost::none;
-    if (m_supply_lane_empire_id != m_supply_lane_empire_id_old)
-        InitStarlaneRenderingBuffers();
+    ChangeSupplyLaneRenderedEmpire(planet->Owner());
 }
 
 void MapWnd::SelectFleet(int fleet_id)
@@ -4260,11 +4259,7 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     // signals being emitted and connected to MapWnd::SelectedFleetsChanged
     fleet_wnd->SelectFleet(fleet->ID());
 
-    // If the selected fleet is owned then display the supply lanes for the owner.
-    auto m_supply_lane_empire_id_old = m_supply_lane_empire_id;
-    m_supply_lane_empire_id = (fleet->Owner() != ALL_EMPIRES) ? boost::optional<int>(fleet->Owner()) : boost::none;
-    if (m_supply_lane_empire_id != m_supply_lane_empire_id_old)
-        InitStarlaneRenderingBuffers();
+    ChangeSupplyLaneRenderedEmpire(fleet->Owner());
 }
 
 void MapWnd::RemoveFleet(int fleet_id) {

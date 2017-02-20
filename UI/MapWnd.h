@@ -441,6 +441,9 @@ private:
     void            SelectedFleetsChanged();
     void            SelectedShipsChanged();
 
+    /** Change which empire is used for supply lane rendering.*/
+    void            ChangeSupplyLaneRenderedEmpire(int empire_id);
+
     /** The ID of the empire to render the colored supply lanes for or none.*/
     boost::optional<int>        m_supply_lane_empire_id;
 
