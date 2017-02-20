@@ -152,6 +152,12 @@ namespace {
     }
     boost::function<std::vector<int> (const Empire&)> empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
 
+    std::map<int, float> EmpireSystemSupplyRangesP(const Empire& empire) {
+        std::map<int, float> retval(empire.SystemSupplyRanges().begin(), empire.SystemSupplyRanges().end());
+        return retval;
+    }
+    boost::function<std::map<int, float> (const Empire&)> empireSystemSuppleRangesFunc =  &EmpireSystemSupplyRangesP;
+
     typedef std::pair<float, int> FloatIntPair;
 
     typedef PairToTupleConverter<float, int> FloatIntPairConverter;
@@ -339,7 +345,11 @@ namespace FreeOrionPython {
                                                             boost::mpl::vector<std::vector<int>, const Empire& >()
                                                         ))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   return_internal_reference<>()))
-            .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          return_internal_reference<>()))
+            .add_property("systemSupplyRanges",         make_function(
+                                                        empireSystemSuppleRangesFunc,
+                                                        return_value_policy<return_by_value>(),
+                                                        boost::mpl::vector<std::map<int, float>, const Empire&>()
+                                                        ))
 
             .def("numSitReps",                      &Empire::NumSitRepEntries)
             .def("getSitRep",                       make_function(
