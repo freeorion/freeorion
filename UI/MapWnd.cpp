@@ -53,6 +53,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/optional/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 #include <boost/locale.hpp>
 
 #include <GG/DrawUtil.h>
@@ -1952,10 +1953,12 @@ void MapWnd::RenderSystems() {
                     if (system->NumStarlanes() > 0) {
                         glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
 
-                        int empire_id = GetSupplyManager().EmpireThatCanSupplyAt(system_icon.first);
-                        if (empire_id != ALL_EMPIRES) {
-                            if (Empire* empire = GetEmpire(empire_id)) {
-                                glColor(empire->Color());
+                        if (m_supply_lane_empire_id) {
+                            int empire_id = GetSupplyManager().EmpireThatCanSupplyAt(system_icon.first);
+                            if ((empire_id == m_supply_lane_empire_id) && (empire_id != ALL_EMPIRES)) {
+                                if (Empire* empire = GetEmpire(empire_id)) {
+                                    glColor(empire->Color());
+                                }
                             }
                         }
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
@@ -3427,6 +3430,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 for (std::map<int, Empire*>::value_type& entry : Empires()) {
                     Empire* empire = entry.second;
 
+                    // Determine if this is a lane that the empire whose supply is being shown can use.
+                    if(!m_supply_lane_empire_id || m_supply_lane_empire_id != empire->EmpireID())
+                        continue;
+
                     timer.EnterSection("add full lane get traversals");
                     const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
 
@@ -3506,6 +3513,10 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 timer.EnterSection("final four");
                 for (std::map<int, Empire*>::value_type& entry : Empires()) {
                     Empire* empire = entry.second;
+
+                    // Determine if this is a lane that the empire whose supply is being shown can use.
+                    if(!m_supply_lane_empire_id || m_supply_lane_empire_id != empire->EmpireID())
+                        continue;
 
                     timer.EnterSection("final four get obstructed");
                     const auto& resource_obstructed_supply_lanes =
@@ -4085,8 +4096,13 @@ void MapWnd::SelectSystem(int system_id) {
     if (system) {
         // ensure meter estimates are up to date, particularly for which ship is selected
         GetUniverse().UpdateMeterEstimates(system_id, true);
-    }
 
+        // // If the selected system is owned then display the supply lanes for the owner.
+        auto m_supply_lane_empire_id_old = m_supply_lane_empire_id;
+        m_supply_lane_empire_id = (system->Owner() != ALL_EMPIRES) ? boost::optional<int>(system->Owner()) : boost::none;
+        if (m_supply_lane_empire_id != m_supply_lane_empire_id_old)
+            InitStarlaneRenderingBuffers();
+    }
 
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
@@ -4164,6 +4180,17 @@ void MapWnd::ReselectLastFleet() {
 
 void MapWnd::SelectPlanet(int planet_id) {
     SectionedScopedTimer timer("MapWnd::SelectPlanet", boost::chrono::microseconds(100));
+    m_production_wnd->SelectPlanet(planet_id);    // calls SidePanel::SelectPlanet()
+
+    std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+    if (!planet)
+        return;
+
+    // If the selected planet is owned then display the supply lanes for the owner.
+    auto m_supply_lane_empire_id_old = m_supply_lane_empire_id;
+    m_supply_lane_empire_id = (planet->Owner() != ALL_EMPIRES) ? boost::optional<int>(planet->Owner()) : boost::none;
+    if (m_supply_lane_empire_id != m_supply_lane_empire_id_old)
+        InitStarlaneRenderingBuffers();
 }
 
 void MapWnd::SelectFleet(int fleet_id)
@@ -4189,6 +4216,9 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
         // which will update this->m_selected_Fleets
         if (active_fleet_wnd)
             active_fleet_wnd->SelectFleet(0);
+
+        // Stop rendering supply lanes.
+        m_supply_lane_empire_id = boost::none;
 
         return;
     }
@@ -4229,6 +4259,12 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     // this->m_selected_fleet_ids will be updated by ActiveFleetWndSelectedFleetsChanged or ActiveFleetWndChanged
     // signals being emitted and connected to MapWnd::SelectedFleetsChanged
     fleet_wnd->SelectFleet(fleet->ID());
+
+    // If the selected fleet is owned then display the supply lanes for the owner.
+    auto m_supply_lane_empire_id_old = m_supply_lane_empire_id;
+    m_supply_lane_empire_id = (fleet->Owner() != ALL_EMPIRES) ? boost::optional<int>(fleet->Owner()) : boost::none;
+    if (m_supply_lane_empire_id != m_supply_lane_empire_id_old)
+        InitStarlaneRenderingBuffers();
 }
 
 void MapWnd::RemoveFleet(int fleet_id) {

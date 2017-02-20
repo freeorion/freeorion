@@ -441,6 +441,9 @@ private:
     void            SelectedFleetsChanged();
     void            SelectedShipsChanged();
 
+    /** The ID of the empire to render the colored supply lanes for or none.*/
+    boost::optional<int>        m_supply_lane_empire_id;
+
     std::set<int>               m_selected_fleet_ids;
     std::set<int>               m_selected_ship_ids;
 
