@@ -75,6 +75,10 @@ public:
       * through obstructed systems for that empire. */
     const std::unordered_map<int, float>&                             PropagatedSupplyDistances(int empire_id) const;
 
+    /** Returns the stealth of the supply in each system for the empire with id
+      * \a empire_id if the empire has supply in system. */
+    const std::unordered_map<int, float>&                             SupplyStealth(int empire_id) const;
+
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;

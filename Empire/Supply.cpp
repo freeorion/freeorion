@@ -68,6 +68,10 @@ public:
       * through obstructed systems for that empire. */
     const std::unordered_map<int, float>&                             PropagatedSupplyDistances(int empire_id) const;
 
+    /** Returns the stealth of the supply in each system for the empire with id
+      * \a empire_id if the empire has siupply in system. */
+    const std::unordered_map<int, float>&                             SupplyStealth(int empire_id) const;
+
     /** Returns true if system with id \a system_id is fleet supplyable or in
       * one of the resource supply groups for empire with id \a empire_id */
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;
@@ -134,6 +138,9 @@ private:
       * possible supply propgation connections (ie. not though a supply
       * obstructed system) */
     std::unordered_map<int, std::unordered_map<int, float>>             m_empire_propagated_supply_distances;
+
+    // For each empire and each system the highest stealth of supply in that system.
+    std::unordered_map<int, std::unordered_map<int, float>> m_empire_to_system_to_stealth;
 };
 
 
@@ -232,6 +239,15 @@ const std::unordered_map<int, float>& SupplyManager::SupplyManagerImpl::Propagat
     auto emp_it = m_empire_propagated_supply_distances.find(empire_id);
     if (emp_it == m_empire_propagated_supply_distances.end())
         return EMPTY_INT_FLOAT_UNORDERED_MAP;
+    return emp_it->second;
+}
+
+const std::unordered_map<int, float>& SupplyManager::SupplyManagerImpl::SupplyStealth(int empire_id) const {
+    auto emp_it = m_empire_to_system_to_stealth.find(empire_id);
+    if (emp_it == m_empire_to_system_to_stealth.end()) {
+        ErrorLogger() << "Supply stealth received an unexpected empire id = " << empire_id <<  " size = " << m_empire_to_system_to_stealth.size();
+        return EMPTY_INT_FLOAT_UNORDERED_MAP;
+    }
     return emp_it->second;
 }
 
@@ -2035,8 +2051,8 @@ void SupplyManager::SupplyManagerImpl::Update() {
     /*std::map<int, std::map<int, float>>           */  m_empire_propagated_supply_distances.clear();
 
 
-    // For each empire the highest stealth its supply in system that it has supply inn.
-    std::unordered_map<int, std::unordered_map<int, float>> empire_to_system_to_stealth;
+    /*// For each empire the highest stealth its supply in system that it has supply inn.
+    std::unordered_map<int, std::unordered_map<int, float>> */ m_empire_to_system_to_stealth.clear();
 
     for (auto&& system_and_supply_pod : system_to_supply_pod) {
         auto system_id = system_and_supply_pod.first;
@@ -2065,7 +2081,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
                 m_empire_propagated_supply_distances[empire_id].insert({system_id, merit.Distance()});
 
                 // Keep the best local stealth.
-                auto& current_stealth = empire_to_system_to_stealth[empire_id][system_id];
+                auto& current_stealth = m_empire_to_system_to_stealth[empire_id][system_id];
                 current_stealth = std::max(current_stealth, stealth);
             }
         }
@@ -2119,21 +2135,28 @@ void SupplyManager::SupplyManagerImpl::Update() {
                 verifyType<System>(end_id, "end id");
 
                 // Use the smallest stealth of either endpoint.
-                auto& stealth_map = empire_to_system_to_stealth[empire_id];
-                const auto stealth = std::min(stealth_map[start_id], stealth_map[end_id]);
-
+                const auto& stealth_map = m_empire_to_system_to_stealth[empire_id];
+                const auto stealth_start_it = stealth_map.find(start_id);
+                const auto stealth_start = stealth_start_it != stealth_map.end() ? stealth_start_it->second : 0.0f;
+                const auto stealth_end_it = stealth_map.find(end_id);
+                const auto stealth_end = stealth_end_it != stealth_map.end() ? stealth_end_it->second : 0.0f;
+                const auto stealth = std::min(stealth_start, stealth_end);
 
                 // If there is supply at both ends then it is traversable
                 if (start_range >= 0.0f  && end_range >= 0.0f) {
-                    DebugLogger() << " Good traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< ".";
+                    DebugLogger() << " Good traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< " stealth = "<<stealth<<".";
                     supply_starlane_traversals.insert({{start_id, end_id}, stealth});
                 }
 
-                // If there is surplus range >1.0f at the source end and 0.0f and the output end
-                // then it is obstructed.
+                // If there is surplus range >1.0f at the source end and 0.0f at the output end
+                // then it is obstructed.  This is asymmetrical, so check both direction separately.
                 if (start_range >= 1.0f  && end_range < 0.0f) {
-                    DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< ".";
-                    supply_starlane_obstructed_traversals.insert({{start_id, end_id}, stealth});
+                    DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< " stealth = "<<stealth_start<<".";
+                    supply_starlane_obstructed_traversals.insert({{start_id, end_id}, stealth_start});
+                }
+                if (end_range >= 1.0f  && start_range < 0.0f) {
+                    DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< " stealth = "<<stealth_end<<".";
+                    supply_starlane_obstructed_traversals.insert({{end_id, start_id}, stealth_end});
                 }
             }
         }
@@ -2294,7 +2317,8 @@ void SupplyManager::SupplyManagerImpl::serialize(Archive& ar, const unsigned int
         & BOOST_SERIALIZATION_NVP(m_propagated_supply_ranges)
         & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_ranges)
         & BOOST_SERIALIZATION_NVP(m_propagated_supply_distances)
-        & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_distances);
+        & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_distances)
+        & BOOST_SERIALIZATION_NVP(m_empire_to_system_to_stealth);
 }
 
 template void SupplyManager::SupplyManagerImpl::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -2351,6 +2375,9 @@ const std::unordered_map<int, float>&                             SupplyManager:
 
 const std::unordered_map<int, float>&                             SupplyManager::PropagatedSupplyDistances(int empire_id) const
 { return pimpl->PropagatedSupplyDistances(empire_id); }
+
+const std::unordered_map<int, float>&                             SupplyManager::SupplyStealth(int empire_id) const
+{ return pimpl->SupplyStealth(empire_id); }
 
 bool                                                    SupplyManager::SystemHasFleetSupply(int system_id, int empire_id) const
 { return pimpl->SystemHasFleetSupply(system_id, empire_id); }
