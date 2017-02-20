@@ -424,13 +424,17 @@ class OrderMilitary(AIFleetOrder):
     def is_valid(self):
         if not super(OrderMilitary, self).is_valid():
             return False
-        return self.fleet.get_object().hasArmedShips
+        thisFleet = self.fleet.get_object()
+        # TODO: consider bombardment-only fleets/orders
+        return thisFleet is not None and (thisFleet.hasArmedShips or thisFleet.hasFighterShips)
 
     def can_issue_order(self, verbose=False):
+        # TODO: consider bombardment
+        # TODO: consider simmply looking at fleet characteristics, as is done for is_valid()
         ship_id = FleetUtilsAI.get_ship_id_with_role(self.fleet.id, ShipRoleType.MILITARY)
         universe = fo.getUniverse()
         ship = universe.getShip(ship_id)
-        return ship is not None and self.fleet.get_system() == self.target and ship.isArmed
+        return ship is not None and self.fleet.get_system() == self.target and (ship.isArmed or ship.hasFighters)
 
     def issue_order(self):
         if not super(OrderMilitary, self).issue_order():

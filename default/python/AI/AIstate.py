@@ -302,7 +302,7 @@ class AIstate(object):
                         fleet_spot_position.setdefault(fleet.systemID, []).append(fleet_id)
                 else:
                     dead_fleet = fleet_id in destroyed_object_ids
-                    if not fleet.ownedBy(-1) and fleet.hasArmedShips:
+                    if not fleet.ownedBy(-1) and (fleet.hasArmedShips or fleet.hasFighterShips):
                         ship_stats = CombatRatingsAI.FleetCombatStats(fleet_id).get_ship_stats(hashable=True)
                         e_f_dict = [cur_e_fighters, old_e_fighters][dead_fleet]  # track old/dead enemy fighters for rating assessments in case not enough current info
                         for stats in ship_stats:

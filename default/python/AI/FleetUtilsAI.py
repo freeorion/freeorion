@@ -389,11 +389,12 @@ def assess_ship_design_role(design):
         else:
             return ShipRoleType.INVALID
 
-    if design.isArmed:
+    if design.isArmed or design.hasFighters:
         return ShipRoleType.MILITARY
     if any(p.partClass == fo.shipPartClass.detection for p in parts):
         return ShipRoleType.CIVILIAN_EXPLORATION
     else:   # if no suitable role found, use as (bad) scout as it still has inherent detection
+        print "AI Warning: defaulting ship role to 'exploration' for ship with parts: ", design.parts
         return ShipRoleType.CIVILIAN_EXPLORATION
 
 
@@ -547,7 +548,7 @@ def get_fighter_capacity_of_fleet(fleet_id):
     ships = (universe.getShip(ship_id) for ship_id in (fleet.shipIDs if fleet else []))
     for ship in ships:
         design = ship and ship.design
-        design_parts = design.parts if design and design.isArmed else []
+        design_parts = design.parts if design and design.hasFighters else []
         for partname in design_parts:
             part = get_part_type(partname)
             if part and part.partClass == fo.shipPartClass.fighterHangar:

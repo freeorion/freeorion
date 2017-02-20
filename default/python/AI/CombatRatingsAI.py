@@ -130,7 +130,7 @@ class ShipCombatStats(object):
         fighter_capacity = 0
         fighter_damage = 0
         design = ship.design
-        if design and ship.isArmed:
+        if design and (ship.isArmed or ship.hasFighters):
             meter_choice = fo.meterType.maxCapacity if self._consider_refuel else fo.meterType.capacity
             for partname in design.parts:
                 if not partname:
