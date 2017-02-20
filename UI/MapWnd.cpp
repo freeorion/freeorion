@@ -1998,9 +1998,19 @@ void MapWnd::RenderSystems() {
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
         glLineWidth(1.5f);
-        glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
+        const auto unowned_starlane_color = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+        glColor(unowned_starlane_color);
+
+        const Empire* client_empire = GetEmpire(empire_id);
+
+        const auto detection_meter = client_empire ? client_empire->GetMeter("METER_DETECTION_STRENGTH") : nullptr;
+        const auto detection_strength =  detection_meter ? detection_meter->Current() : 0.0f;
+
+        const Empire* observed_empire = (m_supply_lane_empire_id ? GetEmpire(*m_supply_lane_empire_id) : client_empire);
+        bool self_observation = observed_empire ? (observed_empire->EmpireID() == client_empire->EmpireID()) : false;
 
         for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
+            glColor(unowned_starlane_color);
             const SystemIcon* icon = system_icon.second;
 
             const int ARC_SIZE = icon->EnclosingCircleDiameter();
@@ -2016,8 +2026,8 @@ void MapWnd::RenderSystems() {
             GG::Pt circle_ul = middle - circle_half_size;
             GG::Pt circle_lr = circle_ul + circle_size;
 
-            if (fog_scanlines
-                && (universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) <= VIS_BASIC_VISIBILITY))
+            const bool system_visible = universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) > VIS_BASIC_VISIBILITY;
+            if (fog_scanlines && !system_visible)
             {
                 m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("UI.system-fog-of-war-clr"));
                 m_scanline_shader.RenderCircle(circle_ul, circle_lr);
@@ -2027,14 +2037,18 @@ void MapWnd::RenderSystems() {
             if (circles) {
                 if (std::shared_ptr<const System> system = GetSystem(system_icon.first)) {
                     if (system->NumStarlanes() > 0) {
-                        glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
+                        glColor(unowned_starlane_color);
 
-                        // If the active supply viewing empire has supply here color the circle
-                        if (m_supply_lane_empire_id && *m_supply_lane_empire_id != ALL_EMPIRES) {
-                            const auto& supply_map = GetSupplyManager().FleetSupplyableSystemIDs(*m_supply_lane_empire_id);
-                            if (supply_map.find(system_icon.first) != supply_map.end()) {
-                                if (Empire* empire = GetEmpire(*m_supply_lane_empire_id))
-                                    glColor(empire->Color());
+                        // If the supply observed empire can supply this system then color the
+                        // circle if the client empire can detect that supply and see the system.
+                        if (observed_empire) {
+                            const auto& supply_stealth_map = GetSupplyManager().SupplyStealth(observed_empire->EmpireID());
+                            const auto& supply_stealth_it = supply_stealth_map.find(system_icon.first);
+                            if (supply_stealth_it != supply_stealth_map.end()
+                                && (self_observation || supply_stealth_it->second < detection_strength)
+                                && system_visible)
+                            {
+                                glColor(observed_empire->Color());
                             }
                         }
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
@@ -3489,30 +3503,28 @@ void MapWnd::InitStarlaneEndPoints() {
 void MapWnd::InitStarlaneRenderingBuffers() {
     DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
     SectionedScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", boost::chrono::microseconds(100));
-    timer.EnterSection("client collection");
+    timer.EnterSection("init");
 
     // clear old buffers
     ClearStarlaneRenderingBuffers();
-
-    // temp storage
-    std::set<std::pair<int, int>>  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
 
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* client_empire = GetEmpire(client_empire_id);
 
+    const auto detection_meter = client_empire->GetMeter("METER_DETECTION_STRENGTH");
+    const auto detection_strength =  detection_meter ? detection_meter->Current() : 0.0f;
+
     const Empire* observed_empire = (m_supply_lane_empire_id ? GetEmpire(*m_supply_lane_empire_id) : client_empire);
 
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const Empire* this_client_empire = GetEmpire(client_empire_id);
+    bool self_observation = (observed_empire->EmpireID() == client_empire->EmpireID());
 
-    // Get info about rendered empire resource starlanes
-
-    // map keyed by ResourcePool (set of objects) to the corresponding set of system ids
+    // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
     boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>> res_pool_systems;
     // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
     boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>> res_group_cores;
+
     std::unordered_set<int> res_group_core_members;
     boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
     std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
@@ -3540,26 +3552,45 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
         // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
         GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
-        for (std::map<int, Empire*>::value_type& entry : Empires()) {
-            Empire* empire = entry.second;
 
-            // Determine if this is a lane that the empire whose supply is being shown can use.
-            if(!m_supply_lane_empire_id || m_supply_lane_empire_id != empire->EmpireID())
-                continue;
+        bool start_visible = GetUniverse().GetObjectVisibilityByEmpire(
+            start_system->ID(), client_empire->EmpireID()) > VIS_BASIC_VISIBILITY;
+        bool end_visible = GetUniverse().GetObjectVisibilityByEmpire(
+            end_system->ID(), client_empire->EmpireID()) > VIS_BASIC_VISIBILITY;
+
+        // Are neither of the endpoint visible?
+        if (!start_visible && !end_visible) {
+            // vertex colours for starlane
+            m_starlane_colors.store(lane_colour);
+            m_starlane_colors.store(lane_colour);
+            break;
+        }
+
+        if (observed_empire) {
+            // Determine if this is a lane that the empire whose supply is being shown can use
+            // and that is visible to the viewing empire.
 
             timer.EnterSection("add full lane get traversals");
-            const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
+            const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(observed_empire->EmpireID());
 
+            timer.EnterSection("add full lane double search");
             std::pair<int, int> lane_forward{start_system->ID(), end_system->ID()};
             std::pair<int, int> lane_backward{end_system->ID(), start_system->ID()};
 
-            timer.EnterSection("add full lane double search");
-            // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
-            if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end()
-                || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end())
+            const auto& forward_lane_and_stealth = resource_supply_lanes.find(lane_forward);
+            const auto& backward_lane_and_stealth = resource_supply_lanes.find(lane_backward);
+
+            // see if this lane exists in this empire's supply propagation lanes set.  either
+            // direction accepted and it is detectable
+
+            // Own supply is always visible
+            if (((forward_lane_and_stealth != resource_supply_lanes.end())
+                 && (self_observation || forward_lane_and_stealth->second < detection_strength))
+                // or backward lane is detectable
+                || ((backward_lane_and_stealth != resource_supply_lanes.end())
+                    && (self_observation || backward_lane_and_stealth->second < detection_strength)))
             {
-                lane_colour = empire->Color();
-                break;
+                lane_colour = observed_empire->Color();
             }
         }
 
@@ -3570,7 +3601,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
         /** Compute the length, width and color of a half lane from start to end.*/
         auto compute_half_starlane_extent =
-            [&timer, this, &observed_empire, &res_group_core_members, &under_alloc_res_grp_core_members, &member_to_core]
+            [&timer, this, &observed_empire, &client_empire, &res_group_core_members,
+             &under_alloc_res_grp_core_members, &member_to_core, &detection_strength, &self_observation]
             (const std::shared_ptr<const System>& half_start_system, const std::shared_ptr<const System>& half_end_system)
             {
                 // render half-starlane from the current start_system to the current dest_system?
@@ -3622,41 +3654,36 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 }
 
                 timer.EnterSection("final four");
-                for (std::map<int, Empire*>::value_type& entry : Empires()) {
-                    Empire* empire = entry.second;
-
-                    // Determine if this is a lane that the empire whose supply is being shown can use.
-                    if(!m_supply_lane_empire_id || m_supply_lane_empire_id != empire->EmpireID())
-                        continue;
-
+                if (observed_empire) {
                     timer.EnterSection("final four get obstructed");
                     const auto& resource_obstructed_supply_lanes =
-                        GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
+                        GetSupplyManager().SupplyObstructedStarlaneTraversals(observed_empire->EmpireID());
 
                     timer.EnterSection("final four search obstructed");
-                    // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
-                    if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
-                        // found an empire that has a half lane here, so add it.
-                        timer.EnterSection("final four insert");
-
+                    // see if this lane exists in the empire's blocked supply lanes and that it is visible.
+                    const auto& forward_lane_and_stealth = resource_obstructed_supply_lanes.find(lane_forward);
+                    // Check if the forward lane is visible
+                    if ((forward_lane_and_stealth != resource_obstructed_supply_lanes.end()
+                         && (self_observation || forward_lane_and_stealth->second < detection_strength)))
+                    {
                         timer.EnterSection("final four vertices");
                         m_starlane_vertices.store(half_start_system->X(),
                                                   half_start_system->Y());
                         m_starlane_vertices.store((half_end_system->X() + half_start_system->X()) * 0.5f,   // half way along starlane
                                                   (half_end_system->Y() + half_start_system->Y()) * 0.5f);
 
-                        lane_colour = empire->Color();
+                        lane_colour = observed_empire->Color();
                         m_starlane_colors.store(lane_colour);
                         m_starlane_colors.store(lane_colour);
-
-                        break;
                     }
                 }
             };
 
         // Compute each half starlane.
-        compute_half_starlane_extent(start_system, end_system);
-        compute_half_starlane_extent(end_system,   start_system);
+        if (start_visible)
+            compute_half_starlane_extent(start_system, end_system);
+        if (end_visible)
+            compute_half_starlane_extent(end_system,   start_system);
     }
 
     timer.EnterSection("fill buffers");
