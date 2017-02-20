@@ -7560,7 +7560,7 @@ Max Fuel
 
 # Meter types
 METER_MAX_SHIELD
-Max Shield
+Max Shields
 
 # Meter types
 METER_MAX_STRUCTURE
@@ -7616,7 +7616,7 @@ Fuel
 
 # Meter types
 METER_SHIELD
-Shield
+Shields
 
 # Meter types
 METER_STRUCTURE
