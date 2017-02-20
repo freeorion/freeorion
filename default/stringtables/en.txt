@@ -4556,7 +4556,7 @@ Shields
 METER_SHIELD_VALUE_DESC
 '''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter.  The main difference between them is simply how they recharge -- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barrier shields take more time to recharge.  The result of that seemingly small difference makes a very noticeable difference in combat, however.
 
-Ship shields: Reduce the [[encyclopedia DAMAGE_TITLE]] sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength.
+Ship shields: Reduce the [[encyclopedia DAMAGE_TITLE]] sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength. However, ship shields do not negate shot damage coming from [[encyclopedia FIGHTER_TECHS]], as fighters fire from within the shields.
 
 Planetary barrier shields: Act more like some kind of planetary armor. Their strength is reduced by each hit until they are completely depleted, at which point further hits will finally get through and damage planetary structures (first [[metertype METER_DEFENSE]] installations and then more general planetary [[metertype METER_CONSTRUCTION]]). Planetary barrier shields regenerate their strength each turn at a certain rate which can be affected by various technologies.
 
@@ -4821,7 +4821,9 @@ DAMAGE_TITLE
 Damage
 
 DAMAGE_TEXT
-Defines the base extent that a weapon will reduce the [[metertype METER_STRUCTURE]] of another ship (or the [[metertype METER_SHIELD]], [[metertype METER_DEFENSE]] and [[metertype METER_CONSTRUCTION]] of a planet), in one combat round (of which there are three in each turn of battle).  If a target ship is equipped with [[metertype METER_SHIELD]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[metertype METER_SHIELD]].
+'''Defines the base amount that a weapon will reduce the [[metertype METER_STRUCTURE]] of another ship (or the [[metertype METER_SHIELD]], [[metertype METER_DEFENSE]] and [[metertype METER_CONSTRUCTION]] of a planet), in one combat round (of which there are three in each turn of battle).  If a target ship is equipped with [[metertype METER_SHIELD]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[metertype METER_SHIELD]].
+
+Note: [[encyclopedia FIGHTER_TECHS]] inflict damage ignoring [[metertype METER_SHIELD]] on ships, as fighters fire from within the enemy shields.'''
 
 MAP_WINDOW_ARTICLE_TITLE
 Map Window
