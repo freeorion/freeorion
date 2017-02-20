@@ -548,7 +548,7 @@ namespace {
     }
 
     using SupplyPODTuple = std::tuple<SupplyMerit, float, int, int>;
-    enum SupplySystemPODFields {ssMerit, ssStealth, ssSupply, ssEmpireID};
+    enum SupplySystemPODFields {ssMerit, ssStealth, ssSource, ssEmpireID};
 
     /** SupplySystemPOD contains all of the data needs to resolve one systems supply conflicts. */
     struct SupplySystemPOD {
@@ -1145,11 +1145,10 @@ namespace {
         // Massage the _candidates into a sorted set of candidates.
         std::set<SupplyPODTuple> candidates;
         for (auto&& source_and_merit_stealth_empire : _candidates) {
-            candidates.insert(
-                {std::get<ssMerit>(source_and_merit_stealth_empire.second),
+            candidates.insert({std::get<ssMerit>(source_and_merit_stealth_empire.second),
                         std::get<ssStealth>(source_and_merit_stealth_empire.second),
                         source_and_merit_stealth_empire.first,
-                        std::get<ssSupply>(source_and_merit_stealth_empire.second)});
+                        std::get<ssSource>(source_and_merit_stealth_empire.second)});
         }
 
         // Sources that have been removed.
@@ -2037,35 +2036,38 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
 
     // For each empire the highest stealth its supply in system that it has supply inn.
-    std::unordered_map<int, std::unordered_map<int, float>> empire_supply_stealth;
+    std::unordered_map<int, std::unordered_map<int, float>> empire_to_system_to_stealth;
 
     for (auto&& system_and_supply_pod : system_to_supply_pod) {
         auto system_id = system_and_supply_pod.first;
         auto& pod = system_and_supply_pod.second;
+        verifyType<System>(system_id, "system");
 
-        // Use the highest merit source as the sole source for now.
-        if (pod.merit_stealth_supply_empire && !pod.merit_stealth_supply_empire->empty()) {
-            const auto& highest = pod.merit_stealth_supply_empire->begin();
-            const SupplyMerit& merit = std::get<ssMerit>(*highest);
-            float stealth;
-            int source_id, empire_id;
-            std::tie(std::ignore, stealth, source_id, empire_id) = *highest;
+        // Create a supply source for each positive merit in the system.
+        if (pod.merit_stealth_supply_empire) {
+            for (const auto& merit_stealth_supply_empire: *pod.merit_stealth_supply_empire) {
+                const SupplyMerit& merit     = std::get<ssMerit>(merit_stealth_supply_empire);
+                const auto         stealth   = std::get<ssStealth>(merit_stealth_supply_empire);
+                const auto         source_id = std::get<ssSource>(merit_stealth_supply_empire);
+                const auto         empire_id = std::get<ssEmpireID>(merit_stealth_supply_empire);
 
-            verifyType<Planet>(source_id, "planet");
-            verifyType<System>(system_id, "system");
+                if (merit.Range() < 0.0f)
+                    continue;
 
-            if (merit.Range() < 0.0f)
-                continue;
+                DebugLogger() << "Added "<<merit<< " in system " << system_id << " for empire " << empire_id;
 
-            DebugLogger() << "Added "<<merit<< " in system " << system_id << " for empire " << empire_id;
+                m_fleet_supplyable_system_ids[empire_id].insert(system_id);
 
-            m_fleet_supplyable_system_ids[empire_id].insert(system_id);
+                m_propagated_supply_ranges.insert({empire_id, merit.Range()});
+                m_empire_propagated_supply_ranges[empire_id].insert({system_id, merit.Range()});
 
-            m_propagated_supply_ranges.insert({empire_id, merit.Range()});
-            m_empire_propagated_supply_ranges[empire_id].insert({system_id, merit.Range()});
+                m_propagated_supply_distances.insert({empire_id, merit.Distance()});
+                m_empire_propagated_supply_distances[empire_id].insert({system_id, merit.Distance()});
 
-            m_propagated_supply_distances.insert({empire_id, merit.Distance()});
-            m_empire_propagated_supply_distances[empire_id].insert({system_id, merit.Distance()});
+                // Keep the best local stealth.
+                auto& current_stealth = empire_to_system_to_stealth[empire_id][system_id];
+                current_stealth = std::max(current_stealth, stealth);
+            }
         }
     }
 
@@ -2116,19 +2118,23 @@ void SupplyManager::SupplyManagerImpl::Update() {
                 verifyType<System>(start_id, "start id");
                 verifyType<System>(end_id, "end id");
 
+                // Use the smallest stealth of either endpoint.
+                auto& stealth_map = empire_to_system_to_stealth[empire_id];
+                const auto stealth = std::min(stealth_map[start_id], stealth_map[end_id]);
+
+
                 // If there is supply at both ends then it is traversable
                 if (start_range >= 0.0f  && end_range >= 0.0f) {
                     DebugLogger() << " Good traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< ".";
-                    supply_starlane_traversals.insert({{start_id, end_id}, 0.0f});
+                    supply_starlane_traversals.insert({{start_id, end_id}, stealth});
                 }
 
                 // If there is surplus range >1.0f at the source end and 0.0f and the output end
                 // then it is obstructed.
                 if (start_range >= 1.0f  && end_range < 0.0f) {
                     DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< ".";
-                    supply_starlane_obstructed_traversals.insert({{start_id, end_id}, 0.0f});
+                    supply_starlane_obstructed_traversals.insert({{start_id, end_id}, stealth});
                 }
-
             }
         }
     }
