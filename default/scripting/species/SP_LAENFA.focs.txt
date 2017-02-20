@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "PHOTOTROPHIC" "TELEPATHIC" "BAD_RESEARCH" "GOOD_POPULATION" "AVERAGE_SUPPLY" "GREAT_DETECTION" "GREAT_STEALTH" "BAD_ATTACKTROOPS" "PEDIA_PHOTOTROPHIC_SPECIES_CLASS" ]
+    tags = [ "PHOTOTROPHIC" "TELEPATHIC" "GOOD_POPULATION" "AVERAGE_SUPPLY" "GREAT_DETECTION" "GREAT_STEALTH" "BAD_ATTACKTROOPS" "PEDIA_PHOTOTROPHIC_SPECIES_CLASS"]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -19,7 +19,7 @@ Species
 
     effectsgroups = [
         [[AVERAGE_INDUSTRY]]
-        [[BAD_RESEARCH]]
+        [[AVERAGE_RESEARCH]]
 
         [[GOOD_POPULATION]]
         [[AVERAGE_HAPPINESS]]
@@ -37,7 +37,7 @@ Species
         [[STANDARD_SHIP_SHIELDS]]
     ]
 
-    [[OCEAN_STANDARD_EP]]
+    [[OCEAN_BROAD_EP]]
 
     graphic = "icons/species/laenfa.png"
 
