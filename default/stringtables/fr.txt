@@ -429,8 +429,8 @@ Robocroiseur Mfs
 SD_ROBOTIC1_DESC
 Croiseur conçu pour missions indépendantes ou au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
-SD_ROBOTIC2
-Destroyer Mfs-DG  # translated
+SD_ROBOTIC2  # translated
+Destroyer Mfs-DG
 
 SD_ROBOTIC2_DESC
 Destroyer à coque robotique conçu pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
@@ -922,6 +922,9 @@ Les événements de tour scriptés contiennent des erreurs. Consultez le fichier
 
 ERROR_PYTHON_AI_CRASHED
 L'IA Python pour %1% a rencontré une erreur fatale.
+
+ERROR_PLAYER_NAME_ALREADY_USED
+%1% : nom de joueur déjà utilisé.
 
 
 ##
@@ -2715,7 +2718,7 @@ MAP_FLEET_CARRIER_COUNT
 Transporteurs de Chasseurs
 
 MAP_FLEET_PART_COUNT
-Total Équipements d'astronef
+Total Équipements Astronef
 
 MAP_FLEET_SLOT_COUNT
 Total Niches d'Équipement
@@ -4121,6 +4124,13 @@ percés
 # %2% name of the unit attacked.
 ENC_COMBAT_ATTACK_SIMPLE_STR
 %1% attaque %2%
+
+
+# %1% number of repeated events.
+# %2% link to the attacking unit or empire.
+# %3% link to the attacking unit or empire.
+ENC_COMBAT_ATTACK_REPEATED_STR
+%1%X %2% attaque %3%
 
 # %1% link to the unit, which launches the fighter.
 # %2% name of the fighters launched.
