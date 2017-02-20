@@ -1439,6 +1439,7 @@ MapWnd::MapWnd() :
         }
         if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd()) {
             GG::Connect(plr_wnd->ClosingSignal, boost::bind(&MapWnd::HideEmpires, this));     // Wnd is manually closed by user
+            GG::Connect(plr_wnd->SelectedPlayersChangedSignal, boost::bind(&MapWnd::SelectedPlayersChanged, this));
             if (plr_wnd->Visible()) {
                 m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
                 m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
@@ -2962,6 +2963,21 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_galaxy_gas_texture_coords.clear();
     m_star_texture_coords.clear();
     m_star_circle_vertices.clear();
+}
+
+void MapWnd::SelectedPlayersChanged() {
+    // If there is a single empire selected in the Empires window, then render its supply lanes.
+    const auto cui = ClientUI::GetClientUI();
+    if (!cui)
+        return;
+    const auto plr_wnd = cui->GetPlayerListWnd();
+    if (!plr_wnd)
+        return;
+    const auto players = plr_wnd->SelectedPlayerIDs();
+    if (players.size() != 1)
+        return;
+
+    ChangeSupplyLaneRenderedEmpire(*players.begin());
 }
 
 void MapWnd::ChangeSupplyLaneRenderedEmpire(int empire_id) {
