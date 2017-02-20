@@ -73,8 +73,7 @@ namespace {
 }
 
 namespace parse {
-    template <>
-    value_ref_parser_rule<StarType>::type& value_ref_parser<StarType>()
+    value_ref_parser_rule<StarType>::type& star_type_value_ref()
     {
         static star_type_parser_rules retval;
         return retval.expr;

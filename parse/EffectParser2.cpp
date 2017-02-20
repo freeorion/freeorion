@@ -27,15 +27,9 @@ namespace {
 
             const parse::lexer& tok =                                                       parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =                  parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =            parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =       parse::value_ref_parser<std::string>();
-            const parse::value_ref_parser_rule<PlanetType>::type& planet_type_value_ref =   parse::value_ref_parser<PlanetType>();
-            const parse::value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref =   parse::value_ref_parser<PlanetSize>();
-
             set_meter
                 =   parse::set_non_ship_part_meter_type_enum() [ _a = _1 ] /* has some overlap with parse::set_ship_part_meter_type_enum() so can't use '>' */
-                >>  parse::label(Value_token)               > double_value_ref [ _c = _1 ]
+                >>  parse::label(Value_token)               > parse::double_value_ref() [ _c = _1 ]
                 >   (
                         (parse::label(AccountingLabel_token) > tok.string [ _val = new_<Effect::SetMeter>(_a, _c, _1) ] )
                     |    eps [ _val = new_<Effect::SetMeter>(_a, _c) ]
@@ -44,58 +38,58 @@ namespace {
 
             set_ship_part_meter
                 =    parse::set_ship_part_meter_type_enum() [ _a = _1 ]
-                >>   parse::label(PartName_token)   > string_value_ref [ _b = _1 ]
-                >    parse::label(Value_token)      > double_value_ref [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
+                >>   parse::label(PartName_token)   > parse::string_value_ref() [ _b = _1 ]
+                >    parse::label(Value_token)      > parse::double_value_ref() [ _val = new_<Effect::SetShipPartMeter>(_a, _b, _1) ]
                 ;
 
             set_empire_stockpile
                 =   tok.SetEmpireTradeStockpile_ [ _a = RE_TRADE ]
                 >   (
-                        (   parse::label(Empire_token) > int_value_ref [ _b = _1 ]
-                        >   parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
+                        (   parse::label(Empire_token) > parse::int_value_ref() [ _b = _1 ]
+                        >   parse::label(Value_token)  > parse::double_value_ref() [ _val = new_<Effect::SetEmpireStockpile>(_b, _a, _1) ]
                         )
-                        |  (parse::label(Value_token)  > double_value_ref [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
+                        |  (parse::label(Value_token)  > parse::double_value_ref() [ _val = new_<Effect::SetEmpireStockpile>(_a, _1) ])
                     )
                 ;
 
             set_empire_capital
                 =    tok.SetEmpireCapital_
                 >   (
-                        (parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::SetEmpireCapital>(_1) ])
+                        (parse::label(Empire_token) > parse::int_value_ref() [ _val = new_<Effect::SetEmpireCapital>(_1) ])
                     |    eps [ _val = new_<Effect::SetEmpireCapital>() ]
                     )
                 ;
 
             set_planet_type
                 =    tok.SetPlanetType_
-                >    parse::label(Type_token) > planet_type_value_ref [ _val = new_<Effect::SetPlanetType>(_1) ]
+                >    parse::label(Type_token) > parse::planet_type_value_ref() [ _val = new_<Effect::SetPlanetType>(_1) ]
                 ;
 
             set_planet_size
                 =    tok.SetPlanetSize_
-                >    parse::label(PlanetSize_token) > planet_size_value_ref [ _val = new_<Effect::SetPlanetSize>(_1) ]
+                >    parse::label(PlanetSize_token) > parse::planet_size_value_ref() [ _val = new_<Effect::SetPlanetSize>(_1) ]
                 ;
 
             set_species
                 =    tok.SetSpecies_
-                >    parse::label(Name_token) > string_value_ref [ _val = new_<Effect::SetSpecies>(_1) ]
+                >    parse::label(Name_token) > parse::string_value_ref() [ _val = new_<Effect::SetSpecies>(_1) ]
                 ;
 
             set_owner
                 =    tok.SetOwner_
-                >    parse::label(Empire_token) > int_value_ref [ _val = new_<Effect::SetOwner>(_1) ]
+                >    parse::label(Empire_token) > parse::int_value_ref() [ _val = new_<Effect::SetOwner>(_1) ]
                 ;
 
             set_species_opinion
                 =    tok.SetSpeciesOpinion_
-                >    parse::label(Species_token) >   string_value_ref [ _a = _1 ]
+                >    parse::label(Species_token) >   parse::string_value_ref() [ _a = _1 ]
                 > (
-                    (   parse::label(Empire_token) >  int_value_ref [ _c = _1 ]
-                     >  parse::label(Opinion_token) > double_value_ref
+                    (   parse::label(Empire_token) >  parse::int_value_ref() [ _c = _1 ]
+                     >  parse::label(Opinion_token) > parse::double_value_ref()
                         [ _val = new_<Effect::SetSpeciesEmpireOpinion>(_a, _c, _1) ])
                    |
-                    (   parse::label(Species_token) > string_value_ref [ _b = _1 ]
-                    >   parse::label(Opinion_token) > double_value_ref
+                    (   parse::label(Species_token) > parse::string_value_ref() [ _b = _1 ]
+                    >   parse::label(Opinion_token) > parse::double_value_ref()
                         [ _val = new_<Effect::SetSpeciesSpeciesOpinion>(_a, _b, _1) ])
                    )
                 ;
@@ -116,7 +110,7 @@ namespace {
                             (   (parse::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                             |    eps [ _d = AFFIL_SELF ]
                             )
-                        >>  parse::label(Empire_token) > int_value_ref [ _b = _1 ]
+                        >>  parse::label(Empire_token) > parse::int_value_ref() [ _b = _1 ]
                         )
                      |  (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires

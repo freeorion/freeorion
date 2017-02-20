@@ -162,8 +162,7 @@ namespace {
 
 
 namespace parse {
-    template <>
-    value_ref_parser_rule<std::string>::type& value_ref_parser<std::string>()
+    value_ref_parser_rule<std::string>::type& string_value_ref()
     {
         static string_parser_rules retval;
         return retval.expr;

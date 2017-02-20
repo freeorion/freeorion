@@ -17,7 +17,6 @@ struct ValueRefStringFixture {
     }
 
     bool parse(std::string phrase, ValueRef::ValueRefBase<std::string>*& result) {
-        parse::value_ref_parser_rule<std::string>::type& rule = parse::value_ref_parser<std::string>();
         const parse::lexer& lexer = lexer.instance();
         boost::spirit::qi::in_state_type in_state;
         boost::spirit::qi::eoi_type eoi;
@@ -29,7 +28,7 @@ struct ValueRefStringFixture {
         return boost::spirit::qi::phrase_parse(
             lexer.begin(begin_phrase, end_phrase),
             lexer.end(),
-            rule[boost::phoenix::ref(result) = _1] > eoi,
+            parse::string_value_ref()[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
     }

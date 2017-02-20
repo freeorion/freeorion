@@ -22,12 +22,6 @@ namespace {
         condition_parser_rules_7() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule< ::StarType>::type& star_type_value_ref =
-                parse::value_ref_parser< ::StarType>();
-
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
-                parse::value_ref_parser<std::string>();
-
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -58,8 +52,8 @@ namespace {
                 =    tok.Star_
                 >    parse::label(Type_token)
                 >    (
-                            ('[' > +star_type_value_ref [ push_back(_a, _1) ] > ']')
-                        |    star_type_value_ref [ push_back(_a, _1) ]
+                            ('[' > +parse::star_type_value_ref() [ push_back(_a, _1) ] > ']')
+                        |    parse::star_type_value_ref() [ push_back(_a, _1) ]
                      )
                 [ _val = new_<Condition::StarType>(_a) ]
                 ;
@@ -75,8 +69,8 @@ namespace {
                     |   tok.Special_    [ _a = Condition::CONTENT_SPECIAL ]
                     |   tok.Focus_      [ _a = Condition::CONTENT_FOCUS ]
                     )
-                >    parse::label(Name_token)   > string_value_ref [ _b = _1 ]
-                >  -(parse::label(Name_token)   > string_value_ref [ _c = _1 ]))
+                >    parse::label(Name_token)   > parse::string_value_ref() [ _b = _1 ]
+                >  -(parse::label(Name_token)   > parse::string_value_ref() [ _c = _1 ]))
                 [ _val = new_<Condition::Location>(_a, _b, _c) ]
                 ;
 

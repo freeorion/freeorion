@@ -58,9 +58,6 @@ namespace {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule< int >::type& flexible_int_ref =     parse::value_ref_parser_flexible_int();
-
             qi::_1_type _1;
             qi::_2_type _2;
             qi::_3_type _3;
@@ -92,8 +89,8 @@ namespace {
             tech_info
                 =   tech_info_name_desc(_a, _b, _c)
                 >   parse::label(Category_token)      > tok.string      [ _e = _1 ]
-                >   parse::label(ResearchCost_token)  > double_value_ref[ _f = _1 ]
-                >   parse::label(ResearchTurns_token) > flexible_int_ref[ _g = _1 ]
+                >   parse::label(ResearchCost_token)  > parse::double_value_ref() [ _f = _1 ]
+                >   parse::label(ResearchTurns_token) > parse::flexible_int_value_ref() [ _g = _1 ]
                 >  (    tok.Unresearchable_ [ _h = false ]
                     |   tok.Researchable_ [ _h = true ]
                     |   eps [ _h = true ]

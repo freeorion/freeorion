@@ -17,9 +17,6 @@ namespace {
         condition_parser_rules_5() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref = parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref = parse::value_ref_parser<std::string>();
-
             qi::_1_type _1;
             qi::_val_type _val;
             qi::eps_type eps;
@@ -27,61 +24,61 @@ namespace {
 
             has_special
                 =   (   tok.HasSpecial_
-                    >>  parse::label(Name_token) > string_value_ref [ _val = new_<Condition::HasSpecial>(_1) ]
+                    >>  parse::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::HasSpecial>(_1) ]
                     )
                 |   tok.HasSpecial_ [ _val = new_<Condition::HasSpecial>() ]
                 ;
 
             has_tag
                 =   (   tok.HasTag_
-                    >>  parse::label(Name_token) > string_value_ref [ _val = new_<Condition::HasTag>(_1) ]
+                    >>  parse::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::HasTag>(_1) ]
                     )
                 |   tok.HasTag_ [ _val = new_<Condition::HasTag>() ]
                 ;
 
             owner_has_tech
                 =   tok.OwnerHasTech_
-                >   parse::label(Name_token) > string_value_ref [ _val = new_<Condition::OwnerHasTech>(_1) ]
+                >   parse::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::OwnerHasTech>(_1) ]
                 ;
 
             design_has_hull
                 =   tok.DesignHasHull_
-                >   parse::label(Name_token) > string_value_ref [ _val = new_<Condition::DesignHasHull>(_1) ]
+                >   parse::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::DesignHasHull>(_1) ]
                 ;
 
             predefined_design
                 =   tok.Design_
-                >>  parse::label(Name_token) > string_value_ref [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
+                >>  parse::label(Name_token) > parse::string_value_ref() [ _val = new_<Condition::PredefinedShipDesign>(_1) ]
                 ;
 
             design_number
                 =   tok.Design_
-                >>  parse::label(Design_token) > int_value_ref [ _val = new_<Condition::NumberedShipDesign>(_1) ]
+                >>  parse::label(Design_token) > parse::int_value_ref() [ _val = new_<Condition::NumberedShipDesign>(_1) ]
                 ;
 
             produced_by_empire // TODO: Lose "empire" part.
                 =   tok.ProducedByEmpire_
-                >   parse::label(Empire_token) > int_value_ref [ _val = new_<Condition::ProducedByEmpire>(_1) ]
+                >   parse::label(Empire_token) > parse::int_value_ref() [ _val = new_<Condition::ProducedByEmpire>(_1) ]
                 ;
 
             visible_to_empire // TODO: Lose "empire" part.
                 =   tok.VisibleToEmpire_
-                >   parse::label(Empire_token) > int_value_ref [ _val = new_<Condition::VisibleToEmpire>(_1) ]
+                >   parse::label(Empire_token) > parse::int_value_ref() [ _val = new_<Condition::VisibleToEmpire>(_1) ]
                 ;
 
             explored_by_empire // TODO: Lose "empire" part.
                 =    tok.ExploredByEmpire_
-                >    parse::label(Empire_token) > int_value_ref [ _val = new_<Condition::ExploredByEmpire>(_1) ]
+                >    parse::label(Empire_token) > parse::int_value_ref() [ _val = new_<Condition::ExploredByEmpire>(_1) ]
                 ;
 
             resupplyable_by
                 =   tok.ResupplyableBy_
-                >   parse::label(Empire_token) > int_value_ref [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
+                >   parse::label(Empire_token) > parse::int_value_ref() [ _val = new_<Condition::FleetSupplyableByEmpire>(_1) ]
                 ;
 
             object_id
                 =   tok.Object_
-                >   parse::label(ID_token) > int_value_ref [ _val = new_<Condition::ObjectID>(_1) ]
+                >   parse::label(ID_token) > parse::int_value_ref() [ _val = new_<Condition::ObjectID>(_1) ]
                 ;
 
             start

@@ -28,21 +28,6 @@ namespace {
         condition_parser_rules_6() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
-                parse::value_ref_parser<std::string>();
-
-            const parse::value_ref_parser_rule<PlanetType>::type& planet_type_value_ref =
-                parse::value_ref_parser<PlanetType>();
-
-            const parse::value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref =
-                parse::value_ref_parser<PlanetSize>();
-
-            const parse::value_ref_parser_rule<PlanetEnvironment>::type& planet_environment_value_ref =
-                parse::value_ref_parser<PlanetEnvironment>();
-
-            const parse::value_ref_parser_rule<UniverseObjectType>::type& universe_object_type_value_ref =
-                parse::value_ref_parser<UniverseObjectType>();
-
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -52,8 +37,8 @@ namespace {
             using phoenix::push_back;
 
             string_ref_vec
-                =   ('[' > +string_value_ref [ push_back(_val, _1) ] > ']')
-                |    string_value_ref [ push_back(_val, _1) ]
+                =   ('[' > +parse::string_value_ref() [ push_back(_val, _1) ] > ']')
+                |    parse::string_value_ref() [ push_back(_val, _1) ]
                 ;
 
             homeworld
@@ -92,8 +77,8 @@ namespace {
                 =   tok.Planet_
                 >>  parse::label(Type_token)
                 >   (
-                        ('[' > +planet_type_value_ref [ push_back(_a, _1) ] > ']')
-                    |    planet_type_value_ref [ push_back(_a, _1) ]
+                        ('[' > +parse::planet_type_value_ref() [ push_back(_a, _1) ] > ']')
+                    |    parse::planet_type_value_ref() [ push_back(_a, _1) ]
                     )
                     [ _val = new_<Condition::PlanetType>(_a) ]
                 ;
@@ -102,8 +87,8 @@ namespace {
                 =   tok.Planet_
                 >>  parse::label(Size_token)
                 >   (
-                        ('[' > +planet_size_value_ref [ push_back(_a, _1) ] > ']')
-                    |    planet_size_value_ref [ push_back(_a, _1) ]
+                        ('[' > +parse::planet_size_value_ref() [ push_back(_a, _1) ] > ']')
+                    |    parse::planet_size_value_ref() [ push_back(_a, _1) ]
                     )
                     [ _val = new_<Condition::PlanetSize>(_a) ]
                 ;
@@ -112,10 +97,10 @@ namespace {
                 =   (tok.Planet_
                 >>  parse::label(Environment_token)
                 >   (
-                        ('[' > +planet_environment_value_ref [ push_back(_a, _1) ] > ']')
-                    |    planet_environment_value_ref [ push_back(_a, _1) ]
+                        ('[' > +parse::planet_environment_value_ref() [ push_back(_a, _1) ] > ']')
+                    |    parse::planet_environment_value_ref() [ push_back(_a, _1) ]
                     )
-                >  -(parse::label(Species_token)        >  string_value_ref [_b = _1]))
+                >  -(parse::label(Species_token)        >  parse::string_value_ref() [_b = _1]))
                     [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
                 ;
 
@@ -123,7 +108,7 @@ namespace {
                 =   parse::universe_object_type_enum() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
                 |   (
                         tok.ObjectType_
-                    >   parse::label(Type_token) > universe_object_type_value_ref [ _val = new_<Condition::Type>(_1) ]
+                    >   parse::label(Type_token) > parse::universe_object_type_value_ref() [ _val = new_<Condition::Type>(_1) ]
                     )
                 ;
 

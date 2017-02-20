@@ -19,7 +19,6 @@ namespace parse {
 
             const parse::lexer& tok =                                                   parse::lexer::instance();
             const int_rule& simple_int =                                                int_simple();
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =   parse::value_ref_parser<std::string>();
 
             part_capacity
                 = (
@@ -59,7 +58,7 @@ namespace parse {
             species_empire_opinion
                 = (
                     (  tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_EMPIRE_OPINION) ]
-                       >  parse::label(Species_token) >  string_value_ref [ _d = _1 ]
+                       >  parse::label(Species_token) >  parse::string_value_ref() [ _d = _1 ]
                     )
                   >> parse::label(Empire_token)  >  simple_int [ _b = _1 ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
@@ -68,9 +67,9 @@ namespace parse {
             species_species_opinion
                 = (
                     (   tok.SpeciesOpinion_ [ _a = construct<std::string>(TOK_SPECIES_SPECIES_OPINION) ]
-                      >  parse::label(Species_token) >  string_value_ref [ _d = _1 ]
+                      >  parse::label(Species_token) >  parse::string_value_ref() [ _d = _1 ]
                     )
-                  >> parse::label(Species_token) >  string_value_ref [ _e = _1 ]
+                  >> parse::label(Species_token) >  parse::string_value_ref() [ _e = _1 ]
                   )     [ _val = new_<ValueRef::ComplexVariable<double> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 

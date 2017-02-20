@@ -71,8 +71,7 @@ namespace {
 }
 
 namespace parse {
-    template <>
-    value_ref_parser_rule<PlanetEnvironment>::type& value_ref_parser<PlanetEnvironment>()
+    value_ref_parser_rule<PlanetEnvironment>::type& planet_environment_value_ref()
     {
         static planet_environment_parser_rules retval;
         return retval.expr;

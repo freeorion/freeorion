@@ -177,11 +177,11 @@ namespace {
             using phoenix::new_;
 
             castable_expr
-                = parse::value_ref_parser<double>() [ _val = new_<ValueRef::StaticCast<double, int> >(_1) ]
+                = parse::double_value_ref() [ _val = new_<ValueRef::StaticCast<double, int> >(_1) ]
                 ;
 
             flexible_int 
-                = parse::value_ref_parser<int>()
+                = parse::int_value_ref()
                 | castable_expr
                 ;
 
@@ -225,10 +225,9 @@ const statistic_rule<int>::type& int_var_statistic()
 { return get_int_parser_rules().statistic; }
 
 namespace parse {
-    template <>
-    value_ref_parser_rule<int>::type& value_ref_parser<int>()
+    value_ref_parser_rule<int>::type& int_value_ref()
     { return get_int_parser_rules().expr; }
 
-    value_ref_parser_rule<int>::type& value_ref_parser_flexible_int()
+    value_ref_parser_rule<int>::type& flexible_int_value_ref()
     { return get_castable_as_int_parser_rules().flexible_int; }
 }

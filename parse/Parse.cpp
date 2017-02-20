@@ -230,7 +230,7 @@ namespace parse {
         debug(double_);
 #endif
 
-        value_ref_parser<int>();
+        int_value_ref();
 
         condition_parser();
     }

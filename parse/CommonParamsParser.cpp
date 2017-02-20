@@ -21,9 +21,6 @@ namespace parse { namespace detail {
         rules() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule< int >::type& flexible_int_ref =     parse::value_ref_parser_flexible_int();
-
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -78,8 +75,8 @@ namespace parse { namespace detail {
 
             common
                 =
-                (   parse::label(BuildCost_token)    > double_value_ref [ _a = _1 ]
-                >   parse::label(BuildTime_token)    > flexible_int_ref [ _b = _1 ]
+                (   parse::label(BuildCost_token)  > parse::double_value_ref() [ _a = _1 ]
+                >   parse::label(BuildTime_token)  > parse::flexible_int_value_ref() [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
@@ -109,7 +106,7 @@ namespace parse { namespace detail {
                 =   tok.Special_
                 > (
                     parse::label(Name_token)        > tok.string [ _b = _1 ]
-                >   parse::label(Consumption_token) > double_value_ref [ _c = _1 ]
+                >   parse::label(Consumption_token) > parse::double_value_ref() [ _c = _1 ]
                 > -(parse::label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
                   )
                 [ insert(_r2, construct<special_consumable_map_value_type>(_b, construct<val_cond_pair>(_c, _d))) ]
@@ -119,7 +116,7 @@ namespace parse { namespace detail {
             consumable_meter
                 = (
                     parse::non_ship_part_meter_type_enum() [ _a = _1 ]
-                >   parse::label(Consumption_token) > double_value_ref [ _c = _1 ]
+                >   parse::label(Consumption_token) > parse::double_value_ref() [ _c = _1 ]
                 > -(parse::label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
                   )
                 [ insert(_r1, construct<meter_consumable_map_value_type>(_a, construct<val_cond_pair>(_c, _d))) ]

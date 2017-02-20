@@ -24,9 +24,6 @@ namespace {
         condition_parser_rules_1() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =
-                parse::value_ref_parser<int>();
-
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_val_type _val;
@@ -87,7 +84,7 @@ namespace {
 
             owned_by_1
                 =   tok.OwnedBy_
-                >>  parse::label(Empire_token) > int_value_ref
+                >>  parse::label(Empire_token) > parse::int_value_ref()
                     [ _val = new_<Condition::EmpireAffiliation>(_1) ]
                 ;
 
@@ -110,7 +107,7 @@ namespace {
             owned_by_5
                 =   tok.OwnedBy_
                 >>  parse::label(Affiliation_token) >> parse::empire_affiliation_type_enum() [ _a = _1 ]
-                >>  parse::label(Empire_token)      >  int_value_ref
+                >>  parse::label(Empire_token)      >  parse::int_value_ref()
                 [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
                 ;
 

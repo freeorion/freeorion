@@ -74,12 +74,9 @@ namespace {
 
 
 namespace parse {
-
-    template <>
-    value_ref_parser_rule<PlanetSize>::type& value_ref_parser<PlanetSize>()
+    value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref()
     {
         static planet_size_parser_rules retval;
         return retval.expr;
     }
-
 }

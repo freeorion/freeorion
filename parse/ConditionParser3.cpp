@@ -16,15 +16,6 @@ namespace {
         condition_parser_rules_3() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =
-                parse::value_ref_parser<int>();
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =
-                parse::value_ref_parser<double>();
-            const parse::value_ref_parser_rule< int >::type& flexible_int_ref = 
-                parse::value_ref_parser_flexible_int();
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
-                parse::value_ref_parser<std::string>();
-
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -38,86 +29,86 @@ namespace {
 
             has_special_capacity
                 =   (   tok.HasSpecialCapacity_
-                >       parse::label(Name_token) >  string_value_ref [ _c = _1 ]
-                >     -(parse::label(Low_token)  >  double_value_ref [ _a = _1 ] )
-                >     -(parse::label(High_token) >  double_value_ref [ _b = _1 ] )
+                >       parse::label(Name_token) >  parse::string_value_ref() [ _c = _1 ]
+                >     -(parse::label(Low_token)  >  parse::double_value_ref() [ _a = _1 ] )
+                >     -(parse::label(High_token) >  parse::double_value_ref() [ _b = _1 ] )
                     ) [ _val = new_<Condition::HasSpecial>(_c, _a, _b) ]
                 ;
 
             within_distance
                 =   tok.WithinDistance_
-                >   parse::label(Distance_token)  > double_value_ref [ _a = _1 ]
+                >   parse::label(Distance_token)  > parse::double_value_ref() [ _a = _1 ]
                 >   parse::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::WithinDistance>(_a, _1) ]
                 ;
 
             within_starlane_jumps
                 =   tok.WithinStarlaneJumps_
-                >   parse::label(Jumps_token)     > flexible_int_ref [ _a = _1 ]
+                >   parse::label(Jumps_token)     > parse::flexible_int_value_ref() [ _a = _1 ]
                 >   parse::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
                 ;
 
             number
                 =   tok.Number_
-                > -(parse::label(Low_token)   >  flexible_int_ref [ _a = _1 ])
-                > -(parse::label(High_token)  >  flexible_int_ref [ _b = _1 ])
+                > -(parse::label(Low_token)   >  parse::flexible_int_value_ref() [ _a = _1 ])
+                > -(parse::label(High_token)  >  parse::flexible_int_value_ref() [ _b = _1 ])
                 >   parse::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
             value_test_1
                 = '('
-                >> double_value_ref [ _a = _1 ]
+                >> parse::double_value_ref() [ _a = _1 ]
                 >> (    lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
                       | lit('>')    [ _d = Condition::GREATER_THAN ]
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> double_value_ref
+                >> parse::double_value_ref()
                 [ _val = new_<Condition::ValueTest>(_a, _d, _1) ]
                 >> ')'
                 ;
 
             value_test_2
                 = '('
-                >> double_value_ref [ _a = _1 ]
+                >> parse::double_value_ref() [ _a = _1 ]
                 >> (    lit('=')    [ _d = Condition::EQUAL ]
                       | lit(">=")   [ _d = Condition::GREATER_THAN_OR_EQUAL ]
                       | lit('>')    [ _d = Condition::GREATER_THAN ]
                       | lit("<=")   [ _d = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _d = Condition::LESS_THAN ]
                       | lit("!=")   [ _d = Condition::NOT_EQUAL ])
-                >> double_value_ref [ _b = _1 ]
+                >> parse::double_value_ref() [ _b = _1 ]
                 >> (    lit('=')    [ _e = Condition::EQUAL ]
                       | lit(">=")   [ _e = Condition::GREATER_THAN_OR_EQUAL ]
                       | lit('>')    [ _e = Condition::GREATER_THAN ]
                       | lit("<=")   [ _e = Condition::LESS_THAN_OR_EQUAL ]
                       | lit('<')    [ _e = Condition::LESS_THAN ]
                       | lit("!=")   [ _e = Condition::NOT_EQUAL ])
-                >  double_value_ref
+                >  parse::double_value_ref()
                 [ _val = new_<Condition::ValueTest>(_a, _d, _b, _e, _1) ]
                 >  ')'
                 ;
 
             turn
                 =  (tok.Turn_
-                > -(parse::label(Low_token)  > (flexible_int_ref [ _a = _1 ]))
-                > -(parse::label(High_token) > (flexible_int_ref [ _b = _1 ])))
+                > -(parse::label(Low_token)  > (parse::flexible_int_value_ref() [ _a = _1 ]))
+                > -(parse::label(High_token) > (parse::flexible_int_value_ref() [ _b = _1 ])))
                 [ _val = new_<Condition::Turn>(_a, _b) ]
                 ;
 
             created_on_turn
                 =  (tok.CreatedOnTurn_
-                > -(parse::label(Low_token)  > flexible_int_ref [ _a = _1 ])
-                > -(parse::label(High_token) > flexible_int_ref [ _b = _1 ]))
+                > -(parse::label(Low_token)  > parse::flexible_int_value_ref() [ _a = _1 ])
+                > -(parse::label(High_token) > parse::flexible_int_value_ref() [ _b = _1 ]))
                 [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
                 ;
 
             number_of1
                 =   tok.NumberOf_
-                >   parse::label(Number_token)    > flexible_int_ref [ _a = _1 ]
+                >   parse::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
                 >   parse::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                 ;
@@ -127,8 +118,8 @@ namespace {
                     |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
                     |   tok.ModeNumberOf_    [ _b = Condition::SORT_MODE ]
                     )
-                >   parse::label(Number_token)    > flexible_int_ref [ _a = _1 ]
-                >   parse::label(SortKey_token)   > double_value_ref [ _c = _1 ]
+                >   parse::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::label(SortKey_token)   > parse::double_value_ref() [ _c = _1 ]
                 >   parse::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
                 ;
@@ -140,20 +131,20 @@ namespace {
 
             random
                 =   tok.Random_
-                >   parse::label(Probability_token) > double_value_ref
+                >   parse::label(Probability_token) > parse::double_value_ref()
                 [ _val = new_<Condition::Chance>(_1) ]
                 ;
 
             owner_stockpile
                 =   tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
-                >   parse::label(Low_token)  > double_value_ref [ _b = _1 ]
-                >   parse::label(High_token) > double_value_ref
+                >   parse::label(Low_token)  > parse::double_value_ref() [ _b = _1 ]
+                >   parse::label(High_token) > parse::double_value_ref()
                 [ _val = new_<Condition::EmpireStockpileValue>(_a, _b, _1) ]
                 ;
 
             resource_supply_connected
                 =   tok.ResourceSupplyConnected_
-                >   parse::label(Empire_token)    > int_value_ref [ _a = _1 ]
+                >   parse::label(Empire_token)    > parse::int_value_ref() [ _a = _1 ]
                 >   parse::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::ResourceSupplyConnectedByEmpire>(_a, _1) ]
                 ;

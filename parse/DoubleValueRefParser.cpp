@@ -191,7 +191,6 @@ const statistic_rule<double>::type& double_var_statistic()
 { return get_double_parser_rules().statistic; }
 
 namespace parse {
-    template <>
-    value_ref_parser_rule<double>::type& value_ref_parser<double>()
+    value_ref_parser_rule<double>::type& double_value_ref()
     { return get_double_parser_rules().expr; }
 }

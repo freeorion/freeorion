@@ -24,15 +24,6 @@ namespace {
         condition_parser_rules_4() {
             const parse::lexer& tok = parse::lexer::instance();
 
-            const parse::value_ref_parser_rule<int>::type& int_value_ref =
-                parse::value_ref_parser<int>();
-
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =
-                parse::value_ref_parser<double>();
-
-            const parse::value_ref_parser_rule<std::string>::type& string_value_ref =
-                parse::value_ref_parser<std::string>();
-
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -47,28 +38,28 @@ namespace {
             meter_value
                 =   (
                         parse::non_ship_part_meter_type_enum() [ _a = _1 ]
-                        >  -(parse::label(Low_token)  > double_value_ref [ _b = _1 ])
-                        >  -(parse::label(High_token) > double_value_ref [ _c = _1 ])
+                        >  -(parse::label(Low_token)  > parse::double_value_ref() [ _b = _1 ])
+                        >  -(parse::label(High_token) > parse::double_value_ref() [ _c = _1 ])
                     ) [ _val = new_<Condition::MeterValue>(_a, _b, _c) ]
                 ;
 
             ship_part_meter_value
                 =   (
                         tok.ShipPartMeter_
-                        >   parse::label(Part_token)    >   string_value_ref [ _e = _1 ]
+                        >   parse::label(Part_token)    >   parse::string_value_ref() [ _e = _1 ]
                         >   parse::ship_part_meter_type_enum() [ _a = _1 ]
-                        >  -(parse::label(Low_token)    >   double_value_ref [ _b = _1 ])
-                        >  -(parse::label(High_token)   >   double_value_ref [ _c = _1 ])
+                        >  -(parse::label(Low_token)    >   parse::double_value_ref() [ _b = _1 ])
+                        >  -(parse::label(High_token)   >   parse::double_value_ref() [ _c = _1 ])
                     ) [ _val = new_<Condition::ShipPartMeterValue>(_e, _a, _b, _c) ]
                 ;
 
             empire_meter_value1
                 =   (
                         tok.EmpireMeter_
-                    >>  parse::label(Empire_token)   >   int_value_ref [ _b = _1 ]
+                    >>  parse::label(Empire_token)   >   parse::int_value_ref() [ _b = _1 ]
                     >   parse::label(Meter_token)    >   tok.string [ _a = _1 ]
-                    >  -(parse::label(Low_token)     >   double_value_ref [ _c = _1 ])
-                    >  -(parse::label(High_token)    >   double_value_ref [ _d = _1 ])
+                    >  -(parse::label(Low_token)     >   parse::double_value_ref() [ _c = _1 ])
+                    >  -(parse::label(High_token)    >   parse::double_value_ref() [ _d = _1 ])
                     ) [ _val = new_<Condition::EmpireMeterValue>(_b, _a, _c, _d) ]
                 ;
 
@@ -76,8 +67,8 @@ namespace {
                 =   (
                         tok.EmpireMeter_
                     >>  parse::label(Meter_token)    >   tok.string [ _a = _1 ]
-                    >  -(parse::label(Low_token)     >   double_value_ref [ _c = _1 ])
-                    >  -(parse::label(High_token)    >   double_value_ref [ _d = _1 ])
+                    >  -(parse::label(Low_token)     >   parse::double_value_ref() [ _c = _1 ])
+                    >  -(parse::label(High_token)    >   parse::double_value_ref() [ _d = _1 ])
                     ) [ _val = new_<Condition::EmpireMeterValue>(_a, _c, _d) ]
                 ;
 

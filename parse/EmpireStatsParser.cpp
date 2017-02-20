@@ -17,7 +17,6 @@ namespace {
     struct rules {
         rules() {
             const parse::lexer& tok =                                               parse::lexer::instance();
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -33,7 +32,7 @@ namespace {
             stat
                 =   tok.Statistic_
                 >   parse::label(Name_token)    > tok.string [ _a = _1 ]
-                >   parse::label(Value_token)   > double_value_ref
+                >   parse::label(Value_token)   > parse::double_value_ref()
                 [ _val = construct<std::pair<std::string, ValueRef::ValueRefBase<double>*> >(_a, _1) ]
                 ;
 

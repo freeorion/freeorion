@@ -35,7 +35,6 @@ namespace {
     struct rules {
         rules() {
             const parse::lexer& tok =                                               parse::lexer::instance();
-            const parse::value_ref_parser_rule<double>::type& double_value_ref =    parse::value_ref_parser<double>();
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -71,9 +70,9 @@ namespace {
 
             special
                 =    special_prefix(_a, _b)
-                >  -(parse::label(Stealth_token)            > double_value_ref [ _g = _1 ])
+                >  -(parse::label(Stealth_token)            > parse::double_value_ref() [ _g = _1 ])
                 >    spawn(_c, _d)
-                >  -(parse::label(Capacity_token)           > double_value_ref [ _h = _1 ])
+                >  -(parse::label(Capacity_token)           > parse::double_value_ref() [ _h = _1 ])
                 >  -(parse::label(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
                 >  -(parse::label(EffectsGroups_token)      > parse::detail::effects_group_parser() [ _f = _1 ])
                 >    parse::label(Graphic_token)            > tok.string

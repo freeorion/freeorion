@@ -71,8 +71,7 @@ namespace {
 }
 
 namespace parse {
-    template <>
-    value_ref_parser_rule<UniverseObjectType>::type& value_ref_parser<UniverseObjectType>()
+    value_ref_parser_rule<UniverseObjectType>::type& universe_object_type_value_ref()
     {
         static universe_object_type_parser_rules retval;
         return retval.expr;

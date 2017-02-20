@@ -76,8 +76,7 @@ namespace {
 }
 
 namespace parse {
-    template <>
-    value_ref_parser_rule<PlanetType>::type& value_ref_parser<PlanetType>()
+    value_ref_parser_rule<PlanetType>::type& planet_type_value_ref()
     {
         static planet_type_parser_rules retval;
         return retval.expr;

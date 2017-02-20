@@ -41,7 +41,6 @@ struct ValueRefDoubleFixture: boost::unit_test::test_observer {
     }
 
     bool parse(std::string phrase, ValueRef::ValueRefBase<double>*& result) {
-        parse::value_ref_parser_rule<double>::type& rule = parse::value_ref_parser<double>();
         const parse::lexer& lexer = lexer.instance();
         boost::spirit::qi::in_state_type in_state;
         boost::spirit::qi::eoi_type eoi;
@@ -53,7 +52,7 @@ struct ValueRefDoubleFixture: boost::unit_test::test_observer {
         return boost::spirit::qi::phrase_parse(
             lexer.begin(begin_phrase, end_phrase),
             lexer.end(),
-            rule[boost::phoenix::ref(result) = _1] > eoi,
+            parse::double_value_ref()[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
     }
