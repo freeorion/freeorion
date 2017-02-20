@@ -18,7 +18,7 @@ namespace {
                 ;
 
             constant
-                =    parse::enum_parser<UniverseObjectType>() [ _val = new_<ValueRef::Constant<UniverseObjectType> >(_1) ]
+                =    parse::universe_object_type_enum() [ _val = new_<ValueRef::Constant<UniverseObjectType> >(_1) ]
                 ;
 
             initialize_bound_variable_parser<UniverseObjectType>(bound_variable, variable_name);

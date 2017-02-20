@@ -188,7 +188,7 @@ namespace {
 
             start
                 =    tok.Item_
-                >    parse::label(Type_token) > parse::enum_parser<UnlockableItemType>() [ _a = _1 ]
+                >    parse::label(Type_token) > parse::unlockable_item_type_enum() [ _a = _1 ]
                 >    parse::label(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
                 ;
 

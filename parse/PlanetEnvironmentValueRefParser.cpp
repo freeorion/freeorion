@@ -18,7 +18,7 @@ namespace {
                 ;
 
             constant
-                =   parse::enum_parser<PlanetEnvironment>() [ _val = new_<ValueRef::Constant<PlanetEnvironment> >(_1) ]
+                =   parse::planet_environment_enum() [ _val = new_<ValueRef::Constant<PlanetEnvironment> >(_1) ]
                 ;
 
             initialize_bound_variable_parser<PlanetEnvironment>(bound_variable, variable_name);

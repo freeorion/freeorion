@@ -74,7 +74,7 @@ namespace {
 
             slot
                 =   tok.Slot_
-                >   parse::label(Type_token) > parse::enum_parser<ShipSlotType>() [ _a = _1 ]
+                >   parse::label(Type_token) > parse::ship_slot_type_enum() [ _a = _1 ]
                 >   parse::label(Position_token)
                 >   '(' > parse::double_ [ _b = _1 ] > ',' > parse::double_ [ _c = _1 ] > lit(')')
                     [ _val = construct<HullType::Slot>(_a, _b, _c) ]

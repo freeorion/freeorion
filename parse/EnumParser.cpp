@@ -12,8 +12,7 @@ namespace {
 }
 
 namespace parse {
-    template <>
-    enum_parser_rule<PlanetSize>::type& enum_parser<PlanetSize>()
+    enum_parser_rule<PlanetSize>::type& planet_size_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<PlanetSize>::type retval
@@ -36,8 +35,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<PlanetType>::type& enum_parser<PlanetType>()
+    enum_parser_rule<PlanetType>::type& planet_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<PlanetType>::type retval
@@ -64,8 +62,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<PlanetEnvironment>::type& enum_parser<PlanetEnvironment>()
+    enum_parser_rule<PlanetEnvironment>::type& planet_environment_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<PlanetEnvironment>::type retval
@@ -86,8 +83,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<UniverseObjectType>::type& enum_parser<UniverseObjectType>()
+    enum_parser_rule<UniverseObjectType>::type& universe_object_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<UniverseObjectType>::type retval
@@ -111,8 +107,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<StarType>::type& enum_parser<StarType>()
+    enum_parser_rule<StarType>::type& star_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<StarType>::type retval
@@ -136,8 +131,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<EmpireAffiliationType>::type& enum_parser<EmpireAffiliationType>()
+    enum_parser_rule<EmpireAffiliationType>::type& empire_affiliation_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<EmpireAffiliationType>::type retval
@@ -160,8 +154,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<UnlockableItemType>::type& enum_parser<UnlockableItemType>()
+    enum_parser_rule<UnlockableItemType>::type& unlockable_item_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<UnlockableItemType>::type retval
@@ -182,8 +175,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<ShipSlotType>::type& enum_parser<ShipSlotType>()
+    enum_parser_rule<ShipSlotType>::type& ship_slot_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<ShipSlotType>::type retval
@@ -202,8 +194,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<ShipPartClass>::type& enum_parser<ShipPartClass>()
+    enum_parser_rule<ShipPartClass>::type& ship_part_class_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<ShipPartClass>::type retval
@@ -236,8 +227,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<CaptureResult>::type& enum_parser<CaptureResult>()
+    enum_parser_rule<CaptureResult>::type& capture_result_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<CaptureResult>::type retval
@@ -256,8 +246,7 @@ namespace parse {
         return retval;
     }
 
-    template <>
-    enum_parser_rule<ValueRef::StatisticType>::type& enum_parser<ValueRef::StatisticType>()
+    enum_parser_rule<ValueRef::StatisticType>::type& statistic_type_enum()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_parser_rule<ValueRef::StatisticType>::type retval

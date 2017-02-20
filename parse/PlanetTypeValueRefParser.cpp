@@ -23,7 +23,7 @@ namespace {
                 ;
 
             constant
-                =    parse::enum_parser<PlanetType>() [ _val = new_<ValueRef::Constant<PlanetType> >(_1) ]
+                =    parse::planet_type_enum() [ _val = new_<ValueRef::Constant<PlanetType> >(_1) ]
                 ;
 
             initialize_bound_variable_parser<PlanetType>(bound_variable, variable_name);

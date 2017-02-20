@@ -109,7 +109,7 @@ namespace {
 
             owned_by_5
                 =   tok.OwnedBy_
-                >>  parse::label(Affiliation_token) >> parse::enum_parser<EmpireAffiliationType>() [ _a = _1 ]
+                >>  parse::label(Affiliation_token) >> parse::empire_affiliation_type_enum() [ _a = _1 ]
                 >>  parse::label(Empire_token)      >  int_value_ref
                 [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
                 ;

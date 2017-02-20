@@ -20,7 +20,7 @@ namespace {
                 ;
 
             constant
-                =    parse::enum_parser<PlanetSize>() [ _val = new_<ValueRef::Constant<PlanetSize> >(_1) ]
+                =    parse::planet_size_enum() [ _val = new_<ValueRef::Constant<PlanetSize> >(_1) ]
                 ;
 
             initialize_bound_variable_parser<PlanetSize>(bound_variable, variable_name);

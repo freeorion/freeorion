@@ -20,7 +20,7 @@ namespace {
                 ;
 
             constant
-                =    parse::enum_parser<StarType>() [ _val = new_<ValueRef::Constant<StarType> >(_1) ]
+                =    parse::star_type_enum() [ _val = new_<ValueRef::Constant<StarType> >(_1) ]
                 ;
 
             initialize_bound_variable_parser<StarType>(bound_variable, variable_name);

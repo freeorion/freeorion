@@ -65,8 +65,8 @@ namespace {
                 =  -(
                         parse::label(MountableSlotTypes_token)
                     >   (
-                            ('[' > +parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ] > ']')
-                        |    parse::enum_parser<ShipSlotType>() [ push_back(_r1, _1) ]
+                            ('[' > +parse::ship_slot_type_enum() [ push_back(_r1, _1) ] > ']')
+                        |    parse::ship_slot_type_enum() [ push_back(_r1, _1) ]
                         )
                      )
                 ;
@@ -74,7 +74,7 @@ namespace {
             part_type
                 = ( tok.Part_
                 >   parse::detail::more_common_params_parser()       [ _a = _1 ]
-                >   parse::label(Class_token)       > parse::enum_parser<ShipPartClass>() [ _c = _1 ]
+                >   parse::label(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
                 > (  (parse::label(Capacity_token)  > parse::double_ [ _d = _1 ])
                    | (parse::label(Damage_token)    > parse::double_ [ _d = _1 ])
                    |  eps [ _d = 0.0 ]

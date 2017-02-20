@@ -96,7 +96,7 @@ namespace {
                 =   (   tok.DesignHasPartClass_
                         > -(parse::label(Low_token)   > flexible_int_ref [ _a = _1 ])
                         > -(parse::label(High_token)  > flexible_int_ref [ _b = _1 ])
-                    )   >   parse::label(Class_token) > parse::enum_parser<ShipPartClass>()
+                    )   >   parse::label(Class_token) > parse::ship_part_class_enum()
                     [ _val = new_<Condition::DesignHasPartClass>(_1, _a, _b) ]
                 ;
 

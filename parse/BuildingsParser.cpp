@@ -54,7 +54,7 @@ namespace {
                 =   tok.BuildingType_
                 >   parse::label(Name_token)                > tok.string        [ _a = _1 ]
                 >   parse::label(Description_token)         > tok.string        [ _b = _1 ]
-                >   (   parse::label(CaptureResult_token)   >> parse::enum_parser<CaptureResult>() [ _d = _1 ]
+                >   (   parse::label(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
                     |   eps [ _d = CR_CAPTURE ]
                     )
                 >   parse::detail::common_params_parser() [ _c = _1 ]

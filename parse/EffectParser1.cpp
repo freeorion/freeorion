@@ -79,7 +79,7 @@ namespace {
                         (   // empire id specified, optionally with an affiliation type:
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
-                            (   (parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ])
+                            (   (parse::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                             |    eps [ _d = AFFIL_SELF ]
                             )
                         >>  parse::label(Empire_token) > int_value_ref
@@ -99,7 +99,7 @@ namespace {
                         )
                     |   (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires
-                            (   (parse::label(Affiliation_token) > parse::enum_parser<EmpireAffiliationType>() [ _d = _1 ])
+                            (   (parse::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                             |    eps [ _d = AFFIL_ANY ]
                             )
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d, _e, _f) ]

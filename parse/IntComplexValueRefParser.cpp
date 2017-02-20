@@ -86,7 +86,7 @@ namespace parse {
                 =   (
                             tok.PartClassInShipDesign_  [ _a = construct<std::string>(_1) ]
                         //> ( parse::label(Class_token) >>
-                        //    as_string [ parse::enum_parser<ShipPartClass>() ]
+                        //    as_string [ parse::ship_part_class_enum() ]
                         //    [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
                         //  )
                         > ( parse::label(Class_token) >
@@ -108,7 +108,7 @@ namespace parse {
                         >-( parse::label(Empire_token)          > int_value_ref [ _b = _1 ] )
                         >-(     ( parse::label(Name_token)      > string_value_ref [ _d = _1 ] )
                             |   ( parse::label(Class_token)     >>
-                                  parse::enum_parser<ShipPartClass>() [ _c = new_<ValueRef::Constant<int>>(_1) ]
+                                  parse::ship_part_class_enum() [ _c = new_<ValueRef::Constant<int>>(_1) ]
                                 )
                           )
                     ) [ _val = new_<ValueRef::ComplexVariable<int>>(_a, _b, _c, _f, _d, _e) ]
