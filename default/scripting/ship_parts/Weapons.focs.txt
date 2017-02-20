@@ -130,6 +130,7 @@ WEAPON_BASE_UNOWNED_EFFECTS
 '''        EffectsGroup
             scope = Source
             activation = Unowned    // if owned by a player, gets weapon meters set by effects in relevant techs
+            stackinggroup = "WEAPON_BASE_UNOWNED_EFFECTS_@1@"
             accountinglabel = "@1@"
             effects = [
                 SetMaxCapacity partname = "@1@" value = Value + PartCapacity name = "@1@"
