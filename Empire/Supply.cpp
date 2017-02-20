@@ -547,7 +547,18 @@ namespace {
         return SupplyMerit(supply_range, obj->Owner(), obj->SystemID());
     }
 
-    typedef std::tuple<SupplyMerit, float, int, int> SupplyPODTuple;
+    using SupplyPODTuple = std::tuple<SupplyMerit, float, int, int>;
+    enum SupplySystemPODFields {ssMerit, ssStealth, ssSupply, ssEmpireID};
+
+    /** SupplySystemPOD contains all of the data needs to resolve one systems supply conflicts. */
+    struct SupplySystemPOD {
+        // TODO resort and add source id?
+        boost::optional<std::set<SupplyPODTuple>> merit_stealth_supply_empire;
+        boost::optional<std::unordered_set<int>> contesting_empires;
+        boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
+        boost::optional<int> blockading_colonies_empire_id;
+    };
+
 
     /** Return a map from empire id to the stealth and supply of a supply generating object.*/
     boost::optional<std::set<SupplyPODTuple>> CalculateMeritStealthSupplyEmpire(const System& system) {
@@ -703,12 +714,12 @@ namespace {
         // No supply in system, so no blockading colony.
         if (!empire_to_stealth_supply)
             return boost::none;
-        auto empire_id = std::get<3>(*empire_to_stealth_supply->begin());
+        auto empire_id = std::get<ssEmpireID>(*empire_to_stealth_supply->begin());
 
         // Check that all the source have the same empire id.
         if (!std::all_of(empire_to_stealth_supply->begin(), empire_to_stealth_supply->end(),
                         [&](const SupplyPODTuple& stuff_empire){
-                             return std::get<3>(stuff_empire) == empire_id;
+                             return std::get<ssEmpireID>(stuff_empire) == empire_id;
                          })) {
             return boost::none;
         }
@@ -763,15 +774,6 @@ namespace {
 
         return system_to_blockading_colony_empire_ids;
     }
-
-    /** SupplySystemPOD contains all of the data needs to resolve one systems supply conflicts. */
-    struct SupplySystemPOD {
-        // TODO resort and add source id?
-        boost::optional<std::set<std::tuple<SupplyMerit, float, int, int>>> merit_stealth_supply_empire;
-        boost::optional<std::unordered_set<int>> contesting_empires;
-        boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
-        boost::optional<int> blockading_colonies_empire_id;
-    };
 
     boost::optional<SupplySystemPOD> CalculateInitialSupply(const System &system) {
         auto stealth_supply = CalculateMeritStealthSupplyEmpire(system);
@@ -1144,10 +1146,10 @@ namespace {
         std::set<SupplyPODTuple> candidates;
         for (auto&& source_and_merit_stealth_empire : _candidates) {
             candidates.insert(
-                {std::get<0>(source_and_merit_stealth_empire.second),
-                        std::get<1>(source_and_merit_stealth_empire.second),
+                {std::get<ssMerit>(source_and_merit_stealth_empire.second),
+                        std::get<ssStealth>(source_and_merit_stealth_empire.second),
                         source_and_merit_stealth_empire.first,
-                        std::get<2>(source_and_merit_stealth_empire.second)});
+                        std::get<ssSupply>(source_and_merit_stealth_empire.second)});
         }
 
         // Sources that have been removed.
@@ -1166,7 +1168,7 @@ namespace {
 
         for (auto candidate_it = candidates.rbegin(); candidate_it != candidates.rend(); ++candidate_it) {
             auto& candidate = *candidate_it;
-            const SupplyMerit& candidate_merit = std::get<0>(candidate);
+            const SupplyMerit& candidate_merit = std::get<ssMerit>(candidate);
             float candidate_stealth;
             int candidate_source_id, candidate_empire_id;
             std::tie(std::ignore, candidate_stealth, candidate_source_id, candidate_empire_id) = candidate;
@@ -1193,7 +1195,7 @@ namespace {
             for (auto other_it = pod.merit_stealth_supply_empire->rbegin();
                  other_it != pod.merit_stealth_supply_empire->rend(); ++other_it)
             {
-                const SupplyMerit& other_merit = std::get<0>(*other_it);
+                const SupplyMerit& other_merit = std::get<ssMerit>(*other_it);
                 float other_stealth;
                 int other_source_id, other_empire_id;
                 std::tie(std::ignore, other_stealth, other_source_id, other_empire_id) = *other_it;
@@ -1284,7 +1286,7 @@ namespace {
 
             // Were any of the others marked for removal
             for (auto marked : marked_for_removals) {
-                const SupplyMerit& marked_merit = std::get<0>(*marked);
+                const SupplyMerit& marked_merit = std::get<ssMerit>(*marked);
                 int marked_source_id, marked_empire_id;
                 std::tie(std::ignore, std::ignore, marked_source_id, marked_empire_id) = *marked;
 
@@ -1316,7 +1318,7 @@ namespace {
         // For each propagator
         for (auto&& propagator : propagators) {
 
-            const SupplyMerit& merit = std::get<0>(propagator);
+            const SupplyMerit& merit = std::get<ssMerit>(propagator);
             float stealth;
             int source_id, empire_id;
             std::tie(std::ignore, stealth, source_id, empire_id) = propagator;
@@ -1398,7 +1400,7 @@ namespace {
         //         merit_stealth_empire_id.insert({jt.second, jt.first, empire_id});
         // }
 
-        // auto max_supply_range = std::get<0>(*merit_stealth_empire_id.begin());
+        // auto max_supply_range = std::get<ssMerit>(*merit_stealth_empire_id.begin());
 
         // auto& keepers = *pod.merit_stealth_supply_empire;
         // keepers.clear();
@@ -2044,7 +2046,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
         // Use the highest merit source as the sole source for now.
         if (pod.merit_stealth_supply_empire && !pod.merit_stealth_supply_empire->empty()) {
             const auto& highest = pod.merit_stealth_supply_empire->begin();
-            const SupplyMerit& merit = std::get<0>(*highest);
+            const SupplyMerit& merit = std::get<ssMerit>(*highest);
             float stealth;
             int source_id, empire_id;
             std::tie(std::ignore, stealth, source_id, empire_id) = *highest;
