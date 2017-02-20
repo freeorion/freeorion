@@ -728,12 +728,87 @@ void MapWndPopup::Close()
 //LaneEndpoints
 //////////////////////////////////
 LaneEndpoints::LaneEndpoints() :
+    s1(nullptr),
+    s2(nullptr),
     X1(static_cast<float>(UniverseObject::INVALID_POSITION)),
     Y1(static_cast<float>(UniverseObject::INVALID_POSITION)),
     X2(static_cast<float>(UniverseObject::INVALID_POSITION)),
     Y2(static_cast<float>(UniverseObject::INVALID_POSITION))
 {}
 
+LaneEndpoints::LaneEndpoints(const std::shared_ptr<const System>& _s1, const std::shared_ptr<const System>& _s2) :
+    s1(_s1), s2(_s2),
+    X1(0.0f), Y1(0.0f), X2(0.0f), Y2(0.0f)
+{
+    double X1_calc = _s1->X();
+    double Y1_calc = _s1->Y();
+    double X2_calc = _s2->X();
+    double Y2_calc = _s2->Y();
+
+    // get unit vector
+    double deltaX = X2_calc - X1_calc;
+    double deltaY = Y2_calc - Y1_calc;
+    double mag = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+
+    double ring_radius = ClientUI::SystemCircleSize() / 2.0 + 0.5;
+
+    // safety check.  don't modify original coordinates if they're too close togther
+    if (mag > 2*ring_radius) {
+        // rescale vector to length of ring radius
+        double offsetX = deltaX / mag * ring_radius;
+        double offsetY = deltaY / mag * ring_radius;
+
+        // move start and end points inwards by rescaled vector
+        X1_calc += offsetX;
+        Y1_calc += offsetY;
+        X2_calc -= offsetX;
+        Y2_calc -= offsetY;
+    }
+
+    X1 = static_cast<float>(X1_calc);
+    Y1 = static_cast<float>(Y1_calc);
+    X2 = static_cast<float>(X2_calc);
+    Y2 = static_cast<float>(Y2_calc);
+}
+
+LaneEndpoints::~LaneEndpoints()
+{}
+
+LaneEndpoints::LaneEndpoints(const LaneEndpoints& other) :
+    s1(other.s1), s2(other.s2),
+    X1(other.X1), Y1(other.Y1), X2(other.X2), Y2(other.Y2)
+{}
+
+// Move constructor
+LaneEndpoints::LaneEndpoints(LaneEndpoints&& other) :
+    s1(other.s1), s2(other.s2),
+    X1(other.X1), Y1(other.Y1), X2(other.X2), Y2(other.Y2)
+{}
+
+LaneEndpoints& LaneEndpoints::operator=(const LaneEndpoints& other) {
+    if (this != &other) {
+        s1 = other.s1;
+        s2 = other.s2;
+        X1 = other.X1;
+        Y1 = other.Y1;
+        X2 = other.X2;
+        Y2 = other.Y2;
+    }
+    return *this;
+}
+
+// Move assignment
+LaneEndpoints& LaneEndpoints::operator=(LaneEndpoints&& other) {
+    if (this != &other) {
+        s1 = std::move(other.s1);
+        s2 = std::move(other.s2);
+        X1 = other.X1;
+        Y1 = other.Y1;
+        X2 = other.X2;
+        Y2 = other.Y2;
+    }
+    return *this;
+}
 
 ////////////////////////////////////////////////
 // MapWnd::MovementLineData::Vertex

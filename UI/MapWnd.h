@@ -42,6 +42,14 @@ class ShaderProgram;
  * positioning fleet buttons that are moving along the starlane. */
 struct LaneEndpoints {
     LaneEndpoints();
+    LaneEndpoints(const std::shared_ptr<const System>& s1, const std::shared_ptr<const System>& s2);
+    ~LaneEndpoints();
+    LaneEndpoints(const LaneEndpoints& other);
+    LaneEndpoints(LaneEndpoints&& other);
+    LaneEndpoints& operator=(const LaneEndpoints& other);
+    LaneEndpoints& operator=(LaneEndpoints&& other);
+
+    std::shared_ptr<const System> s1, s2;
     float X1, Y1, X2, Y2;
 };
 
