@@ -28,7 +28,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 60
+                Turn low = max(60, Source.LastTurnActiveInBattle + 1)
                 Random probability = Source.Age*0.01 - 0.1
             ]
             effects = [

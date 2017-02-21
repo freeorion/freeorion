@@ -27,7 +27,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 90
+                Turn low = max(90, Source.LastTurnActiveInBattle + 1)
                 InSystem
             ]
             stackinggroup = "KRILL_3_ACTION_STACK"
@@ -57,7 +57,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 90
+                Turn low = max(90, Source.LastTurnActiveInBattle + 1)
                 InSystem
             ]
             effects = Destroy
@@ -71,7 +71,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 90
+                Turn low = max(90, Source.LastTurnActiveInBattle + 1)
                 Random probability = 0.08
                 InSystem
             ]

@@ -28,7 +28,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 60
+                Turn low = max(60, Source.LastTurnActiveInBattle + 1)
                 //triple the chance of maturing when in a system with Krill
                 Random probability = (Source.Age*0.01 - 0.1) * 3^(If condition = ContainedBy Contains OR [
                     Design name = "SM_KRILL_1"

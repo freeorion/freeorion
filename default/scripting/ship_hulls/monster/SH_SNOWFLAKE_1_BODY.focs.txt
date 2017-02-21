@@ -53,7 +53,7 @@ Hull
                 ]
             ]
             activation = And [
-                Turn low = 30
+                Turn low = max(30, Source.LastTurnActiveInBattle + 1)
                 Random probability = Source.Age*0.01 - 0.1
             ]
             accountinglabel = "SNOWFLAKE_GROWTH_LABEL"

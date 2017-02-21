@@ -31,6 +31,7 @@ Hull
                 ]
             ]
             activation = And [
+                Turn low = Source.LastTurnActiveInBattle + 1
                 InSystem
                 Random probability = 0.1
             ]
