@@ -70,7 +70,7 @@ script:
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
       docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake -DBUILD_TESTING=ON /src
-      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . -- -j 2
+      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . -- -j 2 &&
       docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . --target unittest -- -j 2
     fi
   - >
