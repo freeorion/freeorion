@@ -893,10 +893,9 @@ namespace {
                     incaps_event->AddEvent(incap_event);
                 }
             }
-            if (!incaps_event->AreSubEventsEmpty(ALL_EMPIRES)) {
-                CombatEventPtr incaps_cast = std::static_pointer_cast<CombatEvent, IncapacitationsEvent>(incaps_event);
-                bout_event->AddEvent(incaps_cast);
-            }
+
+            if (!incaps_event->AreSubEventsEmpty(ALL_EMPIRES))
+                bout_event->AddEvent(incaps_event);
         }
 
         /// Checks if target is destroyed and if it is, update lists of living objects.
@@ -1479,12 +1478,10 @@ namespace {
         }
 
         AttacksEventPtr attacks_event = std::make_shared<AttacksEvent>();
-        CombatEventPtr attacks_event_cast = std::static_pointer_cast<CombatEvent, AttacksEvent>(attacks_event);
-        bout_event->AddEvent(attacks_event_cast);
+        bout_event->AddEvent(attacks_event);
 
         auto fighter_on_fighter_event = std::make_shared<FightersAttackFightersEvent>(bout);
-        auto fighter_on_fighter_event_cast = std::static_pointer_cast<CombatEvent, FightersAttackFightersEvent>(fighter_on_fighter_event);
-        bout_event->AddEvent(fighter_on_fighter_event_cast);
+        bout_event->AddEvent(fighter_on_fighter_event);
 
         int round = 1;  // counter of events during the current combat bout
 
@@ -1511,8 +1508,7 @@ namespace {
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker); // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with PC_DIRECT_WEAPON part class
             WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
                 = std::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
-            CombatEventPtr platform_event_cast = std::static_pointer_cast<CombatEvent, WeaponsPlatformEvent>(platform_event);
-            attacks_event->AddEvent(platform_event_cast);
+            attacks_event->AddEvent(platform_event);
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++, attacks_event, platform_event, fighter_on_fighter_event);
         }
 
@@ -1540,11 +1536,8 @@ namespace {
             WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
                 = std::make_shared<WeaponsPlatformEvent>(bout, attacker_id, attacker->Owner());
             ShootAllWeapons(attacker, weapons, combat_state, bout, round++, attacks_event, platform_event, fighter_on_fighter_event);
-            if (!platform_event->AreSubEventsEmpty(attacker->Owner())) {
-                CombatEventPtr platform_event_cast =
-                    std::static_pointer_cast<CombatEvent, WeaponsPlatformEvent>(platform_event);
-                attacks_event->AddEvent(platform_event_cast);
-            }
+            if (!platform_event->AreSubEventsEmpty(attacker->Owner()))
+                attacks_event->AddEvent(platform_event);
         }
 
         // now launch fighters (which can attack in any subsequent combat bouts)
@@ -1574,10 +1567,8 @@ namespace {
                     DebugLogger() << "Attacker: " << attacker->Name();
             }
 
-            if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES)) {
-                CombatEventPtr launches_event_cast = std::static_pointer_cast<CombatEvent, AttacksEvent>(launches_event);
-                bout_event->AddEvent(launches_event_cast);
-            }
+            if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES))
+                bout_event->AddEvent(launches_event);
         }
 
         // Stealthed attackers have now revealed themselves to their targets.

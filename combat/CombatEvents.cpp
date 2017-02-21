@@ -163,7 +163,7 @@ BoutEvent::BoutEvent():
 BoutEvent::BoutEvent(int _bout):
     bout(_bout), events() {}
 
-void BoutEvent::AddEvent(CombatEventPtr &event)
+void BoutEvent::AddEvent(const CombatEventPtr& event)
 { events.push_back(event); }
 
 std::string BoutEvent::DebugString() const {
@@ -214,7 +214,7 @@ void BoutEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, co
 SimultaneousEvents::SimultaneousEvents() :
     events() {}
 
-void SimultaneousEvents::AddEvent(CombatEventPtr &event)
+void SimultaneousEvents::AddEvent(const CombatEventPtr& event)
 { events.push_back(event); }
 
 std::string SimultaneousEvents::DebugString() const {

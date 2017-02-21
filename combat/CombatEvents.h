@@ -53,7 +53,7 @@ struct FO_COMMON_API BoutEvent : public CombatEvent {
     virtual ~BoutEvent()
     {}
 
-    void AddEvent(CombatEventPtr & event);
+    void AddEvent(const CombatEventPtr& event);
 
     std::string DebugString() const override;
 
@@ -91,7 +91,7 @@ struct FO_COMMON_API SimultaneousEvents : public CombatEvent {
     virtual ~SimultaneousEvents()
     {}
 
-    void AddEvent(CombatEventPtr &event);
+    void AddEvent(const CombatEventPtr& event);
 
     std::string DebugString() const override;
 
