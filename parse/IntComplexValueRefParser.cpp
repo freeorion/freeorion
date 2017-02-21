@@ -82,7 +82,7 @@ namespace parse {
 
             part_class_in_ship_design
                 =   (
-                            tok.PartClassInShipDesign_  [ _a = construct<std::string>(_1) ]
+                            tok.PartOfClassInShipDesign_  [ _a = construct<std::string>(_1) ]
                         //> ( parse::label(Class_token) >>
                         //    as_string [ parse::ship_part_class_enum() ]
                         //    [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
@@ -275,7 +275,7 @@ namespace parse {
             //jumps_between_by_empire_supply.name("JumpsBetweenByEmpireSupplyConnections");
             outposts_owned.name("OutpostsOwned");
             parts_in_ship_design.name("PartsInShipDesign");
-            part_class_in_ship_design.name("PartClassInShipDesign");
+            part_class_in_ship_design.name("PartOfClassInShipDesign");
             ship_parts_owned.name("ShipPartsOwned");
             ship_designs_destroyed.name("ShipDesignsDestroyed");
             ship_designs_lost.name("ShipDesignsLost");

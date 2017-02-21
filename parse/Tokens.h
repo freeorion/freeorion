@@ -278,7 +278,7 @@
 
 #define TOKEN_SEQ_9                             \
     (Parts)                                     \
-    (PartClassInShipDesign)                     \
+    (PartOfClassInShipDesign)                   \
     (PartsInShipDesign)                         \
     (Passive)                                   \
     (Planet)                                    \
