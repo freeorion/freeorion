@@ -156,10 +156,10 @@ def get_invasion_fleets():
                 del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
             if (planet.currentMeterValue(fo.meterType.shield) > 0 and
-                    this_sys_status.get('myFleetRating', 0) < 0.8 * this_sys_status.get('totalThreat', 0)):
+                    (this_sys_status.get('myFleetRating', 0) < 0.8 * this_sys_status.get('totalThreat', 0) or
+                     this_sys_status.get('myFleetRatingVsPlanets', 0) < this_sys_status.get('planetThreat', 0))):
                 # this system not secured, so ruling out invasion base troops for now
                 # don't immediately delete from qualifyingTroopBaseTargets or it will be opened up for regular troops
-                #del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
             loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][0]
             best_base_trooper_here = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
