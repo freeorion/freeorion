@@ -456,11 +456,14 @@ class AIstate(object):
             sys_status['enemies_supplied'] = enemy_supply.get(sys_id, [])
             sys_status['enemies_nearly_supplied'] = enemy_near_supply.get(sys_id, [])
             my_ratings_list = []
+            my_ratings_against_planets_list = []
             for fid in sys_status['myfleets']:
-                this_rating = self.get_rating(fid, True, self.get_standard_enemy())  # DONE!
+                this_rating = self.get_rating(fid, True, self.get_standard_enemy())
                 my_ratings_list.append(this_rating)
+                my_ratings_against_planets_list.append(self.get_rating(fid, against_planets=True))
             if sys_id != INVALID_ID:
-                sys_status['myFleetRating'] = my_ratings_list and CombatRatingsAI.combine_ratings_list(my_ratings_list) or 0
+                sys_status['myFleetRating'] = CombatRatingsAI.combine_ratings_list(my_ratings_list)
+                sys_status['myFleetRatingVsPlanets'] = CombatRatingsAI.combine_ratings_list(my_ratings_against_planets_list)
                 sys_status['all_local_defenses'] = CombatRatingsAI.combine_ratings(sys_status['myFleetRating'], sys_status['mydefenses']['overall'])
             sys_status['neighbors'] = set(dict_from_map(universe.getSystemNeighborsMap(sys_id, self.empireID)))
             
@@ -584,7 +587,7 @@ class AIstate(object):
                 return True
         return False
 
-    def get_rating(self, fleet_id, force_new=False, enemy_stats=None):
+    def get_rating(self, fleet_id, force_new=False, enemy_stats=None, against_planets=False):
         """Returns a dict with various rating info."""
         if fleet_id in self.fleetStatus and not force_new and enemy_stats is None:
             return self.fleetStatus[fleet_id].get('rating', 0)
@@ -592,10 +595,11 @@ class AIstate(object):
             fleet = fo.getUniverse().getFleet(fleet_id)
             if not fleet:
                 return {}  # TODO: also ensure any info for that fleet is deleted
-            status = {'rating': CombatRatingsAI.get_fleet_rating(fleet_id, enemy_stats),  # TODO
+            status = {'rating': CombatRatingsAI.get_fleet_rating(fleet_id, enemy_stats),
+                      'ratingVsPlanets': CombatRatingsAI.get_fleet_rating_against_planets(fleet_id),
                       'sysID': fleet.systemID, 'nships': len(fleet.shipIDs)}
             self.fleetStatus[fleet_id] = status
-            return status['rating']
+            return status['rating'] if not against_planets else status['ratingVsPlanets']
 
     def update_fleet_rating(self, fleet_id):
         self.get_rating(fleet_id, force_new=True)
@@ -663,6 +667,7 @@ class AIstate(object):
         """Removes fleetRoles if a fleet has been lost, and update fleet Ratings."""
         for sys_id in self.systemStatus:
             self.systemStatus[sys_id]['myFleetRating'] = 0
+            self.systemStatus[sys_id]['myFleetRatingVsPlanets'] = 0
 
         universe = fo.getUniverse()
         ok_fleets = FleetUtilsAI.get_empire_fleet_ids()
