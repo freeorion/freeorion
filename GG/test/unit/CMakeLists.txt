@@ -25,13 +25,6 @@
 
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUIRED)
 
-if (NOT TARGET unittest)
-    add_custom_target(unittest
-        COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
-        COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
-    )
-endif ()
-
 add_executable(gg_unittest
     main.cpp
 )

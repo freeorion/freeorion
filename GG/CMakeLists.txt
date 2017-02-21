@@ -160,11 +160,20 @@ add_subdirectory(src)
 if(GiGi_BUILD_DOC)
     add_subdirectory(doc)
 endif()
-if(BUILD_TESTING)
+
+if (BUILD_TESTING)
     enable_testing()
     enable_coverage()
+
+    if (NOT TARGET unittest)
+        add_custom_target(unittest
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+        )
+    endif ()
+
     add_subdirectory(test)
-endif()
+endif ()
 
 
 ########################################

@@ -30,8 +30,15 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 option(BUILD_TESTING "Build the testing tree." OFF)
 
 if (BUILD_TESTING)
-  message( STATUS "Building Tests")
-  enable_testing()
+    message( STATUS "Building Tests")
+    enable_testing()
+
+    if (NOT TARGET unittest)
+        add_custom_target(unittest
+            COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
+            COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
+        )
+    endif ()
 endif ()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
