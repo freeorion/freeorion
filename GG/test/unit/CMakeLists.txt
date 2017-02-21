@@ -43,10 +43,6 @@ add_dependencies(unittest
     gg_unittest
 )
 
-add_coverage(gg_unittest
-    unittest
-)
-
 set(GiGi_TESTS
     TestButton
 )

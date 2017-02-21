@@ -163,7 +163,6 @@ endif()
 
 if (BUILD_TESTING)
     enable_testing()
-    enable_coverage()
 
     if (NOT TARGET unittest)
         add_custom_target(unittest
