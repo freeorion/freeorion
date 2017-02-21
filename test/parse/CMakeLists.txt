@@ -37,10 +37,10 @@ add_dependencies(unittest
 
 set(FO_TEST_PARSE
     TestEnumParser
-    TestValueRefDoubleParser
-    TestValueRefIntParser
-    TestValueRefStringParser
-    TestValueRefUniverseObjectTypeParser
+    #TestValueRefDoubleParser
+    #TestValueRefIntParser
+    #TestValueRefStringParser
+    #TestValueRefUniverseObjectTypeParser
 )
 
 foreach(_TEST ${FO_TEST_PARSE})
