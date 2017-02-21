@@ -47,6 +47,11 @@ before_script:
     if [[ "${TRAVIS_OS_NAME}" == "linux" ]]; then
       mkdir build
       cd build
+      # Add transparent cmake function to allow possible cross platform use of
+      # build sections.
+      function cmake {
+          docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build /usr/bin/cmake $@
+      }
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
@@ -55,8 +60,8 @@ before_script:
 script:
   - >
     if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
-      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake /src
-      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . --target cpp-apidoc
+      cmake /src
+      cmake --build . --target cpp-apidoc
 
       git clone --depth=1 --branch=master https://github.com/freeorion/freeorion.github.io.git apidoc-deploy.git
       pushd apidoc-deploy.git
@@ -69,9 +74,9 @@ script:
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
-      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake -DBUILD_TESTING=ON /src
-      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . -- -j 2 &&
-      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . --target unittest -- -j 2
+      cmake -DBUILD_TESTING=ON /src
+      cmake --build . -- -j 2 &&
+      cmake --build . --target unittest
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
