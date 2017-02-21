@@ -853,20 +853,43 @@ void ListBox::PreRender()
                 NormalizeRow(row);
     }
 
-    AdjustScrolls(false);
+    // Adding/removing scrolls and prerendering rows may change the row sizes and require a change
+    // in added/removed scrolls.  This may not be stable.  Perform two cycles and if it is not
+    // stable then force the scrollbar to be added if either cycle had a scroll bar.
+
+    // Perform a cycle of adjust scrolls and prerendering rows and return if sizes changed.
+    auto check_adjust_scroll_size_change =
+        [this]
+        (std::pair<bool,bool> force_scrolls = {false, false})
+        {
+            // This adjust scrolls may add or remove scrolls
+            AdjustScrolls(true);
+
+            bool visible_row_size_change = ShowVisibleRows(true);
+
+            bool header_size_change = false;
+            if (!m_header_row->empty()) {
+                auto old_size = m_header_row->Size();
+                GUI::PreRenderWindow(m_header_row);
+                header_size_change |= (old_size != m_header_row->Size());
+            }
+            return visible_row_size_change | header_size_change;
+        };
+
+    // Try adjusting scroll twice and then force the scrolls on.
+    if (check_adjust_scroll_size_change()) {
+        bool any_vscroll = (m_vscroll != nullptr);
+        bool any_hscroll = (m_hscroll != nullptr);
+
+        if (check_adjust_scroll_size_change()) {
+            any_vscroll |= (m_vscroll != nullptr);
+            any_hscroll |= (m_hscroll != nullptr);
+            check_adjust_scroll_size_change({any_hscroll, any_vscroll});
+        }
+    }
 
     // Reset require prerender after call to adjust scrolls
     Control::PreRender();
-
-    // Resize rows to fit client area.
-    X row_width(std::max(ClientWidth(), X(1)));
-    for (Row* row : m_rows)
-        row->Resize(Pt(row_width, row->Height()));
-
-    ShowVisibleRows(true);
-
-    if (!m_header_row->empty())
-        GUI::PreRenderWindow(m_header_row);
 
     // Position rows
     Pt pt(m_first_row_offset);
