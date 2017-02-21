@@ -50,7 +50,7 @@ before_script:
       # Add transparent cmake function to allow possible cross platform use of
       # build sections.
       function cmake {
-          docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build /usr/bin/cmake $@
+          docker run -v "${TRAVIS_BUILD_DIR}:/freeorion" -w /freeorion/build freeorion/freeorion-travis-build /usr/bin/cmake $@
       }
     fi
   - >
@@ -60,7 +60,7 @@ before_script:
 script:
   - >
     if [[ "${BUILD_APIDOC}" == "true" && "${TRAVIS_BRANCH}" == "master" ]]; then
-      cmake /src
+      cmake ..
       cmake --build . --target cpp-apidoc
 
       git clone --depth=1 --branch=master https://github.com/freeorion/freeorion.github.io.git apidoc-deploy.git
@@ -74,7 +74,7 @@ script:
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
-      cmake -DBUILD_TESTING=ON /src
+      cmake -DBUILD_TESTING=ON ..
       cmake --build . -- -j 2 &&
       cmake --build . --target unittest
     fi
