@@ -6,6 +6,7 @@ import traceback
 from universe_object import Planet
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID
+import AIDependencies
 __designStats = {}
 
 
@@ -142,6 +143,9 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
             cur_stats['rating'] = CombatRatingsAI.combine_ratings(cur_stats.get('rating', 0), this_rating)
             if 'troopCapacity' in target_stats:
                 cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + troop_capacity
+            if 'totalAttack' in target_stats:
+                cur_stats['totalAttack'] = (cur_stats.get('totalAttack', 0)
+                                          + CombatRatingsAI.FleetCombatStats(fleet_id).total_attack)
             # if we already meet the requirements, we can stop looking for more ships
             if (sum(len(universe.getFleet(fid).shipIDs) for fid in fleet_list) >= 1) \
                     and stats_meet_reqs(cur_stats, target_stats):
@@ -579,3 +583,8 @@ def get_max_fuel(fleet_id):
     """
     fleet = fo.getUniverse().getFleet(fleet_id)
     return fleet and fleet.maxFuel or 0.0
+
+
+def get_fleet_upkeep():
+    # TODO: Use new upkeep calculation
+    return 1 + AIDependencies.SHIP_UPKEEP * foAI.foAIstate.shipCount

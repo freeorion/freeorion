@@ -786,3 +786,48 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
         if allocations:
             assign_military_fleets_to_systems(use_fleet_id_list=avail_mil_fleet_ids, allocations=allocations, round=round)
 
+
+def get_military_support_for_invasion(system_id):
+    universe = fo.getUniverse()
+    system = universe.getSystem(system_id)
+    planets = [universe.getPlanet(pid) for pid in system.planetIDs]
+    total_shields = 0
+    total_defense = 0
+    for planet in planets:
+        # TODO: Consider situations where we can work with current defense
+        # for now, we just assume worst case max meter values
+        total_defense += planet.currentMeterValue(fo.meterType.maxDefense)
+        total_shields += planet.currentMeterValue(fo.meterType.maxShield)
+    fleet_threat = foAI.foAIstate.systemStatus.get(system_id, {}).get('fleetThreat', 0)
+
+    all_military_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY)
+    if not all_military_fleet_ids:
+        return []
+
+    avail_mil_fleet_ids = set(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
+    found_fleets = []
+    found_stats = {}
+    # the military fleet must suffice two conditions:
+    # 1. It must be able to win a battle against enemy forces in the system
+    # 2. It must be able to shoot down planetary shields
+    # As fighters do not fire on planets, we need sufficient non-fighter-based damage.
+    min_stats = {
+        'rating': (total_defense * (total_shields + total_defense) + fleet_threat) * 2 + 1,
+        'totalAttack': (total_shields + total_defense) / 3,
+    }
+    target_stats = {
+        'rating': (total_defense * (total_shields + total_defense) + fleet_threat) * 5 + 1,
+        'totalAttack': total_shields + total_defense,
+    }
+    chosen_fleets = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats, system_id,
+                                                        avail_mil_fleet_ids, found_fleets)
+    if not chosen_fleets:
+        if not FleetUtilsAI.stats_meet_reqs(found_stats, min_stats):
+            print "Insufficient military capacity to support invasion in system %s" % system
+            print "Requested stats:", target_stats
+            print "Minimum stats:", min_stats
+            print "Found stats:", found_stats
+            return []
+        else:
+            chosen_fleets = found_fleets
+    return chosen_fleets
