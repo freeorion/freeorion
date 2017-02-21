@@ -552,8 +552,9 @@ protected:
 
 private:
     /** Show only rows that are within the visible list box area and hide all others.  If
-        \p do_prerender is true then prerender the visible rows.*/
-    void            ShowVisibleRows(bool do_prerender);
+        \p do_prerender is true then prerender the visible rows.  Return true if prerender
+        resulted in any visible row changing size. */
+    bool            ShowVisibleRows(bool do_prerender);
     void            ConnectSignals();
     void            ValidateStyle();                                        ///< reconciles inconsistencies in the style flags
     void            VScrolled(int tab_low, int tab_high, int low, int high);///< signals from the vertical scroll bar are caught here

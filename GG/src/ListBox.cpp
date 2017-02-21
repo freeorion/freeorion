@@ -946,8 +946,9 @@ void ListBox::SizeMove(const Pt& ul, const Pt& lr)
         RequirePreRender();
 }
 
-void ListBox::ShowVisibleRows(bool do_prerender)
+bool ListBox::ShowVisibleRows(bool do_prerender)
 {
+    bool a_row_size_changed = false;
     // Ensure that data in occluded cells is not rendered
     // and that any re-layout during prerender is immediate.
     Y visible_height(BORDER_THICK);
@@ -961,8 +962,11 @@ void ListBox::ShowVisibleRows(bool do_prerender)
             (*it)->Hide();
         } else {
             (*it)->Show();
-            if (do_prerender)
+            if (do_prerender) {
+                auto old_size = (*it)->Size();
                 GUI::PreRenderWindow(*it);
+                a_row_size_changed |= (old_size != (*it)->Size());
+            }
 
             visible_height += (*it)->Height();
             if (visible_height >= max_visible_height)
@@ -970,6 +974,7 @@ void ListBox::ShowVisibleRows(bool do_prerender)
         }
     }
 
+    return a_row_size_changed;
 }
 
 void ListBox::Show(bool show_children /* = true*/)
