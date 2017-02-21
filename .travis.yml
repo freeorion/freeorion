@@ -11,6 +11,8 @@ matrix:
     - os: linux
       services:
         - docker
+      env:
+        - BUILD_UNITTEST=true
     - os: osx
       osx_image: xcode6.4
       compiler: clang
@@ -66,9 +68,10 @@ script:
       popd
     fi
   - >
-    if [[ "${TRAVIS_OS_NAME}" == "linux" && -z "${BUILD_APIDOC}" ]]; then
-      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake /src
+    if [[ "${TRAVIS_OS_NAME}" == "linux" && "${BUILD_UNITTEST}" == "true" ]]; then
+      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake -DBUILD_TESTING=ON /src
       docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . -- -j 2
+      docker run -v "${TRAVIS_BUILD_DIR}:/src" -v "$(pwd):/build" -w /build freeorion/freeorion-travis-build cmake --build . --target unittest -- -j 2
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
