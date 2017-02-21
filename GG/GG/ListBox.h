@@ -569,6 +569,14 @@ private:
     /** Restore cached selected, clicked and last browsed rows.*/
     void RestoreCachedSelections(const SelectionCache& cache);
 
+    /** Return the client size excluding the scroll bar sizes.*/
+    Pt ClientSizeExcludingScrolls() const;
+    /** Return a pair of dimensions of the scollable area if vscroll and/or hscroll is required.*/
+    std::pair<boost::optional<X>, boost::optional<Y>> CheckScrollsRequired() const;
+    /** Add vscroll and/or hscroll if \p required_total_extents x or y dimension exists. Return a
+        pair of bools indicating if added or removed vscroll or hscroll.*/
+    std::pair<bool, bool> AddOrRemoveScrolls(const std::pair<boost::optional<X>, boost::optional<Y>>& required_total_extents);
+
     std::list<Row*> m_rows;             ///< line item data
 
     Scroll*         m_vscroll;          ///< vertical scroll bar on right
