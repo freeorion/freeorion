@@ -3478,6 +3478,116 @@ Double-click on an available item to add it to the production queue.
 PRODUCTION_WND_TITLE
 Production
 
+PRODUCTION_WINDOW_ARTICLE_TITLE
+Production Window
+
+PRODUCTION_WINDOW_ARTICLE_TEXT
+'''The Production Window is the primary interface for utilizing Production Points (PP).
+It may be accessed by:
+*  Pressing the hotkey (default: CTRL + P)
+*  Double clicking on a planet
+*  Clicking on either of the industry icons at top of the [[MAP_WINDOW_ARTICLE_TITLE]] (shown here) <img src="icons/buttons/production.png"></img>
+
+The Production Window is composed of:
+*  Production Summary panel
+*  Producible Items panel
+*  Production Queue panel
+*  The system side panel (on the right edge)
+It also allows for some interaction with the [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], primarily to change the system selection.
+
+
+<u>Production Summary panel</u>
+
+(default position: top left)
+The Production Summary panel shows available Production Points.
+Total Available Points relates to the PP available across your entire empire.
+Points Available Here are the maximum available for the selected system.  This may be less than the total available when all of your empire's systems are not [[metertype METER_SUPPLY]] connected.
+Wasted Points will be lost, if not allocated before ending the turn.
+
+
+<u>Producible Items panel</u>
+
+(default position: bottom edge)
+The Producible Items panel contains items available to start a Production Order.
+Toggle the display of item types or availability by clicking on the column headers.
+Items may be added to the Production Queue as a Production Order by double clicking on them or with the right click menu.
+Each item type has a column for total cost and minimum time.
+The maximum PP that may be allotted to any Production Order is (cost / time) x quantity.
+e.g. an item type with a total cost of 30 PP and a minimum time of 3 turns can progress by up to 10 PP per item, per turn.
+Unavailable items, if displayed, will detail the reasons they are unavailable at the bottom of their tooltip in red (hover the mouse over the item).
+
+<u>Production Queue panel</u>
+
+(default position: left edge, below summary)
+The Production Queue panel contains Production Orders previously enqueued.
+Production Points are allotted to the Production Orders starting at the top of the queue.
+Any orders for the currently selected system will highlight the system name with your empires color (top right of the order).
+These orders may be rearranged in the queue by dragging and dropping to a new position.
+Right clicking on an order will show a menu for moving, removing, or pausing an order (as well as other possible actions, such as <i>Show in Pedia</i> ).
+When removing an order any previous progress on it is lost, there is no credit returned or given to other orders.
+Pausing an order prevents any progress on it until the order is resumed.
+For ships, an additional menu item is available to Rally to a system.  Once the order completes, the ship(s) will have a waypoint assigned for the system rallied to.  To set or change a Rally destination, select the desired system on the map, right click the Production Order, and select <i>Rally to </i>... (where ... is the system name).
+
+
+<u>Production Order</u>
+
+A Production Order is created through the Producible Items panel and is placed into the Production Queue panel.
+Each order defines a repetition count (1⟳) and a quantity (1x), selectable in the top left of the order.
+The repetition count will repeat the order after it completes, without adjusting the position in the queue.
+The quantity defines how many of the item will be produced each repetition.
+
+<i>Note</i>  Repetitions will only consume enough PP for the current iteration, unless the order will complete next turn.
+If the order will complete, some PP are allowed to start the next iteration, up to the maximum allowed per turn for that item type.
+
+
+<u>Example</u>
+
+Your empire produces 10 PP per turn.
+A Survey Ship costs 36 PP with a minimum of 3 turns (max 12 PP/turn).
+(For brevity, this fictional Survey Ship does not increase [[encyclopedia FLEET_UPKEEP_TITLE]])
+-Turn  1: You queue an order for Survey Ship and set the repetition count to 2. (order #1)
+                You queue another order for Survey Ship with a repetition of 2. (order #2)
+                You queue another order for Survey Ship and set the quantity to 2.
+
+-Turn  2: Order #1 has completed 10 PP, 26 PP remain.  10 PP is projected for next turn.
+
+    (Completed PP / Remaining PP to complete -> Projected next turn)
+
+-Turn  3: Order #1 20 / 16 -> 10
+
+-Turn  4: Order #1 30 /   6 ->   6  an additional 4 PP will go to the next repetition of this order.
+
+-Turn  5: A Survey Ship is produced (order #1)
+                Order #1   4 / 32 -> 10  now displays 1 repetition remains
+
+-Turn  6: Order #1 14 / 22 -> 10
+
+-Turn  7: Order #1 32 /   4 ->   4
+                Order #2   0 / 36 ->   6
+
+-Turn  8: A Survey Ship is produced (order #1)
+                Empire production increases to 22 PP per turn (for some unrelated reason).
+                Order #2   4 / 32 -> 12  the max per turn for this project type
+                Order #3   0 / 36 -> 10
+
+-Turn  9: Order #2 16 / 20 -> 12
+                Order #3 10 / 62 -> 10  (36 total cost x 2 quantity = 72 total cost)
+
+-Turn 10: Order #2 28 /   8 ->   8  an additional 12 PP will go to the next repetition
+                Order #3 20 / 52 ->   2
+
+-Turn 11: A Survey Ship is produced (order #2)
+                Order #2 12 / 24 -> 12
+                Order #3 22 / 50 -> 10
+
+-Turn 12: Order #2 24 / 12 -> 12
+                Order #3 32 / 40 -> 10
+
+-Turn 13: A Survey Ship is produced (order #2)
+                Order #3 42 / 30 -> 22  (12 PP/turn x 2 quantity = max 24 PP/turn)
+
+'''
+
 PRODUCTION_INFO_PP
 PP
 
@@ -4510,8 +4620,7 @@ METER_INDUSTRY_VALUE_DESC
 
 The Industry of a planet can be used for any production projects of [[metertype METER_SUPPLY]] line connected planets. Any un-allocated Industry is lost each turn.
 
-Each project has a minimum number of turns required to build it. For example, if a project that cost 15 PPs, and had a minimum time of 3 turns, 5 PPs is the maximum that could be put towards its completion per turn.
-The project at the top of the queue is given PPs first. Any remaining PP are then given to the next project in the queue, and if there is still more remaining to the next-- and so on. You can re-prioritize the items in the queue by dragging the most important items closer to the top.
+For information on the interface, see [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
 METER_RESEARCH_VALUE_LABEL
