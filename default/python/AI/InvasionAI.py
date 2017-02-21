@@ -68,6 +68,8 @@ def get_invasion_fleets():
             for pid in el.key():
                 available_pp[pid] = avail_pp
         for pid in invadable_planet_ids:  # TODO: reorganize
+            if pid in foAI.foAIstate.qualifyingTroopBaseTargets:
+                continue
             planet = universe.getPlanet(pid)
             if not planet:
                 continue
@@ -76,15 +78,25 @@ def get_invasion_fleets():
             planet_partial_vis_turn = universe.getVisibilityTurnsMap(pid, empire_id).get(fo.visibility.partial, -9999)
             if planet_partial_vis_turn < sys_partial_vis_turn:
                 continue
+            best_base_planet = INVALID_ID
+            best_trooper_count = 1  # won't bother using base troopers unless better than 1 per ship
             for pid2 in state.get_empire_inhabited_planets_by_system().get(sys_id, []):
                 if available_pp.get(pid2, 0) < 2:  # TODO: improve troop base PP sufficiency determination
                     break
                 planet2 = universe.getPlanet(pid2)
                 if not planet2:
                     continue
-                if pid not in foAI.foAIstate.qualifyingTroopBaseTargets and planet2.speciesName in ColonisationAI.empire_ship_builders:
-                    foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [pid2, INVALID_ID])
-                    break
+                if planet2.speciesName in ColonisationAI.empire_ship_builders:
+                    best_base_trooper_here = \
+                        ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, pid2)[1]
+                    troops_per_ship = best_base_trooper_here.troopCapacity
+                    species_troop_grade = CombatRatingsAI.get_species_troops_grade(planet2.speciesName)
+                    troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
+                    if troops_per_ship > best_trooper_count:
+                        best_base_planet = pid2
+                        best_trooper_count = troops_per_ship
+            if best_base_planet != INVALID_ID:
+                foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [best_trooper_count, INVALID_ID])
 
         for pid in list(foAI.foAIstate.qualifyingTroopBaseTargets):
             planet = universe.getPlanet(pid)  # TODO: also check that still have a colony in this system that can make troops
@@ -103,6 +115,8 @@ def get_invasion_fleets():
             this_sys_status = foAI.foAIstate.systemStatus.get(sys_id, {})
             if (planet.currentMeterValue(fo.meterType.shield) > 0 and
                     this_sys_status.get('myFleetRating', 0) < 0.8 * this_sys_status.get('totalThreat', 0)):
+                # this system not secured, so ruling out invasion base troops
+                del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
             loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][0]
             best_base_trooper_here = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
@@ -126,6 +140,10 @@ def get_invasion_fleets():
                     'Best troop design %s can not be produces in at planet with id: %s\d' % (col_design, build_choices)
                 )
             n_bases = math.ceil((p_troops + 1) / troops_per_ship)  # TODO: reconsider this +1 safety factor
+            if n_bases > 20:  # fall back to standard troopers if would need more than 20 base troopers
+                print "ruling out base invasion troopers at %s due to excessive number required." % planet.name
+                del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
+                continue
             print "Invasion base planning, need %d troops at %d pership, will build %d ships." % ((p_troops + 1), troops_per_ship, n_bases)
             retval = fo.issueEnqueueShipProductionOrder(col_design.id, loc)
             print "Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_name_ids([loc]), PlanetUtilsAI.planet_name_ids([pid]))
