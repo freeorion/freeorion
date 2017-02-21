@@ -84,7 +84,7 @@ set_property(TARGET freeorionparseobj
 target_compile_options(
     freeorionparseobj PRIVATE
     $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTS}>>,$<CXX_COMPILER_ID:gnu>>:-O3>
+    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:gnu>>:-O3>
     $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
 )
 

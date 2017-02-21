@@ -27,14 +27,11 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(BUILD_TESTS "Controls generation of unit tests." OFF)
+option(BUILD_TESTING "Build the testing tree." OFF)
 
-message(STATUS "Building tests BUILD_TESTS set to ${BUILD_TESTS}")
-if (BUILD_TESTS)
+if (BUILD_TESTING)
   message( STATUS "Building Tests")
   enable_testing()
-else()
-  message( STATUS "Not building Tests")
 endif ()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -153,8 +150,7 @@ set_source_files_properties(
     GENERATED TRUE
 )
 
-if (BUILD_TESTS)
-    enable_testing()
+if (BUILD_TESTING)
     add_subdirectory(test)
 endif ()
 

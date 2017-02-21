@@ -66,8 +66,8 @@ option(BUILD_SDL_DRIVER
 option(GiGi_BUILD_DOC
        "Builds HTML documentation (requires Doxygen)."
        OFF)
-option(GiGi_BUILD_TEST
-       "Builds test (requires Boost.Test)."
+option(BUILD_TESTING
+       "Build the testing tree."
        OFF)
 option(BUILD_DEVEL_PACKAGE
        "Install development files."
@@ -160,7 +160,7 @@ add_subdirectory(src)
 if(GiGi_BUILD_DOC)
     add_subdirectory(doc)
 endif()
-if(GiGi_BUILD_TEST)
+if(BUILD_TESTING)
     enable_testing()
     enable_coverage()
     add_subdirectory(test)
