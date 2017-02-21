@@ -71,16 +71,28 @@ set (freeorionparse_SOURCE
     ValueRefParserImpl.cpp
 )
 
-add_library(freeorionparse
+add_library(freeorionparseobj OBJECT
     ${freeorionparse_HEADER}
     ${freeorionparse_SOURCE}
 )
 
+set_property(TARGET freeorionparseobj
+    PROPERTY
+    POSITION_INDEPENDENT_CODE ON
+)
+
 target_compile_options(
-    freeorionparse PRIVATE
+    freeorionparseobj PRIVATE
     $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
     $<$<AND:$<NOT:$<BOOL:${BUILD_TESTS}>>,$<CXX_COMPILER_ID:gnu>>:-O3>
     $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+)
+
+add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
+
+target_compile_options(
+    freeorionparse PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
 )
 
 install(

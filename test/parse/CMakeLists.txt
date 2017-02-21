@@ -10,6 +10,7 @@ endif ()
 add_executable(fo_unittest_parse
     main.cpp
     CommonTest.cpp
+    $<TARGET_OBJECTS:freeorionparseobj>
 )
 
 target_compile_definitions(fo_unittest_parse
@@ -26,8 +27,8 @@ target_include_directories(fo_unittest_parse
 
 target_link_libraries(fo_unittest_parse
     freeorioncommon
-    freeorionparse
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
+    ${CMAKE_THREAD_LIBS_INIT}
 )
 
 add_dependencies(unittest
