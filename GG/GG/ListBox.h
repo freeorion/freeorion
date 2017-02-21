@@ -544,7 +544,9 @@ protected:
     Row&            ColHeaders();                   ///< returns the row containing the headings for the columns, if any.  If undefined, the returned heading Row will have size() 0. non-const for derivers
     //@}
 
-    void            AdjustScrolls(bool adjust_for_resize);  ///< creates, destroys, or resizes scrolls to reflect size of data in listbox
+    /** creates, destroys, or resizes scrolls to reflect size of data in listbox. \p force_scroll
+        forces the scroll bar to be added.*/
+    void            AdjustScrolls(bool adjust_for_resize, const std::pair<bool, bool>& force_scrolls = {false, false});
 
     void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                          const Pt& pt, Flags<ModKey> mod_keys) const override;
@@ -573,7 +575,8 @@ private:
     /** Return the client size excluding the scroll bar sizes.*/
     Pt ClientSizeExcludingScrolls() const;
     /** Return a pair of dimensions of the scollable area if vscroll and/or hscroll is required.*/
-    std::pair<boost::optional<X>, boost::optional<Y>> CheckScrollsRequired() const;
+    std::pair<boost::optional<X>, boost::optional<Y>>
+        CheckIfScrollsRequired(const std::pair<bool, bool>& force_scrolls= {false, false}) const;
     /** Add vscroll and/or hscroll if \p required_total_extents x or y dimension exists. Return a
         pair of bools indicating if added or removed vscroll or hscroll.*/
     std::pair<bool, bool> AddOrRemoveScrolls(const std::pair<boost::optional<X>, boost::optional<Y>>& required_total_extents);
