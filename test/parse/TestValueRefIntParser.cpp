@@ -654,7 +654,6 @@ BOOST_AUTO_TEST_CASE(IntVariableParserTypeless) {
             std::string phrase = reference.second + "." + attribute;
             BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
             std::string property[] = {
-                reference.second,
                 attribute
             };
 
@@ -663,7 +662,7 @@ BOOST_AUTO_TEST_CASE(IntVariableParserTypeless) {
                 BOOST_CHECK_EQUAL(variable->GetReferenceType(), reference.first);
                 BOOST_CHECK_EQUAL_COLLECTIONS(
                     variable->PropertyName().begin(), variable->PropertyName().end(),
-                    property, property + 2
+                    property, property + 1
                 );
             }
 
@@ -680,7 +679,6 @@ BOOST_AUTO_TEST_CASE(IntVariableParserTyped) {
                 std::string phrase = reference.second + "." + type + "." + attribute;
                 BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
                 std::string property[] = {
-                    reference.second,
                     type,
                     attribute
                 };
@@ -690,7 +688,7 @@ BOOST_AUTO_TEST_CASE(IntVariableParserTyped) {
                     BOOST_CHECK_EQUAL(variable->GetReferenceType(), reference.first);
                     BOOST_CHECK_EQUAL_COLLECTIONS(
                         variable->PropertyName().begin(), variable->PropertyName().end(),
-                        property, property + 3
+                        property, property + 2
                     );
                 }
 
@@ -731,7 +729,6 @@ BOOST_AUTO_TEST_CASE(IntArithmeticVariableParser) {
     // Source.NumShips
     {
         std::string property[] = {
-            "Source",
             "NumShips"
         };
         BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<int>), typeid(*operation2->RHS()));
@@ -739,14 +736,13 @@ BOOST_AUTO_TEST_CASE(IntArithmeticVariableParser) {
         BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::SOURCE_REFERENCE);
         BOOST_CHECK_EQUAL_COLLECTIONS(
             variable->PropertyName().begin(), variable->PropertyName().end(),
-            property, property + 2
+            property, property + 1
         );
     }
 
     // Target.NumShips
     {
         std::string property[] = {
-            "Target",
             "NumShips"
         };
         BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<int>), typeid(*operation1->RHS()));
@@ -754,7 +750,7 @@ BOOST_AUTO_TEST_CASE(IntArithmeticVariableParser) {
         BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
         BOOST_CHECK_EQUAL_COLLECTIONS(
             variable->PropertyName().begin(), variable->PropertyName().end(),
-            property, property + 2
+            property, property + 1
         );
     }
 }
