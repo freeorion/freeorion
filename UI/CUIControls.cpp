@@ -1953,6 +1953,8 @@ MultiTurnProgressBar::MultiTurnProgressBar(int num_segments,
                      << m_perc_completed << ", " << m_perc_predicted;
         using boost::algorithm::clamp;
         m_perc_predicted = clamp(m_perc_predicted, 0.0f, 1.0f);
+        // total of predicted + completed should not exceed 1.0 (100%)
+        // cap completed percentage to remainder from predicted percentage
         m_perc_completed = clamp(m_perc_completed, 0.0f, 1.0f - m_perc_predicted);
     }
 }
