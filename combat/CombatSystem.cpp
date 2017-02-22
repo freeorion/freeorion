@@ -867,6 +867,9 @@ namespace {
 
         /// Removes dead units from lists of attackers and defenders
         void CullTheDead(int bout,   BoutEvent::BoutEventPtr &bout_event) {
+            auto fighters_destroyed_event = std::make_shared<FightersDestroyedEvent>(bout);
+            bool at_least_one_fighter_destroyed = false;
+
             IncapacitationsEventPtr incaps_event =
                 std::make_shared<IncapacitationsEvent>();
 
@@ -882,17 +885,21 @@ namespace {
                 { continue; }
 
                 // Check if the target was destroyed and update lists if yes
-                bool destroyed = CheckDestruction(obj);
-                if (destroyed) { // don't want / need additional
-                                 // incapacitation events for fighters,
-                                 // as any attack destroys them and
-                                 // their ID isn't known on clients to
-                                 // be displayed anyway
+                if (!CheckDestruction(obj))
+                    continue;
+
+                if (obj->ObjectType() == OBJ_FIGHTER) {
+                    fighters_destroyed_event->AddEvent(obj->Owner());
+                    at_least_one_fighter_destroyed = true;
+                } else {
                     CombatEventPtr incap_event = std::make_shared<IncapacitationEvent>(
                         bout, obj->ID(), obj->Owner());
                     incaps_event->AddEvent(incap_event);
                 }
             }
+
+            if (at_least_one_fighter_destroyed)
+                bout_event->AddEvent(fighters_destroyed_event);
 
             if (!incaps_event->AreSubEventsEmpty(ALL_EMPIRES))
                 bout_event->AddEvent(incaps_event);

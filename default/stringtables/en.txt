@@ -4160,7 +4160,14 @@ ENC_COMBAT_UNKNOWN_DESTROYED_STR
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked fighter.
 ENC_COMBAT_FIGHTER_INCAPACITATED_STR
-A %2% was destroyed
+A %1% %2% was destroyed.
+
+# A combat log report for multiple destroyed fighters from one empire
+# %1% count of number of repeated events
+# %2% name of the empire which owns the attacked unit.
+# %3% name of the attacked fighter.
+ENC_COMBAT_FIGHTER_INCAPACITATED_REPEATED_STR
+%1%X %2% %3%s were destroyed.
 
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked planet.

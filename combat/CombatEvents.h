@@ -283,7 +283,7 @@ private:
 };
 
 
-/**FightersAttackFightersEvent aggregates all the fighter on fighter combat for one bout.*/
+/** FightersAttackFightersEvent aggregates all the fighter on fighter combat for one bout.*/
 struct FO_COMMON_API FightersAttackFightersEvent : public CombatEvent {
     FightersAttackFightersEvent();
 
@@ -332,6 +332,32 @@ struct FO_COMMON_API FighterLaunchEvent : public CombatEvent {
     int number_launched;
 
 private:
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
+/** FightersDestroyedEvent aggregates all the fighters destroyed during one combat bout.*/
+struct FO_COMMON_API FightersDestroyedEvent : public CombatEvent {
+    FightersDestroyedEvent();
+
+    FightersDestroyedEvent(int bout);
+
+    virtual ~FightersDestroyedEvent()
+    {}
+
+    std::string DebugString() const override;
+
+    std::string CombatLogDescription(int viewing_empire_id) const override;
+
+    void AddEvent(int target_empire_);
+
+private:
+    int bout;
+
+    // Store the number of each of the identical fighter combat events.
+    std::map<int, unsigned int> events;
+
     friend class boost::serialization::access;
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
