@@ -810,6 +810,13 @@ LaneEndpoints& LaneEndpoints::operator=(LaneEndpoints&& other) {
     return *this;
 }
 
+LaneEndpoints& LaneEndpoints::ReverseDirection() {
+    std::swap(s1, s2);
+    std::swap(X1, X2);
+    std::swap(Y1, Y2);
+    return *this;
+}
+
 ////////////////////////////////////////////////
 // MapWnd::MovementLineData::Vertex
 ////////////////////////////////////////////////

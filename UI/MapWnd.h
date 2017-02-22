@@ -50,6 +50,8 @@ struct LaneEndpoints {
     LaneEndpoints& operator=(const LaneEndpoints& other);
     LaneEndpoints& operator=(LaneEndpoints&& other);
 
+    LaneEndpoints& ReverseDirection(); ///< Swap the endpoints to change the direction.
+
     std::shared_ptr<const System> s1, s2;
     float X1, Y1, X2, Y2;
 };
