@@ -271,7 +271,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserMalformed) {
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleet) {
-    BOOST_CHECK(parse("Mode Property = Fleet.ObjectType Condition = All", result));
+    BOOST_CHECK(parse("Mode Value = Fleet.ObjectType Condition = All", result));
     std::string property[] = { "Fleet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
@@ -286,7 +286,7 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleet) {
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserPlanet) {
-    BOOST_CHECK(parse("Mode Property = Planet.ObjectType All", result));
+    BOOST_CHECK(parse("Mode Value = Planet.ObjectType All", result));
     std::string property[] = { "Planet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
@@ -344,12 +344,12 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
         BOOST_CHECK_THROW(parse(statisticType.second + " Condition =", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        // eg: "Mean Property"
-        BOOST_CHECK_THROW(parse(statisticType.second + " Property", result), std::runtime_error);
+        // eg: "Mean Value"
+        BOOST_CHECK_THROW(parse(statisticType.second + " Value", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        // eg: "RMS Property ="
-        BOOST_CHECK_THROW(parse(statisticType.second + " Property =", result), std::runtime_error);
+        // eg: "RMS Value ="
+        BOOST_CHECK_THROW(parse(statisticType.second + " Value =", result), std::runtime_error);
         BOOST_CHECK(!result);
 
         for (const std::string& attribute : attributes) {
@@ -358,16 +358,16 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
             BOOST_CHECK_THROW(parse(statisticType.second + " " + attribute, result), std::runtime_error);
             BOOST_CHECK(!result);
 
-            // eg: "Mean Property = Owner"
-            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute, result), std::runtime_error);
+            // eg: "Mean Value = Owner"
+            BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + attribute, result), std::runtime_error);
             BOOST_CHECK(!result);
 
-            // eg: "Mean Property = Owner Condition"
-            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute + " Condition", result), std::runtime_error);
+            // eg: "Mean Value = Owner Condition"
+            BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + attribute + " Condition", result), std::runtime_error);
             BOOST_CHECK(!result);
 
-            // eg: "Mean Property = Owner Condition ="
-            BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + attribute + " Condition =", result), std::runtime_error);
+            // eg: "Mean Value = Owner Condition ="
+            BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + attribute + " Condition =", result), std::runtime_error);
             BOOST_CHECK(!result);
 
             for (const std::string& containerType : containerTypes) {
@@ -375,16 +375,16 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
                 BOOST_CHECK_THROW(parse(statisticType.second + " " + containerType + "." + attribute, result), std::runtime_error);
                 BOOST_CHECK(!result);
 
-                // eg: "Mean Property = Planet.Owner"
-                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute, result), std::runtime_error);
+                // eg: "Mean Value = Planet.Owner"
+                BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + containerType + "." + attribute, result), std::runtime_error);
                 BOOST_CHECK(!result);
 
-                // eg: "Mean Property = Fleet.Owner Condition"
-                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute + " Condition", result), std::runtime_error);
+                // eg: "Mean Value = Fleet.Owner Condition"
+                BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + containerType + "." + attribute + " Condition", result), std::runtime_error);
                 BOOST_CHECK(!result);
 
-                // eg: "Mean Property = Planet.Owner Condition ="
-                BOOST_CHECK_THROW(parse(statisticType.second + " Property = " + containerType + "." + attribute + " Condition =", result), std::runtime_error);
+                // eg: "Mean Value = Planet.Owner Condition ="
+                BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + containerType + "." + attribute + " Condition =", result), std::runtime_error);
                 BOOST_CHECK(!result);
             }
         }
