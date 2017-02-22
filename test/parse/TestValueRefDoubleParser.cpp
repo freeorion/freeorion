@@ -49,12 +49,16 @@ struct ValueRefDoubleFixture: boost::unit_test::test_observer {
         std::string::const_iterator begin_phrase = phrase.begin();
         std::string::const_iterator end_phrase = phrase.end();
 
-        return boost::spirit::qi::phrase_parse(
-            lexer.begin(begin_phrase, end_phrase),
-            lexer.end(),
+        auto begin = lexer.begin(begin_phrase, end_phrase);
+        auto end   = lexer.end();
+
+        bool matched = boost::spirit::qi::phrase_parse(
+            begin, end,
             parse::double_value_ref()[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
+
+        return matched && begin == end;
     }
 
     typedef std::pair<ValueRef::ReferenceType, std::string> ReferenceType;

@@ -11,17 +11,22 @@ struct EnumParserFixture {
         typename parse::enum_parser_rule<Type>::type& rule = parser();
         const parse::lexer& lexer = lexer.instance();
         boost::spirit::qi::in_state_type in_state;
+        boost::spirit::qi::eoi_type eoi;
         boost::spirit::qi::_1_type _1;
 
         std::string::const_iterator begin_phrase = phrase.begin();
         std::string::const_iterator end_phrase = phrase.end();
 
-        return boost::spirit::qi::phrase_parse(
-            lexer.begin(begin_phrase, end_phrase),
-            lexer.end(),
-            rule[boost::phoenix::ref(result) = _1],
+        auto begin = lexer.begin(begin_phrase, end_phrase);
+        auto end   = lexer.end();
+
+        bool matched = boost::spirit::qi::phrase_parse(
+            begin, end,
+            rule[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
+
+        return matched && begin == end;
     }
 };
 
