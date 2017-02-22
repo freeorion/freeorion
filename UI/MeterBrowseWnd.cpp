@@ -308,7 +308,7 @@ namespace DualMeter {
         if (!target_meter)
             projected = current;
 
-        return {current, projected, target};
+        return std::make_tuple(current, projected, target);
     }
 }
 
