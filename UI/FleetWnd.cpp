@@ -1661,26 +1661,26 @@ void FleetDataPanel::Init() {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
         std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
-        meters_icons_browsetext.push_back({METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY"});
+        meters_icons_browsetext.emplace_back(METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY");
         if (fleet->HasArmedShips())
-            meters_icons_browsetext.push_back({METER_CAPACITY, DamageIcon(), "FW_FLEET_DAMAGE_SUMMARY"});
+            meters_icons_browsetext.emplace_back(METER_CAPACITY, DamageIcon(), "FW_FLEET_DAMAGE_SUMMARY");
         if (fleet->HasFighterShips())
-            meters_icons_browsetext.push_back({METER_SECONDARY_STAT, FightersIcon(), "FW_FLEET_FIGHTER_SUMMARY"});
+            meters_icons_browsetext.emplace_back(METER_SECONDARY_STAT, FightersIcon(), "FW_FLEET_FIGHTER_SUMMARY");
         if (fleet->HasTroopShips())
-            meters_icons_browsetext.push_back({METER_TROOPS, TroopIcon(), "FW_FLEET_TROOP_SUMMARY"});
+            meters_icons_browsetext.emplace_back(METER_TROOPS, TroopIcon(), "FW_FLEET_TROOP_SUMMARY");
         if (fleet->HasColonyShips())
-            meters_icons_browsetext.push_back({METER_POPULATION, ColonyIcon(), "FW_FLEET_COLONY_SUMMARY"});
+            meters_icons_browsetext.emplace_back(METER_POPULATION, ColonyIcon(), "FW_FLEET_COLONY_SUMMARY");
         if (fleet->ResourceOutput(RE_INDUSTRY) > 0.0f)
-            meters_icons_browsetext.push_back({METER_INDUSTRY, IndustryIcon(), "FW_FLEET_INDUSTRY_SUMMARY"});
+            meters_icons_browsetext.emplace_back(METER_INDUSTRY, IndustryIcon(), "FW_FLEET_INDUSTRY_SUMMARY");
         if (fleet->ResourceOutput(RE_RESEARCH) > 0.0f)
-            meters_icons_browsetext.push_back({METER_RESEARCH, ResearchIcon(), "FW_FLEET_RESEARCH_SUMMARY"});
+            meters_icons_browsetext.emplace_back(METER_RESEARCH, ResearchIcon(), "FW_FLEET_RESEARCH_SUMMARY");
         if (fleet->ResourceOutput(RE_TRADE) > 0.0f)
-            meters_icons_browsetext.push_back({METER_TRADE, TradeIcon(), "FW_FLEET_TRADE_SUMMARY"});
+            meters_icons_browsetext.emplace_back(METER_TRADE, TradeIcon(), "FW_FLEET_TRADE_SUMMARY");
 
-        meters_icons_browsetext.push_back({METER_STRUCTURE, ClientUI::MeterIcon(METER_STRUCTURE), "FW_FLEET_STRUCTURE_SUMMARY"});
-        meters_icons_browsetext.push_back({METER_SHIELD, ClientUI::MeterIcon(METER_SHIELD), "FW_FLEET_SHIELD_SUMMARY"});
-        meters_icons_browsetext.push_back({METER_FUEL, ClientUI::MeterIcon(METER_FUEL), "FW_FLEET_FUEL_SUMMARY"});
-        meters_icons_browsetext.push_back({METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY"});
+        meters_icons_browsetext.emplace_back(METER_STRUCTURE, ClientUI::MeterIcon(METER_STRUCTURE), "FW_FLEET_STRUCTURE_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_SHIELD, ClientUI::MeterIcon(METER_SHIELD), "FW_FLEET_SHIELD_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_FUEL, ClientUI::MeterIcon(METER_FUEL), "FW_FLEET_FUEL_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_SPEED, ClientUI::MeterIcon(METER_SPEED), "FW_FLEET_SPEED_SUMMARY");
 
         for (const std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>& entry : meters_icons_browsetext) {
             StatisticIcon* icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
