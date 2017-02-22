@@ -289,51 +289,6 @@ BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleet) {
     BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
 }
 
-BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserPlanet) {
-    BOOST_CHECK(parse("Mode Value = Planet.ObjectType All", result));
-    std::string property[] = { "Planet", "ObjectType" };
-
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
-    statistic = dynamic_cast<const ValueRef::Statistic<UniverseObjectType>*>(result);
-    BOOST_CHECK_EQUAL(statistic->GetStatisticType(), ValueRef::MODE);
-    BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::NON_OBJECT_REFERENCE);
-    BOOST_CHECK_EQUAL_COLLECTIONS(
-        statistic->PropertyName().begin(), statistic->PropertyName().end(),
-        property, property + 2
-    );
-    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
-}
-
-BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserSystem) {
-    BOOST_CHECK(parse("Mode System.ObjectType Condition = All", result));
-    std::string property[] = { "System", "ObjectType" };
-
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
-    statistic = dynamic_cast<const ValueRef::Statistic<UniverseObjectType>*>(result);
-    BOOST_CHECK_EQUAL(statistic->GetStatisticType(), ValueRef::MODE);
-    BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::NON_OBJECT_REFERENCE);
-    BOOST_CHECK_EQUAL_COLLECTIONS(
-        statistic->PropertyName().begin(), statistic->PropertyName().end(),
-        property, property + 2
-    );
-    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
-}
-
-BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserFleetShort) {
-    BOOST_CHECK(parse("Mode Fleet.ObjectType All", result));
-    std::string property[] = { "Fleet", "ObjectType" };
-
-    BOOST_REQUIRE_EQUAL(typeid(ValueRef::Statistic<UniverseObjectType>), typeid(*result));
-    statistic = dynamic_cast<const ValueRef::Statistic<UniverseObjectType>*>(result);
-    BOOST_CHECK_EQUAL(statistic->GetStatisticType(), ValueRef::MODE);
-    BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::NON_OBJECT_REFERENCE);
-    BOOST_CHECK_EQUAL_COLLECTIONS(
-        statistic->PropertyName().begin(), statistic->PropertyName().end(),
-        property, property + 2
-    );
-    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
-}
-
 BOOST_AUTO_TEST_CASE(UniverseObjectStatisticParserMalformed) {
     for (const StatisticType& statisticType : statisticTypes) {
         // eg: "Number"
