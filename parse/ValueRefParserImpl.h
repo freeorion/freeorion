@@ -332,7 +332,7 @@ void initialize_numeric_statistic_parser(
 
     statistic_2
         =       parse::statistic_type_enum() [ _b = _1 ]
-            >>  parse::label(Value_token)     >>    value_ref [ _a = _1 ]   // >> operators used here to avoid amiguity with min/max parser functions, and to disambiguate between statistic return types
+            >   parse::label(Value_token)     >     value_ref [ _a = _1 ]
             >   parse::label(Condition_token) >     parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
