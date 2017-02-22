@@ -770,7 +770,6 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserTypeless) {
             std::string phrase = reference.second + "." + attribute;
             BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
             std::string property[] = {
-                reference.second,
                 attribute
             };
 
@@ -779,7 +778,7 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserTypeless) {
                 BOOST_CHECK_EQUAL(variable->GetReferenceType(), reference.first);
                 BOOST_CHECK_EQUAL_COLLECTIONS(
                     variable->PropertyName().begin(), variable->PropertyName().end(),
-                    property, property + 2
+                    property, property + 1
                 );
             }
 
@@ -796,7 +795,6 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserTyped) {
                 std::string phrase = reference.second + "." + type + "." + attribute;
                 BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse: \"" + phrase + "\"");
                 std::string property[] = {
-                    reference.second,
                     type,
                     attribute
                 };
@@ -806,7 +804,7 @@ BOOST_AUTO_TEST_CASE(DoubleVariableParserTyped) {
                     BOOST_CHECK_EQUAL(variable->GetReferenceType(), reference.first);
                     BOOST_CHECK_EQUAL_COLLECTIONS(
                         variable->PropertyName().begin(), variable->PropertyName().end(),
-                        property, property + 3
+                        property, property + 2
                     );
                 }
 
