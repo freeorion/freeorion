@@ -1951,8 +1951,9 @@ MultiTurnProgressBar::MultiTurnProgressBar(int num_segments,
     {
         WarnLogger() << "Values not within percent range, clamping: "
                      << m_perc_completed << ", " << m_perc_predicted;
-        boost::algorithm::clamp(m_perc_completed, 0.0f, 1.0f);
-        boost::algorithm::clamp(m_perc_predicted, 0.0f, 1.0f);
+        using boost::algorithm::clamp;
+        m_perc_predicted = clamp(m_perc_predicted, 0.0f, 1.0f);
+        m_perc_completed = clamp(m_perc_completed, 0.0f, 1.0f - m_perc_predicted);
     }
 }
 
