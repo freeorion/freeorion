@@ -48,8 +48,8 @@ BOOST_PYTHON_MODULE(freeorion) {
         .def(map_indexing_suite<std::map<int, bool> >())
     ;
 
-    FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
-    FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
+    FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
+    FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
 }
 
 namespace {
