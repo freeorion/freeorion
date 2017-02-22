@@ -193,7 +193,7 @@ namespace {
     public:
         QueueProductionItemPanel(GG::X x, GG::Y y, GG::X w,
                                  const ProductionQueue::Element& build, double turn_cost, double total_cost,
-                                 int turns, int number, int turns_completed, double partially_complete_turn);
+                                 int turns, int number, double completed_progress);
 
         void PreRender() override;
         void Render() override;
@@ -225,8 +225,7 @@ namespace {
         int                             m_total_turns;
         double                          m_turn_spending;
         double                          m_total_cost;
-        int                             m_turns_completed;
-        double                          m_partially_complete_turn;
+        double                          m_completed_progress;
         bool                            m_order_issuing_enabled;
         bool                            m_initialized;
     };
@@ -337,16 +336,13 @@ namespace {
                 std::tie(total_cost, minimum_turns) = empire->ProductionCostAndTime(elem);
             total_cost *= elem.blocksize;
 
-            float per_turn_cost = total_cost / std::max(1, minimum_turns);
-
             float pp_accumulated = empire ? empire->ProductionStatus(queue_index) : 0.0f; // returns as PP
             if (pp_accumulated == -1.0f)
                 pp_accumulated = 0.0f;
 
             panel = new QueueProductionItemPanel(GG::X0, GG::Y0, ClientWidth() - MARGIN - MARGIN,
                                                  elem, elem.allocated_pp, total_cost, minimum_turns, elem.remaining,
-                                                 static_cast<int>(pp_accumulated / std::max(1e-6f, per_turn_cost)),
-                                                 std::fmod(pp_accumulated, per_turn_cost) / std::max(1e-6f, per_turn_cost));
+                                                 pp_accumulated);
             push_back(panel);
 
             // Since this is only called during PreRender force panel to PreRender()
@@ -395,7 +391,7 @@ namespace {
     //////////////////////////////////////////////////
     QueueProductionItemPanel::QueueProductionItemPanel(GG::X x, GG::Y y, GG::X w, const ProductionQueue::Element& build,
                                                        double turn_spending, double total_cost, int turns, int number,
-                                                       int turns_completed, double partially_complete_turn) :
+                                                       double completed_progress) :
         GG::Control(x, y, w, DefaultHeight(), GG::NO_WND_FLAGS),
         elem(build),
         m_name_text(nullptr),
@@ -410,8 +406,7 @@ namespace {
         m_total_turns(turns),
         m_turn_spending(turn_spending),
         m_total_cost(total_cost),
-        m_turns_completed(turns_completed),
-        m_partially_complete_turn(partially_complete_turn),
+        m_completed_progress(completed_progress),
         m_initialized(false)
     {
         SetChildClippingMode(ClipToClient);
@@ -486,10 +481,13 @@ namespace {
             m_location_text->SetTextColor(location_clr);
         }
 
-        float perc_complete = m_total_turns > 0 ?
-                              (m_turns_completed + m_partially_complete_turn) / m_total_turns :
-                              0.0f;
-        float next_progress = m_turn_spending / std::max(1.0, m_total_cost);
+        double perc_complete = 1.0;
+        double next_progress = 0.0;
+        if (m_total_cost > 0.0) {
+            perc_complete = m_completed_progress / m_total_cost;
+            next_progress = m_turn_spending / std::max(m_turn_spending, m_total_cost);
+        }
+
         GG::Clr outline_color = ClientUI::ResearchableTechFillColor();
         if (m_in_progress)
             outline_color = GG::LightColor(outline_color);
