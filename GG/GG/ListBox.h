@@ -572,14 +572,29 @@ private:
     /** Restore cached selected, clicked and last browsed rows.*/
     void RestoreCachedSelections(const SelectionCache& cache);
 
-    /** Return the client size excluding the scroll bar sizes.*/
+    /** Return the client size excluding the scroll bar sizes, in order to determine if scroll bars
+        are needed. This is a private function that is a component of AdjustScrolls.*/
     Pt ClientSizeExcludingScrolls() const;
-    /** Return a pair of dimensions of the scollable area if vscroll and/or hscroll is required.*/
+
+    /** Return a pair of optional X and/or Y dimensions of the scollable area iff vscroll and/or
+        hscroll are required. If scrollbars are needed, the scrollable extent will be larger than the
+        client size.  If a scrollbar is not required in some dimension return boost::none
+        for that dimension. \p maybe_client_size might contain a precalculated client size.
+
+        This is a private function that is a component of AdjustScrolls. */
     std::pair<boost::optional<X>, boost::optional<Y>>
-        CheckIfScrollsRequired(const std::pair<bool, bool>& force_scrolls= {false, false}) const;
-    /** Add vscroll and/or hscroll if \p required_total_extents x or y dimension exists. Return a
-        pair of bools indicating if added or removed vscroll or hscroll.*/
-    std::pair<bool, bool> AddOrRemoveScrolls(const std::pair<boost::optional<X>, boost::optional<Y>>& required_total_extents);
+        CheckIfScrollsRequired(const std::pair<bool, bool>& force_scrolls = {false, false},
+                               const boost::optional<Pt>& maybe_client_size = boost::none) const;
+
+    /** Add vscroll and/or hscroll if \p required_total_extents the x andor y dimension exists. The
+        value of \p required_total_extents is the full x and y dimensions of the underlying ListBox
+        requiring the scrollbar as calculated in CheckIfScrollsRequired.  Return a pair of bools
+        indicating if vscroll and/or hscroll was added and/or removed.  \p maybe_client_size might
+        contain a precalculated client size as calculated in ClientSizeExcludingScrolls.
+
+        This is a private function that is a component of AdjustScrolls. */
+    std::pair<bool, bool> AddOrRemoveScrolls(const std::pair<boost::optional<X>, boost::optional<Y>>& required_total_extents,
+                                             const boost::optional<Pt>& maybe_client_size = boost::none);
 
     std::list<Row*> m_rows;             ///< line item data
 
