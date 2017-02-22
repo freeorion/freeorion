@@ -3540,131 +3540,153 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
 
     //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
-    timer.EnterSection("general");
+    timer.EnterSection("basic grey");
+
+    // A function for adding partial starlanes.
+    auto add_partial_lane =
+        []
+        (GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuffer& colors,
+         const LaneEndpoints& endpoints, const GG::Clr& color, const float extent)
+        {
+            vertices.store(endpoints.X1, endpoints.Y1);
+            vertices.store((endpoints.X1 + endpoints.X2) * extent,   // half way along starlane
+                           (endpoints.Y1 + endpoints.Y2) * extent);
+
+            colors.store(color);
+            colors.store(color);
+        };
 
     // create buffers for starlane rendering
+
+    // Draw a base layer of uncolored starlanes.
     for (const auto& lane_and_endpoint : m_starlane_endpoints) {
         const auto& endpoints = lane_and_endpoint.second;
 
-        const auto& start_system = endpoints.s1;
-        const auto& end_system   = endpoints.s2;
-
-        timer.EnterSection("add full lane vertices");
+        timer.EnterSection("add full lane vertices basic");
         // add vertices for this full-length starlane
-        m_starlane_vertices.store(static_cast<float>(endpoints.X1),
-                                  static_cast<float>(endpoints.Y1));
-        m_starlane_vertices.store(static_cast<float>(endpoints.X2),
-                                  static_cast<float>(endpoints.Y2));
+        m_starlane_vertices.store(endpoints.X1, endpoints.Y1);
+        m_starlane_vertices.store(endpoints.X2, endpoints.Y2);
 
-        // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
-        // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
         GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
+        m_starlane_colors.store(lane_colour);
+        m_starlane_colors.store(lane_colour);
+    }
 
-        bool start_visible = GetUniverse().GetObjectVisibilityByEmpire(
-            start_system->ID(), client_empire->EmpireID()) > VIS_BASIC_VISIBILITY;
-        bool end_visible = GetUniverse().GetObjectVisibilityByEmpire(
-            end_system->ID(), client_empire->EmpireID()) > VIS_BASIC_VISIBILITY;
+    timer.EnterSection("add colored traversals");
 
-        // Are neither of the endpoint visible?
-        if (!start_visible && !end_visible) {
-            // vertex colours for starlane
-            m_starlane_colors.store(lane_colour);
-            m_starlane_colors.store(lane_colour);
-            break;
-        }
+    // Add colored traversals to show supply propagation for the observed empire
+    if (observed_empire) {
 
-        if (observed_empire) {
-            // Determine if this is a lane that the empire whose supply is being shown can use
-            // and that is visible to the viewing empire.
+        const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(observed_empire->EmpireID());
+        const GG::Clr lane_colour = observed_empire->Color();
 
-            timer.EnterSection("add full lane get traversals");
-            const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(observed_empire->EmpireID());
+        // The valid full lane traversals for the observed empire.
 
-            timer.EnterSection("add full lane double search");
+        for (const auto& lane_and_endpoint : m_starlane_endpoints) {
+            const auto& endpoints = lane_and_endpoint.second;
+            const auto& start_system = endpoints.s1;
+            const auto& end_system   = endpoints.s2;
+
+            timer.EnterSection("visibility check");
+            bool start_visible = GetUniverse().GetObjectVisibilityByEmpire(
+                start_system->ID(), client_empire->EmpireID()) > VIS_BASIC_VISIBILITY;
+            bool end_visible = GetUniverse().GetObjectVisibilityByEmpire(
+                end_system->ID(), client_empire->EmpireID()) > VIS_BASIC_VISIBILITY;
+
+            // Are neither of the endpoints visible?
+            if (!start_visible && !end_visible)
+                break;
+
+            // Determine the stealth of the forward and backward lane
+            timer.EnterSection("double stealth search");
             std::pair<int, int> lane_forward{start_system->ID(), end_system->ID()};
             std::pair<int, int> lane_backward{end_system->ID(), start_system->ID()};
 
             const auto& forward_lane_and_stealth = resource_supply_lanes.find(lane_forward);
             const auto& backward_lane_and_stealth = resource_supply_lanes.find(lane_backward);
 
-            // see if this lane exists in this empire's supply propagation lanes set.  either
-            // direction accepted and it is detectable
+            // Do the lanes exist and have stealth < detection or is observed by own empire?
+            bool forward_detectable = ((forward_lane_and_stealth != resource_supply_lanes.end())
+                                       && (self_observation || forward_lane_and_stealth->second < detection_strength));
 
-            // Own supply is always visible
-            if (((forward_lane_and_stealth != resource_supply_lanes.end())
-                 && (self_observation || forward_lane_and_stealth->second < detection_strength))
-                // or backward lane is detectable
-                || ((backward_lane_and_stealth != resource_supply_lanes.end())
-                    && (self_observation || backward_lane_and_stealth->second < detection_strength)))
-            {
-                lane_colour = observed_empire->Color();
-            }
-        }
-
-        // vertex colours for starlane
-        m_starlane_colors.store(lane_colour);
-        m_starlane_colors.store(lane_colour);
+            bool backward_detectable = ((backward_lane_and_stealth != resource_supply_lanes.end())
+                                        && (self_observation || backward_lane_and_stealth->second < detection_strength));
 
 
-        /** Compute the length, width and color of a half lane from start to end.*/
-        auto compute_half_starlane_extent =
-            [&timer, this, &observed_empire, &client_empire, &res_group_core_members,
-             &under_alloc_res_grp_core_members, &member_to_core, &detection_strength, &self_observation]
-            (const std::shared_ptr<const System>& half_start_system, const std::shared_ptr<const System>& half_end_system)
-            {
-                // render half-starlane from the current start_system to the current dest_system?
-                // check that this lane isn't already going to be rendered.  skip it if it is.
-                timer.EnterSection("add half lane entry search");
-                std::pair<int, int> lane_forward {half_start_system->ID(), half_end_system->ID()};
-
-                timer.EnterSection("add half lane");
-
-                // scan through possible empires to have a half-lane here and add a half-lane if one is found
-                timer.EnterSection("add half lane end points");
-
-                GG::Clr lane_colour;
-                timer.EnterSection("group core search");
-                if ((observed_empire) && (res_group_core_members.find(half_start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for observed_empire -- highlight
-                    timer.EnterSection("under alloc search");
-                    lane_colour = observed_empire->Color();
-                    float indicatorExtent = 0.5f;
-                    if (under_alloc_res_grp_core_members
-                        && (under_alloc_res_grp_core_members->find(half_start_system->ID()) != under_alloc_res_grp_core_members->end() ) )
-                    {
-                        GG::Clr eclr= observed_empire->Color();
-                        lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
-                    }
-                    /*if ((observed_empire->SupplyObstructedStarlaneTraversals().find(lane_forward) != observed_empire->SupplyObstructedStarlaneTraversals().end()) ||
-                      (observed_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != observed_empire->SupplyObstructedStarlaneTraversals().end()) ||
-                      !( (observed_empire->SupplyStarlaneTraversals().find(lane_forward) != observed_empire->SupplyStarlaneTraversals().end()) ||
-                      (observed_empire->SupplyStarlaneTraversals().find(lane_backward) != observed_empire->SupplyStarlaneTraversals().end())   )  ) */
-                    timer.EnterSection("group core double search");
-
-                    // Are both systems core systems, not in the same supply group?
-                    boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator start_core = member_to_core.find(half_start_system->ID());
-                    boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator dest_core = member_to_core.find(half_end_system->ID());
-                    if (start_core != member_to_core.end() && dest_core != member_to_core.end()
-                        && (start_core->second != dest_core->second)
-                        && (*(start_core->second) != *(dest_core->second)))
-                    {
-                        // Disconnect them.
-                        indicatorExtent = 0.2f;
-                    }
-                    timer.EnterSection("group core store vertices");
-                    m_RC_starlane_vertices.store(half_start_system->X(),
-                                                 half_start_system->Y());
-                    m_RC_starlane_vertices.store((half_end_system->X() - half_start_system->X()) * indicatorExtent + half_start_system->X(),   // part way along starlane
-                                                 (half_end_system->Y() - half_start_system->Y()) * indicatorExtent + half_start_system->Y());
-
-                    m_RC_starlane_colors.store(lane_colour);
-                    m_RC_starlane_colors.store(lane_colour);
+            // Should the whole lane be colored?
+            // Are both endpoints visible?
+            if (observed_empire && start_visible && end_visible) {
+                timer.EnterSection("full lane coloring");
+                // Is the lane detectable?
+                if (forward_detectable || backward_detectable) {
+                    timer.EnterSection("add full lane colored vertices");
+                    // add colored vertices for this full-length starlane
+                    m_starlane_vertices.store(endpoints.X1, endpoints.Y1);
+                    m_starlane_vertices.store(endpoints.X2, endpoints.Y2);
+                    m_starlane_colors.store(lane_colour);
+                    m_starlane_colors.store(lane_colour);
                 }
+            }
 
-                timer.EnterSection("final four");
-                if (observed_empire) {
+
+            /** Compute the length, width and color of a half lane from start to end.*/
+            auto compute_half_starlane_extent =
+                [&timer, this, &observed_empire, &client_empire, &res_group_core_members,
+                 &under_alloc_res_grp_core_members, &member_to_core, &detection_strength,
+                 &self_observation, add_partial_lane]
+                (const LaneEndpoints& endpoints)
+                {
+                    const auto& half_start_system = endpoints.s1;
+                    const auto& half_end_system   = endpoints.s2;
+
+                    // render half-starlane from the current start_system to the current dest_system?
+                    // check that this lane isn't already going to be rendered.  skip it if it is.
+                    timer.EnterSection("add half lane entry search");
+                    std::pair<int, int> lane_forward {half_start_system->ID(), half_end_system->ID()};
+
+                    timer.EnterSection("add half lane");
+
+                    // scan through possible empires to have a half-lane here and add a half-lane if one is found
+                    timer.EnterSection("add half lane end points");
+
+                    GG::Clr lane_colour;
+                    timer.EnterSection("group core search");
+                    if ((res_group_core_members.find(half_start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for observed_empire -- highlight
+                        timer.EnterSection("under alloc search");
+                        lane_colour = observed_empire->Color();
+                        float indicatorExtent = 0.5f;
+                        if (under_alloc_res_grp_core_members
+                            && (under_alloc_res_grp_core_members->find(half_start_system->ID()) != under_alloc_res_grp_core_members->end() ) )
+                        {
+                            GG::Clr eclr= observed_empire->Color();
+                            lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
+                        }
+                        /*if ((observed_empire->SupplyObstructedStarlaneTraversals().find(lane_forward) != observed_empire->SupplyObstructedStarlaneTraversals().end()) ||
+                          (observed_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != observed_empire->SupplyObstructedStarlaneTraversals().end()) ||
+                          !( (observed_empire->SupplyStarlaneTraversals().find(lane_forward) != observed_empire->SupplyStarlaneTraversals().end()) ||
+                          (observed_empire->SupplyStarlaneTraversals().find(lane_backward) != observed_empire->SupplyStarlaneTraversals().end())   )  ) */
+                        timer.EnterSection("group core double search");
+
+                        // Are both systems core systems, not in the same supply group?
+                        boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator start_core
+                            = member_to_core.find(half_start_system->ID());
+                        boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator dest_core
+                            = member_to_core.find(half_end_system->ID());
+                        if (start_core != member_to_core.end() && dest_core != member_to_core.end()
+                            && (start_core->second != dest_core->second)
+                            && (*(start_core->second) != *(dest_core->second)))
+                        {
+                            // Disconnect them.
+                            indicatorExtent = 0.2f;
+                        }
+                        timer.EnterSection("group core store vertices");
+                        add_partial_lane(m_RC_starlane_vertices, m_RC_starlane_colors,
+                                         endpoints, lane_colour, indicatorExtent);
+                    }
+
                     timer.EnterSection("final four get obstructed");
                     const auto& resource_obstructed_supply_lanes =
-                        GetSupplyManager().SupplyObstructedStarlaneTraversals(observed_empire->EmpireID());
+                    GetSupplyManager().SupplyObstructedStarlaneTraversals(observed_empire->EmpireID());
 
                     timer.EnterSection("final four search obstructed");
                     // see if this lane exists in the empire's blocked supply lanes and that it is visible.
@@ -3674,23 +3696,18 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                          && (self_observation || forward_lane_and_stealth->second < detection_strength)))
                     {
                         timer.EnterSection("final four vertices");
-                        m_starlane_vertices.store(half_start_system->X(),
-                                                  half_start_system->Y());
-                        m_starlane_vertices.store((half_end_system->X() + half_start_system->X()) * 0.5f,   // half way along starlane
-                                                  (half_end_system->Y() + half_start_system->Y()) * 0.5f);
-
-                        lane_colour = observed_empire->Color();
-                        m_starlane_colors.store(lane_colour);
-                        m_starlane_colors.store(lane_colour);
+                        // Add a half length starlane.
+                        add_partial_lane(m_starlane_vertices, m_starlane_colors,
+                                         endpoints, observed_empire->Color(), 0.5f);
                     }
-                }
-            };
+                };
 
-        // Compute each half starlane.
-        if (start_visible)
-            compute_half_starlane_extent(start_system, end_system);
-        if (end_visible)
-            compute_half_starlane_extent(end_system,   start_system);
+            // Compute each half starlane.
+            if (start_visible)
+                compute_half_starlane_extent(lane_and_endpoint.second);
+            if (end_visible)
+                compute_half_starlane_extent(LaneEndpoints(lane_and_endpoint.second).ReverseDirection());
+        }
     }
 
     timer.EnterSection("fill buffers");
