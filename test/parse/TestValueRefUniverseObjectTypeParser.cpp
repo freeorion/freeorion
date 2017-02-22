@@ -150,105 +150,105 @@ BOOST_AUTO_TEST_CASE(UniverseObjectTypeLiteralParserField) {
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserSource) {
     BOOST_CHECK(parse("Source.ObjectType", result));
-    std::string property[] = { "Source", "ObjectType" };
+    std::string property[] = { "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
     BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::SOURCE_REFERENCE);
     BOOST_CHECK_EQUAL_COLLECTIONS(
         variable->PropertyName().begin(), variable->PropertyName().end(),
-        property, property + 2
+        property, property + 1
     );
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserTarget) {
     BOOST_CHECK(parse("Target.ObjectType", result));
-    std::string property[] = { "Target", "ObjectType" };
+    std::string property[] = { "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
     BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
     BOOST_CHECK_EQUAL_COLLECTIONS(
         variable->PropertyName().begin(), variable->PropertyName().end(),
-        property, property + 2
+        property, property + 1
     );
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserLocalCandidate) {
     BOOST_CHECK(parse("LocalCandidate.ObjectType", result));
-    std::string property[] = { "LocalCandidate", "ObjectType" };
+    std::string property[] = { "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
     BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE);
     BOOST_CHECK_EQUAL_COLLECTIONS(
         variable->PropertyName().begin(), variable->PropertyName().end(),
-        property, property + 2
+        property, property + 1
     );
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserRootCandidate) {
     BOOST_CHECK(parse("RootCandidate.ObjectType", result));
-    std::string property[] = { "RootCandidate", "ObjectType" };
+    std::string property[] = { "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
     BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE);
     BOOST_CHECK_EQUAL_COLLECTIONS(
         variable->PropertyName().begin(), variable->PropertyName().end(),
-        property, property + 2
+        property, property + 1
     );
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserFleetSource) {
     BOOST_CHECK(parse("Source.Fleet.ObjectType", result));
-    std::string property[] = { "Source", "Fleet", "ObjectType" };
+    std::string property[] = { "Fleet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
     BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::SOURCE_REFERENCE);
     BOOST_CHECK_EQUAL_COLLECTIONS(
         variable->PropertyName().begin(), variable->PropertyName().end(),
-        property, property + 3
+        property, property + 2
     );
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserSytemTarget) {
     BOOST_CHECK(parse("Target.System.ObjectType", result));
-    std::string property[] = { "Target", "System", "ObjectType" };
+    std::string property[] = { "System", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
     BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
     BOOST_CHECK_EQUAL_COLLECTIONS(
         variable->PropertyName().begin(), variable->PropertyName().end(),
-        property, property + 3
+        property, property + 2
     );
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserLocalCandidatePlanet) {
     BOOST_CHECK(parse("LocalCandidate.Planet.ObjectType", result));
-    std::string property[] = { "LocalCandidate", "Planet", "ObjectType" };
+    std::string property[] = { "Planet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
     BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::CONDITION_LOCAL_CANDIDATE_REFERENCE);
     BOOST_CHECK_EQUAL_COLLECTIONS(
         variable->PropertyName().begin(), variable->PropertyName().end(),
-        property, property + 3
+        property, property + 2
     );
 }
 
 BOOST_AUTO_TEST_CASE(UniverseObjectVariableParserRootCandidateFleet) {
     BOOST_CHECK(parse("RootCandidate.Fleet.ObjectType", result));
-    std::string property[] = { "RootCandidate", "Fleet", "ObjectType" };
+    std::string property[] = { "Fleet", "ObjectType" };
 
     BOOST_REQUIRE_EQUAL(typeid(ValueRef::Variable<UniverseObjectType>), typeid(*result));
     variable = dynamic_cast<const ValueRef::Variable<UniverseObjectType>*>(result);
     BOOST_CHECK_EQUAL(variable->GetReferenceType(), ValueRef::CONDITION_ROOT_CANDIDATE_REFERENCE);
     BOOST_CHECK_EQUAL_COLLECTIONS(
         variable->PropertyName().begin(), variable->PropertyName().end(),
-        property, property + 3
+        property, property + 2
     );
 }
 
