@@ -14,10 +14,10 @@
 #include "../SetWrapper.h"
 #include "../CommonWrappers.h"
 #include "AIWrapper.h"
+#include "../map_indexing_suite_safe.hpp"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/docstring_options.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/timer.hpp>

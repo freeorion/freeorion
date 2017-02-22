@@ -11,13 +11,13 @@
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 #include "SetWrapper.h"
+#include "map_indexing_suite_safe.hpp"
 
 #include <GG/Clr.h>
 
 #include <boost/function.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/to_python_converter.hpp>

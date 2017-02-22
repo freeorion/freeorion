@@ -12,10 +12,10 @@
 #include "../../Empire/Diplomacy.h"
 #include "../SetWrapper.h"
 #include "../CommonWrappers.h"
+#include "../map_indexing_suite_safe.hpp"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/timer.hpp>
 #include <boost/python/list.hpp>

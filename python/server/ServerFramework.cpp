@@ -7,11 +7,11 @@
 #include "../../util/Logger.h"
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
+#include "../map_indexing_suite_safe.hpp"
 
 #include <boost/filesystem.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/docstring_options.hpp>
 
 
