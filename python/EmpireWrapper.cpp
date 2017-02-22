@@ -271,8 +271,9 @@ namespace FreeOrionPython {
         FreeOrionPython::SetWrapper<std::unordered_set<int>>::Wrap("IntUSet");
         FreeOrionPython::SetWrapper<std::set<std::set<int>>>::Wrap("IntSetSet");
         class_<std::map<std::set<int>, float> > ("resPoolMap")
-            .def(boost::python::map_indexing_suite<std::map<std::set<int>, float>, true>())
-        ;
+            .def(boost::python::map_indexing_suite<std::map<std::set<int>, float>, true>());
+        class_<std::unordered_map<int, float>> ("Float_IntUMap")
+            .def(boost::python::map_indexing_suite<std::unordered_map<int, float>, true>());
 
         ///////////////////
         //     Empire    //
