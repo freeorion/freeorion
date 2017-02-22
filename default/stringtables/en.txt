@@ -1445,17 +1445,16 @@ OPTIONS_DB_AI_CONFIG
 Is available to the AI via the freeorioninterface, is set for current execution only.  Current expected use is to name an optional AI config file within the AI script folder; default is the empty string.  Intended to facilitate AI testing.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED
-Boolean for AI testing which indicates it all AIs are forced to have the same Aggression Trait
+Boolean for AI testing which indicates if all AIs are forced to have the same Aggression Trait.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_AGGRESSION_FORCED_VALUE
 Forced value of the Aggression Trait.  A value from 0 to 5.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED
-Boolean for AI testing which indicates it all AIs are forced to have the same EmpireID Trait
+Boolean for AI testing which indicates if all AIs are forced to have the same EmpireID Trait.
 
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 Forced value of the EmpireID Trait.  A value from 0 to 39.
-
 
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
 If true, autosaves will occur during single-player games.
@@ -1782,6 +1781,7 @@ Accept
 NOT_READY_BN
 Decline
 
+
 ##
 ## Galaxy Setup Screen
 ##
@@ -1932,6 +1932,7 @@ Maniacal
 # Random species selection description
 GSETUP_SPECIES_RANDOM_DESC
 Picks a random selection from the available playable species.
+
 
 ##
 ## About dialog
@@ -3799,12 +3800,7 @@ ENC_TECH
 Technologies
 
 ENC_TECH_DESC
-'''New effects, improved planetary stats, buildings, and ship parts can be unlocked by researching the associated technologies.
-
-Completing [[metertype METER_RESEARCH]] on a technology that unlocks an item will only give an empire the knowledge of how to construct that item. Actually constructing such an item may have other requirements, such as access to a certain resource.
-If an item has been unlocked and is not available to build, the additional requirements can be checked by displaying the hover text on the items listing in the Production window (with [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] selected).
-
-Generally, an item unlocked by a newly researched technology does not require [[metertype METER_SUPPLY]] line connections to be available or active (e.g. a building or a planetary meter improvement). However, if a tech which improves a ship part is researched (e.g. a weapon), the already-existing ships must be in supply range, stationary, and not in combat, in order to receive the upgrade during the following turn.'''
+New effects, improved planetary stats, buildings, and ship parts can be unlocked by [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]], each falling into one of the categories listed here.
 
 ENC_SPECIAL
 Special
@@ -4568,7 +4564,7 @@ Shields
 METER_SHIELD_VALUE_DESC
 '''The term Shields combines all kinds of protective force-fields. They are usually the first barrier incoming attacks have to overcome. There are two main types of shields: ship shields and planetary barrier shields, and both ships and planets have a Shields meter.  The main difference between them is simply how they recharge -- ship shields are able to recharge instantly after every single shot fired at them, whereas planetary barrier shields take more time to recharge.  The result of that seemingly small difference makes a very noticeable difference in combat, however.
 
-Ship shields: Reduce the [[encyclopedia DAMAGE_TITLE]] sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength.
+Ship shields: Reduce the [[encyclopedia DAMAGE_TITLE]] sustained by each hit by the strength rating of the shield part. A weapon can only penetrate a shield if its damage value is higher than the shield's strength. However, ship shields do not negate shot damage coming from [[encyclopedia FIGHTER_TECHS]], as fighters fire from within the shields.
 
 Planetary barrier shields: Act more like some kind of planetary armor. Their strength is reduced by each hit until they are completely depleted, at which point further hits will finally get through and damage planetary structures (first [[metertype METER_DEFENSE]] installations and then more general planetary [[metertype METER_CONSTRUCTION]]). Planetary barrier shields regenerate their strength each turn at a certain rate which can be affected by various technologies.
 
@@ -4833,7 +4829,9 @@ DAMAGE_TITLE
 Damage
 
 DAMAGE_TEXT
-Defines the base extent that a weapon will reduce the [[metertype METER_STRUCTURE]] of another ship (or the [[metertype METER_SHIELD]], [[metertype METER_DEFENSE]] and [[metertype METER_CONSTRUCTION]] of a planet), in one combat round (of which there are three in each turn of battle).  If a target ship is equipped with [[metertype METER_SHIELD]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[metertype METER_SHIELD]].
+'''Defines the base amount that a weapon will reduce the [[metertype METER_STRUCTURE]] of another ship (or the [[metertype METER_SHIELD]], [[metertype METER_DEFENSE]] and [[metertype METER_CONSTRUCTION]] of a planet), in one combat round (of which there are three in each turn of battle).  If a target ship is equipped with [[metertype METER_SHIELD]], the actual damage caused by each hit will be the base damage reduced by the strength rating of the ship's [[metertype METER_SHIELD]].
+
+Note: [[encyclopedia FIGHTER_TECHS]] inflict damage ignoring [[metertype METER_SHIELD]] on ships, as fighters fire from within the enemy shields.'''
 
 MAP_WINDOW_ARTICLE_TITLE
 Map Window
@@ -4951,11 +4949,10 @@ QUICK_START_GUIDE_TITLE
 **Quick Start Guide**
 
 QUICK_START_GUIDE_TEXT
-'''This is a brief introduction to FreeOrion gameplay.  This guide was just born recently, and is currently quite tiny but growing rapidly.  A somewhat less brief Quick Play Guide is available at freeorion.org, (current URL: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url> )
+'''This is a brief introduction to FreeOrion gameplay.  This guide was just born recently, and is currently quite tiny but growing rapidly.  A somewhat less brief Quick Play Guide is available at freeorion.org (current URL: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url> ).
 
 [[DETAILED_PEDIA_REFERENCE]]
-Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]] and the recently begun sections on [[encyclopedia CATEGORY_GUIDES]].
-
+Important sections include [[encyclopedia CATEGORY_GAME_CONCEPTS]], [[encyclopedia CATEGORY_GUIDES]], and the [[encyclopedia ENC_METER_TYPE]] list.
 '''
 
 SITREP_IGNORE_BLOCK_TITLE
@@ -4986,7 +4983,20 @@ SitRep types only appear in the Filters list once an event has occurred that wou
 
 Ignoring is useful for hiding a reoccurring event, such as reminders to build a [[buildingtype BLD_GAS_GIANT_GEN]] at one planet.
 
-Blocking is useful if you find some types of SitReps unhelpful, such as once you have seen all of the [[encyclopedia BEGINNER_HINTS]].'''
+Blocking is useful if you find some types of SitReps unhelpful, such as once you have seen all of the [[encyclopedia BEGINNER_HINTS]].
+'''
+
+RESEARCH_TECH_GUIDE_TITLE
+Researching Technologies
+
+RESEARCH_TECH_GUIDE_SHORT_DESC
+Research and unlock new items
+
+RESEARCH_TECH_GUIDE_TEXT
+'''Completing [[metertype METER_RESEARCH]] on a technology that unlocks an item will only give an empire the knowledge of how to construct that item. Actually constructing such an item may have other requirements, such as access to a certain resource.
+If an item has been unlocked and is not available to build, the additional requirements can be checked by displaying the hover text on the items listing in the Production window (with [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] selected).
+
+Generally, items unlocked by researched [[encyclopedia ENC_TECH]] do not require [[metertype METER_SUPPLY]] line connections to be available or active (e.g. a building or a planetary meter improvement). However, if a tech which improves a ship part is researched (e.g. a weapon), the pre-existing ships must be in supply range, stationary, and not in combat, in order to receive the upgrade at anytime.'''
 
 AI_ERROR_MSG
 AI_Error: AI script error
@@ -5229,7 +5239,6 @@ Specials
 
 TAGS
 Tags
-
 
 
 ##
@@ -6090,7 +6099,7 @@ ENVIRONMENTAL_PREFERENCES
 [[encyclopedia ENVIRONMENT_TITLE]] Preferences:
 
 FOCUS_PREFERENCE
-'''Preferred Focus: '''
+'''Preferred [[encyclopedia FOCUS_TITLE]]: '''
 
 OPINIONS_OF_EMPIRES
 Opinions of Empires:
@@ -6202,8 +6211,7 @@ Happybirthday
 SP_HAPPY_GAMEPLAY_DESC
 '''Abandoned, lonely underwater robots, programmed to sing "happy birthday" to themselves at regular intervals.
 Prefer [[PT_OCEAN]] planets.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
-[[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_HAPPY_DESC
@@ -6248,7 +6256,7 @@ Eaxaw
 SP_EAXAW_GAMEPLAY_DESC
 '''Evil amazonian xenophobic aggressive worms.
 Prefer [[PT_TERRAN]] planets.
-[[encyclopedia ORGANIC_SPECIES_TITLE]] [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
 
 SP_EAXAW_DESC
@@ -6476,7 +6484,7 @@ The Sslith are organized into groups called Pnacra which serve as independent go
 '''
 
 SP_FIFTYSEVEN
-Fifty-seven
+Fifty-Seven
 
 SP_FIFTYSEVEN_GAMEPLAY_DESC
 '''Math-obsessed sky-serpents, singing planet-wide fractal songs.
@@ -7557,7 +7565,7 @@ Max Fuel
 
 # Meter types
 METER_MAX_SHIELD
-Max Shield
+Max Shields
 
 # Meter types
 METER_MAX_STRUCTURE
@@ -7613,7 +7621,7 @@ Fuel
 
 # Meter types
 METER_SHIELD
-Shield
+Shields
 
 # Meter types
 METER_STRUCTURE
@@ -7786,10 +7794,10 @@ PC_FIGHTER_HANGAR
 Hangar
 
 PC_FIGHTER_HANGAR_DESC
-'''Hangars are the storage, maintenance, and resupply areas for fighters.
+'''Hangars are the storage, maintenance, and resupply areas for [[encyclopedia FIGHTER_TECHS]].
 A ship can not have more than one type of hangar.
 
-After combat, fighters return to a hangar for repairs, fuel, and rearmament.
+After combat, surviving fighters return to a hangar for repairs, fuel, and rearmament.
 If a carrier is destroyed in combat, any of its fighters that survive the battle will be unable to dock after combat, and will also be lost.
 '''
 
@@ -7798,7 +7806,7 @@ PC_FIGHTER_BAY
 Launch Bay
 
 PC_FIGHTER_BAY_DESC
-'''Launch bays are the access point for fighters to enter or exit a ship.
+'''Launch bays are the access point for [[encyclopedia FIGHTER_TECHS]] to enter or exit a ship.
 Each launch bay allows a number of fighters to launch each combat round.
 '''
 
@@ -9023,6 +9031,7 @@ Extinct Species
 EXTINCT_SPECIES_TECHS_DESC
 Technologies related to extinct species.
 
+
 ##
 ## Technology theories
 ##
@@ -10056,30 +10065,29 @@ SHP_FIGHTERS_1
 Fighters and Launch Bays
 
 SHP_FIGHTERS_1_DESC
-'''Enables your empire to build ships using Fighter Hangers and Launch Bays. A ship can only have one type of Fighter Hanger on it but can have as many as you have slots for. Each Hanger has a maximum capacity of fighters and those fighters will all have the same strength (which can be modified by species abilities and further research). 
+'''Enables your empire to build ships using Fighter Hangars and Launch Bays. A ship can only have one type of Fighter Hangar on it but can have as many as you have slots for. Each [[encyclopedia PC_FIGHTER_HANGAR]] has a maximum capacity of fighters and those fighters will all have the same strength (which can be modified by species abilities and further research). 
 
-A Launch Bay can launch a number of fighters in each combat round, these fighters will then be both valid targets and able to attack ships and other fighters in subsequent combat rounds, a single hit from any source will destroy a fighter, fighter damage ignores shields on warships (they fire from within the shields).
+A [[encyclopedia PC_FIGHTER_BAY]] can launch a number of fighters in each combat round. These fighters will then be both valid targets and able to attack ships and other fighters in subsequent combat rounds, but a single hit from any source will destroy a fighter. Unlike [[encyclopedia DAMAGE_TITLE]] inflicted by regular weapons, fighter damage ignores [[metertype METER_SHIELD]] on warships (they fire from within the shields).
 
-At the end of combat, carriers will collect any fighters that have survived, if a carrier is in supply immediately after movement is resolved it will refill hangers to maximum.'''
+At the end of combat, carriers will collect any fighters that have survived. If a carrier is in [[metertype METER_SUPPLY]] immediately after movement is resolved, it will refill hangars to maximum.'''
 
 SHP_FIGHTERS_2
 Laser Fighters
 
 SHP_FIGHTERS_2_DESC
-'''Upgrades the fighters of all carriers within Supply to have laser weaponry. Damage from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 2 and [[shippart FT_HANGAR_3]] by 3'''
-
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have laser weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 2 and [[shippart FT_HANGAR_3]] by 3.
 
 SHP_FIGHTERS_3
 Plasma Fighters
 
 SHP_FIGHTERS_3_DESC
-'''Upgrades the fighters of all carriers within Supply to have plasma weaponry. Damage from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 3 and [[shippart FT_HANGAR_3]] by 4'''
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have plasma weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 3 and [[shippart FT_HANGAR_3]] by 4.
 
 SHP_FIGHTERS_4
 Death Ray Fighters
 
 SHP_FIGHTERS_4_DESC
-'''Upgrades the fighters of all carriers within Supply to have death ray weaponry. Damage from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 5 and [[shippart FT_HANGAR_3]] by 7'''
+Upgrades the fighters of all carriers within [[metertype METER_SUPPLY]] to have death ray weaponry. [[encyclopedia DAMAGE_TITLE]] from fighters in a [[shippart FT_HANGAR_1]] is increased by 1, [[shippart FT_HANGAR_2]] is increased by 5 and [[shippart FT_HANGAR_3]] by 7.
 
 SHP_WEAPON_1_2
 Mass Driver 2
@@ -12516,7 +12524,7 @@ SM_KRAKEN_ENVIRONMENT
 Favored Environment: Gas Giants. Kraken nests are normally found in the orbit of [[PT_GASGIANT]] planets, and Kraken can mature into larger forms in systems with Gas Giants.
 
 SM_SNOWFLAKE_ENVIRONMENT
-Favored Environment: Small planets. Snowflake nests are normally found in the orbit of Small planets, and Snowflakes can mature into larger forms in systems with Small planets.
+Favored Environment: [[SZ_SMALL]] planets. Snowflake nests are normally found in the orbit of [[SZ_SMALL]] planets, and Snowflakes can mature into larger forms in systems with [[SZ_SMALL]] planets.
 
 SM_JUGGERNAUT_ENVIRONMENT
 Favored Environment: [[PT_ASTEROIDS]]. Juggernaut nests are normally found within Asteroid belts, and Juggernauts can mature into larger forms in systems with Asteroid belts.
@@ -12539,7 +12547,7 @@ ARTIFICIAL_PLANET_PROCESS_LOCATION
 This process must be enacted at an [[encyclopedia OUTPOSTS_TITLE]] on either a gas giant or an asteroid belt.
 
 BLD_COL_PART_1
-This building can only build at an [[encyclopedia OUTPOSTS_TITLE]], and will upgrade that outpost to a new
+This building can only be built at an [[encyclopedia OUTPOSTS_TITLE]], and will upgrade that outpost to a new
 
 BLD_COL_PART_2
 Minimum build time depends on the total starlane distance to the nearest
@@ -12731,6 +12739,7 @@ GROWTH_SPECIALS_ENTRY_LIST
 
 GROWTH_SPECIAL_LABEL
 Planet <i>%1%</i> [[TT_SPECIAL]]
+
 
 ##
 ## Species picks
