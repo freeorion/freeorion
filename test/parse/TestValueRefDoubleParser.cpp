@@ -828,13 +828,13 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTypeless) {
 
             std::array<std::string, 4> phrases = {{
                 // long variant
-                statisticType.second + " Value = " + attribute + " Condition = All",
+                "Statistic " + statisticType.second + " Value = " + attribute + " Condition = All",
                 // Check variant with missing "Condition =" keyword.
-                statisticType.second + " Value = " + attribute + " All",
+                "Statistic " + statisticType.second + " Value = " + attribute + " All",
                 // Check variant with missing "Value =" keyword.
-                statisticType.second + " " + attribute + " Condition = All",
+                "Statistic " + statisticType.second + " " + attribute + " Condition = All",
                 // Check short variant
-                statisticType.second + " " + attribute + " All"
+                "Statistic " + statisticType.second + " " + attribute + " All"
             }};
 
             for (const std::string& phrase : phrases) {
@@ -869,13 +869,13 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTyped) {
 
                 std::array<std::string, 4> phrases = {{
                     // long variant
-                    statisticType.second + " Value = " + containerType + "." + attribute + " Condition = All",
+                    "Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " Condition = All",
                     // Check variant with missing "Condition =" keyword.
-                    statisticType.second + " Value = " + containerType + "." + attribute + " All",
+                    "Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " All",
                     // Check variant with missing "Value =" keyword.
-                    statisticType.second + " " + containerType + "." + attribute + " Condition = All",
+                    "Statistic " + statisticType.second + " " + containerType + "." + attribute + " Condition = All",
                     // Check short variant
-                    statisticType.second + " " + containerType + "." + attribute + " All"
+                    "Statistic " + statisticType.second + " " + containerType + "." + attribute + " All"
                 }};
 
                 for (const std::string& phrase : phrases) {

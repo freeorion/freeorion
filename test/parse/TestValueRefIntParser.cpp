@@ -791,13 +791,13 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTypeless) {
 
             std::array<std::string, 4> phrases = {{
                 // long variant
-                statisticType.second + " Value = " + attribute + " Condition = All",
+                "Statistic " + statisticType.second + " Value = " + attribute + " Condition = All",
                 // Check variant with missing "Condition =" keyword.
-                statisticType.second + " Value = " + attribute + " All",
+                "Statistic " + statisticType.second + " Value = " + attribute + " All",
                 // Check variant with missing "Value =" keyword.
-                statisticType.second + " " + attribute + " Condition = All",
+                "Statistic " + statisticType.second + " " + attribute + " Condition = All",
                 // Check short variant
-                statisticType.second + " " + attribute + " All"
+                "Statistic " + statisticType.second + " " + attribute + " All"
             }};
 
             for (const std::string& phrase : phrases) {
@@ -832,13 +832,13 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTyped) {
 
                 std::array<std::string, 4> phrases = {{
                     // long variant
-                    statisticType.second + " Value = " + containerType + "." + attribute + " Condition = All",
+                    "Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " Condition = All",
                     // Check variant with missing "Condition =" keyword.
-                    statisticType.second + " Value = " + containerType + "." + attribute + " All",
+                    "Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " All",
                     // Check variant with missing "Value =" keyword.
-                    statisticType.second + " " + containerType + "." + attribute + " Condition = All",
+                    "Statistic " + statisticType.second + " " + containerType + "." + attribute + " Condition = All",
                     // Check short variant
-                    statisticType.second + " " + containerType + "." + attribute + " All"
+                    "Statistic " + statisticType.second + " " + containerType + "." + attribute + " All"
                 }};
 
                 for (const std::string& phrase : phrases) {
@@ -865,59 +865,59 @@ BOOST_AUTO_TEST_CASE(IntStatisticParserTyped) {
 
 BOOST_AUTO_TEST_CASE(IntStatisticParserMalformed) {
     for (const StatisticType& statisticType : statisticTypes) {
-        // eg: "Number"
+        // eg: "Statistic Number"
         BOOST_CHECK_THROW(parse(statisticType.second, result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        // eg: "Mean Condition"
-        BOOST_CHECK_THROW(parse(statisticType.second + " Condition", result), std::runtime_error);
+        // eg: "Statistic Mean Condition"
+        BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Condition", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        // eg: "RMS Condition ="
-        BOOST_CHECK_THROW(parse(statisticType.second + " Condition =", result), std::runtime_error);
+        // eg: "Statistic RMS Condition ="
+        BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Condition =", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        // eg: "Mean Value"
-        BOOST_CHECK_THROW(parse(statisticType.second + " Value", result), std::runtime_error);
+        // eg: "Statistic Mean Value"
+        BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Value", result), std::runtime_error);
         BOOST_CHECK(!result);
 
-        // eg: "RMS Value ="
-        BOOST_CHECK_THROW(parse(statisticType.second + " Value =", result), std::runtime_error);
+        // eg: "Statistic RMS Value ="
+        BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Value =", result), std::runtime_error);
         BOOST_CHECK(!result);
 
         for (const std::string& attribute : attributes) {
             // missing or incomplete condition
-            // eg: "Mean Owner"
-            BOOST_CHECK_THROW(parse(statisticType.second + " " + attribute, result), std::runtime_error);
+            // eg: "Statistic Mean Owner"
+            BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " " + attribute, result), std::runtime_error);
             BOOST_CHECK(!result);
 
-            // eg: "Mean Value = Owner"
-            BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + attribute, result), std::runtime_error);
+            // eg: "Statistic Mean Value = Owner"
+            BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Value = " + attribute, result), std::runtime_error);
             BOOST_CHECK(!result);
 
-            // eg: "Mean Value = Owner Condition"
-            BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + attribute + " Condition", result), std::runtime_error);
+            // eg: "Statistic Mean Value = Owner Condition"
+            BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Value = " + attribute + " Condition", result), std::runtime_error);
             BOOST_CHECK(!result);
 
-            // eg: "Mean Value = Owner Condition ="
-            BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + attribute + " Condition =", result), std::runtime_error);
+            // eg: "Statistic Mean Value = Owner Condition ="
+            BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Value = " + attribute + " Condition =", result), std::runtime_error);
             BOOST_CHECK(!result);
 
             for (const std::string& containerType : containerTypes) {
-                // eg: "Mean Fleet.Owner"
-                BOOST_CHECK_THROW(parse(statisticType.second + " " + containerType + "." + attribute, result), std::runtime_error);
+                // eg: "Statistic Mean Fleet.Owner"
+                BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " " + containerType + "." + attribute, result), std::runtime_error);
                 BOOST_CHECK(!result);
 
-                // eg: "Mean Value = Planet.Owner"
-                BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + containerType + "." + attribute, result), std::runtime_error);
+                // eg: "Statistic Mean Value = Planet.Owner"
+                BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Value = " + containerType + "." + attribute, result), std::runtime_error);
                 BOOST_CHECK(!result);
 
-                // eg: "Mean Value = Fleet.Owner Condition"
-                BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + containerType + "." + attribute + " Condition", result), std::runtime_error);
+                // eg: "Statistic Mean Value = Fleet.Owner Condition"
+                BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " Condition", result), std::runtime_error);
                 BOOST_CHECK(!result);
 
-                // eg: "Mean Value = Planet.Owner Condition ="
-                BOOST_CHECK_THROW(parse(statisticType.second + " Value = " + containerType + "." + attribute + " Condition =", result), std::runtime_error);
+                // eg: "Statistic Mean Value = Planet.Owner Condition ="
+                BOOST_CHECK_THROW(parse("Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " Condition =", result), std::runtime_error);
                 BOOST_CHECK(!result);
             }
         }

@@ -33,7 +33,7 @@ Hull
             scope = Source
             activation = Not Aggressive
             accountinglabel = "SPATIAL_FLUX_BONUS"
-            effects = SetStealth value = Value + 10 + (10 * If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" ) + (10 * If condition = OwnerHasTech name = "SPY_STEALTH_PART_2" ) + (10 * If condition = OwnerHasTech name = "SPY_STEALTH_PART_3" ) + (10 * If condition = OwnerHasTech name = "SPY_STEALTH_4" )
+            effects = SetStealth value = Value + 10 + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_1" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_2" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_PART_3" ) + (10 * Statistic If condition = OwnerHasTech name = "SPY_STEALTH_4" )
 
         [[AVERAGE_BASE_FUEL_REGEN]]
         [[REGULAR_HULL_DETECTION]]

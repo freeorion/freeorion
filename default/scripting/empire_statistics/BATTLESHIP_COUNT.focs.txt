@@ -1,5 +1,5 @@
 Statistic name = "BATTLESHIP_COUNT" value =
-    Count condition = And [
+    Statistic Count condition = And [
         And [
             Ship  
             Armed

@@ -1,5 +1,5 @@
 Statistic name = "COLONIES_COUNT" value =
-    Count condition = And [
+    Statistic Count condition = And [
         PopulationCenter
         Population low = 0.02
         OwnedBy empire = Source.Owner

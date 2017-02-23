@@ -53,7 +53,7 @@ Part
 
 COUNT_OF_LOCAL_SOLAR_CONCENTRATOR
 '''
-Count condition = And [
+Statistic Count condition = And [
                 OwnerHasTech name = "SHP_SOLAR_CONNECTION"
                 Ship
                 OwnedBy empire = Source.Owner

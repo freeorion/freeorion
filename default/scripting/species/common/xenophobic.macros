@@ -30,7 +30,7 @@ XENOPHOBIC_SELF
                 SetTargetIndustry value = Value * 0.9
                 SetTargetResearch value = Value * 0.9
                 SetTargetHappiness value = Value - (
-                    Count condition = And [
+                    Statistic Count condition = And [
                         PopulationCenter
                         OwnedBy empire = Source.Owner
                         Not OR [ 
@@ -62,7 +62,7 @@ XENOPHOBIC_SELF
 
 XENOPHOBIC_SELFSUSTAINING_QUALIFYING_PLANET_COUNT
 '''
-Count condition = And [
+Statistic Count condition = And [
                     PopulationCenter
                     Not OR [
                         Species name = Source.Species

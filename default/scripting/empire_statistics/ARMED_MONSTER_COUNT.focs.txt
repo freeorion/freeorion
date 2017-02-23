@@ -1,5 +1,5 @@
 Statistic name = "ARMED_MONSTER_COUNT" value =
-    Count condition = And [
+    Statistic Count condition = And [
         And [
             Ship
             Monster
