@@ -859,8 +859,7 @@ void ListBox::PreRender()
 
     // Perform a cycle of adjust scrolls and prerendering rows and return if sizes changed.
     auto check_adjust_scroll_size_change =
-        [this]
-        (std::pair<bool, bool> force_scrolls = {false, false})
+        [this](std::pair<bool, bool> force_scrolls = {false, false})
         {
             // This adjust scrolls may add or remove scrolls
             AdjustScrolls(true);
