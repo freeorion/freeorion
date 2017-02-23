@@ -38,6 +38,12 @@ public:
         loops + 1 times otherwise. */
     void PlayMusic(const boost::filesystem::path& path, int loops = 0);
 
+    /** Pauses music play, to be continued from the same position */
+    void PauseMusic();
+
+    /** Resumes music play */
+    void ResumeMusic();
+
     /** Stops playing music. */
     void StopMusic();
 
@@ -169,6 +175,12 @@ void Sound::Disable()
 
 void Sound::PlayMusic(const boost::filesystem::path& path, int loops /* = 0*/)
 { m_impl->PlayMusic(path, loops); }
+
+void Sound::PauseMusic()
+{ m_impl->PauseMusic(); }
+
+void Sound::ResumeMusic()
+{ m_impl->ResumeMusic(); }
 
 void Sound::StopMusic()
 { m_impl->StopMusic(); }
@@ -442,6 +454,25 @@ void Sound::Impl::PlayMusic(const boost::filesystem::path& path, int loops /* = 
     if (m_openal_error != AL_NONE)
         ErrorLogger() << "PlayMusic: OpenAL ERROR: " << alGetString(m_openal_error);
 }
+
+void Sound::Impl::PauseMusic() {
+    if (!m_initialized)
+        return;
+
+    if (alcGetCurrentContext()) {
+        alSourcePause(m_sources[0]);
+    }
+}
+
+void Sound::Impl::ResumeMusic() {
+    if (!m_initialized)
+        return;
+
+    if (alcGetCurrentContext()) {
+        alSourcePlay(m_sources[0]);
+    }
+}
+
 
 void Sound::Impl::StopMusic() {
     if (!m_initialized)

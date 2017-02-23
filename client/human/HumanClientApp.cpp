@@ -947,17 +947,24 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
 
     m_have_window_focus = gained_focus;
 
-    // limit rendering frequency when defocused to limit CPU use
+    // limit rendering frequency when defocused to limit CPU use, and disable sound
     if (!m_have_window_focus) {
         if (GetOptionsDB().Get<bool>("limit-fps-no-focus"))
             this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps-no_focus"));
         else
             this->SetMaxFPS(0.0);
-    } else {
+
+        if (GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+            Sound::GetSound().PauseMusic();
+    }
+    else {
         if (GetOptionsDB().Get<bool>("limit-fps"))
             this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps"));
         else
             this->SetMaxFPS(0.0);
+
+        if (GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+            Sound::GetSound().ResumeMusic();
     }
 
     CancelDragDrop();
