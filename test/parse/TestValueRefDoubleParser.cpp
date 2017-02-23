@@ -826,34 +826,23 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTypeless) {
         for (const std::string& attribute : attributes) {
             std::string property[] = { attribute };
 
-            std::array<std::string, 4> phrases = {{
-                // long variant
-                "Statistic " + statisticType.second + " Value = " + attribute + " Condition = All",
-                // Check variant with missing "Condition =" keyword.
-                "Statistic " + statisticType.second + " Value = " + attribute + " All",
-                // Check variant with missing "Value =" keyword.
-                "Statistic " + statisticType.second + " " + attribute + " Condition = All",
-                // Check short variant
-                "Statistic " + statisticType.second + " " + attribute + " All"
-            }};
+            std::string phrase = "Statistic " + statisticType.second + " Value = " + attribute + " Condition = All";
 
-            for (const std::string& phrase : phrases) {
-                BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
+            BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
 
-                BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<double>), typeid(*result));
-                if(statistic = dynamic_cast<const ValueRef::Statistic<double>*>(result)) {
-                    BOOST_CHECK_EQUAL(statistic->GetStatisticType(), statisticType.first);
-                    BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
-                    BOOST_CHECK_EQUAL_COLLECTIONS(
-                        statistic->PropertyName().begin(), statistic->PropertyName().end(),
-                        property, property + 1
-                    );
-                    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
-                }
-
-                delete result;
-                result = 0;
+            BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<double>), typeid(*result));
+            if(statistic = dynamic_cast<const ValueRef::Statistic<double>*>(result)) {
+                BOOST_CHECK_EQUAL(statistic->GetStatisticType(), statisticType.first);
+                BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
+                BOOST_CHECK_EQUAL_COLLECTIONS(
+                    statistic->PropertyName().begin(), statistic->PropertyName().end(),
+                    property, property + 1
+                );
+                BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
             }
+
+            delete result;
+            result = 0;
         }
     }
 }
@@ -867,34 +856,23 @@ BOOST_AUTO_TEST_CASE(DoubleStatisticParserTyped) {
                     attribute
                 };
 
-                std::array<std::string, 4> phrases = {{
-                    // long variant
-                    "Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " Condition = All",
-                    // Check variant with missing "Condition =" keyword.
-                    "Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " All",
-                    // Check variant with missing "Value =" keyword.
-                    "Statistic " + statisticType.second + " " + containerType + "." + attribute + " Condition = All",
-                    // Check short variant
-                    "Statistic " + statisticType.second + " " + containerType + "." + attribute + " All"
-                }};
+                std::string phrase = "Statistic " + statisticType.second + " Value = " + containerType + "." + attribute + " Condition = All";
 
-                for (const std::string& phrase : phrases) {
-                    BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
+                BOOST_CHECK_MESSAGE(parse(phrase, result), "Failed to parse \"" + phrase + "\"");
 
-                    BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<double>), typeid(*result));
-                    if(statistic = dynamic_cast<const ValueRef::Statistic<double>*>(result)) {
-                        BOOST_CHECK_EQUAL(statistic->GetStatisticType(), statisticType.first);
-                        BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
-                        BOOST_CHECK_EQUAL_COLLECTIONS(
-                            statistic->PropertyName().begin(), statistic->PropertyName().end(),
-                            property, property + 2
-                        );
-                        BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
-                    }
-
-                    delete result;
-                    result = 0;
+                BOOST_CHECK_EQUAL(typeid(ValueRef::Statistic<double>), typeid(*result));
+                if(statistic = dynamic_cast<const ValueRef::Statistic<double>*>(result)) {
+                    BOOST_CHECK_EQUAL(statistic->GetStatisticType(), statisticType.first);
+                    BOOST_CHECK_EQUAL(statistic->GetReferenceType(), ValueRef::EFFECT_TARGET_REFERENCE);
+                    BOOST_CHECK_EQUAL_COLLECTIONS(
+                        statistic->PropertyName().begin(), statistic->PropertyName().end(),
+                        property, property + 2
+                    );
+                    BOOST_CHECK_EQUAL(typeid(Condition::All), typeid(*(statistic->GetSamplingCondition())));
                 }
+
+                delete result;
+                result = 0;
             }
         }
     }
