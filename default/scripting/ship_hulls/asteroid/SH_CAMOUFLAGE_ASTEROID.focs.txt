@@ -26,13 +26,6 @@ Hull
                 OwnedBy empire = Source.Owner
             ]
         ]
-        ResourceSupplyConnected empire = Source.Owner condition = And [
-             Building name = "BLD_SHIPYARD_AST"
-             Or [
-                 OwnedBy empire = Source.Owner
-                 OwnedBy affiliation = AllyOf empire = Source.Owner
-             ]
-        ]
     ]
     effectsgroups = [
         EffectsGroup
