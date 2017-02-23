@@ -1338,6 +1338,14 @@ namespace {
             int source_id, empire_id;
             std::tie(std::ignore, stealth, source_id, empire_id) = propagator;
 
+            auto check_blockade_effectiveness = [&empire_id, &stealth](int blockading_empire_id) {
+                // Blockade if hostile and can detect
+                auto blockading_detection = EmpireDetectionStrength(blockading_empire_id);
+                return ((empire_id != blockading_empire_id)
+                        && (Empires().GetDiplomaticStatus(empire_id, blockading_empire_id) == DIPLO_WAR)
+                        && (blockading_detection > stealth));
+            };
+
             // Follow all known starlanes.
             const auto& endpoints = empire_to_system_to_starlanes[empire_id][system_id];
             for (auto&& end_system : endpoints) {
@@ -1352,24 +1360,20 @@ namespace {
                 if (pod.blockading_fleets_empire_ids) {
                     if (std::any_of(
                             pod.blockading_fleets_empire_ids->begin(), pod.blockading_fleets_empire_ids->end(),
-                            [&](int blockading_empire_id) {
-                                // Blockade if hostile and can detect
-                                auto blockading_detection = EmpireDetectionStrength(blockading_empire_id);
-                                return ((empire_id != blockading_empire_id)
-                                        && (Empires().GetDiplomaticStatus(empire_id, blockading_empire_id) == DIPLO_WAR)
-                                        && (blockading_detection > stealth));
-
-                            }))
+                            check_blockade_effectiveness))
                     {
                         // blockaded
-                        break;
+                        continue;
                     }
                 }
 
-                // Check for hostile blockading colonies regardless of detection strength
+                // Check for hostile blockading colonies.
                 // Note: This is a temporary(?) workaround to ease AI development
-                if (pod.blockading_colonies_empire_id)
-                    break;
+                if (bool(pod.blockading_colonies_empire_id)
+                    && check_blockade_effectiveness(*pod.blockading_colonies_empire_id))
+                {
+                    continue;
+                }
 
                 // Reduce the merit by the length of this starlane
                 auto reduced_merit = merit.OneJumpLessMerit(GetPathfinder()->LinearDistance(system_id, end_system));
@@ -1377,7 +1381,7 @@ namespace {
                 // This corresponds to a range of -1.
                 auto lowest_acceptable_merit = SupplyMerit().OneJumpLessMerit();
                 if (reduced_merit <= lowest_acceptable_merit)
-                    break;
+                    continue;
 
                 // Insert the new data into the endpoint system's POD.
                 if (!pod.merit_stealth_supply_empire)
