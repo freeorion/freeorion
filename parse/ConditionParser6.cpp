@@ -2,6 +2,7 @@
 
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
@@ -147,41 +148,31 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            std::vector<ValueRef::ValueRefBase<std::string>*> (),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            std::vector<ValueRef::ValueRefBase<std::string>*> ()
         > string_ref_vec_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<ValueRef::ValueRefBase<std::string>*> >,
-            parse::skipper_type
+            qi::locals<std::vector<ValueRef::ValueRefBase<std::string>*> >
         > building_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetType>*> >,
-            parse::skipper_type
+            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetType>*> >
         > planet_type_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetSize>*> >,
-            parse::skipper_type
+            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetSize>*> >
         > planet_size_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 std::vector<ValueRef::ValueRefBase<PlanetEnvironment>*>,
                 ValueRef::ValueRefBase<std::string>*
-            >,
-            parse::skipper_type
+            >
         > planet_environment_rule;
 
         string_ref_vec_rule             string_ref_vec;

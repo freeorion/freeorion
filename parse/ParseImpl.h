@@ -15,41 +15,43 @@ namespace qi = boost::spirit::qi;
 namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
+    template <
+        typename signature = qi::unused_type,
+        typename locals = qi::unused_type
+    >
+    using rule = qi::rule<
+        parse::token_iterator,
+        parse::skipper_type,
+        signature,
+        locals
+    >;
 
-    typedef qi::rule<
-        token_iterator,
-        void (std::set<std::string>&),
-        parse::skipper_type
+    typedef rule<
+        void (std::set<std::string>&)
     > tags_rule;
     tags_rule& tags_parser();
 
 
-    typedef qi::rule<
-        token_iterator,
-        std::vector<std::shared_ptr<Effect::EffectsGroup>> (),
-        skipper_type
+    typedef rule<
+        std::vector<std::shared_ptr<Effect::EffectsGroup>> ()
     > effects_group_rule;
     effects_group_rule& effects_group_parser();
 
 
-    typedef qi::rule<
-        token_iterator,
+    typedef rule<
         GG::Clr (),
         qi::locals<
             unsigned int,
             unsigned int,
             unsigned int
-        >,
-        skipper_type
+        >
     > color_parser_rule;
     color_parser_rule& color_parser();
 
 
-    typedef qi::rule<
-        token_iterator,
+    typedef rule<
         ItemSpec (),
-        qi::locals<UnlockableItemType>,
-        skipper_type
+        qi::locals<UnlockableItemType>
     > item_spec_parser_rule;
     item_spec_parser_rule& item_spec_parser();
 

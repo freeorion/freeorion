@@ -2,6 +2,7 @@
 
 #include "ValueRefParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "../universe/Condition.h"
 #include "../universe/Enums.h"
 
@@ -202,8 +203,7 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<double>*,
@@ -211,39 +211,32 @@ namespace {
                 ValueRef::ValueRefBase<std::string>*,
                 Condition::ComparisonType,
                 Condition::ComparisonType
-            >,
-            parse::skipper_type
+            >
         > double_ref_double_ref_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<int>*
-            >,
-            parse::skipper_type
+            >
         > int_ref_int_ref_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<int>*,
                 Condition::SortingMethod,
                 ValueRef::ValueRefBase<double>*
-            >,
-            parse::skipper_type
+            >
         > int_ref_sorting_method_double_ref_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 ResourceType,
                 ValueRef::ValueRefBase<double>*
-            >,
-            parse::skipper_type
+            >
         > resource_type_double_ref_rule;
 
         double_ref_double_ref_rule              has_special_capacity;

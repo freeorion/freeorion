@@ -153,73 +153,56 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             FocusType (),
             qi::locals<
                 std::string,
                 std::string,
                 Condition::ConditionBase*
-            >,
-            parse::skipper_type
+            >
         > focus_type_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<FocusType>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::vector<FocusType>&)
         > foci_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<std::shared_ptr<Effect::EffectsGroup>>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::vector<std::shared_ptr<Effect::EffectsGroup>>&)
         > effects_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             std::pair<PlanetType, PlanetEnvironment> (),
-            qi::locals<PlanetType>,
-            parse::skipper_type
+            qi::locals<PlanetType>
         > environment_map_element_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            std::map<PlanetType, PlanetEnvironment> (),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            std::map<PlanetType, PlanetEnvironment> ()
         > environment_map_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<PlanetType, PlanetEnvironment>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<PlanetType, PlanetEnvironment>&)
         > environments_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             SpeciesParams (),
             qi::locals<
                 bool,
                 bool,
                 bool,
                 bool
-            >,
-            parse::skipper_type
+            >
         > species_params_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             SpeciesStrings (),
             qi::locals<
                 std::string,
                 std::string,
                 std::string
-            >,
-            parse::skipper_type
+            >
         > species_strings_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::map<std::string, Species*>&),
             qi::locals<
                 SpeciesStrings,
@@ -229,14 +212,11 @@ namespace {
                 std::vector<std::shared_ptr<Effect::EffectsGroup>>,
                 std::map<PlanetType, PlanetEnvironment>,
                 std::string             // graphic
-            >,
-            parse::skipper_type
+            >
         > species_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, Species*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<std::string, Species*>&)
         > start_rule;
 
         foci_rule                       foci;

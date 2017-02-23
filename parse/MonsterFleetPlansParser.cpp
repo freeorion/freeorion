@@ -95,21 +95,14 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            parse::skipper_type
-        > generic_rule;
+        typedef parse::detail::rule<> generic_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            MonsterFleetPlan* (),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            MonsterFleetPlan* ()
         > monster_fleet_plan_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<MonsterFleetPlan*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::vector<MonsterFleetPlan*>&)
         > start_rule;
 
         generic_rule            monster_fleet_plan_prefix;

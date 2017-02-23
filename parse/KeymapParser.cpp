@@ -80,24 +80,18 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (Keymap&),
-            qi::locals<int, int>,
-            parse::skipper_type
+            qi::locals<int, int>
         > int_pair_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (NamedKeymaps&),
-            qi::locals<std::string, Keymap>,
-            parse::skipper_type
+            qi::locals<std::string, Keymap>
         > keymap_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (NamedKeymaps&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (NamedKeymaps&)
         > start_rule;
 
         int_pair_rule   int_pair;

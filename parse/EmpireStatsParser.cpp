@@ -49,17 +49,13 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             std::pair<std::string, ValueRef::ValueRefBase<double>*> (),
-            qi::locals<std::string>,
-            parse::skipper_type
+            qi::locals<std::string>
         > stat_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, ValueRef::ValueRefBase<double>*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<std::string, ValueRef::ValueRefBase<double>*>&)
         > start_rule;
 
         stat_rule   stat;

@@ -107,14 +107,11 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<ShipSlotType>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::vector<ShipSlotType>&)
         > slots_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::map<std::string, PartType*>&),
             qi::locals<
                 MoreCommonParams,
@@ -125,14 +122,11 @@ namespace {
                 std::vector<ShipSlotType>,
                 bool,
                 double
-            >,
-            parse::skipper_type
+            >
         > part_type_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, PartType*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<std::string, PartType*>&)
         > start_rule;
 
         slots_rule                                  slots;

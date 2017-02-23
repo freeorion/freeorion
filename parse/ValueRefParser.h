@@ -2,6 +2,7 @@
 #define _ValueRefParser_h_
 
 #include "Lexer.h"
+#include "ParseImpl.h"
 
 #include "../universe/ValueRefFwd.h"
 #include "../universe/EnumsFwd.h"
@@ -13,11 +14,10 @@ namespace parse {
     template <typename T>
     struct value_ref_parser_rule
     {
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            // TODO: Investigate refactoring ValueRef to use variant, for increased locality of reference.
-            ValueRef::ValueRefBase<T>* (),
-            parse::skipper_type
+        typedef detail::rule<
+            // TODO: Investigate refactoring ValueRef to use variant,
+            // for increased locality of reference.
+            ValueRef::ValueRefBase<T>* ()
         > type;
     };
 

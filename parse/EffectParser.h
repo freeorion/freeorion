@@ -2,6 +2,7 @@
 #define _EffectParser_h_
 
 #include "Lexer.h"
+#include "ParseImpl.h"
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -10,10 +11,9 @@ namespace Effect {
 }
 
 namespace parse {
-    typedef boost::spirit::qi::rule<
-        parse::token_iterator,
-        Effect::EffectBase* (), // TODO: Change this type to Effect::Base in the FO code.
-        parse::skipper_type
+    typedef detail::rule<
+        // TODO: Change this type to Effect::Base in the FO code.
+        Effect::EffectBase* ()
     > effect_parser_rule;
 
     /** Returns a const reference to the Effect parser. */

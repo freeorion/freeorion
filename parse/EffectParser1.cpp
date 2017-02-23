@@ -3,6 +3,7 @@
 #include "ConditionParserImpl.h"
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
 #include "../universe/ValueRef.h"
@@ -154,31 +155,26 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 std::string,
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<std::string>*
-            >,
-            parse::skipper_type
+            >
         > string_and_intref_and_intref_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*
-            >,
-            parse::skipper_type
+            >
         > stringref_and_doubleref_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 std::string,
@@ -187,23 +183,18 @@ namespace {
                 EmpireAffiliationType,
                 std::string,
                 bool
-            >,
-            parse::skipper_type
+            >
         > generate_sitrep_message_rule;
 
         typedef std::pair<std::string, ValueRef::ValueRefBase<std::string>*> string_and_string_ref_pair;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             string_and_string_ref_pair (),
-            qi::locals<std::string>,
-            parse::skipper_type
+            qi::locals<std::string>
         > string_and_string_ref_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            std::vector<string_and_string_ref_pair> (),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            std::vector<string_and_string_ref_pair> ()
         > string_and_string_ref_vector_rule;
 
         string_and_intref_and_intref_rule   set_empire_meter_1;

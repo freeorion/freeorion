@@ -107,8 +107,7 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectsGroup* (),
             qi::locals<
                 Condition::ConditionBase*,
@@ -118,8 +117,7 @@ namespace {
                 std::string,
                 int,
                 std::string
-            >,
-            parse::skipper_type
+            >
         > effects_group_rule;
 
         effects_group_rule effects_group;
@@ -167,10 +165,8 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            unsigned int (),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            unsigned int ()
         > rule;
 
         rule channel;

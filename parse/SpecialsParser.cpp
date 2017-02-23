@@ -96,20 +96,15 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::string&, std::string&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::string&, std::string&)
         > special_prefix_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (double&, int&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (double&, int&)
         > spawn_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::map<std::string, Special*>&),
             qi::locals<
                 std::string,
@@ -120,14 +115,11 @@ namespace {
                 std::vector<std::shared_ptr<Effect::EffectsGroup>>,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*
-            >,
-            parse::skipper_type
+            >
         > special_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, Special*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<std::string, Special*>&)
         > start_rule;
 
 

@@ -145,29 +145,23 @@ namespace parse { namespace detail {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef rule<
             void (std::map<MeterType, val_cond_pair>&,
-                  std::map<std::string, val_cond_pair>&),
-            parse::skipper_type
+                  std::map<std::string, val_cond_pair>&)
         > consumption_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef rule<
             void (std::map<MeterType, val_cond_pair>&, std::map<std::string, val_cond_pair>&),
             qi::locals<
                 MeterType,
                 std::string,
                 ValueRef::ValueRefBase<double>*,
                 Condition::ConditionBase*
-            >,
-            parse::skipper_type
+            >
         > consumable_rule;
 
-        typedef qi::rule<
-            token_iterator,
-            void (std::set<std::string>&),
-            parse::skipper_type
+        typedef rule<
+            void (std::set<std::string>&)
         > exclusions_rule;
 
         producible_rule         producible;

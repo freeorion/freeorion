@@ -2,6 +2,7 @@
 #define _EnumParser_h_
 
 #include "Lexer.h"
+#include "ParseImpl.h"
 
 #include "../universe/ValueRefFwd.h"
 #include "../universe/EnumsFwd.h"
@@ -14,10 +15,8 @@ namespace parse {
     template <typename E>
     struct enum_parser_rule
     {
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            E (),
-            parse::skipper_type
+        typedef detail::rule<
+            E ()
         > type;
     };
 

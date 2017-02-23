@@ -2,6 +2,7 @@
 
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
 
@@ -176,31 +177,26 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase< ::PlanetType>*,
                 ValueRef::ValueRefBase< ::PlanetSize>*,
                 ValueRef::ValueRefBase<std::string>*,
                 std::vector<Effect::EffectBase*>
-            >,
-            parse::skipper_type
+            >
         > create_planet_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<std::string>*,
                 std::vector<Effect::EffectBase*>
-            >,
-            parse::skipper_type
+            >
         > create_building_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase< ::StarType>*,
@@ -208,12 +204,10 @@ namespace {
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<std::string>*,
                 std::vector<Effect::EffectBase*>
-            >,
-            parse::skipper_type
+            >
         > create_system_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<std::string>*,
@@ -222,12 +216,10 @@ namespace {
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<std::string>*,
                 std::vector<Effect::EffectBase*>
-            >,
-            parse::skipper_type
+            >
         > create_ship_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<std::string>*,
@@ -236,8 +228,7 @@ namespace {
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<double>*,
                 std::vector<Effect::EffectBase*>
-            >,
-            parse::skipper_type
+            >
         > create_field_rule;
 
         create_planet_rule              create_planet;

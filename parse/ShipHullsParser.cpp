@@ -121,37 +121,30 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             HullTypeStats (),
             qi::locals<
                 double,
                 double,
                 double,
                 double
-            >,
-            parse::skipper_type
+            >
         > hull_stats_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             HullType::Slot (),
             qi::locals<
                 ShipSlotType,
                 double,
                 double
-            >,
-            parse::skipper_type
+            >
         > slot_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<HullType::Slot>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::vector<HullType::Slot>&)
         > slots_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::map<std::string, HullType*>&),
             qi::locals<
                 MoreCommonParams,
@@ -160,14 +153,11 @@ namespace {
                 CommonParams,
                 std::vector<HullType::Slot>,
                 std::string
-            >,
-            parse::skipper_type
+            >
         > hull_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, HullType*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<std::string, HullType*>&)
         > start_rule;
 
         hull_stats_rule                             hull_stats;

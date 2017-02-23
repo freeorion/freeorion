@@ -3,6 +3,7 @@
 #include "ConditionParserImpl.h"
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -22,16 +23,12 @@ namespace std {
 }
 #endif
 
-typedef qi::rule<
-    parse::token_iterator,
-    ValueRef::ReferenceType (),
-    parse::skipper_type
+typedef parse::detail::rule<
+    ValueRef::ReferenceType ()
 > reference_token_rule;
 
-typedef qi::rule<
-    parse::token_iterator,
-    const char* (),
-    parse::skipper_type
+typedef parse::detail::rule<
+    const char* ()
 > name_token_rule;
 
 typedef parse::value_ref_parser_rule<int>::type     int_rule;
@@ -40,36 +37,31 @@ typedef parse::value_ref_parser_rule<double>::type  double_rule;
 template <typename T>
 struct variable_rule
 {
-    typedef qi::rule<
-        parse::token_iterator,
+    typedef parse::detail::rule<
         ValueRef::Variable<T>* (),
         qi::locals<
             std::vector<std::string>,
             ValueRef::ReferenceType
-        >,
-        parse::skipper_type
+        >
     > type;
 };
 
 template <typename T>
 struct statistic_rule
 {
-    typedef qi::rule<
-        parse::token_iterator,
+    typedef parse::detail::rule<
         ValueRef::Statistic<T>* (),
         qi::locals<
             ValueRef::ValueRefBase<T>*,
             ValueRef::StatisticType
-        >,
-        parse::skipper_type
+        >
     > type;
 };
 
 template <typename T>
 struct complex_variable_rule
 {
-    typedef qi::rule<
-        parse::token_iterator,
+    typedef parse::detail::rule<
         ValueRef::ComplexVariable<T>* (),
         qi::locals<
             std::string,
@@ -78,24 +70,21 @@ struct complex_variable_rule
             ValueRef::ValueRefBase<std::string>*,
             ValueRef::ValueRefBase<std::string>*,
             ValueRef::ValueRefBase<int>*
-        >,
-        parse::skipper_type
+        >
     > type;
 };
 
 template <typename T>
 struct expression_rule
 {
-    typedef qi::rule<
-        parse::token_iterator,
+    typedef parse::detail::rule<
         ValueRef::ValueRefBase<T>* (),
         qi::locals<
             ValueRef::ValueRefBase<T>*,
             ValueRef::ValueRefBase<T>*,
             ValueRef::OpType,
             std::vector<ValueRef::ValueRefBase<T>*>
-        >,
-        parse::skipper_type
+        >
     > type;
 };
 

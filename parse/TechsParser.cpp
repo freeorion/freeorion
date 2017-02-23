@@ -157,14 +157,11 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Tech::TechInfo (std::string&, std::string&, std::string&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            Tech::TechInfo (std::string&, std::string&, std::string&)
         > tech_info_name_desc_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Tech::TechInfo (),
             qi::locals<
                 std::string,
@@ -175,24 +172,18 @@ namespace {
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<int>*,
                 bool
-            >,
-            parse::skipper_type
+            >
         > tech_info_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Tech::TechInfo (std::set<std::string>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            Tech::TechInfo (std::set<std::string>&)
         > prerequisites_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            Tech::TechInfo (std::vector<ItemSpec>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            Tech::TechInfo (std::vector<ItemSpec>&)
         > unlocks_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (TechManager::TechContainer&),
             qi::locals<
                 Tech::TechInfo,
@@ -200,24 +191,19 @@ namespace {
                 std::vector<ItemSpec>,
                 std::vector<std::shared_ptr<Effect::EffectsGroup>>,
                 std::string
-            >,
-            parse::skipper_type
+            >
         > tech_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::map<std::string, TechCategory*>&),
             qi::locals<
                 std::string,
                 std::string
-            >,
-            parse::skipper_type
+            >
         > category_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (TechManager::TechContainer&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (TechManager::TechContainer&)
         > start_rule;
 
         tech_info_name_desc_rule    tech_info_name_desc;

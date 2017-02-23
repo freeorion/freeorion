@@ -75,22 +75,18 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::map<std::string, BuildingType*>&),
             qi::locals<
                 std::string,
                 std::string,
                 CommonParams,
                 CaptureResult
-            >,
-            parse::skipper_type
+            >
         > building_type_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, BuildingType*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<std::string, BuildingType*>&)
         > start_rule;
 
         building_type_rule          building_type;

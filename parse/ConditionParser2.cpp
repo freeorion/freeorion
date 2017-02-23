@@ -2,6 +2,7 @@
 
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 #include "../universe/Enums.h"
@@ -126,8 +127,7 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<int>*,
@@ -135,8 +135,7 @@ namespace {
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<std::string>*
-            >,
-            parse::skipper_type
+            >
         > common_rule;
 
         common_rule                     has_special_since_turn;

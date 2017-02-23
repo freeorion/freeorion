@@ -2,6 +2,7 @@
 
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
@@ -200,25 +201,19 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<EmpireAffiliationType>,
-            parse::skipper_type
+            qi::locals<EmpireAffiliationType>
         > owned_by_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<Condition::ConditionBase*> >,
-            parse::skipper_type
+            qi::locals<std::vector<Condition::ConditionBase*> >
         > and_or_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::string>,
-            parse::skipper_type
+            qi::locals<std::string>
         > described_rule;
 
         parse::condition_parser_rule    all;

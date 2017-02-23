@@ -62,22 +62,18 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (Encyclopedia&),
             qi::locals<
                 std::string,
                 std::string,
                 std::string,
                 std::string
-            >,
-            parse::skipper_type
+            >
         > strings_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (Encyclopedia&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (Encyclopedia&)
         > start_rule;
 
 

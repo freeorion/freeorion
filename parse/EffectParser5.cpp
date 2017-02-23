@@ -2,6 +2,7 @@
 #include "ConditionParserImpl.h"
 
 #include "Label.h"
+#include "ParseImpl.h"
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -51,15 +52,13 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 Condition::ConditionBase*,
                 std::vector<Effect::EffectBase*>,
                 std::vector<Effect::EffectBase*>
-            >,
-            parse::skipper_type
+            >
         > conditional_rule;
 
         conditional_rule            conditional;

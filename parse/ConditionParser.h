@@ -2,6 +2,7 @@
 #define _ConditionParser_h_
 
 #include "Lexer.h"
+#include "ParseImpl.h"
 
 #include <boost/spirit/include/qi.hpp>
 
@@ -10,10 +11,8 @@ namespace Condition {
 }
 
 namespace parse {
-    typedef boost::spirit::qi::rule<
-        parse::token_iterator,
-        Condition::ConditionBase* (),
-        parse::skipper_type
+    typedef detail::rule<
+        Condition::ConditionBase* ()
     > condition_parser_rule;
 
     /** Returns a const reference to the Condition parser. */

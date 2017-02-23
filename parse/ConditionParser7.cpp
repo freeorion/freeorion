@@ -2,6 +2,7 @@
 
 #include "ValueRefParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -97,21 +98,18 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<ValueRef::ValueRefBase<StarType>*> >,
-            parse::skipper_type
+            qi::locals<std::vector<ValueRef::ValueRefBase<StarType>*>>
         > star_type_vec_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 Condition::ContentType,
                 ValueRef::ValueRefBase<std::string>*,
-                ValueRef::ValueRefBase<std::string>* >,
-            parse::skipper_type
+                ValueRef::ValueRefBase<std::string>*
+            >
         > string_ref_rule;
 
         parse::condition_parser_rule            ordered_bombarded_by;

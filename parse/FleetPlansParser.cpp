@@ -55,20 +55,16 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::vector<FleetPlan*>&),
             qi::locals<
                 std::string,
                 std::vector<std::string>
-            >,
-            parse::skipper_type
+            >
         > fleet_plan_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<FleetPlan*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::vector<FleetPlan*>&)
         > start_rule;
 
         fleet_plan_rule fleet_plan;

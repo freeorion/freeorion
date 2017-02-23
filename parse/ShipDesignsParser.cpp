@@ -93,14 +93,11 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::string&, std::string&, std::string&, bool&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::string&, std::string&, std::string&, bool&)
         > design_prefix_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::map<std::string, ShipDesign*>&),
             qi::locals<
                 std::string,
@@ -109,14 +106,11 @@ namespace {
                 std::vector<std::string>,
                 std::string,
                 bool
-            >,
-            parse::skipper_type
+            >
         > design_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, ShipDesign*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<std::string, ShipDesign*>&)
         > start_rule;
 
         design_prefix_rule design_prefix;

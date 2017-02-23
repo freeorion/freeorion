@@ -2,6 +2,7 @@
 
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "ConditionParserImpl.h"
 #include "../universe/Effect.h"
@@ -162,20 +163,17 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 MeterType,
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<double>*,
                 std::string
-            >,
-            parse::skipper_type
+            >
         > set_meter_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ResourceType,
@@ -183,19 +181,16 @@ namespace {
                 Visibility,
                 EmpireAffiliationType,
                 Condition::ConditionBase*
-            >,
-            parse::skipper_type
+            >
         > set_stockpile_or_vis_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<std::string>*,
                 ValueRef::ValueRefBase<int>*
-            >,
-            parse::skipper_type
+            >
         > string_string_int_rule;
 
         set_meter_rule                      set_meter;

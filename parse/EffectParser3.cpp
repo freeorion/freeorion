@@ -3,6 +3,7 @@
 #include "ConditionParserImpl.h"
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
 
@@ -167,15 +168,13 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Effect::EffectBase* (),
             qi::locals<
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<std::string>*
-            >,
-            parse::skipper_type
+            >
         > doubles_string_rule;
 
         parse::effect_parser_rule           move_to;

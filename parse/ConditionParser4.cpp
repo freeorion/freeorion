@@ -2,6 +2,7 @@
 
 #include "EnumParser.h"
 #include "Label.h"
+#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
@@ -94,8 +95,7 @@ namespace {
 #endif
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 MeterType,
@@ -103,20 +103,17 @@ namespace {
                 ValueRef::ValueRefBase<double>*,
                 std::string,
                 ValueRef::ValueRefBase<std::string>*
-            >,
-            parse::skipper_type
+            >
         > meter_value_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             Condition::ConditionBase* (),
             qi::locals<
                 std::string,
                 ValueRef::ValueRefBase<int>*,
                 ValueRef::ValueRefBase<double>*,
                 ValueRef::ValueRefBase<double>*
-            >,
-            parse::skipper_type
+            >
         > empire_meter_value_rule;
 
         meter_value_rule                meter_value;

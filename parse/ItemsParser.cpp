@@ -32,10 +32,8 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::vector<ItemSpec>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::vector<ItemSpec>&)
         > start_rule;
 
         start_rule start;

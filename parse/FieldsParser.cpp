@@ -71,8 +71,7 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
+        typedef parse::detail::rule<
             void (std::map<std::string, FieldType*>&),
             qi::locals<
                 std::string,
@@ -80,14 +79,11 @@ namespace {
                 float,
                 std::set<std::string>,
                 std::vector<std::shared_ptr<Effect::EffectsGroup>>
-            >,
-            parse::skipper_type
+            >
         > field_rule;
 
-        typedef boost::spirit::qi::rule<
-            parse::token_iterator,
-            void (std::map<std::string, FieldType*>&),
-            parse::skipper_type
+        typedef parse::detail::rule<
+            void (std::map<std::string, FieldType*>&)
         > start_rule;
 
         field_rule          field;
