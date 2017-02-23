@@ -46,6 +46,7 @@ namespace {
             variable_name.name("PlanetType variable name (e.g., PlanetType)");
             constant.name("PlanetType");
             bound_variable.name("PlanetType variable");
+            statistic_sub_value_ref.name("PlanetType statistic value reference");
             statistic.name("PlanetType statistic");
             primary_expr.name("PlanetType expression");
 

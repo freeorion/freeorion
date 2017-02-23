@@ -43,6 +43,7 @@ namespace {
             variable_name.name("StarType variable name (e.g., StarType)");
             constant.name("StarType");
             bound_variable.name("StarType variable");
+            statistic_sub_value_ref.name("StarType statistic value reference");
             statistic.name("StarType statistic");
             primary_expr.name("StarType expression");
 

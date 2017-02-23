@@ -112,10 +112,12 @@ namespace {
             constant.name("real number constant");
             free_variable.name("free real number variable");
             bound_variable.name("real number bound variable");
+            statistic_1.name("real number collection statistic");
+            statistic_2.name("real number value statistic");
             statistic.name("real number statistic");
+            int_bound_variable_cast.name("integer bound variable");
             int_statistic_cast.name("integer statistic");
             int_complex_variable_cast.name("integer complex variable");
-            int_bound_variable_cast.name("integer bound variable");
             function_expr.name("real number function expression");
             exponential_expr.name("real number exponential expression");
             multiplicative_expr.name("real number multiplication expression");

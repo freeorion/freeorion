@@ -130,7 +130,10 @@ namespace {
                 |   int_var_complex()
                 ;
 
+            statistic_1.name("integer collection statistic");
+            statistic_2.name("integer value statistic");
             statistic.name("integer statistic");
+            statistic_sub_value_ref.name("integer statistic value ref");
             function_expr.name("integer function expression");
             exponential_expr.name("integer exponential expression");
             multiplicative_expr.name("integer multiplication expression");

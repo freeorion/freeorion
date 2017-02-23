@@ -41,8 +41,10 @@ namespace {
             variable_name.name("PlanetEnvironment variable name (e.g., PlanetEnvironment)");
             constant.name("PlanetEnvironment");
             bound_variable.name("PlanetEnvironment variable");
+            statistic_sub_value_ref.name("PlanetEnvironment statistic value reference");
             statistic.name("PlanetEnvironment statistic");
             primary_expr.name("PlanetEnvironment expression");
+            expr.name("PlanetEnvironment value reference");
 
 #if DEBUG_VALUEREF_PARSERS
             debug(variable_name);
