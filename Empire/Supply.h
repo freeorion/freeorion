@@ -31,6 +31,10 @@ namespace std {
     };
 }
 
+// A tuple to report the per system bonus augmenting supply competition.
+using SupplySystemBonusTuple = std::tuple<float, float, float, float>;
+enum SupplySystemBonusFields {ssBonus, ssVisibilityBonus, ssShipBonus, ssColonyBonus};
+std::string SupplySystemBonusTupleString(const SupplySystemBonusTuple& x);
 
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
@@ -83,6 +87,9 @@ public:
       * one of the resource supply groups for empire with id \a empire_id */
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;
     bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
+
+    /** Return the map from system id to empire id and system bonuses. */
+    const std::unordered_map<int, std::map<int, SupplySystemBonusTuple>>& SystemBonuses() const;
 
     std::string Dump(int empire_id = ALL_EMPIRES) const;
     //@}

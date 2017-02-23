@@ -26,6 +26,15 @@
 #include <boost/graph/connected_components.hpp>
 
 #include <algorithm>
+#include <iomanip>
+
+
+std::string SupplySystemBonusTupleString(const SupplySystemBonusTuple& x) {
+    std::stringstream ss;
+    ss << std::setprecision(2) << std::get<ssBonus>(x) << ":(" << std::get<ssVisibilityBonus>(x) << "+"
+       << std::get<ssShipBonus>(x) << "+" << std::get<ssColonyBonus>(x) << ")";
+    return ss.str();
+}
 
 class SupplyManager::SupplyManagerImpl {
 public:
@@ -76,6 +85,9 @@ public:
       * one of the resource supply groups for empire with id \a empire_id */
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;
     bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
+
+    /** Return the map from system id to empire id and system bonuses. */
+    const std::unordered_map<int, std::map<int, SupplySystemBonusTuple>>& SystemBonuses() const;
 
     std::string Dump(int empire_id = ALL_EMPIRES) const;
     //@}
@@ -141,6 +153,9 @@ private:
 
     // For each empire and each system the highest stealth of supply in that system.
     std::unordered_map<int, std::unordered_map<int, float>> m_empire_to_system_to_stealth;
+
+    // For each system a sorted map from empire to system bonus.
+    std::unordered_map<int, std::map<int, SupplySystemBonusTuple>> m_system_to_empire_to_bonus;
 };
 
 
@@ -291,6 +306,10 @@ bool SupplyManager::SupplyManagerImpl::SystemHasFleetSupply(int system_id, int e
     return false;
 }
 
+const std::unordered_map<int, std::map<int, SupplySystemBonusTuple>>& SupplyManager::SupplyManagerImpl::SystemBonuses() const {
+    return m_system_to_empire_to_bonus;
+}
+
 std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
     std::string retval;
 
@@ -410,20 +429,16 @@ namespace {
     /** Parts of the Update function that don't depend on SupplyManager.*/
 
     /** Return a bonus value applied to supply to reduce likelyhood of ties. */
-    // TODO consider either exposing this in the GUI or removing it to improve the transparency of the
-    // supply mechanic.
     /** Return the portion of the supply bonus known from the empire and system.*/
-    float ComputeInitialSupplyBonuses(const int empire_id, const int sys_id)
+    SupplySystemBonusTuple ComputeSystemSupplyBonuses(const int empire_id, const int sys_id)
     {
-        // stuff to break ties...
-        float bonus = 0.0f;
-
         // empires with visibility into system
         Visibility vis = GetUniverse().GetObjectVisibilityByEmpire(sys_id, empire_id);
+        float visibility_bonus = 0.0f;
         if (vis >= VIS_PARTIAL_VISIBILITY)
-            bonus += 0.02f;
+            visibility_bonus = 0.02f;
         else if (vis == VIS_BASIC_VISIBILITY)
-            bonus += 0.01f;
+            visibility_bonus = 0.01f;
 
         // empires with ships / planets in system (that haven't already made it obstructed for another empire)
         bool has_ship = false, has_outpost = false, has_colony = false;
@@ -449,14 +464,19 @@ namespace {
                 has_outpost = true;
             }
         }
-        if (has_ship)
-            bonus += 0.1f;
+        float ship_bonus = (has_ship) ? 0.1f : 0.0f;
+        float colony_bonus = 0.0f;
         if (has_colony)
-            bonus += 0.5f;
+            colony_bonus += 0.5f;
         else if (has_outpost)
-            bonus += 0.3f;
+            colony_bonus += 0.3f;
 
-        return bonus;
+        float bonus = visibility_bonus + ship_bonus + colony_bonus;
+
+        SupplySystemBonusTuple retval = std::make_tuple(bonus, visibility_bonus, ship_bonus, colony_bonus);
+        DebugLogger() << "System bonuses for system " << sys_id << " empire " << empire_id << " = "
+                      << SupplySystemBonusTupleString(retval);
+        return retval;
     }
 
     /** Return the supply bonus accounting for the propagted range and distance.*/
@@ -464,7 +484,8 @@ namespace {
                                std::map<int, std::map<int, float>>& empire_system_supply_range_sums)
     {
         // stuff to break ties...
-        float bonus = ComputeInitialSupplyBonuses(empire_id, sys_id);
+        auto system_bonuses = ComputeSystemSupplyBonuses(empire_id, sys_id);
+        float bonus = std::get<ssBonus>(system_bonuses);
 
         // sum of all supply sources in this system
         bonus += empire_system_supply_range_sums[empire_id][sys_id] / 1000.0f;
@@ -480,62 +501,78 @@ namespace {
     /** SupplyMerit is the merit of a single supply source in a system.  In contested systems,
         higher merit sources will win against lower merit sources.
 
-        A merit can be < zero merit if it's distance portion is positive, or bonus is negative
+        A merit can be < zero merit if it's distance portion is positive, or system_bonus is negative
     */
     class SupplyMerit {
         public:
-        SupplyMerit(float _range, int empire_id, int system_id) :
-            range{_range},
-            bonus{ComputeInitialSupplyBonuses(empire_id, system_id)},
-            distance(0.0f)
-        {}
-
+        // Default constructor.
         SupplyMerit() :
-            range{0.0f},
-            bonus{0.0f},
-            distance(0.0f)
+            m_range(0.0f),
+            m_system_bonus(std::make_tuple(0.0f, 0.0f, 0.0f, 0.0f)),
+            m_distance(0.0f)
         {}
 
-        SupplyMerit OneJumpLessMerit(float _dist = 0.0f) const {
-            // TODO recalc local bonus factors.
-            auto other     = SupplyMerit();
-            other.range    = range - 1;
-            other.distance = distance + _dist;
-            return other;
+        // Constructor for a supply source merit.
+        SupplyMerit(float _range) : SupplyMerit()
+        { m_range = _range; }
+
+        // Constructor for system bonus merit.
+        SupplyMerit(const SupplySystemBonusTuple& _bonus) : SupplyMerit()
+        { m_system_bonus = _bonus; }
+
+        /** Localize changes the system bonus to the system bonues of \p local. */
+        SupplyMerit& Localize(const SupplyMerit& local) {
+            m_system_bonus = local.m_system_bonus;
+            return *this;
+        }
+
+        /** Return a new SupplyMerit based on this merit reduced by one jump of
+            distance \p _dist.*/
+        SupplyMerit& OneJumpLessMerit(float _dist = 0.0f) {
+            m_range    -= 1.0f;
+            m_distance += _dist;
+            return *this;
         }
 
         friend bool operator<(const SupplyMerit& l, const SupplyMerit& r) {
+            // All merits with negative range are equal
+            if (l.m_range < 0 && r.m_range < 0)
+                return false;
+
             // Note:: distance is reverse sorted to penalize distance sources.
-            return std::tie(l.range, l.bonus, r.distance) < std::tie(r.range, r.bonus, l.distance);
+            return (  std::tie(l.m_range, l.m_system_bonus, r.m_distance)
+                    < std::tie(r.m_range, r.m_system_bonus, l.m_distance));
         }
 
-        // TODO?: Should all merits with zero range be equal even if some have a positive bonus?
         friend bool operator==(const SupplyMerit& l, const SupplyMerit& r) {
-            return std::tie(l.range, l.bonus, l.distance) == std::tie(r.range, r.bonus, r.distance);
+            // All merits with negative range are equal
+            if (l.m_range < 0 && r.m_range < 0)
+                return true;
+            return (   std::tie(l.m_range, l.m_system_bonus, l.m_distance)
+                    == std::tie(r.m_range, r.m_system_bonus, r.m_distance));
         }
 
         friend std::ostream& operator<<(std::ostream& os, const SupplyMerit& x) {
-            os << '(' << x.range << '/' << x.bonus << '/' << x.distance << ')';
+            os << '(' << x.m_range << '/' << std::get<ssBonus>(x.m_system_bonus) << '/' << x.m_distance << ')';
             return os;
         }
 
         float Range() const
-        {return range;}
+        {return m_range;}
 
-        float Bonus() const
-        {return bonus;}
+        const SupplySystemBonusTuple& Bonus() const
+        {return m_system_bonus;}
 
         float Distance() const
-        {return distance;}
+        {return m_distance;}
 
         private:
         // Number of jumps that the supply can propagate.
-        // TODO Should this be unsigned int?
-        float range;
-        // A per system opaque bonus value;
-        float bonus;
-        // The distance along jumps that this supply source has already propagated,
-        float distance;
+        float m_range;
+        // A per system bonus value;
+        SupplySystemBonusTuple m_system_bonus;
+        // The distance along the jumps that this supply source has propagated,
+        float m_distance;
     };
 
     // Implement the remaining relational operators.
@@ -543,16 +580,8 @@ namespace {
 
     /** Return the SupplyMerit of a single universe object. This external "constructor" wrapper
         that returns none on failure avoids having to throw on error in the real constrctor.*/
-    boost::optional<SupplyMerit> CalculateSupplyMerit(const std::shared_ptr<UniverseObject>& obj) {
+    boost::optional<SupplyMerit> CalculateObjectSupplyMerit(const std::shared_ptr<const UniverseObject>& obj) {
         // Check is it owned with a valid id and a supply meter.
-
-        // if (obj->SystemID() == INVALID_OBJECT_ID)
-        //     DebugLogger() << "INVALID obj";
-        // if ( obj->Unowned())
-        //     DebugLogger() << "Unownded";
-        // if (!obj->GetMeter(METER_SUPPLY))
-        //     DebugLogger() << "no supply meter";
-
         if ((obj->SystemID() == INVALID_OBJECT_ID)
             || obj->Unowned()
             || !obj->GetMeter(METER_SUPPLY))
@@ -560,7 +589,31 @@ namespace {
 
         // TODO: Why is this NextTurn Supply?
         float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
-        return SupplyMerit(supply_range, obj->Owner(), obj->SystemID());
+        return SupplyMerit(supply_range);
+    }
+
+    /** Return the SupplyMerits of all empires present in a single system. This
+        external "constructor" wrapper that returns none on failure avoids
+        having to throw on error in the real constrctor.*/
+    boost::optional<std::map<int, SupplyMerit>> CalculateSystemSupplyMerit(const System& sys) {
+        // Check is it owned.
+        if (sys.Unowned())
+            return boost::none;
+
+        boost::optional<std::map<int, SupplyMerit>> retval;
+
+        auto system_id = sys.SystemID();
+        for (const auto& id_and_empire : Empires()) {
+            auto system_bonuses = ComputeSystemSupplyBonuses(id_and_empire.second->EmpireID(), system_id);
+            auto bonus = std::get<ssBonus>(system_bonuses);
+            if (bonus > 0.0f) {
+                if (!retval)
+                    retval = std::map<int, SupplyMerit>();
+                retval->insert({id_and_empire.second->EmpireID(), system_bonuses});
+            }
+        }
+
+        return retval;
     }
 
     using SupplyPODTuple = std::tuple<SupplyMerit, float, int, int>;
@@ -569,10 +622,11 @@ namespace {
     /** SupplySystemPOD contains all of the data needs to resolve one systems supply conflicts. */
     struct SupplySystemPOD {
         // TODO resort and add source id?
-        boost::optional<std::set<SupplyPODTuple>> merit_stealth_supply_empire;
-        boost::optional<std::unordered_set<int>> contesting_empires;
-        boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
-        boost::optional<int> blockading_colonies_empire_id;
+        boost::optional<std::set<SupplyPODTuple>>   merit_stealth_supply_empire;
+        boost::optional<std::unordered_set<int>>    contesting_empires;
+        boost::optional<std::unordered_set<int>>    blockading_fleets_empire_ids;
+        boost::optional<int>                        blockading_colonies_empire_id;
+        boost::optional<std::map<int, SupplyMerit>> system_bonuses;
     };
 
 
@@ -582,7 +636,7 @@ namespace {
 
         // as of this writing, only planets can generate supply propagation
         for (auto obj : Objects().FindObjects(system.PlanetIDs())) {
-            auto merit = CalculateSupplyMerit(obj);
+            auto merit = CalculateObjectSupplyMerit(obj);
             if(!merit)
                 continue;
 
@@ -800,10 +854,46 @@ namespace {
 
         auto blockading_colony = CalculateBlockadingColonyEmpireID(system, stealth_supply, contesting_empires);
 
-        if (!stealth_supply && !contesting_empires && !blockading_fleets_empire_ids && !blockading_colony)
+        auto local_bonuses = CalculateSystemSupplyMerit(system);
+
+        // Adjust merit for local bonuses if needed
+        if (stealth_supply && local_bonuses) {
+            // List of merits that need to be adjusted
+            std::vector<std::set<SupplyPODTuple>::const_iterator> erase_these;
+            std::vector<SupplyPODTuple> add_these;
+            for (auto supply_tuple_it = stealth_supply->begin();
+                 supply_tuple_it != stealth_supply->end(); ++supply_tuple_it)
+            {
+                const auto& local_empire = std::get<ssEmpireID>(*supply_tuple_it);
+                const auto& bonus_it = local_bonuses->find(local_empire);
+                if (bonus_it == local_bonuses->end())
+                    continue;
+
+                auto local_supply_tuple = *supply_tuple_it;
+                SupplyMerit& local_merit = std::get<ssMerit>(local_supply_tuple);
+                local_merit.Localize(bonus_it->second);
+
+                erase_these.push_back(supply_tuple_it);
+                add_these.push_back(local_supply_tuple);
+
+                DebugLogger() << "Localizing merit in system "<< system.SystemID() << " from "
+                              << std::get<ssMerit>(*supply_tuple_it) << " to "
+                              << std::get<ssMerit>(local_supply_tuple) << " with local bonus "
+                              << bonus_it->second;
+            }
+
+            // Adjust the set
+            for (const auto& erase_it : erase_these)
+                stealth_supply->erase(erase_it);
+            for(const auto& add_this : add_these)
+                stealth_supply->insert(add_this);
+        }
+
+        if (!stealth_supply && !contesting_empires && !blockading_fleets_empire_ids && !blockading_colony && !local_bonuses)
             return boost::none;
 
-        return SupplySystemPOD({stealth_supply, contesting_empires, blockading_fleets_empire_ids, blockading_colony});
+        return SupplySystemPOD({stealth_supply, contesting_empires, blockading_fleets_empire_ids,
+                    blockading_colony, local_bonuses});
     }
 
     /** Return a map from system id to SupplySystemrPOD. */
@@ -879,20 +969,24 @@ namespace {
 
     class SupplyTranches {
         public:
-        SupplyTranches() :
+        SupplyTranches(const std::unordered_map<int, SupplySystemPOD>& system_to_supply_pod) :
             m_tranches{},
             m_max_merit{SupplyMerit()}
         {
             // Sort by SupplyMerit
             std::set<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>> merit_and_source;
-            for (auto& id_to_obj_ptr : Objects().ExistingObjects()) {
-                // DebugLogger() << " Try merit for " << id_to_obj_ptr.second;
-
-                auto maybe_merit = CalculateSupplyMerit(id_to_obj_ptr.second);
-                if(!maybe_merit)
+            for (const auto& system_id_and_pod : system_to_supply_pod) {
+                if (!system_id_and_pod.second.merit_stealth_supply_empire)
                     continue;
-                DebugLogger() << " Got merit " << *maybe_merit << "for " << id_to_obj_ptr.first ;
-                merit_and_source.insert({*maybe_merit, id_to_obj_ptr.second});
+                for (const auto& supply_tuple : *system_id_and_pod.second.merit_stealth_supply_empire) {
+                    const auto& merit = std::get<ssMerit>(supply_tuple);
+                    const auto& source_id = std::get<ssSource>(supply_tuple);
+                    const auto& obj = Objects().Object(source_id);
+                    if (!obj)
+                        continue;
+                    merit_and_source.insert({merit, obj});
+                    DebugLogger() << " Tranche found merit " << merit << " for obj " << obj->ID();
+                }
             }
 
             if (merit_and_source.empty()) {
@@ -903,7 +997,7 @@ namespace {
             m_max_merit = merit_and_source.rbegin()->first;
 
             auto merit_source_it = merit_and_source.rbegin();
-            auto merit_threshold = m_max_merit.OneJumpLessMerit();
+            auto merit_threshold = SupplyMerit(m_max_merit).OneJumpLessMerit();
             auto tranche = SupplyTranche(merit_threshold);
 
             SupplyMerit merit;
@@ -916,7 +1010,7 @@ namespace {
                 if (merit <= merit_threshold) {
                     // Start a new tranche: Save the old, change the threshold, start a new tranche
                     m_tranches.insert({merit_threshold, tranche});
-                    merit_threshold = merit_threshold.OneJumpLessMerit();
+                    merit_threshold.OneJumpLessMerit();
                     tranche = SupplyTranche(merit_threshold);
                     DebugLogger() << "SupplyTranches() start new tranche with merit " << merit_threshold << ".";
                 }
@@ -936,10 +1030,10 @@ namespace {
             // Create the remaining tranches down to lower of zero merit or the minimum detected
             // merit reduced by one jump of merit reduction.
             auto zero_merit = SupplyMerit();
-            const auto min_merit = std::min(zero_merit, merit_and_source.begin()->first).OneJumpLessMerit();
+            const auto min_merit = SupplyMerit(std::min(zero_merit, merit_and_source.begin()->first)).OneJumpLessMerit();
 
             while (merit_threshold > min_merit) {
-                merit_threshold = merit_threshold.OneJumpLessMerit();
+                merit_threshold.OneJumpLessMerit();
                 m_tranches.insert({merit_threshold, SupplyTranche(merit_threshold)});
                 DebugLogger() << "SupplyTranches() add empty tranche built " << merit_threshold << " threshold.";
             }
@@ -966,7 +1060,7 @@ namespace {
                 --it;
             if (it == m_tranches.end()) {
                 ErrorLogger() << "SupplyTranches()[" << merit << "] found end.";
-                auto merit_minus_one = merit.OneJumpLessMerit();
+                auto merit_minus_one = SupplyMerit(merit).OneJumpLessMerit();
                 m_tranches.insert({merit_minus_one, SupplyTranche(merit_minus_one)});
                 return m_tranches.begin()->second;
 
@@ -975,14 +1069,14 @@ namespace {
             //DebugLogger() << "SupplyTranches()[" << merit << "] found " << it->first << " threshold. ";
 
             //Expected exit
-            if (it->first >= merit.OneJumpLessMerit()) {
+            if (it->first >= SupplyMerit(merit).OneJumpLessMerit()) {
                 //DebugLogger() << "SupplyTranches()[" << merit << "] returned " << it->first << " threshold. ";
                 return it->second;
             }
 
             if (it == m_tranches.begin()) {
                 ErrorLogger() << "SupplyTranches()[" << merit << "] Unable to find tranche. Creating a less than zero tranche.";
-                auto lower_than_zero_merit = it->first.OneJumpLessMerit();
+                auto lower_than_zero_merit = SupplyMerit(it->first).OneJumpLessMerit();
                 m_tranches.insert({lower_than_zero_merit, SupplyTranche(lower_than_zero_merit)});
                 return m_tranches.begin()->second;
             }
@@ -990,7 +1084,7 @@ namespace {
             ErrorLogger() << "SupplyTranches()[" << merit << "] found nothing.  Max merit is " << m_max_merit
                           << "Making a tranche for this merit. ";
 
-            auto merit_threshold = merit.OneJumpLessMerit();
+            auto merit_threshold = SupplyMerit(merit).OneJumpLessMerit();
             m_tranches.insert({merit_threshold, SupplyTranche(merit_threshold)});
             return m_tranches.begin()->second;
         }
@@ -1376,7 +1470,15 @@ namespace {
                 }
 
                 // Reduce the merit by the length of this starlane
-                auto reduced_merit = merit.OneJumpLessMerit(GetPathfinder()->LinearDistance(system_id, end_system));
+                auto reduced_merit = SupplyMerit(merit)
+                    .OneJumpLessMerit(GetPathfinder()->LinearDistance(system_id, end_system));
+
+                // Apply any system bonuses from the new system
+                if (pod.system_bonuses) {
+                    const auto& local_bonus = pod.system_bonuses->find(empire_id);
+                    if (local_bonus != pod.system_bonuses->end())
+                        reduced_merit.Localize(local_bonus->second);
+                }
 
                 // This corresponds to a range of -1.
                 auto lowest_acceptable_merit = SupplyMerit().OneJumpLessMerit();
@@ -1976,7 +2078,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
     // Tranches of SupplyMerit sorted by merit.  Tranches are the size of a one supply hop change
     // in merit starting from the highest merit.  Each tranche of merits can be processed and then
     // propagated to adjacent systems and then never handled again.
-    auto tranches = SupplyTranches();
+    auto tranches = SupplyTranches(system_to_supply_pod);
 
     timer.EnterSection("grind");
     DebugLogger() << "SupplyManager::Update() start grind.";
@@ -2022,7 +2124,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
             }
         }
 
-        merit_threshold = merit_threshold.OneJumpLessMerit();
+        merit_threshold.OneJumpLessMerit();
     }
 
     // Extract the information for each output map from system_to_supply_pod.
@@ -2106,7 +2208,6 @@ void SupplyManager::SupplyManagerImpl::Update() {
         obstructing the resource flow.  That is, the resource flow isn't limited
         by range, but by something blocking its flow. */
     /*std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>*/  m_supply_starlane_obstructed_traversals.clear();
-
     timer.EnterSection("update traversals");
     DebugLogger() << "SupplyManager::Update() traversals.";
     // std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>>
@@ -2388,6 +2489,10 @@ bool                                                    SupplyManager::SystemHas
 
 bool                                                    SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const
 { return pimpl->SystemHasFleetSupply(system_id, empire_id, include_allies); }
+
+const std::unordered_map<int, std::map<int, SupplySystemBonusTuple>>& SupplyManager::SystemBonuses() const {
+    return pimpl->SystemBonuses();
+}
 
 std::string                                             SupplyManager::Dump(int empire_id /*= ALL_EMPIRES*/) const
 { return pimpl->Dump(empire_id); }
