@@ -1712,6 +1712,9 @@ Exit
 ERR_CONNECT_TIMED_OUT
 Timed out while attempting to connect to server
 
+INTRO_CREDITS_LICENSE
+Released under
+
 
 ##
 ## Server Setup Screen

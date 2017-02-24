@@ -132,8 +132,9 @@
       <PERSON name="Jean-Charles Schmidt"     nick="Ouaz"             task="French Translation"/>
       <PERSON name=""                         nick="evzorge"          task="Russian Translation"/>
     </GROUP>
-    <GROUP name="INCLUDED CONTENT">
-      <PERSON name="Adam Evans"               nick="http://www.flickr.com/photos/8269775@N05"   task="Andromeda Galaxy (with h-alpha).jpg (modified)"/>
+    <GROUP name="EXTERNAL RESOURCES">
+      <RESOURCE author="Adam Evans"  license="CC-BY 2.0"  title="Andromeda Galaxy (with h-alpha).jpg"
+                source="http://www.flickr.com/photos/8269775@N05"  notes="used for galaxy picture background"/>
     </GROUP>
   </CREDITS>
 </XMLDoc>
