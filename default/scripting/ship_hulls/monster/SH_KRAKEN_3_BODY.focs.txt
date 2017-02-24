@@ -14,11 +14,11 @@ Hull
     buildCost = 1
     buildTime = 1
     Unproducible
+    tags = [ "PEDIA_HULL_MONSTER_KRAKEN" ]
     location = All
     effectsgroups = [
         [[MONSTER_MOVE_ALWAYS]]
         [[INFINITE_FUEL]]
-        
          EffectsGroup
             scope = Source
             activation = Source
@@ -26,7 +26,6 @@ Hull
                 SetMaxCapacity partname = "SR_TENTACLE" value = Value + min(Source.Age*0.3, 15)
                 SetCapacity partname = "SR_TENTACLE" value = Value + min(Source.Age*0.3, 15)
             ]
-        
         [[GOOD_VISION]]
     ]
     icon = ""

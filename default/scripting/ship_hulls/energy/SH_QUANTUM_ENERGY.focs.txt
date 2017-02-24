@@ -19,7 +19,7 @@ Hull
     ]
     buildCost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 5
-    tags = [ "ENERGY_HULL" ]
+    tags = [ "ENERGY_HULL" "PEDIA_HULL_LINE_ENERGY" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ENRG_COMP"

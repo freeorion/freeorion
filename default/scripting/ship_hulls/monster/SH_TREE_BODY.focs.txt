@@ -9,6 +9,7 @@ Hull
     buildCost = 1
     buildTime = 2
     Unproducible
+    tags = [ "PEDIA_HULL_MONSTER_TREE" ]
     location = All
     effectsgroups = [
         [[MODERATE_VISION]]

@@ -15,7 +15,7 @@ Hull
     buildCost = 1
     buildTime = 2
     Unproducible
-    tags = "UNOWNED_FRIENDLY"
+    tags = [ "UNOWNED_FRIENDLY" "PEDIA_HULL_MONSTER_GUARD" ]
     location = All
     effectsgroups = [
         [[UNOWNED_OWNED_VISION_BONUS(MODERATE,40,30)]]

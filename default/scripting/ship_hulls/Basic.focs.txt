@@ -10,6 +10,7 @@ Hull
     ]
     buildCost = 10.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "PEDIA_HULL_LINE_GENERIC" ]
     location = Contains And [
         Building name = "BLD_SHIPYARD_BASE"
         OwnedBy empire = Source.Owner
@@ -38,6 +39,7 @@ Hull
     ]
     buildCost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "PEDIA_HULL_LINE_GENERIC" ]
     location = Contains And [
         Building name = "BLD_SHIPYARD_BASE"
         OwnedBy empire = Source.Owner
@@ -67,6 +69,7 @@ Hull
     ]
     buildCost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
+    tags = [ "PEDIA_HULL_LINE_GENERIC" ]
     location = Contains And [
         Building name = "BLD_SHIPYARD_BASE"
         OwnedBy empire = Source.Owner

@@ -7,16 +7,16 @@ Hull
     structure = 5
     slots = [
         Slot type = External position = (0.20, 0.15)
-        Slot type = External position = (0.40, 0.15)        
+        Slot type = External position = (0.40, 0.15)
         Slot type = Internal position = (0.45, 0.50)
-        Slot type = Internal position = (0.55, 0.50)        
-        Slot type = External position = (0.80, 0.55)        
+        Slot type = Internal position = (0.55, 0.50)
+        Slot type = External position = (0.80, 0.55)
         Slot type = External position = (0.20, 0.75)
         Slot type = External position = (0.40, 0.75)
     ]
     buildCost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 6
-    tags = [ "ORGANIC_HULL" ]
+    tags = [ "ORGANIC_HULL" "PEDIA_HULL_LINE_ORGANIC" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_ORG_XENO_FAC"

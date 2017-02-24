@@ -13,7 +13,7 @@ Hull
     ]
     buildCost = 16.0 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildTime = 2
-    tags = [ "ASTEROID_HULL" ]
+    tags = [ "ASTEROID_HULL" "PEDIA_HULL_LINE_ASTEROIDS" ]
     location = And [
         Contains And [
             Building name = "BLD_SHIPYARD_BASE"
