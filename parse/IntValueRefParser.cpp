@@ -87,14 +87,12 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_rule<int> rule;
-
         name_token_rule     free_variable_name;
         name_token_rule     bound_variable_name;
-        rule                constant;
+        parse::value_ref_rule<int> constant;
         variable_rule<int>  free_variable;
         variable_rule<int>  bound_variable;
-        rule                simple;
+        parse::value_ref_rule<int> simple;
     };
 
     simple_int_parser_rules& get_simple_int_parser_rules() {
@@ -150,18 +148,16 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_rule<int> rule;
-
         statistic_rule<int> statistic_1;
         statistic_rule<int> statistic_2;
         statistic_rule<int> statistic;
-        rule                statistic_sub_value_ref;
+        parse::value_ref_rule<int> statistic_sub_value_ref;
         expression_rule<int> function_expr;
         expression_rule<int> exponential_expr;
         expression_rule<int> multiplicative_expr;
         expression_rule<int> additive_expr;
-        rule                expr;
-        rule                primary_expr;
+        parse::value_ref_rule<int> expr;
+        parse::value_ref_rule<int> primary_expr;
     };
 
     int_parser_rules& get_int_parser_rules() {

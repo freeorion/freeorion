@@ -55,17 +55,15 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_rule<PlanetSize> rule;
-
         name_token_rule variable_name;
-        rule            constant;
+        parse::value_ref_rule<PlanetSize> constant;
         variable_rule<PlanetSize> bound_variable;
-        rule            statistic_sub_value_ref;
+        parse::value_ref_rule<PlanetSize> statistic_sub_value_ref;
         statistic_rule<PlanetSize> statistic;
         expression_rule<PlanetSize> function_expr;
         expression_rule<PlanetSize> operated_expr;
-        rule            expr;
-        rule            primary_expr;
+        parse::value_ref_rule<PlanetSize> expr;
+        parse::value_ref_rule<PlanetSize> primary_expr;
     };
 }
 

@@ -56,17 +56,15 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_rule<StarType> rule;
-
         name_token_rule variable_name;
-        rule            constant;
+        parse::value_ref_rule<StarType> constant;
         variable_rule<StarType> bound_variable;
-        rule            statistic_sub_value_ref;
+        parse::value_ref_rule<StarType> statistic_sub_value_ref;
         statistic_rule<StarType> statistic;
         expression_rule<StarType> function_expr;
         expression_rule<StarType> operated_expr;
-        rule            expr;
-        rule            primary_expr;
+        parse::value_ref_rule<StarType> expr;
+        parse::value_ref_rule<StarType> primary_expr;
     };
 }
 

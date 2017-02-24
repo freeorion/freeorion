@@ -142,18 +142,16 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_rule<std::string> rule;
-
         name_token_rule bound_variable_name;
-        rule            constant;
-        rule            free_variable;
+        parse::value_ref_rule<std::string> constant;
+        parse::value_ref_rule<std::string> free_variable;
         variable_rule<std::string> bound_variable;
-        rule            statistic_sub_value_ref;
+        parse::value_ref_rule<std::string> statistic_sub_value_ref;
         statistic_rule<std::string> statistic;
         expression_rule<std::string> function_expr;
         expression_rule<std::string> operated_expr;
-        rule            expr;
-        rule            primary_expr;
+        parse::value_ref_rule<std::string> expr;
+        parse::value_ref_rule<std::string> primary_expr;
     };
 }
 

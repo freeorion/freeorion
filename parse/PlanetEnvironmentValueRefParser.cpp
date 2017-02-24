@@ -55,17 +55,15 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_rule<PlanetEnvironment> rule;
-
         name_token_rule variable_name;
-        rule            constant;
+        parse::value_ref_rule<PlanetEnvironment> constant;
         variable_rule<PlanetEnvironment> bound_variable;
-        rule            statistic_sub_value_ref;
+        parse::value_ref_rule<PlanetEnvironment> statistic_sub_value_ref;
         statistic_rule<PlanetEnvironment> statistic;
         expression_rule<PlanetEnvironment> function_expr;
         expression_rule<PlanetEnvironment> operated_expr;
-        rule            expr;
-        rule            primary_expr;
+        parse::value_ref_rule<PlanetEnvironment> expr;
+        parse::value_ref_rule<PlanetEnvironment> primary_expr;
     };
 }
 

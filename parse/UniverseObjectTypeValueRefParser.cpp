@@ -53,17 +53,15 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_rule<UniverseObjectType> rule;
-
         name_token_rule variable_name;
-        rule            constant;
+        parse::value_ref_rule<UniverseObjectType> constant;
         variable_rule<UniverseObjectType> bound_variable;
-        rule            statistic_sub_value_ref;
+        parse::value_ref_rule<UniverseObjectType> statistic_sub_value_ref;
         statistic_rule<UniverseObjectType> statistic;
         expression_rule<UniverseObjectType> function_expr;
         expression_rule<UniverseObjectType> operated_expr;
-        rule            expr;
-        rule            primary_expr;
+        parse::value_ref_rule<UniverseObjectType> expr;
+        parse::value_ref_rule<UniverseObjectType> primary_expr;
     };
 }
 

@@ -144,25 +144,23 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_rule<double> rule;
-
         name_token_rule     bound_variable_name;
         name_token_rule     free_variable_name;
-        rule                constant;
+        parse::value_ref_rule<double> constant;
         variable_rule<double> free_variable;
         variable_rule<double> bound_variable;
         statistic_rule<double> statistic_1;
         statistic_rule<double> statistic_2;
         statistic_rule<double> statistic;
-        rule                int_bound_variable_cast;
-        rule                int_statistic_cast;
-        rule                int_complex_variable_cast;
+        parse::value_ref_rule<double> int_bound_variable_cast;
+        parse::value_ref_rule<double> int_statistic_cast;
+        parse::value_ref_rule<double> int_complex_variable_cast;
         expression_rule<double> function_expr;
         expression_rule<double> exponential_expr;
         expression_rule<double> multiplicative_expr;
         expression_rule<double> additive_expr;
-        rule                expr;
-        rule                primary_expr;
+        parse::value_ref_rule<double> expr;
+        parse::value_ref_rule<double> primary_expr;
     };
 
     double_parser_rules& get_double_parser_rules() {
