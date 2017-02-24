@@ -973,25 +973,25 @@ std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id) 
     // ALL_EMPIRES and then the remainder.
     auto show_events_for_empire =
         [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id]
-        (boost::optional<int> show_empire) {
+        (boost::optional<int> show_empire_id) {
             int count;
-            int target_empire;
+            int target_empire_id;
             for (const auto& index_and_event : events_to_show) {
-                std::tie(target_empire, count) = index_and_event;
+                std::tie(target_empire_id, count) = index_and_event;
 
                 // Skip if this is not the particular attacker requested
-                if (show_empire && *show_empire != target_empire)
+                if (show_empire_id && *show_empire_id != target_empire_id)
                     continue;
 
                 // Skip if no particular empire was requested and this empire is the viewing
                 // empire or ALL_EMPIRES
-                if (!show_empire && (target_empire == viewing_empire_id || target_empire == ALL_EMPIRES))
+                if (!show_empire_id && (target_empire_id == viewing_empire_id || target_empire_id == ALL_EMPIRES))
                     continue;
 
                 auto count_str = std::to_string(index_and_event.second);
-                auto target_empire_link = EmpireLink(target_empire);
+                auto target_empire_link = EmpireLink(target_empire_id);
                 const auto&& target_link = FighterOrPublicNameLink(
-                    viewing_empire_id, INVALID_OBJECT_ID, target_empire);
+                    viewing_empire_id, INVALID_OBJECT_ID, target_empire_id);
 
                 if (count == 1) {
                     const std::string& template_str = UserString("ENC_COMBAT_FIGHTER_INCAPACITATED_STR");
