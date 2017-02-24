@@ -83,15 +83,14 @@ def get_invasion_fleets():
         # For planning and tracking base troopers under construction, we use a dictionary store in
         # foAI.foAIstate.qualifyingTroopBaseTargets, keyed by the invasion target planet ID.  We only store values
         # for invasion targets that appear likely to be suitable for base trooper use, and store a 2-item list.
-        # TODO: either actually use the first value to help sort out potential mission collisions in
-        # assign_invasion_fleets_to_invade(), or else simplify to a 1-item (source PID) entry
-        # TODO: or consider using a small class with named fields instead of this 2-item list, for clarity
-        # The first item in this list is the number of base troopers to be build, and the second entry will store the
-        # location ID where they are being built, once they are actually queued.  Initially, however, we simply enter
-        # INVALID_ID (-1) as the location, to flag this target as being reserved as a base-trooper invasion target.
-        # In the second pass, if/when we actually start construction, then we modify the record to indicate the source
-        # of the base troopers.  The expectation is that this will help us be able to better manage multiple base troop
-        # invasions in the same system that could be at the same time or at least overlap in time.
+        # The first item in this list is the ID of the planet where we expect to build the base troopers, and the second
+        # entry initially is set to INVALID_ID (-1).  The presence of this entry in qualifyingTroopBaseTargets
+        # flags this target as being reserved as a base-trooper invasion target.
+        # In the second pass, if/when we actually start construction, then we modify the record, replacing that second
+        # value with the ID of the planet where the troopers are actually being built.  (Right now that is always the
+        # same as the source planet originally identified, but we could consider reevaluating that, or use that second
+        # value to instead record how many base troopers have been queued, so that on later turns we can assess if the
+        # process got delayed & perhaps more troopers need to be queued).
 
         secure_ai_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
 
@@ -128,7 +127,7 @@ def get_invasion_fleets():
                     best_base_planet = pid2
                     best_trooper_count = troops_per_ship
             if best_base_planet != INVALID_ID:
-                foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [best_trooper_count, INVALID_ID])
+                foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [pid2, INVALID_ID])
 
         # Pass 2: for each target previously identified for base troopers, check that still qualifies and
         # check how many base troopers would be needed; if reasonable then queue up the troops and record this in
@@ -161,7 +160,7 @@ def get_invasion_fleets():
                 # don't immediately delete from qualifyingTroopBaseTargets or it will be opened up for regular troops
                 #del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
-            loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][1]
+            loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][0]
             best_base_trooper_here = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
             loc_planet = universe.getPlanet(loc)
             if best_base_trooper_here is None:  # shouldn't be possible at this point, but just to be safe
@@ -192,7 +191,8 @@ def get_invasion_fleets():
                 print "ruling out base invasion troopers for %s due to high number (%d) required." % (planet, n_bases)
                 del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
-            print "Invasion base planning, need %d troops at %d pership, will build %d ships." % ((p_troops + 1), troops_per_ship, n_bases)
+            print "Invasion base planning, need %d troops at %d pership, will build %d ships." % (
+                (planet_troops + 1), troops_per_ship, n_bases)
             retval = fo.issueEnqueueShipProductionOrder(col_design.id, loc)
             print "Enqueueing %d Troop Bases at %s for %s" % (n_bases, PlanetUtilsAI.planet_name_ids([loc]), PlanetUtilsAI.planet_name_ids([pid]))
             if retval != 0:
