@@ -935,6 +935,110 @@ void FighterLaunchEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchiv
 
 
 //////////////////////////////////////////
+///////// FightersDestroyedEvent ////
+//////////////////////////////////////////
+
+FightersDestroyedEvent::FightersDestroyedEvent() :
+    bout(-1),
+    events()
+{}
+
+FightersDestroyedEvent::FightersDestroyedEvent(int bout_) :
+    bout(bout_),
+    events()
+{}
+
+void FightersDestroyedEvent::AddEvent(int target_empire_)
+{ events[target_empire_] += 1; }
+
+std::string FightersDestroyedEvent::DebugString() const {
+    std::stringstream ss;
+    ss << "FightersDestroyedEvent: ";
+    for (const auto& index_and_event : events) {
+        ss << index_and_event.second << " repeated fighters from empire "
+           << index_and_event.first << " destroyed.";
+    }
+    return ss.str();
+}
+
+std::string FightersDestroyedEvent::CombatLogDescription(int viewing_empire_id) const {
+    if (events.empty())
+        return "";
+
+    const auto& events_to_show = events;
+    auto num_events_remaining = events.size();
+    std::stringstream ss;
+
+    // Use show_events_for_empire to show events in this order: viewing empire,
+    // ALL_EMPIRES and then the remainder.
+    auto show_events_for_empire =
+        [&ss, &num_events_remaining, &events_to_show, &viewing_empire_id]
+        (boost::optional<int> show_empire_id) {
+            int count;
+            int target_empire_id;
+            for (const auto& index_and_event : events_to_show) {
+                std::tie(target_empire_id, count) = index_and_event;
+
+                // Skip if this is not the particular attacker requested
+                if (show_empire_id && *show_empire_id != target_empire_id)
+                    continue;
+
+                // Skip if no particular empire was requested and this empire is the viewing
+                // empire or ALL_EMPIRES
+                if (!show_empire_id && (target_empire_id == viewing_empire_id || target_empire_id == ALL_EMPIRES))
+                    continue;
+
+                auto count_str = std::to_string(index_and_event.second);
+                auto target_empire_link = EmpireLink(target_empire_id);
+                const auto&& target_link = FighterOrPublicNameLink(
+                    viewing_empire_id, INVALID_OBJECT_ID, target_empire_id);
+
+                if (count == 1) {
+                    const std::string& template_str = UserString("ENC_COMBAT_FIGHTER_INCAPACITATED_STR");
+                    ss << str(FlexibleFormat(template_str) % target_empire_link % target_link);
+                }else {
+                    const std::string& template_str = UserString("ENC_COMBAT_FIGHTER_INCAPACITATED_REPEATED_STR");
+                    ss << str(FlexibleFormat(template_str) % count_str % target_empire_link % target_link);
+                }
+                if (--num_events_remaining > 0)
+                    ss << "\n";
+            }
+        };
+
+    // Sort the events by viewing empire, then ALL_EMPIRES and then other empires.
+    show_events_for_empire(viewing_empire_id);
+    show_events_for_empire(ALL_EMPIRES);
+    show_events_for_empire(boost::none);
+
+    return ss.str();
+}
+
+
+template <class Archive>
+void FightersDestroyedEvent::serialize(Archive& ar, const unsigned int version) {
+    ar & BOOST_SERIALIZATION_BASE_OBJECT_NVP(CombatEvent);
+    ar & BOOST_SERIALIZATION_NVP(bout)
+       & BOOST_SERIALIZATION_NVP(events);
+}
+
+BOOST_CLASS_VERSION(FightersDestroyedEvent, 4)
+BOOST_CLASS_EXPORT(FightersDestroyedEvent)
+
+template
+void FightersDestroyedEvent::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+
+template
+void FightersDestroyedEvent::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+
+template
+void FightersDestroyedEvent::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
+template
+void FightersDestroyedEvent::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+
+
+
+//////////////////////////////////////////
 ///////// WeaponsPlatformEvent /////////////
 //////////////////////////////////////////
 
