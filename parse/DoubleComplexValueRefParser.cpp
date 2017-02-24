@@ -19,7 +19,7 @@ namespace parse {
             static const std::string TOK_SPECIES_SPECIES_OPINION{"SpeciesSpeciesOpinion"};
 
             const parse::lexer& tok =                                                   parse::lexer::instance();
-            const int_rule& simple_int =                                                int_simple();
+            const parse::value_ref_rule<int>& simple_int = int_simple();
 
             part_capacity
                 = (

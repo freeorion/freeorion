@@ -170,7 +170,7 @@ namespace {
     }
 }
 
-const double_rule& double_constant()
+const parse::value_ref_rule<double>& double_constant()
 { return get_double_parser_rules().constant; }
 
 const name_token_rule& double_bound_variable_name()

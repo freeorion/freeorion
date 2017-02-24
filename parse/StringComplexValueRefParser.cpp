@@ -16,7 +16,7 @@ namespace parse {
             using phoenix::new_;
 
             const parse::lexer& tok =                                                   parse::lexer::instance();
-            const int_rule& simple_int =                                                int_simple();
+            const parse::value_ref_rule<int>& simple_int = int_simple();
 
 
             lowest_cost_enqueued_tech

@@ -30,9 +30,6 @@ typedef parse::detail::rule<
     const char* ()
 > name_token_rule;
 
-typedef parse::value_ref_rule<int> int_rule;
-typedef parse::value_ref_rule<double> double_rule;
-
 template <typename T>
 using variable_rule = parse::detail::rule<
     ValueRef::Variable<T>* (),
@@ -244,15 +241,15 @@ void initialize_numeric_expression_parsers(
 
 const reference_token_rule&                     variable_scope();
 const name_token_rule&                          container_type();
-const int_rule&                                 int_constant();
+const parse::value_ref_rule<int>&               int_constant();
 const name_token_rule&                          int_bound_variable_name();
 const variable_rule<int>&                       int_bound_variable();
 const name_token_rule&                          int_free_variable_name();
 const variable_rule<int>&                       int_free_variable();
 const statistic_rule<int>&                      int_var_statistic();
 const complex_variable_rule<int>&               int_var_complex();
-const int_rule&                                 int_simple();
-const double_rule&                              double_constant();
+const parse::value_ref_rule<int>&               int_simple();
+const parse::value_ref_rule<double>&            double_constant();
 const name_token_rule&                          double_bound_variable_name();
 const variable_rule<double>&                    double_bound_variable();
 const name_token_rule&                          double_free_variable_name();
