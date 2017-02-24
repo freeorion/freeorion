@@ -1,11 +1,9 @@
-#include "ConditionParserImpl.h"
-#include "Double.h"
-#include "EffectParser.h"
-#include "EnumParser.h"
-#include "Int.h"
-#include "Label.h"
 #include "Parse.h"
 #include "ParseImpl.h"
+
+#include "ConditionParserImpl.h"
+#include "EffectParser.h"
+#include "EnumParser.h"
 #include "ValueRefParser.h"
 
 #include "../universe/Effect.h"
@@ -40,7 +38,7 @@ namespace {
 
             start
                 =  -(
-                        parse::label(Tags_token)
+                        parse::detail::label(Tags_token)
                     >>  (
                             ('[' > +tok.string [ insert(_r1, _1) ] > ']')
                             |   tok.string [ insert(_r1, _1) ]
@@ -79,13 +77,13 @@ namespace {
 
             effects_group
                 =   tok.EffectsGroup_
-                > -(parse::label(Description_token)      > tok.string [ _g = _1 ])
-                >   parse::label(Scope_token)            > parse::detail::condition_parser [ _a = _1 ]
-                > -(parse::label(Activation_token)       > parse::detail::condition_parser [ _b = _1 ])
-                > -(parse::label(StackingGroup_token)    > tok.string [ _c = _1 ])
-                > -(parse::label(AccountingLabel_token)  > tok.string [ _e = _1 ])
-                > ((parse::label(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
-                >   parse::label(Effects_token)
+                > -(parse::detail::label(Description_token)      > tok.string [ _g = _1 ])
+                >   parse::detail::label(Scope_token)            > parse::detail::condition_parser [ _a = _1 ]
+                > -(parse::detail::label(Activation_token)       > parse::detail::condition_parser [ _b = _1 ])
+                > -(parse::detail::label(StackingGroup_token)    > tok.string [ _c = _1 ])
+                > -(parse::detail::label(AccountingLabel_token)  > tok.string [ _e = _1 ])
+                > ((parse::detail::label(Priority_token)         > tok.int_ [ _f = _1 ]) | eps [ _f = 100 ])
+                >   parse::detail::label(Effects_token)
                 >   (
                             ('[' > +parse::effect_parser() [ push_back(_d, _1) ] > ']')
                         |    parse::effect_parser() [ push_back(_d, _1) ]
@@ -184,8 +182,8 @@ namespace {
 
             start
                 =    tok.Item_
-                >    parse::label(Type_token) > parse::unlockable_item_type_enum() [ _a = _1 ]
-                >    parse::label(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
+                >    parse::detail::label(Type_token) > parse::unlockable_item_type_enum() [ _a = _1 ]
+                >    parse::detail::label(Name_token) > tok.string [ _val = construct<ItemSpec>(_a, _1) ]
                 ;
 
             start.name("ItemSpec");
@@ -206,24 +204,24 @@ namespace parse {
         qi::_val_type _val;
         using phoenix::static_cast_;
 
-        int_
+        detail::int_
             =    '-' >> tok.int_ [ _val = -_1 ]
             |    tok.int_ [ _val = _1 ]
             ;
 
-        double_
+        detail::double_
             =    '-' >> tok.int_ [ _val = -static_cast_<double>(_1) ]
             |    tok.int_ [ _val = static_cast_<double>(_1) ]
             |    '-' >> tok.double_ [ _val = -_1 ]
             |    tok.double_ [ _val = _1 ]
             ;
 
-        int_.name("integer");
-        double_.name("real number");
+        detail::int_.name("integer");
+        detail::double_.name("real number");
 
 #if DEBUG_PARSERS
-        debug(int_);
-        debug(double_);
+        debug(detail::int_);
+        debug(detail::double_);
 #endif
 
         int_value_ref();
@@ -552,6 +550,29 @@ namespace parse {
     }
 
     namespace detail {
+        double_rule double_;
+
+        int_rule int_;
+
+        label_rule& label(const char* name) {
+            static const bool PARSING_LABELS_OPTIONAL = false;
+            static std::map<const char*, label_rule> rules;
+            std::map<const char*, label_rule>::iterator it = rules.find(name);
+            if (it == rules.end()) {
+                const lexer& l = lexer::instance();
+                label_rule& retval = rules[name];
+                if (PARSING_LABELS_OPTIONAL) {
+                    retval = -(l.name_token(name) >> '=');
+                } else {
+                    retval =  (l.name_token(name) >> '=');
+                }
+                retval.name(std::string(name) + " =");
+                return retval;
+            } else {
+                return it->second;
+            }
+        }
+
         tags_rule& tags_parser() {
             static tags_rules rules;
             return rules.start;

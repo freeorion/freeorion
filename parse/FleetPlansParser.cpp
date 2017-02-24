@@ -1,11 +1,12 @@
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
 
 #include "../universe/UniverseGenerator.h"
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -33,8 +34,8 @@ namespace {
 
             fleet_plan
                 =    tok.Fleet_
-                >    parse::label(Name_token) > tok.string [ _a = _1 ]
-                >    parse::label(Ships_token)
+                >    parse::detail::label(Name_token) > tok.string [ _a = _1 ]
+                >    parse::detail::label(Ships_token)
                 >    (
                             ('[' > +tok.string [ push_back(_b, _1) ] > ']')
                         |    tok.string [ push_back(_b, _1) ]

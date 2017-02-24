@@ -1,8 +1,7 @@
 #include "ConditionParserImpl.h"
 
-#include "ValueRefParser.h"
-#include "Label.h"
 #include "ParseImpl.h"
+#include "ValueRefParser.h"
 #include "../universe/Condition.h"
 #include "../universe/Enums.h"
 
@@ -30,31 +29,31 @@ namespace {
 
             has_special_capacity
                 =   (   tok.HasSpecialCapacity_
-                >       parse::label(Name_token) >  parse::string_value_ref() [ _c = _1 ]
-                >     -(parse::label(Low_token)  >  parse::double_value_ref() [ _a = _1 ] )
-                >     -(parse::label(High_token) >  parse::double_value_ref() [ _b = _1 ] )
+                >       parse::detail::label(Name_token) >  parse::string_value_ref() [ _c = _1 ]
+                >     -(parse::detail::label(Low_token)  >  parse::double_value_ref() [ _a = _1 ] )
+                >     -(parse::detail::label(High_token) >  parse::double_value_ref() [ _b = _1 ] )
                     ) [ _val = new_<Condition::HasSpecial>(_c, _a, _b) ]
                 ;
 
             within_distance
                 =   tok.WithinDistance_
-                >   parse::label(Distance_token)  > parse::double_value_ref() [ _a = _1 ]
-                >   parse::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Distance_token)  > parse::double_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::WithinDistance>(_a, _1) ]
                 ;
 
             within_starlane_jumps
                 =   tok.WithinStarlaneJumps_
-                >   parse::label(Jumps_token)     > parse::flexible_int_value_ref() [ _a = _1 ]
-                >   parse::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Jumps_token)     > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::WithinStarlaneJumps>(_a, _1) ]
                 ;
 
             number
                 =   tok.Number_
-                > -(parse::label(Low_token)   >  parse::flexible_int_value_ref() [ _a = _1 ])
-                > -(parse::label(High_token)  >  parse::flexible_int_value_ref() [ _b = _1 ])
-                >   parse::label(Condition_token) > parse::detail::condition_parser
+                > -(parse::detail::label(Low_token)   >  parse::flexible_int_value_ref() [ _a = _1 ])
+                > -(parse::detail::label(High_token)  >  parse::flexible_int_value_ref() [ _b = _1 ])
+                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::Number>(_a, _b, _1) ]
                 ;
 
@@ -95,22 +94,22 @@ namespace {
 
             turn
                 =  (tok.Turn_
-                > -(parse::label(Low_token)  > (parse::flexible_int_value_ref() [ _a = _1 ]))
-                > -(parse::label(High_token) > (parse::flexible_int_value_ref() [ _b = _1 ])))
+                > -(parse::detail::label(Low_token)  > (parse::flexible_int_value_ref() [ _a = _1 ]))
+                > -(parse::detail::label(High_token) > (parse::flexible_int_value_ref() [ _b = _1 ])))
                 [ _val = new_<Condition::Turn>(_a, _b) ]
                 ;
 
             created_on_turn
                 =  (tok.CreatedOnTurn_
-                > -(parse::label(Low_token)  > parse::flexible_int_value_ref() [ _a = _1 ])
-                > -(parse::label(High_token) > parse::flexible_int_value_ref() [ _b = _1 ]))
+                > -(parse::detail::label(Low_token)  > parse::flexible_int_value_ref() [ _a = _1 ])
+                > -(parse::detail::label(High_token) > parse::flexible_int_value_ref() [ _b = _1 ]))
                 [ _val = new_<Condition::CreatedOnTurn>(_a, _b) ]
                 ;
 
             number_of1
                 =   tok.NumberOf_
-                >   parse::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
-                >   parse::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _1) ]
                 ;
 
@@ -119,9 +118,9 @@ namespace {
                     |   tok.MinimumNumberOf_ [ _b = Condition::SORT_MIN ]
                     |   tok.ModeNumberOf_    [ _b = Condition::SORT_MODE ]
                     )
-                >   parse::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
-                >   parse::label(SortKey_token)   > parse::double_value_ref() [ _c = _1 ]
-                >   parse::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Number_token)    > parse::flexible_int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(SortKey_token)   > parse::double_value_ref() [ _c = _1 ]
+                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::SortedNumberOf>(_a, _c, _b, _1) ]
                 ;
 
@@ -132,27 +131,27 @@ namespace {
 
             random
                 =   tok.Random_
-                >   parse::label(Probability_token) > parse::double_value_ref()
+                >   parse::detail::label(Probability_token) > parse::double_value_ref()
                 [ _val = new_<Condition::Chance>(_1) ]
                 ;
 
             owner_stockpile
                 =   tok.OwnerTradeStockpile_ [ _a = RE_TRADE ]
-                >   parse::label(Low_token)  > parse::double_value_ref() [ _b = _1 ]
-                >   parse::label(High_token) > parse::double_value_ref()
+                >   parse::detail::label(Low_token)  > parse::double_value_ref() [ _b = _1 ]
+                >   parse::detail::label(High_token) > parse::double_value_ref()
                 [ _val = new_<Condition::EmpireStockpileValue>(_a, _b, _1) ]
                 ;
 
             resource_supply_connected
                 =   tok.ResourceSupplyConnected_
-                >   parse::label(Empire_token)    > parse::int_value_ref() [ _a = _1 ]
-                >   parse::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Empire_token)    > parse::int_value_ref() [ _a = _1 ]
+                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::ResourceSupplyConnectedByEmpire>(_a, _1) ]
                 ;
 
             can_add_starlane
                 =   tok.CanAddStarlanesTo_
-                >   parse::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::CanAddStarlaneConnection>(_1) ]
                 ;
 

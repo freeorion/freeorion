@@ -1,15 +1,14 @@
-#include "ConditionParserImpl.h"
-#include "Double.h"
-#include "EnumParser.h"
-#include "Int.h"
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
+#include "EnumParser.h"
+#include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
 #include "CommonParams.h"
 
 #include "../universe/Building.h"
 #include "../universe/Enums.h"
+
 
 #define DEBUG_PARSERS 0
 
@@ -52,13 +51,13 @@ namespace {
 
             building_type
                 =   tok.BuildingType_
-                >   parse::label(Name_token)                > tok.string        [ _a = _1 ]
-                >   parse::label(Description_token)         > tok.string        [ _b = _1 ]
-                >   (   parse::label(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
+                >   parse::detail::label(Name_token)                > tok.string        [ _a = _1 ]
+                >   parse::detail::label(Description_token)         > tok.string        [ _b = _1 ]
+                >   (   parse::detail::label(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
                     |   eps [ _d = CR_CAPTURE ]
                     )
                 >   parse::detail::common_params_parser() [ _c = _1 ]
-                >   parse::label(Icon_token)               > tok.string
+                >   parse::detail::label(Icon_token)      > tok.string
                 [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _1)) ]
                 ;
 

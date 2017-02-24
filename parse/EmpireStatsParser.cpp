@@ -1,9 +1,10 @@
-#include "ValueRefParser.h"
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
+#include "ValueRefParser.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 #if DEBUG_PARSERS
@@ -31,8 +32,8 @@ namespace {
 
             stat
                 =   tok.Statistic_
-                >   parse::label(Name_token)    > tok.string [ _a = _1 ]
-                >   parse::label(Value_token)   > parse::double_value_ref()
+                >   parse::detail::label(Name_token)    > tok.string [ _a = _1 ]
+                >   parse::detail::label(Value_token)   > parse::double_value_ref()
                 [ _val = construct<std::pair<std::string, ValueRef::ValueRefBase<double>*> >(_a, _1) ]
                 ;
 

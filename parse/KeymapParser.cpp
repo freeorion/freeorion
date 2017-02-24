@@ -1,10 +1,11 @@
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
 
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -59,8 +60,8 @@ namespace {
 
             keymap
                 =   tok.Keymap_
-                >   parse::label(Name_token) > tok.string [ _a = _1 ]
-                >   parse::label(Keys_token)
+                >   parse::detail::label(Name_token) > tok.string [ _a = _1 ]
+                >   parse::detail::label(Keys_token)
                 >   ( '[' > *(int_pair(_b)) > ']' )
                     [ insert_key_map(_r1, construct<NamedKeymaps::value_type>(_a, _b)) ]
                 ;

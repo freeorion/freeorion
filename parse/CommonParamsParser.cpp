@@ -2,14 +2,16 @@
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
 
 #include "CommonParams.h"
-#include "Label.h"
+
+#include "ParseImpl.h"
+#include "EnumParser.h"
 #include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
-#include "EnumParser.h"
-#include "ParseImpl.h"
+
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 namespace phoenix = boost::phoenix;
 
@@ -46,18 +48,18 @@ namespace parse { namespace detail {
                 ;
 
             location
-                =    (parse::label(Location_token) > parse::detail::condition_parser [ _r1 = _1 ])
+                =    (label(Location_token) > condition_parser [ _r1 = _1 ])
                 |     eps [ _r1 = new_<Condition::All>() ]
                 ;
 
             enqueue_location
-                =    (parse::label(EnqueueLocation_token) > parse::detail::condition_parser [ _r1 = _1 ])
+                =    (label(EnqueueLocation_token) > condition_parser [ _r1 = _1 ])
                 |     eps [ _r1 = new_<Condition::All>() ]
                 ;
 
             exclusions
                 =  -(
-                        parse::label(Exclusions_token)
+                        label(Exclusions_token)
                     >>  (
                             ('[' > +tok.string [ insert(_r1, _1) ] > ']')
                             |   tok.string [ insert(_r1, _1) ]
@@ -67,27 +69,27 @@ namespace parse { namespace detail {
 
             more_common
                 =
-                (   parse::label(Name_token)        > tok.string [ _a = _1 ]
-                >   parse::label(Description_token) > tok.string [ _b = _1 ]
+                (   label(Name_token)        > tok.string [ _a = _1 ]
+                >   label(Description_token) > tok.string [ _b = _1 ]
                 >   exclusions(_c)
                 ) [ _val = construct<MoreCommonParams>(_a, _b, _c) ]
                 ;
 
             common
                 =
-                (   parse::label(BuildCost_token)  > parse::double_value_ref() [ _a = _1 ]
-                >   parse::label(BuildTime_token)  > parse::flexible_int_value_ref() [ _b = _1 ]
+                (   label(BuildCost_token)  > parse::double_value_ref() [ _a = _1 ]
+                >   label(BuildTime_token)  > parse::flexible_int_value_ref() [ _b = _1 ]
                 >   producible                                          [ _c = _1 ]
                 >   parse::detail::tags_parser()(_d)
                 >   location(_e)
                 >   enqueue_location(_i)
                 >  -consumption(_g, _h)
-                > -(parse::label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
+                > -(label(EffectsGroups_token)> parse::detail::effects_group_parser() [ _f = _1 ])
                 ) [ _val = construct<CommonParams>(_a, _b, _c, _d, _e, _f, _g, _h, _i) ]
                 ;
 
             consumption
-                =   parse::label(Consumption_token)
+                =   label(Consumption_token)
                 > (
                         consumable_meter(_r1, _r2)
                     |   consumable_special(_r1, _r2)
@@ -105,9 +107,9 @@ namespace parse { namespace detail {
             consumable_special
                 =   tok.Special_
                 > (
-                    parse::label(Name_token)        > tok.string [ _b = _1 ]
-                >   parse::label(Consumption_token) > parse::double_value_ref() [ _c = _1 ]
-                > -(parse::label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
+                    label(Name_token)        > tok.string [ _b = _1 ]
+                >   label(Consumption_token) > parse::double_value_ref() [ _c = _1 ]
+                > -(label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
                   )
                 [ insert(_r2, construct<special_consumable_map_value_type>(_b, construct<val_cond_pair>(_c, _d))) ]
                 ;
@@ -116,8 +118,8 @@ namespace parse { namespace detail {
             consumable_meter
                 = (
                     parse::non_ship_part_meter_type_enum() [ _a = _1 ]
-                >   parse::label(Consumption_token) > parse::double_value_ref() [ _c = _1 ]
-                > -(parse::label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
+                >   label(Consumption_token) > parse::double_value_ref() [ _c = _1 ]
+                > -(label(Condition_token)   > parse::detail::condition_parser [ _d = _1 ])
                   )
                 [ insert(_r1, construct<meter_consumable_map_value_type>(_a, construct<val_cond_pair>(_c, _d))) ]
                 ;

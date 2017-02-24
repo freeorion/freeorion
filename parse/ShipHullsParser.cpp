@@ -1,12 +1,11 @@
 #define PHOENIX_LIMIT 11
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
 
-#include "ConditionParserImpl.h"
-#include "Double.h"
-#include "EnumParser.h"
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
+#include "EnumParser.h"
+#include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
 #include "CommonParams.h"
 
@@ -14,6 +13,7 @@
 #include "../universe/ShipDesign.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -65,24 +65,24 @@ namespace {
             using phoenix::insert;
 
             hull_stats
-                =   parse::label(Speed_token)       >   parse::double_ [ _a = _1 ]
-                >   parse::label(Fuel_token)        >   parse::double_ [ _c = _1 ]
-                >   parse::label(Stealth_token)     >   parse::double_ [ _d = _1 ]
-                >   parse::label(Structure_token)   >   parse::double_
+                =   parse::detail::label(Speed_token)       >   parse::detail::double_ [ _a = _1 ]
+                >   parse::detail::label(Fuel_token)        >   parse::detail::double_ [ _c = _1 ]
+                >   parse::detail::label(Stealth_token)     >   parse::detail::double_ [ _d = _1 ]
+                >   parse::detail::label(Structure_token)   >   parse::detail::double_
                     [ _val = construct<HullTypeStats>(_c, _a, _d, _1) ]
                 ;
 
             slot
                 =   tok.Slot_
-                >   parse::label(Type_token) > parse::ship_slot_type_enum() [ _a = _1 ]
-                >   parse::label(Position_token)
-                >   '(' > parse::double_ [ _b = _1 ] > ',' > parse::double_ [ _c = _1 ] > lit(')')
+                >   parse::detail::label(Type_token) > parse::ship_slot_type_enum() [ _a = _1 ]
+                >   parse::detail::label(Position_token)
+                >   '(' > parse::detail::double_ [ _b = _1 ] > ',' > parse::detail::double_ [ _c = _1 ] > lit(')')
                     [ _val = construct<HullType::Slot>(_a, _b, _c) ]
                 ;
 
             slots
                 =  -(
-                        parse::label(Slots_token)
+                        parse::detail::label(Slots_token)
                     >   (
                                 ('[' > +slot [ push_back(_r1, _1) ] > ']')
                             |    slot [ push_back(_r1, _1) ]
@@ -96,8 +96,8 @@ namespace {
                 >   hull_stats                                  [ _c = _1 ]
                 >  -slots(_e)
                 >   parse::detail::common_params_parser()       [ _d = _1 ]
-                >   parse::label(Icon_token)    > tok.string    [ _f = _1 ]
-                >   parse::label(Graphic_token) > tok.string
+                >   parse::detail::label(Icon_token)    > tok.string    [ _f = _1 ]
+                >   parse::detail::label(Graphic_token) > tok.string
                     [ insert_hull(_r1, new_<HullType>(_c, _d, _a, _e, _f, _1)) ]
                 ;
 

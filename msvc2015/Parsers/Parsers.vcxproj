@@ -150,7 +150,6 @@
     <ClCompile Include="..\..\parse\ConditionParser5.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser6.cpp" />
     <ClCompile Include="..\..\parse\ConditionParser7.cpp" />
-    <ClCompile Include="..\..\parse\Double.cpp" />
     <ClCompile Include="..\..\parse\DoubleComplexValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp">
       <DisableSpecificWarnings Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">4091;4099;4101;4146;4244;4251;4258;4267;4275;4311;4312;4351;4396;4503;4800;4996;4018</DisableSpecificWarnings>
@@ -166,12 +165,10 @@
     <ClCompile Include="..\..\parse\EnumParser.cpp" />
     <ClCompile Include="..\..\parse\FieldsParser.cpp" />
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp" />
-    <ClCompile Include="..\..\parse\Int.cpp" />
     <ClCompile Include="..\..\parse\IntComplexValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\IntValueRefParser.cpp" />
     <ClCompile Include="..\..\parse\ItemsParser.cpp" />
     <ClCompile Include="..\..\parse\KeymapParser.cpp" />
-    <ClCompile Include="..\..\parse\Label.cpp" />
     <ClCompile Include="..\..\parse\Lexer.cpp" />
     <ClCompile Include="..\..\parse\MonsterFleetPlansParser.cpp" />
     <ClCompile Include="..\..\parse\Parse.cpp">
@@ -198,12 +195,9 @@
     <ClInclude Include="..\..\parse\CommonParams.h" />
     <ClInclude Include="..\..\parse\ConditionParser.h" />
     <ClInclude Include="..\..\parse\ConditionParserImpl.h" />
-    <ClInclude Include="..\..\parse\Double.h" />
     <ClInclude Include="..\..\parse\EffectParser.h" />
     <ClInclude Include="..\..\parse\EffectParserImpl.h" />
     <ClInclude Include="..\..\parse\EnumParser.h" />
-    <ClInclude Include="..\..\parse\Int.h" />
-    <ClInclude Include="..\..\parse\Label.h" />
     <ClInclude Include="..\..\parse\Lexer.h" />
     <ClInclude Include="..\..\parse\Parse.h" />
     <ClInclude Include="..\..\parse\ParseImpl.h" />

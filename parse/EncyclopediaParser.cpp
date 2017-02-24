@@ -1,10 +1,11 @@
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
 
 #include "../universe/Encyclopedia.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -41,11 +42,11 @@ namespace {
 
             article
                 =    tok.Article_
-                >    parse::label(Name_token)                > tok.string [ _a = _1 ]
-                >    parse::label(Category_token)            > tok.string [ _b = _1 ]
-                >    parse::label(Short_Description_token)   > tok.string [ _c = _1 ]
-                >    parse::label(Description_token)         > tok.string [ _d = _1 ]
-                >    parse::label(Icon_token)                > tok.string
+                >    parse::detail::label(Name_token)                > tok.string [ _a = _1 ]
+                >    parse::detail::label(Category_token)            > tok.string [ _b = _1 ]
+                >    parse::detail::label(Short_Description_token)   > tok.string [ _c = _1 ]
+                >    parse::detail::label(Description_token)         > tok.string [ _d = _1 ]
+                >    parse::detail::label(Icon_token)                > tok.string
                     [ insert(_r1, construct<EncyclopediaArticle>(_a, _b, _c, _d, _1)) ]
                 ;
 

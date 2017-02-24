@@ -71,9 +71,6 @@
 		3A1BF3EB1748875300812237 /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1BF3EA1748875200812237 /* Version.cpp */; };
 		3A5105541748D68B00DC258B /* i18n.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105521748D68B00DC258B /* i18n.cpp */; };
 		3A5105571748D6A700DC258B /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105551748D6A600DC258B /* Logger.cpp */; };
-		3A76044E17499F1500363653 /* Double.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936DF147E3B1B00B840A5 /* Double.cpp */; };
-		3A76044F17499F1E00363653 /* Int.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936E8147E3B1B00B840A5 /* Int.cpp */; };
-		3A76045017499F1E00363653 /* Label.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936EC147E3B1B00B840A5 /* Label.cpp */; };
 		3A76046217499F3000363653 /* PlanetEnvironmentValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F5147E3B1B00B840A5 /* PlanetEnvironmentValueRefParser.cpp */; };
 		3A76046317499F3D00363653 /* PlanetSizeValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F6147E3B1B00B840A5 /* PlanetSizeValueRefParser.cpp */; };
 		3A76046417499F4C00363653 /* PlanetTypeValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F7147E3B1B00B840A5 /* PlanetTypeValueRefParser.cpp */; };
@@ -870,20 +867,14 @@
 		825936DC147E3B1B00B840A5 /* ConditionParser2.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser2.cpp; sourceTree = "<group>"; };
 		825936DD147E3B1B00B840A5 /* ConditionParser3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser3.cpp; sourceTree = "<group>"; };
 		825936DE147E3B1B00B840A5 /* ConditionParserImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConditionParserImpl.h; sourceTree = "<group>"; };
-		825936DF147E3B1B00B840A5 /* Double.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Double.cpp; sourceTree = "<group>"; };
-		825936E0147E3B1B00B840A5 /* Double.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Double.h; sourceTree = "<group>"; };
 		825936E1147E3B1B00B840A5 /* DoubleValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DoubleValueRefParser.cpp; sourceTree = "<group>"; };
 		825936E2147E3B1B00B840A5 /* EffectParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EffectParser.cpp; sourceTree = "<group>"; };
 		825936E3147E3B1B00B840A5 /* EffectParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EffectParser.h; sourceTree = "<group>"; };
 		825936E4147E3B1B00B840A5 /* EnumParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EnumParser.cpp; sourceTree = "<group>"; };
 		825936E5147E3B1B00B840A5 /* EnumParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumParser.h; sourceTree = "<group>"; };
 		825936E6147E3B1B00B840A5 /* FleetPlansParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FleetPlansParser.cpp; sourceTree = "<group>"; };
-		825936E8147E3B1B00B840A5 /* Int.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Int.cpp; sourceTree = "<group>"; };
-		825936E9147E3B1B00B840A5 /* Int.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Int.h; sourceTree = "<group>"; };
 		825936EA147E3B1B00B840A5 /* IntValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntValueRefParser.cpp; sourceTree = "<group>"; };
 		825936EB147E3B1B00B840A5 /* ItemsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ItemsParser.cpp; sourceTree = "<group>"; };
-		825936EC147E3B1B00B840A5 /* Label.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Label.cpp; sourceTree = "<group>"; };
-		825936ED147E3B1B00B840A5 /* Label.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Label.h; sourceTree = "<group>"; };
 		825936EE147E3B1B00B840A5 /* Lexer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Lexer.cpp; sourceTree = "<group>"; };
 		825936EF147E3B1B00B840A5 /* Lexer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Lexer.h; sourceTree = "<group>"; };
 		825936F0147E3B1B00B840A5 /* MonsterFleetPlansParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonsterFleetPlansParser.cpp; sourceTree = "<group>"; };
@@ -1965,8 +1956,6 @@
 				82D2D9A21838C8340011C212 /* ConditionParser6.cpp */,
 				82B3265219B603C1005082AC /* ConditionParser7.cpp */,
 				825936DE147E3B1B00B840A5 /* ConditionParserImpl.h */,
-				825936DF147E3B1B00B840A5 /* Double.cpp */,
-				825936E0147E3B1B00B840A5 /* Double.h */,
 				82D563D51A6AEBD6007E1131 /* DoubleComplexValueRefParser.cpp */,
 				825936E1147E3B1B00B840A5 /* DoubleValueRefParser.cpp */,
 				825936E2147E3B1B00B840A5 /* EffectParser.cpp */,
@@ -1983,14 +1972,10 @@
 				825936E5147E3B1B00B840A5 /* EnumParser.h */,
 				8250FDE215FCEFC400523C1C /* FieldsParser.cpp */,
 				825936E6147E3B1B00B840A5 /* FleetPlansParser.cpp */,
-				825936E8147E3B1B00B840A5 /* Int.cpp */,
-				825936E9147E3B1B00B840A5 /* Int.h */,
 				8246FECF194D8F83008C07B5 /* IntComplexValueRefParser.cpp */,
 				825936EA147E3B1B00B840A5 /* IntValueRefParser.cpp */,
 				825936EB147E3B1B00B840A5 /* ItemsParser.cpp */,
 				82D68C6C15F4F720006B772D /* KeymapParser.cpp */,
-				825936EC147E3B1B00B840A5 /* Label.cpp */,
-				825936ED147E3B1B00B840A5 /* Label.h */,
 				825936EE147E3B1B00B840A5 /* Lexer.cpp */,
 				825936EF147E3B1B00B840A5 /* Lexer.h */,
 				825936F0147E3B1B00B840A5 /* MonsterFleetPlansParser.cpp */,
@@ -2644,7 +2629,6 @@
 				3A7604B21749A15500363653 /* ConditionParser3.cpp in Sources */,
 				3A7604B31749A15500363653 /* ConditionParser4.cpp in Sources */,
 				82E944E91B04C726004F3343 /* EffectParser5.cpp in Sources */,
-				3A76044E17499F1500363653 /* Double.cpp in Sources */,
 				3A7604AE1749A14600363653 /* DoubleValueRefParser.cpp in Sources */,
 				3A7604A91749A13400363653 /* EffectParser.cpp in Sources */,
 				3A7604AA1749A13400363653 /* EffectParser1.cpp in Sources */,
@@ -2655,11 +2639,9 @@
 				3A7604A71749A11800363653 /* EnumParser.cpp in Sources */,
 				3A7604A61749A10D00363653 /* FieldsParser.cpp in Sources */,
 				3A7604A51749A10100363653 /* FleetPlansParser.cpp in Sources */,
-				3A76044F17499F1E00363653 /* Int.cpp in Sources */,
 				3A7604A41749A0F200363653 /* IntValueRefParser.cpp in Sources */,
 				3A7604A31749A0E600363653 /* ItemsParser.cpp in Sources */,
 				3A7604A21749A0D700363653 /* KeymapParser.cpp in Sources */,
-				3A76045017499F1E00363653 /* Label.cpp in Sources */,
 				3A7604A11749A0CB00363653 /* Lexer.cpp in Sources */,
 				3A7604A01749A0BF00363653 /* MonsterFleetPlansParser.cpp in Sources */,
 				82C07470149DE72D00E76876 /* Parse.cpp in Sources */,

@@ -1,12 +1,12 @@
-#include "Double.h"
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
 
 #include "../universe/Condition.h"
 #include "../universe/Field.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -49,12 +49,12 @@ namespace {
 
             field
                 =   tok.FieldType_
-                >   parse::label(Name_token)                > tok.string [ _a = _1 ]
-                >   parse::label(Description_token)         > tok.string [ _b = _1 ]
-                >   parse::label(Stealth_token)             > parse::double_ [ _c = _1]
+                >   parse::detail::label(Name_token)                > tok.string [ _a = _1 ]
+                >   parse::detail::label(Description_token)         > tok.string [ _b = _1 ]
+                >   parse::detail::label(Stealth_token)             > parse::detail::double_ [ _c = _1]
                 >   parse::detail::tags_parser()(_d)
-                > -(parse::label(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
-                >   parse::label(Graphic_token)             > tok.string
+                > -(parse::detail::label(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
+                >   parse::detail::label(Graphic_token)             > tok.string
                 [ insert(_r1, new_<FieldType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 

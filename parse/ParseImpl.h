@@ -26,6 +26,23 @@ namespace parse { namespace detail {
         locals
     >;
 
+
+    using double_rule = detail::rule<
+        double ()
+    >;
+    extern double_rule double_;
+
+
+    using int_rule = detail::rule<
+        int ()
+    >;
+    extern int_rule int_;
+
+
+    typedef detail::rule<> label_rule;
+    label_rule& label(const char* name);
+
+
     typedef rule<
         void (std::set<std::string>&)
     > tags_rule;

@@ -1,8 +1,7 @@
 #include "ConditionParserImpl.h"
 
-#include "ValueRefParser.h"
-#include "Label.h"
 #include "ParseImpl.h"
+#include "ValueRefParser.h"
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -33,25 +32,25 @@ namespace {
 
             ordered_bombarded_by
                 =    tok.OrderedBombardedBy_
-                >   -parse::label(Condition_token) > parse::detail::condition_parser
+                >   -parse::detail::label(Condition_token) > parse::detail::condition_parser
                      [ _val = new_<Condition::OrderedBombarded>(_1) ]
                 ;
 
             contains
                 =    tok.Contains_
-                >   -parse::label(Condition_token) > parse::detail::condition_parser
+                >   -parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::Contains>(_1) ]
                 ;
 
             contained_by
                 =    tok.ContainedBy_
-                >   -parse::label(Condition_token) > parse::detail::condition_parser
+                >   -parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::ContainedBy>(_1) ]
                 ;
 
             star_type
                 =    tok.Star_
-                >    parse::label(Type_token)
+                >    parse::detail::label(Type_token)
                 >    (
                             ('[' > +parse::star_type_value_ref() [ push_back(_a, _1) ] > ']')
                         |    parse::star_type_value_ref() [ push_back(_a, _1) ]
@@ -61,7 +60,7 @@ namespace {
 
             location
                 =   (tok.Location_
-                >    parse::label(Type_token) >
+                >    parse::detail::label(Type_token) >
                     (
                         tok.Building_   [ _a = Condition::CONTENT_BUILDING ]
                     |   tok.Species_    [ _a = Condition::CONTENT_SPECIES ]
@@ -70,8 +69,8 @@ namespace {
                     |   tok.Special_    [ _a = Condition::CONTENT_SPECIAL ]
                     |   tok.Focus_      [ _a = Condition::CONTENT_FOCUS ]
                     )
-                >    parse::label(Name_token)   > parse::string_value_ref() [ _b = _1 ]
-                >  -(parse::label(Name_token)   > parse::string_value_ref() [ _c = _1 ]))
+                >    parse::detail::label(Name_token)   > parse::string_value_ref() [ _b = _1 ]
+                >  -(parse::detail::label(Name_token)   > parse::string_value_ref() [ _c = _1 ]))
                 [ _val = new_<Condition::Location>(_a, _b, _c) ]
                 ;
 

@@ -1,18 +1,19 @@
 #define PHOENIX_LIMIT 11
 #define BOOST_RESULT_OF_NUM_ARGS PHOENIX_LIMIT
 
-#include "ConditionParserImpl.h"
-#include "EnumParser.h"
-#include "Double.h"
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
+#include "EnumParser.h"
 #include "ValueRefParser.h"
+#include "ConditionParserImpl.h"
 #include "CommonParams.h"
+
 #include "../universe/ShipDesign.h"
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -63,7 +64,7 @@ namespace {
 
             slots
                 =  -(
-                        parse::label(MountableSlotTypes_token)
+                        parse::detail::label(MountableSlotTypes_token)
                     >   (
                             ('[' > +parse::ship_slot_type_enum() [ push_back(_r1, _1) ] > ']')
                         |    parse::ship_slot_type_enum() [ push_back(_r1, _1) ]
@@ -74,13 +75,13 @@ namespace {
             part_type
                 = ( tok.Part_
                 >   parse::detail::more_common_params_parser()       [ _a = _1 ]
-                >   parse::label(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
-                > (  (parse::label(Capacity_token)  > parse::double_ [ _d = _1 ])
-                   | (parse::label(Damage_token)    > parse::double_ [ _d = _1 ])
+                >   parse::detail::label(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
+                > (  (parse::detail::label(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
+                   | (parse::detail::label(Damage_token)    > parse::detail::double_ [ _d = _1 ])
                    |  eps [ _d = 0.0 ]
                   )
-                > (  (parse::label(Damage_token)    > parse::double_ [ _h = _1 ])   // damage is secondary for fighters
-                   | (parse::label(Shots_token)     > parse::double_ [ _h = _1 ])   // shots is secondary for direct fire weapons
+                > (  (parse::detail::label(Damage_token)    > parse::detail::double_ [ _h = _1 ])   // damage is secondary for fighters
+                   | (parse::detail::label(Shots_token)     > parse::detail::double_ [ _h = _1 ])   // shots is secondary for direct fire weapons
                    |  eps [ _h = 1.0 ]
                   )
                 > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
@@ -88,7 +89,7 @@ namespace {
                   )
                 >   slots(_f)
                 >   parse::detail::common_params_parser()           [ _e = _1 ]
-                >   parse::label(Icon_token)        > tok.string    [ _b = _1 ]
+                >   parse::detail::label(Icon_token)        > tok.string    [ _b = _1 ]
                   ) [ insert_part_type(_r1, new_<PartType>(_c, _d, _h, _e, _a, _f, _b, _g)) ]
                 ;
 

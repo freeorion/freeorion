@@ -1,8 +1,7 @@
 #include "ConditionParserImpl.h"
 
-#include "EnumParser.h"
-#include "Label.h"
 #include "ParseImpl.h"
+#include "EnumParser.h"
 #include "ValueRefParser.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
@@ -85,13 +84,13 @@ namespace {
 
             owned_by_1
                 =   tok.OwnedBy_
-                >>  parse::label(Empire_token) > parse::int_value_ref()
+                >>  parse::detail::label(Empire_token) > parse::int_value_ref()
                     [ _val = new_<Condition::EmpireAffiliation>(_1) ]
                 ;
 
             owned_by_2
                 =   tok.OwnedBy_
-                >>  parse::label(Affiliation_token) >> tok.AnyEmpire_
+                >>  parse::detail::label(Affiliation_token) >> tok.AnyEmpire_
                 [ _val = new_<Condition::EmpireAffiliation>( AFFIL_ANY ) ]
                 ;
 
@@ -107,8 +106,8 @@ namespace {
 
             owned_by_5
                 =   tok.OwnedBy_
-                >>  parse::label(Affiliation_token) >> parse::empire_affiliation_type_enum() [ _a = _1 ]
-                >>  parse::label(Empire_token)      >  parse::int_value_ref()
+                >>  parse::detail::label(Affiliation_token) >> parse::empire_affiliation_type_enum() [ _a = _1 ]
+                >>  parse::detail::label(Empire_token)      >  parse::int_value_ref()
                 [ _val = new_<Condition::EmpireAffiliation>(_1, _a) ]
                 ;
 
@@ -139,8 +138,8 @@ namespace {
 
             described
                 =   tok.Described_
-                >   parse::label(Description_token) > tok.string [ _a = _1 ]
-                >   parse::label(Condition_token) > parse::detail::condition_parser
+                >   parse::detail::label(Description_token) > tok.string [ _a = _1 ]
+                >   parse::detail::label(Condition_token) > parse::detail::condition_parser
                 [ _val = new_<Condition::Described>(_1, _a) ]
                 ;
 

@@ -1,9 +1,8 @@
 #include "ValueRefParser.h"
 
+#include "ParseImpl.h"
 #include "ConditionParserImpl.h"
 #include "EnumParser.h"
-#include "Label.h"
-#include "ParseImpl.h"
 #include "../universe/ValueRef.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -305,15 +304,15 @@ void initialize_numeric_statistic_parser(
             >> (   tok.Count_  [ _b = ValueRef::COUNT ]
                |   tok.If_     [ _b = ValueRef::IF ]
             )
-            >   parse::label(Condition_token) >    parse::detail::condition_parser
+            >   parse::detail::label(Condition_token) >    parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
 
     statistic_2
         =   tok.Statistic_
             >>  parse::statistic_type_enum() [ _b = _1 ]
-            >   parse::label(Value_token)     >     value_ref [ _a = _1 ]
-            >   parse::label(Condition_token) >     parse::detail::condition_parser
+            >   parse::detail::label(Value_token)     >     value_ref [ _a = _1 ]
+            >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
 
@@ -341,8 +340,8 @@ void initialize_nonnumeric_statistic_parser(
     statistic
         =   tok.Statistic_
             >>  tok.Mode_ [ _b = ValueRef::MODE ]
-            >   parse::label(Value_token)     >     value_ref [ _a = _1 ]
-            >   parse::label(Condition_token) >     parse::detail::condition_parser
+            >   parse::detail::label(Value_token)     >     value_ref [ _a = _1 ]
+            >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
                 [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
         ;
 }

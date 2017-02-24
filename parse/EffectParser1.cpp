@@ -1,9 +1,8 @@
 #include "EffectParserImpl.h"
 
+#include "ParseImpl.h"
 #include "ConditionParserImpl.h"
 #include "EnumParser.h"
-#include "Label.h"
-#include "ParseImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
 #include "../universe/ValueRef.h"
@@ -34,30 +33,30 @@ namespace {
 
             set_empire_meter_1
                 =    tok.SetEmpireMeter_
-                >>   parse::label(Empire_token) >  parse::int_value_ref() [ _b = _1 ]
-                >    parse::label(Meter_token)  >  tok.string [ _a = _1 ]
-                >    parse::label(Value_token)  >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
+                >>   parse::detail::label(Empire_token) >  parse::int_value_ref() [ _b = _1 ]
+                >    parse::detail::label(Meter_token)  >  tok.string [ _a = _1 ]
+                >    parse::detail::label(Value_token)  >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_b, _a, _1) ]
                 ;
 
             set_empire_meter_2
                 =    tok.SetEmpireMeter_
-                >>   parse::label(Meter_token) >  tok.string [ _a = _1 ]
-                >    parse::label(Value_token) >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
+                >>   parse::detail::label(Meter_token) >  tok.string [ _a = _1 ]
+                >    parse::detail::label(Value_token) >  parse::double_value_ref() [ _val = new_<Effect::SetEmpireMeter>(_a, _1) ]
                 ;
 
             give_empire_tech
                 =   (   tok.GiveEmpireTech_
-                    >   parse::label(Name_token) >      parse::string_value_ref() [ _d = _1 ]
-                    > -(parse::label(Empire_token) >    parse::int_value_ref()    [ _b = _1 ])
+                    >   parse::detail::label(Name_token) >      parse::string_value_ref() [ _d = _1 ]
+                    > -(parse::detail::label(Empire_token) >    parse::int_value_ref()    [ _b = _1 ])
                     ) [ _val = new_<Effect::GiveEmpireTech>(_d, _b) ]
                 ;
 
             set_empire_tech_progress
                 =    tok.SetEmpireTechProgress_
-                >    parse::label(Name_token)     >  parse::string_value_ref() [ _a = _1 ]
-                >    parse::label(Progress_token) >  parse::double_value_ref() [ _b = _1 ]
+                >    parse::detail::label(Name_token)     >  parse::string_value_ref() [ _a = _1 ]
+                >    parse::detail::label(Progress_token) >  parse::double_value_ref() [ _b = _1 ]
                 >    (
-                        (parse::label(Empire_token) > parse::int_value_ref() [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
+                        (parse::detail::label(Empire_token) > parse::int_value_ref() [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b, _1) ])
                      |  eps [ _val = new_<Effect::SetEmpireTechProgress>(_a, _b) ]
                      )
                 ;
@@ -65,39 +64,39 @@ namespace {
             // Note: the NoStringtableLookup flag controls the lookup both of template in Vartext and of the label in SitrepPanel.
             generate_sitrep_message
                 =    tok.GenerateSitrepMessage_
-                >    parse::label(Message_token)    >  tok.string [ _a = _1 ]
-                >    parse::label(Label_token)      >  tok.string [ _e = _1 ]
+                >    parse::detail::label(Message_token)    >  tok.string [ _a = _1 ]
+                >    parse::detail::label(Label_token)      >  tok.string [ _e = _1 ]
                 >   (
                        tok.NoStringtableLookup_ [ _f = false ]
                      | eps [ _f = true ]
                     )
-                >  -(parse::label(Icon_token)       >  tok.string [ _b = _1 ] )
-                >  -(parse::label(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
+                >  -(parse::detail::label(Icon_token)       >  tok.string [ _b = _1 ] )
+                >  -(parse::detail::label(Parameters_token) >  string_and_string_ref_vector [ _c = _1 ] )
                 >   (
                         (   // empire id specified, optionally with an affiliation type:
                             // useful to specify a single recipient empire, or the allies
                             // or enemies of a single empire
-                            (   (parse::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                            (   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                             |    eps [ _d = AFFIL_SELF ]
                             )
-                        >>  parse::label(Empire_token) > parse::int_value_ref()
+                        >>  parse::detail::label(Empire_token) > parse::int_value_ref()
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _1, _d, _e, _f) ]
                         )
                     |   (   // condition specified, with an affiliation type of CanSee:
                             // used to specify CanSee affiliation
-                            parse::label(Affiliation_token) >>  tok.CanSee_
-                        >   parse::label(Condition_token)   >   parse::detail::condition_parser
+                            parse::detail::label(Affiliation_token) >>  tok.CanSee_
+                        >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_CAN_SEE, _1, _e, _f) ]
                         )
                     |   (   // condition specified, with an affiliation type of CanSee:
                             // used to specify CanSee affiliation
-                            parse::label(Affiliation_token) >>  tok.Human_
-                        >   parse::label(Condition_token)   >   parse::detail::condition_parser
+                            parse::detail::label(Affiliation_token) >>  tok.Human_
+                        >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, AFFIL_HUMAN, _1, _e, _f) ]
                         )
                     |   (   // no empire id or condition specified, with or without an
                             // affiliation type: useful to specify no or all empires
-                            (   (parse::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
+                            (   (parse::detail::label(Affiliation_token) > parse::empire_affiliation_type_enum() [ _d = _1 ])
                             |    eps [ _d = AFFIL_ANY ]
                             )
                             [ _val = new_<Effect::GenerateSitRepMessage>(_a, _b, _c, _d, _e, _f) ]
@@ -107,13 +106,13 @@ namespace {
 
             set_overlay_texture
                 =    tok.SetOverlayTexture_
-                >    parse::label(Name_token)    > tok.string [ _a = _1 ]
-                >    parse::label(Size_token)    > parse::double_value_ref() [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
+                >    parse::detail::label(Name_token)    > tok.string [ _a = _1 ]
+                >    parse::detail::label(Size_token)    > parse::double_value_ref() [ _val = new_<Effect::SetOverlayTexture>(_a, _1) ]
                 ;
 
             string_and_string_ref
-                =    parse::label(Tag_token)  >  tok.string [ _a = _1 ]
-                >    parse::label(Data_token)
+                =    parse::detail::label(Tag_token)  >  tok.string [ _a = _1 ]
+                >    parse::detail::label(Data_token)
                 >  ( parse::int_value_ref()      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int> >(_1)) ]
                    | parse::double_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double> >(_1)) ]
                    | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string> >(_1)) ]

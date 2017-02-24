@@ -1,8 +1,7 @@
 #include "EffectParserImpl.h"
-#include "ConditionParserImpl.h"
 
-#include "Label.h"
 #include "ParseImpl.h"
+#include "ConditionParserImpl.h"
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -26,13 +25,13 @@ namespace {
 
             conditional
                 =   (       tok.If_
-                        >   parse::label(Condition_token)   >   parse::detail::condition_parser [ _a = _1 ]
-                        >   parse::label(Effects_token)
+                        >   parse::detail::label(Condition_token)   >   parse::detail::condition_parser [ _a = _1 ]
+                        >   parse::detail::label(Effects_token)
                         >   (
                                 ('[' > +parse::effect_parser() [ push_back(_b, _1) ] > ']')
                             |    parse::effect_parser() [ push_back(_b, _1) ]
                             )
-                        > -(parse::label(Else_token)
+                        > -(parse::detail::label(Else_token)
                         >   (
                                 ('[' > +parse::effect_parser() [ push_back(_c, _1) ] > ']')
                             |    parse::effect_parser() [ push_back(_c, _1) ]

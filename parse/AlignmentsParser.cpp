@@ -1,10 +1,11 @@
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
 
 #include "../Empire/Empire.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -34,9 +35,9 @@ namespace {
 
             alignment
                 =    tok.Alignment_
-                >    parse::label(Name_token)        > tok.string [ _a = _1 ]
-                >    parse::label(Description_token) > tok.string [ _b = _1 ]
-                >    parse::label(Graphic_token)     > tok.string [ push_back(_r1, construct<Alignment>(_a, _b, _1)) ]
+                >    parse::detail::label(Name_token)        > tok.string [ _a = _1 ]
+                >    parse::detail::label(Description_token) > tok.string [ _b = _1 ]
+                >    parse::detail::label(Graphic_token)     > tok.string [ push_back(_r1, construct<Alignment>(_a, _b, _1)) ]
                 ;
 
             start
@@ -44,7 +45,7 @@ namespace {
                             alignment(_r1)
                         >  -(
                                 tok.AlignmentEffects_
-                            >   parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ phoenix::ref(*g_effects_groups) = _1 ]
+                            >   parse::detail::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ phoenix::ref(*g_effects_groups) = _1 ]
                             )
                      )
                 ;

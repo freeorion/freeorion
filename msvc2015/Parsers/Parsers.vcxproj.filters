@@ -35,9 +35,6 @@
     <ClCompile Include="..\..\parse\ConditionParser3.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\Double.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\DoubleValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
@@ -50,16 +47,10 @@
     <ClCompile Include="..\..\parse\FleetPlansParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\parse\Int.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\parse\IntValueRefParser.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\ItemsParser.cpp">
-      <Filter>Source Files\parse</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\parse\Label.cpp">
       <Filter>Source Files\parse</Filter>
     </ClCompile>
     <ClCompile Include="..\..\parse\Lexer.cpp">
@@ -178,19 +169,10 @@
     <ClInclude Include="..\..\parse\ConditionParserImpl.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\parse\Double.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\parse\EffectParser.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\EnumParser.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\Int.h">
-      <Filter>Header Files\parse</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\parse\Label.h">
       <Filter>Header Files\parse</Filter>
     </ClInclude>
     <ClInclude Include="..\..\parse\Lexer.h">

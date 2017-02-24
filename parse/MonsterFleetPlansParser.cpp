@@ -1,15 +1,14 @@
-#include "ConditionParserImpl.h"
-#include "Double.h"
-#include "Int.h"
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
+#include "ConditionParserImpl.h"
 
 #include "../universe/Universe.h"
 #include "../universe/UniverseGenerator.h"
 #include "../util/Directories.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -46,11 +45,11 @@ namespace {
 
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_
-                >    parse::label(Name_token) > tok.string [ phoenix::ref(_a) = _1 ]
+                >    parse::detail::label(Name_token) > tok.string [ phoenix::ref(_a) = _1 ]
                 ;
 
             ships
-                =    parse::label(Ships_token)
+                =    parse::detail::label(Ships_token)
                 >    eps [ clear(phoenix::ref(_b)) ]
                 >    (
                             ('[' > +tok.string [ push_back(phoenix::ref(_b), _1) ] > ']')
@@ -60,11 +59,11 @@ namespace {
 
             spawns
                 =    (
-                            (parse::label(SpawnRate_token) > parse::double_ [ phoenix::ref(_c) = _1 ])
+                            (parse::detail::label(SpawnRate_token) > parse::detail::double_ [ phoenix::ref(_c) = _1 ])
                         |    eps [ phoenix::ref(_c) = 1.0 ]
                      )
                 >    (
-                            (parse::label(SpawnLimit_token) > parse::int_ [ phoenix::ref(_d) = _1 ])
+                            (parse::detail::label(SpawnLimit_token) > parse::detail::int_ [ phoenix::ref(_d) = _1 ])
                         |    eps [ phoenix::ref(_d) = 9999 ]
                      )
                 ;
@@ -74,7 +73,7 @@ namespace {
                             monster_fleet_plan_prefix
                         >   ships
                         >   spawns
-                        > -(parse::label(Location_token) > parse::detail::condition_parser [ phoenix::ref(_e) = _1 ])
+                        > -(parse::detail::label(Location_token) > parse::detail::condition_parser [ phoenix::ref(_e) = _1 ])
                      )
                 [ _val = new_monster_fleet_plan(phoenix::ref(_a), phoenix::ref(_b), phoenix::ref(_c), phoenix::ref(_d), phoenix::ref(_e)) ]
                 ;

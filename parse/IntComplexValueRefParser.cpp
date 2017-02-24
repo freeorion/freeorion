@@ -1,5 +1,6 @@
 #include "ValueRefParserImpl.h"
 
+
 namespace parse {
     struct int_complex_parser_rules {
         int_complex_parser_rules() {
@@ -19,75 +20,75 @@ namespace parse {
             building_types_owned
                 =   (
                             tok.BuildingTypesOwned_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token) >     parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             building_types_produced
                 =   (
                             tok.BuildingTypesProduced_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token) >     parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token) >     parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             building_types_scrapped
                 =   (
                             tok.BuildingTypesScrapped_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             empire_ships_destroyed
                 =   (
                             tok.EmpireShipsDestroyed_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _c = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _c = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             jumps_between
                 =   (
                             tok.JumpsBetween_ [ _a = construct<std::string>(_1) ]
-                        >   parse::label(Object_token) >   (parse::int_value_ref() [ _b = _1 ] | int_var_statistic() [ _b = _1 ])
-                        >   parse::label(Object_token) >   (parse::int_value_ref() [ _c = _1 ] | int_var_statistic() [ _c = _1 ])
+                        >   detail::label(Object_token) >   (parse::int_value_ref() [ _b = _1 ] | int_var_statistic() [ _b = _1 ])
+                        >   detail::label(Object_token) >   (parse::int_value_ref() [ _c = _1 ] | int_var_statistic() [ _c = _1 ])
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             //jumps_between_by_empire_supply
             //    =   (
             //                tok.JumpsBetweenByEmpireSupplyConnections_ [ _a = construct<std::string>(_1) ]
-            //            >   parse::label(Object_token) >>   parse::int_value_ref() [ _b = _1 ]
-            //            >   parse::label(Object_token) >>   parse::int_value_ref() [ _c = _1 ]
-            //            >   parse::label(Empire_token) >>   parse::int_value_ref() [ _f = _1 ]
+            //            >   detail::label(Object_token) >>   parse::int_value_ref() [ _b = _1 ]
+            //            >   detail::label(Object_token) >>   parse::int_value_ref() [ _c = _1 ]
+            //            >   detail::label(Empire_token) >>   parse::int_value_ref() [ _f = _1 ]
             //        ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
             //    ;
 
             outposts_owned
                 =   (
                             tok.OutpostsOwned_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             parts_in_ship_design
                 =   (
                             tok.PartsInShipDesign_[ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
-                        > ( parse::label(Design_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        > ( detail::label(Design_token) >   parse::int_value_ref() [ _b = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             part_class_in_ship_design
                 =   (
                             tok.PartOfClassInShipDesign_  [ _a = construct<std::string>(_1) ]
-                        //> ( parse::label(Class_token) >>
+                        //> ( detail::label(Class_token) >>
                         //    as_string [ parse::ship_part_class_enum() ]
                         //    [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
                         //  )
-                        > ( parse::label(Class_token) >
+                        > ( detail::label(Class_token) >
                             ( tok.ShortRange_       | tok.FighterBay_   | tok.FighterWeapon_
                             | tok.Shield_           | tok.Armour_
                             | tok.Troops_           | tok.Detection_    | tok.Stealth_
@@ -96,16 +97,16 @@ namespace parse {
                             | tok.Industry_         | tok.Trade_        | tok.ProductionLocation_
                             ) [ _d = new_<ValueRef::Constant<std::string> >(_1) ]
                           )
-                        > ( parse::label(Design_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        > ( detail::label(Design_token) >   parse::int_value_ref() [ _b = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             ship_parts_owned
                 =   (
                             tok.ShipPartsOwned_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token)          > parse::int_value_ref() [ _b = _1 ] )
-                        >-(     ( parse::label(Name_token)      > parse::string_value_ref() [ _d = _1 ] )
-                            |   ( parse::label(Class_token)     >>
+                        >-( detail::label(Empire_token)          > parse::int_value_ref() [ _b = _1 ] )
+                        >-(     ( detail::label(Name_token)      > parse::string_value_ref() [ _d = _1 ] )
+                            |   ( detail::label(Class_token)     >>
                                   parse::ship_part_class_enum() [ _c = new_<ValueRef::Constant<int>>(_1) ]
                                 )
                           )
@@ -115,126 +116,126 @@ namespace parse {
             ship_designs_destroyed
                 =   (
                             tok.ShipDesignsDestroyed_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Design_token) >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Design_token) >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             ship_designs_lost
                 =   (
                             tok.ShipDesignsLost_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Design_token) >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Design_token) >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             ship_designs_owned
                 =   (
                             tok.ShipDesignsOwned_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Design_token) >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Design_token) >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             ship_designs_produced
                 =   (
                             tok.ShipDesignsProduced_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Design_token) >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Design_token) >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             ship_designs_scrapped
                 =   (
                             tok.ShipDesignsScrapped_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >    parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Design_token) >    parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >    parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Design_token) >    parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             slots_in_hull
                 =   (
                             tok.SlotsInHull_ [ _a = construct<std::string>(_1) ]
-                        >   parse::label(Name_token) >      parse::string_value_ref() [ _d = _1 ]
+                        >   detail::label(Name_token) >      parse::string_value_ref() [ _d = _1 ]
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             slots_in_ship_design
                 =   (
                             tok.SlotsInShipDesign_ [ _a = construct<std::string>(_1) ]
-                        >   parse::label(Design_token) >    parse::int_value_ref() [ _b = _1 ]
+                        >   detail::label(Design_token) >    parse::int_value_ref() [ _b = _1 ]
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_colonies_owned
                 =  (
                             tok.SpeciesColoniesOwned_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_planets_bombed
                 =  (
                             tok.SpeciesPlanetsBombed_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_planets_depoped
                 =   (
                             tok.SpeciesPlanetsDepoped_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_planets_invaded
                 =   (
                             tok.SpeciesPlanetsInvaded_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_ships_destroyed
                 =   (
                             tok.SpeciesShipsDestroyed_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_ships_lost
                 =   (
                             tok.SpeciesShipsLost_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_ships_owned
                 =   (
                             tok.SpeciesShipsOwned_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_ships_produced
                 =   (
                             tok.SpeciesShipsProduced_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             species_ships_scrapped
                 =   (
                             tok.SpeciesShipsScrapped_ [ _a = construct<std::string>(_1) ]
-                        >-( parse::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
-                        >-( parse::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
+                        >-( detail::label(Empire_token) >   parse::int_value_ref() [ _b = _1 ] )
+                        >-( detail::label(Name_token)   >   parse::string_value_ref() [ _d = _1 ] )
                     ) [ _val = new_<ValueRef::ComplexVariable<int> >(_a, _b, _c, _f, _d, _e) ]
                 ;
 

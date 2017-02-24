@@ -1,10 +1,11 @@
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
 
 #include "../universe/ShipDesign.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 extern const int ALL_EMPIRES;
 
@@ -55,26 +56,26 @@ namespace {
 
             design_prefix
                 =    tok.ShipDesign_
-                >    parse::label(Name_token)        > tok.string [ _r1 = _1 ]
-                >    parse::label(Description_token) > tok.string [ _r2 = _1 ]
+                >    parse::detail::label(Name_token)        > tok.string [ _r1 = _1 ]
+                >    parse::detail::label(Description_token) > tok.string [ _r2 = _1 ]
                 > (
                      tok.NoStringtableLookup_ [ _r4 = false ]
                     | eps [ _r4 = true ]
                   )
-                >    parse::label(Hull_token)        > tok.string [ _r3 = _1 ]
+                >    parse::detail::label(Hull_token)        > tok.string [ _r3 = _1 ]
                 ;
 
             design
                 =    design_prefix(_a, _b, _c, _f)
-                >    parse::label(Parts_token)
+                >    parse::detail::label(Parts_token)
                 >    (
                             ('[' > +tok.string [ push_back(_d, _1) ] > ']')
                         |    tok.string [ push_back(_d, _1) ]
                      )
                 >   -(
-                        parse::label(Icon_token)     > tok.string [ _e = _1 ]
+                        parse::detail::label(Icon_token)     > tok.string [ _e = _1 ]
                      )
-                >    parse::label(Model_token)       > tok.string
+                >    parse::detail::label(Model_token)       > tok.string
                 [ insert(_r1, new_<ShipDesign>(_a, _b, 0, ALL_EMPIRES, _c, _d, _e, _1, _f)) ]
                 ;
 

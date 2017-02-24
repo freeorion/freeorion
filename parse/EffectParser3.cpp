@@ -1,9 +1,8 @@
 #include "EffectParserImpl.h"
 
-#include "ConditionParserImpl.h"
-#include "EnumParser.h"
-#include "Label.h"
 #include "ParseImpl.h"
+#include "EnumParser.h"
+#include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
 #include "../universe/Effect.h"
 
@@ -26,38 +25,38 @@ namespace {
 
             move_to
                 =    tok.MoveTo_
-                >    parse::label(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
+                >    parse::detail::label(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::MoveTo>(_1) ]
                 ;
 
             move_in_orbit
                 =    tok.MoveInOrbit_
-                >    parse::label(Speed_token) >  parse::double_value_ref() [ _a = _1 ]
+                >    parse::detail::label(Speed_token) >  parse::double_value_ref() [ _a = _1 ]
                 >   (
-                        (parse::label(Focus_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ])
+                        (parse::detail::label(Focus_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveInOrbit>(_a, _1) ])
                     |
                         (
-                            parse::label(X_token)     >  parse::double_value_ref() [ _b = _1 ]
-                        >   parse::label(Y_token)     >  parse::double_value_ref() [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
+                            parse::detail::label(X_token)     >  parse::double_value_ref() [ _b = _1 ]
+                        >   parse::detail::label(Y_token)     >  parse::double_value_ref() [ _val = new_<Effect::MoveInOrbit>(_a, _b, _1) ]
                         )
                     )
                 ;
 
             move_towards
                 =    tok.MoveTowards_
-                >    parse::label(Speed_token) > parse::double_value_ref() [ _a = _1 ]
+                >    parse::detail::label(Speed_token) > parse::double_value_ref() [ _a = _1 ]
                 >    (
-                        (parse::label(Target_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ])
+                        (parse::detail::label(Target_token) >  parse::detail::condition_parser [ _val = new_<Effect::MoveTowards>(_a, _1) ])
                      |
                         (
-                            parse::label(X_token)     > parse::double_value_ref() [ _b = _1 ]
-                        >   parse::label(Y_token)     > parse::double_value_ref() [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
+                            parse::detail::label(X_token)     > parse::double_value_ref() [ _b = _1 ]
+                        >   parse::detail::label(Y_token)     > parse::double_value_ref() [ _val = new_<Effect::MoveTowards>(_a, _b, _1) ]
                         )
                     )
                 ;
 
             set_destination
                 =    tok.SetDestination_
-                >    parse::label(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
+                >    parse::detail::label(Destination_token) > parse::detail::condition_parser [ _val = new_<Effect::SetDestination>(_1) ]
                 ;
 
             set_aggression
@@ -75,44 +74,44 @@ namespace {
 
             victory
                 =    tok.Victory_
-                >    parse::label(Reason_token) > tok.string [ _val = new_<Effect::Victory>(_1) ]
+                >    parse::detail::label(Reason_token) > tok.string [ _val = new_<Effect::Victory>(_1) ]
                 ;
 
             add_special_1
                 =   tok.AddSpecial_
-                >   parse::label(Name_token) > parse::string_value_ref() [ _val = new_<Effect::AddSpecial>(_1) ]
+                >   parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Effect::AddSpecial>(_1) ]
                 ;
 
             add_special_2
                 =  (tok.AddSpecial_ | tok.SetSpecialCapacity_)
-                >>  parse::label(Name_token) >> parse::string_value_ref() [ _c = _1 ]
-                >> (parse::label(Capacity_token) | parse::label(Value_token))
+                >>  parse::detail::label(Name_token) >> parse::string_value_ref() [ _c = _1 ]
+                >> (parse::detail::label(Capacity_token) | parse::detail::label(Value_token))
                 >   parse::double_value_ref() [ _val = new_<Effect::AddSpecial>(_c, _1) ]
                 ;
 
             remove_special
                 =   tok.RemoveSpecial_
-                >   parse::label(Name_token) > parse::string_value_ref() [ _val = new_<Effect::RemoveSpecial>(_1) ]
+                >   parse::detail::label(Name_token) > parse::string_value_ref() [ _val = new_<Effect::RemoveSpecial>(_1) ]
                 ;
 
             add_starlanes
                 =   tok.AddStarlanes_
-                >   parse::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
+                >   parse::detail::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::AddStarlanes>(_1) ]
                 ;
 
             remove_starlanes
                 =   tok.RemoveStarlanes_
-                >   parse::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
+                >   parse::detail::label(Endpoint_token) > parse::detail::condition_parser [ _val = new_<Effect::RemoveStarlanes>(_1) ]
                 ;
 
             set_star_type
                 =   tok.SetStarType_
-                >   parse::label(Type_token) > parse::star_type_value_ref() [ _val = new_<Effect::SetStarType>(_1) ]
+                >   parse::detail::label(Type_token) > parse::star_type_value_ref() [ _val = new_<Effect::SetStarType>(_1) ]
                 ;
 
             set_texture
                 =   tok.SetTexture_
-                >   parse::label(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
+                >   parse::detail::label(Name_token) > tok.string [ _val = new_<Effect::SetTexture>(_1) ]
                 ;
 
             start

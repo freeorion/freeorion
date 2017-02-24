@@ -3,12 +3,9 @@ add_definitions(-DNDEBUG -DFREEORION_BUILD_PARSE)
 set (freeorionparse_HEADER
     CommonParams.h
     ConditionParserImpl.h
-    Double.h
     EffectParser.h
     EffectParserImpl.h
     EnumParser.h
-    Int.h
-    Label.h
     Lexer.h
     Parse.h
     ParseImpl.h
@@ -30,7 +27,6 @@ set (freeorionparse_SOURCE
     ConditionParser6.cpp
     ConditionParser7.cpp
     ConditionParser.cpp
-    Double.cpp
     DoubleComplexValueRefParser.cpp
     DoubleValueRefParser.cpp
     EffectParser1.cpp
@@ -44,12 +40,10 @@ set (freeorionparse_SOURCE
     EnumParser.cpp
     FieldsParser.cpp
     FleetPlansParser.cpp
-    Int.cpp
     IntComplexValueRefParser.cpp
     IntValueRefParser.cpp
     ItemsParser.cpp
     KeymapParser.cpp
-    Label.cpp
     Lexer.cpp
     MonsterFleetPlansParser.cpp
     Parse.cpp

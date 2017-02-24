@@ -1,11 +1,13 @@
-#include "ConditionParserImpl.h"
-#include "EnumParser.h"
-#include "Label.h"
 #include "Parse.h"
+
 #include "ParseImpl.h"
+#include "EnumParser.h"
+#include "ConditionParserImpl.h"
+
 #include "../universe/Species.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+
 
 #define DEBUG_PARSERS 0
 
@@ -60,15 +62,15 @@ namespace {
 
             focus_type
                 =    tok.Focus_
-                >    parse::label(Name_token)        > tok.string [ _a = _1 ]
-                >    parse::label(Description_token) > tok.string [ _b = _1 ]
-                >    parse::label(Location_token)    > parse::detail::condition_parser [ _c = _1 ]
-                >    parse::label(Graphic_token)     > tok.string
+                >    parse::detail::label(Name_token)        > tok.string [ _a = _1 ]
+                >    parse::detail::label(Description_token) > tok.string [ _b = _1 ]
+                >    parse::detail::label(Location_token)    > parse::detail::condition_parser [ _c = _1 ]
+                >    parse::detail::label(Graphic_token)     > tok.string
                      [ _val = construct<FocusType>(_a, _b, _c, _1) ]
                 ;
 
             foci
-                =    parse::label(Foci_token)
+                =    parse::detail::label(Foci_token)
                 >    (
                             ('[' > +focus_type [ push_back(_r1, _1) ] > ']')
                         |    focus_type [ push_back(_r1, _1) ]
@@ -76,12 +78,12 @@ namespace {
                 ;
 
             effects
-                =    parse::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _r1 = _1 ]
+                =    parse::detail::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _r1 = _1 ]
                 ;
 
             environment_map_element
-                =    parse::label(Type_token)        > parse::planet_type_enum() [ _a = _1 ]
-                >    parse::label(Environment_token) >  parse::planet_environment_enum()
+                =    parse::detail::label(Type_token)        > parse::planet_type_enum() [ _a = _1 ]
+                >    parse::detail::label(Environment_token) > parse::planet_environment_enum()
                      [ _val = construct<std::pair<PlanetType, PlanetEnvironment> >(_a, _1) ]
                 ;
 
@@ -91,7 +93,7 @@ namespace {
                 ;
 
             environments
-                =    parse::label(Environments_token) > environment_map [ _r1 = _1 ]
+                =    parse::detail::label(Environments_token) > environment_map [ _r1 = _1 ]
                 ;
 
             species_params
@@ -103,9 +105,9 @@ namespace {
                 ;
 
             species_strings
-                =    parse::label(Name_token)                   > tok.string [ _a = _1 ]
-                >    parse::label(Description_token)            > tok.string [ _b = _1 ]
-                >    parse::label(Gameplay_Description_token)   > tok.string [ _c = _1 ]
+                =    parse::detail::label(Name_token)                   > tok.string [ _a = _1 ]
+                >    parse::detail::label(Description_token)            > tok.string [ _b = _1 ]
+                >    parse::detail::label(Gameplay_Description_token)   > tok.string [ _c = _1 ]
                     [ _val = construct<SpeciesStrings>(_a, _b, _c) ]
                 ;
 
@@ -115,10 +117,10 @@ namespace {
                 >    species_params [ _b = _1]
                 >    parse::detail::tags_parser()(_c)
                 >   -foci(_d)
-                >   -(parse::label(PreferredFocus_token)        >> tok.string [ _g = _1 ])
+                >   -(parse::detail::label(PreferredFocus_token)        >> tok.string [ _g = _1 ])
                 >   -effects(_e)
                 >   -environments(_f)
-                >    parse::label(Graphic_token) > tok.string
+                >    parse::detail::label(Graphic_token) > tok.string
                      [ insert_species(_r1, new_<Species>(_a, _d, _g, _f, _e, _b, _c, _1)) ]
                 ;
 
