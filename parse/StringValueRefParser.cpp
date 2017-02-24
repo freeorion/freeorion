@@ -4,10 +4,10 @@
 
 template <>
 void initialize_nonnumeric_expression_parsers<std::string>(
-    typename expression_rule<std::string>::type&                function_expr,
-    typename expression_rule<std::string>::type&                operated_expr,
-    typename parse::value_ref_parser_rule<std::string>::type&   expr,
-    typename parse::value_ref_parser_rule<std::string>::type&   primary_expr)
+    expression_rule<std::string>& function_expr,
+    expression_rule<std::string>& operated_expr,
+    typename parse::value_ref_rule<std::string>& expr,
+    typename parse::value_ref_rule<std::string>& primary_expr)
 {
     qi::_1_type _1;
     qi::_a_type _a;
@@ -142,19 +142,16 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<std::string>::type rule;
-        typedef variable_rule<std::string>::type                variable_rule;
-        typedef statistic_rule<std::string>::type               statistic_rule;
-        typedef expression_rule<std::string>::type              expression_rule;
+        typedef parse::value_ref_rule<std::string> rule;
 
         name_token_rule bound_variable_name;
         rule            constant;
         rule            free_variable;
-        variable_rule   bound_variable;
+        variable_rule<std::string> bound_variable;
         rule            statistic_sub_value_ref;
-        statistic_rule  statistic;
-        expression_rule function_expr;
-        expression_rule operated_expr;
+        statistic_rule<std::string> statistic;
+        expression_rule<std::string> function_expr;
+        expression_rule<std::string> operated_expr;
         rule            expr;
         rule            primary_expr;
     };
@@ -162,7 +159,7 @@ namespace {
 
 
 namespace parse {
-    value_ref_parser_rule<std::string>::type& string_value_ref()
+    value_ref_rule<std::string>& string_value_ref()
     {
         static string_parser_rules retval;
         return retval.expr;

@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(DoubleLiteralParserSineOperation) {
     BOOST_CHECK_EQUAL(value->Value(), 90.0);
 }
 
-// XXX value_ref_parser_rule<double> throws an expectation_failure, the enum parser does not. is this intended?
+// XXX value_ref_rule<double> throws an expectation_failure, the enum rule does not. is this intended?
 BOOST_AUTO_TEST_CASE(DoubleLiteralParserMalformed) {
     BOOST_CHECK_THROW(parse("-", result), std::runtime_error);
     BOOST_CHECK(!result);

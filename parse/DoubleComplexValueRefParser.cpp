@@ -94,13 +94,13 @@ namespace parse {
 #endif
         }
 
-        complex_variable_rule<double>::type part_capacity;
-        complex_variable_rule<double>::type empire_meter_value;
-        complex_variable_rule<double>::type direct_distance;
-        complex_variable_rule<double>::type shortest_path;
-        complex_variable_rule<double>::type species_empire_opinion;
-        complex_variable_rule<double>::type species_species_opinion;
-        complex_variable_rule<double>::type start;
+        complex_variable_rule<double> part_capacity;
+        complex_variable_rule<double> empire_meter_value;
+        complex_variable_rule<double> direct_distance;
+        complex_variable_rule<double> shortest_path;
+        complex_variable_rule<double> species_empire_opinion;
+        complex_variable_rule<double> species_species_opinion;
+        complex_variable_rule<double> start;
     };
 
     namespace detail {
@@ -108,5 +108,5 @@ namespace parse {
     }
 }
 
-const complex_variable_rule<double>::type& double_var_complex()
+const complex_variable_rule<double>& double_var_complex()
 { return parse::detail::double_complex_parser.start; }

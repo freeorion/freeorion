@@ -59,25 +59,22 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<PlanetType>::type  rule;
-        typedef variable_rule<PlanetType>::type                 variable_rule;
-        typedef statistic_rule<PlanetType>::type                statistic_rule;
-        typedef expression_rule<PlanetType>::type               expression_rule;
+        typedef parse::value_ref_rule<PlanetType> rule;
 
         name_token_rule variable_name;
         rule            constant;
-        variable_rule   bound_variable;
+        variable_rule<PlanetType> bound_variable;
         rule            statistic_sub_value_ref;
-        statistic_rule  statistic;
-        expression_rule function_expr;
-        expression_rule operated_expr;
+        statistic_rule<PlanetType> statistic;
+        expression_rule<PlanetType> function_expr;
+        expression_rule<PlanetType> operated_expr;
         rule            expr;
         rule            primary_expr;
     };
 }
 
 namespace parse {
-    value_ref_parser_rule<PlanetType>::type& planet_type_value_ref()
+    value_ref_rule<PlanetType>& planet_type_value_ref()
     {
         static planet_type_parser_rules retval;
         return retval.expr;

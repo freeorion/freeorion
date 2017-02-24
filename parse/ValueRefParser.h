@@ -12,32 +12,29 @@
 
 namespace parse {
     template <typename T>
-    struct value_ref_parser_rule
-    {
-        typedef detail::rule<
-            // TODO: Investigate refactoring ValueRef to use variant,
-            // for increased locality of reference.
-            ValueRef::ValueRefBase<T>* ()
-        > type;
-    };
+    using value_ref_rule = detail::rule<
+        // TODO: Investigate refactoring ValueRef to use variant,
+        // for increased locality of reference.
+        ValueRef::ValueRefBase<T>* ()
+    >;
 
-    value_ref_parser_rule<int>::type& int_value_ref();
+    value_ref_rule<int>& int_value_ref();
 
-    value_ref_parser_rule<int>::type& flexible_int_value_ref();
+    value_ref_rule<int>& flexible_int_value_ref();
 
-    value_ref_parser_rule<double>::type& double_value_ref();
+    value_ref_rule<double>& double_value_ref();
 
-    value_ref_parser_rule<std::string>::type& string_value_ref();
+    value_ref_rule<std::string>& string_value_ref();
 
-    value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref();
+    value_ref_rule<PlanetSize>& planet_size_value_ref();
 
-    value_ref_parser_rule<PlanetType>::type& planet_type_value_ref();
+    value_ref_rule<PlanetType>& planet_type_value_ref();
 
-    value_ref_parser_rule<PlanetEnvironment>::type& planet_environment_value_ref();
+    value_ref_rule<PlanetEnvironment>& planet_environment_value_ref();
 
-    value_ref_parser_rule<UniverseObjectType>::type& universe_object_type_value_ref();
+    value_ref_rule<UniverseObjectType>& universe_object_type_value_ref();
 
-    value_ref_parser_rule<StarType>::type& star_type_value_ref();
+    value_ref_rule<StarType>& star_type_value_ref();
 }
 
 #endif

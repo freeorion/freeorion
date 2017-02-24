@@ -144,26 +144,23 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<double>::type  rule;
-        typedef variable_rule<double>::type                 variable_rule;
-        typedef statistic_rule<double>::type                statistic_rule;
-        typedef expression_rule<double>::type               expression_rule;
+        typedef parse::value_ref_rule<double> rule;
 
         name_token_rule     bound_variable_name;
         name_token_rule     free_variable_name;
         rule                constant;
-        variable_rule       free_variable;
-        variable_rule       bound_variable;
-        statistic_rule      statistic_1;
-        statistic_rule      statistic_2;
-        statistic_rule      statistic;
+        variable_rule<double> free_variable;
+        variable_rule<double> bound_variable;
+        statistic_rule<double> statistic_1;
+        statistic_rule<double> statistic_2;
+        statistic_rule<double> statistic;
         rule                int_bound_variable_cast;
         rule                int_statistic_cast;
         rule                int_complex_variable_cast;
-        expression_rule     function_expr;
-        expression_rule     exponential_expr;
-        expression_rule     multiplicative_expr;
-        expression_rule     additive_expr;
+        expression_rule<double> function_expr;
+        expression_rule<double> exponential_expr;
+        expression_rule<double> multiplicative_expr;
+        expression_rule<double> additive_expr;
         rule                expr;
         rule                primary_expr;
     };
@@ -180,19 +177,19 @@ const double_rule& double_constant()
 const name_token_rule& double_bound_variable_name()
 { return get_double_parser_rules().bound_variable_name; }
 
-const variable_rule<double>::type& double_bound_variable()
+const variable_rule<double>& double_bound_variable()
 { return get_double_parser_rules().bound_variable; }
 
 const name_token_rule& double_free_variable_name()
 { return get_double_parser_rules().free_variable_name; }
 
-const variable_rule<double>::type& double_free_variable()
+const variable_rule<double>& double_free_variable()
 { return get_double_parser_rules().free_variable; }
 
-const statistic_rule<double>::type& double_var_statistic()
+const statistic_rule<double>& double_var_statistic()
 { return get_double_parser_rules().statistic; }
 
 namespace parse {
-    value_ref_parser_rule<double>::type& double_value_ref()
+    value_ref_rule<double>& double_value_ref()
     { return get_double_parser_rules().expr; }
 }

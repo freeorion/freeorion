@@ -56,25 +56,22 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<StarType>::type    rule;
-        typedef variable_rule<StarType>::type                   variable_rule;
-        typedef statistic_rule<StarType>::type                  statistic_rule;
-        typedef expression_rule<StarType>::type                 expression_rule;
+        typedef parse::value_ref_rule<StarType> rule;
 
         name_token_rule variable_name;
         rule            constant;
-        variable_rule   bound_variable;
+        variable_rule<StarType> bound_variable;
         rule            statistic_sub_value_ref;
-        statistic_rule  statistic;
-        expression_rule function_expr;
-        expression_rule operated_expr;
+        statistic_rule<StarType> statistic;
+        expression_rule<StarType> function_expr;
+        expression_rule<StarType> operated_expr;
         rule            expr;
         rule            primary_expr;
     };
 }
 
 namespace parse {
-    value_ref_parser_rule<StarType>::type& star_type_value_ref()
+    value_ref_rule<StarType>& star_type_value_ref()
     {
         static star_type_parser_rules retval;
         return retval.expr;

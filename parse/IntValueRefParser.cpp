@@ -87,14 +87,13 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<int>::type rule;
-        typedef variable_rule<int>::type                variable_rule;
+        typedef parse::value_ref_rule<int> rule;
 
         name_token_rule     free_variable_name;
         name_token_rule     bound_variable_name;
         rule                constant;
-        variable_rule       free_variable;
-        variable_rule       bound_variable;
+        variable_rule<int>  free_variable;
+        variable_rule<int>  bound_variable;
         rule                simple;
     };
 
@@ -151,19 +150,16 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<int>::type rule;
-        typedef variable_rule<int>::type                variable_rule;
-        typedef statistic_rule<int>::type               statistic_rule;
-        typedef expression_rule<int>::type              expression_rule;
+        typedef parse::value_ref_rule<int> rule;
 
-        statistic_rule      statistic_1;
-        statistic_rule      statistic_2;
-        statistic_rule      statistic;
+        statistic_rule<int> statistic_1;
+        statistic_rule<int> statistic_2;
+        statistic_rule<int> statistic;
         rule                statistic_sub_value_ref;
-        expression_rule     function_expr;
-        expression_rule     exponential_expr;
-        expression_rule     multiplicative_expr;
-        expression_rule     additive_expr;
+        expression_rule<int> function_expr;
+        expression_rule<int> exponential_expr;
+        expression_rule<int> multiplicative_expr;
+        expression_rule<int> additive_expr;
         rule                expr;
         rule                primary_expr;
     };
@@ -196,8 +192,8 @@ namespace {
 #endif
         }
 
-        parse::value_ref_parser_rule<int>::type                castable_expr;
-        parse::value_ref_parser_rule<int>::type                flexible_int;
+        parse::value_ref_rule<int> castable_expr;
+        parse::value_ref_rule<int> flexible_int;
     };
 
     castable_as_int_parser_rules& get_castable_as_int_parser_rules() {
@@ -212,25 +208,25 @@ const int_rule& int_constant()
 const name_token_rule& int_bound_variable_name()
 { return get_simple_int_parser_rules().bound_variable_name; }
 
-const variable_rule<int>::type& int_bound_variable()
+const variable_rule<int>& int_bound_variable()
 { return get_simple_int_parser_rules().bound_variable; }
 
 const name_token_rule& int_free_variable_name()
 { return get_simple_int_parser_rules().free_variable_name; }
 
-const variable_rule<int>::type& int_free_variable()
+const variable_rule<int>& int_free_variable()
 { return get_simple_int_parser_rules().free_variable; }
 
 const int_rule& int_simple()
 { return get_simple_int_parser_rules().simple; }
 
-const statistic_rule<int>::type& int_var_statistic()
+const statistic_rule<int>& int_var_statistic()
 { return get_int_parser_rules().statistic; }
 
 namespace parse {
-    value_ref_parser_rule<int>::type& int_value_ref()
+    value_ref_rule<int>& int_value_ref()
     { return get_int_parser_rules().expr; }
 
-    value_ref_parser_rule<int>::type& flexible_int_value_ref()
+    value_ref_rule<int>& flexible_int_value_ref()
     { return get_castable_as_int_parser_rules().flexible_int; }
 }

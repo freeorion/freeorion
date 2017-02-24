@@ -232,33 +232,33 @@ namespace parse {
 #endif
         }
 
-        complex_variable_rule<std::string>::type    lowest_cost_enqueued_tech;
-        complex_variable_rule<std::string>::type    highest_cost_enqueued_tech;
-        complex_variable_rule<std::string>::type    top_priority_enqueued_tech;
-        complex_variable_rule<std::string>::type    most_spent_enqueued_tech;
-        complex_variable_rule<std::string>::type    random_enqueued_tech;
+        complex_variable_rule<std::string> lowest_cost_enqueued_tech;
+        complex_variable_rule<std::string> highest_cost_enqueued_tech;
+        complex_variable_rule<std::string> top_priority_enqueued_tech;
+        complex_variable_rule<std::string> most_spent_enqueued_tech;
+        complex_variable_rule<std::string> random_enqueued_tech;
 
-        complex_variable_rule<std::string>::type    lowest_cost_researchable_tech;
-        complex_variable_rule<std::string>::type    highest_cost_researchable_tech;
-        complex_variable_rule<std::string>::type    top_priority_researchable_tech;
-        complex_variable_rule<std::string>::type    most_spent_researchable_tech;
-        complex_variable_rule<std::string>::type    random_researchable_tech;
+        complex_variable_rule<std::string> lowest_cost_researchable_tech;
+        complex_variable_rule<std::string> highest_cost_researchable_tech;
+        complex_variable_rule<std::string> top_priority_researchable_tech;
+        complex_variable_rule<std::string> most_spent_researchable_tech;
+        complex_variable_rule<std::string> random_researchable_tech;
 
-        complex_variable_rule<std::string>::type    random_complete_tech;
+        complex_variable_rule<std::string> random_complete_tech;
 
-        complex_variable_rule<std::string>::type    lowest_cost_transferrable_tech;
-        complex_variable_rule<std::string>::type    highest_cost_transferrable_tech;
-        complex_variable_rule<std::string>::type    top_priority_transferrable_tech;
-        complex_variable_rule<std::string>::type    most_spent_transferrable_tech;
-        complex_variable_rule<std::string>::type    random_transferrable_tech;
+        complex_variable_rule<std::string> lowest_cost_transferrable_tech;
+        complex_variable_rule<std::string> highest_cost_transferrable_tech;
+        complex_variable_rule<std::string> top_priority_transferrable_tech;
+        complex_variable_rule<std::string> most_spent_transferrable_tech;
+        complex_variable_rule<std::string> random_transferrable_tech;
 
-        complex_variable_rule<std::string>::type    most_populous_species;
-        complex_variable_rule<std::string>::type    most_happy_species;
-        complex_variable_rule<std::string>::type    least_happy_species;
-        complex_variable_rule<std::string>::type    ramdom_colonizable_species;
-        complex_variable_rule<std::string>::type    random_controlled_species;
+        complex_variable_rule<std::string> most_populous_species;
+        complex_variable_rule<std::string> most_happy_species;
+        complex_variable_rule<std::string> least_happy_species;
+        complex_variable_rule<std::string> ramdom_colonizable_species;
+        complex_variable_rule<std::string> random_controlled_species;
 
-        complex_variable_rule<std::string>::type    start;
+        complex_variable_rule<std::string> start;
     };
 
     namespace detail {
@@ -266,5 +266,5 @@ namespace parse {
     }
 }
 
-const complex_variable_rule<std::string>::type& string_var_complex()
+const complex_variable_rule<std::string>& string_var_complex()
 { return parse::detail::string_complex_parser.start; }

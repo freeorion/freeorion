@@ -11,44 +11,40 @@
 
 
 namespace parse {
-
     template <typename E>
-    struct enum_parser_rule
-    {
-        typedef detail::rule<
-            E ()
-        > type;
-    };
+    using enum_rule = detail::rule<
+        E ()
+    >;
 
-    enum_parser_rule<PlanetSize>::type& planet_size_enum();
+    enum_rule<PlanetSize>& planet_size_enum();
 
-    enum_parser_rule<PlanetType>::type& planet_type_enum();
+    enum_rule<PlanetType>& planet_type_enum();
 
-    enum_parser_rule<PlanetEnvironment>::type& planet_environment_enum();
+    enum_rule<PlanetEnvironment>& planet_environment_enum();
 
-    enum_parser_rule<UniverseObjectType>::type& universe_object_type_enum();
+    enum_rule<UniverseObjectType>& universe_object_type_enum();
 
-    enum_parser_rule<StarType>::type& star_type_enum();
+    enum_rule<StarType>& star_type_enum();
 
-    enum_parser_rule<EmpireAffiliationType>::type& empire_affiliation_type_enum();
+    enum_rule<EmpireAffiliationType>& empire_affiliation_type_enum();
 
-    enum_parser_rule<UnlockableItemType>::type& unlockable_item_type_enum();
+    enum_rule<UnlockableItemType>& unlockable_item_type_enum();
 
-    enum_parser_rule<ShipSlotType>::type& ship_slot_type_enum();
+    enum_rule<ShipSlotType>& ship_slot_type_enum();
 
-    enum_parser_rule<ShipPartClass>::type& ship_part_class_enum();
+    enum_rule<ShipPartClass>& ship_part_class_enum();
 
-    enum_parser_rule<CaptureResult>::type& capture_result_enum();
+    enum_rule<CaptureResult>& capture_result_enum();
 
-    enum_parser_rule<ValueRef::StatisticType>::type& statistic_type_enum();
+    enum_rule<ValueRef::StatisticType>& statistic_type_enum();
 
-    enum_parser_rule<MeterType>::type& non_ship_part_meter_type_enum();
+    enum_rule<MeterType>& non_ship_part_meter_type_enum();
 
-    enum_parser_rule<MeterType>::type& ship_part_meter_type_enum();
+    enum_rule<MeterType>& ship_part_meter_type_enum();
 
-    enum_parser_rule<MeterType>::type& set_non_ship_part_meter_type_enum();
+    enum_rule<MeterType>& set_non_ship_part_meter_type_enum();
 
-    enum_parser_rule<MeterType>::type& set_ship_part_meter_type_enum();
+    enum_rule<MeterType>& set_ship_part_meter_type_enum();
 }
 
 #endif

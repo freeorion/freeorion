@@ -31,69 +31,57 @@ typedef parse::detail::rule<
     const char* ()
 > name_token_rule;
 
-typedef parse::value_ref_parser_rule<int>::type     int_rule;
-typedef parse::value_ref_parser_rule<double>::type  double_rule;
+typedef parse::value_ref_rule<int> int_rule;
+typedef parse::value_ref_rule<double> double_rule;
 
 template <typename T>
-struct variable_rule
-{
-    typedef parse::detail::rule<
-        ValueRef::Variable<T>* (),
-        qi::locals<
-            std::vector<std::string>,
-            ValueRef::ReferenceType
-        >
-    > type;
-};
+using variable_rule = parse::detail::rule<
+    ValueRef::Variable<T>* (),
+    qi::locals<
+        std::vector<std::string>,
+        ValueRef::ReferenceType
+    >
+>;
 
 template <typename T>
-struct statistic_rule
-{
-    typedef parse::detail::rule<
-        ValueRef::Statistic<T>* (),
-        qi::locals<
-            ValueRef::ValueRefBase<T>*,
-            ValueRef::StatisticType
-        >
-    > type;
-};
+using statistic_rule = parse::detail::rule<
+    ValueRef::Statistic<T>* (),
+    qi::locals<
+        ValueRef::ValueRefBase<T>*,
+        ValueRef::StatisticType
+    >
+>;
 
 template <typename T>
-struct complex_variable_rule
-{
-    typedef parse::detail::rule<
-        ValueRef::ComplexVariable<T>* (),
-        qi::locals<
-            std::string,
-            ValueRef::ValueRefBase<int>*,
-            ValueRef::ValueRefBase<int>*,
-            ValueRef::ValueRefBase<std::string>*,
-            ValueRef::ValueRefBase<std::string>*,
-            ValueRef::ValueRefBase<int>*
-        >
-    > type;
-};
+using complex_variable_rule = parse::detail::rule<
+    ValueRef::ComplexVariable<T>* (),
+    qi::locals<
+        std::string,
+        ValueRef::ValueRefBase<int>*,
+        ValueRef::ValueRefBase<int>*,
+        ValueRef::ValueRefBase<std::string>*,
+        ValueRef::ValueRefBase<std::string>*,
+        ValueRef::ValueRefBase<int>*
+    >
+>;
 
 template <typename T>
-struct expression_rule
-{
-    typedef parse::detail::rule<
-        ValueRef::ValueRefBase<T>* (),
-        qi::locals<
-            ValueRef::ValueRefBase<T>*,
-            ValueRef::ValueRefBase<T>*,
-            ValueRef::OpType,
-            std::vector<ValueRef::ValueRefBase<T>*>
-        >
-    > type;
-};
+using expression_rule = parse::detail::rule<
+    ValueRef::ValueRefBase<T>* (),
+    qi::locals<
+        ValueRef::ValueRefBase<T>*,
+        ValueRef::ValueRefBase<T>*,
+        ValueRef::OpType,
+        std::vector<ValueRef::ValueRefBase<T>*>
+    >
+>;
 
 template <typename T>
 void initialize_nonnumeric_expression_parsers(
-    typename expression_rule<T>::type&              function_expr,
-    typename expression_rule<T>::type&              operated_expr,
-    typename parse::value_ref_parser_rule<T>::type& expr,
-    typename parse::value_ref_parser_rule<T>::type& primary_expr)
+    expression_rule<T>& function_expr,
+    expression_rule<T>& operated_expr,
+    typename parse::value_ref_rule<T>& expr,
+    typename parse::value_ref_rule<T>& primary_expr)
 {
     qi::_1_type _1;
     qi::_c_type _c;
@@ -134,20 +122,20 @@ void initialize_nonnumeric_expression_parsers(
 
 template <>
 void initialize_nonnumeric_expression_parsers<std::string>(
-    typename expression_rule<std::string>::type&                function_expr,
-    typename expression_rule<std::string>::type&                operated_expr,
-    typename parse::value_ref_parser_rule<std::string>::type&   expr,
-    typename parse::value_ref_parser_rule<std::string>::type&   primary_expr);
+    expression_rule<std::string>& function_expr,
+    expression_rule<std::string>& operated_expr,
+    typename parse::value_ref_rule<std::string>& expr,
+    typename parse::value_ref_rule<std::string>& primary_expr);
 
 
 template <typename T>
 void initialize_numeric_expression_parsers(
-    typename expression_rule<T>::type&              function_expr,
-    typename expression_rule<T>::type&              exponential_expr,
-    typename expression_rule<T>::type&              multiplicative_expr,
-    typename expression_rule<T>::type&              additive_expr,
-    typename parse::value_ref_parser_rule<T>::type& expr,
-    typename parse::value_ref_parser_rule<T>::type& primary_expr)
+    expression_rule<T>& function_expr,
+    expression_rule<T>& exponential_expr,
+    expression_rule<T>& multiplicative_expr,
+    expression_rule<T>& additive_expr,
+    typename parse::value_ref_rule<T>& expr,
+    typename parse::value_ref_rule<T>& primary_expr)
 {
     qi::_1_type _1;
     qi::_a_type _a;
@@ -259,24 +247,24 @@ const reference_token_rule&                     variable_scope();
 const name_token_rule&                          container_type();
 const int_rule&                                 int_constant();
 const name_token_rule&                          int_bound_variable_name();
-const variable_rule<int>::type&                 int_bound_variable();
+const variable_rule<int>&                       int_bound_variable();
 const name_token_rule&                          int_free_variable_name();
-const variable_rule<int>::type&                 int_free_variable();
-const statistic_rule<int>::type&                int_var_statistic();
-const complex_variable_rule<int>::type&         int_var_complex();
+const variable_rule<int>&                       int_free_variable();
+const statistic_rule<int>&                      int_var_statistic();
+const complex_variable_rule<int>&               int_var_complex();
 const int_rule&                                 int_simple();
 const double_rule&                              double_constant();
 const name_token_rule&                          double_bound_variable_name();
-const variable_rule<double>::type&              double_bound_variable();
+const variable_rule<double>&                    double_bound_variable();
 const name_token_rule&                          double_free_variable_name();
-const variable_rule<double>::type&              double_free_variable();
-const statistic_rule<double>::type&             double_var_statistic();
-const complex_variable_rule<double>::type&      double_var_complex();
-const complex_variable_rule<std::string>::type& string_var_complex();
+const variable_rule<double>&                    double_free_variable();
+const statistic_rule<double>&                   double_var_statistic();
+const complex_variable_rule<double>&            double_var_complex();
+const complex_variable_rule<std::string>&       string_var_complex();
 
 template <typename T>
 void initialize_bound_variable_parser(
-    typename variable_rule<T>::type& bound_variable,
+    variable_rule<T>& bound_variable,
     const name_token_rule& variable_name)
 {
     qi::_1_type _1;
@@ -296,10 +284,10 @@ void initialize_bound_variable_parser(
 
 template <typename T>
 void initialize_numeric_statistic_parser(
-    typename statistic_rule<T>::type& statistic,
-    typename statistic_rule<T>::type& statistic_1,
-    typename statistic_rule<T>::type& statistic_2,
-    const typename parse::value_ref_parser_rule<T>::type& value_ref
+    statistic_rule<T>& statistic,
+    statistic_rule<T>& statistic_1,
+    statistic_rule<T>& statistic_2,
+    const typename parse::value_ref_rule<T>& value_ref
     )
 {
     const parse::lexer& tok = parse::lexer::instance();
@@ -337,8 +325,8 @@ void initialize_numeric_statistic_parser(
 
 template <typename T>
 void initialize_nonnumeric_statistic_parser(
-    typename statistic_rule<T>::type& statistic,
-    const typename parse::value_ref_parser_rule<T>::type& value_ref)
+    statistic_rule<T>& statistic,
+    const typename parse::value_ref_rule<T>& value_ref)
 {
     const parse::lexer& tok = parse::lexer::instance();
 

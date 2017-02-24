@@ -55,18 +55,15 @@ namespace {
 #endif
         }
 
-        typedef parse::value_ref_parser_rule<PlanetSize>::type  rule;
-        typedef variable_rule<PlanetSize>::type                 variable_rule;
-        typedef statistic_rule<PlanetSize>::type                statistic_rule;
-        typedef expression_rule<PlanetSize>::type               expression_rule;
+        typedef parse::value_ref_rule<PlanetSize> rule;
 
         name_token_rule variable_name;
         rule            constant;
-        variable_rule   bound_variable;
+        variable_rule<PlanetSize> bound_variable;
         rule            statistic_sub_value_ref;
-        statistic_rule  statistic;
-        expression_rule function_expr;
-        expression_rule operated_expr;
+        statistic_rule<PlanetSize> statistic;
+        expression_rule<PlanetSize> function_expr;
+        expression_rule<PlanetSize> operated_expr;
         rule            expr;
         rule            primary_expr;
     };
@@ -74,7 +71,7 @@ namespace {
 
 
 namespace parse {
-    value_ref_parser_rule<PlanetSize>::type& planet_size_value_ref()
+    value_ref_rule<PlanetSize>& planet_size_value_ref()
     {
         static planet_size_parser_rules retval;
         return retval.expr;

@@ -325,33 +325,33 @@ namespace parse {
 #endif
         }
 
-        complex_variable_rule<int>::type    building_types_owned;
-        complex_variable_rule<int>::type    building_types_produced;
-        complex_variable_rule<int>::type    building_types_scrapped;
-        complex_variable_rule<int>::type    empire_ships_destroyed;
-        complex_variable_rule<int>::type    jumps_between;
-        //complex_variable_rule<int>::type    jumps_between_by_empire_supply;
-        complex_variable_rule<int>::type    outposts_owned;
-        complex_variable_rule<int>::type    parts_in_ship_design;
-        complex_variable_rule<int>::type    part_class_in_ship_design;
-        complex_variable_rule<int>::type    ship_parts_owned;
-        complex_variable_rule<int>::type    ship_designs_destroyed;
-        complex_variable_rule<int>::type    ship_designs_lost;
-        complex_variable_rule<int>::type    ship_designs_owned;
-        complex_variable_rule<int>::type    ship_designs_produced;
-        complex_variable_rule<int>::type    ship_designs_scrapped;
-        complex_variable_rule<int>::type    slots_in_hull;
-        complex_variable_rule<int>::type    slots_in_ship_design;
-        complex_variable_rule<int>::type    species_colonies_owned;
-        complex_variable_rule<int>::type    species_planets_bombed;
-        complex_variable_rule<int>::type    species_planets_depoped;
-        complex_variable_rule<int>::type    species_planets_invaded;
-        complex_variable_rule<int>::type    species_ships_destroyed;
-        complex_variable_rule<int>::type    species_ships_lost;
-        complex_variable_rule<int>::type    species_ships_owned;
-        complex_variable_rule<int>::type    species_ships_produced;
-        complex_variable_rule<int>::type    species_ships_scrapped;
-        complex_variable_rule<int>::type    start;
+        complex_variable_rule<int> building_types_owned;
+        complex_variable_rule<int> building_types_produced;
+        complex_variable_rule<int> building_types_scrapped;
+        complex_variable_rule<int> empire_ships_destroyed;
+        complex_variable_rule<int> jumps_between;
+        //complex_variable_rule<int> jumps_between_by_empire_supply;
+        complex_variable_rule<int> outposts_owned;
+        complex_variable_rule<int> parts_in_ship_design;
+        complex_variable_rule<int> part_class_in_ship_design;
+        complex_variable_rule<int> ship_parts_owned;
+        complex_variable_rule<int> ship_designs_destroyed;
+        complex_variable_rule<int> ship_designs_lost;
+        complex_variable_rule<int> ship_designs_owned;
+        complex_variable_rule<int> ship_designs_produced;
+        complex_variable_rule<int> ship_designs_scrapped;
+        complex_variable_rule<int> slots_in_hull;
+        complex_variable_rule<int> slots_in_ship_design;
+        complex_variable_rule<int> species_colonies_owned;
+        complex_variable_rule<int> species_planets_bombed;
+        complex_variable_rule<int> species_planets_depoped;
+        complex_variable_rule<int> species_planets_invaded;
+        complex_variable_rule<int> species_ships_destroyed;
+        complex_variable_rule<int> species_ships_lost;
+        complex_variable_rule<int> species_ships_owned;
+        complex_variable_rule<int> species_ships_produced;
+        complex_variable_rule<int> species_ships_scrapped;
+        complex_variable_rule<int> start;
     };
 
     namespace detail {
@@ -359,5 +359,5 @@ namespace parse {
     }
 }
 
-const complex_variable_rule<int>::type& int_var_complex()
+const complex_variable_rule<int>& int_var_complex()
 { return parse::detail::int_complex_parser.start; }
