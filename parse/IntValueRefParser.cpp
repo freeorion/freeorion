@@ -4,6 +4,9 @@
 namespace {
     struct simple_int_parser_rules {
         simple_int_parser_rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
             using phoenix::new_;
 
             qi::_1_type _1;
@@ -131,9 +134,13 @@ namespace {
 
     struct castable_as_int_parser_rules {
         castable_as_int_parser_rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::new_;
+
             qi::_1_type _1;
             qi::_val_type _val;
-            using phoenix::new_;
 
             castable_expr
                 = parse::double_value_ref() [ _val = new_<ValueRef::StaticCast<double, int> >(_1) ]

@@ -39,7 +39,13 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
+            using phoenix::insert;
+            using phoenix::new_;
+            using phoenix::push_back;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -55,10 +61,8 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
-            using phoenix::construct;
-            using phoenix::insert;
-            using phoenix::new_;
-            using phoenix::push_back;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             focus_type
                 =    tok.Focus_
@@ -157,7 +161,7 @@ namespace {
 
         typedef parse::detail::rule<
             FocusType (),
-            qi::locals<
+            boost::spirit::qi::locals<
                 std::string,
                 std::string,
                 Condition::ConditionBase*
@@ -174,7 +178,7 @@ namespace {
 
         typedef parse::detail::rule<
             std::pair<PlanetType, PlanetEnvironment> (),
-            qi::locals<PlanetType>
+            boost::spirit::qi::locals<PlanetType>
         > environment_map_element_rule;
 
         typedef parse::detail::rule<
@@ -187,7 +191,7 @@ namespace {
 
         typedef parse::detail::rule<
             SpeciesParams (),
-            qi::locals<
+            boost::spirit::qi::locals<
                 bool,
                 bool,
                 bool,
@@ -197,7 +201,7 @@ namespace {
 
         typedef parse::detail::rule<
             SpeciesStrings (),
-            qi::locals<
+            boost::spirit::qi::locals<
                 std::string,
                 std::string,
                 std::string
@@ -206,7 +210,7 @@ namespace {
 
         typedef parse::detail::rule<
             void (std::map<std::string, Species*>&),
-            qi::locals<
+            boost::spirit::qi::locals<
                 SpeciesStrings,
                 SpeciesParams,
                 std::set<std::string>,  // tags

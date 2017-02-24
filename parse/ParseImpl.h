@@ -11,15 +11,13 @@
 
 #include <GG/Clr.h>
 
-namespace qi = boost::spirit::qi;
-namespace phoenix = boost::phoenix;
 
 namespace parse { namespace detail {
     template <
-        typename signature = qi::unused_type,
-        typename locals = qi::unused_type
+        typename signature = boost::spirit::qi::unused_type,
+        typename locals = boost::spirit::qi::unused_type
     >
-    using rule = qi::rule<
+    using rule = boost::spirit::qi::rule<
         parse::token_iterator,
         parse::skipper_type,
         signature,
@@ -57,7 +55,7 @@ namespace parse { namespace detail {
 
     typedef rule<
         GG::Clr (),
-        qi::locals<
+        boost::spirit::qi::locals<
             unsigned int,
             unsigned int,
             unsigned int
@@ -68,7 +66,7 @@ namespace parse { namespace detail {
 
     typedef rule<
         ItemSpec (),
-        qi::locals<UnlockableItemType>
+        boost::spirit::qi::locals<UnlockableItemType>
     > item_spec_parser_rule;
     item_spec_parser_rule& item_spec_parser();
 

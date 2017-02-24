@@ -3,7 +3,7 @@
 namespace {
     struct variable_parser_rules {
         variable_parser_rules() {
-            qi::_val_type _val;
+            boost::spirit::qi::_val_type _val;
 
             const parse::lexer& tok = parse::lexer::instance();
 

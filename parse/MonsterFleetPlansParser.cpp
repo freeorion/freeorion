@@ -31,7 +31,11 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::clear;
+            using phoenix::push_back;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -40,8 +44,8 @@ namespace {
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
-            using phoenix::clear;
-            using phoenix::push_back;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             monster_fleet_plan_prefix
                 =    tok.MonsterFleet_

@@ -18,12 +18,16 @@ namespace std {
 namespace {
     struct rules {
         rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::push_back;
+
             qi::_1_type _1;
             qi::_2_type _2;
             qi::_3_type _3;
             qi::_4_type _4;
             qi::_r1_type _r1;
-            using phoenix::push_back;
 
             start
                 =   +parse::detail::item_spec_parser() [ push_back(_r1, _1) ]

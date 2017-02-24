@@ -35,7 +35,10 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::new_;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -47,7 +50,8 @@ namespace {
             qi::_d_type _d;
             qi::_r1_type _r1;
             qi::eps_type eps;
-            using phoenix::new_;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             building_type
                 =   tok.BuildingType_
@@ -76,7 +80,7 @@ namespace {
 
         typedef parse::detail::rule<
             void (std::map<std::string, BuildingType*>&),
-            qi::locals<
+            boost::spirit::qi::locals<
                 std::string,
                 std::string,
                 CommonParams,

@@ -17,7 +17,11 @@ namespace std {
 namespace {
     struct rules {
         rules() {
-            const parse::lexer& tok =                                               parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::insert;
+            using phoenix::construct;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -26,9 +30,8 @@ namespace {
             qi::_a_type _a;
             qi::_r1_type _r1;
             qi::_val_type _val;
-            using phoenix::insert;
-            using phoenix::construct;
 
+            const parse::lexer& tok = parse::lexer::instance();
 
             stat
                 =   tok.Statistic_
@@ -52,7 +55,7 @@ namespace {
 
         typedef parse::detail::rule<
             std::pair<std::string, ValueRef::ValueRefBase<double>*> (),
-            qi::locals<std::string>
+            boost::spirit::qi::locals<std::string>
         > stat_rule;
 
         typedef parse::detail::rule<

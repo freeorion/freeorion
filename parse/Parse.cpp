@@ -30,11 +30,15 @@ namespace std {
 namespace {
     struct tags_rules {
         tags_rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::insert;
 
             qi::_1_type _1;
             qi::_r1_type _r1;
-            using phoenix::insert;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             start
                 =  -(
@@ -58,7 +62,12 @@ namespace {
 
     struct effects_group_rules {
         effects_group_rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
+            using phoenix::new_;
+            using phoenix::push_back;
 
             qi::_1_type _1;
             qi::_a_type _a;
@@ -71,9 +80,8 @@ namespace {
             qi::_val_type _val;
             qi::lit_type lit;
             qi::eps_type eps;
-            using phoenix::construct;
-            using phoenix::new_;
-            using phoenix::push_back;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             effects_group
                 =   tok.EffectsGroup_
@@ -107,7 +115,7 @@ namespace {
 
         typedef parse::detail::rule<
             Effect::EffectsGroup* (),
-            qi::locals<
+            boost::spirit::qi::locals<
                 Condition::ConditionBase*,
                 Condition::ConditionBase*,
                 std::string,
@@ -124,7 +132,11 @@ namespace {
 
     struct color_parser_rules {
         color_parser_rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
+            using phoenix::if_;
 
             qi::_1_type _1;
             qi::_a_type _a;
@@ -134,8 +146,8 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
             qi::uint_type uint_;
-            using phoenix::construct;
-            using phoenix::if_;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             channel
                 =    tok.int_ [ _val = _1, _pass = 0 <= _1 && _1 <= 255 ]
@@ -173,12 +185,16 @@ namespace {
 
     struct item_spec_parser_rules {
         item_spec_parser_rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
 
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_val_type _val;
-            using phoenix::construct;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             start
                 =    tok.Item_
@@ -199,10 +215,15 @@ namespace {
 
 namespace parse {
     void init() {
-        const lexer& tok = lexer::instance();
+        namespace phoenix = boost::phoenix;
+        namespace qi = boost::spirit::qi;
+
+        using phoenix::static_cast_;
+
         qi::_1_type _1;
         qi::_val_type _val;
-        using phoenix::static_cast_;
+
+        const lexer& tok = lexer::instance();
 
         detail::int_
             =    '-' >> tok.int_ [ _val = -_1 ]

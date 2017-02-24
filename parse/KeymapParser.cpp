@@ -42,7 +42,10 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -51,7 +54,8 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_r1_type _r1;
-            using phoenix::construct;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             int_pair
                 =   tok.int_ [ _a = _1 ] >> tok.int_ [ _b = _1 ]
@@ -83,12 +87,12 @@ namespace {
 
         typedef parse::detail::rule<
             void (Keymap&),
-            qi::locals<int, int>
+            boost::spirit::qi::locals<int, int>
         > int_pair_rule;
 
         typedef parse::detail::rule<
             void (NamedKeymaps&),
-            qi::locals<std::string, Keymap>
+            boost::spirit::qi::locals<std::string, Keymap>
         > keymap_rule;
 
         typedef parse::detail::rule<

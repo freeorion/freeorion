@@ -33,7 +33,10 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::new_;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -45,7 +48,8 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_r1_type _r1;
-            using phoenix::new_;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             field
                 =   tok.FieldType_
@@ -73,7 +77,7 @@ namespace {
 
         typedef parse::detail::rule<
             void (std::map<std::string, FieldType*>&),
-            qi::locals<
+            boost::spirit::qi::locals<
                 std::string,
                 std::string,
                 float,

@@ -4,6 +4,9 @@
 namespace {
     struct simple_double_parser_rules {
         simple_double_parser_rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
             using phoenix::new_;
             using phoenix::static_cast_;
 
@@ -115,6 +118,9 @@ namespace {
         double_parser_rules() :
             arithmetic_rules("real number")
         {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
             using phoenix::new_;
 
             qi::_1_type _1;

@@ -21,7 +21,11 @@ namespace parse { namespace detail {
 
 
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::new_;
+            using phoenix::construct;
+            using phoenix::insert;
 
             qi::_1_type _1;
             qi::_a_type _a;
@@ -37,9 +41,8 @@ namespace parse { namespace detail {
             qi::_r2_type _r2;
             qi::_val_type _val;
             qi::eps_type eps;
-            using phoenix::new_;
-            using phoenix::construct;
-            using phoenix::insert;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             producible
                 =   tok.Unproducible_ [ _val = false ]
@@ -154,7 +157,7 @@ namespace parse { namespace detail {
 
         typedef rule<
             void (std::map<MeterType, val_cond_pair>&, std::map<std::string, val_cond_pair>&),
-            qi::locals<
+            boost::spirit::qi::locals<
                 MeterType,
                 std::string,
                 ValueRef::ValueRefBase<double>*,

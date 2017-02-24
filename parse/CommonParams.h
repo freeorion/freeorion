@@ -8,10 +8,8 @@
 #include "../universe/Condition.h"
 #include "../universe/Effect.h"
 
-
 #include <boost/spirit/include/qi.hpp>
 
-namespace qi = boost::spirit::qi;
 
 namespace parse { namespace detail {
 
@@ -27,7 +25,7 @@ namespace parse { namespace detail {
 
     typedef rule<
         CommonParams (),
-        qi::locals<
+        boost::spirit::qi::locals<
             ValueRef::ValueRefBase<double>*,
             ValueRef::ValueRefBase<int>*,
             bool,
@@ -43,7 +41,7 @@ namespace parse { namespace detail {
 
     typedef rule<
         MoreCommonParams (),
-        qi::locals<
+        boost::spirit::qi::locals<
             std::string,
             std::string,
             std::set<std::string>

@@ -9,6 +9,12 @@ void initialize_string_expression_parsers(
     typename parse::value_ref_rule<std::string>& expr,
     typename parse::value_ref_rule<std::string>& primary_expr)
 {
+    namespace phoenix = boost::phoenix;
+    namespace qi = boost::spirit::qi;
+
+    using phoenix::new_;
+    using phoenix::push_back;
+
     qi::_1_type _1;
     qi::_a_type _a;
     qi::_b_type _b;
@@ -16,8 +22,6 @@ void initialize_string_expression_parsers(
     qi::_d_type _d;
     qi::_val_type _val;
     qi::lit_type lit;
-    using phoenix::new_;
-    using phoenix::push_back;
 
     const parse::lexer& tok = parse::lexer::instance();
 
@@ -70,9 +74,13 @@ void initialize_string_expression_parsers(
 namespace {
     struct string_parser_rules {
         string_parser_rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::new_;
+
             qi::_1_type _1;
             qi::_val_type _val;
-            using phoenix::new_;
 
             static const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
 

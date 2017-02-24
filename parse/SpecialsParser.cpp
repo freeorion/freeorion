@@ -34,7 +34,10 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok =                                               parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::new_;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -51,7 +54,8 @@ namespace {
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::eps_type eps;
-            using phoenix::new_;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             special_prefix
                 =    tok.Special_
@@ -106,7 +110,7 @@ namespace {
 
         typedef parse::detail::rule<
             void (std::map<std::string, Special*>&),
-            qi::locals<
+            boost::spirit::qi::locals<
                 std::string,
                 std::string,
                 double,

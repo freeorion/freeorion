@@ -21,7 +21,11 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
+            using phoenix::push_back;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -30,8 +34,8 @@ namespace {
             qi::_a_type _a;
             qi::_b_type _b;
             qi::_r1_type _r1;
-            using phoenix::construct;
-            using phoenix::push_back;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             alignment
                 =    tok.Alignment_
@@ -61,7 +65,7 @@ namespace {
 
         typedef parse::detail::rule<
             void (std::vector<Alignment>&),
-            qi::locals<
+            boost::spirit::qi::locals<
                 std::string,
                 std::string
             >

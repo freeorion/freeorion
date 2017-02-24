@@ -4,6 +4,12 @@
 namespace parse {
     struct string_complex_parser_rules {
         string_complex_parser_rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
+            using phoenix::new_;
+
             qi::_1_type _1;
             qi::_a_type _a;
             qi::_b_type _b;
@@ -12,10 +18,8 @@ namespace parse {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_val_type _val;
-            using phoenix::construct;
-            using phoenix::new_;
 
-            const parse::lexer& tok =                                                   parse::lexer::instance();
+            const parse::lexer& tok = parse::lexer::instance();
             const parse::value_ref_rule<int>& simple_int = int_simple();
 
 

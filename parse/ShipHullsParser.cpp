@@ -43,7 +43,13 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
+            using phoenix::new_;
+            using phoenix::push_back;
+            using phoenix::insert;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -59,10 +65,8 @@ namespace {
             qi::_val_type _val;
             qi::eps_type eps;
             qi::lit_type lit;
-            using phoenix::construct;
-            using phoenix::new_;
-            using phoenix::push_back;
-            using phoenix::insert;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             hull_stats
                 =   parse::detail::label(Speed_token)       >   parse::detail::double_ [ _a = _1 ]
@@ -123,7 +127,7 @@ namespace {
 
         typedef parse::detail::rule<
             HullTypeStats (),
-            qi::locals<
+            boost::spirit::qi::locals<
                 double,
                 double,
                 double,
@@ -133,7 +137,7 @@ namespace {
 
         typedef parse::detail::rule<
             HullType::Slot (),
-            qi::locals<
+            boost::spirit::qi::locals<
                 ShipSlotType,
                 double,
                 double
@@ -146,7 +150,7 @@ namespace {
 
         typedef parse::detail::rule<
             void (std::map<std::string, HullType*>&),
-            qi::locals<
+            boost::spirit::qi::locals<
                 MoreCommonParams,
                 std::string,    // dummy
                 HullTypeStats,

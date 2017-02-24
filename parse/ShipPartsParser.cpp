@@ -42,7 +42,12 @@ namespace {
 
     struct rules {
         rules() {
-            const parse::lexer& tok = parse::lexer::instance();
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::construct;
+            using phoenix::new_;
+            using phoenix::push_back;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -58,9 +63,8 @@ namespace {
             qi::_h_type _h;
             qi::_r1_type _r1;
             qi::eps_type eps;
-            using phoenix::construct;
-            using phoenix::new_;
-            using phoenix::push_back;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             slots
                 =  -(
@@ -114,7 +118,7 @@ namespace {
 
         typedef parse::detail::rule<
             void (std::map<std::string, PartType*>&),
-            qi::locals<
+            boost::spirit::qi::locals<
                 MoreCommonParams,
                 std::string,
                 ShipPartClass,
