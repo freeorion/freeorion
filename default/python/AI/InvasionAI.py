@@ -127,7 +127,7 @@ def get_invasion_fleets():
                     best_base_planet = pid2
                     best_trooper_count = troops_per_ship
             if best_base_planet != INVALID_ID:
-                foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [pid2, INVALID_ID])
+                foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [best_base_planet, INVALID_ID])
 
         # Pass 2: for each target previously identified for base troopers, check that still qualifies and
         # check how many base troopers would be needed; if reasonable then queue up the troops and record this in
