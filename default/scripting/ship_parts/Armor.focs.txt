@@ -51,7 +51,7 @@ Part
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
     location = And [
-        Number low = 1 high = 999 condition = And [
+        ResourceSupplyConnected empire = Source.Owner condition = And [
             Building name = "BLD_SHIPYARD_AST_REF"
             Or [
                 OwnedBy empire = Source.Owner
@@ -71,7 +71,7 @@ Part
     buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     location = And [
-        Number low = 1 high = 999 condition = And [
+        ResourceSupplyConnected empire = Source.Owner condition = And [
             Building name = "BLD_SHIPYARD_AST_REF"
             Or [
                 OwnedBy empire = Source.Owner
@@ -93,7 +93,7 @@ Part
     location = And [
         OwnedBy empire = Source.Owner
         Contains Building name = "BLD_NEUTRONIUM_FORGE"
-        Number low = 1 high = 999 condition = And [
+        ResourceSupplyConnected empire = Source.Owner condition = And [
             OwnedBy empire = Source.Owner
             Or [
                 Building name = "BLD_NEUTRONIUM_EXTRACTOR"
