@@ -170,23 +170,6 @@ namespace {
     }
 }
 
-const parse::value_ref_rule<double>& double_constant()
-{ return get_double_parser_rules().constant; }
-
-const name_token_rule& double_bound_variable_name()
-{ return get_double_parser_rules().bound_variable_name; }
-
-const variable_rule<double>& double_bound_variable()
-{ return get_double_parser_rules().bound_variable; }
-
-const name_token_rule& double_free_variable_name()
-{ return get_double_parser_rules().free_variable_name; }
-
-const variable_rule<double>& double_free_variable()
-{ return get_double_parser_rules().free_variable; }
-
-const statistic_rule<double>& double_var_statistic()
-{ return get_double_parser_rules().statistic; }
 
 namespace parse {
     value_ref_rule<double>& double_value_ref()
