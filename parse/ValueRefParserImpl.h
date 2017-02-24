@@ -7,13 +7,10 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 
-namespace qi = boost::spirit::qi;
-namespace phoenix = boost::phoenix;
-
 
 #define DEBUG_VALUEREF_PARSERS 0
 
-// These are just here to satisfy the requirements of qi::debug(<rule>).
+// These are just here to satisfy the requirements of boost::spirit::qi::debug(<rule>).
 #if DEBUG_VALUEREF_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<const char*>&) { return os; }
@@ -33,7 +30,7 @@ typedef parse::detail::rule<
 template <typename T>
 using variable_rule = parse::detail::rule<
     ValueRef::Variable<T>* (),
-    qi::locals<
+    boost::spirit::qi::locals<
         std::vector<std::string>,
         ValueRef::ReferenceType
     >
@@ -42,7 +39,7 @@ using variable_rule = parse::detail::rule<
 template <typename T>
 using statistic_rule = parse::detail::rule<
     ValueRef::Statistic<T>* (),
-    qi::locals<
+    boost::spirit::qi::locals<
         ValueRef::ValueRefBase<T>*,
         ValueRef::StatisticType
     >
@@ -51,7 +48,7 @@ using statistic_rule = parse::detail::rule<
 template <typename T>
 using complex_variable_rule = parse::detail::rule<
     ValueRef::ComplexVariable<T>* (),
-    qi::locals<
+    boost::spirit::qi::locals<
         std::string,
         ValueRef::ValueRefBase<int>*,
         ValueRef::ValueRefBase<int>*,
@@ -64,7 +61,7 @@ using complex_variable_rule = parse::detail::rule<
 template <typename T>
 using expression_rule = parse::detail::rule<
     ValueRef::ValueRefBase<T>* (),
-    qi::locals<
+    boost::spirit::qi::locals<
         ValueRef::ValueRefBase<T>*,
         ValueRef::ValueRefBase<T>*,
         ValueRef::OpType,
@@ -79,13 +76,14 @@ void initialize_nonnumeric_expression_parsers(
     typename parse::value_ref_rule<T>& expr,
     typename parse::value_ref_rule<T>& primary_expr)
 {
-    qi::_1_type _1;
-    qi::_c_type _c;
-    qi::_d_type _d;
-    qi::_val_type _val;
-    qi::lit_type lit;
-    using phoenix::new_;
-    using phoenix::push_back;
+    using boost::phoenix::new_;
+    using boost::phoenix::push_back;
+
+    boost::spirit::qi::_1_type _1;
+    boost::spirit::qi::_c_type _c;
+    boost::spirit::qi::_d_type _d;
+    boost::spirit::qi::_val_type _val;
+    boost::spirit::qi::lit_type lit;
 
     const parse::lexer& tok = parse::lexer::instance();
 
@@ -133,15 +131,16 @@ void initialize_numeric_expression_parsers(
     typename parse::value_ref_rule<T>& expr,
     typename parse::value_ref_rule<T>& primary_expr)
 {
-    qi::_1_type _1;
-    qi::_a_type _a;
-    qi::_b_type _b;
-    qi::_c_type _c;
-    qi::_d_type _d;
-    qi::_val_type _val;
-    qi::lit_type lit;
-    using phoenix::new_;
-    using phoenix::push_back;
+    using boost::phoenix::new_;
+    using boost::phoenix::push_back;
+
+    boost::spirit::qi::_1_type _1;
+    boost::spirit::qi::_a_type _a;
+    boost::spirit::qi::_b_type _b;
+    boost::spirit::qi::_c_type _c;
+    boost::spirit::qi::_d_type _d;
+    boost::spirit::qi::_val_type _val;
+    boost::spirit::qi::lit_type lit;
 
     const parse::lexer& tok = parse::lexer::instance();
 
@@ -263,13 +262,14 @@ void initialize_bound_variable_parser(
     variable_rule<T>& bound_variable,
     const name_token_rule& variable_name)
 {
-    qi::_1_type _1;
-    qi::_a_type _a;
-    qi::_b_type _b;
-    qi::_val_type _val;
-    using phoenix::construct;
-    using phoenix::new_;
-    using phoenix::push_back;
+    using boost::phoenix::construct;
+    using boost::phoenix::new_;
+    using boost::phoenix::push_back;
+
+    boost::spirit::qi::_1_type _1;
+    boost::spirit::qi::_a_type _a;
+    boost::spirit::qi::_b_type _b;
+    boost::spirit::qi::_val_type _val;
 
     bound_variable
         =   variable_scope() [ _b = _1 ] >> '.'
@@ -286,15 +286,16 @@ void initialize_numeric_statistic_parser(
     const typename parse::value_ref_rule<T>& value_ref
     )
 {
-    const parse::lexer& tok = parse::lexer::instance();
+    using boost::phoenix::construct;
+    using boost::phoenix::new_;
+    using boost::phoenix::push_back;
 
-    qi::_1_type _1;
-    qi::_a_type _a;
-    qi::_b_type _b;
-    qi::_val_type _val;
-    using phoenix::construct;
-    using phoenix::new_;
-    using phoenix::push_back;
+    boost::spirit::qi::_1_type _1;
+    boost::spirit::qi::_a_type _a;
+    boost::spirit::qi::_b_type _b;
+    boost::spirit::qi::_val_type _val;
+
+    const parse::lexer& tok = parse::lexer::instance();
 
     statistic_1
         =   tok.Statistic_
@@ -324,15 +325,16 @@ void initialize_nonnumeric_statistic_parser(
     statistic_rule<T>& statistic,
     const typename parse::value_ref_rule<T>& value_ref)
 {
-    const parse::lexer& tok = parse::lexer::instance();
+    using boost::phoenix::construct;
+    using boost::phoenix::new_;
+    using boost::phoenix::push_back;
 
-    qi::_1_type _1;
-    qi::_a_type _a;
-    qi::_b_type _b;
-    qi::_val_type _val;
-    using phoenix::construct;
-    using phoenix::new_;
-    using phoenix::push_back;
+    boost::spirit::qi::_1_type _1;
+    boost::spirit::qi::_a_type _a;
+    boost::spirit::qi::_b_type _b;
+    boost::spirit::qi::_val_type _val;
+
+    const parse::lexer& tok = parse::lexer::instance();
 
     statistic
         =   tok.Statistic_
