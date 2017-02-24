@@ -19,6 +19,9 @@ import CombatRatingsAI
 from freeorion_tools import tech_is_complete, AITimer
 from AIDependencies import INVALID_ID
 
+MAX_BASE_TROOPERS_GOOD_INVADERS = 20
+MAX_BASE_TROOPERS_POOR_INVADERS = 10
+
 invasion_timer = AITimer('get_invasion_fleets()', write_log=False)
 
 
@@ -67,6 +70,32 @@ def get_invasion_fleets():
             avail_pp = el.data()
             for pid in el.key():
                 available_pp[pid] = avail_pp
+        # For planning base trooper invasion targets we have a two-pass system.  (1) In the first pass we consider all
+        # the invasion targets and figure out which ones appear to be suitable for using base troopers against (i.e., we
+        # already have a populated planet in the same system that could build base troopers) and we have at least a
+        # minimal amount of PP available, and (2) in the second pass we go through the reserved base trooper target list
+        # and check to make sure that there does not appear to be too much military action still needed before the
+        # target is ready to be invaded, we double check that not too many base troopers would be needed, and if things
+        # look clear then we queue up the base troopers on the Production Queue and keep track of where we are building
+        # them, and how many; we may also disqualify and remove previously qualified targets (in case, for example,
+        # we lost our base trooper source planet since it was first added to list).
+        #
+        # For planning and tracking base troopers under construction, we use a dictionary store in
+        # foAI.foAIstate.qualifyingTroopBaseTargets, keyed by the invasion target planet ID.  We only store values
+        # for invasion targets that appear likely to be suitable for base trooper use, and store a 2-item list.
+        # TODO: either actually use the first value to help sort out potential mission collisions in
+        # assign_invasion_fleets_to_invade(), or else simplify to a 1-item (source PID) entry
+        # TODO: or consider using a small class with named fields instead of this 2-item list, for clarity
+        # The first item in this list is the number of base troopers to be build, and the second entry will store the
+        # location ID where they are being built, once they are actually queued.  Initially, however, we simply enter
+        # INVALID_ID (-1) as the location, to flag this target as being reserved as a base-trooper invasion target.
+        # In the second pass, if/when we actually start construction, then we modify the record to indicate the source
+        # of the base troopers.  The expectation is that this will help us be able to better manage multiple base troop
+        # invasions in the same system that could be at the same time or at least overlap in time.
+
+        secure_ai_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
+
+        # Pass 1: identify qualifying base troop invasion targets
         for pid in invadable_planet_ids:  # TODO: reorganize
             if pid in foAI.foAIstate.qualifyingTroopBaseTargets:
                 continue
@@ -79,46 +108,60 @@ def get_invasion_fleets():
             if planet_partial_vis_turn < sys_partial_vis_turn:
                 continue
             best_base_planet = INVALID_ID
-            best_trooper_count = 1  # won't bother using base troopers unless better than 1 per ship
+            best_trooper_count = 0
             for pid2 in state.get_empire_inhabited_planets_by_system().get(sys_id, []):
                 if available_pp.get(pid2, 0) < 2:  # TODO: improve troop base PP sufficiency determination
                     break
                 planet2 = universe.getPlanet(pid2)
-                if not planet2:
+                if not planet2 or planet2.speciesName not in ColonisationAI.empire_ship_builders:
                     continue
-                if planet2.speciesName in ColonisationAI.empire_ship_builders:
-                    best_base_trooper_here = \
-                        ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, pid2)[1]
-                    troops_per_ship = best_base_trooper_here.troopCapacity
-                    species_troop_grade = CombatRatingsAI.get_species_troops_grade(planet2.speciesName)
-                    troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
-                    if troops_per_ship > best_trooper_count:
-                        best_base_planet = pid2
-                        best_trooper_count = troops_per_ship
+                best_base_trooper_here = \
+                    ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, pid2)[1]
+                if not best_base_trooper_here:
+                    continue
+                troops_per_ship = best_base_trooper_here.troopCapacity
+                if not troops_per_ship:
+                    continue
+                species_troop_grade = CombatRatingsAI.get_species_troops_grade(planet2.speciesName)
+                troops_per_ship = CombatRatingsAI.weight_attack_troops(troops_per_ship, species_troop_grade)
+                if troops_per_ship > best_trooper_count:
+                    best_base_planet = pid2
+                    best_trooper_count = troops_per_ship
             if best_base_planet != INVALID_ID:
                 foAI.foAIstate.qualifyingTroopBaseTargets.setdefault(pid, [best_trooper_count, INVALID_ID])
 
-        for pid in list(foAI.foAIstate.qualifyingTroopBaseTargets):
-            planet = universe.getPlanet(pid)  # TODO: also check that still have a colony in this system that can make troops
+        # Pass 2: for each target previously identified for base troopers, check that still qualifies and
+        # check how many base troopers would be needed; if reasonable then queue up the troops and record this in
+        # foAI.foAIstate.qualifyingTroopBaseTargets
+        for pid in foAI.foAIstate.qualifyingTroopBaseTargets.keys():
+            planet = universe.getPlanet(pid)
             if planet and planet.owner == empire_id:
                 del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
-
-        secure_ai_fleet_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
-        for pid in (set(foAI.foAIstate.qualifyingTroopBaseTargets.keys()) - set(invasion_targeted_planet_ids)):  # TODO: consider overriding standard invasion mission
-            planet = universe.getPlanet(pid)
+                continue
+            if pid in invasion_targeted_planet_ids:  # TODO: consider overriding standard invasion mission
+                continue
             if foAI.foAIstate.qualifyingTroopBaseTargets[pid][1] != -1:
                 reserved_troop_base_targets.append(pid)
                 if planet:
                     all_invasion_targeted_system_ids.add(planet.systemID)
+                # TODO: evaluate changes to situation, any more troops needed, etc.
                 continue  # already building for here
+            _, planet_troops = evaluate_invasion_planet(pid, empire, secure_ai_fleet_missions, False)
             sys_id = planet.systemID
             this_sys_status = foAI.foAIstate.systemStatus.get(sys_id, {})
-            if (planet.currentMeterValue(fo.meterType.shield) > 0 and
-                    this_sys_status.get('myFleetRating', 0) < 0.8 * this_sys_status.get('totalThreat', 0)):
-                # this system not secured, so ruling out invasion base troops
+            troop_tally = 0
+            for _fid in this_sys_status.get('myfleets', []):
+                troop_tally += FleetUtilsAI.count_troops_in_fleet(_fid)
+            if troop_tally > planet_troops:  # base troopers appear unneeded
                 del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
-            loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][0]
+            if (planet.currentMeterValue(fo.meterType.shield) > 0 and
+                    this_sys_status.get('myFleetRating', 0) < 0.8 * this_sys_status.get('totalThreat', 0)):
+                # this system not secured, so ruling out invasion base troops for now
+                # don't immediately delete from qualifyingTroopBaseTargets or it will be opened up for regular troops
+                #del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
+                continue
+            loc = foAI.foAIstate.qualifyingTroopBaseTargets[pid][1]
             best_base_trooper_here = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)[1]
             loc_planet = universe.getPlanet(loc)
             if best_base_trooper_here is None:  # shouldn't be possible at this point, but just to be safe
@@ -131,7 +174,6 @@ def get_invasion_fleets():
             if not troops_per_ship:
                 print "The best orbital invasion design at %s seems not to have any troop capacity." % loc_planet
                 continue
-            this_score, p_troops = evaluate_invasion_planet(pid, empire, secure_ai_fleet_missions, False)
             _, col_design, build_choices = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_ORBITAL_INVASION, loc)
             if not col_design:
                 continue
@@ -139,9 +181,15 @@ def get_invasion_fleets():
                 sys.stderr.write(
                     'Best troop design %s can not be produces in at planet with id: %s\d' % (col_design, build_choices)
                 )
-            n_bases = math.ceil((p_troops + 1) / troops_per_ship)  # TODO: reconsider this +1 safety factor
-            if n_bases > 20:  # fall back to standard troopers if would need more than 20 base troopers
-                print "ruling out base invasion troopers at %s due to excessive number required." % planet.name
+            n_bases = math.ceil((planet_troops + 1) / troops_per_ship)  # TODO: reconsider this +1 safety factor
+            # TODO: evaluate cost and time-to-build of best base trooper here versus cost and time-to-build-and-travel
+            # for best regular trooper elsewhere
+            # For now, we assume what building base troopers is best so long as either (1) we would need no more than
+            # MAX_BASE_TROOPERS_POOR_INVADERS base troop ships, or (2) our base troopers have more than 1 trooper per
+            # ship and we would need no more than MAX_BASE_TROOPERS_GOOD_INVADERS base troop ships
+            if (n_bases <= MAX_BASE_TROOPERS_POOR_INVADERS or
+                    (troops_per_ship > 1 and n_bases <= MAX_BASE_TROOPERS_GOOD_INVADERS)):
+                print "ruling out base invasion troopers for %s due to high number (%d) required." % (planet, n_bases)
                 del foAI.foAIstate.qualifyingTroopBaseTargets[pid]
                 continue
             print "Invasion base planning, need %d troops at %d pership, will build %d ships." % ((p_troops + 1), troops_per_ship, n_bases)
