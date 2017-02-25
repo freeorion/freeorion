@@ -69,6 +69,22 @@ using expression_rule = parse::detail::rule<
     >
 >;
 
+
+const reference_token_rule&                     variable_scope();
+const name_token_rule&                          container_type();
+
+const variable_rule<int>&                       int_bound_variable();
+const variable_rule<int>&                       int_free_variable();
+const statistic_rule<int>&                      int_var_statistic();
+const complex_variable_rule<int>&               int_var_complex();
+const parse::value_ref_rule<int>&               int_simple();
+
+const complex_variable_rule<double>&            double_var_complex();
+const parse::value_ref_rule<double>&            double_simple();
+
+const complex_variable_rule<std::string>&       string_var_complex();
+
+
 template <typename T>
 void initialize_nonnumeric_expression_parsers(
     expression_rule<T>& function_expr,
@@ -114,12 +130,61 @@ void initialize_nonnumeric_expression_parsers(
         ;
 }
 
+
 template <>
 void initialize_nonnumeric_expression_parsers<std::string>(
     expression_rule<std::string>& function_expr,
     expression_rule<std::string>& operated_expr,
     typename parse::value_ref_rule<std::string>& expr,
     typename parse::value_ref_rule<std::string>& primary_expr);
+
+
+template <typename T>
+void initialize_nonnumeric_statistic_parser(
+    statistic_rule<T>& statistic,
+    const typename parse::value_ref_rule<T>& value_ref)
+{
+    using boost::phoenix::construct;
+    using boost::phoenix::new_;
+    using boost::phoenix::push_back;
+
+    boost::spirit::qi::_1_type _1;
+    boost::spirit::qi::_a_type _a;
+    boost::spirit::qi::_b_type _b;
+    boost::spirit::qi::_val_type _val;
+
+    const parse::lexer& tok = parse::lexer::instance();
+
+    statistic
+        =   tok.Statistic_
+            >>  tok.Mode_ [ _b = ValueRef::MODE ]
+            >   parse::detail::label(Value_token)     >     value_ref [ _a = _1 ]
+            >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
+                [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
+        ;
+}
+
+
+template <typename T>
+void initialize_bound_variable_parser(
+    variable_rule<T>& bound_variable,
+    const name_token_rule& variable_name)
+{
+    using boost::phoenix::construct;
+    using boost::phoenix::new_;
+    using boost::phoenix::push_back;
+
+    boost::spirit::qi::_1_type _1;
+    boost::spirit::qi::_a_type _a;
+    boost::spirit::qi::_b_type _b;
+    boost::spirit::qi::_val_type _val;
+
+    bound_variable
+        =   variable_scope() [ _b = _1 ] >> '.'
+        >>-(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
+        >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
+        ;
+}
 
 
 template <typename T>
@@ -291,65 +356,3 @@ struct arithmetic_rules
     statistic_rule<T> statistic_expr;
     parse::value_ref_rule<T> expr;
 };
-
-
-const reference_token_rule&                     variable_scope();
-const name_token_rule&                          container_type();
-
-const variable_rule<int>&                       int_bound_variable();
-const variable_rule<int>&                       int_free_variable();
-const statistic_rule<int>&                      int_var_statistic();
-const complex_variable_rule<int>&               int_var_complex();
-const parse::value_ref_rule<int>&               int_simple();
-
-const complex_variable_rule<double>&            double_var_complex();
-const parse::value_ref_rule<double>&            double_simple();
-
-const complex_variable_rule<std::string>&       string_var_complex();
-
-
-template <typename T>
-void initialize_bound_variable_parser(
-    variable_rule<T>& bound_variable,
-    const name_token_rule& variable_name)
-{
-    using boost::phoenix::construct;
-    using boost::phoenix::new_;
-    using boost::phoenix::push_back;
-
-    boost::spirit::qi::_1_type _1;
-    boost::spirit::qi::_a_type _a;
-    boost::spirit::qi::_b_type _b;
-    boost::spirit::qi::_val_type _val;
-
-    bound_variable
-        =   variable_scope() [ _b = _1 ] >> '.'
-        >>-(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-        >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
-        ;
-}
-
-template <typename T>
-void initialize_nonnumeric_statistic_parser(
-    statistic_rule<T>& statistic,
-    const typename parse::value_ref_rule<T>& value_ref)
-{
-    using boost::phoenix::construct;
-    using boost::phoenix::new_;
-    using boost::phoenix::push_back;
-
-    boost::spirit::qi::_1_type _1;
-    boost::spirit::qi::_a_type _a;
-    boost::spirit::qi::_b_type _b;
-    boost::spirit::qi::_val_type _val;
-
-    const parse::lexer& tok = parse::lexer::instance();
-
-    statistic
-        =   tok.Statistic_
-            >>  tok.Mode_ [ _b = ValueRef::MODE ]
-            >   parse::detail::label(Value_token)     >     value_ref [ _a = _1 ]
-            >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
-                [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
-        ;
-}
