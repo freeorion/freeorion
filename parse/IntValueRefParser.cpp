@@ -101,68 +101,28 @@ namespace {
         return retval;
     }
 
-    struct int_parser_rules {
-        int_parser_rules() {
-
+    struct int_arithmetic_rules : public arithmetic_rules<int> {
+        int_arithmetic_rules() :
+            arithmetic_rules("integer")
+        {
             const parse::value_ref_rule<int>& simple = int_simple();
 
-            statistic_sub_value_ref
+            statistic_value_ref_expr
                 =   simple
                 |   int_var_complex()
             ;
 
-            initialize_numeric_statistic_parser<int>(statistic, statistic_1, statistic_2,
-                                                     statistic_sub_value_ref);
-
-            initialize_numeric_expression_parsers<int>(function_expr,
-                                                       exponential_expr,
-                                                       multiplicative_expr,
-                                                       additive_expr,
-                                                       expr,
-                                                       primary_expr);
-
             primary_expr
                 =   '(' >> expr >> ')'
                 |   simple
-                |   statistic
+                |   statistic_expr
                 |   int_var_complex()
                 ;
-
-            statistic_1.name("integer collection statistic");
-            statistic_2.name("integer value statistic");
-            statistic.name("integer statistic");
-            statistic_sub_value_ref.name("integer statistic value ref");
-            function_expr.name("integer function expression");
-            exponential_expr.name("integer exponential expression");
-            multiplicative_expr.name("integer multiplication expression");
-            additive_expr.name("integer additive expression");
-            expr.name("integer expression");
-            primary_expr.name("integer expression");
-
-#if DEBUG_VALUEREF_PARSERS
-            debug(statistic);
-            debug(negate_expr);
-            debug(multiplicative_expr);
-            debug(additive_expr);
-            debug(expr);
-            debug(primary_expr);
-#endif
         }
-
-        statistic_rule<int> statistic_1;
-        statistic_rule<int> statistic_2;
-        statistic_rule<int> statistic;
-        parse::value_ref_rule<int> statistic_sub_value_ref;
-        expression_rule<int> function_expr;
-        expression_rule<int> exponential_expr;
-        expression_rule<int> multiplicative_expr;
-        expression_rule<int> additive_expr;
-        parse::value_ref_rule<int> expr;
-        parse::value_ref_rule<int> primary_expr;
     };
 
-    int_parser_rules& get_int_parser_rules() {
-        static int_parser_rules retval;
+    int_arithmetic_rules& get_int_arithmetic_rules() {
+        static int_arithmetic_rules retval;
         return retval;
     }
 
@@ -210,12 +170,12 @@ const parse::value_ref_rule<int>& int_simple()
 { return get_simple_int_parser_rules().simple; }
 
 const statistic_rule<int>& int_var_statistic()
-{ return get_int_parser_rules().statistic; }
+{ return get_int_arithmetic_rules().statistic_expr; }
 
 
 namespace parse {
     value_ref_rule<int>& int_value_ref()
-    { return get_int_parser_rules().expr; }
+    { return get_int_arithmetic_rules().expr; }
 
     value_ref_rule<int>& flexible_int_value_ref()
     { return get_castable_as_int_parser_rules().flexible_int; }

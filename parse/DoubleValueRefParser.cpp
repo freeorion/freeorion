@@ -2,8 +2,11 @@
 
 
 namespace {
-    struct double_parser_rules {
-        double_parser_rules() {
+    struct double_parser_rules : public arithmetic_rules<double> {
+        double_parser_rules() :
+            arithmetic_rules("real number")
+        {
+
             qi::_1_type _1;
             qi::_val_type _val;
             using phoenix::construct;
@@ -74,16 +77,6 @@ namespace {
 
             initialize_bound_variable_parser<double>(bound_variable, bound_variable_name);
 
-            initialize_numeric_statistic_parser<double>(statistic, statistic_1, statistic_2,
-                                                        primary_expr);
-
-            initialize_numeric_expression_parsers<double>(function_expr,
-                                                          exponential_expr,
-                                                          multiplicative_expr,
-                                                          additive_expr,
-                                                          expr,
-                                                          primary_expr);
-
             int_bound_variable_cast
                 =   int_bound_variable() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
@@ -102,29 +95,23 @@ namespace {
                 |    free_variable
                 |    bound_variable
                 |    int_bound_variable_cast
-                |    statistic
+                |    statistic_expr
                 |    int_statistic_cast
                 |    double_var_complex()
                 |    int_complex_variable_cast
                 ;
+
+            statistic_value_ref_expr
+                = primary_expr.alias();
 
             bound_variable_name.name("real number bound variable name (e.g., Population)");
             free_variable_name.name("real number free variable name (e.g., UniverseCentreX)");
             constant.name("real number constant");
             free_variable.name("free real number variable");
             bound_variable.name("real number bound variable");
-            statistic_1.name("real number collection statistic");
-            statistic_2.name("real number value statistic");
-            statistic.name("real number statistic");
             int_bound_variable_cast.name("integer bound variable");
             int_statistic_cast.name("integer statistic");
             int_complex_variable_cast.name("integer complex variable");
-            function_expr.name("real number function expression");
-            exponential_expr.name("real number exponential expression");
-            multiplicative_expr.name("real number multiplication expression");
-            additive_expr.name("real number additive expression");
-            expr.name("real number expression");
-            primary_expr.name("real number expression");
 
 #if DEBUG_VALUEREF_PARSERS
             debug(bound_variable_name);
@@ -132,16 +119,11 @@ namespace {
             debug(constant);
             debug(free_variable);
             debug(bound_variable);
-            debug(statistic);
             debug(int_statistic_cast);
             debug(int_complex_variable_cast);
             debug(int_complex_variable_cast);
             debug(double_complex_variable);
             debug(negate_expr);
-            debug(multiplicative_expr);
-            debug(additive_expr);
-            debug(expr);
-            debug(primary_expr);
 #endif
         }
 
@@ -150,18 +132,9 @@ namespace {
         parse::value_ref_rule<double> constant;
         variable_rule<double> free_variable;
         variable_rule<double> bound_variable;
-        statistic_rule<double> statistic_1;
-        statistic_rule<double> statistic_2;
-        statistic_rule<double> statistic;
         parse::value_ref_rule<double> int_bound_variable_cast;
         parse::value_ref_rule<double> int_statistic_cast;
         parse::value_ref_rule<double> int_complex_variable_cast;
-        expression_rule<double> function_expr;
-        expression_rule<double> exponential_expr;
-        expression_rule<double> multiplicative_expr;
-        expression_rule<double> additive_expr;
-        parse::value_ref_rule<double> expr;
-        parse::value_ref_rule<double> primary_expr;
     };
 
     double_parser_rules& get_double_parser_rules() {
