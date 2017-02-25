@@ -31,8 +31,16 @@
 
 std::string SupplySystemBonusTupleString(const SupplySystemBonusTuple& x) {
     std::stringstream ss;
-    ss << std::setprecision(2) << std::get<ssBonus>(x) << ":(" << std::get<ssVisibilityBonus>(x) << "+"
-       << std::get<ssShipBonus>(x) << "+" << std::get<ssColonyBonus>(x) << ")";
+    ss << std::setprecision(2) << std::get<ssbBonus>(x) << ":(" << std::get<ssbVisibilityBonus>(x) << "+"
+       << std::get<ssbShipBonus>(x) << "+" << std::get<ssbColonyBonus>(x) << ")";
+    return ss.str();
+}
+
+std::string SupplySystemEmpireTupleString(const SupplySystemEmpireTuple& x) {
+    std::stringstream ss;
+    ss << std::setprecision(2) << "source = " << std::get<sseSource>(x) << " range = " << std::get<sseRange>(x) << " bonus = "
+       << SupplySystemBonusTupleString(std::get<sseBonus>(x)) << " dist = " << std::get<sseDistance>(x)
+       << " stealth = "<< std::get<sseStealth>(x);
     return ss.str();
 }
 
@@ -485,7 +493,7 @@ namespace {
     {
         // stuff to break ties...
         auto system_bonuses = ComputeSystemSupplyBonuses(empire_id, sys_id);
-        float bonus = std::get<ssBonus>(system_bonuses);
+        float bonus = std::get<ssbBonus>(system_bonuses);
 
         // sum of all supply sources in this system
         bonus += empire_system_supply_range_sums[empire_id][sys_id] / 1000.0f;
@@ -553,7 +561,7 @@ namespace {
         }
 
         friend std::ostream& operator<<(std::ostream& os, const SupplyMerit& x) {
-            os << '(' << x.m_range << '/' << std::get<ssBonus>(x.m_system_bonus) << '/' << x.m_distance << ')';
+            os << '(' << x.m_range << '/' << std::get<ssbBonus>(x.m_system_bonus) << '/' << x.m_distance << ')';
             return os;
         }
 
@@ -605,7 +613,7 @@ namespace {
         auto system_id = sys.SystemID();
         for (const auto& id_and_empire : Empires()) {
             auto system_bonuses = ComputeSystemSupplyBonuses(id_and_empire.second->EmpireID(), system_id);
-            auto bonus = std::get<ssBonus>(system_bonuses);
+            auto bonus = std::get<ssbBonus>(system_bonuses);
             if (bonus > 0.0f) {
                 if (!retval)
                     retval = std::map<int, SupplyMerit>();
@@ -2410,6 +2418,42 @@ void SupplyManager::SupplyManagerImpl::UpdateOld() {
     }
 
     DetermineSupplyConnectedSystemGroups();
+}
+
+namespace boost {
+    namespace serialization {
+
+    // TODO: Write a generic template std::tuple serialization routine.
+
+    template <class Archive>
+    void serialize(Archive& ar, SupplySystemBonusTuple& x, const unsigned int version) {
+        auto& bonus = std::get<ssbBonus>(x);
+        auto& visibility = std::get<ssbVisibilityBonus>(x);
+        auto& ship = std::get<ssbShipBonus>(x);
+        auto& colony = std::get<ssbColonyBonus>(x);
+
+        ar  & BOOST_SERIALIZATION_NVP(bonus)
+            & BOOST_SERIALIZATION_NVP(visibility)
+            & BOOST_SERIALIZATION_NVP(ship)
+            & BOOST_SERIALIZATION_NVP(colony);
+    }
+
+    template <class Archive>
+    void serialize(Archive& ar, SupplySystemEmpireTuple& x, const unsigned int version) {
+        auto& source = std::get<sseSource>(x);
+        auto& range = std::get<sseRange>(x);
+        auto& bonus = std::get<sseBonus>(x);
+        auto& dist = std::get<sseDistance>(x);
+        auto& stealth = std::get<sseStealth>(x);
+
+        ar  & BOOST_SERIALIZATION_NVP(source)
+            & BOOST_SERIALIZATION_NVP(range)
+            & BOOST_SERIALIZATION_NVP(bonus)
+            & BOOST_SERIALIZATION_NVP(dist)
+            & BOOST_SERIALIZATION_NVP(stealth);
+    }
+
+    }
 }
 
 template <class Archive>

@@ -33,8 +33,13 @@ namespace std {
 
 // A tuple to report the per system bonus augmenting supply competition.
 using SupplySystemBonusTuple = std::tuple<float, float, float, float>;
-enum SupplySystemBonusFields {ssBonus, ssVisibilityBonus, ssShipBonus, ssColonyBonus};
+enum SupplySystemBonusFields {ssbBonus, ssbVisibilityBonus, ssbShipBonus, ssbColonyBonus};
 std::string SupplySystemBonusTupleString(const SupplySystemBonusTuple& x);
+
+// A tuple to report the per system per empire supply factors.
+using SupplySystemEmpireTuple = std::tuple<int, float, SupplySystemBonusTuple, float, float>;
+enum SupplySystemEmpireFields {sseSource, sseRange, sseBonus, sseDistance, sseStealth};
+std::string SupplySystemEmpireTupleString(const SupplySystemEmpireTuple& x);
 
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {
