@@ -5,6 +5,7 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/functional/hash.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <map>
 #include <set>
@@ -93,8 +94,9 @@ public:
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;
     bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
 
-    /** Return the map from system id to empire id and system bonuses. */
-    const std::unordered_map<int, std::map<int, SupplySystemBonusTuple>>& SystemBonuses() const;
+    /** Return an ordered map from empire id to each system supply and detailed bonuses. */
+    using system_iterator = std::unordered_map<int, std::map<int, std::vector<SupplySystemEmpireTuple>>>::const_iterator;
+    boost::optional<const system_iterator> SystemSupply(const int system_id) const;
 
     std::string Dump(int empire_id = ALL_EMPIRES) const;
     //@}

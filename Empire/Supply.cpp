@@ -94,8 +94,8 @@ public:
     bool        SystemHasFleetSupply(int system_id, int empire_id) const;
     bool        SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const;
 
-    /** Return the map from system id to empire id and system bonuses. */
-    const std::unordered_map<int, std::map<int, SupplySystemBonusTuple>>& SystemBonuses() const;
+    /** Return an ordered map from empire id to each system supply and detailed bonuses. */
+    boost::optional<const SupplyManager::system_iterator> SystemSupply(const int system_id) const;
 
     std::string Dump(int empire_id = ALL_EMPIRES) const;
     //@}
@@ -162,8 +162,9 @@ private:
     // For each empire and each system the highest stealth of supply in that system.
     std::unordered_map<int, std::unordered_map<int, float>> m_empire_to_system_to_stealth;
 
-    // For each system a sorted map from empire to system bonus.
-    std::unordered_map<int, std::map<int, SupplySystemBonusTuple>> m_system_to_empire_to_bonus;
+    // For each system a sorted map from empire to system merit and all components.
+    // TODO consider assembling this from smaller maps for individual components
+    std::unordered_map<int, std::map<int, std::vector<SupplySystemEmpireTuple>>> m_system_to_empire_to_final_supply;
 };
 
 
@@ -314,8 +315,12 @@ bool SupplyManager::SupplyManagerImpl::SystemHasFleetSupply(int system_id, int e
     return false;
 }
 
-const std::unordered_map<int, std::map<int, SupplySystemBonusTuple>>& SupplyManager::SupplyManagerImpl::SystemBonuses() const {
-    return m_system_to_empire_to_bonus;
+boost::optional<const SupplyManager::system_iterator>
+SupplyManager::SupplyManagerImpl::SystemSupply(const int system_id) const {
+    const auto &retval =  m_system_to_empire_to_final_supply.find(system_id);
+    if (retval == m_system_to_empire_to_final_supply.end())
+        return boost::none;
+    return boost::optional<const SupplyManager::system_iterator>(retval);
 }
 
 std::string SupplyManager::SupplyManagerImpl::Dump(int empire_id) const {
@@ -2168,6 +2173,8 @@ void SupplyManager::SupplyManagerImpl::Update() {
     /*// For each empire the highest stealth its supply in system that it has supply inn.
     std::unordered_map<int, std::unordered_map<int, float>> */ m_empire_to_system_to_stealth.clear();
 
+    m_system_to_empire_to_final_supply.clear();
+
     for (auto&& system_and_supply_pod : system_to_supply_pod) {
         auto system_id = system_and_supply_pod.first;
         auto& pod = system_and_supply_pod.second;
@@ -2197,6 +2204,9 @@ void SupplyManager::SupplyManagerImpl::Update() {
                 // Keep the best local stealth.
                 auto& current_stealth = m_empire_to_system_to_stealth[empire_id][system_id];
                 current_stealth = std::max(current_stealth, stealth);
+
+                m_system_to_empire_to_final_supply[system_id][empire_id].push_back(
+                    std::make_tuple(source_id, merit.Range(), merit.Bonus(), merit.Distance(), stealth));
             }
         }
     }
@@ -2216,6 +2226,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
         obstructing the resource flow.  That is, the resource flow isn't limited
         by range, but by something blocking its flow. */
     /*std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>*/  m_supply_starlane_obstructed_traversals.clear();
+
     timer.EnterSection("update traversals");
     DebugLogger() << "SupplyManager::Update() traversals.";
     // std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>>
@@ -2467,7 +2478,8 @@ void SupplyManager::SupplyManagerImpl::serialize(Archive& ar, const unsigned int
         & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_ranges)
         & BOOST_SERIALIZATION_NVP(m_propagated_supply_distances)
         & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_distances)
-        & BOOST_SERIALIZATION_NVP(m_empire_to_system_to_stealth);
+        & BOOST_SERIALIZATION_NVP(m_empire_to_system_to_stealth)
+        & BOOST_SERIALIZATION_NVP(m_system_to_empire_to_final_supply);
 }
 
 template void SupplyManager::SupplyManagerImpl::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
@@ -2534,8 +2546,8 @@ bool                                                    SupplyManager::SystemHas
 bool                                                    SupplyManager::SystemHasFleetSupply(int system_id, int empire_id, bool include_allies) const
 { return pimpl->SystemHasFleetSupply(system_id, empire_id, include_allies); }
 
-const std::unordered_map<int, std::map<int, SupplySystemBonusTuple>>& SupplyManager::SystemBonuses() const {
-    return pimpl->SystemBonuses();
+boost::optional<const SupplyManager::system_iterator> SupplyManager::SystemSupply(const int system_id) const {
+    return pimpl->SystemSupply(system_id);
 }
 
 std::string                                             SupplyManager::Dump(int empire_id /*= ALL_EMPIRES*/) const
