@@ -144,7 +144,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
             continue
         last_sys = ai_fleet_mission.target.get_system().id  # will count this fleet as assigned to last system in target list  # TODO last_sys or target sys?
         this_rating = CombatRatingsAI.get_fleet_rating(fleet_id)
-        already_assigned_rating[last_sys] = CombatRatingsAI.combine_ratings(already_assigned_rating.get(sys_id, 0), this_rating)
+        already_assigned_rating[last_sys] = CombatRatingsAI.combine_ratings(already_assigned_rating.get(last_sys, 0), this_rating)
     for sys_id in universe.systemIDs:
         my_defense_rating = systems_status.get(sys_id, {}).get('mydefenses', {}).get('overall', 0)
         already_assigned_rating[sys_id] = CombatRatingsAI.combine_ratings(my_defense_rating, already_assigned_rating[sys_id])
