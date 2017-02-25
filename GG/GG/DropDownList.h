@@ -237,7 +237,7 @@ protected:
 private:
     const ListBox*  LB() const;
 
-    std::unique_ptr<ModalListPicker> const m_modal_picker;
+    const std::shared_ptr<ModalListPicker> m_modal_picker;
 };
 
 } // namespace GG
