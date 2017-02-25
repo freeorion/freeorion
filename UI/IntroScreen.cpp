@@ -120,28 +120,52 @@ void CreditsWnd::DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transpa
     std::string credit;
     for (const XMLElement& group : m_credits.children) {
         if (0 == group.Tag().compare("GROUP")) {
-            for (const XMLElement& person : group.children) {
-                if (0 == person.Tag().compare("PERSON")) {
-                    credit = "";
-                    if (person.attributes.count("name"))
-                        credit += person.attributes.at("name");
-                    if (person.attributes.count("nick") && person.attributes.at("nick").length() > 0) {
+            for (const XMLElement& item : group.children) {
+                credit = "";
+
+                if (0 == item.Tag().compare("PERSON")) {    
+                    if (item.attributes.count("name"))
+                        credit += item.attributes.at("name");
+                    if (item.attributes.count("nick") && item.attributes.at("nick").length() > 0) {
                         credit += " <rgba 153 153 153 " + std::to_string(transparency) +">(";
-                        credit += person.attributes.at("nick");
+                        credit += item.attributes.at("nick");
                         credit += ")</rgba>";
                     }
-                    if (person.attributes.count("task") && person.attributes.at("task").length() > 0) {
+                    if (item.attributes.count("task") && item.attributes.at("task").length() > 0) {
                         credit += " - <rgba 204 204 204 " + std::to_string(transparency) +">";
-                        credit += person.attributes.at("task");
+                        credit += item.attributes.at("task");
                         credit += "</rgba>";
                     }
-                    std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
-                        m_font->ExpensiveParseFromTextToTextElements(credit, format);
-                    std::vector<GG::Font::LineData> lines =
-                        m_font->DetermineLines(credit, format, x2 - x1, text_elements);
-                    m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), credit, format, lines);
-                    offset += m_font->TextExtent(lines).y + 2;
                 }
+
+                if (0 == item.Tag().compare("RESOURCE")) {
+                    if (item.attributes.count("author"))
+                        credit += item.attributes.at("author");
+                    if (item.attributes.count("title")) {
+                        credit += "<rgba 153 153 153 " + std::to_string(transparency) + "> - ";
+                        credit += item.attributes.at("title");
+                        credit += "</rgba>\n";
+                    }
+                    if (item.attributes.count("license"))
+                        credit += UserString("INTRO_CREDITS_LICENSE") + " " + item.attributes.at("license");
+                    if (item.attributes.count("source")) {
+                        credit += "<rgba 153 153 153 " + std::to_string(transparency) + "> - ";
+                        credit += item.attributes.at("source");
+                        credit += "</rgba>\n";
+                    }
+                    if (item.attributes.count("notes") && item.attributes.at("notes").length() > 0) {
+                        credit += "<rgba 204 204 204 " + std::to_string(transparency) + ">(";
+                        credit += item.attributes.at("notes");
+                        credit += ")</rgba>";
+                    }
+                }
+
+                std::vector<std::shared_ptr<GG::Font::TextElement>> text_elements =
+                    m_font->ExpensiveParseFromTextToTextElements(credit, format);
+                std::vector<GG::Font::LineData> lines =
+                    m_font->DetermineLines(credit, format, x2 - x1, text_elements);
+                m_font->RenderText(GG::Pt(x1, y1 + offset), GG::Pt(x2, y2), credit, format, lines);
+                offset += m_font->TextExtent(lines).y + 2;
             }
             offset += m_font->Lineskip() + 2;
         }
