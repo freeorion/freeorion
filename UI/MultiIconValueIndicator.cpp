@@ -62,8 +62,12 @@ MultiIconValueIndicator::MultiIconValueIndicator(GG::X w, const std::vector<int>
         AttachChild(m_icons.back());
         x += IconWidth() + IconSpacing();
     }
+    x += EDGE_PAD;
+    const auto height = EDGE_PAD + IconHeight() + ClientUI::Pts()*3/2;
     if (!m_icons.empty())
-        Resize(GG::Pt(Width(), EDGE_PAD + IconHeight() + ClientUI::Pts()*3/2));
+        Resize(GG::Pt(x, height));
+    else
+        Resize(GG::Pt(GG::X0, height));
     Update();
 }
 

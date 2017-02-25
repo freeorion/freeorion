@@ -14,6 +14,7 @@
 #include "ShaderProgram.h"
 #include "SpecialsPanel.h"
 #include "SystemResourceSummaryBrowseWnd.h"
+#include "SystemSupplySummaryPanel.h"
 #include "TextBrowseWnd.h"
 #include "../universe/Predicates.h"
 #include "../universe/ShipDesign.h"
@@ -2766,6 +2767,7 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_star_graphic(nullptr),
     m_planet_panel_container(nullptr),
     m_system_resource_summary(nullptr),
+    m_system_supply_summary(nullptr),
     m_selection_enabled(false)
 {
     m_planet_panel_container = new PlanetPanelContainer();
@@ -2802,6 +2804,9 @@ SidePanel::SidePanel(const std::string& config_name) :
     m_system_resource_summary = new MultiIconValueIndicator(Width() - EDGE_PAD*2);
     AttachChild(m_system_resource_summary);
 
+    m_system_supply_summary = new SystemSupplySummaryPanel(s_system_id);
+    AttachChild(m_system_supply_summary);
+
     GG::Connect(m_system_name->DropDownOpenedSignal,                     &SidePanel::SystemNameDropListOpenedSlot,  this);
     GG::Connect(m_system_name->SelChangedSignal,                         &SidePanel::SystemSelectionChangedSlot,    this);
     GG::Connect(m_system_name->SelChangedWhileDroppedSignal,             &SidePanel::SystemSelectionChangedSlot,    this);
@@ -2837,12 +2842,18 @@ SidePanel::~SidePanel() {
 
     delete m_star_graphic;
     delete m_system_resource_summary;
+    delete m_system_supply_summary;
 }
 
 bool SidePanel::InWindow(const GG::Pt& pt) const {
-    return (UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight())
-           || (m_planet_panel_container && m_planet_panel_container->InWindow(pt))
-           || (m_system_resource_summary && m_system_resource_summary->Parent() == this && m_system_resource_summary->InWindow(pt));
+    return ((UpperLeft() + GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0) <= pt && pt < LowerRight())
+            || (m_planet_panel_container && m_planet_panel_container->InWindow(pt))
+            || (m_system_resource_summary
+                && m_system_resource_summary->Parent() == this
+                && m_system_resource_summary->InWindow(pt))
+            || (m_system_supply_summary
+                && m_system_supply_summary->Parent() == this
+                && m_system_supply_summary->InWindow(pt)));
 }
 
 GG::Pt SidePanel::ClientUpperLeft() const
@@ -2958,6 +2969,15 @@ void SidePanel::UpdateImpl() {
     //std::cout << "SidePanel::UpdateImpl" << std::endl;
     if (m_system_resource_summary)
         m_system_resource_summary->Update();
+    if (m_system_supply_summary) {
+        m_system_supply_summary->Update();
+        if (m_system_supply_summary->IsEmpty()) {
+            DetachChild(m_system_supply_summary);
+        } else {
+            AttachChild(m_system_supply_summary);
+        }
+    }
+
     // update individual PlanetPanels in PlanetPanelContainer, then redo layout of panel container
     m_planet_panel_container->RefreshAllPlanetPanels();
 }
@@ -3081,6 +3101,8 @@ void SidePanel::RefreshImpl() {
     m_star_graphic = nullptr;
     delete m_system_resource_summary;
     m_system_resource_summary = nullptr;
+    delete m_system_supply_summary;
+    m_system_supply_summary = nullptr;
 
 
     RefreshSystemNames();
@@ -3144,11 +3166,14 @@ void SidePanel::RefreshImpl() {
                                                                  {METER_RESEARCH,   METER_TARGET_RESEARCH},
                                                                  {METER_TRADE,      METER_TARGET_TRADE}};
 
+    auto system_summary_width = GG::X(Width() - MaxPlanetDiameter() - 8);
+    auto system_summary_x_pos = GG::X(MaxPlanetDiameter() + 4);
+
     // refresh the system resource summary.
-    m_system_resource_summary = new MultiIconValueIndicator(Width() - MaxPlanetDiameter() - 8,
-                                                            owned_planets, meter_types);
-    m_system_resource_summary->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() + 4),
-                                             140 - m_system_resource_summary->Height()));
+    m_system_resource_summary = new MultiIconValueIndicator(
+        system_summary_width, owned_planets, meter_types);
+    auto system_summary_y_pos = 140 - m_system_resource_summary->Height();
+    m_system_resource_summary->MoveTo(GG::Pt(system_summary_x_pos, system_summary_y_pos));
     AttachChild(m_system_resource_summary);
 
 
@@ -3167,6 +3192,17 @@ void SidePanel::RefreshImpl() {
 
         AttachChild(m_system_resource_summary);
         m_system_resource_summary->Update();
+        system_summary_width -= m_system_resource_summary->Width();
+        system_summary_x_pos += m_system_resource_summary->Width();
+    }
+
+    m_system_supply_summary = new SystemSupplySummaryPanel(s_system_id);
+    m_system_supply_summary->MoveTo(GG::Pt(system_summary_x_pos, system_summary_y_pos));
+    AttachChild(m_system_supply_summary);
+    // MoveChildUp(m_system_supply_summary);
+    m_system_supply_summary->Update();
+    if (m_system_supply_summary->IsEmpty()) {
+        DetachChild(m_system_supply_summary);
     }
 }
 
@@ -3208,6 +3244,7 @@ void SidePanel::DoLayout() {
     // SidePanel layout and rendering is slow enough that this appears as a visible glitch.
     GG::GUI::PreRenderWindow(m_system_name);
     GG::GUI::PreRenderWindow(m_system_resource_summary);
+    GG::GUI::PreRenderWindow(m_system_supply_summary);
     GG::GUI::PreRenderWindow(m_planet_panel_container);
 
     // hide scrollbar if there is no planets in the system
@@ -3221,10 +3258,19 @@ void SidePanel::DoLayout() {
 
     // resize system resource summary
     if (m_system_resource_summary) {
+         ul = GG::Pt(GG::X(EDGE_PAD + 1), PLANET_PANEL_TOP - m_system_resource_summary->Height());
+        m_system_resource_summary->MoveTo(ul);
+
+        if (m_system_supply_summary) {
+            m_system_supply_summary->MoveTo(ul + GG::Pt(m_system_resource_summary->Width(), GG::Y0));
+            MoveChildUp(m_system_supply_summary);
+        }
+    } else if (m_system_supply_summary) {
         ul = GG::Pt(GG::X(EDGE_PAD + 1), PLANET_PANEL_TOP - m_system_resource_summary->Height());
-        lr = ul + GG::Pt(ClientWidth() - EDGE_PAD - 1, m_system_resource_summary->Height());
-        m_system_resource_summary->SizeMove(ul, lr);
+        m_system_supply_summary->MoveTo(ul);
+        MoveChildUp(m_system_supply_summary);
     }
+
 }
 
 void SidePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {

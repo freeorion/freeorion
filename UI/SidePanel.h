@@ -16,6 +16,7 @@
 
 class CUIDropDownList;
 class MultiIconValueIndicator;
+class SystemSupplySummaryPanel;
 
 class SidePanel : public CUIWnd {
 public:
@@ -151,7 +152,7 @@ private:
 
     PlanetPanelContainer*       m_planet_panel_container;
     MultiIconValueIndicator*    m_system_resource_summary;
-
+    SystemSupplySummaryPanel*   m_system_supply_summary;
     bool                        m_selection_enabled;
 
     static bool                 s_needs_update;

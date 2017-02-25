@@ -207,6 +207,7 @@
     <ClInclude Include="..\..\UI\SpecialsPanel.h" />
     <ClInclude Include="..\..\UI\SystemIcon.h" />
     <ClInclude Include="..\..\UI\SystemResourceSummaryBrowseWnd.h" />
+    <ClInclude Include="..\..\UI\SystemSupplySummaryPanel.h" />
     <ClInclude Include="..\..\UI\TechTreeArcs.h" />
     <ClInclude Include="..\..\UI\TechTreeLayout.h" />
     <ClInclude Include="..\..\UI\TechTreeWnd.h" />
@@ -318,6 +319,7 @@
     <ClCompile Include="..\..\UI\SpecialsPanel.cpp" />
     <ClCompile Include="..\..\UI\SystemIcon.cpp" />
     <ClCompile Include="..\..\UI\SystemResourceSummaryBrowseWnd.cpp" />
+    <ClCompile Include="..\..\UI\SystemSupplySummaryPanel.cpp" />
     <ClCompile Include="..\..\UI\TechTreeArcs.cpp" />
     <ClCompile Include="..\..\UI\TechTreeLayout.cpp" />
     <ClCompile Include="..\..\UI\TechTreeWnd.cpp" />
