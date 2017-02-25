@@ -303,6 +303,7 @@ const complex_variable_rule<int>&               int_var_complex();
 const parse::value_ref_rule<int>&               int_simple();
 
 const complex_variable_rule<double>&            double_var_complex();
+const parse::value_ref_rule<double>&            double_simple();
 
 const complex_variable_rule<std::string>&       string_var_complex();
 

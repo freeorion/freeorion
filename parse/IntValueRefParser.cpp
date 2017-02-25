@@ -4,11 +4,12 @@
 namespace {
     struct simple_int_parser_rules {
         simple_int_parser_rules() {
-            qi::_1_type _1;
-            qi::_val_type _val;
             using phoenix::new_;
 
-            const parse::lexer& tok =   parse::lexer::instance();
+            qi::_1_type _1;
+            qi::_val_type _val;
+
+            const parse::lexer& tok = parse::lexer::instance();
 
             // TODO: Should we apply elements of this list only to certain
             // objects? For example, if one writes "Source.Planet.",
@@ -39,10 +40,6 @@ namespace {
                 |   tok.ETA_
                 ;
 
-            constant
-                =   tok.int_    [ _val = new_<ValueRef::Constant<int> >(_1) ]
-                ;
-
             free_variable_name
                 =   tok.CurrentTurn_
                 |   tok.GalaxyAge_
@@ -54,6 +51,10 @@ namespace {
                 |   tok.GalaxySize_
                 |   tok.GalaxySpecialFrequency_
                 |   tok.GalaxyStarlaneFrequency_
+                ;
+
+            constant
+                =   tok.int_    [ _val = new_<ValueRef::Constant<int> >(_1) ]
                 ;
 
             free_variable
@@ -71,16 +72,16 @@ namespace {
 
             initialize_bound_variable_parser<int>(bound_variable, bound_variable_name);
 
-            free_variable_name.name("integer free variable name (e.g. CurrentTurn)");
             bound_variable_name.name("integer bound variable name (e.g., FleetID)");
+            free_variable_name.name("integer free variable name (e.g. CurrentTurn)");
             constant.name("integer constant");
             free_variable.name("free integer variable");
             bound_variable.name("bound integer variable");
             simple.name("simple integer expression (constant, free or bound variable)");
 
 #if DEBUG_VALUEREF_PARSERS
-            debug(free_variable_name);
             debug(bound_variable_name);
+            debug(free_variable_name);
             debug(constant);
             debug(free_variable);
             debug(bound_variable);
@@ -88,18 +89,20 @@ namespace {
 #endif
         }
 
-        name_token_rule     free_variable_name;
-        name_token_rule     bound_variable_name;
+        name_token_rule bound_variable_name;
+        name_token_rule free_variable_name;
         parse::value_ref_rule<int> constant;
-        variable_rule<int>  free_variable;
-        variable_rule<int>  bound_variable;
+        variable_rule<int> free_variable;
+        variable_rule<int> bound_variable;
         parse::value_ref_rule<int> simple;
     };
+
 
     simple_int_parser_rules& get_simple_int_parser_rules() {
         static simple_int_parser_rules retval;
         return retval;
     }
+
 
     struct int_arithmetic_rules : public arithmetic_rules<int> {
         int_arithmetic_rules() :
