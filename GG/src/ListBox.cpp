@@ -858,22 +858,20 @@ void ListBox::PreRender()
     // stable then force the scrollbar to be added if either cycle had a scroll bar.
 
     // Perform a cycle of adjust scrolls and prerendering rows and return if sizes changed.
-    auto check_adjust_scroll_size_change =
-        [this](std::pair<bool, bool> force_scrolls = {false, false})
-        {
-            // This adjust scrolls may add or remove scrolls
-            AdjustScrolls(true);
+    auto check_adjust_scroll_size_change = [this](std::pair<bool, bool> force_scrolls = {false, false}) {
+        // This adjust scrolls may add or remove scrolls
+        AdjustScrolls(true);
 
-            bool visible_row_size_change = ShowVisibleRows(true);
+        bool visible_row_size_change = ShowVisibleRows(true);
 
-            bool header_size_change = false;
-            if (!m_header_row->empty()) {
-                auto old_size = m_header_row->Size();
-                GUI::PreRenderWindow(m_header_row);
-                header_size_change |= (old_size != m_header_row->Size());
-            }
-            return visible_row_size_change | header_size_change;
-        };
+        bool header_size_change = false;
+        if (!m_header_row->empty()) {
+            auto old_size = m_header_row->Size();
+            GUI::PreRenderWindow(m_header_row);
+            header_size_change |= (old_size != m_header_row->Size());
+        }
+        return visible_row_size_change | header_size_change;
+    };
 
     // Try adjusting scroll twice and then force the scrolls on.
     if (check_adjust_scroll_size_change()) {
