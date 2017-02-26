@@ -3209,38 +3209,28 @@ namespace {
         }
         return map_it->second;
     }
-}
 
-void MapWnd::InitStarlaneRenderingBuffers() {
-    DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
-    ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", true);
+    void GetResPoolLaneInfo(int empire_id,
+                            boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>& res_pool_systems,
+                            boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>& res_group_cores,
+                            std::unordered_set<int>& res_group_core_members,
+                            boost::unordered_map<int, std::shared_ptr<std::set<int>>>& member_to_core,
+                            std::shared_ptr<std::unordered_set<int>>& under_alloc_res_grp_core_members)
+    {
+        res_pool_systems.clear();
+        res_group_cores.clear();
+        res_group_core_members.clear();
+        member_to_core.clear();
+        under_alloc_res_grp_core_members.reset();
+        if (empire_id == ALL_EMPIRES)
+            return;
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return;
 
-    // clear old buffers
-    ClearStarlaneRenderingBuffers();
-
-    // temp storage
-    std::set<std::pair<int, int>>  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
-
-    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
-
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const Empire* this_client_empire = GetEmpire(client_empire_id);
-
-    // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
-    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_pool_systems;
-    // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_group_cores;
-
-    std::unordered_set<int> res_group_core_members;
-    boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
-    std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
-
-    if (this_client_empire) {
-        const ProductionQueue& queue = this_client_empire->GetProductionQueue();
+        const ProductionQueue& queue = empire->GetProductionQueue();
         const std::map<std::set<int>, float>& allocated_pp(queue.AllocatedPP());
-        const std::map<std::set<int>, float> available_pp(this_client_empire->GetResourcePool(RE_INDUSTRY)->Available());
+        const std::map<std::set<int>, float> available_pp(empire->GetResourcePool(RE_INDUSTRY)->Available());
 
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
@@ -3276,7 +3266,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // of the lookups.
         GetPathsThroughSupplyLanes::SupplyLaneMMap resource_supply_lanes_undirected;
         const std::set<std::pair<int, int>>
-            resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
+            resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(empire_id);
 
         for (const std::set<std::pair<int, int>>::value_type& supply_lane : resource_supply_lanes_directed) {
             resource_supply_lanes_undirected.insert({supply_lane.first, supply_lane.second});
@@ -3304,8 +3294,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             }
 
             std::unordered_set<int> paths;
-            GetPathsThroughSupplyLanes::GetPathsThroughSupplyLanes(
-                paths, terminal_points, resource_supply_lanes_undirected);
+            GetPathsThroughSupplyLanes::GetPathsThroughSupplyLanes(paths, terminal_points, resource_supply_lanes_undirected);
 
             // All systems on the paths are valid end points so they are
             // added to the core group of systems that will be rendered
@@ -3334,8 +3323,40 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             }
         }
     }
+}
 
-    //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
+void MapWnd::InitStarlaneRenderingBuffers() {
+    DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
+    ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", true);
+
+    // clear old buffers
+    ClearStarlaneRenderingBuffers();
+
+    // temp storage
+    std::set<std::pair<int, int>>  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
+
+    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
+    const Empire* this_client_empire = GetEmpire(client_empire_id);
+
+
+
+    // Get info about rendered empire resource starlanes
+
+    // map keyed by ResourcePool (set of objects) to the corresponding set of system ids
+    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_pool_systems;
+    // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_group_cores;
+    std::unordered_set<int> res_group_core_members;
+    boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
+    std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
+    GetResPoolLaneInfo(client_empire_id, res_pool_systems, res_group_cores, res_group_core_members,
+                       member_to_core, under_alloc_res_grp_core_members);
+
+
 
     // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
     m_starlane_endpoints.clear();
