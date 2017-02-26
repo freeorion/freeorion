@@ -400,9 +400,6 @@ public:
     /** Returns the systems in which this empire is blockading supply.*/
     const std::unordered_set<int>& SupplyBlockadedSystems() const;
 
-    /** Return a map from system id to an ordered set of pairs of stealth and supply range.*/
-    const std::unordered_map<int, std::set<std::pair<float, float>>>& SystemToStealthAndSupplyRange() const;
-
     /** Returns set of system ids that are able to propagate supply from one
       * system to the next, or at which supply can be delivered to fleets if
       * supply can reach the system from elsewhere, or in which planets can
@@ -519,8 +516,6 @@ public:
     void        UpdateSystemSupplyRanges();
     /** Calculates the systems in which this empire is blockading supply. */
     void        UpdateSupplyBlockadedSystems();
-    /** Calculates stealth and range that systems can send fleet and resource supplies. */
-    void        UpdateSystemToStealthAndSupplyRange();
     /** Calculates systems that can propagate supply (fleet or resource) using
       * the specified set of \a known_systems */
     void        UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems);
@@ -710,9 +705,6 @@ private:
 
     /** System id where this empire is blockading/protecting supply.*/
     std::unordered_set<int>         m_systems_with_empire_owned_blockading_fleets;
-
-    /** A map from system id to a set of supply stealth and range.*/
-    std::unordered_map<int, std::set<std::pair<float, float>>> m_system_to_stealth_supply;
 
     std::map<int, std::set<int> >   m_available_system_exit_lanes;  ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
     std::map<int, std::set<int> >   m_pending_system_exit_lanes;    ///< pending updates to m_available_system_exit_lanes

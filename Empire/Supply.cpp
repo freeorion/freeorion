@@ -2491,7 +2491,7 @@ void SupplyManager::SupplyManagerImpl::UpdateOld() {
     for (const auto& entry : Empires()) {
         const auto empire_id = entry.first;
         const auto& empire = entry.second;
-        empire_to_system_to_stealth_supply[empire_id] = empire->SystemToStealthAndSupplyRange();
+        // empire_to_system_to_stealth_supply[empire_id] = empire->SystemToStealthAndSupplyRange();
         empire_system_supply_ranges[empire_id] = empire->SystemSupplyRanges();
         empire_supply_unobstructed_systems[empire_id] = empire->SupplyUnobstructedSystems();
 

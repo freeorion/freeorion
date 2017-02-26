@@ -735,7 +735,6 @@ void ServerApp::NewGameInit(const GalaxySetupData& galaxy_setup_data,
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propagate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
-        empire->UpdateSystemToStealthAndSupplyRange();         // sets range systems can propagate fleet and resourse supply (separately)
     }
 
     GetSupplyManager().Update();
@@ -1146,7 +1145,6 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             continue;   // skip eliminated empires.  presumably this shouldn't be an issue when initializing a new game, but apparently I thought this was worth checking for...
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propagate fleet and resource (same for both)
         empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
-        empire->UpdateSystemToStealthAndSupplyRange();         // sets range systems can propagate fleet and resourse supply (separately)
     }
 
     GetSupplyManager().Update();
@@ -2898,7 +2896,6 @@ void ServerApp::PostCombatProcessTurns() {
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propagate fleet and resource (same for both)
         empire->UpdateSupplyBlockadedSystems();
         empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
-        empire->UpdateSystemToStealthAndSupplyRange();         // sets range systems can propagate fleet and resourse supply (separately)
     }
 
     GetSupplyManager().Update();

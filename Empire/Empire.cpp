@@ -2005,29 +2005,6 @@ namespace
     }
 }
 
-void Empire::UpdateSystemToStealthAndSupplyRange() {
-
-    m_system_to_stealth_supply.clear();
-
-    // as of this writing, only planets can generate supply propagation
-    for (int object_id : ExistingObjectsKnownToEmpire<Planet>(EmpireID())) {
-        std::shared_ptr<const Planet> planet = GetPlanet(object_id);
-        std::shared_ptr<const UniverseObject> obj = planet;
-        // Check is it an owned planet with a valid id and a supply meter.
-        if (!planet
-            || !planet->OwnedBy(EmpireID())
-            || (planet->SystemID() == INVALID_OBJECT_ID)
-            || !obj->GetMeter(METER_SUPPLY))
-        { continue; }
-
-        // TODO: Why is this NextTurn Supply?
-        float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
-        float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
-
-        m_system_to_stealth_supply[planet->SystemID()].insert(std::make_pair(stealth, supply_range));
-    }
-}
-
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_supply_system_ranges.clear();
@@ -2368,9 +2345,6 @@ void Empire::UpdateAvailableLanes() {
     }
     m_pending_system_exit_lanes.clear(); // TODO: consider: not really necessary, & may be more efficient to not clear.
 }
-
-const std::unordered_map<int, std::set<std::pair<float, float>>>& Empire::SystemToStealthAndSupplyRange() const
-{ return m_system_to_stealth_supply; }
 
 const std::unordered_map<int, float>& Empire::SystemSupplyRanges() const
 { return m_supply_system_ranges; }
