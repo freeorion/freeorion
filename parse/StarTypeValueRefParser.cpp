@@ -21,7 +21,7 @@ namespace {
                 ;
 
             constant_expr
-                =    parse::star_type_enum() [ _val = new_<ValueRef::Constant<StarType> >(_1) ]
+                =    parse::enum_expr<StarType>() [ _val = new_<ValueRef::Constant<StarType> >(_1) ]
                 ;
         }
     };

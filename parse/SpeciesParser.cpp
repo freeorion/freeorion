@@ -82,8 +82,8 @@ namespace {
                 ;
 
             environment_map_element
-                =    parse::detail::label(Type_token)        > parse::planet_type_enum() [ _a = _1 ]
-                >    parse::detail::label(Environment_token) > parse::planet_environment_enum()
+                =    parse::detail::label(Type_token)        > parse::enum_expr<PlanetType>() [ _a = _1 ]
+                >    parse::detail::label(Environment_token) > parse::enum_expr<PlanetEnvironment>()
                      [ _val = construct<std::pair<PlanetType, PlanetEnvironment> >(_a, _1) ]
                 ;
 

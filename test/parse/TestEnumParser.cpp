@@ -240,29 +240,29 @@ BOOST_AUTO_TEST_CASE(PlanetEnvironmentParser) {
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_ENVIRONMENTS == 5, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Uninhabitable", result, parse::planet_environment_enum()));
+    BOOST_CHECK(parse("Uninhabitable", result, parse::enum_expr<PlanetEnvironment>()));
     BOOST_CHECK(result == PE_UNINHABITABLE);
 
-    BOOST_CHECK(parse("Hostile", result, parse::planet_environment_enum()));
+    BOOST_CHECK(parse("Hostile", result, parse::enum_expr<PlanetEnvironment>()));
     BOOST_CHECK(result == PE_HOSTILE);
 
-    BOOST_CHECK(parse("Poor", result, parse::planet_environment_enum()));
+    BOOST_CHECK(parse("Poor", result, parse::enum_expr<PlanetEnvironment>()));
     BOOST_CHECK(result == PE_POOR);
 
-    BOOST_CHECK(parse("Adequate", result, parse::planet_environment_enum()));
+    BOOST_CHECK(parse("Adequate", result, parse::enum_expr<PlanetEnvironment>()));
     BOOST_CHECK(result == PE_ADEQUATE);
 
-    BOOST_CHECK(parse("Good", result, parse::planet_environment_enum()));
+    BOOST_CHECK(parse("Good", result, parse::enum_expr<PlanetEnvironment>()));
     BOOST_CHECK(result == PE_GOOD);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_PLANET_ENVIRONMENT;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::planet_environment_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<PlanetEnvironment>()));
     BOOST_CHECK(result == INVALID_PLANET_ENVIRONMENT);
 
     // XXX: is not modifying result the correct behaviour?
     result = NUM_PLANET_ENVIRONMENTS;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::planet_environment_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<PlanetEnvironment>()));
     BOOST_CHECK(result == NUM_PLANET_ENVIRONMENTS);
 }
 
@@ -273,35 +273,35 @@ BOOST_AUTO_TEST_CASE(PlanetSizeParser) {
     // XXX: SZ_NOWORLD has no token, so no test, +1
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_SIZES == 7 + 1, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Tiny", result, parse::planet_size_enum()));
+    BOOST_CHECK(parse("Tiny", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == SZ_TINY);
 
-    BOOST_CHECK(parse("Small", result, parse::planet_size_enum()));
+    BOOST_CHECK(parse("Small", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == SZ_SMALL);
 
-    BOOST_CHECK(parse("Medium", result, parse::planet_size_enum()));
+    BOOST_CHECK(parse("Medium", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == SZ_MEDIUM);
 
-    BOOST_CHECK(parse("Large", result, parse::planet_size_enum()));
+    BOOST_CHECK(parse("Large", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == SZ_LARGE);
 
-    BOOST_CHECK(parse("Huge", result, parse::planet_size_enum()));
+    BOOST_CHECK(parse("Huge", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == SZ_HUGE);
 
-    BOOST_CHECK(parse("Asteroids", result, parse::planet_size_enum()));
+    BOOST_CHECK(parse("Asteroids", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == SZ_ASTEROIDS);
 
-    BOOST_CHECK(parse("GasGiant", result, parse::planet_size_enum()));
+    BOOST_CHECK(parse("GasGiant", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == SZ_GASGIANT);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_PLANET_SIZE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::planet_size_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == INVALID_PLANET_SIZE);
 
     // XXX: is not modifying result the correct behaviour?
     result = NUM_PLANET_SIZES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::planet_size_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<PlanetSize>()));
     BOOST_CHECK(result == NUM_PLANET_SIZES);
 }
 
@@ -311,47 +311,47 @@ BOOST_AUTO_TEST_CASE(PlanetTypeParser) {
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_PLANET_TYPES == 11, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Swamp", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Swamp", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_SWAMP);
 
-    BOOST_CHECK(parse("Toxic", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Toxic", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_TOXIC);
 
-    BOOST_CHECK(parse("Inferno", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Inferno", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_INFERNO);
 
-    BOOST_CHECK(parse("Radiated", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Radiated", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_RADIATED);
 
-    BOOST_CHECK(parse("Barren", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Barren", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_BARREN);
 
-    BOOST_CHECK(parse("Tundra", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Tundra", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_TUNDRA);
 
-    BOOST_CHECK(parse("Desert", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Desert", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_DESERT);
 
-    BOOST_CHECK(parse("Terran", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Terran", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_TERRAN);
 
-    BOOST_CHECK(parse("Ocean", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Ocean", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_OCEAN);
 
-    BOOST_CHECK(parse("Asteroids", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("Asteroids", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_ASTEROIDS);
 
-    BOOST_CHECK(parse("GasGiant", result, parse::planet_type_enum()));
+    BOOST_CHECK(parse("GasGiant", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == PT_GASGIANT);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_PLANET_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::planet_type_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == INVALID_PLANET_TYPE);
 
     // XXX: is not modifying result the correct behaviour?
     result = NUM_PLANET_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::planet_type_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<PlanetType>()));
     BOOST_CHECK(result == NUM_PLANET_TYPES);
 }
 
@@ -539,38 +539,38 @@ BOOST_AUTO_TEST_CASE(StarTypeParser) {
     // Literal is number of tests, not number of enums.
     BOOST_REQUIRE_MESSAGE(NUM_STAR_TYPES == 8, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Blue", result, parse::star_type_enum()));
+    BOOST_CHECK(parse("Blue", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == STAR_BLUE);
 
-    BOOST_CHECK(parse("White", result, parse::star_type_enum()));
+    BOOST_CHECK(parse("White", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == STAR_WHITE);
 
-    BOOST_CHECK(parse("Yellow", result, parse::star_type_enum()));
+    BOOST_CHECK(parse("Yellow", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == STAR_YELLOW);
 
-    BOOST_CHECK(parse("Orange", result, parse::star_type_enum()));
+    BOOST_CHECK(parse("Orange", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == STAR_ORANGE);
 
-    BOOST_CHECK(parse("Red", result, parse::star_type_enum()));
+    BOOST_CHECK(parse("Red", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == STAR_RED);
 
-    BOOST_CHECK(parse("Neutron", result, parse::star_type_enum()));
+    BOOST_CHECK(parse("Neutron", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == STAR_NEUTRON);
 
-    BOOST_CHECK(parse("BlackHole", result, parse::star_type_enum()));
+    BOOST_CHECK(parse("BlackHole", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == STAR_BLACK);
 
-    BOOST_CHECK(parse("NoStar", result, parse::star_type_enum()));
+    BOOST_CHECK(parse("NoStar", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == STAR_NONE);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_STAR_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::star_type_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == INVALID_STAR_TYPE);
 
     // XXX: is not modifying result the correct behaviour?
     result = NUM_STAR_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::star_type_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<StarType>()));
     BOOST_CHECK(result == NUM_STAR_TYPES);
 }
 
@@ -615,38 +615,38 @@ BOOST_AUTO_TEST_CASE(UniverseObjectTypeParser)
     // XXX: OBJ_FIGHTER has no token, so no test, +1
     BOOST_REQUIRE_MESSAGE(NUM_OBJ_TYPES == 8 + 1, "Untested enumeration value.");
 
-    BOOST_CHECK(parse("Building", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(parse("Building", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == OBJ_BUILDING);
 
-    BOOST_CHECK(parse("Ship", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(parse("Ship", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == OBJ_SHIP);
 
-    BOOST_CHECK(parse("Fleet ", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(parse("Fleet ", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == OBJ_FLEET );
 
-    BOOST_CHECK(parse("Planet", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(parse("Planet", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == OBJ_PLANET);
 
-    BOOST_CHECK(parse("PopulationCenter", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(parse("PopulationCenter", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == OBJ_POP_CENTER);
 
-    BOOST_CHECK(parse("ProductionCenter", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(parse("ProductionCenter", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == OBJ_PROD_CENTER);
 
-    BOOST_CHECK(parse("System", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(parse("System", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == OBJ_SYSTEM);
 
-    BOOST_CHECK(parse("Field", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(parse("Field", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == OBJ_FIELD);
 
     // XXX: is not modifying result the correct behaviour?
     result = INVALID_UNIVERSE_OBJECT_TYPE;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == INVALID_UNIVERSE_OBJECT_TYPE);
 
     // XXX: is not modifying result the correct behaviour?
     result = NUM_OBJ_TYPES;
-    BOOST_CHECK(!parse("DoesNotExist", result, parse::universe_object_type_enum()));
+    BOOST_CHECK(!parse("DoesNotExist", result, parse::enum_expr<UniverseObjectType>()));
     BOOST_CHECK(result == NUM_OBJ_TYPES);
 }
 

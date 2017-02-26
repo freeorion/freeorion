@@ -19,7 +19,7 @@ namespace {
                 ;
 
             constant_expr
-                =   parse::planet_environment_enum() [ _val = new_<ValueRef::Constant<PlanetEnvironment> >(_1) ]
+                =   parse::enum_expr<PlanetEnvironment>() [ _val = new_<ValueRef::Constant<PlanetEnvironment> >(_1) ]
                 ;
         }
     };

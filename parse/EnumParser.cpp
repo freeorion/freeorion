@@ -12,7 +12,8 @@ namespace {
 }
 
 namespace parse {
-    enum_rule<PlanetSize>& planet_size_enum()
+    template <>
+    enum_rule<PlanetSize>& enum_expr<PlanetSize>()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_rule<PlanetSize> retval
@@ -35,7 +36,8 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<PlanetType>& planet_type_enum()
+    template <>
+    enum_rule<PlanetType>& enum_expr<PlanetType>()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_rule<PlanetType> retval
@@ -62,7 +64,8 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<PlanetEnvironment>& planet_environment_enum()
+    template <>
+    enum_rule<PlanetEnvironment>& enum_expr<PlanetEnvironment>()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_rule<PlanetEnvironment> retval
@@ -83,7 +86,8 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<UniverseObjectType>& universe_object_type_enum()
+    template <>
+    enum_rule<UniverseObjectType>& enum_expr<UniverseObjectType>()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_rule<UniverseObjectType> retval
@@ -107,7 +111,8 @@ namespace parse {
         return retval;
     }
 
-    enum_rule<StarType>& star_type_enum()
+    template <>
+    enum_rule<StarType>& enum_expr<StarType>()
     {
         const parse::lexer& tok = parse::lexer::instance();
         static enum_rule<StarType> retval

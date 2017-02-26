@@ -21,7 +21,7 @@ namespace {
                 ;
 
             constant_expr
-                =    parse::planet_size_enum() [ _val = new_<ValueRef::Constant<PlanetSize> >(_1) ]
+                =    parse::enum_expr<PlanetSize>() [ _val = new_<ValueRef::Constant<PlanetSize> >(_1) ]
                 ;
         }
     };

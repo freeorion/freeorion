@@ -24,7 +24,7 @@ namespace {
                 ;
 
             constant_expr
-                =    parse::planet_type_enum() [ _val = new_<ValueRef::Constant<PlanetType> >(_1) ]
+                =    parse::enum_expr<PlanetType>() [ _val = new_<ValueRef::Constant<PlanetType> >(_1) ]
                 ;
         }
     };

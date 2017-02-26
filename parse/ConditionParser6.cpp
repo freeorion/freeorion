@@ -105,7 +105,7 @@ namespace {
                 ;
 
             object_type
-                =   parse::universe_object_type_enum() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
+                =   parse::enum_expr<UniverseObjectType>() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
                 |   (
                         tok.ObjectType_
                     >   parse::detail::label(Type_token) > parse::universe_object_type_value_ref() [ _val = new_<Condition::Type>(_1) ]

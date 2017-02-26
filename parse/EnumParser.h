@@ -16,15 +16,24 @@ namespace parse {
         E ()
     >;
 
-    enum_rule<PlanetSize>& planet_size_enum();
+    template <typename T>
+    enum_rule<T>& enum_expr()
+    {}
 
-    enum_rule<PlanetType>& planet_type_enum();
+    template <>
+    enum_rule<PlanetSize>& enum_expr<PlanetSize>();
 
-    enum_rule<PlanetEnvironment>& planet_environment_enum();
+    template <>
+    enum_rule<PlanetType>& enum_expr<PlanetType>();
 
-    enum_rule<UniverseObjectType>& universe_object_type_enum();
+    template <>
+    enum_rule<PlanetEnvironment>& enum_expr<PlanetEnvironment>();
 
-    enum_rule<StarType>& star_type_enum();
+    template <>
+    enum_rule<UniverseObjectType>& enum_expr<UniverseObjectType>();
+
+    template <>
+    enum_rule<StarType>& enum_expr<StarType>();
 
     enum_rule<EmpireAffiliationType>& empire_affiliation_type_enum();
 

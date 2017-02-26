@@ -19,7 +19,7 @@ namespace {
                 ;
 
             constant_expr
-                =    parse::universe_object_type_enum() [ _val = new_<ValueRef::Constant<UniverseObjectType> >(_1) ]
+                =    parse::enum_expr<UniverseObjectType>() [ _val = new_<ValueRef::Constant<UniverseObjectType> >(_1) ]
                 ;
         }
     };
