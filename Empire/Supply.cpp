@@ -860,6 +860,71 @@ namespace {
         return system_to_blockading_colony_empire_ids;
     }
 
+    /** Return a map from system id to all initial sources of supply. */
+    // TODO change to vector
+    std::unordered_map<int, std::set<SupplyPODTuple>> CalculateInitialSupplySources() {
+        std::unordered_map<int, std::set<SupplyPODTuple>> system_to_supply_pod;
+
+        for (auto system_it : Objects().ExistingSystems()) {
+            auto system = std::dynamic_pointer_cast<const System>(system_it.second);
+            if (!system)
+                continue;
+
+            if (auto stealth_supply = CalculateMeritStealthSupplyEmpire(*system))
+                system_to_supply_pod[system->SystemID()] = *stealth_supply;
+        }
+
+        return system_to_supply_pod;
+    }
+
+    /** CalculateInitialSystemConditions returns a SupplySystemPOD for \p system populated with
+        everything except the local system supply, blockading fleets, contesting fleets,
+        blockading planets and local bonuses. */
+    boost::optional<SupplySystemPOD> CalculateInitialSystemConditions(
+        const System &system, const boost::optional<std::set<SupplyPODTuple>>& stealth_supply)
+    {
+        boost::optional<std::unordered_set<int>> contesting_empires;
+        boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
+        std::tie(contesting_empires, blockading_fleets_empire_ids) = CalculateBlockadingFleetsEmpireIDs(system);
+
+        auto blockading_colony = CalculateBlockadingColonyEmpireID(system, stealth_supply, contesting_empires);
+
+        auto local_bonuses = CalculateSystemSupplyMerit(system);
+
+        if (!contesting_empires && !blockading_fleets_empire_ids && !blockading_colony && !local_bonuses)
+            return boost::none;
+
+        return SupplySystemPOD({boost::optional<std::set<SupplyPODTuple>>(),
+                    contesting_empires, blockading_fleets_empire_ids, blockading_colony, local_bonuses});
+    }
+
+    /** Return a map from system id to SupplySystemrPOD populated with
+        everything except the local system supply, blockading fleets, contesting fleets,
+        blockading planets and local bonuses. \p system_to_supply are the per system initial
+        supply sources. */
+    std::unordered_map<int, SupplySystemPOD> CalculateInitialSystemConditions(
+        const std::unordered_map<int, std::set<SupplyPODTuple>>& system_to_supply)
+    {
+        std::unordered_map<int, SupplySystemPOD> system_to_supply_pod;
+
+        for (auto system_it : Objects().ExistingSystems()) {
+            auto system = std::dynamic_pointer_cast<const System>(system_it.second);
+            if (!system)
+                continue;
+
+            // Find any local supply sources
+            boost::optional<std::set<SupplyPODTuple>> maybe_local_supply;
+            const auto& local_supply_it = system_to_supply.find(system->SystemID());
+            if (local_supply_it != system_to_supply.end())
+                maybe_local_supply = local_supply_it->second;
+
+            if (auto pod = CalculateInitialSystemConditions(*system, maybe_local_supply))
+                system_to_supply_pod[system->SystemID()] = *pod;
+        }
+
+        return system_to_supply_pod;
+    }
+
     boost::optional<SupplySystemPOD> CalculateInitialSupply(const System &system) {
         auto stealth_supply = CalculateMeritStealthSupplyEmpire(system);
 
@@ -2097,10 +2162,15 @@ void SupplyManager::SupplyManagerImpl::Update() {
         }
     }
 
-    timer.EnterSection("initial supply");
+    timer.EnterSection("initial supply sources ");
+    DebugLogger() << "SupplyManager::Update() Find initial supply sources.";
+    // Map from system id to all sources of supply.
+    std::unordered_map<int, std::set<SupplyPODTuple>> initial_supply_sources = CalculateInitialSupplySources();
+
+    timer.EnterSection("create PODs");
     DebugLogger() << "SupplyManager::Update() create PODs.";
     //Map from system id to SupplySystemPOD containing all data needed to evaluate supply in one system.
-    std::unordered_map<int, SupplySystemPOD> system_to_supply_pod = CalculateInitialSupply();
+    std::unordered_map<int, SupplySystemPOD> system_to_supply_pod = CalculateInitialSystemConditions(initial_supply_sources);
 
     timer.EnterSection("create tranches");
     DebugLogger() << "SupplyManager::Update() create tranches.";
