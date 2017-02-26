@@ -925,6 +925,58 @@ namespace {
         return system_to_supply_pod;
     }
 
+    /**Localize (modify) the \p supply_sources with local factors in \p supply_pod. */
+    void LocalizeSupply(std::set<SupplyPODTuple>& supply_sources, const SupplySystemPOD& supply_pod) {
+        // Adjust merit for local bonuses if needed
+        auto local_bonuses = supply_pod.system_bonuses;
+        if (!local_bonuses)
+            return;
+
+        // List of merits that need to be adjusted
+        std::vector<std::set<SupplyPODTuple>::const_iterator> erase_these;
+        std::vector<SupplyPODTuple> add_these;
+        for (auto supply_tuple_it = supply_sources.begin();
+             supply_tuple_it != supply_sources.end(); ++supply_tuple_it)
+        {
+            const auto& local_empire = std::get<ssEmpireID>(*supply_tuple_it);
+            const auto& bonus_it = local_bonuses->find(local_empire);
+            if (bonus_it == local_bonuses->end())
+                continue;
+
+            auto local_supply_tuple = *supply_tuple_it;
+            SupplyMerit& local_merit = std::get<ssMerit>(local_supply_tuple);
+            local_merit.Localize(bonus_it->second);
+
+            erase_these.push_back(supply_tuple_it);
+            add_these.push_back(local_supply_tuple);
+
+            DebugLogger() << "Localizing merit from " << std::get<ssMerit>(*supply_tuple_it)
+                          << " to " << std::get<ssMerit>(local_supply_tuple)
+                          << " with local bonus " << bonus_it->second;
+        }
+
+        // Adjust the set
+        // TODO does this need to be a set?
+        for (const auto& erase_it : erase_these)
+            supply_sources.erase(erase_it);
+        for(const auto& add_this : add_these)
+            supply_sources.insert(add_this);
+    }
+
+    /** Modify \p system_to_supply to be localize by local bonus factors in \p system_to_supply_pod. */
+    void LocalizeSupply(
+        std::unordered_map<int, std::set<SupplyPODTuple>>& system_to_supply,
+        const std::unordered_map<int, SupplySystemPOD>& system_to_supply_pod)
+    {
+        for (auto& system_and_supply : system_to_supply) {
+            const auto&  system_to_supply_pod_it = system_to_supply_pod.find(system_and_supply.first);
+            if (system_to_supply_pod_it == system_to_supply_pod.end())
+                continue;
+
+            LocalizeSupply(system_and_supply.second, system_to_supply_pod_it->second);
+        }
+    }
+
     boost::optional<SupplySystemPOD> CalculateInitialSupply(const System &system) {
         auto stealth_supply = CalculateMeritStealthSupplyEmpire(system);
 
