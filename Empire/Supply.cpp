@@ -184,6 +184,8 @@ SupplyManager::SupplyManagerImpl& SupplyManager::SupplyManagerImpl::operator=(co
 }
 
 namespace {
+    // TODO remove these and replace with boost::optional which doesn't result in cross thread
+    // reference to right here.
     static const std::set<int> EMPTY_INT_SET;
     static const std::set<std::set<int>> EMPTY_INT_SET_SET;
     static const std::unordered_set<int> EMPTY_INT_UNORDERED_SET;
@@ -953,8 +955,14 @@ namespace {
             if (system_it == m_system_to_source_to_merit_stealth_empire.end())
                 return;
 
+            DebugLogger() << "Found and removing from system " << system_it->first << "source id " << source_id;
             system_it->second.erase(source_id);
             --m_num_sources;
+
+            system_it = m_system_to_source_to_merit_stealth_empire.find(system_id);
+            if (system_it == m_system_to_source_to_merit_stealth_empire.end())
+                return;
+            ErrorLogger() << "Found more?";
         }
 
         std::unordered_map<int, std::unordered_map<int, std::tuple<SupplyMerit, float, int>>>::iterator begin()
@@ -1305,7 +1313,7 @@ namespace {
             }
 
             DebugLogger() << " Contesting candidate " << candidate_source_id << " from empire "
-                          << candidate_empire_id << " with merit " << candidate_merit << " and "
+                          << candidate_empire_id << " with merit " << candidate_merit << " and stealth "
                           << candidate_stealth << " detection " << candidate_detection << ".";
 
             // Conditionally add candidate to the keepers.  It might be removed if tied for range.
@@ -1323,11 +1331,19 @@ namespace {
                 std::tie(std::ignore, other_stealth, other_source_id, other_empire_id) = *other_it;
 
                 DebugLogger() << " against other " << other_source_id << " from empire "
-                              << other_empire_id << " with merit " << other_merit << " and "
+                              << other_empire_id << " with merit " << other_merit << " and stealth "
                               << other_stealth << ".";
-                // Same source
-                if (other_source_id == candidate_source_id)
+
+                // Same source looping back
+                if (other_source_id == candidate_source_id){
+                    // Same source looping back
+                    if (other_merit > candidate_merit) {
+                        DebugLogger() << " Lost to loopback ";
+                        is_keep_candidate = false;
+                        break;
+                    }
                     continue;
+                }
 
                 // Same empire
                 if (other_empire_id == candidate_empire_id) {
@@ -2120,7 +2136,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
             DebugLogger() << "SupplyManager::Update() remove " << losers.size() << " losers in "<< system_id;
             // Remove the losers the tranches.
-            for (auto&& loser : losers) {
+            for (auto& loser : losers) {
                 tranches.Remove(system_id, loser.first, loser.second);
             }
 
