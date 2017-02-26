@@ -3219,7 +3219,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     ClearStarlaneRenderingBuffers();
 
     // temp storage
-    std::set<std::pair<int, int> >  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
+    std::set<std::pair<int, int>>  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
 
     const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
 
@@ -3275,7 +3275,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
         // Convert supply starlanes to non-directional.  This saves half
         // of the lookups.
         GetPathsThroughSupplyLanes::SupplyLaneMMap resource_supply_lanes_undirected;
-        const std::set<std::pair<int, int> >
+        const std::set<std::pair<int, int>>
             resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(client_empire_id);
 
         for (const std::set<std::pair<int, int>>::value_type& supply_lane : resource_supply_lanes_directed) {
@@ -3395,7 +3395,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
                 GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
                 for (std::map<int, Empire*>::value_type& entry : Empires()) {
                     Empire* empire = entry.second;
-                    const std::set<std::pair<int, int> >& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
+                    const std::set<std::pair<int, int>>& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
 
                     //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
 
@@ -3464,7 +3464,7 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
                 for (std::map<int, Empire*>::value_type& entry : Empires()) {
                     Empire* empire = entry.second;
-                    const std::set<std::pair<int, int> >& resource_obstructed_supply_lanes =
+                    const std::set<std::pair<int, int>>& resource_obstructed_supply_lanes =
                         GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
 
                     // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
@@ -3657,7 +3657,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     const ObjectMap&        objects = GetUniverse().Objects();
 
     // for each map position and empire, find max value of detection range at that position
-    std::map<std::pair<int, std::pair<float, float> >, float> empire_position_max_detection_ranges;
+    std::map<std::pair<int, std::pair<float, float>>, float> empire_position_max_detection_ranges;
 
     for (std::shared_ptr<const UniverseObject> obj : objects.FindObjects<UniverseObject>()) {
         int object_id = obj->ID();
@@ -3704,8 +3704,8 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
 
         // find this empires entry for this location, if any
-        std::pair<int, std::pair<float, float> > key{obj->Owner(), {X, Y}};
-        std::map<std::pair<int, std::pair<float, float> >, float>::iterator range_it =
+        std::pair<int, std::pair<float, float>> key{obj->Owner(), {X, Y}};
+        std::map<std::pair<int, std::pair<float, float>>, float>::iterator range_it =
             empire_position_max_detection_ranges.find(key);
         if (range_it != empire_position_max_detection_ranges.end()) {
             if (range_it->second < D) range_it->second = D; // update existing entry
@@ -3714,7 +3714,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
         }
     }
 
-    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt> > > circles;
+    std::map<GG::Clr, std::vector<std::pair<GG::Pt, GG::Pt>>> circles;
     for (const std::map<std::pair<int, std::pair<float, float>>, float>::value_type& detection_circle : empire_position_max_detection_ranges) {
         const Empire* empire = GetEmpire(detection_circle.first.first);
         if (!empire) {
@@ -4573,8 +4573,8 @@ void MapWnd::DeferredRefreshFleetButtons() {
 
 template <typename K>
 void MapWnd::CreateFleetButtonsOfType (
-    boost::unordered_map<K, std::unordered_set<FleetButton*> >& type_fleet_buttons,
-    const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
+    boost::unordered_map<K, std::unordered_set<FleetButton*>>& type_fleet_buttons,
+    const boost::unordered_map<std::pair<K, int>, std::vector<int>> &fleets_map,
     const FleetButton::SizeType & fleet_button_size)
 {
     for (const typename boost::unordered_map<std::pair<K, int>, std::vector<int>>::value_type& fleets : fleets_map) {
@@ -6214,7 +6214,7 @@ bool MapWnd::ZoomToPrevOwnedSystem() {
         return false;
 
     // find currently selected system in list
-    std::set<std::pair<std::string, int> >::const_reverse_iterator it = system_names_ids.rend();
+    std::set<std::pair<std::string, int>>::const_reverse_iterator it = system_names_ids.rend();
     std::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
@@ -6264,7 +6264,7 @@ bool MapWnd::ZoomToPrevSystem() {
         return false;
 
     // find currently selected system in list
-    std::set<std::pair<std::string, int> >::const_reverse_iterator it = system_names_ids.rend();
+    std::set<std::pair<std::string, int>>::const_reverse_iterator it = system_names_ids.rend();
     std::shared_ptr<const System> sel_sys = GetSystem(SidePanel::SystemID());
     if (sel_sys) {
         it = std::find(system_names_ids.rbegin(), system_names_ids.rend(),  std::make_pair(sel_sys->Name(), sel_sys->ID()));
@@ -6393,7 +6393,7 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     const std::shared_ptr<ResourcePool> pool = empire->GetResourcePool(RE_INDUSTRY);
     if (!pool)
         return false;
-    std::set<std::set<int> > wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
+    std::set<std::set<int>> wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
     if (wasted_PP_objects.empty())
         return false;
 
@@ -6569,9 +6569,9 @@ namespace { //helper function for DispatchFleetsExploring
     //return the set of all systems ID with a starlane connecting them to a system in set
     std::set<int> AddNeighboorsToSet(const Empire *empire, const std::set<int> system_ids){
         std::set<int> retval;
-        std::map<int, std::set<int> > starlanes = empire->KnownStarlanes();
+        std::map<int, std::set<int>> starlanes = empire->KnownStarlanes();
         for (int system_id : system_ids) {
-            std::map<int, std::set<int> >::iterator new_neighboors_it = starlanes.find(system_id);
+            std::map<int, std::set<int>>::iterator new_neighboors_it = starlanes.find(system_id);
             if(new_neighboors_it != starlanes.end()){
                 for (int neighbor_id : new_neighboors_it->second) {
                     retval.insert(neighbor_id);
@@ -6588,7 +6588,7 @@ namespace { //helper function for DispatchFleetsExploring
             return std::pair<int, int>(INVALID_OBJECT_ID, INT_MAX);
 
         std::set<int> supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID());
-        std::map<int, std::set<int> > starlanes = empire->KnownStarlanes();
+        std::map<int, std::set<int>> starlanes = empire->KnownStarlanes();
         std::set<int> frontier;
         frontier.insert(system_id);
         int distance = 0;
