@@ -34,11 +34,12 @@
 #include <boost/optional/optional.hpp>
 
 #include <iterator>
+#include <memory>
 
 
 using namespace GG;
 
-class ModalListPicker : public Control
+class ModalListPicker : public std::enable_shared_from_this<ModalListPicker>, public Control
 {
 public:
     typedef ListBox::iterator iterator;
@@ -47,7 +48,8 @@ public:
     ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t m_num_shown_rows);
     ~ModalListPicker();
 
-    bool Run() override;
+    /** ModalListPicker is run then it returns true if it was not destroyed while running.*/
+    bool RunAndCheckSelfDestruction();
     void EndRun() override;
     void Render() override
     {}
@@ -152,6 +154,7 @@ namespace {
 // ModalListPicker
 ////////////////////////////////////////////////
 ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd, size_t num_rows) :
+    std::enable_shared_from_this<ModalListPicker>(),
     Control(X0, Y0, GUI::GetGUI()->AppWidth(), GUI::GetGUI()->AppHeight(), INTERACTIVE | MODAL),
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
@@ -179,13 +182,23 @@ ModalListPicker::~ModalListPicker()
     EndRun();
 }
 
-bool ModalListPicker::Run() {
+bool ModalListPicker::RunAndCheckSelfDestruction() {
+
+    //    const std::shared_ptr<ModalListPicker> leash_holder_prevents_destruction = leash;
+    const std::shared_ptr<ModalListPicker> keep_alive = shared_from_this();
+
     DropDownList::iterator old_current_item = CurrentItem();
-    bool retval = Wnd::Run();
+    Wnd::Run();
     m_dropped = false;
+
+    // If keep_alive.use_count is less than 2 then the parent is not still
+    // holding a shared pointer to this, so return false to indicate that the
+    // stack needs to be unrolled without referring to any destroyed objects.
+    if (keep_alive.use_count() < 2)
+        return false;
     if (old_current_item != CurrentItem())
         SignalChanged(CurrentItem());
-    return retval;
+    return true;
 }
 
 void ModalListPicker::ModalInit()
@@ -255,10 +268,23 @@ void ModalListPicker::SignalChanged(boost::optional<DropDownList::iterator> it)
     if (!it)
         return;
 
-    if (Dropped())
+    const std::weak_ptr<const ModalListPicker> weak_this(shared_from_this());
+
+    if (Dropped()) {
+        // There will be at least 2 shared_ptr, one held by parent and one by Run(), if the parent
+        // has not already destroyed itself.  This can happen while in the modal event pump.
+        if (weak_this.use_count() < 2)
+            return;
+
         SelChangedWhileDroppedSignal(*it);
-    else
+    } else {
+        // There will be at least 1 shared_ptr, one held by parent and one by Run(), if the parent
+        // has not already tried to destroy this.  This should never happen.
+        if (weak_this.use_count() < 1)
+            return;
+
         SelChangedSignal(*it);
+    }
 }
 
 Pt ModalListPicker::DetermineListHeight(const Pt& _drop_down_size) {
@@ -475,7 +501,7 @@ void ModalListPicker::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
 ////////////////////////////////////////////////
 DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
     Control(X0, Y0, X(1 + 2 * ListBox::BORDER_THICK), Y(1 + 2 * ListBox::BORDER_THICK), INTERACTIVE),
-    m_modal_picker(new ModalListPicker(color, this, num_shown_elements))
+    m_modal_picker(std::make_shared<ModalListPicker>(color, this, num_shown_elements))
 {
     SetStyle(LIST_SINGLESEL);
 
@@ -828,7 +854,8 @@ void DropDownList::LClick(const Pt& pt, Flags<ModKey> mod_keys)
     LB()->m_first_col_shown = 0;
 
     DropDownOpenedSignal(true);
-    m_modal_picker->Run();
+    if (!m_modal_picker->RunAndCheckSelfDestruction())
+        return;
     DropDownOpenedSignal(false);
 }
 
