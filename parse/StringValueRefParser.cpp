@@ -3,8 +3,7 @@
 #include "EnumParser.h"
 
 
-template <>
-void initialize_nonnumeric_expression_parsers<std::string>(
+void initialize_string_expression_parsers(
     expression_rule<std::string>& function_expr,
     expression_rule<std::string>& operated_expr,
     typename parse::value_ref_rule<std::string>& expr,
@@ -114,7 +113,7 @@ namespace {
                 |   string_var_complex()
                 ;
 
-            initialize_nonnumeric_expression_parsers<std::string>(function_expr, operated_expr, expr, primary_expr);
+            initialize_string_expression_parsers(function_expr, operated_expr, expr, primary_expr);
 
             initialize_nonnumeric_statistic_parser<std::string>(statistic, statistic_sub_value_ref);
 

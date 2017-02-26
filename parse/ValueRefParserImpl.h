@@ -86,60 +86,6 @@ const complex_variable_rule<std::string>&       string_var_complex();
 
 
 template <typename T>
-void initialize_nonnumeric_expression_parsers(
-    expression_rule<T>& function_expr,
-    expression_rule<T>& operated_expr,
-    typename parse::value_ref_rule<T>& expr,
-    typename parse::value_ref_rule<T>& primary_expr)
-{
-    using boost::phoenix::new_;
-    using boost::phoenix::push_back;
-
-    boost::spirit::qi::_1_type _1;
-    boost::spirit::qi::_c_type _c;
-    boost::spirit::qi::_d_type _d;
-    boost::spirit::qi::_val_type _val;
-    boost::spirit::qi::lit_type lit;
-
-    const parse::lexer& tok = parse::lexer::instance();
-
-    function_expr
-        =   (
-                (
-                    (
-                        tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
-                    |   tok.Min_        [ _c = ValueRef::MINIMUM ]
-                    |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
-                    )
-                    >  '('  >   expr [ push_back(_d, _1) ]
-                    >*(','  >   expr [ push_back(_d, _1) ] )
-                    [ _val = new_<ValueRef::Operation<T> >(_c, _d) ] >   ')'
-                )
-            |   (
-                    primary_expr [ _val = _1 ]
-                )
-            )
-        ;
-
-    operated_expr
-        =   function_expr   // no operators supported for generic non-numeric types. specialized implementation (eg. std::string) may support some operators, though
-        ;
-
-    expr
-        =   operated_expr
-        ;
-}
-
-
-template <>
-void initialize_nonnumeric_expression_parsers<std::string>(
-    expression_rule<std::string>& function_expr,
-    expression_rule<std::string>& operated_expr,
-    typename parse::value_ref_rule<std::string>& expr,
-    typename parse::value_ref_rule<std::string>& primary_expr);
-
-
-template <typename T>
 void initialize_nonnumeric_statistic_parser(
     statistic_rule<T>& statistic,
     const typename parse::value_ref_rule<T>& value_ref)
@@ -185,6 +131,88 @@ void initialize_bound_variable_parser(
         >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
         ;
 }
+
+
+template <typename T>
+struct enum_value_ref_rules {
+    enum_value_ref_rules(const std::string& type_name) {
+        using boost::phoenix::new_;
+        using boost::phoenix::push_back;
+
+        boost::spirit::qi::_1_type _1;
+        boost::spirit::qi::_c_type _c;
+        boost::spirit::qi::_d_type _d;
+        boost::spirit::qi::_val_type _val;
+        boost::spirit::qi::lit_type lit;
+
+        const parse::lexer& tok = parse::lexer::instance();
+
+        initialize_bound_variable_parser<T>(bound_variable_expr, variable_name);
+
+        statistic_value_ref_expr
+            =   constant_expr
+            |   bound_variable_expr
+            ;
+
+        functional_expr
+            =   (
+                    (
+                        (
+                            tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
+                        |   tok.Min_        [ _c = ValueRef::MINIMUM ]
+                        |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
+                        )
+                        >  '('  >   expr [ push_back(_d, _1) ]
+                        >*(','  >   expr [ push_back(_d, _1) ] )
+                        [ _val = new_<ValueRef::Operation<T> >(_c, _d) ] >   ')'
+                    )
+                |   (
+                        primary_expr [ _val = _1 ]
+                    )
+                )
+            ;
+
+        expr
+            =   functional_expr
+            ;
+
+        initialize_nonnumeric_statistic_parser<T>(statistic_expr, statistic_value_ref_expr);
+
+        primary_expr
+            =   constant_expr
+            |   bound_variable_expr
+            |   statistic_expr
+            ;
+
+#if DEBUG_VALUEREF_PARSERS
+        debug(variable_name);
+        debug(constant_expr);
+        debug(bound_variable_expr);
+        debug(statistic_value_ref_expr);
+        debug(statistic_expr);
+        debug(functional_expr);
+        debug(primary_expr);
+        debug(expr);
+#endif
+
+        variable_name.name(type_name + " variable name");
+        constant_expr.name(type_name);
+        bound_variable_expr.name(type_name + " variable");
+        statistic_value_ref_expr.name(type_name + " statistic value reference");
+        statistic_expr.name(type_name + " statistic");
+        primary_expr.name(type_name + " expression");
+        expr.name(type_name + " expression");
+    }
+
+    name_token_rule variable_name;
+    parse::value_ref_rule<T> constant_expr;
+    variable_rule<T> bound_variable_expr;
+    expression_rule<T> functional_expr;
+    parse::value_ref_rule<T> primary_expr;
+    parse::value_ref_rule<T> statistic_value_ref_expr;
+    statistic_rule<T> statistic_expr;
+    parse::value_ref_rule<T> expr;
+};
 
 
 template <typename T>

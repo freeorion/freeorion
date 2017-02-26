@@ -4,12 +4,13 @@
 
 
 namespace {
-    struct star_type_parser_rules {
-        star_type_parser_rules() {
+    struct star_type_parser_rules : public enum_value_ref_rules<StarType> {
+        star_type_parser_rules() :
+            enum_value_ref_rules("StarType")
+        {
             qi::_1_type _1;
             qi::_val_type _val;
             using phoenix::new_;
-            using phoenix::push_back;
 
             const parse::lexer& tok = parse::lexer::instance();
 
@@ -19,52 +20,10 @@ namespace {
                 |    tok.NextYoungerStarType_
                 ;
 
-            constant
+            constant_expr
                 =    parse::star_type_enum() [ _val = new_<ValueRef::Constant<StarType> >(_1) ]
                 ;
-
-            initialize_bound_variable_parser<StarType>(bound_variable, variable_name);
-
-            statistic_sub_value_ref
-                =   constant
-                |   bound_variable
-                ;
-
-            initialize_nonnumeric_expression_parsers<StarType>(function_expr, operated_expr, expr, primary_expr);
-
-            initialize_nonnumeric_statistic_parser<StarType>(statistic, statistic_sub_value_ref);
-
-            primary_expr
-                =   constant
-                |   bound_variable
-                |   statistic
-                ;
-
-            variable_name.name("StarType variable name (e.g., StarType)");
-            constant.name("StarType");
-            bound_variable.name("StarType variable");
-            statistic_sub_value_ref.name("StarType statistic value reference");
-            statistic.name("StarType statistic");
-            primary_expr.name("StarType expression");
-
-#if DEBUG_VALUEREF_PARSERS
-            debug(variable_name);
-            debug(constant);
-            debug(bound_variable);
-            debug(statistic);
-            debug(primary_expr);
-#endif
         }
-
-        name_token_rule variable_name;
-        parse::value_ref_rule<StarType> constant;
-        variable_rule<StarType> bound_variable;
-        parse::value_ref_rule<StarType> statistic_sub_value_ref;
-        statistic_rule<StarType> statistic;
-        expression_rule<StarType> function_expr;
-        expression_rule<StarType> operated_expr;
-        parse::value_ref_rule<StarType> expr;
-        parse::value_ref_rule<StarType> primary_expr;
     };
 }
 

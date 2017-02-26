@@ -4,12 +4,13 @@
 
 
 namespace {
-    struct universe_object_type_parser_rules {
-        universe_object_type_parser_rules()  {
+    struct universe_object_type_parser_rules : public enum_value_ref_rules<UniverseObjectType> {
+        universe_object_type_parser_rules() :
+           enum_value_ref_rules("ObjectType")
+        {
             qi::_1_type _1;
             qi::_val_type _val;
             using phoenix::new_;
-            using phoenix::push_back;
 
             const parse::lexer& tok = parse::lexer::instance();
 
@@ -17,51 +18,10 @@ namespace {
                 %=   tok.ObjectType_
                 ;
 
-            constant
+            constant_expr
                 =    parse::universe_object_type_enum() [ _val = new_<ValueRef::Constant<UniverseObjectType> >(_1) ]
                 ;
-
-            initialize_bound_variable_parser<UniverseObjectType>(bound_variable, variable_name);
-
-            statistic_sub_value_ref
-                =   constant
-                |   bound_variable
-                ;
-
-            initialize_nonnumeric_expression_parsers<UniverseObjectType>(function_expr, operated_expr, expr, primary_expr);
-
-            initialize_nonnumeric_statistic_parser<UniverseObjectType>(statistic, statistic_sub_value_ref);
-
-            primary_expr
-                =   constant
-                |   bound_variable
-                |   statistic
-                ;
-
-            variable_name.name("ObjectType variable name (e.g., ObjectType)");
-            constant.name("ObjectType");
-            bound_variable.name("ObjectType variable");
-            statistic.name("ObjectType statistic");
-            primary_expr.name("ObjectType expression");
-
-#if DEBUG_VALUEREF_PARSERS
-            debug(variable_name);
-            debug(constant);
-            debug(bound_variable);
-            debug(statistic);
-            debug(primary_expr);
-#endif
         }
-
-        name_token_rule variable_name;
-        parse::value_ref_rule<UniverseObjectType> constant;
-        variable_rule<UniverseObjectType> bound_variable;
-        parse::value_ref_rule<UniverseObjectType> statistic_sub_value_ref;
-        statistic_rule<UniverseObjectType> statistic;
-        expression_rule<UniverseObjectType> function_expr;
-        expression_rule<UniverseObjectType> operated_expr;
-        parse::value_ref_rule<UniverseObjectType> expr;
-        parse::value_ref_rule<UniverseObjectType> primary_expr;
     };
 }
 
