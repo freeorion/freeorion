@@ -8,18 +8,10 @@ namespace {
         universe_object_type_parser_rules() :
            enum_value_ref_rules("ObjectType")
         {
-            qi::_1_type _1;
-            qi::_val_type _val;
-            using phoenix::new_;
-
             const parse::lexer& tok = parse::lexer::instance();
 
             variable_name
                 %=   tok.ObjectType_
-                ;
-
-            constant_expr
-                =    parse::enum_expr<UniverseObjectType>() [ _val = new_<ValueRef::Constant<UniverseObjectType> >(_1) ]
                 ;
         }
     };

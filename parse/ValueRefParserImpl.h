@@ -147,6 +147,10 @@ struct enum_value_ref_rules {
 
         const parse::lexer& tok = parse::lexer::instance();
 
+        constant_expr
+            =   parse::enum_expr<T>() [ _val = new_<ValueRef::Constant<T>>(_1) ]
+            ;
+
         initialize_bound_variable_parser<T>(bound_variable_expr, variable_name);
 
         statistic_value_ref_expr
