@@ -1362,17 +1362,15 @@ namespace {
     }
 
     /** Resolve the supply conflicts in a single \p system between the \p candidates and other
-        supply source in the system \p pod and return a pair of winners and losers.
+        supply source in the system \p pod and returns a the winners.
 
         Winners are candidates who can propagate to other systems if they have more range.
         Losers are supply sources removed from the system by this contest.
     */
-    std::pair<std::vector<SupplyPODTuple>,
-              std::unordered_map<int, SupplyMerit>>
-    ContestSystem(
+    // std::pair<std::vector<SupplyPODTuple>, std::vector<std::set<SupplyPODTuple>::iterator>> ContestSystem(
+    std::vector<SupplyPODTuple> ContestSystem(
         SupplySystemPOD& pod, int system_id,
-        const std::unordered_map<int, std::tuple<SupplyMerit, float, int>>& _candidates
-        )
+        const std::unordered_map<int, std::tuple<SupplyMerit, float, int>>& _candidates)
     {
         // Supply resolution works as follows.  Each supply source has a (merit,
         // stealth).  Each empire has a detection stength.  A supply source with
@@ -1386,7 +1384,7 @@ namespace {
             return {{}, {}};
         }
 
-        DebugLogger() << " Contesting system "<<system_id<<" with " << _candidates.size() << " candidates.";
+        DebugLogger() << "Contesting system "<<system_id<<" with " << _candidates.size() << " candidates.";
 
         // Massage the _candidates into a sorted set of candidates.
         std::set<SupplyPODTuple> candidates;
@@ -1398,18 +1396,14 @@ namespace {
         }
 
         // Sources that have been removed.
-        std::unordered_map<int, SupplyMerit> losers;
+        // std::vector<std::set<SupplyPODTuple>::iterator> losers;
 
         // Candidates that have not been removed.
         std::vector<SupplyPODTuple> winners;
 
-        // There are no empires here.
-        if (!pod.merit_stealth_supply_empire || pod.merit_stealth_supply_empire->empty()) {
-            if (!candidates.empty())
-                ErrorLogger() << "Supply ContestSystem passed " << candidates.size()
-                              << " into empty system " << system_id << ".";
-            return {{}, {}};
-        }
+        // If there are no supply sources here the candidate with highest merit becomes an automatic winner.
+        if (!pod.merit_stealth_supply_empire && !candidates.empty())
+            pod.merit_stealth_supply_empire = std::set<SupplyPODTuple>();
 
         for (auto candidate_it = candidates.rbegin(); candidate_it != candidates.rend(); ++candidate_it) {
             auto& candidate = *candidate_it;
@@ -1421,9 +1415,9 @@ namespace {
             // Find this empire's detection strength
             auto candidate_detection = EmpireDetectionStrength(candidate_empire_id);
 
-            if (pod.merit_stealth_supply_empire->find(candidate) == pod.merit_stealth_supply_empire->end()) {
+            if (pod.merit_stealth_supply_empire->find(candidate) != pod.merit_stealth_supply_empire->end()) {
                 ErrorLogger() << "Supply ContestSystem passed a candidate" << candidate_source_id
-                              << " not present in system " << system_id << ". Skipping...";
+                              << " already in system " << system_id << ". Skipping...";
                 continue;
             }
 
@@ -1532,40 +1526,50 @@ namespace {
             }
 
             // Did the candidate win/lose?
-            if (is_keep_candidate)
+            if (is_keep_candidate) {
+                // Insert the new data into the endpoint system's POD.
+                if (!pod.merit_stealth_supply_empire)
+                    pod.merit_stealth_supply_empire = std::set<SupplyPODTuple>();
+                pod.merit_stealth_supply_empire->insert(candidate);
+
                 winners.push_back(candidate);
-            else
-                losers.insert({candidate_source_id, candidate_merit});
+
+                DebugLogger() << "Winner " << candidate_source_id << " inserted in POD for system " << system_id;
+            }
 
             // Were any of the others marked for removal
             for (auto marked : marked_for_removals) {
-                const SupplyMerit& marked_merit = std::get<ssMerit>(*marked);
-                int marked_source_id, marked_empire_id;
-                std::tie(std::ignore, std::ignore, marked_source_id, marked_empire_id) = *marked;
-
-                losers.insert({marked_source_id, marked_merit});
 
                 // Remove the collected **reverse** iterator.  Should be O(1).
                 pod.merit_stealth_supply_empire->erase(std::next(marked).base());
+
+                const SupplyMerit& marked_merit = std::get<ssMerit>(*marked);
+
+                int marked_source_id, marked_empire_id;
+                std::tie(std::ignore, std::ignore, marked_source_id, marked_empire_id) = *marked;
+                DebugLogger() << "Loser " << marked_source_id << " removed from POD for system " << system_id;
             }
+
+            if (pod.merit_stealth_supply_empire->empty())
+                pod.merit_stealth_supply_empire = boost::none;
 
             // Reset
             is_keep_candidate = true;
             marked_for_removals.clear();
         }
-        return {winners, losers};
+        return winners;
     }
 
     /** Propagate the \p propagators from \p system_id through all starlanes visible to their
         empire in \p empire_to_system_to_starlanes. Return the newly added supply elements.*/
     boost::optional<std::map<SupplyMerit, std::tuple<int, float, int, int>>> AttemptToPropagate(
-        std::unordered_map<int, SupplySystemPOD>& system_to_supply_pod,
+        const std::unordered_map<int, SupplySystemPOD>& system_to_supply_pod,
         SupplyTranches& tranches,
         const int system_id,
         const std::vector<SupplyPODTuple>& propagators,
         std::unordered_map<int, std::unordered_map<int, std::unordered_set<int>>>& empire_to_system_to_starlanes)
     {
-        // Return a set of winners that will propagate further and a set of losers that will not.
+        // Return a set of winners that may propagate further.
         boost::optional<std::map<SupplyMerit, std::tuple<int, float, int, int>>> retval;
 
         // For each propagator
@@ -1587,52 +1591,46 @@ namespace {
             // Follow all known starlanes.
             const auto& endpoints = empire_to_system_to_starlanes[empire_id][system_id];
             for (auto&& end_system : endpoints) {
-                auto& pod = system_to_supply_pod[end_system];
-
-                // boost::optional<std::set<std::tuple<SupplyMerit, float, int, int>>> merit_stealth_supply_empire;
-                // boost::optional<std::unordered_set<int>> contesting_empires;
-                // boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
-                // boost::optional<int> blockading_colonies_empire_id;
-
-                // Check for hostile blockading fleets that can detect this supply
-                if (pod.blockading_fleets_empire_ids) {
-                    if (std::any_of(
-                            pod.blockading_fleets_empire_ids->begin(), pod.blockading_fleets_empire_ids->end(),
-                            check_blockade_effectiveness))
-                    {
-                        // blockaded
-                        continue;
-                    }
-                }
-
-                // Check for hostile blockading colonies.
-                // Note: This is a temporary(?) workaround to ease AI development
-                if (bool(pod.blockading_colonies_empire_id)
-                    && check_blockade_effectiveness(*pod.blockading_colonies_empire_id))
-                {
-                    continue;
-                }
-
                 // Reduce the merit by the length of this starlane
                 auto reduced_merit = SupplyMerit(merit)
                     .OneJumpLessMerit(GetPathfinder()->LinearDistance(system_id, end_system));
 
-                // Apply any system bonuses from the new system
-                if (pod.system_bonuses) {
-                    const auto& local_bonus = pod.system_bonuses->find(empire_id);
-                    if (local_bonus != pod.system_bonuses->end())
-                        reduced_merit.Localize(local_bonus->second);
+                const auto& pod_it = system_to_supply_pod.find(end_system);
+                if (pod_it != system_to_supply_pod.end()) {
+
+                    // Check for hostile blockading fleets that can detect this supply
+                    if (pod_it->second.blockading_fleets_empire_ids) {
+                        if (std::any_of(
+                                pod_it->second.blockading_fleets_empire_ids->begin(),
+                                pod_it->second.blockading_fleets_empire_ids->end(),
+                                check_blockade_effectiveness))
+                        {
+                            // blockaded
+                            continue;
+                        }
+                    }
+
+                    // Check for hostile blockading colonies.
+                    // Note: This is a temporary(?) workaround to ease AI development
+                    if (bool(pod_it->second.blockading_colonies_empire_id)
+                        && check_blockade_effectiveness(*pod_it->second.blockading_colonies_empire_id))
+                    {
+                        continue;
+                    }
+
+                    // Apply any system bonuses from the new system
+                    if (pod_it->second.system_bonuses) {
+                        const auto& local_bonus = pod_it->second.system_bonuses->find(empire_id);
+                        if (local_bonus != pod_it->second.system_bonuses->end())
+                            reduced_merit.Localize(local_bonus->second);
+                    }
                 }
 
+                // Check if the reduce merit is less than -1.
                 // This corresponds to a range of -1.
                 auto lowest_acceptable_merit = SupplyMerit().OneJumpLessMerit();
                 if (reduced_merit <= lowest_acceptable_merit)
                     continue;
-
-                // Insert the new data into the endpoint system's POD.
-                if (!pod.merit_stealth_supply_empire)
-                    pod.merit_stealth_supply_empire = std::set<SupplyPODTuple>();
-                pod.merit_stealth_supply_empire->insert({reduced_merit, stealth, source_id, empire_id});
 
                 // Add the new data into the list of changed supply
                 if (!retval)
@@ -2246,6 +2244,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
         // from consideration.
         auto& tranche = tranches[merit_threshold];
         for (auto&& system_and_source_to_merit_stealth_empire : tranche) {
+            timer.EnterSection("contest");
             auto system_id = system_and_source_to_merit_stealth_empire.first;
             DebugLogger() << "SupplyManager::Update() contest system "<< system_id;
 
@@ -2253,27 +2252,19 @@ void SupplyManager::SupplyManagerImpl::Update() {
             auto& pod = system_to_supply_pod[system_id];
 
             // Contest each system
-            std::vector<SupplyPODTuple> winners;
-            std::unordered_map<int, SupplyMerit> losers;
-            std::tie( winners, losers) =
-                ContestSystem(pod, system_id, system_and_source_to_merit_stealth_empire.second);
+            auto winners = ContestSystem(pod, system_id, system_and_source_to_merit_stealth_empire.second);
 
-            DebugLogger() << "SupplyManager::Update() remove " << losers.size() << " losers in "<< system_id;
-            // Remove the losers the tranches.
-            for (auto& loser : losers) {
-                tranches.Remove(system_id, loser.first, loser.second);
-            }
-
+            timer.EnterSection("propagate winners");
             DebugLogger() << "SupplyManager::Update() attempt propagate " << winners.size() << " winners in "<< system_id;
             // Propagate the winners
-            auto propagated_winners = AttemptToPropagate(
+            auto past_blockades = AttemptToPropagate(
                 system_to_supply_pod, tranches, system_id,
                 winners, empire_to_system_to_starlanes);
 
-            if (propagated_winners) {
-                DebugLogger() << "SupplyManager::Update() add " << propagated_winners->size()
+            if (past_blockades) {
+                DebugLogger() << "SupplyManager::Update() add " << past_blockades->size()
                               << " propagated winners from "<< system_id;
-                tranches.Add(*propagated_winners);
+                tranches.Add(*past_blockades);
             }
         }
 
