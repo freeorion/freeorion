@@ -1107,16 +1107,14 @@ namespace {
 
     class SupplyTranches {
         public:
-        SupplyTranches(const std::unordered_map<int, SupplySystemPOD>& system_to_supply_pod) :
+        SupplyTranches(const std::unordered_map<int, std::set<SupplyPODTuple>>& system_to_supply_tuple) :
             m_tranches{},
             m_max_merit{SupplyMerit()}
         {
             // Sort by SupplyMerit
             std::set<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>> merit_and_source;
-            for (const auto& system_id_and_pod : system_to_supply_pod) {
-                if (!system_id_and_pod.second.merit_stealth_supply_empire)
-                    continue;
-                for (const auto& supply_tuple : *system_id_and_pod.second.merit_stealth_supply_empire) {
+            for (const auto& system_id_and_tuples : system_to_supply_tuple) {
+                for (const auto& supply_tuple : system_id_and_tuples.second) {
                     const auto& merit = std::get<ssMerit>(supply_tuple);
                     const auto& source_id = std::get<ssSource>(supply_tuple);
                     const auto& obj = Objects().Object(source_id);
@@ -2224,12 +2222,16 @@ void SupplyManager::SupplyManagerImpl::Update() {
     //Map from system id to SupplySystemPOD containing all data needed to evaluate supply in one system.
     std::unordered_map<int, SupplySystemPOD> system_to_supply_pod = CalculateInitialSystemConditions(initial_supply_sources);
 
+    timer.EnterSection("localize supply");
+    DebugLogger() << "SupplyManager::Localize initial supply.";
+    LocalizeSupply(initial_supply_sources, system_to_supply_pod);
+
     timer.EnterSection("create tranches");
     DebugLogger() << "SupplyManager::Update() create tranches.";
     // Tranches of SupplyMerit sorted by merit.  Tranches are the size of a one supply hop change
     // in merit starting from the highest merit.  Each tranche of merits can be processed and then
     // propagated to adjacent systems and then never handled again.
-    auto tranches = SupplyTranches(system_to_supply_pod);
+    auto tranches = SupplyTranches(initial_supply_sources);
 
     timer.EnterSection("grind");
     DebugLogger() << "SupplyManager::Update() start grind.";
