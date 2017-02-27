@@ -223,6 +223,58 @@ struct enum_value_ref_rules {
     parse::value_ref_rule<T> expr;
 };
 
+
+template <typename T>
+struct simple_variable_rules
+{
+    simple_variable_rules(const std::string& type_name) {
+        using boost::phoenix::new_;
+
+        boost::spirit::qi::_1_type _1;
+        boost::spirit::qi::_val_type _val;
+
+        const parse::lexer& tok = parse::lexer::instance();
+
+        free_variable
+            =   tok.Value_
+                [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+            |   free_variable_name
+                [ _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+            ;
+
+        simple
+            =   constant
+            |   free_variable
+            |   bound_variable
+            ;
+
+         initialize_bound_variable_parser<T>(bound_variable, bound_variable_name);
+
+#if DEBUG_VALUEREF_PARSERS
+        debug(bound_variable_name);
+        debug(free_variable_name);
+        debug(constant);
+        debug(free_variable);
+        debug(bound_variable);
+        debug(simple);
+#endif
+
+        bound_variable_name.name(type_name + " bound variable name");
+        free_variable_name.name(type_name + " free variable name");
+        constant.name(type_name + " constant");
+        free_variable.name(type_name + " free variable");
+        bound_variable.name(type_name + " bound variable");
+        simple.name(type_name + " simple variable expression");
+    }
+
+    name_token_rule bound_variable_name;
+    name_token_rule free_variable_name;
+    parse::value_ref_rule<T> constant;
+    variable_rule<T> free_variable;
+    variable_rule<T> bound_variable;
+    parse::value_ref_rule<T> simple;
+};
+
 } }
 
 

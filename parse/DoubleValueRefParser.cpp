@@ -2,8 +2,12 @@
 
 
 namespace {
-    struct simple_double_parser_rules {
-        simple_double_parser_rules() {
+    struct simple_double_parser_rules:
+        public parse::detail::simple_variable_rules<double>
+    {
+        simple_double_parser_rules() :
+            simple_variable_rules("double")
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -62,45 +66,7 @@ namespace {
             constant
                 =   tok.double_ [ _val = new_<ValueRef::Constant<double> >(_1) ]
                 ;
-
-            free_variable
-                =   tok.Value_
-                    [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
-                |   free_variable_name
-                    [ _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
-                ;
-
-            simple
-                =   constant
-                |   free_variable
-                |   bound_variable
-                ;
-
-            initialize_bound_variable_parser<double>(bound_variable, bound_variable_name);
-
-            bound_variable_name.name("real number bound variable name (e.g., Population)");
-            free_variable_name.name("real number free variable name (e.g., UniverseCentreX)");
-            constant.name("real number constant");
-            free_variable.name("free real number variable");
-            bound_variable.name("real number bound variable");
-            simple.name("simple read number expression (constant, free or bound variable)");
-
-#if DEBUG_VALUEREF_PARSERS
-            debug(bound_variable_name);
-            debug(free_variable_name);
-            debug(constant);
-            debug(free_variable);
-            debug(bound_variable);
-            debug(simple);
-#endif
         }
-
-        name_token_rule bound_variable_name;
-        name_token_rule free_variable_name;
-        parse::value_ref_rule<double> constant;
-        variable_rule<double> free_variable;
-        variable_rule<double> bound_variable;
-        parse::value_ref_rule<double> simple;
     };
 
 

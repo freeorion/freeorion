@@ -2,8 +2,12 @@
 
 
 namespace {
-    struct simple_int_parser_rules {
-        simple_int_parser_rules() {
+    struct simple_int_parser_rules :
+        public parse::detail::simple_variable_rules<int>
+    {
+        simple_int_parser_rules() :
+            simple_variable_rules("integer")
+        {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
 
@@ -59,45 +63,7 @@ namespace {
             constant
                 =   tok.int_    [ _val = new_<ValueRef::Constant<int> >(_1) ]
                 ;
-
-            free_variable
-                =   tok.Value_
-                    [ _val = new_<ValueRef::Variable<int> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
-                |   free_variable_name
-                    [ _val = new_<ValueRef::Variable<int> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
-                ;
-
-            simple
-                =   constant
-                |   free_variable
-                |   bound_variable
-                ;
-
-            initialize_bound_variable_parser<int>(bound_variable, bound_variable_name);
-
-            bound_variable_name.name("integer bound variable name (e.g., FleetID)");
-            free_variable_name.name("integer free variable name (e.g. CurrentTurn)");
-            constant.name("integer constant");
-            free_variable.name("free integer variable");
-            bound_variable.name("bound integer variable");
-            simple.name("simple integer expression (constant, free or bound variable)");
-
-#if DEBUG_VALUEREF_PARSERS
-            debug(bound_variable_name);
-            debug(free_variable_name);
-            debug(constant);
-            debug(free_variable);
-            debug(bound_variable);
-            debug(simple);
-#endif
         }
-
-        name_token_rule bound_variable_name;
-        name_token_rule free_variable_name;
-        parse::value_ref_rule<int> constant;
-        variable_rule<int> free_variable;
-        variable_rule<int> bound_variable;
-        parse::value_ref_rule<int> simple;
     };
 
 
