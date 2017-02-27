@@ -3615,8 +3615,8 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
 
             // Should the whole lane be colored?
-            // Are both endpoints visible?
-            if (observed_empire && start_visible && end_visible) {
+            // Is either endpoint visible?
+            if (observed_empire && (start_visible || end_visible)) {
                 timer.EnterSection("full lane coloring");
                 // Is the lane detectable?
                 if (forward_detectable || backward_detectable) {
