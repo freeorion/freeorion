@@ -624,7 +624,7 @@ namespace {
             if (bonus > 0.0f) {
                 if (!retval)
                     retval = std::map<int, SupplyMerit>();
-                retval->insert({id_and_empire.second->EmpireID(), system_bonuses});
+                retval->insert(std::make_pair(id_and_empire.second->EmpireID(), system_bonuses));
             }
         }
 
@@ -658,7 +658,7 @@ namespace {
             float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
             if (!empire_to_stealth_supply)
                 empire_to_stealth_supply = std::set<SupplyPODTuple>();
-            (*empire_to_stealth_supply).insert({*merit, stealth, obj->ID(), obj->Owner()});
+            (*empire_to_stealth_supply).insert(std::make_tuple(*merit, stealth, obj->ID(), obj->Owner()));
         }
 
         return empire_to_stealth_supply;
@@ -792,7 +792,10 @@ namespace {
             return boost::none;
 
         return SupplySystemPOD({boost::optional<std::set<SupplyPODTuple>>(),
-                    contesting_empires, blockading_fleets_empire_ids, blockading_colony, local_bonuses});
+                                contesting_empires,
+                                blockading_fleets_empire_ids,
+                                blockading_colony,
+                                local_bonuses});
     }
 
     /** Return a map from system id to SupplySystemrPOD populated with
@@ -890,7 +893,8 @@ namespace {
                 ErrorLogger() << "source " << merit << " lower than merit threshold " << m_lower_threshold <<". Skipping ...";
                 return;
             }
-            m_system_to_source_to_merit_stealth_empire[system_id].insert({source_id, {merit, stealth, empire_id}});
+            m_system_to_source_to_merit_stealth_empire[system_id].insert(
+                std::make_pair(source_id, std::make_tuple(merit, stealth, empire_id)));
             ++m_num_sources;
             DebugLogger() << "Tranche::Add() sys = " << system_id << " source = " << source_id
                           << " stealth = "<< stealth<< " empire = " << empire_id << " merit = "
@@ -950,7 +954,7 @@ namespace {
                     const auto& obj = Objects().Object(source_id);
                     if (!obj)
                         continue;
-                    merit_and_source.insert({merit, obj});
+                    merit_and_source.insert(std::make_pair(merit, obj));
                     DebugLogger() << " Tranche found merit " << merit << " for obj " << obj->ID();
                 }
             }
@@ -975,7 +979,7 @@ namespace {
 
                 if (merit <= merit_threshold) {
                     // Start a new tranche: Save the old, change the threshold, start a new tranche
-                    m_tranches.insert({merit_threshold, tranche});
+                    m_tranches.insert(std::make_pair(merit_threshold, tranche));
                     merit_threshold.OneJumpLessMerit();
                     tranche = SupplyTranche(merit_threshold);
                     DebugLogger() << "SupplyTranches() start new tranche with merit " << merit_threshold << ".";
@@ -990,7 +994,7 @@ namespace {
                 ++merit_source_it;
             }
 
-            m_tranches.insert({merit_threshold, tranche});
+            m_tranches.insert(std::make_pair(merit_threshold, tranche));
 
             DebugLogger() << "SupplyTranches() built " << m_tranches.size() << " tranches with data.";
             // Create the remaining tranches down to lower of zero merit or the minimum detected
@@ -1000,7 +1004,7 @@ namespace {
 
             while (merit_threshold > min_merit) {
                 merit_threshold.OneJumpLessMerit();
-                m_tranches.insert({merit_threshold, SupplyTranche(merit_threshold)});
+                m_tranches.insert(std::make_pair(merit_threshold, SupplyTranche(merit_threshold)));
                 DebugLogger() << "SupplyTranches() add empty tranche built " << merit_threshold << " threshold.";
             }
             DebugLogger() << "SupplyTranches() built " << m_tranches.size() << " tranches max merit "
@@ -1027,7 +1031,7 @@ namespace {
             if (it == m_tranches.end()) {
                 ErrorLogger() << "SupplyTranches()[" << merit << "] found end.";
                 auto merit_minus_one = SupplyMerit(merit).OneJumpLessMerit();
-                m_tranches.insert({merit_minus_one, SupplyTranche(merit_minus_one)});
+                m_tranches.insert(std::make_pair(merit_minus_one, SupplyTranche(merit_minus_one)));
                 return m_tranches.begin()->second;
 
             }
@@ -1043,7 +1047,7 @@ namespace {
             if (it == m_tranches.begin()) {
                 ErrorLogger() << "SupplyTranches()[" << merit << "] Unable to find tranche. Creating a less than zero tranche.";
                 auto lower_than_zero_merit = SupplyMerit(it->first).OneJumpLessMerit();
-                m_tranches.insert({lower_than_zero_merit, SupplyTranche(lower_than_zero_merit)});
+                m_tranches.insert(std::make_pair(lower_than_zero_merit, SupplyTranche(lower_than_zero_merit)));
                 return m_tranches.begin()->second;
             }
 
@@ -1051,7 +1055,7 @@ namespace {
                           << "Making a tranche for this merit. ";
 
             auto merit_threshold = SupplyMerit(merit).OneJumpLessMerit();
-            m_tranches.insert({merit_threshold, SupplyTranche(merit_threshold)});
+            m_tranches.insert(std::make_pair(merit_threshold, SupplyTranche(merit_threshold)));
             return m_tranches.begin()->second;
         }
 
@@ -1089,11 +1093,11 @@ namespace {
         // and set any traversals going to this system as obstructed
         for (const auto& lane : lane_traversals_initial) {
             if (lane.first.first == sys_id) {
-                lane_traversals.erase({sys_id, lane.first.second});
+                lane_traversals.erase(std::make_pair(sys_id, lane.first.second));
             }
             if (lane.first.second == sys_id) {
-                lane_traversals.erase({lane.first.first, sys_id});
-                obstructed_traversals.insert({{lane.first.first, sys_id}, 0.0f});
+                lane_traversals.erase(std::make_pair(lane.first.first, sys_id));
+                obstructed_traversals.insert(std::make_pair(std::make_pair(lane.first.first, sys_id), 0.0f));
             }
         }
 
@@ -1111,7 +1115,7 @@ namespace {
         const std::unordered_map<std::pair<int, int>, float>& lane_traversals,
         std::unordered_map<std::pair<int, int>, float>& obstructed_traversals)
     {
-        obstructed_traversals.insert({{sys_id, end_sys_id}, 0.0f});
+        obstructed_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
     }
 
     /** Add a traversal */
@@ -1124,20 +1128,20 @@ namespace {
 
         //DebugLogger() << "Added traversal from " << sys_id << " to " << end_sys_id;
         // always record a traversal, so connectivity is calculated properly
-        lane_traversals.insert({{sys_id, end_sys_id}, 0.0f});
+        lane_traversals.insert(std::make_pair(std::make_pair(sys_id, end_sys_id), 0.0f));
 
         // erase any previous obstructed traversal that just succeeded
-        if (obstructed_traversals.find({sys_id, end_sys_id}) !=
+        if (obstructed_traversals.find(std::make_pair(sys_id, end_sys_id)) !=
             obstructed_traversals.end())
         {
             //DebugLogger() << "Removed obstructed traversal from " << sys_id << " to " << end_sys_id;
-            obstructed_traversals.erase({sys_id, end_sys_id});
+            obstructed_traversals.erase(std::make_pair(sys_id, end_sys_id));
         }
-        if (obstructed_traversals.find({end_sys_id, sys_id}) !=
+        if (obstructed_traversals.find(std::make_pair(end_sys_id, sys_id)) !=
             obstructed_traversals.end())
         {
             //DebugLogger() << "Removed obstructed traversal from " << end_sys_id << " to " << sys_id;
-            obstructed_traversals.erase({end_sys_id, sys_id});
+            obstructed_traversals.erase(std::make_pair(end_sys_id, sys_id));
         }
     }
 
@@ -1169,10 +1173,11 @@ namespace {
         // Massage the _candidates into a sorted set of candidates.
         std::set<SupplyPODTuple> candidates;
         for (auto&& source_and_merit_stealth_empire : _candidates) {
-            candidates.insert({std::get<ssMerit>(source_and_merit_stealth_empire.second),
-                        std::get<ssStealth>(source_and_merit_stealth_empire.second),
-                        source_and_merit_stealth_empire.first,
-                        std::get<ssSource>(source_and_merit_stealth_empire.second)});
+            candidates.insert(
+                std::make_tuple(std::get<ssMerit>(source_and_merit_stealth_empire.second),
+                                std::get<ssStealth>(source_and_merit_stealth_empire.second),
+                                source_and_merit_stealth_empire.first,
+                                std::get<ssSource>(source_and_merit_stealth_empire.second)));
         }
 
         // Sources that have been removed.
@@ -1416,7 +1421,7 @@ namespace {
                 DebugLogger() << "AttemptToPropagate succeeds source = " << source_id << " merit = "
                               << reduced_merit << " stealth = "<< stealth<< " end sys = "
                               << end_system << " empire = " << empire_id <<".";
-                retval->insert({reduced_merit, {source_id, stealth, end_system, empire_id}});
+                retval->insert(std::make_pair(reduced_merit, std::make_tuple(source_id, stealth, end_system, empire_id)));
                 verifyType<Planet>(source_id, "planet2");
                 verifyType<System>(end_system, "end sys");
             }
@@ -1737,7 +1742,7 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups() {
             int label = components[comp_graph_id];
             int sys_id = graph_id_to_sys_id[comp_graph_id];
             if (component_sets_map.find(label) == component_sets_map.end())
-                component_sets_map.insert({label, std::make_shared<std::unordered_set<int>>()});
+                component_sets_map.insert(std::make_pair(label, std::make_shared<std::unordered_set<int>>()));
             component_sets_map[label]->insert(sys_id);
         }
 
@@ -1886,11 +1891,11 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
                 m_fleet_supplyable_system_ids[empire_id].insert(system_id);
 
-                m_propagated_supply_ranges.insert({empire_id, merit.Range()});
-                m_empire_propagated_supply_ranges[empire_id].insert({system_id, merit.Range()});
+                m_propagated_supply_ranges.insert(std::make_pair(empire_id, merit.Range()));
+                m_empire_propagated_supply_ranges[empire_id].insert(std::make_pair(system_id, merit.Range()));
 
-                m_propagated_supply_distances.insert({empire_id, merit.Distance()});
-                m_empire_propagated_supply_distances[empire_id].insert({system_id, merit.Distance()});
+                m_propagated_supply_distances.insert(std::make_pair(empire_id, merit.Distance()));
+                m_empire_propagated_supply_distances[empire_id].insert(std::make_pair(system_id, merit.Distance()));
 
                 // Keep the best local stealth.
                 auto& current_stealth = m_empire_to_system_to_stealth[empire_id][system_id];
@@ -1955,7 +1960,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
                 if (start_range >= 0.0f  && end_range >= 0.0f) {
                     DebugLogger() << " Good traversal added ("<<start_id<<","<<end_id<<") for empire "
                                   <<empire_id<< " stealth = "<<stealth<<".";
-                    supply_starlane_traversals.insert({{start_id, end_id}, stealth});
+                    supply_starlane_traversals.insert(std::make_pair(std::make_pair(start_id, end_id), stealth));
                 }
 
                 // If there is surplus range >1.0f at the source end and 0.0f at the output end
@@ -1963,12 +1968,14 @@ void SupplyManager::SupplyManagerImpl::Update() {
                 if (start_range >= 1.0f  && end_range < 0.0f) {
                     DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id
                                   <<") for empire "<<empire_id<< " stealth = "<<stealth_start<<".";
-                    supply_starlane_obstructed_traversals.insert({{start_id, end_id}, stealth_start});
+                    supply_starlane_obstructed_traversals.insert(
+                        std::make_pair(std::make_pair(start_id, end_id), stealth_start));
                 }
                 if (end_range >= 1.0f  && start_range < 0.0f) {
                     DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id
                                   <<") for empire "<<empire_id<< " stealth = "<<stealth_end<<".";
-                    supply_starlane_obstructed_traversals.insert({{end_id, start_id}, stealth_end});
+                    supply_starlane_obstructed_traversals.insert(
+                        std::make_pair(std::make_pair(end_id, start_id), stealth_end));
                 }
             }
         }
