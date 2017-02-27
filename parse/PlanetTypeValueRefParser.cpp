@@ -6,7 +6,9 @@
 
 
 namespace {
-    struct planet_type_parser_rules : public enum_value_ref_rules<PlanetType> {
+    struct planet_type_parser_rules :
+        public parse::detail::enum_value_ref_rules<PlanetType>
+    {
         planet_type_parser_rules() :
             enum_value_ref_rules("PlanetType")
         {
@@ -38,23 +40,15 @@ namespace {
                 ;
         }
     };
-
-    planet_type_parser_rules& get_planet_type_parser_rules()
-    {
-        static planet_type_parser_rules retval;
-        return retval;
-    }
 }
 
-namespace parse {
-    template <>
-    enum_rule<PlanetType>& enum_expr<PlanetType>()
-    {
-        return get_planet_type_parser_rules().enum_expr;
-    }
 
-    value_ref_rule<PlanetType>& planet_type_value_ref()
-    {
-        return get_planet_type_parser_rules().expr;
-    }
+namespace parse { namespace detail {
+
+enum_value_ref_rules<PlanetType>& planet_type_rules()
+{
+    static planet_type_parser_rules retval;
+    return retval;
 }
+
+} }

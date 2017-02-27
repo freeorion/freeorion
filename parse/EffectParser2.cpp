@@ -3,6 +3,7 @@
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "ValueRefParser.h"
+#include "ValueRefParserImpl.h"
 #include "ConditionParserImpl.h"
 #include "../universe/Effect.h"
 #include "../universe/Enums.h"
@@ -62,12 +63,12 @@ namespace {
 
             set_planet_type
                 =    tok.SetPlanetType_
-                >    parse::detail::label(Type_token) > parse::planet_type_value_ref() [ _val = new_<Effect::SetPlanetType>(_1) ]
+                >    parse::detail::label(Type_token) > parse::detail::planet_type_rules().expr [ _val = new_<Effect::SetPlanetType>(_1) ]
                 ;
 
             set_planet_size
                 =    tok.SetPlanetSize_
-                >    parse::detail::label(PlanetSize_token) > parse::planet_size_value_ref() [ _val = new_<Effect::SetPlanetSize>(_1) ]
+                >    parse::detail::label(PlanetSize_token) > parse::detail::planet_size_rules().expr [ _val = new_<Effect::SetPlanetSize>(_1) ]
                 ;
 
             set_species

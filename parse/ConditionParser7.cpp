@@ -2,6 +2,7 @@
 
 #include "ParseImpl.h"
 #include "ValueRefParser.h"
+#include "ValueRefParserImpl.h"
 #include "../universe/Condition.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -52,8 +53,8 @@ namespace {
                 =    tok.Star_
                 >    parse::detail::label(Type_token)
                 >    (
-                            ('[' > +parse::star_type_value_ref() [ push_back(_a, _1) ] > ']')
-                        |    parse::star_type_value_ref() [ push_back(_a, _1) ]
+                            ('[' > +parse::detail::star_type_rules().expr [ push_back(_a, _1) ] > ']')
+                        |    parse::detail::star_type_rules().expr [ push_back(_a, _1) ]
                      )
                 [ _val = new_<Condition::StarType>(_a) ]
                 ;

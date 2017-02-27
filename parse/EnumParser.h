@@ -16,25 +16,6 @@ namespace parse {
         E ()
     >;
 
-    template <typename T>
-    enum_rule<T>& enum_expr()
-    {}
-
-    template <>
-    enum_rule<PlanetSize>& enum_expr<PlanetSize>();
-
-    template <>
-    enum_rule<PlanetType>& enum_expr<PlanetType>();
-
-    template <>
-    enum_rule<PlanetEnvironment>& enum_expr<PlanetEnvironment>();
-
-    template <>
-    enum_rule<UniverseObjectType>& enum_expr<UniverseObjectType>();
-
-    template <>
-    enum_rule<StarType>& enum_expr<StarType>();
-
     enum_rule<EmpireAffiliationType>& empire_affiliation_type_enum();
 
     enum_rule<UnlockableItemType>& unlockable_item_type_enum();

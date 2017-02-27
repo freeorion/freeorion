@@ -26,15 +26,23 @@ namespace parse {
 
     value_ref_rule<std::string>& string_value_ref();
 
-    value_ref_rule<PlanetSize>& planet_size_value_ref();
 
-    value_ref_rule<PlanetType>& planet_type_value_ref();
+namespace detail {
 
-    value_ref_rule<PlanetEnvironment>& planet_environment_value_ref();
+template <typename T>
+struct enum_value_ref_rules;
 
-    value_ref_rule<UniverseObjectType>& universe_object_type_value_ref();
+enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules();
 
-    value_ref_rule<StarType>& star_type_value_ref();
+enum_value_ref_rules<PlanetSize>& planet_size_rules();
+
+enum_value_ref_rules<PlanetType>& planet_type_rules();
+
+enum_value_ref_rules<StarType>& star_type_rules();
+
+enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules();
+
+}
 }
 
 #endif

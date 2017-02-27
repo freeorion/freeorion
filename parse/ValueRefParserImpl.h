@@ -133,6 +133,8 @@ void initialize_bound_variable_parser(
 }
 
 
+namespace parse { namespace detail {
+
 template <typename T>
 struct enum_value_ref_rules {
     enum_value_ref_rules(const std::string& type_name) {
@@ -220,6 +222,8 @@ struct enum_value_ref_rules {
     statistic_rule<T> statistic_expr;
     parse::value_ref_rule<T> expr;
 };
+
+} }
 
 
 template <typename T>

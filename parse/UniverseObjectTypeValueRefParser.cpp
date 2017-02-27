@@ -6,7 +6,9 @@
 
 
 namespace {
-    struct universe_object_type_parser_rules : public enum_value_ref_rules<UniverseObjectType> {
+    struct universe_object_type_parser_rules :
+        public parse::detail::enum_value_ref_rules<UniverseObjectType>
+    {
         universe_object_type_parser_rules() :
            enum_value_ref_rules("ObjectType")
         {
@@ -30,23 +32,15 @@ namespace {
                 ;
         }
     };
-
-    universe_object_type_parser_rules& get_universe_object_type_parser_rules()
-    {
-        static universe_object_type_parser_rules retval;
-        return retval;
-    }
 }
 
-namespace parse {
-    template<>
-    enum_rule<UniverseObjectType>& enum_expr<UniverseObjectType>()
-    {
-        return get_universe_object_type_parser_rules().enum_expr;
-    }
 
-    value_ref_rule<UniverseObjectType>& universe_object_type_value_ref()
-    {
-        return get_universe_object_type_parser_rules().expr;
-    }
+namespace parse { namespace detail {
+
+enum_value_ref_rules<UniverseObjectType>& universe_object_type_rules()
+{
+    static universe_object_type_parser_rules retval;
+    return retval;
 }
+
+} }

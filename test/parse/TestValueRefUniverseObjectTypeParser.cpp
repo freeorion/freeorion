@@ -37,7 +37,7 @@ struct ValueRefUniverseObjectTypeFixture {
 
         bool matched = boost::spirit::qi::phrase_parse(
             begin, end,
-            parse::universe_object_type_value_ref()[boost::phoenix::ref(result) = _1] > eoi,
+            parse::detail::universe_object_type_rules().expr[boost::phoenix::ref(result) = _1] > eoi,
             in_state("WS")[lexer.self]
         );
 

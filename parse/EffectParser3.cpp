@@ -4,6 +4,7 @@
 #include "EnumParser.h"
 #include "ConditionParserImpl.h"
 #include "ValueRefParser.h"
+#include "ValueRefParserImpl.h"
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -106,7 +107,7 @@ namespace {
 
             set_star_type
                 =   tok.SetStarType_
-                >   parse::detail::label(Type_token) > parse::star_type_value_ref() [ _val = new_<Effect::SetStarType>(_1) ]
+                >   parse::detail::label(Type_token) > parse::detail::star_type_rules().expr [ _val = new_<Effect::SetStarType>(_1) ]
                 ;
 
             set_texture

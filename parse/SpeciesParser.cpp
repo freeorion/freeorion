@@ -2,6 +2,7 @@
 
 #include "ParseImpl.h"
 #include "EnumParser.h"
+#include "ValueRefParserImpl.h"
 #include "ConditionParserImpl.h"
 
 #include "../universe/Species.h"
@@ -86,8 +87,8 @@ namespace {
                 ;
 
             environment_map_element
-                =    parse::detail::label(Type_token)        > parse::enum_expr<PlanetType>() [ _a = _1 ]
-                >    parse::detail::label(Environment_token) > parse::enum_expr<PlanetEnvironment>()
+                =    parse::detail::label(Type_token)        > parse::detail::planet_type_rules().enum_expr [ _a = _1 ]
+                >    parse::detail::label(Environment_token) > parse::detail::planet_environment_rules().enum_expr
                      [ _val = construct<std::pair<PlanetType, PlanetEnvironment> >(_a, _1) ]
                 ;
 

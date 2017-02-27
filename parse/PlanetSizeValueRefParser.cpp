@@ -6,7 +6,9 @@
 
 
 namespace {
-    struct planet_size_parser_rules : public enum_value_ref_rules<PlanetSize> {
+    struct planet_size_parser_rules :
+        public parse::detail::enum_value_ref_rules<PlanetSize>
+    {
         planet_size_parser_rules() :
             enum_value_ref_rules("PlanetSize")
         {
@@ -31,24 +33,15 @@ namespace {
                 ;
         }
     };
-
-    planet_size_parser_rules& get_planet_size_parser_rules()
-    {
-        static planet_size_parser_rules retval;
-        return retval;
-    }
 }
 
 
-namespace parse {
-    template <>
-    enum_rule<PlanetSize>& enum_expr<PlanetSize>()
-    {
-        return get_planet_size_parser_rules().enum_expr;
-    }
+namespace parse { namespace detail {
 
-    value_ref_rule<PlanetSize>& planet_size_value_ref()
-    {
-        return get_planet_size_parser_rules().expr;
-    }
+enum_value_ref_rules<PlanetSize>& planet_size_rules()
+{
+    static planet_size_parser_rules retval;
+    return retval;
 }
+
+} }

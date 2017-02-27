@@ -6,7 +6,9 @@
 
 
 namespace {
-    struct planet_environment_parser_rules : public enum_value_ref_rules<PlanetEnvironment> {
+    struct planet_environment_parser_rules :
+        public parse::detail::enum_value_ref_rules<PlanetEnvironment>
+    {
         planet_environment_parser_rules() :
             enum_value_ref_rules("PlanetEnvironment")
         {
@@ -27,23 +29,15 @@ namespace {
                 ;
         }
     };
-
-    planet_environment_parser_rules& get_planet_environment_parser_rules()
-    {
-        static planet_environment_parser_rules retval;
-        return retval;
-    }
 }
 
-namespace parse {
-    template <>
-    enum_rule<PlanetEnvironment>& enum_expr<PlanetEnvironment>()
-    {
-        return get_planet_environment_parser_rules().enum_expr;
-    }
 
-    value_ref_rule<PlanetEnvironment>& planet_environment_value_ref()
-    {
-        return get_planet_environment_parser_rules().expr;
-    }
+namespace parse { namespace detail {
+
+enum_value_ref_rules<PlanetEnvironment>& planet_environment_rules()
+{
+    static planet_environment_parser_rules retval;
+    return retval;
 }
+
+} }

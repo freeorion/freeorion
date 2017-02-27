@@ -3,6 +3,7 @@
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "ValueRefParser.h"
+#include "ValueRefParserImpl.h"
 #include "../universe/Condition.h"
 #include "../universe/ValueRef.h"
 
@@ -77,8 +78,8 @@ namespace {
                 =   tok.Planet_
                 >>  parse::detail::label(Type_token)
                 >   (
-                        ('[' > +parse::planet_type_value_ref() [ push_back(_a, _1) ] > ']')
-                    |    parse::planet_type_value_ref() [ push_back(_a, _1) ]
+                        ('[' > +parse::detail::planet_type_rules().expr [ push_back(_a, _1) ] > ']')
+                    |    parse::detail::planet_type_rules().expr [ push_back(_a, _1) ]
                     )
                     [ _val = new_<Condition::PlanetType>(_a) ]
                 ;
@@ -87,8 +88,8 @@ namespace {
                 =   tok.Planet_
                 >>  parse::detail::label(Size_token)
                 >   (
-                        ('[' > +parse::planet_size_value_ref() [ push_back(_a, _1) ] > ']')
-                    |    parse::planet_size_value_ref() [ push_back(_a, _1) ]
+                        ('[' > +parse::detail::planet_size_rules().expr [ push_back(_a, _1) ] > ']')
+                    |    parse::detail::planet_size_rules().expr [ push_back(_a, _1) ]
                     )
                     [ _val = new_<Condition::PlanetSize>(_a) ]
                 ;
@@ -97,18 +98,18 @@ namespace {
                 =   (tok.Planet_
                 >>  parse::detail::label(Environment_token)
                 >   (
-                        ('[' > +parse::planet_environment_value_ref() [ push_back(_a, _1) ] > ']')
-                    |    parse::planet_environment_value_ref() [ push_back(_a, _1) ]
+                        ('[' > +parse::detail::planet_environment_rules().expr [ push_back(_a, _1) ] > ']')
+                    |    parse::detail::planet_environment_rules().expr [ push_back(_a, _1) ]
                     )
                 >  -(parse::detail::label(Species_token)        >  parse::string_value_ref() [_b = _1]))
                     [ _val = new_<Condition::PlanetEnvironment>(_a, _b) ]
                 ;
 
             object_type
-                =   parse::enum_expr<UniverseObjectType>() [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
+                =   parse::detail::universe_object_type_rules().enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
                 |   (
                         tok.ObjectType_
-                    >   parse::detail::label(Type_token) > parse::universe_object_type_value_ref() [ _val = new_<Condition::Type>(_1) ]
+                    >   parse::detail::label(Type_token) > parse::detail::universe_object_type_rules().expr [ _val = new_<Condition::Type>(_1) ]
                     )
                 ;
 

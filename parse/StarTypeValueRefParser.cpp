@@ -6,7 +6,9 @@
 
 
 namespace {
-    struct star_type_parser_rules : public enum_value_ref_rules<StarType> {
+    struct star_type_parser_rules :
+        public parse::detail::enum_value_ref_rules<StarType>
+    {
         star_type_parser_rules() :
             enum_value_ref_rules("StarType")
         {
@@ -32,23 +34,14 @@ namespace {
                 ;
         }
     };
-
-    star_type_parser_rules& get_star_type_parser_rules()
-    {
-        static star_type_parser_rules retval;
-        return retval;
-    }
 }
 
-namespace parse {
-    template <>
-    enum_rule<StarType>& enum_expr<StarType>()
-    {
-        return get_star_type_parser_rules().enum_expr;
-    }
+namespace parse { namespace detail {
 
-    value_ref_rule<StarType>& star_type_value_ref()
-    {
-        return get_star_type_parser_rules().expr;
-    }
+enum_value_ref_rules<StarType>& star_type_rules()
+{
+    static star_type_parser_rules retval;
+    return retval;
 }
+
+} }

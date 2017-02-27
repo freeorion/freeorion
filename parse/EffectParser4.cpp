@@ -3,6 +3,7 @@
 #include "ParseImpl.h"
 #include "EnumParser.h"
 #include "ValueRefParser.h"
+#include "ValueRefParserImpl.h"
 #include "../universe/Effect.h"
 
 #include <boost/spirit/include/phoenix.hpp>
@@ -30,8 +31,8 @@ namespace {
 
             create_planet
                 =   (       tok.CreatePlanet_
-                        >   parse::detail::label(Type_token)        >   parse::planet_type_value_ref() [ _a = _1 ]
-                        >   parse::detail::label(PlanetSize_token)  >   parse::planet_size_value_ref() [ _b = _1 ]
+                        >   parse::detail::label(Type_token)        >   parse::detail::planet_type_rules().expr [ _a = _1 ]
+                        >   parse::detail::label(PlanetSize_token)  >   parse::detail::planet_size_rules().expr [ _b = _1 ]
                         > -(parse::detail::label(Name_token)        >   parse::string_value_ref()      [ _c = _1 ])
                         > -(parse::detail::label(Effects_token)
                         >   (
@@ -117,7 +118,7 @@ namespace {
 
             create_system_1
                 =   (       tok.CreateSystem_
-                        >>  parse::detail::label(Type_token)    >   parse::star_type_value_ref() [ _a = _1 ]
+                        >>  parse::detail::label(Type_token)    >   parse::detail::star_type_rules().expr [ _a = _1 ]
                         >   parse::detail::label(X_token)       >   parse::double_value_ref()    [ _b = _1 ]
                         >   parse::detail::label(Y_token)       >   parse::double_value_ref()    [ _c = _1 ]
                         > -(parse::detail::label(Name_token)    >   parse::string_value_ref()    [ _d = _1 ])
