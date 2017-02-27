@@ -634,10 +634,13 @@ namespace {
     using SupplyPODTuple = std::tuple<SupplyMerit, float, int, int>;
     enum SupplySystemPODFields {ssMerit, ssStealth, ssSource, ssEmpireID};
 
+    // SupplyPODTuple sets are sorted from largest to smallest merit
+    using SupplyPODTupleSet = std::set<SupplyPODTuple, std::greater<SupplyPODTuple>>;
+
     /** SupplySystemPOD contains all of the data needs to resolve one systems supply conflicts. */
     struct SupplySystemPOD {
         // TODO resort and add source id?
-        boost::optional<std::set<SupplyPODTuple>>   merit_stealth_supply_empire;
+        boost::optional<SupplyPODTupleSet>          merit_stealth_supply_empire;
         boost::optional<std::unordered_set<int>>    contesting_empires;
         boost::optional<std::unordered_set<int>>    blockading_fleets_empire_ids;
         boost::optional<int>                        blockading_colonies_empire_id;
@@ -646,8 +649,8 @@ namespace {
 
 
     /** Return a map from empire id to the stealth and supply of a supply generating object.*/
-    boost::optional<std::set<SupplyPODTuple>> CalculateMeritStealthSupplyEmpire(const System& system) {
-        boost::optional<std::set<SupplyPODTuple>> empire_to_stealth_supply = boost::none;
+    boost::optional<SupplyPODTupleSet> CalculateMeritStealthSupplyEmpire(const System& system) {
+        boost::optional<SupplyPODTupleSet> empire_to_stealth_supply = boost::none;
 
         // as of this writing, only planets can generate supply propagation
         for (auto obj : Objects().FindObjects(system.PlanetIDs())) {
@@ -657,7 +660,7 @@ namespace {
 
             float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
             if (!empire_to_stealth_supply)
-                empire_to_stealth_supply = std::set<SupplyPODTuple>();
+                empire_to_stealth_supply = SupplyPODTupleSet();
             (*empire_to_stealth_supply).insert(std::make_tuple(*merit, stealth, obj->ID(), obj->Owner()));
         }
 
@@ -727,7 +730,7 @@ namespace {
     */
     boost::optional<int> CalculateBlockadingColonyEmpireID(
         const System& system,
-        const boost::optional<std::set<SupplyPODTuple>>& empire_to_stealth_supply,
+        const boost::optional<SupplyPODTupleSet>& empire_to_stealth_supply,
         const boost::optional<std::unordered_set<int>>& contesting_fleets_empire_ids)
     {
         // No supply in system, so no blockading colony.
@@ -759,8 +762,8 @@ namespace {
 
     /** Return a map from system id to all initial sources of supply. */
     // TODO change to vector
-    std::unordered_map<int, std::set<SupplyPODTuple>> CalculateInitialSupplySources() {
-        std::unordered_map<int, std::set<SupplyPODTuple>> system_to_supply_pod;
+    std::unordered_map<int, SupplyPODTupleSet> CalculateInitialSupplySources() {
+        std::unordered_map<int, SupplyPODTupleSet> system_to_supply_pod;
 
         for (auto system_it : Objects().ExistingSystems()) {
             auto system = std::dynamic_pointer_cast<const System>(system_it.second);
@@ -778,7 +781,7 @@ namespace {
         everything except the local system supply, blockading fleets, contesting fleets,
         blockading planets and local bonuses. */
     boost::optional<SupplySystemPOD> CalculateInitialSystemConditions(
-        const System &system, const boost::optional<std::set<SupplyPODTuple>>& stealth_supply)
+        const System &system, const boost::optional<SupplyPODTupleSet>& stealth_supply)
     {
         boost::optional<std::unordered_set<int>> contesting_empires;
         boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
@@ -791,7 +794,7 @@ namespace {
         if (!contesting_empires && !blockading_fleets_empire_ids && !blockading_colony && !local_bonuses)
             return boost::none;
 
-        return SupplySystemPOD({boost::optional<std::set<SupplyPODTuple>>(),
+        return SupplySystemPOD({boost::optional<SupplyPODTupleSet>(),
                                 contesting_empires,
                                 blockading_fleets_empire_ids,
                                 blockading_colony,
@@ -803,7 +806,7 @@ namespace {
         blockading planets and local bonuses. \p system_to_supply are the per system initial
         supply sources. */
     std::unordered_map<int, SupplySystemPOD> CalculateInitialSystemConditions(
-        const std::unordered_map<int, std::set<SupplyPODTuple>>& system_to_supply)
+        const std::unordered_map<int, SupplyPODTupleSet>& system_to_supply)
     {
         std::unordered_map<int, SupplySystemPOD> system_to_supply_pod;
 
@@ -813,7 +816,7 @@ namespace {
                 continue;
 
             // Find any local supply sources
-            boost::optional<std::set<SupplyPODTuple>> maybe_local_supply;
+            boost::optional<SupplyPODTupleSet> maybe_local_supply;
             const auto& local_supply_it = system_to_supply.find(system->SystemID());
             if (local_supply_it != system_to_supply.end())
                 maybe_local_supply = local_supply_it->second;
@@ -826,14 +829,14 @@ namespace {
     }
 
     /**Localize (modify) the \p supply_sources with local factors in \p supply_pod. */
-    void LocalizeSupply(std::set<SupplyPODTuple>& supply_sources, const SupplySystemPOD& supply_pod) {
+    void LocalizeSupply(SupplyPODTupleSet& supply_sources, const SupplySystemPOD& supply_pod) {
         // Adjust merit for local bonuses if needed
         auto local_bonuses = supply_pod.system_bonuses;
         if (!local_bonuses)
             return;
 
         // List of merits that need to be adjusted
-        std::vector<std::set<SupplyPODTuple>::const_iterator> erase_these;
+        std::vector<SupplyPODTupleSet::const_iterator> erase_these;
         std::vector<SupplyPODTuple> add_these;
         for (auto supply_tuple_it = supply_sources.begin();
              supply_tuple_it != supply_sources.end(); ++supply_tuple_it)
@@ -865,7 +868,7 @@ namespace {
 
     /** Modify \p system_to_supply to be localize by local bonus factors in \p system_to_supply_pod. */
     void LocalizeSupply(
-        std::unordered_map<int, std::set<SupplyPODTuple>>& system_to_supply,
+        std::unordered_map<int, SupplyPODTupleSet>& system_to_supply,
         const std::unordered_map<int, SupplySystemPOD>& system_to_supply_pod)
     {
         for (auto& system_and_supply : system_to_supply) {
@@ -941,12 +944,13 @@ namespace {
 
     class SupplyTranches {
         public:
-        SupplyTranches(const std::unordered_map<int, std::set<SupplyPODTuple>>& system_to_supply_tuple) :
+        SupplyTranches(const std::unordered_map<int, SupplyPODTupleSet>& system_to_supply_tuple) :
             m_tranches{},
             m_max_merit{SupplyMerit()}
         {
-            // Sort by SupplyMerit
-            std::set<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>> merit_and_source;
+            // Sort by SupplyMerit from largest to smallest
+            std::set<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>,
+                     std::greater<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>>> merits_and_sources;
             for (const auto& system_id_and_tuples : system_to_supply_tuple) {
                 for (const auto& supply_tuple : system_id_and_tuples.second) {
                     const auto& merit = std::get<ssMerit>(supply_tuple);
@@ -954,22 +958,17 @@ namespace {
                     const auto& obj = Objects().Object(source_id);
                     if (!obj)
                         continue;
-                    merit_and_source.insert(std::make_pair(merit, obj));
+                    merits_and_sources.insert(std::make_pair(merit, obj));
                     DebugLogger() << " Tranche found merit " << merit << " for obj " << obj->ID();
                 }
             }
 
-            if (merit_and_source.empty()) {
+            if (merits_and_sources.empty()) {
                 return;
             }
 
             // Divide into tranches of the minimum drop in merit across a single starlane.
-            m_max_merit = merit_and_source.rbegin()->first;
-
-            using merit_source_rit_type = std::set<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>>::reverse_iterator;
-            // Precompute rend to avoid Clang ambiguity in operator!=
-            const merit_source_rit_type merit_source_rend = merit_and_source.rend();
-            merit_source_rit_type merit_source_it = merit_and_source.rbegin();
+            m_max_merit = merits_and_sources.begin()->first;
 
             auto merit_threshold = SupplyMerit(m_max_merit).OneJumpLessMerit();
             auto tranche = SupplyTranche(merit_threshold);
@@ -977,9 +976,9 @@ namespace {
             SupplyMerit merit;
             std::shared_ptr<UniverseObject> source;
 
-            DebugLogger() << "SupplyTranches() adding " << merit_and_source.size() << " supply sources to tranches.";
-            while (merit_source_it != merit_source_rend) {
-                std::tie(merit, source) = *merit_source_it;
+            DebugLogger() << "SupplyTranches() adding " << merits_and_sources.size() << " supply sources to tranches.";
+            for (const auto merit_and_source : merits_and_sources) {
+                std::tie(merit, source) = merit_and_source;
 
                 if (merit <= merit_threshold) {
                     // Start a new tranche: Save the old, change the threshold, start a new tranche
@@ -994,8 +993,6 @@ namespace {
                 tranche.Add(source->ID(), merit, stealth, source->SystemID(), source->Owner());
                 DebugLogger() << "SupplyTranches() add " << source->ID() << " with  merit " << merit
                               << " to tranche with threshold " << merit_threshold;
-
-                ++merit_source_it;
             }
 
             m_tranches.insert(std::make_pair(merit_threshold, tranche));
@@ -1004,7 +1001,7 @@ namespace {
             // Create the remaining tranches down to lower of zero merit or the minimum detected
             // merit reduced by one jump of merit reduction.
             auto zero_merit = SupplyMerit();
-            const auto min_merit = SupplyMerit(std::min(zero_merit, merit_and_source.begin()->first)).OneJumpLessMerit();
+            const auto min_merit = SupplyMerit(std::min(zero_merit, merits_and_sources.rbegin()->first)).OneJumpLessMerit();
 
             while (merit_threshold > min_merit) {
                 merit_threshold.OneJumpLessMerit();
@@ -1155,7 +1152,6 @@ namespace {
         Winners are candidates who can propagate to other systems if they have more range.
         Losers are supply sources removed from the system by this contest.
     */
-    // std::pair<std::vector<SupplyPODTuple>, std::vector<std::set<SupplyPODTuple>::iterator>> ContestSystem(
     std::vector<SupplyPODTuple> ContestSystem(
         SupplySystemPOD& pod, int system_id,
         const std::unordered_map<int, std::tuple<SupplyMerit, float, int>>& _candidates)
@@ -1174,8 +1170,8 @@ namespace {
 
         DebugLogger() << "Contesting system "<<system_id<<" with " << _candidates.size() << " candidates.";
 
-        // Massage the _candidates into a sorted set of candidates.
-        std::set<SupplyPODTuple> candidates;
+        // Massage the _candidates into a sorted set of candidates from largest to smallest Merit.
+        SupplyPODTupleSet candidates;
         for (auto&& source_and_merit_stealth_empire : _candidates) {
             candidates.insert(
                 std::make_tuple(std::get<ssMerit>(source_and_merit_stealth_empire.second),
@@ -1185,21 +1181,16 @@ namespace {
         }
 
         // Sources that have been removed.
-        // std::vector<std::set<SupplyPODTuple>::iterator> losers;
+        // std::vector<SupplyPODTupleSet::iterator> losers;
 
         // Candidates that have not been removed.
         std::vector<SupplyPODTuple> winners;
 
         // If there are no supply sources here the candidate with highest merit becomes an automatic winner.
         if (!pod.merit_stealth_supply_empire && !candidates.empty())
-            pod.merit_stealth_supply_empire = std::set<SupplyPODTuple>();
+            pod.merit_stealth_supply_empire = SupplyPODTupleSet();
 
-        using candidate_it_type = std::set<SupplyPODTuple>::reverse_iterator;
-        candidate_it_type candidate_it = candidates.rbegin();
-        // Explicitly type rend to avoid operator!= ambiguity in Clang.
-        const candidate_it_type candidates_rend = candidates.rend();
-        for (; candidate_it != candidates_rend; ++candidate_it) {
-            auto& candidate = *candidate_it;
+        for (const auto& candidate : candidates) {
             const SupplyMerit& candidate_merit = std::get<ssMerit>(candidate);
             float candidate_stealth;
             int candidate_source_id, candidate_empire_id;
@@ -1222,14 +1213,10 @@ namespace {
             bool is_keep_candidate = true;
 
             // A list of individual others to remove from the list.
-            std::vector<std::set<SupplyPODTuple>::reverse_iterator> marked_for_removals;
+            std::vector<SupplyPODTupleSet::iterator> marked_for_removals;
 
-            using other_it_type = std::set<SupplyPODTuple>::reverse_iterator;
-            other_it_type other_it = pod.merit_stealth_supply_empire->rbegin();
-            // Explicitly type rend to avoid Clang operator!= ambiguity.
-            const other_it_type other_it_rend = pod.merit_stealth_supply_empire->rend();
-
-            for (;other_it != other_it_rend; ++other_it) {
+            SupplyPODTupleSet::iterator other_it = pod.merit_stealth_supply_empire->begin();
+            for (; other_it != pod.merit_stealth_supply_empire->end(); ++other_it) {
                 const SupplyMerit& other_merit = std::get<ssMerit>(*other_it);
                 float other_stealth;
                 int other_source_id, other_empire_id;
@@ -1325,7 +1312,7 @@ namespace {
             if (is_keep_candidate) {
                 // Insert the new data into the endpoint system's POD.
                 if (!pod.merit_stealth_supply_empire)
-                    pod.merit_stealth_supply_empire = std::set<SupplyPODTuple>();
+                    pod.merit_stealth_supply_empire = SupplyPODTupleSet();
                 pod.merit_stealth_supply_empire->insert(candidate);
 
                 winners.push_back(candidate);
@@ -1336,8 +1323,8 @@ namespace {
             // Were any of the others marked for removal
             for (auto marked : marked_for_removals) {
 
-                // Remove the collected **reverse** iterator.  Should be O(1).
-                pod.merit_stealth_supply_empire->erase(std::next(marked).base());
+                // Remove the collected iterator.  Should be O(1).
+                pod.merit_stealth_supply_empire->erase(marked);
 
                 int marked_source_id, marked_empire_id;
                 std::tie(std::ignore, std::ignore, marked_source_id, marked_empire_id) = *marked;
@@ -1789,7 +1776,7 @@ void SupplyManager::SupplyManagerImpl::Update() {
     timer.EnterSection("initial supply sources ");
     DebugLogger() << "SupplyManager::Update() Find initial supply sources.";
     // Map from system id to all sources of supply.
-    std::unordered_map<int, std::set<SupplyPODTuple>> initial_supply_sources = CalculateInitialSupplySources();
+    std::unordered_map<int, SupplyPODTupleSet> initial_supply_sources = CalculateInitialSupplySources();
 
     timer.EnterSection("create PODs");
     DebugLogger() << "SupplyManager::Update() create PODs.";
