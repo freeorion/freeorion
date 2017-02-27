@@ -839,9 +839,10 @@ MapWnd::MovementLineData::MovementLineData() :
     colour(GG::CLR_ZERO)
 {}
 
-MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
-                                           const std::unordered_map<std::pair<int, int>, LaneEndpoints, UnorderedPairHash, UnorderedPairEqual>& lane_end_points_map,
-                                           GG::Clr colour_/*= GG::CLR_WHITE*/, int empireID /*= ALL_EMPIRES*/) :
+MapWnd::MovementLineData::MovementLineData(
+    const std::list<MovePathNode>& path_,
+    const std::unordered_map<std::pair<int, int>, LaneEndpoints, OrderedPairHash>& lane_end_points_map,
+    GG::Clr colour_/*= GG::CLR_WHITE*/, int empireID /*= ALL_EMPIRES*/) :
     path(path_),
     colour(colour_)
 {

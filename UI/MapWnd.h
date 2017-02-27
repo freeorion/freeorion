@@ -461,22 +461,18 @@ private:
     ModeratorActionsWnd*        m_moderator_wnd;    //!< buttons to select moderator actions
     CombatReportWnd*            m_combat_report_wnd;//!< shows graphical reports of combats
 
-    struct UnorderedPairHash {
+    struct OrderedPairHash {
         std::size_t operator()(const std::pair<int, int> x) const {
-            // Use XOR so that the hash is order independent.
-            return std::hash<int>{}(x.first) ^ std::hash<int>{}(x.second) ;
-        }
-    };
-
-    struct UnorderedPairEqual {
-        bool operator()(const std::pair<int, int>& x, const std::pair<int, int>& y) const {
-            return (((x.first == y.first) && (x.second == y.second))
-                    || ((x.first == y.second) && (x.second == y.first)));
+            // Use boost::hash_combine to preserve order.
+            std::size_t seed(0);
+            boost::hash_combine(seed, x.first);
+            boost::hash_combine(seed, x.second);
+            return seed;
         }
     };
 
     // A map from an unordered pair of systems to starlanes endpoint in universe coordinates
-    std::unordered_map<std::pair<int, int>, LaneEndpoints, UnorderedPairHash, UnorderedPairEqual> m_starlane_endpoints;
+    std::unordered_map<std::pair<int, int>, LaneEndpoints, OrderedPairHash> m_starlane_endpoints;
 
     /** Icons representing fleets at a system that are not departing, indexed
         by system. */
@@ -500,7 +496,7 @@ private:
         struct Vertex;                                  // apparent universe positions of move line points, derived from actual universe positions contained in MovePathNodes
         MovementLineData();
         MovementLineData(const std::list<MovePathNode>& path_,
-                         const std::unordered_map<std::pair<int, int>, LaneEndpoints, UnorderedPairHash, UnorderedPairEqual>& lane_end_points_map,
+                         const std::unordered_map<std::pair<int, int>, LaneEndpoints, OrderedPairHash>& lane_end_points_map,
                          GG::Clr colour_ = GG::CLR_WHITE, int empireID = ALL_EMPIRES);
 
         std::list<MovePathNode>             path;       // raw path data from which line rendering is determined
