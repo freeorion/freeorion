@@ -664,41 +664,6 @@ namespace {
         return empire_to_stealth_supply;
     }
 
-    // /** Return a map from empire id to the stealth and supply of a supply generating object.*/
-    // boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>>
-    // CalculateEmpireToStealthSupply(const System& system) {
-    //     boost::optional<std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>>
-    //         empire_to_stealth_supply = boost::none;
-
-    //     // as of this writing, only planets can generate supply propagation
-    //     for (auto obj : Objects().FindObjects(system.PlanetIDs())) {
-    //         auto merit = CalculateSupplyMerit(obj);
-    //         if(!merit)
-    //             continue;
-
-    //         float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
-    //         if (!empire_to_stealth_supply)
-    //             empire_to_stealth_supply = std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>();
-    //         (*empire_to_stealth_supply)[obj->Owner()].insert({stealth, *merit});
-    //     }
-
-    //     return empire_to_stealth_supply;
-    // }
-
-    // /** Return a map from system id to empire id to the stealth and supply of a supply generating object.*/
-    // std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> CalculateSystemToEmpireToStealthSupply() {
-    //     std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> system_to_empire_to_stealth_supply;
-
-    //     for (auto system_it : Objects().ExistingSystems()) {
-    //         if (auto system = std::dynamic_pointer_cast<const System>(system_it.second)) {
-    //             if (auto stealth_supply = CalculateEmpireToStealthSupply(*system))
-    //                 system_to_empire_to_stealth_supply[system->SystemID()] = *stealth_supply;
-    //         }
-    //     }
-
-    //     return system_to_empire_to_stealth_supply;
-    // }
-
     /** Return sets of contestings and blockading fleet's empire ids.
 
         The fleets determined to be blocking by this function may be different than
