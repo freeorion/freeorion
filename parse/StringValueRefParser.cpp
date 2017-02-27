@@ -1,75 +1,5 @@
 #include "ValueRefParserImpl.h"
 
-#include "EnumParser.h"
-
-
-void initialize_string_expression_parsers(
-    expression_rule<std::string>& function_expr,
-    expression_rule<std::string>& operated_expr,
-    typename parse::value_ref_rule<std::string>& expr,
-    typename parse::value_ref_rule<std::string>& primary_expr)
-{
-    namespace phoenix = boost::phoenix;
-    namespace qi = boost::spirit::qi;
-
-    using phoenix::new_;
-    using phoenix::push_back;
-
-    qi::_1_type _1;
-    qi::_a_type _a;
-    qi::_b_type _b;
-    qi::_c_type _c;
-    qi::_d_type _d;
-    qi::_val_type _val;
-    qi::lit_type lit;
-
-    const parse::lexer& tok = parse::lexer::instance();
-
-    function_expr
-        =   (
-                (
-                    (
-                        tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
-                    |   tok.Min_        [ _c = ValueRef::MINIMUM ]
-                    |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
-                    )
-                    >  '('  >   expr [ push_back(_d, _1) ]
-                    >*(','  >   expr [ push_back(_d, _1) ] )
-                    [ _val = new_<ValueRef::Operation<std::string> >(_c, _d) ] >   ')'
-                )
-            |   (
-                    tok.UserString_ >   '(' >   expr[ _val = new_<ValueRef::UserStringLookup<std::string>>(_1) ] >   ')'
-                )
-            |   (
-                    primary_expr [ _val = _1 ]
-                )
-            )
-        ;
-
-    operated_expr
-        =
-            (
-                (
-                        function_expr [ _a = _1 ]
-                    >>  lit('+') [ _c = ValueRef::PLUS ]
-                    >>  function_expr [ _b = new_<ValueRef::Operation<std::string> >(_c, _a, _1) ]
-                    [ _val = _b ]
-                )
-            |   (
-                                function_expr [ push_back(_d, _1) ]     // template string
-                    >>+('%' >   function_expr [ push_back(_d, _1) ] )   // must have at least one sub-string
-                    [ _val = new_<ValueRef::Operation<std::string> >(ValueRef::SUBSTITUTION, _d) ]
-                )
-            |   (
-                    function_expr [ _val = _1 ]
-                )
-            )
-        ;
-
-    expr
-        =   operated_expr
-        ;
-}
 
 namespace {
     struct string_parser_rules {
@@ -78,9 +8,15 @@ namespace {
             namespace qi = boost::spirit::qi;
 
             using phoenix::new_;
+            using phoenix::push_back;
 
             qi::_1_type _1;
+            qi::_a_type _a;
+            qi::_b_type _b;
+            qi::_c_type _c;
+            qi::_d_type _d;
             qi::_val_type _val;
+            qi::lit_type lit;
 
             static const std::string TOK_CURRENT_CONTENT{"CurrentContent"};
 
@@ -121,7 +57,50 @@ namespace {
                 |   string_var_complex()
                 ;
 
-            initialize_string_expression_parsers(function_expr, operated_expr, expr, primary_expr);
+            function_expr
+                =   (
+                        (
+                            (
+                                tok.OneOf_      [ _c = ValueRef::RANDOM_PICK ]
+                            |   tok.Min_        [ _c = ValueRef::MINIMUM ]
+                            |   tok.Max_        [ _c = ValueRef::MAXIMUM ]
+                            )
+                            >  '('  >   expr [ push_back(_d, _1) ]
+                            >*(','  >   expr [ push_back(_d, _1) ] )
+                            [ _val = new_<ValueRef::Operation<std::string> >(_c, _d) ] >   ')'
+                        )
+                    |   (
+                            tok.UserString_ >   '(' >   expr[ _val = new_<ValueRef::UserStringLookup<std::string>>(_1) ] >   ')'
+                        )
+                    |   (
+                            primary_expr [ _val = _1 ]
+                        )
+                    )
+                ;
+
+            operated_expr
+                =
+                    (
+                        (
+                                function_expr [ _a = _1 ]
+                            >>  lit('+') [ _c = ValueRef::PLUS ]
+                            >>  function_expr [ _b = new_<ValueRef::Operation<std::string> >(_c, _a, _1) ]
+                            [ _val = _b ]
+                        )
+                    |   (
+                                        function_expr [ push_back(_d, _1) ]     // template string
+                            >>+('%' >   function_expr [ push_back(_d, _1) ] )   // must have at least one sub-string
+                            [ _val = new_<ValueRef::Operation<std::string> >(ValueRef::SUBSTITUTION, _d) ]
+                        )
+                    |   (
+                            function_expr [ _val = _1 ]
+                        )
+                    )
+                ;
+
+            expr
+                =   operated_expr
+                ;
 
             initialize_nonnumeric_statistic_parser<std::string>(statistic, statistic_sub_value_ref);
 
