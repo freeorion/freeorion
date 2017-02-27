@@ -148,7 +148,7 @@ struct enum_value_ref_rules {
         const parse::lexer& tok = parse::lexer::instance();
 
         constant_expr
-            =   parse::enum_expr<T>() [ _val = new_<ValueRef::Constant<T>>(_1) ]
+            =   enum_expr [ _val = new_<ValueRef::Constant<T>>(_1) ]
             ;
 
         initialize_bound_variable_parser<T>(bound_variable_expr, variable_name);
@@ -190,6 +190,7 @@ struct enum_value_ref_rules {
 
 #if DEBUG_VALUEREF_PARSERS
         debug(variable_name);
+        debug(enum_expr);
         debug(constant_expr);
         debug(bound_variable_expr);
         debug(statistic_value_ref_expr);
@@ -200,6 +201,7 @@ struct enum_value_ref_rules {
 #endif
 
         variable_name.name(type_name + " variable name");
+        enum_expr.name(type_name);
         constant_expr.name(type_name);
         bound_variable_expr.name(type_name + " variable");
         statistic_value_ref_expr.name(type_name + " statistic value reference");
@@ -209,6 +211,7 @@ struct enum_value_ref_rules {
     }
 
     name_token_rule variable_name;
+    parse::enum_rule<T> enum_expr;
     parse::value_ref_rule<T> constant_expr;
     variable_rule<T> bound_variable_expr;
     expression_rule<T> functional_expr;
