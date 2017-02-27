@@ -73,8 +73,8 @@ public:
 
     /** Returns set of sets of systems that can share industry (systems in
       * separate groups are blockaded or otherwise separated). */
-    const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>& ResourceSupplyGroups() const;
-    const std::vector<std::shared_ptr<const std::unordered_set<int>>>&                          ResourceSupplyGroups(int empire_id) const;
+    const std::unordered_map<int, std::vector<std::shared_ptr<std::unordered_set<int>>>>& ResourceSupplyGroups() const;
+    const std::vector<std::shared_ptr<std::unordered_set<int>>>&                          ResourceSupplyGroups(int empire_id) const;
 
     /** Returns the range from each system that the empire with id \a empire_id
       * can propagate supply.*/
@@ -136,7 +136,7 @@ private:
     /** sets of system ids that are connected by supply lines and are able to
         share resources between systems or between objects in systems. indexed
         by empire id. */
-    std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>  m_resource_supply_groups;
+    std::unordered_map<int, std::vector<std::shared_ptr<std::unordered_set<int>>>>  m_resource_supply_groups;
 
     /** for whichever empire can propagate supply into this system, what is the
         additional range from this system that empire can propagate supply */
@@ -189,7 +189,7 @@ namespace {
     static const std::set<int> EMPTY_INT_SET;
     static const std::set<std::set<int>> EMPTY_INT_SET_SET;
     static const std::unordered_set<int> EMPTY_INT_UNORDERED_SET;
-    static const std::vector<std::shared_ptr<const std::unordered_set<int>>> EMPTY_INT_VECTOR_SHARED_UNORDERED_SET;
+    static const std::vector<std::shared_ptr<std::unordered_set<int>>> EMPTY_INT_VECTOR_SHARED_UNORDERED_SET;
     static const std::set<std::pair<int, int>> EMPTY_INT_PAIR_SET;
     static const std::map<int, float> EMPTY_INT_FLOAT_MAP;
     static const std::unordered_map<int, float> EMPTY_INT_FLOAT_UNORDERED_MAP;
@@ -243,10 +243,10 @@ std::unordered_set<int> SupplyManager::SupplyManagerImpl::FleetSupplyableSystemI
     return retval;
 }
 
-const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups() const
+const std::unordered_map<int, std::vector<std::shared_ptr<std::unordered_set<int>>>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups() const
 { return m_resource_supply_groups; }
 
-const std::vector<std::shared_ptr<const std::unordered_set<int>>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups(int empire_id) const {
+const std::vector<std::shared_ptr<std::unordered_set<int>>>& SupplyManager::SupplyManagerImpl::ResourceSupplyGroups(int empire_id) const {
     const auto& it = m_resource_supply_groups.find(empire_id);
     if (it != m_resource_supply_groups.end())
         return it->second;
@@ -2086,10 +2086,10 @@ const std::unordered_set<int>&                                    SupplyManager:
 std::unordered_set<int>                                           SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool include_allies) const
 { return pimpl->FleetSupplyableSystemIDs(empire_id, include_allies); }
 
-const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>&         SupplyManager::ResourceSupplyGroups() const
+const std::unordered_map<int, std::vector<std::shared_ptr<std::unordered_set<int>>>>&         SupplyManager::ResourceSupplyGroups() const
 { return pimpl->ResourceSupplyGroups(); }
 
-const std::vector<std::shared_ptr<const std::unordered_set<int>>>&                         SupplyManager::ResourceSupplyGroups(int empire_id) const
+const std::vector<std::shared_ptr<std::unordered_set<int>>>&                         SupplyManager::ResourceSupplyGroups(int empire_id) const
 { return pimpl->ResourceSupplyGroups(empire_id); }
 
 const std::unordered_map<int, float>&                             SupplyManager::PropagatedSupplyRanges(int empire_id) const

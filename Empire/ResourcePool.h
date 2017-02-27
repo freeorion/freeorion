@@ -22,7 +22,7 @@ class FO_COMMON_API ResourcePool {
 public:
     // Resource pool uses pointers to shared const int sets as key to it sets and maps.
     // Using the set itself as the key is slow, because both set comparison and hasing are O(N).
-    using key_type = std::shared_ptr<const std::unordered_set<int>>;
+    using key_type = std::shared_ptr<std::unordered_set<int>>;
 
     /** \name Structors */ //@{
     ResourcePool(ResourceType type);

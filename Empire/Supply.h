@@ -72,9 +72,12 @@ public:
     std::unordered_set<int>                                           FleetSupplyableSystemIDs(int empire_id, bool include_allies) const;
 
     /** Returns set of sets of systems that can share industry (systems in
-      * separate groups are blockaded or otherwise separated). */
-    const std::unordered_map<int, std::vector<std::shared_ptr<const std::unordered_set<int>>>>& ResourceSupplyGroups() const;
-    const std::vector<std::shared_ptr<const std::unordered_set<int>>>&                          ResourceSupplyGroups(int empire_id) const;
+        separate groups are blockaded or otherwise separated).  The sets should
+        not be modified.  However, due to this bug
+        https://svn.boost.org/trac/boost/ticket/10488 in boost::serialization
+        they can't be declared const. */
+    const std::unordered_map<int, std::vector<std::shared_ptr<std::unordered_set<int>>>>& ResourceSupplyGroups() const;
+    const std::vector<std::shared_ptr<std::unordered_set<int>>>&                          ResourceSupplyGroups(int empire_id) const;
 
     /** Returns the range from each system that the empire with id \a empire_id
       * can propagate supply.*/
