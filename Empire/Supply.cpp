@@ -749,37 +749,6 @@ namespace {
         return {contesting_fleets_empire_ids, blockading_fleets_empire_ids};
     }
 
-    /** Return a map from system to blockading fleet's empire id.
-
-        The fleets determined to be blocking by this function may be different than
-        blocking fleets determined by an empire, because a blockading fleet may not
-        be visible to a given empire.
-    */
-    std::pair<std::unordered_map<int, std::unordered_set<int>>,
-              std::unordered_map<int, std::unordered_set<int>>> CalculateSystemToBlockadingFleetsEmpireIDs()
-    {
-        std::unordered_map<int, std::unordered_set<int>> system_to_contesting_fleets_empire_ids;
-        std::unordered_map<int, std::unordered_set<int>> system_to_blockading_fleets_empire_ids;
-
-        for (auto system_it : Objects().ExistingSystems()) {
-            auto system = std::dynamic_pointer_cast<const System>(system_it.second);
-
-            if (!system)
-                continue;
-
-            boost::optional<std::unordered_set<int>> contesting_empires;
-            boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
-            std::tie(contesting_empires, blockading_fleets_empire_ids) = CalculateBlockadingFleetsEmpireIDs(*system);
-
-            if (contesting_empires && !contesting_empires->empty())
-                system_to_contesting_fleets_empire_ids[system->SystemID()]= *contesting_empires;
-
-            if (blockading_fleets_empire_ids && !blockading_fleets_empire_ids->empty())
-                system_to_blockading_fleets_empire_ids[system->SystemID()] = *blockading_fleets_empire_ids;
-        }
-        return {system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids};
-    }
-
     /** Return an optional empire id if any empires colonies can blockade supply.
 
         A colony can blockade supply if only one empire has supply in the system and no hostile empires
@@ -821,43 +790,6 @@ namespace {
             return empire_id;
 
         return boost::none;
-    }
-
-    /** Return a map from system to blockading colony's empire id.
-
-        A colony's ability to blockade supply was added to relax requirements on the AI understanding
-        supply mechanics.  It may be removed in future.
-
-        The systems determined to be blocked by this function may be different than
-        determined by an empire, because empires don't have complete visibility.
-    */
-    std::unordered_map<int, std::unordered_set<int>> CalculateSystemToBlockadingColonyEmpireIDs(
-        const std::unordered_map<int, std::set<SupplyPODTuple>>& system_to_empire_to_stealth_supply,
-        const std::unordered_map<int, std::unordered_set<int>>& system_to_contesting_fleets_empire_ids)
-    {
-        std::unordered_map<int, std::unordered_set<int>> system_to_blockading_colony_empire_ids;
-
-        for (auto system_to_empire_to_stealth_supply_it : system_to_empire_to_stealth_supply) {
-            auto system_id = system_to_empire_to_stealth_supply_it.first;
-            auto system = std::dynamic_pointer_cast<const System>(Objects().Object(system_id));
-
-            if (!system)
-                continue;
-
-            // Are any hostile fleets contesting control of this system?
-            auto fleets_it = system_to_contesting_fleets_empire_ids.find(system_id);
-            if (fleets_it == system_to_contesting_fleets_empire_ids.end())
-                continue;
-
-            auto maybe_blockader_id = CalculateBlockadingColonyEmpireID(
-                *system, system_to_empire_to_stealth_supply_it.second,
-                fleets_it->second);
-
-            if (maybe_blockader_id)
-                system_to_blockading_colony_empire_ids[system_id].insert(*maybe_blockader_id);
-        }
-
-        return system_to_blockading_colony_empire_ids;
     }
 
     /** Return a map from system id to all initial sources of supply. */
@@ -975,73 +907,6 @@ namespace {
 
             LocalizeSupply(system_and_supply.second, system_to_supply_pod_it->second);
         }
-    }
-
-    boost::optional<SupplySystemPOD> CalculateInitialSupply(const System &system) {
-        auto stealth_supply = CalculateMeritStealthSupplyEmpire(system);
-
-        boost::optional<std::unordered_set<int>> contesting_empires;
-        boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
-        std::tie(contesting_empires, blockading_fleets_empire_ids) = CalculateBlockadingFleetsEmpireIDs(system);
-
-        auto blockading_colony = CalculateBlockadingColonyEmpireID(system, stealth_supply, contesting_empires);
-
-        auto local_bonuses = CalculateSystemSupplyMerit(system);
-
-        // Adjust merit for local bonuses if needed
-        if (stealth_supply && local_bonuses) {
-            // List of merits that need to be adjusted
-            std::vector<std::set<SupplyPODTuple>::const_iterator> erase_these;
-            std::vector<SupplyPODTuple> add_these;
-            for (auto supply_tuple_it = stealth_supply->begin();
-                 supply_tuple_it != stealth_supply->end(); ++supply_tuple_it)
-            {
-                const auto& local_empire = std::get<ssEmpireID>(*supply_tuple_it);
-                const auto& bonus_it = local_bonuses->find(local_empire);
-                if (bonus_it == local_bonuses->end())
-                    continue;
-
-                auto local_supply_tuple = *supply_tuple_it;
-                SupplyMerit& local_merit = std::get<ssMerit>(local_supply_tuple);
-                local_merit.Localize(bonus_it->second);
-
-                erase_these.push_back(supply_tuple_it);
-                add_these.push_back(local_supply_tuple);
-
-                DebugLogger() << "Localizing merit in system "<< system.SystemID() << " from "
-                              << std::get<ssMerit>(*supply_tuple_it) << " to "
-                              << std::get<ssMerit>(local_supply_tuple) << " with local bonus "
-                              << bonus_it->second;
-            }
-
-            // Adjust the set
-            for (const auto& erase_it : erase_these)
-                stealth_supply->erase(erase_it);
-            for(const auto& add_this : add_these)
-                stealth_supply->insert(add_this);
-        }
-
-        if (!stealth_supply && !contesting_empires && !blockading_fleets_empire_ids && !blockading_colony && !local_bonuses)
-            return boost::none;
-
-        return SupplySystemPOD({stealth_supply, contesting_empires, blockading_fleets_empire_ids,
-                    blockading_colony, local_bonuses});
-    }
-
-    /** Return a map from system id to SupplySystemrPOD. */
-    std::unordered_map<int, SupplySystemPOD> CalculateInitialSupply() {
-        std::unordered_map<int, SupplySystemPOD> system_to_supply_pod;
-
-        for (auto system_it : Objects().ExistingSystems()) {
-            auto system = std::dynamic_pointer_cast<const System>(system_it.second);
-            if (!system)
-                continue;
-
-            if (auto pod = CalculateInitialSupply(*system))
-                system_to_supply_pod[system->SystemID()] = *pod;
-        }
-
-        return system_to_supply_pod;
     }
 
     /** SupplyTranches are sets of supply sources divided by merit into tranches starting from the
@@ -1244,56 +1109,6 @@ namespace {
 
 
     };
-
-    // boost::optional<SupplySystemPOD> CalculateInitialSupply(
-    //     const System &system,
-    //     const std::set<std::pair<SupplyMerit, float>>& merit_and_stealth)
-    // {
-    //     auto stealth_supply = CalculateEmpireToStealthSupply(system);
-
-    //     boost::optional<std::unordered_set<int>> contesting_empires;
-    //     boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
-    //     std::tie(contesting_empires, blockading_fleets_empire_ids) = CalculateBlockadingFleetsEmpireIDs(system);
-
-    //     auto blockading_colony = CalculateBlockadingColonyEmpireID(system, stealth_supply, contesting_empires);
-
-    //     if (!stealth_supply && !contesting_empires && !blockading_fleets_empire_ids && !blockading_colony)
-    //         return boost::none;
-
-    //     return SupplySystemPOD({stealth_supply, contesting_empires, blockading_fleets_empire_ids, blockading_colony});
-    // }
-
-    // // /** Return a map from system id to SupplySystemPOD. */
-    // std::unordered_map<int, SupplySystemPOD> CalculateSupplySystemPODs(
-    //     const std::set<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>>& merit_to_obj)
-    // {
-    //     std::unordered_map<int, std::set<std::pair<SupplyMerit, float>>> system_to_supply_merits;
-    //     for (auto merit_and_obj : merit_to_obj) {
-    //         const std::shared_ptr<UniverseObject>& obj = merit_and_obj.second;
-    //         if (obj->SystemID() == INVALID_OBJECT_) {
-    //             ErrorLogger() << "An supply source with id " << obj->ID() << " has an invalid system id.";
-    //             continue;
-    //         }
-
-    //         const SupplMerit& merit = merit_and_obj.first;
-    //         float stealth = obj->GetMeter(METER_STEALTH) ? obj->CurrentMeterValue(METER_STEALTH) : 0;
-
-    //         system_to_supply_merits[obj->SystemID()].insert({merit, stealth});
-    //     }
-
-    //     std::unordered_map<int, SupplySystemPOD> system_to_supply_pod;
-
-    //     for (auto system_id_and_merits : system_to_supply_merits) {
-    //         auto system = std::dynamic_pointer_cast<const System>(system_id_and_merits.first);
-    //         if (!system)
-    //             continue;
-
-    //         if (auto pod = CalculateInitialSupply(*system, system_id_and_merits.second))
-    //             system_to_supply_pod[system->SystemID()] = *pod;
-    //     }
-
-    //     return system_to_supply_pod;
-    // }
 
     /** Remove \p sys_id from unobstructed_systems, remove all startlanes that arrive or depart sys_id
         from lane_traversals and remove obstructed traversals that depart this system.*/
@@ -1543,8 +1358,6 @@ namespace {
                 // Remove the collected **reverse** iterator.  Should be O(1).
                 pod.merit_stealth_supply_empire->erase(std::next(marked).base());
 
-                const SupplyMerit& marked_merit = std::get<ssMerit>(*marked);
-
                 int marked_source_id, marked_empire_id;
                 std::tie(std::ignore, std::ignore, marked_source_id, marked_empire_id) = *marked;
                 DebugLogger() << "Loser " << marked_source_id << " removed from POD for system " << system_id;
@@ -1645,210 +1458,6 @@ namespace {
         }
         return retval;
     }
-
-        // There is one empire here.
-        // if (pod.empire_to_merit_stealth_supply->size() == 1) {
-        //     if (!candidates.size() == 1 && )
-        //         ErrorLogger() << "Supply ContestSystem passed " << candidates.size()
-        //                       << " into empty system " << system.SystemID();
-        //     auto supply_range_of_only_empire = pod.empire_to_merit_stealth_supply->begin()->second.begin()->second;
-        //     return {supply_range_of_only_empire, empires_needing_traversal_adjustment};
-        // }
-
-        // Sort by range using tuples of (merit, stealth, empire id)
-        // SupplyPODTuple> merit_stealth_empire_id;
-        // for (auto it : *pod.empire_to_merit_stealth_supply) {
-        //     auto empire_id = it.first;
-        //     for (auto jt : it.second)
-        //         merit_stealth_empire_id.insert({jt.second, jt.first, empire_id});
-        // }
-
-        // auto max_supply_range = std::get<ssMerit>(*merit_stealth_empire_id.begin());
-
-        // auto& keepers = *pod.merit_stealth_supply_empire;
-        // keepers.clear();
-
-        // while (!merit_stealth_empire_id.empty()) {
-        //     // Compare the candidate with the greatest range to determine if it should be kept and if
-        //     // each other supply source should be kept or removed from further supply resolutions.
-        //     auto candidate = *merit_stealth_empire_id.rbegin();
-        //     SupplyMerit candidate_merit;
-        //     float candidate_stealth;
-        //     int candidate_empire_id;
-        //     std::tie(candidate_merit, candidate_stealth, candidate_empire_id) = candidate;
-        //     merit_stealth_empire_id.erase(std::next(merit_stealth_empire_id.rbegin()).base());
-
-        //     auto candidate_detection_it = empire_to_detection.find(candidate_empire_id);
-        //     if (candidate_detection_it == empire_to_detection.end()) {
-        //         ErrorLogger() << "Candidate supply has an empire id " << candidate_empire_id
-        //                       << " with no detection strength. Skipping...";
-        //         continue;
-        //     }
-        //     auto candidate_detection = candidate_detection_it->second;
-
-        //     // Conditionally add candidate to the keepers.  It might be removed if tied for range.
-        //     bool is_keep_candidate = true;
-
-        //     // A list of individual others to remove from the list.
-        //     std::vector<SupplyPODTuple>::reverse_iterator> removed_others;
-
-        //     for (auto other_it = merit_stealth_empire_id.rbegin();
-        //          other_it != merit_stealth_empire_id.rend(); ++other_it)
-        //     {
-        //         SupplyMerit other_merit;
-        //         float other_stealth;
-        //         int other_empire_id;
-        //         std::tie(other_merit, other_stealth, other_empire_id) = *other_it;
-
-        //         // Note: All other_merit are <= candidate_merit
-
-        //         // If the other is of the same empire and has less stealth then it can't improve
-        //         // supply, so remove it.
-        //         if (other_empire_id == candidate_empire_id) {
-        //             if (other_stealth <= candidate_stealth)
-        //                 removed_others.push_back(other_it);
-        //             continue;
-        //         }
-
-        //         // If other can't be detected then skip it
-        //         if (other_stealth > candidate_detection)
-        //             continue;
-
-        //         // If other is not hostile to candidate empire then skip it
-        //         if (Empires().GetDiplomaticStatus(candidate_empire_id, other_empire_id) != DIPLO_WAR)
-        //             continue;
-
-        //         // If other has the same range then remove both the candidate and the other
-        //         if (other_merit == candidate_merit) {
-        //             is_keep_candidate = false;
-        //             removed_others.push_back(other_it);
-        //             continue;
-        //         }
-
-        //         // All remaining others are detectable, hostile and have less range so remove them.
-        //         removed_others.push_back(other_it);
-        //     }
-
-        //     if (is_keep_candidate)
-        //         keepers[candidate_empire_id].insert({candidate_stealth, candidate_merit});
-        //     else
-        //         empires_needing_traversal_adjustment.insert(candidate_empire_id);
-
-
-        //     for (auto removed_other : removed_others) {
-        //         int other_empire_id;
-        //         std::tie(std::ignore, std::ignore, other_empire_id) = *removed_other;
-        //         empires_needing_traversal_adjustment.insert(other_empire_id);
-
-        //         // Remove the collected reverse iterator.  Should be O(1).
-        //         merit_stealth_empire_id.erase(std::next(removed_other).base());
-        //     }
-        // }
-
-        // return {max_supply_range, empires_needing_traversal_adjustment};
-
-    /** Adjust the supply lane traversals, after a system is contested. */
-    void AdjustStarlaneTraversals(
-        std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& supply_starlane_traversals,
-        std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>& supply_starlane_obstructed_traversals,
-        SupplySystemPOD& pod, const System& system,
-        const std::unordered_map<int, float>& empire_to_detection,
-        const std::unordered_set<int> & empires_needing_traversal_adjustment)
-    {
-        // Check each empire that needs adjustment and if they have no more traversals in the SystemPOD
-        // remove them from the traversals maps.
-
-        for(auto empire_id : empires_needing_traversal_adjustment) {
-
-            // There no empires or empire id is not present
-            if (!pod.merit_stealth_supply_empire || pod.merit_stealth_supply_empire->empty()) {
-                RemoveSystemFromTraversals(system.SystemID(), supply_starlane_traversals[empire_id],
-                                           supply_starlane_obstructed_traversals[empire_id]);
-            }
-        }
-    }
-
-    std::unordered_map<int, std::vector<int>> CalculateColonyDisruptedSupply(
-        const std::unordered_map<int, std::unordered_map<int, float>>& empire_system_supply_ranges)
-    {
-        // Map from Empire to Systems where only other empires have supply sources and there is no
-        // friendly fleet.  This is used to help the AI until it can full manage supply mechanics
-        std::unordered_map<int, std::vector<int>> empire_to_colony_disrupted_systems;
-
-        const std::vector<std::shared_ptr<Fleet>> fleets = GetUniverse().Objects().FindObjects<Fleet>();
-
-        for (const std::map<int, Empire*>::value_type& entry : Empires()) {
-            int empire_id = entry.first;
-
-            auto& self_protected_supply = empire_to_colony_disrupted_systems[empire_id];
-
-            // Find systems containing armed aggressive fleets from own empire.
-            std::set<int> systems_containing_friendly_fleets;
-
-            const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(empire_id);
-            for (std::shared_ptr<const Fleet> fleet : fleets) {
-                int system_id = fleet->SystemID();
-                if (system_id == INVALID_OBJECT_ID) {
-                    continue;   // not in a system, so can't affect system obstruction
-                } else if (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) {
-                    continue; //known to be destroyed so can't affect supply, important just in case being updated on client side
-                }
-
-                if ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive()) {
-                    if (fleet->OwnedBy(empire_id)) {
-                        if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
-                            systems_containing_friendly_fleets.insert(system_id);
-                        }
-                    }
-                }
-            }
-
-            std::set<int> systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt;
-            // add all systems where hostile_others have supply
-            for (const auto& empire_supply : empire_system_supply_ranges) {
-                if (empire_supply.first == empire_id || empire_supply.first == ALL_EMPIRES)
-                    continue;
-
-                if (Empires().GetDiplomaticStatus(empire_id, empire_supply.first) != DIPLO_WAR)
-                    continue;
-
-                for (const std::map<int, float>::value_type& supply_range : empire_supply.second) {
-                    if (supply_range.second <= 0.0f)
-                        continue;
-                    systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt.insert(supply_range.first);
-                }
-            }
-            // remove systems were this empire has supply
-            const auto& it = empire_system_supply_ranges.find(empire_id);
-            if (it != empire_system_supply_ranges.end()) {
-                for (const std::map<int, float>::value_type& supply_range : it->second) {
-                    if (supply_range.second <= 0.0f)
-                        continue;
-                    systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt.erase(supply_range.first);
-                }
-            }
-
-            // for systems where others have supply sources and this empire doesn't
-            // and where this empire has no fleets...
-            // supply is obstructed
-            for (int system_id : systems_where_hostile_others_have_supply_sources_and_current_empire_doesnt) {
-                if (systems_containing_friendly_fleets.find(system_id) == systems_containing_friendly_fleets.end())
-                    self_protected_supply.push_back(system_id);
-            }
-        }
-        return empire_to_colony_disrupted_systems;
-    }
-
-    void ObstructSupplyIfUncontestedHostileSupplySource(
-        const std::unordered_map<int, std::unordered_map<int, float>>& empire_system_supply_ranges,
-        std::map<int, std::set<int>>& empire_supply_unobstructed_systems)
-    {
-        for (auto& empire_to_colony_disrupted_systems : CalculateColonyDisruptedSupply(empire_system_supply_ranges)) {
-            for (auto system_id: empire_to_colony_disrupted_systems.second)
-                empire_supply_unobstructed_systems.erase(system_id);
-        }
-    }
-
 }
 
 std::map<int, std::map<int, std::pair<float, float>>> SupplyManager::SupplyManagerImpl::PropagateSupplyAlongUnobstructedStarlanes(
@@ -2174,20 +1783,6 @@ void SupplyManager::SupplyManagerImpl::DetermineSupplyConnectedSystemGroups() {
     }
 }
 
-namespace {
-    /** Return a map from empire id to detection strength.*/
-    std::unordered_map<int, float> EmpireToDetectionStrengths() {
-        std::unordered_map<int, float> retval;
-        for (const auto& entry : Empires()) {
-            const auto  empire_id = entry.first;
-            const auto& empire = entry.second;
-            const auto  meter = empire->GetMeter("METER_DETECTION_STRENGTH");
-            retval[empire_id] = meter ? meter->Current() : 0.0f;
-        }
-        return retval;
-    }
-}
-
 void SupplyManager::SupplyManagerImpl::Update() {
     SectionedScopedTimer timer("SupplyManager::Update", boost::chrono::microseconds(100));
     timer.EnterSection("update starlanes");
@@ -2342,12 +1937,6 @@ void SupplyManager::SupplyManagerImpl::Update() {
         }
     }
 
-        // boost::optional<std::set<std::tuple<SupplyMerit, float, int, int>>> merit_stealth_supply_empire;
-        // boost::optional<std::unordered_set<int>> contesting_empires;
-        // boost::optional<std::unordered_set<int>> blockading_fleets_empire_ids;
-        // boost::optional<int> blockading_colonies_empire_id;
-
-
         /** ordered pairs of system ids between which a starlane runs that can be
         used to convey resources between systems. indexed first by empire id. */
     /*std::unordered_map<int, std::unordered_map<std::pair<int, int>, float>>*/  m_supply_starlane_traversals.clear();
@@ -2399,18 +1988,21 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
                 // If there is supply at both ends then it is traversable
                 if (start_range >= 0.0f  && end_range >= 0.0f) {
-                    DebugLogger() << " Good traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< " stealth = "<<stealth<<".";
+                    DebugLogger() << " Good traversal added ("<<start_id<<","<<end_id<<") for empire "
+                                  <<empire_id<< " stealth = "<<stealth<<".";
                     supply_starlane_traversals.insert({{start_id, end_id}, stealth});
                 }
 
                 // If there is surplus range >1.0f at the source end and 0.0f at the output end
                 // then it is obstructed.  This is asymmetrical, so check both direction separately.
                 if (start_range >= 1.0f  && end_range < 0.0f) {
-                    DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< " stealth = "<<stealth_start<<".";
+                    DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id
+                                  <<") for empire "<<empire_id<< " stealth = "<<stealth_start<<".";
                     supply_starlane_obstructed_traversals.insert({{start_id, end_id}, stealth_start});
                 }
                 if (end_range >= 1.0f  && start_range < 0.0f) {
-                    DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id<<") for empire "<<empire_id<< " stealth = "<<stealth_end<<".";
+                    DebugLogger() << " Obstructed traversal added ("<<start_id<<","<<end_id
+                                  <<") for empire "<<empire_id<< " stealth = "<<stealth_end<<".";
                     supply_starlane_obstructed_traversals.insert({{end_id, start_id}, stealth_end});
                 }
             }
@@ -2428,138 +2020,6 @@ void SupplyManager::SupplyManagerImpl::Update() {
 
     DebugLogger() << "Exiting SupplyManager update.";
 
-}
-
-void SupplyManager::SupplyManagerImpl::UpdateOld() {
-    m_supply_starlane_traversals.clear();
-    m_supply_starlane_obstructed_traversals.clear();
-    m_fleet_supplyable_system_ids.clear();
-    m_resource_supply_groups.clear();
-    m_propagated_supply_ranges.clear();
-
-    // for each empire, need to get a set of sets of systems that can exchange
-    // resources.  some sets may be just one system, in which resources can be
-    // exchanged between UniverseObjects producing or consuming them, but which
-    // can't exchange with any other systems.
-
-    // which systems can share resources depends on system supply ranges, which
-    // systems have obstructions to supply propagation for each empire, and
-    // the ranges and obstructions of other empires' supply, as only one empire
-    // can supply each system or propagate along each starlane. one empire's
-    // propagating supply can push back another's, if the pusher's range is
-    // larger.
-
-
-    // // Map from system id to a map from empire id to the stealth and supply ranges of empire
-    // // objects in that system.
-    // std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, SupplyMerit>>>> system_to_empire_to_stealth_supply
-    //     = CalculateSystemToEmpireToStealthSupply();
-
-    // Map from system to blockading fleets.
-    // These fleets will differ from the empire's known blockading fleets, because an empire may
-    // not be able to detect all fleets.
-    std::unordered_map<int, std::unordered_set<int>> system_to_contesting_fleets_empire_ids;
-    std::unordered_map<int, std::unordered_set<int>> system_to_blockading_fleets_empire_ids;
-    std::tie(system_to_contesting_fleets_empire_ids, system_to_blockading_fleets_empire_ids)
-        = CalculateSystemToBlockadingFleetsEmpireIDs();
-
-    // // Map from the system to empire id of colonies that are blockading.
-    // // Note: This was an addition to ease the AI requirements of the supply mechanic.
-    // std::unordered_map<int, std::unordered_set<int>> system_blockading_colony_empire_ids
-    //     = CalculateSystemToBlockadingColonyEmpireIDs(system_to_empire_to_stealth_supply,
-    //                                                  system_to_contesting_fleets_empire_ids);
-
-
-    // //Map from system id to SupplySystemPOD containing all data needed to evaluate supply in one system.
-    // std::unordered_map<int, SupplySystemPOD> system_to_initial_supply_pod = CalculateInitialSupply();
-
-
-    // Map from empire id to a map from system id to the stealth and supply ranges of empire
-    // objects in that system.
-    std::unordered_map<int, std::unordered_map<int, std::set<std::pair<float, float>>>> empire_to_system_to_stealth_supply;
-
-    // map from empire id to map from system id to range (in starlane jumps)
-    // that supply can be propagated out of that system by that empire.
-    std::unordered_map<int, std::unordered_map<int, float> > empire_system_supply_ranges;
-    // map from empire id to which systems are obstructed for it for supply
-    // propagation
-    std::map<int, std::set<int> > empire_supply_unobstructed_systems;
-
-    /** Map from empire id to detection strength.*/
-    auto empire_to_detection = EmpireToDetectionStrengths();
-
-    for (const auto& entry : Empires()) {
-        const auto empire_id = entry.first;
-        const auto& empire = entry.second;
-        // empire_to_system_to_stealth_supply[empire_id] = empire->SystemToStealthAndSupplyRange();
-        empire_system_supply_ranges[empire_id] = empire->SystemSupplyRanges();
-        empire_supply_unobstructed_systems[empire_id] = empire->SupplyUnobstructedSystems();
-
-        //std::stringstream ss;
-        //for (int system_id : empire_supply_unobstructed_systems[entry.first])
-        //{ ss << system_id << ", "; }
-        //DebugLogger() << "Empire " << empire->EmpireID() << " unobstructed systems: " << ss.str();
-    }
-
-    /////
-    // probably temporary: additional restriction here for supply propagation
-    // but not for general system obstruction as determind within Empire::UpdateSupplyUnobstructedSystems
-    /////
-    ObstructSupplyIfUncontestedHostileSupplySource(
-        empire_system_supply_ranges,
-        empire_supply_unobstructed_systems);
-    /////
-    // end probably temporary...
-    /////
-
-
-    // Calculate for each empire the supply available at each system
-    std::map<int, std::map<int, std::pair<float, float>>>&& empire_propagating_supply_ranges =
-        PropagateSupplyAlongUnobstructedStarlanes(
-            empire_system_supply_ranges,
-            empire_supply_unobstructed_systems);
-
-
-    //// DEBUG
-    //DebugLogger() << "SuppolyManager::Update: after removing conflicts, empires can provide supply to the following system ids:";
-    //for (std::map<int, std::map<int, float>>::value_type& empire_supply : empire_propagating_supply_ranges) {
-    //    int empire_id = empire_supply.first;
-    //    std::stringstream ss;
-    //    for (std::map<int, float>::value_type& supply_range : empire_supply.second) {
-    //        ss << supply_range.first << " (" << supply_range.second << "),  ";
-    //    }
-    //    DebugLogger() << "empire: " << empire_id << ":  " << ss.str();
-    //}
-    //// END DEBUG
-
-    // record which systems are fleet supplyable by each empire (after resolving conflicts in each system)
-    for (const std::map<int, std::map<int, std::pair<float, float>>>::value_type& empire_supply : empire_propagating_supply_ranges) {
-        int empire_id = empire_supply.first;
-        for (const std::map<int, std::pair<float, float>>::value_type& supply_range : empire_supply.second) {
-            if (supply_range.second.first < 0.0f)
-                continue;   // negative supply doesn't count... zero does (it just reaches)
-            m_fleet_supplyable_system_ids[empire_id].insert(supply_range.first);
-
-            // should be only one empire per system at this point, but use max just to be safe...
-            m_propagated_supply_ranges[supply_range.first] =
-                std::max(supply_range.second.first, m_propagated_supply_ranges[supply_range.first]);
-            m_empire_propagated_supply_ranges[empire_id][supply_range.first] =
-                m_propagated_supply_ranges[supply_range.first];
-
-            // should be only one empire per system at this point, but use max just to be safe...
-            m_propagated_supply_distances[supply_range.first] =
-                std::max(supply_range.second.second, m_propagated_supply_distances[supply_range.first]);
-            m_empire_propagated_supply_distances[empire_id][supply_range.first] =
-                m_propagated_supply_distances[supply_range.first];
-        }
-
-        //DebugLogger() << "For empire: " << empire_id << " system supply distances: ";
-        //for (auto entry : m_empire_propagated_supply_distances[empire_id]) {
-        //    DebugLogger() << entry.first << " : " << entry.second;
-        //}
-    }
-
-    DetermineSupplyConnectedSystemGroups();
 }
 
 namespace boost {
