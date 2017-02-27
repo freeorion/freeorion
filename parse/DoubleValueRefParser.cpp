@@ -8,7 +8,6 @@ namespace {
             namespace qi = boost::spirit::qi;
 
             using phoenix::new_;
-            using phoenix::static_cast_;
 
             qi::_1_type _1;
             qi::_val_type _val;
@@ -61,8 +60,7 @@ namespace {
                 ;
 
             constant
-                =   tok.int_ [ _val = new_<ValueRef::Constant<double> >(static_cast_<double>(_1)) ]
-                |   tok.double_ [ _val = new_<ValueRef::Constant<double> >(_1) ]
+                =   tok.double_ [ _val = new_<ValueRef::Constant<double> >(_1) ]
                 ;
 
             free_variable
@@ -70,8 +68,6 @@ namespace {
                     [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
                 |   free_variable_name
                     [ _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
-                |   int_free_variable()
-                    [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
             simple
@@ -122,14 +118,24 @@ namespace {
             namespace qi = boost::spirit::qi;
 
             using phoenix::new_;
+            using phoenix::static_cast_;
 
             qi::_1_type _1;
             qi::_val_type _val;
 
+            const parse::lexer& tok = parse::lexer::instance();
             const parse::value_ref_rule<double>& simple = double_simple();
+
+            int_constant_cast
+                =   tok.int_ [ _val = new_<ValueRef::Constant<double> >(static_cast_<double>(_1)) ]
+                ;
 
             int_bound_variable_cast
                 =   int_bound_variable() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                ;
+
+            int_free_variable_cast
+                =   int_free_variable() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
                 ;
 
             int_statistic_cast
@@ -146,25 +152,33 @@ namespace {
             primary_expr
                 =   ('(' > expr > ')')
                 |    simple
-                |    int_bound_variable_cast
                 |    statistic_expr
                 |    int_statistic_cast
                 |    double_var_complex()
+                |    int_constant_cast
+                |    int_free_variable_cast
+                |    int_bound_variable_cast
                 |    int_complex_variable_cast
                 ;
 
+            int_free_variable_cast.name("integer free variable");
             int_bound_variable_cast.name("integer bound variable");
             int_statistic_cast.name("integer statistic");
             int_complex_variable_cast.name("integer complex variable");
 
 #if DEBUG_VALUEREF_PARSERS
+            debug(int_constant_cast);
+            debug(int_free_variable_cast);
+            debug(int_bound_variable_cast);
             debug(int_statistic_cast);
             debug(int_complex_variable_cast);
             debug(double_complex_variable);
 #endif
         }
 
+        parse::value_ref_rule<double> int_constant_cast;
         parse::value_ref_rule<double> int_bound_variable_cast;
+        parse::value_ref_rule<double> int_free_variable_cast;
         parse::value_ref_rule<double> int_statistic_cast;
         parse::value_ref_rule<double> int_complex_variable_cast;
     };
