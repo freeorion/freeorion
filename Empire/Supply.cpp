@@ -966,7 +966,11 @@ namespace {
             // Divide into tranches of the minimum drop in merit across a single starlane.
             m_max_merit = merit_and_source.rbegin()->first;
 
-            auto merit_source_it = merit_and_source.rbegin();
+            using merit_source_rit_type = std::set<std::pair<SupplyMerit, std::shared_ptr<UniverseObject>>>::reverse_iterator;
+            // Precompute rend to avoid Clang ambiguity in operator!=
+            const merit_source_rit_type merit_source_rend = merit_and_source.rend();
+            merit_source_rit_type merit_source_it = merit_and_source.rbegin();
+
             auto merit_threshold = SupplyMerit(m_max_merit).OneJumpLessMerit();
             auto tranche = SupplyTranche(merit_threshold);
 
@@ -974,7 +978,7 @@ namespace {
             std::shared_ptr<UniverseObject> source;
 
             DebugLogger() << "SupplyTranches() adding " << merit_and_source.size() << " supply sources to tranches.";
-            while (merit_source_it != merit_and_source.rend()) {
+            while (merit_source_it != merit_source_rend) {
                 std::tie(merit, source) = *merit_source_it;
 
                 if (merit <= merit_threshold) {
@@ -1190,7 +1194,11 @@ namespace {
         if (!pod.merit_stealth_supply_empire && !candidates.empty())
             pod.merit_stealth_supply_empire = std::set<SupplyPODTuple>();
 
-        for (auto candidate_it = candidates.rbegin(); candidate_it != candidates.rend(); ++candidate_it) {
+        using candidate_it_type = std::set<SupplyPODTuple>::reverse_iterator;
+        candidate_it_type candidate_it = candidates.rbegin();
+        // Explicitly type rend to avoid operator!= ambiguity in Clang.
+        const candidate_it_type candidates_rend = candidates.rend();
+        for (; candidate_it != candidates_rend; ++candidate_it) {
             auto& candidate = *candidate_it;
             const SupplyMerit& candidate_merit = std::get<ssMerit>(candidate);
             float candidate_stealth;
@@ -1216,9 +1224,12 @@ namespace {
             // A list of individual others to remove from the list.
             std::vector<std::set<SupplyPODTuple>::reverse_iterator> marked_for_removals;
 
-            for (auto other_it = pod.merit_stealth_supply_empire->rbegin();
-                 other_it != pod.merit_stealth_supply_empire->rend(); ++other_it)
-            {
+            using other_it_type = std::set<SupplyPODTuple>::reverse_iterator;
+            other_it_type other_it = pod.merit_stealth_supply_empire->rbegin();
+            // Explicitly type rend to avoid Clang operator!= ambiguity.
+            const other_it_type other_it_rend = pod.merit_stealth_supply_empire->rend();
+
+            for (;other_it != other_it_rend; ++other_it) {
                 const SupplyMerit& other_merit = std::get<ssMerit>(*other_it);
                 float other_stealth;
                 int other_source_id, other_empire_id;
