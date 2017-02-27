@@ -1456,7 +1456,6 @@ Valeur boléenne pour test d'IA indiquant si toutes les IAs ont forcément le m�
 OPTIONS_DB_AI_CONFIG_TRAIT_EMPIREID_FORCED_VALUE
 Valeur forcée pour le Niveau selon l'EmpireID. Une valeur de 0 à 39.
 
-
 OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER
 Si activé, les parties solo bénéficieront d'une sauvegarde automatique régulière.
 
@@ -1712,6 +1711,9 @@ Quitter
 ERR_CONNECT_TIMED_OUT
 Délai de connexion au serveur dépassé.
 
+INTRO_CREDITS_LICENSE
+Publié sous
+
 
 ##
 ## Server Setup Screen
@@ -1781,6 +1783,7 @@ Accepter
 
 NOT_READY_BN
 Refuser
+
 
 ##
 ## Galaxy Setup Screen
@@ -1932,6 +1935,7 @@ Maniaque
 # Random species selection description
 GSETUP_SPECIES_RANDOM_DESC
 Sélectionne au hasard une espèce parmi celles jouables.
+
 
 ##
 ## About dialog
@@ -3394,7 +3398,7 @@ PRODUCTION_INFO_EMPIRE
 %1% %2%
 
 PRODUCTION_INFO_TOTAL_PS_LABEL
-Points disponibles
+Total Points disponibles
 
 PRODUCTION_INFO_WASTED_PS_LABEL
 Points gaspillés
@@ -3477,6 +3481,116 @@ Double-clic sur les projets disponibles pour les ajouter à la file d'attente de
 
 PRODUCTION_WND_TITLE  # translated
 Production
+
+PRODUCTION_WINDOW_ARTICLE_TITLE
+Fenêtre Production
+
+PRODUCTION_WINDOW_ARTICLE_TEXT
+'''La Fenêtre Production est l'interface principale permettant l'utilisation des Points de Production (PP).
+Il est possible d'y accéder :
+*  Par une touche de raccourci (défaut: CTRL + P)
+*  En double-cliquant sur une planète
+*  En cliquant sur l'une des icônes Production en haut de la  [[MAP_WINDOW_ARTICLE_TITLE]] <img src="icons/buttons/production.png"></img>
+
+La Fenêtre Production est composée de différents panneaux :
+*  Récapitulation de Production
+*  Projets de Production
+*  File d'Attente de Production
+*  Panneau latéral Système (sur la droite)
+La Fenêtre Production permet d'interagir directement avec la carte de la  [[encyclopedia MAP_WINDOW_ARTICLE_TITLE]], principalement pour sélectionner un autre système.
+
+
+<u>Panneau Récapitulation de Production</u>
+
+(position par défaut: en haut à gauche)
+Le panneau "Récapitulation de Production" affiche les Points de Production disponibles.
+"Total Points disponibles" fait référence aux PP disponibles à travers tout l'empire.
+"Points disponibles ici" concerne le maximum de points disponibles pour le système sélectionné. Cette valeur peut être inférieure au total des points disponibles lorsque tous les systèmes de votre empire ne sont pas reliés par lignes d'[[metertype METER_SUPPLY]].
+"Points gaspillés" indique le nombre de points qui seront perdus si ceux-ci ne sont pas alloués avant la fin du tour.
+
+
+<u>Panneau Projets de Production</u>
+
+(position par défaut: en bas)
+Le panneau "Projets de Production" liste les objets disponibles pour lancer une Commande de Production.
+Il est possible de lister les objets par types et/ou disponibilité en cliquant sur les boutons de filtrage situés au sommet de la liste.
+Les objets peuvent être ajoutés à la File d'Attente de Production comme Commande de Production par un double-clic ou un clic-droit sur ces derniers.
+Pour chaque objet, une colonne indique le coût total et le temps minimum de production.
+Les PP maximum pouvant être alloués à une Commande de Production correspondent à la formule: (coût / temps) x quantité.
+Exemple: la production d'un objet d'un coût total de 30 PP et un temps minimum de 3 tours pourra progresser de 10 PP par objet, par tour.
+Les objets indisponibles, si affichés, permettront par un survol de souris d'accéder à une bulle d'information listant en rouge les raisons pour lesquelles ils ne peuvent pas être produits par l'empire.
+
+<u>Panneau File d'Attente de Production</u>
+
+(position par défaut: à gauche, sous le panneau Récapitulation)
+Le panneau "File d'Attente de Production" contient les Commandes de Production de l'empire.
+Les Points de Production sont alloués aux Commandes de Production en partant du haut de la file d'attente.
+Toute commande ayant pour lieu le système sélectionné sur la carte galactique affichera le nom du système de la même couleur que celle de votre empire (en haut à droite de la commande).
+Ces commandes peuvent être déplacées dans la file d'attente à l'aide d'un glisser/déposer vers une nouvelle position.
+Un clic-droit sur une commande affichera un menu permettant de déplacer, retirer, ou mettre en pause une commande (d'autres actions sont disponibles, telle <i>Rechercher dans l'Encyclopédie</i>).
+Lorsqu'une commande est retirée de la file d'attente, tout point déjà dépensé est perdu, aucun n'est récupéré ou réaffecté sur une autre commande.
+Mettre en pause une commande empêche toute nouvelle dépense de points sur ce projet, jusqu'à ce que la commande soit remise en route.
+Pour les astronefs, une action supplémentaire est disponible dans le menu contextuel, permettant de "Rallier un système". Une fois le projet de production terminé, le ou les astronefs produits entameront automatiquement un déplacement vers le système désigné. Pour définir ou modifier la destination à Rallier, sélectionnez le système voulu sur la carte galactique, effectuez un clic-droit sur la Commande de Production, puis cliquez sur <i>Rallier ...</i> (où ... correspond au nom du système).
+
+
+<u>Commande de Production</u>
+
+Une "Commande de Production" est créée à partir du panneau Projets de Production, en plaçant un de ces derniers dans le panneau File d'Attente de Production.
+Chaque commande est déterminée par son nombre de répétition (1⟳) et sa quantité (1x), réglables via les boutons situés en haut à gauche de la commande.
+Le nombre de répétition définit combien de fois la même commande sera relancée une fois la précédente achevée, sans avoir à modifier sa position dans la file d'attente.
+La quantité définit combien d'objets seront produits lors de chaque répétition de la commande.
+
+<i>Note</i> Les répétitions consommeront toujours les seuls PP nécessaires pour l'itération en cours, à moins que la commande ne s'achève au tour suivant.
+Si la commande s'achève, un nombre donné de PP seront automatiquement alloués au démarrage de l'itération suivante, toujours selon le maximum autorisé par tour pour l'objet en question.
+
+
+<u>Exemple</u>
+
+Votre empire dispose de 10 PP par tour.
+Un Astronef Furtif coûte 36 PP avec un minimum de 3 tours (max 12 PP/tour).
+(Par commodité, la production de cet Astronef n'augmente pas le coût d'[[encyclopedia FLEET_UPKEEP_TITLE]])
+-Tour  1: Vous lancez la commande d'un Astronef Furtif et réglez la répétition sur 2. (commande #1)
+                Vous lancez une autre commande d'un Astronef Furtif avec une répétition de 2. (commande #2)
+                Vous lancez une autre commande d'un Astronef Furtif et réglez la quantité sur 2.
+
+-Tour  2: Commande #1 progresse de 10 PP, 26 PP restants.  10 PP sont prévus pour le tour suivant.
+
+    (PP complétés / PP restants -> Prévus tour suivant)
+
+-Tour  3: Commande #1 20 / 16 -> 10
+
+-Tour  4: Commande #1 30 /   6 ->   6  ; 4 PP supplémentaires seront alloués à la répétition suivante.
+
+-Tour  5: Un Astronef Furtif est produit (commande #1)
+                Commande #1   4 / 32 -> 10  ; affiche à présent 1 répétition restante
+
+-Tour  6: Commande #1 14 / 22 -> 10
+
+-Tour  7: Commande #1 32 /   4 ->   4
+                Commande #2   0 / 36 ->   6
+
+-Tour  8: Un Astronef Furtif est produit (commande #1)
+                La production de l'empire augmente à 22 PP par tour (pour une raison quelconque).
+                Commande #2   4 / 32 -> 12  ; le maximum par tour pour ce projet
+                Commande #3   0 / 36 -> 10
+
+-Tour  9: Commande #2 16 / 20 -> 12
+                Commande #3 10 / 62 -> 10  (coût total 36 x quantité 2 = coût total 72)
+
+-Tour 10: Commande #2 28 /   8 ->   8  ; 12 PP supplémentaires seront alloués à la répétition suivante.
+                Commande #3 20 / 52 ->   2
+
+-Tour 11: Un Astronef Furtif est produit (commande #2)
+                Commande #2 12 / 24 -> 12
+                Commande #3 22 / 50 -> 10
+
+-Tour 12: Commande #2 24 / 12 -> 12
+                Commande #3 32 / 40 -> 10
+
+-Tour 13: Un Astronef Furtif est produit (commande #2)
+                Commande #3 42 / 30 -> 22  (12 PP/tour x 2 quantité = max 24 PP/tour)
+
+'''
 
 PRODUCTION_INFO_PP  # translated
 PP
@@ -3795,16 +3909,14 @@ Astronef - Équipement
 ENC_SHIP_HULL
 Astronef - Coque
 
+ENC_SHIP_HULL_DESC
+Coques d'Astronef
+
 ENC_TECH  # translated
 Technologies
 
 ENC_TECH_DESC
-'''De nouveaux effets, indicateurs planétaires améliorés, structures, et équipements d'astronef peuvent être débloqués via la [[metertype METER_RESEARCH]] des technologies associées.
-
-Effectuer la [[METER_RESEARCH]] d'une technologie débloquant un objet donnera uniquement à l'empire la connaissance des modalités de production de cet objet. La production effective d'un objet peut être soumise à d'autres conditions, tel l'accès à certaines ressources.
-Si un objet a été débloqué mais ne peut pas être produit, les conditions additionnelles de production peuvent être consultées en affichant la bulle d'aide de l'objet en question dans la liste de la Fenêtre Production (survol souris + filtre "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" activé).
-
-En général, la disponibilité ou l'activation d'un objet débloqué par la [[METER_RESEARCH]] d'une technologie ne nécessite pas de connection aux lignes d'[[metertype METER_SUPPLY]] (par exemple une structure ou une amélioration d'un indicateur planétaire). Toutefois, si une technologie améliorant un équipement d'astronef est recherchée puis assimilée (par exemple un armement), les astronefs déjà existants doivent se trouver dans une zone d'approvisionnement, être stationnaires et ne pas être en situation de combat, afin de recevoir l'amélioration au cours du tour suivant.'''
+[[encyclopedia RESEARCH_TECH_GUIDE_TITLE]] permet de débloquer de nouveaux effets, indicateurs planétaires améliorés, structures, ou équipements d'astronef, chacun d'entre eux appartenant à l'une des catégories ci-dessous.
 
 ENC_SPECIAL
 Particularité Planétaire ou Spatiale
@@ -4094,7 +4206,7 @@ ENC_TECH_DETAIL_UNLOCKED_ITEM_STR
 # %1% object, technology or other content that should be looked up in the
 #     encyclopedia.
 ENC_LOOKUP
-Encyclopédie, rechercher %1%
+Encyclopédie: rechercher %1%
 
 # %1% link to the system, where the combat occured.
 # %2% turn when the combat occured.
@@ -4160,7 +4272,14 @@ ENC_COMBAT_UNKNOWN_DESTROYED_STR
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked fighter.
 ENC_COMBAT_FIGHTER_INCAPACITATED_STR
-Un %2% a été détruit
+Un %2% de %1% a été détruit.
+
+# A combat log report for multiple destroyed fighters from one empire
+# %1% count of number of repeated events
+# %2% name of the empire which owns the attacked unit.
+# %3% name of the attacked fighter.
+ENC_COMBAT_FIGHTER_INCAPACITATED_REPEATED_STR
+%1%X %3%s de %2% ont été détruits.
 
 # %1% name of the empire which owns the attacked unit.
 # %2% name of the attacked planet.
@@ -4510,8 +4629,7 @@ METER_INDUSTRY_VALUE_DESC
 
 L'Industrie d'une planète peut participer à tout projet lancé sur les planètes qui lui sont reliées par lignes d'[[metertype METER_SUPPLY]] de l'empire. L'Industrie qui n'est affectée à aucun projet durant un tour est perdue (production gaspillée).
 
-Chaque projet nécessite un nombre minimal de tours pour être mené à son terme. Par exemple, si un projet coûte 15 PP et requiert un minimum de 3 tours, un maximum de 5 PP seulement par tour peut lui être affecté.
-Les PP sont alloués aux projets selon leur position dans de la file d'attente : le projet en tête de file est prioritaire. Les PP restants sont affectés au projet suivant dans la file et ainsi de suite, jusqu'à épuisement des points disponibles. L'ordre des projets dans la file d'attente peut être modifié : les projets que vous jugez prioritaires peuvent ainsi être déplacés en tête de file.
+Pour davantage d'informations sur l'interface de Production, consultez l'article [[encyclopedia PRODUCTION_WINDOW_ARTICLE_TITLE]].
 '''
 
 METER_RESEARCH_VALUE_LABEL
@@ -4568,7 +4686,7 @@ Boucliers
 METER_SHIELD_VALUE_DESC
 '''Le terme 'Boucliers' désigne toutes sortes de champs d'énergie de protection, ces derniers constituant en général la première barrière défensive contre toute attaque. Il existe deux types distincts de boucliers: les Boucliers d'astronefs et les Boucliers planétaires, les astronefs comme les planètes ayant tous deux un indicateur 'Bouclier'. La principale différence entre les deux types de boucliers est la manière dont ils se rechargent: les boucliers d'astronefs se rechargent instantanément après chaque tir subi, tandis que les boucliers planétaires nécessitent un temps de recharge plus important. Cette légère nuance de fonctionnement peut paraître minime de prime abord mais engendre une différence notable en situation de combat.
 
-Boucliers d'astronefs: les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir sont réduits de la valeur de solidité du Bouclier. Une arme peut pénétrer un Bouclier seulement si les Dommages qu'elle inflige sont supérieurs à la solidité du Bouclier.
+Boucliers d'astronefs: les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir sont réduits de la valeur de solidité du Bouclier. Une arme peut pénétrer un Bouclier seulement si les Dommages qu'elle inflige sont supérieurs à la solidité du Bouclier. Cependant, les Boucliers d'astronef ne protègent pas des dommages infligés par les [[encyclopedia FIGHTER_TECHS]], ces derniers faisant feu une fois à l'intérieur de la zone de protection fournie par les Boucliers.
 
 Boucliers planétaires: Agit comme une sorte d'armure. La solidité d'un bouclier planétaire s'amenuise après chaque tir encaissé jusqu'à que celle-ci soit réduite à néant, les tirs suivants passant alors au travers et endommageant les structures planétaires (en premier lieu les structures de [[metertype METER_DEFENSE]], puis dans un second temps l'[[metertype METER_CONSTRUCTION]] dans son ensemble). Les Boucliers planétaires se regénèrent après chaque tour à un certain taux, ce dernier pouvant varier selon les technologies maîtrisées.
 
@@ -4833,7 +4951,9 @@ DAMAGE_TITLE
 Dommages
 
 DAMAGE_TEXT
-Définit la valeur de base qu'un armement d'astronef ôtera à la [[metertype METER_STRUCTURE]] d'un autre astronef (ou aux [[metertype METER_SHIELD]], à la [[metertype METER_DEFENSE]] et à l'[[metertype METER_CONSTRUCTION]] d'une planète), en une passe de combat (pour un total de trois passes par tour). Si l'astronef ciblé est équipé de [[metertype METER_SHIELD]], les dommages causés par chaque tir seront égaux à cette valeur de base moins la valeur de solidité des [[metertype METER_SHIELD]] de l'astronef.
+'''Définit la valeur de base qu'un armement d'astronef ôtera à la [[metertype METER_STRUCTURE]] d'un autre astronef (ou aux [[metertype METER_SHIELD]], à la [[metertype METER_DEFENSE]] et à l'[[metertype METER_CONSTRUCTION]] d'une planète), en une passe de combat (pour un total de trois passes par tour). Si l'astronef ciblé est équipé de [[metertype METER_SHIELD]], les dommages causés par chaque tir seront égaux à cette valeur de base moins la valeur de solidité des [[metertype METER_SHIELD]] de l'astronef.
+
+Note: les [[encyclopedia FIGHTER_TECHS]] infligent des dommages n'étant pas minorés par les [[metertype METER_SHIELD]] d'astronef, les Chasseurs faisant feu une fois à l'intérieur de la zone de protection fournie par les Boucliers.'''
 
 MAP_WINDOW_ARTICLE_TITLE
 Fenêtre Carte
@@ -4951,11 +5071,10 @@ QUICK_START_GUIDE_TITLE
 **Guide de Démarrage Rapide**
 
 QUICK_START_GUIDE_TEXT
-'''Voici une brève introduction au gameplay de Freeorion. Ce guide in-game, ajouté récemment, est pour le moment assez sommaire mais sera complété au fil des versions. Un guide plus conséquent est disponible sur le site freeorion.org, (URL actuelle: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>)
+'''Voici une brève introduction au gameplay de Freeorion. Ce guide in-game, ajouté récemment, est pour le moment assez sommaire mais sera complété au fil des versions. Un guide plus conséquent est disponible sur le site freeorion.org (URL actuelle: <url  http://freeorion.org/index.php/V0.4_Quick_Play_Guide>freeorion.org/index.php/V0.4_Quick_Play_Guide</url>).
 
 [[DETAILED_PEDIA_REFERENCE]]
-Il est conseillé de consulter en priorité le chapitre [[encyclopedia CATEGORY_GAME_CONCEPTS]] et les sections récemment ajoutées dans le chapitre [[encyclopedia CATEGORY_GUIDES]].
-
+Il est conseillé de consulter en priorité les sections [[encyclopedia CATEGORY_GAME_CONCEPTS]], [[encyclopedia CATEGORY_GUIDES]], et [[encyclopedia ENC_METER_TYPE]].
 '''
 
 SITREP_IGNORE_BLOCK_TITLE
@@ -4986,7 +5105,20 @@ Les types de SitRep apparaissent dans la liste Filtres seulement une fois que l'
 
 Ignorer est utile pour masquer un événement récurrent, tels les rappels pour construire un [[buildingtype BLD_GAS_GIANT_GEN]] sur une planète.
 
-Bloquer est utile si vous considérez certains types de SitReps superflus, telles les [[encyclopedia BEGINNER_HINTS]] une fois toutes celles-ci connues.'''
+Bloquer est utile si vous considérez certains types de SitReps superflus, telles les [[encyclopedia BEGINNER_HINTS]] une fois toutes celles-ci connues.
+'''
+
+RESEARCH_TECH_GUIDE_TITLE
+Rechercher des Technologies
+
+RESEARCH_TECH_GUIDE_SHORT_DESC
+Rechercher et débloquer de nouveaux objets
+
+RESEARCH_TECH_GUIDE_TEXT
+'''Compléter la [[metertype METER_RESEARCH]] d'une technologie débloquant un objet donnera uniquement à l'empire la connaissance des modalités de production de cet objet. La production effective d'un objet peut être soumise à d'autres conditions, tel l'accès à certaines ressources.
+Si un objet a été débloqué mais ne peut pas être produit, les conditions additionnelles de production peuvent être consultées en affichant la bulle d'aide de l'objet en question dans la liste de la Fenêtre Production (survol souris + filtre "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" activé).
+
+En général, la disponibilité ou l'activation des objets débloqués par la [[METER_RESEARCH]] des différentes [[encyclopedia ENC_TECH]] ne nécessite pas de connection aux lignes d'[[metertype METER_SUPPLY]] (par exemple une structure ou une amélioration d'un indicateur planétaire). Toutefois, si une technologie améliorant un équipement d'astronef est recherchée puis assimilée (par exemple un armement), les astronefs déjà existants doivent se trouver dans une zone d'approvisionnement, être stationnaires et pas en situation de combat, afin de pouvoir recevoir l'amélioration à tout moment.'''
 
 AI_ERROR_MSG
 Erreur_IA : Erreur de script d'IA
@@ -5229,7 +5361,6 @@ Particularités
 
 TAGS  # translated
 Tags
-
 
 
 ##
@@ -6090,7 +6221,7 @@ ENVIRONMENTAL_PREFERENCES
 Adaptabilité [[encyclopedia ENVIRONMENT_TITLE]] Planète :
 
 FOCUS_PREFERENCE
-'''Focus favori : '''
+'''[[encyclopedia FOCUS_TITLE]] favori : '''
 
 OPINIONS_OF_EMPIRES
 Opinions des Empires :
@@ -6202,8 +6333,7 @@ Happybirthday
 SP_HAPPY_GAMEPLAY_DESC
 '''Robots submersibles abandonnés et solitaires, programmés pour chanter "Happy Birthday" à intervalles réguliers.
 Préfèrent les Planètes [[PT_OCEAN]]s.
-[[encyclopedia ROBOTIC_SPECIES_TITLE]]
-[[encyclopedia TELEPATHIC_TITLE]]
+[[encyclopedia ROBOTIC_SPECIES_TITLE]], [[encyclopedia TELEPATHIC_TITLE]]
 '''
 
 SP_HAPPY_DESC
@@ -6248,7 +6378,7 @@ Eaxaw
 SP_EAXAW_GAMEPLAY_DESC
 '''Vers amazones agressifs et xénophobes.
 Préfèrent les Planètes [[PT_TERRAN]]s.
-[[encyclopedia ORGANIC_SPECIES_TITLE]] [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
+[[encyclopedia ORGANIC_SPECIES_TITLE]], [[encyclopedia XENOPHOBIC_SPECIES_TITLE]]
 '''
 
 SP_EAXAW_DESC
@@ -7557,7 +7687,7 @@ Max Carburant
 
 # Meter types
 METER_MAX_SHIELD
-Max Bouclier
+Max Boucliers
 
 # Meter types
 METER_MAX_STRUCTURE
@@ -7613,7 +7743,7 @@ Carburant
 
 # Meter types
 METER_SHIELD
-Bouclier
+Boucliers
 
 # Meter types
 METER_STRUCTURE
@@ -7786,10 +7916,10 @@ PC_FIGHTER_HANGAR
 Hangar
 
 PC_FIGHTER_HANGAR_DESC
-'''Les Hangars sont les lieux de stockage, de maintenance, et de réapprovisionnement pour les Chasseurs.
+'''Les Hangars sont les lieux de stockage, de maintenance, et de réapprovisionnement pour les [[encyclopedia FIGHTER_TECHS]].
 Un astronef ne peut pas accueillir plus d'un type de Hangar.
 
-Après un combat, les Chasseurs doivent retourner à un Hangar pour effectuer des réparations, un réapprovisionnement en carburant, et un réarmement.
+Après un combat, les Chasseurs rescapés doivent retourner à un Hangar pour effectuer des réparations, un réapprovisionnement en carburant, et un réarmement.
 Si un porteur est détruit en combat, chacun de ses chasseurs ayant survécu à la bataille sera dans l'impossibilité de s'y remettre à quai, et sera par conséquent perdu.
 '''
 
@@ -7798,7 +7928,7 @@ PC_FIGHTER_BAY
 Rampe Lanc.
 
 PC_FIGHTER_BAY_DESC
-'''Les Rampes de Lancement sont le point d'accès des Chasseurs pour entrer ou décoller d'un astronef porteur.
+'''Les Rampes de Lancement sont le point d'accès des [[encyclopedia FIGHTER_TECHS]] pour se poser sur un astronef porteur ou pour y décoller.
 Chaque Rampe de Lancement autorise un nombre défini de Chasseurs à décoller lors de chaque passe de combat.
 '''
 
@@ -7877,6 +8007,80 @@ Partielle
 # Visibility levels
 VIS_FULL_VISIBILITY
 Complète
+
+# Ship hull categories
+
+HULL_LINE_GENERIC
+Classe Coque: Générique
+
+HULL_LINE_GENERIC_DESC
+Classe Générique de coques d'astronef, sans particularité.
+
+HULL_LINE_ASTEROIDS
+Classe Coque: [[PT_ASTEROIDS]]
+
+HULL_LINE_ASTEROIDS_DESC
+Classe de coques façonnées à partir, ou formées, d'[[PT_ASTEROIDS]].
+
+HULL_LINE_ENERGY
+Classe Coque: Énergie
+
+HULL_LINE_ENERGY_DESC
+Classe de coques résultant, ou faisant usage, d'une énergie de haute densité.
+
+HULL_LINE_ORGANIC
+Classe Coque: Organique
+
+HULL_LINE_ORGANIC_DESC
+Classe de coques composées de matériaux organiques.
+
+HULL_LINE_ROBOTIC
+Classe Coque: Robotique
+
+HULL_LINE_ROBOTIC_DESC
+Classe de coques privilégiant grandement l'intelligence artificielle et l'automatisation.
+
+HULL_MONSTER
+Corps de Monstres
+
+HULL_MONSTER_DESC
+Corps utilisés dans la conception de monstres.
+
+HULL_MONSTER_GUARD
+Corps de Gardiens
+
+HULL_MONSTER_GUARD_DESC
+Corps utilisés dans la conception de monstres de type Gardien.
+
+HULL_MONSTER_JUGGERNAUT
+Corps de Mastodontes
+
+HULL_MONSTER_JUGGERNAUT_DESC
+Corps utilisés dans la conception de monstres de type Mastodonte.
+
+HULL_MONSTER_KRAKEN
+Corps de Krakens
+
+HULL_MONSTER_KRAKEN_DESC
+Corps utilisés dans la conception de monstres de type Kraken.
+
+HULL_MONSTER_KRILL
+Corps de Krill
+
+HULL_MONSTER_KRILL_DESC
+Corps utilisés dans la conception de monstres de type Krill.
+
+HULL_MONSTER_SNOWFLAKE
+Corps de Flocons de Neige
+
+HULL_MONSTER_SNOWFLAKE_DESC
+Corps utilisés dans la conception de monstres de type Flocon de Neige.
+
+HULL_MONSTER_TREE
+Corps de Végétaux
+
+HULL_MONSTER_TREE_DESC
+Corps utilisés dans la conception de monstres de type Végétal.
 
 
 ##
@@ -9023,6 +9227,7 @@ Espèces Éteintes
 EXTINCT_SPECIES_TECHS_DESC
 Technologies relatives aux espèces éteintes.
 
+
 ##
 ## Technology theories
 ##
@@ -10056,9 +10261,9 @@ SHP_FIGHTERS_1
 Chasseurs et Rampes de Lancement
 
 SHP_FIGHTERS_1_DESC
-'''Permet à l'empire de produire des astronefs intégrant des Hangars à Chasseurs et des Rampes de Lancement. Un astronef ne peut abriter qu'un seul type de Hangar, mais cependant autant que le permet le nombre de [[encyclopedia SLOT_TITLE]]s disponibles. Chaque Hangar dispose d'une capacité maximale de chasseurs et ces derniers auront tous la même Puissance (pouvant être modifiée selon l'espèce les contrôlant et en procédant à des recherches plus avancées dans le domaine). 
+'''Permet à l'empire de produire des astronefs intégrant des Hangars à Chasseurs et des Rampes de Lancement. Un astronef ne peut abriter qu'un seul type de [[encyclopedia PC_FIGHTER_HANGAR]], mais cependant autant que le permet le nombre de [[encyclopedia SLOT_TITLE]]s disponibles. Chaque Hangar dispose d'une capacité maximale de chasseurs et ces derniers auront tous la même Puissance (pouvant être modifiée selon l'espèce les contrôlant et en procédant à des recherches plus avancées dans le domaine). 
 
-Une Rampe de Lancement peut faire décoller un nombre défini de chasseurs lors de chaque passe de combat, ces chasseurs devenant des cibles valides mais pouvant attaquer les astronefs et chasseurs ennemis lors de chaque passe suivante de combat. Un unique tir de n'importe quelle nature subi par un chasseur détruira ce dernier, tandis que les [[encyclopedia DAMAGE_TITLE]] infligés par un chasseur ne sont pas minorés par les [[metertype METER_SHIELD]] d'astronef (les chasseurs font feu une fois à l'intérieur de la zone de protection d'un bouclier).
+Une <encyclopedia PC_FIGHTER_BAY>Rampe de Lancement</encyclopedia> peut faire décoller un nombre défini de chasseurs lors de chaque passe de combat. Ces chasseurs deviennent des cibles valides et peuvent attaquer les astronefs et chasseurs ennemis lors de chaque passe suivante de combat. Toutefois, un unique tir de n'importe quelle nature subi par un chasseur détruira ce dernier. Contrairement aux [[encyclopedia DAMAGE_TITLE]] qu'infligent les armements traditionnels, les dommages résultant d'un tir de chasseur ne sont pas minorés par les [[metertype METER_SHIELD]] d'astronef (les chasseurs faisant feu une fois à l'intérieur de la zone de protection d'un bouclier).
 
 Au terme d'un combat, les astronefs transporteurs récupèreront automatiquement les chasseurs non-détruits. Si un transporteur est stationnaire dans une zone d'[[metertype METER_SUPPLY]], ses hangars seront rééquipés à leur capacité maximale.'''
 
@@ -10066,20 +10271,19 @@ SHP_FIGHTERS_2
 Chasseurs Laser
 
 SHP_FIGHTERS_2_DESC
-'''Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 2 pour un [[shippart FT_HANGAR_2]] et de 3 pour un [[shippart FT_HANGAR_3]]'''
-
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Laser. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 2 pour un [[shippart FT_HANGAR_2]] et de 3 pour un [[shippart FT_HANGAR_3]].
 
 SHP_FIGHTERS_3
 Chasseurs Plasma
 
 SHP_FIGHTERS_3_DESC
-'''Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 3 pour un [[shippart FT_HANGAR_2]] et de 4 pour un [[shippart FT_HANGAR_3]]'''
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Plasma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 3 pour un [[shippart FT_HANGAR_2]] et de 4 pour un [[shippart FT_HANGAR_3]].
 
 SHP_FIGHTERS_4
 Chasseurs Gamma
 
 SHP_FIGHTERS_4_DESC
-'''Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 5 pour un [[shippart FT_HANGAR_2]] et de 7 pour un [[shippart FT_HANGAR_3]]'''
+Améliore les chasseurs de tous les transporteurs à portée d'[[metertype METER_SUPPLY]] en les dotant d'un armement Gamma. Les [[encyclopedia DAMAGE_TITLE]] infligés par les chasseurs d'un [[shippart FT_HANGAR_1]] augmentent de 1, augmentent de 5 pour un [[shippart FT_HANGAR_2]] et de 7 pour un [[shippart FT_HANGAR_3]].
 
 SHP_WEAPON_1_2
 Canon Mitrailleur 2
@@ -11315,7 +11519,7 @@ Tirs par Attaque : %2%'''
 # %2% number of deployable fighters.
 PART_DESC_HANGAR_STATS
 '''[[encyclopedia DAMAGE_TITLE]] par tir : %2%
-Capacité Chasseurs : %1%'''
+Capacité [[encyclopedia FIGHTER_TECHS]] : %1%'''
 
 
 ##
@@ -12343,7 +12547,7 @@ SH_GUARD_MONSTER_BODY
 Coque Gardien
 
 SH_GUARD_MONSTER_BODY_DESC
-Une coque solide destinée aux monstres-astronefs de type Gardien.
+Une coque solide destinée aux monstres de type Gardien.
 
 SH_GUARD_0_BODY
 Coque Vaisseau Maintenance
@@ -12355,13 +12559,13 @@ SH_GUARD_1_BODY
 Coque Factionnaire
 
 SH_GUARD_1_BODY_DESC
-Une coque basique destinée aux monstres-astronefs de type Gardien.
+Une coque basique destinée aux monstres de type Gardien.
 
 SH_GUARD_3_BODY
 Coque Défenseur
 
 SH_GUARD_3_BODY_DESC
-Une coque puissante destinée aux monstres-astronefs de type Gardien.
+Une coque puissante destinée aux monstres de type Gardien.
 
 SH_KRILL_1_BODY
 Corps Krill 1
@@ -12731,6 +12935,7 @@ Particularités pour [[encyclopedia LITHIC_SPECIES_TITLE]] :
 
 GROWTH_SPECIAL_LABEL
 Planète <i>%1%</i> [[TT_SPECIAL]]
+
 
 ##
 ## Species picks
