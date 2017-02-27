@@ -3566,29 +3566,35 @@ A Survey Ship costs 36 PP with a minimum of 3 turns (max 12 PP/turn).
 
 -Turn  6: Order #1 14 / 22 -> 10
 
--Turn  7: Order #1 32 /   4 ->   4
-                Order #2   0 / 36 ->   6
+-Turn  7: Order #1 24 / 12 -> 10
 
--Turn  8: A Survey Ship is produced (order #1)
+-Turn  8: Order #1 34 /   2 ->   2
+                Order #2   0 / 36 ->   8
+
+-Turn  9: A Survey Ship is produced (order #1)
                 Empire production increases to 22 PP per turn (for some unrelated reason).
-                Order #2   4 / 32 -> 12  the max per turn for this project type
-                Order #3   0 / 36 -> 10
+                Order #2   8 / 28 -> 12  the max per turn for this project type
+                Order #3   0 / 72 -> 10  (36 total cost x 2 quantity = 72 total cost)
 
--Turn  9: Order #2 16 / 20 -> 12
-                Order #3 10 / 62 -> 10  (36 total cost x 2 quantity = 72 total cost)
+-Turn 10: Order #2 20 / 16 -> 12
+                 Order #3 10 / 62 -> 10
 
--Turn 10: Order #2 28 /   8 ->   8  an additional 12 PP will go to the next repetition
-                Order #3 20 / 52 ->   2
+-Turn 11: Order #2 32 /    4 ->   4  an additional 12 PP will go to the next repetition
+                 Order #3 20 / 52 ->   6  (22 - (4 + 12))
 
--Turn 11: A Survey Ship is produced (order #2)
-                Order #2 12 / 24 -> 12
-                Order #3 22 / 50 -> 10
+-Turn 12: A Survey Ship is produced (order #2)
+                 Order #2 12 / 24 -> 12
+                 Order #3 26 / 46 -> 10
 
--Turn 12: Order #2 24 / 12 -> 12
-                Order #3 32 / 40 -> 10
+-Turn 13: Order #2 24 / 12 -> 12
+                 Order #3 36 / 36 -> 10
 
--Turn 13: A Survey Ship is produced (order #2)
-                Order #3 42 / 30 -> 22  (12 PP/turn x 2 quantity = max 24 PP/turn)
+-Turn 14: A Survey Ship is produced (order #2)
+                 Order #3 46 / 26 -> 22  (12 PP/turn x 2 quantity = max 24 PP/turn)
+
+-Turn 15: Order #3 68 /   4 ->   4  (18 PP will be unused if no other items in queue)
+
+-Turn 16: 2 Survey Ships are produced (order #3)
 
 '''
 
