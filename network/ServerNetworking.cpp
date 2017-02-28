@@ -78,7 +78,8 @@ PlayerConnection::~PlayerConnection() {
     boost::system::error_code ec;
     m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
     if (ec) {
-        ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error \"" << ec << "\"";
+        ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error #"
+                      << ec.value() << " \"" << ec.message() << "\"";
     }
     m_socket.close();
 }
