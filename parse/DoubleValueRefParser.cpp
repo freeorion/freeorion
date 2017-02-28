@@ -2,7 +2,7 @@
 
 
 namespace {
-    struct simple_double_parser_rules:
+    struct simple_double_parser_rules :
         public parse::detail::simple_variable_rules<double>
     {
         simple_double_parser_rules() :
