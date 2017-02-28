@@ -321,6 +321,7 @@ void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
 HumanClientApp::~HumanClientApp() {
     m_networking->DisconnectFromServer();
     m_server_process.RequestTermination();
+    DebugLogger() << "HumanClientApp exited cleanly.";
 }
 
 bool HumanClientApp::SinglePlayerGame() const

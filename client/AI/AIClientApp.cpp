@@ -94,7 +94,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 AIClientApp::~AIClientApp() {
     Networking().DisconnectFromServer();
 
-    DebugLogger() << "Shut down " + PlayerName() + " ai client.";
+    DebugLogger() << "AIClientApp exited cleanly for ai client " << PlayerName();
 }
 
 void AIClientApp::operator()()
