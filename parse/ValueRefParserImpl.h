@@ -237,9 +237,9 @@ struct simple_variable_rules
 
         free_variable
             =   tok.Value_
-                [ _val = new_<ValueRef::Variable<double> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+                [ _val = new_<ValueRef::Variable<T>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
             |   free_variable_name
-                [ _val = new_<ValueRef::Variable<double> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+                [ _val = new_<ValueRef::Variable<T>>(ValueRef::NON_OBJECT_REFERENCE, _1) ]
             ;
 
         simple
