@@ -32,6 +32,12 @@ public:
         loops + 1 times otherwise. */
     void PlayMusic(const boost::filesystem::path& path, int loops = 0);
 
+    /** Pauses music play, to be continued from the same position */
+    void PauseMusic();
+
+    /** Resumes music play */
+    void ResumeMusic();
+
     /** Stops playing music. */
     void StopMusic();
 
