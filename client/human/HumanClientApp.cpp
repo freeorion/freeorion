@@ -1134,13 +1134,21 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     if (m_networking->IsTxConnected()) {
         DebugLogger() << "HumanClientApp::EndGame Sending server shutdown message.";
         m_networking->SendMessage(ShutdownServerMessage(m_networking->PlayerID()));
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        m_networking->DisconnectFromServer();
-        // TODO fix this.  disconnect is asynchronous and may not have acted by now.
-        if (!m_networking->IsConnected())
-            DebugLogger() << "HumanClientApp::EndGame Disconnected from server.";
-        else
+
+        // Poll the server until it disconnects or timesout and then kill it
+        constexpr auto POLLING_TIME = std::chrono::milliseconds(10000);
+        constexpr auto POLLING_INTERVAL = std::chrono::milliseconds(10);
+
+        using Clock = std::chrono::steady_clock;
+        auto start_time = Clock::now();
+        while (m_networking->IsConnected() && (POLLING_TIME > (Clock::now() - start_time))) {
+            std::this_thread::sleep_for(POLLING_INTERVAL);
+        }
+
+        if (m_networking->IsConnected()) {
+            m_networking->DisconnectFromServer();
             ErrorLogger() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
+        }
     }
 
     if (!m_server_process.Empty()) {
