@@ -259,10 +259,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
     GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);
     GG::Connect(WindowMovedSignal,      &HumanClientApp::HandleWindowMove,      this);
-    /* TODO: Wire these signals if theyare needed
     GG::Connect(WindowClosingSignal,    &HumanClientApp::HandleWindowClosing,   this);
-    GG::Connect(WindowClosedSignal,     &HumanClientApp::HandleWindowClose,     this);
-    */
+    GG::Connect(AppQuittingSignal,      &HumanClientApp::HandleAppQuitting,   this);
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
@@ -915,12 +913,15 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     GetOptionsDB().Commit();
 }
 
-void HumanClientApp::HandleWindowClosing()
-{ DebugLogger() << "HumanClientApp::HandleWindowClosing()"; }
+void HumanClientApp::HandleWindowClosing() {
+    DebugLogger() << "HumanClientApp::HandleWindowClosing()";
+    EndGame(true);
+    Exit(0);
+}
 
-void HumanClientApp::HandleWindowClose() {
-    DebugLogger() << "HumanClientApp::HandleWindowClose()";
-    EndGame();
+void HumanClientApp::HandleAppQuitting() {
+    DebugLogger() << "HumanClientApp::HandleAppQuitting()";
+    EndGame(true);
     Exit(0);
 }
 

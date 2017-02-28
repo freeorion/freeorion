@@ -110,7 +110,7 @@ private:
     void            HandleWindowMove(GG::X w, GG::Y h);
     void            HandleWindowResize(GG::X w, GG::Y h);
     void            HandleWindowClosing();
-    void            HandleWindowClose();
+    void            HandleAppQuitting();
     void            HandleFocusChange(bool gained_focus);
 
     void            ConnectKeyboardAcceleratorSignals();///< installs the following 3 global hotkeys: quit, exit, togglefullscreen
