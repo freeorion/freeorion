@@ -259,8 +259,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
     GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);
     GG::Connect(WindowMovedSignal,      &HumanClientApp::HandleWindowMove,      this);
-    GG::Connect(WindowClosingSignal,    &HumanClientApp::HandleWindowClosing,   this);
-    GG::Connect(AppQuittingSignal,      &HumanClientApp::HandleAppQuitting,   this);
+    GG::Connect(WindowClosingSignal,    &HumanClientApp::HandleAppQuitting,     this);
+    GG::Connect(AppQuittingSignal,      &HumanClientApp::HandleAppQuitting,     this);
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
@@ -308,9 +308,9 @@ void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
     // Add global hotkeys
     HotkeyManager *hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(boost::bind(&HumanClientApp::ExitGame, this),          "exit",
+    hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyExitApp, this),          "exit",
                  NoModalWndsOpenCondition);
-    hkm->Connect(boost::bind(&HumanClientApp::QuitGame, this),          "quit",
+    hkm->Connect(boost::bind(&HumanClientApp::HandleHotkeyResetGame, this),        "quit",
                  NoModalWndsOpenCondition);
     hkm->Connect(boost::bind(&HumanClientApp::ToggleFullscreen, this), "fullscreen",
                  NoModalWndsOpenCondition);
@@ -632,7 +632,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     // end any currently-playing game before loading new one
     if (m_game_started) {
-        EndGame();
+        ResetGame();
         // delay to make sure old game is fully cleaned up before attempting to start a new one
         std::this_thread::sleep_for(std::chrono::seconds(3));
     } else {
@@ -914,15 +914,9 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     GetOptionsDB().Commit();
 }
 
-void HumanClientApp::HandleWindowClosing() {
-    DebugLogger() << "HumanClientApp::HandleWindowClosing()";
-    EndGame(true);
-    Exit(0);
-}
-
 void HumanClientApp::HandleAppQuitting() {
     DebugLogger() << "HumanClientApp::HandleAppQuitting()";
-    EndGame(true);
+    QuitGame();
     Exit(0);
 }
 
@@ -957,14 +951,15 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
     ClearEventState();
 }
 
-bool HumanClientApp::QuitGame() {
-    EndGame();
+bool HumanClientApp::HandleHotkeyResetGame() {
+    DebugLogger() << "HumanClientApp::HandleHotkeyResetGame()";
+    ResetGame();
     return true;
 }
 
-bool HumanClientApp::ExitGame() {
-    QuitGame();
-    Exit(0);
+bool HumanClientApp::HandleHotkeyExitApp() {
+    DebugLogger() << "HumanClientApp::HandleHotkeyExitApp()";
+    HandleAppQuitting();
     // Not reached, but required for HotkeyManager::Connect()
     return true;
 }
@@ -1127,7 +1122,7 @@ std::string HumanClientApp::SelectLoadFile() {
     return sfd.Result();
 }
 
-void HumanClientApp::EndGame(bool suppress_FSM_reset) {
+void HumanClientApp::QuitGame() {
     DebugLogger() << "HumanClientApp::EndGame";
     m_game_started = false;
 
@@ -1155,6 +1150,10 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
         DebugLogger() << "HumanClientApp::EndGame Terminated server process.";
         m_server_process.RequestTermination();
     }
+}
+
+void HumanClientApp::ResetGame() {
+    QuitGame();
 
     m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
@@ -1166,8 +1165,7 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     m_orders.Reset();
     GetCombatLogManager().Clear();
 
-    if (!suppress_FSM_reset)
-        m_fsm->process_event(ResetToIntroMenu());
+    m_fsm->process_event(ResetToIntroMenu());
 }
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {

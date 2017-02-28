@@ -280,7 +280,7 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg) {
 boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
-    Client().EndGame(true);
+    Client().QuitGame();
     return transit<IntroMenu>();
 }
 
@@ -378,7 +378,7 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
 
 boost::statechart::result PlayingGame::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    Client().EndGame(true);
+    Client().QuitGame();
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
@@ -430,11 +430,11 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     bool error = false;
     switch (reason) {
     case Message::LOCAL_CLIENT_DISCONNECT:
-        Client().EndGame(true);
+        Client().QuitGame();
         reason_message = UserString("SERVER_LOST");
         break;
     case Message::PLAYER_DISCONNECT:
-        Client().EndGame(true);
+        Client().QuitGame();
         reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;
         break;
@@ -474,7 +474,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
 
     if (fatal) {
         ClientUI::MessageBox(UserString(problem), true);
-        client.EndGame(true);
+        client.QuitGame();
     }
     return retval;
 }
@@ -668,7 +668,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
             // if no auto turns left, and supposed to quit after that, quit
             DebugLogger() << "auto-quit ending game.";
             std::cout << "auto-quit ending game." << std::endl;
-            Client().EndGame(true);
+            Client().QuitGame();
             throw HumanClientApp::CleanQuit();
         }
 
