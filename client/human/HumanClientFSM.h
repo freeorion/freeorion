@@ -116,6 +116,7 @@ struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<HostSPGame>,
+        boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<Error>
     > reactions;
 
@@ -123,6 +124,7 @@ struct WaitingForSPHostAck : boost::statechart::simple_state<WaitingForSPHostAck
     ~WaitingForSPHostAck();
 
     boost::statechart::result react(const HostSPGame& a);
+    boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
@@ -136,6 +138,7 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<HostMPGame>,
+        boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<Error>
     > reactions;
 
@@ -143,6 +146,7 @@ struct WaitingForMPHostAck : boost::statechart::simple_state<WaitingForMPHostAck
     ~WaitingForMPHostAck();
 
     boost::statechart::result react(const HostMPGame& a);
+    boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR
@@ -157,6 +161,7 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
 
     typedef boost::mpl::list<
         boost::statechart::custom_reaction<JoinGame>,
+        boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<Error>
     > reactions;
 
@@ -164,6 +169,7 @@ struct WaitingForMPJoinAck : boost::statechart::simple_state<WaitingForMPJoinAck
     ~WaitingForMPJoinAck();
 
     boost::statechart::result react(const JoinGame& a);
+    boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const Error& msg);
 
     CLIENT_ACCESSOR

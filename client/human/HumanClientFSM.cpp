@@ -107,6 +107,17 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
     return transit<PlayingGame>();
 }
 
+boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
+    Client().ResetGame();
+    //Note: Any transit<> transition must occur before the MessageBox().
+    // MessageBox blocks and can allow other events to transit<> to a new state
+    // which makes this transit fatal.
+    boost::statechart::result retval = transit<IntroMenu>();
+    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    return retval;
+}
+
 boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForSPHostAck.Error";
     std::string problem;
@@ -151,6 +162,17 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
     return transit<MPLobby>();
 }
 
+boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
+    Client().ResetGame();
+    //Note: Any transit<> transition must occur before the MessageBox().
+    // MessageBox blocks and can allow other events to transit<> to a new state
+    // which makes this transit fatal.
+    boost::statechart::result retval = transit<IntroMenu>();
+    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    return retval;
+}
+
 boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPHostAck.Error";
     std::string problem;
@@ -192,6 +214,17 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     Client().Networking().SetPlayerID(msg.m_message.ReceivingPlayer());
 
     return transit<MPLobby>();
+}
+
+boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
+    Client().ResetGame();
+    //Note: Any transit<> transition must occur before the MessageBox().
+    // MessageBox blocks and can allow other events to transit<> to a new state
+    // which makes this transit fatal.
+    boost::statechart::result retval = transit<IntroMenu>();
+    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    return retval;
 }
 
 boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
