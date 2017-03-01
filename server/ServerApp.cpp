@@ -169,14 +169,6 @@ void ServerApp::SignalHandler(const boost::system::error_code& error, int signal
     m_fsm->process_event(ShutdownServer());
 }
 
-void ServerApp::Exit(int code) {
-    DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
-    CleanupAIs();
-    if (code)
-        exit(code);
-    throw NormalExitException();
-}
-
 namespace {
     std::string AIClientExe()
     {
