@@ -63,6 +63,7 @@ function(ENABLE_COVERAGE)
     find_program(GENHTML_EXECUTABLE genhtml)
 
     if(NOT GCOV_EXECUTABLE OR NOT LCOV_EXECUTABLE OR NOT GENHTML_EXECUTABLE)
+        message(WARNING "Could not find `gcov`, `lcov` or `genhtml`. Disabling code coverage.")
         return()
     endif()
 
