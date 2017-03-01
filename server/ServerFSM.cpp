@@ -241,7 +241,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
         DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
         // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
         boost::this_thread::sleep_for(boost::chrono::seconds(2));
-        m_server.Exit(1);
+        m_server.m_fsm->process_event(ShutdownServer());
     }
 }
 
