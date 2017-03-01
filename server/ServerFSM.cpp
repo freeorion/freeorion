@@ -1785,3 +1785,129 @@ sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ProcessingTurn.CheckTurnEndConditions";
     return discard_event();
 }
+
+
+////////////////////////////////////////////////////////////
+// ShuttingDownServer
+////////////////////////////////////////////////////////////
+constexpr auto SHUTDOWN_POLLING_TIME = boost::chrono::milliseconds(5000);
+constexpr auto SHUTDOWN_POLLING_INTERVAL = boost::chrono::milliseconds(10);
+
+ShuttingDownServer::ShuttingDownServer(my_context c) :
+    my_base(c),
+    m_player_id_ack_expected(),
+    m_start_time(Clock::now())
+{
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer";
+
+    ServerApp& server = Server();
+
+    if (server.m_ai_client_processes.empty() && server.m_networking.empty())
+        throw ServerApp::NormalExitException();
+
+    DebugLogger() << "ShuttingDownServer informing AIs game is ending";
+
+    for (PlayerConnectionPtr player : server.m_networking) {
+        if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+            player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
+            m_player_id_ack_expected.insert(player->PlayerID());
+        }
+    }
+
+    DebugLogger() << "ShuttingDownServer expecting " << m_player_id_ack_expected.size() << " AIs to ACK shutdown.";
+
+    post_event(CheckEndConditions());
+}
+
+ShuttingDownServer::~ShuttingDownServer()
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~ShuttingDownServer"; }
+
+sc::result ShuttingDownServer::react(const LeaveGame& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.LeaveGame";
+    const Message& message = msg.m_message;
+    int player_id = message.SendingPlayer();
+
+    auto ack_found = m_player_id_ack_expected.find(player_id);
+
+    if (ack_found != m_player_id_ack_expected.end()) {
+        DebugLogger() << "Shutdown ACK received for AI " << player_id;
+        m_player_id_ack_expected.erase(ack_found);
+    } else {
+        WarnLogger() << "Unexpected shutdown ACK received for AI " << player_id;
+    }
+
+    post_event(CheckEndConditions());
+    return discard_event();
+}
+
+sc::result ShuttingDownServer::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.Disconnection";
+    PlayerConnectionPtr& player_connection = d.m_player_connection;
+    int player_id = player_connection->PlayerID();
+
+    // Treat disconnection as an implicit ACK.  Otherwise ignore it.
+    auto ack_found = m_player_id_ack_expected.find(player_id);
+
+    if (ack_found != m_player_id_ack_expected.end()) {
+        DebugLogger() << "Disconnect received for AI " << player_id << ".  Treating it as shutdown ACK.";
+        m_player_id_ack_expected.erase(ack_found);
+    }
+
+    post_event(CheckEndConditions());
+    return discard_event();
+}
+
+sc::result ShuttingDownServer::react(const CheckEndConditions& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.CheckEndConditions";
+    ServerApp& server = Server();
+
+    auto all_acked = m_player_id_ack_expected.empty();
+
+    if (all_acked) {
+        DebugLogger() << "All " << server.m_ai_client_processes.size() << " AIs acknowledged shutdown request.";
+
+        // Free the processes so that they can complete their shutdown.
+        for (Process& process : server.m_ai_client_processes)
+        { process.Free(); }
+
+        post_event(DisconnectClients());
+        return discard_event();
+    }
+
+    // If the AIs have more time sleep and check for more events.
+    if (SHUTDOWN_POLLING_TIME > (Clock::now() - m_start_time)) {
+        if (TRACE_EXECUTION) DebugLogger() << "Waiting for " << m_player_id_ack_expected.size() << " AI clients to ACK shutdown.";
+        boost::this_thread::sleep_for(SHUTDOWN_POLLING_INTERVAL);
+        return discard_event();
+    }
+
+    // Otherwise kill all the AIs
+    ErrorLogger() << m_player_id_ack_expected.size() << " AI clients  did not ACK shutdown.";
+    DebugLogger() << "Killing " << server.m_ai_client_processes.size() << " AI clients.";
+    for (Process& process : server.m_ai_client_processes)
+    { process.Kill(); }
+
+    post_event(DisconnectClients());
+    return discard_event();
+}
+
+sc::result ShuttingDownServer::react(const DisconnectClients& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.DisconnectClients";
+    ServerApp& server = Server();
+
+    // Remove the ai processes.  They either all acknowledged the shutdown and are free or were all killed.
+    server.m_ai_client_processes.clear();
+
+    // Disconnect
+    server.m_networking.DisconnectAll();
+
+    throw ServerApp::NormalExitException();
+
+    // Never reached.
+    return discard_event();
+}
+
+sc::result ShuttingDownServer::react(const Error& msg) {
+    HandleErrorMessage(msg, Server());
+    return discard_event();
+}

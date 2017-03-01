@@ -328,6 +328,7 @@ private:
     friend struct WaitingForTurnEndIdle;
     friend struct WaitingForSaveData;
     friend struct ProcessingTurn;
+    friend struct ShuttingDownServer;
 };
 
 // template implementations
