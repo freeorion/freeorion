@@ -42,6 +42,12 @@ class ShaderProgram;
  * positioning fleet buttons that are moving along the starlane. */
 struct LaneEndpoints {
     LaneEndpoints();
+    LaneEndpoints(float x1, float y1, float x2, float y2) :
+        X1(x1),
+        Y1(y1),
+        X2(x2),
+        Y2(y2)
+    {}
     float X1, Y1, X2, Y2;
 };
 
@@ -303,10 +309,6 @@ private:
     void            InitScaleCircleRenderingBuffer();
     void            ClearScaleCircleRenderingBuffer();
     void            ClearStarfieldRenderingBuffers();
-
-    /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
-     * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
-    LaneEndpoints   StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2);
 
     void            RenderStarfields();                         //!< renders the background starfiends
     void            RenderGalaxyGas();                          //!< renders gassy substance to make shape of galaxy
