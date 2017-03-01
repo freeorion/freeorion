@@ -1156,7 +1156,7 @@ void HumanClientApp::QuitGame() {
     }
 }
 
-void HumanClientApp::ResetGame() {
+void HumanClientApp::ResetGame(bool suppress_FSM_reset /*= false*/) {
     QuitGame();
 
     m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
@@ -1169,7 +1169,8 @@ void HumanClientApp::ResetGame() {
     m_orders.Reset();
     GetCombatLogManager().Clear();
 
-    m_fsm->process_event(ResetToIntroMenu());
+    if (!suppress_FSM_reset)
+        m_fsm->process_event(ResetToIntroMenu());
 }
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {
