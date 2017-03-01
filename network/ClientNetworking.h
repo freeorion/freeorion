@@ -119,7 +119,7 @@ public:
 private:
     void HandleException(const boost::system::system_error& error);
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
-                          boost::asio::high_resolution_timer* timer,
+                          boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock>* timer,
                           const boost::system::error_code& error);
     void CancelRetries();
     void NetworkingThread();

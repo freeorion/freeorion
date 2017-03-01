@@ -105,7 +105,7 @@ namespace {
         { m_socket.close(); }
 
         boost::asio::io_service*       m_io_service;
-        boost::asio::high_resolution_timer m_timer;
+        boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock> m_timer;
         boost::asio::ip::udp::socket   m_socket;
 
         std::array<char, 1024> m_recv_buf;
@@ -179,7 +179,7 @@ bool ClientNetworking::ConnectToServer(
             if (verbose)
 
             m_socket.close();
-            boost::asio::high_resolution_timer timer(m_io_service);
+            boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock> timer(m_io_service);
 
             m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                     &it,
@@ -289,7 +289,7 @@ void ClientNetworking::SendSynchronousMessage(Message message, Message& response
 }
 
 void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
-                                        boost::asio::high_resolution_timer* timer,
+                                        boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock>* timer,
                                         const boost::system::error_code& error)
 {
     if (error) {
