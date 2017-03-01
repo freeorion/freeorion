@@ -382,7 +382,7 @@ sc::result MPLobby::react(const Disconnection& d) {
     // if there are no humans left, it's time to terminate
     if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
         DebugLogger() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
-        server.Exit(1);
+        return transit<ShuttingDownServer>();
     }
 
     if (server.m_networking.PlayerIsHost(player_connection->PlayerID()))
@@ -1023,6 +1023,12 @@ sc::result MPLobby::react(const HostSPGame& msg) {
     msg.m_player_connection->SendMessage(ErrorMessage(UserStringNop("SERVER_ALREADY_HOSTING_GAME"), true));
     Server().m_networking.Disconnect(msg.m_player_connection);
     return discard_event();
+}
+
+sc::result MPLobby::react(const ShutdownServer& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.ShutdownServer";
+
+    return transit<ShuttingDownServer>();
 }
 
 sc::result MPLobby::react(const Error& msg) {

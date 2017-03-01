@@ -158,6 +158,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
         sc::custom_reaction<StartMPGame>,
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
+        sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -171,6 +172,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     sc::result react(const StartMPGame& msg);
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
+    sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
 
     std::shared_ptr<MultiplayerLobbyData> m_lobby_data;
