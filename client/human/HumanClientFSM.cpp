@@ -313,7 +313,7 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg) {
 boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
-    Client().QuitGame();
+    Client().ResetGame();
     return transit<IntroMenu>();
 }
 
@@ -411,7 +411,7 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
 
 boost::statechart::result PlayingGame::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    Client().QuitGame();
+    Client().ResetGame();
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
@@ -463,11 +463,11 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     bool error = false;
     switch (reason) {
     case Message::LOCAL_CLIENT_DISCONNECT:
-        Client().QuitGame();
+        Client().ResetGame();
         reason_message = UserString("SERVER_LOST");
         break;
     case Message::PLAYER_DISCONNECT:
-        Client().QuitGame();
+        Client().ResetGame();
         reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;
         break;
@@ -507,7 +507,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
 
     if (fatal) {
         ClientUI::MessageBox(UserString(problem), true);
-        client.QuitGame();
+        client.ResetGame();
     }
     return retval;
 }
