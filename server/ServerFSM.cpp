@@ -140,8 +140,8 @@ namespace {
     }
 
 
-    /** Note:  This Exits on fatal errors and does not return.*/
-    void HandleErrorMessage(const Error& msg, ServerApp &server) {
+    /** Return true for fatal errors.*/
+    bool HandleErrorMessage(const Error& msg, ServerApp &server) {
         std::string problem;
         bool fatal;
         ExtractErrorMessageData(msg.m_message, problem, fatal);
@@ -157,11 +157,11 @@ namespace {
         if (fatal) {
             FatalLogger() << ss.str();
             SendMessageToAllPlayers(msg.m_message);
-            boost::this_thread::sleep_for(boost::chrono::seconds(2));
-            server.Exit(1);
+        } else {
+            ErrorLogger() << ss.str();
         }
 
-        ErrorLogger() << ss.str();
+        return fatal;
     }
 }
 
@@ -328,7 +328,9 @@ sc::result Idle::react(const HostSPGame& msg) {
 }
 
 sc::result Idle::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal)
+        return transit<ShuttingDownServer>();
     return discard_event();
 }
 
@@ -1032,7 +1034,9 @@ sc::result MPLobby::react(const ShutdownServer& msg) {
 }
 
 sc::result MPLobby::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal)
+        return transit<ShuttingDownServer>();
     return discard_event();
 }
 
@@ -1241,7 +1245,11 @@ sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u) {
 }
 
 sc::result WaitingForSPGameJoiners::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal) {
+        DebugLogger() << "fatal in joiners";
+        return transit<ShuttingDownServer>();
+    }
     return discard_event();
 }
 
@@ -1359,7 +1367,9 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
 }
 
 sc::result WaitingForMPGameJoiners::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal)
+        return transit<ShuttingDownServer>();
     return discard_event();
 }
 
@@ -1450,7 +1460,11 @@ sc::result PlayingGame::react(const RequestCombatLogs& msg) {
 }
 
 sc::result PlayingGame::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal) {
+        DebugLogger() << "Fatal received.";
+        return transit<ShuttingDownServer>();
+    }
     return discard_event();
 }
 
@@ -1920,6 +1934,8 @@ sc::result ShuttingDownServer::react(const DisconnectClients& u) {
 }
 
 sc::result ShuttingDownServer::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal)
+        return transit<ShuttingDownServer>();
     return discard_event();
 }
