@@ -1140,9 +1140,13 @@ void HumanClientApp::QuitGame() {
             std::this_thread::sleep_for(POLLING_INTERVAL);
         }
 
-        if (m_networking->IsConnected()) {
-            m_networking->DisconnectFromServer();
+        if (!m_networking->IsConnected()) {
+            // Treat disconnection as acknowledgement of shutdown and free the process
+            if (!m_server_process.Empty())
+                m_server_process.Free();
+        } else {
             ErrorLogger() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
+            m_networking->DisconnectFromServer();
         }
     }
 
