@@ -77,9 +77,10 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
 PlayerConnection::~PlayerConnection() {
     boost::system::error_code ec;
     m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-    if (ec) {
+    if (ec && (m_ID != INVALID_PLAYER_ID)) {
         ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error #"
-                      << ec.value() << " \"" << ec.message() << "\"";
+                      << ec.value() << " \"" << ec.message() << "\""
+                      << " for player id " << m_ID;
     }
     m_socket.close();
 }
