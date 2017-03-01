@@ -43,6 +43,7 @@ struct CheckEndConditions : sc::event<CheckEndConditions>               {};
 struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
 struct ProcessTurn : sc::event<ProcessTurn>                             {};
 struct DisconnectClients : sc::event<DisconnectClients>                 {};
+struct ShutdownServer : sc::event<ShutdownServer>                       {};
 
 
 //  Message events
@@ -250,6 +251,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<Diplomacy>,
         sc::custom_reaction<ModeratorAct>,
         sc::custom_reaction<RequestCombatLogs>,
+        sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -259,6 +261,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const PlayerChat& msg);
     sc::result react(const Diplomacy& msg);
     sc::result react(const ModeratorAct& msg);
+    sc::result react(const ShutdownServer& u);
     sc::result react(const RequestCombatLogs& msg);
     sc::result react(const Error& msg);
 

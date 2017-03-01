@@ -1431,6 +1431,12 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     return discard_event();
 }
 
+sc::result PlayingGame::react(const ShutdownServer& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.ShutdownServer";
+
+    return transit<ShuttingDownServer>();
+}
+
 sc::result PlayingGame::react(const RequestCombatLogs& msg) {
     DebugLogger() << "(ServerFSM) PlayingGame::RequestCombatLogs message received";
     Server().UpdateCombatLogs(msg.m_message, msg.m_player_connection);

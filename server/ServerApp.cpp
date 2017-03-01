@@ -423,6 +423,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::DEBUG:                    break;
 
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
+    case Message::AI_END_GAME_ACK:           m_fsm->process_event(LeaveGame(msg, player_connection));        break;
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
     case Message::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
@@ -442,7 +443,7 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
         return;
     }
     DebugLogger() << "ServerApp::HandleShutdownMessage shutting down";
-    Exit(0);
+    m_fsm->process_event(ShutdownServer());
 }
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
@@ -455,8 +456,8 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
     default:
         if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
             DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
-                                   << "connected player, who is local and so the request is being honored; server shutting down.";
-                                   Exit(0);
+                          << "connected player, who is local and so the request is being honored; server shutting down.";
+            m_fsm->process_event(ShutdownServer());
         } else {
             ErrorLogger() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                             << msg.Type() << "\" for a non-player Message.  Terminating connection.";
