@@ -90,7 +90,6 @@ function(ENABLE_COVERAGE)
         COMMAND ${LCOV_EXECUTABLE} --quiet --directory . --capture --output-file ${COVERAGE_INFO}
         # Filter out undesirable code
         COMMAND ${LCOV_EXECUTABLE} --quiet --remove ${COVERAGE_INFO} '/usr/include/*' 'GG/utf8/*' 'src/gilext/*' 'test/*' --output-file ${COVERAGE_CLEANED}
-        DEPENDS ${CMAKE_PROJECT_NAME}_coverage_clear
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Capture code coverage line counters"
     )
@@ -110,6 +109,7 @@ function(ENABLE_COVERAGE)
 endfunction()
 
 function(ADD_COVERAGE _TARGET _TEST_TARGET)
+    add_dependencies(${_TARGET} ${CMAKE_PROJECT_NAME}_coverage_clear)
     add_dependencies(${CMAKE_PROJECT_NAME}_coverage_capture ${_TARGET})
     add_dependencies(${CMAKE_PROJECT_NAME}_coverage_capture ${_TEST_TARGET})
 endfunction()
