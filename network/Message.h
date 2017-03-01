@@ -84,6 +84,7 @@ public:
         REQUEST_NEW_DESIGN_ID,  ///< sent by client to server requesting a new design ID.
         DISPATCH_NEW_DESIGN_ID, ///< sent by server to client with the new design ID.
         END_GAME,               ///< sent by the server when the current game is to ending (see EndGameReason for the possible reasons this message is sent out)
+        AI_END_GAME_ACK,        ///< sent by the ai client when it has shutdown
         MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
         SHUT_DOWN_SERVER,       ///< sent by host client to server to kill the server process
         REQUEST_SAVE_PREVIEWS,  ///< sent by client to request previews of available savegames
@@ -310,6 +311,9 @@ FO_COMMON_API Message DiplomaticStatusMessage(int receiver, const DiplomaticStat
 
 /** creates an END_GAME message used to terminate an active game. */
 FO_COMMON_API Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
+
+/** creates an AI_END_GAME_ACK message used to indicate that the AI has shutdown. */
+FO_COMMON_API Message AIEndGameAcknowledgeMessage(int sender);
 
 /** creates a MODERATOR_ACTION message used to implement moderator commands. */
 FO_COMMON_API Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& mod_action);

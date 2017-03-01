@@ -583,6 +583,9 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
     return Message(Message::END_GAME, Networking::INVALID_PLAYER_ID, receiver, os.str());
 }
 
+Message AIEndGameAcknowledgeMessage(int sender)
+{ return Message(Message::AI_END_GAME_ACK, sender, Networking::INVALID_PLAYER_ID, DUMMY_EMPTY_MESSAGE); }
+
 Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& action) {
     std::ostringstream os;
     {
