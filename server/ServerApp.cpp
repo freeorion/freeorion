@@ -164,11 +164,9 @@ void ServerApp::operator()()
 { Run(); }
 
 void ServerApp::SignalHandler(const boost::system::error_code& error, int signal_number) {
-    if (!error)
-        throw NormalExitException();
-
-    ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
-    Exit(1);
+    if (error)
+        ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
+    m_fsm->process_event(ShutdownServer());
 }
 
 void ServerApp::Exit(int code) {
@@ -1318,7 +1316,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Exiting.";
-            Exit(0);
+            m_fsm->process_event(ShutdownServer());
         }
     }
 
@@ -1371,7 +1369,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                Exit(0);
+                m_fsm->process_event(ShutdownServer());
             }
         }
     }
