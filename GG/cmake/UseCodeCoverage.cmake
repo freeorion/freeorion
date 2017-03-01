@@ -54,7 +54,8 @@ function(ENABLE_COVERAGE)
     endif()
 
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Coverage")
-        message(WARNING "Code coverage inaccurate with an other build configuration than \"Coverage\"")
+        message(WARNING "Code coverage requires \"Coverage\" build configuration. Disabling code coverage.")
+        return()
     endif()
 
     find_program(GCOV_EXECUTABLE gcov)
