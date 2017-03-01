@@ -49,6 +49,10 @@ if(CMAKE_CONFIGURATION_TYPES)
 endif()
 
 function(ENABLE_COVERAGE)
+    if(TARGET coverage)
+        return()
+    endif()
+
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Coverage")
         message(WARNING "Code coverage inaccurate with an other build configuration than \"Coverage\"")
     endif()
@@ -97,10 +101,8 @@ function(ENABLE_COVERAGE)
         COMMENT "Generate code coverage report in `coverage/index.html`"
     )
 
-    if(NOT TARGET coverage)
-        add_custom_target(coverage
-            COMMENT "Create code coverage for ${CMAKE_PROJECT_NAME}")
-    endif()
+    add_custom_target(coverage
+        COMMENT "Create code coverage for ${CMAKE_PROJECT_NAME}")
 
     add_dependencies(coverage ${CMAKE_PROJECT_NAME}_coverage_report)
 endfunction()

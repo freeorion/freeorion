@@ -21,6 +21,7 @@ message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 project(FreeOrion)
 
 include(GNUInstallDirs)
+include(UseCodeCoverage)
 
 set(FreeOrion_VERSION 0.4.6+)
 set(CMAKE_CXX_STANDARD 11)
@@ -32,6 +33,7 @@ option(BUILD_TESTING "Build the testing tree." OFF)
 if (BUILD_TESTING)
     message( STATUS "Building Tests")
     enable_testing()
+    enable_coverage()
 
     if (NOT TARGET unittest)
         add_custom_target(unittest

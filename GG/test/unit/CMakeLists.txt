@@ -39,6 +39,10 @@ target_link_libraries(gg_unittest
     ${Boost_UNIT_TEST_FRAMEWORK_LIBRARIES}
 )
 
+add_coverage(fo_unittest_parse
+    unittest
+)
+
 add_dependencies(unittest
     gg_unittest
 )

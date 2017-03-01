@@ -24,6 +24,10 @@ target_link_libraries(fo_unittest_parse
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+add_coverage(fo_unittest_parse
+    unittest
+)
+
 add_dependencies(unittest
     fo_unittest_parse
 )
