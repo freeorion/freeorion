@@ -1,0 +1,6 @@
+Article
+    name = "PC_RESEARCH"
+    category = "ENC_SHIP_PART"
+    short_description = "PC_RESEARCH"
+    description = "PC_RESEARCH_DESC"
+    icon = "icons/meters/research.png"

@@ -1,0 +1,6 @@
+Article
+    name = "PC_PRODUCTION_LOCATION"
+    category = "ENC_SHIP_PART"
+    short_description = "PC_PRODUCTION_LOCATION"
+    description = "PC_PRODUCTION_LOCATION_DESC"
+    icon = "icons/meters/construction.png"
