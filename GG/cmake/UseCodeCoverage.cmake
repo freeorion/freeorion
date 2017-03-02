@@ -48,6 +48,8 @@ if(CMAKE_CONFIGURATION_TYPES)
         FORCE)
 endif()
 
+set(COVERAGE_REPORT_TYPE "HTML" CACHE STRING "The coverage report format (one of: `HTML`, `XML`)")
+
 function(ENABLE_COVERAGE)
     if(TARGET coverage)
         return()
@@ -74,11 +76,27 @@ function(ENABLE_COVERAGE)
         message(FATAL_ERROR "Requires GNU GCC or Clang to create code coverage")
     endif()
 
+    if("${COVERAGE_REPORT_TYPE}" STREQUAL "XML")
+        set(COVERAGE_REPORT_TYPE_FLAGS
+            --xml-pretty
+            --output ${CMAKE_PROJECT_NAME}.cov.xml
+        )
+    else()
+        set(COVERAGE_REPORT_AUX_COMMANDS
+            COMMAND
+                ${CMAKE_COMMAND} -E remove_directory coverage
+            COMMAND
+                ${CMAKE_COMMAND} -E make_directory coverage
+        )
+        set(COVERAGE_REPORT_TYPE_FLAGS
+            --html
+            --html-details
+            --output coverage/${CMAKE_PROJECT_NAME}.html
+        )
+    endif()
+
     add_custom_target(coverage-cpp
-        COMMAND
-            ${CMAKE_COMMAND} -E remove_directory coverage
-        COMMAND
-            ${CMAKE_COMMAND} -E make_directory coverage
+        ${COVERAGE_REPORT_AUX_COMMANDS}
         # Capture gcov line counters
         COMMAND
             ${GCOVR_EXECUTABLE}
@@ -86,9 +104,7 @@ function(ENABLE_COVERAGE)
                 --object-directory ${CMAKE_BINARY_DIR}
                 --root ${CMAKE_SOURCE_DIR}
                 --delete
-                --html
-                --html-details
-                --output coverage/${CMAKE_PROJECT_NAME}.html
+                ${COVERAGE_REPORT_TYPE_FLAGS}
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
         COMMENT "Generate C++ code coverage report"
     )
