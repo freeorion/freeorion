@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = External
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
+    tags = [ "PEDIA_PC_FUEL" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup

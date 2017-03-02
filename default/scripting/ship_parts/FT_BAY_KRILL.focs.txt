@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_BAY" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/krill.png"
 

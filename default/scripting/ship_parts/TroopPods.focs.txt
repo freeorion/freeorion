@@ -6,7 +6,7 @@ Part
     mountableSlotTypes = [External Internal]
     buildcost = 3 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
-    tags = "COMFORTABLE"
+    tags = [ "COMFORTABLE" "PEDIA_PC_TROOPS" ]
     location = And [
         OwnedBy empire = Source.Owner
         Not HasTag name = "NO_ATTACKTROOPS"
@@ -23,6 +23,7 @@ Part
     mountableSlotTypes = [External Internal]
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_TROOPS" ]
     location = And [
         OwnedBy empire = Source.Owner
         Not HasTag name = "NO_ATTACKTROOPS"

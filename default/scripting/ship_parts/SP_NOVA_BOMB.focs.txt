@@ -5,6 +5,7 @@ Part
     mountableSlotTypes = External
     buildcost = 5000 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 12
+    tags = [ "PEDIA_PC_GENERAL" ]
     location = All
     effectsgroups = [
         EffectsGroup

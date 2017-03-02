@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = External
     buildcost = 4 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_ARMOUR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/std_armor_plating.png"
 
@@ -17,6 +18,7 @@ Part
     mountableSlotTypes = External
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_ARMOUR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/zortrium_plating.png"
 
@@ -28,6 +30,7 @@ Part
     mountableSlotTypes = External
     buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_ARMOUR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/diamond_plating.png"
 
@@ -39,6 +42,7 @@ Part
     mountableSlotTypes = External
     buildcost = 12 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_ARMOUR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/xentronium_plating.png"
 
@@ -50,6 +54,7 @@ Part
     mountableSlotTypes = External
     buildcost = 6 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
+    tags = [ "PEDIA_PC_ARMOUR" ]
     location = And [
         ResourceSupplyConnected empire = Source.Owner condition = And [
             Building name = "BLD_SHIPYARD_AST_REF"
@@ -70,6 +75,7 @@ Part
     mountableSlotTypes = External
     buildcost = 8 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "PEDIA_PC_ARMOUR" ]
     location = And [
         ResourceSupplyConnected empire = Source.Owner condition = And [
             Building name = "BLD_SHIPYARD_AST_REF"
@@ -90,6 +96,7 @@ Part
     mountableSlotTypes = External
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
+    tags = [ "PEDIA_PC_ARMOUR" ]
     location = And [
         OwnedBy empire = Source.Owner
         Contains Building name = "BLD_NEUTRONIUM_FORGE"
@@ -111,6 +118,7 @@ Part
     mountableSlotTypes = External
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_ARMOUR" ]
     location = Not All  // to keep this from making all other armor look redundant in DesignWnd; ok since not player-buildable currently
     icon = ""
 

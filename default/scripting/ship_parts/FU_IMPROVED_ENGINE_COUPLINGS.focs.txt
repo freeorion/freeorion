@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "PEDIA_PC_SPEED" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/engine-1.png"
 

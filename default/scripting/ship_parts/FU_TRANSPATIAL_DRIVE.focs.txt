@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = Core
     buildcost = 80 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
+    tags = [ "PEDIA_PC_SPEED" ]
     location = And [
         OwnedBy empire = Source.Owner
         Contains Building name = "BLD_SHIPYARD_CON_ADV_ENGINE"

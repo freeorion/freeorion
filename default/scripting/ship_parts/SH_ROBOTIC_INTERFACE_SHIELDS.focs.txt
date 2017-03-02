@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = [Internal]
     buildcost = 70 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
+    tags = [ "PEDIA_PC_SHIELD" ]
     location = And [
         OwnedBy empire = Source.Owner
         HasTag name = "ROBOTIC"

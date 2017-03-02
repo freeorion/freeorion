@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 120 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
+    tags = [ "PEDIA_PC_COLONY" ]
     location = And [
         OwnedBy empire = Source.Owner
         Population low = [[MIN_RECOLONIZING_SIZE]] high = 999
