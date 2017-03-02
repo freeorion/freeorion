@@ -116,6 +116,10 @@ function(ENABLE_COVERAGE)
 endfunction()
 
 function(ADD_COVERAGE _TARGET _TEST_TARGET)
+    if(NOT TARGET coverage)
+        return()
+    endif()
+
     add_dependencies(coverage-cpp ${_TARGET})
     add_dependencies(coverage-cpp ${_TEST_TARGET})
 endfunction()
