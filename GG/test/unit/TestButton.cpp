@@ -126,7 +126,7 @@ BOOST_AUTO_TEST_CASE( constructor )
     BOOST_CHECK(button.GetChildClippingMode() == GG::Wnd::DontClip);
     BOOST_CHECK(!button.NonClientChild());
     BOOST_CHECK(button.Visible());
-    BOOST_CHECK(button.PreRenderRequired());
+    BOOST_CHECK(!button.PreRenderRequired());
     BOOST_CHECK(button.Name() == "");
     BOOST_CHECK(button.DragDropDataType() == "");
     BOOST_CHECK(button.UpperLeft() == GG::Pt(GG::X(0), GG::Y(0)));

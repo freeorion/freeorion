@@ -157,6 +157,7 @@ Wnd::Wnd() :
     m_done(false),
     m_parent(nullptr),
     m_visible(true),
+    m_needs_prerender(false),
     m_child_clipping_mode(DontClip),
     m_non_client_child(false),
     m_max_size(X(1 << 30), Y(1 << 30)),
