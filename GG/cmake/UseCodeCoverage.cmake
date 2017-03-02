@@ -59,11 +59,10 @@ function(ENABLE_COVERAGE)
     endif()
 
     find_program(GCOV_EXECUTABLE gcov)
-    find_program(LCOV_EXECUTABLE lcov)
-    find_program(GENHTML_EXECUTABLE genhtml)
+    find_program(GCOVR_EXECUTABLE gcovr)
 
-    if(NOT GCOV_EXECUTABLE OR NOT LCOV_EXECUTABLE OR NOT GENHTML_EXECUTABLE)
-        message(WARNING "Could not find `gcov`, `lcov` or `genhtml`. Disabling code coverage.")
+    if(NOT GCOV_EXECUTABLE OR NOT GCOVR_EXECUTABLE)
+        message(WARNING "Could not find `gcov` and `gcovr`. Disabling code coverage.")
         return()
     endif()
 
@@ -75,41 +74,32 @@ function(ENABLE_COVERAGE)
         message(FATAL_ERROR "Requires GNU GCC or Clang to create code coverage")
     endif()
 
-    set(COVERAGE_INFO "${CMAKE_BINARY_DIR}/${CMAKE_PROJECT_NAME}.covinfo")
-    set(COVERAGE_CLEANED "${COVERAGE_INFO}.cleaned")
-
-    add_custom_target(${CMAKE_PROJECT_NAME}_coverage_clear
-        # Reset line counters
-        COMMAND ${LCOV_EXECUTABLE} --quiet --directory . --zerocounters
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Reset code coverage line counters"
-    )
-
-    add_custom_target(${CMAKE_PROJECT_NAME}_coverage_capture
+    add_custom_target(coverage-cpp
+        COMMAND
+            ${CMAKE_COMMAND} -E remove_directory coverage
+        COMMAND
+            ${CMAKE_COMMAND} -E make_directory coverage
         # Capture gcov line counters
-        COMMAND ${LCOV_EXECUTABLE} --quiet --directory . --capture --output-file ${COVERAGE_INFO}
-        # Filter out undesirable code
-        COMMAND ${LCOV_EXECUTABLE} --quiet --remove ${COVERAGE_INFO} '/usr/include/*' 'GG/utf8/*' 'src/gilext/*' 'test/*' --output-file ${COVERAGE_CLEANED}
+        COMMAND
+            ${GCOVR_EXECUTABLE}
+                --gcov-executable ${GCOV_EXECUTABLE}
+                --object-directory ${CMAKE_BINARY_DIR}
+                --root ${CMAKE_SOURCE_DIR}
+                --delete
+                --html
+                --html-details
+                --output coverage/${CMAKE_PROJECT_NAME}.html
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Capture code coverage line counters"
-    )
-
-    add_custom_target(${CMAKE_PROJECT_NAME}_coverage_report
-        # Create coverage report
-        COMMAND ${GENHTML_EXECUTABLE} --quiet --output-directory coverage --title "${CMAKE_PROJECT_NAME}" ${COVERAGE_CLEANED}
-        DEPENDS ${CMAKE_PROJECT_NAME}_coverage_capture
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        COMMENT "Generate code coverage report in `coverage/index.html`"
+        COMMENT "Generate C++ code coverage report"
     )
 
     add_custom_target(coverage
         COMMENT "Create code coverage for ${CMAKE_PROJECT_NAME}")
 
-    add_dependencies(coverage ${CMAKE_PROJECT_NAME}_coverage_report)
+    add_dependencies(coverage coverage-cpp)
 endfunction()
 
 function(ADD_COVERAGE _TARGET _TEST_TARGET)
-    add_dependencies(${_TARGET} ${CMAKE_PROJECT_NAME}_coverage_clear)
-    add_dependencies(${CMAKE_PROJECT_NAME}_coverage_capture ${_TARGET})
-    add_dependencies(${CMAKE_PROJECT_NAME}_coverage_capture ${_TEST_TARGET})
+    add_dependencies(coverage-cpp ${_TARGET})
+    add_dependencies(coverage-cpp ${_TEST_TARGET})
 endfunction()
