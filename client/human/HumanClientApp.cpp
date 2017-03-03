@@ -446,7 +446,6 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ended_with_ok = galaxy_wnd.EndedWithOk();
     }
 
-    bool failed = false;
     Clock::time_point start_time = Clock::now();
     Clock::duration connection_time{0};
     while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
@@ -455,14 +454,16 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
             ErrorLogger() << "Timed out.  Failed to connect to server in "
                           << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-            failed = true;
-            break;
+            KillServer();
+            return;
         }
     }
-    m_connected = !failed;
-    if (!failed && (quickstart || ended_with_ok)) {
-        DebugLogger() << "HumanClientApp::NewSinglePlayerGame : Connected to server in "
-                      << boost::chrono::duration_cast<boost::chrono::milliseconds>(Clock::now() - start_time) << ".";
+
+    m_connected = true;
+    DebugLogger() << "HumanClientApp::NewSinglePlayerGame : Connecting to server took "
+                  << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+
+    if (quickstart || ended_with_ok) {
 
         SinglePlayerSetupData setup_data;
         setup_data.m_new_game = true;
@@ -541,17 +542,15 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         m_networking.SendMessage(HostSPGameMessage(setup_data));
         m_fsm->process_event(HostSPGameRequested());
     } else {
-        DebugLogger() << "HumanClientApp::NewSinglePlayerGame killing server due to canceled game or server connection failure";
-        if (m_networking.Connected()) {
-            DebugLogger() << "HumanClientApp::NewSinglePlayerGame Sending server shutdown message.";
-            m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
-            boost::this_thread::sleep_for(boost::chrono::seconds(1));
-            m_networking.DisconnectFromServer();
-            if (!m_networking.Connected())
-                DebugLogger() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
-            else
-                ErrorLogger() << "HumanClientApp::NewSinglePlayerGame Unexpectedly still connected to server...?";
-        }
+        ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
+        DebugLogger() << "HumanClientApp::NewSinglePlayerGame Sending server shutdown message.";
+        m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
+        boost::this_thread::sleep_for(boost::chrono::seconds(1));
+        m_networking.DisconnectFromServer();
+        if (!m_networking.Connected())
+            DebugLogger() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
+        else
+            ErrorLogger() << "HumanClientApp::NewSinglePlayerGame Unexpectedly still connected to server...?";
         KillServer();
     }
 }
