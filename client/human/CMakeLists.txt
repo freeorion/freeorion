@@ -9,15 +9,6 @@ find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
-include_directories(
-    SYSTEM
-    ${OPENGL_INCLUDE_DIR}
-    ${OPENAL_INCLUDE_DIR}
-    ${SDL2_INCLUDE_DIR}
-    ${OGG_INCLUDE_DIR}
-    ${VORBIS_INCLUDE_DIR}
-)
-
 add_definitions(-DFREEORION_BUILD_HUMAN)
 
 
@@ -188,6 +179,17 @@ add_executable(freeorion
 target_compile_options(
     freeorion PRIVATE
     $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+)
+
+target_include_directories(freeorion SYSTEM
+    PRIVATE
+        ${OPENGL_INCLUDE_DIR}
+        ${OPENAL_INCLUDE_DIR}
+        ${SDL2_INCLUDE_DIR}
+        ${OGG_INCLUDE_DIR}
+        ${VORBIS_INCLUDE_DIR}
+        ${FREETYPE_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/GG
 )
 
 target_link_libraries(freeorion

@@ -1,8 +1,3 @@
-include_directories(
-    SYSTEM
-    ${PYTHON_INCLUDE_PATH}
-)
-
 add_definitions(-DFREEORION_BUILD_AI)
 
 set(freeorionca_LINK_LIBS
@@ -44,6 +39,13 @@ add_executable(freeorionca
 target_compile_options(
     freeorionca PRIVATE
     $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+)
+
+target_include_directories(freeorionca SYSTEM
+    PRIVATE
+        ${Boost_INCLUDE_DIRS}
+        ${PYTHON_INCLUDE_PATH}
+        ${PROJECT_SOURCE_DIR}/GG
 )
 
 target_link_libraries(freeorionca

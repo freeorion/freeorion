@@ -70,6 +70,12 @@ add_library(freeorionparseobj OBJECT
     ${freeorionparse_SOURCE}
 )
 
+target_include_directories(freeorionparseobj SYSTEM
+    PRIVATE
+        ${Boost_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/GG
+)
+
 set_property(TARGET freeorionparseobj
     PROPERTY
     POSITION_INDEPENDENT_CODE ON

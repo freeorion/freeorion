@@ -189,18 +189,6 @@ if(${Boost_VERSION} EQUAL "106100" OR ${Boost_VERSION} GREATER "106100")
     )
 endif()
 
-include_directories(
-    SYSTEM
-    ${Boost_INCLUDE_DIRS}
-    ${ZLIB_INCLUDE_DIR}
-    ${FREETYPE_INCLUDE_DIRS}
-)
-
-include_directories(
-    ${CMAKE_SOURCE_DIR}
-    GG
-)
-
 link_directories(
     ${Boost_LIBRARY_DIRS}
 )
@@ -217,6 +205,14 @@ target_compile_options(freeorioncommon
 target_compile_definitions(freeorioncommon
     PRIVATE
     -DFREEORION_BUILD_COMMON
+)
+
+target_include_directories(freeorioncommon SYSTEM
+    PRIVATE
+        ${CMAKE_SOURCE_DIR}
+        ${Boost_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/GG
+        ${ZLIB_INCLUDE_DIR}
 )
 
 target_link_libraries(freeorioncommon
