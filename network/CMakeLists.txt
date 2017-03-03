@@ -1,0 +1,10 @@
+target_sources(freeorioncommon
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/Message.h
+        ${CMAKE_CURRENT_LIST_DIR}/MessageQueue.h
+        ${CMAKE_CURRENT_LIST_DIR}/Networking.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/Message.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MessageQueue.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Networking.cpp
+)

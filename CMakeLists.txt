@@ -205,153 +205,19 @@ link_directories(
     ${Boost_LIBRARY_DIRS}
 )
 
-set (freeorioncommon_HEADER
-    combat/CombatEvent.h
-    combat/CombatEvents.h
-    combat/CombatLogManager.h
-    combat/CombatSystem.h
-    Empire/Diplomacy.h
-    Empire/Empire.h
-    Empire/EmpireManager.h
-    Empire/ResourcePool.h
-    Empire/Supply.h
-    network/Message.h
-    network/MessageQueue.h
-    network/Networking.h
-    python/SetWrapper.h
-    python/CommonWrappers.h
-    universe/Building.h
-    universe/Condition.h
-    universe/EffectAccounting.h
-    universe/Effect.h
-    universe/Encyclopedia.h
-    universe/Enums.h
-    universe/Field.h
-    universe/Fighter.h
-    universe/Fleet.h
-    universe/Meter.h
-    universe/ObjectMap.h
-    universe/Planet.h
-    universe/PopCenter.h
-    universe/Predicates.h
-    universe/ResourceCenter.h
-    universe/ShipDesign.h
-    universe/Ship.h
-    universe/Special.h
-    universe/Species.h
-    universe/System.h
-    universe/Tech.h
-    universe/Universe.h
-    universe/Pathfinder.h
-    universe/UniverseObject.h
-    universe/ValueRef.h
-    universe/ValueRefFwd.h
-    util/AppInterface.h
-    util/blocking_combiner.h
-    util/Directories.h
-    util/EnumText.h
-    util/i18n.h
-    util/Logger.h
-    util/ModeratorAction.h
-    util/MultiplayerCommon.h
-    util/OptionsDB.h
-    util/OptionValidators.h
-    util/Order.h
-    util/OrderSet.h
-    util/Process.h
-    util/Random.h
-    util/SaveGamePreviewUtils.h
-    util/ScopedTimer.h
-    util/Serialize.h
-    util/Serialize.ipp
-    util/SitRepEntry.h
-    util/StringTable.h
-    util/VarText.h
-    util/Version.h
-    util/XMLDoc.h
+
+add_library(freeorioncommon "")
+
+target_compile_options(freeorioncommon
+    PRIVATE
+        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
 )
 
-set (freeorioncommon_SOURCE
-    combat/CombatEvent.cpp
-    combat/CombatEvents.cpp
-    combat/CombatLogManager.cpp
-    Empire/Diplomacy.cpp
-    Empire/Empire.cpp
-    Empire/EmpireManager.cpp
-    Empire/ResourcePool.cpp
-    Empire/Supply.cpp
-    network/Message.cpp
-    network/MessageQueue.cpp
-    network/Networking.cpp
-    universe/Building.cpp
-    universe/Condition.cpp
-    universe/EffectAccounting.cpp
-    universe/Effect.cpp
-    universe/Encyclopedia.cpp
-    universe/Enums.cpp
-    universe/Field.cpp
-    universe/Fighter.cpp
-    universe/Fleet.cpp
-    universe/Meter.cpp
-    universe/ObjectMap.cpp
-    universe/Planet.cpp
-    universe/PopCenter.cpp
-    universe/Predicates.cpp
-    universe/ResourceCenter.cpp
-    universe/Ship.cpp
-    universe/ShipDesign.cpp
-    universe/Special.cpp
-    universe/Species.cpp
-    universe/System.cpp
-    universe/Tech.cpp
-    universe/Universe.cpp
-    universe/Pathfinder.cpp
-    universe/UniverseObject.cpp
-    universe/ValueRef.cpp
-    util/AppInterface.cpp
-    util/Directories.cpp
-    util/EnumText.cpp
-    util/i18n.cpp
-    util/Logger.cpp
-    util/ModeratorAction.cpp
-    util/MultiplayerCommon.cpp
-    util/OptionsDB.cpp
-    util/Order.cpp
-    util/OrderSet.cpp
-    util/Process.cpp
-    util/Random.cpp
-    util/SaveGamePreviewUtils.cpp
-    util/ScopedTimer.cpp
-    util/SerializeEmpire.cpp
-    util/SerializeModeratorAction.cpp
-    util/SerializeMultiplayerCommon.cpp
-    util/SerializeOrderSet.cpp
-    util/SerializeUniverse.cpp
-    util/SitRepEntry.cpp
-    util/StringTable.cpp
-    util/VarText.cpp
-    util/Version.cpp
-    util/XMLDoc.cpp
+target_compile_definitions(freeorioncommon
+    PRIVATE
+    -DFREEORION_BUILD_COMMON
 )
-
-if (NOT WIN32)
-    list(APPEND freeorioncommon_SOURCE
-        util/binreloc.c
-    )
-endif ()
-
-add_library(freeorioncommon
-    ${freeorioncommon_HEADER}
-    ${freeorioncommon_SOURCE}
-)
-
-target_compile_options(
-    freeorioncommon PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-    $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
-)
-
-add_dependencies(freeorioncommon freeorionversion)
 
 target_link_libraries(freeorioncommon
     ${Boost_CHRONO_LIBRARY}
@@ -367,18 +233,22 @@ target_link_libraries(freeorioncommon
     ${ZLIB_LIBRARIES}
 )
 
-set_target_properties(freeorioncommon
-    PROPERTIES
-    DEFINE_SYMBOL "FREEORION_BUILD_COMMON"
-)
+add_dependencies(freeorioncommon freeorionversion)
+
 
 ########################################
 # Recurse Into Sources                 #
 ########################################
-add_subdirectory(parse)
-add_subdirectory(server)
 add_subdirectory(client/AI)
 add_subdirectory(client/human)
+add_subdirectory(combat)
+add_subdirectory(Empire)
+add_subdirectory(network)
+add_subdirectory(parse)
+add_subdirectory(python)
+add_subdirectory(server)
+add_subdirectory(universe)
+add_subdirectory(util)
 add_subdirectory(check)
 add_subdirectory(doc)
 
