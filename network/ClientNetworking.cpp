@@ -176,8 +176,6 @@ bool ClientNetworking::ConnectToServer(
 
     try {
         for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-            if (verbose)
-
             m_socket.close();
             boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock> timer(m_io_service);
 
@@ -195,6 +193,7 @@ bool ClientNetworking::ConnectToServer(
                 DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
                               << "  address: " << it->endpoint().address()
                               << "  port: " << it->endpoint().port();
+
                 DebugLogger() << "ClientNetworking::ConnectToServer : connected to server";
                 if (GetOptionsDB().Get<bool>("binary-serialization"))
                     DebugLogger() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
