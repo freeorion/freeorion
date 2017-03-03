@@ -907,6 +907,16 @@ void ListBox::Render()
 
     BeveledRectangle(ul, lr, int_color_to_use, color_to_use, false, BORDER_THICK);
 
+    // HACK! This gets around the issue of how to render headers and scrolls,
+    // which do not fall within the client area.
+    if (!m_header_row->empty()) {
+        Rect header_area(Pt(ul.x + static_cast<int>(BORDER_THICK), m_header_row->Top()),
+                         Pt(lr.x - static_cast<int>(BORDER_THICK), m_header_row->Bottom()));
+        BeginScissorClipping(header_area.ul, header_area.lr);
+        GUI::GetGUI()->RenderWindow(m_header_row);
+        EndScissorClipping();
+    }
+
     if (m_first_row_shown == m_rows.end())
         return;
 
@@ -942,15 +952,6 @@ void ListBox::Render()
 
     EndClipping();
 
-    // HACK! This gets around the issue of how to render headers and scrolls,
-    // which do not fall within the client area.
-    if (!m_header_row->empty()) {
-        Rect header_area(Pt(ul.x + static_cast<int>(BORDER_THICK), m_header_row->Top()),
-                         Pt(lr.x - static_cast<int>(BORDER_THICK), m_header_row->Bottom()));
-        BeginScissorClipping(header_area.ul, header_area.lr);
-        GUI::GetGUI()->RenderWindow(m_header_row);
-        EndScissorClipping();
-    }
     if (m_vscroll)
         GUI::GetGUI()->RenderWindow(m_vscroll);
     if (m_hscroll)
