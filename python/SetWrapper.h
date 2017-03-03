@@ -1,7 +1,6 @@
 #ifndef PYTHON_SETWRAPPER_H
 #define PYTHON_SETWRAPPER_H
 
-#include <set>
 #include <string>
 
 #include <boost/python.hpp>
@@ -13,14 +12,14 @@ namespace FreeOrionPython {
     using boost::python::def;
     using boost::python::iterator;
 
-    /* SetWrapper class encapsulates functions that expose the STL std::set<>
-     * class to Python in a limited, read-only fashion.  The set can be iterated
+    /* SetWrapper class encapsulates functions that expose the STL std::set<> like
+     * classes to Python in a limited, read-only fashion.  The set can be iterated
      * through in Python, and printed. */
-    template <typename ElementType>
+    template <typename Set>
     class SetWrapper {
     public:
-        typedef typename std::set<ElementType> Set;
-        typedef typename Set::const_iterator SetIterator;
+        using SetIterator = typename Set::const_iterator;
+        using ElementType = typename Set::value_type;
 
         static unsigned int size(const Set& self) {
             return static_cast<unsigned int>(self.size());  // ignore warning http://lists.boost.org/Archives/boost/2007/04/120377.php

@@ -176,9 +176,9 @@ namespace {
       * location and the amount of minerals and industry produced in the group).
       * Elements will not receive funding if they cannot be produced by the
       * empire with the indicated \a empire_id this turn at their build location. */
-    void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp,
-                                     const std::vector<std::set<int> >& queue_element_resource_sharing_object_groups,
-                                     ProductionQueue::QueueType& queue, std::map<std::set<int>, float>& allocated_pp,
+    void SetProdQueueElementSpending(std::map<ResourcePool::key_type, float> available_pp,
+                                     const std::vector<ResourcePool::key_type>& queue_element_resource_sharing_object_groups,
+                                     ProductionQueue::QueueType& queue, std::map<ResourcePool::key_type, float>& allocated_pp,
                                      int& projects_in_progress, int empire_id)
     {
         //DebugLogger() << "========SetProdQueueElementSpending========";
@@ -228,15 +228,15 @@ namespace {
             }
 
             // get resource sharing group and amount of resource available to build this item
-            const std::set<int>& group = queue_element_resource_sharing_object_groups[i];
-            if (group.empty()) {
+            const auto& group = queue_element_resource_sharing_object_groups[i];
+            if (group->empty()) {
                 //DebugLogger() << "resource sharing group for queue element is empty.  not allocating any resources to element";
                 queue_element.allocated_pp = 0.0f;
                 ++i;
                 continue;
             }
 
-            std::map<std::set<int>, float>::iterator available_pp_it = available_pp.find(group);
+            const auto& available_pp_it = available_pp.find(group);
             if (available_pp_it == available_pp.end()) {
                 // item is not being built at an object that has access to resources, so it can't be produced.
                 //DebugLogger() << "no resource sharing group for production queue element";
@@ -871,50 +871,50 @@ int ProductionQueue::ProjectsInProgress() const
 float ProductionQueue::TotalPPsSpent() const {
     // add up allocated PP from all resource sharing object groups
     float retval = 0.0f;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_object_group_allocated_pp)
+    for (const auto& entry : m_object_group_allocated_pp)
     { retval += entry.second; }
     return retval;
 }
 
-std::map<std::set<int>, float> ProductionQueue::AvailablePP(
+std::map<ResourcePool::key_type, float> ProductionQueue::AvailablePP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
 {
-    std::map<std::set<int>, float> retval;
     if (!industry_pool) {
         ErrorLogger() << "ProductionQueue::AvailablePP passed invalid industry resource pool";
-        return retval;
+        return {};
     }
 
+    std::map<ResourcePool::key_type, float> retval;
     // determine available PP (ie. industry) in each resource sharing group of systems
-    for (std::map<std::set<int>, float>::value_type& ind : industry_pool->Available()) {
+    for (auto& ind : industry_pool->Available()) {
         // get group of systems in industry pool
-        const std::set<int>& group = ind.first;
+        const auto& group = ind.first;
         retval[group] = ind.second;
     }
 
     return retval;
 }
 
-const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
+const std::map<ResourcePool::key_type, float>& ProductionQueue::AllocatedPP() const
 { return m_object_group_allocated_pp; }
 
-std::set<std::set<int> > ProductionQueue::ObjectsWithWastedPP(
+std::set<ResourcePool::key_type> ProductionQueue::ObjectsWithWastedPP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
 {
-    std::set<std::set<int> > retval;
     if (!industry_pool) {
         ErrorLogger() << "ProductionQueue::ObjectsWithWastedPP passed invalid industry resource pool";
-        return retval;
+        return {};
     }
 
-    for (std::map<std::set<int>, float>::value_type& avail_pp : AvailablePP(industry_pool)) {
+    std::set<ResourcePool::key_type> retval;
+    for (auto& avail_pp : AvailablePP(industry_pool)) {
         //std::cout << "available PP groups size: " << avail_pp.first.size() << " pp: " << avail_pp.second << std::endl;
 
         if (avail_pp.second <= 0)
             continue;   // can't waste if group has no PP
-        const std::set<int>& group = avail_pp.first;
+        const auto& group = avail_pp.first;
         // find this group's allocated PP
-        std::map<std::set<int>, float>::const_iterator alloc_it = m_object_group_allocated_pp.find(group);
+        const auto& alloc_it = m_object_group_allocated_pp.find(group);
         // is less allocated than is available?  if so, some is wasted
         if (alloc_it == m_object_group_allocated_pp.end() || alloc_it->second < avail_pp.second)
             retval.insert(avail_pp.first);
@@ -980,28 +980,32 @@ void ProductionQueue::Update() {
 
     ScopedTimer update_timer("ProductionQueue::Update");
 
-    std::map<std::set<int>, float> available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+    const auto& available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
 
     // determine which resource sharing group each queue item is located in
-    std::vector<std::set<int> > queue_element_groups;
+    std::vector<ResourcePool::key_type> queue_element_groups;
     for (const ProductionQueue::Element& element : m_queue) {
         // get location object for element
         int location_id = element.location;
 
         // search through groups to find object
-        for (std::map<std::set<int>, float>::const_iterator groups_it = available_pp.begin();
-             true; ++groups_it)
+        for (auto groups_it = available_pp.begin(); true; ++groups_it)
         {
             if (groups_it == available_pp.end()) {
                 // didn't find a group containing this object, so add an empty group as this element's queue element group
-                queue_element_groups.push_back(std::set<int>());
+
+                //TODO Danger makeing a new set?
+                ErrorLogger() << "Expected to find " << location_id << " in resource pool.  Adding a dummy item.";
+                auto single_item_group = std::make_shared<std::unordered_set<int>>();
+                single_item_group->insert(location_id);
+                queue_element_groups.push_back(single_item_group);
                 break;
             }
 
             // check if location object id is in this group
-            const std::set<int>& group = groups_it->first;
-            std::set<int>::const_iterator set_it = group.find(location_id);
-            if (set_it != group.end()) {
+            const auto& group = groups_it->first;
+            const auto& set_it = group->find(location_id);
+            if (set_it != group->end()) {
                 // system is in this group.
                 queue_element_groups.push_back(group);  // record this discovery
                 break;                                  // stop searching for a group containing a system, since one has been found
@@ -1019,7 +1023,7 @@ void ProductionQueue::Update() {
     // if at least one resource-sharing system group have available PP, simulate
     // future turns to predict when build items will be finished
     bool simulate_future = false;
-    for (std::map<std::set<int>, float>::value_type& available : available_pp) {
+    for (auto& available : available_pp) {
         if (available.second > EPSILON) {
             simulate_future = true;
             break;
@@ -1045,7 +1049,7 @@ void ProductionQueue::Update() {
 
     // duplicate production queue state for future simulation
     QueueType sim_queue = m_queue;
-    std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;
+    auto sim_queue_element_groups = queue_element_groups;
     std::vector<int>            simulation_results(sim_queue.size(), -1);
     std::vector<unsigned int>   sim_queue_original_indices(sim_queue.size());
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
@@ -1069,14 +1073,14 @@ void ProductionQueue::Update() {
     // also remove from simulated queue any items that are located in a resource
     // sharing object group that is empty or that does not have any PP available
     for (unsigned int i = 0; i < sim_queue.size(); ++i) {
-        const std::set<int>& group = queue_element_groups[sim_queue_original_indices[i]];
+        const auto& group = queue_element_groups[sim_queue_original_indices[i]];
 
         // if any removal condition is met, remove item from queue
         bool remove = false;
-        if (group.empty() || !empire->ProducibleItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
+        if (group->empty() || !empire->ProducibleItem(sim_queue[i].item, sim_queue[i].location)) {        // empty group or not buildable
             remove = true;
         } else {
-            std::map<std::set<int>, float>::const_iterator available_it = available_pp.find(group);
+            const auto available_it = available_pp.find(group);
             if (available_it == available_pp.end() || available_it->second < EPSILON)                   // missing group or non-empty group with no PP available
                 remove = true;
         }
@@ -1119,7 +1123,7 @@ void ProductionQueue::Update() {
     dp_time_start = boost::posix_time::ptime(boost::posix_time::microsec_clock::local_time()); 
 
     //invert lookup direction of sim_queue_element_groups:
-    std::map< std::set<int>, std::vector<int>  > elements_by_group;
+    std::map<ResourcePool::key_type, std::vector<int>> elements_by_group;
     for (unsigned int i = 0; i < dpsim_queue.size(); ++i)
         elements_by_group[sim_queue_element_groups[i]].push_back(i);
 
@@ -1138,7 +1142,7 @@ void ProductionQueue::Update() {
 
 
     // within each group, allocate PP to queue items
-    for (const std::map<std::set<int>, float>::value_type& group : available_pp) {
+    for (const auto& group : available_pp) {
         unsigned int first_turn_pp_available = 1; //the first turn any pp in this resource group is available to the next item for this group
         unsigned int turn_jump = 0;
         //pp_still_available[turn-1] gives the PP still available in this resource pool at turn "turn"
@@ -1980,6 +1984,27 @@ void Empire::Win(const std::string& reason) {
     }
 }
 
+namespace
+{
+    template <typename T>
+    std::vector<int> ExistingObjectsKnownToEmpire(int id) {
+        const Universe& universe = GetUniverse();
+        const ObjectMap& empire_known_objects = EmpireKnownObjects(id);
+
+        // get ids of objects partially or better visible to this empire.
+        auto known_objects_vec = empire_known_objects.FindObjectIDs<T>();
+        const auto& known_destroyed_objects = universe.EmpireKnownDestroyedObjectIDs(id);
+
+        std::vector<int> known_objects;
+
+        // exclude objects known to have been destroyed (or rather, include ones that aren't known by this empire to be destroyed)
+        for (int object_id : known_objects_vec)
+            if (known_destroyed_objects.find(object_id) == known_destroyed_objects.end())
+                known_objects.push_back(object_id);
+        return known_objects;
+    }
+}
+
 void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
     //std::cout << "Empire::UpdateSystemSupplyRanges() for empire " << this->Name() << std::endl;
     m_supply_system_ranges.clear();
@@ -2007,7 +2032,7 @@ void Empire::UpdateSystemSupplyRanges(const std::set<int>& known_objects) {
             float supply_range = obj->NextTurnCurrentMeterValue(METER_SUPPLY);
 
             // if this object can provide more supply range than the best previously checked object in this system, record its range as the new best for the system
-            std::map<int, float>::iterator system_it = m_supply_system_ranges.find(system_id);  // try to find a previous entry for this system's supply range
+            const auto& system_it = m_supply_system_ranges.find(system_id);  // try to find a previous entry for this system's supply range
             if (system_it == m_supply_system_ranges.end() || supply_range > system_it->second) {// if there is no previous entry, or the previous entry is shorter than the new one, add or replace the entry
                 //std::cout << " ... object " << obj->Name() << " has resource supply range: " << resource_supply_range << std::endl;
                 m_supply_system_ranges[system_id] = supply_range;
@@ -2083,13 +2108,6 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     // get all fleets, or just those visible to this client's empire
     const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
-    // get empire supply ranges
-    std::map<int, std::map<int, float> > empire_system_supply_ranges;
-    for (const std::map<int, Empire*>::value_type& entry : Empires()) {
-        const Empire* empire = entry.second;
-        empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
-    }
-
     // find systems that contain fleets that can either maintain supply or block supply.
     // to affect supply in either manner, a fleet must be armed & aggressive, & must be not
     // trying to depart the systme.  Qualifying enemy fleets will blockade if no friendly fleets
@@ -2115,19 +2133,22 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
 
         //DebugLogger() << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
         if ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive()) {
-            if (fleet->OwnedBy(m_id)) {
-                if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
+            int fleet_owner = fleet->Owner();
+            auto is_hostile = fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR;
+            auto is_stopped = fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID();
+            auto is_blockading = fleet->ArrivalStarlane() == system_id;
+            if (!is_hostile) {
+                if (is_stopped) {
                     systems_containing_friendly_fleets.insert(system_id);
-                    if (fleet->ArrivalStarlane()==system_id)
+                    if (is_blockading)
                         unrestricted_friendly_systems.insert(system_id);
                     else
                         systems_with_lane_preserving_fleets.insert(system_id);
                 }
-            } else if (fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID()) {
-                int fleet_owner = fleet->Owner();
-                if (fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR) {
+            } else if (is_stopped) {
+                if (is_hostile) {
                     systems_containing_obstructing_objects.insert(system_id);
-                    if (fleet->ArrivalStarlane() == system_id)
+                    if (is_blockading)
                         unrestricted_obstruction_systems.insert(system_id);
                 }
             }
@@ -2166,6 +2187,10 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
             m_supply_unobstructed_systems.insert(sys_id);
 
         } else if (systems_with_lane_preserving_fleets.find(sys_id) == systems_with_lane_preserving_fleets.end()) {
+            // TODO make sure this bit of logic that update m_available_system_exit_lanes and not
+            // the m_supply_unobstructed_systems is preserved.
+            // TODO Determine why this isn't with the other m_available_system_exit_lanes update code?
+
             // otherwise, if system contains no friendly fleets capable of
             // maintaining lane access but does contain an unfriendly fleet,
             // so it is obstructed, so isn't included in the unobstructed
@@ -2180,6 +2205,126 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
         }
     }
 }
+
+void Empire::UpdateSupplyBlockadedSystems() {
+    m_systems_with_empire_owned_blockading_fleets.clear();
+
+    const auto known_systems = ExistingObjectsKnownToEmpire<System>(EmpireID());
+
+    // get systems with historically at least partial visibility
+    std::unordered_set<int> systems_with_at_least_partial_visibility_at_some_point;
+    for (int system_id : known_systems) {
+        const auto& vis_turns = GetUniverse().GetObjectVisibilityTurnMapByEmpire(system_id, m_id);
+        if (vis_turns.find(VIS_PARTIAL_VISIBILITY) != vis_turns.end())
+            systems_with_at_least_partial_visibility_at_some_point.insert(system_id);
+    }
+
+    const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(EmpireID());
+
+    // find systems that contain fleets that can either maintain supply or block supply.
+    // to affect supply in either manner, a fleet must be armed & aggressive, & must be not
+    // trying to depart the systme.  Qualifying enemy fleets will blockade if no friendly fleets
+    // are present, or if the friendly fleets were already blockade-restricted and the enemy
+    // fleets were not (meaning that the enemy fleets were continuing an existing blockade)
+    // Friendly fleets can preserve available starlane accesss even if they are trying to leave the
+    // system
+
+    // TODO: Determine if all ship in all blockading fleets are re-fleeted does this break the
+    // blockade?  The AI does this every turn.
+
+    // Unrestricted lane access (i.e, (fleet->ArrivalStarlane() == system->ID()) ) is used as a proxy for
+    // order of arrival -- if an enemy has unrestricted lane access and you don't, they must have arrived
+    // before you, or be in cahoots with someone who did.
+    std::unordered_set<int> systems_containing_friendly_fleets;
+    std::unordered_set<int> systems_with_lane_preserving_fleets;
+    std::unordered_set<int> unrestricted_friendly_systems;
+    std::unordered_set<int> systems_containing_obstructing_objects;
+    std::unordered_set<int> unrestricted_obstruction_systems;
+    for (std::shared_ptr<const Fleet> fleet : GetUniverse().Objects().FindObjects<Fleet>()) {
+        int system_id = fleet->SystemID();
+        if ((system_id == INVALID_OBJECT_ID)    // not in a system, so can't affect system obstruction
+            || (known_destroyed_objects.find(fleet->ID()) != known_destroyed_objects.end()) // known to be destroyed
+            || !fleet->Aggressive()             // not agressive
+            || !(fleet->HasArmedShips() || fleet->HasFighterShips()) // not armed
+            || !(fleet->NextSystemID() == INVALID_OBJECT_ID || fleet->NextSystemID() == fleet->SystemID())) //leaving system
+        { continue; }
+
+        //DebugLogger() << "Fleet " << fleet->ID() << " is in system " << system_id << " with next system " << fleet->NextSystemID() << " and is owned by " << fleet->Owner() << " armed: " << fleet->HasArmedShips() << " and agressive: " << fleet->Aggressive();
+        if (fleet->OwnedBy(m_id)) {
+            systems_containing_friendly_fleets.insert(system_id);
+            if (fleet->ArrivalStarlane()==system_id)
+                unrestricted_friendly_systems.insert(system_id);
+            else
+                systems_with_lane_preserving_fleets.insert(system_id);
+        } else {
+            int fleet_owner = fleet->Owner();
+            if (fleet_owner == ALL_EMPIRES || Empires().GetDiplomaticStatus(m_id, fleet_owner) == DIPLO_WAR) {
+                systems_containing_obstructing_objects.insert(system_id);
+                if (fleet->ArrivalStarlane() == system_id)
+                    unrestricted_obstruction_systems.insert(system_id);
+            }
+        }
+    }
+
+    //std::stringstream ss;
+    //for (int obj_id : systems_containing_obstructing_objects)
+    //{ ss << obj_id << ", "; }
+    //DebugLogger() << "systems with obstructing objects for empire " << m_id << " : " << ss.str();
+
+
+    // check each potential supplyable system for whether it can propagate supply.
+    for (int sys_id : known_systems) {
+        //DebugLogger() << "deciding unobstructedness for system " << sys_id;
+
+        // has empire ever seen this system with partial or better visibility?
+        if (systems_with_at_least_partial_visibility_at_some_point.find(sys_id) ==
+            systems_with_at_least_partial_visibility_at_some_point.end())
+        { continue; }
+
+        // if system is explored, then whether it can propagate supply depends
+        // on what friendly / enemy ships and planets are in the system
+
+        if (unrestricted_friendly_systems.find(sys_id) != unrestricted_friendly_systems.end()) {
+            // if there are unrestricted friendly ships, supply can propagate
+            m_systems_with_empire_owned_blockading_fleets.insert(sys_id);
+            continue;
+
+        }
+
+        if (systems_containing_friendly_fleets.find(sys_id) != systems_containing_friendly_fleets.end()
+            && (unrestricted_obstruction_systems.find(sys_id) == unrestricted_obstruction_systems.end()))
+        {
+            // if there are (previously) restricted friendly ships, and no unrestricted enemy fleets, supply can propagate
+            m_systems_with_empire_owned_blockading_fleets.insert(sys_id);
+            continue;
+        }
+
+        if (systems_containing_obstructing_objects.find(sys_id) != systems_containing_obstructing_objects.end()
+            && (systems_with_lane_preserving_fleets.find(sys_id) == systems_with_lane_preserving_fleets.end()))
+        {
+            // TODO make sure this bit of logic that update m_available_system_exit_lanes and not
+            // the m_supply_unobstructed_systems is preserved.
+            // TODO Determine why this isn't with the other m_available_system_exit_lanes update code?
+
+            // otherwise, if system contains no friendly fleets capable of
+            // maintaining lane access but does contain an unfriendly fleet,
+            // so it is obstructed, so isn't included in the unobstructed
+            // systems set.  Furthermore, this empire's available system exit
+            // lanes for this system are cleared
+
+
+            // TEST_CODE Remove below
+            if (!m_available_system_exit_lanes[sys_id].empty())
+                ErrorLogger() << "For empire " <<Name()<< "("<<m_id<<") unexpected non empty system lane exits at "<<sys_id;
+            // TEST_CODE Remove above
+
+            m_available_system_exit_lanes[sys_id].clear();
+        }
+    }
+}
+
+const std::unordered_set<int>& Empire::SupplyBlockadedSystems() const
+{ return m_systems_with_empire_owned_blockading_fleets; }
 
 void Empire::RecordPendingLaneUpdate(int start_system_id, int dest_system_id) {
     if (m_supply_unobstructed_systems.find(start_system_id) == m_supply_unobstructed_systems.end()) {
@@ -2201,7 +2346,7 @@ void Empire::UpdateAvailableLanes() {
     m_pending_system_exit_lanes.clear(); // TODO: consider: not really necessary, & may be more efficient to not clear.
 }
 
-const std::map<int, float>& Empire::SystemSupplyRanges() const
+const std::unordered_map<int, float>& Empire::SystemSupplyRanges() const
 { return m_supply_system_ranges; }
 
 const std::set<int>& Empire::SupplyUnobstructedSystems() const
@@ -3329,12 +3474,12 @@ void Empire::InitResourcePools() {
     m_resource_pools[RE_INDUSTRY]->SetConnectedSupplyGroups(GetSupplyManager().ResourceSupplyGroups(m_id));
 
     // set non-blockadeable resource pools to share resources between all systems
-    std::set<std::set<int> > sets_set;
-    std::set<int> all_systems_set;
-    for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingSystems()) {
-        all_systems_set.insert(entry.first);
+    std::vector<ResourcePool::key_type> sets_set;
+    auto all_systems_set = std::make_shared<std::unordered_set<int>>();
+    for (const auto& entry : Objects().ExistingSystems()) {
+        all_systems_set->insert(entry.first);
     }
-    sets_set.insert(all_systems_set);
+    sets_set.push_back(all_systems_set);
     m_resource_pools[RE_RESEARCH]->SetConnectedSupplyGroups(sets_set);
     m_resource_pools[RE_TRADE]->SetConnectedSupplyGroups(sets_set);
 

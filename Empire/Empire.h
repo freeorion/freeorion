@@ -11,6 +11,8 @@
 
 #include <deque>
 #include <string>
+#include <unordered_set>
+#include <unordered_map>
 
 struct ItemSpec;
 class ShipDesign;
@@ -222,15 +224,15 @@ struct FO_COMMON_API ProductionQueue {
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP available in those groups of objects */
-    std::map<std::set<int>, float> AvailablePP(const std::shared_ptr<ResourcePool>& industry_pool) const;
+    std::map<ResourcePool::key_type, float> AvailablePP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
     /** Returns map from sets of object ids that can share resources to amount
       * of PP allocated to production queue elements that have build locations
       * in systems in the group. */
-    const std::map<std::set<int>, float>&  AllocatedPP() const;
+    const std::map<ResourcePool::key_type, float>&  AllocatedPP() const;
 
     /** Returns sets of object ids that have more available than allocated PP */
-    std::set<std::set<int>> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
+    std::set<ResourcePool::key_type> ObjectsWithWastedPP(const std::shared_ptr<ResourcePool>& industry_pool) const;
 
 
     // STL container-like interface
@@ -275,7 +277,7 @@ struct FO_COMMON_API ProductionQueue {
 private:
     QueueType                       m_queue;
     int                             m_projects_in_progress;
-    std::map<std::set<int>, float>  m_object_group_allocated_pp;
+    std::map<ResourcePool::key_type, float>  m_object_group_allocated_pp;
     int                             m_empire_id;
 
     friend class boost::serialization::access;
@@ -393,7 +395,10 @@ public:
 
     /** Returns distance in jumps away from each system that this empire can
       * propagate supply. */
-    const std::map<int, float>&             SystemSupplyRanges() const;
+    const std::unordered_map<int, float>&             SystemSupplyRanges() const;
+
+    /** Returns the systems in which this empire is blockading supply.*/
+    const std::unordered_set<int>& SupplyBlockadedSystems() const;
 
     /** Returns set of system ids that are able to propagate supply from one
       * system to the next, or at which supply can be delivered to fleets if
@@ -509,6 +514,8 @@ public:
     void        UpdateSystemSupplyRanges(const std::set<int>& known_objects);
     /** Calculates ranges that systems can send fleet and resource supplies. */
     void        UpdateSystemSupplyRanges();
+    /** Calculates the systems in which this empire is blockading supply. */
+    void        UpdateSupplyBlockadedSystems();
     /** Calculates systems that can propagate supply (fleet or resource) using
       * the specified set of \a known_systems */
     void        UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems);
@@ -693,8 +700,12 @@ private:
     std::map<std::string, int>      m_building_types_scrapped;  ///< how many buildings of each type has this empire scrapped?
 
     // cached calculation results, returned by reference
-    std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
+    std::unordered_map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
     std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
+
+    /** System id where this empire is blockading/protecting supply.*/
+    std::unordered_set<int>         m_systems_with_empire_owned_blockading_fleets;
+
     std::map<int, std::set<int> >   m_available_system_exit_lanes;  ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
     std::map<int, std::set<int> >   m_pending_system_exit_lanes;    ///< pending updates to m_available_system_exit_lanes
 

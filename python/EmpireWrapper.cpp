@@ -11,13 +11,13 @@
 #include "../util/AppInterface.h"
 #include "../util/Logger.h"
 #include "SetWrapper.h"
+#include "map_indexing_suite_safe.hpp"
 
 #include <GG/Clr.h>
 
 #include <boost/function.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/python.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
 #include <boost/python/tuple.hpp>
 #include <boost/python/to_python_converter.hpp>
@@ -87,11 +87,12 @@ namespace {
     typedef std::map<std::pair<int, int>,int > PairIntInt_IntMap;
 
     std::vector<IntPair> obstructedStarlanesP(const Empire& empire) {
-        const std::set<IntPair>& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
+        const auto& laneset = GetSupplyManager().SupplyObstructedStarlaneTraversals(empire.EmpireID());
         std::vector<IntPair> retval;
+        // TODO remove this try catch.  It was introduced in a large AI commit a7dfe4c5b8.
         try {
-            for (const std::pair<int, int>& lane : laneset)
-            { retval.push_back(lane); }
+            for (const auto& lane : laneset)
+            { retval.push_back(lane.first); }
         } catch (...) {
         }
         return retval;
@@ -144,9 +145,11 @@ namespace {
 
     boost::function<std::map<int,int>(const Empire&)> jumpsToSuppliedSystemFunc =               &jumpsToSuppliedSystemP;
 
-    const std::set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
+    const std::unordered_set<int>& EmpireFleetSupplyableSystemIDsP(const Empire& empire)
     { return GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID()); }
-    boost::function<const std::set<int>& (const Empire&)> empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
+    boost::function<const std::unordered_set<int>& (const Empire&)> empireFleetSupplyableSystemIDsFunc =  &EmpireFleetSupplyableSystemIDsP;
+
+
 
     typedef std::pair<float, int> FloatIntPair;
 
@@ -165,9 +168,9 @@ namespace {
         const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planetsWithAvailablePP;
-        for (const std::map<std::set<int>, float>::value_type& objects_pp : prodQueue.AvailablePP(industry_pool)) {
+        for (const auto& objects_pp : prodQueue.AvailablePP(industry_pool)) {
             std::set<int> planetSet;
-            for (int object_id : objects_pp.first) {
+            for (int object_id : *objects_pp.first) {
                 if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                     planetSet.insert(object_id);
             }
@@ -181,10 +184,10 @@ namespace {
     std::map<std::set<int>, float> PlanetsWithAllocatedPP_P(const Empire& empire) {
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::map<std::set<int>, float> planetsWithAllocatedPP;
-        std::map<std::set<int>, float> objectsWithAllocatedPP = prodQueue.AllocatedPP();
-        for (const std::map<std::set<int>, float>::value_type& objects_pp : objectsWithAllocatedPP) {
+        const auto& objectsWithAllocatedPP = prodQueue.AllocatedPP();
+        for (const auto& objects_pp : objectsWithAllocatedPP) {
             std::set<int> planetSet;
-            for (int object_id : objects_pp.first) {
+            for (int object_id : *objects_pp.first) {
                 if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                     planetSet.insert(object_id);
             }
@@ -199,10 +202,10 @@ namespace {
         const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
         std::set<std::set<int> > planetsWithWastedPP;
-        std::set<std::set<int> > objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
-        for (const std::set<int>&  objects : objectsWithWastedPP) {
+        const auto& objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
+        for (const auto&  objects : objectsWithWastedPP) {
                  std::set<int> planetSet;
-                 for (int object_id : objects) {
+                 for (int object_id : *objects) {
                      if (/* std::shared_ptr<const Planet> planet = */ GetPlanet(object_id))
                          planetSet.insert(object_id);
                  }
@@ -260,10 +263,12 @@ namespace FreeOrionPython {
 
         class_<ResourcePool, std::shared_ptr<ResourcePool>, boost::noncopyable>("resPool", boost::python::no_init);
         //FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
-        FreeOrionPython::SetWrapper<IntSet>::Wrap("IntSetSet");
+        FreeOrionPython::SetWrapper<std::unordered_set<int>>::Wrap("IntUSet");
+        FreeOrionPython::SetWrapper<std::set<std::set<int>>>::Wrap("IntSetSet");
         class_<std::map<std::set<int>, float> > ("resPoolMap")
-            .def(boost::python::map_indexing_suite<std::map<std::set<int>, float>, true>())
-        ;
+            .def(boost::python::map_indexing_suite<std::map<std::set<int>, float>, true>());
+        class_<std::unordered_map<int, float>> ("Float_IntUMap")
+            .def(boost::python::map_indexing_suite<std::unordered_map<int, float>, true>());
 
         ///////////////////
         //     Empire    //
@@ -332,7 +337,7 @@ namespace FreeOrionPython {
             .add_property("fleetSupplyableSystemIDs",   make_function(
                                                             empireFleetSupplyableSystemIDsFunc,
                                                             return_value_policy<copy_const_reference>(),
-                                                            boost::mpl::vector<const std::set<int>&, const Empire& >()
+                                                            boost::mpl::vector<const std::unordered_set<int>&, const Empire& >()
                                                         ))
             .add_property("supplyUnobstructedSystems",  make_function(&Empire::SupplyUnobstructedSystems,   return_internal_reference<>()))
             .add_property("systemSupplyRanges",         make_function(&Empire::SystemSupplyRanges,          return_internal_reference<>()))

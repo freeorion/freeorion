@@ -7,11 +7,11 @@
 #include "../../util/Logger.h"
 #include "../../universe/Universe.h"
 #include "../../universe/UniverseGenerator.h"
+#include "../map_indexing_suite_safe.hpp"
 
 #include <boost/filesystem.hpp>
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/docstring_options.hpp>
 
 
@@ -48,8 +48,8 @@ BOOST_PYTHON_MODULE(freeorion) {
         .def(map_indexing_suite<std::map<int, bool> >())
     ;
 
-    FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
-    FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
+    FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
+    FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
 }
 
 namespace {

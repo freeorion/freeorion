@@ -53,6 +53,7 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/optional/optional.hpp>
+#include <boost/optional/optional_io.hpp>
 #include <boost/locale.hpp>
 
 #include <GG/DrawUtil.h>
@@ -727,12 +728,94 @@ void MapWndPopup::Close()
 //LaneEndpoints
 //////////////////////////////////
 LaneEndpoints::LaneEndpoints() :
+    s1(nullptr),
+    s2(nullptr),
     X1(static_cast<float>(UniverseObject::INVALID_POSITION)),
     Y1(static_cast<float>(UniverseObject::INVALID_POSITION)),
     X2(static_cast<float>(UniverseObject::INVALID_POSITION)),
     Y2(static_cast<float>(UniverseObject::INVALID_POSITION))
 {}
 
+LaneEndpoints::LaneEndpoints(const std::shared_ptr<const System>& _s1, const std::shared_ptr<const System>& _s2) :
+    s1(_s1), s2(_s2),
+    X1(0.0f), Y1(0.0f), X2(0.0f), Y2(0.0f)
+{
+    double X1_calc = _s1->X();
+    double Y1_calc = _s1->Y();
+    double X2_calc = _s2->X();
+    double Y2_calc = _s2->Y();
+
+    // get unit vector
+    double deltaX = X2_calc - X1_calc;
+    double deltaY = Y2_calc - Y1_calc;
+    double mag = std::sqrt(deltaX*deltaX + deltaY*deltaY);
+
+    double ring_radius = ClientUI::SystemCircleSize() / 2.0 + 0.5;
+
+    // safety check.  don't modify original coordinates if they're too close togther
+    if (mag > 2*ring_radius) {
+        // rescale vector to length of ring radius
+        double offsetX = deltaX / mag * ring_radius;
+        double offsetY = deltaY / mag * ring_radius;
+
+        // move start and end points inwards by rescaled vector
+        X1_calc += offsetX;
+        Y1_calc += offsetY;
+        X2_calc -= offsetX;
+        Y2_calc -= offsetY;
+    }
+
+    X1 = static_cast<float>(X1_calc);
+    Y1 = static_cast<float>(Y1_calc);
+    X2 = static_cast<float>(X2_calc);
+    Y2 = static_cast<float>(Y2_calc);
+}
+
+LaneEndpoints::~LaneEndpoints()
+{}
+
+LaneEndpoints::LaneEndpoints(const LaneEndpoints& other) :
+    s1(other.s1), s2(other.s2),
+    X1(other.X1), Y1(other.Y1), X2(other.X2), Y2(other.Y2)
+{}
+
+// Move constructor
+LaneEndpoints::LaneEndpoints(LaneEndpoints&& other) :
+    s1(other.s1), s2(other.s2),
+    X1(other.X1), Y1(other.Y1), X2(other.X2), Y2(other.Y2)
+{}
+
+LaneEndpoints& LaneEndpoints::operator=(const LaneEndpoints& other) {
+    if (this != &other) {
+        s1 = other.s1;
+        s2 = other.s2;
+        X1 = other.X1;
+        Y1 = other.Y1;
+        X2 = other.X2;
+        Y2 = other.Y2;
+    }
+    return *this;
+}
+
+// Move assignment
+LaneEndpoints& LaneEndpoints::operator=(LaneEndpoints&& other) {
+    if (this != &other) {
+        s1 = std::move(other.s1);
+        s2 = std::move(other.s2);
+        X1 = other.X1;
+        Y1 = other.Y1;
+        X2 = other.X2;
+        Y2 = other.Y2;
+    }
+    return *this;
+}
+
+LaneEndpoints& LaneEndpoints::ReverseDirection() {
+    std::swap(s1, s2);
+    std::swap(X1, X2);
+    std::swap(Y1, Y2);
+    return *this;
+}
 
 ////////////////////////////////////////////////
 // MapWnd::MovementLineData::Vertex
@@ -756,9 +839,10 @@ MapWnd::MovementLineData::MovementLineData() :
     colour(GG::CLR_ZERO)
 {}
 
-MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
-                                           const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
-                                           GG::Clr colour_/*= GG::CLR_WHITE*/, int empireID /*= ALL_EMPIRES*/) :
+MapWnd::MovementLineData::MovementLineData(
+    const std::list<MovePathNode>& path_,
+    const std::unordered_map<std::pair<int, int>, LaneEndpoints, OrderedPairHash>& lane_end_points_map,
+    GG::Clr colour_/*= GG::CLR_WHITE*/, int empireID /*= ALL_EMPIRES*/) :
     path(path_),
     colour(colour_)
 {
@@ -782,11 +866,11 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
     int     next_sys_id =               INVALID_OBJECT_ID;
 
     const Empire* empire = GetEmpire(empireID);
-    std::set<int> unobstructed;
+    const std::set<int>* unobstructed;
     bool s_flag = false;
     bool calc_s_flag = false;
     if (empire) {
-        unobstructed = empire->SupplyUnobstructedSystems();
+        unobstructed = &empire->SupplyUnobstructedSystems();
         calc_s_flag = true;
         //s_flag = ((first_node.object_id != INVALID_OBJECT_ID) && unobstructed.find(first_node.object_id)==unobstructed.end());
     }
@@ -823,7 +907,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         std::pair<int, int> lane_ids = UnorderedIntPair(prev_sys_id, next_sys_id);
 
         // get lane end points
-        std::map<std::pair<int, int>, LaneEndpoints>::const_iterator ends_it = lane_end_points_map.find(lane_ids);
+        const auto& ends_it = lane_end_points_map.find(lane_ids);
         if (ends_it == lane_end_points_map.end()) {
             ErrorLogger() << "couldn't get endpoints of lane for move line";
             break;
@@ -838,7 +922,7 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
         // 3) Add points for line segment to list of Vertices
         bool b_flag = node.post_blockade;
         s_flag = s_flag || (calc_s_flag &&
-            ((node.object_id != INVALID_OBJECT_ID) && unobstructed.find(node.object_id)==unobstructed.end()));
+            ((node.object_id != INVALID_OBJECT_ID) && unobstructed->find(node.object_id)==unobstructed->end()));
         vertices.push_back(Vertex(start_xy.first,   start_xy.second,    prev_eta,   false,          b_flag, s_flag));
         vertices.push_back(Vertex(end_xy.first,     end_xy.second,      node.eta,   node.turn_end,  b_flag, s_flag));
 
@@ -1438,6 +1522,7 @@ MapWnd::MapWnd() :
         }
         if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd()) {
             GG::Connect(plr_wnd->ClosingSignal, boost::bind(&MapWnd::HideEmpires, this));     // Wnd is manually closed by user
+            GG::Connect(plr_wnd->SelectedPlayersChangedSignal, boost::bind(&MapWnd::SelectedPlayersChanged, this));
             if (plr_wnd->Visible()) {
                 m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
                 m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
@@ -1921,9 +2006,19 @@ void MapWnd::RenderSystems() {
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
         glLineWidth(1.5f);
-        glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
+        const auto unowned_starlane_color = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+        glColor(unowned_starlane_color);
+
+        const Empire* client_empire = GetEmpire(empire_id);
+
+        const auto detection_meter = client_empire ? client_empire->GetMeter("METER_DETECTION_STRENGTH") : nullptr;
+        const auto detection_strength =  detection_meter ? detection_meter->Current() : 0.0f;
+
+        const Empire* observed_empire = (m_supply_lane_empire_id ? GetEmpire(*m_supply_lane_empire_id) : client_empire);
+        bool self_observation = observed_empire ? (observed_empire->EmpireID() == client_empire->EmpireID()) : false;
 
         for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
+            glColor(unowned_starlane_color);
             const SystemIcon* icon = system_icon.second;
 
             const int ARC_SIZE = icon->EnclosingCircleDiameter();
@@ -1939,8 +2034,8 @@ void MapWnd::RenderSystems() {
             GG::Pt circle_ul = middle - circle_half_size;
             GG::Pt circle_lr = circle_ul + circle_size;
 
-            if (fog_scanlines
-                && (universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) <= VIS_BASIC_VISIBILITY))
+            const bool system_visible = universe.GetObjectVisibilityByEmpire(system_icon.first, empire_id) > VIS_BASIC_VISIBILITY;
+            if (fog_scanlines && !system_visible)
             {
                 m_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("UI.system-fog-of-war-clr"));
                 m_scanline_shader.RenderCircle(circle_ul, circle_lr);
@@ -1950,12 +2045,18 @@ void MapWnd::RenderSystems() {
             if (circles) {
                 if (std::shared_ptr<const System> system = GetSystem(system_icon.first)) {
                     if (system->NumStarlanes() > 0) {
-                        glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
+                        glColor(unowned_starlane_color);
 
-                        int empire_id = GetSupplyManager().EmpireThatCanSupplyAt(system_icon.first);
-                        if (empire_id != ALL_EMPIRES) {
-                            if (Empire* empire = GetEmpire(empire_id)) {
-                                glColor(empire->Color());
+                        // If the supply observed empire can supply this system then color the
+                        // circle if the client empire can detect that supply and see the system.
+                        if (observed_empire) {
+                            const auto& supply_stealth_map = GetSupplyManager().SupplyStealth(observed_empire->EmpireID());
+                            const auto& supply_stealth_it = supply_stealth_map.find(system_icon.first);
+                            if (supply_stealth_it != supply_stealth_map.end()
+                                && (self_observation || supply_stealth_it->second < detection_strength)
+                                && system_visible)
+                            {
+                                glColor(observed_empire->Color());
                             }
                         }
                         CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
@@ -2686,7 +2787,7 @@ void MapWnd::InitTurn() {
 
 void MapWnd::MidTurnUpdate() {
     DebugLogger() << "MapWnd::MidTurnUpdate";
-    ScopedTimer timer("MapWnd::MidTurnUpdate", true);
+    SectionedScopedTimer timer("MapWnd::MidTurnUpdate", boost::chrono::microseconds(100));
 
     GetUniverse().InitializeSystemGraph(HumanClientApp::GetApp()->EmpireID());
 
@@ -2705,7 +2806,8 @@ void MapWnd::MidTurnUpdate() {
 
 void MapWnd::InitTurnRendering() {
     DebugLogger() << "MapWnd::InitTurnRendering";
-    ScopedTimer timer("MapWnd::InitTurnRendering", true);
+    SectionedScopedTimer timer("MapWnd::InitTurnRendering", boost::chrono::microseconds(100));
+    timer.EnterSection("init");
 
     // adjust size of map window for universe and application size
     Resize(GG::Pt(static_cast<GG::X>(GetUniverse().UniverseWidth() * ZOOM_MAX + AppWidth() * 1.5),
@@ -2759,6 +2861,7 @@ void MapWnd::InitTurnRendering() {
 
     // create buffers for system icon and galaxy gas rendering, and starlane rendering
     InitSystemRenderingBuffers();
+    InitStarlaneEndPoints();
     InitStarlaneRenderingBuffers();
 
     // position system icons
@@ -2799,7 +2902,7 @@ void MapWnd::InitTurnRendering() {
 
     InitVisibilityRadiiRenderingBuffers();
 
-    // create fleet buttons and move lines.  needs to be after InitStarlaneRenderingBuffers so that m_starlane_endpoints is populated
+    // create fleet buttons and move lines.  needs to be after InitStarlaneEndpoints so that m_starlane_endpoints is populated
     RefreshFleetButtons();
 
 
@@ -2810,7 +2913,7 @@ void MapWnd::InitTurnRendering() {
 
 void MapWnd::InitSystemRenderingBuffers() {
     DebugLogger() << "MapWnd::InitSystemRenderingBuffers";
-    ScopedTimer timer("MapWnd::InitSystemRenderingBuffers", true);
+    SectionedScopedTimer timer("MapWnd::InitSystemRenderingBuffers", boost::chrono::microseconds(100));
 
     // clear out all the old buffers
     ClearSystemRenderingBuffers();
@@ -2958,6 +3061,29 @@ void MapWnd::ClearSystemRenderingBuffers() {
     m_galaxy_gas_texture_coords.clear();
     m_star_texture_coords.clear();
     m_star_circle_vertices.clear();
+}
+
+void MapWnd::SelectedPlayersChanged() {
+    // If there is a single empire selected in the Empires window, then render its supply lanes.
+    const auto cui = ClientUI::GetClientUI();
+    if (!cui)
+        return;
+    const auto plr_wnd = cui->GetPlayerListWnd();
+    if (!plr_wnd)
+        return;
+    const auto players = plr_wnd->SelectedPlayerIDs();
+    if (players.size() != 1)
+        return;
+
+    ChangeSupplyLaneRenderedEmpire(*players.begin());
+}
+
+void MapWnd::ChangeSupplyLaneRenderedEmpire(int empire_id) {
+    // Update supply lane rendering if it changed.
+    auto m_supply_lane_empire_id_old = m_supply_lane_empire_id;
+    m_supply_lane_empire_id = (empire_id != ALL_EMPIRES) ? boost::optional<int>(empire_id) : boost::none;
+    if (m_supply_lane_empire_id != m_supply_lane_empire_id_old)
+        InitStarlaneRenderingBuffers();
 }
 
 namespace GetPathsThroughSupplyLanes {
@@ -3209,10 +3335,9 @@ namespace {
         }
         return map_it->second;
     }
-
     void GetResPoolLaneInfo(int empire_id,
-                            boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>& res_pool_systems,
-                            boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>& res_group_cores,
+                            boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>>& res_pool_systems,
+                            boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>>& res_group_cores,
                             std::unordered_set<int>& res_group_core_members,
                             boost::unordered_map<int, std::shared_ptr<std::set<int>>>& member_to_core,
                             std::shared_ptr<std::unordered_set<int>>& under_alloc_res_grp_core_members)
@@ -3229,18 +3354,18 @@ namespace {
             return;
 
         const ProductionQueue& queue = empire->GetProductionQueue();
-        const std::map<std::set<int>, float>& allocated_pp(queue.AllocatedPP());
-        const std::map<std::set<int>, float> available_pp(empire->GetResourcePool(RE_INDUSTRY)->Available());
+        const auto& allocated_pp(queue.AllocatedPP());
+        const auto& available_pp(empire->GetResourcePool(RE_INDUSTRY)->Available());
 
         // For each industry set,
         // add all planet's systems to res_pool_systems[industry set]
-        for (const std::map<std::set<int>, float>::value_type& available_pp_group : available_pp) {
+        for (const auto& available_pp_group : available_pp) {
             float group_pp = available_pp_group.second;
             if (group_pp < 1e-4f)
                 continue;
 
             // std::string this_pool = "( ";
-            for (int object_id : available_pp_group.first) {
+            for (int object_id : *available_pp_group.first) {
                 // this_pool += std::to_string(object_id) +", ";
 
                 std::shared_ptr<const Planet> planet = GetPlanet(object_id);
@@ -3265,19 +3390,19 @@ namespace {
         // Convert supply starlanes to non-directional.  This saves half
         // of the lookups.
         GetPathsThroughSupplyLanes::SupplyLaneMMap resource_supply_lanes_undirected;
-        const std::set<std::pair<int, int>>
+        const auto&
             resource_supply_lanes_directed = GetSupplyManager().SupplyStarlaneTraversals(empire_id);
 
-        for (const std::set<std::pair<int, int>>::value_type& supply_lane : resource_supply_lanes_directed) {
-            resource_supply_lanes_undirected.insert({supply_lane.first, supply_lane.second});
-            resource_supply_lanes_undirected.insert({supply_lane.second, supply_lane.first});
+        for (const auto& supply_lane : resource_supply_lanes_directed) {
+            resource_supply_lanes_undirected.insert({supply_lane.first.first, supply_lane.first.second});
+            resource_supply_lanes_undirected.insert({supply_lane.first.second, supply_lane.first.first});
         }
 
         // For each pool of resources find all paths available through
         // the supply network.
 
-        for (boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>::value_type& res_pool_system : res_pool_systems) {
-            std::shared_ptr<std::set<int>>& group_core = lookup_or_make_shared(res_group_cores, res_pool_system.first);
+        for (boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>>::value_type& res_pool_system : res_pool_systems) {
+            auto& group_core = lookup_or_make_shared(res_group_cores, res_pool_system.first);
 
             // All individual resource system are included in the
             // network on their own.
@@ -3307,14 +3432,14 @@ namespace {
         }
 
         // Take note of all systems of under allocated resource groups.
-        for (const std::map<std::set<int>, float>::value_type& available_pp_group : available_pp) {
+        for (const auto& available_pp_group : available_pp) {
             float group_pp = available_pp_group.second;
             if (group_pp < 1e-4f)
                 continue;
 
-            std::map<std::set<int>, float>::const_iterator allocated_it = allocated_pp.find(available_pp_group.first);
+            const auto& allocated_it = allocated_pp.find(available_pp_group.first);
             if (allocated_it == allocated_pp.end() || (group_pp > allocated_it->second + 0.05)) {
-                boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>>::iterator group_core_it = res_group_cores.find(available_pp_group.first);
+                boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>>::iterator group_core_it = res_group_cores.find(available_pp_group.first);
                 if (group_core_it != res_group_cores.end()) {
                     if (!under_alloc_res_grp_core_members)
                         under_alloc_res_grp_core_members = std::make_shared<std::unordered_set<int>>();
@@ -3325,52 +3450,26 @@ namespace {
     }
 }
 
-void MapWnd::InitStarlaneRenderingBuffers() {
-    DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
-    ScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", true);
-
-    // clear old buffers
-    ClearStarlaneRenderingBuffers();
-
-    // temp storage
-    std::set<std::pair<int, int>>  rendered_half_starlanes;    // stored as unaltered pairs, so that a each direction of traversal can be shown separately
-
-    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
-
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-
-    const std::set<int>& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
-    const Empire* this_client_empire = GetEmpire(client_empire_id);
-
-
-
-    // Get info about rendered empire resource starlanes
-
-    // map keyed by ResourcePool (set of objects) to the corresponding set of system ids
-    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_pool_systems;
-    // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
-    boost::unordered_map<std::set<int>, std::shared_ptr<std::set<int>>> res_group_cores;
-    std::unordered_set<int> res_group_core_members;
-    boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
-    std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
-    GetResPoolLaneInfo(client_empire_id, res_pool_systems, res_group_cores, res_group_core_members,
-                       member_to_core, under_alloc_res_grp_core_members);
-
-
-
-    // calculate in-universe apparent starlane endpoints and create buffers for starlane rendering
+void MapWnd::InitStarlaneEndPoints() {
+    SectionedScopedTimer timer("MapWnd::InitStarlaneEndpoints", boost::chrono::microseconds(100));
+    timer.EnterSection("init");
     m_starlane_endpoints.clear();
 
-    for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
-        int system_id = system_icon.first;
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const auto& this_client_known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(client_empire_id);
 
+    for (const auto& system_icon : m_system_icons) {
+        int start_sys_id = system_icon.first;
+
+        timer.EnterSection("destroyed");
         // skip systems that don't actually exist
-        if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+        if (this_client_known_destroyed_objects.find(start_sys_id) != this_client_known_destroyed_objects.end())
             continue;
 
-        std::shared_ptr<const System> start_system = GetSystem(system_id);
+        timer.EnterSection("get system");
+        std::shared_ptr<const System> start_system = GetSystem(start_sys_id);
         if (!start_system) {
-            ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
+            ErrorLogger() << "MapWnd::InitStarlaneEndpoint couldn't get system with id " << start_sys_id;
             continue;
         }
 
@@ -3379,138 +3478,240 @@ void MapWnd::InitStarlaneRenderingBuffers() {
             bool lane_is_wormhole = render_lane.second;
             if (lane_is_wormhole) continue; // at present, not rendering wormholes
 
-            int lane_end_sys_id = render_lane.first;
+            int end_sys_id = render_lane.first;
 
+            timer.EnterSection("destroyed");
             // skip lanes to systems that don't actually exist
-            if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+            if (this_client_known_destroyed_objects.find(end_sys_id) != this_client_known_destroyed_objects.end())
                 continue;
 
+            timer.EnterSection("get system");
             std::shared_ptr<const System> dest_system = GetSystem(render_lane.first);
             if (!dest_system)
                 continue;
-            //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
-
 
             // check that this lane isn't already in map / being rendered.
-            std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());     // get "unordered pair" indexing lane
+            std::pair<int, int> lane = {start_system->ID(), dest_system->ID()};
 
-            if (m_starlane_endpoints.find(lane) == m_starlane_endpoints.end()) {
-                //std::cout << "adding full length lane" << std::endl;
+            if (m_starlane_endpoints.find(lane) != m_starlane_endpoints.end())
+                continue;
 
-                // get and store universe position endpoints for this starlane.  make sure to store in the same order
-                // as the system ids in the lane id pair
-                if (start_system->ID() == lane.first)
-                    m_starlane_endpoints[lane] = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
-                else
-                    m_starlane_endpoints[lane] = StarlaneEndPointsFromSystemPositions(dest_system->X(), dest_system->Y(), start_system->X(), start_system->Y());
+            timer.EnterSection("add full lane end points");
+
+            // get and store universe position endpoints for this starlane.  make sure to store in the same order
+            // as the system ids in the lane id pair
+            if (start_system->ID() == lane.first)
+                m_starlane_endpoints.insert(std::make_pair(lane, LaneEndpoints(start_system, dest_system)));
+            else
+                m_starlane_endpoints.insert(std::make_pair(lane, LaneEndpoints(dest_system, start_system)));
+        }
+    }
+}
+
+void MapWnd::InitStarlaneRenderingBuffers() {
+    DebugLogger() << "MapWnd::InitStarlaneRenderingBuffers";
+    SectionedScopedTimer timer("MapWnd::InitStarlaneRenderingBuffers", boost::chrono::microseconds(100));
+    timer.EnterSection("init");
+
+    // clear old buffers
+    ClearStarlaneRenderingBuffers();
+
+    const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* client_empire = GetEmpire(client_empire_id);
+
+    const auto detection_meter = client_empire->GetMeter("METER_DETECTION_STRENGTH");
+    const auto detection_strength =  detection_meter ? detection_meter->Current() : 0.0f;
+
+    const Empire* observed_empire = (m_supply_lane_empire_id ? GetEmpire(*m_supply_lane_empire_id) : client_empire);
+
+    bool self_observation = (observed_empire->EmpireID() == client_empire->EmpireID());
+
+    // map keyed by ResourcePool (set of objects) to the corresponding set of SysIDs
+    boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>> res_pool_systems;
+    // map keyed by ResourcePool to the set of systems considered the core of the corresponding ResGroup
+    boost::unordered_map<ResourcePool::key_type, std::shared_ptr<std::set<int>>> res_group_cores;
+
+    std::unordered_set<int> res_group_core_members;
+    boost::unordered_map<int, std::shared_ptr<std::set<int>>> member_to_core;
+    std::shared_ptr<std::unordered_set<int>> under_alloc_res_grp_core_members;
+    GetResPoolLaneInfo(observed_empire->EmpireID(), res_pool_systems, res_group_cores, res_group_core_members,
+                       member_to_core, under_alloc_res_grp_core_members);
 
 
-                // add vertices for this full-length starlane
-                m_starlane_vertices.store(static_cast<float>(m_starlane_endpoints[lane].X1),
-                                          static_cast<float>(m_starlane_endpoints[lane].Y1));
-                m_starlane_vertices.store(static_cast<float>(m_starlane_endpoints[lane].X2),
-                                          static_cast<float>(m_starlane_endpoints[lane].Y2));
+    //DebugLogger() << "           MapWnd::InitStarlaneRenderingBuffers  finished empire Info collection";
+    timer.EnterSection("basic grey");
 
-                // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
-                // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
-                GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
-                for (std::map<int, Empire*>::value_type& entry : Empires()) {
-                    Empire* empire = entry.second;
-                    const std::set<std::pair<int, int>>& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(entry.first);
+    // A function for adding partial starlanes.
+    auto add_partial_lane =
+        []
+        (GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuffer& colors,
+         const LaneEndpoints& endpoints, const GG::Clr& color, const float extent)
+        {
+            vertices.store(endpoints.X1, endpoints.Y1);
+            vertices.store((endpoints.X1 + endpoints.X2) * extent,   // half way along starlane
+                           (endpoints.Y1 + endpoints.Y2) * extent);
 
-                    //std::cout << "resource supply starlane traversals for empire " << empire->Name() << ": " << resource_supply_lanes.size() << std::endl;
+            colors.store(color);
+            colors.store(color);
+        };
 
-                    std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
-                    std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
+    // create buffers for starlane rendering
 
-                    // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
-                    if (resource_supply_lanes.find(lane_forward) != resource_supply_lanes.end() || resource_supply_lanes.find(lane_backward) != resource_supply_lanes.end()) {
-                        lane_colour = empire->Color();
-                        //std::cout << "selected colour of empire " << empire->Name() << " for this full lane" << std::endl;
-                        break;
-                    }
+    // Draw a base layer of uncolored starlanes.
+    for (const auto& lane_and_endpoint : m_starlane_endpoints) {
+        const auto& endpoints = lane_and_endpoint.second;
+
+        timer.EnterSection("add full lane vertices basic");
+        // add vertices for this full-length starlane
+        m_starlane_vertices.store(endpoints.X1, endpoints.Y1);
+        m_starlane_vertices.store(endpoints.X2, endpoints.Y2);
+
+        GG::Clr lane_colour = UNOWNED_LANE_COLOUR;    // default colour if no empires transfer resources along starlane
+        m_starlane_colors.store(lane_colour);
+        m_starlane_colors.store(lane_colour);
+    }
+
+    timer.EnterSection("add colored traversals");
+
+    // Add colored traversals to show supply propagation for the observed empire
+    if (observed_empire) {
+
+        const auto& resource_supply_lanes = GetSupplyManager().SupplyStarlaneTraversals(observed_empire->EmpireID());
+        const GG::Clr lane_colour = observed_empire->Color();
+
+        // The valid full lane traversals for the observed empire.
+
+        for (const auto& lane_and_endpoint : m_starlane_endpoints) {
+            const auto& endpoints = lane_and_endpoint.second;
+            const auto& start_system = endpoints.s1;
+            const auto& end_system   = endpoints.s2;
+
+            timer.EnterSection("visibility check");
+            bool start_visible = GetUniverse().GetObjectVisibilityByEmpire(
+                start_system->ID(), client_empire->EmpireID()) > VIS_BASIC_VISIBILITY;
+            bool end_visible = GetUniverse().GetObjectVisibilityByEmpire(
+                end_system->ID(), client_empire->EmpireID()) > VIS_BASIC_VISIBILITY;
+
+            // Are neither of the endpoints visible?
+            if (!start_visible && !end_visible)
+                break;
+
+            // Determine the stealth of the forward and backward lane
+            timer.EnterSection("double stealth search");
+            std::pair<int, int> lane_forward{start_system->ID(), end_system->ID()};
+            std::pair<int, int> lane_backward{end_system->ID(), start_system->ID()};
+
+            const auto& forward_lane_and_stealth = resource_supply_lanes.find(lane_forward);
+            const auto& backward_lane_and_stealth = resource_supply_lanes.find(lane_backward);
+
+            // Do the lanes exist and have stealth < detection or is observed by own empire?
+            bool forward_detectable = ((forward_lane_and_stealth != resource_supply_lanes.end())
+                                       && (self_observation || forward_lane_and_stealth->second < detection_strength));
+
+            bool backward_detectable = ((backward_lane_and_stealth != resource_supply_lanes.end())
+                                        && (self_observation || backward_lane_and_stealth->second < detection_strength));
+
+
+            // Should the whole lane be colored?
+            // Is either endpoint visible?
+            if (observed_empire && (start_visible || end_visible)) {
+                timer.EnterSection("full lane coloring");
+                // Is the lane detectable?
+                if (forward_detectable || backward_detectable) {
+                    timer.EnterSection("add full lane colored vertices");
+                    // add colored vertices for this full-length starlane
+                    m_starlane_vertices.store(endpoints.X1, endpoints.Y1);
+                    m_starlane_vertices.store(endpoints.X2, endpoints.Y2);
+                    m_starlane_colors.store(lane_colour);
+                    m_starlane_colors.store(lane_colour);
                 }
-
-                // vertex colours for starlane
-                m_starlane_colors.store(lane_colour);
-                m_starlane_colors.store(lane_colour);
-
-                //DebugLogger() << "adding full lane from " << start_system->Name() << " to " << dest_system->Name();
             }
 
 
-            // render half-starlane from the current start_system to the current dest_system?
+            /** Compute the length, width and color of a half lane from start to end.*/
+            auto compute_half_starlane_extent =
+                [&timer, this, &observed_empire, &client_empire, &res_group_core_members,
+                 &under_alloc_res_grp_core_members, &member_to_core, &detection_strength,
+                 &self_observation, add_partial_lane]
+                (const LaneEndpoints& endpoints)
+                {
+                    const auto& half_start_system = endpoints.s1;
+                    const auto& half_end_system   = endpoints.s2;
 
-            // check that this lane isn't already going to be rendered.  skip it if it is.
-            if (rendered_half_starlanes.find({start_system->ID(), dest_system->ID()}) ==
-                rendered_half_starlanes.end())
-            {
-                // NOTE: this will never find a preexisting half lane   NOTE LATER: I probably wrote that comment, but have no idea what it means...
-                //std::cout << "half lane not found... considering possible half lanes to add" << std::endl;
+                    // render half-starlane from the current start_system to the current dest_system?
+                    // check that this lane isn't already going to be rendered.  skip it if it is.
+                    timer.EnterSection("add half lane entry search");
+                    std::pair<int, int> lane_forward {half_start_system->ID(), half_end_system->ID()};
 
-                // scan through possible empires to have a half-lane here and add a half-lane if one is found
-                std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
-                //std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
-                LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
-                GG::Clr lane_colour;
-                if ( (this_client_empire) &&(res_group_core_members.find(start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for this_client_empire -- highlight
-                    lane_colour = this_client_empire->Color();
-                    float indicatorExtent = 0.5f;
-                    if (under_alloc_res_grp_core_members
-                        && (under_alloc_res_grp_core_members->find(start_system->ID()) != under_alloc_res_grp_core_members->end() ) )
+                    timer.EnterSection("add half lane");
+
+                    // scan through possible empires to have a half-lane here and add a half-lane if one is found
+                    timer.EnterSection("add half lane end points");
+
+                    GG::Clr lane_colour;
+                    timer.EnterSection("group core search");
+                    if ((res_group_core_members.find(half_start_system->ID()) != res_group_core_members.end()))  {//start system is a res Grp core member for observed_empire -- highlight
+                        timer.EnterSection("under alloc search");
+                        lane_colour = observed_empire->Color();
+                        float indicatorExtent = 0.5f;
+                        if (under_alloc_res_grp_core_members
+                            && (under_alloc_res_grp_core_members->find(half_start_system->ID()) != under_alloc_res_grp_core_members->end() ) )
+                        {
+                            GG::Clr eclr= observed_empire->Color();
+                            lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
+                        }
+                        /*if ((observed_empire->SupplyObstructedStarlaneTraversals().find(lane_forward) != observed_empire->SupplyObstructedStarlaneTraversals().end()) ||
+                          (observed_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != observed_empire->SupplyObstructedStarlaneTraversals().end()) ||
+                          !( (observed_empire->SupplyStarlaneTraversals().find(lane_forward) != observed_empire->SupplyStarlaneTraversals().end()) ||
+                          (observed_empire->SupplyStarlaneTraversals().find(lane_backward) != observed_empire->SupplyStarlaneTraversals().end())   )  ) */
+                        timer.EnterSection("group core double search");
+
+                        // Are both systems core systems, not in the same supply group?
+                        boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator start_core
+                            = member_to_core.find(half_start_system->ID());
+                        boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator dest_core
+                            = member_to_core.find(half_end_system->ID());
+                        if (start_core != member_to_core.end() && dest_core != member_to_core.end()
+                            && (start_core->second != dest_core->second)
+                            && (*(start_core->second) != *(dest_core->second)))
+                        {
+                            // Disconnect them.
+                            indicatorExtent = 0.2f;
+                        }
+                        timer.EnterSection("group core store vertices");
+                        add_partial_lane(m_RC_starlane_vertices, m_RC_starlane_colors,
+                                         endpoints, lane_colour, indicatorExtent);
+                    }
+
+                    timer.EnterSection("final four get obstructed");
+                    const auto& resource_obstructed_supply_lanes =
+                    GetSupplyManager().SupplyObstructedStarlaneTraversals(observed_empire->EmpireID());
+
+                    timer.EnterSection("final four search obstructed");
+                    // see if this lane exists in the empire's blocked supply lanes and that it is visible.
+                    const auto& forward_lane_and_stealth = resource_obstructed_supply_lanes.find(lane_forward);
+                    // Check if the forward lane is visible
+                    if ((forward_lane_and_stealth != resource_obstructed_supply_lanes.end()
+                         && (self_observation || forward_lane_and_stealth->second < detection_strength)))
                     {
-                        GG::Clr eclr= this_client_empire->Color();
-                        lane_colour = GG::DarkColor(GG::Clr(255-eclr.r, 255-eclr.g, 255-eclr.b, eclr.a));
+                        timer.EnterSection("final four vertices");
+                        // Add a half length starlane.
+                        add_partial_lane(m_starlane_vertices, m_starlane_colors,
+                                         endpoints, observed_empire->Color(), 0.5f);
                     }
-                    /*if ((this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
-                        (this_client_empire->SupplyObstructedStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyObstructedStarlaneTraversals().end()) ||
-                        !( (this_client_empire->SupplyStarlaneTraversals().find(lane_forward) != this_client_empire->SupplyStarlaneTraversals().end()) ||
-                        (this_client_empire->SupplyStarlaneTraversals().find(lane_backward) != this_client_empire->SupplyStarlaneTraversals().end())   )  ) */
-                    boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator start_core = member_to_core.find(start_system->ID());
-                    boost::unordered_map<int, std::shared_ptr<std::set<int>>>::const_iterator dest_core = member_to_core.find(dest_system->ID());
-                    if (start_core != member_to_core.end() && dest_core != member_to_core.end()
-                        && (start_core->second != dest_core->second)
-                        && (*(start_core->second) != *(dest_core->second)))
-                    {
-                        indicatorExtent = 0.2f;
-                    }
-                    m_RC_starlane_vertices.store(lane_endpoints.X1,
-                                                 lane_endpoints.Y1);
-                    m_RC_starlane_vertices.store((lane_endpoints.X2 - lane_endpoints.X1) * indicatorExtent + lane_endpoints.X1,   // part way along starlane
-                                                 (lane_endpoints.Y2 - lane_endpoints.Y1) * indicatorExtent + lane_endpoints.Y1);
+                };
 
-                    m_RC_starlane_colors.store(lane_colour);
-                    m_RC_starlane_colors.store(lane_colour);
-                }
-
-                for (std::map<int, Empire*>::value_type& entry : Empires()) {
-                    Empire* empire = entry.second;
-                    const std::set<std::pair<int, int>>& resource_obstructed_supply_lanes =
-                        GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
-
-                    // see if this lane exists in this empire's supply propagation lanes set.  either direction accepted.
-                    if (resource_obstructed_supply_lanes.find(lane_forward) != resource_obstructed_supply_lanes.end()) {
-                        // found an empire that has a half lane here, so add it.
-                        rendered_half_starlanes.insert({start_system->ID(), dest_system->ID()});  // inserted as ordered pair, so both directions can have different half-lanes
-
-                        m_starlane_vertices.store(lane_endpoints.X1,
-                                                  lane_endpoints.Y1);
-                        m_starlane_vertices.store((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f,   // half way along starlane
-                                                  (lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
-
-                        lane_colour = empire->Color();
-                        m_starlane_colors.store(lane_colour);
-                        m_starlane_colors.store(lane_colour);
-
-                        //std::cout << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name() << std::endl;
-
-                        break;
-                    }
-                }
-            }
+            // Compute each half starlane.
+            if (start_visible)
+                compute_half_starlane_extent(lane_and_endpoint.second);
+            if (end_visible)
+                compute_half_starlane_extent(LaneEndpoints(lane_and_endpoint.second).ReverseDirection());
         }
     }
 
+    timer.EnterSection("fill buffers");
 
     // fill new buffers
     m_starlane_vertices.createServerBuffer();
@@ -3519,7 +3720,9 @@ void MapWnd::InitStarlaneRenderingBuffers() {
     m_RC_starlane_vertices.createServerBuffer();
     m_RC_starlane_colors.createServerBuffer();
     m_RC_starlane_vertices.harmonizeBufferType(m_RC_starlane_colors);
+
 }
+
 
 void MapWnd::ClearStarlaneRenderingBuffers() {
     m_starlane_vertices.clear();
@@ -3528,38 +3731,9 @@ void MapWnd::ClearStarlaneRenderingBuffers() {
     m_RC_starlane_colors.clear();
 }
 
-LaneEndpoints MapWnd::StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {
-    LaneEndpoints retval;
-
-    // get unit vector
-    double deltaX = X2 - X1, deltaY = Y2 - Y1;
-    double mag = std::sqrt(deltaX*deltaX + deltaY*deltaY);
-
-    double ring_radius = ClientUI::SystemCircleSize() / 2.0 + 0.5;
-
-    // safety check.  don't modify original coordinates if they're too close togther
-    if (mag > 2*ring_radius) {
-        // rescale vector to length of ring radius
-        double offsetX = deltaX / mag * ring_radius;
-        double offsetY = deltaY / mag * ring_radius;
-
-        // move start and end points inwards by rescaled vector
-        X1 += offsetX;
-        Y1 += offsetY;
-        X2 -= offsetX;
-        Y2 -= offsetY;
-    }
-
-    retval.X1 = static_cast<float>(X1);
-    retval.Y1 = static_cast<float>(Y1);
-    retval.X2 = static_cast<float>(X2);
-    retval.Y2 = static_cast<float>(Y2);
-    return retval;
-}
-
 void MapWnd::InitFieldRenderingBuffers() {
     DebugLogger() << "MapWnd::InitFieldRenderingBuffers";
-    ScopedTimer timer("MapWnd::InitFieldRenderingBuffers", true);
+    SectionedScopedTimer timer("MapWnd::InitFieldRenderingBuffers", boost::chrono::microseconds(100));
 
     ClearFieldRenderingBuffers();
 
@@ -3668,7 +3842,7 @@ void MapWnd::ClearFieldRenderingBuffers() {
 void MapWnd::InitVisibilityRadiiRenderingBuffers() {
     DebugLogger() << "MapWnd::InitVisibilityRadiiRenderingBuffers";
     //std::cout << "InitVisibilityRadiiRenderingBuffers" << std::endl;
-    ScopedTimer timer("MapWnd::InitVisibilityRadiiRenderingBuffers", true);
+    SectionedScopedTimer timer("MapWnd::InitVisibilityRadiiRenderingBuffers", boost::chrono::microseconds(100));
 
     ClearVisibilityRadiiRenderingBuffers();
 
@@ -4046,6 +4220,7 @@ void MapWnd::ReselectLastSystem() {
 }
 
 void MapWnd::SelectSystem(int system_id) {
+    SectionedScopedTimer timer("MapWnd::SelectSystem", boost::chrono::microseconds(100));
     //std::cout << "MapWnd::SelectSystem(" << system_id << ")" << std::endl;
     std::shared_ptr<const System> system = GetSystem(system_id);
     if (!system && system_id != INVALID_OBJECT_ID) {
@@ -4053,12 +4228,12 @@ void MapWnd::SelectSystem(int system_id) {
         system_id = INVALID_OBJECT_ID;
     }
 
-
     if (system) {
         // ensure meter estimates are up to date, particularly for which ship is selected
         GetUniverse().UpdateMeterEstimates(system_id, true);
-    }
 
+        ChangeSupplyLaneRenderedEmpire(system->Owner());
+    }
 
     if (SidePanel::SystemID() != system_id) {
         // remove map selection indicator from previously selected system
@@ -4134,13 +4309,22 @@ void MapWnd::ReselectLastFleet() {
     }
 }
 
-void MapWnd::SelectPlanet(int planetID)
-{ m_production_wnd->SelectPlanet(planetID); }   // calls SidePanel::SelectPlanet()
+void MapWnd::SelectPlanet(int planet_id) {
+    SectionedScopedTimer timer("MapWnd::SelectPlanet", boost::chrono::microseconds(100));
+    m_production_wnd->SelectPlanet(planet_id);    // calls SidePanel::SelectPlanet()
+
+    std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+    if (!planet)
+        return;
+
+    ChangeSupplyLaneRenderedEmpire(planet->Owner());
+}
 
 void MapWnd::SelectFleet(int fleet_id)
 { SelectFleet(GetFleet(fleet_id)); }
 
 void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
+    SectionedScopedTimer timer("MapWnd::SelectFleet", boost::chrono::microseconds(100));
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
 
     if (!fleet) {
@@ -4159,6 +4343,9 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
         // which will update this->m_selected_Fleets
         if (active_fleet_wnd)
             active_fleet_wnd->SelectFleet(0);
+
+        // Stop rendering supply lanes.
+        m_supply_lane_empire_id = boost::none;
 
         return;
     }
@@ -4199,6 +4386,8 @@ void MapWnd::SelectFleet(std::shared_ptr<Fleet> fleet) {
     // this->m_selected_fleet_ids will be updated by ActiveFleetWndSelectedFleetsChanged or ActiveFleetWndChanged
     // signals being emitted and connected to MapWnd::SelectedFleetsChanged
     fleet_wnd->SelectFleet(fleet->ID());
+
+    ChangeSupplyLaneRenderedEmpire(fleet->Owner());
 }
 
 void MapWnd::RemoveFleet(int fleet_id) {
@@ -4447,7 +4636,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<c
     std::pair<int, int> lane = UnorderedIntPair(sys1_id, sys2_id);
 
     // get apparent positions of endpoints for this lane that have been pre-calculated
-    std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find(lane);
+    const auto& endpoints_it = m_starlane_endpoints.find(lane);
     if (endpoints_it == m_starlane_endpoints.end()) {
         // couldn't find an entry for the lane this fleet is one, so just
         // return actual position of fleet on starlane - ignore the distance
@@ -4531,7 +4720,7 @@ void MapWnd::DeferredRefreshFleetButtons() {
         return;
     m_deferred_refresh_fleet_buttons = false;
 
-    ScopedTimer timer("RefreshFleetButtons()");
+    SectionedScopedTimer timer("MapWnd::DeferredRefreshFleetButtons", boost::chrono::microseconds(100));
 
     // determine fleets that need buttons so that fleets at the same location can
     // be grouped by empire owner and buttons created
@@ -4645,7 +4834,7 @@ void MapWnd::DeleteFleetButtons() {
 }
 
 void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("RemoveFleetsStateChangedSignal()", true);
+    SectionedScopedTimer timer("MapWnd::RemoveFleetsStateChangedSignal", boost::chrono::microseconds(100));
     for (std::shared_ptr<Fleet> fleet : fleets) {
         boost::unordered_map<int, boost::signals2::connection>::iterator
             found_signal = m_fleet_state_change_signals.find(fleet->ID());
@@ -4657,7 +4846,7 @@ void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fl
 }
 
 void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("AddFleetsStateChangedSignal()", true);
+    SectionedScopedTimer timer("MapWnd::AddFleetsStateChangedSignal", boost::chrono::microseconds(100));
     for (std::shared_ptr<Fleet> fleet : fleets) {
         m_fleet_state_change_signals[fleet->ID()] =
             GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
@@ -4665,20 +4854,20 @@ void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet
 }
 
 void MapWnd::FleetsInsertedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("FleetsInsertedSignalHandler()", true);
+    SectionedScopedTimer timer("MapWnd::FleetsInsertedSignalHandler", boost::chrono::microseconds(100));
     RefreshFleetButtons();
     RemoveFleetsStateChangedSignal(fleets);
     AddFleetsStateChangedSignal(fleets);
 }
 
 void MapWnd::FleetsRemovedSignalHandler(const std::vector<std::shared_ptr<Fleet>>& fleets) {
-    ScopedTimer timer("FleetsRemovedSignalHandler()", true);
+    SectionedScopedTimer timer("MapWnd::FleetsRemovedSignalHandler", boost::chrono::microseconds(100));
     RefreshFleetButtons();
     RemoveFleetsStateChangedSignal(fleets);
 }
 
 void MapWnd::RefreshFleetSignals() {
-    ScopedTimer timer("RefreshFleetSignals()", true);
+    SectionedScopedTimer timer("MapWnd::RefreshFleetSignals", boost::chrono::microseconds(100));
     // disconnect old fleet statechangedsignal connections
     for (boost::unordered_map<int, boost::signals2::connection>::value_type& con : m_fleet_state_change_signals)
     { con.second.disconnect(); }
@@ -5286,7 +5475,7 @@ void MapWnd::SelectedFleetsChanged() {
 }
 
 void MapWnd::SelectedShipsChanged() {
-    ScopedTimer timer("MapWnd::SelectedShipsChanged", true);
+    SectionedScopedTimer timer("MapWnd::SelectedShipsChanged", boost::chrono::microseconds(100));
 
     // get selected ships
     std::set<int> selected_ship_ids;
@@ -6414,16 +6603,16 @@ bool MapWnd::ZoomToSystemWithWastedPP() {
     const std::shared_ptr<ResourcePool> pool = empire->GetResourcePool(RE_INDUSTRY);
     if (!pool)
         return false;
-    std::set<std::set<int>> wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
+    const auto& wasted_PP_objects(queue.ObjectsWithWastedPP(pool));
     if (wasted_PP_objects.empty())
         return false;
 
     // pick first object in first group
-    const std::set<int>& obj_group = *wasted_PP_objects.begin();
-    if (obj_group.empty())
+    const auto& obj_group = *wasted_PP_objects.begin();
+    if (obj_group->empty())
         return false; // shouldn't happen?
-    for (const std::set<int>& obj_ids : wasted_PP_objects) {
-        for (int obj_id : obj_ids) {
+    for (const auto& obj_ids : wasted_PP_objects) {
+        for (int obj_id : *obj_ids) {
             std::shared_ptr<const UniverseObject> obj = GetUniverseObject(obj_id);
             if (obj && obj->SystemID() != INVALID_OBJECT_ID) {
                 // found object with wasted PP that is in a system.  zoom there.
@@ -6608,7 +6797,7 @@ namespace { //helper function for DispatchFleetsExploring
         if (!empire)
             return std::pair<int, int>(INVALID_OBJECT_ID, INT_MAX);
 
-        std::set<int> supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID());
+        const auto& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID());
         std::map<int, std::set<int>> starlanes = empire->KnownStarlanes();
         std::set<int> frontier;
         frontier.insert(system_id);
@@ -6669,7 +6858,7 @@ void MapWnd::DispatchFleetsExploring() {
 
     //list all unknow systems with the distance to the nearest supply available
     std::map<int, int> unknown_systems;
-    const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id);
+    const auto& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id);
     for (int system_id : candidates_unknown_systems) {
         std::shared_ptr<System> system = GetSystem(system_id);
         if (!system)

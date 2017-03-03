@@ -197,20 +197,3 @@ template void DiplomaticMessage::serialize<freeorion_bin_iarchive>(freeorion_bin
 template void DiplomaticMessage::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
 template void DiplomaticMessage::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
-template <class Archive>
-void SupplyManager::serialize(Archive& ar, const unsigned int version)
-{
-    ar  & BOOST_SERIALIZATION_NVP(m_supply_starlane_traversals)
-        & BOOST_SERIALIZATION_NVP(m_supply_starlane_obstructed_traversals)
-        & BOOST_SERIALIZATION_NVP(m_fleet_supplyable_system_ids)
-        & BOOST_SERIALIZATION_NVP(m_resource_supply_groups)
-        & BOOST_SERIALIZATION_NVP(m_propagated_supply_ranges)
-        & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_ranges)
-        & BOOST_SERIALIZATION_NVP(m_propagated_supply_distances)
-        & BOOST_SERIALIZATION_NVP(m_empire_propagated_supply_distances);
-}
-
-template void SupplyManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
-template void SupplyManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
-template void SupplyManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
-template void SupplyManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);

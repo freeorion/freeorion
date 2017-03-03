@@ -14,10 +14,10 @@
 #include "../SetWrapper.h"
 #include "../CommonWrappers.h"
 #include "AIWrapper.h"
+#include "../map_indexing_suite_safe.hpp"
 
 #include <boost/python.hpp>
 #include <boost/python/suite/indexing/vector_indexing_suite.hpp>
-#include <boost/python/suite/indexing/map_indexing_suite.hpp>
 #include <boost/python/docstring_options.hpp>
 #include <boost/mpl/vector.hpp>
 #include <boost/timer.hpp>
@@ -87,8 +87,8 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
         .def(map_indexing_suite<std::map<int, bool> >())
     ;
 
-    FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
-    FreeOrionPython::SetWrapper<std::string>::Wrap("StringSet");
+    FreeOrionPython::SetWrapper<std::set<int>>::Wrap("IntSet");
+    FreeOrionPython::SetWrapper<std::set<std::string>>::Wrap("StringSet");
 }
  
 //////////////////////

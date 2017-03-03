@@ -27,6 +27,7 @@ set(freeorion_HEADER
     HumanClientApp.cpp
     HumanClientApp.h
     ../../network/ClientNetworking.h
+    ../../Empire/Supply.h
     ../../UI/About.h
     ../../UI/AccordionPanel.h
     ../../UI/BuildDesignatorWnd.h
@@ -83,6 +84,7 @@ set(freeorion_HEADER
     ../../UI/SpecialsPanel.h
     ../../UI/SystemIcon.h
     ../../UI/SystemResourceSummaryBrowseWnd.h
+    ../../UI/SystemSupplySummaryPanel.h
     ../../UI/TechTreeArcs.h
     ../../UI/TechTreeLayout.h
     ../../UI/TechTreeWnd.h
@@ -97,6 +99,7 @@ set(freeorion_SOURCES
     HumanClientFSM.cpp
     ../../combat/CombatSystem.cpp
     ../../network/ClientNetworking.cpp
+    ../../Empire/Supply.cpp
     ../../UI/About.cpp
     ../../UI/AccordionPanel.cpp
     ../../UI/BuildDesignatorWnd.cpp
@@ -152,6 +155,7 @@ set(freeorion_SOURCES
     ../../UI/SpecialsPanel.cpp
     ../../UI/SystemIcon.cpp
     ../../UI/SystemResourceSummaryBrowseWnd.cpp
+    ../../UI/SystemSupplySummaryPanel.cpp
     ../../UI/TechTreeArcs.cpp
     ../../UI/TechTreeLayout.cpp
     ../../UI/TechTreeWnd.cpp

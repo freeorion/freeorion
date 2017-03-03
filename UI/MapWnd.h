@@ -13,6 +13,7 @@
 #include <boost/unordered_map.hpp>
 
 #include <unordered_set>
+#include <unordered_map>
 #include <vector>
 
 
@@ -42,6 +43,16 @@ class ShaderProgram;
  * positioning fleet buttons that are moving along the starlane. */
 struct LaneEndpoints {
     LaneEndpoints();
+    LaneEndpoints(const std::shared_ptr<const System>& s1, const std::shared_ptr<const System>& s2);
+    ~LaneEndpoints();
+    LaneEndpoints(const LaneEndpoints& other);
+    LaneEndpoints(LaneEndpoints&& other);
+    LaneEndpoints& operator=(const LaneEndpoints& other);
+    LaneEndpoints& operator=(LaneEndpoints&& other);
+
+    LaneEndpoints& ReverseDirection(); ///< Swap the endpoints to change the direction.
+
+    std::shared_ptr<const System> s1, s2;
     float X1, Y1, X2, Y2;
 };
 
@@ -215,20 +226,7 @@ private:
     void            UpdateSidePanelSystemObjectMetersAndResourcePools();                                ///< update meter estimates for objects contained within the current system shown in the sidepanel, or all objects if there is no system shown
     void            UpdateEmpireResourcePools();                                                        ///< recalculates production and predicted changes of player's empire's resource and population pools
 
-    /** contains information necessary to render a single fleet movement line on the main map. also
-      * contains cached infromation */
-    struct MovementLineData {
-        struct Vertex;                                  // apparent universe positions of move line points, derived from actual universe positions contained in MovePathNodes
-        MovementLineData();
-        MovementLineData(const std::list<MovePathNode>& path_,
-                         const std::map<std::pair<int, int>, LaneEndpoints>& lane_end_points_map,
-                         GG::Clr colour_ = GG::CLR_WHITE, int empireID = ALL_EMPIRES);
-
-        std::list<MovePathNode>             path;       // raw path data from which line rendering is determined
-        GG::Clr                             colour;     // colour of line
-        std::vector<Vertex>                 vertices;   // cached apparent universe positions of starts and ends of line segments drawn to represent move path
-    };
-
+    struct MovementLineData;
     class MapScaleLine;
 
     void            InitializeWindows();
@@ -294,6 +292,7 @@ private:
     void            InitTurnRendering();                        //!< sets up rendering of system icons, galaxy gas, starlanes at start of turn
     void            InitSystemRenderingBuffers();               //!< initializes or refreshes buffers for rendering of system icons and galaxy gas
     void            ClearSystemRenderingBuffers();
+    void            InitStarlaneEndPoints();
     void            InitStarlaneRenderingBuffers();             //!< initializes or refreshes buffers for rendering of starlanes
     void            ClearStarlaneRenderingBuffers();
     void            InitFieldRenderingBuffers();
@@ -303,10 +302,6 @@ private:
     void            InitScaleCircleRenderingBuffer();
     void            ClearScaleCircleRenderingBuffer();
     void            ClearStarfieldRenderingBuffers();
-
-    /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
-     * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
-    LaneEndpoints   StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2);
 
     void            RenderStarfields();                         //!< renders the background starfiends
     void            RenderGalaxyGas();                          //!< renders gassy substance to make shape of galaxy
@@ -441,6 +436,15 @@ private:
     void            SelectedFleetsChanged();
     void            SelectedShipsChanged();
 
+    /** Change which empire is used for supply lane rendering.*/
+    void            ChangeSupplyLaneRenderedEmpire(int empire_id);
+
+    /** Handle a SelectedPlayersChangedSignal. */
+    void            SelectedPlayersChanged();
+
+    /** The ID of the empire to render the colored supply lanes for or none.*/
+    boost::optional<int>        m_supply_lane_empire_id;
+
     std::set<int>               m_selected_fleet_ids;
     std::set<int>               m_selected_ship_ids;
 
@@ -457,7 +461,18 @@ private:
     ModeratorActionsWnd*        m_moderator_wnd;    //!< buttons to select moderator actions
     CombatReportWnd*            m_combat_report_wnd;//!< shows graphical reports of combats
 
-    std::map<std::pair<int, int>, LaneEndpoints>    m_starlane_endpoints;                   //!< map from starlane start and end system IDs (stored in pair in increasing order) to the universe coordiates at which to draw the starlane ends
+    struct OrderedPairHash {
+        std::size_t operator()(const std::pair<int, int> x) const {
+            // Use boost::hash_combine to preserve order.
+            std::size_t seed(0);
+            boost::hash_combine(seed, x.first);
+            boost::hash_combine(seed, x.second);
+            return seed;
+        }
+    };
+
+    // A map from an unordered pair of systems to starlanes endpoint in universe coordinates
+    std::unordered_map<std::pair<int, int>, LaneEndpoints, OrderedPairHash> m_starlane_endpoints;
 
     /** Icons representing fleets at a system that are not departing, indexed
         by system. */
@@ -474,6 +489,20 @@ private:
 
     boost::unordered_map<int, boost::signals2::connection>               m_fleet_state_change_signals;
     boost::unordered_map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;
+
+    /** contains information necessary to render a single fleet movement line on the main map. also
+      * contains cached infromation */
+    struct MovementLineData {
+        struct Vertex;                                  // apparent universe positions of move line points, derived from actual universe positions contained in MovePathNodes
+        MovementLineData();
+        MovementLineData(const std::list<MovePathNode>& path_,
+                         const std::unordered_map<std::pair<int, int>, LaneEndpoints, OrderedPairHash>& lane_end_points_map,
+                         GG::Clr colour_ = GG::CLR_WHITE, int empireID = ALL_EMPIRES);
+
+        std::list<MovePathNode>             path;       // raw path data from which line rendering is determined
+        GG::Clr                             colour;     // colour of line
+        std::vector<Vertex>                 vertices;   // cached apparent universe positions of starts and ends of line segments drawn to represent move path
+    };
 
     std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
     std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd

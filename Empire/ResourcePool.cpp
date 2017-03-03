@@ -34,16 +34,16 @@ float ResourcePool::Stockpile() const
 
 float ResourcePool::Output() const {
     float retval = 0.0f;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output)
+    for (const auto& entry : m_connected_object_groups_resource_output)
     { retval += entry.second; }
     return retval;
 }
 
 float ResourcePool::GroupOutput(int object_id) const {
     // find group containing specified object
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output)
+    for (const auto& entry : m_connected_object_groups_resource_output)
     {
-        const std::set<int>& group = entry.first;
+        const auto& group = *entry.first;
         if (group.find(object_id) != group.end())
             return entry.second;
     }
@@ -56,15 +56,15 @@ float ResourcePool::GroupOutput(int object_id) const {
 
 float ResourcePool::TargetOutput() const {
     float retval = 0.0f;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_target_output)
+    for (const auto& entry : m_connected_object_groups_resource_target_output)
     { retval += entry.second; }
     return retval;
 }
 
 float ResourcePool::GroupTargetOutput(int object_id) const {
     // find group containing specified object
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_target_output) {
-        const std::set<int>& group = entry.first;
+    for (const auto& entry : m_connected_object_groups_resource_target_output) {
+        const auto& group = *entry.first;
         if (group.find(object_id) != group.end())
             return entry.second;
     }
@@ -76,20 +76,20 @@ float ResourcePool::GroupTargetOutput(int object_id) const {
 
 float ResourcePool::TotalAvailable() const {
     float retval = m_stockpile;
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output)
+    for (const auto& entry : m_connected_object_groups_resource_output)
     { retval += entry.second; }
     return retval;
 }
 
-std::map<std::set<int>, float> ResourcePool::Available() const {
-    std::map<std::set<int>, float> retval = m_connected_object_groups_resource_output;
+std::map<ResourcePool::key_type, float> ResourcePool::Available() const {
+    auto retval = m_connected_object_groups_resource_output;
 
     if (INVALID_OBJECT_ID == m_stockpile_object_id)
         return retval;  // early exit for no stockpile
 
     // find group that contains the stockpile, and add the stockpile to that group's production to give its availability
-    for (std::map<std::set<int>, float>::value_type& entry : retval) {
-        const std::set<int>& group = entry.first;
+    for (auto& entry : retval) {
+        const auto& group = *entry.first;
         if (group.find(m_stockpile_object_id) != group.end()) {
             entry.second += m_stockpile;
             break;  // assuming stockpile is on only one group
@@ -106,8 +106,8 @@ float ResourcePool::GroupAvailable(int object_id) const {
         return GroupOutput(object_id);
 
     // need to find if stockpile object is in the requested object's group
-    for (const std::map<std::set<int>, float>::value_type& entry : m_connected_object_groups_resource_output) {
-        const std::set<int>& group = entry.first;
+    for (const auto& entry : m_connected_object_groups_resource_output) {
+        const auto& group = *entry.first;
         if (group.find(object_id) != group.end()) {
             // found group for requested object.  is stockpile also in this group?
             if (group.find(m_stockpile_object_id) != group.end())
@@ -135,8 +135,12 @@ std::string ResourcePool::Dump() const {
 void ResourcePool::SetObjects(const std::vector<int>& object_ids)
 { m_object_ids = object_ids; }
 
-void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int> >& connected_system_groups)
-{ m_connected_system_groups = connected_system_groups; }
+void ResourcePool::SetConnectedSupplyGroups(const std::vector<ResourcePool::key_type>& connected_system_groups)
+{
+    m_connected_system_groups.clear();
+    for (auto& set : connected_system_groups)
+        m_connected_system_groups.insert(set);
+}
 
 void ResourcePool::SetStockpileObject(int stockpile_object_id)
 { m_stockpile_object_id = stockpile_object_id; }
@@ -159,7 +163,8 @@ void ResourcePool::Update() {
 
     // temporary storage: indexed by group of systems, which objects
     // are located in that system group?
-    std::map<std::set<int>, std::set<std::shared_ptr<const UniverseObject>>> system_groups_to_object_groups;
+    std::map<key_type,
+             std::set<std::shared_ptr<const UniverseObject>>> system_groups_to_object_groups;
 
 
     // for every object, find if a connected system group contains the object's
@@ -174,9 +179,9 @@ void ResourcePool::Update() {
             continue;
 
         // is object's system in a system group?
-        std::set<int> object_system_group;
-        for (const std::set<int>& sys_group : m_connected_system_groups) {
-            if (sys_group.find(object_system_id) != sys_group.end()) {
+        key_type object_system_group;
+        for (const auto& sys_group : m_connected_system_groups) {
+            if (sys_group->find(object_system_id) != sys_group->end()) {
                 object_system_group = sys_group;
                 break;
             }
@@ -186,14 +191,15 @@ void ResourcePool::Update() {
         // own entry in m_connected_object_groups_resource_output and m_connected_object_groups_resource_target_output
         // this will allow the object to use its own locally produced
         // resource when, for instance, distributing pp
-        if (object_system_group.empty()) {
-            object_system_group.insert(object_id);  // just use this already-available set to store the object id, even though it is not likely actually a system
+        if (!object_system_group) {
+            auto single_item_group = std::make_shared<std::unordered_set<int>>();
+            single_item_group->insert(object_id);  // just use this set to store the object id, even though it is not likely actually a system
 
             float obj_output = obj->GetMeter(meter_type) ? obj->CurrentMeterValue(meter_type) : 0.0f;
-            m_connected_object_groups_resource_output[object_system_group] = obj_output;
+            m_connected_object_groups_resource_output[single_item_group] = obj_output;
 
             float obj_target_output = obj->GetMeter(target_meter_type) ? obj->CurrentMeterValue(target_meter_type) : 0.0f;
-            m_connected_object_groups_resource_target_output[object_system_group] = obj_target_output;
+            m_connected_object_groups_resource_target_output[single_item_group] = obj_target_output;
             continue;
         }
 
@@ -204,9 +210,9 @@ void ResourcePool::Update() {
 
     // sum the resource production for object groups, and store the total
     // group production, indexed by group of object ids
-    for (std::map<std::set<int>, std::set<std::shared_ptr<const UniverseObject>>>::value_type& entry : system_groups_to_object_groups) {
+    for (auto& entry : system_groups_to_object_groups) {
         const std::set<std::shared_ptr<const UniverseObject>>& object_group = entry.second;
-        std::set<int> object_group_ids;
+        auto object_group_ids = std::make_shared<std::unordered_set<int>>();
         float total_group_output = 0.0f;
         float total_group_target_output = 0.0f;
         for (std::shared_ptr<const UniverseObject> obj : object_group) {
@@ -214,7 +220,7 @@ void ResourcePool::Update() {
                 total_group_output += obj->CurrentMeterValue(meter_type);
             if (obj->GetMeter(target_meter_type))
                 total_group_target_output += obj->CurrentMeterValue(target_meter_type);
-            object_group_ids.insert(obj->ID());
+            object_group_ids->insert(obj->ID());
         }
         m_connected_object_groups_resource_output[object_group_ids] = total_group_output;
         m_connected_object_groups_resource_target_output[object_group_ids] = total_group_target_output;

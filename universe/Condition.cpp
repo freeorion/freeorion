@@ -7333,8 +7333,8 @@ namespace {
                 return false;
 
             const SupplyManager& supply = GetSupplyManager();
-            const std::map<int, std::set<int> >& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
-            std::map<int, std::set<int> >::const_iterator it = empire_supplyable_systems.find(m_empire_id);
+            const auto& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
+            const auto& it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
                 return false;
             return it->second.find(candidate->SystemID()) != it->second.end();
@@ -7442,16 +7442,16 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const std::set<std::set<int> >& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
+            const auto& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
             if (groups.empty())
                 return false;
 
             // is candidate object connected to a subcondition matching object by resource supply?
             for (std::shared_ptr<const UniverseObject> from_object : m_from_objects) {
-                for (const std::set<int>& group : groups) {
-                    if (group.find(from_object->SystemID()) != group.end()) {
+                for (const auto& group : groups) {
+                    if (group->find(from_object->SystemID()) != group->end()) {
                         // found resource sharing group containing test object.  Does it also contain candidate?
-                        if (group.find(candidate->SystemID()) != group.end())
+                        if (group->find(candidate->SystemID()) != group->end())
                             return true;    // test object and candidate object are in same resourse sharing group
                         else
                             // test object is not in resource sharing group with candidate

@@ -1046,20 +1046,20 @@ void ProductionWnd::UpdateInfoPanel() {
     std::shared_ptr<UniverseObject> loc_obj = GetUniverseObject(prod_loc_id);
     if (loc_obj) {
         // extract available and allocated PP at production location
-        std::map<std::set<int>, float> available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
-        const std::map<std::set<int>, float>& allocated_pp = queue.AllocatedPP();
+        const auto& available_pp = queue.AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
+        const auto& allocated_pp = queue.AllocatedPP();
 
         float available_pp_at_loc = 0.0f, allocated_pp_at_loc = 0.0f;   // for the resource sharing group containing the selected production location
 
-        for (const std::map<std::set<int>, float>::value_type& map : available_pp) {
-            if (map.first.find(prod_loc_id) != map.first.end()) {
+        for (const auto& map : available_pp) {
+            if (map.first->find(prod_loc_id) != map.first->end()) {
                 available_pp_at_loc = map.second;
                 break;
             }
         }
 
-        for (const std::map<std::set<int>, float>::value_type& map : allocated_pp) {
-            if (map.first.find(prod_loc_id) != map.first.end()) {
+        for (const auto& map : allocated_pp) {
+            if (map.first->find(prod_loc_id) != map.first->end()) {
                 allocated_pp_at_loc = map.second;
                 break;
             }

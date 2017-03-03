@@ -257,6 +257,7 @@
 		8275F4031AD31381003568FF /* ShipDesignPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3F11AD31381003568FF /* ShipDesignPanel.cpp */; };
 		8275F4041AD31381003568FF /* SpecialsPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3F31AD31381003568FF /* SpecialsPanel.cpp */; };
 		8275F4051AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3F51AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp */; };
+		8275F3FF1AD31381003569FF /* SystemSupplySummaryPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3E91AD31381003569FF /* SystemSupplySummaryPanel.cpp */; };
 		8275F4061AD31381003568FF /* TextBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3F71AD31381003568FF /* TextBrowseWnd.cpp */; };
 		827902381737C6EA008AF126 /* ModeratorActionsWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */; };
 		8280AC5D19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8280AC5C19C0741B00ADDB65 /* libboost_iostreams.a */; };
@@ -997,6 +998,8 @@
 		8275F3F41AD31381003568FF /* SpecialsPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SpecialsPanel.h; sourceTree = "<group>"; };
 		8275F3F51AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemResourceSummaryBrowseWnd.cpp; sourceTree = "<group>"; };
 		8275F3F61AD31381003568FF /* SystemResourceSummaryBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemResourceSummaryBrowseWnd.h; sourceTree = "<group>"; };
+		8275F3E91AD31381003569FF /* SystemSupplySummaryPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SystemSupplySummaryPanel.cpp; sourceTree = "<group>"; };
+		8275F3EA1AD31381003569FF /* SystemSupplySummaryPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SystemSupplySummaryPanel.h; sourceTree = "<group>"; };
 		8275F3F71AD31381003568FF /* TextBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TextBrowseWnd.cpp; sourceTree = "<group>"; };
 		8275F3F81AD31381003568FF /* TextBrowseWnd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextBrowseWnd.h; sourceTree = "<group>"; };
 		827902361737C6EA008AF126 /* ModeratorActionsWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorActionsWnd.cpp; sourceTree = "<group>"; };
@@ -1727,6 +1730,8 @@
 				471D5CDF0A98A3F900DA9C21 /* SystemIcon.h */,
 				8275F3F51AD31381003568FF /* SystemResourceSummaryBrowseWnd.cpp */,
 				8275F3F61AD31381003568FF /* SystemResourceSummaryBrowseWnd.h */,
+				8275F3E91AD31381003569FF /* SystemSupplySummaryPanel.cpp */,
+				8275F3EA1AD31381003569FF /* SystemSupplySummaryPanel.h */,
 				82970BED1A0CF53A008B37EF /* TechTreeArcs.cpp */,
 				82970BEE1A0CF53A008B37EF /* TechTreeArcs.h */,
 				2F22EC0412F7F4CF00456CDE /* TechTreeLayout.cpp */,
@@ -2708,6 +2713,7 @@
 				8275F3FC1AD31381003568FF /* IconTextBrowseWnd.cpp in Sources */,
 				470DF9A10A9CE53500A88AD6 /* HumanClientApp.cpp in Sources */,
 				8275F3FF1AD31381003568FF /* MultiIconValueIndicator.cpp in Sources */,
+				8275F3FF1AD31381003569FF /* SystemSupplySummaryPanel.cpp in Sources */,
 				CE71ED7B1DADAB130085A4DC /* DependencyVersions.cpp in Sources */,
 				471031390CEF618C00A7DF2B /* HumanClientFSM.cpp in Sources */,
 				8275F4021AD31381003568FF /* ResourcePanel.cpp in Sources */,

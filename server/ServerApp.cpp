@@ -2894,6 +2894,7 @@ void ServerApp::PostCombatProcessTurns() {
             continue;   // skip eliminated empires
 
         empire->UpdateSupplyUnobstructedSystems();  // determines which systems can propagate fleet and resource (same for both)
+        empire->UpdateSupplyBlockadedSystems();
         empire->UpdateSystemSupplyRanges();         // sets range systems can propagate fleet and resourse supply (separately)
     }
 
