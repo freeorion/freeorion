@@ -85,7 +85,7 @@ void SigHandler(int sig) {
 
 namespace {
     typedef boost::chrono::steady_clock Clock;
-    const boost::chrono::milliseconds SERVER_CONNECT_TIMEOUT(4500);
+    const boost::chrono::milliseconds SERVER_CONNECT_TIMEOUT(10000);
     const boost::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(10);
 
     const bool          INSTRUMENT_MESSAGE_HANDLING = false;
