@@ -448,8 +448,12 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     bool failed = false;
     Clock::time_point start_time = Clock::now();
+    Clock::duration connection_time{0};
     while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
-        if (SERVER_CONNECT_TIMEOUT < Clock::now() - start_time) {
+        connection_time = Clock::now() - start_time;
+        if (SERVER_CONNECT_TIMEOUT < connection_time) {
+            ErrorLogger() << "Timed out.  Failed to connect to server in "
+                          << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             failed = true;
             break;
@@ -661,18 +665,22 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
     Clock::time_point start_time = Clock::now();
+    Clock::duration connection_time{0};
     while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
-        if (SERVER_CONNECT_TIMEOUT < Clock::now() - start_time) {
-            ErrorLogger() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
+        connection_time = Clock::now() - start_time;
+        if (SERVER_CONNECT_TIMEOUT < connection_time) {
+            ErrorLogger() << "Timed out.  Failed to connect to server in "
+                          << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             KillServer();
             return;
         }
     }
 
-    DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connected to server";
-
     m_connected = true;
+    DebugLogger() << "HumanClientApp::LoadSinglePlayerGame : Connecting to server took "
+                      << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
@@ -701,15 +709,20 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
 
         DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
         Clock::time_point start_time = Clock::now();
+        Clock::duration connection_time{0};
         while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
-            if (SERVER_CONNECT_TIMEOUT < Clock::now() - start_time) {
-                ErrorLogger() << "HumanClientApp::LoadSinglePlayerGame() server connecting timed out";
+            connection_time = Clock::now() - start_time;
+            if (SERVER_CONNECT_TIMEOUT < connection_time) {
+                ErrorLogger() << "Timed out.  Failed to connect to server in "
+                              << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 KillServer();
                 return;
             }
         }
         m_connected = true;
+        DebugLogger() << "HumanClientApp::RequestSavePreviews : Connecting to server took "
+                      << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     Message response;
