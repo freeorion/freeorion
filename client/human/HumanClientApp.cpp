@@ -1131,8 +1131,8 @@ void HumanClientApp::QuitGame() {
         m_networking->SendMessage(ShutdownServerMessage(m_networking->PlayerID()));
 
         // Poll the server until it disconnects or timesout and then kill it
-        constexpr auto POLLING_TIME = std::chrono::milliseconds(10000);
-        constexpr auto POLLING_INTERVAL = std::chrono::milliseconds(10);
+        const auto POLLING_TIME = std::chrono::milliseconds(10000);
+        const auto POLLING_INTERVAL = std::chrono::milliseconds(10);
 
         using Clock = std::chrono::steady_clock;
         auto start_time = Clock::now();

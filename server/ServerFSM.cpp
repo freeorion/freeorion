@@ -1816,8 +1816,8 @@ sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
 ////////////////////////////////////////////////////////////
 // ShuttingDownServer
 ////////////////////////////////////////////////////////////
-constexpr auto SHUTDOWN_POLLING_TIME = boost::chrono::milliseconds(5000);
-constexpr auto SHUTDOWN_POLLING_INTERVAL = boost::chrono::milliseconds(10);
+const auto SHUTDOWN_POLLING_TIME = boost::chrono::milliseconds(5000);
+const auto SHUTDOWN_POLLING_INTERVAL = boost::chrono::milliseconds(10);
 
 ShuttingDownServer::ShuttingDownServer(my_context c) :
     my_base(c),
