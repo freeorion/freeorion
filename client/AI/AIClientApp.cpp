@@ -161,17 +161,19 @@ void AIClientApp::ConnectToServer() {
 
     bool connected = false;
     Clock::time_point start_time = Clock::now();
-    boost::chrono::milliseconds connection_time(0);
+    Clock::duration connection_time{0};
     while (!connected && (connection_time < SERVER_CONNECT_TIMEOUT )) {
         connected = Networking().ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME);
-        connection_time = boost::chrono::duration_cast<boost::chrono::milliseconds>(Clock::now() - start_time);
+        connection_time = Clock::now() - start_time;
     }
 
     if (!connected) {
-        ErrorLogger() << "AIClientApp::Run : Failed to connect to localhost server after " << connection_time << ".  Exiting.";
+        ErrorLogger() << "Timed out.  Failed to connect to server in "
+                      << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
         Exit(1);
     }
-    DebugLogger() << "AI connected to local server took " << connection_time << ".";
+    DebugLogger() << "Connecting to server took "
+                  << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
 }
 
 void AIClientApp::StartPythonAI() {
