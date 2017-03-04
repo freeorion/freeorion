@@ -336,15 +336,7 @@ void ClientNetworking::NetworkingThread() {
         if (!m_outgoing_messages.empty())
             AsyncWriteMessage();
         AsyncReadMessage();
-        while (1) {
-            try {
-                m_io_service.run();
-                break;
-            } catch (const boost::system::system_error& error) {
-                HandleException(error);
-                break;
-            }
-        }
+        m_io_service.run();
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
