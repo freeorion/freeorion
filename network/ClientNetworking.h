@@ -82,14 +82,12 @@ public:
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
     bool ConnectToServer(const std::string& ip_address,
-                         std::chrono::milliseconds timeout = std::chrono::seconds(10),
-                         bool verbose = false);
+                         std::chrono::milliseconds timeout = std::chrono::seconds(10));
 
     /** Connects to the server on the client's host.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
     bool ConnectToLocalHostServer(std::chrono::milliseconds timeout =
-                                  std::chrono::seconds(10),
-                                  bool verbose = false);
+                                  std::chrono::seconds(10));
 
     /** Sends \a message to the server.  This function actually just enqueues
         the message for sending and returns immediately. */
