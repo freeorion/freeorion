@@ -16,6 +16,9 @@
 #   undef MessageBox
 #endif
 
+#include <memory>
+
+
 /** Encapsulates the networking facilities of the client.  The client must
     execute its networking code in a separate thread from its main processing
     thread, for UI and networking responsiveness, and to process synchronous
@@ -47,7 +50,7 @@
     even if it is not at the front of the queue at the time.  This implies
     that some response messages may be handled out of order with respect to
     regular messages, but these are in fact the desired semantics. */
-class ClientNetworking {
+class ClientNetworking : public std::enable_shared_from_this<ClientNetworking> {
 public:
     /** The type of list returned by a call to DiscoverLANServers(). */
     typedef std::vector<std::pair<boost::asio::ip::address, std::string> >  ServerList;
@@ -124,7 +127,7 @@ private:
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
                           const boost::system::error_code& error);
     void CancelRetries();
-    void NetworkingThread();
+    void NetworkingThread(std::shared_ptr<ClientNetworking> &self);
     void HandleMessageBodyRead(     boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(   boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();

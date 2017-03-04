@@ -321,7 +321,7 @@ void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
 }
 
 HumanClientApp::~HumanClientApp() {
-    m_networking.DisconnectFromServer();
+    m_networking->DisconnectFromServer();
     m_server_process.RequestTermination();
 }
 
@@ -412,16 +412,16 @@ void HumanClientApp::StartServer() {
 
 void HumanClientApp::FreeServer() {
     m_server_process.Free();
-    m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
-    m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
 void HumanClientApp::KillServer() {
     DebugLogger() << "HumanClientApp::KillServer()";
     m_server_process.Kill();
-    m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
-    m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 }
 
@@ -444,7 +444,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ended_with_ok = galaxy_wnd.EndedWithOk();
     }
 
-    m_connected = m_networking.ConnectToLocalHostServer();
+    m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         KillServer();
@@ -527,16 +527,16 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
             setup_data.m_players.push_back(ai_setup_data);
         }
 
-        m_networking.SendMessage(HostSPGameMessage(setup_data));
+        m_networking->SendMessage(HostSPGameMessage(setup_data));
         m_fsm->process_event(HostSPGameRequested());
     } else {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
         DebugLogger() << "HumanClientApp::NewSinglePlayerGame Sending server shutdown message.";
-        m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
+        m_networking->SendMessage(ShutdownServerMessage(m_networking->PlayerID()));
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        m_networking.DisconnectFromServer();
+        m_networking->DisconnectFromServer();
         // TODO refactor this.  disconnect is asynchronous and might not have taken effect by now.
-        if (!m_networking.IsConnected())
+        if (!m_networking->IsConnected())
             DebugLogger() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
         else
             ErrorLogger() << "HumanClientApp::NewSinglePlayerGame Unexpectedly still connected to server...?";
@@ -545,7 +545,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 }
 
 void HumanClientApp::MultiPlayerGame() {
-    if (m_networking.IsConnected()) {
+    if (m_networking->IsConnected()) {
         ErrorLogger() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
         return;
     }
@@ -575,7 +575,7 @@ void HumanClientApp::MultiPlayerGame() {
     }
 
 
-    m_connected = m_networking.ConnectToServer(server_name);
+    m_connected = m_networking->ConnectToServer(server_name);
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
@@ -584,10 +584,10 @@ void HumanClientApp::MultiPlayerGame() {
     }
 
     if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
-        m_networking.SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
+        m_networking->SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
         m_fsm->process_event(HostMPGameRequested());
     } else {
-        m_networking.SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
+        m_networking->SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
         m_fsm->process_event(JoinMPGameRequested());
     }
 }
@@ -600,7 +600,7 @@ void HumanClientApp::CancelMultiplayerGameFromLobby()
 
 void HumanClientApp::SaveGame(const std::string& filename) {
     Message response_msg;
-    m_networking.SendMessage(HostSaveGameInitiateMessage(PlayerID(), filename));
+    m_networking->SendMessage(HostSaveGameInitiateMessage(PlayerID(), filename));
     DebugLogger() << "HumanClientApp::SaveGame sent save initiate message to server...";
 }
 
@@ -650,15 +650,15 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     }
 
     DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
-    m_connected = m_networking.ConnectToLocalHostServer();
+    m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         KillServer();
         return;
     }
 
-    m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
-    m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
 
     SinglePlayerSetupData setup_data;
@@ -668,7 +668,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     // leving setup_data.m_players empty : not specified when loading a game, as server will generate from save file
 
 
-    m_networking.SendMessage(HostSPGameMessage(setup_data));
+    m_networking->SendMessage(HostSPGameMessage(setup_data));
     m_fsm->process_event(HostSPGameRequested());
 }
 
@@ -677,14 +677,14 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     DebugLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end());
 
     std::string  generic_directory = directory;//PathString(fs::path(directory));
-    if (!m_networking.IsConnected()) {
+    if (!m_networking->IsConnected()) {
         DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
 
         m_single_player_game = true;
         StartServer();
 
         DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
-        m_connected = m_networking.ConnectToLocalHostServer();
+        m_connected = m_networking->ConnectToLocalHostServer();
         if (!m_connected) {
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             KillServer();
@@ -693,7 +693,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     Message response;
-    m_networking.SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
+    m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
     if (response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
         ExtractDispatchSavePreviewsMessageData(response, previews);
         DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
@@ -804,12 +804,12 @@ void HumanClientApp::HandleSystemEvents() {
     } catch (const utf8::invalid_utf8& e) {
         ErrorLogger() << "UTF-8 error handling system event: " << e.what();
     }
-    if (m_connected && !m_networking.IsConnected()) {
+    if (m_connected && !m_networking->IsConnected()) {
         m_connected = false;
         DisconnectedFromServer();
-    } else if (m_networking.MessageAvailable()) {
+    } else if (m_networking->MessageAvailable()) {
         Message msg;
-        m_networking.GetMessage(msg);
+        m_networking->GetMessage(msg);
         try {
             HandleMessage(msg);
         } catch (const std::exception& e) {
@@ -860,7 +860,7 @@ void HumanClientApp::HandleSaveGameDataRequest() {
         std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << Message::SAVE_GAME_DATA_REQUEST << ")\n";
     SaveGameUIData ui_data;
     m_ui->GetSaveGameUIData(ui_data);
-    m_networking.SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
+    m_networking->SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
 }
 
 void HumanClientApp::UpdateCombatLogs(const Message& msg){
@@ -983,7 +983,7 @@ void HumanClientApp::HandleTurnUpdate()
 void HumanClientApp::UpdateCombatLogManager() {
     boost::optional<std::vector<int>> incomplete_ids = GetCombatLogManager().IncompleteLogIDs();
     if (incomplete_ids)
-        m_networking.SendMessage(RequestCombatLogsMessage(PlayerID(), *incomplete_ids));
+        m_networking->SendMessage(RequestCombatLogsMessage(PlayerID(), *incomplete_ids));
 }
 
 namespace {
@@ -1122,13 +1122,13 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     DebugLogger() << "HumanClientApp::EndGame";
     m_game_started = false;
 
-    if (m_networking.IsTxConnected()) {
+    if (m_networking->IsTxConnected()) {
         DebugLogger() << "HumanClientApp::EndGame Sending server shutdown message.";
-        m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
+        m_networking->SendMessage(ShutdownServerMessage(m_networking->PlayerID()));
         std::this_thread::sleep_for(std::chrono::seconds(1));
-        m_networking.DisconnectFromServer();
+        m_networking->DisconnectFromServer();
         // TODO fix this.  disconnect is asynchronous and may not have acted by now.
-        if (!m_networking.IsConnected())
+        if (!m_networking->IsConnected())
             DebugLogger() << "HumanClientApp::EndGame Disconnected from server.";
         else
             ErrorLogger() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
@@ -1139,8 +1139,8 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
         m_server_process.RequestTermination();
     }
 
-    m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
-    m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
+    m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
     m_ui->GetMapWnd()->Sanitize();
 

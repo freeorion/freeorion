@@ -233,8 +233,10 @@ bool ClientNetworking::ConnectToServer(
                     m_socket.set_option(boost::asio::socket_base::keep_alive(true));
                     DebugLogger() << "Connecting to server took "
                                   << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
+
                     DebugLogger() << "ConnectToServer() : starting networking thread";
-                    boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
+                    auto self = shared_from_this();
+                    boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this, self));
                     break;
                 } else {
                     if (TRACE_EXECUTION)
@@ -367,7 +369,8 @@ void ClientNetworking::HandleException(const boost::system::system_error& error)
     }
 }
 
-void ClientNetworking::NetworkingThread() {
+void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self) {
+    auto protect_from_destruction_in_other_thread = self;
     try {
         if (!m_outgoing_messages.empty())
             AsyncWriteMessage();
