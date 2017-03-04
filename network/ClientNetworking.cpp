@@ -162,11 +162,9 @@ ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
-    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/,
-    bool verbose)
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
 {
-    if (verbose)
-        DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
+    DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
 
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
@@ -206,14 +204,14 @@ bool ClientNetworking::ConnectToServer(
                 DebugLogger() << "ClientNetworking::ConnectToServer : starting networking thread";
                 boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
                 break;
-            } else if (verbose) {
+            } else {
                 DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
                               << "  address: " << it->endpoint().address()
                               << "  port: " << it->endpoint().port();
                 DebugLogger() << "ClientNetworking::ConnectToServer : no connection yet...";
             }
         }
-        if (!Connected() && verbose)
+        if (!Connected())
             DebugLogger() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
 
     } catch (const std::exception& e) {
@@ -224,14 +222,13 @@ bool ClientNetworking::ConnectToServer(
 }
 
 bool ClientNetworking::ConnectToLocalHostServer(
-    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/,
-    bool verbose)
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
 {
     bool retval = false;
 #if FREEORION_WIN32
     try {
 #endif
-        retval = ConnectToServer("127.0.0.1", timeout, verbose);
+        retval = ConnectToServer("127.0.0.1", timeout);
 #if FREEORION_WIN32
     } catch (const boost::system::system_error& e) {
         if (e.code().value() != WSAEADDRNOTAVAIL)
