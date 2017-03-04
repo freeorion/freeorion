@@ -9,6 +9,7 @@
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/thread/thread.hpp>
 
+#include <thread>
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
@@ -249,7 +250,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         if (m_new_connection) {
             // wait half a second if the first data read is an error; we
             // probably just need more setup time
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         } else {
             if (error == boost::asio::error::eof ||
                 error == boost::asio::error::connection_reset) {

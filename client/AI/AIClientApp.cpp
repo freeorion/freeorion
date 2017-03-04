@@ -23,6 +23,8 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/chrono/chrono_io.hpp>
 
+#include <chrono>
+
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
@@ -155,9 +157,9 @@ void AIClientApp::Run() {
 }
 
 void AIClientApp::ConnectToServer() {
-    typedef boost::chrono::steady_clock Clock;
-    const boost::chrono::milliseconds SERVER_CONNECT_TIMEOUT(10000);
-    const boost::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(10);
+    typedef std::chrono::steady_clock Clock;
+    const std::chrono::milliseconds SERVER_CONNECT_TIMEOUT(10000);
+    const std::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(10);
 
     bool connected = false;
     Clock::time_point start_time = Clock::now();
@@ -169,11 +171,11 @@ void AIClientApp::ConnectToServer() {
 
     if (!connected) {
         ErrorLogger() << "Timed out.  Failed to connect to server in "
-                      << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+                      << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
         Exit(1);
     }
     DebugLogger() << "Connecting to server took "
-                  << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 }
 
 void AIClientApp::StartPythonAI() {

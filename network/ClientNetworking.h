@@ -82,13 +82,13 @@ public:
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
     bool ConnectToServer(const std::string& ip_address,
-                         boost::chrono::milliseconds timeout = boost::chrono::seconds(5),
+                         std::chrono::milliseconds timeout = std::chrono::seconds(5),
                          bool verbose = false);
 
     /** Connects to the server on the client's host.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
-    bool ConnectToLocalHostServer(boost::chrono::milliseconds timeout =
-                                  boost::chrono::seconds(5),
+    bool ConnectToLocalHostServer(std::chrono::milliseconds timeout =
+                                  std::chrono::seconds(5),
                                   bool verbose = false);
 
     /** Sends \a message to the server.  This function actually just enqueues
@@ -119,7 +119,7 @@ public:
 private:
     void HandleException(const boost::system::system_error& error);
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
-                          boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock>* timer,
+                          boost::asio::basic_waitable_timer<std::chrono::high_resolution_clock>* timer,
                           const boost::system::error_code& error);
     void CancelRetries();
     void NetworkingThread();

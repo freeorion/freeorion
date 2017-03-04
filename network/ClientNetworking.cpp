@@ -13,6 +13,8 @@
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
 
+#include <thread>
+
 using boost::asio::ip::tcp;
 using namespace Networking;
 
@@ -62,7 +64,7 @@ namespace {
                                 this,
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::bytes_transferred));
-                m_timer.expires_from_now(boost::chrono::seconds(2));
+                m_timer.expires_from_now(std::chrono::seconds(2));
                 m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
                 m_io_service->run();
                 m_io_service->reset();
@@ -105,7 +107,7 @@ namespace {
         { m_socket.close(); }
 
         boost::asio::io_service*       m_io_service;
-        boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock> m_timer;
+        boost::asio::basic_waitable_timer<std::chrono::high_resolution_clock> m_timer;
         boost::asio::ip::udp::socket   m_socket;
 
         std::array<char, 1024> m_recv_buf;
@@ -160,7 +162,7 @@ ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
-    boost::chrono::milliseconds timeout/* = boost::chrono::seconds(5)*/,
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(5)*/,
     bool verbose)
 {
     if (verbose)
@@ -177,7 +179,7 @@ bool ClientNetworking::ConnectToServer(
     try {
         for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
             m_socket.close();
-            boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock> timer(m_io_service);
+            boost::asio::basic_waitable_timer<std::chrono::high_resolution_clock> timer(m_io_service);
 
             m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                     &it,
@@ -222,7 +224,7 @@ bool ClientNetworking::ConnectToServer(
 }
 
 bool ClientNetworking::ConnectToLocalHostServer(
-    boost::chrono::milliseconds timeout/* = boost::chrono::seconds(5)*/,
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(5)*/,
     bool verbose)
 {
     bool retval = false;
@@ -243,7 +245,7 @@ void ClientNetworking::DisconnectFromServer() {
     if (Connected())
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
     // HACK! wait a bit for the disconnect to occur
-    boost::this_thread::sleep_for(boost::chrono::seconds(1));
+    std::this_thread::sleep_for(std::chrono::seconds(1));
 }
 
 void ClientNetworking::SetPlayerID(int player_id) {
@@ -288,7 +290,7 @@ void ClientNetworking::SendSynchronousMessage(Message message, Message& response
 }
 
 void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
-                                        boost::asio::basic_waitable_timer<boost::chrono::high_resolution_clock>* timer,
+                                        boost::asio::basic_waitable_timer<std::chrono::high_resolution_clock>* timer,
                                         const boost::system::error_code& error)
 {
     if (error) {

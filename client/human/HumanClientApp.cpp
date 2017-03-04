@@ -45,6 +45,9 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/chrono/chrono_io.hpp>
 
+#include <chrono>
+#include <thread>
+
 #include <sstream>
 
 
@@ -84,9 +87,9 @@ void SigHandler(int sig) {
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    typedef boost::chrono::steady_clock Clock;
-    const boost::chrono::milliseconds SERVER_CONNECT_TIMEOUT(10000);
-    const boost::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(10);
+    typedef std::chrono::steady_clock Clock;
+    const std::chrono::milliseconds SERVER_CONNECT_TIMEOUT(10000);
+    const std::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(10);
 
     const bool          INSTRUMENT_MESSAGE_HANDLING = false;
 
@@ -452,7 +455,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         connection_time = Clock::now() - start_time;
         if (SERVER_CONNECT_TIMEOUT < connection_time) {
             ErrorLogger() << "Timed out.  Failed to connect to server in "
-                          << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+                          << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             KillServer();
             return;
@@ -461,7 +464,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     m_connected = true;
     DebugLogger() << "HumanClientApp::NewSinglePlayerGame : Connecting to server took "
-                  << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
     if (quickstart || ended_with_ok) {
 
@@ -545,7 +548,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
         DebugLogger() << "HumanClientApp::NewSinglePlayerGame Sending server shutdown message.";
         m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
-        boost::this_thread::sleep_for(boost::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         m_networking.DisconnectFromServer();
         if (!m_networking.Connected())
             DebugLogger() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
@@ -648,7 +651,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     if (m_game_started) {
         EndGame();
         // delay to make sure old game is fully cleaned up before attempting to start a new one
-        boost::this_thread::sleep_for(boost::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
     } else {
         DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
     }
@@ -669,7 +672,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         connection_time = Clock::now() - start_time;
         if (SERVER_CONNECT_TIMEOUT < connection_time) {
             ErrorLogger() << "Timed out.  Failed to connect to server in "
-                          << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+                          << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             KillServer();
             return;
@@ -678,7 +681,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     m_connected = true;
     DebugLogger() << "HumanClientApp::LoadSinglePlayerGame : Connecting to server took "
-                      << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
@@ -713,7 +716,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
             connection_time = Clock::now() - start_time;
             if (SERVER_CONNECT_TIMEOUT < connection_time) {
                 ErrorLogger() << "Timed out.  Failed to connect to server in "
-                              << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+                              << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
                 ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
                 KillServer();
                 return;
@@ -721,7 +724,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         }
         m_connected = true;
         DebugLogger() << "HumanClientApp::RequestSavePreviews : Connecting to server took "
-                      << boost::chrono::duration_cast<boost::chrono::milliseconds>(connection_time) << ".";
+                      << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     Message response;
@@ -1157,7 +1160,7 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     if (m_networking.Connected()) {
         DebugLogger() << "HumanClientApp::EndGame Sending server shutdown message.";
         m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
-        boost::this_thread::sleep_for(boost::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         m_networking.DisconnectFromServer();
         if (!m_networking.Connected())
             DebugLogger() << "HumanClientApp::EndGame Disconnected from server.";
