@@ -523,6 +523,10 @@ public:
 
     mutable boost::signals2::signal<void (int)> BuildingRightClickedSignal;
 
+    /** Emitted when an order button changes state, used to update controls
+     *  of panels for other planets in the same system */
+    mutable boost::signals2::signal<void (int)> OrderButtonChangedSignal;
+
 private:
     void                    DoLayout();
     void                    RefreshPlanetGraphic();
@@ -590,7 +594,11 @@ public:
     void            SetValidSelectionPredicate(const std::shared_ptr<UniverseObjectVisitor> &visitor);
     void            ScrollTo(int pos);
 
-    void            RefreshAllPlanetPanels();           //!< updates data displayed in info panels and redoes layout
+    /** Updates data displayed in info panels and redoes layout
+     *  @param[in] excluded_planet_id Excludes panels with this planet id
+     *  @param[in] require_prerender Set panels to RequirePreRender */
+    void RefreshAllPlanetPanels(int excluded_planet_id = INVALID_OBJECT_ID,
+                                bool require_prerender = false);
 
     virtual void    ShowScrollbar();
     virtual void    HideScrollbar();
@@ -2282,6 +2290,7 @@ void SidePanel::PlanetPanel::ClickColonize() {
         HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
             new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
     }
+    OrderButtonChangedSignal(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::ClickInvade() {
@@ -2326,6 +2335,7 @@ void SidePanel::PlanetPanel::ClickInvade() {
                 new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
         }
     }
+    OrderButtonChangedSignal(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::ClickBombard() {
@@ -2370,6 +2380,7 @@ void SidePanel::PlanetPanel::ClickBombard() {
                 new BombardOrder(empire_id, ship->ID(), m_planet_id)));
         }
     }
+    OrderButtonChangedSignal(m_planet_id);
 }
 
 void SidePanel::PlanetPanel::FocusDropListOpened(bool is_open) {
@@ -2535,6 +2546,10 @@ void SidePanel::PlanetPanelContainer::SetPlanets(const std::vector<int>& planet_
         GG::Connect(m_planet_panels.back()->RightClickedSignal,         PlanetRightClickedSignal);
         GG::Connect(m_planet_panels.back()->BuildingRightClickedSignal, BuildingRightClickedSignal);
         GG::Connect(m_planet_panels.back()->ResizedSignal,              &SidePanel::PlanetPanelContainer::RequirePreRender,       this);
+        m_planet_panels.back()->OrderButtonChangedSignal.connect(
+            [this](int excluded_planet_id) {
+                RefreshAllPlanetPanels(excluded_planet_id, true);
+            });
     }
 
     // disable non-selectable planet panels
@@ -2712,9 +2727,16 @@ void SidePanel::PlanetPanelContainer::VScroll(int pos_top, int pos_bottom, int r
     RequirePreRender();
 }
 
-void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels() {
-    for (PlanetPanel* panel : m_planet_panels)
+void SidePanel::PlanetPanelContainer::RefreshAllPlanetPanels(
+    int excluded_planet_id, bool require_prerender)
+{
+    for (PlanetPanel* panel : m_planet_panels) {
+        if (excluded_planet_id > 0 && panel->PlanetID() == INVALID_OBJECT_ID)
+            continue;
         panel->Refresh();
+        if (require_prerender)
+            panel->RequirePreRender();
+    }
 }
 
 void SidePanel::PlanetPanelContainer::ShowScrollbar()
