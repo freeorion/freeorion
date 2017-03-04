@@ -357,13 +357,13 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
 }
 
 void ClientNetworking::HandleException(const boost::system::system_error& error) {
-    if (error.code() == boost::asio::error::eof ||
-        error.code() == boost::asio::error::connection_reset ||
-        error.code() == boost::asio::error::operation_aborted)
-    {
-        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
-                      << "due to disconnect exception \"" << error.what() << "\"";
-    } else {
+    if (error.code() == boost::asio::error::eof)
+        DebugLogger() << "Client connection disconnected by EOF from server.";
+    else if (error.code() == boost::asio::error::connection_reset)
+        DebugLogger() << "Client connection disconnected, due to connection reset from server.";
+    else if (error.code() == boost::asio::error::operation_aborted)
+        DebugLogger() << "Client connection closed by client.";
+    else {
         ErrorLogger() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
                       << "due to unhandled exception \"" << error.what() << "\"";
     }
