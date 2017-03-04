@@ -1,62 +1,11 @@
-add_definitions(-DFREEORION_BUILD_SERVER)
-
-set(freeoriond_LINK_LIBS
-    freeorioncommon
-    freeorionparse
-    ${PYTHON_LIBRARIES}
-    ${Boost_PYTHON_LIBRARY}
-)
-
-set (freeoriond_HEADER
-    ../network/ServerNetworking.h
-    SaveLoad.h
-    ServerApp.h
-    ServerFSM.h
-)
-
-set (freeoriond_SOURCE
-    dmain.cpp
-    SaveLoad.cpp
-    ServerApp.cpp
-    ServerFSM.cpp
-    ../combat/CombatSystem.cpp
-    ../network/ServerNetworking.cpp
-    ../python/CommonFramework.cpp
-    ../python/EmpireWrapper.cpp
-    ../python/EnumWrapper.cpp
-    ../python/LoggingWrapper.cpp
-    ../python/UniverseWrapper.cpp
-    ../python/server/ServerWrapper.cpp
-    ../python/server/ServerFramework.cpp
-    ../universe/UniverseGenerator.cpp
-    ../util/DependencyVersions.cpp
-)
-
-add_executable(freeoriond
-    ${freeoriond_HEADER}
-    ${freeoriond_SOURCE}
-)
-
-target_compile_options(
-    freeoriond PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-)
-
-target_include_directories(freeoriond SYSTEM
+target_sources(freeoriond
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/SaveLoad.h
+        ${CMAKE_CURRENT_LIST_DIR}/ServerApp.h
+        ${CMAKE_CURRENT_LIST_DIR}/ServerFSM.h
     PRIVATE
-        ${PROJECT_SOURCE_DIR}/GG
-        ${PYTHON_INCLUDE_PATH}
+        ${CMAKE_CURRENT_LIST_DIR}/dmain.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/SaveLoad.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ServerApp.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ServerFSM.cpp
 )
-
-
-target_link_libraries(freeoriond
-    ${freeoriond_LINK_LIBS}
-    ${CMAKE_THREAD_LIBS_INIT}
-)
-
-install(
-    TARGETS freeoriond
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT COMPONENT_FREEORION
-)
-

@@ -8,3 +8,10 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/MessageQueue.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Networking.cpp
 )
+
+target_sources(freeoriond
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/ServerNetworking.cpp
+)

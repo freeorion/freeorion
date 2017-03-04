@@ -9,3 +9,8 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/CombatEvents.cpp
         ${CMAKE_CURRENT_LIST_DIR}/CombatLogManager.cpp
 )
+
+target_sources(freeoriond
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
+)

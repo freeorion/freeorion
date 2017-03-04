@@ -57,3 +57,7 @@ if (NOT WIN32)
     )
 endif ()
 
+target_sources(freeoriond
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
+)

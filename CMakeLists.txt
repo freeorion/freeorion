@@ -229,6 +229,8 @@ target_link_libraries(freeorioncommon
     ${ZLIB_LIBRARIES}
 )
 
+add_dependencies(freeorioncommon freeorionversion)
+
 
 add_library(freeorionparseobj OBJECT "")
 
@@ -265,7 +267,31 @@ target_compile_options(
 )
 
 
-add_dependencies(freeorioncommon freeorionversion)
+add_executable(freeoriond "")
+
+target_compile_options(freeoriond
+    PRIVATE
+        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+)
+
+target_compile_definitions(freeoriond
+    PRIVATE
+        -DFREEORION_BUILD_SERVER
+)
+
+target_include_directories(freeoriond SYSTEM
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/GG
+        ${PYTHON_INCLUDE_PATH}
+)
+
+target_link_libraries(freeoriond
+    freeorioncommon
+    freeorionparse
+    ${PYTHON_LIBRARIES}
+    ${Boost_PYTHON_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
 
 
 ########################################
@@ -311,6 +337,12 @@ install(
 install(
     TARGETS freeorionparse
     LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT COMPONENT_FREEORION
+)
+
+install(
+    TARGETS freeoriond
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
 )
