@@ -87,10 +87,6 @@ void SigHandler(int sig) {
 #endif //ENABLE_CRASH_BACKTRACE
 
 namespace {
-    typedef std::chrono::steady_clock Clock;
-    const std::chrono::milliseconds SERVER_CONNECT_TIMEOUT(10000);
-    const std::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(10);
-
     const bool          INSTRUMENT_MESSAGE_HANDLING = false;
 
     // command-line options
@@ -449,22 +445,12 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         ended_with_ok = galaxy_wnd.EndedWithOk();
     }
 
-    Clock::time_point start_time = Clock::now();
-    Clock::duration connection_time{0};
-    while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
-        connection_time = Clock::now() - start_time;
-        if (SERVER_CONNECT_TIMEOUT < connection_time) {
-            ErrorLogger() << "Timed out.  Failed to connect to server in "
-                          << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
-            ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-            KillServer();
-            return;
-        }
+    m_connected = m_networking.ConnectToLocalHostServer();
+    if (!m_connected) {
+        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        KillServer();
+        return;
     }
-
-    m_connected = true;
-    DebugLogger() << "HumanClientApp::NewSinglePlayerGame : Connecting to server took "
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
     if (quickstart || ended_with_ok) {
 
@@ -588,14 +574,13 @@ void HumanClientApp::MultiPlayerGame() {
         server_name = GetOptionsDB().Get<std::string>("external-server-address");
     }
 
-    Clock::time_point start_time = Clock::now();
-    while (!m_networking.ConnectToServer(server_name, SERVER_STARTUP_POLLING_TIME)) {
-        if (SERVER_CONNECT_TIMEOUT < Clock::now() - start_time) {
-            ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-            if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
-                KillServer();
-            return;
-        }
+
+    m_connected = m_networking.ConnectToServer(server_name);
+    if (!m_connected) {
+        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
+            KillServer();
+        return;
     }
 
     if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
@@ -605,7 +590,6 @@ void HumanClientApp::MultiPlayerGame() {
         m_networking.SendMessage(JoinGameMessage(server_connect_wnd.Result().first, Networking::CLIENT_TYPE_HUMAN_PLAYER));
         m_fsm->process_event(JoinMPGameRequested());
     }
-    m_connected = true;
 }
 
 void HumanClientApp::StartMultiPlayerGameFromLobby()
@@ -666,22 +650,12 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     }
 
     DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
-    Clock::time_point start_time = Clock::now();
-    Clock::duration connection_time{0};
-    while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
-        connection_time = Clock::now() - start_time;
-        if (SERVER_CONNECT_TIMEOUT < connection_time) {
-            ErrorLogger() << "Timed out.  Failed to connect to server in "
-                          << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
-            ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-            KillServer();
-            return;
-        }
+    m_connected = m_networking.ConnectToLocalHostServer();
+    if (!m_connected) {
+        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        KillServer();
+        return;
     }
-
-    m_connected = true;
-    DebugLogger() << "HumanClientApp::LoadSinglePlayerGame : Connecting to server took "
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
     m_networking.SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking.SetHostPlayerID(Networking::INVALID_PLAYER_ID);
@@ -710,21 +684,12 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         StartServer();
 
         DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
-        Clock::time_point start_time = Clock::now();
-        Clock::duration connection_time{0};
-        while (!m_networking.ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME)) {
-            connection_time = Clock::now() - start_time;
-            if (SERVER_CONNECT_TIMEOUT < connection_time) {
-                ErrorLogger() << "Timed out.  Failed to connect to server in "
-                              << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
-                ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-                KillServer();
-                return;
-            }
+        m_connected = m_networking.ConnectToLocalHostServer();
+        if (!m_connected) {
+            ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+            KillServer();
+            return;
         }
-        m_connected = true;
-        DebugLogger() << "HumanClientApp::RequestSavePreviews : Connecting to server took "
-                      << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     Message response;
