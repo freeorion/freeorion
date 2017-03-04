@@ -204,7 +204,21 @@ bool ClientNetworking::ConnectToServer(
                                   << ((GetOptionsDB().Get<bool>("binary-serialization")) ? "binary": "xml")
                                   << " serialization.";
 
+                    // Prepare the socket
+
+                    // linger option has different meanings on different platforms.  It affects the
+                    // behavior of the socket.close().  It can do the following:
+                    // - close both send and receive immediately,
+                    // - finish sending any pending send packets and wait up to SOCKET_LINGER_TIME for
+                    // ACKs,
+                    // - finish sending pending sent packets and wait up to SOCKET_LINGER_TIME for ACKs
+                    // and for the other side of the connection to close,
+                    // linger may/may not cause close() to block until the linger time has elapsed.
                     m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
+
+                    // keep alive is an OS dependent option that will keep the TCP connection alive and
+                    // then deliver an OS dependent error when/if the other side of the connection
+                    // times out or closes.
                     m_socket.set_option(boost::asio::socket_base::keep_alive(true));
                     DebugLogger() << "Connecting to server took "
                                   << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
