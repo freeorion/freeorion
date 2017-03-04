@@ -184,16 +184,7 @@ add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
 
-if(${Boost_VERSION} LESS "105600")
-    # Starting with boost 1.56 boost::spirit uses boost::phoenix v3 exclusively.
-    # Before that version there spirit provides an translation layer, which can
-    # be enabled by defining BOOST_SPIRIT_USE_PHOENIX_V3.
-    add_definitions(
-        -DBOOST_SPIRIT_USE_PHOENIX_V3
-    )
-endif()
-
-if(${Boost_VERSION} EQUAL "106100" OR ${Boost_VERSION} GREATER "106100")
+if(${Boost_VERSION} GREATER "106000")
     # with boost 1.61 some boost::optional internals were changed. However
     # boost::spirit relies on some API the old implementation provided.  This
     # define enables the usage of the old boost::optional implementation.
