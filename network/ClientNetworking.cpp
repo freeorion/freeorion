@@ -162,7 +162,7 @@ ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
-    std::chrono::milliseconds timeout/* = std::chrono::seconds(5)*/,
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/,
     bool verbose)
 {
     if (verbose)
@@ -224,7 +224,7 @@ bool ClientNetworking::ConnectToServer(
 }
 
 bool ClientNetworking::ConnectToLocalHostServer(
-    std::chrono::milliseconds timeout/* = std::chrono::seconds(5)*/,
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/,
     bool verbose)
 {
     bool retval = false;
