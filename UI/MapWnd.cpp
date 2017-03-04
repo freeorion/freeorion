@@ -3354,13 +3354,14 @@ namespace {
 
 
     void PrepFullLanesToRender(const boost::unordered_map<int, SystemIcon*>& sys_icons,
-                               std::map<std::pair<int, int>, LaneEndpoints>& starlane_endpoints,
                                GG::GL2DVertexBuffer& starlane_vertices,
                                GG::GLRGBAColorBuffer& starlane_colors)
     {
         const std::set<int>& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+
+        std::set<std::pair<int, int>> already_rendered_full_lanes;
 
         for (const auto& id_icon : sys_icons) {
             int system_id = id_icon.first;
@@ -3393,26 +3394,20 @@ namespace {
 
 
                 // check that this lane isn't already in map / being rendered.
-                std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());     // get "unordered pair" indexing lane
+                //std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());     // get "unordered pair" indexing lane
+                if (already_rendered_full_lanes.find({start_system->ID(), dest_system->ID()}) !=
+                    already_rendered_full_lanes.end())
+                { continue; }
+                already_rendered_full_lanes.insert({start_system->ID(), dest_system->ID()});
+                already_rendered_full_lanes.insert({dest_system->ID(), start_system->ID()});
 
-                if (starlane_endpoints.find(lane) != starlane_endpoints.end())
-                    continue;
 
                 //std::cout << "adding full length lane" << std::endl;
-
-                // get and store universe position endpoints for this starlane.  make sure to store in the same order
-                // as the system ids in the lane id pair
-                if (start_system->ID() == lane.first)
-                    starlane_endpoints[lane] = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
-                else
-                    starlane_endpoints[lane] = StarlaneEndPointsFromSystemPositions(dest_system->X(), dest_system->Y(), start_system->X(), start_system->Y());
-
-
                 // add vertices for this full-length starlane
-                starlane_vertices.store(static_cast<float>(starlane_endpoints[lane].X1),
-                                        static_cast<float>(starlane_endpoints[lane].Y1));
-                starlane_vertices.store(static_cast<float>(starlane_endpoints[lane].X2),
-                                        static_cast<float>(starlane_endpoints[lane].Y2));
+                LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+                starlane_vertices.store(lane_endpoints.X1, lane_endpoints.Y1);
+                starlane_vertices.store(lane_endpoints.X2, lane_endpoints.Y2);
+
 
                 // determine colour(s) for lane based on which empire(s) can transfer resources along the lane.
                 // todo: multiple rendered lanes (one for each empire) when multiple empires use the same lane.
@@ -3544,6 +3539,10 @@ namespace {
             }
         }
     }
+
+    void PrepObstructedLaneTraversalsToRender(const boost::unordered_map<int, SystemIcon*>& sys_icons) {
+
+    }
 }
 
 void MapWnd::InitStarlaneRenderingBuffers() {
@@ -3554,13 +3553,13 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     // temp storage
     std::set<std::pair<int, int>> rendered_half_starlanes;  // stored as unaltered pairs, so that a each direction of traversal can be shown separately
-    m_starlane_endpoints.clear();
+    m_starlane_endpoints.clear();   // todo: remove this variable
 
 
-    PrepFullLanesToRender(m_system_icons, m_starlane_endpoints, m_starlane_vertices, m_starlane_colors);
+    PrepFullLanesToRender(m_system_icons, m_starlane_vertices, m_starlane_colors);
     PrepResourceConnectionLanesToRender(m_system_icons, HumanClientApp::GetApp()->EmpireID(), rendered_half_starlanes,
                                         m_RC_starlane_vertices, m_RC_starlane_colors);
-
+    PrepObstructedLaneTraversalsToRender(m_system_icons);
 
     const std::set<int>& this_client_known_destroyed_objects =
         GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
