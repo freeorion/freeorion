@@ -158,25 +158,8 @@ void AIClientApp::Run() {
 }
 
 void AIClientApp::ConnectToServer() {
-    typedef std::chrono::steady_clock Clock;
-    const std::chrono::milliseconds SERVER_CONNECT_TIMEOUT(10000);
-    const std::chrono::milliseconds SERVER_STARTUP_POLLING_TIME(10);
-
-    bool connected = false;
-    Clock::time_point start_time = Clock::now();
-    Clock::duration connection_time{0};
-    while (!connected && (connection_time < SERVER_CONNECT_TIMEOUT )) {
-        connected = Networking().ConnectToLocalHostServer(SERVER_STARTUP_POLLING_TIME);
-        connection_time = Clock::now() - start_time;
-    }
-
-    if (!connected) {
-        ErrorLogger() << "Timed out.  Failed to connect to server in "
-                      << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
+    if (!Networking().ConnectToLocalHostServer())
         Exit(1);
-    }
-    DebugLogger() << "Connecting to server took "
-                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 }
 
 void AIClientApp::StartPythonAI() {
