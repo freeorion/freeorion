@@ -164,6 +164,9 @@ bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
     std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
 {
+    using Clock = std::chrono::steady_clock;
+    Clock::time_point start_time = Clock::now();
+
     DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
 
     using namespace boost::asio::ip;
@@ -189,6 +192,8 @@ bool ClientNetworking::ConnectToServer(
             m_io_service.run();
             m_io_service.reset();
 
+            auto connection_time = Clock::now() - start_time;
+
             if (Connected()) {
                 DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
                               << "  address: " << it->endpoint().address()
@@ -201,6 +206,8 @@ bool ClientNetworking::ConnectToServer(
                     DebugLogger() << "ClientNetworking::ConnectToServer : this client using xml serialization.";
                 m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
                 m_socket.set_option(boost::asio::socket_base::keep_alive(true));
+                DebugLogger() << "Connecting to server took "
+                              << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
                 DebugLogger() << "ClientNetworking::ConnectToServer : starting networking thread";
                 boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
                 break;
@@ -209,6 +216,11 @@ bool ClientNetworking::ConnectToServer(
                               << "  address: " << it->endpoint().address()
                               << "  port: " << it->endpoint().port();
                 DebugLogger() << "ClientNetworking::ConnectToServer : no connection yet...";
+                if (timeout < connection_time) {
+                    ErrorLogger() << "Timed out ("
+                                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms."
+                                  << ") attempting to connect to server.";
+                }
             }
         }
         if (!Connected())
