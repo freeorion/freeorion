@@ -15,9 +15,11 @@ ENDIF(NOT CMAKE_BUILD_TYPE)
 
 message(STATUS "Build type CMAKE_BUILD_TYPE set to ${CMAKE_BUILD_TYPE}")
 
-########################################
-# Configuration                        #
-########################################
+
+##
+## Global project configuration
+##
+
 project(FreeOrion)
 
 include(GNUInstallDirs)
@@ -111,9 +113,10 @@ if (NOT FO_LINK_STATIC_BOOST_LIBS)
 endif ()
 
 
-########################################
-# Dependencies                         #
-########################################
+##
+## Collect project dependencies.
+##
+
 set(MINIMUM_PYTHON_VERSION 2.7)
 set(MINIMUM_BOOST_VERSION 1.56.0)
 
@@ -149,9 +152,9 @@ find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
 
-########################################
-# Build common code library            #
-########################################
+##
+## Define main project targets.
+##
 
 # To run the version generation every compile we need to deferr the
 # execution to a separate target and the existing python command
@@ -372,9 +375,10 @@ target_link_libraries(freeorion
 )
 
 
-########################################
-# Recurse Into Sources                 #
-########################################
+##
+## Recurse into sources.
+##
+
 add_subdirectory(AI)
 add_subdirectory(client)
 add_subdirectory(combat)
@@ -389,9 +393,11 @@ add_subdirectory(util)
 add_subdirectory(check)
 add_subdirectory(doc)
 
-########################################
-# Packaging                            #
-########################################
+
+##
+## Install targets and package project.
+##
+
 set(BUILD_PACKAGING
     false
     CACHE BOOL
