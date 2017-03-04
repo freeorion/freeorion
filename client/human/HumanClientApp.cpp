@@ -530,15 +530,6 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         m_fsm->process_event(HostSPGameRequested());
     } else {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
-        DebugLogger() << "HumanClientApp::NewSinglePlayerGame Sending server shutdown message.";
-        m_networking->SendMessage(ShutdownServerMessage(m_networking->PlayerID()));
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-        m_networking->DisconnectFromServer();
-        // TODO refactor this.  disconnect is asynchronous and might not have taken effect by now.
-        if (!m_networking->IsConnected())
-            DebugLogger() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
-        else
-            ErrorLogger() << "HumanClientApp::NewSinglePlayerGame Unexpectedly still connected to server...?";
         KillServer();
     }
 }
