@@ -19,6 +19,12 @@ BuildingType
                 NOT Population high = 0
                 OwnedBy empire = Source.Owner
             ]
+            activation = And [
+                ContainedBy And [
+                    Planet
+                    Contains Building name = "BLD_CULTURE_ARCHIVES"
+                ]
+            ]
             priority = [[VERY_LATE_PRIORITY]]
             effects = [
                 SetTargetResearch value = Value + 5
