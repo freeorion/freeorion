@@ -257,7 +257,7 @@ protected:
     EmpireManager               m_empires;
     SupplyManager               m_supply_manager;
     OrderSet                    m_orders;
-    ClientNetworking            m_networking;
+    std::shared_ptr<ClientNetworking> m_networking;
     int                         m_empire_id;
     int                         m_current_turn;
     /** Indexed by player id, contains info about all players in the game */

@@ -202,7 +202,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
                 ErrorLogger() << "AIClientApp::HandleMessage for HOST_ID : Couldn't parese message text: " << text;
             }
         }
-        m_networking.SetHostPlayerID(host_id);
+        m_networking->SetHostPlayerID(host_id);
         break;
     }
 
@@ -210,7 +210,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             if (PlayerID() == Networking::INVALID_PLAYER_ID) {
                 DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
-                m_networking.SetPlayerID(msg.ReceivingPlayer());
+                m_networking->SetPlayerID(msg.ReceivingPlayer());
             } else {
                 ErrorLogger() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";
             }
