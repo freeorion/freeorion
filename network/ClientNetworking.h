@@ -29,7 +29,7 @@
     periodically request the next incoming message; the arrival of incoming
     messages is never explicitly signalled to the main thread.  The same
     applies to unintentional disconnects from the server.  The client must
-    periodically check Connected().
+    periodically check IsConnected().
 
     The ClientNetworking has three modes of operation.  First, it can discover
     FreeOrion servers on the local network; this is a blocking operation with
@@ -57,8 +57,14 @@ public:
     //@}
 
     /** \name Accessors */ //@{
-    /** Returns true iff the client is connected to the server. */
-    bool Connected() const;
+    /** Returns true iff the client is full duplex connected to the server. */
+    bool IsConnected() const;
+
+    /** Returns true iff the client is connected to receive from the server. */
+    bool IsRxConnected() const;
+
+    /** Returns true iff the client is connected to send to the server. */
+    bool IsTxConnected() const;
 
     /** Returns true iff there is at least one incoming message available. */
     bool MessageAvailable() const;
@@ -135,7 +141,8 @@ private:
     mutable boost::mutex            m_mutex;
     MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
     std::list<Message>              m_outgoing_messages;
-    bool                            m_connected;         // accessed from multiple threads
+    bool                            m_rx_connected;      // accessed from multiple threads
+    bool                            m_tx_connected;      // accessed from multiple threads
 
     Message::HeaderBuffer           m_incoming_header;
     Message                         m_incoming_message;

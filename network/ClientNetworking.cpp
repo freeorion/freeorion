@@ -128,12 +128,23 @@ ClientNetworking::ClientNetworking() :
     m_io_service(),
     m_socket(m_io_service),
     m_incoming_messages(m_mutex),
-    m_connected(false)
+    m_rx_connected(false),
+    m_tx_connected(false)
 {}
 
-bool ClientNetworking::Connected() const {
+bool ClientNetworking::IsConnected() const {
     boost::mutex::scoped_lock lock(m_mutex);
-    return m_connected;
+    return m_rx_connected && m_tx_connected;
+}
+
+bool ClientNetworking::IsRxConnected() const {
+    boost::mutex::scoped_lock lock(m_mutex);
+    return m_rx_connected;
+}
+
+bool ClientNetworking::IsTxConnected() const {
+    boost::mutex::scoped_lock lock(m_mutex);
+    return m_tx_connected;
 }
 
 bool ClientNetworking::MessageAvailable() const
@@ -152,7 +163,7 @@ bool ClientNetworking::PlayerIsHost(int player_id) const {
 }
 
 ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
-    if (!Connected())
+    if (!IsConnected())
         return ServerList();
     ServerDiscoverer discoverer(m_io_service);
     discoverer.DiscoverServers();
@@ -183,7 +194,7 @@ bool ClientNetworking::ConnectToServer(
     }
 
     try {
-        while(!Connected() && Clock::now() < deadline) {
+        while(!IsConnected() && Clock::now() < deadline) {
             for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
                 m_socket.close();
 
@@ -195,7 +206,7 @@ bool ClientNetworking::ConnectToServer(
 
                 auto connection_time = Clock::now() - start_time;
 
-                if (Connected()) {
+                if (IsConnected()) {
                     DebugLogger() << "Connected to server at host_name: " << it->host_name()
                                   << "  address: " << it->endpoint().address()
                                   << "  port: " << it->endpoint().port();
@@ -238,13 +249,14 @@ bool ClientNetworking::ConnectToServer(
                 }
             }
         }
-        if (!Connected())
+        if (!IsConnected())
             DebugLogger() << "ConnectToServer() : failed to connect to server.";
+
     } catch (const std::exception& e) {
         ErrorLogger() << "ConnectToServer() : unable to connect to server at "
                       << ip_address << " due to exception: " << e.what();
     }
-    return Connected();
+    return IsConnected();
 }
 
 bool ClientNetworking::ConnectToLocalHostServer(
@@ -265,12 +277,21 @@ bool ClientNetworking::ConnectToLocalHostServer(
 }
 
 void ClientNetworking::DisconnectFromServer() {
-    if (Connected()) {
+    bool is_open(false);
+
+    { // Create a scope for the mutex
+        boost::mutex::scoped_lock lock(m_mutex);
+        is_open = m_rx_connected || m_tx_connected;
+    } // Destroy the scope for the mutex.
+
+    if (is_open) {
+        // Depending behavior of linger on OS's of the sending and receiving machines this call to close could
+        // - immediately disconnect both send and receive channels
+        // - immediately disconnect send, but continue receiving until all pending sent packets are
+        // received and acknowledged.
+        // - send pending packets and wait for the receive side to terminate the connection.
+
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
-        // HACK! wait a bit for the disconnect to occur
-        //only wait ~1 refresh period
-        DebugLogger() << "ClientNetworking::DisconnectFromServer wait";
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
     }
 }
 
@@ -283,8 +304,8 @@ void ClientNetworking::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
 
 void ClientNetworking::SendMessage(Message message) {
-    if (!Connected()) {
-        ErrorLogger() << "ClientNetworking::SendMessage can't send message when not connected";
+    if (!IsTxConnected()) {
+        ErrorLogger() << "ClientNetworking::SendMessage can't send message when not transmit connected";
         return;
     }
     if (TRACE_EXECUTION)
@@ -328,7 +349,8 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
             DebugLogger() << "ClientNetworking::HandleConnection : connected";
 
         boost::mutex::scoped_lock lock(m_mutex);
-        m_connected = true;
+        m_rx_connected = true;
+        m_tx_connected = true;
     }
 }
 
@@ -358,7 +380,8 @@ void ClientNetworking::NetworkingThread() {
     m_outgoing_messages.clear();
     m_io_service.reset();
     boost::mutex::scoped_lock lock(m_mutex);
-    m_connected = false;
+    m_rx_connected = false;
+    m_tx_connected = false;
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
@@ -439,5 +462,13 @@ void ClientNetworking::SendMessageImpl(Message message) {
         AsyncWriteMessage();
 }
 
-void ClientNetworking::DisconnectFromServerImpl()
-{ m_socket.close(); }
+void ClientNetworking::DisconnectFromServerImpl() {
+    // Stop sending new packets
+    { // Scope for the mutex
+        boost::mutex::scoped_lock lock(m_mutex);
+        m_tx_connected = false;
+    }
+
+    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+    m_socket.close();
+}

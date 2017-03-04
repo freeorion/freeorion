@@ -321,8 +321,7 @@ void HumanClientApp::ConnectKeyboardAcceleratorSignals() {
 }
 
 HumanClientApp::~HumanClientApp() {
-    if (m_networking.Connected())
-        m_networking.DisconnectFromServer();
+    m_networking.DisconnectFromServer();
     m_server_process.RequestTermination();
 }
 
@@ -536,7 +535,8 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
         std::this_thread::sleep_for(std::chrono::seconds(1));
         m_networking.DisconnectFromServer();
-        if (!m_networking.Connected())
+        // TODO refactor this.  disconnect is asynchronous and might not have taken effect by now.
+        if (!m_networking.IsConnected())
             DebugLogger() << "HumanClientApp::NewSinglePlayerGame Disconnected from server.";
         else
             ErrorLogger() << "HumanClientApp::NewSinglePlayerGame Unexpectedly still connected to server...?";
@@ -545,7 +545,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 }
 
 void HumanClientApp::MultiPlayerGame() {
-    if (m_networking.Connected()) {
+    if (m_networking.IsConnected()) {
         ErrorLogger() << "HumanClientApp::MultiPlayerGame aborting because already connected to a server";
         return;
     }
@@ -677,7 +677,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
     DebugLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end());
 
     std::string  generic_directory = directory;//PathString(fs::path(directory));
-    if (!m_networking.Connected()) {
+    if (!m_networking.IsConnected()) {
         DebugLogger() << "HumanClientApp::RequestSavePreviews: No game running. Start a server for savegame queries.";
 
         m_single_player_game = true;
@@ -804,7 +804,7 @@ void HumanClientApp::HandleSystemEvents() {
     } catch (const utf8::invalid_utf8& e) {
         ErrorLogger() << "UTF-8 error handling system event: " << e.what();
     }
-    if (m_connected && !m_networking.Connected()) {
+    if (m_connected && !m_networking.IsConnected()) {
         m_connected = false;
         DisconnectedFromServer();
     } else if (m_networking.MessageAvailable()) {
@@ -1122,12 +1122,13 @@ void HumanClientApp::EndGame(bool suppress_FSM_reset) {
     DebugLogger() << "HumanClientApp::EndGame";
     m_game_started = false;
 
-    if (m_networking.Connected()) {
+    if (m_networking.IsTxConnected()) {
         DebugLogger() << "HumanClientApp::EndGame Sending server shutdown message.";
         m_networking.SendMessage(ShutdownServerMessage(m_networking.PlayerID()));
         std::this_thread::sleep_for(std::chrono::seconds(1));
         m_networking.DisconnectFromServer();
-        if (!m_networking.Connected())
+        // TODO fix this.  disconnect is asynchronous and may not have acted by now.
+        if (!m_networking.IsConnected())
             DebugLogger() << "HumanClientApp::EndGame Disconnected from server.";
         else
             ErrorLogger() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
