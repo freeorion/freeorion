@@ -1,103 +1,63 @@
-add_definitions(-DNDEBUG -DFREEORION_BUILD_PARSE)
-
-set (freeorionparse_HEADER
-    CommonParams.h
-    ConditionParserImpl.h
-    EffectParser.h
-    EffectParserImpl.h
-    EnumParser.h
-    Lexer.h
-    Parse.h
-    ParseImpl.h
-    ReportParseError.h
-    Tokens.h
-    ValueRefParser.h
-    ValueRefParserImpl.h
-)
-
-set (freeorionparse_SOURCE
-    AlignmentsParser.cpp
-    BuildingsParser.cpp
-    CommonParamsParser.cpp
-    ConditionParser1.cpp
-    ConditionParser2.cpp
-    ConditionParser3.cpp
-    ConditionParser4.cpp
-    ConditionParser5.cpp
-    ConditionParser6.cpp
-    ConditionParser7.cpp
-    ConditionParser.cpp
-    DoubleComplexValueRefParser.cpp
-    DoubleValueRefParser.cpp
-    EffectParser1.cpp
-    EffectParser2.cpp
-    EffectParser3.cpp
-    EffectParser4.cpp
-    EffectParser5.cpp
-    EffectParser.cpp
-    EmpireStatsParser.cpp
-    EncyclopediaParser.cpp
-    EnumParser.cpp
-    FieldsParser.cpp
-    FleetPlansParser.cpp
-    IntComplexValueRefParser.cpp
-    IntValueRefParser.cpp
-    ItemsParser.cpp
-    KeymapParser.cpp
-    Lexer.cpp
-    MonsterFleetPlansParser.cpp
-    Parse.cpp
-    PlanetEnvironmentValueRefParser.cpp
-    PlanetSizeValueRefParser.cpp
-    PlanetTypeValueRefParser.cpp
-    ReportParseError.cpp
-    ShipDesignsParser.cpp
-    ShipHullsParser.cpp
-    ShipPartsParser.cpp
-    SpecialsParser.cpp
-    SpeciesParser.cpp
-    StarTypeValueRefParser.cpp
-    StringComplexValueRefParser.cpp
-    StringValueRefParser.cpp
-    TechsParser.cpp
-    Tokens.cpp
-    UniverseObjectTypeValueRefParser.cpp
-    ValueRefParserImpl.cpp
-)
-
-add_library(freeorionparseobj OBJECT
-    ${freeorionparse_HEADER}
-    ${freeorionparse_SOURCE}
-)
-
-target_include_directories(freeorionparseobj SYSTEM
+target_sources(freeorionparseobj
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/Parse.h
     PRIVATE
-        ${Boost_INCLUDE_DIRS}
-        ${PROJECT_SOURCE_DIR}/GG
-)
-
-set_property(TARGET freeorionparseobj
-    PROPERTY
-    POSITION_INDEPENDENT_CODE ON
-)
-
-target_compile_options(
-    freeorionparseobj PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:gnu>>:-O3>
-    $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
-)
-
-add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
-
-target_compile_options(
-    freeorionparse PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-)
-
-install(
-    TARGETS freeorionparse
-    LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT COMPONENT_FREEORION
+        ${CMAKE_CURRENT_LIST_DIR}/CommonParams.h
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParserImpl.h
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser.h
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParserImpl.h
+        ${CMAKE_CURRENT_LIST_DIR}/EnumParser.h
+        ${CMAKE_CURRENT_LIST_DIR}/Lexer.h
+        ${CMAKE_CURRENT_LIST_DIR}/ParseImpl.h
+        ${CMAKE_CURRENT_LIST_DIR}/ReportParseError.h
+        ${CMAKE_CURRENT_LIST_DIR}/Tokens.h
+        ${CMAKE_CURRENT_LIST_DIR}/ValueRefParser.h
+        ${CMAKE_CURRENT_LIST_DIR}/ValueRefParserImpl.h
+        ${CMAKE_CURRENT_LIST_DIR}/AlignmentsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/BuildingsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/CommonParamsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser1.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser2.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser3.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser4.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser5.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser6.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser7.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ConditionParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/DoubleComplexValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/DoubleValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser1.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser2.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser3.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser4.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser5.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EffectParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EmpireStatsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EncyclopediaParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EnumParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FieldsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FleetPlansParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/IntComplexValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/IntValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ItemsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/KeymapParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Lexer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MonsterFleetPlansParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Parse.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PlanetEnvironmentValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PlanetSizeValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PlanetTypeValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ReportParseError.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ShipDesignsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ShipHullsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ShipPartsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/SpecialsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/SpeciesParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/StarTypeValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/StringComplexValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/StringValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TechsParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Tokens.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UniverseObjectTypeValueRefParser.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ValueRefParserImpl.cpp
 )

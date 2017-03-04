@@ -229,6 +229,42 @@ target_link_libraries(freeorioncommon
     ${ZLIB_LIBRARIES}
 )
 
+
+add_library(freeorionparseobj OBJECT "")
+
+target_include_directories(freeorionparseobj SYSTEM
+    PRIVATE
+        ${Boost_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/GG
+)
+
+set_property(TARGET freeorionparseobj
+    PROPERTY
+    POSITION_INDEPENDENT_CODE ON
+)
+
+target_compile_options(
+    freeorionparseobj PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:gnu>>:-O3>
+    $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+)
+
+target_compile_definitions(freeorionparseobj
+    PRIVATE
+        -DNDEBUG
+        -DFREEORION_BUILD_PARSE
+)
+
+
+add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
+
+target_compile_options(
+    freeorionparse PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+)
+
+
 add_dependencies(freeorioncommon freeorionversion)
 
 
@@ -267,6 +303,13 @@ install(
 
 install(
     TARGETS freeorioncommon
+    LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT COMPONENT_FREEORION
+)
+
+install(
+    TARGETS freeorionparse
     LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
