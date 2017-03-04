@@ -66,3 +66,8 @@ target_sources(freeorionca
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
 )
+
+target_sources(freeorion
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/DependencyVersions.cpp
+)

@@ -1,0 +1,12 @@
+target_sources(freeorion
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/CombatLogWnd.h
+        ${CMAKE_CURRENT_LIST_DIR}/CombatReportData.h
+        ${CMAKE_CURRENT_LIST_DIR}/CombatReportWnd.h
+        ${CMAKE_CURRENT_LIST_DIR}/GraphicalSummary.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/GraphicalSummary.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/CombatLogWnd.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/CombatReportData.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/CombatReportWnd.cpp
+)

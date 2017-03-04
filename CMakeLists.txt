@@ -137,6 +137,16 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
     REQUIRED)
 find_package(ZLIB REQUIRED)
 find_package(Freetype REQUIRED)
+find_package(OpenGL REQUIRED)
+
+if (NOT OPENGL_GLU_FOUND)
+    message(FATAL_ERROR "OpenGL GLU library not found.")
+endif ()
+
+find_package(SDL2 REQUIRED)
+find_package(OpenAL REQUIRED)
+find_package(Ogg REQUIRED)
+find_package(Vorbis REQUIRED)
 
 
 ########################################
@@ -322,18 +332,58 @@ target_link_libraries(freeorionca
 )
 
 
+add_executable(freeorion "")
+
+target_compile_options(freeorion
+    PRIVATE
+        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+)
+
+target_compile_definitions(freeorion
+    PRIVATE
+        -DFREEORION_BUILD_HUMAN
+)
+
+target_include_directories(freeorion SYSTEM
+    PRIVATE
+        ${OPENGL_INCLUDE_DIR}
+        ${OPENAL_INCLUDE_DIR}
+        ${SDL2_INCLUDE_DIR}
+        ${OGG_INCLUDE_DIR}
+        ${VORBIS_INCLUDE_DIR}
+        ${FREETYPE_INCLUDE_DIRS}
+        ${PROJECT_SOURCE_DIR}/GG
+)
+
+target_link_libraries(freeorion
+    freeorioncommon
+    freeorionparse
+    GiGi
+    GiGiSDL
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    ${OPENAL_LIBRARY}
+    ${SDL2_LIBRARY}
+    ${OGG_LIBRARY}
+    ${VORBIS_LIBRARIES}
+    ${ZLIB_LIBRARY}
+    ${Boost_LOCALE_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+
 ########################################
 # Recurse Into Sources                 #
 ########################################
 add_subdirectory(AI)
 add_subdirectory(client)
-add_subdirectory(client/human)
 add_subdirectory(combat)
 add_subdirectory(Empire)
 add_subdirectory(network)
 add_subdirectory(parse)
 add_subdirectory(python)
 add_subdirectory(server)
+add_subdirectory(UI)
 add_subdirectory(universe)
 add_subdirectory(util)
 add_subdirectory(check)
@@ -378,6 +428,12 @@ install(
 
 install(
     TARGETS freeorionca
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT COMPONENT_FREEORION
+)
+
+install(
+    TARGETS freeorion
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
 )

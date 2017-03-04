@@ -22,3 +22,10 @@ target_sources(freeorionca
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.cpp
 )
+
+target_sources(freeorion
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.h
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/ClientNetworking.cpp
+)
