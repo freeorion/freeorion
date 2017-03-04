@@ -14,3 +14,8 @@ target_sources(freeoriond
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
 )
+
+target_sources(freeorionca
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/CombatSystem.cpp
+)

@@ -294,10 +294,39 @@ target_link_libraries(freeoriond
 )
 
 
+add_executable(freeorionca "")
+
+target_compile_options(
+    freeorionca PRIVATE
+    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+)
+
+target_compile_definitions(freeorionca
+    PRIVATE
+        -DFREEORION_BUILD_AI
+)
+
+target_include_directories(freeorionca SYSTEM
+    PRIVATE
+        ${Boost_INCLUDE_DIRS}
+        ${PYTHON_INCLUDE_PATH}
+        ${PROJECT_SOURCE_DIR}/GG
+)
+
+target_link_libraries(freeorionca
+    freeorioncommon
+    freeorionparse
+    ${PYTHON_LIBRARIES}
+    ${Boost_PYTHON_LIBRARY}
+    ${CMAKE_THREAD_LIBS_INIT}
+)
+
+
 ########################################
 # Recurse Into Sources                 #
 ########################################
-add_subdirectory(client/AI)
+add_subdirectory(AI)
+add_subdirectory(client)
 add_subdirectory(client/human)
 add_subdirectory(combat)
 add_subdirectory(Empire)
@@ -343,6 +372,12 @@ install(
 
 install(
     TARGETS freeoriond
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT COMPONENT_FREEORION
+)
+
+install(
+    TARGETS freeorionca
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     COMPONENT COMPONENT_FREEORION
 )
