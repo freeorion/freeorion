@@ -31,6 +31,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTING "Build the testing tree." OFF)
+option(BUILD_PACKAGING "Build the installer/binary package" OFF)
 
 if (BUILD_TESTING)
     message( STATUS "Building Tests")
@@ -397,12 +398,6 @@ add_subdirectory(doc)
 ##
 ## Install targets and package project.
 ##
-
-set(BUILD_PACKAGING
-    false
-    CACHE BOOL
-    "Whether to build installer/binary package. (This is the executable installer on Win32, and an RPM/DEB/tarball on Linux."
-)
 
 install(
     DIRECTORY default/
