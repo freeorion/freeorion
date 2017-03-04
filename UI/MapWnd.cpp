@@ -2516,7 +2516,7 @@ void MapWnd::EnableOrderIssuing(bool enable/* = true*/) {
 void MapWnd::InitTurn() {
     int turn_number = CurrentTurn();
     DebugLogger() << "Initializing turn " << turn_number;
-    SectionedScopedTimer timer("MapWnd::InitTurn", boost::chrono::milliseconds(1));
+    SectionedScopedTimer timer("MapWnd::InitTurn", std::chrono::milliseconds(1));
     timer.EnterSection("init");
 
     //DebugLogger() << GetSupplyManager().Dump();

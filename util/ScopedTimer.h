@@ -6,8 +6,7 @@
 
 #include "Export.h"
 
-// TODO change boost to std when C++11 is adopted.
-#include <boost/chrono/chrono.hpp>
+#include <chrono>
 
 /** Outputs time during which this object existed.
     Created in the scope of a function, and passed the appropriate
@@ -21,8 +20,8 @@
 class FO_COMMON_API ScopedTimer {
 public:
     ScopedTimer(const std::string& timed_name, bool enable_output = false,
-                boost::chrono::microseconds threshold = boost::chrono::milliseconds(1));
-    ScopedTimer(const std::string& timed_name, boost::chrono::microseconds threshold);
+                std::chrono::microseconds threshold = std::chrono::milliseconds(1));
+    ScopedTimer(const std::string& timed_name, std::chrono::microseconds threshold);
     ~ScopedTimer();
 
     class Impl;
@@ -61,7 +60,7 @@ private:
 
     void function_to_profile () {
 
-        SectionedScopedTimer timer("Title", boost::chrono::milliseconds(1));
+        SectionedScopedTimer timer("Title", std::chrono::milliseconds(1));
         timer.EnterSection("initial section");
 
         profiled_code();
@@ -89,8 +88,8 @@ private:
 class FO_COMMON_API SectionedScopedTimer {
 public:
     SectionedScopedTimer(const std::string& timed_name, bool enable_output = false,
-                         boost::chrono::microseconds threshold = boost::chrono::milliseconds(1));
-    SectionedScopedTimer(const std::string& timed_name, boost::chrono::microseconds threshold);
+                         std::chrono::microseconds threshold = std::chrono::milliseconds(1));
+    SectionedScopedTimer(const std::string& timed_name, std::chrono::microseconds threshold);
     ~SectionedScopedTimer();
 
     /** Start recording times for \p section_name.
