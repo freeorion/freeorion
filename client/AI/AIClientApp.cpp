@@ -92,8 +92,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 }
 
 AIClientApp::~AIClientApp() {
-    if (Networking().Connected())
-        Networking().DisconnectFromServer();
+    Networking().DisconnectFromServer();
 
     DebugLogger() << "Shut down " + PlayerName() + " ai client.";
 }
@@ -130,7 +129,7 @@ void AIClientApp::Run() {
         while (1) {
             try {
 
-                if (!Networking().Connected())
+                if (!Networking().IsRxConnected())
                     break;
                 if (Networking().MessageAvailable()) {
                     Message msg;
