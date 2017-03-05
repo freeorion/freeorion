@@ -140,7 +140,7 @@ void AIClientApp::Run() {
                 /* If the python interpreter is still running then keep
                    going, otherwise exit.*/
                 m_AI->HandleErrorAlreadySet();
-                if (m_AI->IsPythonRunning())
+                if (!m_AI->IsPythonRunning())
                     throw;
             }
         }
