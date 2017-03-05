@@ -76,7 +76,7 @@ std::set<int> SupplyManager::FleetSupplyableSystemIDs(int empire_id, bool includ
     for (auto empire_id_sys_id_set : m_fleet_supplyable_system_ids) {
         int other_empire_id = empire_id_sys_id_set.first;
         const std::set<int>& systems = empire_id_sys_id_set.second;
-        if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_PEACE)
+        if (systems.empty() || Empires().GetDiplomaticStatus(empire_id, other_empire_id) != DIPLO_ALLIED)
             continue;
         retval.insert(systems.begin(), systems.end());
     }
@@ -697,17 +697,76 @@ void SupplyManager::Update() {
         //}
     }
 
+
+
+    // TEST STUFF FOR INTER-EMPIRE-MERGING
+    std::map<int, std::set<std::pair<int, int>>> ally_merged_supply_starlane_traversals = m_supply_starlane_traversals;
+
+    // add connections into allied empire systems when their obstructed lane
+    // traversals originate on either end of a starlane
+    for (auto& empire_set : m_supply_starlane_obstructed_traversals) {
+        // input:
+        const std::set<std::pair<int, int>>& empire_obstructed_traversals = empire_set.second;
+        // output:
+        std::set<std::pair<int, int>>& empire_supply_traversals = ally_merged_supply_starlane_traversals[empire_set.first];
+
+
+        std::set<int> allies_of_empire = Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DIPLO_ALLIED);
+        for (int ally_id : allies_of_empire) {
+            // input:
+            auto const& ally_obstructed_traversals = m_supply_starlane_obstructed_traversals[ally_id];
+
+            // find cases where outer loop empire has an obstructed traversal from A to B
+            // and inner loop empire has an obstructed traversal from B to A
+            for (auto const& empire_trav : empire_obstructed_traversals) {
+                for (auto const& ally_trav : ally_obstructed_traversals) {
+                    if (empire_trav.first == ally_trav.second && empire_trav.second == ally_trav.first) {
+                        empire_supply_traversals.insert({empire_trav.first, empire_trav.second});
+                        empire_supply_traversals.insert({empire_trav.second, empire_trav.first});
+                    }
+                }
+            }
+        }
+    }
+
+    // add allied supply starlane traversals to empires' traversals, so that
+    // allies can use eachothers' supply networks
+    for (auto& empire_set : ally_merged_supply_starlane_traversals) {
+        std::set<std::pair<int, int>>& output_empire_traversals = empire_set.second;
+        for (int ally_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DIPLO_ALLIED)) {
+            // copy ally traversals into the output empire traversals set
+            for (const auto& traversal_pair : m_supply_starlane_obstructed_traversals[ally_id])
+                output_empire_traversals.insert(traversal_pair);
+        }
+    }
+
+    // same for fleet supplyable system ids, as these are added to supplyable
+    // groups in following code
+    auto ally_merged_fleet_supplyable_system_ids = m_fleet_supplyable_system_ids;
+    for (auto& empire_set : ally_merged_fleet_supplyable_system_ids) {
+        std::set<int>& output_empire_ids = empire_set.second;
+        for (int ally_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DIPLO_ALLIED)) {
+            // copy ally traversals into the output empire traversals set
+            for (int sys_id : m_fleet_supplyable_system_ids[ally_id])
+                output_empire_ids.insert(sys_id);
+        }
+    }
+
+    // END TEST STUFF FOR INTER-EMPIRE-MERGING
+
+
+
     // determine supply-connected groups of systems for each empire.
     // need to merge interconnected supply groups into as few sets of mutually-
     // supply-exchanging systems as possible.  This requires finding the
     // connected components of an undirected graph, where the node
     // adjacency are the directly-connected systems determined above.
-    for (std::map<int, std::map<int, std::pair<float, float>>>::value_type& empire_supply : empire_propagating_supply_ranges) {
+    for (const auto& empire_supply : empire_propagating_supply_ranges) {
         int empire_id = empire_supply.first;
 
         // assemble all direct connections between systems from remaining traversals
         std::map<int, std::set<int>> supply_groups_map;
-        for (const std::set<std::pair<int, int>>::value_type& lane : m_supply_starlane_traversals[empire_id]) {
+        for (auto const& lane : m_supply_starlane_traversals[empire_id]) {
             supply_groups_map[lane.first].insert(lane.second);
             supply_groups_map[lane.second].insert(lane.first);
         }
