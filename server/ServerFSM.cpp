@@ -239,8 +239,6 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     // independently of everything else, if there are no humans left, it's time to terminate
     if (m_server.m_networking.empty() || m_server.m_ai_client_processes.size() == m_server.m_networking.NumEstablishedPlayers()) {
         DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
-        // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
-        boost::this_thread::sleep_for(boost::chrono::seconds(2));
         m_server.m_fsm->process_event(ShutdownServer());
     }
 }
