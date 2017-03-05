@@ -819,11 +819,8 @@ MapWnd::MovementLineData::MovementLineData(const std::list<MovePathNode>& path_,
 
         // 2) Get apparent universe positions of nodes, which depend on endpoints of lane and actual universe position of nodes
 
-        // get unordered pair with which to lookup lane endpoints
-        std::pair<int, int> lane_ids = UnorderedIntPair(prev_sys_id, next_sys_id);
-
         // get lane end points
-        std::map<std::pair<int, int>, LaneEndpoints>::const_iterator ends_it = lane_end_points_map.find(lane_ids);
+        std::map<std::pair<int, int>, LaneEndpoints>::const_iterator ends_it = lane_end_points_map.find({prev_sys_id, next_sys_id});
         if (ends_it == lane_end_points_map.end()) {
             ErrorLogger() << "couldn't get endpoints of lane for move line";
             break;
@@ -4596,10 +4593,9 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<c
 
     // get endpoints of lane on screen, store in UnorderedIntPair which can be looked up in MapWnd's map of starlane endpoints
     int sys1_id = fleet->PreviousSystemID(), sys2_id = fleet->NextSystemID();
-    std::pair<int, int> lane = UnorderedIntPair(sys1_id, sys2_id);
 
     // get apparent positions of endpoints for this lane that have been pre-calculated
-    std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find(lane);
+    std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find({sys1_id, sys2_id});
     if (endpoints_it == m_starlane_endpoints.end()) {
         // couldn't find an entry for the lane this fleet is one, so just
         // return actual position of fleet on starlane - ignore the distance
@@ -4609,7 +4605,7 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<c
 
     // return apparent position of fleet on starlane
     const LaneEndpoints& screen_lane_endpoints = endpoints_it->second;
-    return ScreenPosOnStarane(fleet->X(), fleet->Y(), lane.first, lane.second, screen_lane_endpoints);
+    return ScreenPosOnStarane(fleet->X(), fleet->Y(), sys1_id, sys2_id, screen_lane_endpoints);
 }
 
 namespace {
