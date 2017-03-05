@@ -51,7 +51,6 @@ public:
 
     void                StartServer();                  ///< starts a server process on localhost
     void                FreeServer();                   ///< frees (relinquishes ownership and control of) any running server process already started by this client; performs no cleanup of other processes, such as AIs
-    void                KillServer();                   ///< kills any running server process already started by this client; performs no cleanup of other processes, such as AIs
     void                NewSinglePlayerGame(bool quickstart = false);
     void                MultiPlayerGame();                              ///< shows multiplayer connection window, and then transitions to multiplayer lobby if connected
     void                StartMultiPlayerGameFromLobby();                ///< begins
@@ -66,9 +65,10 @@ public:
 
     void                QuitGame();                                     ///< kills the server (if appropriate) and ends the current game
     /** Kill the server (if appropriate) and ends the current game, leaving the application in its
-        start state.  If \p suppress_FSM_reset is true don't initiate the FSM transistion to the
-        Intro menu.  This is used from within the FSM. */
-    void                ResetGame(bool suppress_FSM_reset = false);
+        start state.*/
+    void                ResetGame();
+    /** Reset to the Intro Menu. */
+    void                ResetToIntro();
     void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void                RequestSavePreviews(const std::string& directory, PreviewInformation& previews); ///< Requests the savegame previews for choosing one.
     void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met

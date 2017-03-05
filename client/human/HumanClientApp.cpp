@@ -416,14 +416,6 @@ void HumanClientApp::FreeServer() {
     SetEmpireID(ALL_EMPIRES);
 }
 
-void HumanClientApp::KillServer() {
-    DebugLogger() << "HumanClientApp::KillServer()";
-    m_server_process.Kill();
-    m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
-    m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
-    SetEmpireID(ALL_EMPIRES);
-}
-
 void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     if (!GetOptionsDB().Get<bool>("force-external-server")) {
         m_single_player_game = true;
@@ -446,7 +438,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-        KillServer();
+        ResetGame();
         return;
     }
 
@@ -530,7 +522,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         m_fsm->process_event(HostSPGameRequested());
     } else {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
-        KillServer();
+        ResetGame();
     }
 }
 
@@ -569,7 +561,7 @@ void HumanClientApp::MultiPlayerGame() {
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
-            KillServer();
+            ResetGame();
         return;
     }
 
@@ -623,7 +615,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 
     // end any currently-playing game before loading new one
     if (m_game_started) {
-        ResetGame();
+        ResetToIntro();
         // delay to make sure old game is fully cleaned up before attempting to start a new one
         std::this_thread::sleep_for(std::chrono::seconds(3));
     } else {
@@ -643,7 +635,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-        KillServer();
+        ResetGame();
         return;
     }
 
@@ -677,7 +669,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         m_connected = m_networking->ConnectToLocalHostServer();
         if (!m_connected) {
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-            KillServer();
+            ResetGame();
             return;
         }
     }
@@ -944,7 +936,7 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
 
 bool HumanClientApp::HandleHotkeyResetGame() {
     DebugLogger() << "HumanClientApp::HandleHotkeyResetGame()";
-    ResetGame();
+    ResetToIntro();
     return true;
 }
 
@@ -1147,7 +1139,7 @@ void HumanClientApp::QuitGame() {
     }
 }
 
-void HumanClientApp::ResetGame(bool suppress_FSM_reset /*= false*/) {
+void HumanClientApp::ResetGame() {
     QuitGame();
 
     m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
@@ -1159,10 +1151,10 @@ void HumanClientApp::ResetGame(bool suppress_FSM_reset /*= false*/) {
     m_empires.Clear();
     m_orders.Reset();
     GetCombatLogManager().Clear();
-
-    if (!suppress_FSM_reset)
-        m_fsm->process_event(ResetToIntroMenu());
 }
+
+void HumanClientApp::ResetToIntro()
+{ m_fsm->process_event(ResetToIntroMenu()); }
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {
     if (auto_turns > 0)
