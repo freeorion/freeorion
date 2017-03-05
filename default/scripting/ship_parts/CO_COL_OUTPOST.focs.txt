@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "PEDIA_PC_COLONY" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/habitation_domes.png"
 

@@ -3912,6 +3912,9 @@ AI Max Aggression: %10%
 ENC_SHIP_PART
 Ship Part
 
+ENC_SHIP_PART_DESC
+Ship Parts
+
 ENC_SHIP_HULL
 Ship Hull
 
@@ -7917,6 +7920,11 @@ invalid ship part class
 PC_DIRECT_WEAPON
 Direct Weapon
 
+PC_DIRECT_WEAPON_DESC
+'''Direct-fire weapons attack and can damage targets each combat round (unlike [[encyclopedia FIGHTER_TECHS]], which must first be launched before they can attack).
+
+Some weapons in this category are capable of firing multiple shots per combat round.'''
+
 # Ship part classes
 PC_FIGHTER_HANGAR
 Hangar
@@ -7935,56 +7943,115 @@ Launch Bay
 
 PC_FIGHTER_BAY_DESC
 '''Launch bays are the access point for [[encyclopedia FIGHTER_TECHS]] to enter or exit a ship.
-Each launch bay allows a number of fighters to launch each combat round.
-'''
+Launched fighters join combat the round after being launched, returning once combat ends for that turn.'''
 
 # Ship part classes
 PC_SHIELD
 Shields
 
+PC_SHIELD_DESC
+'''Shield parts reduce the [[encyclopedia DAMAGE_TITLE]] sustained from each weapon hit by the shield parts strength.
+
+Ship shields are not affected by weapon hits, and reduce all subsequent direct fire weapon hits' damage by the same amount. Ship shields are ineffective against [[encyclopedia FIGHTER_TECHS]].'''
+
 # Ship part classes
 PC_ARMOUR
 Armor
+
+PC_ARMOUR_DESC
+Armor parts increase the [[metertype METER_STRUCTURE]] of a ship, allowing a ship to sustain more damage before being destroyed.
 
 # Ship part classes
 PC_TROOPS
 Ground Troops
 
+PC_TROOPS_DESC
+'''Troop parts increase the [[metertype METER_TROOPS]] on-board, which can be used to invade enemy planets.
+
+To successfully invade a planet, the total number of [[metertype METER_TROOPS]] from all invading ships must exceed the total defending (ties are awarded to the defender).
+An invading ship is destroyed as part of the landing operation (any additional parts on the ship are lost as well).'''
+
 # Ship part classes
 PC_DETECTION
 Detection
+
+PC_DETECTION_DESC
+'''Detection parts increase the [[metertype METER_DETECTION]] for the ship they are equipped on.
+
+An empire's [[encyclopedia DETECTION_TITLE]] must equal or exceed an object's [[metertype METER_STEALTH]] to detect the object.'''
 
 # Ship part classes
 PC_STEALTH
 Stealth
 
+PC_STEALTH_DESC
+'''Stealth parts increase the [[metertype METER_STEALTH]] of a ship. The effects from these parts do not complement each other, only the highest rated part will affect the ship.
+
+If combat occurs in a system, ships that are invisible to an enemy are not targetted by the enemy's weapons. If the ship attacks, it may become visible for the following rounds.
+
+See also: [[metertype METER_DETECTION]], [[encyclopedia DETECTION_TITLE]]'''
+
 # Ship part classes
 PC_FUEL
 Fuel
+
+PC_FUEL_DESC
+'''Fuel parts affect a ship's [[metertype METER_FUEL]]. Such parts might increase the maximum fuel capacity or increase the amount of fuel the ship can scavenge or regenerate.
+
+A ship requires a fuel value of 1.0 or more to leave a system.'''
 
 # Ship part classes
 PC_COLONY
 Colonization
 
+PC_COLONY_DESC
+'''Colony parts integrate with a ship to provide the necessary equipment to establish ownership on a new planet.
+
+These parts may also increase the [[metertype METER_POPULATION]] on a ship.
+When colonizing a planet with a populated colony ship, a colony for the [[encyclopedia ENC_SPECIES]] is established, starting with the same population that was aboard the ship.
+
+A ship with no population will still have enough personnel to establish an [[encyclopedia OUTPOSTS_TITLE]].
+Outposts may construct a colony for any species in the empire within supply range, provided the source meets other criteria.
+The combination of outpost ship and local construction of a colony is cheaper than producing a populated colony ship.
+
+When a ship colonizes a planet, it is consumed in the process and can not be used again. Any weapons or other parts on the ship will be decommissioned as well.'''
+
 # Ship part classes
 PC_SPEED
 Speed
+
+PC_SPEED_DESC
+Parts in the [[metertype METER_SPEED]] category increase the maximum distance a ship may travel each turn.
 
 # Ship part classes
 PC_GENERAL
 General
 
+PC_GENERAL_DESC
+General purpose and specialized parts that do not fall into any specific category.
+
 # Ship part classes
 PC_BOMBARD
 Bombardment
+
+PC_BOMBARD_DESC
+'''Bombardment parts allow a ship to bombard an enemy planet, typically reducing the population on the planet by the capacity value of any applicable bombardment parts on board.
+
+The majority of bombardment parts only affect one [[encyclopedia METABOLISM_TITLE]].'''
 
 # Ship part classes
 PC_INDUSTRY
 Industry
 
+PC_INDUSTRY_DESC
+Industry parts increase the [[metertype METER_INDUSTRY]] generated from a ship. The ship must be [[metertype METER_SUPPLY]] connected to a [[OBJ_PROD_CENTER]] (such as a colony) for the output to be utilized.
+
 # Ship part classes
 PC_RESEARCH
 Research
+
+PC_RESEARCH_DESC
+Research parts increase the [[metertype METER_RESEARCH]] generated from a ship. The ship may also require [[metertype METER_POPULATION]] to begin increasing the output.
 
 # Ship part classes
 PC_TRADE
@@ -7993,6 +8060,9 @@ Trade
 # Ship part classes
 PC_PRODUCTION_LOCATION
 Production
+
+PC_PRODUCTION_LOCATION_DESC
+Production parts integrate with a ship to form a [[OBJ_PROD_CENTER]], allowing the creation of some production projects. The ship must be [[metertype METER_SUPPLY]] connected to a source of [[metertype METER_INDUSTRY]].
 
 # Visibility levels
 INVALID_VISIBILITY

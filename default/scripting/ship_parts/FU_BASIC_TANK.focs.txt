@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_FUEL" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/basic-tank.png"
 

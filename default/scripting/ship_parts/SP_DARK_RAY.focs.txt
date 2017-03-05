@@ -6,7 +6,7 @@ Part
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    tags = [ "CTRL_BOMBARD_PHOTOTROPHIC" ]
+    tags = [ "CTRL_BOMBARD_PHOTOTROPHIC" "PEDIA_PC_BOMBARD" ]
     location = All
     effectsgroups = [
         EffectsGroup    // players can order dark ray used on enemies

@@ -7,6 +7,7 @@ Part
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
         [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_1_1)]]
@@ -22,6 +23,7 @@ Part
     mountableSlotTypes = External
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
         [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_0_1)]]
@@ -36,6 +38,7 @@ Part
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
         [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_2_1)]]
@@ -50,6 +53,7 @@ Part
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
         [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_3_1)]]
@@ -64,6 +68,7 @@ Part
     mountableSlotTypes = External
     buildcost = 60 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
         [[WEAPON_BASE_UNOWNED_EFFECTS(SR_WEAPON_4_1)]]
@@ -77,6 +82,7 @@ Part
     mountableSlotTypes = External
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/teeth.png"
 
@@ -88,6 +94,7 @@ Part
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/claw.png"
 
@@ -99,6 +106,7 @@ Part
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/tentacle.png"
 
@@ -110,6 +118,7 @@ Part
     mountableSlotTypes = External
     buildcost = 40 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/flame_thrower.png"
 
@@ -121,6 +130,7 @@ Part
     mountableSlotTypes = External
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/snowflake_laser.png"
 

@@ -1,0 +1,6 @@
+Article
+    name = "PC_INDUSTRY"
+    category = "ENC_SHIP_PART"
+    short_description = "PC_INDUSTRY"
+    description = "PC_INDUSTRY_DESC"
+    icon = "icons/meters/industry.png"

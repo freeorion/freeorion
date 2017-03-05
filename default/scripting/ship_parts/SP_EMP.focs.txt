@@ -6,7 +6,7 @@ Part
     mountableSlotTypes = External
     buildcost = 5 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
-    tags = [ "CTRL_BOMBARD_ROBOTIC" ]
+    tags = [ "CTRL_BOMBARD_ROBOTIC" "PEDIA_PC_BOMBARD" ]
     location = All
     effectsgroups = [
         EffectsGroup    // players can order EMP used on enemies

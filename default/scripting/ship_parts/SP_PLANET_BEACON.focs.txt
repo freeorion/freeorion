@@ -5,6 +5,7 @@ Part
     mountableSlotTypes = Core
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
+    tags = [ "PEDIA_PC_GENERAL" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/building/beacon.png"
 

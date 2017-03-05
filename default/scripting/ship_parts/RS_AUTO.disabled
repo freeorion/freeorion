@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_RESEARCH" ]
     Unproducible
     location = OwnedBy empire = Source.Owner
     icon = "icons/tech/categories/learning.png"
@@ -18,6 +19,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_INDUSTRY" ]
     Unproducible
     location = OwnedBy empire = Source.Owner
     icon = "icons/tech/categories/production.png"
@@ -30,6 +32,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_TRADE" ]
     Unproducible
     location = OwnedBy empire = Source.Owner
     icon = "icons/tech/categories/economics.png"

@@ -1,0 +1,6 @@
+Article
+    name = "PC_DETECTION"
+    category = "ENC_SHIP_PART"
+    short_description = "PC_DETECTION"
+    description = "PC_DETECTION_DESC"
+    icon = "icons/ship_parts/detector-1.png"

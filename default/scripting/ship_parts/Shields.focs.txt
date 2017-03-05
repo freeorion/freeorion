@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 2
+    tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/defense_grid.png"
@@ -18,6 +19,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 50 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
+    tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/deflector_shield.png"
@@ -30,6 +32,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 90 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
+    tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/plasma_shield.png"
@@ -42,6 +45,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 150 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 6
+    tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups = [[SHIELD_STACKING]]    //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT
     icon = "icons/ship_parts/blackshield.png"
@@ -54,6 +58,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 100 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 8
+    tags = [ "PEDIA_PC_SHIELD" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups = [
         [[SHIELD_STACKING]]     //Make sure to add new shields to SUM_SHIELD_CAPACITY and BEST_SHIELD_EFFECT

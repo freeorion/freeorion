@@ -8,6 +8,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter05.png"
 
@@ -21,6 +22,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter06.png"
 
@@ -34,6 +36,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter02.png"
 
@@ -47,6 +50,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter04.png"
 
@@ -60,6 +64,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 30 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/fighter01.png"
 
@@ -72,6 +77,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
+    tags = [ "PEDIA_PC_FIGHTER_HANGAR" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/krill.png"
 

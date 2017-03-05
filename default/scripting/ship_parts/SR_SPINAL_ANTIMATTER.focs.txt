@@ -6,6 +6,7 @@ Part
     mountableSlotTypes = Core
     buildcost = 250 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 4
+    tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/spinal_antimatter.png"
 
