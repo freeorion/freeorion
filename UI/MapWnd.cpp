@@ -198,10 +198,6 @@ namespace {
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    // returns an int-int pair that doesn't depend on the order of parameters
-    std::pair<int, int> UnorderedIntPair(int one, int two)
-    { return {std::min(one, two), std::max(one, two)}; }
-
     /* Returns fractional distance along line segment between two points that a
      * third point between them is.assumes the "mid" point is between the
      * "start" and "end" points, in which case the returned fraction is between
@@ -235,15 +231,13 @@ namespace {
      * ends of the lane, but is proportional to the distance of the actual
      * position along the lane. */
     std::pair<double, double> ScreenPosOnStarane(double X, double Y, int lane_start_sys_id, int lane_end_sys_id, const LaneEndpoints& screen_lane_endpoints) {
-        std::pair<int, int> lane = UnorderedIntPair(lane_start_sys_id, lane_end_sys_id);
-
         // get endpoints of lane in universe.  may be different because on-
         // screen lanes are drawn between system circles, not system centres
         int empire_id = HumanClientApp::GetApp()->EmpireID();
-        std::shared_ptr<const UniverseObject> prev = GetEmpireKnownObject(lane.first, empire_id);
-        std::shared_ptr<const UniverseObject> next = GetEmpireKnownObject(lane.second, empire_id);
+        std::shared_ptr<const UniverseObject> prev = GetEmpireKnownObject(lane_start_sys_id, empire_id);
+        std::shared_ptr<const UniverseObject> next = GetEmpireKnownObject(lane_end_sys_id, empire_id);
         if (!next || !prev) {
-            ErrorLogger() << "ScreenPosOnStarane couldn't find next system " << lane.first << " or prev system " << lane.second;
+            ErrorLogger() << "ScreenPosOnStarane couldn't find next system " << lane_start_sys_id << " or prev system " << lane_end_sys_id;
             return {UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION};
         }
 
@@ -3391,7 +3385,6 @@ namespace {
 
 
                 // check that this lane isn't already in map / being rendered.
-                //std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());     // get "unordered pair" indexing lane
                 if (already_rendered_full_lanes.find({start_system->ID(), dest_system->ID()}) !=
                     already_rendered_full_lanes.end())
                 { continue; }
@@ -3492,10 +3485,6 @@ namespace {
                 if (!dest_system)
                     continue;
                 //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
-
-
-                // check that this lane isn't already in map / being rendered.
-                std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());     // get "unordered pair" indexing lane
 
 
                 // check that this lane isn't already going to be rendered.  skip it if it is.
@@ -4591,8 +4580,9 @@ std::pair<double, double> MapWnd::MovingFleetMapPositionOnLane(std::shared_ptr<c
         return {UniverseObject::INVALID_POSITION, UniverseObject::INVALID_POSITION};
     }
 
-    // get endpoints of lane on screen, store in UnorderedIntPair which can be looked up in MapWnd's map of starlane endpoints
-    int sys1_id = fleet->PreviousSystemID(), sys2_id = fleet->NextSystemID();
+    // get endpoints of lane on screen
+    int sys1_id = fleet->PreviousSystemID();
+    int sys2_id = fleet->NextSystemID();
 
     // get apparent positions of endpoints for this lane that have been pre-calculated
     std::map<std::pair<int, int>, LaneEndpoints>::const_iterator endpoints_it = m_starlane_endpoints.find({sys1_id, sys2_id});
