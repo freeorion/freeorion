@@ -49,9 +49,9 @@
 
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/format.hpp>
-#include <boost/thread.hpp>
 #include <boost/xpressive/xpressive.hpp>
 
+#include <thread>
 #include <cassert>
 #include <iostream>
 #include <fstream>
@@ -1198,10 +1198,10 @@ bool GUI::SetNextFocusWndInCycle()
 }
 
 void GUI::Wait(unsigned int ms)
-{ boost::this_thread::sleep_for(boost::chrono::milliseconds(ms)); }
+{ std::this_thread::sleep_for(std::chrono::milliseconds(ms)); }
 
-void GUI::Wait(boost::chrono::microseconds us)
-{ boost::this_thread::sleep_for(us); }
+void GUI::Wait(std::chrono::microseconds us)
+{ std::this_thread::sleep_for(us); }
 
 void GUI::Register(Wnd* wnd)
 { if (wnd) s_impl->m_zlist.Add(wnd); }
