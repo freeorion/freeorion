@@ -1109,6 +1109,14 @@ void HumanClientApp::QuitGame() {
     DebugLogger() << "HumanClientApp::EndGame";
     m_game_started = false;
 
+    if (m_server_process.Empty()) {
+        if (m_networking->IsTxConnected()) {
+            WarnLogger() << "Disconnecting from server that is already killed.";
+            m_networking->DisconnectFromServer();
+        }
+        return;
+    }
+
     if (m_networking->IsTxConnected()) {
         DebugLogger() << "HumanClientApp::EndGame Sending server shutdown message.";
         m_networking->SendMessage(ShutdownServerMessage(m_networking->PlayerID()));
