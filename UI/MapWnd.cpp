@@ -3466,6 +3466,7 @@ namespace {
             GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
         const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
 
+
         for (const auto& id_icon : sys_icons) {
             int system_id = id_icon.first;
 
@@ -3506,7 +3507,7 @@ namespace {
 
 
                 // add resource connection highlight lanes
-                std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
+                //std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
                 //std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
                 LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
 
@@ -3540,8 +3541,133 @@ namespace {
         }
     }
 
-    void PrepObstructedLaneTraversalsToRender(const boost::unordered_map<int, SystemIcon*>& sys_icons) {
+    void PrepObstructedLaneTraversalsToRender(const boost::unordered_map<int, SystemIcon*>& sys_icons,
+                                              int empire_id,
+                                              std::set<std::pair<int, int>>& rendered_half_starlanes,
+                                              GG::GL2DVertexBuffer& starlane_vertices,
+                                              GG::GLRGBAColorBuffer& starlane_colors)
+    {
+        const Empire* empire = GetEmpire(empire_id);
+        if (!empire)
+            return;
+        GG::Clr lane_colour = empire->Color();
 
+        const std::set<int>& this_client_known_destroyed_objects =
+            GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+
+
+        for (const auto& id_icon : sys_icons) {
+            int system_id = id_icon.first;
+
+            // skip systems that don't actually exist
+            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+                continue;
+
+            // skip systems that don't actually exist
+            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+                continue;
+
+            std::shared_ptr<const System> start_system = GetSystem(system_id);
+            if (!start_system) {
+                ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
+                continue;
+            }
+
+            // add system's starlanes
+            for (const std::map<int, bool>::value_type& render_lane : start_system->StarlanesWormholes()) {
+                bool lane_is_wormhole = render_lane.second;
+                if (lane_is_wormhole) continue; // at present, not rendering wormholes
+
+                int lane_end_sys_id = render_lane.first;
+
+                // skip lanes to systems that don't actually exist
+                if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+                    continue;
+
+                std::shared_ptr<const System> dest_system = GetSystem(render_lane.first);
+                if (!dest_system)
+                    continue;
+                //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
+
+
+                // check that this lane isn't already going to be rendered.  skip it if it is.
+                if (rendered_half_starlanes.find({start_system->ID(), dest_system->ID()}) != rendered_half_starlanes.end())
+                    continue;
+
+
+                // add obstructed lane traversals as half lanes
+                for (std::map<int, Empire*>::value_type& entry : Empires()) {
+                    Empire* empire = entry.second;
+                    const std::set<std::pair<int, int>>& resource_obstructed_supply_lanes =
+                        GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
+
+                    // see if this lane exists in this empire's obstructed supply propagation lanes set.  either direction accepted.
+                    if (resource_obstructed_supply_lanes.find({start_system->ID(), dest_system->ID()}) == resource_obstructed_supply_lanes.end())
+                        continue;
+
+                    // found an empire that has a half lane here, so add it.
+                    rendered_half_starlanes.insert({start_system->ID(), dest_system->ID()});  // inserted as ordered pair, so both directions can have different half-lanes
+
+                    LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+                    starlane_vertices.store(lane_endpoints.X1, lane_endpoints.Y1);
+                    starlane_vertices.store((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f,   // half way along starlane
+                                            (lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
+
+                    GG::Clr lane_colour = empire->Color();
+                    starlane_colors.store(lane_colour);
+                    starlane_colors.store(lane_colour);
+
+                    //std::cout << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name() << std::endl;
+
+                    break;
+                }
+            }
+        }
+    }
+
+    std::map<std::pair<int, int>, LaneEndpoints> CalculateStarlaneEndpoints(
+        const boost::unordered_map<int, SystemIcon*>& sys_icons)
+    {
+
+        std::map<std::pair<int, int>, LaneEndpoints> retval;
+
+        const std::set<int>& this_client_known_destroyed_objects =
+            GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
+
+        for (auto const& id_icon : sys_icons) {
+            int system_id = id_icon.first;
+
+            // skip systems that don't actually exist
+            if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
+                continue;
+
+            std::shared_ptr<const System> start_system = GetSystem(system_id);
+            if (!start_system) {
+                ErrorLogger() << "GetFullLanesToRender couldn't get system with id " << system_id;
+                continue;
+            }
+
+            // add system's starlanes
+            for (const std::map<int, bool>::value_type& render_lane : start_system->StarlanesWormholes()) {
+                bool lane_is_wormhole = render_lane.second;
+                if (lane_is_wormhole) continue; // at present, not rendering wormholes
+
+                int lane_end_sys_id = render_lane.first;
+
+                // skip lanes to systems that don't actually exist
+                if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
+                    continue;
+
+                std::shared_ptr<const System> dest_system = GetSystem(render_lane.first);
+                if (!dest_system)
+                    continue;
+
+                retval[{system_id, lane_end_sys_id}] = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
+                retval[{lane_end_sys_id, system_id}] = StarlaneEndPointsFromSystemPositions(dest_system->X(), dest_system->Y(), start_system->X(), start_system->Y());
+            }
+        }
+
+        return retval;
     }
 }
 
@@ -3551,91 +3677,20 @@ void MapWnd::InitStarlaneRenderingBuffers() {
 
     ClearStarlaneRenderingBuffers();
 
+    // todo: move this somewhere better... fill in starlane endpoint cache
+    m_starlane_endpoints = CalculateStarlaneEndpoints(m_system_icons);
+
+
     // temp storage
     std::set<std::pair<int, int>> rendered_half_starlanes;  // stored as unaltered pairs, so that a each direction of traversal can be shown separately
-    m_starlane_endpoints.clear();   // todo: remove this variable
 
 
+    // add vertices and colours to lane rendering buffers
     PrepFullLanesToRender(m_system_icons, m_starlane_vertices, m_starlane_colors);
     PrepResourceConnectionLanesToRender(m_system_icons, HumanClientApp::GetApp()->EmpireID(), rendered_half_starlanes,
                                         m_RC_starlane_vertices, m_RC_starlane_colors);
-    PrepObstructedLaneTraversalsToRender(m_system_icons);
-
-    const std::set<int>& this_client_known_destroyed_objects =
-        GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-    const Empire* this_client_empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
-
-    for (const boost::unordered_map<int, SystemIcon*>::value_type& system_icon : m_system_icons) {
-        int system_id = system_icon.first;
-
-        // skip systems that don't actually exist
-        if (this_client_known_destroyed_objects.find(system_id) != this_client_known_destroyed_objects.end())
-            continue;
-
-        std::shared_ptr<const System> start_system = GetSystem(system_id);
-        if (!start_system) {
-            ErrorLogger() << "MapWnd::InitStarlaneRenderingBuffers couldn't get system with id " << system_id;
-            continue;
-        }
-
-        // add system's starlanes
-        for (const std::map<int, bool>::value_type& render_lane : start_system->StarlanesWormholes()) {
-            bool lane_is_wormhole = render_lane.second;
-            if (lane_is_wormhole) continue; // at present, not rendering wormholes
-
-            int lane_end_sys_id = render_lane.first;
-
-            // skip lanes to systems that don't actually exist
-            if (this_client_known_destroyed_objects.find(lane_end_sys_id) != this_client_known_destroyed_objects.end())
-                continue;
-
-            std::shared_ptr<const System> dest_system = GetSystem(render_lane.first);
-            if (!dest_system)
-                continue;
-            //std::cout << "colouring lanes between " << start_system->Name() << " and " << dest_system->Name() << std::endl;
-
-
-            // check that this lane isn't already in map / being rendered.
-            std::pair<int, int> lane = UnorderedIntPair(start_system->ID(), dest_system->ID());     // get "unordered pair" indexing lane
-
-
-            // check that this lane isn't already going to be rendered.  skip it if it is.
-            if (rendered_half_starlanes.find({start_system->ID(), dest_system->ID()}) != rendered_half_starlanes.end())
-                continue;
-
-            // add resource connection highlight lanes
-            std::pair<int, int> lane_forward{start_system->ID(), dest_system->ID()};
-            //std::pair<int, int> lane_backward{dest_system->ID(), start_system->ID()};
-            LaneEndpoints lane_endpoints = StarlaneEndPointsFromSystemPositions(start_system->X(), start_system->Y(), dest_system->X(), dest_system->Y());
-
-            // and obstructed lane traversals
-            for (std::map<int, Empire*>::value_type& entry : Empires()) {
-                Empire* empire = entry.second;
-                const std::set<std::pair<int, int>>& resource_obstructed_supply_lanes =
-                    GetSupplyManager().SupplyObstructedStarlaneTraversals(entry.first);
-
-                // see if this lane exists in this empire's obstructed supply propagation lanes set.  either direction accepted.
-                if (resource_obstructed_supply_lanes.find(lane_forward) == resource_obstructed_supply_lanes.end())
-                    continue;
-
-                // found an empire that has a half lane here, so add it.
-                rendered_half_starlanes.insert({start_system->ID(), dest_system->ID()});  // inserted as ordered pair, so both directions can have different half-lanes
-
-                m_starlane_vertices.store(lane_endpoints.X1,
-                                          lane_endpoints.Y1);
-                m_starlane_vertices.store((lane_endpoints.X1 + lane_endpoints.X2) * 0.5f,   // half way along starlane
-                                          (lane_endpoints.Y1 + lane_endpoints.Y2) * 0.5f);
-
-                GG::Clr lane_colour = empire->Color();
-                m_starlane_colors.store(lane_colour);
-                m_starlane_colors.store(lane_colour);
-
-                //std::cout << "Adding half lane between " << start_system->Name() << " to " << dest_system->Name() << " with colour of empire " << empire->Name() << std::endl;
-
-                break;
-            }
-        }
-    }
+    PrepObstructedLaneTraversalsToRender(m_system_icons, HumanClientApp::GetApp()->EmpireID(), rendered_half_starlanes,
+                                         m_starlane_vertices, m_starlane_colors);
 
 
     // fill new buffers
