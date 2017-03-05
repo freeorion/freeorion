@@ -6746,7 +6746,7 @@ namespace { //helper function for DispatchFleetsExploring
         if (!empire)
             return std::pair<int, int>(INVALID_OBJECT_ID, INT_MAX);
 
-        std::set<int> supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID());
+        std::set<int> supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire->EmpireID(), true);
         std::map<int, std::set<int>> starlanes = empire->KnownStarlanes();
         std::set<int> frontier;
         frontier.insert(system_id);
@@ -6805,9 +6805,9 @@ void MapWnd::DispatchFleetsExploring() {
     std::set<int> neighboors = AddNeighboorsToSet(empire, candidates_unknown_systems);
     candidates_unknown_systems.insert(neighboors.begin(), neighboors.end());
 
-    //list all unknow systems with the distance to the nearest supply available
+    // list all unknown systems with the distance to the nearest supply available
     std::map<int, int> unknown_systems;
-    const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id);
+    const std::set<int>& supplyable_systems = GetSupplyManager().FleetSupplyableSystemIDs(empire_id, true);
     for (int system_id : candidates_unknown_systems) {
         std::shared_ptr<System> system = GetSystem(system_id);
         if (!system)

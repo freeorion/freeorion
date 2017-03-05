@@ -103,7 +103,7 @@ namespace {
         const std::map<int, std::set<int> >& empire_starlanes = empire.KnownStarlanes();
         std::list<int> propagating_list;
 
-        for (int system_id : GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID())) {
+        for (int system_id : GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID(), true)) {
             retval[system_id] = 0;
             propagating_list.push_back(system_id);
         }
