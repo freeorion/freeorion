@@ -215,15 +215,15 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     } catch (const std::invalid_argument& e) {
         std::cerr << "main() caught exception(std::invalid_argument): " << e.what() << std::endl;
-        boost::this_thread::sleep_for(boost::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         return 1;
     } catch (const std::runtime_error& e) {
         std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
-        boost::this_thread::sleep_for(boost::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         return 1;
     } catch (const std::exception& e) {
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
-        boost::this_thread::sleep_for(boost::chrono::seconds(3));
+        std::this_thread::sleep_for(std::chrono::seconds(3));
         return 1;
     }
 #endif
