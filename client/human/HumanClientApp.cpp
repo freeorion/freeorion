@@ -1132,9 +1132,9 @@ void HumanClientApp::QuitGame() {
         }
 
         if (!m_networking->IsConnected()) {
-            // Treat disconnection as acknowledgement of shutdown and free the process
-            if (!m_server_process.Empty())
-                m_server_process.Free();
+            // Treat disconnection as acknowledgement of shutdown and free the
+            // process to allow orderly shutdown.
+            m_server_process.Free();
         } else {
             ErrorLogger() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
             m_networking->DisconnectFromServer();
