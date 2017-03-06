@@ -345,7 +345,7 @@ target_include_directories(freeorion SYSTEM
         ${OPENAL_INCLUDE_DIR}
         ${SDL2_INCLUDE_DIR}
         ${OGG_INCLUDE_DIRS}
-        ${VORBIS_INCLUDE_DIR}
+        ${VORBIS_INCLUDE_DIRS}
         ${FREETYPE_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
 )
