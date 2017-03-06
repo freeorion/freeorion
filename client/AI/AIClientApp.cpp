@@ -153,11 +153,7 @@ void AIClientApp::Run() {
         HandlePythonAICrash();
     }
 
-    if (Networking().IsConnected()) {
-        DebugLogger() << "Acknowledge server shutdown message.";
-        Networking().SendMessage(AIEndGameAcknowledgeMessage(Networking().PlayerID()));
-        Networking().DisconnectFromServer();
-    }
+    Networking().DisconnectFromServer();
 }
 
 void AIClientApp::ConnectToServer() {
@@ -345,6 +341,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::END_GAME: {
         DebugLogger() << "Message::END_GAME : Exiting";
+        DebugLogger() << "Acknowledge server shutdown message.";
+        Networking().SendMessage(AIEndGameAcknowledgeMessage(Networking().PlayerID()));
         Exit(0);
         break;
     }
