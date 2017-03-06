@@ -735,7 +735,7 @@ void SupplyManager::Update() {
         std::set<std::pair<int, int>>& output_empire_traversals = empire_set.second;
         for (int ally_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_set.first, DIPLO_ALLIED)) {
             // copy ally traversals into the output empire traversals set
-            for (const auto& traversal_pair : m_supply_starlane_obstructed_traversals[ally_id])
+            for (const auto& traversal_pair : m_supply_starlane_traversals[ally_id])
                 output_empire_traversals.insert(traversal_pair);
         }
     }
@@ -766,7 +766,7 @@ void SupplyManager::Update() {
 
         // assemble all direct connections between systems from remaining traversals
         std::map<int, std::set<int>> supply_groups_map;
-        for (auto const& lane : m_supply_starlane_traversals[empire_id]) {
+        for (auto const& lane : ally_merged_supply_starlane_traversals[empire_id]) {
             supply_groups_map[lane.first].insert(lane.second);
             supply_groups_map[lane.second].insert(lane.first);
         }
@@ -774,12 +774,24 @@ void SupplyManager::Update() {
         // also add connections from all fleet-supplyable systems to themselves, so that
         // any fleet supply able system with no connection to another system can still
         // have resource sharing within tiself
-        for (int system_id : m_fleet_supplyable_system_ids[empire_id]) {
+        for (int system_id : ally_merged_fleet_supplyable_system_ids[empire_id])
             supply_groups_map[system_id].insert(system_id);
-        }
+
 
         if (supply_groups_map.empty())
             continue;
+
+        //DebugLogger() << "Empire " << empire_id << " supply groups map:";
+        //for (auto const& q : supply_groups_map) {
+        //    int source_id = q.first;
+
+        //    std::stringstream other_ids;
+        //    for (auto const& r : q.second)
+        //    { other_ids << r << ", "; }
+
+        //    DebugLogger() << " ... src: " << source_id << " to: " << other_ids.str();
+        //}
+
 
         // create graph
         boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> graph;
@@ -827,8 +839,7 @@ void SupplyManager::Update() {
         }
 
         // copy sets in map into set of sets
-        for (std::map<int, std::set<int>>::value_type& component_set : component_sets_map) {
+        for (std::map<int, std::set<int>>::value_type& component_set : component_sets_map)
             m_resource_supply_groups[empire_id].insert(component_set.second);
-        }
     }
 }
