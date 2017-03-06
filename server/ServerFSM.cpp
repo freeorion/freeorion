@@ -1831,11 +1831,12 @@ ShuttingDownServer::ShuttingDownServer(my_context c) :
 
     DebugLogger() << "ShuttingDownServer informing AIs game is ending";
 
+    // Inform all players that the game is ending.  Only check the AIs for acknowledgement, because
+    // they are the server's child processes.
     for (PlayerConnectionPtr player : server.m_networking) {
-        if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-            player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
+        player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
+        if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
             m_player_id_ack_expected.insert(player->PlayerID());
-        }
     }
 
     DebugLogger() << "ShuttingDownServer expecting " << m_player_id_ack_expected.size() << " AIs to ACK shutdown.";
