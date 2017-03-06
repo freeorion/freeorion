@@ -1909,6 +1909,7 @@ sc::result ShuttingDownServer::react(const CheckEndConditions& u) {
     if (SHUTDOWN_POLLING_TIME > (Clock::now() - m_start_time)) {
         if (TRACE_EXECUTION) DebugLogger() << "Waiting for " << m_player_id_ack_expected.size() << " AI clients to ACK shutdown.";
         boost::this_thread::sleep_for(SHUTDOWN_POLLING_INTERVAL);
+        post_event(CheckEndConditions());
         return discard_event();
     }
 
