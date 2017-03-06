@@ -63,12 +63,9 @@ public:
      */
     void                UpdateCombatLogManager();
 
-    void                QuitGame();                                     ///< kills the server (if appropriate) and ends the current game
-    /** Kill the server (if appropriate) and ends the current game, leaving the application in its
-        start state.*/
-    void                ResetGame();
-    /** Reset to the Intro Menu. */
     void                ResetToIntro();
+    void                ExitApp();
+    void                ResetClientData();
     void                LoadSinglePlayerGame(std::string filename = "");///< loads a single player game chosen by the user; returns true if a game was loaded, and false if the operation was cancelled
     void                RequestSavePreviews(const std::string& directory, PreviewInformation& previews); ///< Requests the savegame previews for choosing one.
     void                Autosave();                                     ///< autosaves the current game, iff autosaves are enabled and any turn number requirements are met

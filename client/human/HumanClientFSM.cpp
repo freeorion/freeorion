@@ -60,7 +60,6 @@ IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) IntroMenu";
-    Client().ResetGame();
     Client().GetClientUI().ShowIntroScreen();
 }
 
@@ -516,12 +515,6 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     return retval;
 }
 
-boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.ResetToIntroMenu";
-    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
-    return transit<IntroMenu>();
-}
-
 boost::statechart::result PlayingGame::react(const StartQuittingGame& e) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
 
@@ -745,8 +738,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
             // if no auto turns left, and supposed to quit after that, quit
             DebugLogger() << "auto-quit ending game.";
             std::cout << "auto-quit ending game." << std::endl;
-            Client().QuitGame();
-            throw HumanClientApp::CleanQuit();
+            Client().ExitApp();
         }
 
         // if there are still auto turns left, advance the turn automatically,
@@ -966,7 +958,7 @@ boost::statechart::result QuittingGame::react(const TerminateServer& u) {
 
     // Reset the game or quit the app as appropriate
     if (m_reset_to_intro) {
-        // Client().ResetClientData();
+        Client().ResetClientData();
         return transit<IntroMenu>();
     } else {
         throw HumanClientApp::CleanQuit();

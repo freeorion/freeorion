@@ -37,10 +37,6 @@ struct JoinMPGameRequested : boost::statechart::event<JoinMPGameRequested> {};
 // Indicates that the player's turn has been sent to the server.
 struct TurnEnded : boost::statechart::event<TurnEnded> {};
 
-/** Indicates that a game has ended and that the state should be reset to
-  * IntroMenu. */
-struct ResetToIntroMenu : boost::statechart::event<ResetToIntroMenu> {};
-
 // Posted to advance the turn, including when auto-advancing the first turn
 struct AdvanceTurn : boost::statechart::event<AdvanceTurn> {};
 
@@ -66,7 +62,6 @@ struct TerminateServer : boost::statechart::event<TerminateServer> {};
     (HostMPGameRequested)                                       \
     (JoinMPGameRequested)                                       \
     (TurnEnded)                                                 \
-    (ResetToIntroMenu)                                          \
     (StartQuittingGame)                                         \
     (ShutdownServer)                                            \
     (WaitForDisconnect)                                         \
@@ -249,7 +244,6 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
         boost::statechart::custom_reaction<Diplomacy>,
         boost::statechart::custom_reaction<DiplomaticStatusUpdate>,
         boost::statechart::custom_reaction<EndGame>,
-        boost::statechart::custom_reaction<ResetToIntroMenu>,
         boost::statechart::custom_reaction<StartQuittingGame>,
         boost::statechart::custom_reaction<Error>,
         boost::statechart::custom_reaction<TurnProgress>,
@@ -266,7 +260,6 @@ struct PlayingGame : boost::statechart::state<PlayingGame, HumanClientFSM, Waiti
     boost::statechart::result react(const Diplomacy& d);
     boost::statechart::result react(const DiplomaticStatusUpdate& u);
     boost::statechart::result react(const EndGame& msg);
-    boost::statechart::result react(const ResetToIntroMenu& msg);
     boost::statechart::result react(const StartQuittingGame& msg);
     boost::statechart::result react(const Error& msg);
     boost::statechart::result react(const TurnProgress& msg);

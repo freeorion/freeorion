@@ -437,8 +437,8 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
+        ResetToIntro();
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-        ResetGame();
         return;
     }
 
@@ -522,7 +522,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         m_fsm->process_event(HostSPGameRequested());
     } else {
         ErrorLogger() << "HumanClientApp::NewSinglePlayerGame failed to start new game, killing server.";
-        ResetGame();
+        ResetToIntro();
     }
 }
 
@@ -561,7 +561,7 @@ void HumanClientApp::MultiPlayerGame() {
     if (!m_connected) {
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
         if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
-            ResetGame();
+            ResetToIntro();
         return;
     }
 
@@ -634,8 +634,8 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() Connecting to server";
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
+        ResetToIntro();
         ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-        ResetGame();
         return;
     }
 
@@ -668,8 +668,8 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         DebugLogger() << "HumanClientApp::RequestSavePreviews Connecting to server";
         m_connected = m_networking->ConnectToLocalHostServer();
         if (!m_connected) {
+            ResetToIntro();
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
-            ResetGame();
             return;
         }
     }
@@ -897,12 +897,6 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
     GetOptionsDB().Commit();
 }
 
-void HumanClientApp::HandleAppQuitting() {
-    DebugLogger() << "HumanClientApp::HandleAppQuitting()";
-    QuitGame();
-    Exit(0);
-}
-
 void HumanClientApp::HandleFocusChange(bool gained_focus) {
     DebugLogger() << "HumanClientApp::HandleFocusChange("
                   << (gained_focus ? "Gained Focus" : "Lost Focus")
@@ -932,6 +926,11 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
 
     CancelDragDrop();
     ClearEventState();
+}
+
+void HumanClientApp::HandleAppQuitting() {
+    DebugLogger() << "HumanClientApp::HandleAppQuitting()";
+    ExitApp();
 }
 
 bool HumanClientApp::HandleHotkeyResetGame() {
@@ -1105,51 +1104,7 @@ std::string HumanClientApp::SelectLoadFile() {
     return sfd.Result();
 }
 
-void HumanClientApp::QuitGame() {
-    DebugLogger() << "HumanClientApp::EndGame";
-    m_game_started = false;
-
-    if (m_server_process.Empty()) {
-        if (m_networking->IsTxConnected()) {
-            WarnLogger() << "Disconnecting from server that is already killed.";
-            m_networking->DisconnectFromServer();
-        }
-        return;
-    }
-
-    if (m_networking->IsTxConnected()) {
-        DebugLogger() << "HumanClientApp::EndGame Sending server shutdown message.";
-        m_networking->SendMessage(ShutdownServerMessage(m_networking->PlayerID()));
-
-        // Poll the server until it disconnects or timesout and then kill it
-        const auto POLLING_TIME = std::chrono::milliseconds(10000);
-        const auto POLLING_INTERVAL = std::chrono::milliseconds(10);
-
-        using Clock = std::chrono::steady_clock;
-        auto start_time = Clock::now();
-        while (m_networking->IsConnected() && (POLLING_TIME > (Clock::now() - start_time))) {
-            std::this_thread::sleep_for(POLLING_INTERVAL);
-        }
-
-        if (!m_networking->IsConnected()) {
-            // Treat disconnection as acknowledgement of shutdown and free the
-            // process to allow orderly shutdown.
-            m_server_process.Free();
-        } else {
-            ErrorLogger() << "HumanClientApp::EndGame Unexpectedly still connected to server...?";
-            m_networking->DisconnectFromServer();
-        }
-    }
-
-    if (!m_server_process.Empty()) {
-        DebugLogger() << "HumanClientApp::EndGame Terminated server process.";
-        m_server_process.RequestTermination();
-    }
-}
-
-void HumanClientApp::ResetGame() {
-    QuitGame();
-
+void HumanClientApp::ResetClientData() {
     m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
@@ -1161,8 +1116,19 @@ void HumanClientApp::ResetGame() {
     GetCombatLogManager().Clear();
 }
 
-void HumanClientApp::ResetToIntro()
-{ m_fsm->process_event(ResetToIntroMenu()); }
+void HumanClientApp::ResetToIntro() {
+    DebugLogger() << "HumanClientApp::ResetToIntro";
+    m_game_started = false;
+    m_fsm->process_event(StartQuittingGame(true, m_server_process));
+    return;
+}
+
+void HumanClientApp::ExitApp() {
+    DebugLogger() << "HumanClientApp::ExitApp";
+    m_game_started = false;
+
+    m_fsm->process_event(StartQuittingGame(false, m_server_process));
+}
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {
     if (auto_turns > 0)
