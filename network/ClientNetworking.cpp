@@ -286,15 +286,8 @@ void ClientNetworking::DisconnectFromServer() {
         is_open = m_rx_connected || m_tx_connected;
     } // Destroy the scope for the mutex.
 
-    if (is_open) {
-        // Depending behavior of linger on OS's of the sending and receiving machines this call to close could
-        // - immediately disconnect both send and receive channels
-        // - immediately disconnect send, but continue receiving until all pending sent packets are
-        // received and acknowledged.
-        // - send pending packets and wait for the receive side to terminate the connection.
-
+    if (is_open)
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
-    }
 }
 
 void ClientNetworking::SetPlayerID(int player_id) {
@@ -466,12 +459,23 @@ void ClientNetworking::SendMessageImpl(Message message) {
 }
 
 void ClientNetworking::DisconnectFromServerImpl() {
+    // Depending behavior of linger on OS's of the sending and receiving machines this call to close could
+    // - immediately disconnect both send and receive channels
+    // - immediately disconnect send, but continue receiving until all pending sent packets are
+    //   received and acknowledged.
+    // - send pending packets and wait for the receive side to terminate the connection.
+
     // Stop sending new packets
     { // Scope for the mutex
         boost::mutex::scoped_lock lock(m_mutex);
         m_tx_connected = false;
+        m_tx_connected = m_socket.is_open();
     }
 
-    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
-    m_socket.close();
+    // Note: m_socket.is_open() may be independently true/false on each of these checks.
+    if (m_socket.is_open())
+        m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+
+    if (m_socket.is_open())
+        m_socket.close();
 }
