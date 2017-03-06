@@ -15,6 +15,7 @@
 #include "../../UI/MapWnd.h"
 
 #include <boost/format.hpp>
+#include <thread>
 
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
@@ -802,3 +803,124 @@ boost::statechart::result PlayingTurn::react(const DispatchCombatLogs& msg) {
     Client().UpdateCombatLogs(msg.m_message);
     return discard_event();
 }
+
+
+////////////////////////////////////////////////////////////
+// QuittingGame
+////////////////////////////////////////////////////////////
+/** The QuittingGame state expects to start with a StartQuittingGame message posted. */
+QuittingGame::QuittingGame(my_context c) :
+    my_base(c),
+    m_start_time(Clock::now()),
+    m_reset_to_intro(true),
+    m_server_process(nullptr)
+{
+    // Quit the game by sending a shutdown message to the server and waiting for
+    // the disconnection event.  Free the server if it starts an orderly
+    // shutdown, otherwise kill it.
+
+    if (TRACE_EXECUTION) DebugLogger() << "(Host) QuittingGame";
+
+    // Client().m_game_started = false;
+}
+
+QuittingGame::~QuittingGame()
+{ if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) ~QuittingGame"; }
+
+boost::statechart::result QuittingGame::react(const StartQuittingGame& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame set reset to intro = " << u.m_reset_to_intro;
+
+    m_reset_to_intro = u.m_reset_to_intro;
+    m_server_process = &u.m_server;
+
+    post_event(ShutdownServer());
+    return discard_event();
+}
+
+boost::statechart::result QuittingGame::react(const ShutdownServer& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.ShutdownServer";
+
+    if (!m_server_process) {
+        ErrorLogger() << "m_server_process is nullptr";
+        post_event(TerminateServer());
+        return discard_event();
+    }
+
+    if (m_server_process->Empty()) {
+        if (Client().Networking().IsTxConnected()) {
+            WarnLogger() << "Disconnecting from server that is already killed.";
+            Client().Networking().DisconnectFromServer();
+        }
+        post_event(TerminateServer());
+        return discard_event();
+    }
+
+    if (Client().Networking().IsTxConnected()) {
+        DebugLogger() << "Sending server shutdown message.";
+        Client().Networking().SendMessage(ShutdownServerMessage(Client().Networking().PlayerID()));
+
+        post_event(WaitForDisconnect());
+
+    } else {
+        post_event(TerminateServer());
+    }
+    return discard_event();
+}
+
+const auto QUITTING_TIMEOUT          = std::chrono::milliseconds(5000);
+const auto QUITTING_POLLING_INTERVAL = std::chrono::milliseconds(10);
+boost::statechart::result QuittingGame::react(const WaitForDisconnect& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.WaitForDisconnect";
+
+    if (!Client().Networking().IsConnected()) {
+        post_event(TerminateServer());
+        return discard_event();
+    }
+
+    // Wait until the timeout for a disconnect event
+    if (QUITTING_TIMEOUT > (Clock::now() - m_start_time)) {
+        std::this_thread::sleep_for(QUITTING_POLLING_INTERVAL);
+        post_event(WaitForDisconnect());
+        return discard_event();
+    }
+
+    // Otherwise kill the connection
+    Client().Networking().DisconnectFromServer();
+
+    post_event(TerminateServer());
+    return discard_event();
+ }
+
+boost::statechart::result QuittingGame::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
+
+    if (m_server_process) {
+        // Treat disconnection as acknowledgement of shutdown and free the
+        // process to allow orderly shutdown.
+        m_server_process->Free();
+    } else {
+        ErrorLogger() << "m_server_process is nullptr";
+    }
+
+    post_event(TerminateServer());
+    return discard_event();
+}
+
+boost::statechart::result QuittingGame::react(const TerminateServer& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.WaitForDisconnect";
+
+    if (m_server_process && !m_server_process->Empty()) {
+        DebugLogger() << "QuittingGame terminated server process.";
+        m_server_process->RequestTermination();
+    }
+
+    // Reset the game or quit the app as appropriate
+    if (m_reset_to_intro) {
+        // Client().ResetClientData();
+        return transit<IntroMenu>();
+    } else {
+        throw HumanClientApp::CleanQuit();
+    }
+
+}
+
