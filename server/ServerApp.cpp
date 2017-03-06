@@ -413,7 +413,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::DEBUG:                    break;
 
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
-    case Message::AI_END_GAME_ACK:           m_fsm->process_event(LeaveGame(msg, player_connection));        break;
+    case Message::AI_END_GAME_ACK:          m_fsm->process_event(LeaveGame(msg, player_connection));        break;
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
     case Message::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
