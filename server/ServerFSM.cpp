@@ -325,6 +325,12 @@ sc::result Idle::react(const HostSPGame& msg) {
     return transit<WaitingForSPGameJoiners>();
 }
 
+sc::result Idle::react(const ShutdownServer& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.ShutdownServer";
+
+    return transit<ShuttingDownServer>();
+}
+
 sc::result Idle::react(const Error& msg) {
     auto fatal = HandleErrorMessage(msg, Server());
     if (fatal)

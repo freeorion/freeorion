@@ -134,6 +134,7 @@ struct Idle : sc::state<Idle, ServerFSM> {
     typedef boost::mpl::list<
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
+        sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -142,6 +143,7 @@ struct Idle : sc::state<Idle, ServerFSM> {
 
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
+    sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
 
     SERVER_ACCESSOR
