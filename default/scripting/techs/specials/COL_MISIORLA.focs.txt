@@ -6,6 +6,5 @@ Tech
     researchcost = 1
     researchturns = 1
     Unresearchable
-    tags = [ "PEDIA_EXTINCT_SPECIES_TECHS" ]
-    unlock = Item type = Building name = "BLD_COL_MISIORLA"
+    tags = [ "PEDIA_EXTINCT_SPECIES_TECHS" "SP_MISIORLA" "CTRL_EXTINCT" ]
     graphic = "icons/species/misiorla.png"
