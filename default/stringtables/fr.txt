@@ -3566,29 +3566,35 @@ Un Astronef Furtif coûte 36 PP avec un minimum de 3 tours (max 12 PP/tour).
 
 -Tour  6: Commande #1 14 / 22 -> 10
 
--Tour  7: Commande #1 32 /   4 ->   4
-                Commande #2   0 / 36 ->   6
+-Tour  7: Commande #1 24 / 12 -> 10
 
--Tour  8: Un Astronef Furtif est produit (commande #1)
+-Tour  8: Commande #1 34 /   2 ->   2
+                Commande #2   0 / 36 ->   8
+
+-Tour  9: Un Astronef Furtif est produit (commande #1)
                 La production de l'empire augmente à 22 PP par tour (pour une raison quelconque).
-                Commande #2   4 / 32 -> 12  ; le maximum par tour pour ce projet
-                Commande #3   0 / 36 -> 10
+                Commande #2   8 / 28 -> 12  ; le maximum par tour pour ce projet
+                Commande #3   0 / 72 -> 10  (coût total 36 x quantité 2 = coût total 72)
 
--Tour  9: Commande #2 16 / 20 -> 12
-                Commande #3 10 / 62 -> 10  (coût total 36 x quantité 2 = coût total 72)
+-Tour 10: Commande #2 20 / 16 -> 12
+                 Commande #3 10 / 62 -> 10
 
--Tour 10: Commande #2 28 /   8 ->   8  ; 12 PP supplémentaires seront alloués à la répétition suivante.
-                Commande #3 20 / 52 ->   2
+-Tour 11: Commande #2 32 /    4 ->   4  ; 12 PP supplémentaires seront alloués à la répétition suivante.
+                 Commande #3 20 / 52 ->   6  (22 - (4 + 12))
 
--Tour 11: Un Astronef Furtif est produit (commande #2)
-                Commande #2 12 / 24 -> 12
-                Commande #3 22 / 50 -> 10
+-Tour 12: Un Astronef Furtif est produit (commande #2)
+                 Commande #2 12 / 24 -> 12
+                 Commande #3 26 / 46 -> 10
 
--Tour 12: Commande #2 24 / 12 -> 12
-                Commande #3 32 / 40 -> 10
+-Tour 13: Commande #2 24 / 12 -> 12
+                 Commande #3 36 / 36 -> 10
 
--Tour 13: Un Astronef Furtif est produit (commande #2)
-                Commande #3 42 / 30 -> 22  (12 PP/tour x 2 quantité = max 24 PP/tour)
+-Tour 14: Un Astronef Furtif est produit (commande #2)
+                 Commande #3 46 / 26 -> 22  (12 PP/tour x quantité 2 = max 24 PP/tour)
+
+-Tour 15: Commande #3 68 /   4 ->   4  (18 PP seront inutilisés si aucun autre objet ne se trouve en file d'attente)
+
+-Tour 16: 2 Astronefs Furtifs sont produits (commande #3)
 
 '''
 
@@ -3905,6 +3911,9 @@ Agressivité max de l'IA: %10%
 
 ENC_SHIP_PART
 Astronef - Équipement
+
+ENC_SHIP_PART_DESC
+Équipements d'astronef
 
 ENC_SHIP_HULL
 Astronef - Coque
@@ -4759,7 +4768,7 @@ METER_SPEED_VALUE_LABEL
 Vitesse
 
 METER_SPEED_VALUE_DESC
-Vitesse sur la carte galactique  (uu/tour). La distance en uu parcourue par un astronef en un tour est égale à la valeur de sa Vitesse sur Voie spatiale, et est représentée sur la carte par une ligne en pointillé. Celle-ci indique également le nombre de tour requis pour parcourir la Voie spatiale dans sa totalité et ainsi atteindre le prochain système. Si la Vitesse sur Voie spatiale d'un astronef est inférieure à la longueur de la Voie spatiale, un minimum de 2 tours sera nécessaire à l'astronef pour parcourir cette dernière. Un voyage complet sur une Voie spatiale consommera seulement 1 unité de [[metertype METER_FUEL]], quel que soit le nombre de tour requis.
+Vitesse sur la carte galactique (uu/tour). La distance en uu parcourue par un astronef en un tour est égale à la valeur de sa Vitesse sur Voie spatiale, et est représentée sur la carte par une ligne en pointillé. Celle-ci indique également le nombre de tour requis pour parcourir la Voie spatiale dans sa totalité et ainsi atteindre le prochain système. Si la Vitesse d'un astronef est inférieure à la longueur de la Voie spatiale, un minimum de 2 tours sera nécessaire à l'astronef pour parcourir cette dernière. Un voyage complet sur une Voie spatiale consommera seulement 1 unité de [[metertype METER_FUEL]], quel que soit le nombre de tour requis.
 
 METER_DETECTION_STRENGTH_VALUE_LABEL
 [[DETECTION_TITLE]]
@@ -7419,11 +7428,11 @@ Planète
 
 # Universe object types
 OBJ_POP_CENTER
-Centre de population
+Centre de Population
 
 # Universe object types
 OBJ_PROD_CENTER
-Centre de production
+Centre de Production
 
 # Universe object types
 OBJ_SYSTEM
@@ -7911,6 +7920,11 @@ Classe d'équipement d'astronef invalide
 PC_DIRECT_WEAPON
 Armement
 
+PC_DIRECT_WEAPON_DESC
+'''L'armement d'un astronef permet d'attaquer et d'endommager des cibles lors de chaque passe de combat (à la différence des [[encyclopedia FIGHTER_TECHS]], qui nécessitent au préalable d'être lancés avant de pouvoir attaquer).
+
+Certaines armes sont capables de faire feu plusieurs fois par passe de combat.'''
+
 # Ship part classes
 PC_FIGHTER_HANGAR
 Hangar
@@ -7929,56 +7943,115 @@ Rampe Lanc.
 
 PC_FIGHTER_BAY_DESC
 '''Les Rampes de Lancement sont le point d'accès des [[encyclopedia FIGHTER_TECHS]] pour se poser sur un astronef porteur ou pour y décoller.
-Chaque Rampe de Lancement autorise un nombre défini de Chasseurs à décoller lors de chaque passe de combat.
-'''
+Les Chasseurs prennent part au combat le tour suivant leur lancement, et retournent à quai le tour où le combat prend fin.'''
 
 # Ship part classes
 PC_SHIELD
 Bouclier
 
+PC_SHIELD_DESC
+'''Les Boucliers réduisent les [[encyclopedia DAMAGE_TITLE]] infligés par chaque tir de la valeur de solidité du Bouclier.
+
+Les Boucliers d'astronef ne sont pas affectés par les tirs ennemis, et réduisent donc toujours de la même valeur les dommages infligés consécutivement par chaque tir. Par contre, les Boucliers d'astronef sont inefficaces contre les [[encyclopedia FIGHTER_TECHS]].'''
+
 # Ship part classes
 PC_ARMOUR
 Blindage
+
+PC_ARMOUR_DESC
+Les Blindages augmentent la [[metertype METER_STRUCTURE]] d'un astronef, permettant ainsi à un astronef de subir davantage de [[encyclopedia DAMAGE_TITLE]] avant d'être détruit.
 
 # Ship part classes
 PC_TROOPS
 Infanterie
 
+PC_TROOPS_DESC
+'''Les équipements d'Infanterie permettent d'augmenter les effectifs d'[[metertype METER_TROOPS]] à bord d'un astronef, ces derniers pouvant être utilisés pour envahir les planètes ennemies.
+
+Pour envahir une planète avec succès, l'effectif total d'[[metertype METER_TROOPS]] de tous les astronefs prenant part à l'invasion doit être supérieur à l'effectif total de défense (les égalités sont en faveur du défenseur).
+Un astronef d'invasion devient définitivement inutilisable suite à l'opération d'atterrissage (tout équipement additionnel sur l'astronef est également perdu).'''
+
 # Ship part classes
 PC_DETECTION
 Détection
+
+PC_DETECTION_DESC
+'''Les équipements de Détection permettent d'augmenter le [[metertype METER_DETECTION]] des astronefs sur lesquels ils sont montés.
+
+La [[encyclopedia DETECTION_TITLE]] d'un empire doit être égale ou supérieure à la valeur de [[metertype METER_STEALTH]] d'un objet, afin que l'empire soit en mesure de le détecter.'''
 
 # Ship part classes
 PC_STEALTH
 Furtivité
 
+PC_STEALTH_DESC
+'''Les équipements de Furtivité augmentent la [[metertype METER_STEALTH]] d'un astronef. Les effets induits par ces équipements ne sont pas additionnables, ce qui signifie que seul l'équipement le plus puissant influera sur les statistiques de l'astronef.
+
+Si un combat se déroule dans un système, les astronefs invisibles pour l'ennemi ne seront pas ciblés par son armement. Si un astronef invisible attaque, il deviendra alors visible durant toutes les passes de combat suivantes.
+
+Voir aussi [[metertype METER_DETECTION]] et [[encyclopedia DETECTION_TITLE]].'''
+
 # Ship part classes
 PC_FUEL
 Carburant
+
+PC_FUEL_DESC
+'''Les équipements de Carburant modifient la capacité en [[metertype METER_FUEL]] d'un astronef, augmentant la capacité maximale du réservoir ou bien la quantité de carburant qu'un astronef peut récolter ou régénérer.
+
+Un astronef nécessite une valeur de carburant de 1.0 afin de pouvoir quitter un système.'''
 
 # Ship part classes
 PC_COLONY
 Colonisation
 
+PC_COLONY_DESC
+'''Les équipements de Colonisation d'un astronef fournissent les outils nécessaires afin de s'établir sur une nouvelle planète et en prendre possession.
+
+Ces équipements peuvent également augmenter la [[metertype METER_POPULATION]] sur un astronef.
+Lors de la colonisation d'une planète à l'aide d'un astronef colonisateur peuplé, une nouvelle colonie pour l'[[encyclopedia ENC_SPECIES]] est créée, débutant avec la même population que celle qui se trouvait à bord de l'astronef.
+
+Un astronef sans population disposera tout de même d'un personnel suffisant pour établir un [[encyclopedia OUTPOSTS_TITLE]].
+Un Avant-Poste peut fonder une colonie pour toute espèce de l'empire s'il se trouve à portée d'[[metertype METER_SUPPLY]], sous condition que la source d'approvisionnement satisfasse certains critères.
+La combinaison d'un astronef bâtisseur d'Avant-Poste et la fondation d'une colonie à cet emplacement est moins onéreuse que la production d'un astronef colonisateur peuplé.
+
+Lorsque qu'un astronef colonise une planète, il devient définitivement inutilisable suite au processus. Toute arme ou autre équipement de l'astronef seront également perdus.'''
+
 # Ship part classes
 PC_SPEED
 Vitesse
+
+PC_SPEED_DESC
+Les équipements de la catégorie [[metertype METER_SPEED]] augmentent la distance maximale qu'un astronef peut parcourir en un tour.
 
 # Ship part classes
 PC_GENERAL
 Général
 
+PC_GENERAL_DESC
+Équipements communs ou spécialisés qui ne peuvent être classés dans aucune catégorie spécifique.
+
 # Ship part classes
 PC_BOMBARD
 Bombardement
+
+PC_BOMBARD_DESC
+'''Les équipements de Bombardement permettent à un astronef de bombarder une planète ennemie, réduisant la [[metertype METER_POPULATION]] de cette planète de la puissance de chaque équipement de Bombardement montés sur l'astronef.
+
+La majorité des équipements de Bombardment n'affectent qu'un type donné de [[encyclopedia METABOLISM_TITLE]].'''
 
 # Ship part classes
 PC_INDUSTRY
 Industrie
 
+PC_INDUSTRY_DESC
+Les équipements d'Industrie augmentent l'[[metertype METER_INDUSTRY]] générée  sur un astronef. Ce dernier doit être relié par lignes d'[[metertype METER_SUPPLY]] à un [[OBJ_PROD_CENTER]] (comme une colonie) pour que la capacité industrielle générée puisse être utilisée.
+
 # Ship part classes
 PC_RESEARCH
 Recherche
+
+PC_RESEARCH_DESC
+Les équipements de Recherche augmentent la [[metertype METER_RESEARCH]] générée  sur un astronef. Ce dernier requiert également une [[metertype METER_POPULATION]] à bord afin de générer la capacité de Recherche.
 
 # Ship part classes
 PC_TRADE
@@ -7987,6 +8060,9 @@ Commerce
 # Ship part classes
 PC_PRODUCTION_LOCATION  # translated
 Production
+
+PC_PRODUCTION_LOCATION_DESC
+Les équipements de Production sont intégrés à un astronef pour former un [[OBJ_PROD_CENTER]], permettant ainsi la mise en œuvre de certains projets de production. L'astronef doit être relié par lignes d'[[metertype METER_SUPPLY]] à une source générant de l'[[metertype METER_INDUSTRY]].
 
 # Visibility levels
 INVALID_VISIBILITY
@@ -13666,7 +13742,7 @@ AI_FIRST_TURN_GREETING_MSG402
 Ave, Human, morituri te salutant!
 
 AI_FIRST_TURN_GREETING_MSG403
-Saluations, Étranger! Nous espérons de tout coeur avoir affaire à un adversaire de valeur.
+Saluations, Étranger! Nous espérons de tout cœur avoir affaire à un adversaire de valeur.
 
 AI_FIRST_TURN_GREETING_MSG501
 Bienvenue cher ennemi, nos vaillants et puissants guerriers vous attendent...
