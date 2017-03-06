@@ -35,6 +35,12 @@ species_list = [
     ("SP_EXOBOT", "Exobot", "icons/species/robotic-01.png")
 ]
 
+tech_dict = dict(
+    SP_BANFORO="TECH_COL_BANFORO",
+    SP_KILANDOW="TECH_COL_KILANDOW",
+    SP_MISIORLA="TECH_COL_MISIORLA"
+)
+
 time_factor = {"SP_HAPPY": "1.2", "SP_PHINNERT": "0.75"}
 
 
@@ -137,6 +143,7 @@ t_species_condition_extinct = string.Template(
                     Happiness low = 5
                 ]
                 And [
+                    OwnerHasTech name = "${tech_name}"
                     HasSpecial name = "EXTINCT_${name}_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
@@ -216,6 +223,7 @@ for sp_id, sp_desc_name, sp_graphic in species_list:
     sp_name = sp_id.split("_", 1)[1]
     sp_tags = '"' + sp_id + '"'
     sp_filename = sp_id + ".focs.txt"
+    sp_tech = tech_dict.get(sp_id, '')
 
     data = {
         'id': sp_id,
@@ -234,7 +242,7 @@ for sp_id, sp_desc_name, sp_graphic in species_list:
         data['species_condition'] = r"// no existing Exobot colony required!"
     elif sp_id in ("SP_BANFORO", "SP_KILANDOW", "SP_MISIORLA"):
         data['tags'] += ' "CTRL_EXTINCT"'
-        data['species_condition'] = t_species_condition_extinct.substitute(id=sp_id, name=sp_name)
+        data['species_condition'] = t_species_condition_extinct.substitute(tech_name=sp_tech, id=sp_id, name=sp_name)
         data['time'] = t_buildtime_extinct.substitute(id=sp_id, name=sp_name, t_factor=time_factor.get(sp_id, "1.0"))
 
     with open(os.path.join(outpath, sp_filename), "w") as f:
