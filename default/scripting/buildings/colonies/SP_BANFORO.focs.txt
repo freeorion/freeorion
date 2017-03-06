@@ -55,6 +55,7 @@ BuildingType
                     Happiness low = 5
                 ]
                 And [
+                    OwnerHasTech name = "TECH_COL_BANFORO"
                     HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
@@ -78,6 +79,7 @@ BuildingType
                     Happiness low = 5
                 ]
                 And [
+                    OwnerHasTech name = "TECH_COL_BANFORO"
                     HasSpecial name = "EXTINCT_BANFORO_SPECIAL"
                     Contains Building name = "BLD_XENORESURRECTION_LAB"
                 ]
