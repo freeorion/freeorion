@@ -71,7 +71,7 @@ namespace {
 
     /** @content_tag{CTRL_ALWAYS_REPORT} Always display a species on a planet suitability report. **/
     const std::string TAG_ALWAYS_REPORT = "CTRL_ALWAYS_REPORT";
-    /** @content_tag{CTRL_EXTINCT} Added to both a species and their colony building.  Handles display in planet suitability report. **/
+    /** @content_tag{CTRL_EXTINCT} Added to both a species and their enabling tech.  Handles display in planet suitability report. **/
     const std::string TAG_EXTINCT = "CTRL_EXTINCT";
     /** @content_tag{PEDIA_} Defines an encyclopedia category for the generated article of the containing content definition.  The category name should be postfixed to this tag. **/
     const std::string TAG_PEDIA_PREFIX = "PEDIA_";
@@ -2332,6 +2332,7 @@ namespace {
 
         std::set<std::string> species_names;
         std::map<std::string, std::pair<PlanetEnvironment, float> > population_counts;
+        const auto& empire_avialable_techs = empire->AvailableTechs();
 
         // Collect species colonizing/environment hospitality information
         // start by building roster-- any species tagged as 'ALWAYS_REPORT' plus any species
@@ -2345,22 +2346,18 @@ namespace {
                 species_names.insert(species_str);
                 continue;
             }
-            // Add extinct species if their (extinct) colony building is available
-            // Extinct species should have an EXTINCT tag
-            // The colony building should have an EXTINCT tag unless it is a starting unlock
+            // Add extinct species if their tech is known
+            // Extinct species and enabling tech should have an EXTINCT tag
             if (species_tags.find(TAG_EXTINCT) != species_tags.end()) {
-                for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
-                    const std::set<std::string>& bld_tags = entry.second->Tags();
-                    // check if building matches tag requirements
-                    if ((bld_tags.find(TAG_EXTINCT) != bld_tags.end()) &&
-                        (bld_tags.find(species_str) != bld_tags.end()))
+                for (const auto& avail_tech : empire_avialable_techs) {
+                    // Check for presence of tags in tech
+                    const auto& tech_tags = GetTech(avail_tech)->Tags();
+                    if ((tech_tags.find(species_str) != tech_tags.end()) &&
+                        (tech_tags.find(TAG_EXTINCT) != tech_tags.end()))
                     {
-                        const std::string& bld_str = entry.first;
-                        // Add if colony building is available to empire
-                        if (empire->BuildingTypeAvailable(bld_str)) {
-                            species_names.insert(species_str);
-                        }
-                        continue;
+                        // Add the species and exit loop
+                        species_names.insert(species_str);
+                        break;
                     }
                 }
             }
