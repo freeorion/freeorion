@@ -86,6 +86,11 @@ boost::statechart::result IntroMenu::react(const JoinMPGameRequested& a) {
     return transit<WaitingForMPJoinAck>();
 }
 
+boost::statechart::result IntroMenu::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+    post_event(e);
+    return transit<QuittingGame>();
+}
 
 ////////////////////////////////////////////////////////////
 // WaitingForSPHostAck
@@ -142,6 +147,15 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     return retval;
 }
 
+boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForMPHostAck
@@ -196,6 +210,15 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     return retval;
 }
 
+boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
+}
+
 
 ////////////////////////////////////////////////////////////
 // WaitingForMPJoinAck
@@ -247,6 +270,16 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     }
 
     return retval;
+}
+
+
+boost::statechart::result WaitingForMPJoinAck::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
 }
 
 
@@ -354,6 +387,15 @@ boost::statechart::result MPLobby::react(const Error& msg) {
         ClientUI::MessageBox(UserString(problem), true);
 
     return retval;
+}
+
+boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
 }
 
 
@@ -476,9 +518,17 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
 
 boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.ResetToIntroMenu";
-
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     return transit<IntroMenu>();
+}
+
+boost::statechart::result PlayingGame::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
 }
 
 boost::statechart::result PlayingGame::react(const Error& msg) {
