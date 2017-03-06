@@ -1,47 +1,105 @@
-# - Try to find ogg
-# Once done this will define
+#.rst:
+# FindOgg
+# -------
 #
-#  OGG_FOUND - system has ogg
-#  OGG_INCLUDE_DIR
-#  OGG_LIBRARY
+# Find the native Ogg includes and library.
 #
-# $OGGDIR is an environment variable used
-# for finding ogg.
+# IMPORTED Targets
+# ^^^^^^^^^^^^^^^^
 #
-# Several changes and additions by Fabian 'x3n' Landau
-# Most of all rewritten by Adrian Friedli
-# Debug versions and simplifications by Reto Grieder
-#                 > www.orxonox.net <
+# This module defines :prop_tgt:`IMPORTED` target ``Ogg::Ogg``, if
+# Ogg has been found.
+#
+# Result Variables
+# ^^^^^^^^^^^^^^^^
+#
+# This module defines the following variables:
+#
+# ::
+#
+#   OGG_INCLUDE_DIRS    - where to find ogg.h, etc.
+#   OGG_LIBRARIES       - List of libraries when using ogg.
+#   OGG_FOUND           - True if ogg found.
+#
+# Hints
+# ^^^^^
+#
+# A user may set ``OGGDIR`` environment to a ogg installation root
+# to tell this module where to look.
 
-INCLUDE(FindPackageHandleStandardArgs)
-INCLUDE(HandleLibraryTypes)
 
-FIND_PATH(OGG_INCLUDE_DIR ogg/ogg.h
-  PATHS $ENV{OGGDIR}
-  PATH_SUFFIXES include
-)
-FIND_LIBRARY(OGG_LIBRARY_OPTIMIZED
-  NAMES ogg libogg
-  PATHS $ENV{OGGDIR}
-  PATH_SUFFIXES lib
-)
-FIND_LIBRARY(OGG_LIBRARY_DEBUG
-  NAMES oggd ogg_d oggD ogg_D
-  PATHS $ENV{OGGDIR}
-  PATH_SUFFIXES lib
-)
+set(_OGG_SEARCHES)
 
-# Handle the REQUIRED argument and set OGG_FOUND
-FIND_PACKAGE_HANDLE_STANDARD_ARGS(Ogg DEFAULT_MSG
-  OGG_LIBRARY_OPTIMIZED
-  OGG_INCLUDE_DIR
-)
+# Search OGGDIR first when is set.
+if(ENV{OGGDIR})
+  set(_OGG_SEARCH_ROOT PATHS $ENV{OGGDIR} NO_DEFAULT_PATH)
+  list(APPEND _OGG_SEARCHES _OGG_SEARCH_ROOT)
+endif()
 
-# Collect optimized and debug libraries
-HANDLE_LIBRARY_TYPES(OGG)
+# Normal search.
+set(_OGG_SEARCH_NORMAL
+  PATH ""
+  )
+list(APPEND _OGG_SEARCHES _OGG_SEARCH_NORMAL)
 
-MARK_AS_ADVANCED(
-  OGG_INCLUDE_DIR
-  OGG_LIBRARY_OPTIMIZED
-  OGG_LIBRARY_DEBUG
-)
+set(OGG_NAMES ogg libogg)
+set(OGG_NAMES_DEBUG oggd ogg_D oggD ogg_D)
+
+foreach(search ${_OGG_SEARCHES})
+  find_path(OGG_INCLUDE_DIR NAMES ogg.h ${${search}} PATH_SUFFIXES ogg)
+endforeach()
+
+# Allow OGG_LIBRARY to be set manually, as the location of the
+# ogg library
+if(NOT OGG_LIBRARY)
+  foreach(search ${_OGG_SEARCHES})
+    find_library(OGG_LIBRARY_RELEASE NAMES ${OGG_NAMES} ${${search}} PATH_SUFFIXES lib)
+    find_library(OGG_LIBRARY_DEBUG NAMES ${OGG_NAMES_DEBUG} ${${search}} PATH_SUFFIXES lib)
+  endforeach()
+
+  include(SelectLibraryConfigurations)
+  select_library_configurations(OGG)
+endif()
+
+unset(OGG_NAMES)
+unset(OGG_NAMES_DEBUG)
+
+mark_as_advanced(OGG_LIBRARY OGG_INCLUDE_DIR)
+
+# handle the QUIETLY and REQUIRED argument and set OGG_FOUND to TRUE if
+# all listed variables are TRUE
+include(FindPackageHandleStandardArgs)
+FIND_PACKAGE_HANDLE_STANDARD_ARGS(Ogg REQUIRED_VARS OGG_LIBRARY OGG_INCLUDE_DIR)
+
+if(OGG_FOUND)
+    set(OGG_INCLUDE_DIRS ${OGG_INCLUDE_DIR})
+
+    if(NOT OGG_LIBRARIES)
+        set(OGG_LIBRARIES ${OGG_LIBRARY})
+    endif()
+
+    if(NOT TARGET Ogg::Ogg)
+      add_library(Ogg::Ogg UNKNOWN IMPORTED)
+      set_target_properties(Ogg::Ogg PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${OGG_INCLUDE_DIRS}")
+
+      if(OGG_LIBRARY_RELEASE)
+        set_property(TARGET Ogg::Ogg APPEND PROPERTY
+          IMPORTED_CONFIGURATIONS RELEASE)
+        set_target_properties(Ogg::Ogg PROPERTIES
+          IMPORTED_LOCATION_RELEASE "${OGG_LIBRARY_RELEASE}")
+      endif()
+
+      if(OGG_LIBRARY_DEBUG)
+        set_property(TARGET Ogg::Ogg APPEND PROPERTY
+          IMPORTED_CONFIGURATIONS DEBUG)
+        set_target_properties(Ogg::Ogg PROPERTIES
+          IMPORTED_LOCATION_DEBUG "${OGG_LIBRARY_DEBUG}")
+      endif()
+
+      if(NOT ZLIB_LIBRARY_RELEASE AND NOT ZLIB_LIBRARY_DEBUG)
+        set_property(TARGET Ogg::Ogg APPEND PROPERTY
+          IMPORTED_LOCATION "${OGG_LIBRARY}")
+      endif()
+    endif()
+endif()

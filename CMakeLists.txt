@@ -344,7 +344,7 @@ target_include_directories(freeorion SYSTEM
         ${OPENGL_INCLUDE_DIR}
         ${OPENAL_INCLUDE_DIR}
         ${SDL2_INCLUDE_DIR}
-        ${OGG_INCLUDE_DIR}
+        ${OGG_INCLUDE_DIRS}
         ${VORBIS_INCLUDE_DIR}
         ${FREETYPE_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
@@ -359,7 +359,7 @@ target_link_libraries(freeorion
     ${OPENGL_glu_LIBRARY}
     ${OPENAL_LIBRARY}
     ${SDL2_LIBRARY}
-    ${OGG_LIBRARY}
+    ${OGG_LIBRARIES}
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARY}
     ${Boost_LOCALE_LIBRARY}
