@@ -407,6 +407,7 @@ void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, 
 
     BufferToHeader(m_incoming_header, m_incoming_message);
     m_incoming_message.Resize(m_incoming_header[4]);
+    // Intentionally not checked for open.  We expect (header, body) pairs.
     boost::asio::async_read(
         m_socket,
         boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
@@ -417,10 +418,12 @@ void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, 
 }
 
 void ClientNetworking::AsyncReadMessage() {
-    boost::asio::async_read(m_socket, boost::asio::buffer(m_incoming_header),
-                            boost::bind(&ClientNetworking::HandleMessageHeaderRead, this,
-                                        boost::asio::placeholders::error,
-                                        boost::asio::placeholders::bytes_transferred));
+    if (m_socket.is_open())
+        boost::asio::async_read(
+            m_socket, boost::asio::buffer(m_incoming_header),
+            boost::bind(&ClientNetworking::HandleMessageHeaderRead, this,
+                        boost::asio::placeholders::error,
+                        boost::asio::placeholders::bytes_transferred));
 }
 
 void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::size_t bytes_transferred) {
@@ -439,6 +442,11 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::
 }
 
 void ClientNetworking::AsyncWriteMessage() {
+    if (!m_socket.is_open()) {
+        ErrorLogger() << "Socket is closed. Dropping message.";
+        return;
+    }
+
     HeaderToBuffer(m_outgoing_messages.front(), m_outgoing_header);
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back(boost::asio::buffer(m_outgoing_header));
