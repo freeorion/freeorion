@@ -375,9 +375,11 @@ void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self)
     m_incoming_messages.Clear();
     m_outgoing_messages.clear();
     m_io_service.reset();
-    boost::mutex::scoped_lock lock(m_mutex);
-    m_rx_connected = false;
-    m_tx_connected = false;
+    {
+        boost::mutex::scoped_lock lock(m_mutex);
+        m_rx_connected = false;
+        m_tx_connected = false;
+    }
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
