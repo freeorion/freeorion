@@ -544,8 +544,8 @@ namespace {
     };
 }
 
-std::list <std::pair<std::string, std::string> >            EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string> >(0);
-std::list <std::pair<std::string, std::string> >::iterator  EncyclopediaDetailPanel::m_items_it = m_items.begin();
+std::list<std::pair<std::string, std::string>>              EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string> >(0);
+std::list<std::pair<std::string, std::string>>::iterator    EncyclopediaDetailPanel::m_items_it = m_items.begin();
 
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
     CUIWnd(UserString("MAP_BTN_PEDIA"), flags, config_name, false),

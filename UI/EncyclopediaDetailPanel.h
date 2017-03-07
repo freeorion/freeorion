@@ -104,9 +104,9 @@ private:
     void            HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
     void            HandleSearchTextEntered();
 
-    static std::list<std::pair <std::string, std::string> >             m_items;    // stores all items which have been observed in the past
+    static std::list<std::pair <std::string, std::string>>              m_items;    // stores all items which have been observed in the past
                                                                                     // .first == item type; .second == item.name
-    static std::list<std::pair <std::string, std::string> >::iterator   m_items_it; // stores actual position within m_items
+    static std::list<std::pair <std::string, std::string>>::iterator    m_items_it; // stores actual position within m_items
 
     std::weak_ptr<const ShipDesign> m_incomplete_design;
 
@@ -114,7 +114,7 @@ private:
     GG::Label*          m_cost_text;        // cost and time to build or research
     GG::Label*          m_summary_text;     // general purpose item
     GG::RichText*       m_description_box;  // detailed and lengthy description
-    GG::ScrollPanel* m_description_panel;   // scroller for m_description_box
+    GG::ScrollPanel*    m_description_panel;// scroller for m_description_box
     GG::StaticGraphic*  m_icon;
     GG::Button*         m_index_button;
     GG::Button*         m_back_button;

@@ -989,7 +989,7 @@ Font::RenderState::RenderState (Clr color):
 
 void Font::RenderState::PushColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a)
 {
-    GG::Clr color(r, g, b, a);
+    Clr color(r, g, b, a);
     // The same color may end up being stored multiple times, but the cost of deduplication
     // is greater than the cost of just letting it be so.
     color_index_stack.push(used_colors.size());
@@ -1019,11 +1019,11 @@ bool Font::RenderState::ColorsEmpty() const
 
 // Must be here for scoped_ptr deleter to work
 Font::RenderCache::RenderCache() :
-    vertices(new GG::GL2DVertexBuffer()),
-    coordinates(new GG::GLTexCoordBuffer()),
-    colors(new GG::GLRGBAColorBuffer()),
-    underline_vertices(new GG::GL2DVertexBuffer()),
-    underline_colors(new GG::GLRGBAColorBuffer())
+    vertices(new GL2DVertexBuffer()),
+    coordinates(new GLTexCoordBuffer()),
+    colors(new GLRGBAColorBuffer()),
+    underline_vertices(new GL2DVertexBuffer()),
+    underline_colors(new GLRGBAColorBuffer())
 {}
 
 // Must be here for scoped_ptr deleter to work
@@ -2073,7 +2073,7 @@ void Font::ValidateFormat(Flags<TextFormat>& format) const
         format &= ~FORMAT_LINEWRAP;
 }
 
-void Font::StoreGlyphImpl(Font::RenderCache& cache, GG::Clr color, const Pt& pt,
+void Font::StoreGlyphImpl(Font::RenderCache& cache, Clr color, const Pt& pt,
                           const Glyph& glyph, int x_top_offset, int y_shift) const
 {
     cache.coordinates->store(glyph.sub_texture.TexCoords()[0], glyph.sub_texture.TexCoords()[1]);
@@ -2096,7 +2096,7 @@ void Font::StoreGlyphImpl(Font::RenderCache& cache, GG::Clr color, const Pt& pt,
     cache.colors->store(color);
 }
 
-void Font::StoreUnderlineImpl(Font::RenderCache& cache, GG::Clr color, const Pt& pt, const Glyph& glyph,
+void Font::StoreUnderlineImpl(Font::RenderCache& cache, Clr color, const Pt& pt, const Glyph& glyph,
                         Y descent, Y height, Y underline_height, Y underline_offset) const
 {
     X x1 = pt.x;
@@ -2134,14 +2134,14 @@ X Font::StoreGlyph(const Pt& pt, const Glyph& glyph, const Font::RenderState* re
 
     // render shadows?
     if (shadow_offset > 0) {
-        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X1, Y0), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, Y1), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(-X1, Y0), glyph, italic_top_offset, super_sub_offset);
-        StoreGlyphImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, -Y1), glyph, italic_top_offset, super_sub_offset);
+        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X1, Y0), glyph, italic_top_offset, super_sub_offset);
+        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, italic_top_offset, super_sub_offset);
+        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(-X1, Y0), glyph, italic_top_offset, super_sub_offset);
+        StoreGlyphImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, italic_top_offset, super_sub_offset);
         if (render_state && render_state->draw_underline) {
-            StoreUnderlineImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, Y1), glyph, m_descent,
+            StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, Y1), glyph, m_descent,
                                m_height, Y(m_underline_height), Y(m_underline_offset));
-            StoreUnderlineImpl(cache, GG::CLR_BLACK, pt + GG::Pt(X0, -Y1), glyph, m_descent,
+            StoreUnderlineImpl(cache, CLR_BLACK, pt + Pt(X0, -Y1), glyph, m_descent,
                                m_height, Y(m_underline_height), Y(m_underline_offset));
         }
     }
@@ -2260,7 +2260,7 @@ bool Font::IsDefaultFont()
 { return m_font_filename == StyleFactory::DefaultFontName(); }
 
 std::shared_ptr<Font> Font::GetDefaultFont(unsigned int pts)
-{ return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts); }
+{ return GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts); }
 
 
 ///////////////////////////////////////

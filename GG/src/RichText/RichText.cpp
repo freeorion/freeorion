@@ -188,11 +188,11 @@ namespace GG {
         }
 
         /**
-            * @brief Set the whitespace around the content.
-            *
-            * @param pixels The number of pixels to reserve for empty space around the content.
-            * @return void
-            */
+          * @brief Set the whitespace around the content.
+          *
+          * @param pixels The number of pixels to reserve for empty space around the content.
+          * @return void
+          */
         void SetPadding(int pixels)
         {
             if (m_padding != pixels) {
@@ -228,15 +228,14 @@ namespace GG {
         { m_block_factory_map = block_factory_map; }
 
     private:
-        RichText* const             m_owner; //!< The public control.
-        /** The font to use for text. */
-        std::shared_ptr<Font> m_font;
-        Clr                         m_color; //! < The color to use for text.
-        Flags<TextFormat>           m_format; //!< Text format.
-        /** A map that tells us how to generate block controls from tags. */
-        std::shared_ptr<RichText::BLOCK_FACTORY_MAP> m_block_factory_map;
-        std::vector<BlockControl*>  m_blocks; //!< The blocks generated from our content.
-        int m_padding;
+        RichText* const             m_owner;                //!< The public control.
+        std::shared_ptr<Font>       m_font;                 //!< The font to use for text.
+        Clr                         m_color;                //! < The color to use for text.
+        Flags<TextFormat>           m_format;               //!< Text format.
+        std::shared_ptr<RichText::BLOCK_FACTORY_MAP>
+                                    m_block_factory_map;    //!< A map that tells us how to generate block controls from tags.
+        std::vector<BlockControl*>  m_blocks;               //!< The blocks generated from our content.
+        int                         m_padding;
 
         // Easier access to m_block_factory_map
         RichText::BLOCK_FACTORY_MAP& FactoryMap()

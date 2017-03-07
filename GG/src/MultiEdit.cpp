@@ -252,7 +252,7 @@ void MultiEdit::SizeMove(const Pt& ul, const Pt& lr)
     // resizing this control doesn't reset the scroll position to the top.
     // just calling PreserveTextPositionOnNextSetText() before the SetText
     // call doesn't work as that leaves the scrollbars unadjusted for the resize
-    GG::Pt initial_scroll_pos = ScrollPosition();
+    Pt initial_scroll_pos = ScrollPosition();
 
     Edit::SizeMove(ul, lower_right);
 
@@ -408,9 +408,9 @@ void MultiEdit::SetScrollPosition(Pt pt)
     if (m_hscroll) {
         std::pair<int, int> range = m_hscroll->ScrollRange();
         if (pt.x < range.first)
-            pt.x = GG::X(range.first);
+            pt.x = X(range.first);
         if (pt.x > range.second)
-            pt.x = GG::X(range.second);
+            pt.x = X(range.second);
         std::pair<int, int> posn_range = m_hscroll->PosnRange();
         if (pt.x != posn_range.first) {
             m_hscroll->ScrollTo(Value(pt.x));
@@ -420,9 +420,9 @@ void MultiEdit::SetScrollPosition(Pt pt)
     if (m_vscroll) {
         std::pair<int, int> range = m_vscroll->ScrollRange();
         if (pt.y < range.first)
-            pt.y = GG::Y(range.first);
+            pt.y = Y(range.first);
         if (pt.y > range.second)
-            pt.y = GG::Y(range.second);
+            pt.y = Y(range.second);
         std::pair<int, int> posn_range = m_vscroll->PosnRange();
         if (pt.y != posn_range.first) {
             m_vscroll->ScrollTo(Value(pt.y));
@@ -491,11 +491,11 @@ std::pair<std::size_t, CPSize> MultiEdit::CharAt(CPSize idx) const
 
 Pt MultiEdit::ScrollPosition() const
 {
-    Pt retval(GG::X0, GG::Y0);
+    Pt retval(X0, Y0);
     if (m_hscroll)
-        retval.x = GG::X(m_hscroll->PosnRange().first);
+        retval.x = X(m_hscroll->PosnRange().first);
     if (m_vscroll)
-        retval.y = GG::Y(m_vscroll->PosnRange().first);
+        retval.y = Y(m_vscroll->PosnRange().first);
     return retval;
 }
 
