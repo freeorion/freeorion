@@ -23,16 +23,16 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-set(SDL_BUILDING_LIBRARY true)
+set(SDL_NO_MAIN true)
 
-find_package(SDL2 REQUIRED)
+find_package(SDL REQUIRED)
 
 include_directories(
     SYSTEM
-    ${SDL2_INCLUDE_DIR}
+    ${SDL_INCLUDE_DIRS}
 )
 
-set(GiGiSDL_LINK_LIBS GiGi ${SDL2_LIBRARY})
+set(GiGiSDL_LINK_LIBS GiGi ${SDL_LIBRARIES})
 add_library(GiGiSDL SDLGUI.cpp)
 
 if (USE_STATIC_LIBS)

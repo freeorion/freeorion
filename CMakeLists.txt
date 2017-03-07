@@ -147,7 +147,7 @@ if (NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL GLU library not found.")
 endif ()
 
-find_package(SDL2 REQUIRED)
+find_package(SDL REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
@@ -345,7 +345,7 @@ target_include_directories(freeorion SYSTEM
         ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${OPENAL_INCLUDE_DIR}
-        ${SDL2_INCLUDE_DIR}
+        ${SDL_INCLUDE_DIRS}
         ${OGG_INCLUDE_DIRS}
         ${VORBIS_INCLUDE_DIRS}
         ${FREETYPE_INCLUDE_DIRS}
@@ -360,7 +360,7 @@ target_link_libraries(freeorion
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     ${OPENAL_LIBRARY}
-    ${SDL2_LIBRARY}
+    ${SDL_LIBRARIES}
     ${OGG_LIBRARIES}
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARY}
