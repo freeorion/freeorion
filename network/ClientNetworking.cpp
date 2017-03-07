@@ -350,8 +350,10 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
 }
 
 void ClientNetworking::HandleException(const boost::system::system_error& error) {
-    if (error.code() == boost::asio::error::eof)
+    if (error.code() == boost::asio::error::eof) {
         DebugLogger() << "Client connection disconnected by EOF from server.";
+        m_socket.close();
+    }
     else if (error.code() == boost::asio::error::connection_reset)
         DebugLogger() << "Client connection disconnected, due to connection reset from server.";
     else if (error.code() == boost::asio::error::operation_aborted)
@@ -388,22 +390,19 @@ void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self)
 void ClientNetworking::HandleMessageBodyRead(boost::system::error_code error,
                                              std::size_t bytes_transferred)
 {
-    if (error) {
+    if (error)
         throw boost::system::system_error(error);
-    } else {
-        assert(static_cast<int>(bytes_transferred) <= m_incoming_header[4]);
-        if (static_cast<int>(bytes_transferred) == m_incoming_header[4]) {
-            m_incoming_messages.PushBack(m_incoming_message);
-            AsyncReadMessage();
-        }
+
+    assert(static_cast<int>(bytes_transferred) <= m_incoming_header[4]);
+    if (static_cast<int>(bytes_transferred) == m_incoming_header[4]) {
+        m_incoming_messages.PushBack(m_incoming_message);
+        AsyncReadMessage();
     }
 }
 
 void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred) {
-    if (error) {
+    if (error)
         throw boost::system::system_error(error);
-        return;
-    }
     assert(bytes_transferred <= Message::HeaderBufferSize);
     if (bytes_transferred != Message::HeaderBufferSize)
         return;
@@ -442,6 +441,18 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::
     m_outgoing_messages.pop_front();
     if (!m_outgoing_messages.empty())
         AsyncWriteMessage();
+
+    // Check if finished sending last pending write while shutting down.
+    else {
+        bool should_shutdown(false);
+        { // Scope for the mutex
+            boost::mutex::scoped_lock lock(m_mutex);
+            should_shutdown = !m_tx_connected;
+        }
+        if (should_shutdown) {
+            DisconnectFromServerImpl();
+        }
+    }
 }
 
 void ClientNetworking::AsyncWriteMessage() {
@@ -476,17 +487,25 @@ void ClientNetworking::DisconnectFromServerImpl() {
     //   received and acknowledged.
     // - send pending packets and wait for the receive side to terminate the connection.
 
+    // The shutdown steps:
+    // 1. Finish sending pending tx messages.  These may include final panic messages
+    // 2. After the final tx call DisconnectFromServerImpl again from the tx handler.
+    // 3. shutdown the connection
+    // 4. server end acknowledges with a 0 length packet
+    // 5. close the connection in the rx handler
+
     // Stop sending new packets
     { // Scope for the mutex
         boost::mutex::scoped_lock lock(m_mutex);
         m_tx_connected = false;
-        m_tx_connected = m_socket.is_open();
+        m_rx_connected = m_socket.is_open();
+    }
+
+    if (!m_outgoing_messages.empty()) {
+        return;
     }
 
     // Note: m_socket.is_open() may be independently true/false on each of these checks.
     if (m_socket.is_open())
         m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
-
-    if (m_socket.is_open())
-        m_socket.close();
 }

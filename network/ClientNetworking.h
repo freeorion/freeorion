@@ -112,7 +112,7 @@ public:
         synchronous response from the server. */
     void SendSynchronousMessage(Message message, Message& response_message);
 
-    /** Disconnects the client from the server. */
+    /** Disconnects the client from the server. Try to send any pending transmit messages. */
     void DisconnectFromServer();
 
     /** Sets player ID for this client. */
