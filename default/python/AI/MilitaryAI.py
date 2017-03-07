@@ -107,6 +107,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     if try_reset and (fo.currentTurn() + empire_id) % 30 == 0 and thisround == "Main":
         try_again(all_military_fleet_ids, try_reset=False, thisround=thisround + " Reset")
+        return
 
     num_milships = sum(foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids)
 
