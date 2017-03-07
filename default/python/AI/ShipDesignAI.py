@@ -684,6 +684,11 @@ class DesignStats(object):
         self.fighter_launch_rate = 0
         self.fighter_damage = 0
 
+    def convert_to_combat_stats(self):
+        """Return a tuple as expected by CombatRatingsAI"""
+        return (self.attacks, self.structure, self.shields,
+                self.fighter_capacity, self.fighter_launch_rate, self.fighter_damage)
+
 
 class ShipDesigner(object):
     """This class and its subclasses implement the building of a ship design and its rating.
