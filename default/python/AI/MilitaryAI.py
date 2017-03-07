@@ -524,8 +524,6 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
             print "No Other Interior Systems with fleet threat "
             print "-----------------"
 
-    monster_dens = []
-
     # explo_target_ids, _ = ExplorationAI.get_current_exploration_info(verbose=False)
     explo_target_ids = []
     if "Main" in thisround:
@@ -611,33 +609,6 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
             print "-----------------"
             print "No Other Empire-Accessible Systems with biased local threat "
             print "-----------------"
-
-    # monster den treatment probably unnecessary now
-    if "Main" in thisround:
-        if _verbose_mil_reporting:
-            print
-            print "Big-Monster Dens: %s" % (["| %d %s |" % (sys_id, universe.getSystem(sys_id).name) for sys_id in monster_dens])
-            print "-----------------"
-    # for these, calc fleet threat only, no neighbor threat, but use a multiplier for fleet safety
-    new_alloc = 0
-    if monster_dens:
-        ot_sys_alloc = 0
-        ot_sys_threat = [(o_s_id, safety_factor * combine_ratings_list([systems_status.get(o_s_id, {}).get('fleetThreat', 0), systems_status.get(o_s_id, {}).get('monsterThreat', 0), systems_status.get(o_s_id, {}).get('planetThreat', 0)])) for o_s_id in monster_dens]
-        for sid, thrt in ot_sys_threat:
-            cur_alloc = 0.8 * already_assigned_rating[sid]
-            this_alloc = 0
-            if (thrt > cur_alloc) and remaining_mil_rating > 2 * thrt:
-                this_alloc = int(0.99999 + (thrt - cur_alloc) * 1.5)
-                new_alloc += this_alloc
-                allocations.append((sid, this_alloc, False, 5))
-                remaining_mil_rating -= this_alloc
-                ot_sys_alloc += this_alloc
-            if "Main" in thisround or this_alloc > 0:
-                if _verbose_mil_reporting:
-                    print "Monster Den %4d ( %10s ) has local threat %8d ; existing military allocation %d and new allocation %8d" % (sid, universe.getSystem(sid).name, thrt, cur_alloc, this_alloc)
-        if "Main" in thisround or new_alloc > 0:
-            if _verbose_mil_reporting:
-                print "-----------------"
 
     new_allocations = []
     remaining_mil_rating = avail_mil_rating
