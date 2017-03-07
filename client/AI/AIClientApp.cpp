@@ -178,7 +178,6 @@ void AIClientApp::HandlePythonAICrash() {
     ErrorLogger() << err_msg.str() << " id = " << PlayerID();
     Networking().SendMessage(
         ErrorMessage(PlayerID(), str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
-   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 
 
