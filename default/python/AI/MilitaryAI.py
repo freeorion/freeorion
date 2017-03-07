@@ -480,7 +480,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
                 print "Blockade Targeted Systems under total threat: %d -- total mil allocation-- existing: %d ; new: %d" % (totot_sys_threat, tot_cur_alloc, ot_sys_alloc)
                 print "-----------------"
 
-    current_mil_systems = [sid for sid, alloc, take_any, mm in allocations]
+    current_mil_systems = [sid for sid, alloc, take_any, _ in allocations]
     interior_targets1 = targetable_ids.difference(current_mil_systems)
     interior_targets = [sid for sid in interior_targets1 if (
         threat_bias + systems_status.get(sid, {}).get('totalThreat', 0) > 0.8 * already_assigned_rating[sid])]
@@ -567,7 +567,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     visible_system_ids = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate. visBorderSystemIDs.keys()
     accessible_system_ids = [sys_id for sys_id in visible_system_ids if universe.systemsConnected(sys_id, home_system_id, empire_id)]
-    current_mil_systems = [sid for sid, alloc, take_any, multiplier in allocations if alloc > 0]
+    current_mil_systems = [sid for sid, alloc, take_any, _ in allocations if alloc > 0]
     border_targets1 = [sid for sid in accessible_system_ids if sid not in current_mil_systems]
     border_targets = [sid for sid in border_targets1 if (threat_bias + systems_status.get(sid, {}).get('fleetThreat', 0) + systems_status.get(sid, {}).get('planetThreat', 0) > 0.8*already_assigned_rating[sid])]
     if "Main" in thisround:
@@ -644,7 +644,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     if "Main" in thisround:
         _military_allocations = new_allocations
     _min_mil_allocations.clear()
-    _min_mil_allocations.update([(sid, alloc) for sid, alloc, take_any, mm in allocations])
+    _min_mil_allocations.update([(sid, alloc) for sid, alloc, take_any, _ in allocations])
     if _verbose_mil_reporting or "Main" in thisround:
         print "------------------------------\nFinal %s Round Military Allocations: %s \n-----------------------" % (thisround, dict([(sid, alloc) for sid, alloc, minalloc, take_any in new_allocations]))
         print "(Apparently) remaining military rating: %.1f" % remaining_mil_rating
