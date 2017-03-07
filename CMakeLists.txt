@@ -286,6 +286,7 @@ target_compile_definitions(freeoriond
 
 target_include_directories(freeoriond SYSTEM
     PRIVATE
+        ${Boost_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
         ${PYTHON_INCLUDE_PATH}
 )
@@ -341,6 +342,7 @@ target_compile_definitions(freeorion
 
 target_include_directories(freeorion SYSTEM
     PRIVATE
+        ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${OPENAL_INCLUDE_DIR}
         ${SDL2_INCLUDE_DIR}
