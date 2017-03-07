@@ -255,8 +255,8 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         // connects and disconnects are not a priority.
         if (m_new_connection) {
             ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
-                          << "new connection error \"" << error << "\""
-                          << " waiting for 0.5s";
+                          << "new connection error #" << error.value() << " \""
+                          << error.message() << "\"" << " waiting for 0.5s";
             // wait half a second if the first data read is an error; we
             // probably just need more setup time
             ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
@@ -269,7 +269,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                 EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
             } else {
                 ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
-                              << "error \"" << error << "\"";
+                              << "error #"<<error.value()<<" \"" << error.message() << "\"";
             }
         }
     } else {

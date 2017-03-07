@@ -358,7 +358,8 @@ void ClientNetworking::HandleException(const boost::system::system_error& error)
         DebugLogger() << "Client connection closed by client.";
     else {
         ErrorLogger() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
-                      << "due to unhandled exception \"" << error.what() << "\"";
+                      << "due to unhandled exception error #" << error.code().value() << " \""
+                      << error.code().message() << "\"";
     }
 }
 
