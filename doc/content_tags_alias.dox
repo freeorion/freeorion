@@ -9,33 +9,44 @@ tags.
 
 @section alias_content_tags_example Examples
 
-Definition tags should be documented only once, at the first point of use within
-source files or scripts.
-Documentation within FOCS markup files is not yet
-supported.
-
 Some example code fragments:
+
+C++ :
 @verbatim // File: Sample1.h
 /** @content_tag{CTRL_SAMPLE1} Sample 1 **/
 int SomeFunction(std::string tag = "CTRL_SAMPLE1");
 @endverbatim
 
+FOCS :
+@verbatim # File: Sample2.focs.txt
+EffectsGroup
+    scope = And [
+        Ship
+        # @content_tag{CTRL_SAMPLE2} Sample 2
+        Not HasTag name = "CTRL_SAMPLE2"
+        WithinDistance distance = Source.Size condition = Source
+    ]
+    effects = ...
+@endverbatim
+
+Python :
 With Python, docstring comments do not support special commands.
 
 @verbatim # File: Sample3.py
 def AnotherFunc(some_object):
-    ## @content_tag{CTRL_SAMPLE3} Sample 3
+    # @content_tag{CTRL_SAMPLE3} Sample 3
     if universe.getObject(some_object).hasTag("CTRL_SAMPLE3"):
         do_work
 @endverbatim
 
-@subsection alias_content_tags_duplicate_entries Duplicate entries
+@subsection alias_content_tags_duplicate_entries C++ : Duplicate entries
 
 Within any single scope, after the first use of this alias, any additional
 uses will show a duplicated entry.\n
 To work around this bug, define those tags in variables and reference them
 where needed.
 
+The following results in duplicate entries for CTRL_SAMPLE4b.
 @verbatim # File: Sample4.cpp
 void FuncThree(Object obj) {
     /** @content_tag{CTRL_SAMPLE4a} Sample 4a **/
@@ -46,8 +57,8 @@ void FuncThree(Object obj) {
         DoLessWork();
 }
 @endverbatim
-Results in duplicate entries for CTRL_SAMPLE4b.
 
+Instead, define a const and document that variable:
 @verbatim # File: Sample4.cpp
 /** @content_tag{CTRL_SAMPLE4a} Sample 4a **/
 const std::string TAG_SAMPLE_4A = "CTRL_SAMPLE4a";
@@ -60,6 +71,5 @@ void FuncThree(Object obj) {
         DoLessWork();
 }
 @endverbatim
-Prevents duplication.
 
 **/

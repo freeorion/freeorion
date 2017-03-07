@@ -103,9 +103,8 @@ WARN_LOGFILE           =
 INPUT                  = @FreeOrion_SOURCE_DIR@/AI \
                          @FreeOrion_SOURCE_DIR@/client \
                          @FreeOrion_SOURCE_DIR@/combat \
-                         @FreeOrion_SOURCE_DIR@/doc/all_tags.dox \
+                         @FreeOrion_CPP_APIDOC_OUTDIR@/all_tags.dox \
                          @FreeOrion_SOURCE_DIR@/doc/content_tags_alias.dox \
-                         @FreeOrion_SOURCE_DIR@/default/python \
                          @FreeOrion_SOURCE_DIR@/Empire \
                          @FreeOrion_SOURCE_DIR@/network \
                          @FreeOrion_SOURCE_DIR@/parse \
@@ -126,7 +125,7 @@ EXAMPLE_PATTERNS       =
 EXAMPLE_RECURSIVE      = NO
 IMAGE_PATH             =
 INPUT_FILTER           =
-FILTER_PATTERNS        = "*.py=\"@PYTHON_EXECUTABLE@\" \"@FreeOrion_SOURCE_DIR@/doc/tag_filter.py\""
+FILTER_PATTERNS        = 
 FILTER_SOURCE_FILES    = NO
 FILTER_SOURCE_PATTERNS =
 USE_MDFILE_AS_MAINPAGE =
