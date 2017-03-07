@@ -12,12 +12,13 @@
 #include <boost/statechart/in_state_reaction.hpp>
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
-#include <boost/chrono/chrono.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 
 #include <memory>
 #include <set>
 #include <vector>
 #include <unordered_set>
+#include <chrono>
 
 
 struct MultiplayerLobbyData;
@@ -363,7 +364,7 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame> {
 
 /** The server state in which the server is shutting down and waiting for AIs to exit. */
 struct ShuttingDownServer : sc::state<ShuttingDownServer, ServerFSM> {
-    using Clock = boost::chrono::steady_clock;
+    using Clock = std::chrono::high_resolution_clock;
     typedef boost::mpl::list<
         sc::in_state_reaction<Disconnection>,
         sc::custom_reaction<LeaveGame>,
@@ -381,8 +382,8 @@ struct ShuttingDownServer : sc::state<ShuttingDownServer, ServerFSM> {
     sc::result react(const Disconnection& d);
     sc::result react(const Error& msg);
 
-    std::unordered_set<int>                 m_player_id_ack_expected;
-    boost::chrono::steady_clock::time_point m_start_time;
+    std::unordered_set<int>            m_player_id_ack_expected;
+    boost::asio::high_resolution_timer m_timeout;
 
     SERVER_ACCESSOR
 };

@@ -20,7 +20,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/thread/thread.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 
 #include <iterator>
 
@@ -1820,13 +1820,12 @@ sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
 ////////////////////////////////////////////////////////////
 // ShuttingDownServer
 ////////////////////////////////////////////////////////////
-const auto SHUTDOWN_POLLING_TIME = boost::chrono::milliseconds(5000);
-const auto SHUTDOWN_POLLING_INTERVAL = boost::chrono::milliseconds(10);
+const auto SHUTDOWN_POLLING_TIME = std::chrono::milliseconds(5000);
 
 ShuttingDownServer::ShuttingDownServer(my_context c) :
     my_base(c),
     m_player_id_ack_expected(),
-    m_start_time(Clock::now())
+    m_timeout(Server().m_io_service, Clock::now() + SHUTDOWN_POLLING_TIME)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer";
 
@@ -1840,12 +1839,21 @@ ShuttingDownServer::ShuttingDownServer(my_context c) :
     // Inform all players that the game is ending.  Only check the AIs for acknowledgement, because
     // they are the server's child processes.
     for (PlayerConnectionPtr player : server.m_networking) {
-        player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
-        if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_player_id_ack_expected.insert(player->PlayerID());
+        auto good_connection = player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
+        if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+            if (good_connection) {
+                // Only expect acknowledgement from sockets that are up.
+                m_player_id_ack_expected.insert(player->PlayerID());
+            }
+        }
     }
 
     DebugLogger() << "ShuttingDownServer expecting " << m_player_id_ack_expected.size() << " AIs to ACK shutdown.";
+
+    // Set the timeout.  If all clients have not responded then kill the remainder and exit
+    m_timeout.async_wait(boost::bind(&ServerApp::ShutdownTimedoutHandler,
+                                     &server,
+                                     boost::asio::placeholders::error));
 
     post_event(CheckEndConditions());
 }
@@ -1902,24 +1910,8 @@ sc::result ShuttingDownServer::react(const CheckEndConditions& u) {
         { process.Free(); }
 
         post_event(DisconnectClients());
-        return discard_event();
     }
 
-    // If the AIs have more time sleep and check for more events.
-    if (SHUTDOWN_POLLING_TIME > (Clock::now() - m_start_time)) {
-        if (TRACE_EXECUTION) DebugLogger() << "Waiting for " << m_player_id_ack_expected.size() << " AI clients to ACK shutdown.";
-        boost::this_thread::sleep_for(SHUTDOWN_POLLING_INTERVAL);
-        post_event(CheckEndConditions());
-        return discard_event();
-    }
-
-    // Otherwise kill all the AIs
-    ErrorLogger() << m_player_id_ack_expected.size() << " AI clients  did not ACK shutdown.";
-    DebugLogger() << "Killing " << server.m_ai_client_processes.size() << " AI clients.";
-    for (Process& process : server.m_ai_client_processes)
-    { process.Kill(); }
-
-    post_event(DisconnectClients());
     return discard_event();
 }
 

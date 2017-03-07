@@ -284,6 +284,9 @@ private:
     /** Called by ServerNetworking when a player's TCP connection is closed*/
     void    PlayerDisconnected(PlayerConnectionPtr player_connection);
 
+    /** Handle shutdown timeout by killing all ais. */
+    void ShutdownTimedoutHandler(boost::system::error_code error);
+
     /** Called when the host player has disconnected.  Select a new host player*/
     void    SelectNewHost();
 

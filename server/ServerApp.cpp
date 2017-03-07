@@ -460,6 +460,14 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
 { m_fsm->process_event(Disconnection(player_connection)); }
 
+void ServerApp::ShutdownTimedoutHandler(boost::system::error_code error) {
+    if (error)
+        DebugLogger() << "Shutdown timed out cancelled";
+
+    DebugLogger() << "Shutdown timed out.  Disconnecting remaining clients.";
+    m_fsm->process_event(DisconnectClients());
+}
+
 void ServerApp::SelectNewHost() {
     int new_host_id = Networking::INVALID_PLAYER_ID;
     int old_host_id = m_networking.HostPlayerID();
