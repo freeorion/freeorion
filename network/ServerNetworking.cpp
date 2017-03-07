@@ -7,7 +7,7 @@
 #include <GG/SignalsAndSlots.h>
 
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/thread/thread.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 
 #include <thread>
 
@@ -36,15 +36,6 @@ private:
 };
 
 namespace {
-    void WriteMessage(boost::asio::ip::tcp::socket& socket, const Message& message) {
-        Message::HeaderBuffer header_buf;
-        HeaderToBuffer(message, header_buf);
-        std::vector<boost::asio::const_buffer> buffers;
-        buffers.push_back(boost::asio::buffer(header_buf));
-        buffers.push_back(boost::asio::buffer(message.Data(), message.Size()));
-        boost::asio::write(socket, buffers);
-    }
-
     struct PlayerID {
         PlayerID(int id) :
             m_id(id)
@@ -65,6 +56,7 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
                                    MessageAndConnectionFn nonplayer_message_callback,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
+    m_service(io_service),
     m_socket(io_service),
     m_ID(INVALID_PLAYER_ID),
     m_new_connection(true),
@@ -103,8 +95,9 @@ bool PlayerConnection::IsLocalConnection() const
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
-void PlayerConnection::SendMessage(const Message& message)
-{ WriteMessage(m_socket, message); }
+bool PlayerConnection::SendMessage(const Message& message) {
+    return SyncWriteMessage(message);
+}
 
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
                                        const std::string& client_version_string)
@@ -296,6 +289,32 @@ void PlayerConnection::AsyncReadMessage() {
                                         boost::asio::placeholders::bytes_transferred));
 }
 
+bool PlayerConnection::SyncWriteMessage(const Message& message) {
+    // Synchronously write and asynchronously signal the errors.  This prevents PlayerConnections
+    // being removed from the list while iterating to transmit to multiple receivers.
+    Message::HeaderBuffer header_buf;
+    HeaderToBuffer(message, header_buf);
+    std::vector<boost::asio::const_buffer> buffers;
+    buffers.push_back(boost::asio::buffer(header_buf));
+    buffers.push_back(boost::asio::buffer(message.Data(), message.Size()));
+
+    boost::system::error_code error;
+    boost::asio::write(m_socket, buffers, error);
+
+    if (error) {
+        ErrorLogger() << "PlayerConnection::WriteMessage(): player id = " << m_ID
+                      << " error #" << error.value() << " \"" << error.message();
+        boost::asio::high_resolution_timer t(m_service);
+        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, this, error, boost::asio::placeholders::error));
+    }
+
+    return (!error);
+}
+
+void PlayerConnection::AsyncErrorHandler(boost::system::error_code handled_error, boost::system::error_code error) {
+    EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // DiscoveryServer
 ////////////////////////////////////////////////////////////////////////////////
@@ -406,34 +425,35 @@ bool ServerNetworking::ModeratorsInGame() const {
     return false;
 }
 
-void ServerNetworking::SendMessage(const Message& message,
+bool ServerNetworking::SendMessage(const Message& message,
                                    PlayerConnectionPtr player_connection)
 {
-    player_connection->SendMessage(message);
+    return player_connection->SendMessage(message);
 }
 
-void ServerNetworking::SendMessage(const Message& message) {
+bool ServerNetworking::SendMessage(const Message& message) {
     if (message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID) {
         // if recipient is INVALID_PLAYER_ID send message to all players
         for (ServerNetworking::const_established_iterator player_it = established_begin();
             player_it != established_end(); ++player_it)
         {
-            (*player_it)->SendMessage(message);
+            return (*player_it)->SendMessage(message);
         }
     } else {
         // send message to single player
         established_iterator it = GetPlayer(message.ReceivingPlayer());
         if (it == established_end()) {
             ErrorLogger() << "ServerNetworking::SendMessage couldn't find player with id " << message.ReceivingPlayer() << " to disconnect.  aborting";
-            return;
+            return false;
         }
         PlayerConnectionPtr player = *it;
         if (player->PlayerID() != message.ReceivingPlayer()) {
             ErrorLogger() << "ServerNetworking::SendMessage got PlayerConnectionPtr with inconsistent player id (" << message.ReceivingPlayer() << ") to what was requrested (" << message.ReceivingPlayer() << ")";
-            return;
+            return false;
         }
-        player->SendMessage(message);
+        return player->SendMessage(message);
     }
+    return false;
 }
 
 void ServerNetworking::Disconnect(int id) {
