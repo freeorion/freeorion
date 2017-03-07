@@ -1843,7 +1843,10 @@ ShuttingDownServer::ShuttingDownServer(my_context c) :
         if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
             if (good_connection) {
                 // Only expect acknowledgement from sockets that are up.
+                DebugLogger() << "Expected shutdown ack from id = " << player->PlayerID();
                 m_player_id_ack_expected.insert(player->PlayerID());
+            } else {
+                DebugLogger() << "Not Expecting shutdown ack from id = " << player->PlayerID() << " bad connection";
             }
         }
     }
