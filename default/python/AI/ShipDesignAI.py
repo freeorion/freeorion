@@ -631,6 +631,7 @@ class AdditionalSpecifications(object):
             self.enemy_mine_dmg = 6
         else:
             self.enemy_mine_dmg = 14
+        self.enemy = None
         self.update_enemy(foAI.foAIstate.get_standard_enemy())
 
     def update_enemy(self, enemy):
@@ -639,6 +640,7 @@ class AdditionalSpecifications(object):
         :param enemy:
         :type enemy: CombatRatingsAI.ShipCombatStats
         """
+        self.enemy = enemy
         enemy_attack_stats, enemy_structure, self.enemy_shields = enemy.get_basic_stats()
         self.enemy_shields += 1  # add bias against weak weapons to account to allow weapons to stay longer relevant.
         if enemy_attack_stats:
@@ -649,8 +651,6 @@ class AdditionalSpecifications(object):
                 d += dmg*count
                 n += count
             self.avg_enemy_weapon_strength = d/n
-
-        print enemy_attack_stats, self.max_enemy_weapon_strength
 
     def convert_to_tuple(self):
         """Create a tuple of this class' attributes (e.g. to use as key in dict).
@@ -732,7 +732,6 @@ class ShipDesigner(object):
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
         self._design_stats = DesignStats()
-        self.colonisation = -1      # -1 since 0 indicates an outpost (capacity = 0)
         self.production_cost = 9999
         self.production_time = 1
         self.pid = INVALID_ID               # planetID for checks on production cost if not LocationInvariant.
@@ -1752,6 +1751,10 @@ class ShipDesigner(object):
             species_modifier = 0
         return base + species_modifier + tech_bonus
 
+    def _combat_rating(self):
+        combat_stats = CombatRatingsAI.ShipCombatStats(stats=self._design_stats.convert_to_combat_stats())
+        return combat_stats.get_rating(enemy_stats=self.additional_specifications.enemy)
+
 
 class WarShipDesigner(ShipDesigner):
     basename = "Warship (do not build me)"
@@ -1816,10 +1819,10 @@ class MilitaryShipDesigner(WarShipDesigner):
         total_dmg = max(self._total_dmg_vs_shields(), self._total_dmg() / 1000)
         if total_dmg <= 0:
             return INVALID_DESIGN_RATING
-        effective_structure = self._effective_structure()
+        combat_rating = self._combat_rating()
         speed_factor = self._speed_factor()
         fuel_factor = self._fuel_factor()
-        return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
+        return combat_rating * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
         # for military ships, our primary rating function is given by
@@ -1908,28 +1911,10 @@ class CarrierShipDesigner(WarShipDesigner):
     def _rating_function(self):
         if self.fighter_capacity < 1:
             return INVALID_DESIGN_RATING
-        # first, calculate "normal" weapon stuff
-        weapon_dmg = max(self._total_dmg_vs_shields(), self._total_dmg() / 1000)
-        effective_structure = self._effective_structure()
-
-        # now, consider offensive potential of our fighters
-        enemy_dmg_avg = self.additional_specifications.avg_enemy_weapon_strength
-        launched_1st_bout = min(self.fighter_capacity, self.fighter_launch_rate)
-        launched_2nd_bout = min(self.fighter_capacity - launched_1st_bout, self.fighter_launch_rate)
-        survival_rate = .2  # chance of a fighter launched in bout 1 to live in turn 3 TODO Actual estimation
-        total_fighter_damage = self.fighter_damage * (launched_1st_bout * (1+survival_rate) + launched_2nd_bout)
-        fighter_damage_per_bout = total_fighter_damage / 3
-
-        # now, consider the defensive potential of our fighters!
-        fighters_shot_down = (1-survival_rate**2) * launched_1st_bout + (1-survival_rate) * launched_2nd_bout
-        damage_prevented = fighters_shot_down * enemy_dmg_avg  # TODO: Some shields calculations...
-
-        total_dmg = weapon_dmg + fighter_damage_per_bout
-        effective_structure += damage_prevented
-
+        combat_rating = self._combat_rating()
         speed_factor = self._speed_factor()
         fuel_factor = self._fuel_factor()
-        return total_dmg * effective_structure * speed_factor * fuel_factor / self._adjusted_production_cost()
+        return combat_rating * speed_factor * fuel_factor / self._adjusted_production_cost()
 
     # TODO Implement _starting_guess() for faster convergence
 

@@ -97,8 +97,8 @@ def cur_best_military_design_rating():
     if current_turn in _best_military_design_rating_cache:
         return _best_military_design_rating_cache[current_turn]
     priority = PriorityType.PRODUCTION_MILITARY
-    if priority in _design_cache and _design_cache[priority] and _design_cache[priority][0]:
-        # the rating provided by the ShipDesigner does  not
+    if _design_cache.get(priority, None) and _design_cache[priority][0]:
+        # the rating provided by the ShipDesigner does not
         # reflect the rating used in threat considerations
         # but takes additional factors (such as cost) into
         # account. Therefore, we want to calculate the actual
