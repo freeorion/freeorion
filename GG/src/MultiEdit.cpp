@@ -815,8 +815,10 @@ void MultiEdit::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mo
         return;
     }
 
-    if (m_style & MULTI_READ_ONLY)
+    if (m_style & MULTI_READ_ONLY) {
+        ForwardEventToParent();
         return;
+    }
 
     bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
     bool ctrl_down = mod_keys & (MOD_KEY_CTRL | MOD_KEY_RCTRL);
