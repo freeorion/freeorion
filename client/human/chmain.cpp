@@ -16,6 +16,8 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+#include <thread>
+#include <chrono>
 #include <iostream>
 
 #if defined(FREEORION_LINUX)
