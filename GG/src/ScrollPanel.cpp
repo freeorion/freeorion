@@ -84,7 +84,7 @@ namespace GG {
 
         // Don't accept less than MIN_SCROLL_WIDTH pixels wide scrolls.
         if (m_vscroll->Width() < MIN_SCROLL_WIDTH) {
-            m_vscroll->Resize(GG::Pt(MIN_SCROLL_WIDTH, m_vscroll->Height()));
+            m_vscroll->Resize(Pt(MIN_SCROLL_WIDTH, m_vscroll->Height()));
         }
 
         AttachChild(m_vscroll);
@@ -95,7 +95,7 @@ namespace GG {
         DoLayout();
     }
 
-    void GG::ScrollPanel::ScrollTo(Y pos)
+    void ScrollPanel::ScrollTo(Y pos)
     {
         m_vscroll->ScrollTo(Value(pos));
         SignalScroll(*m_vscroll, true);
@@ -106,10 +106,77 @@ namespace GG {
         m_background_color = color;
     }
 
-    void ScrollPanel::MouseWheel(const Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
+    void ScrollPanel::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
     {
         m_vscroll->ScrollLineIncr(-move);
         SignalScroll(*m_vscroll, true);
+    }
+
+    void ScrollPanel::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+    {
+        bool shift_down = mod_keys & (MOD_KEY_LSHIFT | MOD_KEY_RSHIFT);
+        bool ctrl_down = mod_keys & (MOD_KEY_CTRL | MOD_KEY_RCTRL);
+        bool numlock_on = mod_keys & MOD_KEY_NUM;
+
+        if (!numlock_on) {
+            // convert keypad keys into corresponding non-number keys
+            switch (key) {
+            case GGK_KP0:       key = GGK_INSERT;   break;
+            case GGK_KP1:       key = GGK_END;      break;
+            case GGK_KP2:       key = GGK_DOWN;     break;
+            case GGK_KP3:       key = GGK_PAGEDOWN; break;
+            case GGK_KP4:       key = GGK_LEFT;     break;
+            case GGK_KP5:                           break;
+            case GGK_KP6:       key = GGK_RIGHT;    break;
+            case GGK_KP7:       key = GGK_HOME;     break;
+            case GGK_KP8:       key = GGK_UP;       break;
+            case GGK_KP9:       key = GGK_PAGEUP;   break;
+            case GGK_KP_PERIOD: key = GGK_DELETE;   break;
+            default:                                break;
+            }
+        }
+
+        switch (key) {
+
+        case GGK_LEFT: {
+            break;
+        }
+
+        case GGK_RIGHT: {
+            break;
+        }
+
+        case GGK_UP: {
+            MouseWheel(GG::Pt(X0, Y0), 1, mod_keys);
+            break;
+        }
+
+        case GGK_DOWN: {
+            MouseWheel(GG::Pt(X0, Y0), -1, mod_keys);
+            break;
+        }
+
+        case GGK_HOME: {
+            break;
+        }
+
+        case GGK_END: {
+            break;
+        }
+
+        case GGK_PAGEUP: {
+            break;
+        }
+
+        case GGK_PAGEDOWN: {
+            break;
+        }
+
+        default: {
+            break;
+        }
+        }
+
     }
 
     void ScrollPanel::DoLayout()
@@ -148,6 +215,4 @@ namespace GG {
         // Immediately move the content.
         m_content->MoveTo(m_content_pos);
     }
-
-
 }

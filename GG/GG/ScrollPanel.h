@@ -60,11 +60,11 @@ public:
     void SetBackgroundColor(const Clr& color);
 
     //! Returns the scroll bar.
-    const Scroll * GetScroll() const
+    const Scroll* GetScroll() const
     { return m_vscroll;}
 
-protected:
-    void MouseWheel(const Pt& pt, int move, GG::Flags< GG::ModKey > mod_keys) override;
+    void MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys) override;
+    void KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys) override;
 
 private:
     Scroll* m_vscroll; //!< The vertical scroll bar.
