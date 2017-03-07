@@ -1238,7 +1238,7 @@ class ShipDesigner(object):
 
         Only designs with a positive rating (i.e. matching the minimum requirements) will be returned.
 
-        :return: list of (rating,planet_id,design_id,cost) tuples, i.e. best available design for each planet
+        :return: list of (rating,planet_id,design_id,cost, design_stats) tuples, i.e. best available design for each planet
         :param loc: int or list of ints (optional) - planet ids where the designs are to be built. Default: All planets.
         :param verbose: Toggles detailed logging for debugging.
         :type verbose: bool
@@ -1353,7 +1353,8 @@ class ShipDesigner(object):
                 if verbose:
                     print "For best design got got design id %s" % design_id
                 if design_id is not None:
-                    best_design_list.append((best_rating_for_planet, pid, design_id, self.production_cost))
+                    best_design_list.append((best_rating_for_planet, pid, design_id,
+                                             self.production_cost, self._design_stats))
                 else:
                     print_error("The best design for %s on planet %d could not be added."
                                 % (self.__class__.__name__, pid))

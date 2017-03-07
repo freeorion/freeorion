@@ -98,7 +98,7 @@ def cur_best_military_design_rating():
     priority = PriorityType.PRODUCTION_MILITARY
     if priority in _design_cache:
         if _design_cache[priority] and _design_cache[priority][0]:
-            rating, pid, design_id, cost = _design_cache[priority][0]
+            rating, pid, design_id, cost, stats = _design_cache[priority][0]
             _best_military_design_rating_cache[current_turn] = rating
             return max(rating, 0.001)
         else:
@@ -123,7 +123,7 @@ def get_best_ship_info(priority, loc=None):
             return None, None, None
 
         for design_stats in best_designs:
-            top_rating, pid, top_id, cost = design_stats
+            top_rating, pid, top_id, cost, stats = design_stats
             if pid in planet_ids:
                 break
         valid_locs = [item[1] for item in best_designs if item[0] == top_rating and item[2] == top_id]
@@ -156,10 +156,10 @@ def get_best_ship_ratings(planet_ids):
     priority = PriorityType.PRODUCTION_MILITARY
     planet_ids = set(planet_ids).intersection(ColonisationAI.empire_shipyards)
 
-    if priority in _design_cache:  # use new framework
+    if priority in _design_cache:
         build_choices = _design_cache[priority]
-        loc_choices = [[item[0], item[1], item[2], fo.getShipDesign(item[2])]
-                       for item in build_choices if item[1] in planet_ids]
+        loc_choices = [[rating, pid, design_id, fo.getShipDesign(design_id)]
+                       for (rating, pid, design_id, cost, stats) in build_choices if pid in planet_ids]
         if not loc_choices:
             return []
         best_rating = loc_choices[0][0]
