@@ -217,7 +217,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     if capital_sys_id is not None:
         capital_sys_status = systems_status[capital_sys_id]
         capital_threat = safety_factor*(2 * threat_bias + combine_ratings_list([capital_sys_status[thrt_key] for thrt_key in ['totalThreat', 'neighborThreat']]))
-        capital_threat += max(0, enemy_sup_factor[sys_id]*enemy_rating - capital_sys_status.get('my_neighbor_rating', 0))
+        capital_threat += max(0, enemy_sup_factor[capital_sys_id]*enemy_rating - capital_sys_status.get('my_neighbor_rating', 0))
         local_support = combine_ratings(already_assigned_rating[capital_sys_id], capital_sys_status['my_neighbor_rating'])
         base_needed_rating = rating_needed(capital_sys_status['regional_threat'], local_support)
         needed_rating = max(base_needed_rating, rating_needed(1.4 * capital_threat, already_assigned_rating[capital_sys_id]))
