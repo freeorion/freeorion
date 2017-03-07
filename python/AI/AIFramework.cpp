@@ -144,7 +144,7 @@ void PythonAI::GenerateOrders() {
         generateOrdersPythonFunction();
     } catch (error_already_set err) {
         HandleErrorAlreadySet();
-        if (IsPythonRunning())
+        if (!IsPythonRunning())
             throw;
 
         ErrorLogger() << "PythonAI::GenerateOrders : Python error caught.  Partial orders sent to server";
