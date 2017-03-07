@@ -37,56 +37,55 @@ public:
 
     /** \name Mutators */ //@{
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
+    void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
     void PreRender() override;
-
     void Render() override;
 
     /** Need to redefine this so that icons and name can be put at the top of
       * the Wnd, rather than being restricted to the client area of a CUIWnd */
     GG::Pt ClientUpperLeft() const override;
 
-    void            AddItem(const std::string& type, const std::string& name); // adds a new item to m_items
-    void            PopItem();
-    void            ClearItems();
-    int             GetItemsSize() { return m_items.size(); }
+    void AddItem(const std::string& type, const std::string& name); // adds a new item to m_items
+    void PopItem();
+    void ClearItems();
+    int GetItemsSize() { return m_items.size(); }
 
-    void            SetText(const std::string& text, bool lookup_in_stringtable = true);
-    void            SetPlanet(int planet_id);
+    void SetText(const std::string& text, bool lookup_in_stringtable = true);
+    void SetPlanet(int planet_id);
     void SetItem(std::shared_ptr<const Planet> planet);
-    void            SetTech(const std::string& tech_name);
-    void            SetItem(const Tech* tech);
-    void            SetPartType(const std::string& part_name);
-    void            SetItem(const PartType* part);
-    void            SetHullType(const std::string& hull_name);
-    void            SetItem(const HullType* hull_type);
-    void            SetBuildingType(const std::string& building_name);
-    void            SetItem(const BuildingType* building_type);
-    void            SetSpecial(const std::string& special_name);
-    void            SetItem(const Special* special);
-    void            SetSpecies(const std::string& species_name);
-    void            SetItem(const Species* species);
-    void            SetFieldType(const std::string& field_type_name);
-    void            SetItem(const FieldType* field_type);
-    void            SetObject(int object_id);
-    void            SetObject(const std::string& object_id);
+    void SetTech(const std::string& tech_name);
+    void SetItem(const Tech* tech);
+    void SetPartType(const std::string& part_name);
+    void SetItem(const PartType* part);
+    void SetHullType(const std::string& hull_name);
+    void SetItem(const HullType* hull_type);
+    void SetBuildingType(const std::string& building_name);
+    void SetItem(const BuildingType* building_type);
+    void SetSpecial(const std::string& special_name);
+    void SetItem(const Special* special);
+    void SetSpecies(const std::string& species_name);
+    void SetItem(const Species* species);
+    void SetFieldType(const std::string& field_type_name);
+    void SetItem(const FieldType* field_type);
+    void SetObject(int object_id);
+    void SetObject(const std::string& object_id);
     void SetItem(std::shared_ptr<const UniverseObject> obj);
-    void            SetEmpire(int empire_id);
-    void            SetEmpire(const std::string& empire_id);
-    void            SetItem(const Empire* empire);
-    void            SetDesign(int design_id);
-    void            SetDesign(const std::string& design_id);
-    void            SetItem(const ShipDesign* design);
+    void SetEmpire(int empire_id);
+    void SetEmpire(const std::string& empire_id);
+    void SetItem(const Empire* empire);
+    void SetDesign(int design_id);
+    void SetDesign(const std::string& design_id);
+    void SetItem(const ShipDesign* design);
     void SetIncompleteDesign(std::weak_ptr<const ShipDesign> incomplete_design);
-    void            SetMeterType(const std::string& meter_string);
-    void            SetItem(const MeterType& meter_type);
-    void            SetGraph(const std::string& graph_id);
-    void            SetIndex();
+    void SetMeterType(const std::string& meter_string);
+    void SetItem(const MeterType& meter_type);
+    void SetGraph(const std::string& graph_id);
+    void SetIndex();
 
-    void            Refresh();
-    void            OnIndex();
-    void            OnBack();
-    void            OnNext();
+    void Refresh();
+    void OnIndex();
+    void OnBack();
+    void OnNext();
     //@}
 
     mutable boost::signals2::signal<void ()> ClosingSignal;
@@ -97,12 +96,12 @@ protected:
 private:
     void CloseClicked() override;
 
-    void            DoLayout();
-    void            RefreshImpl();
+    void DoLayout();
+    void RefreshImpl();
 
-    void            HandleLinkClick(const std::string& link_type, const std::string& data);
-    void            HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
-    void            HandleSearchTextEntered();
+    void HandleLinkClick(const std::string& link_type, const std::string& data);
+    void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
+    void HandleSearchTextEntered();
 
     static std::list<std::pair <std::string, std::string>>              m_items;    // stores all items which have been observed in the past
                                                                                     // .first == item type; .second == item.name

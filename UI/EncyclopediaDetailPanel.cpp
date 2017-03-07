@@ -722,6 +722,14 @@ void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         RequirePreRender();
 }
 
+void EncyclopediaDetailPanel::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+    if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) {
+        GG::GUI::GetGUI()->SetFocusWnd(m_search_edit);
+    } else {
+        m_description_panel->KeyPress(key, key_code_point, mod_keys);
+    }
+}
+
 GG::Pt EncyclopediaDetailPanel::ClientUpperLeft() const
 { return GG::Wnd::UpperLeft(); }
 
