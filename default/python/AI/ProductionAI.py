@@ -12,6 +12,7 @@ import PriorityAI
 import ColonisationAI
 import MilitaryAI
 import ShipDesignAI
+import CombatRatingsAI
 from turn_state import state
 
 from EnumsAI import (PriorityType, EmpireProductionTypes, MissionType, get_priority_production_types,
@@ -96,15 +97,18 @@ def cur_best_military_design_rating():
     if current_turn in _best_military_design_rating_cache:
         return _best_military_design_rating_cache[current_turn]
     priority = PriorityType.PRODUCTION_MILITARY
-    if priority in _design_cache:
-        if _design_cache[priority] and _design_cache[priority][0]:
-            rating, pid, design_id, cost, stats = _design_cache[priority][0]
-            _best_military_design_rating_cache[current_turn] = rating
-            return max(rating, 0.001)
-        else:
-            return 0.001
-    else:
-        return 0.001
+    if priority in _design_cache and _design_cache[priority] and _design_cache[priority][0]:
+        # the rating provided by the ShipDesigner does  not
+        # reflect the rating used in threat considerations
+        # but takes additional factors (such as cost) into
+        # account. Therefore, we want to calculate the actual
+        # rating of the design as provided by CombatRatingsAI.
+        _, _, _, _, stats = _design_cache[priority][0]
+        # TODO: Should this consider enemy stats?
+        rating = CombatRatingsAI.ShipCombatStats(stats=stats.convert_to_combat_stats()).get_rating()
+        _best_military_design_rating_cache[current_turn] = rating
+        return max(rating, 0.001)
+    return 0.001
 
 
 def get_best_ship_info(priority, loc=None):
