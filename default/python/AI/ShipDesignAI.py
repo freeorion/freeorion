@@ -662,6 +662,29 @@ class AdditionalSpecifications(object):
                 "enemyMineDmg: %s" % self.enemy_mine_dmg)
 
 
+class DesignStats(object):
+
+    def __init__(self):
+        self.attacks = {}  # {damage: shots_per_turn}
+        self.structure = 0
+        self.shields = 0
+        self.fuel = 0
+        self.speed = 0
+        self.stealth = 0
+        self.detection = 0
+        self.troops = 0
+        self.colonisation = -1  # -1 since 0 indicates an outpost (capacity = 0)
+        self.fuel_per_turn = 0
+        self.organic_growth = 0
+        self.maximum_organic_growth = 0
+        self.repair_per_turn = 0
+        self.asteroid_stealth = 0
+        self.solar_stealth = 0
+        self.fighter_capacity = 0
+        self.fighter_launch_rate = 0
+        self.fighter_damage = 0
+
+
 class ShipDesigner(object):
     """This class and its subclasses implement the building of a ship design and its rating.
      Specialised Designs with their own rating system or optimizing algorithms should inherit from this class.
@@ -703,14 +726,7 @@ class ShipDesigner(object):
         self.hull = None            # hull object (not hullname!)
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
-        self.attacks = {}           # {damage: count}
-        self.structure = 0
-        self.shields = 0
-        self.fuel = 0
-        self.speed = 0
-        self.stealth = 0
-        self.detection = 0
-        self.troops = 0
+        self._design_stats = DesignStats()
         self.colonisation = -1      # -1 since 0 indicates an outpost (capacity = 0)
         self.production_cost = 9999
         self.production_time = 1
@@ -718,15 +734,150 @@ class ShipDesigner(object):
         self.additional_specifications = AdditionalSpecifications()
         self.design_name_dict = {k: v for k, v in zip(self.NAME_THRESHOLDS,
                                                       UserString(self.NAMETABLE, self.basename).splitlines())}
-        self.fuel_per_turn = 0
-        self.organic_growth = 0
-        self.maximum_organic_growth = 0
-        self.repair_per_turn = 0
-        self.asteroid_stealth = 0
-        self.solar_stealth = 0
-        self.fighter_capacity = 0
-        self.fighter_launch_rate = 0
-        self.fighter_damage = 0
+
+    @property
+    def attacks(self):
+        return self._design_stats.attacks
+
+    @attacks.setter
+    def attacks(self, value):
+        self._design_stats.attacks = value
+
+    @property
+    def structure(self):
+        return self._design_stats.structure
+
+    @structure.setter
+    def structure(self, value):
+        self._design_stats.structure = value
+
+    @property
+    def shields(self):
+        return self._design_stats.shields
+
+    @shields.setter
+    def shields(self, value):
+        self._design_stats.shields = value
+
+    @property
+    def fuel(self):
+        return self._design_stats.fuel
+
+    @fuel.setter
+    def fuel(self, value):
+        self._design_stats.fuel = value
+
+    @property
+    def speed(self):
+        return self._design_stats.speed
+
+    @speed.setter
+    def speed(self, value):
+        self._design_stats.speed = value
+
+    @property
+    def stealth(self):
+        return self._design_stats.stealth
+
+    @stealth.setter
+    def stealth(self, value):
+        self._design_stats.stealth = value
+
+    @property
+    def detection(self):
+        return self._design_stats.detection
+
+    @detection.setter
+    def detection(self, value):
+        self._design_stats.detection = value
+
+    @property
+    def troops(self):
+        return self._design_stats.troops
+
+    @troops.setter
+    def troops(self, value):
+        self._design_stats.troops = value
+
+    @property
+    def colonisation(self):
+        return self._design_stats.colonisation
+
+    @colonisation.setter
+    def colonisation(self, value):
+        self._design_stats.colonisation = value
+
+    @property
+    def fuel_per_turn(self):
+        return self._design_stats.fuel_per_turn
+
+    @fuel_per_turn.setter
+    def fuel_per_turn(self, value):
+        self._design_stats.fuel_per_turn = value
+
+    @property
+    def organic_growth(self):
+        return self._design_stats.organic_growth
+
+    @organic_growth.setter
+    def organic_growth(self, value):
+        self._design_stats.organic_growth = value
+
+    @property
+    def maximum_organic_growth(self):
+        return self._design_stats.maximum_organic_growth
+
+    @maximum_organic_growth.setter
+    def maximum_organic_growth(self, value):
+        self._design_stats.maximum_organic_growth = value
+
+    @property
+    def repair_per_turn(self):
+        return self._design_stats.repair_per_turn
+
+    @repair_per_turn.setter
+    def repair_per_turn(self, value):
+        self._design_stats.repair_per_turn = value
+
+    @property
+    def asteroid_stealth(self):
+        return self._design_stats.asteroid_stealth
+
+    @asteroid_stealth.setter
+    def asteroid_stealth(self, value):
+        self._design_stats.asteroid_stealth = value
+
+    @property
+    def solar_stealth(self):
+        return self._design_stats.solar_stealth
+
+    @solar_stealth.setter
+    def solar_stealth(self, value):
+        self._design_stats.solar_stealth = value
+
+    @property
+    def fighter_capacity(self):
+        return self._design_stats.fighter_capacity
+
+    @fighter_capacity.setter
+    def fighter_capacity(self, value):
+        self._design_stats.fighter_capacity = value
+
+    @property
+    def fighter_launch_rate(self):
+        return self._design_stats.fighter_launch_rate
+
+    @fighter_launch_rate.setter
+    def fighter_launch_rate(self, value):
+        self._design_stats.fighter_launch_rate = value
+
+    @property
+    def fighter_damage(self):
+        return self._design_stats.fighter_damage
+
+    @fighter_damage.setter
+    def fighter_damage(self, value):
+        self._design_stats.fighter_damage = value
 
     def evaluate(self):
         """ Return a rating for the design.
