@@ -15,9 +15,9 @@
 ClientApp::ClientApp() :
     IApp(),
     m_universe(),
+    m_networking(std::make_shared<ClientNetworking>()),
     m_empire_id(ALL_EMPIRES),
-    m_current_turn(INVALID_GAME_TURN),
-    m_networking(std::make_shared<ClientNetworking>())
+    m_current_turn(INVALID_GAME_TURN)
 {}
 
 ClientApp::~ClientApp()
