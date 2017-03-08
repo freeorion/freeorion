@@ -167,8 +167,6 @@ bool ClientNetworking::ConnectToServer(
     Clock::time_point start_time = Clock::now();
     auto deadline = start_time + timeout;
 
-    DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
-
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
     tcp::resolver::query query(tcp::v4(), ip_address,
@@ -176,6 +174,13 @@ bool ClientNetworking::ConnectToServer(
                                boost::asio::ip::resolver_query_base::numeric_service);
 
     tcp::resolver::iterator end_it;
+
+    DebugLogger() << "Attempt to connect to server at one of these addresses:";
+    for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
+        DebugLogger() << "  tcp::resolver::iterator host_name: " << it->host_name()
+                      << "  address: " << it->endpoint().address()
+                      << "  port: " << it->endpoint().port();
+    }
 
     try {
         while(!Connected() && Clock::now() < deadline) {
@@ -191,27 +196,26 @@ bool ClientNetworking::ConnectToServer(
                 auto connection_time = Clock::now() - start_time;
 
                 if (Connected()) {
-                    DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
+                    DebugLogger() << "Connected to server at host_name: " << it->host_name()
                                   << "  address: " << it->endpoint().address()
                                   << "  port: " << it->endpoint().port();
 
-                    DebugLogger() << "ClientNetworking::ConnectToServer : connected to server";
-                    if (GetOptionsDB().Get<bool>("binary-serialization"))
-                        DebugLogger() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
-                    else
-                        DebugLogger() << "ClientNetworking::ConnectToServer : this client using xml serialization.";
+                    DebugLogger() << "ConnectToServer() : Client using "
+                                  << ((GetOptionsDB().Get<bool>("binary-serialization")) ? "binary": "xml")
+                                  << " serialization.";
+
                     m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
                     m_socket.set_option(boost::asio::socket_base::keep_alive(true));
                     DebugLogger() << "Connecting to server took "
                                   << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
-                    DebugLogger() << "ClientNetworking::ConnectToServer : starting networking thread";
+                    DebugLogger() << "ConnectToServer() : starting networking thread";
                     boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
                     break;
                 } else {
-                    DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
-                                  << "  address: " << it->endpoint().address()
-                                  << "  port: " << it->endpoint().port();
-                    DebugLogger() << "ClientNetworking::ConnectToServer : no connection yet...";
+                    if (TRACE_EXECUTION)
+                        DebugLogger() << "Failed to connect to host_name: " << it->host_name()
+                                      << "  address: " << it->endpoint().address()
+                                      << "  port: " << it->endpoint().port();
                     if (timeout < connection_time) {
                         ErrorLogger() << "Timed out ("
                                       << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms."
@@ -219,11 +223,11 @@ bool ClientNetworking::ConnectToServer(
                     }
                 }
             }
-            if (!Connected())
-                DebugLogger() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
         }
+        if (!Connected())
+            DebugLogger() << "ConnectToServer() : failed to connect to server.";
     } catch (const std::exception& e) {
-        ErrorLogger() << "ClientNetworking::ConnectToServer unable to connect to server at "
+        ErrorLogger() << "ConnectToServer() : unable to connect to server at "
                       << ip_address << " due to exception: " << e.what();
     }
     return Connected();
