@@ -16,6 +16,9 @@
 #   undef MessageBox
 #endif
 
+#ifndef FREEORION_MACOSX
+#include <chrono>
+#endif
 
 /** Encapsulates the networking facilities of the client.  The client must
     execute its networking code in a separate thread from its main processing
@@ -116,9 +119,16 @@ public:
 
 private:
     void HandleException(const boost::system::system_error& error);
+#ifndef FREEORION_MACOSX
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
                           boost::asio::high_resolution_timer* timer,
                           const boost::system::error_code& error);
+#else
+    void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
+                          boost::asio::high_resolution_timer* timer,
+                          std::chrono::milliseconds& backoff_time,
+                          const boost::system::error_code& error);
+#endif
     void CancelRetries();
     void NetworkingThread();
     void HandleMessageBodyRead(     boost::system::error_code error, std::size_t bytes_transferred);
