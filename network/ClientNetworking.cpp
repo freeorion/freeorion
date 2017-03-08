@@ -2,6 +2,21 @@
 
 #include "ClientNetworking.h"
 
+#include "Message.h"
+#include "MessageQueue.h"
+
+// boost::asio pulls in windows.h which in turn defines the macros Message,
+// MessageBox, min and max. Disabling the generation of the min and max macros
+// and undefining those should avoid name collisions with std c++ library and
+// FreeOrion function names.
+#define NOMINMAX
+#include <boost/asio.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
+#ifdef FREEORION_WIN32
+#   undef Message
+#   undef MessageBox
+#endif
+
 #include "Networking.h"
 #include "../util/Logger.h"
 #include "../util/MultiplayerCommon.h"
@@ -119,10 +134,125 @@ namespace {
     };
 }
 
+
+
+class ClientNetworking::Impl {
+public:
+    /** The type of list returned by a call to DiscoverLANServers(). */
+    typedef std::vector<std::pair<boost::asio::ip::address, std::string> >  ServerList;
+
+    /** \name Structors */ //@{
+    Impl();
+    //@}
+
+    /** \name Accessors */ //@{
+    /** Returns true iff the client is full duplex connected to the server. */
+    bool IsConnected() const;
+
+    /** Returns true iff the client is connected to receive from the server. */
+    bool IsRxConnected() const;
+
+    /** Returns true iff the client is connected to send to the server. */
+    bool IsTxConnected() const;
+
+    /** Returns true iff there is at least one incoming message available. */
+    bool MessageAvailable() const;
+
+    /** Returns the ID of the player on this client. */
+    int PlayerID() const;
+
+    /** Returns the ID of the host player, or INVALID_PLAYER_ID if there is no host player. */
+    int HostPlayerID() const;
+
+    /** Returns whether the indicated player ID is the host. */
+    bool PlayerIsHost(int player_id) const;
+    //@}
+
+    /** \name Mutators */ //@{
+    /** Returns a list of the addresses and names of all servers on the Local
+        Area Network. */
+    ServerList DiscoverLANServers();
+
+    /** Connects to the server at \a ip_address.  On failure, repeated
+        attempts will be made until \a timeout seconds has elapsed. */
+    bool ConnectToServer(const ClientNetworking* const self,
+                         const std::string& ip_address,
+                         std::chrono::milliseconds timeout = std::chrono::seconds(10));
+
+    /** Connects to the server on the client's host.  On failure, repeated
+        attempts will be made until \a timeout seconds has elapsed. */
+    bool ConnectToLocalHostServer(const ClientNetworking* const self,
+                                  std::chrono::milliseconds timeout =
+                                  std::chrono::seconds(10));
+
+    /** Sends \a message to the server.  This function actually just enqueues
+        the message for sending and returns immediately. */
+    void SendMessage(const Message& message);
+
+    /** Gets the next incoming message from the server, places it into \a
+        message, and removes it from the incoming message queue.  The function
+        assumes that there is at least one message in the incoming queue.
+        Users must call MessageAvailable() first to make sure this is the
+        case. */
+    void GetMessage(Message& message);
+
+    /** Sends \a message to the server, then blocks until it sees the first
+        synchronous response from the server. */
+    void SendSynchronousMessage(const Message& message, Message& response_message);
+
+    /** Disconnects the client from the server. */
+    void DisconnectFromServer();
+
+    /** Sets player ID for this client. */
+    void SetPlayerID(int player_id);
+
+    /** Sets Host player ID. */
+    void SetHostPlayerID(int host_player_id);
+    //@}
+
+private:
+    void HandleException(const boost::system::system_error& error);
+    void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
+                          const boost::system::error_code& error);
+    void CancelRetries();
+    void NetworkingThread(const std::shared_ptr<const ClientNetworking>& self);
+    void HandleMessageBodyRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
+                               boost::system::error_code error, std::size_t bytes_transferred);
+    void HandleMessageHeaderRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
+                                 boost::system::error_code error, std::size_t bytes_transferred);
+    void AsyncReadMessage(const std::shared_ptr<const ClientNetworking>& keep_alive);
+    void HandleMessageWrite(        boost::system::error_code error, std::size_t bytes_transferred);
+    void AsyncWriteMessage();
+    void SendMessageImpl(Message message);
+    void DisconnectFromServerImpl();
+
+    int                             m_player_id;
+    int                             m_host_player_id;
+
+    boost::asio::io_service         m_io_service;
+    boost::asio::ip::tcp::socket    m_socket;
+
+    // m_mutex guards m_incoming_message, m_rx_connected and m_tx_connected which are written by
+    // the networking thread and read by the main thread to check incoming messages and connection
+    // status. As those read and write operations are not atomic, shared access has to be
+    // protected to prevent unpredictable results.
+    mutable boost::mutex            m_mutex;
+
+    MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
+    std::list<Message>              m_outgoing_messages;
+    bool                            m_rx_connected;      // accessed from multiple threads
+    bool                            m_tx_connected;      // accessed from multiple threads
+
+    Message::HeaderBuffer           m_incoming_header;
+    Message                         m_incoming_message;
+    Message::HeaderBuffer           m_outgoing_header;
+};
+
+
 ////////////////////////////////////////////////
-// ClientNetworking
+// ClientNetworking Impl
 ////////////////////////////////////////////////
-ClientNetworking::ClientNetworking() :
+ClientNetworking::Impl::Impl() :
     m_player_id(Networking::INVALID_PLAYER_ID),
     m_host_player_id(Networking::INVALID_PLAYER_ID),
     m_io_service(),
@@ -132,37 +262,37 @@ ClientNetworking::ClientNetworking() :
     m_tx_connected(false)
 {}
 
-bool ClientNetworking::IsConnected() const {
+bool ClientNetworking::Impl::IsConnected() const {
     boost::mutex::scoped_lock lock(m_mutex);
     return m_rx_connected && m_tx_connected;
 }
 
-bool ClientNetworking::IsRxConnected() const {
+bool ClientNetworking::Impl::IsRxConnected() const {
     boost::mutex::scoped_lock lock(m_mutex);
     return m_rx_connected;
 }
 
-bool ClientNetworking::IsTxConnected() const {
+bool ClientNetworking::Impl::IsTxConnected() const {
     boost::mutex::scoped_lock lock(m_mutex);
     return m_tx_connected;
 }
 
-bool ClientNetworking::MessageAvailable() const
+bool ClientNetworking::Impl::MessageAvailable() const
 { return !m_incoming_messages.Empty(); }
 
-int ClientNetworking::PlayerID() const
+int ClientNetworking::Impl::PlayerID() const
 { return m_player_id; }
 
-int ClientNetworking::HostPlayerID() const
+int ClientNetworking::Impl::HostPlayerID() const
 { return m_host_player_id; }
 
-bool ClientNetworking::PlayerIsHost(int player_id) const {
+bool ClientNetworking::Impl::PlayerIsHost(int player_id) const {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return false;
     return player_id == m_host_player_id;
 }
 
-ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
+ClientNetworking::ServerList ClientNetworking::Impl::DiscoverLANServers() {
     if (!IsConnected())
         return ServerList();
     ServerDiscoverer discoverer(m_io_service);
@@ -170,7 +300,8 @@ ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
     return discoverer.Servers();
 }
 
-bool ClientNetworking::ConnectToServer(
+bool ClientNetworking::Impl::ConnectToServer(
+    const ClientNetworking* const self,
     const std::string& ip_address,
     std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
 {
@@ -198,7 +329,7 @@ bool ClientNetworking::ConnectToServer(
             for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
                 m_socket.close();
 
-                m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
+                m_socket.async_connect(*it, boost::bind(&ClientNetworking::Impl::HandleConnection, this,
                                                         &it,
                                                         boost::asio::placeholders::error));
                 m_io_service.run();
@@ -235,8 +366,7 @@ bool ClientNetworking::ConnectToServer(
                                   << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
                     DebugLogger() << "ConnectToServer() : starting networking thread";
-                    auto self = shared_from_this();
-                    boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this, self));
+                    boost::thread(boost::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
                     break;
                 } else {
                     if (TRACE_EXECUTION)
@@ -261,14 +391,15 @@ bool ClientNetworking::ConnectToServer(
     return IsConnected();
 }
 
-bool ClientNetworking::ConnectToLocalHostServer(
+bool ClientNetworking::Impl::ConnectToLocalHostServer(
+    const ClientNetworking* const self,
     std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
 {
     bool retval = false;
 #if FREEORION_WIN32
     try {
 #endif
-        retval = ConnectToServer("127.0.0.1", timeout);
+        retval = ConnectToServer(self, "127.0.0.1", timeout);
 #if FREEORION_WIN32
     } catch (const boost::system::system_error& e) {
         if (e.code().value() != WSAEADDRNOTAVAIL)
@@ -278,7 +409,7 @@ bool ClientNetworking::ConnectToLocalHostServer(
     return retval;
 }
 
-void ClientNetworking::DisconnectFromServer() {
+void ClientNetworking::Impl::DisconnectFromServer() {
     bool is_open(false);
 
     { // Create a scope for the mutex
@@ -287,28 +418,28 @@ void ClientNetworking::DisconnectFromServer() {
     }
 
     if (is_open)
-        m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
+        m_io_service.post(boost::bind(&ClientNetworking::Impl::DisconnectFromServerImpl, this));
 }
 
-void ClientNetworking::SetPlayerID(int player_id) {
+void ClientNetworking::Impl::SetPlayerID(int player_id) {
     DebugLogger() << "ClientNetworking::SetPlayerID: player id set to: " << player_id;
     m_player_id = player_id;
 }
 
-void ClientNetworking::SetHostPlayerID(int host_player_id)
+void ClientNetworking::Impl::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
 
-void ClientNetworking::SendMessage(Message message) {
+void ClientNetworking::Impl::SendMessage(const Message& message) {
     if (!IsTxConnected()) {
         ErrorLogger() << "ClientNetworking::SendMessage can't send message when not transmit connected";
         return;
     }
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendMessage() : sending message " << message;
-    m_io_service.post(boost::bind(&ClientNetworking::SendMessageImpl, this, message));
+    m_io_service.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
-void ClientNetworking::GetMessage(Message& message) {
+void ClientNetworking::Impl::GetMessage(Message& message) {
     if (!MessageAvailable()) {
         ErrorLogger() << "ClientNetworking::GetMessage can't get message if none available";
         return;
@@ -319,7 +450,7 @@ void ClientNetworking::GetMessage(Message& message) {
                       << message;
 }
 
-void ClientNetworking::SendSynchronousMessage(Message message, Message& response_message) {
+void ClientNetworking::Impl::SendSynchronousMessage(const Message& message, Message& response_message) {
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : sending message "
                                << message;
@@ -331,7 +462,7 @@ void ClientNetworking::SendSynchronousMessage(Message message, Message& response
                                << "response message " << response_message;
 }
 
-void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
+void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
                                         const boost::system::error_code& error)
 {
     if (error) {
@@ -349,7 +480,7 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
     }
 }
 
-void ClientNetworking::HandleException(const boost::system::system_error& error) {
+void ClientNetworking::Impl::HandleException(const boost::system::system_error& error) {
     if (error.code() == boost::asio::error::eof) {
         DebugLogger() << "Client connection disconnected by EOF from server.";
         m_socket.close();
@@ -365,7 +496,7 @@ void ClientNetworking::HandleException(const boost::system::system_error& error)
     }
 }
 
-void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self) {
+void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const ClientNetworking>& self) {
     auto protect_from_destruction_in_other_thread = self;
     try {
         if (!m_outgoing_messages.empty())
@@ -387,7 +518,7 @@ void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self)
         DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
 
-void ClientNetworking::HandleMessageBodyRead(const std::shared_ptr<ClientNetworking>& keep_alive,
+void ClientNetworking::Impl::HandleMessageBodyRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
                                              boost::system::error_code error, std::size_t bytes_transferred)
 {
     if (error)
@@ -400,7 +531,7 @@ void ClientNetworking::HandleMessageBodyRead(const std::shared_ptr<ClientNetwork
     }
 }
 
-void ClientNetworking::HandleMessageHeaderRead(const std::shared_ptr<ClientNetworking>& keep_alive,
+void ClientNetworking::Impl::HandleMessageHeaderRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
                                                boost::system::error_code error, std::size_t bytes_transferred)
 {
     if (error)
@@ -415,13 +546,13 @@ void ClientNetworking::HandleMessageHeaderRead(const std::shared_ptr<ClientNetwo
     boost::asio::async_read(
         m_socket,
         boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
-        boost::bind(&ClientNetworking::HandleMessageBodyRead,
+        boost::bind(&ClientNetworking::Impl::HandleMessageBodyRead,
                     this, keep_alive,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
 }
 
-void ClientNetworking::AsyncReadMessage(const std::shared_ptr<ClientNetworking>& keep_alive) {
+void ClientNetworking::Impl::AsyncReadMessage(const std::shared_ptr<const ClientNetworking>& keep_alive) {
     // If keep_alive's count < 2 the networking thread is orphaned so shut down
     if (keep_alive.use_count() < 2)
         DisconnectFromServerImpl();
@@ -429,12 +560,12 @@ void ClientNetworking::AsyncReadMessage(const std::shared_ptr<ClientNetworking>&
     if (m_socket.is_open())
         boost::asio::async_read(
             m_socket, boost::asio::buffer(m_incoming_header),
-            boost::bind(&ClientNetworking::HandleMessageHeaderRead, this, keep_alive,
+            boost::bind(&ClientNetworking::Impl::HandleMessageHeaderRead, this, keep_alive,
                         boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));
 }
 
-void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::size_t bytes_transferred) {
+void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error, std::size_t bytes_transferred) {
     if (error) {
         throw boost::system::system_error(error);
         return;
@@ -461,7 +592,7 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::
     }
 }
 
-void ClientNetworking::AsyncWriteMessage() {
+void ClientNetworking::Impl::AsyncWriteMessage() {
     if (!m_socket.is_open()) {
         ErrorLogger() << "Socket is closed. Dropping message.";
         return;
@@ -473,12 +604,12 @@ void ClientNetworking::AsyncWriteMessage() {
     buffers.push_back(boost::asio::buffer(m_outgoing_messages.front().Data(),
                                           m_outgoing_messages.front().Size()));
     boost::asio::async_write(m_socket, buffers,
-                             boost::bind(&ClientNetworking::HandleMessageWrite, this,
+                             boost::bind(&ClientNetworking::Impl::HandleMessageWrite, this,
                                          boost::asio::placeholders::error,
                                          boost::asio::placeholders::bytes_transferred));
 }
 
-void ClientNetworking::SendMessageImpl(Message message) {
+void ClientNetworking::Impl::SendMessageImpl(Message message) {
     bool start_write = m_outgoing_messages.empty();
     m_outgoing_messages.push_back(Message());
     swap(m_outgoing_messages.back(), message);
@@ -486,7 +617,7 @@ void ClientNetworking::SendMessageImpl(Message message) {
         AsyncWriteMessage();
 }
 
-void ClientNetworking::DisconnectFromServerImpl() {
+void ClientNetworking::Impl::DisconnectFromServerImpl() {
     // Depending behavior of linger on OS's of the sending and receiving machines this call to close could
     // - immediately disconnect both send and receive channels
     // - immediately disconnect send, but continue receiving until all pending sent packets are
@@ -515,3 +646,65 @@ void ClientNetworking::DisconnectFromServerImpl() {
     if (m_socket.is_open())
         m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
 }
+
+
+
+////////////////////////////////////////////////
+// ClientNetworking
+////////////////////////////////////////////////
+ClientNetworking::ClientNetworking() :
+    m_impl(new ClientNetworking::Impl())
+{}
+
+ClientNetworking::~ClientNetworking() = default;
+
+bool ClientNetworking::IsConnected() const
+{ return m_impl->IsConnected(); }
+
+bool ClientNetworking::IsRxConnected() const
+{ return m_impl->IsRxConnected(); }
+
+bool ClientNetworking::IsTxConnected() const
+{ return m_impl->IsTxConnected(); }
+
+bool ClientNetworking::MessageAvailable() const
+{ return m_impl->MessageAvailable(); }
+
+int ClientNetworking::PlayerID() const
+{ return m_impl->PlayerID(); }
+
+int ClientNetworking::HostPlayerID() const
+{ return m_impl->HostPlayerID(); }
+
+bool ClientNetworking::PlayerIsHost(int player_id) const
+{ return m_impl->PlayerIsHost(player_id); }
+
+ClientNetworking::ServerList ClientNetworking::DiscoverLANServers()
+{ return m_impl->DiscoverLANServers(); }
+
+bool ClientNetworking::ConnectToServer(
+    const std::string& ip_address,
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
+{ return m_impl->ConnectToServer(this, ip_address, timeout); }
+
+bool ClientNetworking::ConnectToLocalHostServer(
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
+{ return m_impl->ConnectToLocalHostServer(this, timeout); }
+
+void ClientNetworking::DisconnectFromServer()
+{ return m_impl->DisconnectFromServer(); }
+
+void ClientNetworking::SetPlayerID(int player_id)
+{ return m_impl->SetPlayerID(player_id); }
+
+void ClientNetworking::SetHostPlayerID(int host_player_id)
+{ return m_impl->SetHostPlayerID(host_player_id); }
+
+void ClientNetworking::SendMessage(const Message& message)
+{ return m_impl->SendMessage(message); }
+
+void ClientNetworking::GetMessage(Message& message)
+{ m_impl->GetMessage(message); }
+
+void ClientNetworking::SendSynchronousMessage(const Message& message, Message& response_message)
+{ m_impl->SendSynchronousMessage(message, response_message); }

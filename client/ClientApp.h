@@ -4,6 +4,7 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
 #include "../network/ClientNetworking.h"
+#include "../network/Message.h"
 #include "../universe/Universe.h"
 #include "../util/OrderSet.h"
 #include "../util/AppInterface.h"
