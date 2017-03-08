@@ -208,9 +208,12 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
     if (error) {
         if (error == boost::asio::error::eof ||
             error == boost::asio::error::connection_reset) {
+            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): "
+                          << "error #"<<error.value()<<" \"" << error.message() << "\"";
             EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
         } else {
-            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): error \"" << error << "\"";
+            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): "
+                          << "error #"<<error.value()<<" \"" << error.message() << "\"";
         }
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
@@ -250,6 +253,9 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         if (m_new_connection) {
             // wait half a second if the first data read is an error; we
             // probably just need more setup time
+            ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
+                          << "new connection error #" << error.value() << " \""
+                          << error.message() << "\"" << " waiting for 0.5s";
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
         } else {
             if (error == boost::asio::error::eof ||
