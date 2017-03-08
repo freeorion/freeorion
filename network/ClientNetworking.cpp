@@ -182,19 +182,10 @@ bool ClientNetworking::ConnectToServer(
             m_socket.close();
             boost::asio::high_resolution_timer timer(m_io_service);
 
-#ifndef FREEORION_MACOSX
             m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                     &it,
                                                     &timer,
                                                     boost::asio::placeholders::error));
-#else
-            auto backoff_time = std::chrono::milliseconds(10);
-            m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
-                                                    &it,
-                                                    &timer,
-                                                    backoff_time,
-                                                    boost::asio::placeholders::error));
-#endif
             timer.expires_from_now(timeout);
             timer.async_wait(boost::bind(&ClientNetworking::CancelRetries, this));
             m_cancel_retries = false;
@@ -307,7 +298,6 @@ void ClientNetworking::SendSynchronousMessage(Message message, Message& response
                                << "response message " << response_message;
 }
 
-#ifndef FREEORION_MACOSX
 void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
                                         boost::asio::high_resolution_timer* timer,
                                         const boost::system::error_code& error)
@@ -331,39 +321,6 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
         m_connected = true;
     }
 }
-#else
-void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
-                                        boost::asio::high_resolution_timer* timer,
-                                        std::chrono::milliseconds& backoff_time,
-                                        const boost::system::error_code& error)
-{
-    if (error) {
-        if (!m_cancel_retries) {
-            // Try a progressive backoff to prevent MAXOSX from blocking repeated connection attempts.
-            DebugLogger() << "Retry connection after backoff of " << backoff_time.count() << " ms.";
-            std::this_thread::sleep_for(backoff_time);
-            // double backoff time until 1 sec then start again at 10ms
-            backoff_time =  (backoff_time > std::chrono::seconds(1)) ? std::chrono::milliseconds(10) : (2 * backoff_time);
-
-            if (TRACE_EXECUTION)
-                DebugLogger() << "ClientNetworking::HandleConnection : connection "
-                              << "error #"<<error.value()<<" \"" << error.message() << "\""
-                              << "... retrying";
-            m_socket.async_connect(**it, boost::bind(&ClientNetworking::HandleConnection, this,
-                                                     it,
-                                                     timer,
-                                                     backoff_time,
-                                                     boost::asio::placeholders::error));
-        }
-    } else {
-        if (TRACE_EXECUTION)
-            DebugLogger() << "ClientNetworking::HandleConnection : connected";
-        timer->cancel();
-        boost::mutex::scoped_lock lock(m_mutex);
-        m_connected = true;
-    }
-}
-#endif
 
 void ClientNetworking::CancelRetries()
 { m_cancel_retries = true; }
