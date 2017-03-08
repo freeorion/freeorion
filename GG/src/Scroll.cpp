@@ -428,7 +428,7 @@ void Scroll::UpdatePosn()
 void Scroll::MoveTabToPosn()
 {
     int start_tabspace = 0; // the tab's lowest posible extent
-    if(m_decr)
+    if (m_decr)
         start_tabspace = (m_orientation == VERTICAL ?
                           Value(m_decr->Size().y) :
                           Value(m_decr->Size().x));

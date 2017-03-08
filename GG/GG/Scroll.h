@@ -105,18 +105,18 @@ public:
 
     virtual void DoLayout();
 
-    void           SetInteriorColor(Clr c); ///< sets the color painted into the client area of the control
-    void           SizeScroll(int min, int max, unsigned int line, unsigned int page); ///< sets the logical ranges of the control, and the logical increment values
-    void           SetMax(int max);         ///< sets the maximum value of the scroll
-    void           SetMin(int min);         ///< sets the minimum value of the scroll
-    void           SetLineSize(unsigned int line); ///< sets the size of a line in the scroll. This is the number of logical units the tab moves when either of the up or down buttons is pressed.
-    void           SetPageSize(unsigned int page); ///< sets the size of a line page in the scroll. This is the number of logical units the tab moves when either of the page-up or page-down areas is clicked.
+    void SetInteriorColor(Clr c); ///< sets the color painted into the client area of the control
+    void SizeScroll(int min, int max, unsigned int line, unsigned int page); ///< sets the logical ranges of the control, and the logical increment values
+    void SetMax(int max);         ///< sets the maximum value of the scroll
+    void SetMin(int min);         ///< sets the minimum value of the scroll
+    void SetLineSize(unsigned int line); ///< sets the size of a line in the scroll. This is the number of logical units the tab moves when either of the up or down buttons is pressed.
+    void SetPageSize(unsigned int page); ///< sets the size of a line page in the scroll. This is the number of logical units the tab moves when either of the page-up or page-down areas is clicked.
 
-    void           ScrollTo(int p);  ///< scrolls the control to a certain spot
-    void           ScrollLineIncr(int lines = 1); ///< scrolls the control down (or right) by \a lines lines
-    void           ScrollLineDecr(int lines = 1); ///< scrolls the control up (or left) by \a lines lines
-    void           ScrollPageIncr(); ///< scrolls the control down (or right) by a page
-    void           ScrollPageDecr(); ///< scrolls the control up (or left) by a page
+    void ScrollTo(int p);  ///< scrolls the control to a certain spot
+    void ScrollLineIncr(int lines = 1); ///< scrolls the control down (or right) by \a lines lines
+    void ScrollLineDecr(int lines = 1); ///< scrolls the control up (or left) by \a lines lines
+    void ScrollPageIncr(); ///< scrolls the control down (or right) by a page
+    void ScrollPageDecr(); ///< scrolls the control up (or left) by a page
     //@}
 
 protected:
@@ -143,12 +143,12 @@ protected:
     GG::GL2DVertexBuffer    m_buffer;
 
 private:
-    void              UpdatePosn();         ///< adjusts m_posn due to a tab-drag
-    void              MoveTabToPosn();      ///< adjusts tab due to a button click, PgUp, etc.
-    void              ScrollLineIncrDecrImpl(bool signal, int lines);
+    void UpdatePosn();                      ///< adjusts m_posn due to a tab-drag
+    void MoveTabToPosn();                   ///< adjusts tab due to a button click, PgUp, etc.
+    void ScrollLineIncrDecrImpl(bool signal, int lines);
 
     Clr                     m_int_color;    ///< color inside border of slide area
-    const Orientation       m_orientation; ///< vertical or horizontal scroll? (use enum for these declared above)
+    const Orientation       m_orientation;  ///< vertical or horizontal scroll? (use enum for these declared above)
     int                     m_posn;         ///< current position of tab in logical coords (will be in [m_range_min, m_range_max - m_page_sz])
     int                     m_range_min;    ///< lowest value in range of scrollbar
     int                     m_range_max;    ///< highest value "
