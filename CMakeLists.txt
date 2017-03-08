@@ -242,6 +242,7 @@ target_compile_options(freeorioncommon
     PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
         $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
+        $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
 )
 
 target_compile_definitions(freeorioncommon
@@ -298,6 +299,7 @@ target_compile_options(
     $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
     $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
     $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
+    $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
 )
 
 target_compile_definitions(freeorionparseobj
