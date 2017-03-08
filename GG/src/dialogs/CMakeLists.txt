@@ -1,6 +1,6 @@
 # GG is a GUI for SDL and OpenGL.
 #
-# Copyright (C) 2009 T. Zachary Laine
+# Copyright (C) 2017 Marcel Metz
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public License
@@ -23,7 +23,9 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-target_sources(GiGiSDL
+target_sources(GiGi
     PRIVATE
-        ${CMAKE_CURRENT_LIST_DIR}/SDLGUI.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ColorDlg.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/FileDlg.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ThreeButtonDlg.cpp
 )

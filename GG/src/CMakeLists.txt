@@ -23,109 +23,47 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-set(GiGi_LINK_LIBS
-    ${Boost_LIBRARIES}
-    ${OPENGL_LIBRARIES}
-    ${GLEW_LIBRARIES}
-    ${FREETYPE_LIBRARIES}
-)
-if (PNG_FOUND)
-    list(APPEND GiGi_LINK_LIBS ${PNG_LIBRARIES})
-endif ()
-if (TIFF_FOUND)
-    list(APPEND GiGi_LINK_LIBS ${TIFF_LIBRARIES})
-endif ()
-
-if (WIN32)
-    if (MSVC)
-        add_definitions(/wd4146 /wd4099 /wd4251 /wd4800 /wd4267 /wd4275
-                        /wd4244 /wd4101 /wd4258 /wd4351 /wd4996)
-    endif ()
-endif ()
-
-add_library(GiGi
-    AlignmentFlags.cpp
-    Base.cpp
-    BrowseInfoWnd.cpp
-    Button.cpp
-    ClrConstants.cpp
-    Control.cpp
-    Cursor.cpp
-    DrawUtil.cpp
-    DropDownList.cpp
-    DynamicGraphic.cpp
-    Edit.cpp
-    EventPump.cpp
-    Font.cpp
-    GLClientAndServerBuffer.cpp
-    GroupBox.cpp
-    GUI.cpp
-    Layout.cpp
-    DeferredLayout.cpp
-    ListBox.cpp
-    Menu.cpp
-    MultiEdit.cpp
-    PtRect.cpp
-    Scroll.cpp
-    ScrollPanel.cpp
-    StaticGraphic.cpp
-    StyleFactory.cpp
-    TabWnd.cpp
-    TextControl.cpp
-    Texture.cpp
-    Timer.cpp
-    UnicodeCharsets.cpp
-    Wnd.cpp
-    WndEvent.cpp
-    ZList.cpp
-
-    dialogs/ColorDlg.cpp
-    dialogs/FileDlg.cpp
-    dialogs/ThreeButtonDlg.cpp
-
-    RichText/RichText.cpp
-    RichText/TagParser.cpp
-    RichText/ImageBlock.cpp
-    RichText/TextBlock.cpp
-    RichText/BlockControl.cpp
-)
-
-if (USE_STATIC_LIBS)
-    set_target_properties(GiGi
-        PROPERTIES
-        LINK_SEARCH_END_STATIC true
-    )
-endif ()
-
-target_link_libraries(GiGi ${GiGi_LINK_LIBS})
-
-install(
-    TARGETS GiGi
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT COMPONENT_GIGI
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT COMPONENT_GIGI
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    COMPONENT COMPONENT_GIGI_DEVEL
-)
-
-if (UNIX AND BUILD_DEVEL_PACKAGE)
-    get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
-
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/../cmake/GiGi.pc.in
-        ${CMAKE_BINARY_DIR}/GiGi.pc
-        @ONLY
-    )
-
-    install(
-        FILES ${CMAKE_BINARY_DIR}/GiGi.pc
-        DESTINATION  ${CMAKE_INSTALL_LIBDIR}/pkgconfig
-        COMPONENT COMPONENT_GIGI_DEVEL
-        OPTIONAL
-    )
-endif ()
+add_subdirectory(dialogs)
+add_subdirectory(RichText)
 
 if (BUILD_SDL_DRIVER)
     add_subdirectory(SDL)
 endif ()
+
+target_sources(GiGi
+    PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/AlignmentFlags.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Base.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/BrowseInfoWnd.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Button.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ClrConstants.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Control.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Cursor.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/DeferredLayout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/DrawUtil.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/DropDownList.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/DynamicGraphic.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Edit.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/EventPump.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Font.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GLClientAndServerBuffer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GroupBox.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/GUI.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Layout.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ListBox.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Menu.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/MultiEdit.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/PtRect.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Scroll.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ScrollPanel.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/StaticGraphic.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/StyleFactory.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TabWnd.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/TextControl.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Texture.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Timer.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/UnicodeCharsets.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/Wnd.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/WndEvent.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/ZList.cpp
+)

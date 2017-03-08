@@ -23,55 +23,61 @@
 # Zach Laine
 # whatwasthataddress@gmail.com
 
-cmake_minimum_required(VERSION 2.8.12 FATAL_ERROR)
+cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
 if(POLICY CMP0044)
     cmake_policy(SET CMP0044 OLD)
 endif()
 
-include(CMakeDependentOption)
-include(GNUInstallDirs)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
+
+
+##
+## Global project configuration
+##
 
 project(GiGi)
 
-########################################
-# Configuration                        #
-########################################
+include(CMakeDependentOption)
+include(GNUInstallDirs)
+include(UseCodeCoverage)
+include(Util)
+
 set(GIGI_VERSION 0.8.0)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake)
-
-set(MINIMUM_BOOST_VERSION 1.47.0)
-
-option(BUILD_SHARED_LIBS "Enables building of shared libraries; OFF implies static libraries." ON)
+option(BUILD_SHARED_LIBS "Build project as shared libraries." ON)
 option(ENABLE_PNG_TEXTURES "Enable PNG texture support." ON)
 option(ENABLE_TIFF_TEXTURES "Enable TIFF texture support." OFF)
+option(BUILD_SDL_DRIVER "Builds GG SDL support (the GiGiSDL library)." ON)
+option(BUILD_DOCUMENTATION "Builds HTML documentation." OFF)
+option(BUILD_TESTING "Build the testing tree." OFF)
+option(BUILD_DEVEL_PACKAGE "Install development files." ON)
 
 cmake_dependent_option(USE_STATIC_LIBS "Favour static linking of depencendies." OFF BUILD_SHARED_LIBS OFF)
-
-include(UseCodeCoverage)
-include(Util)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 
-option(BUILD_SDL_DRIVER
-       "Builds GG SDL support (the GiGiSDL library)."
-       ON)
-option(GiGi_BUILD_DOC
-       "Builds HTML documentation (requires Doxygen)."
-       OFF)
-option(BUILD_TESTING
-       "Build the testing tree."
-       OFF)
-option(BUILD_DEVEL_PACKAGE
-       "Install development files."
-       ON)
+if (MSVC)
+    set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
+    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+    set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+
+    add_definitions(/wd4146 /wd4099 /wd4251 /wd4800 /wd4267 /wd4275
+                    /wd4244 /wd4101 /wd4258 /wd4351 /wd4996)
+endif ()
+
+
+##
+## Collect project dependencies.
+##
+
+set(MINIMUM_BOOST_VERSION 1.56.0)
 
 if (NOT DEFINED USE_STATIC_LIBS)
     add_definitions(
@@ -81,21 +87,6 @@ if (NOT DEFINED USE_STATIC_LIBS)
     )
 endif ()
 
-if (MSVC)
-    set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
-    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-    set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-endif ()
-
-include_directories(
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_BINARY_DIR}
-)
-
-
-########################################
-# Dependencies                         #
-########################################
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex signals system thread log REQUIRED)
 
@@ -120,20 +111,16 @@ if(ENABLE_TIFF_TEXTURES)
 else()
     set(int_have_tiff 0)
 endif()
+set(SDL_NO_MAIN true)
+
+find_package(SDL REQUIRED)
+
 
 include_directories(
-    SYSTEM
-    ${Boost_INCLUDE_DIRS}
-    ${OPENGL_INCLUDE_DIR}
-    ${GLEW_INCLUDE_DIR}
-    ${FREETYPE_INCLUDE_DIRS}
-    ${PNG_INCLUDE_DIR}
-    ${TIFF_INCLUDE_DIR}
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    ${CMAKE_CURRENT_BINARY_DIR}
 )
 
-########################################
-# Header Generation                    #
-########################################
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.h.in
     ${CMAKE_CURRENT_BINARY_DIR}/GG/Config.h
@@ -141,25 +128,71 @@ configure_file(
 )
 
 
-########################################
-# Installed Files                      #
-########################################
-if (BUILD_DEVEL_PACKAGE)
-    install(
-        DIRECTORY GG
-        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        COMPONENT COMPONENT_GIGI_DEVEL
+##
+## Define main project targets.
+##
+
+add_library(GiGi "")
+
+if (USE_STATIC_LIBS)
+    set_target_properties(GiGi
+        PROPERTIES
+        LINK_SEARCH_END_STATIC true
     )
 endif ()
 
+target_include_directories(GiGi SYSTEM
+    PRIVATE
+        ${Boost_INCLUDE_DIRS}
+        ${OPENGL_INCLUDE_DIR}
+        ${GLEW_INCLUDE_DIR}
+        ${FREETYPE_INCLUDE_DIRS}
+        ${PNG_INCLUDE_DIR}
+        ${TIFF_INCLUDE_DIR}
+)
 
-########################################
-# Recurse Into Sources                 #
-########################################
+target_link_libraries(GiGi
+    ${Boost_LIBRARIES}
+    ${OPENGL_LIBRARIES}
+    ${GLEW_LIBRARIES}
+    ${FREETYPE_LIBRARIES}
+)
+
+if (PNG_FOUND)
+    target_link_libraries(GiGi ${PNG_LIBRARIES})
+endif ()
+
+if (TIFF_FOUND)
+    target_link_libraries(GiGi ${TIFF_LIBRARIES})
+endif ()
+
+
+add_library(GiGiSDL "")
+
+if (USE_STATIC_LIBS)
+    set_target_properties(GiGiSDL
+        PROPERTIES
+        LINK_SEARCH_END_STATIC true
+    )
+endif ()
+
+target_include_directories(GiGiSDL SYSTEM
+    PRIVATE
+        ${SDL_INCLUDE_DIRS}
+)
+
+target_link_libraries(GiGiSDL
+    GiGi
+    ${SDL_LIBRARIES}
+)
+
+
+##
+## Recurse into sources.
+##
+
+add_subdirectory(GG)
 add_subdirectory(src)
-if(GiGi_BUILD_DOC)
-    add_subdirectory(doc)
-endif()
 
 if (BUILD_TESTING)
     enable_testing()
@@ -175,10 +208,79 @@ if (BUILD_TESTING)
     add_subdirectory(test)
 endif ()
 
+if(BUILD_DOCUMENTATION)
+    add_subdirectory(doc)
+endif()
 
-########################################
-# Packaging                            #
-########################################
+
+##
+## Install targets and package project.
+##
+
+if (BUILD_DEVEL_PACKAGE)
+    install(
+        DIRECTORY GG
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        COMPONENT COMPONENT_GIGI_DEVEL
+    )
+endif ()
+
+install(
+    TARGETS GiGi
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    COMPONENT COMPONENT_GIGI
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT COMPONENT_GIGI
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    COMPONENT COMPONENT_GIGI_DEVEL
+)
+
+if (UNIX AND BUILD_DEVEL_PACKAGE)
+    get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GiGi.pc.in
+        ${CMAKE_BINARY_DIR}/GiGi.pc
+        @ONLY
+    )
+
+    install(
+        FILES ${CMAKE_BINARY_DIR}/GiGi.pc
+        DESTINATION  ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+        COMPONENT COMPONENT_GIGI_DEVEL
+        OPTIONAL
+    )
+endif ()
+
+
+install(
+    TARGETS GiGiSDL
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    COMPONENT COMPONENT_GIGISDL
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    COMPONENT COMPONENT_GIGISDL
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    COMPONENT COMPONENT_GIGISDL_DEVEL
+)
+
+if (UNIX AND BUILD_DEVEL_PACKAGE)
+    get_pkg_config_libs(pkg_config_libs ${GiGiSDL_LINK_LIBS})
+
+    configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/cmake/GiGiSDL.pc.in
+        ${CMAKE_BINARY_DIR}/GiGiSDL.pc
+        @ONLY
+    )
+
+    install(
+        FILES ${CMAKE_BINARY_DIR}/GiGiSDL.pc
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig
+        COMPONENT COMPONENT_GIGI_DEVEL
+        OPTIONAL
+    )
+endif ()
+
+
 set(CPACK_PACKAGE_VERSION ${GIGI_VERSION})
 set(CPACK_PACKAGE_VENDOR "T. Zachary Laine")
 set(CPACK_PACKAGE_CONTACT ${CPACK_PACKAGE_VENDOR})
