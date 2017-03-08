@@ -40,7 +40,7 @@ namespace {
         FreeOrion servers, and reports any it finds. */
     class ServerDiscoverer {
     public:
-        typedef ClientNetworking::ServerList ServerList;
+        using ServerList = std::vector<std::pair<boost::asio::ip::address, std::string>>;
 
         ServerDiscoverer(boost::asio::io_service& io_service) :
             m_io_service(&io_service),
@@ -139,7 +139,7 @@ namespace {
 class ClientNetworking::Impl {
 public:
     /** The type of list returned by a call to DiscoverLANServers(). */
-    typedef std::vector<std::pair<boost::asio::ip::address, std::string> >  ServerList;
+    using ServerList = std::vector<std::pair<boost::asio::ip::address, std::string>>;
 
     /** \name Structors */ //@{
     Impl();
@@ -171,7 +171,7 @@ public:
     /** \name Mutators */ //@{
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
-    ServerList DiscoverLANServers();
+    ClientNetworking::ServerNames DiscoverLANServerNames();
 
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
@@ -292,12 +292,17 @@ bool ClientNetworking::Impl::PlayerIsHost(int player_id) const {
     return player_id == m_host_player_id;
 }
 
-ClientNetworking::ServerList ClientNetworking::Impl::DiscoverLANServers() {
+ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
     if (!IsConnected())
-        return ServerList();
+        return ServerNames();
     ServerDiscoverer discoverer(m_io_service);
     discoverer.DiscoverServers();
-    return discoverer.Servers();
+    auto servers = discoverer.Servers();
+    ServerNames names;
+    for (const auto& server : servers) {
+        names.push_back(server.second);
+    }
+    return names;
 }
 
 bool ClientNetworking::Impl::ConnectToServer(
@@ -679,8 +684,8 @@ int ClientNetworking::HostPlayerID() const
 bool ClientNetworking::PlayerIsHost(int player_id) const
 { return m_impl->PlayerIsHost(player_id); }
 
-ClientNetworking::ServerList ClientNetworking::DiscoverLANServers()
-{ return m_impl->DiscoverLANServers(); }
+ClientNetworking::ServerNames ClientNetworking::DiscoverLANServerNames()
+{ return m_impl->DiscoverLANServerNames(); }
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,

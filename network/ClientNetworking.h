@@ -51,7 +51,7 @@ class Message;
 class ClientNetworking : public std::enable_shared_from_this<ClientNetworking> {
 public:
     /** The type of list returned by a call to DiscoverLANServers(). */
-    typedef std::vector<std::pair<boost::asio::ip::address, std::string>> ServerList;
+    using ServerNames =  std::vector<std::string>;
 
     /** \name Structors */ //@{
     ClientNetworking();
@@ -84,7 +84,7 @@ public:
     /** \name Mutators */ //@{
     /** Returns a list of the addresses and names of all servers on the Local
         Area Network. */
-    ServerList DiscoverLANServers();
+    ServerNames DiscoverLANServerNames();
 
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */

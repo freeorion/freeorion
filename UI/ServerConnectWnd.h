@@ -56,7 +56,7 @@ private:
     GG::Button*                         m_ok_bn;
     GG::Button*                         m_cancel_bn;
 
-    ClientNetworking::ServerList        m_LAN_servers;
+    ClientNetworking::ServerNames        m_LAN_servers;
 };
 
 #endif // _ServerConnectWnd_h_
