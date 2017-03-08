@@ -148,7 +148,7 @@ if(EXISTS "${_FREETYPE_INCLUDE_freetype_h}")
 endif()
 
 find_library(FREETYPE_LIBRARY
-  NAMES freetype libfreetype "freetype${FREETYPE_FILE_VERSION_STRING}" "freetype${FREETYPE_FILE_VERSION_STRING}MT"
+  NAMES freetype libfreetype "freetype${FREETYPE_FILE_VERSION}" "freetype${FREETYPE_FILE_VERSION}MT"
   HINTS
     ENV FREETYPE_DIR
   PATHS
