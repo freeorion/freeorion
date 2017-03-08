@@ -16,7 +16,6 @@
 #   undef MessageBox
 #endif
 
-
 /** Encapsulates the networking facilities of the client.  The client must
     execute its networking code in a separate thread from its main processing
     thread, for UI and networking responsiveness, and to process synchronous
@@ -117,7 +116,6 @@ public:
 private:
     void HandleException(const boost::system::system_error& error);
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
-                          boost::asio::high_resolution_timer* timer,
                           const boost::system::error_code& error);
     void CancelRetries();
     void NetworkingThread();
@@ -138,7 +136,6 @@ private:
     MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
     std::list<Message>              m_outgoing_messages;
     bool                            m_connected;         // accessed from multiple threads
-    bool                            m_cancel_retries;
 
     Message::HeaderBuffer           m_incoming_header;
     Message                         m_incoming_message;

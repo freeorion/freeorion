@@ -128,8 +128,7 @@ ClientNetworking::ClientNetworking() :
     m_io_service(),
     m_socket(m_io_service),
     m_incoming_messages(m_mutex),
-    m_connected(false),
-    m_cancel_retries(false)
+    m_connected(false)
 {}
 
 bool ClientNetworking::Connected() const {
@@ -164,8 +163,9 @@ bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
     std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
 {
-    using Clock = std::chrono::steady_clock;
+    using Clock = std::chrono::high_resolution_clock;
     Clock::time_point start_time = Clock::now();
+    auto deadline = start_time + timeout;
 
     DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
 
@@ -178,54 +178,50 @@ bool ClientNetworking::ConnectToServer(
     tcp::resolver::iterator end_it;
 
     try {
-        for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-            m_socket.close();
-            boost::asio::high_resolution_timer timer(m_io_service);
+        while(!Connected() && Clock::now() < deadline) {
+            for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
+                m_socket.close();
 
-            m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
-                                                    &it,
-                                                    &timer,
-                                                    boost::asio::placeholders::error));
-            timer.expires_from_now(timeout);
-            timer.async_wait(boost::bind(&ClientNetworking::CancelRetries, this));
-            m_cancel_retries = false;
-            m_io_service.run();
-            m_io_service.reset();
+                m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
+                                                        &it,
+                                                        boost::asio::placeholders::error));
+                m_io_service.run();
+                m_io_service.reset();
 
-            auto connection_time = Clock::now() - start_time;
+                auto connection_time = Clock::now() - start_time;
 
-            if (Connected()) {
-                DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
-                              << "  address: " << it->endpoint().address()
-                              << "  port: " << it->endpoint().port();
+                if (Connected()) {
+                    DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
+                                  << "  address: " << it->endpoint().address()
+                                  << "  port: " << it->endpoint().port();
 
-                DebugLogger() << "ClientNetworking::ConnectToServer : connected to server";
-                if (GetOptionsDB().Get<bool>("binary-serialization"))
-                    DebugLogger() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
-                else
-                    DebugLogger() << "ClientNetworking::ConnectToServer : this client using xml serialization.";
-                m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
-                m_socket.set_option(boost::asio::socket_base::keep_alive(true));
-                DebugLogger() << "Connecting to server took "
-                              << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
-                DebugLogger() << "ClientNetworking::ConnectToServer : starting networking thread";
-                boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
-                break;
-            } else {
-                DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
-                              << "  address: " << it->endpoint().address()
-                              << "  port: " << it->endpoint().port();
-                DebugLogger() << "ClientNetworking::ConnectToServer : no connection yet...";
-                if (timeout < connection_time) {
-                    ErrorLogger() << "Timed out ("
-                                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms."
-                                  << ") attempting to connect to server.";
+                    DebugLogger() << "ClientNetworking::ConnectToServer : connected to server";
+                    if (GetOptionsDB().Get<bool>("binary-serialization"))
+                        DebugLogger() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
+                    else
+                        DebugLogger() << "ClientNetworking::ConnectToServer : this client using xml serialization.";
+                    m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
+                    m_socket.set_option(boost::asio::socket_base::keep_alive(true));
+                    DebugLogger() << "Connecting to server took "
+                                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
+                    DebugLogger() << "ClientNetworking::ConnectToServer : starting networking thread";
+                    boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
+                    break;
+                } else {
+                    DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
+                                  << "  address: " << it->endpoint().address()
+                                  << "  port: " << it->endpoint().port();
+                    DebugLogger() << "ClientNetworking::ConnectToServer : no connection yet...";
+                    if (timeout < connection_time) {
+                        ErrorLogger() << "Timed out ("
+                                      << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms."
+                                      << ") attempting to connect to server.";
+                    }
                 }
             }
+            if (!Connected())
+                DebugLogger() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
         }
-        if (!Connected())
-            DebugLogger() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
-
     } catch (const std::exception& e) {
         ErrorLogger() << "ClientNetworking::ConnectToServer unable to connect to server at "
                       << ip_address << " due to exception: " << e.what();
@@ -299,31 +295,21 @@ void ClientNetworking::SendSynchronousMessage(Message message, Message& response
 }
 
 void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
-                                        boost::asio::high_resolution_timer* timer,
                                         const boost::system::error_code& error)
 {
     if (error) {
-        if (!m_cancel_retries) {
-            if (TRACE_EXECUTION)
-                DebugLogger() << "ClientNetworking::HandleConnection : connection "
-                              << "error #"<<error.value()<<" \"" << error.message() << "\""
-                              << "... retrying";
-            m_socket.async_connect(**it, boost::bind(&ClientNetworking::HandleConnection, this,
-                                                     it,
-                                                     timer,
-                                                     boost::asio::placeholders::error));
-        }
+        if (TRACE_EXECUTION)
+            DebugLogger() << "ClientNetworking::HandleConnection : connection "
+                          << "error #"<<error.value()<<" \"" << error.message() << "\""
+                          << "... retrying";
     } else {
         if (TRACE_EXECUTION)
             DebugLogger() << "ClientNetworking::HandleConnection : connected";
-        timer->cancel();
+
         boost::mutex::scoped_lock lock(m_mutex);
         m_connected = true;
     }
 }
-
-void ClientNetworking::CancelRetries()
-{ m_cancel_retries = true; }
 
 void ClientNetworking::HandleException(const boost::system::system_error& error) {
     if (error.code() == boost::asio::error::eof ||
