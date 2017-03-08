@@ -108,7 +108,7 @@ find_path(
     freetype
 )
 
-if(EXISTS "${_FREETYPE_INCLUDE_DIR}")
+if(EXISTS "${FREETYPE_INCLUDE_DIR}")
     file(STRINGS "${FREETYPE_INCLUDE_DIR}/ft2build.h" _FREETYPE_INCLUDE_ftheader_h
         REGEX "^#[\t ]*include[\t ]+<\(.*/ftheader\\.h\)>[\t ]*$")
     string(REGEX MATCHALL "^#[\t ]*include[\t ]+<\(.*ftheader\\.h\)>[\t ]*$"
