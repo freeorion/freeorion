@@ -48,14 +48,8 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/VarText.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Version.cpp
         ${CMAKE_CURRENT_LIST_DIR}/XMLDoc.cpp
+        $<$<NOT:$<PLATFORM_ID:Windows>>:${CMAKE_CURRENT_LIST_DIR}/binreloc.c>
 )
-
-if (NOT WIN32)
-    target_sources(freeorioncommon
-        PRIVATE
-            ${CMAKE_CURRENT_LIST_DIR}/binreloc.c
-    )
-endif ()
 
 target_sources(freeoriond
     PRIVATE
