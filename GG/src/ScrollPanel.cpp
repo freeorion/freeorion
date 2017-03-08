@@ -137,46 +137,49 @@ namespace GG {
         }
 
         switch (key) {
-
-        case GGK_LEFT: {
-            break;
-        }
-
-        case GGK_RIGHT: {
-            break;
-        }
-
         case GGK_UP: {
-            MouseWheel(GG::Pt(X0, Y0), 1, mod_keys);
+            m_vscroll->ScrollLineIncr(-1);
+            SignalScroll(*m_vscroll, true);
             break;
         }
 
         case GGK_DOWN: {
-            MouseWheel(GG::Pt(X0, Y0), -1, mod_keys);
+            m_vscroll->ScrollLineIncr(1);
+            SignalScroll(*m_vscroll, true);
             break;
         }
 
         case GGK_HOME: {
+            if (ctrl_down) {
+                m_vscroll->ScrollTo(m_vscroll->ScrollRange().first);
+                SignalScroll(*m_vscroll, true);
+            }
             break;
         }
 
         case GGK_END: {
+            if (ctrl_down) {
+                m_vscroll->ScrollTo(m_vscroll->ScrollRange().second);
+                SignalScroll(*m_vscroll, true);
+            }
             break;
         }
 
         case GGK_PAGEUP: {
+            m_vscroll->ScrollPageDecr();
+            SignalScroll(*m_vscroll, true);
             break;
         }
 
         case GGK_PAGEDOWN: {
+            m_vscroll->ScrollPageIncr();
+            SignalScroll(*m_vscroll, true);
             break;
         }
 
-        default: {
+        default:
             break;
         }
-        }
-
     }
 
     void ScrollPanel::DoLayout()
