@@ -217,7 +217,7 @@ target_include_directories(freeorioncommon SYSTEM
         ${CMAKE_SOURCE_DIR}
         ${Boost_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
-        ${ZLIB_INCLUDE_DIR}
+        ${ZLIB_INCLUDE_DIRS}
 )
 
 target_link_libraries(freeorioncommon
@@ -363,7 +363,7 @@ target_link_libraries(freeorion
     ${SDL_LIBRARIES}
     ${OGG_LIBRARIES}
     ${VORBIS_LIBRARIES}
-    ${ZLIB_LIBRARY}
+    ${ZLIB_LIBRARIES}
     ${Boost_LOCALE_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
