@@ -177,12 +177,12 @@ public:
         attempts will be made until \a timeout seconds has elapsed. */
     bool ConnectToServer(const ClientNetworking* const self,
                          const std::string& ip_address,
-                         std::chrono::milliseconds timeout = std::chrono::seconds(10));
+                         const std::chrono::milliseconds& timeout = std::chrono::seconds(10));
 
     /** Connects to the server on the client's host.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
     bool ConnectToLocalHostServer(const ClientNetworking* const self,
-                                  std::chrono::milliseconds timeout =
+                                  const std::chrono::milliseconds& timeout =
                                   std::chrono::seconds(10));
 
     /** Sends \a message to the server.  This function actually just enqueues
@@ -308,7 +308,7 @@ ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
 bool ClientNetworking::Impl::ConnectToServer(
     const ClientNetworking* const self,
     const std::string& ip_address,
-    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
+    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/)
 {
     using Clock = std::chrono::high_resolution_clock;
     Clock::time_point start_time = Clock::now();
@@ -398,7 +398,7 @@ bool ClientNetworking::Impl::ConnectToServer(
 
 bool ClientNetworking::Impl::ConnectToLocalHostServer(
     const ClientNetworking* const self,
-    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
+    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/)
 {
     bool retval = false;
 #if FREEORION_WIN32
@@ -689,11 +689,11 @@ ClientNetworking::ServerNames ClientNetworking::DiscoverLANServerNames()
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
-    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
+    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/)
 { return m_impl->ConnectToServer(this, ip_address, timeout); }
 
 bool ClientNetworking::ConnectToLocalHostServer(
-    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
+    const std::chrono::milliseconds& timeout/* = std::chrono::seconds(10)*/)
 { return m_impl->ConnectToLocalHostServer(this, timeout); }
 
 void ClientNetworking::DisconnectFromServer()

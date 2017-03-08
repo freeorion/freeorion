@@ -1,17 +1,10 @@
 #ifndef _ClientNetworking_h_
 #define _ClientNetworking_h_
 
-// boost::asio pulls in windows.h which in turn defines the macros Message,
-// MessageBox, min and max. Disabling the generation of the min and max macros
-// and undefining those should avoid name collisions with std c++ library and
-// FreeOrion function names.
-#define NOMINMAX
-#include <boost/asio.hpp>
-#include <boost/asio/high_resolution_timer.hpp>
-#ifdef FREEORION_WIN32
-#   undef Message
-#   undef MessageBox
-#endif
+#include <string>
+#include <vector>
+#include <memory>
+#include <chrono>
 
 #include <memory>
 
@@ -89,15 +82,15 @@ public:
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
     bool ConnectToServer(const std::string& ip_address,
-                         std::chrono::milliseconds timeout = std::chrono::seconds(10));
+                         const std::chrono::milliseconds& timeout = std::chrono::seconds(10));
 
     /** Connects to the server on the client's host.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
-    bool ConnectToLocalHostServer(std::chrono::milliseconds timeout =
+    bool ConnectToLocalHostServer(const std::chrono::milliseconds& timeout =
                                   std::chrono::seconds(10));
 
     /** Sends \a message to the server.  This function actually just enqueues
-        the message for sending and returns immediately. */
+        the message for sending a nd returns immediately. */
     void SendMessage(const Message& message);
 
     /** Gets the next incoming message from the server, places it into \a
