@@ -19,7 +19,7 @@ using boost::asio::ip::tcp;
 using namespace Networking;
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    const bool TRACE_EXECUTION = true;
 
     /** A simple client that broadcasts UDP datagrams on the local network for
         FreeOrion servers, and reports any it finds. */
@@ -315,7 +315,9 @@ void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
     if (error) {
         if (!m_cancel_retries) {
             if (TRACE_EXECUTION)
-                DebugLogger() << "ClientNetworking::HandleConnection : connection error ... retrying";
+                DebugLogger() << "ClientNetworking::HandleConnection : connection "
+                              << "error #"<<error.value()<<" \"" << error.message() << "\""
+                              << "... retrying";
             m_socket.async_connect(**it, boost::bind(&ClientNetworking::HandleConnection, this,
                                                      it,
                                                      timer,
