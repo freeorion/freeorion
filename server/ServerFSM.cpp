@@ -1126,6 +1126,8 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
 
+    server.InitializePython();
+
     if (m_single_player_setup_data->m_new_game) {
         // For SP game start inializaing while waiting for AI callbacks.
         DebugLogger() << "Initializing new SP game...";
@@ -1264,6 +1266,8 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     }
 
     server.CreateAIClients(player_setup_data, m_lobby_data->m_ai_aggr);
+
+    server.InitializePython();
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will

@@ -149,11 +149,6 @@ ServerApp::ServerApp() :
     GG::Connect(Empires().DiplomaticStatusChangedSignal,  &ServerApp::HandleDiplomaticStatusChange, this);
     GG::Connect(Empires().DiplomaticMessageChangedSignal, &ServerApp::HandleDiplomaticMessageChange,this);
 
-    if (!m_python_server.Initialize()) {
-        ErrorLogger() << "Server's python interpreter failed to initialize.";
-        Exit(0);
-    }
-
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
 }
 
@@ -333,6 +328,17 @@ void ServerApp::Run() {
         }
     } catch (const NormalExitException&)
     {}
+}
+
+void ServerApp::InitializePython() {
+    if (m_python_server.IsPythonRunning())
+        return;
+
+    if (!m_python_server.Initialize()) {
+        ErrorLogger() << "Server's python interpreter failed to initialize.";
+        // TODO go to Shutdown in FSM.
+        Exit(0);
+    }
 }
 
 void ServerApp::CleanupAIs() {
