@@ -29,7 +29,7 @@ public:
 private:
     bool                m_free;
 #if defined(FREEORION_WIN32)
-    STARTUPINFO          m_startup_info;
+    STARTUPINFOW         m_startup_info;
     PROCESS_INFORMATION  m_process_info;
 #elif defined(FREEORION_LINUX) || defined(FREEORION_MACOSX)
     pid_t                m_process_id;
@@ -101,8 +101,8 @@ Process::Impl::Impl(const std::string& cmd, const std::vector<std::string>& argv
             wargs += ' ';
     }
 
-    ZeroMemory(&m_startup_info, sizeof(STARTUPINFO));
-    m_startup_info.cb = sizeof(STARTUPINFO);
+    ZeroMemory(&m_startup_info, sizeof(STARTUPINFOW));
+    m_startup_info.cb = sizeof(STARTUPINFOW);
     ZeroMemory(&m_process_info, sizeof(PROCESS_INFORMATION));
 
     if (!CreateProcessW(wcmd.c_str(), const_cast<LPWSTR>(wargs.c_str()), 0, 0,
