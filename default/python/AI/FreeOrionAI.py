@@ -107,15 +107,21 @@ def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
 
     global foAIstate
     print "Resuming loaded game"
-    try:
-        # loading saved state
-        # pre load code
-        foAIstate = pickle.loads(saved_state_string)
-    except Exception as e:
-        # assigning new state
+    if not saved_state_string:
+        print_error("AI given empty state-string to resume from; this is expected if the AI is assigned to an empire "
+                    "previously run by a human, but is otherwise an error. AI will be set to Aggressive.")
         foAIstate = AIstate.AIstate(fo.aggression.aggressive)
         foAIstate.session_start_cleanup()
-        print_error("Fail to load aiState form saved game: %s" % e)
+    else:
+        try:
+            # loading saved state
+            # pre load code
+            foAIstate = pickle.loads(saved_state_string)
+        except Exception as e:
+            # assigning new state
+            foAIstate = AIstate.AIstate(fo.aggression.aggressive)
+            foAIstate.session_start_cleanup()
+            print_error("Fail to load aiState from saved game: %s" % e)
 
     aggression_trait = foAIstate.character.get_trait(Aggression)
     diplomatic_corp_configs = {fo.aggression.beginner: DiplomaticCorp.BeginnerDiplomaticCorp,
