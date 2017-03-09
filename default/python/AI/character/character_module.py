@@ -617,7 +617,7 @@ def create_character(aggression=fo.aggression.maniacal, empire_id=0):
     # Check the optionsDB for the trait bypass values and create
     # the character.
     NO_VALUE = -1
-    bypassed_aggression = get_trait_bypass_value("aggression", aggression, NO_VALUE)
+    bypassed_aggression = get_trait_bypass_value("aggression", int(aggression), NO_VALUE)
     bypassed_empire_id = get_trait_bypass_value("empire-id", empire_id, NO_VALUE)
 
     return Character([Aggression(bypassed_aggression), EmpireIDTrait(bypassed_empire_id, bypassed_aggression)])
