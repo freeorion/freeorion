@@ -193,7 +193,7 @@ public:
     //@}
 
     /** Sets part types to the future value of \p pending_part_types. */
-    FO_COMMON_API void SetPartTypes(Pending::Pending<PartTypeMap>&& pending_part_types);
+    void SetPartTypes(Pending::Pending<PartTypeMap>&& pending_part_types);
 
 private:
     PartTypeManager();
@@ -391,7 +391,7 @@ public:
     //@}
 
     /** Sets hull types to the future value of \p pending_hull_types. */
-    FO_COMMON_API void SetHullTypes(Pending::Pending<HullTypeMap>&& pending_hull_types);
+    void SetHullTypes(Pending::Pending<HullTypeMap>&& pending_hull_types);
 
 private:
     HullTypeManager();
@@ -690,11 +690,11 @@ public:
 
     /** Sets ship design types to the future value of \p pending_designs
         found in \p subdir. */
-    FO_COMMON_API void SetShipDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
+    void SetShipDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
 
     /** Sets monster design types to the future value of \p
         pending_design_types found in \p subdir. */
-    FO_COMMON_API void SetMonsterDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
+    void SetMonsterDesignTypes(Pending::Pending<ParsedShipDesignsType>&& pending_designs);
 
 private:
     PredefinedShipDesignManager();

@@ -3,7 +3,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS unit_test_framework REQUI
 add_executable(fo_unittest_parse
     main.cpp
     CommonTest.cpp
-    $<TARGET_OBJECTS:freeorionparseobj>
+    $<TARGET_OBJECTS:freeorionparse>
 )
 
 target_compile_definitions(fo_unittest_parse

@@ -15,7 +15,7 @@ struct PlayerSetupData;
  * ShipDesign names refer to designs listed in default/scripting/ship_designs.
  * Useful for saving or specifying prearranged combinations of prearranged
  * ShipDesigns to automatically put together, such as during universe creation.*/
-class FleetPlan {
+class FO_COMMON_API FleetPlan {
 public:
     FleetPlan(const std::string& fleet_name, const std::vector<std::string>& ship_design_names,
               bool lookup_name_userstring = false) :

@@ -297,13 +297,6 @@ target_compile_options(freeorioncommon
         $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
 )
 
-if(APPLE)
-    set_target_properties(freeorioncommon
-        PROPERTIES
-        LINK_FLAGS "-undefined dynamic_lookup"
-    )
-endif()
-
 target_compile_definitions(freeorioncommon
     PRIVATE
     -DFREEORION_BUILD_COMMON
@@ -335,27 +328,20 @@ target_link_libraries(freeorioncommon
 add_dependencies(freeorioncommon freeorionversion)
 
 
-add_library(freeorionparseobj OBJECT "")
+add_library(freeorionparse OBJECT "")
 
-target_include_directories(freeorionparseobj SYSTEM
+target_include_directories(freeorionparse SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
 )
 
-set_property(TARGET freeorionparseobj
+set_property(TARGET freeorionparse
     PROPERTY
     POSITION_INDEPENDENT_CODE ON
 )
 
-if(WIN32)
-    set_property(TARGET freeorionparse
-        PROPERTY
-        OUTPUT_NAME Parsers
-    )
-endif()
-
-target_compile_options(freeorionparseobj
+target_compile_options(freeorionparse
     PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
         $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
@@ -365,38 +351,16 @@ target_compile_options(freeorionparseobj
         $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
 )
 
-target_compile_definitions(freeorionparseobj
+target_compile_definitions(freeorionparse
     PRIVATE
         -DNDEBUG
-        -DFREEORION_BUILD_PARSE
+        -DFREEORION_BUILD_COMMON
 )
 
-
-add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
-
-target_compile_options(freeorionparse
+target_sources(freeorioncommon
     PRIVATE
-        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
+        $<TARGET_OBJECTS:freeorionparse>
 )
-
-if(APPLE)
-    # Xcode doesn't build freeorionparse because it doesn't have any
-    # source code files associated and only links the freeorionparselib
-    # objects into a shared library.  Adding an empty file fixes this.
-    # https://cmake.org/cmake/help/v3.0/command/add_library.html
-    file(WRITE xcode_dummy.cpp "")
-    target_sources(freeorionparse
-        PRIVATE
-            xcode_dummy.cpp
-    )
-
-    set_target_properties(freeorionparse
-        PROPERTIES
-        LINK_FLAGS "-undefined dynamic_lookup"
-    )
-endif()
 
 
 add_executable(freeoriond "")
@@ -430,7 +394,6 @@ target_include_directories(freeoriond SYSTEM
 
 target_link_libraries(freeoriond
     freeorioncommon
-    freeorionparse
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
     ${Boost_LOG_LIBRARY}
@@ -473,7 +436,6 @@ target_include_directories(freeorionca SYSTEM
 
 target_link_libraries(freeorionca
     freeorioncommon
-    freeorionparse
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
     ${Boost_LOG_LIBRARY}
@@ -575,7 +537,6 @@ if(NOT BUILD_HEADLESS)
 
     target_link_libraries(freeorion
         freeorioncommon
-        freeorionparse
         GiGi
         GiGiSDL
         ${OPENGL_gl_LIBRARY}
@@ -608,8 +569,6 @@ if(APPLE)
             ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
             ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
-        COMMAND
-            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
             ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:GiGi>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
@@ -689,7 +648,6 @@ if(UNIX AND NOT APPLE)
     install(
         TARGETS
             freeorioncommon
-            freeorionparse
         LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
