@@ -1358,7 +1358,7 @@ class ShipDesigner(object):
                     print "For best design got got design id %s" % design_id
                 if design_id is not None:
                     best_design_list.append((best_rating_for_planet, pid, design_id,
-                                             self.production_cost, self._design_stats))
+                                             self.production_cost, copy.deepcopy(self._design_stats)))
                 else:
                     print_error("The best design for %s on planet %d could not be added."
                                 % (self.__class__.__name__, pid))
