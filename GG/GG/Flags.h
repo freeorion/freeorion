@@ -210,7 +210,6 @@ public:
                 return string.first;
         }
         throw UnknownString("Could not find flag corresponding to unknown string");
-        return FlagType(0);
     }
     //@}
 

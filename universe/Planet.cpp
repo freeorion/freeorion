@@ -33,7 +33,6 @@ namespace {
         case SZ_GASGIANT: return 0.25f;
         default:          return 1.0f;
         }
-        return 1.0f;
     }
 
     static const std::string EMPTY_STRING;

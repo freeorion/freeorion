@@ -456,7 +456,6 @@ std::string StealthChangeEvent::StealthChangeEventDetail::CombatLogDescription(i
                % attacker_link
                % target_link
                % empire_link);
-    return "";
 }
 
 

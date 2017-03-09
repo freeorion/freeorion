@@ -1140,8 +1140,6 @@ T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>,
             throw std::runtime_error("ValueRef evaluated with an unknown or invalid StatisticType.");
             break;
     }
-
-    return T(0);
 }
 
 template <class T>

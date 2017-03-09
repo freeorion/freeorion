@@ -4099,7 +4099,7 @@ bool Enqueued::TargetInvariant() const {
         (m_low &&       !m_low->TargetInvariant()) ||
         (m_high &&      !m_high->TargetInvariant()))
     { return false; }
-    return true;    return true;
+    return true;
 }
 
 bool Enqueued::SourceInvariant() const {
@@ -4109,7 +4109,7 @@ bool Enqueued::SourceInvariant() const {
         (m_low &&       !m_low->SourceInvariant()) ||
         (m_high &&      !m_high->SourceInvariant()))
     { return false; }
-    return true;    return true;
+    return true;
 }
 
 std::string Enqueued::Description(bool negated/* = false*/) const {
