@@ -178,11 +178,15 @@ endif ()
 
 target_include_directories(GiGiSDL SYSTEM
     PRIVATE
+        ${OPENGL_INCLUDE_DIR}
+        ${GLEW_INCLUDE_DIRS}
         ${SDL_INCLUDE_DIRS}
 )
 
 target_link_libraries(GiGiSDL
     GiGi
+    ${OPENGL_LIBRARIES}
+    ${GLEW_LIBRARIES}
     ${SDL_LIBRARIES}
 )
 
