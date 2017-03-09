@@ -99,7 +99,6 @@ ServerConnectWnd::ServerConnectWnd() :
 
     ResetDefaultPosition();
 
-    m_LAN_servers = HumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
     Init();
 }
 
@@ -146,7 +145,8 @@ void ServerConnectWnd::Init() {
 void ServerConnectWnd::PopulateServerList()
 {
     m_servers_lb->Clear();
-    for (const auto& server : m_LAN_servers) {
+    const auto server_names = HumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
+    for (const auto& server : server_names) {
         GG::ListBox::Row* row = new GG::ListBox::Row;
         row->push_back(new CUILabel(server));
         m_servers_lb->Insert(row);
@@ -155,7 +155,6 @@ void ServerConnectWnd::PopulateServerList()
 
 void ServerConnectWnd::RefreshServerList()
 {
-    m_LAN_servers = HumanClientApp::GetApp()->Networking().DiscoverLANServerNames();
     PopulateServerList();
 }
 
