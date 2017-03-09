@@ -287,6 +287,7 @@ target_compile_definitions(freeoriond
 target_include_directories(freeoriond SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
+        ${ZLIB_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
         ${PYTHON_INCLUDE_PATH}
 )
@@ -316,6 +317,7 @@ target_include_directories(freeorionca SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
         ${PYTHON_INCLUDE_PATH}
+        ${ZLIB_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
 )
 
@@ -344,11 +346,13 @@ target_include_directories(freeorion SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-        ${OPENAL_INCLUDE_DIR}
+        ${GLEW_INCLUDE_DIRS}
         ${SDL_INCLUDE_DIRS}
+        ${OPENAL_INCLUDE_DIR}
         ${OGG_INCLUDE_DIRS}
         ${VORBIS_INCLUDE_DIRS}
         ${FREETYPE_INCLUDE_DIRS}
+        ${ZLIB_INCLUDE_DIRS}
         ${PROJECT_SOURCE_DIR}/GG
 )
 

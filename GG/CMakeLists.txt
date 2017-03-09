@@ -178,6 +178,7 @@ endif ()
 
 target_include_directories(GiGiSDL SYSTEM
     PRIVATE
+        ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
         ${GLEW_INCLUDE_DIRS}
         ${SDL_INCLUDE_DIRS}
