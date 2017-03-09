@@ -339,13 +339,6 @@ target_compile_options(freeorioncommon
         $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
 )
 
-if(APPLE)
-    set_target_properties(freeorioncommon
-        PROPERTIES
-        LINK_FLAGS "-undefined dynamic_lookup"
-    )
-endif()
-
 target_compile_definitions(freeorioncommon
     PUBLIC
         -DBOOST_ALL_DYN_LINK
@@ -385,96 +378,63 @@ endif()
 add_dependencies(freeorioncommon freeorionversion)
 
 
-add_library(freeorionparseobj OBJECT "")
+add_library(freeorionparse OBJECT "")
 
 # Object libraries only understand the modern CMake approach of defining
 # dependencies via imported targets and target_link_libraries starting 3.12.
 # For now manually unpack the compiler definitions and include directories.
-target_compile_definitions(freeorionparseobj
+target_compile_definitions(freeorionparse
+    INTERFACE
+        $<TARGET_PROPERTY:Boost::disable_autolinking,COMPILE_DEFINITIONS>
+        $<TARGET_PROPERTY:Boost::dynamic_linking,COMPILE_DEFINITIONS>
     PUBLIC
+        -DBOOST_ALL_DYN_LINK
         $<TARGET_PROPERTY:Boost::boost,INTERFACE_COMPILE_DEFINITIONS>
         $<TARGET_PROPERTY:GiGi::header,INTERFACE_COMPILE_DEFINITIONS>
 )
 
-target_include_directories(freeorionparseobj
+target_include_directories(freeorionparse
+    INTERFACE
+        $<TARGET_PROPERTY:Boost::boost,INCLUDE_DIRECTORIES>
     PUBLIC
         $<TARGET_PROPERTY:Boost::boost,INTERFACE_INCLUDE_DIRECTORIES>
         $<TARGET_PROPERTY:GiGi::header,INTERFACE_INCLUDE_DIRECTORIES>
 )
 
-set_property(TARGET freeorionparseobj
+set_property(TARGET freeorionparse
     PROPERTY
     POSITION_INDEPENDENT_CODE ON
 )
 
 if(MSVC)
     # The debug information produced in this project is over the MSVC linking limit, remove it
-    get_target_property(PARSEOBJ_COMPILE_OPTIONS freeorionparseobj COMPILE_OPTIONS)
+    get_target_property(PARSEOBJ_COMPILE_OPTIONS freeorionparse COMPILE_OPTIONS)
     list(REMOVE_ITEM PARSEOBJ_COMPILE_OPTIONS 
         "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<OR:$<CONFIG:DEBUG>,$<CONFIG:RELWITHDEBINFO>>>:/Zi>"
     )
-    set_target_properties(freeorionparseobj 
+    set_target_properties(freeorionparse
         PROPERTIES
         COMPILE_OPTIONS "${PARSEOBJ_COMPILE_OPTIONS}"
     )
 endif()
 
-target_compile_options(freeorionparseobj
+target_compile_options(freeorionparse
     PRIVATE
         $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
         $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
         $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
 )
 
-target_compile_definitions(freeorionparseobj
-    PUBLIC
-        -DBOOST_ALL_DYN_LINK
+target_compile_definitions(freeorionparse
     PRIVATE
         -DNDEBUG
-        -DFREEORION_BUILD_PARSE
+        -DFREEORION_BUILD_COMMON
 )
 
-if(NOT WIN32)
-    add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
-endif()
-
-if(WIN32)
-    add_library(freeorionparse STATIC $<TARGET_OBJECTS:freeorionparseobj>)
-
-    set_property(TARGET freeorionparse
-        PROPERTY
-        OUTPUT_NAME Parsers
-    )
-endif()
-
-if(MSVC)
-    # The debug information produced in this project is over the MSVC linking limit, remove it
-    get_target_property(PARSE_COMPILE_OPTIONS freeorionparse COMPILE_OPTIONS)
-    list(REMOVE_ITEM PARSE_COMPILE_OPTIONS 
-        "$<$<AND:$<CXX_COMPILER_ID:MSVC>,$<OR:$<CONFIG:DEBUG>,$<CONFIG:RELWITHDEBINFO>>>:/Zi>"
-    )
-    set_target_properties(freeorionparse
-        PROPERTIES
-        COMPILE_OPTIONS "${PARSEOBJ_COMPILE_OPTIONS}"
-    )
-endif()
-
-if(APPLE)
-    # Xcode doesn't build freeorionparse because it doesn't have any
-    # source code files associated and only links the freeorionparselib
-    # objects into a shared library.  Adding an empty file fixes this.
-    # https://cmake.org/cmake/help/v3.0/command/add_library.html
-    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/xcode_dummy.cpp" "")
-    target_sources(freeorionparse
-        PRIVATE
-            "${CMAKE_CURRENT_BINARY_DIR}/xcode_dummy.cpp"
-    )
-
-    set_target_properties(freeorionparse
-        PROPERTIES
-        LINK_FLAGS "-undefined dynamic_lookup"
-    )
-endif()
+target_sources(freeorioncommon
+    PRIVATE
+        $<TARGET_OBJECTS:freeorionparse>
+)
 
 
 add_executable(freeoriond "")
@@ -499,7 +459,6 @@ target_include_directories(freeoriond SYSTEM
 target_link_libraries(freeoriond
     PRIVATE
         freeorioncommon
-        freeorionparse
         Boost::python${Boost_PYTHON_SUFFIX}
         ${PYTHON_LIBRARIES}
 )
@@ -528,7 +487,6 @@ target_include_directories(freeorionca SYSTEM
 
 target_link_libraries(freeorionca
     freeorioncommon
-    freeorionparse
     Boost::python${Boost_PYTHON_SUFFIX}
     ${PYTHON_LIBRARIES}
 )
@@ -607,7 +565,6 @@ if(NOT BUILD_HEADLESS)
 
     target_link_libraries(freeorion
         freeorioncommon
-        freeorionparse
         GiGi::GiGi
         ${SDL_LIBRARIES}
         ${OPENGL_gl_LIBRARY}
@@ -642,8 +599,6 @@ if(APPLE)
             ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
             ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
-        COMMAND
-            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
             ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:GiGi>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
         COMMAND
@@ -718,7 +673,6 @@ if(UNIX AND NOT APPLE)
     install(
         TARGETS
             freeorioncommon
-            freeorionparse
         LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )

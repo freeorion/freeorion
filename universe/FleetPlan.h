@@ -60,7 +60,7 @@ public:
         FleetPlan()
     {}
 
-    auto SpawnRate() const -> auto
+    auto SpawnRate() const -> double
     { return m_spawn_rate; }
 
     auto SpawnLimit() const -> int

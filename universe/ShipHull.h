@@ -225,7 +225,7 @@ public:
     auto GetCheckSum() const -> unsigned int;
 
     //! Sets hull types to the future value of \p pending_ship_hulls.
-    FO_COMMON_API void SetShipHulls(Pending::Pending<container_type>&& pending_ship_hulls);
+    void SetShipHulls(Pending::Pending<container_type>&& pending_ship_hulls);
 
 private:
     ShipHullManager();

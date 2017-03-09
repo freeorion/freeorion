@@ -255,4 +255,4 @@ namespace parse {
 // explicitly instantiate techs.
 // This allows Tech.h to only be included in this .cpp file and not Parse.h
 // which recompiles all parsers if Tech.h changes.
-template FO_PARSE_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);
+template FO_COMMON_API TechManager::TechParseTuple parse::techs<TechManager::TechParseTuple>(const boost::filesystem::path& path);

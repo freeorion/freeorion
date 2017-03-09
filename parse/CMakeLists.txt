@@ -1,4 +1,4 @@
-target_sources(freeorionparseobj
+target_sources(freeorionparse
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/Parse.h
     PRIVATE

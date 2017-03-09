@@ -246,7 +246,7 @@ public:
         std::set<std::string> // categories_seen
         >;
     /** Sets types to the value of \p future. */
-    FO_COMMON_API void SetTechs(Pending::Pending<TechParseTuple>&& future);
+    void SetTechs(Pending::Pending<TechParseTuple>&& future);
 
 
     /** returns the instance of this singleton class; you should use the free function GetTechManager() instead */
