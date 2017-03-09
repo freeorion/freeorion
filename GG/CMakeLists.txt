@@ -145,10 +145,10 @@ target_include_directories(GiGi SYSTEM
     PRIVATE
         ${Boost_INCLUDE_DIRS}
         ${OPENGL_INCLUDE_DIR}
-        ${GLEW_INCLUDE_DIR}
+        ${GLEW_INCLUDE_DIRS}
         ${FREETYPE_INCLUDE_DIRS}
-        ${PNG_INCLUDE_DIR}
-        ${TIFF_INCLUDE_DIR}
+        ${PNG_INCLUDE_DIRS}
+        ${TIFF_INCLUDE_DIRS}
 )
 
 target_link_libraries(GiGi
