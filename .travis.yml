@@ -80,5 +80,5 @@ script:
     fi
   - >
     if [[ "${TRAVIS_OS_NAME}" == "osx" ]]; then
-      xcodebuild -project FreeOrion.xcodeproj -configuration Release -alltargets
+      xcodebuild -parallelizeTargets -project FreeOrion.xcodeproj -configuration Release -alltargets
     fi
