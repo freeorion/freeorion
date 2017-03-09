@@ -5,7 +5,7 @@ Part
     mountableSlotTypes = Internal
     buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 10
-    tags = [ "PEDIA_GENERAL" ]
+    tags = [ "PEDIA_PC_GENERAL" ]
     location = OwnedBy empire = Source.Owner
     effectsgroups =
         EffectsGroup
