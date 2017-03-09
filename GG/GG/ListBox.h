@@ -198,8 +198,6 @@ public:
 
         bool                   m_ignore_adjust_layout;
         bool                   m_is_normalized;
-
-        friend struct DeferAdjustLayout;
     };
 
     typedef std::list<Row*>::iterator iterator;
