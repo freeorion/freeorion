@@ -86,6 +86,7 @@ if (WIN32)
         -D_CRT_NONSTDC_NO_DEPRECATE
         -DFREEORION_WIN32
         -D_WIN32_WINNT=0x0501
+        -DBOOST_ZLIB_BINARY=zlib.lib
     )
     if (MSVC)
         set (CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/../")
