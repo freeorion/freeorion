@@ -710,16 +710,7 @@ void ServerApp::NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_dat
     bool host_is_human(false);
     for (const auto& psd : player_setup_data) {
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            // In a single player game, the host player is always the human player, so
-            // this is just a matter of finding which player setup data is for
-            // a human player, and assigning that setup data to the host
-            // player id
-            if (m_networking.HostPlayerID() != psd.m_player_id)
-                ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners Human Player id, "
-                              << psd.m_player_id << ", is not the host id, " << m_networking.HostPlayerID() << ".";
-
             player_id_setup_data[psd.m_player_id] = psd;
-
         } else if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
             player_id_setup_data[psd.m_player_id] = psd;
         } else {
@@ -734,9 +725,26 @@ void ServerApp::NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_dat
         m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
+
+    if (m_networking.HostPlayerID() >= player_id_setup_data.size()) {
+        ErrorLogger() << "NewGameInitVerifyJoiners : Host id " << m_networking.HostPlayerID()
+                      << " is larger than the number of players = " << player_id_setup_data.size() << ".";
+        return;
+    }
+
+    if (player_id_setup_data[m_networking.HostPlayerID()].m_client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    {
+        ErrorLogger() << "NewGameInitVerifyJoiners : Host player with id "
+                      << m_networking.HostPlayerID() << " is not human.";
+        return;
+    }
+
     // ensure number of players connected and for which data are provided are consistent
-    if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size())
-        DebugLogger() << "ServerApp::NewGameInitVerifyJoiners has " << m_networking.NumEstablishedPlayers() << " established players but " << player_id_setup_data.size() << " entries in player setup data.";
+    if (m_networking.NumEstablishedPlayers() != player_id_setup_data.size()) {
+        ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners has " << m_networking.NumEstablishedPlayers()
+                      << " established players but " << player_id_setup_data.size() << " entries in player setup data.";
+        return;
+    }
 
     // validate some connection info / determine which players need empires created
     for (ServerNetworking::const_established_iterator player_connection_it = m_networking.established_begin();
