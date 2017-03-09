@@ -264,21 +264,25 @@ bool ListBox::Row::IsNormalized() const
 void ListBox::Row::Render()
 {}
 
+void ListBox::Row::GrowWidthsStretchesAlignmentsTo(std::size_t nn) {
+    while (m_col_widths.size() < nn) {
+        m_col_widths.emplace_back(X(5));
+        m_col_alignments.emplace_back(ALIGN_NONE);
+        m_col_stretches.emplace_back(0.0);
+    }
+}
+
 void ListBox::Row::push_back(Control* c)
 {
     m_cells.push_back(c);
-    m_col_widths.push_back(X(5));
-    m_col_alignments.push_back(ALIGN_NONE);
-    m_col_stretches.push_back(0.0);
-    if (1 < m_cells.size())
-        m_col_widths.back() = m_col_widths[m_cells.size() - 1];
-
-    std::size_t ii = m_cells.size() - 1;
+    GrowWidthsStretchesAlignmentsTo(m_cells.size());
+    auto ii = m_cells.size() - 1;
     Layout* layout = GetLayout();
-    if (c)
-        layout->Add(c, 0, ii, m_row_alignment | m_col_alignments.back());
-    layout->SetMinimumColumnWidth(ii, m_col_widths.back());
-    layout->SetColumnStretch(ii, m_col_stretches.back());
+    if (c) {
+        layout->Add(c, 0, ii, m_row_alignment | m_col_alignments[ii]);
+        layout->SetMinimumColumnWidth(ii, m_col_widths.back());
+        layout->SetColumnStretch(ii, m_col_stretches.back());
+    }
 }
 
 void ListBox::Row::clear()
@@ -394,6 +398,7 @@ void ListBox::Row::SetRowAlignment(Alignment align)
 
 void ListBox::Row::SetColAlignment(std::size_t n, Alignment align)
 {
+    GrowWidthsStretchesAlignmentsTo(n + 1);
     if (align == m_col_alignments[n])
         return;
 
@@ -406,6 +411,7 @@ void ListBox::Row::SetColAlignment(std::size_t n, Alignment align)
 
 void ListBox::Row::SetColWidth(std::size_t n, X width)
 {
+    GrowWidthsStretchesAlignmentsTo(n + 1);
     if (width == m_col_widths[n])
         return;
 

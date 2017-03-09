@@ -187,6 +187,8 @@ public:
         boost::signals2::signal<void(const Pt&, GG::Flags<GG::ModKey>)> RightClickedSignal;
 
     protected:
+        /** Add elements to m_col_widths, m_col_stretches and m_col_alignments until they reach size nn. */
+        void GrowWidthsStretchesAlignmentsTo(std::size_t nn);
         void RClick(const Pt& pt, GG::Flags<GG::ModKey> mod) override;
 
         std::vector<Control*>  m_cells;          ///< the Controls in this Row (each may be null)
