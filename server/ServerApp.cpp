@@ -587,11 +587,9 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     }
 
     std::vector<PlayerSetupData> psds;
-    for (std::map<int, PlayerSetupData>::iterator it = player_id_setup_data.begin();
-         it!= player_id_setup_data.end(); ++it)
-    {
-        it->second.m_player_id = it->first;
-        psds.push_back(it->second);
+    for (auto& id_and_psd : player_id_setup_data) {
+        id_and_psd.second.m_player_id = id_and_psd.first;
+        psds.push_back(id_and_psd.second);
     }
 
     NewGameInitConcurrentWithJoiners(multiplayer_lobby_data, psds);
@@ -606,10 +604,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_s
 
     // validate some connection info / determine which players need empires created
     std::map<int, PlayerSetupData> active_players_id_setup_data;
-    for (std::vector<PlayerSetupData>::const_iterator player_setup_data_it = player_setup_data.begin();
-         player_setup_data_it != player_setup_data.end(); ++player_setup_data_it) {
-        const PlayerSetupData& psd = *player_setup_data_it;
-
+    for (const auto& psd : player_setup_data) {
         if (!psd.m_player_name.empty()
             && (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER
                 || psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER))
@@ -712,10 +707,8 @@ void ServerApp::NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_dat
 
     std::map<int, PlayerSetupData> player_id_setup_data;
 
-    for (std::vector<PlayerSetupData>::const_iterator setup_data_it = player_setup_data.begin();
-         setup_data_it != player_setup_data.end(); ++setup_data_it)
-    {
-        const PlayerSetupData& psd = *setup_data_it;
+    bool host_is_human(false);
+    for (const auto& psd : player_setup_data) {
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             // In a single player game, the host player is always the human player, so
             // this is just a matter of finding which player setup data is for

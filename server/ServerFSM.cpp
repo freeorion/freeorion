@@ -1053,27 +1053,26 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         // for new games, single player setup data contains full m_players
         // vector, so can just use the contents of that to create AI
         // clients
-        for (std::vector<PlayerSetupData>::iterator psd_it = players.begin(); psd_it != players.end(); ++psd_it) {
-            if (psd_it->m_player_name.empty()) {
-                if (psd_it->m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                    psd_it->m_player_name = "AI_" + boost::lexical_cast<std::string>(player_num++);
-                else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                    psd_it->m_player_name = "Human_Player_" + boost::lexical_cast<std::string>(player_num++);
-                else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-                    psd_it->m_player_name = "Observer_" + boost::lexical_cast<std::string>(player_num++);
-                else if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-                    psd_it->m_player_name = "Moderator_" + boost::lexical_cast<std::string>(player_num++);
+        for (auto& psd : players) {
+            if (psd.m_player_name.empty()) {
+                if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                    psd.m_player_name = "AI_" + boost::lexical_cast<std::string>(player_num++);
+                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    psd.m_player_name = "Human_Player_" + boost::lexical_cast<std::string>(player_num++);
+                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                    psd.m_player_name = "Observer_" + boost::lexical_cast<std::string>(player_num++);
+                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                    psd.m_player_name = "Moderator_" + boost::lexical_cast<std::string>(player_num++);
                 else
-                    psd_it->m_player_name = "Player_" + boost::lexical_cast<std::string>(player_num++);
+                    psd.m_player_name = "Player_" + boost::lexical_cast<std::string>(player_num++);
             }
 
-            if (psd_it->m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-                psd_it->m_player_id = server.Networking().HostPlayerID();
+            if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                psd.m_player_id = server.Networking().HostPlayerID();
             } else {
-                psd_it->m_player_id = player_id++;
+                psd.m_player_id = player_id++;
             }
         }
-
 
     } else {
         // for loaded games, all that is specified is the filename, and the
@@ -1156,7 +1155,7 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-        std::map<std::string, int>::const_iterator expected_it = m_expected_ai_player_ids.find(player_name);
+        const auto& expected_it = m_expected_ai_player_ids.find(player_name);
         // verify that player name was expected
         if (expected_it == m_expected_ai_player_ids.end()) {
             // unexpected ai player
