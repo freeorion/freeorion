@@ -67,6 +67,16 @@ add_compile_options(
     $<$<CXX_COMPILER_ID:clang>:-Wall>
     # https://msdn.microsoft.com/en-us/library/thxezb7y.aspx#Anchor_1
     $<$<CXX_COMPILER_ID:msvc>:/W4>
+    # Disable "'<param>': unreferenced formal parameter" warning
+    $<$<CXX_COMPILER_ID:msvc>:/wd4100>
+    # Disable "'<class>::<member>': class '<member-type>' needs to have dll-interface to be used by clients of class '<class>'" warning
+    $<$<CXX_COMPILER_ID:msvc>:/wd4251>
+    # Disable "'<func>': unreferenced local function has been removed" warning
+    $<$<CXX_COMPILER_ID:msvc>:/wd4505>
+    # Disable "declaration of '<type>' hides global declaration" warning
+    $<$<CXX_COMPILER_ID:msvc>:/wd4459>
+    # Disable "function '<func>' marked as __forceinline not inlined" warning
+    $<$<CXX_COMPILER_ID:msvc>:/wd4714>
 )
 
 if (WIN32)
