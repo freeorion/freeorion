@@ -439,12 +439,6 @@ bool ServerNetworking::ModeratorsInGame() const {
     return false;
 }
 
-bool ServerNetworking::SendMessage(const Message& message,
-                                   PlayerConnectionPtr player_connection)
-{
-    return player_connection->SendMessage(message);
-}
-
 bool ServerNetworking::SendMessageAll(const Message& message) {
     bool success = true;
     for (ServerNetworking::const_established_iterator player_it = established_begin();

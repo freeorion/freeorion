@@ -88,9 +88,6 @@ public:
     //@}
 
     /** \name Mutators */ //@{
-    /** Sends a synchronous message \a message to \a player_connection and returns true on success. */
-    bool SendMessage(const Message& message, PlayerConnectionPtr player_connection);
-
     /** Sends a synchronous message \a message to the player indicated in the message and returns true on success. */
     bool SendMessageAll(const Message& message);
 

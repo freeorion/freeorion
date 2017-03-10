@@ -1872,7 +1872,6 @@ ShuttingDownServer::~ShuttingDownServer()
 
 sc::result ShuttingDownServer::react(const LeaveGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.LeaveGame";
-    const Message& message = msg.m_message;
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
     int player_id = player_connection->PlayerID();
 
