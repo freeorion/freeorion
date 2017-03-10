@@ -37,7 +37,6 @@
 
 namespace {
     const std::string DUMMY_EMPTY_MESSAGE = "Lathanda";
-    const std::string ACKNOWLEDGEMENT = "ACK";
 }
 
 ////////////////////////////////////////////////
