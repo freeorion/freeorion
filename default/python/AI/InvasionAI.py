@@ -482,7 +482,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
     """sends a list of invasion fleets to a list of planet_value_pairs"""
     if not fleet_ids:
         return
-    
+
     universe = fo.getUniverse()
     invasion_fleet_pool = set(fleet_ids)
 
@@ -522,7 +522,7 @@ def assign_invasion_fleets_to_invade():
     all_troopbase_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION)
     available_troopbase_fleet_ids = set(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_troopbase_fleet_ids))
     for fid in list(available_troopbase_fleet_ids):
-        if fid not in available_troopbase_fleet_ids:  # TODO: I do not see how this check makes sense, maybe remove?
+        if fid not in available_troopbase_fleet_ids:  # entry may have been discarded in previous loop iterations
             continue
         fleet = universe.getFleet(fid)
         if not fleet:
@@ -535,7 +535,7 @@ def assign_invasion_fleets_to_invade():
             [(pid, foAI.foAIstate.qualifyingTroopBaseTargets[pid]) for pid in available_planets])
         targets = [pid for pid in available_planets if foAI.foAIstate.qualifyingTroopBaseTargets[pid][1] != -1]
         if not targets:
-            print "Error: found no valid target for troop base in system %s (%d)" % (system.name, sys_id)
+            print "Failure: found no valid target for troop base in system %s" % system
             continue
         status = foAI.foAIstate.systemStatus.get(sys_id, {})
         local_base_troops = set(status.get('myfleets', [])).intersection(available_troopbase_fleet_ids)
@@ -546,8 +546,7 @@ def assign_invasion_fleets_to_invade():
         target_id = INVALID_ID
         best_score = -1
         target_troops = 0
-        for pid, rating in assign_invasion_values(targets).items():
-            p_score, p_troops = rating
+        for pid, (p_score, p_troops) in assign_invasion_values(targets).items():
             if p_score > best_score:
                 best_score = p_score
                 target_id = pid
