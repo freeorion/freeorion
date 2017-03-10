@@ -341,7 +341,6 @@ void AIClientApp::HandleMessage(const Message& msg) {
     }
 
     case Message::PLAYER_CHAT: {
-        const std::string& text = msg.Text();
         std::string data;
         int player_id;
         ExtractServerPlayerChatMessageData(msg, player_id, data);
