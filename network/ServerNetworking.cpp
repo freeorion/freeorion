@@ -226,8 +226,8 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
                           << "error #" << error.value() << " \"" << error.message() << "\"";
         }
     } else {
-        assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[2]);
-        if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[2]) {
+        assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[Message::Parts::SIZE]);
+        if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[Message::Parts::SIZE]) {
             if (TRACE_EXECUTION && m_incoming_message.Type() != Message::REQUEST_NEW_DESIGN_ID) {   // new design id messages ignored due to log spam
                 DebugLogger() << "Server received message from player id: " << m_ID
                               << " of type " << MessageTypeName(m_incoming_message.Type())
@@ -284,7 +284,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         assert(bytes_transferred <= Message::HeaderBufferSize);
         if (bytes_transferred == Message::HeaderBufferSize) {
             BufferToHeader(m_incoming_header_buffer, m_incoming_message);
-            m_incoming_message.Resize(m_incoming_header_buffer[2]);
+            m_incoming_message.Resize(m_incoming_header_buffer[Message::Parts::SIZE]);
             boost::asio::async_read(
                 m_socket,
                 boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),

@@ -114,15 +114,15 @@ void swap(Message& lhs, Message& rhs)
 { lhs.Swap(rhs); }
 
 void BufferToHeader(const Message::HeaderBuffer& buffer, Message& message) {
-    message.m_type = static_cast<Message::MessageType>(buffer[0]);
-    message.m_synchronous_response = (buffer[1] != 0);
-    message.m_message_size = buffer[2];
+    message.m_type = static_cast<Message::MessageType>(buffer[Message::Parts::TYPE]);
+    message.m_synchronous_response = (buffer[Message::Parts::RESPONSE] != 0);
+    message.m_message_size = buffer[Message::Parts::SIZE];
 }
 
 void HeaderToBuffer(const Message& message, Message::HeaderBuffer& buffer) {
-    buffer[0] = message.Type();
-    buffer[1] = message.SynchronousResponse();
-    buffer[2] = message.Size();
+    buffer[Message::Parts::TYPE] = message.Type();
+    buffer[Message::Parts::RESPONSE] = message.SynchronousResponse();
+    buffer[Message::Parts::SIZE] = message.Size();
 }
 
 ////////////////////////////////////////////////

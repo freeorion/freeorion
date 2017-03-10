@@ -47,7 +47,9 @@ namespace Moderator {
   * misbehave as well.) */
 class FO_COMMON_API Message {
 public:
-    typedef std::array<int, 3> HeaderBuffer;
+    enum Parts : size_t {TYPE = 0, RESPONSE, SIZE, Parts_Count};
+
+    typedef std::array<int, Parts::Parts_Count> HeaderBuffer;
 
     constexpr static size_t HeaderBufferSize =
         std::tuple_size<HeaderBuffer>::value * sizeof(HeaderBuffer::value_type);
