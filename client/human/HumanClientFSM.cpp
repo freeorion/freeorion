@@ -161,8 +161,8 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
         Client().GetClientUI().GetMapWnd()->Sanitize();
 
         return transit<PlayingGame>();
-    } catch (...) {
-        ErrorLogger() << "WaitingForSPHostAck::react(const HostSPGame& msg) couldn't parese message text: " << msg.m_message.Text();
+    } catch (const boost::bad_lexical_cast& ex) {
+        ErrorLogger() << "WaitingForSPHostAck::react(const HostSPGame& msg) couldn't parse message text: " << msg.m_message.Text() << " Error: " << ex.what();
         return transit<IntroMenu>();
     }
 }
@@ -229,8 +229,8 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
         Client().Networking().SetHostPlayerID(host_id);
 
         return transit<MPLobby>();
-    } catch (...) {
-        ErrorLogger() << "WaitingForMPHostAck::react(const HostMPGame& msg) couldn't parese message text: " << msg.m_message.Text();
+    } catch (const boost::bad_lexical_cast& ex) {
+        ErrorLogger() << "WaitingForMPHostAck::react(const HostMPGame& msg) couldn't parse message text: " << msg.m_message.Text() << " Error: " << ex.what();
         return transit<IntroMenu>();
     }
 }
@@ -296,8 +296,8 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
         Client().Networking().SetPlayerID(player_id);
 
         return transit<MPLobby>();
-    } catch (...) {
-        ErrorLogger() << "WaitingForMPJoinAck::react(const JoinGame& msg) couldn't parese message text: " << msg.m_message.Text();
+    } catch (const boost::bad_lexical_cast& ex) {
+        ErrorLogger() << "WaitingForMPJoinAck::react(const JoinGame& msg) couldn't parse message text: " << msg.m_message.Text() << " Error: " << ex.what();
         return transit<IntroMenu>();
     }
 }
@@ -376,11 +376,7 @@ boost::statechart::result MPLobby::react(const HostID& msg) {
     if (text.empty()) {
         ErrorLogger() << "MPLobby::react(const HostID& msg) got empty message text?!";
     } else {
-        try {
-            host_id = boost::lexical_cast<int>(text);
-        } catch (...) {
-            ErrorLogger() << "MPLobby::react(const HostID& msg) couldn't parese message text: " << text;
-        }
+        host_id = boost::lexical_cast<int>(text);
     }
     Client().Networking().SetHostPlayerID(host_id);
 
@@ -494,11 +490,7 @@ boost::statechart::result PlayingGame::react(const HostID& msg) {
     if (text.empty()) {
         ErrorLogger() << "PlayingGame::react(const HostID& msg) got empty message text?!";
     } else {
-        try {
-            host_id = boost::lexical_cast<int>(text);
-        } catch (...) {
-            ErrorLogger() << "PlayingGame::react(const HostID& msg) couldn't parese message text: " << text;
-        }
+        host_id = boost::lexical_cast<int>(text);
     }
     Client().Networking().SetHostPlayerID(host_id);
 
