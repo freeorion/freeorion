@@ -67,12 +67,25 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
 {}
 
 PlayerConnection::~PlayerConnection() {
-    boost::system::error_code ec;
-    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-    if (ec && (m_ID != INVALID_PLAYER_ID)) {
-        ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error #"
-                      << ec.value() << " \"" << ec.message() << "\""
-                      << " for player id " << m_ID;
+    boost::system::error_code error;
+    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+    if (error && (m_ID != INVALID_PLAYER_ID)) {
+        if (error == boost::asio::error::eof) {
+            DebugLogger() << "Player connection disconnected by EOF from client.";
+            m_socket.close();
+        }
+        else if (error == boost::asio::error::connection_reset)
+            DebugLogger() << "Player connection disconnected, due to connection reset by client.";
+        else if (error == boost::asio::error::operation_aborted)
+            DebugLogger() << "Player connection closed by server.";
+        else if (error == boost::asio::error::shut_down)
+            DebugLogger() << "Player connection shutdown.";
+        else {
+
+            ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error #"
+                          << error.value() << " \"" << error.message() << "\""
+                          << " for player id " << m_ID;
+        }
     }
     m_socket.close();
 }
@@ -205,11 +218,11 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
         if (error == boost::asio::error::eof ||
             error == boost::asio::error::connection_reset) {
             ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): "
-                          << "error #"<<error.value()<<" \"" << error.message() << "\"";
+                          << "error #" << error.value() << " \"" << error.message() << "\"";
             EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
         } else {
             ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): "
-                          << "error #"<<error.value()<<" \"" << error.message() << "\"";
+                          << "error #" << error.value() << " \"" << error.message() << "\"";
         }
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
@@ -262,7 +275,7 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
                 EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
             } else {
                 ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
-                              << "error #"<<error.value()<<" \"" << error.message() << "\"";
+                              << "error #" << error.value() << " \"" << error.message() << "\"";
             }
         }
     } else {
