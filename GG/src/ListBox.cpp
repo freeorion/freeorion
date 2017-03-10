@@ -265,10 +265,10 @@ void ListBox::Row::Render()
 {}
 
 void ListBox::Row::GrowWidthsStretchesAlignmentsTo(std::size_t nn) {
-    while (m_col_widths.size() < nn) {
-        m_col_widths.emplace_back(X(5));
-        m_col_alignments.emplace_back(ALIGN_NONE);
-        m_col_stretches.emplace_back(0.0);
+    if (m_col_widths.size() < nn) {
+        m_col_widths.resize(nn, X(5));
+        m_col_alignments.resize(nn, ALIGN_NONE);
+        m_col_stretches.resize(nn, 0.0);
     }
 }
 
