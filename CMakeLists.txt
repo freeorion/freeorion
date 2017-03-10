@@ -77,6 +77,8 @@ add_compile_options(
     $<$<CXX_COMPILER_ID:msvc>:/wd4459>
     # Disable "function '<func>' marked as __forceinline not inlined" warning
     $<$<CXX_COMPILER_ID:msvc>:/wd4714>
+    # Enable C++ Exception unwind mechanics
+    $<$<CXX_COMPILER_ID:msvc>:/EHsc>
 )
 
 if (WIN32)
