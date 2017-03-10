@@ -2329,7 +2329,7 @@ void ListBox::AdjustScrolls(bool adjust_for_resize, const std::pair<bool, bool>&
     }
 
     // Resize rows to fit client area.
-    if (vscroll_added_or_removed) {
+    if (vscroll_added_or_removed || adjust_for_resize) {
         RequirePreRender();
         X row_width(std::max(ClientWidth(), X(1)));
         for (Row* row : m_rows) {
