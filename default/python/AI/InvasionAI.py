@@ -515,12 +515,12 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
             fleet_mission.set_target(mission_type, target)
 
 
-def assign_invasion_fleets_to_invade():
-    """Assign fleet targets to invadable planets."""
+def assign_invasion_bases():
+    """Assign our troop bases to invasion targets."""
     universe = fo.getUniverse()
-
     all_troopbase_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION)
     available_troopbase_fleet_ids = set(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_troopbase_fleet_ids))
+
     for fid in list(available_troopbase_fleet_ids):
         if fid not in available_troopbase_fleet_ids:  # entry may have been discarded in previous loop iterations
             continue
@@ -569,8 +569,13 @@ def assign_invasion_fleets_to_invade():
         fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
         fleet_mission.set_target(MissionType.ORBITAL_INVASION, target)
 
-    invasion_fleet_ids = AIstate.invasionFleetIDs
 
+def assign_invasion_fleets_to_invade():
+    """Assign fleet targets to invadable planets."""
+
+    assign_invasion_bases()
+
+    invasion_fleet_ids = AIstate.invasionFleetIDs
     send_invasion_fleets(invasion_fleet_ids, AIstate.invasionTargets, MissionType.INVASION)
     all_invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
     for fid in FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids):
