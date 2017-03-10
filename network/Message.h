@@ -188,16 +188,16 @@ FO_COMMON_API Message JoinGameMessage(const std::string& player_name, Networking
 /** creates a HOST_ID message.  The player ID of the host is sent in the message. */
 FO_COMMON_API Message HostIDMessage(int host_player_id);
 
-/** creates a GAME_START message.  Contains the initial game state visible to player \a player_id.*/
-FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+/** creates a GAME_START message.  Contains the initial game state visible to the player.*/
+FO_COMMON_API Message GameStartMessage(bool single_player_game, int empire_id, int current_turn,
                                        const EmpireManager& empires, const Universe& universe,
                                        const SpeciesManager& species, CombatLogManager& combat_logs,
                                        const SupplyManager& supply, const std::map<int, PlayerInfo>& players,
                                        const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
-  * player \a player_id.  Also includes data loaded from a saved game. */
-FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+  * the player.  Also includes data loaded from a saved game. */
+FO_COMMON_API Message GameStartMessage(bool single_player_game, int empire_id, int current_turn,
                                        const EmpireManager& empires, const Universe& universe,
                                        const SpeciesManager& species, CombatLogManager& combat_logs,
                                        const SupplyManager& supply,
@@ -206,8 +206,8 @@ FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, i
                                        const GalaxySetupData& galaxy_setup_data, bool use_binary_serialization);
 
 /** creates a GAME_START message.  Contains the initial game state visible to
-  * player \a player_id.  Also includes state string loaded from a saved game. */
-FO_COMMON_API Message GameStartMessage(int player_id, bool single_player_game, int empire_id, int current_turn,
+  * the player.  Also includes state string loaded from a saved game. */
+FO_COMMON_API Message GameStartMessage(bool single_player_game, int empire_id, int current_turn,
                                        const EmpireManager& empires, const Universe& universe,
                                        const SpeciesManager& species, CombatLogManager& combat_logs,
                                        const SupplyManager& supply,

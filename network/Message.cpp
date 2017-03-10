@@ -180,7 +180,7 @@ Message HostIDMessage(int host_player_id) {
                    std::to_string(host_player_id));
 }
 
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
+Message GameStartMessage(bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
                          const Universe& universe, const SpeciesManager& species,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
@@ -225,7 +225,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
     return Message(Message::GAME_START, os.str());
 }
 
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
+Message GameStartMessage(bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
                          const Universe& universe, const SpeciesManager& species,
                          CombatLogManager& combat_logs, const SupplyManager& supply,
@@ -285,7 +285,7 @@ Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
     return Message(Message::GAME_START, os.str());
 }
 
-Message GameStartMessage(int player_id, bool single_player_game, int empire_id,
+Message GameStartMessage(bool single_player_game, int empire_id,
                          int current_turn, const EmpireManager& empires,
                          const Universe& universe, const SpeciesManager& species,
                          CombatLogManager& combat_logs, const SupplyManager& supply,

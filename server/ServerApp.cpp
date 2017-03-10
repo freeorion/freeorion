@@ -804,12 +804,12 @@ void ServerApp::SendNewGameStartMessages() {
         int player_id = player_connection->PlayerID();
         int empire_id = PlayerEmpireID(player_id);
         bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
-        player_connection->SendMessage(GameStartMessage(player_id,              m_single_player_game,
-                                                        empire_id,              m_current_turn,
-                                                        m_empires,              m_universe,
-                                                        GetSpeciesManager(),    GetCombatLogManager(),
-                                                        GetSupplyManager(),     player_info_map,
-                                                        m_galaxy_setup_data,    use_binary_serialization));
+        player_connection->SendMessage(GameStartMessage(m_single_player_game,    empire_id,
+                                                        m_current_turn,          m_empires,
+                                                        m_universe,              GetSpeciesManager(),
+                                                        GetCombatLogManager(),   GetSupplyManager(),
+                                                        player_info_map,         m_galaxy_setup_data,
+                                                        use_binary_serialization));
     }
 }
 
@@ -1242,14 +1242,14 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             if (!psgd.m_save_state_string.empty())
                 sss = &psgd.m_save_state_string;
 
-            player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
+            player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map, *orders, sss,
                                                             m_galaxy_setup_data, use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
+            player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(),  player_info_map, *orders,
@@ -1260,7 +1260,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                    client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
 
-            player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, ALL_EMPIRES,
+            player_connection->SendMessage(GameStartMessage(m_single_player_game, ALL_EMPIRES,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map,
