@@ -52,7 +52,7 @@ FO_COMMON_API int EffectiveSign(double val);
  TODO: Adopt an out of house i18n framework and handle of empty, singular, pairs, triplets etc. correctly. */
 
 template<typename HeaderContainer, typename ListContainer>
-FO_COMMON_API boost::format FlexibleFormatList(
+boost::format FlexibleFormatList(
     const HeaderContainer& header_words,
     const ListContainer& words,
     const std::string& plural_header_template,
@@ -132,7 +132,7 @@ FO_COMMON_API boost::format FlexibleFormatList(
 }
 
 template<typename Container>
-FO_COMMON_API boost::format FlexibleFormatList(const Container& words) {
+boost::format FlexibleFormatList(const Container& words) {
     return FlexibleFormatList(std::vector<std::string>(), words,
                               UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER"),
                               UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER"),
@@ -141,24 +141,24 @@ FO_COMMON_API boost::format FlexibleFormatList(const Container& words) {
 }
 
 template<typename Container>
-FO_COMMON_API boost::format FlexibleFormatList(
+boost::format FlexibleFormatList(
     const Container& words, const std::string& all_header) {
     return FlexibleFormatList(std::vector<std::string>(), words, all_header, all_header, all_header, all_header);
 }
 template<typename Container>
-FO_COMMON_API boost::format FlexibleFormatList(
+boost::format FlexibleFormatList(
     const Container& words, const std::string& plural_header, const std::string& single_header) {
     return FlexibleFormatList(std::vector<std::string>(), words, plural_header, single_header, plural_header, plural_header);
 }
 template<typename Container>
-FO_COMMON_API boost::format FlexibleFormatList(
+boost::format FlexibleFormatList(
     const Container& words, const std::string& plural_header
     , const std::string& single_header, const std::string& empty_header) {
     return FlexibleFormatList(std::vector<std::string>(), words, plural_header, single_header, empty_header, plural_header);
 }
 
 template<typename T1, typename T2>
-FO_COMMON_API boost::format FlexibleFormatList(const T2& header_words, const T1& words) {
+boost::format FlexibleFormatList(const T2& header_words, const T1& words) {
     return FlexibleFormatList(header_words, words
                               , UserString("FORMAT_LIST_DEFAULT_PLURAL_HEADER")
                               , UserString("FORMAT_LIST_DEFAULT_SINGLE_HEADER")
@@ -167,18 +167,18 @@ FO_COMMON_API boost::format FlexibleFormatList(const T2& header_words, const T1&
 }
 
 template<typename T1, typename T2>
-FO_COMMON_API boost::format FlexibleFormatList(
+boost::format FlexibleFormatList(
     const T2& header_words, const T1& words, const std::string& all_header) {
     return FlexibleFormatList(header_words, words, all_header, all_header, all_header, all_header);
 }
 template<typename T1, typename T2>
-FO_COMMON_API boost::format FlexibleFormatList(
+boost::format FlexibleFormatList(
     const T2& header_words, const T1& words, const std::string& plural_header, const std::string& single_header) {
     return FlexibleFormatList(header_words, words, plural_header, single_header, plural_header, plural_header);
 }
 
 template<typename T1, typename T2>
-FO_COMMON_API boost::format FlexibleFormatList(
+boost::format FlexibleFormatList(
     const T2& header_words, const T1& words, const std::string& plural_header
     , const std::string& single_header, const std::string& empty_header) {
     return FlexibleFormatList(header_words, words, plural_header, single_header, empty_header, plural_header);

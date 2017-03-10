@@ -4,6 +4,7 @@
 #include "../universe/EnumsFwd.h"
 #include "Diplomacy.h"
 #include "../util/Export.h"
+#include "../util/Serialize.h"
 
 #include <GG/Clr.h>
 
@@ -111,6 +112,11 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+extern template FO_COMMON_API void EmpireManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+extern template FO_COMMON_API void EmpireManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+extern template FO_COMMON_API void EmpireManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+extern template FO_COMMON_API void EmpireManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 /** The colors that are available for use for empires in the game. */
 FO_COMMON_API const std::vector<GG::Clr>& EmpireColors();

@@ -496,7 +496,7 @@ public:
 
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
 
-    friend bool operator ==(const ShipDesign& first, const ShipDesign& second);
+    friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
     //@}
 
     bool                            ProductionLocation(int empire_id, int location_id) const;   ///< returns true iff the empire with ID empire_id can produce this design at the location with location_id

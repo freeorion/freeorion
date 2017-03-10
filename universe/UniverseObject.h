@@ -19,7 +19,7 @@ class Meter;
 class System;
 class SitRepEntry;
 struct UniverseObjectVisitor;
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 // The ID number assigned to a UniverseObject upon construction;
 // It is assigned an ID later when it is placed in the universe

@@ -569,57 +569,57 @@ void ObjectMap::Insert(std::shared_ptr<T> item, int empire_id /* = ALL_EMPIRES *
 // template specializations
 
 template <>
-const std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, std::shared_ptr<System>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<System>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, std::shared_ptr<Building>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<Building>>& ObjectMap::Map() const;
 
 template <>
-const std::map<int, std::shared_ptr<Field>>& ObjectMap::Map() const;
+FO_COMMON_API const std::map<int, std::shared_ptr<Field>>& ObjectMap::Map() const;
 
 template <>
-std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<UniverseObject>>& ObjectMap::Map();
 
 template <>
-std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<ResourceCenter>>& ObjectMap::Map();
 
 template <>
-std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<PopCenter>>& ObjectMap::Map();
 
 template <>
-std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<Ship>>& ObjectMap::Map();
 
 template <>
-std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<Fleet>>& ObjectMap::Map();
 
 template <>
-std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<Planet>>& ObjectMap::Map();
 
 template <>
-std::map<int, std::shared_ptr<System>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<System>>& ObjectMap::Map();
 
 template <>
-std::map<int, std::shared_ptr<Building>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<Building>>& ObjectMap::Map();
 
 template <>
-std::map<int, std::shared_ptr<Field>>& ObjectMap::Map();
+FO_COMMON_API std::map<int, std::shared_ptr<Field>>& ObjectMap::Map();
 
 #endif

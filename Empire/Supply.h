@@ -9,7 +9,7 @@
 #include <set>
 #include <string>
 
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** Used to calcuate all empires' supply distributions. */
 class FO_COMMON_API SupplyManager {

@@ -14,6 +14,7 @@
 
 #include "MultiplayerCommon.h"
 #include "Export.h"
+#include "Serialize.h"
 #include "Directories.h"
 
 /** Contains preview information about a savegame.
@@ -43,6 +44,11 @@ struct FO_COMMON_API SaveGamePreviewData {
 };
 
 BOOST_CLASS_VERSION(SaveGamePreviewData, 2);
+
+extern template FO_COMMON_API void SaveGamePreviewData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, unsigned int);
+extern template FO_COMMON_API void SaveGamePreviewData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, unsigned int);
+extern template FO_COMMON_API void SaveGamePreviewData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, unsigned int);
+extern template FO_COMMON_API void SaveGamePreviewData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, unsigned int);
 
 /** Stores all aggregated information about a save file */
 struct FO_COMMON_API FullPreview {

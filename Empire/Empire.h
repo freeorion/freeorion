@@ -15,9 +15,9 @@
 struct ItemSpec;
 class ShipDesign;
 class SitRepEntry;
-extern const int INVALID_GAME_TURN;
-extern const int INVALID_OBJECT_ID;
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int INVALID_GAME_TURN;
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 class Alignment {
 public:
@@ -145,7 +145,7 @@ private:
 
 struct FO_COMMON_API ProductionQueue {
     /** The type that specifies a single production item (BuildType and name string). */
-    struct ProductionItem {
+    struct FO_COMMON_API ProductionItem {
         ProductionItem();
 
         ProductionItem(BuildType build_type_, std::string name_);   ///< basic ctor for BuildTypes that use std::string to identify specific items (BuildingTypes)
@@ -172,7 +172,7 @@ struct FO_COMMON_API ProductionQueue {
     };
 
     /** The type of a single element in the production queue. */
-    struct Element {
+    struct FO_COMMON_API Element {
         Element();
 
         Element(ProductionItem item_, int empire_id_, int ordered_, int remaining_, int location_, bool paused_ = false);

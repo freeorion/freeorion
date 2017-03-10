@@ -4,6 +4,7 @@
 
 #include "EnumsFwd.h"
 #include "../util/Export.h"
+#include "../util/Serialize.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -23,7 +24,7 @@ namespace Effect {
     class EffectsGroup;
 }
 
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** A setting that a ResourceCenter can be assigned to influence what it
   * produces.  Doesn't directly affect the ResourceCenter, but effectsgroups
@@ -212,9 +213,9 @@ private:
 /** Holds all FreeOrion species.  Types may be looked up by name. */
 class FO_COMMON_API SpeciesManager {
 private:
-    struct PlayableSpecies
+    struct FO_COMMON_API PlayableSpecies
     { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
-    struct NativeSpecies
+    struct FO_COMMON_API NativeSpecies
     { bool operator()(const std::map<std::string, Species*>::value_type& species_map_iterator) const; };
 
 public:
@@ -334,6 +335,15 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+extern template
+FO_COMMON_API void SpeciesManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+extern template
+FO_COMMON_API void SpeciesManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+extern template
+FO_COMMON_API void SpeciesManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+extern template
+FO_COMMON_API void SpeciesManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
 
 /** returns the singleton species manager */
 FO_COMMON_API SpeciesManager& GetSpeciesManager();

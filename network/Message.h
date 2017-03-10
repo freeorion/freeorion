@@ -151,7 +151,7 @@ private:
 
     boost::shared_array<char> m_message_text;
 
-    friend void BufferToHeader(const HeaderBuffer&, Message&);
+    friend FO_COMMON_API void BufferToHeader(const HeaderBuffer&, Message&);
 };
 
 /** Fills in the relevant portions of \a message with the values in the buffer \a buffer. */

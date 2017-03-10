@@ -1,6 +1,6 @@
 #include "Diplomacy.h"
 
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 DiplomaticMessage::DiplomaticMessage() :
     m_sender_empire(ALL_EMPIRES),

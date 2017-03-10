@@ -26,7 +26,7 @@ namespace {
     const double    WORMHOLE_TRAVEL_DISTANCE = 0.1;         // the effective distance for ships travelling along a wormhole, for determining how much of their speed is consumed by the jump
 }
 
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 namespace {
 

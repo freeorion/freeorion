@@ -68,7 +68,7 @@ namespace boost {
 }
 
 
-extern const int ALL_EMPIRES            = -1;
+extern FO_COMMON_API const int ALL_EMPIRES            = -1;
 // TODO: implement a robust, thread-safe solution for creating multiple client-local temporary objects with unique IDs that will never conflict with each other or the server.
 extern const int MAX_ID                 = 2000000000;
 

@@ -4,6 +4,7 @@
 #include "CombatSystem.h"
 
 #include "../util/Export.h"
+#include "../util/Serialize.h"
 
 #include <boost/optional/optional.hpp>
 
@@ -82,6 +83,17 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+
+extern template
+FO_COMMON_API void CombatLogManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
+extern template
+FO_COMMON_API void CombatLogManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
+extern template
+FO_COMMON_API void CombatLogManager::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive& ar, const unsigned int version);
+extern template
+FO_COMMON_API void CombatLogManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
+
 
 /** returns the singleton combat log manager */
 FO_COMMON_API CombatLogManager&   GetCombatLogManager();

@@ -7,7 +7,7 @@
 #include <boost/spirit/include/phoenix.hpp>
 
 
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 #define DEBUG_PARSERS 0
 

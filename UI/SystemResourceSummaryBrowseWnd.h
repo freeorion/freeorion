@@ -5,8 +5,9 @@
 #include <GG/BrowseInfoWnd.h>
 
 #include "../universe/EnumsFwd.h"
+#include "../util/Export.h"
 
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** Gives information about inporting and exporting of resources to and from this system when mousing
   * over the system resource production summary. */

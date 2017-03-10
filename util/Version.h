@@ -42,6 +42,6 @@ FO_COMMON_API std::map<std::string, std::string> DependencyVersions();
 /** @brief  Log the map returned by DependencyVersions() into the @e info log
  *      channel.
  */
-FO_COMMON_API void LogDependencyVersions();
+void LogDependencyVersions();
 
 #endif  // _Version_h_

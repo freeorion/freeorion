@@ -260,13 +260,10 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
         BuildStatCaches();
 }
 
-// explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
 template
 void SpeciesManager::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive& ar, const unsigned int version);
 template
 void SpeciesManager::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive& ar, const unsigned int version);
-
-// explicit template initialization of System::serialize needed to avoid bug with GCC 4.5.2.
 template
 void SpeciesManager::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive& ar, const unsigned int version);
 template

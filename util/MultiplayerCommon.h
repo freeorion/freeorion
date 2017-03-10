@@ -4,6 +4,7 @@
 #include "../universe/EnumsFwd.h"
 #include "../network/Networking.h"
 #include "Export.h"
+#include "Serialize.h"
 
 #include <GG/Clr.h>
 
@@ -17,7 +18,7 @@
 FO_COMMON_API extern const std::string MP_SAVE_FILE_EXTENSION;
 FO_COMMON_API extern const std::string SP_SAVE_FILE_EXTENSION;
 
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {
@@ -55,6 +56,11 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+extern template FO_COMMON_API void GalaxySetupData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+extern template FO_COMMON_API void GalaxySetupData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+extern template FO_COMMON_API void GalaxySetupData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+extern template FO_COMMON_API void GalaxySetupData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
+
 /** Contains the UI data that must be saved in save game files in order to
   * restore games to the users' last views. */
 struct FO_COMMON_API SaveGameUIData {
@@ -68,6 +74,11 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+extern template FO_COMMON_API void SaveGameUIData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+extern template FO_COMMON_API void SaveGameUIData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+extern template FO_COMMON_API void SaveGameUIData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+extern template FO_COMMON_API void SaveGameUIData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 /** The data for one empire necessary for game-setup during multiplayer loading. */
 struct FO_COMMON_API SaveGameEmpireData {
@@ -97,6 +108,11 @@ private:
     template <class Archive>
     void serialize(Archive& ar, const unsigned int version);
 };
+
+extern template FO_COMMON_API void SaveGameEmpireData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);
+extern template FO_COMMON_API void SaveGameEmpireData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, const unsigned int);
+extern template FO_COMMON_API void SaveGameEmpireData::serialize<freeorion_xml_oarchive>(freeorion_xml_oarchive&, const unsigned int);
+extern template FO_COMMON_API void SaveGameEmpireData::serialize<freeorion_xml_iarchive>(freeorion_xml_iarchive&, const unsigned int);
 
 /** The data structure used to represent a single player's setup options for a
   * multiplayer game (in the multiplayer lobby screen). */

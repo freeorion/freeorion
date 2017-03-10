@@ -276,9 +276,6 @@ FO_COMMON_API ResourceType MeterToResource(MeterType type);
 FO_COMMON_API MeterType AssociatedMeterType(MeterType meter_type);
 
 
-extern const int ALL_EMPIRES;
-
-
 /** degrees of visibility an Empire or UniverseObject can have for an
   * UniverseObject.  determines how much information the empire
   * gets about the (non)visible object. */

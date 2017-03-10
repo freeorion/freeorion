@@ -145,7 +145,7 @@ private:
 
 /** the constant value leaf ValueRef class. */
 template <class T>
-struct FO_COMMON_API Constant : public ValueRefBase<T>
+struct Constant : public ValueRefBase<T>
 {
     explicit Constant(T value);
 
@@ -188,7 +188,7 @@ private:
 /** The variable value ValueRef class.  The value returned by this node is
   * taken from the gamestate, most often from the Source or Target objects. */
 template <class T>
-struct FO_COMMON_API Variable : public ValueRefBase<T>
+struct Variable : public ValueRefBase<T>
 {
     explicit Variable(ReferenceType ref_type, const std::string& property_name = "");
     Variable(ReferenceType ref_type, const std::vector<std::string>& property_name);
@@ -229,7 +229,7 @@ private:
   * \a sampling_condition and the statistic indicated by \a stat_type is
   * calculated from them and returned. */
 template <class T>
-struct FO_COMMON_API Statistic : public Variable<T>
+struct Statistic : public Variable<T>
 {
     Statistic(ValueRefBase<T>* value_ref,
               StatisticType stat_type,
@@ -291,7 +291,7 @@ private:
 /** The complex variable ValueRef class. The value returned by this node
   * is taken from the gamestate. */
 template <class T>
-struct FO_COMMON_API ComplexVariable : public Variable<T>
+struct ComplexVariable : public Variable<T>
 {
     explicit ComplexVariable(const std::string& variable_name,
                              ValueRefBase<int>* int_ref1 = nullptr,
@@ -347,7 +347,7 @@ private:
   * from the ctor \a value_ref parameter's FromType value, static_cast to
   * ToType. */
 template <class FromType, class ToType>
-struct FO_COMMON_API StaticCast : public Variable<ToType>
+struct StaticCast : public Variable<ToType>
 {
     StaticCast(Variable<FromType>* value_ref);
 
@@ -388,7 +388,7 @@ private:
   * is taken from the ctor \a value_ref parameter's FromType value,
   * lexical_cast to std::string */
 template <class FromType>
-struct FO_COMMON_API StringCast : public Variable<std::string>
+struct StringCast : public Variable<std::string>
 {
     StringCast(Variable<FromType>* value_ref);
     StringCast(ValueRefBase<FromType>* value_ref);
@@ -426,7 +426,7 @@ private:
 /** Looks up a string ValueRef or vector of string ValueRefs, and returns
   * and returns the UserString equivalent(s). */
 template <class FromType>
-struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
+struct UserStringLookup : public Variable<std::string> {
     explicit UserStringLookup(Variable<FromType>* value_ref);
     explicit UserStringLookup(ValueRefBase<FromType>* value_ref);
     ~UserStringLookup();
@@ -509,7 +509,7 @@ private:
   * mutiplication, division, or unary negation is performed on the child(ren)
   * of this node, and the result is returned. */
 template <class T>
-struct FO_COMMON_API Operation : public ValueRefBase<T>
+struct Operation : public ValueRefBase<T>
 {
     /** Binary operation ctor. */
     Operation(OpType op_type, ValueRefBase<T>* operand1,
@@ -633,40 +633,40 @@ void Constant<T>::SetTopLevelContent(const std::string& content_name)
 { m_top_level_content = content_name; }
 
 template <>
-std::string Constant<int>::Description() const;
+FO_COMMON_API std::string Constant<int>::Description() const;
 
 template <>
-std::string Constant<double>::Description() const;
+FO_COMMON_API std::string Constant<double>::Description() const;
 
 template <>
-std::string Constant<std::string>::Description() const;
+FO_COMMON_API std::string Constant<std::string>::Description() const;
 
 template <>
-std::string Constant<PlanetSize>::Dump() const;
+FO_COMMON_API std::string Constant<PlanetSize>::Dump() const;
 
 template <>
-std::string Constant<PlanetType>::Dump() const;
+FO_COMMON_API std::string Constant<PlanetType>::Dump() const;
 
 template <>
-std::string Constant<PlanetEnvironment>::Dump() const;
+FO_COMMON_API std::string Constant<PlanetEnvironment>::Dump() const;
 
 template <>
-std::string Constant<UniverseObjectType>::Dump() const;
+FO_COMMON_API std::string Constant<UniverseObjectType>::Dump() const;
 
 template <>
-std::string Constant<StarType>::Dump() const;
+FO_COMMON_API std::string Constant<StarType>::Dump() const;
 
 template <>
-std::string Constant<double>::Dump() const;
+FO_COMMON_API std::string Constant<double>::Dump() const;
 
 template <>
-std::string Constant<int>::Dump() const;
+FO_COMMON_API std::string Constant<int>::Dump() const;
 
 template <>
-std::string Constant<std::string>::Dump() const;
+FO_COMMON_API std::string Constant<std::string>::Dump() const;
 
 template <>
-std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string Constant<std::string>::Eval(const ScriptingContext& context) const;
 
 template <class T>
 template <class Archive>
@@ -741,28 +741,31 @@ std::string Variable<T>::Dump() const
 { return ReconstructName(m_property_name, m_ref_type); }
 
 template <>
-PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;
 
 template <>
-PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetType Variable<PlanetType>::Eval(const ScriptingContext& context) const;
 
 template <>
-PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetEnvironment Variable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
 
 template <>
-UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API UniverseObjectType Variable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
 
 template <>
-StarType Variable<StarType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API StarType Variable<StarType>::Eval(const ScriptingContext& context) const;
 
 template <>
-double Variable<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API double Variable<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-int Variable<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API int Variable<int>::Eval(const ScriptingContext& context) const;
 
 template <>
-std::vector<std::string> Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string Variable<std::string>::Eval(const ScriptingContext& context) const;
+
+template <>
+FO_COMMON_API std::vector<std::string> Variable<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 template <class T>
 template <class Archive>
@@ -964,13 +967,13 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-double Statistic<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API double Statistic<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-int Statistic<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API int Statistic<int>::Eval(const ScriptingContext& context) const;
 
 template <>
-std::string Statistic<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string Statistic<std::string>::Eval(const ScriptingContext& context) const;
 
 template <class T>
 T Statistic<T>::ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const
@@ -1354,25 +1357,28 @@ void ComplexVariable<T>::SetTopLevelContent(const std::string& content_name)
 }
 
 template <>
-PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetSize ComplexVariable<PlanetSize>::Eval(const ScriptingContext& context) const;
 
 template <>
-PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetType ComplexVariable<PlanetType>::Eval(const ScriptingContext& context) const;
 
 template <>
-PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API PlanetEnvironment ComplexVariable<PlanetEnvironment>::Eval(const ScriptingContext& context) const;
 
 template <>
-UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API UniverseObjectType ComplexVariable<UniverseObjectType>::Eval(const ScriptingContext& context) const;
 
 template <>
-StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API StarType ComplexVariable<StarType>::Eval(const ScriptingContext& context) const;
 
 template <>
-double ComplexVariable<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API double ComplexVariable<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-int ComplexVariable<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API int ComplexVariable<int>::Eval(const ScriptingContext& context) const;
+
+template <>
+FO_COMMON_API std::string ComplexVariable<std::string>::Eval(const ScriptingContext& context) const;
 
 template <class T>
 template <class Archive>
@@ -1525,13 +1531,13 @@ std::string StringCast<FromType>::Eval(const ScriptingContext& context) const
 }
 
 template <>
-std::string StringCast<double>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string StringCast<double>::Eval(const ScriptingContext& context) const;
 
 template <>
-std::string StringCast<int>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string StringCast<int>::Eval(const ScriptingContext& context) const;
 
 template <>
-std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string StringCast<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 template <class FromType>
 bool StringCast<FromType>::RootCandidateInvariant() const
@@ -1626,10 +1632,10 @@ std::string UserStringLookup<FromType>::Eval(const ScriptingContext& context) co
 }
 
 template <>
-std::string UserStringLookup<std::string>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string UserStringLookup<std::string>::Eval(const ScriptingContext& context) const;
 
 template <>
-std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
+FO_COMMON_API std::string UserStringLookup<std::vector<std::string>>::Eval(const ScriptingContext& context) const;
 
 template <class FromType>
 bool UserStringLookup<FromType>::RootCandidateInvariant() const
@@ -1868,13 +1874,13 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
 }
 
 template <>
-std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
+FO_COMMON_API std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) const;
 
 template <>
-double Operation<double>::EvalImpl(const ScriptingContext& context) const;
+FO_COMMON_API double Operation<double>::EvalImpl(const ScriptingContext& context) const;
 
 template <>
-int Operation<int>::EvalImpl(const ScriptingContext& context) const;
+FO_COMMON_API int Operation<int>::EvalImpl(const ScriptingContext& context) const;
 
 template <class T>
 bool Operation<T>::RootCandidateInvariant() const

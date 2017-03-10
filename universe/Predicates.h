@@ -17,7 +17,7 @@ class Field;
 class Fighter;
 
 
-extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** the base class for UniverseObject visitor classes.  These visitors have Visit() overloads for each type in the UniversObject-based
     class herarchy.  Calling Visit() returns the \a obj parameter, if some predicate is true of that object.  Each UniverseObject
