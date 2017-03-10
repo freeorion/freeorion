@@ -3211,7 +3211,9 @@ void SidePanel::DoLayout() {
 
     // system name / droplist
     ul = GG::Pt(GG::X(MaxPlanetDiameter()), GG::Y0);
-    lr = ul + GG::Pt(ClientWidth() - GG::X(MaxPlanetDiameter()), name_height);
+    auto system_name_width = ClientWidth() - GG::X(MaxPlanetDiameter());
+    lr = ul + GG::Pt(system_name_width, name_height);
+    m_system_name->SetColWidth(0, system_name_width - 4 * GG::X(GG::ListBox::BORDER_THICK));
     m_system_name->SizeMove(ul, lr);
 
     // star type text
