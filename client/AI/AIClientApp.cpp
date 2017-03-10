@@ -9,6 +9,7 @@
 #include "../../util/i18n.h"
 #include "../util/AppInterface.h"
 #include "../../network/Message.h"
+#include "../../network/ClientNetworking.h"
 #include "../util/Random.h"
 
 #include "../../universe/System.h"

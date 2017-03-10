@@ -6,6 +6,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Message.h"
+#include "../network/ClientNetworking.h"
 #include "../universe/Universe.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"

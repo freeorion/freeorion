@@ -13,6 +13,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Directories.h"
 #include "../client/human/HumanClientApp.h"
+#include "../network/ClientNetworking.h"
 #include "ClientUI.h"
 #include "CUIControls.h"
 #include "Sound.h"
