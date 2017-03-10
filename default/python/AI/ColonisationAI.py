@@ -474,9 +474,9 @@ def get_colony_fleets():
             if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1:
                 continue  # already building for here
             loc = foAI.foAIstate.qualifyingOutpostBaseTargets[pid][0]
-            this_score = evaluate_planet(pid, MissionType.OUTPOST, None, empire, [])
+            this_score = evaluate_planet(pid, MissionType.OUTPOST, None, [])
             for species in empire_colonizers:
-                this_score = max(this_score, evaluate_planet(pid, MissionType.COLONISATION, species, empire, []))
+                this_score = max(this_score, evaluate_planet(pid, MissionType.COLONISATION, species, []))
             planet = universe.getPlanet(pid)
             if this_score == 0:
                 # print "Potential outpost base (rejected) for %s to be built at planet id(%d); outpost score %.1f" % ( ((planet and planet.name) or "unknown"), loc, this_score)
@@ -579,7 +579,7 @@ def assign_colonisation_values(planet_ids, mission_type, species, detail=None, r
         for spec_name in try_species:
             detail = orig_detail[:]
             # appends (score, species_name, detail)
-            pv.append((evaluate_planet(planet_id, mission_type, spec_name, empire, detail), spec_name, detail))
+            pv.append((evaluate_planet(planet_id, mission_type, spec_name, detail), spec_name, detail))
         all_sorted = sorted(pv, reverse=True)
         best = all_sorted[:1]
         if best:
@@ -675,8 +675,9 @@ def get_defense_value(species_name):
         return get_base_outpost_defense_value()
 
 
-def evaluate_planet(planet_id, mission_type, spec_name, empire, detail=None):
+def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
     """returns the colonisation value of a planet"""
+    empire = fo.getEmpire()
     if detail is None:
         detail = []
     retval = 0
