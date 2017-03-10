@@ -29,7 +29,7 @@ def get_invasion_fleets():
     invasion_timer.start("gathering initial info")
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empire_id = empire.empireID
+    empire_id = fo.empireID()
 
     all_invasion_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.INVASION)
     AIstate.invasionFleetIDs = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_invasion_fleet_ids)
@@ -145,7 +145,7 @@ def get_invasion_fleets():
                     all_invasion_targeted_system_ids.add(planet.systemID)
                 # TODO: evaluate changes to situation, any more troops needed, etc.
                 continue  # already building for here
-            _, planet_troops = evaluate_invasion_planet(pid, empire, secure_ai_fleet_missions, False)
+            _, planet_troops = evaluate_invasion_planet(pid, secure_ai_fleet_missions, False)
             sys_id = planet.systemID
             this_sys_status = foAI.foAIstate.systemStatus.get(sys_id, {})
             troop_tally = 0
@@ -259,14 +259,14 @@ def retaliation_risk_factor(empire_id):
 
 def assign_invasion_values(planet_ids):
     """Creates a dictionary that takes planet_ids as key and their invasion score as value."""
-    empire = fo.getEmpire()
+    empire_id = fo.empireID()
     planet_values = {}
     neighbor_values = {}
     neighbor_val_ratio = .95
     universe = fo.getUniverse()
     secure_missions = foAI.foAIstate.get_fleet_missions_with_any_mission_types([MissionType.SECURE])
     for pid in planet_ids:
-        planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid, empire, secure_missions))
+        planet_values[pid] = neighbor_values.setdefault(pid, evaluate_invasion_planet(pid, secure_missions))
         print "planet %d, values %s" % (pid, planet_values[pid])
         planet = universe.getPlanet(pid)
         species_name = (planet and planet.speciesName) or ""
@@ -287,13 +287,14 @@ def assign_invasion_values(planet_ids):
                 if pid2 == pid:
                     continue
                 planet2 = universe.getPlanet(pid2)
-                if planet2 and (planet2.owner != empire.empireID) and ((planet2.owner != -1) or (planet.currentMeterValue(fo.meterType.population) > 0)):  # TODO check for allies
-                    planet_values[pid][0] += industry_ratio * neighbor_val_ratio * (neighbor_values.setdefault(pid2, evaluate_invasion_planet(pid2, empire, secure_missions))[0])
+                if planet2 and (planet2.owner != empire_id) and ((planet2.owner != -1) or (planet.currentMeterValue(fo.meterType.population) > 0)):  # TODO check for allies
+                    planet_values[pid][0] += industry_ratio * neighbor_val_ratio * (neighbor_values.setdefault(pid2, evaluate_invasion_planet(pid2, secure_missions))[0])
     return planet_values
 
 
-def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=True):
+def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     """Return the invasion value (score, troops) of a planet."""
+    empire = fo.getEmpire()
     detail = []
     building_values = {"BLD_IMPERIAL_PALACE": 1000,
                        "BLD_CULTURE_ARCHIVES": 1000,
@@ -322,7 +323,7 @@ def evaluate_invasion_planet(planet_id, empire, secure_fleet_missions, verbose=T
                        }
     # TODO: add more factors, as used for colonization
     universe = fo.getUniverse()
-    empire_id = empire.empireID
+    empire_id = fo.empireID()
     max_jumps = 8
     planet = universe.getPlanet(planet_id)
     if planet is None:  # TODO: exclude planets with stealth higher than empireDetection
