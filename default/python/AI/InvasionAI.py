@@ -294,7 +294,6 @@ def assign_invasion_values(planet_ids):
 
 def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
     """Return the invasion value (score, troops) of a planet."""
-    empire = fo.getEmpire()
     detail = []
     building_values = {"BLD_IMPERIAL_PALACE": 1000,
                        "BLD_CULTURE_ARCHIVES": 1000,
@@ -457,7 +456,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         troop_cost = ships_needed * cost_per_ship  # fleet upkeep is already included in query from server
 
     # apply some bias to expensive operations
-    normalized_cost = float(troop_cost) / max(empire.productionPoints, 1)
+    normalized_cost = float(troop_cost) / max(fo.getEmpire().productionPoints, 1)
     normalized_cost = max(1, normalized_cost)
     cost_score = (normalized_cost**2 / 50.0) * troop_cost
 

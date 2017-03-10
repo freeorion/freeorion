@@ -185,7 +185,7 @@ def survey_universe():
     colonization_timer.start("Categorizing Visible Planets")
     universe = fo.getUniverse()
     empire = fo.getEmpire()
-    empire_id = empire.empireID
+    empire_id = fo.empireID()
     current_turn = fo.currentTurn()
 
     # get outpost and colonization planets
@@ -552,10 +552,10 @@ def get_colony_fleets():
     foAI.foAIstate.colonisableOutpostIDs.update(sorted_outposts)
     colonization_timer.stop_print_and_clear()
 
+
 # TODO: clean up suppliable versus annexable
 def assign_colonisation_values(planet_ids, mission_type, species, detail=None, return_all=False):
     """Creates a dictionary that takes planetIDs as key and their colonisation score as value."""
-    empire = fo.getEmpire()
     if detail is None:
         detail = []
     orig_detail = detail
@@ -1225,7 +1225,6 @@ def get_claimed_stars():
 
 def assign_colony_fleets_to_colonise():
     universe = fo.getUniverse()
-    empire = fo.getEmpire()
     all_outpost_base_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(
         MissionType.ORBITAL_OUTPOST)
     avail_outpost_base_fleet_ids = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_base_fleet_ids)
