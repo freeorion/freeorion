@@ -480,10 +480,11 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
 
 def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
     """sends a list of invasion fleets to a list of planet_value_pairs"""
+    if not fleet_ids:
+        return
+    
     universe = fo.getUniverse()
     invasion_fleet_pool = set(fleet_ids)
-    if not invasion_fleet_pool:
-        return
 
     for planet_id, pscore, ptroops in evaluated_planets:
         planet = universe.getPlanet(planet_id)
@@ -518,8 +519,7 @@ def assign_invasion_fleets_to_invade():
     """Assign fleet targets to invadable planets."""
     universe = fo.getUniverse()
 
-    all_troopbase_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.
-                                                                        ORBITAL_INVASION)
+    all_troopbase_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.ORBITAL_INVASION)
     available_troopbase_fleet_ids = set(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_troopbase_fleet_ids))
     for fid in list(available_troopbase_fleet_ids):
         if fid not in available_troopbase_fleet_ids:  # TODO: I do not see how this check makes sense, maybe remove?
