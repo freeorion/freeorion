@@ -539,9 +539,6 @@ def assign_invasion_fleets_to_invade():
             continue
         status = foAI.foAIstate.systemStatus.get(sys_id, {})
         local_base_troops = set(status.get('myfleets', [])).intersection(available_troopbase_fleet_ids)
-        troop_capacity_tally = 0
-        for fid2 in local_base_troops:
-            troop_capacity_tally += FleetUtilsAI.count_troops_in_fleet(fid2)
 
         target_id = INVALID_ID
         best_score = -1
