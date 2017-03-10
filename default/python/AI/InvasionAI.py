@@ -205,7 +205,7 @@ def get_invasion_fleets():
     invasion_timer.start("evaluating target planets")
     # TODO: check if any invasion_targeted_planet_ids need more troops assigned
     evaluated_planet_ids = list(set(invadable_planet_ids) - set(invasion_targeted_planet_ids) - set(reserved_troop_base_targets))
-    evaluated_planets = assign_invasion_values(evaluated_planet_ids, empire)
+    evaluated_planets = assign_invasion_values(evaluated_planet_ids)
 
     sorted_planets = [(pid, pscore % 10000, ptroops) for pid, (pscore, ptroops) in evaluated_planets.items()]
     sorted_planets.sort(key=lambda x: x[1], reverse=True)
@@ -257,8 +257,9 @@ def retaliation_risk_factor(empire_id):
         return 1.0
 
 
-def assign_invasion_values(planet_ids, empire):
+def assign_invasion_values(planet_ids):
     """Creates a dictionary that takes planet_ids as key and their invasion score as value."""
+    empire = fo.getEmpire()
     planet_values = {}
     neighbor_values = {}
     neighbor_val_ratio = .95
@@ -516,7 +517,6 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
 def assign_invasion_fleets_to_invade():
     """Assign fleet targets to invadable planets."""
     universe = fo.getUniverse()
-    empire = fo.getEmpire()
 
     all_troopbase_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.
                                                                         ORBITAL_INVASION)
@@ -546,7 +546,7 @@ def assign_invasion_fleets_to_invade():
         target_id = INVALID_ID
         best_score = -1
         target_troops = 0
-        for pid, rating in assign_invasion_values(targets, empire).items():
+        for pid, rating in assign_invasion_values(targets).items():
             p_score, p_troops = rating
             if p_score > best_score:
                 best_score = p_score

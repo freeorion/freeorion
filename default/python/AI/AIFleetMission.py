@@ -241,7 +241,6 @@ class AIFleetMission(object):
     def _check_retarget_invasion(self):
         """checks if an invasion mission should be retargeted"""
         universe = fo.getUniverse()
-        empire = fo.getEmpire()
         empire_id = fo.empireID()
         fleet_id = self.fleet.id
         fleet = universe.getFleet(fleet_id)
@@ -274,7 +273,7 @@ class AIFleetMission(object):
         best_score = -1
         target_troops = 0
         #
-        for pid, rating in InvasionAI.assign_invasion_values(open_targets, empire).items():
+        for pid, rating in InvasionAI.assign_invasion_values(open_targets).items():
             p_score, p_troops = rating
             if p_score > best_score:
                 if p_troops >= troops_in_fleet:
