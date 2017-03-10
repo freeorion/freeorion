@@ -548,25 +548,26 @@ def assign_invasion_fleets_to_invade():
                 best_score = p_score
                 target_id = pid
                 target_troops = p_troops
-        if target_id != INVALID_ID:
-            local_base_troops.discard(fid)
-            found_fleets = []
-            troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fid))
-            found_stats = {}
-            min_stats = {'rating': 0, 'troopCapacity': troops_needed}
-            target_stats = {'rating': 10, 'troopCapacity': troops_needed}
+        if target_id == INVALID_ID:
+            continue
+        local_base_troops.discard(fid)
+        found_fleets = []
+        troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fid))
+        found_stats = {}
+        min_stats = {'rating': 0, 'troopCapacity': troops_needed}
+        target_stats = {'rating': 10, 'troopCapacity': troops_needed}
 
-            FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
-                                                starting_system=sys_id, fleet_pool_set=local_base_troops,
-                                                fleet_list=found_fleets)
-            for fid2 in found_fleets:
-                FleetUtilsAI.merge_fleet_a_into_b(fid2, fid)
-                available_troopbase_fleet_ids.discard(fid2)
-            available_troopbase_fleet_ids.discard(fid)
-            foAI.foAIstate.qualifyingTroopBaseTargets[target_id][1] = -1  # TODO: should probably delete
-            target = universe_object.Planet(target_id)
-            fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
-            fleet_mission.set_target(MissionType.ORBITAL_INVASION, target)
+        FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
+                                            starting_system=sys_id, fleet_pool_set=local_base_troops,
+                                            fleet_list=found_fleets)
+        for fid2 in found_fleets:
+            FleetUtilsAI.merge_fleet_a_into_b(fid2, fid)
+            available_troopbase_fleet_ids.discard(fid2)
+        available_troopbase_fleet_ids.discard(fid)
+        foAI.foAIstate.qualifyingTroopBaseTargets[target_id][1] = -1  # TODO: should probably delete
+        target = universe_object.Planet(target_id)
+        fleet_mission = foAI.foAIstate.get_fleet_mission(fid)
+        fleet_mission.set_target(MissionType.ORBITAL_INVASION, target)
 
     invasion_fleet_ids = AIstate.invasionFleetIDs
 
