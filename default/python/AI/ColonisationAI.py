@@ -510,14 +510,12 @@ def get_colony_fleets():
         unowned_empty_planet_ids - set(outpost_targeted_planet_ids) - set(colony_targeted_planet_ids) - set(
             reserved_outpost_base_targets))
 
-    evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids,
-                                                          MissionType.COLONISATION, None, empire)
+    evaluated_colony_planets = assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None)
     colonization_timer.stop('Evaluate %d Primary Colony Opportunities' % (len(evaluated_colony_planet_ids)))
     colonization_timer.start('Evaluate All Colony Opportunities')
     all_colony_opportunities.clear()
     all_colony_opportunities.update(
-        assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None,
-                                   empire, [], True))
+        assign_colonisation_values(evaluated_colony_planet_ids, MissionType.COLONISATION, None, [], True))
     colonization_timer.start('Evaluate Outpost Opportunities')
 
     sorted_planets = evaluated_colony_planets.items()
@@ -534,8 +532,7 @@ def get_colony_fleets():
     all_outpost_fleet_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     AIstate.outpostFleetIDs = FleetUtilsAI.extract_fleet_ids_without_mission_types(all_outpost_fleet_ids)
 
-    evaluated_outpost_planets = assign_colonisation_values(evaluated_outpost_planet_ids,
-                                                           MissionType.OUTPOST, None, empire)
+    evaluated_outpost_planets = assign_colonisation_values(evaluated_outpost_planet_ids, MissionType.OUTPOST, None)
     # if outposted planet would be in supply range, let outpost value be best of outpost value or colonization value
     for pid in set(evaluated_outpost_planets).intersection(evaluated_colony_planets):
         if planet_supply_cache.get(pid, -99) >= 0:
@@ -555,10 +552,10 @@ def get_colony_fleets():
     foAI.foAIstate.colonisableOutpostIDs.update(sorted_outposts)
     colonization_timer.stop_print_and_clear()
 
-
-def assign_colonisation_values(planet_ids, mission_type, species, empire, detail=None,
-                               return_all=False):  # TODO: clean up suppliable versus annexable
+# TODO: clean up suppliable versus annexable
+def assign_colonisation_values(planet_ids, mission_type, species, detail=None, return_all=False):
     """Creates a dictionary that takes planetIDs as key and their colonisation score as value."""
+    empire = fo.getEmpire()
     if detail is None:
         detail = []
     orig_detail = detail
@@ -1244,8 +1241,7 @@ def assign_colony_fleets_to_colonise():
             continue
         target_id = INVALID_ID
         best_score = -1
-        for pid, rating in assign_colonisation_values(targets, MissionType.OUTPOST, None,
-                                                      empire).items():
+        for pid, rating in assign_colonisation_values(targets, MissionType.OUTPOST, None).items():
             if rating[0] > best_score:
                 best_score = rating[0]
                 target_id = pid
