@@ -37,11 +37,11 @@
 #include <boost/filesystem/operations.hpp>
 #include <boost/lexical_cast.hpp>
 #include <boost/functional/hash.hpp>
-#include <boost/thread/thread.hpp>
 #include <boost/date_time/posix_time/time_formatters.hpp>
 
 
 #include <ctime>
+#include <thread>
 
 namespace fs = boost::filesystem;
 
@@ -352,7 +352,7 @@ void ServerApp::CleanupAIs() {
     if (ai_connection_lingering) {
         // time for AIs to react?
         DebugLogger() << "ServerApp::CleanupAIs() waiting 1 second for AI processes to clean up...";
-        boost::this_thread::sleep_for(boost::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     DebugLogger() << "ServerApp::CleanupAIs() killing " << m_ai_client_processes.size() << " AI clients.";

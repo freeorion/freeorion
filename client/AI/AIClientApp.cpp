@@ -22,6 +22,8 @@
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
 
+#include <thread>
+
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
@@ -133,7 +135,7 @@ void AIClientApp::Run() {
                     Networking().GetMessage(msg);
                     HandleMessage(msg);
                 } else {
-                    boost::this_thread::sleep_for(boost::chrono::milliseconds(10));
+                    std::this_thread::sleep_for(std::chrono::milliseconds(10));
                 }
 
             } catch (boost::python::error_already_set) {
@@ -192,7 +194,7 @@ void AIClientApp::HandlePythonAICrash() {
     ErrorLogger() << err_msg.str() << " id = " << PlayerID();
     Networking().SendMessage(
         ErrorMessage(PlayerID(), str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
-    boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
+   std::this_thread::sleep_for(std::chrono::milliseconds(500));
 }
 
 

@@ -30,9 +30,9 @@
 using namespace GG;
 
 EventPumpState::EventPumpState() :
-    last_FPS_time(boost::chrono::high_resolution_clock::now()),
-    last_frame_time(boost::chrono::high_resolution_clock::now()),
-    most_recent_time(boost::chrono::high_resolution_clock::now()),
+    last_FPS_time(std::chrono::high_resolution_clock::now()),
+    last_frame_time(std::chrono::high_resolution_clock::now()),
+    most_recent_time(std::chrono::high_resolution_clock::now()),
     frames(0)
 {}
 
@@ -40,31 +40,31 @@ EventPumpState::EventPumpState() :
 void EventPumpBase::LoopBody(GUI* gui, EventPumpState& state, bool do_non_rendering, bool do_rendering)
 {
     if (do_non_rendering) {
-        boost::chrono::high_resolution_clock::time_point time = boost::chrono::high_resolution_clock::now();
+        std::chrono::high_resolution_clock::time_point time = std::chrono::high_resolution_clock::now();
 
         // send an idle message, so that the gui has timely updates for triggering browse info windows, etc.
         gui->HandleGGEvent(GUI::IDLE, GGK_UNKNOWN, 0, gui->ModKeys(), gui->MousePosition(), Pt());
 
         // govern FPS speed if needed
         if (double max_FPS = gui->MaxFPS()) {
-            boost::chrono::microseconds min_us_per_frame = boost::chrono::duration_cast<boost::chrono::microseconds>(
-            boost::chrono::duration<double>(1.0 / (max_FPS + 1)));
-            boost::chrono::microseconds us_elapsed = boost::chrono::duration_cast<boost::chrono::microseconds>(
+            std::chrono::microseconds min_us_per_frame = std::chrono::duration_cast<std::chrono::microseconds>(
+            std::chrono::duration<double>(1.0 / (max_FPS + 1)));
+            std::chrono::microseconds us_elapsed = std::chrono::duration_cast<std::chrono::microseconds>(
                 time - state.last_frame_time);
-            boost::chrono::microseconds us_to_wait = (min_us_per_frame - us_elapsed);
-            if (boost::chrono::microseconds(0) < us_to_wait) {
+            std::chrono::microseconds us_to_wait = (min_us_per_frame - us_elapsed);
+            if (std::chrono::microseconds(0) < us_to_wait) {
                 gui->Wait(us_to_wait);
-                time = boost::chrono::high_resolution_clock::now();
+                time = std::chrono::high_resolution_clock::now();
             }
         }
         state.last_frame_time = time;
 
         // track FPS if needed
-        gui->SetDeltaT(boost::chrono::duration_cast<boost::chrono::microseconds>(time - state.most_recent_time).count());
+        gui->SetDeltaT(std::chrono::duration_cast<std::chrono::microseconds>(time - state.most_recent_time).count());
         if (gui->FPSEnabled()) {
             ++state.frames;
-            if (boost::chrono::seconds(1) < time - state.last_FPS_time) { // calculate FPS at most once a second
-                double time_since_last_FPS = boost::chrono::duration_cast<boost::chrono::microseconds>(
+            if (std::chrono::seconds(1) < time - state.last_FPS_time) { // calculate FPS at most once a second
+                double time_since_last_FPS = std::chrono::duration_cast<std::chrono::microseconds>(
                     time - state.last_FPS_time).count() / 1000000.0;
                 gui->SetFPS(state.frames / time_since_last_FPS);
                 state.last_FPS_time = time;
