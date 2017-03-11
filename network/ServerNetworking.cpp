@@ -70,16 +70,16 @@ PlayerConnection::~PlayerConnection() {
     boost::system::error_code error;
     m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
     if (error && (m_ID != INVALID_PLAYER_ID)) {
-        if (error == boost::asio::error::eof) {
+        if (error == boost::asio::error::eof)
             DebugLogger() << "Player connection disconnected by EOF from client.";
-            m_socket.close();
-        }
         else if (error == boost::asio::error::connection_reset)
-            DebugLogger() << "Player connection disconnected, due to connection reset by client.";
+            DebugLogger() << "Player connection disconnected, reset by client.";
         else if (error == boost::asio::error::operation_aborted)
-            DebugLogger() << "Player connection closed by server.";
+            DebugLogger() << "Player operation aborted by server.";
         else if (error == boost::asio::error::shut_down)
             DebugLogger() << "Player connection shutdown.";
+        else if (error == boost::asio::error::connection_aborted)
+            DebugLogger() << "Player connection closed by server.";
         else {
 
             ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error #"
