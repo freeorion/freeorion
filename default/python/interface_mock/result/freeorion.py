@@ -4070,7 +4070,7 @@ def sys_set_star_type(number, star_type):
     return None
 
 
-def systems_within_jumps(number, item_list):
+def systems_within_jumps_unordered(number, item_list):
     """
     Return all systems within ''jumps'' of the systems with ids ''sys_ids''
 

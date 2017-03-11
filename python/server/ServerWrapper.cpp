@@ -1345,7 +1345,7 @@ namespace FreeOrionPython {
 
         def("objs_get_systems",                     ObjectsGetSystems);
 
-        def("systems_within_jumps",                 SystemsWithinJumps, "Return all systems within ''jumps'' of the systems with ids ''sys_ids''");
+        def("systems_within_jumps_unordered",       SystemsWithinJumps, "Return all systems within ''jumps'' of the systems with ids ''sys_ids''");
 
         def("sys_get_star_type",                    SystemGetStarType);
         def("sys_set_star_type",                    SystemSetStarType);

@@ -118,7 +118,7 @@ def distribute_specials(specials_freq, universe_objects):
                 obj_tuple_needing_specials.add((obj, system, specials_count - 1))
 
             # remove all neighbors from the local pool
-            for neighbor in fo.systems_within_jumps(GALAXY_DECOUPLING_DISTANCE, [system]):
+            for neighbor in fo.systems_within_jumps_unordered(GALAXY_DECOUPLING_DISTANCE, [system]):
                 if neighbor in systems_needing_specials:
                     systems_needing_specials.pop(neighbor)
 
