@@ -155,7 +155,7 @@ namespace {
            << " error message: " << problem;
 
         if (fatal) {
-            FatalLogger() << ss.str();
+            ErrorLogger() << ss.str();
             SendMessageToAllPlayers(msg.m_message);
         } else {
             ErrorLogger() << ss.str();

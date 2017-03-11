@@ -41,9 +41,6 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 #define ErrorLogger()\
     FO_LOGGER(error)
 
-#define FatalLogger()\
-    FO_LOGGER(fatal)
-
 extern int g_indent;
 
 /** A function that returns the correct amount of spacing for the current
