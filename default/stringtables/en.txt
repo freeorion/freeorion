@@ -9137,6 +9137,12 @@ DESC_OWNER_HAS_SHIP_DESIGN
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
 ''' ship design not unlocked for empire'''
 
+DESC_OWNER_HAS_SHIP_PART
+''' ship part unlocked for empire'''
+
+DESC_OWNER_HAS_SHIP_PART_NOT
+''' ship part not unlocked for empire'''
+
 # %1% FIXME
 # %2% FIXME
 # %3% FIXME
