@@ -437,7 +437,9 @@ def compile_home_system_list(num_home_systems, systems, gsd):
             "planets in the near vicinity, required minimum:", min_planets_in_vicinity_limit(num_systems_in_vicinity)
         if num_planets_to_add > 0:
             systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
-            add_planets_to_vicinity(systems_in_vicinity, num_planets_to_add, gsd)
+            # sort the systems_in_vicinity before adding, since the C++ engine doesn't guarrantee the same
+            # platform independence as python.
+            add_planets_to_vicinity(sorted(systems_in_vicinity), num_planets_to_add, gsd)
 
     # as we've sorted the home system list before, lets shuffle it to ensure random order and return
     random.shuffle(home_systems)
