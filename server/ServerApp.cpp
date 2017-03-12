@@ -712,7 +712,6 @@ bool ServerApp::NewGameInitVerifyJoiners(
 
     std::map<int, PlayerSetupData> player_id_setup_data;
 
-    bool host_is_human{false};
     for (const auto& psd : player_setup_data) {
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             player_id_setup_data[psd.m_player_id] = psd;
