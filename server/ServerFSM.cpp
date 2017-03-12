@@ -1206,7 +1206,9 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
         DebugLogger() << "WaitingForSPGameJoiners::react(const CheckStartConditions& u) : have all " << m_num_expected_players << " expected players connected.";
         if (m_single_player_setup_data->m_new_game) {
             DebugLogger() << "Verify AIs SP game...";
-            server.VerifySPGameAIs(*m_single_player_setup_data);
+            if (server.VerifySPGameAIs(*m_single_player_setup_data))
+                server. SendNewGameStartMessages();
+
         } else {
             DebugLogger() << "Loading SP game save file: " << m_single_player_setup_data->m_filename;
             try {

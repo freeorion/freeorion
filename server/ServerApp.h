@@ -189,10 +189,9 @@ public:
     /** Intializes single player game universe.*/
     void    NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data);
 
-    /** Verifies single player game AIs are compatible with already
-      * created universe. Sends out initial game state to
-      * clients, and signals clients to start first turn */
-    void    VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data);
+    /** Return true if single player game AIs are compatible with created
+      * universe and are ready to start a new game. */
+    bool    VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data);
 
     /** Intializes multi player game universe, sends out initial game state to
       * clients, and signals clients to start first turn */
@@ -236,11 +235,12 @@ private:
     void    NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_setup_data,
                                              const std::vector<PlayerSetupData>& player_setup_data);
 
-    /** Compiles and sends out basic
-      * information about players in game to all other players as part of the
-      * game start messages sent to players. */
-    void    NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_data,
+    /** Return true if player data is consistent with starting a new game. */
+    bool    NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_data,
                                      const std::vector<PlayerSetupData>& player_setup_data);
+
+    /** Sends out initial new game state to clients, and signals clients to start first turn. */
+    void SendNewGameStartMessages();
 
     /** Clears any old game stored orders, victors or eliminated players, ads
       * empires to turn processing list, does start-of-turn empire supply and
