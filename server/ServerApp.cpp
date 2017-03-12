@@ -232,9 +232,9 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     args.push_back("\"" + AI_CLIENT_EXE + "\"");
     args.push_back("place_holder");
     size_t player_pos = args.size()-1;
-    std::stringstream maxAggrStr;
-    maxAggrStr << max_aggression;
-    args.push_back(maxAggrStr.str());
+    std::stringstream max_aggr_str;
+    max_aggr_str << max_aggression;
+    args.push_back(max_aggr_str.str());
     args.push_back("--resource-dir");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
     args.push_back("--log-level");
@@ -597,8 +597,10 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
         SendNewGameStartMessages();
 }
 
-void ServerApp::NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_setup_data,
-                            const std::vector<PlayerSetupData>& player_setup_data) {
+void ServerApp::NewGameInitConcurrentWithJoiners(
+    const GalaxySetupData& galaxy_setup_data,
+    const std::vector<PlayerSetupData>& player_setup_data)
+{
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners";
 
     m_galaxy_setup_data = galaxy_setup_data;
@@ -710,7 +712,7 @@ bool ServerApp::NewGameInitVerifyJoiners(
 
     std::map<int, PlayerSetupData> player_id_setup_data;
 
-    bool host_is_human(false);
+    bool host_is_human{false};
     for (const auto& psd : player_setup_data) {
         if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
             player_id_setup_data[psd.m_player_id] = psd;
@@ -735,7 +737,8 @@ bool ServerApp::NewGameInitVerifyJoiners(
         return false;
     }
 
-    if (player_id_setup_data[m_networking.HostPlayerID()].m_client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER)
+    if (player_id_setup_data[m_networking.HostPlayerID()].m_client_type
+        != Networking::CLIENT_TYPE_HUMAN_PLAYER)
     {
         ErrorLogger() << "NewGameInitVerifyJoiners : Host player with id "
                       << m_networking.HostPlayerID() << " is not human.";

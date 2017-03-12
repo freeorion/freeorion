@@ -198,7 +198,7 @@ struct WaitingForSPGameJoiners : sc::state<WaitingForSPGameJoiners, ServerFSM> {
     std::shared_ptr<SinglePlayerSetupData>   m_single_player_setup_data;
     std::vector<PlayerSaveGameData>          m_player_save_game_data;
     std::shared_ptr<ServerSaveGameData>      m_server_save_game_data;
-    std::map<std::string, int>               m_expected_ai_player_ids;
+    std::map<std::string, int>               m_expected_ai_names_and_ids;
     int                                      m_num_expected_players;
 
     SERVER_ACCESSOR

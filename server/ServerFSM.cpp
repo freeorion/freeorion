@@ -1056,15 +1056,15 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
         for (auto& psd : players) {
             if (psd.m_player_name.empty()) {
                 if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                    psd.m_player_name = "AI_" + boost::lexical_cast<std::string>(player_num++);
+                    psd.m_player_name = "AI_" + std::to_string(player_num++);
                 else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                    psd.m_player_name = "Human_Player_" + boost::lexical_cast<std::string>(player_num++);
+                    psd.m_player_name = "Human_Player_" + std::to_string(player_num++);
                 else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-                    psd.m_player_name = "Observer_" + boost::lexical_cast<std::string>(player_num++);
+                    psd.m_player_name = "Observer_" + std::to_string(player_num++);
                 else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-                    psd.m_player_name = "Moderator_" + boost::lexical_cast<std::string>(player_num++);
+                    psd.m_player_name = "Moderator_" + std::to_string(player_num++);
                 else
-                    psd.m_player_name = "Player_" + boost::lexical_cast<std::string>(player_num++);
+                    psd.m_player_name = "Player_" + std::to_string(player_num++);
             }
 
             if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
@@ -1117,10 +1117,10 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
     }
 
     m_num_expected_players = players.size();
-    m_expected_ai_player_ids.clear();
+    m_expected_ai_names_and_ids.clear();
     for (const auto& player_data : players) {
         if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_player_ids.insert(std::make_pair(player_data.m_player_name, player_data.m_player_id));
+            m_expected_ai_names_and_ids.insert(std::make_pair(player_data.m_player_name, player_data.m_player_id));
     }
 
     server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
@@ -1155,9 +1155,9 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
 
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
-        const auto& expected_it = m_expected_ai_player_ids.find(player_name);
+        const auto& expected_it = m_expected_ai_names_and_ids.find(player_name);
         // verify that player name was expected
-        if (expected_it == m_expected_ai_player_ids.end()) {
+        if (expected_it == m_expected_ai_names_and_ids.end()) {
             // unexpected ai player
             ErrorLogger() << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
             server.m_networking.Disconnect(player_connection);
@@ -1168,12 +1168,12 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             player_connection->SendMessage(JoinAckMessage(expected_it->second));
 
             // remove name from expected names list, so as to only allow one connection per AI
-            m_expected_ai_player_ids.erase(player_name);
+            m_expected_ai_names_and_ids.erase(player_name);
         }
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_ids.size() + server.m_networking.NumEstablishedPlayers();
+        int already_connected_players = m_expected_ai_names_and_ids.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
             ErrorLogger() << "WaitingForSPGameJoiners::react(const JoinGame& msg): A human player attempted to join the game but there was not enough room.  Terminating connection.";
