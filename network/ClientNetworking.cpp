@@ -383,7 +383,6 @@ void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self)
         m_rx_connected = false;
         m_tx_connected = false;
     }
-    DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated noisy.";
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
@@ -393,9 +392,6 @@ void ClientNetworking::HandleMessageBodyRead(boost::system::error_code error,
 {
     if (error)
         throw boost::system::system_error(error);
-
-    if (bytes_transferred == 0 )
-        DebugLogger() << "0 length received in header";
 
     assert(static_cast<int>(bytes_transferred) <= m_incoming_header[4]);
     if (static_cast<int>(bytes_transferred) == m_incoming_header[4]) {
@@ -407,10 +403,6 @@ void ClientNetworking::HandleMessageBodyRead(boost::system::error_code error,
 void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred) {
     if (error)
         throw boost::system::system_error(error);
-
-    if (bytes_transferred == 0 )
-        DebugLogger() << "0 length received in body";
-
     assert(bytes_transferred <= Message::HeaderBufferSize);
     if (bytes_transferred != Message::HeaderBufferSize)
         return;
@@ -446,8 +438,6 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::
     if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[4])
         return;
 
-    DebugLogger() << "tx success num bytes = " << bytes_transferred;
-
     m_outgoing_messages.pop_front();
     if (!m_outgoing_messages.empty())
         AsyncWriteMessage();
@@ -460,7 +450,6 @@ void ClientNetworking::HandleMessageWrite(boost::system::error_code error, std::
             should_shutdown = !m_tx_connected;
         }
         if (should_shutdown) {
-            DebugLogger() << "tx queue empty trying to disconnect.";
             DisconnectFromServerImpl();
         }
     }
@@ -512,11 +501,7 @@ void ClientNetworking::DisconnectFromServerImpl() {
         m_rx_connected = m_socket.is_open();
     }
 
-    DebugLogger() << "shutdown both is_open() = " << m_socket.is_open()
-                  << " outgoing pending = " << (!m_outgoing_messages.empty());
-
     if (!m_outgoing_messages.empty()) {
-        DebugLogger() << "wait on pending final txs";
         return;
     }
 

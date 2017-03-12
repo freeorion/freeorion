@@ -94,7 +94,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 AIClientApp::~AIClientApp() {
     Networking().DisconnectFromServer();
 
-    DebugLogger() << "AIClientApp exited cleanly for ai client " << PlayerName() << " id = " << PlayerID();
+    DebugLogger() << "AIClientApp exited cleanly for ai client " << PlayerName();
 }
 
 void AIClientApp::operator()()
@@ -142,7 +142,6 @@ void AIClientApp::Run() {
             } catch (boost::python::error_already_set) {
                 /* If the python interpreter is still running then keep
                    going, otherwise exit.*/
-                ErrorLogger() << " reached inner catch.";
                 m_AI->HandleErrorAlreadySet();
                 if (!m_AI->IsPythonRunning())
                     throw;
@@ -151,12 +150,9 @@ void AIClientApp::Run() {
     } catch (const NormalExitException&) {
         // intentionally empty.
     } catch (boost::python::error_already_set) {
-        ErrorLogger() << " reached outer catch.";
         HandlePythonAICrash();
-        ErrorLogger() << "exit error already set ";
     }
 
-    ErrorLogger() << "try disconnect from server ";
     Networking().DisconnectFromServer();
 }
 
@@ -179,10 +175,9 @@ void AIClientApp::HandlePythonAICrash() {
     // know the AI's PlayerName.
     std::stringstream err_msg;
     err_msg << "AIClientApp failed due to error in python AI code for " << PlayerName() << ".  Exiting Soon.";
-    ErrorLogger() << err_msg.str() << " id = " << PlayerID() << " is connected = " << Networking().IsConnected();
+    ErrorLogger() << err_msg.str() << " id = " << PlayerID();
     Networking().SendMessage(
         ErrorMessage(PlayerID(), str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
-    ErrorLogger() << "exit handle python ai crash ";
 }
 
 

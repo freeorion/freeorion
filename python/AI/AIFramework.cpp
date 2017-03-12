@@ -144,7 +144,6 @@ void PythonAI::GenerateOrders() {
         generateOrdersPythonFunction();
     } catch (error_already_set err) {
         HandleErrorAlreadySet();
-        ErrorLogger() << " reached inner catch in generate orders.";
         if (!IsPythonRunning())
             throw;
 
