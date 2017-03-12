@@ -326,8 +326,7 @@ void ServerApp::InitializePython() {
 
     if (!m_python_server.Initialize()) {
         ErrorLogger() << "Server's python interpreter failed to initialize.";
-        // TODO go to Shutdown in FSM.
-        Exit(0);
+        m_fsm->process_event(ShutdownServer());
     }
 }
 
