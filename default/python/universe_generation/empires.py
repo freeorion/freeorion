@@ -72,7 +72,7 @@ def count_planets_in_systems(systems, planet_types_filter=HS_ACCEPTABLE_PLANET_T
 
 def calculate_home_system_merit(system):
     """Calculate the system's merit as the number of planets within HS_VICINTIY_RANGE."""
-    return count_planets_in_systems(fo.systems_within_jumps(HS_VICINITY_RANGE, [system]))
+    return count_planets_in_systems(fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [system]))
 
 
 def min_planets_in_vicinity_limit(num_systems):
@@ -161,7 +161,7 @@ class HomeSystemFinder(object):
                 candidate.append(member)
 
                 # remove all neighbors from the local pool
-                local_pool -= set(fo.systems_within_jumps(min_jumps, [member]))
+                local_pool -= set(fo.systems_within_jumps_unordered(min_jumps, [member]))
 
             # Count complete misses when number of candidates is not close to the target.
             if len(candidate) < (self.num_home_systems - MISS_THRESHOLD):
@@ -185,7 +185,7 @@ class HomeSystemFinder(object):
                 best_candidate = [s for (_, s) in merit_system]
 
                 # Quit sucessfully if the lowest merit system meets the minimum threshold
-                if merit >= min_planets_in_vicinity_limit(fo.systems_within_jumps(HS_VICINITY_RANGE, [system])):
+                if merit >= min_planets_in_vicinity_limit(fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [system])):
                     break
 
         return best_candidate
@@ -351,7 +351,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     pool_matching_sys_and_planet_limit = []
     pool_matching_sys_limit = []
     for system in systems:
-        systems_in_vicinity = fo.systems_within_jumps(HS_VICINITY_RANGE, [system])
+        systems_in_vicinity = fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [system])
         if len(systems_in_vicinity) >= HS_MIN_SYSTEMS_IN_VICINITY:
             pool_matching_sys_limit.append(system)
             if count_planets_in_systems(systems_in_vicinity) >= min_planets_in_vicinity_limit(len(systems_in_vicinity)):
@@ -429,7 +429,7 @@ def compile_home_system_list(num_home_systems, systems, gsd):
     print "Checking if home systems have the required minimum of planets within the near vicinity..."
     for home_system in home_systems:
         # calculate the number of missing planets, and add them if this number is > 0
-        systems_in_vicinity = fo.systems_within_jumps(HS_VICINITY_RANGE, [home_system])
+        systems_in_vicinity = fo.systems_within_jumps_unordered(HS_VICINITY_RANGE, [home_system])
         num_systems_in_vicinity = len(systems_in_vicinity)
         num_planets_in_vicinity = count_planets_in_systems(systems_in_vicinity)
         num_planets_to_add = min_planets_in_vicinity_limit(num_systems_in_vicinity) - num_planets_in_vicinity
@@ -437,7 +437,9 @@ def compile_home_system_list(num_home_systems, systems, gsd):
             "planets in the near vicinity, required minimum:", min_planets_in_vicinity_limit(num_systems_in_vicinity)
         if num_planets_to_add > 0:
             systems_in_vicinity.remove(home_system)  # don't add planets to the home system, so remove it from the list
-            add_planets_to_vicinity(systems_in_vicinity, num_planets_to_add, gsd)
+            # sort the systems_in_vicinity before adding, since the C++ engine doesn't guarrantee the same
+            # platform independence as python.
+            add_planets_to_vicinity(sorted(systems_in_vicinity), num_planets_to_add, gsd)
 
     # as we've sorted the home system list before, lets shuffle it to ensure random order and return
     random.shuffle(home_systems)
