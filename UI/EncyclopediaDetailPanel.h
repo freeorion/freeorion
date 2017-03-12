@@ -111,19 +111,19 @@ private:
 
     std::weak_ptr<const ShipDesign> m_incomplete_design;
 
-    GG::Label*          m_name_text;        // name
-    GG::Label*          m_cost_text;        // cost and time to build or research
-    GG::Label*          m_summary_text;     // general purpose item
-    GG::RichText*       m_description_box;  // detailed and lengthy description
-    GG::ScrollPanel*    m_description_panel;// scroller for m_description_box
+    GG::Label*          m_name_text;            // name
+    GG::Label*          m_cost_text;            // cost and time to build or research
+    GG::Label*          m_summary_text;         // general purpose item
+    GG::RichText*       m_description_rich_text;// detailed and lengthy description
+    GG::ScrollPanel*    m_scroll_panel;         // scroller for m_description_rich_text
     GG::StaticGraphic*  m_icon;
     GG::Button*         m_index_button;
     GG::Button*         m_back_button;
     GG::Button*         m_next_button;
-    GG::Edit*           m_search_edit;      // box to type to search
+    GG::Edit*           m_search_edit;          // box to type to search
 
     GraphControl*       m_graph;
-    bool                m_needs_refresh;    ///< Indicates that data is stale.
+    bool                m_needs_refresh;        // Indicates that data is stale.
 };
 
 

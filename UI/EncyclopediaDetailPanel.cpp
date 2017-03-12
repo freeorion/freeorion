@@ -552,8 +552,8 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     m_name_text(nullptr),
     m_cost_text(nullptr),
     m_summary_text(nullptr),
-    m_description_box(nullptr),
-    m_description_panel(nullptr),
+    m_description_rich_text(nullptr),
+    m_scroll_panel(nullptr),
     m_icon(nullptr),
     m_search_edit(nullptr),
     m_graph(nullptr),
@@ -594,11 +594,11 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     GG::Connect(m_back_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnBack,                   this);
     GG::Connect(m_next_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnNext,                   this);
 
-    m_description_box = new GG::RichText(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
-                                         ClientUI::GetFont(), ClientUI::TextColor(),
-                                         GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK,
-                                         GG::INTERACTIVE);
-    m_description_panel = new GG::ScrollPanel(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), m_description_box);
+    m_description_rich_text = new GG::RichText(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
+                                               ClientUI::GetFont(), ClientUI::TextColor(),
+                                               GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK,
+                                               GG::INTERACTIVE);
+    m_scroll_panel = new GG::ScrollPanel(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), m_description_rich_text);
 
     // Copy default block factory.
     std::shared_ptr<GG::RichText::BLOCK_FACTORY_MAP> factory_map(new GG::RichText::BLOCK_FACTORY_MAP(*GG::RichText::DefaultBlockFactoryMap()));
@@ -608,11 +608,11 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     GG::Connect(factory->LinkDoubleClickedSignal,  &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     GG::Connect(factory->LinkRightClickedSignal,   &EncyclopediaDetailPanel::HandleLinkDoubleClick,    this);
     (*factory_map)[GG::RichText::PLAINTEXT_TAG] = factory;
-    m_description_box->SetBlockFactoryMap(factory_map);
-    m_description_box->SetPadding(DESCRIPTION_PADDING);
+    m_description_rich_text->SetBlockFactoryMap(factory_map);
+    m_description_rich_text->SetPadding(DESCRIPTION_PADDING);
 
-    m_description_panel->SetBackgroundColor(ClientUI::CtrlColor());
-    m_description_panel->InstallEventFilter(this);
+    m_scroll_panel->SetBackgroundColor(ClientUI::CtrlColor());
+    m_scroll_panel->InstallEventFilter(this);
 
     m_graph = new GraphControl();
     m_graph->ShowPoints(false);
@@ -626,7 +626,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     AttachChild(m_name_text);
     AttachChild(m_cost_text);
     AttachChild(m_summary_text);
-    AttachChild(m_description_panel);
+    AttachChild(m_scroll_panel);
     AttachChild(m_index_button);
     AttachChild(m_back_button);
     AttachChild(m_next_button);
@@ -678,7 +678,7 @@ void EncyclopediaDetailPanel::DoLayout() {
     ul = GG::Pt(BORDER_LEFT, ICON_SIZE + BORDER_BOTTOM + TEXT_MARGIN_Y + Y_OFFSET + 1);
     lr = GG::Pt(Width() - BORDER_RIGHT, Height() - BORDER_BOTTOM*3 - PTS - 4);
     timer.EnterSection("description->SizeMove");
-    m_description_panel->SizeMove(ul, lr);
+    m_scroll_panel->SizeMove(ul, lr);
     timer.EnterSection("");
 
     // graph
@@ -731,7 +731,7 @@ void EncyclopediaDetailPanel::KeyPress(GG::Key key, std::uint32_t key_code_point
     } else if (key == GG::GGK_BACKSPACE) {
         this->OnBack();
     } else {
-        m_description_panel->KeyPress(key, key_code_point, mod_keys);
+        m_scroll_panel->KeyPress(key, key_code_point, mod_keys);
     }
 }
 
@@ -2612,7 +2612,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     m_summary_text->Clear();
     m_cost_text->Clear();
 
-    m_description_box->SetText("");
+    m_description_rich_text->SetText("");
 
     DetachChild(m_graph);
 
@@ -2705,9 +2705,9 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     }
 
     if (!detailed_description.empty())
-        m_description_box->SetText(detailed_description);
+        m_description_rich_text->SetText(detailed_description);
 
-    m_description_panel->ScrollTo(GG::Y0);
+    m_scroll_panel->ScrollTo(GG::Y0);
 }
 
 void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string& name) {
@@ -2737,7 +2737,7 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
         m_next_button->Disable(true);
 
     Refresh();
-    m_description_panel->ScrollTo(GG::Y0);   // revert to top for new screen
+    m_scroll_panel->ScrollTo(GG::Y0);   // revert to top for new screen
 }
 
 void EncyclopediaDetailPanel::PopItem() {
@@ -2746,7 +2746,7 @@ void EncyclopediaDetailPanel::PopItem() {
         if (m_items_it == m_items.end() && m_items_it != m_items.begin())
             --m_items_it;
         Refresh();
-        m_description_panel->ScrollTo(GG::Y0);   // revert to top for new screen
+        m_scroll_panel->ScrollTo(GG::Y0);   // revert to top for new screen
     }
 }
 
@@ -2754,7 +2754,7 @@ void EncyclopediaDetailPanel::ClearItems() {
     m_items.clear();
     m_items_it = m_items.end();
     Refresh();
-    m_description_panel->ScrollTo(GG::Y0);   // revert to top for new screen
+    m_scroll_panel->ScrollTo(GG::Y0);   // revert to top for new screen
 }
 
 void EncyclopediaDetailPanel::SetText(const std::string& text, bool lookup_in_stringtable) {
@@ -2951,7 +2951,7 @@ void EncyclopediaDetailPanel::OnBack() {
         m_next_button->Disable(false);
 
     Refresh();
-    m_description_panel->ScrollTo(GG::Y0);   // revert to top for new screen
+    m_scroll_panel->ScrollTo(GG::Y0);   // revert to top for new screen
 }
 
 void EncyclopediaDetailPanel::OnNext() {
@@ -2966,7 +2966,7 @@ void EncyclopediaDetailPanel::OnNext() {
         m_back_button->Disable(false);
 
     Refresh();
-    m_description_panel->ScrollTo(GG::Y0);   // revert to top for new screen
+    m_scroll_panel->ScrollTo(GG::Y0);   // revert to top for new screen
 }
 
 void EncyclopediaDetailPanel::CloseClicked()
