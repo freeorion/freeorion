@@ -594,8 +594,10 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     GG::Connect(m_back_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnBack,                   this);
     GG::Connect(m_next_button->LeftClickedSignal,   &EncyclopediaDetailPanel::OnNext,                   this);
 
-    m_description_box = new GG::RichText(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "", ClientUI::GetFont(), ClientUI::TextColor(),
-                                         GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK, GG::INTERACTIVE);
+    m_description_box = new GG::RichText(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), "",
+                                         ClientUI::GetFont(), ClientUI::TextColor(),
+                                         GG::FORMAT_TOP | GG::FORMAT_LEFT | GG::FORMAT_LINEWRAP | GG::FORMAT_WORDBREAK,
+                                         GG::INTERACTIVE);
     m_description_panel = new GG::ScrollPanel(GG::X(0), GG::Y(0), ClientWidth(), ClientHeight(), m_description_box);
 
     // Copy default block factory.
@@ -610,6 +612,7 @@ EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, c
     m_description_box->SetPadding(DESCRIPTION_PADDING);
 
     m_description_panel->SetBackgroundColor(ClientUI::CtrlColor());
+    m_description_panel->InstallEventFilter(this);
 
     m_graph = new GraphControl();
     m_graph->ShowPoints(false);
@@ -725,6 +728,8 @@ void EncyclopediaDetailPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 void EncyclopediaDetailPanel::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
     if (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) {
         GG::GUI::GetGUI()->SetFocusWnd(m_search_edit);
+    } else if (key == GG::GGK_BACKSPACE) {
+        this->OnBack();
     } else {
         m_description_panel->KeyPress(key, key_code_point, mod_keys);
     }
@@ -2966,3 +2971,14 @@ void EncyclopediaDetailPanel::OnNext() {
 
 void EncyclopediaDetailPanel::CloseClicked()
 { ClosingSignal(); }
+
+bool EncyclopediaDetailPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
+    if (w == this)
+        return false;
+
+    if (event.Type() != GG::WndEvent::KeyPress)
+        return false;
+
+    this->HandleEvent(event);
+    return true;
+}

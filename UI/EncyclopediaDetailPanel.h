@@ -103,6 +103,8 @@ private:
     void HandleLinkDoubleClick(const std::string& link_type, const std::string& data);
     void HandleSearchTextEntered();
 
+    bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
+
     static std::list<std::pair <std::string, std::string>>              m_items;    // stores all items which have been observed in the past
                                                                                     // .first == item type; .second == item.name
     static std::list<std::pair <std::string, std::string>>::iterator    m_items_it; // stores actual position within m_items
