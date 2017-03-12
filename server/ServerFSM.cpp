@@ -1047,27 +1047,32 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
 
     // Ensure all players have unique non-empty names   // TODO: the uniqueness part...
     unsigned int player_num = 1;
-    for (PlayerSetupData& psd : players) {
-        if (psd.m_player_name.empty()) {
-            if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-                psd.m_player_name = "AI_" + std::to_string(player_num++);
-            else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
-                psd.m_player_name = "Human_Player_" + std::to_string(player_num++);
-            else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
-                psd.m_player_name = "Observer_" + std::to_string(player_num++);
-            else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
-                psd.m_player_name = "Moderator_" + std::to_string(player_num++);
-            else
-                psd.m_player_name = "Player_" + std::to_string(player_num++);
-        }
-    }
+    int player_id = server.m_networking.NewPlayerID();
 
     if (m_single_player_setup_data->m_new_game) {
-        // DO NOTHING
-
         // for new games, single player setup data contains full m_players
         // vector, so can just use the contents of that to create AI
         // clients
+        for (auto& psd : players) {
+            if (psd.m_player_name.empty()) {
+                if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+                    psd.m_player_name = "AI_" + std::to_string(player_num++);
+                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER)
+                    psd.m_player_name = "Human_Player_" + std::to_string(player_num++);
+                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER)
+                    psd.m_player_name = "Observer_" + std::to_string(player_num++);
+                else if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
+                    psd.m_player_name = "Moderator_" + std::to_string(player_num++);
+                else
+                    psd.m_player_name = "Player_" + std::to_string(player_num++);
+            }
+
+            if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                psd.m_player_id = server.Networking().HostPlayerID();
+            } else {
+                psd.m_player_id = player_id++;
+            }
+        }
 
     } else {
         // for loaded games, all that is specified is the filename, and the
@@ -1099,18 +1104,34 @@ WaitingForSPGameJoiners::WaitingForSPGameJoiners(my_context c) :
                 //psd.m_starting_species_name // left default
                 psd.m_save_game_empire_id = psgd.m_empire_id;
                 psd.m_client_type =         psgd.m_client_type;
+
+                if (psd.m_client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
+                    psd.m_player_id = server.Networking().HostPlayerID();
+                } else {
+                    psd.m_player_id = player_id++;
+                }
+
                 players.push_back(psd);
             }
         }
     }
 
     m_num_expected_players = players.size();
-    m_expected_ai_player_names.clear();
-    for (const PlayerSetupData& psd : players)
-        if (psd.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
-            m_expected_ai_player_names.insert(psd.m_player_name);
+    m_expected_ai_names_and_ids.clear();
+    for (const auto& player_data : players) {
+        if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+            m_expected_ai_names_and_ids.insert(std::make_pair(player_data.m_player_name, player_data.m_player_id));
+    }
 
     server.CreateAIClients(players, m_single_player_setup_data->m_ai_aggr);    // also disconnects any currently-connected AI clients
+
+    server.InitializePython();
+
+    if (m_single_player_setup_data->m_new_game) {
+        // For SP game start inializaing while waiting for AI callbacks.
+        DebugLogger() << "Initializing new SP game...";
+        server.NewSPGameInit(*m_single_player_setup_data);
+    }
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will
@@ -1132,37 +1153,40 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
     std::string client_version_string;
     ExtractJoinGameMessageData(message, player_name, client_type, client_version_string);
 
-    int player_id = server.m_networking.NewPlayerID();
-
     // is this an AI?
     if (client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
+        const auto& expected_it = m_expected_ai_names_and_ids.find(player_name);
         // verify that player name was expected
-        if (m_expected_ai_player_names.find(player_name) == m_expected_ai_player_names.end()) {
+        if (expected_it == m_expected_ai_names_and_ids.end()) {
             // unexpected ai player
             ErrorLogger() << "WaitingForSPGameJoiners::react(const JoinGame& msg) received join game message for player \"" << player_name << "\" which was not an expected AI player name.    Terminating connection.";
             server.m_networking.Disconnect(player_connection);
         } else {
             // expected player
             // let the networking system know what socket this player is on
-            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-            player_connection->SendMessage(JoinAckMessage(player_id));
+            player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
+            player_connection->SendMessage(JoinAckMessage(expected_it->second));
 
             // remove name from expected names list, so as to only allow one connection per AI
-            m_expected_ai_player_names.erase(player_name);
+            m_expected_ai_names_and_ids.erase(player_name);
         }
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
         // verify that there is room left for this player
-        int already_connected_players = m_expected_ai_player_names.size() + server.m_networking.NumEstablishedPlayers();
+        int already_connected_players = m_expected_ai_names_and_ids.size() + server.m_networking.NumEstablishedPlayers();
         if (already_connected_players >= m_num_expected_players) {
             // too many human players
             ErrorLogger() << "WaitingForSPGameJoiners::react(const JoinGame& msg): A human player attempted to join the game but there was not enough room.  Terminating connection.";
             // TODO: send message to attempted joiner saying game is full
             server.m_networking.Disconnect(player_connection);
         } else {
-            // expected human player
-            player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
-            player_connection->SendMessage(JoinAckMessage(player_id));
+            // unexpected but welcome human player
+            int host_id = server.Networking().HostPlayerID();
+            player_connection->EstablishPlayer(host_id, player_name, client_type, client_version_string);
+            player_connection->SendMessage(JoinAckMessage(host_id));
+
+            DebugLogger() << "Initializing new SP game...";
+            server.NewSPGameInit(*m_single_player_setup_data);
         }
     } else {
         ErrorLogger() << "WaitingForSPGameJoiners::react(const JoinGame& msg): Received JoinGame message with invalid client type: " << client_type;
@@ -1181,8 +1205,10 @@ sc::result WaitingForSPGameJoiners::react(const CheckStartConditions& u) {
     if (static_cast<int>(server.m_networking.NumEstablishedPlayers()) == m_num_expected_players) {
         DebugLogger() << "WaitingForSPGameJoiners::react(const CheckStartConditions& u) : have all " << m_num_expected_players << " expected players connected.";
         if (m_single_player_setup_data->m_new_game) {
-            DebugLogger() << "Initializing new SP game...";
-            server.NewSPGameInit(*m_single_player_setup_data);
+            DebugLogger() << "Verify AIs SP game...";
+            if (server.VerifySPGameAIs(*m_single_player_setup_data))
+                server. SendNewGameStartMessages();
+
         } else {
             DebugLogger() << "Loading SP game save file: " << m_single_player_setup_data->m_filename;
             try {
@@ -1241,6 +1267,8 @@ WaitingForMPGameJoiners::WaitingForMPGameJoiners(my_context c) :
     }
 
     server.CreateAIClients(player_setup_data, m_lobby_data->m_ai_aggr);
+
+    server.InitializePython();
 
     // force immediate check if all expected AIs are present, so that the FSM
     // won't get stuck in this state waiting for JoinGame messages that will

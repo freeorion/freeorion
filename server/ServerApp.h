@@ -186,9 +186,12 @@ public:
       * are thereby victorious. */
     void    CheckForEmpireElimination();
 
-    /** Intializes single player game universe, sends out initial game state to
-      * clients, and signals clients to start first turn */
+    /** Intializes single player game universe.*/
     void    NewSPGameInit(const SinglePlayerSetupData& single_player_setup_data);
+
+    /** Return true if single player game AIs are compatible with created
+      * universe and are ready to start a new game. */
+    bool    VerifySPGameAIs(const SinglePlayerSetupData& single_player_setup_data);
 
     /** Intializes multi player game universe, sends out initial game state to
       * clients, and signals clients to start first turn */
@@ -219,17 +222,25 @@ private:
 
     void    Run();          ///< initializes app state, then executes main event handler/render loop (Poll())
 
+    /** Initialize the python engine or exit. */
+    void InitializePython();
+
     /** Called when server process receive termination signal */
     void    SignalHandler(const boost::system::error_code& error, int signal_number);
 
 
     /** Clears any old game stored orders, victors or eliminated players, ads
       * empires to turn processing list, does start-of-turn empire supply and
-      * resource pool determination, and compiles and sends out basic
-      * information about players in game for all other players as part of the
-      * game start messages sent to players. */
-    void    NewGameInit(const GalaxySetupData& galaxy_setup_data,
-                        const std::map<int, PlayerSetupData>& player_id_setup_data);
+      * resource pool determination. */
+    void    NewGameInitConcurrentWithJoiners(const GalaxySetupData& galaxy_setup_data,
+                                             const std::vector<PlayerSetupData>& player_setup_data);
+
+    /** Return true if player data is consistent with starting a new game. */
+    bool    NewGameInitVerifyJoiners(const GalaxySetupData& galaxy_setup_data,
+                                     const std::vector<PlayerSetupData>& player_setup_data);
+
+    /** Sends out initial new game state to clients, and signals clients to start first turn. */
+    void SendNewGameStartMessages();
 
     /** Clears any old game stored orders, victors or eliminated players, ads
       * empires to turn processing list, does start-of-turn empire supply and
