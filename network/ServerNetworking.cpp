@@ -80,6 +80,8 @@ PlayerConnection::~PlayerConnection() {
             DebugLogger() << "Player connection shutdown.";
         else if (error == boost::asio::error::connection_aborted)
             DebugLogger() << "Player connection closed by server.";
+        else if (error == boost::asio::error::not_connected)
+            DebugLogger() << "Player connection already down.";
         else {
 
             ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error #"
