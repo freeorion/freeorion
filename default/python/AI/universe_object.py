@@ -3,7 +3,10 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 from AIDependencies import INVALID_ID
 
 class UniverseObject(object):
-    """Stores information about AI target - its id and type."""
+    """
+    Stores information about AI target - its id and type.
+    :type id: int
+    """
 
     def __init__(self, target_id):
         self.id = target_id
@@ -21,7 +24,7 @@ class UniverseObject(object):
 
     def get_object(self):
         """
-        Returns UniverseObject or None.
+        Returns fo.universeObject or None.
         """
         return None
 
@@ -29,7 +32,10 @@ class UniverseObject(object):
         return self.id is not None and self.id >= 0
 
     def get_system(self):
-        """Returns all system AITargets required to visit in this object."""
+        """
+        Returns the system that contains this object, or None.
+        :rtype: System | None
+        """
         raise NotImplementedError()
 
 
@@ -37,11 +43,18 @@ class Planet(UniverseObject):
     object_name = 'planet'
 
     def get_system(self):
+        """
+        Returns the system that contains this object, or None.
+        :rtype: System | None
+        """
         universe = fo.getUniverse()
         planet = universe.getPlanet(self.id)
         return System(planet.systemID)
 
     def get_object(self):
+        """
+        :rtype fo.planet:
+        """
         return fo.getUniverse().getPlanet(self.id)
 
 
@@ -49,6 +62,10 @@ class System(UniverseObject):
     object_name = 'system'
 
     def get_system(self):
+        """
+        Returns this object.
+        :rtype: System
+        """
         return self
 
     def get_object(self):
@@ -59,7 +76,10 @@ class Fleet(UniverseObject):
     object_name = 'fleet'
 
     def get_system(self):
-        """Get current fleet location or target system if currently on starlane."""
+        """
+        Get current fleet location or target system if currently on starlane.
+        :rtype: System | None
+        """
         universe = fo.getUniverse()
         fleet = universe.getFleet(self.id)
         system_id = fleet.nextSystemID

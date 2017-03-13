@@ -1,4 +1,5 @@
 from EnumsAI import ShipRoleType, MissionType
+import AIstate
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
@@ -10,6 +11,45 @@ from freeorion_tools import print_error
 from universe_object import Fleet, System, Planet
 from AIDependencies import INVALID_ID
 dumpTurn = 0
+
+def trooper_move_reqs_met(main_fleet_mission, order, verbose):
+    """
+    Indicates whether or not move requirements specific to invasion troopers are met for the provided mission and order.
+    :type main_fleet_mission: AIFleetMission.AIFleetMission
+    :type order: OrderMove
+    :param verbose: whether to print verbose decision details
+    :type verbose: bool
+    :rtype: bool
+    """
+    # Don't advance outside of our fleet-supply zone unless the target either has no shields at all or there
+    # is already a military fleet assigned to secure the target, and don't take final jump unless the planet is
+    # (to the AI's knowledge) down to zero shields.  Additional checks will also be done by the later
+    # generic movement code
+    system_id = order.fleet.get_system().id
+    invasion_target = main_fleet_mission.target
+    invasion_planet = invasion_target.get_object()
+    invasion_system = invasion_target.get_system()
+    supplied_systems = fo.getEmpire().fleetSupplyableSystemIDs
+    # if about to leave supply lines
+    if (order.target.id not in supplied_systems and system_id in supplied_systems):
+        if (invasion_planet.currentMeterValue(fo.meterType.maxShield) and
+                    invasion_system.id not in AIstate.militarySystemIDs):
+            if verbose:
+                print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
+                       "because target (%s) has nonzero max shields and there is not yet a military fleet "
+                       "assigned to secure the target system.") % (order.fleet.id, invasion_planet)
+            return False
+        if verbose:
+            print ("trooper_move_reqs_met() allowing Invasion fleet %d to leave supply "
+                   "because target (%s) has zero max shields or there is a military fleet assigned to secure "
+                   "the target system.") % (order.fleet.id, invasion_planet)
+    # if on final leg of journey
+    if (order.target.id == invasion_system.id) and invasion_planet.currentMeterValue(fo.meterType.shield):
+        if verbose:
+            print ("trooper_move_reqs_met() holding Invasion fleet %d before final leg to target system because "
+                   "target (%s) has nonzero shields") % (order.fleet.id, invasion_planet)
+        return False
+    return True
 
 
 class AIFleetOrder(object):
@@ -107,6 +147,8 @@ class OrderMove(AIFleetOrder):
         if system_id == self.target.get_system().id:
             return True  # TODO: already there, but could consider retreating
 
+        main_fleet_mission = foAI.foAIstate.get_fleet_mission(self.fleet.id)
+
         fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
         target_sys_status = foAI.foAIstate.systemStatus.get(self.target.id, {})
         f_threat = target_sys_status.get('fleetThreat', 0)
@@ -115,6 +157,8 @@ class OrderMove(AIFleetOrder):
         threat = f_threat + m_threat + p_threat
         safety_factor = foAI.foAIstate.character.military_safety_factor()
         universe = fo.getUniverse()
+        if main_fleet_mission.type == MissionType.INVASION and not trooper_move_reqs_met(main_fleet_mission, self, verbose):
+            return False
         if fleet_rating >= safety_factor * threat:
             return True
         elif not p_threat and self.target.id in fo.getEmpire().supplyUnobstructedSystems:
