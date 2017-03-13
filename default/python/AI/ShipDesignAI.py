@@ -736,157 +736,13 @@ class ShipDesigner(object):
         self.hull = None            # hull object (not hullname!)
         self.partnames = []         # list of partnames (string)
         self.parts = []             # list of actual part objects
-        self._design_stats = DesignStats()
+        self.design_stats = DesignStats()
         self.production_cost = 9999
         self.production_time = 1
         self.pid = INVALID_ID               # planetID for checks on production cost if not LocationInvariant.
         self.additional_specifications = AdditionalSpecifications()
         self.design_name_dict = {k: v for k, v in zip(self.NAME_THRESHOLDS,
                                                       UserString(self.NAMETABLE, self.basename).splitlines())}
-
-    @property
-    def attacks(self):
-        return self._design_stats.attacks
-
-    @attacks.setter
-    def attacks(self, value):
-        self._design_stats.attacks = value
-
-    @property
-    def structure(self):
-        return self._design_stats.structure
-
-    @structure.setter
-    def structure(self, value):
-        self._design_stats.structure = value
-
-    @property
-    def shields(self):
-        return self._design_stats.shields
-
-    @shields.setter
-    def shields(self, value):
-        self._design_stats.shields = value
-
-    @property
-    def fuel(self):
-        return self._design_stats.fuel
-
-    @fuel.setter
-    def fuel(self, value):
-        self._design_stats.fuel = value
-
-    @property
-    def speed(self):
-        return self._design_stats.speed
-
-    @speed.setter
-    def speed(self, value):
-        self._design_stats.speed = value
-
-    @property
-    def stealth(self):
-        return self._design_stats.stealth
-
-    @stealth.setter
-    def stealth(self, value):
-        self._design_stats.stealth = value
-
-    @property
-    def detection(self):
-        return self._design_stats.detection
-
-    @detection.setter
-    def detection(self, value):
-        self._design_stats.detection = value
-
-    @property
-    def troops(self):
-        return self._design_stats.troops
-
-    @troops.setter
-    def troops(self, value):
-        self._design_stats.troops = value
-
-    @property
-    def colonisation(self):
-        return self._design_stats.colonisation
-
-    @colonisation.setter
-    def colonisation(self, value):
-        self._design_stats.colonisation = value
-
-    @property
-    def fuel_per_turn(self):
-        return self._design_stats.fuel_per_turn
-
-    @fuel_per_turn.setter
-    def fuel_per_turn(self, value):
-        self._design_stats.fuel_per_turn = value
-
-    @property
-    def organic_growth(self):
-        return self._design_stats.organic_growth
-
-    @organic_growth.setter
-    def organic_growth(self, value):
-        self._design_stats.organic_growth = value
-
-    @property
-    def maximum_organic_growth(self):
-        return self._design_stats.maximum_organic_growth
-
-    @maximum_organic_growth.setter
-    def maximum_organic_growth(self, value):
-        self._design_stats.maximum_organic_growth = value
-
-    @property
-    def repair_per_turn(self):
-        return self._design_stats.repair_per_turn
-
-    @repair_per_turn.setter
-    def repair_per_turn(self, value):
-        self._design_stats.repair_per_turn = value
-
-    @property
-    def asteroid_stealth(self):
-        return self._design_stats.asteroid_stealth
-
-    @asteroid_stealth.setter
-    def asteroid_stealth(self, value):
-        self._design_stats.asteroid_stealth = value
-
-    @property
-    def solar_stealth(self):
-        return self._design_stats.solar_stealth
-
-    @solar_stealth.setter
-    def solar_stealth(self, value):
-        self._design_stats.solar_stealth = value
-
-    @property
-    def fighter_capacity(self):
-        return self._design_stats.fighter_capacity
-
-    @fighter_capacity.setter
-    def fighter_capacity(self, value):
-        self._design_stats.fighter_capacity = value
-
-    @property
-    def fighter_launch_rate(self):
-        return self._design_stats.fighter_launch_rate
-
-    @fighter_launch_rate.setter
-    def fighter_launch_rate(self, value):
-        self._design_stats.fighter_launch_rate = value
-
-    @property
-    def fighter_damage(self):
-        return self._design_stats.fighter_damage
-
-    @fighter_damage.setter
-    def fighter_damage(self, value):
-        self._design_stats.fighter_damage = value
 
     def evaluate(self):
         """ Return a rating for the design.
@@ -906,16 +762,16 @@ class ShipDesigner(object):
         min_speed = self._minimum_speed()
         min_structure = self._minimum_structure()
         min_fighter_launch_rate = self._minimum_fighter_launch_rate()
-        if self.fuel < min_fuel:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fuel - self.fuel)
-        if self.speed < min_speed:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_speed - self.speed)
-        estimated_structure = (self.structure +
-                               self.organic_growth * self.additional_specifications.expected_turns_till_fight)
+        if self.design_stats.fuel < min_fuel:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fuel - self.design_stats.fuel)
+        if self.design_stats.speed < min_speed:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_speed - self.design_stats.speed)
+        estimated_structure = (self.design_stats.structure +
+                               self.design_stats.organic_growth * self.additional_specifications.expected_turns_till_fight)
         if estimated_structure < min_structure:
             rating += MISSING_REQUIREMENT_MULTIPLIER * (min_structure - estimated_structure)
-        if self.fighter_launch_rate < min_fighter_launch_rate:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fighter_launch_rate - self.fighter_launch_rate)
+        if self.design_stats.fighter_launch_rate < min_fighter_launch_rate:
+            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fighter_launch_rate - self.design_stats.fighter_launch_rate)
         if rating < 0:
             return rating
         else:
@@ -945,7 +801,7 @@ class ShipDesigner(object):
         """Set stats to default.
 
         Call this if design is invalid to avoid miscalculation of ratings."""
-        self._design_stats.reset()
+        self.design_stats.reset()
         self.production_cost = 9999
         self.production_time = 1
 
@@ -990,27 +846,27 @@ class ShipDesigner(object):
         local_time_cache = Cache.production_time[self.pid]
 
         # read out hull stats
-        self.structure = self.hull.structure
-        self.fuel = self.hull.fuel
-        self.speed = self.hull.speed
-        self.stealth = self.hull.stealth
-        self.attacks.clear()
-        self.detection = 0  # TODO: Add self.hull.detection once available in interface
-        self.shields = 0    # TODO: Add self.hull.shields if added to interface
-        self.troops = 0     # TODO: Add self.hull.troops if added to interface
+        self.design_stats.structure = self.hull.structure
+        self.design_stats.fuel = self.hull.fuel
+        self.design_stats.speed = self.hull.speed
+        self.design_stats.stealth = self.hull.stealth
+        self.design_stats.attacks.clear()
+        self.design_stats.detection = 0  # TODO: Add self.hull.detection once available in interface
+        self.design_stats.shields = 0    # TODO: Add self.hull.shields if added to interface
+        self.design_stats.troops = 0     # TODO: Add self.hull.troops if added to interface
         self.production_cost = local_cost_cache.get(self.hull.name, self.hull.productionCost(fo.empireID(), self.pid))
         self.production_time = local_time_cache.get(self.hull.name, self.hull.productionTime(fo.empireID(), self.pid))
-        self.colonisation = -1  # -1 as 0 corresponds to outpost pod (capacity = 0)
-        self.fuel_per_turn = 0
-        self.organic_growth = 0
-        self.maximum_organic_growth = 0
-        self.repair_per_turn = 0
-        self.asteroid_stealth = 0
-        self.solar_stealth = 0
+        self.design_stats.colonisation = -1  # -1 as 0 corresponds to outpost pod (capacity = 0)
+        self.design_stats.fuel_per_turn = 0
+        self.design_stats.organic_growth = 0
+        self.design_stats.maximum_organic_growth = 0
+        self.design_stats.repair_per_turn = 0
+        self.design_stats.asteroid_stealth = 0
+        self.design_stats.solar_stealth = 0
 
-        self.fighter_capacity = 0
-        self.fighter_launch_rate = 0
-        self.fighter_damage = 0
+        self.design_stats.fighter_capacity = 0
+        self.design_stats.fighter_launch_rate = 0
+        self.design_stats.fighter_damage = 0
 
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = 0  # to deal with Non-stacking parts
@@ -1022,60 +878,60 @@ class ShipDesigner(object):
             partclass = part.partClass
             capacity = part.capacity if partclass not in WEAPONS else self._calculate_weapon_strength(part)
             if partclass in FUEL:
-                self.fuel += capacity
+                self.design_stats.fuel += capacity
             elif partclass in ENGINES:
-                self.speed += capacity
+                self.design_stats.speed += capacity
             elif partclass in COLONISATION:
                 colonization_counter += 1
                 if colonization_counter == 1:
-                    self.colonisation = capacity
+                    self.design_stats.colonisation = capacity
                 else:
-                    self.colonisation = -1
+                    self.design_stats.colonisation = -1
             elif partclass in DETECTION:
                 detection_counter += 1
                 if detection_counter == 1:
-                    self.detection += capacity
+                    self.design_stats.detection += capacity
                 else:
-                    self.detection = 0
+                    self.design_stats.detection = 0
             elif partclass in ARMOUR:
-                self.structure += capacity
+                self.design_stats.structure += capacity
             elif partclass in WEAPONS:
                 shots = self._calculate_weapon_shots(part)
-                self.attacks[capacity] = self.attacks.get(capacity, 0) + shots
+                self.design_stats.attacks[capacity] = self.design_stats.attacks.get(capacity, 0) + shots
             elif partclass in SHIELDS:
                 shield_counter += 1
                 if shield_counter == 1:
-                    self.shields = capacity
+                    self.design_stats.shields = capacity
                 else:
-                    self.shields = 0
+                    self.design_stats.shields = 0
             elif partclass in TROOPS:
-                self.troops += capacity
+                self.design_stats.troops += capacity
             elif partclass in STEALTH:
                 cloak_counter += 1
                 if cloak_counter == 1:
-                    self.stealth += capacity
+                    self.design_stats.stealth += capacity
                 else:
-                    self.stealth = 0
+                    self.design_stats.stealth = 0
             elif partclass in FIGHTER_BAY:
-                self.fighter_launch_rate += capacity
+                self.design_stats.fighter_launch_rate += capacity
             elif partclass in FIGHTER_HANGAR:
                 hangar_parts.add(part.name)
                 if len(hangar_parts) > 1:
                     # enforce only one hangar part per design
-                    self.fighter_capacity = 0
-                    self.fighter_damage = 0
+                    self.design_stats.fighter_capacity = 0
+                    self.design_stats.fighter_damage = 0
                 else:
-                    self.fighter_capacity += self._calculate_hangar_capacity(part)
-                    self.fighter_damage = self._calculate_hangar_damage(part)
+                    self.design_stats.fighter_capacity += self._calculate_hangar_capacity(part)
+                    self.design_stats.fighter_damage = self._calculate_hangar_damage(part)
 
         self._apply_hardcoded_effects()
 
         if self.species and not ignore_species:
             shields_grade = CombatRatingsAI.get_species_shield_grade(self.species)
-            self.shields = CombatRatingsAI.weight_shields(self.shields, shields_grade)
-            if self.troops:
+            self.design_stats.shields = CombatRatingsAI.weight_shields(self.design_stats.shields, shields_grade)
+            if self.design_stats.troops:
                 troops_grade = CombatRatingsAI.get_species_troops_grade(self.species)
-                self.troops = CombatRatingsAI.weight_attack_troops(self.troops, troops_grade)
+                self.design_stats.troops = CombatRatingsAI.weight_attack_troops(self.design_stats.troops, troops_grade)
 
     def _apply_hardcoded_effects(self):
         """Update stats that can not be read out by the AI yet, i.e. applied by effects.
@@ -1097,9 +953,9 @@ class ShipDesigner(object):
             dependency, value = tup
             dep_val = 0
             if dependency == AIDependencies.STRUCTURE:
-                dep_val = self.structure
+                dep_val = self.design_stats.structure
             elif dependency == AIDependencies.FUEL:
-                dep_val = self.fuel
+                dep_val = self.design_stats.fuel
             else:
                 print "Can't parse dependent token: ", tup
             return dep_val * value
@@ -1116,52 +972,52 @@ class ShipDesigner(object):
                 if isinstance(value, tuple) and token is not AIDependencies.ORGANIC_GROWTH:
                     value = parse_complex_tokens(value)
                 if token == AIDependencies.REPAIR_PER_TURN:
-                    self.repair_per_turn += min(value, self.structure)
+                    self.design_stats.repair_per_turn += min(value, self.design_stats.structure)
                 elif token == AIDependencies.FUEL_PER_TURN:
-                    self.fuel_per_turn = max(self.fuel_per_turn + value, self.fuel)
+                    self.design_stats.fuel_per_turn = max(self.design_stats.fuel_per_turn + value, self.design_stats.fuel)
                 elif token == AIDependencies.STEALTH_MODIFIER:
                     if not (AIDependencies.NO_EFFECT_WITH_CLOAKS in tokendict.get(AIDependencies.STACKING_RULES, [])
                             and self._partclass_in_design(STEALTH)):
-                        self.stealth += value
+                        self.design_stats.stealth += value
                 # STACKING_RULES configures NO_EFFECT_WITH_CLOAKS -> ignore
                 elif token == AIDependencies.STACKING_RULES:
                     continue
                 elif token == AIDependencies.ASTEROID_STEALTH:
-                    self.asteroid_stealth += value
+                    self.design_stats.asteroid_stealth += value
                 elif token == AIDependencies.SHIELDS:
-                    self.shields += value
+                    self.design_stats.shields += value
                 elif token == AIDependencies.DETECTION:
-                    self.detection += value
+                    self.design_stats.detection += value
                 elif token == AIDependencies.ORGANIC_GROWTH:
-                    self.organic_growth += value[0]
-                    self.maximum_organic_growth += value[1]
+                    self.design_stats.organic_growth += value[0]
+                    self.design_stats.maximum_organic_growth += value[1]
                 elif token == AIDependencies.SOLAR_STEALTH:
-                    self.solar_stealth = max(self.solar_stealth, value)
+                    self.design_stats.solar_stealth = max(self.design_stats.solar_stealth, value)
                 elif token == AIDependencies.SPEED:
-                    self.speed += value
+                    self.design_stats.speed += value
                 elif token == AIDependencies.FUEL:
-                    self.fuel += value
+                    self.design_stats.fuel += value
                 elif token == AIDependencies.STRUCTURE:
-                    self.structure += value
+                    self.design_stats.structure += value
                 else:
                     print "WARNING: Failed to parse token: %s" % token
             # if the hull has no special detection specified, then it has base detection.
             if is_hull and AIDependencies.DETECTION not in tokendict:
-                self.detection += AIDependencies.BASE_DETECTION
+                self.design_stats.detection += AIDependencies.BASE_DETECTION
 
         # TODO establish framework for conditional effects and get rid of this
         if self.hull.name == "SH_SPATIAL_FLUX":
-            self.stealth += 10
+            self.design_stats.stealth += 10
             relevant_stealth_techs = [
                 "SPY_STEALTH_PART_1", "SPY_STEALTH_PART_2",
                 "SPY_STEALTH_PART_3", "SPY_STEALTH_4",
             ]
             completed_techs = [tech for tech in relevant_stealth_techs
                                if tech_is_complete(tech)]
-            self.stealth += 10 * len(completed_techs)
+            self.design_stats.stealth += 10 * len(completed_techs)
 
         if self.hull.name not in AIDependencies.HULL_EFFECTS:
-            self.detection += AIDependencies.BASE_DETECTION
+            self.design_stats.detection += AIDependencies.BASE_DETECTION
         else:
             parse_tokens(AIDependencies.HULL_EFFECTS[self.hull.name], is_hull=True)
 
@@ -1346,7 +1202,7 @@ class ShipDesigner(object):
                     print "For best design got got design id %s" % design_id
                 if design_id is not None:
                     best_design_list.append((best_rating_for_planet, pid, design_id,
-                                             self.production_cost, copy.deepcopy(self._design_stats)))
+                                             self.production_cost, copy.deepcopy(self.design_stats)))
                 else:
                     print_error("The best design for %s on planet %d could not be added."
                                 % (self.__class__.__name__, pid))
@@ -1562,7 +1418,7 @@ class ShipDesigner(object):
         :return: summed up damage vs shielded enemy
         """
         total_dmg = 0
-        for dmg, count in self.attacks.items():
+        for dmg, count in self.design_stats.attacks.items():
             total_dmg += max(0, dmg - self.additional_specifications.enemy_shields) * count
         return total_dmg
 
@@ -1572,7 +1428,7 @@ class ShipDesigner(object):
         :return: Total damage of the design (against no shields)
         """
         total_dmg = 0
-        for dmg, count in self.attacks.items():
+        for dmg, count in self.design_stats.attacks.items():
             total_dmg += dmg * count
         return total_dmg
 
@@ -1608,7 +1464,7 @@ class ShipDesigner(object):
          :return: float - a rough approximation of the strength of this design
          """
         self.update_stats(ignore_species=True)
-        return self.structure
+        return self.design_stats.structure
 
     def _adjusted_production_cost(self):
         """Return a production cost adjusted by the number of ships we have.
@@ -1643,14 +1499,14 @@ class ShipDesigner(object):
         :rtype: float
         """
         enemy_dmg = self.additional_specifications.max_enemy_weapon_strength
-        return max(enemy_dmg / max(0.01, enemy_dmg - self.shields), 1)
+        return max(enemy_dmg / max(0.01, enemy_dmg - self.design_stats.shields), 1)
 
     def _effective_fuel(self):
         """Return the number of turns the ship can move without refueling.
 
         :rtype: float
         """
-        return min(self.fuel / max(1 - self.fuel_per_turn, 0.001), 10)
+        return min(self.design_stats.fuel / max(1 - self.design_stats.fuel_per_turn, 0.001), 10)
 
     def _expected_organic_growth(self):
         """Get expected organic growth defined by growth rate and expected numbers till fight.
@@ -1658,8 +1514,8 @@ class ShipDesigner(object):
         :return: Expected organic growth
         :rtype: float
         """
-        return min(self.additional_specifications.expected_turns_till_fight * self.organic_growth,
-                   self.maximum_organic_growth)
+        return min(self.additional_specifications.expected_turns_till_fight * self.design_stats.organic_growth,
+                   self.design_stats.maximum_organic_growth)
 
     def _remaining_growth(self):
         """Get growth potential after _expected_organic_growth() took place.
@@ -1667,14 +1523,14 @@ class ShipDesigner(object):
         :return: Remaining growth after _expected_organic_growth()
         :rtype: float
         """
-        return self.maximum_organic_growth - self._expected_organic_growth()
+        return self.design_stats.maximum_organic_growth - self._expected_organic_growth()
 
     def _effective_mine_damage(self):
         """Return enemy mine damage corrected by self-repair-rate.
 
         :rtype: float
         """
-        return self.additional_specifications.enemy_mine_dmg - self.repair_per_turn
+        return self.additional_specifications.enemy_mine_dmg - self.design_stats.repair_per_turn
 
     def _partclass_in_design(self, partclass):
         """Check if partclass is used in current design.
@@ -1740,7 +1596,7 @@ class ShipDesigner(object):
         return base + species_modifier + tech_bonus
 
     def _combat_rating(self):
-        combat_stats = CombatRatingsAI.ShipCombatStats(stats=self._design_stats.convert_to_combat_stats())
+        combat_stats = CombatRatingsAI.ShipCombatStats(stats=self.design_stats.convert_to_combat_stats())
         return combat_stats.get_rating(enemy_stats=self.additional_specifications.enemy)
 
 
@@ -1758,12 +1614,12 @@ class WarShipDesigner(ShipDesigner):
         return super(WarShipDesigner, self)._adjusted_production_cost()**exponent
 
     def _effective_structure(self):
-        effective_structure = self.structure + self._expected_organic_growth() + self._remaining_growth() / 5
+        effective_structure = self.design_stats.structure + self._expected_organic_growth() + self._remaining_growth() / 5
         effective_structure *= self._shield_factor()
         return effective_structure
 
     def _speed_factor(self):
-        return 1 + 0.005*(self.speed - 85)
+        return 1 + 0.005*(self.design_stats.speed - 85)
 
     def _fuel_factor(self):
         return 1 + 0.03 * (self._effective_fuel() - self._minimum_fuel()) ** 0.5
@@ -1869,7 +1725,7 @@ class MilitaryShipDesigner(WarShipDesigner):
 
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
-        return self.structure*self._total_dmg()*(1+self.shields/10)
+        return self.design_stats.structure*self._total_dmg()*(1+self.design_stats.shields/10)
 
 
 class CarrierShipDesigner(WarShipDesigner):
@@ -1897,7 +1753,7 @@ class CarrierShipDesigner(WarShipDesigner):
         self.additional_specifications.minimum_fighter_launch_rate = 1
 
     def _rating_function(self):
-        if self.fighter_capacity < 1:
+        if self.design_stats.fighter_capacity < 1:
             return INVALID_DESIGN_RATING
         combat_rating = self._combat_rating()
         speed_factor = self._speed_factor()
@@ -1941,8 +1797,8 @@ class CarrierShipDesigner(WarShipDesigner):
         return best_rating, best_partlist
 
     def _calc_rating_for_name(self):
-        base_rating = self.structure*self._total_dmg()*(1+self.shields/10)
-        fighter_rating = self.fighter_capacity * self.fighter_launch_rate * (.1+self.fighter_damage)
+        base_rating = self.design_stats.structure*self._total_dmg()*(1+self.design_stats.shields/10)
+        fighter_rating = self.design_stats.fighter_capacity * self.design_stats.fighter_launch_rate * (.1+self.design_stats.fighter_damage)
         return base_rating + fighter_rating
 
 
@@ -1964,10 +1820,10 @@ class TroopShipDesignerBaseClass(ShipDesigner):
         ShipDesigner.__init__(self)
 
     def _rating_function(self):
-        if self.troops == 0:
+        if self.design_stats.troops == 0:
             return INVALID_DESIGN_RATING
         else:
-            return self.troops/self._adjusted_production_cost()
+            return self.design_stats.troops/self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
         # fill completely with biggest troop pods. If none are available for this slot type, leave empty.
@@ -2049,9 +1905,9 @@ class ColonisationShipDesignerBaseClass(ShipDesigner):
         ShipDesigner.__init__(self)
 
     def _rating_function(self):
-        if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
+        if self.design_stats.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
             return INVALID_DESIGN_RATING
-        return self.colonisation*(1+0.002*(self.speed-75))/self.production_cost
+        return self.design_stats.colonisation*(1+0.002*(self.design_stats.speed-75))/self.production_cost
 
     def _starting_guess(self, available_parts, num_slots):
         # we want to use one and only one of the best colo pods
@@ -2113,9 +1969,9 @@ class OrbitalColonisationShipDesigner(ColonisationShipDesignerBaseClass):
         self.additional_specifications.minimum_fuel = 0
 
     def _rating_function(self):
-        if self.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
+        if self.design_stats.colonisation <= 0:  # -1 indicates no pod, 0 indicates outpost
             return INVALID_DESIGN_RATING
-        return self.colonisation/self.production_cost
+        return self.design_stats.colonisation/self.production_cost
 
 
 class OutpostShipDesignerBaseClass(ShipDesigner):
@@ -2137,9 +1993,9 @@ class OutpostShipDesignerBaseClass(ShipDesigner):
         ShipDesigner.__init__(self)
 
     def _rating_function(self):
-        if self.colonisation != 0:
+        if self.design_stats.colonisation != 0:
             return INVALID_DESIGN_RATING
-        return (1+0.002*(self.speed-75))/self.production_cost
+        return (1+0.002*(self.design_stats.speed-75))/self.production_cost
 
     def _class_specific_filter(self, partname_dict):
         # filter all colo pods
@@ -2186,7 +2042,7 @@ class OrbitalOutpostShipDesigner(OutpostShipDesignerBaseClass):
         self.additional_specifications.minimum_speed = 0
 
     def _rating_function(self):
-        if self.colonisation != 0:
+        if self.design_stats.colonisation != 0:
             return INVALID_DESIGN_RATING
         return 1/self.production_cost
 
@@ -2227,10 +2083,10 @@ class OrbitalDefenseShipDesigner(ShipDesigner):
         ShipDesigner.__init__(self)
 
     def _rating_function(self):
-        if self.speed > 10:
+        if self.design_stats.speed > 10:
             return INVALID_DESIGN_RATING
         total_dmg = self._total_dmg_vs_shields()
-        return (1+total_dmg*self.structure)/self._adjusted_production_cost()
+        return (1+total_dmg*self.design_stats.structure)/self._adjusted_production_cost()
 
     def _calc_rating_for_name(self):
         self.update_stats(ignore_species=True)
@@ -2253,11 +2109,11 @@ class ScoutShipDesigner(ShipDesigner):
         self.additional_specifications.minimum_speed = 60
 
     def _rating_function(self):
-        if not self.detection:
+        if not self.design_stats.detection:
             return INVALID_DESIGN_RATING
-        detection_factor = self.detection ** 2
+        detection_factor = self.design_stats.detection ** 2
         fuel_factor = self._effective_fuel()
-        speed_factor = self.speed ** 0.5
+        speed_factor = self.design_stats.speed ** 0.5
         return detection_factor * fuel_factor * speed_factor / self.production_cost
 
 
@@ -2279,11 +2135,11 @@ class KrillSpawnerShipDesigner(ShipDesigner):
     def _rating_function(self):
         if AIDependencies.PART_KRILL_SPAWNER not in self.partnames:
             return INVALID_DESIGN_RATING
-        structure_factor = (1 + self.structure - self._minimum_structure())**0.03  # nice to have but not too important
+        structure_factor = (1 + self.design_stats.structure - self._minimum_structure())**0.03  # nice to have but not too important
         fuel_factor = self._effective_fuel()
-        speed_factor = 1 + (self.speed - self._minimum_speed())**0.1
-        stealth_factor = 1 + (self.stealth + self.asteroid_stealth / 2)  # TODO: Adjust for enemy detection strength
-        detection_factor = self.detection**1.5
+        speed_factor = 1 + (self.design_stats.speed - self._minimum_speed())**0.1
+        stealth_factor = 1 + (self.design_stats.stealth + self.design_stats.asteroid_stealth / 2)  # TODO: Adjust for enemy detection strength
+        detection_factor = self.design_stats.detection**1.5
         return (structure_factor * fuel_factor * speed_factor *
                 stealth_factor * detection_factor / self.production_cost)
 
