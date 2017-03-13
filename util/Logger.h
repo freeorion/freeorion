@@ -2,8 +2,12 @@
 #define _Logger_h_
 
 #include <boost/log/trivial.hpp>
+#include <boost/log/sources/severity_channel_logger.hpp>
 #include <boost/log/expressions/keyword.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
+#include <boost/log/sources/global_logger_storage.hpp>
+
+#include <string>
 
 #include "Export.h"
 
@@ -95,47 +99,74 @@
 
 */
 
+// Prefix \p name to create a global logger name less likely to collide.
+#define FO_GLOBAL_LOGGER_NAME(name) fo_logger_global_##name
+
 /** Initializes the logging system. Log to the given file.  If the file already
  * exists it will be deleted. \p root_logger_name is the name by which the
  * default logger "" appears in the log file.*/
 FO_COMMON_API void InitLoggingSystem(const std::string& logFile, const std::string& root_logger_name);
 
-/** Accessors for the App's logger */
-FO_COMMON_API void SetLoggerPriority(int priority);
+/** A type for loggers (sources) that allows for severity and a logger name (channel in
+    boost parlance) and supports multithreading.*/
+using NamedThreadedLogger = boost::log::sources::severity_channel_logger_mt<
+    boost::log::trivial::severity_level, ///< the type of the severity level
+    std::string                          ///< the name of the logger
+    >;
+
+// Lookup and/or register the \p name logger in OptionsDB.  Sets the initial level.
+FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger);
+
+// Place in source file to create the previously defined global logger \p name
+#define CreateThreadedLogger(name)                                      \
+    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                                \
+        FO_GLOBAL_LOGGER_NAME(name), NamedThreadedLogger)               \
+    {                                                                   \
+        auto lg = NamedThreadedLogger(                                  \
+            (boost::log::keywords::severity = boost::log::trivial::trace), \
+            (boost::log::keywords::channel = #name));                   \
+        RegisterLoggerWithOptionsDB(#name);                             \
+        return lg;                                                      \
+    }
+
+// Create the default logger
+CreateThreadedLogger();
+
+/** Sets the priority for the log file sink. */
+FO_COMMON_API void SetLogFileSinkPriority(int priority);
 
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_filename, "SrcFilename", std::string);
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 
 #define __BASE_FILENAME__ (strrchr(__FILE__, '/') ? strrchr(__FILE__, '/') + 1 : strrchr(__FILE__, '\\') ? strrchr(__FILE__, '\\') + 1 : __FILE__)
 
-#define FO_LOGGER(lvl)\
-    BOOST_LOG_STREAM_WITH_PARAMS(::boost::log::trivial::logger::get(),\
-        (::boost::log::keywords::severity = ::boost::log::trivial::lvl)) <<\
+#define FO_LOGGER(name, lvl)                                            \
+    BOOST_LOG_STREAM_WITH_PARAMS(                                       \
+        FO_GLOBAL_LOGGER_NAME(name)::get(),                             \
+        (::boost::log::keywords::severity = ::boost::log::trivial::lvl)) << \
         ::boost::log::add_value("SrcFilename", __BASE_FILENAME__) <<\
         ::boost::log::add_value("SrcLinenum", __LINE__)
 
-#define TraceLogger()\
-    FO_LOGGER(trace)
+#define TraceLogger(name)\
+    FO_LOGGER(name, trace)
 
-#define DebugLogger()\
-    FO_LOGGER(debug)
+#define DebugLogger(name)\
+    FO_LOGGER(name, debug)
 
-#define InfoLogger()\
-    FO_LOGGER(info)
+#define InfoLogger(name)\
+    FO_LOGGER(name, info)
 
-#define WarnLogger()\
-    FO_LOGGER(warning)
+#define WarnLogger(name)\
+    FO_LOGGER(name, warning)
 
-#define ErrorLogger()\
-    FO_LOGGER(error)
+#define ErrorLogger(name)\
+    FO_LOGGER(name, error)
+
 
 extern int g_indent;
 
 /** A function that returns the correct amount of spacing for the current
   * indentation level during a dump. */
 std::string DumpIndent();
-
-/** Returns the integer priority level that should be passed for a given priority name string. */
-FO_COMMON_API int PriorityValue(const std::string& name);
 
 #endif // _Logger_h_
