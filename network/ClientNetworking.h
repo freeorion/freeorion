@@ -112,7 +112,7 @@ public:
         synchronous response from the server. */
     void SendSynchronousMessage(Message message, Message& response_message);
 
-    /** Disconnects the client from the server. Try to send any pending transmit messages. */
+    /** Disconnects the client from the server. First tries to send any pending transmit messages. */
     void DisconnectFromServer();
 
     /** Sets player ID for this client. */
@@ -127,7 +127,7 @@ private:
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
                           const boost::system::error_code& error);
     void CancelRetries();
-    void NetworkingThread(std::shared_ptr<ClientNetworking> &self);
+    void NetworkingThread(std::shared_ptr<ClientNetworking>& self);
     void HandleMessageBodyRead(const std::shared_ptr<ClientNetworking>& keep_alive,
                                boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(const std::shared_ptr<ClientNetworking>& keep_alive,
@@ -143,7 +143,12 @@ private:
 
     boost::asio::io_service         m_io_service;
     boost::asio::ip::tcp::socket    m_socket;
+
+    // m_mutex guards m_incoming_message, m_rx_connected and m_tx_connected which are written by
+    // the networking thread and read by the main thread to check incoming messages and connection
+    // status.
     mutable boost::mutex            m_mutex;
+
     MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
     std::list<Message>              m_outgoing_messages;
     bool                            m_rx_connected;      // accessed from multiple threads

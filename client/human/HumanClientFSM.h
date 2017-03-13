@@ -361,8 +361,10 @@ struct QuittingGame : boost::statechart::state<QuittingGame, HumanClientFSM> {
     boost::statechart::result react(const Disconnection& msg);
     boost::statechart::result react(const TerminateServer& msg);
 
-    // Determines whether QuittingGame ends by exiting the app or returning to the Intro menu.
     std::chrono::steady_clock::time_point m_start_time;
+
+    // if m_reset_to_intro is true QuittingGame transits to the Intro menu, otherwise it
+    // exits the app.
     bool m_reset_to_intro;
     Process* m_server_process;
 

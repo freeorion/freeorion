@@ -284,7 +284,7 @@ void ClientNetworking::DisconnectFromServer() {
     { // Create a scope for the mutex
         boost::mutex::scoped_lock lock(m_mutex);
         is_open = m_rx_connected || m_tx_connected;
-    } // Destroy the scope for the mutex.
+    }
 
     if (is_open)
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
@@ -378,7 +378,7 @@ void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self)
     m_incoming_messages.Clear();
     m_outgoing_messages.clear();
     m_io_service.reset();
-    {
+    { // Mutex scope
         boost::mutex::scoped_lock lock(m_mutex);
         m_rx_connected = false;
         m_tx_connected = false;
