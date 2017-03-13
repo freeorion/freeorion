@@ -147,8 +147,6 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
         ::boost::log::add_value("SrcFilename", __BASE_FILENAME__) <<\
         ::boost::log::add_value("SrcLinenum", __LINE__)
 
-#define TraceLogger(name)\
-    FO_LOGGER(name, trace)
 
 #define DebugLogger(name)\
     FO_LOGGER(name, debug)
