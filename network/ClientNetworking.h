@@ -128,9 +128,11 @@ private:
                           const boost::system::error_code& error);
     void CancelRetries();
     void NetworkingThread(std::shared_ptr<ClientNetworking> &self);
-    void HandleMessageBodyRead(     boost::system::error_code error, std::size_t bytes_transferred);
-    void HandleMessageHeaderRead(   boost::system::error_code error, std::size_t bytes_transferred);
-    void AsyncReadMessage();
+    void HandleMessageBodyRead(const std::shared_ptr<ClientNetworking>& keep_alive,
+                               boost::system::error_code error, std::size_t bytes_transferred);
+    void HandleMessageHeaderRead(const std::shared_ptr<ClientNetworking>& keep_alive,
+                                 boost::system::error_code error, std::size_t bytes_transferred);
+    void AsyncReadMessage(const std::shared_ptr<ClientNetworking>& keep_alive);
     void HandleMessageWrite(        boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncWriteMessage();
     void SendMessageImpl(Message message);

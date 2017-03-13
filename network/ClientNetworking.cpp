@@ -370,7 +370,7 @@ void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self)
     try {
         if (!m_outgoing_messages.empty())
             AsyncWriteMessage();
-        AsyncReadMessage();
+        AsyncReadMessage(protect_from_destruction_in_other_thread);
         m_io_service.run();
     } catch (const boost::system::system_error& error) {
         HandleException(error);
@@ -387,8 +387,8 @@ void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self)
         DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
 
-void ClientNetworking::HandleMessageBodyRead(boost::system::error_code error,
-                                             std::size_t bytes_transferred)
+void ClientNetworking::HandleMessageBodyRead(const std::shared_ptr<ClientNetworking>& keep_alive,
+                                             boost::system::error_code error, std::size_t bytes_transferred)
 {
     if (error)
         throw boost::system::system_error(error);
@@ -396,11 +396,13 @@ void ClientNetworking::HandleMessageBodyRead(boost::system::error_code error,
     assert(static_cast<int>(bytes_transferred) <= m_incoming_header[4]);
     if (static_cast<int>(bytes_transferred) == m_incoming_header[4]) {
         m_incoming_messages.PushBack(m_incoming_message);
-        AsyncReadMessage();
+        AsyncReadMessage(keep_alive);
     }
 }
 
-void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred) {
+void ClientNetworking::HandleMessageHeaderRead(const std::shared_ptr<ClientNetworking>& keep_alive,
+                                               boost::system::error_code error, std::size_t bytes_transferred)
+{
     if (error)
         throw boost::system::system_error(error);
     assert(bytes_transferred <= Message::HeaderBufferSize);
@@ -414,16 +416,20 @@ void ClientNetworking::HandleMessageHeaderRead(boost::system::error_code error, 
         m_socket,
         boost::asio::buffer(m_incoming_message.Data(), m_incoming_message.Size()),
         boost::bind(&ClientNetworking::HandleMessageBodyRead,
-                    this,
+                    this, keep_alive,
                     boost::asio::placeholders::error,
                     boost::asio::placeholders::bytes_transferred));
 }
 
-void ClientNetworking::AsyncReadMessage() {
+void ClientNetworking::AsyncReadMessage(const std::shared_ptr<ClientNetworking>& keep_alive) {
+    // If keep_alive's count < 2 the networking thread is orphaned so shut down
+    if (keep_alive.use_count() < 2)
+        DisconnectFromServerImpl();
+
     if (m_socket.is_open())
         boost::asio::async_read(
             m_socket, boost::asio::buffer(m_incoming_header),
-            boost::bind(&ClientNetworking::HandleMessageHeaderRead, this,
+            boost::bind(&ClientNetworking::HandleMessageHeaderRead, this, keep_alive,
                         boost::asio::placeholders::error,
                         boost::asio::placeholders::bytes_transferred));
 }
