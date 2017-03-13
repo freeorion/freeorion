@@ -837,9 +837,10 @@ class ShipDesigner(object):
         :param ignore_species: toggles whether species piloting grades are considered in the stats.
         :type ignore_species: bool
         """
+        self._set_stats_to_default()
+
         if not self.hull:
             print "WARNING: Tried to update stats of design without hull. Reset values to default."
-            self._set_stats_to_default()
             return
 
         local_cost_cache = Cache.production_cost[self.pid]
@@ -850,23 +851,8 @@ class ShipDesigner(object):
         self.design_stats.fuel = self.hull.fuel
         self.design_stats.speed = self.hull.speed
         self.design_stats.stealth = self.hull.stealth
-        self.design_stats.attacks.clear()
-        self.design_stats.detection = 0  # TODO: Add self.hull.detection once available in interface
-        self.design_stats.shields = 0    # TODO: Add self.hull.shields if added to interface
-        self.design_stats.troops = 0     # TODO: Add self.hull.troops if added to interface
         self.production_cost = local_cost_cache.get(self.hull.name, self.hull.productionCost(fo.empireID(), self.pid))
         self.production_time = local_time_cache.get(self.hull.name, self.hull.productionTime(fo.empireID(), self.pid))
-        self.design_stats.colonisation = -1  # -1 as 0 corresponds to outpost pod (capacity = 0)
-        self.design_stats.fuel_per_turn = 0
-        self.design_stats.organic_growth = 0
-        self.design_stats.maximum_organic_growth = 0
-        self.design_stats.repair_per_turn = 0
-        self.design_stats.asteroid_stealth = 0
-        self.design_stats.solar_stealth = 0
-
-        self.design_stats.fighter_capacity = 0
-        self.design_stats.fighter_launch_rate = 0
-        self.design_stats.fighter_damage = 0
 
         # read out part stats
         shield_counter = cloak_counter = detection_counter = colonization_counter = 0  # to deal with Non-stacking parts
