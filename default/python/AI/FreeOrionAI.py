@@ -144,9 +144,12 @@ def prepareForSave():  # pylint: disable=invalid-name
     print "Preparing for game save by serializing state"
 
     # serialize (convert to string) global state dictionary and send to AI client to be stored in save file
-    dump_string = pickle.dumps(foAIstate)
-    print "foAIstate pickled to string, about to send to server"
-    fo.setSaveStateString(dump_string)
+    try:
+        dump_string = pickle.dumps(foAIstate)
+        print "foAIstate pickled to string, about to send to server"
+        fo.setSaveStateString(dump_string)
+    except:
+        print_error("foAIstate unable to pickle save-state string; the save file should be playable but the AI may have a different aggression.", trace=True)
 
 
 @chat_on_error
