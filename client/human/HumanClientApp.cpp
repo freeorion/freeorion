@@ -208,7 +208,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
 
-    InitLogger(HUMAN_CLIENT_LOG_FILENAME, "Client");
+    InitLoggingSystem(HUMAN_CLIENT_LOG_FILENAME, "Client");
 
     try {
         InfoLogger() << "GL Version String: " << GetGLVersionString();

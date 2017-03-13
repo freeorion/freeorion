@@ -140,7 +140,7 @@ ServerApp::ServerApp() :
 {
     const std::string SERVER_LOG_FILENAME((GetUserDataDir() / "freeoriond.log").string());
 
-    InitLogger(SERVER_LOG_FILENAME, "Server");
+    InitLoggingSystem(SERVER_LOG_FILENAME, "Server");
 
     LogDependencyVersions();
 

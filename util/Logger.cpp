@@ -50,7 +50,7 @@ int g_indent = 0;
 std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
-void InitLogger(const std::string& logFile, const std::string& process) {
+void InitLoggingSystem(const std::string& logFile, const std::string& process) {
     logging::add_file_log(
         keywords::file_name = logFile.c_str(),
         keywords::auto_flush = true,
