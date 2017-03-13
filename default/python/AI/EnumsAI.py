@@ -46,7 +46,7 @@ class Enum(object):
 
 
 class PriorityType(Enum):
-    RESOURCE_GROWTH = 0
+    RESOURCE_GROWTH = 1
     RESOURCE_PRODUCTION = 2
     RESOURCE_RESEARCH = 3
     RESOURCE_TRADE = 4
@@ -71,7 +71,7 @@ class PriorityType(Enum):
 
 
 def get_priority_resource_types():
-    return PriorityType.range(0, 6)
+    return PriorityType.range(1, 6)
 
 
 def get_priority_production_types():
@@ -86,11 +86,11 @@ class ExplorableSystemType(Enum):
 
 
 class MissionType(Enum):
-    EXPLORATION = 0
     OUTPOST = 1
     COLONISATION = 2
     SPLIT_FLEET = 3
     MERGE_FLEET = 4  # not really supported yet
+    EXPLORATION = 5
     INVASION = 9
     MILITARY = 10
     SECURE = 11  # mostly same as MILITARY, but waits for system removal from all targeted system lists (invasion, colonization, outpost, blockade) before clearing
@@ -131,8 +131,7 @@ class ShipDesignTypes(object):
 
 class ShipRoleType(Enum):  # this is also used in determining fleetRoles
     INVALID = -1
-    MILITARY_ATTACK = 0
-    MILITARY_LONGRANGE = 1
+    MILITARY_ATTACK = 1
     MILITARY_MISSILES = 2
     MILITARY_POINTDEFENSE = 3
     CIVILIAN_EXPLORATION = 4
