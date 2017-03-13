@@ -128,7 +128,7 @@ def assign_scouts_to_explore_systems():
 
 def follow_vis_system_connections(start_system_id, home_system_id):
     universe = fo.getUniverse()
-    empire_id = foAI.foAIstate.empireID
+    empire_id = fo.empireID()
     exploration_list = [start_system_id]
     while exploration_list:
         cur_system_id = exploration_list.pop()
@@ -208,7 +208,7 @@ def update_explored_systems():
         print "Obstructed starlanes are: %s" % ', '.join('%s-%s' % item for item in obs_lanes_list)
     else:
         print "No obstructed Starlanes"
-    empire_id = foAI.foAIstate.empireID
+    empire_id = fo.empireID()
     newly_explored = []
     still_unexplored = []
     for sys_id in list(foAI.foAIstate.unexploredSystemIDs):

@@ -279,7 +279,7 @@ def get_ship_id_with_role(fleet_id, ship_role, verbose=True):
 
 def get_empire_fleet_ids():
     """Returns all fleetIDs for current empire."""
-    empire_id = foAI.foAIstate.empireID
+    empire_id = fo.empireID()
     universe = fo.getUniverse()
     empire_fleet_ids = []
     destroyed_object_ids = universe.destroyedObjectIDs(empire_id)
