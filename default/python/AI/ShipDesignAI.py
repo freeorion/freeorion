@@ -665,7 +665,7 @@ class AdditionalSpecifications(object):
 class DesignStats(object):
 
     def __init__(self):
-        self.attacks = {}  # {damage: shots_per_turn}
+        self.attacks = {}  # {damage: shots_per_round}
         self.structure = 0
         self.shields = 0
         self.fuel = 0
@@ -1242,7 +1242,7 @@ class ShipDesigner(object):
 
         Only designs with a positive rating (i.e. matching the minimum requirements) will be returned.
 
-        :return: list of (rating,planet_id,design_id,cost, design_stats) tuples, i.e. best available design for each planet
+        :return: list of (rating, planet_id, design_id, cost, design_stats) tuples, i.e. best available design for each planet
         :param loc: int or list of ints (optional) - planet ids where the designs are to be built. Default: All planets.
         :param verbose: Toggles detailed logging for debugging.
         :type verbose: bool
