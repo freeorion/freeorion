@@ -8,7 +8,7 @@ import MoveUtilsAI
 import MilitaryAI
 import InvasionAI
 import CombatRatingsAI
-from universe_object import System, Fleet, Planet
+from universe_object import UniverseObject, System, Fleet, Planet
 from EnumsAI import MissionType
 from AIDependencies import INVALID_ID
 
@@ -50,6 +50,7 @@ COMPATIBLE_ROLES_MAP = {
 class AIFleetMission(object):
     """
     Stores information about AI mission. Every mission has fleetID and AI targets depending upon AI fleet mission type.
+    :type target: UniverseObject | None
     """
 
     def __init__(self, fleet_id):

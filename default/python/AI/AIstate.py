@@ -519,7 +519,10 @@ class AIstate(object):
         return threat, max_threat, myrating, threat_fleets
 
     def get_fleet_mission(self, fleet_id):
-        """Returns AIFleetMission with fleetID."""
+        """
+        Returns AIFleetMission with fleetID.
+        :rtype: AIFleetMission.AIFleetMission
+        """
         if fleet_id in self.__aiMissionsByFleetID:
             return self.__aiMissionsByFleetID[fleet_id]
         else:
