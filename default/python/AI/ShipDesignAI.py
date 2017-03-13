@@ -666,6 +666,11 @@ class DesignStats(object):
 
     def __init__(self):
         self.attacks = {}  # {damage: shots_per_round}
+        self.reset()  # this call initiates remaining instance variables!
+
+    # noinspection PyAttributeOutsideInit
+    def reset(self):
+        self.attacks.clear()
         self.structure = 0
         self.shields = 0
         self.fuel = 0
@@ -940,26 +945,9 @@ class ShipDesigner(object):
         """Set stats to default.
 
         Call this if design is invalid to avoid miscalculation of ratings."""
-        self.attacks.clear()
-        self.structure = 0
-        self.shields = 0
-        self.fuel = 0
-        self.speed = 0
-        self.stealth = 0
-        self.detection = 0
-        self.troops = 0
-        self.colonisation = -1
+        self._design_stats.reset()
         self.production_cost = 9999
         self.production_time = 1
-        self.fuel_per_turn = 0
-        self.organic_growth = 0
-        self.maximum_organic_growth = 0
-        self.repair_per_turn = 0
-        self.asteroid_stealth = 0
-        self.solar_stealth = 0
-        self.fighter_capacity = 0
-        self.fighter_launch_rate = 0
-        self.fighter_damage = 0
 
     def update_hull(self, hullname):
         """Set hull of the design.
