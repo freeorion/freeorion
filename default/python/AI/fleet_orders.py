@@ -210,7 +210,7 @@ class OrderMove(AIFleetOrder):
             if foAI.foAIstate.get_fleet_role(fleet_id) == MissionType.EXPLORATION:
                 if system_id in foAI.foAIstate.needsEmergencyExploration:
                     del foAI.foAIstate.needsEmergencyExploration[foAI.foAIstate.needsEmergencyExploration.index(system_id)]
-            self.order_issued = True
+        self.order_issued = True
 
 
 class OrderResupply(AIFleetOrder):

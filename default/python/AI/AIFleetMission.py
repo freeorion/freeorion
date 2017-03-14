@@ -302,6 +302,37 @@ class AIFleetMission(object):
         self.set_target(MissionType.INVASION, target)
         self.generate_fleet_orders()
 
+    def need_to_pause_movement(self, last_move_target_id, new_move_order):
+        """
+        When a fleet has consecutive move orders, assesses whether something about the interim destination warrants
+        forcing a stop (such as a military fleet choosing to engage with an enemy fleet about to enter the same system,
+        or it may provide a good vantage point to view current status of next system in path). Assessments about whether
+        the new destination is suitable to move to are (currently) separately made by OrderMove.can_issue_order()
+        :param last_move_target_id:
+        :type last_move_target_id: int
+        :param new_move_order:
+        :type new_move_order: OrderMove
+        :rtype: bool
+        """
+        fleet = self.fleet.get_object()
+        # don't try skipping over more than one System
+        if fleet.nextSystemID != last_move_target_id:
+            return True
+        universe = fo.getUniverse()
+        current_dest_system =  universe.getSystem(fleet.nextSystemID)
+        if not current_dest_system:
+            # shouldn't really happen, but just to be safe
+            return True
+        distance_to_next_system = ((fleet.x - current_dest_system.x)**2 + (fleet.y - current_dest_system.y)**2)**0.5
+        surplus_travel_distance = fleet.speed - distance_to_next_system
+        # if need more than one turn to reach current destination, then don't add another jump yet
+        if surplus_travel_distance < 0:
+            return True
+        # TODO: add assessments for other situations we'd prefer to pause, such as cited above re military fleets, and
+        # for situations where high value fleets like colony fleets might deem it safest to stop and look around
+        # before proceeding
+        return False
+
     def issue_fleet_orders(self):
         """issues AIFleetOrders which can be issued in system and moves to next one if is possible"""
         # TODO: priority
@@ -310,7 +341,14 @@ class AIFleetMission(object):
         print "Checking orders for fleet %s (on turn %d), with mission type %s" % (self.fleet.get_object(), fo.currentTurn(), self.type or 'No mission')
         if MissionType.INVASION == self.type:
             self._check_retarget_invasion()
+        just_issued_move_order = False
+        last_move_target_id = INVALID_ID
         for fleet_order in self.orders:
+            if just_issued_move_order and self.fleet.get_object().systemID != last_move_target_id:
+                # having just issued a move order, we will normally stop issuing orders this turn, except that if there
+                # are consecutive move orders we will consider moving through the first destination rather than stopping
+                if not isinstance(fleet_order, OrderMove) or self.need_to_pause_movement(last_move_target_id, fleet_order):
+                    break
             print "Checking order: %s" % fleet_order
             if isinstance(fleet_order, (OrderColonize, OrderOutpost, OrderInvade)):  # TODO: invasion?
                 if self._check_abort_mission(fleet_order):
@@ -321,6 +359,8 @@ class AIFleetMission(object):
                 if isinstance(fleet_order, OrderMove) and order_completed:  # only move if all other orders completed
                     print "Issuing fleet order %s" % fleet_order
                     fleet_order.issue_order()
+                    just_issued_move_order = True
+                    last_move_target_id = fleet_order.target.id
                 elif not isinstance(fleet_order, OrderMove):
                     print "Issuing fleet order %s" % fleet_order
                     fleet_order.issue_order()
@@ -351,12 +391,6 @@ class AIFleetMission(object):
                             self.clear_fleet_orders()
                             self.clear_target()
                             return
-            # moving to another system stops issuing all orders in system where fleet is
-            # move order is also the last order in system
-            if isinstance(fleet_order, OrderMove):
-                fleet = self.fleet.get_object()
-                if fleet.systemID != fleet_order.target.id:
-                    break
         else:  # went through entire order list
             if order_completed:
                 print "Final order is completed"
