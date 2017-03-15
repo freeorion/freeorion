@@ -78,13 +78,6 @@ def get_priority_production_types():
     return PriorityType.range(6, 12)
 
 
-class ExplorableSystemType(Enum):
-    UNREACHABLE = 0
-    UNEXPLORED = 1
-    EXPLORED = 2
-    VISIBLE = 3
-
-
 class MissionType(Enum):
     OUTPOST = 1
     COLONISATION = 2
