@@ -42,6 +42,7 @@ global variables:
 # TODO: Implement a better system for the new weapon upgrade functionality:
 #       - _calculate_weapon_strength() may be removed
 #       - Filtering the weapon parts must be updated: current cache does not consider tech upgrades, weapons are ignored
+import sys
 
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
@@ -177,7 +178,7 @@ class ShipDesignCache(object):
         elif isinstance(pid, list):
             planets = pid
         else:
-            print "ERROR: Invalid parameter 'pid' for 'print_hulls_for_planets'. Expected int, list or None."
+            print >> sys.stderr, "Invalid parameter 'pid' for 'print_hulls_for_planets'. Expected int, list or None."
             return
         print "Hull-cache:"
         get_planet = fo.getUniverse().getPlanet
@@ -196,7 +197,7 @@ class ShipDesignCache(object):
         elif isinstance(pid, list):
             planets = pid
         else:
-            print "FAILURE: Invalid parameter 'pid' for 'print_parts_for_planets'. Expected int, list or None."
+            print >> sys.stderr, "Invalid parameter 'pid' for 'print_parts_for_planets'. Expected int, list or None."
             return
         print "Available parts per planet:"
         get_planet = fo.getUniverse().getPlanet
@@ -323,7 +324,7 @@ class ShipDesignCache(object):
         - design_id_by_name
         """
         if self.map_reference_design_name or self.design_id_by_name:
-            print "WARNING: In ShipDesignAI.py: Cache._build_cache_after_load() called but cache is not empty."
+            print >> sys.stderr, "ShipDesignAI.Cache._build_cache_after_load() called but cache is not empty."
         for design_id in fo.getEmpire().allShipDesigns:
             design = fo.getShipDesign(design_id)
             if TESTDESIGN_NAME_BASE in design.name:
@@ -555,8 +556,8 @@ class ShipDesignCache(object):
                 if i != idx:
                     available_hulls[i], available_hulls[idx] = available_hulls[idx], available_hulls[i]
             except ValueError:
-                print "ERROR: hull in testhull cache not in available_hulls",
-                print "even though it is supposed to be a proper subset."
+                print >> sys.stderr, ("hull in testhull cache not in available_hulls"
+                                      "even though it is supposed to be a proper subset.")
                 traceback.print_exc()
 
         # 4. Cache the list of buildable ship parts for each planet
@@ -826,7 +827,7 @@ class ShipDesigner(object):
         self._set_stats_to_default()
 
         if not self.hull:
-            print "WARNING: Tried to update stats of design without hull. Reset values to default."
+            print >> sys.stderr, "Tried to update stats of design without hull. Reset values to default."
             return
 
         local_cost_cache = Cache.production_cost[self.pid]
@@ -929,7 +930,7 @@ class ShipDesigner(object):
             elif dependency == AIDependencies.FUEL:
                 dep_val = self.design_stats.fuel
             else:
-                print "Can't parse dependent token: ", tup
+                print >> sys.stderr, "Can't parse dependent token: ", tup
             return dep_val * value
 
         def parse_tokens(tokendict, is_hull=False):
@@ -972,7 +973,7 @@ class ShipDesigner(object):
                 elif token == AIDependencies.STRUCTURE:
                     self.design_stats.structure += value
                 else:
-                    print "WARNING: Failed to parse token: %s" % token
+                    print >> sys.stderr, "Failed to parse token: %s" % token
             # if the hull has no special detection specified, then it has base detection.
             if is_hull and AIDependencies.DETECTION not in tokendict:
                 self.design_stats.detection += AIDependencies.BASE_DETECTION
@@ -1026,8 +1027,8 @@ class ShipDesigner(object):
                 return _get_design_by_name(Cache.map_reference_design_name[reference_name]).id
             except AttributeError:
                 cached_name = Cache.map_reference_design_name[reference_name]
-                print "ERROR: %s maps to %s in Cache.map_reference_design_name." % (reference_name, cached_name),
-                print "But the design seems not to exist..."
+                print >> sys.stderr, "%s maps to %s in Cache.map_reference_design_name." % (reference_name, cached_name),
+                print >> sys.stderr, "But the design seems not to exist..."
                 traceback.print_exc()
                 return None
 
@@ -1042,7 +1043,7 @@ class ShipDesigner(object):
             Cache.map_reference_design_name[reference_name] = design_name
             return new_design.id
         else:
-            print "Failure: Tried to get just created design %s but got None" % design_name
+            print >> sys.stderr, "Tried to get just created design %s but got None" % design_name
             return None
 
     def _class_specific_filter(self, partname_dict):
@@ -1076,7 +1077,7 @@ class ShipDesigner(object):
         elif isinstance(loc, list):
             planets = loc
         else:
-            print "ERROR: Invalid loc parameter for optimize_design(). Expected int or list but got", loc
+            print >> sys.stderr, "Invalid loc parameter for optimize_design(). Expected int or list but got", loc
             return []
 
         self.consider_fleet_count = consider_fleet_count
@@ -2170,9 +2171,9 @@ def _create_ship_design(design_name, hull_name, part_names, model="fighter",
             if verbose:
                 print "Success: Design %s stored in design_by_name_cache" % design_name
         else:
-            print "Failure: Tried to get just created design %s but got None" % design_name
+            print >> sys.stderr, "Tried to get just created design %s but got None" % design_name
     else:
-        print "Failure: Tried to add design %s but returned %s, expected 1" % (design_name, res)
+        print >> sys.stderr, "Tried to add design %s but returned %s, expected 1" % (design_name, res)
 
     return res
 
@@ -2246,7 +2247,7 @@ def get_part_type(partname):
             Cache.part_by_partname[partname] = parttype
             return Cache.part_by_partname[partname]
         else:
-            print "FAILURE: Could not find part", partname
+            print >> sys.stderr, "Could not find part", partname
             return None
 
 
