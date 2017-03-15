@@ -793,8 +793,7 @@ class ShipDesigner(object):
 
         :returns: float - rating
         """
-        print_error("WARNING: Rating function not overloaded for class %s!" % self.__class__.__name__)
-        return -9999
+        raise NotImplementedError
 
     def _set_stats_to_default(self):
         """Set stats to default.
