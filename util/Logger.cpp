@@ -22,6 +22,7 @@
 #include <boost/log/utility/setup/formatter_parser.hpp>
 #include <boost/log/utility/setup/filter_parser.hpp>
 
+#include <ctime>
 
 namespace logging = boost::log;
 namespace expr = boost::log::expressions;
@@ -89,7 +90,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& root_logge
         keywords::file_name = logFile.c_str(),
         keywords::auto_flush = true,
         keywords::format = expr::stream
-            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
+            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
             << " [" << log_severity << "] "
             << root_logger_name << " : " << log_src_filename << ":" << log_src_linenum << " : "
             << expr::message
@@ -98,7 +99,8 @@ void InitLoggingSystem(const std::string& logFile, const std::string& root_logge
     logging::core::get()->set_filter(log_severity >= LogLevel::debug);
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
-    DebugLogger() << "Logger initialized";
+    auto date_time = std::time(nullptr);
+    DebugLogger() << "Logger initialized at " << std::ctime(&date_time);
     InfoLogger() << FreeOrionVersionString();
 
     LogLevel options_db_log_priority = StringToLogLevel(GetOptionsDB().Get<std::string>("log-level"));
