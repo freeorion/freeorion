@@ -146,7 +146,8 @@ private:
 
     // m_mutex guards m_incoming_message, m_rx_connected and m_tx_connected which are written by
     // the networking thread and read by the main thread to check incoming messages and connection
-    // status.
+    // status. As those read and write operations are not atomic, shared access has to be
+    // protected to prevent unpredictable results.
     mutable boost::mutex            m_mutex;
 
     MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
