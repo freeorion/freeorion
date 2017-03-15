@@ -157,6 +157,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         iostreams
         locale
         log
+        log_setup
         regex
         serialization
         python
@@ -294,6 +295,7 @@ target_link_libraries(freeorioncommon
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_IOSTREAMS_LIBRARY}
     ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${Boost_REGEX_LIBRARY}
     ${Boost_SERIALIZATION_LIBRARY}
     ${Boost_SIGNALS_LIBRARY}

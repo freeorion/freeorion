@@ -99,6 +99,9 @@
 
 */
 
+// The logging levels.
+enum class LogLevel {debug, info, warn, error};
+
 // Prefix \p name to create a global logger name less likely to collide.
 #define FO_GLOBAL_LOGGER_NAME(name) fo_logger_global_##name
 
@@ -110,8 +113,8 @@ FO_COMMON_API void InitLoggingSystem(const std::string& logFile, const std::stri
 /** A type for loggers (sources) that allows for severity and a logger name (channel in
     boost parlance) and supports multithreading.*/
 using NamedThreadedLogger = boost::log::sources::severity_channel_logger_mt<
-    boost::log::trivial::severity_level, ///< the type of the severity level
-    std::string                          ///< the name of the logger
+    LogLevel,     ///< the type of the severity level
+    std::string   ///< the channel name of the logger
     >;
 
 // Lookup and/or register the \p name logger in OptionsDB.  Sets the initial level.
@@ -123,7 +126,7 @@ FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger);
         FO_GLOBAL_LOGGER_NAME(name), NamedThreadedLogger)               \
     {                                                                   \
         auto lg = NamedThreadedLogger(                                  \
-            (boost::log::keywords::severity = boost::log::trivial::trace), \
+            (boost::log::keywords::severity = LogLevel::debug),         \
             (boost::log::keywords::channel = #name));                   \
         RegisterLoggerWithOptionsDB(#name);                             \
         return lg;                                                      \
@@ -133,8 +136,12 @@ FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger);
 CreateThreadedLogger();
 
 /** Sets the priority for the log file sink. */
-FO_COMMON_API void SetLogFileSinkPriority(int priority);
+FO_COMMON_API void SetLogFileSinkPriority(LogLevel priority);
 
+/** Sets the \p priority of \p source.  \p source == "" is the default logger.*/
+FO_COMMON_API void SetLoggerSourcePriority(const std::string& source, LogLevel priority);
+
+BOOST_LOG_ATTRIBUTE_KEYWORD(log_severity, "Severity", LogLevel);
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_filename, "SrcFilename", std::string);
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 
@@ -143,22 +150,21 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 #define FO_LOGGER(name, lvl)                                            \
     BOOST_LOG_STREAM_WITH_PARAMS(                                       \
         FO_GLOBAL_LOGGER_NAME(name)::get(),                             \
-        (::boost::log::keywords::severity = ::boost::log::trivial::lvl)) << \
-        ::boost::log::add_value("SrcFilename", __BASE_FILENAME__) <<\
-        ::boost::log::add_value("SrcLinenum", __LINE__)
+        (boost::log::keywords::severity = lvl))                         \
+    << boost::log::add_value("SrcFilename", __BASE_FILENAME__)          \
+    << boost::log::add_value("SrcLinenum", __LINE__)
 
+#define DebugLogger(name)                       \
+    FO_LOGGER(name, LogLevel::debug)
 
-#define DebugLogger(name)\
-    FO_LOGGER(name, debug)
+#define InfoLogger(name)                        \
+    FO_LOGGER(name, LogLevel::info)
 
-#define InfoLogger(name)\
-    FO_LOGGER(name, info)
+#define WarnLogger(name)                        \
+    FO_LOGGER(name, LogLevel::warn)
 
-#define WarnLogger(name)\
-    FO_LOGGER(name, warning)
-
-#define ErrorLogger(name)\
-    FO_LOGGER(name, error)
+#define ErrorLogger(name)                       \
+    FO_LOGGER(name, LogLevel::error)
 
 
 extern int g_indent;

@@ -10,7 +10,6 @@
 #include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/utility/setup/file.hpp>
 #include <boost/log/utility/setup/common_attributes.hpp>
-#include <boost/log/sources/severity_logger.hpp>
 #include <boost/log/sources/severity_channel_logger.hpp>
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/utility/setup/formatter_parser.hpp>
@@ -20,6 +19,8 @@
 #include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/attributes/value_extraction.hpp>
+#include <boost/log/utility/setup/formatter_parser.hpp>
+#include <boost/log/utility/setup/filter_parser.hpp>
 
 
 namespace logging = boost::log;
@@ -29,34 +30,24 @@ namespace keywords = boost::log::keywords;
 
 
 namespace {
-    logging::trivial::severity_level IntToSeverity(int num) {
-        switch (num) {
-        case 5:   return logging::trivial::fatal;   break;
-        case 4:   return logging::trivial::error;   break;
-        case 3:   return logging::trivial::warning; break;
-        case 2:   return logging::trivial::info;    break;
-        case 1:   return logging::trivial::debug;   break;
-        default:  return logging::trivial::trace;
-        }
+
+    // Compile time constant pointers to constant char arrays.
+    constexpr const char* const log_level_names[] = {"debug", "info", "warn", "error"};
+
+    LogLevel StringToLogLevel(const std::string& text) {
+        if (text == "error")    return LogLevel::error;
+        if (text == "warn")     return LogLevel::warn;
+        if (text == "info")     return LogLevel::info;
+        return LogLevel::debug;
     }
 
-    int StringToSeverityInt(const std::string& text) {
-        if (text == "FATAL")    return 5;
-        if (text == "ERROR")    return 4;
-        if (text == "WARN")     return 3;
-        if (text == "INFO")     return 2;
-        if (text == "DEBUG")    return 1;
-        if (text == "TRACE")    return 0;
-        return 0;
+    std::string LogLevelToString(const LogLevel level) {
+        return log_level_names[static_cast<std::size_t>(level)];
     }
-
-    int PriorityValue(const std::string& name)
-    { return StringToSeverityInt(name); }
-
 
     DiscreteValidator<std::string> LogLevelValidator() {
-        std::set<std::string> valid_levels = {"error", "warn", "info", "debug",
-                                              "ERROR", "WARN", "INFO", "DEBUG",
+        std::set<std::string> valid_levels = {"debug", "info", "warn", "error",
+                                              "DEBUG", "INFO", "WARN", "ERROR",
                                               "0", "1", "2", "3" };
         auto validator = DiscreteValidator<std::string>(valid_levels);
         return validator;
@@ -64,6 +55,25 @@ namespace {
 
 }
 
+// Provide a LogLevel stream out formatter for streaming logs
+template<typename CharT, typename TraitsT>
+std::basic_ostream<CharT, TraitsT>& operator<<(
+    std::basic_ostream<CharT, TraitsT>& os, const LogLevel& level)
+{
+    os << log_level_names[static_cast<std::size_t>(level)];
+    return os;
+}
+
+// Provide a LogLevel input formatter for filtering
+template<typename CharT, typename TraitsT>
+inline std::basic_istream<CharT, TraitsT >& operator>>(
+    std::basic_istream<CharT, TraitsT>& is, LogLevel& level)
+{
+    std::string tmp;
+    is >> tmp;
+    level = StringToLogLevel(tmp);
+    return is;
+}
 
 int g_indent = 0;
 
@@ -71,23 +81,27 @@ std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
 void InitLoggingSystem(const std::string& logFile, const std::string& root_logger_name) {
+    // Register LogLevel so that the formatters will be found.
+    logging::register_simple_formatter_factory<LogLevel, char>("Severity");
+    logging::register_simple_filter_factory<LogLevel>("Severity");
+
     logging::add_file_log(
         keywords::file_name = logFile.c_str(),
         keywords::auto_flush = true,
         keywords::format = expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
-            << " [" << expr::attr<logging::trivial::severity_level>("Severity") << "] "
+            << " [" << log_severity << "] "
             << root_logger_name << " : " << log_src_filename << ":" << log_src_linenum << " : "
             << expr::message
-        );
+    );
 
-    logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::trace);
+    logging::core::get()->set_filter(log_severity >= LogLevel::debug);
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
     DebugLogger() << "Logger initialized";
     InfoLogger() << FreeOrionVersionString();
 
-    int options_db_log_priority = PriorityValue(GetOptionsDB().Get<std::string>("log-level"));
+    LogLevel options_db_log_priority = StringToLogLevel(GetOptionsDB().Get<std::string>("log-level"));
     SetLogFileSinkPriority(options_db_log_priority);
 
     // Setup the OptionsDB options for the file sink.
@@ -104,11 +118,14 @@ void InitLoggingSystem(const std::string& logFile, const std::string& root_logge
 
 }
 
-void SetLogFileSinkPriority(int priority) {
-    logging::trivial::severity_level i_severity = IntToSeverity(priority);
-    logging::core::get()->set_filter(logging::trivial::severity >= i_severity);
+void SetLogFileSinkPriority(LogLevel priority) {
+    logging::core::get()->set_filter(log_severity >= priority);
 }
 
+/** Sets the \p priority of \p source.  \p source == "" is the default logger.*/
+FO_COMMON_API void SetLoggerSourcePriority(const std::string & source, LogLevel priority) {
+    //FIXME
+}
 
 void RegisterLoggerWithOptionsDB(const std::string& name) {
     if (name.empty())
