@@ -4,7 +4,7 @@ Species
     gameplay_description = "SP_VOLP_GAMEPLAY_DESC"
     Native
 
-    tags = [ "LITHIC" "GOOD_POPULATION" "ULTIMATE_SUPPLY" ]
+    tags = [ "LITHIC" "GOOD_POPULATION" "ULTIMATE_SUPPLY" "PEDIA_LITHIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
