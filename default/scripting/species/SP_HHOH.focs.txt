@@ -7,7 +7,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "GOOD_WEAPONS" "AVERAGE_SUPPLY" ]
+    tags = [ "ORGANIC" "GOOD_WEAPONS" "AVERAGE_SUPPLY" "PEDIA_ORGANIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
