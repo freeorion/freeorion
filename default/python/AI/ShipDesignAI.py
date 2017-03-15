@@ -942,7 +942,48 @@ class ShipDesigner(object):
         method to read out all stats.
         """
 
-        def parse_complex_tokens(tup):
+        def interpret_value(value):
+            if isinstance(value, list):
+                return sum(interpret_value(v) for v in value)
+
+            if isinstance(value, tuple):
+                return parse_complex_value(value)
+
+            return float(value)  # will throw a TypeError for non-numeric types/strings.
+
+        def evaluate_conditional(conditional):
+            def _evaluate(condition, *args):
+                if condition == AIDependencies.TECH_COMPLETE:
+                    assert len(args) == 1
+                    tech_name = args[0]
+                    assert isinstance(tech_name, basestring)
+                    return tech_is_complete(tech_name)
+
+                return NotImplementedError
+
+            _, condition, value = conditional
+            if isinstance(condition, tuple):
+                condition_fulfilled = _evaluate(*condition)
+            else:
+                condition_fulfilled = _evaluate(condition)
+
+            return interpret_value(value) if condition_fulfilled else 0
+
+        def evaluate_dependency(dependency):
+            assert isinstance(dependency, tuple)
+            assert len(dependency) == 2
+
+            reference_value, ratio = dependency
+            if reference_value == AIDependencies.STRUCTURE:
+                reference_value = self.structure
+            elif dependency == AIDependencies.FUEL:
+                reference_value = self.fuel
+            else:
+                raise NotImplementedError
+
+            return reference_value * ratio
+
+        def parse_complex_value(tup):
             """Parse complex tokens which have a value dependent on another value
 
             Example usage:
@@ -951,15 +992,13 @@ class ShipDesigner(object):
             :type tup: tuple
             :return: float
             """
-            dependency, value = tup
-            dep_val = 0
-            if dependency == AIDependencies.STRUCTURE:
-                dep_val = self.structure
-            elif dependency == AIDependencies.FUEL:
-                dep_val = self.fuel
+            assert isinstance(tup, tuple)
+            assert len(tup) > 0
+
+            if tup[0] == AIDependencies.IF:
+                return evaluate_conditional(tup)
             else:
-                print "Can't parse dependent token: ", tup
-            return dep_val * value
+                return evaluate_dependency(tup)
 
         def parse_tokens(tokendict, is_hull=False):
             """Adjust design stats according to the token dict key-value pairs.
@@ -969,9 +1008,17 @@ class ShipDesigner(object):
             :param is_hull: tokendict is related to hull
             :type is_hull: bool
             """
-            for token, value in tokendict.items():
-                if isinstance(value, tuple) and token is not AIDependencies.ORGANIC_GROWTH:
-                    value = parse_complex_tokens(value)
+            for token, _value in tokendict.items():
+
+                # organic growth expects a tuple which should not be interpreted
+                if token == AIDependencies.ORGANIC_GROWTH:
+                    assert isinstance(_value, tuple) and len(_value) == 2
+                    self.organic_growth += _value[0]
+                    self.maximum_organic_growth += _value[1]
+                    continue
+
+                value = interpret_value(_value)
+
                 if token == AIDependencies.REPAIR_PER_TURN:
                     self.repair_per_turn += min(value, self.structure)
                 elif token == AIDependencies.FUEL_PER_TURN:
@@ -989,9 +1036,6 @@ class ShipDesigner(object):
                     self.shields += value
                 elif token == AIDependencies.DETECTION:
                     self.detection += value
-                elif token == AIDependencies.ORGANIC_GROWTH:
-                    self.organic_growth += value[0]
-                    self.maximum_organic_growth += value[1]
                 elif token == AIDependencies.SOLAR_STEALTH:
                     self.solar_stealth = max(self.solar_stealth, value)
                 elif token == AIDependencies.SPEED:
@@ -1001,7 +1045,7 @@ class ShipDesigner(object):
                 elif token == AIDependencies.STRUCTURE:
                     self.structure += value
                 else:
-                    print "WARNING: Failed to parse token: %s" % token
+                    raise NotImplementedError
             # if the hull has no special detection specified, then it has base detection.
             if is_hull and AIDependencies.DETECTION not in tokendict:
                 self.detection += AIDependencies.BASE_DETECTION
