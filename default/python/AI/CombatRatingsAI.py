@@ -1,13 +1,13 @@
 from collections import Counter
-
-import freeOrionAIInterface as fo  # pylint: disable=import-error
 import sys
 
+import freeOrionAIInterface as fo
 import FleetUtilsAI
 from EnumsAI import MissionType
 from freeorion_tools import get_ai_tag_grade, dict_to_tuple, tuple_to_dict, cache_by_session
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID
+
 
 def get_empire_standard_fighter():
     """Get the current empire standard fighter stats, i.e. the most common shiptype within the empire.

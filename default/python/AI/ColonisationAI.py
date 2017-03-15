@@ -1,6 +1,7 @@
+import sys
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.print_utils import Table, Text, Sequence, Bool
-import sys
 import AIDependencies
 import universe_object
 import AIstate

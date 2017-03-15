@@ -1,7 +1,8 @@
+import math
 import sys
+
 from turn_state import state
-import freeOrionAIInterface as fo  # pylint: disable=import-error
-# noinspection PyUnresolvedReferences
+import freeOrionAIInterface as fo
 from common.print_utils import Table, Text, Float
 
 import FreeOrionAI as foAI
@@ -10,7 +11,6 @@ import AIDependencies
 import FleetUtilsAI
 import PlanetUtilsAI
 import universe_object
-import math
 import ProductionAI
 import ColonisationAI
 import MilitaryAI

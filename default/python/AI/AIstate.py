@@ -1,7 +1,7 @@
 import copy
 from collections import OrderedDict as odict
 from time import time
-import sys
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 from common.print_utils import Table, Text, Float
 

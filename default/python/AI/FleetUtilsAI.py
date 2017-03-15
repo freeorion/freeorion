@@ -2,7 +2,6 @@ import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
-import traceback
 from universe_object import Planet
 from ShipDesignAI import get_part_type
 from AIDependencies import INVALID_ID

@@ -1,4 +1,5 @@
 import sys
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import ColonisationAI
 from freeorion_tools import print_error

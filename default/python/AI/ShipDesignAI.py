@@ -42,18 +42,18 @@ global variables:
 # TODO: Implement a better system for the new weapon upgrade functionality:
 #       - _calculate_weapon_strength() may be removed
 #       - Filtering the weapon parts must be updated: current cache does not consider tech upgrades, weapons are ignored
+import copy
+import math
 import sys
+import traceback
+from collections import Counter, defaultdict
 
 import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 import AIDependencies
-import copy
-import traceback
-import math
 import AIstate
 import CombatRatingsAI
 import FleetUtilsAI
-from collections import Counter, defaultdict
 from AIDependencies import INVALID_ID
 from freeorion_tools import print_error, UserString, tech_is_complete
 

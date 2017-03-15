@@ -3,7 +3,6 @@ import AIstate
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
-import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
 import CombatRatingsAI

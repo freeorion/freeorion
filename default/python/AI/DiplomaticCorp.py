@@ -1,7 +1,7 @@
 """Handle diplomatic messages and response determination."""
-
 import random
-import freeOrionAIInterface as fo  # pylint: disable=import-error
+
+import freeOrionAIInterface as fo
 import FreeOrionAI as foAI
 from character.character_module import Aggression
 from character.character_strings_module import possible_greetings

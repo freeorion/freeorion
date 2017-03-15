@@ -1,4 +1,5 @@
 from collections import namedtuple
+
 import freeOrionAIInterface as fo
 
 PlanetInfo = namedtuple('PlanetInfo', ['pid', 'species_name', 'owner', 'system_id'])

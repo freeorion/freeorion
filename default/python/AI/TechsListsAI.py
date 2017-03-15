@@ -3,10 +3,10 @@ The TechsListAI module provides functions that describes dependencies between
 various technologies to help the AI decide which technologies should be
 researched next.
 """
+import sys
 
 from freeorion_tools import print_error
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-import sys
 
 EXOBOT_TECH_NAME = "PRO_EXOBOTS"
 
