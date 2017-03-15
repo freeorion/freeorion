@@ -193,9 +193,9 @@ def get_ship_tech_usefulness(tech, ship_designer):
     if not (old_designs and new_designs):
         # AI is likely defeated; don't bother with logging error message
         return 0
-    old_rating, old_pid, old_design_id, old_cost = old_designs[0]
+    old_rating, old_pid, old_design_id, old_cost, old_stats = old_designs[0]
     old_rating = old_rating
-    new_rating, new_pid, new_design_id, new_cost = new_designs[0]
+    new_rating, new_pid, new_design_id, new_cost, new_stats = new_designs[0]
     new_rating = new_rating
     if new_rating > old_rating:
         ratio = (new_rating - old_rating) / (new_rating + old_rating)
@@ -1070,13 +1070,15 @@ def generate_classic_research_orders():
             print "No new ship parts/hulls unlocked by tech %s" % tech
             continue
         old_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(consider_fleet_count=False)
-        new_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(additional_hulls=unlocked_hulls, additional_parts=unlocked_parts, consider_fleet_count=False)
+        new_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(additional_hulls=unlocked_hulls,
+                                                                          additional_parts=unlocked_parts,
+                                                                          consider_fleet_count=False)
         if not (old_designs and new_designs):
             # AI is likely defeated; don't bother with logging error message
             continue
-        old_rating, old_pid, old_design_id, old_cost = old_designs[0]
+        old_rating, old_pid, old_design_id, old_cost, old_stats = old_designs[0]
         old_design = fo.getShipDesign(old_design_id)
-        new_rating, new_pid, new_design_id, new_cost = new_designs[0]
+        new_rating, new_pid, new_design_id, new_cost, new_stats = new_designs[0]
         new_design = fo.getShipDesign(new_design_id)
         if new_rating > old_rating:
             print "Tech %s gives access to a better design!" % tech
