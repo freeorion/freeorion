@@ -752,29 +752,17 @@ class ShipDesigner(object):
         :returns: float - rating of the current part/hull combo
         """
         self.update_stats()
-        rating = 0
 
         # If we do not meet the requirements, we want to return a negative rating.
         # However, we also need to make sure, that the closer we are to requirements,
         # the better our rating is so the optimizing heuristic finds "the right way".
-        min_fuel = self._minimum_fuel()
-        min_speed = self._minimum_speed()
-        min_structure = self._minimum_structure()
-        min_fighter_launch_rate = self._minimum_fighter_launch_rate()
-        if self.design_stats.fuel < min_fuel:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fuel - self.design_stats.fuel)
-        if self.design_stats.speed < min_speed:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_speed - self.design_stats.speed)
-        estimated_structure = (self.design_stats.structure +
-                               self.design_stats.organic_growth * self.additional_specifications.expected_turns_till_fight)
-        if estimated_structure < min_structure:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_structure - estimated_structure)
-        if self.design_stats.fighter_launch_rate < min_fighter_launch_rate:
-            rating += MISSING_REQUIREMENT_MULTIPLIER * (min_fighter_launch_rate - self.design_stats.fighter_launch_rate)
-        if rating < 0:
-            return rating
-        else:
-            return self._rating_function()
+        rating = MISSING_REQUIREMENT_MULTIPLIER * sum([
+            max(0, self._minimum_fuel() - self.design_stats.fuel),
+            max(0, self._minimum_speed() - self.design_stats.speed),
+            max(0, self._minimum_structure() - (self.design_stats.structure + self._expected_organic_growth())),
+            max(0, self._minimum_fighter_launch_rate() - self.design_stats.fighter_launch_rate)
+        ])
+        return rating if rating < 0 else self._rating_function()
 
     def _minimum_fuel(self):
         return self.additional_specifications.minimum_fuel
