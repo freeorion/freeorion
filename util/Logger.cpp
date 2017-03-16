@@ -103,15 +103,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
             << expr::message
     );
 
-    logging::core::get()->set_filter(log_severity >= LogLevel::debug);
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
-
-    auto date_time = std::time(nullptr);
-    DebugLogger() << "Logger initialized at " << std::ctime(&date_time);
-    InfoLogger() << FreeOrionVersionString();
-
-    LogLevel options_db_log_priority = to_LogLevel(GetOptionsDB().Get<std::string>("log-level"));
-    SetLogFileSinkPriority(options_db_log_priority);
 
     // Setup the OptionsDB options for the file sink.
     const std::string sink_option_name = "logging.sinks." + root_logger_name;
@@ -119,12 +111,13 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
         sink_option_name, UserStringNop("OPTIONS_DB_LOGGER_FILE_SINK_LEVEL"),
         "info", LogLevelValidator());
 
-    // Setup the OptionsDB options for this default source.
-    const std::string source_option_name = "logging.sources." + root_logger_name;
-    GetOptionsDB().Add<std::string>(
-        source_option_name, UserStringNop("OPTIONS_DB_LOGGER_SOURCE_LEVEL"),
-        "debug", LogLevelValidator());
+    // Use the option
+    LogLevel options_db_log_priority = to_LogLevel(GetOptionsDB().Get<std::string>(sink_option_name));
+    SetLogFileSinkPriority(options_db_log_priority);
 
+    auto date_time = std::time(nullptr);
+    InternalLogger() << "Logger initialized at " << std::ctime(&date_time);
+    InfoLogger() << FreeOrionVersionString();
 }
 
 void SetLogFileSinkPriority(LogLevel priority) {
