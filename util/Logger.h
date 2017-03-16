@@ -102,6 +102,12 @@
 // The logging levels.
 enum class LogLevel {debug, info, warn, error, internal_logger};
 
+constexpr LogLevel max_LogLevel = LogLevel::error;
+constexpr LogLevel min_LogLevel = LogLevel::debug;
+
+FO_COMMON_API std::string to_string(const LogLevel level);
+FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
+
 // Prefix \p name to create a global logger name less likely to collide.
 #define FO_GLOBAL_LOGGER_NAME(name) fo_logger_global_##name
 

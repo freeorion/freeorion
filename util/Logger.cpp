@@ -39,17 +39,6 @@ namespace {
     // Compile time constant pointers to constant char arrays.
     constexpr const char* const log_level_names[] = {"debug", "info ", "warn ", "error", " log "};
 
-    LogLevel StringToLogLevel(const std::string& text) {
-        if (text == "error")    return LogLevel::error;
-        if (text == "warn")     return LogLevel::warn;
-        if (text == "info")     return LogLevel::info;
-        return LogLevel::debug;
-    }
-
-    std::string LogLevelToString(const LogLevel level) {
-        return log_level_names[static_cast<std::size_t>(level)];
-    }
-
     DiscreteValidator<std::string> LogLevelValidator() {
         std::set<std::string> valid_levels = {"debug", "info", "warn", "error",
                                               "DEBUG", "INFO", "WARN", "ERROR",
@@ -58,6 +47,16 @@ namespace {
         return validator;
     }
 
+}
+
+std::string to_string(const LogLevel level)
+{ return log_level_names[static_cast<std::size_t>(level)]; }
+
+LogLevel to_LogLevel(const std::string& text) {
+    if (text == "error")    return LogLevel::error;
+    if (text == "warn")     return LogLevel::warn;
+    if (text == "info")     return LogLevel::info;
+    return LogLevel::debug;
 }
 
 // Provide a LogLevel stream out formatter for streaming logs
@@ -76,7 +75,7 @@ inline std::basic_istream<CharT, TraitsT >& operator>>(
 {
     std::string tmp;
     is >> tmp;
-    level = StringToLogLevel(tmp);
+    level = to_LogLevel(tmp);
     return is;
 }
 
@@ -111,7 +110,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
     DebugLogger() << "Logger initialized at " << std::ctime(&date_time);
     InfoLogger() << FreeOrionVersionString();
 
-    LogLevel options_db_log_priority = StringToLogLevel(GetOptionsDB().Get<std::string>("log-level"));
+    LogLevel options_db_log_priority = to_LogLevel(GetOptionsDB().Get<std::string>("log-level"));
     SetLogFileSinkPriority(options_db_log_priority);
 
     // Setup the OptionsDB options for the file sink.
