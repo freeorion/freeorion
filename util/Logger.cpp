@@ -39,6 +39,9 @@ namespace {
     // Compile time constant pointers to constant char arrays.
     constexpr const char* const log_level_names[] = {"debug", "info ", "warn ", "error", " log "};
 
+    constexpr LogLevel default_sink_level = LogLevel::debug;
+    constexpr LogLevel default_source_level = LogLevel::info;
+
     DiscreteValidator<std::string> LogLevelValidator() {
         std::set<std::string> valid_levels = {"debug", "info", "warn", "error",
                                               "DEBUG", "INFO", "WARN", "ERROR",
@@ -109,7 +112,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
     const std::string sink_option_name = "logging.sinks." + root_logger_name;
     GetOptionsDB().Add<std::string>(
         sink_option_name, UserStringNop("OPTIONS_DB_LOGGER_FILE_SINK_LEVEL"),
-        "info", LogLevelValidator());
+        to_string(default_sink_level), LogLevelValidator());
 
     // Use the option
     LogLevel options_db_log_priority = to_LogLevel(GetOptionsDB().Get<std::string>(sink_option_name));
