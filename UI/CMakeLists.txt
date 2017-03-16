@@ -15,6 +15,7 @@ target_sources(freeorion
         ${CMAKE_CURRENT_LIST_DIR}/CombatReport/GraphicalSummary.h
         ${CMAKE_CURRENT_LIST_DIR}/CUIControls.h
         ${CMAKE_CURRENT_LIST_DIR}/CUIDrawUtil.h
+        ${CMAKE_CURRENT_LIST_DIR}/CUILinkTextBlock.h
         ${CMAKE_CURRENT_LIST_DIR}/CUISlider.h
         ${CMAKE_CURRENT_LIST_DIR}/CUISpin.h
         ${CMAKE_CURRENT_LIST_DIR}/CUIStyle.h

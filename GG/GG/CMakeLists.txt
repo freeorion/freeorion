@@ -38,12 +38,10 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/Button.h
         ${CMAKE_CURRENT_LIST_DIR}/ClrConstants.h
         ${CMAKE_CURRENT_LIST_DIR}/Clr.h
-        ${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt
         ${CMAKE_CURRENT_LIST_DIR}/Config.h
         ${CMAKE_CURRENT_LIST_DIR}/Control.h
         ${CMAKE_CURRENT_LIST_DIR}/Cursor.h
         ${CMAKE_CURRENT_LIST_DIR}/DeferredLayout.h
-        ${CMAKE_CURRENT_LIST_DIR}/dialogs
         ${CMAKE_CURRENT_LIST_DIR}/DrawUtil.h
         ${CMAKE_CURRENT_LIST_DIR}/DropDownList.h
         ${CMAKE_CURRENT_LIST_DIR}/DynamicGraphic.h
@@ -65,7 +63,6 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/MultiEditFwd.h
         ${CMAKE_CURRENT_LIST_DIR}/MultiEdit.h
         ${CMAKE_CURRENT_LIST_DIR}/PtRect.h
-        ${CMAKE_CURRENT_LIST_DIR}/RichText
         ${CMAKE_CURRENT_LIST_DIR}/Scroll.h
         ${CMAKE_CURRENT_LIST_DIR}/ScrollPanel.h
         ${CMAKE_CURRENT_LIST_DIR}/Signal0.h

@@ -1,5 +1,5 @@
 target_sources(freeorioncommon
-    INTERFACE
+    PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/AppInterface.h
         ${CMAKE_CURRENT_LIST_DIR}/blocking_combiner.h
         ${CMAKE_CURRENT_LIST_DIR}/Directories.h

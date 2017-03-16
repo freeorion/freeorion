@@ -1,13 +1,11 @@
 add_subdirectory(AI)
 add_subdirectory(server)
 
-target_sources(freeorioncommon
-    PUBLIC
-        ${CMAKE_CURRENT_LIST_DIR}/SetWrapper.h
-        ${CMAKE_CURRENT_LIST_DIR}/CommonWrappers.h
-)
-
 target_sources(freeoriond
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.h
+        ${CMAKE_CURRENT_LIST_DIR}/CommonWrappers.h
+        ${CMAKE_CURRENT_LIST_DIR}/SetWrapper.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.cpp
         ${CMAKE_CURRENT_LIST_DIR}/EmpireWrapper.cpp
@@ -17,6 +15,10 @@ target_sources(freeoriond
 )
 
 target_sources(freeorionca
+    PUBLIC
+        ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.h
+        ${CMAKE_CURRENT_LIST_DIR}/CommonWrappers.h
+        ${CMAKE_CURRENT_LIST_DIR}/SetWrapper.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/CommonFramework.cpp
         ${CMAKE_CURRENT_LIST_DIR}/EmpireWrapper.cpp

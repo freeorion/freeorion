@@ -2,6 +2,8 @@ target_sources(freeorion
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/HumanClientApp.h
     PRIVATE
+        ${CMAKE_CURRENT_LIST_DIR}/chmain.h
+        ${CMAKE_CURRENT_LIST_DIR}/HumanClientFSM.h
         ${CMAKE_CURRENT_LIST_DIR}/chmain.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HumanClientApp.cpp
         ${CMAKE_CURRENT_LIST_DIR}/HumanClientFSM.cpp
