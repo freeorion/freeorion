@@ -24,7 +24,7 @@
 # whatwasthataddress@gmail.com
 
 target_sources(GiGi
-    INTERFACE
+    PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/BlockControl.h
         ${CMAKE_CURRENT_LIST_DIR}/ImageBlock.h
         ${CMAKE_CURRENT_LIST_DIR}/RichText.h

@@ -31,7 +31,7 @@ if (BUILD_SDL_DRIVER)
 endif ()
 
 target_sources(GiGi
-    INTERFACE
+    PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/AlignmentFlags.h
         ${CMAKE_CURRENT_LIST_DIR}/Base.h
         ${CMAKE_CURRENT_LIST_DIR}/BrowseInfoWnd.h

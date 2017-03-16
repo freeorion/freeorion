@@ -24,7 +24,7 @@
 # whatwasthataddress@gmail.com
 
 target_sources(GiGi
-    INTERFACE
+    PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/ColorDlg.h
         ${CMAKE_CURRENT_LIST_DIR}/FileDlg.h
         ${CMAKE_CURRENT_LIST_DIR}/ThreeButtonDlg.h

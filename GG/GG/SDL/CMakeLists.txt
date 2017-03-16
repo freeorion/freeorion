@@ -24,6 +24,6 @@
 # whatwasthataddress@gmail.com
 
 target_sources(GiGiSDL
-    INTERFACE
+    PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/SDLGUI.h
 )
