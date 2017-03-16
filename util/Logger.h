@@ -100,7 +100,7 @@
 */
 
 // The logging levels.
-enum class LogLevel {debug, info, warn, error};
+enum class LogLevel {debug, info, warn, error, internal_logger};
 
 // Prefix \p name to create a global logger name less likely to collide.
 #define FO_GLOBAL_LOGGER_NAME(name) fo_logger_global_##name
@@ -154,17 +154,13 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
     << boost::log::add_value("SrcFilename", __BASE_FILENAME__)          \
     << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define DebugLogger(name)                       \
-    FO_LOGGER(name, LogLevel::debug)
+#define DebugLogger(name) FO_LOGGER(name, LogLevel::debug)
 
-#define InfoLogger(name)                        \
-    FO_LOGGER(name, LogLevel::info)
+#define InfoLogger(name) FO_LOGGER(name, LogLevel::info)
 
-#define WarnLogger(name)                        \
-    FO_LOGGER(name, LogLevel::warn)
+#define WarnLogger(name) FO_LOGGER(name, LogLevel::warn)
 
-#define ErrorLogger(name)                       \
-    FO_LOGGER(name, LogLevel::error)
+#define ErrorLogger(name) FO_LOGGER(name, LogLevel::error)
 
 
 extern int g_indent;

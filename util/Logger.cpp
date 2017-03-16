@@ -32,8 +32,12 @@ namespace keywords = boost::log::keywords;
 
 namespace {
 
+    // internal_logger is intentionally omitted from all converters.  It is only used internally.
+    // Hence the name.
+#define InternalLogger(name) FO_LOGGER(name, LogLevel::internal_logger)
+
     // Compile time constant pointers to constant char arrays.
-    constexpr const char* const log_level_names[] = {"debug", "info", "warn", "error"};
+    constexpr const char* const log_level_names[] = {"debug", "info ", "warn ", "error", " log "};
 
     LogLevel StringToLogLevel(const std::string& text) {
         if (text == "error")    return LogLevel::error;
