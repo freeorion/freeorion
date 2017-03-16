@@ -85,7 +85,11 @@ int g_indent = 0;
 std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
-void InitLoggingSystem(const std::string& logFile, const std::string& root_logger_name) {
+void InitLoggingSystem(const std::string& logFile, const std::string& _root_logger_name) {
+    std::string root_logger_name = _root_logger_name;
+    std::transform(root_logger_name.begin(), root_logger_name.end(), root_logger_name.begin(),
+                   [](const char c) { return std::tolower(c); });
+
     // Register LogLevel so that the formatters will be found.
     logging::register_simple_formatter_factory<LogLevel, char>("Severity");
     logging::register_simple_filter_factory<LogLevel>("Severity");
