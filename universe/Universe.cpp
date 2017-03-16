@@ -2257,6 +2257,46 @@ namespace {
             }
         }
     }
+
+    void ShareVisbilitiesBetweenAllies(Universe::EmpireObjectVisibilityMap& empire_object_visibility,
+                                       Universe::EmpireObjectSpecialsMap& empire_object_visible_specials)
+    {
+        // make copy of input vis map, iterate over that, not the output as
+        // iterating over the output while modifying it would result in 
+        // second-order visibility sharing (but only through allies with lower
+        // empire id)
+        Universe::EmpireObjectVisibilityMap input_eov_copy = empire_object_visibility;
+        Universe::EmpireObjectSpecialsMap input_eovs_copy = empire_object_visible_specials;
+
+        for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+            int empire_id = empire_entry.first;
+            // output maps for this empire
+            Universe::ObjectVisibilityMap& obj_vis_map = empire_object_visibility[empire_id];
+            Universe::ObjectSpecialsMap& obj_specials_map = empire_object_visible_specials[empire_id];
+
+            for (auto allied_empire_id : Empires().GetEmpireIDsWithDiplomaticStatusWithEmpire(empire_id, DIPLO_ALLIED)) {
+                if (empire_id == allied_empire_id) {
+                    ErrorLogger() << "ShareVisbilitiesBetweenAllies : Empire apparent allied with itself!";
+                    continue;
+                }
+
+                // inpu maps for this ally empire
+                Universe::ObjectVisibilityMap& allied_obj_vis_map = input_eov_copy[allied_empire_id];
+                Universe::ObjectSpecialsMap& allied_obj_specials_map = input_eovs_copy[allied_empire_id];
+
+                // add allied visibilities to outer-loop empire visibilities
+                // whenever the ally has better visibility of an object
+                // (will do the reverse in another loop iteration)
+                for (auto const& allied_obj_id_vis_pair : allied_obj_vis_map) {
+                    int obj_id = allied_obj_id_vis_pair.first;
+                    Visibility allied_vis = allied_obj_id_vis_pair.second;
+                    std::map<int, Visibility>::iterator it = obj_vis_map.find(obj_id);
+                    if (it == obj_vis_map.end() || it->second < allied_vis)
+                        obj_vis_map[obj_id] = allied_vis;
+                }
+            }
+        }
+    }
 }
 
 void Universe::UpdateEmpireObjectVisibilities() {
@@ -2302,6 +2342,8 @@ void Universe::UpdateEmpireObjectVisibilities() {
     SetTravelledStarlaneEndpointsVisible(Objects(), m_empire_object_visibility);
 
     SetEmpireSpecialVisibilities(Objects(), m_empire_object_visibility, m_empire_object_visible_specials);
+
+    ShareVisbilitiesBetweenAllies(m_empire_object_visibility, m_empire_object_visible_specials);
 }
 
 void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {

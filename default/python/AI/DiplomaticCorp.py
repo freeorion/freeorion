@@ -60,7 +60,7 @@ class DiplomaticCorp(object):
             fo.sendChatMessage(proposal_sender_player, acknowledgement)
             if attitude > 0:
                 diplo_reply = fo.diplomaticMessage(message.recipient, message.sender,
-                                                   fo.diplomaticMessageType.acceptProposal)
+                                                   fo.diplomaticMessageType.acceptPeaceProposal)
                 print "Sending diplomatic message to empire %s of type %s" % (message.sender, diplo_reply.type)
                 fo.sendDiplomaticMessage(diplo_reply)
             print "sending chat to player %d of empire %d, message body: '%s'" % (

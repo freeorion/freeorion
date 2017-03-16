@@ -12,8 +12,12 @@ public:
         INVALID_DIPLOMATIC_MESSAGE_TYPE = -1,
         WAR_DECLARATION,
         PEACE_PROPOSAL,
-        ACCEPT_PROPOSAL,
+        ACCEPT_PEACE_PROPOSAL,
+        ALLIES_PROPOSAL,
+        ACCEPT_ALLIES_PROPOSAL,
+        END_ALLIANCE_DECLARATION,
         CANCEL_PROPOSAL,
+        REJECT_PROPOSAL
     };
 
     DiplomaticMessage();
@@ -39,7 +43,11 @@ bool operator!=(const DiplomaticMessage& lhs, const DiplomaticMessage& rhs);
 
 FO_COMMON_API DiplomaticMessage WarDeclarationDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 FO_COMMON_API DiplomaticMessage PeaceProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
-FO_COMMON_API DiplomaticMessage AcceptDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage AcceptPeaceDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage AlliesProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage AcceptAlliesDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage EndAllianceDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 FO_COMMON_API DiplomaticMessage CancelDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
+FO_COMMON_API DiplomaticMessage RejectProposalDiplomaticMessage(int sender_empire_id, int recipient_empire_id);
 
 #endif // _Diplomacy_h_

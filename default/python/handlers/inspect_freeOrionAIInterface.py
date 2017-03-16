@@ -60,7 +60,7 @@ def inspect_ai_interface():
             fo.getSpecial('MODERATE_TECH_NATIVES_SPECIAL'),
             fo.getSpecies('SP_ABADDONI'),
             fo.getTech('SHP_WEAPON_4_1'),
-            fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptProposal),
+            fo.diplomaticMessage(1, 2, fo.diplomaticMessageType.acceptPeaceProposal),
             fleets_int_vector,
             part_type,
             prod_queue,

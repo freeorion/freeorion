@@ -20,7 +20,7 @@
 #include <cmath>
 
 namespace {
-    const bool ALLOW_ALLIED_SUPPLY = false;
+    const bool ALLOW_ALLIED_SUPPLY = true;
 
     const std::set<int> EMPTY_SET;
     const double MAX_SHIP_SPEED = 500.0;        // max allowed speed of ship movement

@@ -55,8 +55,10 @@ public:
     int                 NumEmpires() const;
 
     DiplomaticStatus            GetDiplomaticStatus(int empire1, int empire2) const;
-    bool                        DiplomaticMessageAvailable(int empire1, int empire2) const;
-    const DiplomaticMessage&    GetDiplomaticMessage(int empire1, int empire2) const;
+    std::set<int>               GetEmpireIDsWithDiplomaticStatusWithEmpire(int empire_id,
+                                                                           DiplomaticStatus diplo_status) const;
+    bool                        DiplomaticMessageAvailable(int sender_id, int recipient_id) const;
+    const DiplomaticMessage&    GetDiplomaticMessage(int sender_id, int recipient_id) const;
 
     std::string         Dump() const;
     //@}
@@ -73,7 +75,7 @@ public:
     void        SetDiplomaticStatus(int empire1, int empire2, DiplomaticStatus status);
     void        HandleDiplomaticMessage(const DiplomaticMessage& message);
     void        SetDiplomaticMessage(const DiplomaticMessage& message);
-    void        RemoveDiplomaticMessage(int empire1, int empire2);
+    void        RemoveDiplomaticMessage(int sender_id, int recipient_id);
 
     void        ResetDiplomacy();
 
@@ -95,6 +97,8 @@ public:
 
 private:
     EmpireManager();
+
+    std::string DumpDiplomacy() const;
 
     /** Adds the given empire to the manager. */
     void        InsertEmpire(Empire* empire);
