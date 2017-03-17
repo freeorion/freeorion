@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "BAD_RESEARCH" "ULTIMATE_INDUSTRY" "BAD_POPULATION" "GREAT_SUPPLY" "GREAT_ATTACKTROOPS" "PEDIA_LITHIC_SPECIES_CLASS" ]
+    tags = [ "LITHIC" "BAD_RESEARCH" "GREAT_INDUSTRY" "BAD_POPULATION" "GREAT_SUPPLY" "GREAT_ATTACKTROOPS" "PEDIA_LITHIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -18,7 +18,7 @@ Species
     preferredfocus = "FOCUS_INDUSTRY"
 
     effectsgroups = [
-        [[ULTIMATE_INDUSTRY]]
+        [[GREAT_INDUSTRY]]
         [[BAD_RESEARCH]]
 
         [[BAD_POPULATION]]
