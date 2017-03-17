@@ -4,7 +4,7 @@ Species
     gameplay_description = "SP_LEMBALALAM_GAMEPLAY_DESC"
     Native
 
-    tags = [ "ORGANIC" "NO_INDUSTRY" "GOOD_RESEARCH" "AVERAGE_SUPPLY" "GOOD_STEALTH"]
+    tags = [ "ORGANIC" "NO_INDUSTRY" "GOOD_RESEARCH" "AVERAGE_SUPPLY" "GOOD_STEALTH" "PEDIA_ORGANIC_SPECIES_CLASS" ]
 
     foci = [
         /*[[HAS_INDUSTRY_FOCUS]]*/

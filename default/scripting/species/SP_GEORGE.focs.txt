@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "LITHIC" "TELEPATHIC" "GOOD_INDUSTRY" "BAD_RESEARCH" "GREAT_SUPPLY" ]
+    tags = [ "LITHIC" "TELEPATHIC" "GOOD_INDUSTRY" "BAD_RESEARCH" "GREAT_SUPPLY" "PEDIA_LITHIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]

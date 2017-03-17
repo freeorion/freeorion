@@ -3957,6 +3957,9 @@ Building Type
 ENC_SPECIES
 Species
 
+ENC_SPECIES_DESC
+Each species is classified according their [[encyclopedia METABOLISM_TITLE]]. 
+
 ENC_FIELD_TYPE
 Field Type
 
@@ -4882,25 +4885,25 @@ ORGANIC_SPECIES_TITLE
 Organic Metabolism
 
 ORGANIC_SPECIES_TEXT
-Organic species are more or less, 'life as we know it'. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.
+[[encyclopedia ORGANIC_SPECIES_CLASS]] species are more or less, 'life as we know it'. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when an Organic Growth Special is colonized, and focused on Growth. Organic Growth specials are marked with a little green 'O' in the corner.
 
 LITHIC_SPECIES_TITLE
 Lithic Metabolism
 
 LITHIC_SPECIES_TEXT
-Lithic species are silicon or mineral-based. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.
+[[encyclopedia LITHIC_SPECIES_CLASS]] species are silicon or mineral-based. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Lithic Growth Special is colonized, and focused on Growth. Lithic Growth specials are marked with a little grey 'L' in the corner.
 
 ROBOTIC_SPECIES_TITLE
 Robotic Metabolism
 
 ROBOTIC_SPECIES_TEXT
-Robotic species are sapient machines. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.
+[[encyclopedia ROBOTIC_SPECIES_CLASS]] species are sapient machines. These species' max population can be increased when their connected homeworld is set on [[encyclopedia GROWTH_FOCUS_TITLE]], or when a Robotic Growth Special is colonized, and focused on Growth. Robotic Growth specials are marked with a little red 'R' in the corner.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Phototrophic Metabolism
 
 PHOTOTROPHIC_SPECIES_TEXT
-'''Phototrophic species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star and the planet size - the brighter or bigger, the better. Growth specials do not benefit them.
+'''[[encyclopedia PHOTOTROPHIC_SPECIES_CLASS]] species live mainly or entirely on sunlight. These species' max population is greatly influenced by the brightness of the local star and the planet size - the brighter or bigger, the better. Growth specials do not benefit them.
 
 Population changes:
 
@@ -4918,7 +4921,7 @@ SELF_SUSTAINING_SPECIES_TITLE
 Self-Sustaining Metabolism
 
 SELF_SUSTAINING_SPECIES_TEXT
-Self-Sustaining species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
+[[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] species may be energy or crystalline beings or something even stranger. Their commonality is that they need no sustenance, so their max population is very high. While there are no specials that boost their growth, their max population is equal to a species that is provided with all three [[encyclopedia GROWTH_FOCUS_TITLE]] specials.
 
 TELEPATHIC_TITLE
 Telepathy
@@ -6255,6 +6258,40 @@ Opinions of Empires:
 
 OPINIONS_OF_OTHER_SPECIES
 Opinions of Other Species:
+
+# Species Pedia Categories
+
+LITHIC_SPECIES_CLASS
+Lithic
+
+LITHIC_SPECIES_CLASS_DESC
+List of [[encyclopedia LITHIC_SPECIES_TITLE]] species:
+
+ORGANIC_SPECIES_CLASS
+Organic
+
+ORGANIC_SPECIES_CLASS_DESC
+List of [[encyclopedia ORGANIC_SPECIES_TITLE]] species:
+
+PHOTOTROPHIC_SPECIES_CLASS
+Phototrophic
+
+PHOTOTROPHIC_SPECIES_CLASS_DESC
+List of [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]] species:
+
+ROBOTIC_SPECIES_CLASS
+Robotic
+
+ROBOTIC_SPECIES_CLASS_DESC
+List of [[encyclopedia ROBOTIC_SPECIES_TITLE]] species:
+
+SELF_SUSTAINING_SPECIES_CLASS
+Self-Sustaining
+
+SELF_SUSTAINING_SPECIES_CLASS_DESC
+List of [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]] species:
+
+# Species Pedia Articles
 
 SP_HUMAN
 Human

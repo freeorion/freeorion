@@ -6,7 +6,7 @@ Species
     CanProduceShips
     CanColonize
 
-    tags = [ "ROBOTIC" "BAD_INDUSTRY" "GOOD_RESEARCH" "AVERAGE_SUPPLY" ]
+    tags = [ "ROBOTIC" "BAD_INDUSTRY" "GOOD_RESEARCH" "AVERAGE_SUPPLY" "PEDIA_ROBOTIC_SPECIES_CLASS" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
