@@ -435,6 +435,10 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
             // close enough to be consider to be at next system.
             // set current position to be exactly at next system to avoid rounding issues
             cur_system = next_system;
+            if (!cur_system) {
+                ErrorLogger() << "Fleet::MovePath got null next system!";
+                break;
+            }
             cur_x = cur_system->X();    // update positions to ensure no round-off-errors
             cur_y = cur_system->Y();
 
@@ -457,20 +461,20 @@ std::list<MovePathNode> Fleet::MovePath(const std::list<int>& route, bool flag_b
                 }
             }
             if (flag_blockades && !clear_exit) {
-                //DebugLogger() <<   "Fleet::MovePath checking blockades at system "<<cur_system->Name() << " ("<<cur_system->ID() <<
-                //                            ") for fleet " << this->Name() <<" travelling to system "<< (*route_it);
-                if (BlockadedAtSystem(cur_system->ID(), next_system->ID())) {
+                //DebugLogger() << "Fleet::MovePath checking blockades at system " << cur_system->Name() << " (" << cur_system->ID() <<
+                //                 ") for fleet " << this->Name() << " travelling to system " << (*route_it);
+                if (cur_system && next_system && BlockadedAtSystem(cur_system->ID(), next_system->ID())) {
                     // blockade debug logging
-                    //DebugLogger() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
-                    //                            ") blockaded for fleet " << this->Name();
+                    //DebugLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID() <<
+                    //                 ") blockaded for fleet " << this->Name();
                     is_post_blockade = true;
                 } else {
-                    //DebugLogger() <<   "Fleet::MovePath finds system "<<cur_system->Name() << " ("<<cur_system->ID() <<
-                    //                            ") NOT blockaded for fleet " << this->Name();
+                    //DebugLogger() << "Fleet::MovePath finds system " << cur_system->Name() << " (" << cur_system->ID() <<
+                    //                 ") NOT blockaded for fleet " << this->Name();
                 }
             }
 
-            if (route_it == route.end())
+            if (route_it == route.end() || !cur_system)
                 break;
 
             if (!next_system) {
