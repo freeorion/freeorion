@@ -94,9 +94,11 @@ std::string EmpireManager::DumpDiplomacy() const {
     }
     retval += "Diplomatic Messages:\n";
     for (const auto& message : m_diplomatic_messages) {
+        if (message.second.GetType() == DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE)
+            continue;   // don't print non-messages and pollute the log files...
         retval += "From: " + std::to_string(message.first.first)
                + " to: " + std::to_string(message.first.second)
-               + " message:" + message.second.Dump() + "\n";
+               + " message: " + message.second.Dump() + "\n";
     }
 
     return retval;
@@ -151,7 +153,7 @@ void EmpireManager::Clear() {
 }
 
 DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) const {
-    if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES)
+    if (empire1 == ALL_EMPIRES || empire2 == ALL_EMPIRES || empire1 == empire2)
         return INVALID_DIPLOMATIC_STATUS;
 
     auto it = m_empire_diplomatic_statuses.find(DiploKey(empire1, empire2));
@@ -161,8 +163,8 @@ DiplomaticStatus EmpireManager::GetDiplomaticStatus(int empire1, int empire2) co
     return INVALID_DIPLOMATIC_STATUS;
 }
 
-std::set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(int empire_id,
-                                                                        DiplomaticStatus diplo_status) const
+std::set<int> EmpireManager::GetEmpireIDsWithDiplomaticStatusWithEmpire(
+    int empire_id, DiplomaticStatus diplo_status) const
 {
     std::set<int> retval;
     if (empire_id == ALL_EMPIRES || diplo_status == INVALID_DIPLOMATIC_STATUS)
@@ -190,7 +192,7 @@ const DiplomaticMessage& EmpireManager::GetDiplomaticMessage(int sender_id, int 
     if (it != m_diplomatic_messages.end())
         return it->second;
     static DiplomaticMessage DEFAULT_DIPLOMATIC_MESSAGE;
-    ErrorLogger() << "Couldn't find diplomatic message between empires " << sender_id << " and " << recipient_id;
+    //WarnLogger() << "Couldn't find requested diplomatic message between empires " << sender_id << " and " << recipient_id;
     return DEFAULT_DIPLOMATIC_MESSAGE;
 }
 
@@ -214,21 +216,18 @@ void EmpireManager::SetDiplomaticMessage(const DiplomaticMessage& message) {
 
 void EmpireManager::RemoveDiplomaticMessage(int sender_id, int recipient_id) {
     auto it = m_diplomatic_messages.find({sender_id, recipient_id});
-    if (it != m_diplomatic_messages.end()) {
-        m_diplomatic_messages[{sender_id, recipient_id}] =
-            DiplomaticMessage(sender_id, recipient_id, DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE);
-        DiplomaticMessageChangedSignal(sender_id, recipient_id);
-        return;
-    }
-    ErrorLogger() << "Was no diplomatic message entry between empires " << sender_id << " and " << recipient_id;
+    bool changed = (it != m_diplomatic_messages.end()) &&
+                   (it->second.GetType() != DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE);
+
     m_diplomatic_messages[{sender_id, recipient_id}] =
         DiplomaticMessage(sender_id, recipient_id, DiplomaticMessage::INVALID_DIPLOMATIC_MESSAGE_TYPE);
+
+    // if there already was a message, and it wasn't already a non-message, notify about change
+    if (changed)
+        DiplomaticMessageChangedSignal(sender_id, recipient_id);
 }
 
 void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
-    DebugLogger() << "HandleDiplomaticMessage start message: " << message.Dump();
-    DebugLogger() << this->DumpDiplomacy();
-
     int sender_empire_id = message.SenderEmpireID();
     int recipient_empire_id = message.RecipientEmpireID();
 
@@ -332,8 +331,6 @@ void EmpireManager::HandleDiplomaticMessage(const DiplomaticMessage& message) {
     default:
         break;
     }
-    DebugLogger() << "HandleDiplomaticMessage end";
-    DebugLogger() << this->DumpDiplomacy();
 }
 
 void EmpireManager::ResetDiplomacy() {
