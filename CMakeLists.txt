@@ -32,6 +32,8 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_PACKAGING "Build the installer/binary package" OFF)
+option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." OFF)
+
 
 if (BUILD_TESTING)
     message( STATUS "Building Tests")
@@ -114,18 +116,6 @@ else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
 endif ()
 
-# Need to know if the boost libraries are linked statically or dynamically
-# If dynamically, add some macro definitions to prevent potential link errors
-option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." OFF)
-
-if (NOT FO_LINK_STATIC_BOOST_LIBS)
-    add_definitions(
-        -DBOOST_ALL_NO_LINK
-        -DBOOST_ALL_DYN_LINK
-        -DBOOST_LOG_DYN_LINK
-    )
-endif ()
-
 
 ##
 ## Collect project dependencies.
@@ -196,6 +186,14 @@ set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
 add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
+
+if (NOT FO_LINK_STATIC_BOOST_LIBS)
+    add_definitions(
+        -DBOOST_ALL_NO_LINK
+        -DBOOST_ALL_DYN_LINK
+        -DBOOST_LOG_DYN_LINK
+    )
+endif ()
 
 if(${Boost_VERSION} GREATER "106000")
     # with boost 1.61 some boost::optional internals were changed. However
