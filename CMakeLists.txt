@@ -212,6 +212,13 @@ link_directories(
 
 add_library(freeorioncommon "")
 
+if (WIN32)
+    set_property(TARGET freeorioncommon
+        PROPERTY
+        OUTPUT_NAME Common
+    )
+endif ()
+
 target_compile_options(freeorioncommon
     PRIVATE
         $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
@@ -261,6 +268,13 @@ set_property(TARGET freeorionparseobj
     POSITION_INDEPENDENT_CODE ON
 )
 
+if (WIN32)
+    set_property(TARGET freeorionparse
+        PROPERTY
+        OUTPUT_NAME Parsers
+    )
+endif ()
+
 target_compile_options(
     freeorionparseobj PRIVATE
     $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
@@ -284,6 +298,13 @@ target_compile_options(
 
 
 add_executable(freeoriond "")
+
+if (WIN32)
+    set_property(TARGET freeoriond
+        PROPERTY
+            OUTPUT_NAME FreeOrionD
+    )
+endif ()
 
 target_compile_options(freeoriond
     PRIVATE
@@ -314,6 +335,13 @@ target_link_libraries(freeoriond
 
 add_executable(freeorionca "")
 
+if (WIN32)
+    set_property(TARGET freeorionca
+        PROPERTY
+            OUTPUT_NAME FreeOrionCA
+    )
+endif ()
+
 target_compile_options(
     freeorionca PRIVATE
     $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
@@ -342,6 +370,13 @@ target_link_libraries(freeorionca
 
 
 add_executable(freeorion "")
+
+if (WIN32)
+    set_property(TARGET freeorion
+        PROPERTY
+            OUTPUT_NAME FreeOrion
+    )
+endif ()
 
 target_compile_options(freeorion
     PRIVATE
