@@ -24,6 +24,7 @@ project(FreeOrion)
 
 include(GNUInstallDirs)
 include(UseCodeCoverage)
+include(TargetDependencies)
 
 set(FreeOrion_VERSION 0.4.6+)
 set(CMAKE_CXX_STANDARD 11)
@@ -98,6 +99,7 @@ if (WIN32)
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
         set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+        target_dependencies_add_search_path("${CMAKE_PREFIX_PATH}/bin")
     endif ()
 elseif (APPLE)
     add_definitions(-DFREEORION_MACOSX)
@@ -332,6 +334,8 @@ target_link_libraries(freeoriond
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
+target_dependencies_copy_to_build(freeoriond)
+
 
 add_executable(freeorionca "")
 
@@ -367,6 +371,8 @@ target_link_libraries(freeorionca
     ${Boost_PYTHON_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
+target_dependencies_copy_to_build(freeorionca)
 
 
 add_executable(freeorion "")
@@ -424,6 +430,8 @@ target_link_libraries(freeorion
     ${Boost_LOCALE_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
+
+target_dependencies_copy_to_build(freeorion)
 
 
 ##
