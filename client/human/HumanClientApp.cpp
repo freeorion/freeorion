@@ -236,7 +236,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     EnableFPS();
     UpdateFPSLimit();
-    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &HumanClientApp::UpdateFPSLimit, this);
+    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"),  &HumanClientApp::UpdateFPSLimit, this);
+    GG::Connect(GetOptionsDB().OptionChangedSignal("max-fps"),   &HumanClientApp::UpdateFPSLimit, this);
 
     std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
         new GG::TextBoxBrowseInfoWnd(GG::X(400), ClientUI::GetFont(),
