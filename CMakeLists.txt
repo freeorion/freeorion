@@ -335,6 +335,7 @@ target_link_libraries(freeoriond
 )
 
 target_dependencies_copy_to_build(freeoriond)
+target_dependent_data_symlink_to_build(freeoriond ${PROJECT_SOURCE_DIR}/default)
 
 
 add_executable(freeorionca "")
@@ -373,6 +374,7 @@ target_link_libraries(freeorionca
 )
 
 target_dependencies_copy_to_build(freeorionca)
+target_dependent_data_symlink_to_build(freeorionca ${PROJECT_SOURCE_DIR}/default)
 
 
 add_executable(freeorion "")
@@ -432,6 +434,7 @@ target_link_libraries(freeorion
 )
 
 target_dependencies_copy_to_build(freeorion)
+target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
 
 
 ##

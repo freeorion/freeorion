@@ -24,6 +24,12 @@
 # Copy the dependent shared libraries of <target>s main binary into <target>s
 # build destination directory after a successful build.
 #
+# ::
+#
+#    TARGET_DEPENDENT_DATA_SYMLINK_TO_BUILD(<target> <path>)
+#
+# Create a symbolic link to <path> into <target>s build destination directory
+# after a successful build.  Only supports directories as <path>.
 
 set_property(GLOBAL PROPERTY _TARGET_DEPENDENCIES_SCRIPT "${CMAKE_CURRENT_LIST_FILE}")
 
@@ -46,6 +52,7 @@ function (target_dependencies_copy_to_build TARGET)
         POST_BUILD
         COMMAND
             "${CMAKE_COMMAND}"
+            -DMODE=DYNAMIC_LIB_COPY
             "-DBINARY=$<TARGET_FILE:${TARGET}>"
             "-DDESTINATION=$<TARGET_FILE_DIR:${TARGET}>"
             "-DSEARCH_PATH=${SEARCH_PATH}"
@@ -53,7 +60,42 @@ function (target_dependencies_copy_to_build TARGET)
     )
 endfunction ()
 
-if (CMAKE_SCRIPT_MODE_FILE)
+function (target_dependent_data_symlink_to_build TARGET SOURCE_PATH)
+    if (APPLE)
+        return ()
+    endif ()
+
+    if (WIN32)
+        if (CMAKE_VERSION VERSION_LESS "3.4")
+            message (FATAL_ERROR "`target_dependent_data_symlink_to_build`: Requires at least CMake 3.4 to work properly.")
+        endif ()
+
+        find_program(MKLINK_EXECUTABLE NAMES mklink)
+
+        if (NOT MKLINK_EXECUTABLE)
+            message (FATAL_ERROR "`target_dependent_data_symlink_to_build`: Requires `mklink.exe` to work properly (available on Vista or later).")
+        endif ()
+
+        if (NOT IS_DIRECTORY "${SOURCE_PATH}")
+            message (FATAL_ERROR "`target_dependent_data_symlink_to_build`: Source path must point to a directory.")
+        endif ()
+    endif ()
+
+    get_property(SCRIPT GLOBAL PROPERTY _TARGET_DEPENDENCIES_SCRIPT)
+
+    add_custom_command(TARGET ${TARGET}
+        POST_BUILD
+        COMMAND
+            "${CMAKE_COMMAND}"
+            -DMODE=DATA_LINK
+            "-DMKLINK_EXECUTABLE=${MKLINK_EXECUTABLE}"
+            "-DDESTINATION=$<TARGET_FILE_DIR:${TARGET}>"
+            "-DSOURCE_PATH=${SOURCE_PATH}"
+            -P "${SCRIPT}"
+    )
+endfunction ()
+
+if (CMAKE_SCRIPT_MODE_FILE AND (MODE STREQUAL "DYNAMIC_LIB_COPY"))
     include(GetPrerequisites)
 
     get_filename_component(BINARY_PATH "${BINARY}" PATH)
@@ -67,4 +109,25 @@ if (CMAKE_SCRIPT_MODE_FILE)
             execute_process(COMMAND "${CMAKE_COMMAND}" -E copy_if_different "${DEPENDENCY_FILE}" "${DESTINATION}")
         endif ()
     endforeach ()
+endif ()
+
+if (CMAKE_SCRIPT_MODE_FILE AND (MODE STREQUAL "DATA_LINK"))
+    if(NOT IS_DIRECTORY "${DESTINATION}")
+        message (FATAL_ERROR "`target_dependent_data_symlink_to_build`: Destination is not a directory.")
+    endif ()
+
+    get_filename_component(TARGET_NAME "${SOURCE_PATH}" NAME)
+
+    if ("${DESTINATION}/${TARGET_NAME}" STREQUAL "${SOURCE_PATH}")
+        return ()
+    elseif (IS_SYMLINK "${DESTINATION}/${TARGET_NAME}")
+        return ()
+    elseif (EXISTS "${DESTINATION}/${TARGET_NAME}")
+        message (FATAL_ERROR "`target_dependent_data_symlink_to_build`: Target path exists and is not a symlink.")
+    endif ()
+    if (WIN32)
+        execute_process(COMMAND "${MKLINK_EXECUTABLE}" /J "${DESTINATION}" "${SOURCE_PATH}")
+    else ()
+        execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${SOURCE_PATH}" "${DESTINATION}/${TARGET_NAME}")
+    endif ()
 endif ()
