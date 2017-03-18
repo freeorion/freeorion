@@ -114,22 +114,13 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
         sink_option_name, UserStringNop("OPTIONS_DB_LOGGER_FILE_SINK_LEVEL"),
         to_string(default_sink_level), LogLevelValidator());
 
-    // Use the option
-    LogLevel options_db_log_priority = to_LogLevel(GetOptionsDB().Get<std::string>(sink_option_name));
-    SetLogFileSinkPriority(options_db_log_priority);
+    // Use the option to set the threshold of the default logger
+    LogLevel options_db_log_threshold = to_LogLevel(GetOptionsDB().Get<std::string>(sink_option_name));
+    SetLoggerThreshold("", options_db_log_threshold);
 
     auto date_time = std::time(nullptr);
     InternalLogger() << "Logger initialized at " << std::ctime(&date_time);
     InfoLogger() << FreeOrionVersionString();
-}
-
-void SetLogFileSinkPriority(LogLevel priority) {
-    logging::core::get()->set_filter(log_severity >= priority);
-}
-
-/** Sets the \p priority of \p source.  \p source == "" is the default logger.*/
-FO_COMMON_API void SetLoggerSourcePriority(const std::string & source, LogLevel priority) {
-    //FIXME
 }
 
 void RegisterLoggerWithOptionsDB(const std::string& name) {
@@ -141,4 +132,17 @@ void RegisterLoggerWithOptionsDB(const std::string& name) {
     GetOptionsDB().Add<std::string>(
         option_name, UserStringNop("OPTIONS_DB_LOGGER_SOURCE_LEVEL"),
         "info", LogLevelValidator());
+}
+namespace {
+    // Create a minimum severity table filter
+    auto f_min_channel_severity = expr::channel_severity_filter(log_channel, log_severity);
+}
+
+void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
+    InternalLogger() << "Setting \"" << (source.empty() ? "default" : source)
+                     << "\" logger threshold to \"" << threshold << "\".";
+
+    logging::core::get()->reset_filter();
+    f_min_channel_severity[source] = threshold;
+    logging::core::get()->set_filter(f_min_channel_severity);
 }

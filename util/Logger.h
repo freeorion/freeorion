@@ -141,13 +141,11 @@ FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger);
 // Create the default logger
 CreateThreadedLogger();
 
-/** Sets the priority for the log file sink. */
-FO_COMMON_API void SetLogFileSinkPriority(LogLevel priority);
-
-/** Sets the \p priority of \p source.  \p source == "" is the default logger.*/
-FO_COMMON_API void SetLoggerSourcePriority(const std::string& source, LogLevel priority);
+/** Sets the \p threshold of \p source.  \p source == "" is the default logger.*/
+FO_COMMON_API void SetLoggerThreshold(const std::string& source, LogLevel threshold);
 
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_severity, "Severity", LogLevel);
+BOOST_LOG_ATTRIBUTE_KEYWORD(log_channel, "Channel", std::string)
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_filename, "SrcFilename", std::string);
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 
