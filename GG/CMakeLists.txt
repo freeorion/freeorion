@@ -83,7 +83,7 @@ endif ()
 
 set(MINIMUM_BOOST_VERSION 1.56.0)
 
-if (NOT DEFINED USE_STATIC_LIBS)
+if (NOT USE_STATIC_LIBS)
     add_definitions(
         -DBOOST_ALL_NO_LINK
         -DBOOST_ALL_DYN_LINK
