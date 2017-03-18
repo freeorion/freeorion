@@ -3931,13 +3931,13 @@ ENC_SHIP_PART
 Ship Part
 
 ENC_SHIP_PART_DESC
-Ship Parts
+A Ship Part can be mounted on a [[encyclopedia ENC_SHIP_HULL]] (in an available [[encyclopedia SLOT_TITLE]]) when designing a ship, in order to improve its statistics. Some low-tier parts are available by default, but better versions or new part types can be unlocked by [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]. Each ship part falls into one of the categories below.
 
 ENC_SHIP_HULL
 Ship Hull
 
 ENC_SHIP_HULL_DESC
-Ship Hulls
+A Ship Hull is the primary element of a ship architecture, defining the basic statistics of a ship design (when no [[encyclopedia ENC_SHIP_PART]] is yet mounted). Some low-tier hulls are available by default, but better versions or new hull lines can be unlocked by [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]]. Each ship hull falls into one of the categories below.
 
 ENC_TECH
 Technologies
