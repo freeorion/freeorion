@@ -21,6 +21,8 @@
 #include <boost/log/attributes/value_extraction.hpp>
 #include <boost/log/utility/setup/formatter_parser.hpp>
 #include <boost/log/utility/setup/filter_parser.hpp>
+#include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/sinks/sync_frontend.hpp>
 
 #include <ctime>
 
@@ -28,6 +30,7 @@ namespace logging = boost::log;
 namespace expr = boost::log::expressions;
 namespace attr = boost::log::attributes;
 namespace keywords = boost::log::keywords;
+namespace sinks = boost::log::sinks;
 
 
 namespace {
@@ -87,6 +90,14 @@ int g_indent = 0;
 std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
+namespace {
+    using TextFileSinkBackend  = sinks::text_file_backend;
+    using TextFileSinkFrontend = sinks::synchronous_sink<TextFileSinkBackend>;
+
+    // The backend should be accessible synchronously from any thread by any sink frontend
+    boost::shared_ptr<TextFileSinkBackend>  f_file_sink_backend;
+}
+
 void InitLoggingSystem(const std::string& logFile, const std::string& _root_logger_name) {
     std::string root_logger_name = _root_logger_name;
     std::transform(root_logger_name.begin(), root_logger_name.end(), root_logger_name.begin(),
@@ -96,16 +107,30 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
     logging::register_simple_formatter_factory<LogLevel, char>("Severity");
     logging::register_simple_filter_factory<LogLevel>("Severity");
 
-    logging::add_file_log(
+    // Create a sink backend that logs to a file
+    f_file_sink_backend = boost::make_shared<TextFileSinkBackend>(
         keywords::file_name = logFile.c_str(),
-        keywords::auto_flush = true,
-        keywords::format = expr::stream
-            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
-            << " [" << log_severity << "] "
-            << root_logger_name << " : " << log_src_filename << ":" << log_src_linenum << " : "
-            << expr::message
+        keywords::auto_flush = true
     );
 
+    // Create the frontend for formatting default records.
+    auto file_sink_frontend = boost::make_shared<TextFileSinkFrontend>(f_file_sink_backend);
+
+    // Create the format
+    file_sink_frontend->set_formatter(
+        expr::stream
+        << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+        << " [" << log_severity << "] "
+        << root_logger_name << " : " << log_src_filename << ":" << log_src_linenum << " : "
+        << expr::message
+    );
+
+    // Set a filter to only use records from the default channel
+    file_sink_frontend->set_filter(log_channel == "");
+
+    logging::core::get()->add_sink(file_sink_frontend);
+
+    // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
     // Setup the OptionsDB options for the file sink.
@@ -118,6 +143,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
     LogLevel options_db_log_threshold = to_LogLevel(GetOptionsDB().Get<std::string>(sink_option_name));
     SetLoggerThreshold("", options_db_log_threshold);
 
+    // Print setup message.
     auto date_time = std::time(nullptr);
     InternalLogger() << "Logger initialized at " << std::ctime(&date_time);
     InfoLogger() << FreeOrionVersionString();
