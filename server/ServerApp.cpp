@@ -730,11 +730,9 @@ bool ServerApp::NewGameInitVerifyJoiners(
         return false;
     }
 
-    if (m_networking.HostPlayerID() < 0
-        || static_cast<std::size_t>(m_networking.HostPlayerID()) >= player_id_setup_data.size())
-    {
+    if (player_id_setup_data.find(m_networking.HostPlayerID()) == player_id_setup_data.end()) {
         ErrorLogger() << "NewGameInitVerifyJoiners : Host id " << m_networking.HostPlayerID()
-                      << " is not a valid player id [0, " << (player_id_setup_data.size() - 1) << "].";
+                      << " is not a valid player id.";
         return false;
     }
 
