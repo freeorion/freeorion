@@ -70,9 +70,8 @@ function (target_dependent_data_symlink_to_build TARGET SOURCE_PATH)
             message (FATAL_ERROR "`target_dependent_data_symlink_to_build`: Requires at least CMake 3.4 to work properly.")
         endif ()
 
-        find_program(MKLINK_EXECUTABLE NAMES mklink)
-
-        if (NOT MKLINK_EXECUTABLE)
+        # mklink is a builtin in cmd.exe of Win Vista an above
+        if (CMAKE_SYSTEM_VERSION VERSION_LESS "6.0")
             message (FATAL_ERROR "`target_dependent_data_symlink_to_build`: Requires `mklink.exe` to work properly (available on Vista or later).")
         endif ()
 
@@ -88,7 +87,6 @@ function (target_dependent_data_symlink_to_build TARGET SOURCE_PATH)
         COMMAND
             "${CMAKE_COMMAND}"
             -DMODE=DATA_LINK
-            "-DMKLINK_EXECUTABLE=${MKLINK_EXECUTABLE}"
             "-DDESTINATION=$<TARGET_FILE_DIR:${TARGET}>"
             "-DSOURCE_PATH=${SOURCE_PATH}"
             -P "${SCRIPT}"
@@ -126,7 +124,7 @@ if (CMAKE_SCRIPT_MODE_FILE AND (MODE STREQUAL "DATA_LINK"))
         message (FATAL_ERROR "`target_dependent_data_symlink_to_build`: Target path exists and is not a symlink.")
     endif ()
     if (WIN32)
-        execute_process(COMMAND "${MKLINK_EXECUTABLE}" /J "${DESTINATION}" "${SOURCE_PATH}")
+        execute_process(COMMAND mklink /J "${DESTINATION}" "${SOURCE_PATH}")
     else ()
         execute_process(COMMAND ${CMAKE_COMMAND} -E create_symlink "${SOURCE_PATH}" "${DESTINATION}/${TARGET_NAME}")
     endif ()
