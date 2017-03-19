@@ -25,6 +25,7 @@
 #include <boost/log/sinks/sync_frontend.hpp>
 
 #include <ctime>
+#include <regex>
 
 namespace logging = boost::log;
 namespace expr = boost::log::expressions;
@@ -53,7 +54,49 @@ namespace {
         return validator;
     }
 
+    constexpr auto exec_option_name_prefix = "logging.execs.";
+    constexpr auto source_option_name_prefix = "logging.sources.";
+
+    std::regex exec_name_regex("(?:logging\\.execs\\.)(\\S+)");
+    std::regex source_name_regex("(?:logging\\.sources\\.)(\\S+)");
+
+
+    /** Add the log threshold for a logger with \p full_option_name to OptionsDB and return the
+        threshold read from OptionsDB. */
+    LogLevel AddLoggerToOptionsDB(const std::string& full_option_name) {
+
+        // Determine the type of logger, executable default or channel.
+        std::smatch ematch;
+        std::regex_search(full_option_name, ematch, exec_name_regex);
+        bool is_an_exec_root_logger = !ematch.empty();
+
+        std::smatch cmatch;
+        std::regex_search(full_option_name, cmatch, source_name_regex);
+        bool is_a_channel_logger = !cmatch.empty();
+
+        if (!is_an_exec_root_logger && !is_a_channel_logger)
+            InternalLogger() << "Adding a logger to OptionsDB with an unknown prefix. " << full_option_name;
+
+        // Find the appropriate defaults.
+        auto default_level = to_string(default_source_level);
+        auto description = UserStringNop("OPTIONS_DB_LOGGER_SOURCE_LEVEL");
+
+        if (is_an_exec_root_logger) {
+            default_level = to_string(default_sink_level);
+            description =  UserStringNop("OPTIONS_DB_LOGGER_FILE_SINK_LEVEL");
+        }
+
+        // Create the new option if necessary.
+        if (!GetOptionsDB().OptionExists(full_option_name))
+            GetOptionsDB().Add<std::string>(
+                full_option_name, description, default_level, LogLevelValidator());
+
+        // Return the threshold from the db.
+        return to_LogLevel(GetOptionsDB().Get<std::string>(full_option_name));
+    }
 }
+
+
 
 std::string to_string(const LogLevel level)
 { return log_level_names[static_cast<std::size_t>(level)]; }
