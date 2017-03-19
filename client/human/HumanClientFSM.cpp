@@ -542,14 +542,14 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
                   << problem << "\nProblem is" <<(fatal ? "":"non-")<<" fatal";
 
-    //Note: Any transit<> transition must occur before the MessageBox().
+    // Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
     auto retval = discard_event();
     if (fatal) {
+        retval = transit<IntroMenu>();
         Client().ResetToIntro();
         ClientUI::MessageBox(UserString(problem), true);
-        return transit<IntroMenu>();
     } else {
         ClientUI::MessageBox(UserString(problem), false);
     }
@@ -965,11 +965,11 @@ boost::statechart::result QuittingGame::react(const TerminateServer& u) {
 
     // Reset the game or quit the app as appropriate
     if (m_reset_to_intro) {
+        auto retval = transit<IntroMenu>();
         Client().ResetClientData();
-        return transit<IntroMenu>();
+        return retval;
     } else {
         throw HumanClientApp::CleanQuit();
     }
-
 }
 
