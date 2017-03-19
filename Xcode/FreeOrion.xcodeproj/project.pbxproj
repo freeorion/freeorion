@@ -111,7 +111,6 @@
 		3ABEAB3F1749C27700E34912 /* libboost_filesystem.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */; };
 		3ABEAB711749C2F400E34912 /* libboost_signals.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */; };
 		3ABEAB741749C36200E34912 /* libboost_system.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */; };
-		3ABEAB7D1749C4D300E34912 /* libboost_chrono.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 824C0B7C15F61C45002081C2 /* libboost_chrono.a */; };
 		3ABEAB801749C51B00E34912 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
 		3ABEAB871749C72000E34912 /* Universe.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5D0F0A98A3F900DA9C21 /* Universe.cpp */; };
 		3ABEAB901749C8F500E34912 /* libboost_thread.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */; };
@@ -845,7 +844,6 @@
 		8246FECF194D8F83008C07B5 /* IntComplexValueRefParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IntComplexValueRefParser.cpp; sourceTree = "<group>"; };
 		82483B7A15F4F24100D27614 /* libboost_date_time.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_date_time.a; sourceTree = "<group>"; };
 		82483B7B15F4F26200D27614 /* libFreeImage.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFreeImage.a; sourceTree = "<group>"; };
-		824C0B7C15F61C45002081C2 /* libboost_chrono.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_chrono.a; sourceTree = "<group>"; };
 		8250FDE115FCEFC400523C1C /* ConditionParser4.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConditionParser4.cpp; sourceTree = "<group>"; };
 		8250FDE215FCEFC400523C1C /* FieldsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FieldsParser.cpp; sourceTree = "<group>"; };
 		8250FDE315FCEFDD00523C1C /* Field.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Field.cpp; sourceTree = "<group>"; };
@@ -1133,7 +1131,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				82E5239F192FEAA6001E2374 /* CoreFoundation.framework in Frameworks */,
-				3ABEAB7D1749C4D300E34912 /* libboost_chrono.a in Frameworks */,
 				3ABEAB3F1749C27700E34912 /* libboost_filesystem.a in Frameworks */,
 				3ABEAB3C1749C21B00E34912 /* libboost_serialization.a in Frameworks */,
 				3ABEAB711749C2F400E34912 /* libboost_signals.a in Frameworks */,
@@ -1912,7 +1909,6 @@
 		47B60DED0CF0761E00318761 /* boost */ = {
 			isa = PBXGroup;
 			children = (
-				824C0B7C15F61C45002081C2 /* libboost_chrono.a */,
 				82483B7A15F4F24100D27614 /* libboost_date_time.a */,
 				9EEEEA7313ACB91A0085B1A0 /* libboost_filesystem.a */,
 				8280AC5C19C0741B00ADDB65 /* libboost_iostreams.a */,

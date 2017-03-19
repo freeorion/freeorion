@@ -146,7 +146,6 @@ find_package(PythonInterp ${MINIMUM_PYTHON_VERSION} REQUIRED)
 find_package(PythonLibs ${MINIMUM_PYTHON_VERSION} REQUIRED)
 find_package(Boost ${MINIMUM_BOOST_VERSION}
     COMPONENTS
-        chrono
         date_time
         filesystem
         iostreams
@@ -262,7 +261,6 @@ target_include_directories(freeorioncommon SYSTEM
 )
 
 target_link_libraries(freeorioncommon
-    ${Boost_CHRONO_LIBRARY}
     ${Boost_DATE_TIME_LIBRARY}
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_IOSTREAMS_LIBRARY}

@@ -43,7 +43,6 @@
 #include <boost/format.hpp>
 #include <boost/serialization/vector.hpp>
 #include <boost/algorithm/string.hpp>
-#include <boost/chrono/chrono_io.hpp>
 
 #include <chrono>
 #include <thread>

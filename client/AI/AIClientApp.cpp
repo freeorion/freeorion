@@ -21,7 +21,6 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/chrono/chrono_io.hpp>
 
 #include <thread>
 #include <chrono>
