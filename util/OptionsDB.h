@@ -181,8 +181,8 @@ public:
     void GetXML(XMLDoc& doc) const;
 
     /** find all registered Options that begin with \a prefix and store them in
-      * \a ret. */
-    void        FindOptions(std::set<std::string>& ret, const std::string& prefix) const;
+      * \a ret. If \p allow_unrecognized then include unrecognized options. */
+    void        FindOptions(std::set<std::string>& ret, const std::string& prefix, bool allow_unrecognized = false) const;
 
     /** the option changed signal object for the given option */
     OptionChangedSignalType&    OptionChangedSignal(const std::string& option);
