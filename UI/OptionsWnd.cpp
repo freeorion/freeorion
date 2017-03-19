@@ -693,12 +693,22 @@ GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
     return page;
 }
 
-void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level, const std::string& name) {
+void OptionsWnd::CreateSectionHeader(
+    GG::ListBox* page, int indentation_level, const std::string& name, const std::string& tooltip)
+{
     assert(0 <= indentation_level);
     GG::Label* heading_text = new CUILabel(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
     heading_text->SetFont(ClientUI::GetFont(ClientUI::Pts() * 4 / 3));
+
     GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, heading_text->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                heading_text, indentation_level);
+
+    if (!tooltip.empty()) {
+        DebugLogger() << "Adding OptionsWnd section header tooltip for '" << tooltip <<"'";
+        row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row->SetBrowseText(tooltip);
+    }
+
     page->Insert(row);
 }
 
