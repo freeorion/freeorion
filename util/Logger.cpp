@@ -40,7 +40,7 @@ namespace {
 #define InternalLogger(name) FO_LOGGER(name, LogLevel::internal_logger)
 
     // Compile time constant pointers to constant char arrays.
-    constexpr const char* const log_level_names[] = {"debug", "info ", "warn ", "error", " log "};
+    constexpr const char* const log_level_names[] = {"debug", "info", "warn", "error", "log"};
 
     constexpr LogLevel default_sink_level = LogLevel::debug;
     constexpr LogLevel default_source_level = LogLevel::info;
@@ -62,6 +62,21 @@ LogLevel to_LogLevel(const std::string& text) {
     if (text == "error")    return LogLevel::error;
     if (text == "warn")     return LogLevel::warn;
     if (text == "info")     return LogLevel::info;
+    if (text == "debug")    return LogLevel::debug;
+
+    if (text == "ERROR")    return LogLevel::error;
+    if (text == "WARN")     return LogLevel::warn;
+    if (text == "INFO")     return LogLevel::info;
+    if (text == "DEBUG")    return LogLevel::debug;
+
+    if (text == "3")    return LogLevel::error;
+    if (text == "2")    return LogLevel::warn;
+    if (text == "1")    return LogLevel::info;
+    if (text == "0")    return LogLevel::debug;
+
+    WarnLogger() << "\"" << text <<"\" is not a valid log level. "
+                 << "Valid levels are error, warn, info, and debug";
+
     return LogLevel::debug;
 }
 
