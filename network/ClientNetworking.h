@@ -10,11 +10,11 @@
 // FreeOrion function names.
 #define NOMINMAX
 #include <boost/asio.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 #ifdef FREEORION_WIN32
 #   undef Message
 #   undef MessageBox
 #endif
-
 
 /** Encapsulates the networking facilities of the client.  The client must
     execute its networking code in a separate thread from its main processing
@@ -81,12 +81,12 @@ public:
     /** Connects to the server at \a ip_address.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
     bool ConnectToServer(const std::string& ip_address,
-                         boost::posix_time::seconds timeout = boost::posix_time::seconds(5));
+                         std::chrono::milliseconds timeout = std::chrono::seconds(10));
 
     /** Connects to the server on the client's host.  On failure, repeated
         attempts will be made until \a timeout seconds has elapsed. */
-    bool ConnectToLocalHostServer(boost::posix_time::seconds timeout =
-                                  boost::posix_time::seconds(5));
+    bool ConnectToLocalHostServer(std::chrono::milliseconds timeout =
+                                  std::chrono::seconds(10));
 
     /** Sends \a message to the server.  This function actually just enqueues
         the message for sending and returns immediately. */
@@ -116,7 +116,6 @@ public:
 private:
     void HandleException(const boost::system::system_error& error);
     void HandleConnection(boost::asio::ip::tcp::resolver::iterator* it,
-                          boost::asio::deadline_timer* timer,
                           const boost::system::error_code& error);
     void CancelRetries();
     void NetworkingThread();
@@ -137,7 +136,6 @@ private:
     MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
     std::list<Message>              m_outgoing_messages;
     bool                            m_connected;         // accessed from multiple threads
-    bool                            m_cancel_retries;
 
     Message::HeaderBuffer           m_incoming_header;
     Message                         m_incoming_message;

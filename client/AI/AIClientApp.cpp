@@ -21,6 +21,9 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/chrono/chrono_io.hpp>
+
+#include <chrono>
 
 #include <thread>
 
@@ -156,25 +159,8 @@ void AIClientApp::Run() {
 }
 
 void AIClientApp::ConnectToServer() {
-    // connect
-    const int MAX_TRIES = 10;
-    int tries = 0;
-    volatile bool connected = false;
-    while (tries < MAX_TRIES) {
-        DebugLogger() << "Attempting to contact server";
-        connected = Networking().ConnectToLocalHostServer();
-        if (!connected) {
-            std::cerr << "FreeOrion AI client server contact attempt " << tries + 1 << " failed." << std::endl;
-            ErrorLogger() << "Server contact attempt " << tries + 1 << " failed";
-        } else {
-            break;
-        }
-        ++tries;
-    }
-    if (!connected) {
-        ErrorLogger() << "AIClientApp::Run : Failed to connect to localhost server after " << MAX_TRIES << " tries.  Exiting.";
+    if (!Networking().ConnectToLocalHostServer())
         Exit(1);
-    }
 }
 
 void AIClientApp::StartPythonAI() {
