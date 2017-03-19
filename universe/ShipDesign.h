@@ -48,8 +48,8 @@ struct CommonParams {
                  const std::set<std::string>& tags_,
                  Condition::ConditionBase* location_,
                  const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects_,
-                 std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> > production_meter_consumption_,
-                 std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> > production_special_consumption_,
+                 std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>> production_meter_consumption_,
+                 std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>> production_special_consumption_,
                  Condition::ConditionBase* enqueue_location_) :
         production_cost(production_cost_),
         production_time(production_time_),
@@ -69,9 +69,9 @@ struct CommonParams {
     ValueRef::ValueRefBase<int>*                            production_time;
     bool                                                    producible;
     std::set<std::string>                                   tags;
-    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >
+    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
                                                             production_meter_consumption;
-    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >
+    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
                                                             production_special_consumption;
     Condition::ConditionBase*                               location;
     Condition::ConditionBase*                               enqueue_location;
@@ -125,9 +125,9 @@ public:
     int                     ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this part
     bool                    Producible() const      { return m_producible; }        ///< returns whether this part type is producible by players and appears on the design screen
 
-    const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >&
+    const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
                             ProductionMeterConsumption() const  { return m_production_meter_consumption; }
-    const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >&
+    const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
                             ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     const std::set<std::string>& Tags() const       { return m_tags; }
@@ -154,9 +154,9 @@ private:
     bool                                                    m_producible;
     std::vector<ShipSlotType>                               m_mountable_slot_types;
     std::set<std::string>                                   m_tags;
-    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >
+    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
                                                             m_production_meter_consumption;
-    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >
+    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
                                                             m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
     std::set<std::string>                                   m_exclusions;
@@ -323,9 +323,9 @@ public:
     int                 ProductionTime(int empire_id, int location_id) const;   ///< returns the number of turns required to produce this hull
     bool                Producible() const      { return m_producible; }        ///< returns whether this hull type is producible by players and appears on the design screen
 
-    const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >&
+    const std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
                             ProductionMeterConsumption() const  { return m_production_meter_consumption; }
-    const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >&
+    const std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>&
                             ProductionSpecialConsumption() const{ return m_production_special_consumption; }
 
     unsigned int        NumSlots() const        { return m_slots.size(); }      ///< returns total number of of slots in hull
@@ -363,9 +363,9 @@ private:
     bool                                                    m_producible;
     std::vector<Slot>                                       m_slots;
     std::set<std::string>                                   m_tags;
-    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >
+    std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
                                                             m_production_meter_consumption;
-    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >
+    std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
                                                             m_production_special_consumption;
     Condition::ConditionBase*                               m_location;
     std::set<std::string>                                   m_exclusions;

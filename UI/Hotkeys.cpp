@@ -85,7 +85,7 @@ std::set<std::string> Hotkey::DefinedHotkeys() {
 std::string Hotkey::ToString() const
 { return HotkeyToString(m_key, m_mod_keys); }
 
-std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::string& str) {
+std::pair<GG::Key, GG::Flags<GG::ModKey>> Hotkey::HotkeyFromString(const std::string& str) {
     if (str.empty())
         return {GG::GGK_NONE, GG::Flags<GG::ModKey>()};
 
@@ -125,11 +125,11 @@ std::pair<GG::Key, GG::Flags<GG::ModKey> > Hotkey::HotkeyFromString(const std::s
     std::istringstream s(v);
     GG::Key key;
     s >> key;
-    return std::pair<GG::Key, GG::Flags<GG::ModKey> >(key, mod);
+    return std::pair<GG::Key, GG::Flags<GG::ModKey>>(key, mod);
 }
 
 void Hotkey::SetFromString(const std::string& str) {
-    std::pair<GG::Key, GG::Flags<GG::ModKey> > km = HotkeyFromString(str);
+    std::pair<GG::Key, GG::Flags<GG::ModKey>> km = HotkeyFromString(str);
     m_key = km.first;
     m_mod_keys = km.second;
 }
@@ -257,8 +257,8 @@ Hotkey& Hotkey::PrivateNamedHotkey(const std::string& name) {
     return i->second;
 }
 
-std::map<std::string, std::set<std::string> > Hotkey::ClassifyHotkeys() {
-    std::map<std::string, std::set<std::string> > ret;
+std::map<std::string, std::set<std::string>> Hotkey::ClassifyHotkeys() {
+    std::map<std::string, std::set<std::string>> ret;
     if (s_hotkeys) {
         for (const std::map<std::string, Hotkey>::value_type& hotkey : *s_hotkeys) {
             const std::string& hk_name = hotkey.first;

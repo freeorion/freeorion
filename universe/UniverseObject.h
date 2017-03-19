@@ -46,7 +46,7 @@ FO_COMMON_API extern const int TEMPORARY_OBJECT_ID;
 class FO_COMMON_API UniverseObject : virtual public std::enable_shared_from_this<UniverseObject> {
 public:
     /** \name Signal Types */ //@{
-    typedef boost::signals2::signal<void (), blocking_combiner<boost::signals2::optional_last_value<void> > > StateChangedSignalType;
+    typedef boost::signals2::signal<void (), blocking_combiner<boost::signals2::optional_last_value<void>>> StateChangedSignalType;
     //@}
 
     /** \name Slot Types */ //@{
@@ -65,7 +65,7 @@ public:
 
     virtual int                 SystemID() const;                   ///< returns the ID number of the system in which this object can be found, or INVALID_OBJECT_ID if the object is not within any system
 
-    const std::map<std::string, std::pair<int, float> >&   Specials() const;        ///< returns the Specials attached to this object
+    const std::map<std::string, std::pair<int, float>>&   Specials() const;         ///< returns the Specials attached to this object
     bool                        HasSpecial(const std::string& name) const;          ///< returns true iff this object has a special with the indicated \a name
     int                         SpecialAddedOnTurn(const std::string& name) const;  ///< returns the turn on which the special with name \a name was added to this object, or INVALID_GAME_TURN if that special is not present
     float                       SpecialCapacity(const std::string& name) const;     ///> returns the capacity of the special with name \a name or 0 if that special is not present
@@ -230,7 +230,7 @@ private:
     double                                          m_y;
     int                                             m_owner_empire_id;
     int                                             m_system_id;
-    std::map<std::string, std::pair<int, float> >   m_specials; // map from special name to pair of (turn added, capacity)
+    std::map<std::string, std::pair<int, float>>    m_specials; // map from special name to pair of (turn added, capacity)
     std::map<MeterType, Meter>                      m_meters;
     int                                             m_created_on_turn;
 

@@ -114,7 +114,7 @@ namespace {
         }
     }
     typedef std::map<std::pair<ShipPartClass, ShipSlotType>,
-                     std::vector<const PartType* > >            PartGroupsType;
+                     std::vector<const PartType*>>              PartGroupsType;
 
     const std::string DESIGN_FILENAME_EXTENSION = ".txt";
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
@@ -273,7 +273,7 @@ namespace {
 
         default_file_name += DESIGN_FILENAME_EXTENSION;
 
-        std::vector<std::pair<std::string, std::string> > filters;
+        std::vector<std::pair<std::string, std::string>> filters;
         filters.push_back({UserString("SHIP_DESIGN_FILES"), "*" + DESIGN_FILENAME_EXTENSION});
 
         try {

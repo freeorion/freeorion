@@ -109,9 +109,9 @@ namespace {
         std::vector<Atmosphere> atmospheres;     ///< the filenames of the atmosphere images suitable for use with this planet image
     };
 
-    const std::map<PlanetType, std::vector<RotatingPlanetData> >&   GetRotatingPlanetData() {
+    const std::map<PlanetType, std::vector<RotatingPlanetData>>&    GetRotatingPlanetData() {
         ScopedTimer timer("GetRotatingPlanetData", true);
-        static std::map<PlanetType, std::vector<RotatingPlanetData> > data;
+        static std::map<PlanetType, std::vector<RotatingPlanetData>> data;
         if (data.empty()) {
             XMLDoc doc;
             try {
@@ -272,8 +272,8 @@ namespace {
         return retval;
     }
 
-    const std::map<StarType, std::vector<float> >& GetStarLightColors() {
-        static std::map<StarType, std::vector<float> > light_colors;
+    const std::map<StarType, std::vector<float>>& GetStarLightColors() {
+        static std::map<StarType, std::vector<float>> light_colors;
 
         if (light_colors.empty()) {
             XMLDoc doc;
@@ -309,8 +309,8 @@ namespace {
 
     const std::vector<float>& StarLightColour(StarType star_type) {
         static std::vector<float> white(4, 0.0f);
-        const std::map<StarType, std::vector<float> >& colour_map = GetStarLightColors();
-        std::map<StarType, std::vector<float> >::const_iterator it = colour_map.find(star_type);
+        const std::map<StarType, std::vector<float>>& colour_map = GetStarLightColors();
+        std::map<StarType, std::vector<float>>::const_iterator it = colour_map.find(star_type);
         if (it != colour_map.end())
             return it->second;
         return white;
@@ -430,8 +430,8 @@ namespace {
 
     /** Returns map from planet ID to issued invasion orders affecting it. There
       * may be multiple ships invading a single planet. */
-    std::map<int, std::set<int> > PendingInvadeOrders() {
-        std::map<int, std::set<int> > retval;
+    std::map<int, std::set<int>> PendingInvadeOrders() {
+        std::map<int, std::set<int>> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
@@ -445,8 +445,8 @@ namespace {
 
     /** Returns map from planet ID to issued bombard orders affecting it. There
       * may be multiple ships bombarding a single planet. */
-    std::map<int, std::set<int> > PendingBombardOrders() {
-        std::map<int, std::set<int> > retval;
+    std::map<int, std::set<int>> PendingBombardOrders() {
+        std::map<int, std::set<int>> retval;
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
@@ -693,9 +693,9 @@ public:
         m_visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, HumanClientApp::GetApp()->EmpireID());
 
         const std::string texture_filename;
-        const std::map<PlanetType, std::vector<RotatingPlanetData> >& planet_data = GetRotatingPlanetData();
+        const std::map<PlanetType, std::vector<RotatingPlanetData>>& planet_data = GetRotatingPlanetData();
 
-        std::map<PlanetType, std::vector<RotatingPlanetData> >::const_iterator it = planet_data.find(planet->Type());
+        std::map<PlanetType, std::vector<RotatingPlanetData>>::const_iterator it = planet_data.find(planet->Type());
         int num_planets_of_type;
         if (it != planet_data.end() && (num_planets_of_type = planet_data.find(planet->Type())->second.size())) {
             unsigned int hash_value = static_cast<int>(m_planet_id);
@@ -2307,8 +2307,8 @@ void SidePanel::PlanetPanel::ClickInvade() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, std::set<int> > pending_invade_orders = PendingInvadeOrders();
-    std::map<int, std::set<int> >::const_iterator it = pending_invade_orders.find(m_planet_id);
+    std::map<int, std::set<int>> pending_invade_orders = PendingInvadeOrders();
+    std::map<int, std::set<int>>::const_iterator it = pending_invade_orders.find(m_planet_id);
 
     if (it != pending_invade_orders.end()) {
         const std::set<int>& planet_invade_orders = it->second;
@@ -2352,8 +2352,8 @@ void SidePanel::PlanetPanel::ClickBombard() {
     if (empire_id == ALL_EMPIRES)
         return;
 
-    std::map<int, std::set<int> > pending_bombard_orders = PendingBombardOrders();
-    std::map<int, std::set<int> >::const_iterator it = pending_bombard_orders.find(m_planet_id);
+    std::map<int, std::set<int>> pending_bombard_orders = PendingBombardOrders();
+    std::map<int, std::set<int>>::const_iterator it = pending_bombard_orders.find(m_planet_id);
 
     if (it != pending_bombard_orders.end()) {
         const std::set<int>& planet_bombard_orders = it->second;
@@ -3060,7 +3060,7 @@ void SidePanel::RefreshSystemNames() {
     // entire vector into the ListBox.  If the approach switches to
     // maintaing the list by incrementally inserting/deleting system
     // names, then this approach should also be dropped.
-    std::set<std::pair<std::string, int> > sorted_systems;
+    std::set<std::pair<std::string, int>> sorted_systems;
     for (std::shared_ptr<const System> system : Objects().FindObjects<System>()) {
         // Skip rows for systems that aren't known to this client, except the selected system
         if (!system->Name().empty() || system->ID() == s_system_id)
@@ -3162,9 +3162,9 @@ void SidePanel::RefreshImpl() {
     }
 
     // specify which meter types to include in resource summary.  Oddly enough, these are the resource meters.
-    std::vector<std::pair<MeterType, MeterType> > meter_types = {{METER_INDUSTRY,   METER_TARGET_INDUSTRY},
-                                                                 {METER_RESEARCH,   METER_TARGET_RESEARCH},
-                                                                 {METER_TRADE,      METER_TARGET_TRADE}};
+    std::vector<std::pair<MeterType, MeterType>> meter_types = {{METER_INDUSTRY,   METER_TARGET_INDUSTRY},
+                                                                {METER_RESEARCH,   METER_TARGET_RESEARCH},
+                                                                {METER_TRADE,      METER_TARGET_TRADE}};
 
     // refresh the system resource summary.
     m_system_resource_summary = new MultiIconValueIndicator(Width() - MaxPlanetDiameter() - 8,

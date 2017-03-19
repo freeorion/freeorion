@@ -147,7 +147,7 @@ public:
 
     NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
                   const std::vector<int>& fleet_ids,
-                  int system_id, const std::vector<std::vector<int> >& ship_id_groups,
+                  int system_id, const std::vector<std::vector<int>>& ship_id_groups,
                   const std::vector<bool>& aggressives);
     //@}
 
@@ -161,7 +161,7 @@ public:
     const std::vector<int>& FleetIDs() const
     { return m_fleet_ids; }
 
-    const std::vector<std::vector<int> >& ShipIDGroups() const
+    const std::vector<std::vector<int>>& ShipIDGroups() const
     { return m_ship_id_groups; }
 
     const std::vector<bool>& Aggressive() const

@@ -211,9 +211,9 @@ bool ClientNetworking::ConnectToServer(
                                   << "  address: " << it->endpoint().address()
                                   << "  port: " << it->endpoint().port();
 
-                    DebugLogger() << "ConnectToServer() : Client using "
-                                  << ((GetOptionsDB().Get<bool>("binary-serialization")) ? "binary": "xml")
-                                  << " serialization.";
+                    //DebugLogger() << "ConnectToServer() : Client using "
+                    //              << ((GetOptionsDB().Get<bool>("binary-serialization")) ? "binary": "xml")
+                    //              << " serialization.";
 
                     // Prepare the socket
 

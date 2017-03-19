@@ -82,7 +82,7 @@ namespace {
     };
 
     struct BrowseForPathButtonFunctor {
-        BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string> >& filters,
+        BrowseForPathButtonFunctor(const fs::path& path, const std::vector<std::pair<std::string, std::string>>& filters,
                                    GG::Edit* edit, bool directory, bool return_relative_path) :
             m_path(path),
             m_filters(filters),
@@ -110,7 +110,7 @@ namespace {
         }
 
         fs::path                                            m_path;
-        std::vector<std::pair<std::string, std::string> >   m_filters;
+        std::vector<std::pair<std::string, std::string>>    m_filters;
         GG::Edit*                                           m_edit;
         bool                                                m_directory;
         bool                                                m_return_relative_path;
@@ -203,7 +203,7 @@ namespace {
             /// the like...
         };
 
-        static std::pair<GG::Key, GG::Flags<GG::ModKey> > GetKeypress() {
+        static std::pair<GG::Key, GG::Flags<GG::ModKey>> GetKeypress() {
             KeyPressCatcher ct;
             ct.Run();
             return std::make_pair(ct.m_key, ct.m_mods);
@@ -699,7 +699,7 @@ GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level
 
 namespace {
     void HandleSetHotkeyOption(const std::string & hk_name, GG::Button* button) {
-        std::pair<GG::Key, GG::Flags<GG::ModKey> > kp = KeyPressCatcher::GetKeypress();
+        std::pair<GG::Key, GG::Flags<GG::ModKey>> kp = KeyPressCatcher::GetKeypress();
 
         // abort of escape was pressed...
         if (kp.first == GG::GGK_ESCAPE)
@@ -761,13 +761,13 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     std::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     GG::Spin<int>* spin = nullptr;
     int value = GetOptionsDB().Get<int>(option_name);
-    if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int> >(validator))
+    if (std::shared_ptr<const RangedValidator<int>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<int>>(validator))
         spin = new CUISpin<int>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
-    else if (std::shared_ptr<const StepValidator<int>> step_validator = std::dynamic_pointer_cast<const StepValidator<int> >(validator))
+    else if (std::shared_ptr<const StepValidator<int>> step_validator = std::dynamic_pointer_cast<const StepValidator<int>>(validator))
         spin = new CUISpin<int>(value, step_validator->m_step_size, -1000000, 1000000, true);
-    else if (std::shared_ptr<const RangedStepValidator<int>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<int> >(validator))
+    else if (std::shared_ptr<const RangedStepValidator<int>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<int>>(validator))
         spin = new CUISpin<int>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
-    else if (std::shared_ptr<const Validator<int>> int_validator = std::dynamic_pointer_cast<const Validator<int> >(validator))
+    else if (std::shared_ptr<const Validator<int>> int_validator = std::dynamic_pointer_cast<const Validator<int>>(validator))
         spin = new CUISpin<int>(value, 1, -1000000, 1000000, true);
     if (!spin) {
         ErrorLogger() << "Unable to create IntOption spin";
@@ -797,13 +797,13 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     std::shared_ptr<const ValidatorBase> validator = GetOptionsDB().GetValidator(option_name);
     GG::Spin<double>* spin = nullptr;
     double value = GetOptionsDB().Get<double>(option_name);
-    if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double> >(validator))
+    if (std::shared_ptr<const RangedValidator<double>> ranged_validator = std::dynamic_pointer_cast<const RangedValidator<double>>(validator))
         spin = new CUISpin<double>(value, 1, ranged_validator->m_min, ranged_validator->m_max, true);
-    else if (std::shared_ptr<const StepValidator<double>> step_validator = std::dynamic_pointer_cast<const StepValidator<double> >(validator))
+    else if (std::shared_ptr<const StepValidator<double>> step_validator = std::dynamic_pointer_cast<const StepValidator<double>>(validator))
         spin = new CUISpin<double>(value, step_validator->m_step_size, -1000000, 1000000, true);
-    else if (std::shared_ptr<const RangedStepValidator<double>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<double> >(validator))
+    else if (std::shared_ptr<const RangedStepValidator<double>> ranged_step_validator = std::dynamic_pointer_cast<const RangedStepValidator<double>>(validator))
         spin = new CUISpin<double>(value, ranged_step_validator->m_step_size, ranged_step_validator->m_min, ranged_step_validator->m_max, true);
-    else if (std::shared_ptr<const Validator<double>> double_validator = std::dynamic_pointer_cast<const Validator<double> >(validator))
+    else if (std::shared_ptr<const Validator<double>> double_validator = std::dynamic_pointer_cast<const Validator<double>>(validator))
         spin = new CUISpin<double>(value, 1, -1000000, 1000000, true);
     if (!spin) {
         ErrorLogger() << "Unable to create DoubleOption spin";
@@ -833,7 +833,7 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     GG::StateButton* button = new CUIStateButton(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
-    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator("UI.sound.music-volume"));
+    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator("UI.sound.music-volume"));
     assert(validator);
     GG::Slider<int>* slider = new CUISlider<int>(validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>("UI.sound.music-volume"));
@@ -860,7 +860,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     GG::StateButton* button = new CUIStateButton(text, GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(toggle_value);
-    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int> >(GetOptionsDB().GetValidator(volume_option_name));
+    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator(volume_option_name));
     assert(validator);
     GG::Slider<int>* slider = new CUISlider<int>(validator->m_min, validator->m_max, GG::HORIZONTAL);
     slider->SlideTo(GetOptionsDB().Get<int>(volume_option_name));
@@ -880,7 +880,7 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
 }
 
 void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const fs::path& path,
-                                const std::vector<std::pair<std::string, std::string> >& filters,
+                                const std::vector<std::pair<std::string, std::string>>& filters,
                                 std::function<bool (const std::string&)> string_validator, bool directory, bool relative_path)
 {
     GG::Label* text_control = new CUILabel(text, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
@@ -925,14 +925,14 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
                             std::function<bool (const std::string&)> string_validator/* = 0*/)
-{ FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string> >(), string_validator); }
+{ FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(), string_validator); }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
                             const std::pair<std::string, std::string>& filter, std::function<bool (const std::string&)> string_validator/* = 0*/)
-{ FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string> >(1, filter), string_validator); }
+{ FileOption(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(1, filter), string_validator); }
 
 void OptionsWnd::FileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const boost::filesystem::path& path,
-                            const std::vector<std::pair<std::string, std::string> >& filters, std::function<bool (const std::string&)> string_validator/* = 0*/)
+                            const std::vector<std::pair<std::string, std::string>>& filters, std::function<bool (const std::string&)> string_validator/* = 0*/)
 { FileOptionImpl(page, indentation_level, option_name, text, path, filters, string_validator, false, false); }
 
 void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
@@ -943,7 +943,7 @@ void OptionsWnd::SoundFileOption(GG::ListBox* page, int indentation_level, const
 void OptionsWnd::DirectoryOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text,
                                  const fs::path& path)
 {
-    FileOptionImpl(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string> >(),
+    FileOptionImpl(page, indentation_level, option_name, text, path, std::vector<std::pair<std::string, std::string>>(),
                    ValidDirectory, true, false);
 }
 

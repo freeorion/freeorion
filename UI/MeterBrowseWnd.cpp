@@ -249,10 +249,10 @@ namespace {
         Effect::AccountingMap::const_iterator map_it = effect_accounting_map.find(obj_id);
         if (map_it == effect_accounting_map.end())
             return boost::none;
-        const std::map<MeterType, std::vector<Effect::AccountingInfo> >& meter_map = map_it->second;
+        const std::map<MeterType, std::vector<Effect::AccountingInfo>>& meter_map = map_it->second;
 
         // get accounting info for this MeterBrowseWnd's meter type, aborting if none available
-        std::map<MeterType, std::vector<Effect::AccountingInfo> >::const_iterator meter_it = meter_map.find(meter_type);
+        std::map<MeterType, std::vector<Effect::AccountingInfo>>::const_iterator meter_it = meter_map.find(meter_type);
         if (meter_it == meter_map.end() || meter_it->second.empty())
             return boost::none;
 
@@ -825,7 +825,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
 
     float fighter_damage = 0.0f;
     std::pair<std::string, int> hangar_part;  // name, count
-    std::map<std::string, std::pair<int, int> > bay_parts;  // name, (count, capacity)
+    std::map<std::string, std::pair<int, int>> bay_parts;  // name, (count, capacity)
     int hangar_current_fighters = 0;
     int hangar_total_capacity = 0;
     int bay_total_capacity = 0;
@@ -922,7 +922,7 @@ void ShipFightersBrowseWnd::UpdateEffectLabelsAndValues(GG::Y& top) {
         // Show each effect for part capacity summaries
 
         // add labels for bay parts
-        for (const std::map<std::string, std::pair<int, int> >::value_type& bay_part : bay_parts) {
+        for (const std::map<std::string, std::pair<int, int>>::value_type& bay_part : bay_parts) {
             const std::string& part_name = UserString(bay_part.first);
             int part_qty = bay_part.second.first;
             int fighter_total = bay_part.second.second * part_qty;

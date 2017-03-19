@@ -199,7 +199,7 @@ CensusBrowseWnd::CensusBrowseWnd(const std::string& title_text, const std::map<s
     std::vector<std::string> tag_order;
     std::copy(std::istream_iterator<std::string>(tag_stream),
         std::istream_iterator<std::string>(),
-        std::back_inserter<std::vector<std::string> >(tag_order));
+        std::back_inserter<std::vector<std::string>>(tag_order));
 
     // add tags/characteristics rows
     for (const std::string& tag_ord : tag_order) {

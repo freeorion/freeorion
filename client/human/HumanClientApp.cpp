@@ -267,7 +267,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("UI.swap-mouse-lr"));
 
-    std::map<std::string, std::map<int, int> > named_key_maps;
+    std::map<std::string, std::map<int, int>> named_key_maps;
     parse::keymaps(named_key_maps);
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Keymaps:";
@@ -277,7 +277,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
                 DebugLogger() << "    " << char(keys.first) << " : " << char(keys.second);
         }
     }
-    std::map<std::string, std::map<int, int> >::const_iterator km_it = named_key_maps.find("TEST");
+    std::map<std::string, std::map<int, int>>::const_iterator km_it = named_key_maps.find("TEST");
     if (km_it != named_key_maps.end()) {
         const std::map<int, int> int_key_map = km_it->second;
         std::map<GG::Key, GG::Key> key_map;
@@ -849,11 +849,11 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     DebugLogger() << "HCL Update Combat Logs";
 
     // Unpack the combat logs from the message
-    std::vector<std::pair<int, CombatLog> > logs;
+    std::vector<std::pair<int, CombatLog>> logs;
     ExtractDispatchCombatLogsMessageData(msg, logs);
 
     // Update the combat log manager with the completed logs.
-    for (std::vector<std::pair<int, CombatLog> >::const_iterator it = logs.begin();
+    for (std::vector<std::pair<int, CombatLog>>::const_iterator it = logs.begin();
          it != logs.end(); ++it)
     {
         GetCombatLogManager().CompleteLog(it->first, it->second);

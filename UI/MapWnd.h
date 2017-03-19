@@ -259,7 +259,7 @@ private:
     template <typename K>
     void            CreateFleetButtonsOfType(
         boost::unordered_map<K, std::unordered_set<FleetButton*>>& type_fleet_buttons,
-        const boost::unordered_map<std::pair<K, int>, std::vector<int> > &fleets_map,
+        const boost::unordered_map<std::pair<K, int>, std::vector<int>> &fleets_map,
         const FleetButton::SizeType& fleet_button_size);
 
     /** Delete all fleet buttons.*/
@@ -470,17 +470,18 @@ private:
     boost::unordered_map<int, std::unordered_set<FleetButton*>> m_departing_fleet_buttons;
 
     /** Icons representing fleets not at a system. */
-    boost::unordered_map<std::pair<double, double>, std::unordered_set<FleetButton*>> m_moving_fleet_buttons;
+    boost::unordered_map<std::pair<double, double>,
+                         std::unordered_set<FleetButton*>>              m_moving_fleet_buttons;
 
-    boost::unordered_map<int, FleetButton*>                     m_fleet_buttons;                        //!< fleet icons, index by fleet
+    boost::unordered_map<int, FleetButton*>                             m_fleet_buttons;                        //!< fleet icons, index by fleet
 
-    boost::unordered_map<int, boost::signals2::connection>               m_fleet_state_change_signals;
-    boost::unordered_map<int, std::vector<boost::signals2::connection> > m_system_fleet_insert_remove_signals;
+    boost::unordered_map<int, boost::signals2::connection>              m_fleet_state_change_signals;
+    boost::unordered_map<int, std::vector<boost::signals2::connection>> m_system_fleet_insert_remove_signals;
 
-    std::map<int, MovementLineData>                 m_fleet_lines;                          //!< lines used for moving fleets in the main map
-    std::map<int, MovementLineData>                 m_projected_fleet_lines;                //!< lines that show the projected path of the active fleet in the FleetWnd
+    std::map<int, MovementLineData>     m_fleet_lines;                  //!< lines used for moving fleets in the main map
+    std::map<int, MovementLineData>     m_projected_fleet_lines;        //!< lines that show the projected path of the active fleet in the FleetWnd
 
-    std::pair<int, int>                 m_line_between_systems;                             //!< set when map should render line connecting 2 systems
+    std::pair<int, int>                 m_line_between_systems;         //!< set when map should render line connecting 2 systems
 
     std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer> m_star_core_quad_vertices;
     std::map<std::shared_ptr<GG::Texture>, GG::GL2DVertexBuffer> m_star_halo_quad_vertices;
@@ -504,7 +505,7 @@ private:
     GG::GLRGBAColorBuffer               m_visibility_radii_colors;
     GG::GL2DVertexBuffer                m_visibility_radii_border_vertices;
     GG::GLRGBAColorBuffer               m_visibility_radii_border_colors;
-    std::vector<std::pair<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t> > >
+    std::vector<std::pair<std::pair<std::size_t, std::size_t>, std::pair<std::size_t, std::size_t>>>
                                         m_radii_radii_vertices_indices_runs;
 
     GG::GL2DVertexBuffer                m_scale_circle_vertices;

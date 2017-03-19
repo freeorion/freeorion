@@ -183,7 +183,7 @@ namespace {
         return ContainsArmedShips(ship_ids);
     }
 
-    void CreateNewFleetsForShips(const std::vector<std::vector<int> >& ship_id_groups,
+    void CreateNewFleetsForShips(const std::vector<std::vector<int>>& ship_id_groups,
                                  NewFleetAggression aggression)
     {
         if (ship_id_groups.empty())
@@ -204,7 +204,7 @@ namespace {
         // compile data about new fleets to pass to order
         std::vector<std::string>        order_fleet_names;
         std::vector<int>                order_fleet_ids;
-        std::vector<std::vector<int> >  order_ship_id_groups;
+        std::vector<std::vector<int>>   order_ship_id_groups;
         std::vector<bool>               order_ship_aggressives;
 
 
@@ -290,7 +290,7 @@ namespace {
                                  NewFleetAggression aggression)
     {
         DebugLogger() << "CreateNewFleetFromShips with " << ship_ids.size();
-        std::vector<std::vector<int> > ship_id_groups;
+        std::vector<std::vector<int>> ship_id_groups;
         ship_id_groups.push_back(ship_ids);
 
         CreateNewFleetsForShips(ship_id_groups, aggression);
@@ -330,7 +330,7 @@ namespace {
             return;
 
         // sort ships by ID into container, indexed by design id
-        std::map<int, std::vector<int> > designs_ship_ids;
+        std::map<int, std::vector<int>> designs_ship_ids;
         for (std::shared_ptr<Ship> ship : Objects().FindObjects<Ship>(ship_ids)) {
             designs_ship_ids[ship->DesignID()].push_back(ship->ID());
         }
@@ -1117,7 +1117,7 @@ private:
     GG::StaticGraphic*  m_gift_indicator;
     ScanlineControl*    m_scanline_control;
 
-    std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
+    std::vector<std::pair<MeterType, StatisticIcon*>>   m_stat_icons;   // statistic icons and associated meter types
 
     bool                m_selected;
     bool                m_initialized;
@@ -1448,8 +1448,8 @@ void FleetDataPanel::Refresh() {
         m_fleet_destination_text->SetText(FleetDestinationText(m_fleet_id));
 
         // set icons
-        std::vector<std::shared_ptr<GG::Texture>> icons;
-        std::vector<GG::Flags<GG::GraphicStyle> > styles;
+        std::vector<std::shared_ptr<GG::Texture>>   icons;
+        std::vector<GG::Flags<GG::GraphicStyle>>    styles;
 
         std::shared_ptr<GG::Texture> size_icon = FleetSizeIcon(fleet, FleetButton::FLEET_BUTTON_LARGE);
         icons.push_back(size_icon);
@@ -3521,7 +3521,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
             // assemble container of containers of ids of fleets to create.
             // one ship id per vector
-            std::vector<std::vector<int> > ship_id_groups;
+            std::vector<std::vector<int>> ship_id_groups;
             for (int ship_id : ship_ids_set) {
                 std::vector<int> single_id(1, ship_id);
                 ship_id_groups.push_back(single_id);

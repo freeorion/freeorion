@@ -557,7 +557,7 @@ class FileDlg : public GG::FileDlg {
 public:
     /** \name Structors */ //@{
     FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
-            const std::vector<std::pair<std::string, std::string> >& types);
+            const std::vector<std::pair<std::string, std::string>>& types);
     //@}
 };
 
@@ -666,14 +666,14 @@ public:
       * if \a styles is not specified or contains fewer entres than \a textures, entries in \a textures without 
       * associated styles use the style GRAPHIC_CENTER. */
     MultiTextureStaticGraphic(const std::vector<std::shared_ptr<GG::Texture>>& textures,
-                              const std::vector<GG::Flags<GG::GraphicStyle> >& styles = std::vector<GG::Flags<GG::GraphicStyle> >());
+                              const std::vector<GG::Flags<GG::GraphicStyle>>& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
 
     /** creates a MultiTextureStaticGraphic from multiple pre-existing SubTextures which are rendered back-to-front in the
       * order they are specified in \a subtextures with GraphicStyles specified in the same-indexed value of \a styles.
       * if \a styles is not specified or contains fewer entres than \a subtextures, entries in \a subtextures without 
       * associated styles use the style GRAPHIC_CENTER. */
     MultiTextureStaticGraphic(const std::vector<GG::SubTexture>& subtextures,
-                              const std::vector<GG::Flags<GG::GraphicStyle> >& styles = std::vector<GG::Flags<GG::GraphicStyle> >());
+                              const std::vector<GG::Flags<GG::GraphicStyle>>& styles = std::vector<GG::Flags<GG::GraphicStyle>>());
     //@}
 
     /** \name Mutators */ ///@{
@@ -694,7 +694,7 @@ private:
     void            ValidateStyles();      ///< ensures that the style flags are consistent
 
     std::vector<GG::SubTexture>                 m_graphics;
-    std::vector<GG::Flags<GG::GraphicStyle> >   m_styles;   ///< position of texture wrt the window area
+    std::vector<GG::Flags<GG::GraphicStyle>>    m_styles;   ///< position of texture wrt the window area
 };
 
 /** Functions like a StaticGraphic, except can be rotated with a fixed phase

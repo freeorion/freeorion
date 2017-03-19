@@ -190,7 +190,7 @@ struct FO_COMMON_API MultiplayerLobbyData : public GalaxySetupData {
     bool                                        m_new_game;
     // TODO: Change from a list<(player_id, PlayerSetupData)> where
     // PlayerSetupData contain player_id to a vector of PlayerSetupData
-    std::list<std::pair<int, PlayerSetupData> > m_players;              // <player_id, PlayerSetupData>
+    std::list<std::pair<int, PlayerSetupData>>  m_players;              // <player_id, PlayerSetupData>
 
     std::string                                 m_save_game;            //< File name of a save file
     std::map<int, SaveGameEmpireData>           m_save_game_empire_data;// indexed by empire_id

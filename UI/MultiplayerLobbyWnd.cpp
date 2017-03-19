@@ -689,7 +689,7 @@ void MultiPlayerLobbyWnd::ChatMessage(int player_id, const std::string& msg) {
 }
 
 namespace {
-    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
+    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData>>& psd) {
         DebugLogger() << "PlayerSetupData:";
         for (const std::pair<int, PlayerSetupData>& entry : psd)
             DebugLogger() << std::to_string(entry.first) << " : "

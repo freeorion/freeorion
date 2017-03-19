@@ -53,7 +53,7 @@ private:
     std::shared_ptr<const PopCenter> GetPopCenter() const;
 
     /** Icons for the associated meter type. */
-    std::vector<std::pair<MeterType, StatisticIcon*> > m_meter_stats;
+    std::vector<std::pair<MeterType, StatisticIcon*>> m_meter_stats;
 
     /** textually / numerically indicates population */
     MultiIconValueIndicator* m_multi_icon_value_indicator;

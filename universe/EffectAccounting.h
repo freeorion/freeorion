@@ -39,7 +39,7 @@ namespace Effect {
 
     /** Effect accounting information for all meters of all objects that are
       * acted on by effects. */
-    typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo> > > AccountingMap;
+    typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
 
     /** Combination of targets and cause for an effects group. */
     struct TargetsAndCause {
@@ -65,7 +65,7 @@ namespace Effect {
       * available -> the unknown factor affecting the meter.  This is used
       * when generating effect accounting, in the case where the expected
       * and actual meter values don't match. */
-    typedef std::map<int, std::map<MeterType, double> > DiscrepancyMap;
+    typedef std::map<int, std::map<MeterType, double>> DiscrepancyMap;
 
     /** Map from (effects group and source object) to target set of for
       * that effects group with that source object.  A multimap is used
@@ -73,7 +73,7 @@ namespace Effect {
       * same effectsgroup.  This is useful when a Ship has multiple copies
       * of the same effects group due to having multiple copies of the same
       * ship part in its design. */
-    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause> > TargetsCauses;
+    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> TargetsCauses;
 }
 
 #endif

@@ -155,8 +155,8 @@ struct FO_COMMON_API ProductionQueue {
 
         bool operator<(const ProductionItem& rhs) const;
 
-        std::map<std::string, std::map<int, float> >    CompletionSpecialConsumption(int location_id) const;// for each special name, what object ids have those special capacities reduced by what amount
-        std::map<MeterType, std::map<int, float> >      CompletionMeterConsumption(int location_id) const;  // for each meter type, what object ids have those meters reduced by what amount
+        std::map<std::string, std::map<int, float>> CompletionSpecialConsumption(int location_id) const;// for each special name, what object ids have those special capacities reduced by what amount
+        std::map<MeterType, std::map<int, float>>   CompletionMeterConsumption(int location_id) const;  // for each meter type, what object ids have those meters reduced by what amount
 
         std::string Dump() const;
 
@@ -406,8 +406,8 @@ public:
     const bool                              UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const;
 
     const std::set<int>&                    ExploredSystems() const;    ///< returns set of ids of systems that this empire has explored
-    const std::map<int, std::set<int> >     KnownStarlanes() const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
-    const std::map<int, std::set<int> >     VisibleStarlanes() const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
+    const std::map<int, std::set<int>>      KnownStarlanes() const;     ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes known to this empire
+    const std::map<int, std::set<int>>      VisibleStarlanes() const;   ///< returns map from system id (start) to set of system ids (endpoints) of all starlanes visible to this empire this turn
 
     SitRepItr               SitRepBegin() const;                ///< starting iterator for sitrep entries for this empire
     SitRepItr               SitRepEnd() const;                  ///< end iterator for sitreps
@@ -695,8 +695,8 @@ private:
     // cached calculation results, returned by reference
     std::map<int, float>            m_supply_system_ranges;         ///< number of starlane jumps away from each system (by id) supply can be conveyed.  This is the number due to a system's contents conveying supply and is computed and set by UpdateSystemSupplyRanges
     std::set<int>                   m_supply_unobstructed_systems;  ///< ids of system that don't block supply from flowing
-    std::map<int, std::set<int> >   m_available_system_exit_lanes;  ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
-    std::map<int, std::set<int> >   m_pending_system_exit_lanes;    ///< pending updates to m_available_system_exit_lanes
+    std::map<int, std::set<int>>    m_available_system_exit_lanes;  ///< for each system known to this empire, the set of available/non-blockaded exit lanes for fleet travel
+    std::map<int, std::set<int>>    m_pending_system_exit_lanes;    ///< pending updates to m_available_system_exit_lanes
 
     friend class boost::serialization::access;
     Empire();

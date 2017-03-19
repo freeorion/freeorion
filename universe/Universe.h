@@ -39,9 +39,9 @@ namespace Effect {
     struct SourcedEffectsGroup;
     class EffectsGroup;
     typedef std::vector<std::shared_ptr<UniverseObject>> TargetSet;
-    typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo> > > AccountingMap;
-    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause> > TargetsCauses;
-    typedef std::map<int, std::map<MeterType, double> > DiscrepancyMap;
+    typedef std::map<int, std::map<MeterType, std::vector<AccountingInfo>>> AccountingMap;
+    typedef std::vector<std::pair<SourcedEffectsGroup, TargetsAndCause>> TargetsCauses;
+    typedef std::map<int, std::map<MeterType, double>> DiscrepancyMap;
 }
 
 #if defined(_MSC_VER)
@@ -71,13 +71,13 @@ private:
     typedef std::map<int, VisibilityTurnMap>        ObjectVisibilityTurnMap;        ///< Most recent turn number on which the objects were observed at various Visibility ratings; keyed by object id
     typedef std::map<int, ObjectVisibilityTurnMap>  EmpireObjectVisibilityTurnMap;  ///< Each empire's most recent turns on which object information was known; keyed by empire id
 
-    typedef std::map<int, std::set<int> >           ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
+    typedef std::map<int, std::set<int>>            ObjectKnowledgeMap;             ///< IDs of Empires which know information about an object (or deleted object); keyed by object id
 
 public:
     typedef std::map<int, Visibility>               ObjectVisibilityMap;            ///< map from object id to Visibility level for a particular empire
     typedef std::map<int, ObjectVisibilityMap>      EmpireObjectVisibilityMap;      ///< map from empire id to ObjectVisibilityMap for that empire
 
-    typedef std::map<int, std::set<std::string> >   ObjectSpecialsMap;              ///< map from object id to names of specials on an object
+    typedef std::map<int, std::set<std::string>>    ObjectSpecialsMap;              ///< map from object id to names of specials on an object
     typedef std::map<int, ObjectSpecialsMap>        EmpireObjectSpecialsMap;        ///< map from empire id to ObjectSpecialsMap of known specials for objects for that empire
 
     typedef std::map<int, ShipDesign*>              ShipDesignMap;                  ///< ShipDesigns in universe; keyed by design id
@@ -163,7 +163,7 @@ public:
       * were applied to the meter. */
     const Effect::AccountingMap&            GetEffectAccountingMap() const {return m_effect_accounting_map;}
 
-    const std::map<std::string, std::map<int, std::map<int, double> > >&
+    const std::map<std::string, std::map<int, std::map<int, double>>>&
                                             GetStatRecords() const { return m_stat_records; }
 
     /** Number of combat rounds
@@ -448,7 +448,7 @@ private:
     ObjectKnowledgeMap              m_empire_stale_knowledge_object_ids;///< map from empire id to (set of object ids that the empire has previously observed but has subsequently been unable to detect at its last known location despite expecting to be able to detect it based on stealth of the object and having detectors in range)
 
     ShipDesignMap                   m_ship_designs;                     ///< ship designs in the universe
-    std::map<int, std::set<int> >   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
+    std::map<int, std::set<int>>   m_empire_known_ship_design_ids;     ///< ship designs known to each empire
 
     Effect::AccountingMap           m_effect_accounting_map;            ///< map from target object id, to map from target meter, to orderered list of structs with details of an effect and what it does to the meter
     Effect::DiscrepancyMap          m_effect_discrepancy_map;           ///< map from target object id, to map from target meter, to discrepancy between meter's actual initial value, and the initial value that this meter should have as far as the client can tell: the unknown factor affecting the meter
@@ -456,14 +456,14 @@ private:
     int                             m_last_allocated_object_id;
     int                             m_last_allocated_design_id;
 
-    std::map<int, std::set<int> >   m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
+    std::map<int, std::set<int>>    m_marked_destroyed;                 ///< used while applying effects to cache objects that have been destroyed.  this allows to-be-destroyed objects to remain undestroyed until all effects have been processed, which ensures that to-be-destroyed objects still exist when other effects need to access them as a source object. key is destroyed object, and value set are the ids of objects that caused the destruction (may be multiples destroying a single target on a given turn)
 
     double                          m_universe_width;
     bool                            m_inhibit_universe_object_signals;
     int                             m_encoding_empire;                  ///< used during serialization to globally set what empire knowledge to use
     bool                            m_all_objects_visible;              ///< flag set to skip visibility tests and make everything visible to all players
 
-    std::map<std::string, std::map<int, std::map<int, double> > >
+    std::map<std::string, std::map<int, std::map<int, double>>>
                                     m_stat_records;                     ///< storage for statistics calculated for empires. Indexed by stat name (string), contains a map indexed by empire id, contains a map from turn number (int) to stat value (double).
 
     /** Fills \a designs_to_serialize with ShipDesigns known to the empire with

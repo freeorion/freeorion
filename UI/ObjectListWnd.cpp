@@ -954,7 +954,7 @@ private:
 ////////////////////////////////////////////////
 class FilterDialog : public CUIWnd {
 public:
-    FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >& vis_filters,
+    FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis_filters,
                  const Condition::ConditionBase* const condition_filter) :
         CUIWnd(UserString("FILTERS"),
                GG::INTERACTIVE | GG::DRAGABLE | GG::MODAL,
@@ -970,11 +970,11 @@ public:
     bool    ChangesAccepted()
     { return m_accept_changes; }
 
-    std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    GetVisibilityFilters() const
+    std::map<UniverseObjectType, std::set<VIS_DISPLAY>> GetVisibilityFilters() const
     { return m_vis_filters; }
 
     // caller takes ownership of returned ConditionBase*
-    Condition::ConditionBase*                               GetConditionFilter()
+    Condition::ConditionBase*                           GetConditionFilter()
     { return m_condition_widget->GetCondition(); }
 
 protected:
@@ -1090,7 +1090,7 @@ private:
             UniverseObjectType uot = entry.first;
 
             // find visibilities for this object type
-            std::map<UniverseObjectType, std::set<VIS_DISPLAY> >::iterator uot_it = m_vis_filters.find(uot);
+            std::map<UniverseObjectType, std::set<VIS_DISPLAY>>::iterator uot_it = m_vis_filters.find(uot);
             const std::set<VIS_DISPLAY>& shown_vis = (uot_it != m_vis_filters.end() ? uot_it->second : std::set<VIS_DISPLAY>());
 
             // set all button checks depending on whether that buttons visibility is to be shown
@@ -1156,9 +1156,9 @@ private:
         UpdateStateButtonsFromVisFilters();
     }
 
-    std::map<UniverseObjectType, std::set<VIS_DISPLAY> >    m_vis_filters;
+    std::map<UniverseObjectType, std::set<VIS_DISPLAY>>     m_vis_filters;
     std::map<UniverseObjectType,
-             std::map<VIS_DISPLAY, GG::StateButton*> >      m_filter_buttons;
+             std::map<VIS_DISPLAY, GG::StateButton*>>       m_filter_buttons;
     bool                                                    m_accept_changes;
 
     ConditionWidget*    m_condition_widget;
@@ -1327,7 +1327,7 @@ public:
         std::vector<std::shared_ptr<GG::Texture>> textures = ObjectTextures(obj);
 
         m_icon = new MultiTextureStaticGraphic(textures,
-                                               std::vector<GG::Flags<GG::GraphicStyle> >(textures.size(), style));
+                                               std::vector<GG::Flags<GG::GraphicStyle>>(textures.size(), style));
         AttachChild(m_icon);
 
         for (GG::Control* control : m_controls)
@@ -1795,7 +1795,7 @@ public:
     const Condition::ConditionBase* const                       FilterCondition() const
     { return m_filter_condition; }
 
-    const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >  Visibilities() const
+    const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>   Visibilities() const
     { return m_visibilities; }
 
     void            CollapseObject(int object_id = INVALID_OBJECT_ID) {
@@ -1833,7 +1833,7 @@ public:
         Refresh();
     }
 
-    void            SetVisibilityFilters(const std::map<UniverseObjectType, std::set<VIS_DISPLAY> >& vis) {
+    void            SetVisibilityFilters(const std::map<UniverseObjectType, std::set<VIS_DISPLAY>>& vis) {
         if (vis != m_visibilities) {
             m_visibilities = vis;
             Refresh();
@@ -1875,10 +1875,10 @@ public:
 
         // sort objects by containment associations
         std::set<int>                   systems;
-        std::map<int, std::set<int> >   system_fleets;
-        std::map<int, std::set<int> >   fleet_ships;
-        std::map<int, std::set<int> >   system_planets;
-        std::map<int, std::set<int> >   planet_buildings;
+        std::map<int, std::set<int>>    system_fleets;
+        std::map<int, std::set<int>>    fleet_ships;
+        std::map<int, std::set<int>>    system_planets;
+        std::map<int, std::set<int>>    planet_buildings;
         std::set<int>                   fields;
 
         for (std::shared_ptr<const UniverseObject> obj : GetUniverse().Objects()) {
@@ -1907,8 +1907,8 @@ public:
 
         // add system rows
         for (int system_id : systems) {
-            std::map<int, std::set<int> >::iterator sp_it = system_planets.find(system_id);
-            std::map<int, std::set<int> >::iterator sf_it = system_fleets.find(system_id);
+            std::map<int, std::set<int>>::iterator sp_it = system_planets.find(system_id);
+            std::map<int, std::set<int>>::iterator sf_it = system_fleets.find(system_id);
             std::set<int> system_contents;
             if (sp_it != system_planets.end())
                 system_contents = sp_it->second;
@@ -1921,7 +1921,7 @@ public:
             // add planet rows in this system
             if (sp_it != system_planets.end()) {
                 for (int planet_id : sp_it->second) {
-                    std::map<int, std::set<int> >::iterator pb_it = planet_buildings.find(planet_id);
+                    std::map<int, std::set<int>>::iterator pb_it = planet_buildings.find(planet_id);
 
                     if (!ObjectCollapsed(system_id)) {
                         AddObjectRow(planet_id, system_id,
@@ -1949,7 +1949,7 @@ public:
             // add fleet rows in this system
             if (sf_it != system_fleets.end()) {
                 for (int fleet_id : sf_it->second) {
-                    std::map<int, std::set<int> >::iterator fs_it = fleet_ships.find(fleet_id);
+                    std::map<int, std::set<int>>::iterator fs_it = fleet_ships.find(fleet_id);
 
                     if (!ObjectCollapsed(system_id)) {
                         AddObjectRow(fleet_id, system_id, 
@@ -1981,7 +1981,7 @@ public:
         // add planets not in shown systems
         for (const std::map<int, std::set<int>>::value_type& sp : system_planets) {
             for (int planet_id : sp.second) {
-                std::map<int, std::set<int> >::iterator pb_it = planet_buildings.find(planet_id);
+                std::map<int, std::set<int>>::iterator pb_it = planet_buildings.find(planet_id);
 
                 AddObjectRow(planet_id, INVALID_OBJECT_ID,
                                 pb_it != planet_buildings.end() ? pb_it->second : std::set<int>(),
@@ -2016,7 +2016,7 @@ public:
         // add fleets not in shown systems
         for (const std::map<int, std::set<int>>::value_type& sf : system_fleets) {
             for (int fleet_id : sf.second) {
-                std::map<int, std::set<int> >::iterator fs_it = fleet_ships.find(fleet_id);
+                std::map<int, std::set<int>>::iterator fs_it = fleet_ships.find(fleet_id);
 
                 AddObjectRow(fleet_id, INVALID_OBJECT_ID,
                                 fs_it != fleet_ships.end() ? fs_it->second : std::set<int>(),
@@ -2215,7 +2215,7 @@ private:
     std::map<int, boost::signals2::connection>          m_object_change_connections;
     std::set<int>                                       m_collapsed_objects;
     Condition::ConditionBase*                           m_filter_condition;
-    std::map<UniverseObjectType, std::set<VIS_DISPLAY> >m_visibilities;
+    std::map<UniverseObjectType, std::set<VIS_DISPLAY>> m_visibilities;
     ObjectHeaderRow*                                    m_header_row;
     boost::signals2::connection m_obj_deleted_connection;
 };

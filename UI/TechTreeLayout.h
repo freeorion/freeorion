@@ -91,11 +91,11 @@ public:
     ~Edge();
     const std::string&  GetTechFrom() const;
     const std::string&  GetTechTo() const;
-    void                ReadPoints(std::vector<std::pair<double,double> > & points) const;
+    void                ReadPoints(std::vector<std::pair<double,double>> & points) const;
     void                AddPoint(double x, double y);
     void                Debug() const;
 private:
-    std::vector<std::pair<double, double> > m_points;   // point list of connection
+    std::vector<std::pair<double, double>>  m_points;   // point list of connection
     std::string                             m_from;     //source tech
     std::string                             m_to;       //destination tech
 };

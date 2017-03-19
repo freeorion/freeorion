@@ -62,7 +62,7 @@ public:
     /// Returns the names of all defined hotkeys, classified by
     /// "sections" (ie "namespace"), converted into user string by
     /// naming it HOTKEYS_uppercase)
-    static std::map<std::string, std::set<std::string> > ClassifyHotkeys();
+    static std::map<std::string, std::set<std::string>> ClassifyHotkeys();
 
     /// Returns the Hotkey of the given name, or raises an exception
     /// if there is no such hotkey.
@@ -87,7 +87,7 @@ public:
     std::string ToString() const;
 
     /// Converts a string back to the pair key/modifier
-    static std::pair<GG::Key, GG::Flags<GG::ModKey> > HotkeyFromString(const std::string& str);
+    static std::pair<GG::Key, GG::Flags<GG::ModKey>> HotkeyFromString(const std::string& str);
 
     void SetFromString(const std::string& str);
 

@@ -79,7 +79,7 @@ void BufferStoreCircleArcVertices(GG::GL2DVertexBuffer& buffer, const GG::Pt& ul
         SLICES = num_slices;
     const double   HORZ_THETA = (2 * PI) / SLICES;
 
-    static std::map<int, std::vector<double> > unit_circle_coords;
+    static std::map<int, std::vector<double>> unit_circle_coords;
     std::vector<double>& unit_vertices = unit_circle_coords[SLICES];
     bool calc_vertices = unit_vertices.size() == 0;
     if (calc_vertices) {

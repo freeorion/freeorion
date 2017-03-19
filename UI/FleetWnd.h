@@ -178,7 +178,7 @@ private:
     FleetDataPanel*     m_new_fleet_drop_target;
     FleetDetailPanel*   m_fleet_detail_panel;
 
-    std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   /// statistic icons and associated meter types for multi-fleet aggregate
+    std::vector<std::pair<MeterType, StatisticIcon*>> m_stat_icons; /// statistic icons and associated meter types for multi-fleet aggregate
 
     friend class FleetUIManager;
 };
@@ -229,11 +229,11 @@ private:
     GG::Label*                  m_ship_name_text;
     GG::Label*                  m_design_name_text;
 
-    std::vector<std::pair<MeterType, StatisticIcon*> >    m_stat_icons;   // statistic icons and associated meter types
+    std::vector<std::pair<MeterType, StatisticIcon*>> m_stat_icons;   // statistic icons and associated meter types
 
     bool                        m_selected;
-    boost::signals2::connection  m_ship_connection;
-    boost::signals2::connection  m_fleet_connection;
+    boost::signals2::connection m_ship_connection;
+    boost::signals2::connection m_fleet_connection;
 };
 
 #endif // _FleetWnd_h_

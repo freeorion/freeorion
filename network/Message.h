@@ -331,7 +331,7 @@ FO_COMMON_API Message DispatchSavePreviewsMessage(int receiver, const PreviewInf
 FO_COMMON_API Message RequestCombatLogsMessage(int sender, const std::vector<int>& ids);
 
 /** returns combat logs to the client */
-FO_COMMON_API Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int, const CombatLog> >& logs);
+FO_COMMON_API Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int, const CombatLog>>& logs);
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
@@ -417,6 +417,6 @@ FO_COMMON_API void ExtractServerSaveGameCompleteMessageData(const Message& msg, 
 
 FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::vector<int>& ids);
 
-FO_COMMON_API void ExtractDispatchCombatLogsMessageData(const Message& msg, std::vector<std::pair<int, CombatLog> >& logs);
+FO_COMMON_API void ExtractDispatchCombatLogsMessageData(const Message& msg, std::vector<std::pair<int, CombatLog>>& logs);
 
 #endif // _Message_h_

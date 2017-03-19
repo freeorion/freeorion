@@ -51,7 +51,7 @@ protected:
 
     GG::Label*              m_meter_title;
 
-    std::vector<std::pair<GG::Label*, GG::Label*> >
+    std::vector<std::pair<GG::Label*, GG::Label*>>
                             m_effect_labels_and_values;
 
     GG::Y                   m_row_height;

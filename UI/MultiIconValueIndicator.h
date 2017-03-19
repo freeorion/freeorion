@@ -36,7 +36,7 @@ public:
 
 private:
     std::vector<StatisticIcon*>                         m_icons;
-    const std::vector<std::pair<MeterType, MeterType> > m_meter_types;
+    const std::vector<std::pair<MeterType, MeterType>>  m_meter_types;
     std::vector<int>                                    m_object_ids;
 };
 

@@ -131,7 +131,7 @@ bool TechTreeLayout::Column::Swap(Node* m, Node* n) {
 // class Edge //
 ////////////////
 TechTreeLayout::Edge::Edge(const std::string& from, const std::string& to) :
-    m_points(std::vector<std::pair<double,double> >()),
+    m_points(std::vector<std::pair<double, double>>()),
     m_from(from),
     m_to(to)
 { assert(GetTech(from) && GetTech(to)); }
@@ -146,16 +146,16 @@ const std::string& TechTreeLayout::Edge::GetTechTo() const
 { return m_to; }
 
 void TechTreeLayout::Edge::AddPoint(double x, double y)
-{ m_points.push_back(std::pair<double,double>(x, y)); }
+{ m_points.push_back(std::pair<double, double>(x, y)); }
 
-void TechTreeLayout::Edge::ReadPoints(std::vector<std::pair<double,double> > & points) const {
-    for(const std::pair<double,double>& p : m_points)
+void TechTreeLayout::Edge::ReadPoints(std::vector<std::pair<double, double>> & points) const {
+    for(const std::pair<double, double>& p : m_points)
         points.push_back(p);
 }
 
 void TechTreeLayout::Edge::Debug() const {
     DebugLogger() << "Edge " << m_from << "-> " << m_to << ": ";
-    for(const std::pair<double,double>& p : m_points)
+    for(const std::pair<double, double>& p : m_points)
         DebugLogger() << "(" << p.first << "," << p.second << ") ";
     DebugLogger() << "\n";
 }
@@ -211,7 +211,7 @@ void TechTreeLayout::DoLayout(double column_width, double row_height, double x_m
         node->CreatePlaceHolder(m_nodes);
 
     //3. put nodes into containers for each depth column
-    std::vector<std::vector<Node*> > nodes_at_each_depth(max_node_depth + 1);
+    std::vector<std::vector<Node*>> nodes_at_each_depth(max_node_depth + 1);
     for (Node* node : m_nodes) {
         assert((node->GetDepth() >= 0) && (node->GetDepth() < nodes_at_each_depth.size()));
         nodes_at_each_depth[node->GetDepth()].push_back(node);

@@ -211,7 +211,7 @@ protected:
     CUI_PinButton*          m_pin_button;           //!< the pin button
 
     GG::GL2DVertexBuffer                                m_vertex_buffer;
-    std::vector<std::pair<std::size_t, std::size_t> >   m_buffer_indices;
+    std::vector<std::pair<std::size_t, std::size_t>>    m_buffer_indices;
 
     static const GG::Y      BUTTON_TOP_OFFSET;
     static const GG::X      BUTTON_RIGHT_OFFSET;

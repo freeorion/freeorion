@@ -263,11 +263,11 @@ public:
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
-    std::map<std::string, std::set<int> >                           GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
+    std::map<std::string, std::set<int>>                            GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns a map from species name to a map from empire id to each the
       * species' opinion of the empire */
-    const std::map<std::string, std::map<int, float> >&             GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+    const std::map<std::string, std::map<int, float>>&              GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns opinion of species with name \a species_name about empire with
       * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
@@ -276,7 +276,7 @@ public:
 
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
-    const std::map<std::string, std::map<std::string, float> >&     GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+    const std::map<std::string, std::map<std::string, float>>&      GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns opinion of species with name \a opinionated_species_name about
       * other species with name \a rated_species_name or 0.0 if there is no
@@ -297,12 +297,12 @@ public:
 
     /** sets the opinions of species (indexed by name string) of empires (indexed
       * by id) as a double-valued number. */
-    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, float> >& species_empire_opinions);
+    void    SetSpeciesEmpireOpinions(const std::map<std::string, std::map<int, float>>& species_empire_opinions);
     void    SetSpeciesEmpireOpinion(const std::string& species_name, int empire_id, float opinion);
 
     /** sets the opinions of species (indexed by name string) of other species
       * (indexed by name string) as a double-valued number. */
-    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, float> >& species_species_opinions);
+    void    SetSpeciesSpeciesOpinions(const std::map<std::string, std::map<std::string, float>>& species_species_opinions);
     void    SetSpeciesSpeciesOpinion(const std::string& opinionated_species, const std::string& rated_species, float opinion);
 
     /** clears all species opinion data */
@@ -310,8 +310,8 @@ public:
 
     void    UpdatePopulationCounter();
 
-    std::map<std::string, std::map<int, float> >&       SpeciesObjectPopulations(int encoding_empire = ALL_EMPIRES);
-    std::map<std::string, std::map<std::string, int> >& SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES);
+    std::map<std::string, std::map<int, float>>&        SpeciesObjectPopulations(int encoding_empire = ALL_EMPIRES);
+    std::map<std::string, std::map<std::string, int>>&  SpeciesShipsDestroyed(int encoding_empire = ALL_EMPIRES);
     //@}
 
 private:
@@ -320,14 +320,14 @@ private:
 
     /** sets the homeworld ids of species in this SpeciesManager to those
       * specified in \a species_homeworld_ids */
-    void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int> >& species_homeworld_ids);
+    void    SetSpeciesHomeworlds(const std::map<std::string, std::set<int>>& species_homeworld_ids);
 
-    std::map<std::string, Species*>                         m_species;
-    std::map<std::string, std::map<int, float> >            m_species_empire_opinions;
-    std::map<std::string, std::map<std::string, float> >    m_species_species_opinions;
+    std::map<std::string, Species*>                     m_species;
+    std::map<std::string, std::map<int, float>>         m_species_empire_opinions;
+    std::map<std::string, std::map<std::string, float>> m_species_species_opinions;
 
-    std::map<std::string, std::map<int, float> >            m_species_object_populations;
-    std::map<std::string, std::map<std::string, int> >      m_species_species_ships_destroyed;
+    std::map<std::string, std::map<int, float>>         m_species_object_populations;
+    std::map<std::string, std::map<std::string, int>>   m_species_species_ships_destroyed;
 
     static SpeciesManager* s_instance;
 

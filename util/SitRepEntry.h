@@ -60,7 +60,7 @@ FO_COMMON_API SitRepEntry CreateFleetArrivedAtDestinationSitRep(int system_id, i
 SitRepEntry               CreateEmpireEliminatedSitRep(int empire_id);
 SitRepEntry               CreateVictorySitRep(const std::string& reason_string, int empire_id);
 FO_COMMON_API SitRepEntry CreateSitRep(const std::string& template_string, int turn, const std::string& icon,
-                                       const std::vector<std::pair<std::string, std::string> >& parameters, const std::string label = "", bool stringtable_lookup = true);
+                                       const std::vector<std::pair<std::string, std::string>>& parameters, const std::string label = "", bool stringtable_lookup = true);
 
 // template implementations
 template <class Archive>

@@ -54,7 +54,7 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
                                                               GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
 
     // meter and production indicators
-    std::vector<std::pair<MeterType, MeterType> > meters;
+    std::vector<std::pair<MeterType, MeterType>> meters;
 
     for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
         meter_stat.second->InstallEventFilter(this);

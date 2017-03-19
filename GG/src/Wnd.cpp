@@ -83,7 +83,7 @@ namespace {
     typedef multi_index_container<
         GridLayoutWnd,
         indexed_by<
-            ordered_unique<tag<Pointer>,            member<GridLayoutWnd, Wnd*, &GridLayoutWnd::wnd> >,
+            ordered_unique<tag<Pointer>,            member<GridLayoutWnd, Wnd*, &GridLayoutWnd::wnd>>,
             ordered_non_unique<tag<LayoutLeft>,     member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsLeft>,
             ordered_non_unique<tag<LayoutTop>,      member<GridLayoutWnd, Pt,   &GridLayoutWnd::ul>, IsTop>,
             ordered_non_unique<tag<LayoutRight>,    member<GridLayoutWnd, Pt,   &GridLayoutWnd::lr>, IsRight>,

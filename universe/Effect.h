@@ -1013,21 +1013,21 @@ private:
 class FO_COMMON_API GenerateSitRepMessage : public EffectBase {
 public:
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
                           ValueRef::ValueRefBase<int>* recipient_empire_id,
                           EmpireAffiliationType affiliation,
                           const std::string label = "",
                           bool stringtable_lookup = true);
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
                           EmpireAffiliationType affiliation,
                           Condition::ConditionBase* condition = nullptr,
                           const std::string label = "",
                           bool stringtable_lookup = true);
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
                           EmpireAffiliationType affiliation,
                           const std::string& label = "",
                           bool stringtable_lookup = true);
@@ -1056,7 +1056,7 @@ public:
     const std::string& Icon() const
     { return m_icon; }
 
-    const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >&
+    const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>&
         MessageParameters() const
     { return m_message_parameters; }
 

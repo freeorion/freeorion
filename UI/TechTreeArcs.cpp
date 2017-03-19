@@ -103,7 +103,7 @@ public:
 
 private:
     const TechTreeLayout& m_layout;
-    std::map<std::string, std::set<std::string> > m_edges_to_show;
+    std::map<std::string, std::set<std::string>> m_edges_to_show;
 
     GG::GL2DVertexBuffer m_buffer;
     GG::GL2DVertexBuffer m_highlight_buffer;
@@ -115,7 +115,7 @@ private:
             const std::vector<TechTreeLayout::Edge*> edges = m_layout.GetOutEdges(tech_name);
             //prerequisite edge
             for (TechTreeLayout::Edge* edge : edges) {
-                std::vector<std::pair<double, double> > points;
+                std::vector<std::pair<double, double>> points;
                 const std::string& from = edge->GetTechFrom();
                 const std::string& to   = edge->GetTechTo();
                 // Do not show lines leading to techs

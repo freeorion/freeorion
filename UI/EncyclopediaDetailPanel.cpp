@@ -119,7 +119,7 @@ namespace {
     void MeterTypeDirEntry(const MeterType& meter_type,
                            std::multimap<std::string,
                                          std::pair<std::string,
-                                                   std::string> >& list)
+                                                   std::string>>& list)
     {
         std::pair<std::string, std::string> meter_name = MeterValueLabelAndString(meter_type);
 
@@ -149,7 +149,7 @@ namespace {
      * @param[in] name name entry of the article
      */
     const EncyclopediaArticle& GetPediaArticle(const std::string& name) {
-        const std::map<std::string, std::vector<EncyclopediaArticle> >& articles = GetEncyclopedia().articles;
+        const std::map<std::string, std::vector<EncyclopediaArticle>>& articles = GetEncyclopedia().articles;
         for (const std::map<std::string, std::vector<EncyclopediaArticle>>::value_type& entry : articles) {
             for (const EncyclopediaArticle& article : entry.second) {
                 if (article.name == name) {
@@ -167,7 +167,7 @@ namespace {
     void GetSortedPediaDirEntires(const std::string& dir_name,
                                   std::multimap<std::string,
                                                 std::pair<std::string,
-                                                          std::string> >& sorted_entries_list)
+                                                          std::string>>& sorted_entries_list)
     {
         const Encyclopedia& encyclopedia = GetEncyclopedia();
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -510,7 +510,7 @@ namespace {
         std::string retval;
 
         // get sorted list of entries for requested directory
-        std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
+        std::multimap<std::string, std::pair<std::string, std::string>> sorted_entries_list;
         GetSortedPediaDirEntires(dir_name, sorted_entries_list);
 
         // add sorted entries to page text
@@ -544,7 +544,7 @@ namespace {
     };
 }
 
-std::list<std::pair<std::string, std::string>>              EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string> >(0);
+std::list<std::pair<std::string, std::string>>              EncyclopediaDetailPanel::m_items = std::list<std::pair<std::string, std::string>>(0);
 std::list<std::pair<std::string, std::string>>::iterator    EncyclopediaDetailPanel::m_items_it = m_items.begin();
 
 EncyclopediaDetailPanel::EncyclopediaDetailPanel(GG::Flags<GG::WndFlag> flags, const std::string& config_name) :
@@ -946,7 +946,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
         return;
 
     std::string match_report;
-    std::set<std::pair<std::string, std::string> > already_listed_results;  // pair of category / article name
+    std::set<std::pair<std::string, std::string>> already_listed_results;  // pair of category / article name
 
     // assemble link text to all pedia entries, indexed by name
     std::vector<std::string> dir_names = GetSearchTextDirNames();
@@ -955,13 +955,13 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     }
 
     // map from human-readable-name to (link-text, category name)
-    std::multimap<std::string, std::pair<std::string, std::string> > all_pedia_entries_list;
+    std::multimap<std::string, std::pair<std::string, std::string>> all_pedia_entries_list;
 
 
     // for every directory, get all entries, add to common multimap for ease of
     // repeated searching for different types of match...
     for (const std::string& type_text : dir_names) {
-        std::multimap<std::string, std::pair<std::string, std::string> > sorted_entries_list;
+        std::multimap<std::string, std::pair<std::string, std::string>> sorted_entries_list;
         GetSortedPediaDirEntires(type_text, sorted_entries_list);
         for (std::multimap<std::string, std::pair<std::string, std::string>>::value_type& entry : sorted_entries_list) {
             all_pedia_entries_list.insert(entry);
@@ -997,7 +997,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     // search for full word matches in titles
     match_report += "\n" + UserString("ENC_SEARCH_WORD_MATCHES") + "\n\n";
     for (const std::multimap<std::string, std::pair<std::string, std::string>>::value_type& entry : all_pedia_entries_list) {
-        std::set<std::pair<std::string, std::string> >::const_iterator dupe_it =
+        std::set<std::pair<std::string, std::string>>::const_iterator dupe_it =
             already_listed_results.find({entry.second.second, entry.first});
         if (dupe_it != already_listed_results.end())
             continue;
@@ -1014,7 +1014,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     // title text, not necessarily as a complete word
     match_report += "\n" + UserString("ENC_SEARCH_PARTIAL_MATCHES") + "\n\n";
     for (std::multimap<std::string, std::pair<std::string, std::string>>::value_type& entry : all_pedia_entries_list) {
-        std::set<std::pair<std::string, std::string> >::const_iterator dupe_it =
+        std::set<std::pair<std::string, std::string>>::const_iterator dupe_it =
             already_listed_results.find({entry.second.second, entry.first});
         if (dupe_it != already_listed_results.end())
             continue;
@@ -1034,7 +1034,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     if (GetOptionsDB().Get<bool>("UI.encyclopedia.search.articles")) {
         match_report += "\n" + UserString("ENC_SEARCH_ARTICLE_MATCHES") + "\n\n";
         for (std::multimap<std::string, std::pair<std::string, std::string>>::value_type& entry : all_pedia_entries_list) {
-            std::set<std::pair<std::string, std::string> >::const_iterator dupe_it =
+            std::set<std::pair<std::string, std::string>>::const_iterator dupe_it =
                 already_listed_results.find({entry.second.second, entry.first});
             if (dupe_it != already_listed_results.end())
                 continue;
@@ -1881,8 +1881,8 @@ namespace {
 
         // occupied planets
         std::vector<std::shared_ptr<const Planet>> species_occupied_planets;
-        std::map<std::string, std::map<int, float> >& species_object_populations = GetSpeciesManager().SpeciesObjectPopulations();
-        std::map<std::string, std::map<int, float> >::const_iterator sp_op_it = species_object_populations.find(item_name);
+        std::map<std::string, std::map<int, float>>& species_object_populations = GetSpeciesManager().SpeciesObjectPopulations();
+        std::map<std::string, std::map<int, float>>::const_iterator sp_op_it = species_object_populations.find(item_name);
         if (sp_op_it != species_object_populations.end()) {
             const std::map<int, float>& object_pops = sp_op_it->second;
             for (const std::map<int, float>::value_type& object_pop : object_pops) {
@@ -1907,8 +1907,8 @@ namespace {
         }
 
         // empire opinions
-        const std::map<std::string, std::map<int, float> >& seom = GetSpeciesManager().GetSpeciesEmpireOpinionsMap();
-        std::map<std::string, std::map<int, float> >::const_iterator species_it = seom.find(species->Name());
+        const std::map<std::string, std::map<int, float>>& seom = GetSpeciesManager().GetSpeciesEmpireOpinionsMap();
+        std::map<std::string, std::map<int, float>>::const_iterator species_it = seom.find(species->Name());
         if (species_it != seom.end()) {
             detailed_description += "\n" + UserString("OPINIONS_OF_EMPIRES") + "\n";
             for (const std::map<int, float>::value_type& entry : species_it->second) {
@@ -1919,8 +1919,8 @@ namespace {
         }
 
         // species opinions
-        const std::map<std::string, std::map<std::string, float> >& ssom = GetSpeciesManager().GetSpeciesSpeciesOpinionsMap();
-        std::map<std::string, std::map<std::string, float> >::const_iterator species_it2 = ssom.find(species->Name());
+        const std::map<std::string, std::map<std::string, float>>& ssom = GetSpeciesManager().GetSpeciesSpeciesOpinionsMap();
+        std::map<std::string, std::map<std::string, float>>::const_iterator species_it2 = ssom.find(species->Name());
         if (species_it2 != ssom.end()) {
             detailed_description += "\n" + UserString("OPINIONS_OF_OTHER_SPECIES") + "\n";
             for (const std::map<std::string, float>::value_type& entry : species_it2->second) {
@@ -2336,7 +2336,7 @@ namespace {
         const std::vector<int> pop_center_ids = empire->GetPopulationPool().PopCenterIDs();
 
         std::set<std::string> species_names;
-        std::map<std::string, std::pair<PlanetEnvironment, float> > population_counts;
+        std::map<std::string, std::pair<PlanetEnvironment, float>> population_counts;
         const auto& empire_avialable_techs = empire->AvailableTechs();
 
         // Collect species colonizing/environment hospitality information
@@ -2425,7 +2425,7 @@ namespace {
             population_counts[species_name].second = planet_capacity;
         }
 
-        std::multimap<float, std::pair<std::string, PlanetEnvironment> > target_population_species;
+        std::multimap<float, std::pair<std::string, PlanetEnvironment>> target_population_species;
         for (std::map<std::string, std::pair<PlanetEnvironment, float>>::value_type& entry : population_counts) {
             target_population_species.insert({entry.second.second, {entry.first, entry.second.first}});
         }
@@ -2636,13 +2636,13 @@ void EncyclopediaDetailPanel::RefreshImpl() {
     if (m_items_it->first == TextLinker::GRAPH_TAG) {
         const std::string& graph_id = m_items_it->second;
 
-        const std::map<std::string, std::map<int, std::map<int, double> > >&
+        const std::map<std::string, std::map<int, std::map<int, double>>>&
             stat_records = GetUniverse().GetStatRecords();
 
-        std::map<std::string, std::map<int, std::map<int, double> > >::const_iterator
+        std::map<std::string, std::map<int, std::map<int, double>>>::const_iterator
             stat_name_it = stat_records.find(graph_id);
         if (stat_name_it != stat_records.end()) {
-            const std::map<int, std::map<int, double> >& empire_lines = stat_name_it->second;
+            const std::map<int, std::map<int, double>>& empire_lines = stat_name_it->second;
             m_graph->Clear();
 
             // add lines for each empire
@@ -2655,7 +2655,7 @@ void EncyclopediaDetailPanel::RefreshImpl() {
 
                 const std::map<int, double>& empire_line = entry.second;
                 // convert formats...
-                std::vector<std::pair<double, double> > line_data_pts;
+                std::vector<std::pair<double, double>> line_data_pts;
                 for (const std::map<int, double>::value_type& entry : empire_line)
                 { line_data_pts.push_back({entry.first, entry.second}); }
 
@@ -2712,10 +2712,10 @@ void EncyclopediaDetailPanel::AddItem(const std::string& type, const std::string
     if (!m_items.empty()) {
         if (m_items_it->first == type && m_items_it->second == name)
             return;
-        std::list<std::pair <std::string, std::string> >::iterator end = m_items.end();
+        std::list<std::pair <std::string, std::string>>::iterator end = m_items.end();
         --end;
         if (m_items_it != end) {
-            std::list<std::pair <std::string, std::string> >::iterator i = m_items_it;
+            std::list<std::pair <std::string, std::string>>::iterator i = m_items_it;
             ++i;
             m_items.erase(i, m_items.end());
         }
@@ -2952,7 +2952,7 @@ void EncyclopediaDetailPanel::OnBack() {
 }
 
 void EncyclopediaDetailPanel::OnNext() {
-    std::list<std::pair <std::string, std::string> >::iterator end = m_items.end();
+    std::list<std::pair <std::string, std::string>>::iterator end = m_items.end();
     --end;
     if (m_items_it != end && !m_items.empty())
         ++m_items_it;

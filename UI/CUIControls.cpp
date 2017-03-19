@@ -1686,7 +1686,7 @@ void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 // class FileDlg
 ///////////////////////////////////////
 FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool save, bool multi,
-                 const std::vector<std::pair<std::string, std::string> >& types) :
+                 const std::vector<std::pair<std::string, std::string>>& types) :
     GG::FileDlg(directory, filename, save, multi, ClientUI::GetFont(),
                 ClientUI::CtrlColor(), ClientUI::CtrlBorderColor(), ClientUI::TextColor())
 {
@@ -2097,7 +2097,7 @@ void FPSIndicator::UpdateEnabled()
 // MultiTextureStaticGraphic
 //////////////////////////////////////////////////
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<std::shared_ptr<GG::Texture>>& textures,
-                                                     const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
+                                                     const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_graphics(),
     m_styles(styles)
@@ -2108,7 +2108,7 @@ MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<std::shar
 }
 
 MultiTextureStaticGraphic::MultiTextureStaticGraphic(const std::vector<GG::SubTexture>& subtextures,
-                                                     const std::vector<GG::Flags<GG::GraphicStyle> >& styles) :
+                                                     const std::vector<GG::Flags<GG::GraphicStyle>>& styles) :
     GG::Control(GG::X0, GG::Y0, GG::X1, GG::Y1, GG::NO_WND_FLAGS),
     m_graphics(subtextures),
     m_styles(styles)

@@ -377,22 +377,22 @@ private:
     void                CopyObjectsToSpecializedMaps();
 
     template <class T>
-    const std::map<int, std::shared_ptr<T> >& Map() const;
+    const std::map<int, std::shared_ptr<T>>& Map() const;
 
     template <class T>
     std::map<int, std::shared_ptr<T>>& Map();
 
     template<class T>
-    static void ClearMap(std::map<int, std::shared_ptr<T> >& map);
+    static void ClearMap(std::map<int, std::shared_ptr<T>>& map);
 
     template <class T>
     static void TryInsertIntoMap(std::map<int, std::shared_ptr<T>>& map, std::shared_ptr<UniverseObject> item);
 
     template <class T>
-    static void EraseFromMap(std::map<int, std::shared_ptr<T> >& map, int id);
+    static void EraseFromMap(std::map<int, std::shared_ptr<T>>& map, int id);
 
     template <class T>
-    static void SwapMap(std::map<int, std::shared_ptr<T> >& map, ObjectMap& rhs);
+    static void SwapMap(std::map<int, std::shared_ptr<T>>& map, ObjectMap& rhs);
 
     std::map<int, std::shared_ptr<UniverseObject>> m_objects;
 

@@ -21,7 +21,7 @@ GraphControl::GraphControl() :
     m_x_scale_ticks(),
     m_y_scale_ticks()
 {
-    std::vector<std::pair<double, double> > test_data = {{0.0, 1.0}, {1.0, 3.2}, {4.2, -1}, {0, 0}, {-1, 1}};
+    std::vector<std::pair<double, double>> test_data = {{0.0, 1.0}, {1.0, 3.2}, {4.2, -1}, {0, 0}, {-1, 1}};
     m_data.push_back({test_data, GG::CLR_CYAN});
 
     test_data = {{1.0, 1.0}, {2.0, 3.2}, {3.2, -1}, {4, 0}, {5, 1}};
@@ -30,7 +30,7 @@ GraphControl::GraphControl() :
     AutoSetRange();
 }
 
-void GraphControl::AddSeries(const std::vector<std::pair<double, double> >& data, const GG::Clr& clr) {
+void GraphControl::AddSeries(const std::vector<std::pair<double, double>>& data, const GG::Clr& clr) {
     if (!data.empty()) {
         m_data.push_back({data, clr});
         DoLayout();
@@ -190,7 +190,7 @@ void GraphControl::DoLayout() {
 
 
     for (const std::pair<std::vector<std::pair<double, double>>, GG::Clr>& curve : m_data) {
-        const std::vector<std::pair<double, double> >& curve_pts = curve.first;
+        const std::vector<std::pair<double, double>>& curve_pts = curve.first;
         if (curve_pts.empty())
             continue;
 
@@ -199,9 +199,9 @@ void GraphControl::DoLayout() {
         float screen_x, screen_y;
 
         // pairs of n and n+1 point, starting with first-second, to the second-last-last
-        std::vector<std::pair<double, double> >::const_iterator curve_it = curve_pts.begin();
+        std::vector<std::pair<double, double>>::const_iterator curve_it = curve_pts.begin();
         for (; curve_it != curve_pts.end(); ++curve_it) {
-            std::vector<std::pair<double, double> >::const_iterator next_it = curve_it;
+            std::vector<std::pair<double, double>>::const_iterator next_it = curve_it;
             ++next_it;
             if (next_it == curve_pts.end())
                 break;

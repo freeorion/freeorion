@@ -53,7 +53,7 @@
 class ClientNetworking : public std::enable_shared_from_this<ClientNetworking> {
 public:
     /** The type of list returned by a call to DiscoverLANServers(). */
-    typedef std::vector<std::pair<boost::asio::ip::address, std::string> >  ServerList;
+    typedef std::vector<std::pair<boost::asio::ip::address, std::string>> ServerList;
 
     /** \name Structors */ //@{
     ClientNetworking();

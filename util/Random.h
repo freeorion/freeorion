@@ -32,10 +32,10 @@
  */
 
 typedef boost::mt19937                                                          GeneratorType;
-typedef boost::variate_generator<GeneratorType&, boost::uniform_smallint<> >    SmallIntDistType;
-typedef boost::variate_generator<GeneratorType&, boost::uniform_int<> >         IntDistType;
-typedef boost::variate_generator<GeneratorType&, boost::uniform_real<> >        DoubleDistType;
-typedef boost::variate_generator<GeneratorType&, boost::normal_distribution<> > GaussianDistType;
+typedef boost::variate_generator<GeneratorType&, boost::uniform_smallint<>>     SmallIntDistType;
+typedef boost::variate_generator<GeneratorType&, boost::uniform_int<>>          IntDistType;
+typedef boost::variate_generator<GeneratorType&, boost::uniform_real<>>         DoubleDistType;
+typedef boost::variate_generator<GeneratorType&, boost::normal_distribution<>>  GaussianDistType;
 
 /** seeds the underlying random number generator used to drive all random number distributions */
 FO_COMMON_API void Seed(unsigned int seed);

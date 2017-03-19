@@ -72,7 +72,7 @@ namespace {
         // List the columns to show, separated by colons.
         // Valid: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq
         // These settings are not visible in the options panel; the defaults should be good for regular users.
-        db.Add<std::vector<std::string> >("UI.save-file-dialog.columns", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS"),
+        db.Add<std::vector<std::string>>("UI.save-file-dialog.columns", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS"),
                                           StringToList("time,turn,player,empire,file"));
         db.Add<std::string>("UI.save-file-dialog.time." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"),
                             "YYYY-MM-DD");
@@ -580,7 +580,7 @@ private:
     static std::shared_ptr<std::vector<SaveFileColumn>> FilterColumns(
         const std::shared_ptr<std::vector<SaveFileColumn>>& all_cols)
     {
-        std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string> >("UI.save-file-dialog.columns");
+        std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string>>("UI.save-file-dialog.columns");
         auto columns = std::make_shared<std::vector<SaveFileColumn>>();
         for (const std::string& column_name : names) {
             bool found_col = false;

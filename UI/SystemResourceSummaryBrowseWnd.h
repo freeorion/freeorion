@@ -22,12 +22,12 @@ public:
 private:
     void UpdateImpl(std::size_t mode, const GG::Wnd* target) override;
 
-    void            Clear();
-    void            Initialize();
+    void Clear();
+    void Initialize();
 
-    void            UpdateProduction(GG::Y& top);   // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top and updates \a top to the vertical position after the last entry
-    void            UpdateAllocation(GG::Y& top);   // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and updates \a top to be the vertical position after the last entry
-    void            UpdateImportExport(GG::Y& top); // sets m_import_export_label and m_import_export text and amount to indicate how much resource is being imported or exported from this system, and moves them to vertical position \a top and updates \a top to be the vertical position below these labels
+    void UpdateProduction(GG::Y& top);   // adds pairs of labels for ResourceCenter name and production of resource starting at vertical position \a top and updates \a top to the vertical position after the last entry
+    void UpdateAllocation(GG::Y& top);   // adds pairs of labels for allocation of resources in system, starting at vertical position \a top and updates \a top to be the vertical position after the last entry
+    void UpdateImportExport(GG::Y& top); // sets m_import_export_label and m_import_export text and amount to indicate how much resource is being imported or exported from this system, and moves them to vertical position \a top and updates \a top to be the vertical position below these labels
 
     ResourceType        m_resource_type;
     int                 m_system_id;
@@ -40,9 +40,9 @@ private:
     GG::Label*          m_allocation_label;
     GG::Label*          m_import_export_label;
 
-    std::vector<std::pair<GG::Label*, GG::Label*> > m_production_labels_and_amounts;
-    std::vector<std::pair<GG::Label*, GG::Label*> > m_allocation_labels_and_amounts;
-    std::vector<std::pair<GG::Label*, GG::Label*> > m_import_export_labels_and_amounts;
+    std::vector<std::pair<GG::Label*, GG::Label*>> m_production_labels_and_amounts;
+    std::vector<std::pair<GG::Label*, GG::Label*>> m_allocation_labels_and_amounts;
+    std::vector<std::pair<GG::Label*, GG::Label*>> m_import_export_labels_and_amounts;
 
     GG::Y               row_height;
 

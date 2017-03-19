@@ -49,7 +49,7 @@ public:
     void        SetObjects(const std::vector<int>& object_ids);
     /** specifies which sets systems can share resources.  any two sets should
       * have no common systems. */
-    void        SetConnectedSupplyGroups(const std::set<std::set<int> >& connected_system_groups);
+    void        SetConnectedSupplyGroups(const std::set<std::set<int>>& connected_system_groups);
 
    /** specifies which object has access to the resource stockpile.  Objects in
      * a supply group with the object that can access the stockpile can store
@@ -66,7 +66,7 @@ private:
     ResourcePool(); ///< default ctor needed for serialization
 
     std::vector<int>                        m_object_ids;                                       ///< IDs of objects to consider in this pool
-    std::set<std::set<int> >                m_connected_system_groups;                          ///< sets of systems between and in which objects can share this pool's resource
+    std::set<std::set<int>>                 m_connected_system_groups;                          ///< sets of systems between and in which objects can share this pool's resource
     std::map<std::set<int>, float>          m_connected_object_groups_resource_output;          ///< cached map from connected group of objects that can share resources, to how much resource is output by ResourceCenters in the group.  regenerated during update from other state information.
     std::map<std::set<int>, float>          m_connected_object_groups_resource_target_output;   ///< cached map from connected group of objects that can share resources, to how much resource would, if all meters equaled their target meters, be output by ResourceCenters in the group.  regenerated during update from other state information.
     int                                     m_stockpile_object_id;                              ///< object id where stockpile for this pool is located

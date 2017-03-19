@@ -60,16 +60,16 @@ FO_COMMON_API std::string ListToString(const std::vector<std::string>& input_lis
 FO_COMMON_API std::vector<std::string> StringToList(const std::string& input_string);
 
 template <>
-struct Validator<std::vector<std::string> > : public ValidatorBase
+struct Validator<std::vector<std::string>> : public ValidatorBase
 {
     boost::any Validate(const std::string& str) const override
     { return boost::any(StringToList(str)); }
 
     std::string String(const boost::any& value) const override
-    { return ListToString(boost::any_cast<std::vector<std::string> >(value)); }
+    { return ListToString(boost::any_cast<std::vector<std::string>>(value)); }
 
     Validator *Clone() const override
-    { return new Validator<std::vector<std::string> >(); }
+    { return new Validator<std::vector<std::string>>(); }
 };
 
 /** a Validator that constrains the range of valid values */
