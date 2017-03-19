@@ -206,16 +206,38 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
     InfoLogger() << FreeOrionVersionString();
 }
 
-void RegisterLoggerWithOptionsDB(const std::string& name) {
+void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, const std::string& name) {
     if (name.empty())
         return;
 
+    InternalLogger() << "Adding log source \"" << name << "\".";
+
+    // Create a sink frontend for formatting.
+    auto sink_frontend = boost::make_shared<TextFileSinkFrontend>(f_file_sink_backend);
+
+    // Create the format
+    sink_frontend->set_formatter(
+        expr::stream
+        << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+        << " [" << log_severity << "] "
+        << name
+        << " : " << log_src_filename << ":" << log_src_linenum << " : "
+        << expr::message
+    );
+
+    // Set a filter to only format this channel
+    sink_frontend->set_filter(log_channel == name);
+
+    logging::core::get()->add_sink(sink_frontend);
+
     // Setup the OptionsDB options for this source.
-    const std::string option_name = "logging.sources." + name;
-    GetOptionsDB().Add<std::string>(
-        option_name, UserStringNop("OPTIONS_DB_LOGGER_SOURCE_LEVEL"),
-        "info", LogLevelValidator());
+    LogLevel options_db_log_threshold = AddLoggerToOptionsDB(
+        source_option_name_prefix + name);
+
+    // Use the option.
+    SetLoggerThreshold(name, options_db_log_threshold);
 }
+
 namespace {
     // Create a minimum severity table filter
     auto f_min_channel_severity = expr::channel_severity_filter(log_channel, log_severity);

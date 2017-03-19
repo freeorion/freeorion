@@ -124,7 +124,7 @@ using NamedThreadedLogger = boost::log::sources::severity_channel_logger_mt<
     >;
 
 // Lookup and/or register the \p name logger in OptionsDB.  Sets the initial level.
-FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger);
+FO_COMMON_API void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, const std::string& name);
 
 // Place in source file to create the previously defined global logger \p name
 #define CreateThreadedLogger(name)                                      \
@@ -134,7 +134,7 @@ FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger);
         auto lg = NamedThreadedLogger(                                  \
             (boost::log::keywords::severity = LogLevel::debug),         \
             (boost::log::keywords::channel = #name));                   \
-        RegisterLoggerWithOptionsDB(#name);                             \
+        RegisterLoggerWithOptionsDB(lg, #name);                         \
         return lg;                                                      \
     }
 
