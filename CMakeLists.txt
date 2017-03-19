@@ -96,7 +96,6 @@ if (WIN32)
         -D_UNICODE
         -DFREEORION_WIN32
         -D_WIN32_WINNT=0x0501
-        -DBOOST_ZLIB_BINARY=zlib.lib
     )
     if (MSVC)
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
@@ -189,6 +188,12 @@ set(CMAKE_INSTALL_LIBDIR "${FreeOrion_INSTALL_LIBDIR}")
 add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
+
+if (WIN32)
+    add_definitions(
+        -DBOOST_ZLIB_BINARY=zlib.lib
+    )
+endif ()
 
 if (NOT FO_LINK_STATIC_BOOST_LIBS)
     add_definitions(
