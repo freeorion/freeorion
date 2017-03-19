@@ -112,7 +112,6 @@ elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     add_definitions(
         -DFREEORION_FREEBSD
         -DENABLE_BINRELOC
-        -DBOOST_DATE_TIME_NO_LOCALE
     )
 else ()
     message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
