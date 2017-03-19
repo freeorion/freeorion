@@ -33,7 +33,6 @@
 
 #include <GG/GUI.h>
 
-// TODO change boost to std when C++11 is adopted.
 #include <chrono>
 
 

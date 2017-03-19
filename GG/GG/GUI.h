@@ -32,7 +32,6 @@
 #include <GG/Font.h>
 #include <GG/WndEvent.h>
 
-// TODO change boost to std when C++11 is adopted.
 #include <chrono>
 
 
