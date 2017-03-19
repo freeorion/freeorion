@@ -156,27 +156,6 @@ find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
-
-##
-## Define main project targets.
-##
-
-# To run the version generation every compile we need to deferr the
-# execution to a separate target and the existing python command
-add_custom_target(freeorionversion
-    COMMAND
-    "${PYTHON_EXECUTABLE}"
-    "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
-    "${CMAKE_SOURCE_DIR}"
-    "CMake"
-)
-
-set_source_files_properties(
-    ${CMAKE_CURRENT_SOURCE_DIR}/util/Version.cpp
-    PROPERTIES
-    GENERATED TRUE
-)
-
 if (BUILD_TESTING)
     add_subdirectory(test)
 endif ()
@@ -214,6 +193,27 @@ endif()
 
 link_directories(
     ${Boost_LIBRARY_DIRS}
+)
+
+
+##
+## Define main project targets.
+##
+
+# To run the version generation every compile we need to deferr the
+# execution to a separate target and the existing python command
+add_custom_target(freeorionversion
+    COMMAND
+    "${PYTHON_EXECUTABLE}"
+    "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
+    "${CMAKE_SOURCE_DIR}"
+    "CMake"
+)
+
+set_source_files_properties(
+    ${CMAKE_CURRENT_SOURCE_DIR}/util/Version.cpp
+    PROPERTIES
+    GENERATED TRUE
 )
 
 
