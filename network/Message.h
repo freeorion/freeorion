@@ -12,11 +12,13 @@
 #endif
 
 #include <array>
+#include <set>
 #include <map>
 #include <string>
 #include <vector>
 
 
+enum class LogLevel;
 class EmpireManager;
 class SupplyManager;
 class SpeciesManager;
@@ -89,9 +91,10 @@ public:
         MODERATOR_ACTION,       ///< sent by client to server when a moderator edits the universe
         SHUT_DOWN_SERVER,       ///< sent by host client to server to kill the server process
         REQUEST_SAVE_PREVIEWS,  ///< sent by client to request previews of available savegames
-        DISPATCH_SAVE_PREVIEWS,  ///< sent by host to client to provide the savegame previews
-        REQUEST_COMBAT_LOGS,  ///< sent by client to request combat logs
-        DISPATCH_COMBAT_LOGS  ///< sent by host to client to provide combat logs
+        DISPATCH_SAVE_PREVIEWS, ///< sent by host to client to provide the savegame previews
+        REQUEST_COMBAT_LOGS,    ///< sent by client to request combat logs
+        DISPATCH_COMBAT_LOGS,   ///< sent by host to client to provide combat logs
+        LOGGER_CONFIG           ///< sent by host to server and server to ais to configure logging
     )
 
     GG_CLASS_ENUM(TurnProgressPhase,
@@ -320,6 +323,9 @@ FO_COMMON_API Message RequestCombatLogsMessage(const std::vector<int>& ids);
 /** returns combat logs to the client */
 FO_COMMON_API Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatLog>>& logs);
 
+/** Sends logger configuration details to server or ai process. */
+FO_COMMON_API Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options);
+
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
@@ -409,5 +415,7 @@ FO_COMMON_API void ExtractServerSaveGameCompleteMessageData(const Message& msg, 
 FO_COMMON_API void ExtractRequestCombatLogsMessageData(const Message& msg, std::vector<int>& ids);
 
 FO_COMMON_API void ExtractDispatchCombatLogsMessageData(const Message& msg, std::vector<std::pair<int, CombatLog>>& logs);
+
+FO_COMMON_API void ExtractLoggerConfigMessageData(const Message& msg, std::set<std::tuple<std::string, std::string, LogLevel>>& options);
 
 #endif // _Message_h_
