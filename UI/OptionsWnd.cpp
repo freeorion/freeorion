@@ -377,6 +377,67 @@ namespace {
             LockColWidths();
         }
     };
+
+
+    /**Create UI controls for a logger level option.*/
+    void LoggerLevelOption(
+        GG::ListBox& page, bool is_sink, const std::string& label, const std::string& option_name)
+    {
+        // Create the label
+        GG::Label* logger_label = new CUILabel(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
+
+        // Create a drop down list for the filtering levels
+        auto num_log_levels = 1 + static_cast<std::size_t>(max_LogLevel) - static_cast<std::size_t>(min_LogLevel);
+        GG::DropDownList* drop_list = new CUIDropDownList(num_log_levels);
+        drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, GG::Y(ClientUI::Pts() + 4)));
+        drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
+        drop_list->SetStyle(GG::LIST_NOSORT);
+
+        // Insert the levels into the list
+        for (auto ii = static_cast<std::size_t>(min_LogLevel); ii <= static_cast<std::size_t>(max_LogLevel); ++ii) {
+            auto level_name = to_string(static_cast<LogLevel>(ii));
+            auto* priority_row = new CUISimpleDropDownListRow(level_name);
+            // use the row's name to store the option value.
+            priority_row->SetName(level_name);
+            drop_list->Insert(priority_row);
+        }
+
+        // Select the current filtering level in the list
+        auto selected_level = static_cast<std::size_t>(to_LogLevel(GetOptionsDB().GetValueString(option_name)));
+        // Select the current filter level
+        if (drop_list->NumRows() >= 1)
+            drop_list->Select(selected_level);
+
+        // Make a layout with a row etc. for this option
+        GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, LAYOUT_MARGIN);
+        layout->Add(logger_label, 0, 0);
+        layout->Add(drop_list   , 0, 1, 1, 1, GG::ALIGN_VCENTER);
+
+        GG::ListBox::Row* row = new GG::ListBox::Row();
+        // row->Resize(GG::Pt(ROW_WIDTH, drop_list->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
+        row->Resize(GG::Pt(ROW_WIDTH, drop_list->MinUsableSize().y + LAYOUT_MARGIN));
+
+        auto row_wnd = new RowContentsWnd(row->Width(), row->Height(), layout, 0);
+        row_wnd->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row_wnd->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
+        row->push_back(row_wnd);
+
+        page.Insert(row);
+
+        // Connect to Options DB
+        drop_list->SelChangedSignal.connect(
+            [option_name, drop_list](const GG::ListBox::const_iterator& it) {
+                if (it == drop_list->end())
+                    return;
+                const auto row = dynamic_cast<CUISimpleDropDownListRow* const>(*it);
+
+                const auto& option_value = row->Name();
+                GetOptionsDB().Set(option_name, option_value);
+
+                HumanClientApp::GetApp()->HandleLoggerUpdate();
+            });
+    }
+
 }
 
 OptionsWnd::OptionsWnd():
@@ -652,6 +713,29 @@ OptionsWnd::OptionsWnd():
     BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
     m_tabs->SetCurrentWnd(0);
 
+    // Logging section
+    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGING_SECTION"),
+                        UserString("OPTIONS_DB_UI_LOGGING_SECTION_TOOLTIP"));
+    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SINKS"),
+                        UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SINKS_TOOLTIP"));
+
+    const auto log_file_sinks = LoggerExecutableOptionsLabelsAndLevels();
+    for (const auto& sink : log_file_sinks) {
+        const auto& option = std::get<0>(sink);
+        const auto& option_label = std::get<1>(sink);
+        LoggerLevelOption(*current_page, true, option_label, option);
+    }
+
+    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SOURCES"),
+                        UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SOURCES_TOOLTIP"));
+
+    const auto log_file_sources = LoggerSourceOptionsLabelsAndLevels();
+    for (const auto& source : log_file_sources) {
+        const auto& option = std::get<0>(source);
+        const auto& option_label = std::get<1>(source);
+        LoggerLevelOption(*current_page, false, option_label, option);
+    }
+
     DoLayout();
 
     // Connect the done and cancel button
@@ -704,7 +788,6 @@ void OptionsWnd::CreateSectionHeader(
                                                heading_text, indentation_level);
 
     if (!tooltip.empty()) {
-        DebugLogger() << "Adding OptionsWnd section header tooltip for '" << tooltip <<"'";
         row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
         row->SetBrowseText(tooltip);
     }
