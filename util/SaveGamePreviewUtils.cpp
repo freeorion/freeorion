@@ -29,7 +29,7 @@ namespace fs = boost::filesystem;
 
 namespace {
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
-    const std::string XML_SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed, and the main gamestate information is stored as zlib-comprssed XML archive in the last entry in the main archive.");
+    const std::string XML_SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed. The main gamestate information follows, possibly stored as zlib-comprssed XML archive in the last entry in the main archive.");
     const std::string BIN_SAVE_FILE_DESCRIPTION("This is binary archive FreeOrion saved game.");
 
     /// Splits time and date on separate lines for an ISO datetime string
