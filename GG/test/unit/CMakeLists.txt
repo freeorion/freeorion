@@ -51,7 +51,7 @@ set(GiGi_TESTS
     TestButton
 )
 
-foreach (_TEST ${GiGi_TESTS})
+foreach(_TEST ${GiGi_TESTS})
     target_sources(gg_unittest
         PRIVATE
         ${_TEST}.cpp
@@ -61,4 +61,4 @@ foreach (_TEST ${GiGi_TESTS})
         COMMAND gg_unittest --log_level=message "--run_test=${_TEST}" --catch_system_error=yes
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
-endforeach ()
+endforeach()

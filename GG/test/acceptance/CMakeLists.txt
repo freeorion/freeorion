@@ -1,4 +1,4 @@
-macro (add_gigi_acceptance_test name)
+macro(ADD_GIGI_ACCEPTANCE_TEST name)
     add_executable(gg_acceptance_${name}
         ${ARGN}
         $<TARGET_OBJECTS:gigi_acceptance_runner>
@@ -15,7 +15,7 @@ macro (add_gigi_acceptance_test name)
         PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     )
-endmacro ()
+endmacro()
 
 
 message("-- Configuring GIGI acceptance tests")

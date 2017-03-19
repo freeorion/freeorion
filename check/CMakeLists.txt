@@ -1,7 +1,7 @@
 find_package(CPPCheck)
 find_package(PyCodestyle)
 
-if (CPPCHECK_FOUND)
+if(CPPCHECK_FOUND)
     add_custom_target(check-cpp
         ${CPPCHECK_EXECUTABLE}
             --quiet
@@ -10,9 +10,9 @@ if (CPPCHECK_FOUND)
             ${PROJECT_SOURCE_DIR}
         COMMENT "Check C++ for problematic code"
     )
-endif ()
+endif()
 
-if (PYCODESTYLE_FOUND)
+if(PYCODESTYLE_FOUND)
     configure_file(pep8.ini.in pep8.ini)
     # The script wrapper discards the exit code of `pep8` to allow
     # continuing the build even when there are errors found by `pep8`.
@@ -29,18 +29,18 @@ if (PYCODESTYLE_FOUND)
         VERBATIM
         SOURCES pep8.ini.in
     )
-endif ()
+endif()
 
-if (NOT TARGET check)
+if(NOT TARGET check)
     add_custom_target(check
         COMMENT "Run code quality checks"
     )
-endif ()
+endif()
 
-if (CPPCHECK_FOUND)
+if(CPPCHECK_FOUND)
     add_dependencies(check check-cpp)
-endif ()
+endif()
 
-if (PYCODESTYLE_FOUND)
+if(PYCODESTYLE_FOUND)
     add_dependencies(check check-pep8)
-endif ()
+endif()

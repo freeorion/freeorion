@@ -26,9 +26,9 @@
 add_subdirectory(dialogs)
 add_subdirectory(RichText)
 
-if (BUILD_SDL_DRIVER)
+if(BUILD_SDL_DRIVER)
     add_subdirectory(SDL)
-endif ()
+endif()
 
 target_sources(GiGi
     PUBLIC

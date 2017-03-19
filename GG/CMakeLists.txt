@@ -63,10 +63,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 
-if (MSVC)
-    set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
-    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-    set (CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+if(MSVC)
+    set(CMAKE_STATIC_LIBRARY_PREFIX "lib")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+    set(CMAKE_STATIC_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
 
     add_definitions(/wd4146 /wd4099 /wd4251 /wd4800 /wd4267 /wd4275
                     /wd4244 /wd4101 /wd4258 /wd4351 /wd4996)
@@ -74,7 +74,7 @@ if (MSVC)
         /EHsc
         -D_UNICODE
     )
-endif ()
+endif()
 
 
 ##
@@ -83,13 +83,13 @@ endif ()
 
 set(MINIMUM_BOOST_VERSION 1.56.0)
 
-if (NOT USE_STATIC_LIBS)
+if(NOT USE_STATIC_LIBS)
     add_definitions(
         -DBOOST_ALL_NO_LINK
         -DBOOST_ALL_DYN_LINK
         -DBOOST_LOG_DYN_LINK
     )
-endif ()
+endif()
 
 set(Boost_USE_STATIC_LIBS ${USE_STATIC_LIBS})
 find_package(Boost ${MINIMUM_BOOST_VERSION} COMPONENTS chrono date_time filesystem regex signals system thread log REQUIRED)
@@ -98,9 +98,9 @@ find_package(OpenGL REQUIRED)
 find_package(GLEW REQUIRED)
 find_package(Freetype REQUIRED)
 
-if (NOT OPENGL_GLU_FOUND)
+if(NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL GLU library not found.")
-endif ()
+endif()
 
 if(ENABLE_PNG_TEXTURES)
     find_package(PNG REQUIRED)
@@ -138,12 +138,12 @@ configure_file(
 
 add_library(GiGi "")
 
-if (USE_STATIC_LIBS)
+if(USE_STATIC_LIBS)
     set_target_properties(GiGi
         PROPERTIES
         LINK_SEARCH_END_STATIC true
     )
-endif ()
+endif()
 
 target_include_directories(GiGi SYSTEM
     PRIVATE
@@ -162,23 +162,23 @@ target_link_libraries(GiGi
     ${FREETYPE_LIBRARIES}
 )
 
-if (PNG_FOUND)
+if(PNG_FOUND)
     target_link_libraries(GiGi ${PNG_LIBRARIES})
-endif ()
+endif()
 
-if (TIFF_FOUND)
+if(TIFF_FOUND)
     target_link_libraries(GiGi ${TIFF_LIBRARIES})
-endif ()
+endif()
 
 
 add_library(GiGiSDL "")
 
-if (USE_STATIC_LIBS)
+if(USE_STATIC_LIBS)
     set_target_properties(GiGiSDL
         PROPERTIES
         LINK_SEARCH_END_STATIC true
     )
-endif ()
+endif()
 
 target_include_directories(GiGiSDL SYSTEM
     PRIVATE
@@ -203,19 +203,19 @@ target_link_libraries(GiGiSDL
 add_subdirectory(GG)
 add_subdirectory(src)
 
-if (BUILD_TESTING)
+if(BUILD_TESTING)
     enable_testing()
     enable_coverage()
 
-    if (NOT TARGET unittest)
+    if(NOT TARGET unittest)
         add_custom_target(unittest
             COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
             COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
         )
-    endif ()
+    endif()
 
     add_subdirectory(test)
-endif ()
+endif()
 
 if(BUILD_DOCUMENTATION)
     add_subdirectory(doc)
@@ -226,13 +226,13 @@ endif()
 ## Install targets and package project.
 ##
 
-if (BUILD_DEVEL_PACKAGE)
+if(BUILD_DEVEL_PACKAGE)
     install(
         DIRECTORY GG
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         COMPONENT COMPONENT_GIGI_DEVEL
     )
-endif ()
+endif()
 
 install(
     TARGETS GiGi
@@ -244,7 +244,7 @@ install(
     COMPONENT COMPONENT_GIGI_DEVEL
 )
 
-if (UNIX AND BUILD_DEVEL_PACKAGE)
+if(UNIX AND BUILD_DEVEL_PACKAGE)
     get_pkg_config_libs(pkg_config_libs ${GiGi_LINK_LIBS})
 
     configure_file(
@@ -259,7 +259,7 @@ if (UNIX AND BUILD_DEVEL_PACKAGE)
         COMPONENT COMPONENT_GIGI_DEVEL
         OPTIONAL
     )
-endif ()
+endif()
 
 
 install(
@@ -272,7 +272,7 @@ install(
     COMPONENT COMPONENT_GIGISDL_DEVEL
 )
 
-if (UNIX AND BUILD_DEVEL_PACKAGE)
+if(UNIX AND BUILD_DEVEL_PACKAGE)
     get_pkg_config_libs(pkg_config_libs ${GiGiSDL_LINK_LIBS})
 
     configure_file(
@@ -287,7 +287,7 @@ if (UNIX AND BUILD_DEVEL_PACKAGE)
         COMPONENT COMPONENT_GIGI_DEVEL
         OPTIONAL
     )
-endif ()
+endif()
 
 
 set(CPACK_PACKAGE_VERSION ${GIGI_VERSION})
@@ -307,18 +307,18 @@ set(CPACK_RPM_PACKAGE_REQUIRES)
 list(APPEND CPACK_RPM_PACKAGE_REQUIRES Mesa freetype2)
 list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi=${GIGI_VERSION})
 
-if (BUILD_SDL_DRIVER)
+if(BUILD_SDL_DRIVER)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL>=1.2)
-endif ()
+endif()
 
-if (BUILD_DEVEL_PACKAGE)
+if(BUILD_DEVEL_PACKAGE)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES boost-devel>=1.44.0 Mesa-devel freetype2-devel)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES gigi-devel=${GIGI_VERSION})
-endif ()
+endif()
 
-if (BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
+if(BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
     list(APPEND CPACK_RPM_PACKAGE_REQUIRES SDL-devel>=1.2)
-endif ()
+endif()
 
 # Deb-specific settings
 set(CPACK_DEBIAN_PACKAGE_SECTION libs)
@@ -326,36 +326,36 @@ set(CPACK_DEBIAN_PACKAGE_SECTION libs)
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "libgl1-mesa-glx | libgl1, libglu1-mesa | libglu, libfreetype6")
 set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi (= ${GIGI_VERSION})")
 
-if (BUILD_SDL_DRIVER)
+if(BUILD_SDL_DRIVER)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2debian (>= 1.2)")
-endif ()
+endif()
 
-if (BUILD_DEVEL_PACKAGE)
+if(BUILD_DEVEL_PACKAGE)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "boost-devel (>= 1.44.0), libgl1-mesa-dev | libgl-dev, libglu1-mesa-dev | libglu-dev, libfreetype6-dev")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, gigi-dev (= ${GIGI_VERSION})")
-endif ()
+endif()
 
-if (BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
+if(BUILD_DEVEL_PACKAGE AND BUILD_SDL_DRIVER)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "${CPACK_DEBIAN_PACKAGE_DEPENDS}, libsdl1.2-dev (>= 1.2)")
-endif ()
+endif()
 
-if (UNIX)
+if(UNIX)
     set(CPACK_GENERATOR "TGZ;TBZ2")
     find_program(RPMBUILD rpmbuild)
-    if (RPMBUILD)
+    if(RPMBUILD)
         list(APPEND CPACK_GENERATOR RPM)
-    endif ()
+    endif()
     set(RPMBUILD ${RPMBUILD} CACHE INTERNAL "")
     find_program(DPKG dpkg)
-    if (DPKG)
+    if(DPKG)
         list(APPEND CPACK_GENERATOR DEB)
-    endif ()
+    endif()
     set(DPKG ${DPKG} CACHE INTERNAL "")
     set(CPACK_SOURCE_GENERATOR "TGZ;TBZ2")
-elseif (WIN32)
+elseif(WIN32)
     set(CPACK_GENERATOR "NSIS")
     set(CPACK_SOURCE_GENERATOR "ZIP")
-endif ()
+endif()
 
 include(CPack)
 

@@ -35,7 +35,7 @@ if(NOT TARGET doc)
     add_custom_target(doc)
 endif()
 
-add_custom_command (
+add_custom_command(
     OUTPUT GG/index.html
     COMMAND ${DOXYGEN_EXECUTABLE} Doxyfile
     MAIN_DEPENDENCY ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
@@ -44,7 +44,7 @@ add_custom_command (
     COMMENT "Generating GiGi API documentation with Doxygen" VERBATIM
 )
 
-add_custom_target (GiGi-apidoc DEPENDS GG/index.html)
+add_custom_target(GiGi-apidoc DEPENDS GG/index.html)
 add_dependencies(doc GiGi-apidoc)
 
 install(

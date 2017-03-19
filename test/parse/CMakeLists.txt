@@ -50,4 +50,4 @@ foreach(_TEST ${FO_TEST_PARSE})
         COMMAND fo_unittest_parse --log_level=message "--run_test=${_TEST}" --catch_system_error=yes
         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
     )
-endforeach ()
+endforeach()

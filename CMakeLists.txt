@@ -36,18 +36,18 @@ option(BUILD_PACKAGING "Build the installer/binary package" OFF)
 option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." OFF)
 
 
-if (BUILD_TESTING)
+if(BUILD_TESTING)
     message( STATUS "Building Tests")
     enable_testing()
     enable_coverage()
 
-    if (NOT TARGET unittest)
+    if(NOT TARGET unittest)
         add_custom_target(unittest
             COMMAND ${CMAKE_CTEST_COMMAND} --output-on-failure
             COMMENT "Run tests for ${CMAKE_PROJECT_NAME}"
         )
-    endif ()
-endif ()
+    endif()
+endif()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
@@ -116,14 +116,14 @@ set_property(DIRECTORY APPEND
         $<$<PLATFORM_ID:FreeBSD>:FREEORION_FREEBSD>
 )
 
-if (WIN32 AND MSVC)
-    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-endif ()
+if(WIN32 AND MSVC)
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+endif()
 
-if (UNIX AND NOT APPLE)
+if(UNIX AND NOT APPLE)
     add_definitions(-DENABLE_BINRELOC)
-endif ()
+endif()
 
 
 ##
@@ -155,18 +155,18 @@ find_package(ZLIB REQUIRED)
 find_package(Freetype REQUIRED)
 find_package(OpenGL REQUIRED)
 
-if (NOT OPENGL_GLU_FOUND)
+if(NOT OPENGL_GLU_FOUND)
     message(FATAL_ERROR "OpenGL GLU library not found.")
-endif ()
+endif()
 
 find_package(SDL REQUIRED)
 find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
-if (BUILD_TESTING)
+if(BUILD_TESTING)
     add_subdirectory(test)
-endif ()
+endif()
 
 set(BUILD_DEVEL_PACKAGE OFF CACHE INTERNAL "Disables installation of GiGi development files." FORCE)
 set(_ORIG_CMAKE_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
@@ -175,19 +175,19 @@ add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
 
-if (WIN32)
+if(WIN32)
     add_definitions(
         -DBOOST_ZLIB_BINARY=zlib.lib
     )
-endif ()
+endif()
 
-if (NOT FO_LINK_STATIC_BOOST_LIBS)
+if(NOT FO_LINK_STATIC_BOOST_LIBS)
     add_definitions(
         -DBOOST_ALL_NO_LINK
         -DBOOST_ALL_DYN_LINK
         -DBOOST_LOG_DYN_LINK
     )
-endif ()
+endif()
 
 if(${Boost_VERSION} GREATER "106000")
     # with boost 1.61 some boost::optional internals were changed. However
@@ -227,12 +227,12 @@ set_source_files_properties(
 
 add_library(freeorioncommon "")
 
-if (WIN32)
+if(WIN32)
     set_property(TARGET freeorioncommon
         PROPERTY
         OUTPUT_NAME Common
     )
-endif ()
+endif()
 
 target_compile_options(freeorioncommon
     PRIVATE
@@ -283,12 +283,12 @@ set_property(TARGET freeorionparseobj
     POSITION_INDEPENDENT_CODE ON
 )
 
-if (WIN32)
+if(WIN32)
     set_property(TARGET freeorionparse
         PROPERTY
         OUTPUT_NAME Parsers
     )
-endif ()
+endif()
 
 target_compile_options(
     freeorionparseobj PRIVATE
@@ -314,12 +314,12 @@ target_compile_options(
 
 add_executable(freeoriond "")
 
-if (WIN32)
+if(WIN32)
     set_property(TARGET freeoriond
         PROPERTY
             OUTPUT_NAME FreeOrionD
     )
-endif ()
+endif()
 
 target_compile_options(freeoriond
     PRIVATE
@@ -353,12 +353,12 @@ target_dependent_data_symlink_to_build(freeoriond ${PROJECT_SOURCE_DIR}/default)
 
 add_executable(freeorionca "")
 
-if (WIN32)
+if(WIN32)
     set_property(TARGET freeorionca
         PROPERTY
             OUTPUT_NAME FreeOrionCA
     )
-endif ()
+endif()
 
 target_compile_options(
     freeorionca PRIVATE
@@ -392,18 +392,18 @@ target_dependent_data_symlink_to_build(freeorionca ${PROJECT_SOURCE_DIR}/default
 
 add_executable(freeorion "")
 
-if (WIN32)
+if(WIN32)
     set_property(TARGET freeorion
         PROPERTY
             OUTPUT_NAME FreeOrion
     )
-    if (MSVC AND (CMAKE_VERSION VERSION_GREATER "3.6"))
+    if(MSVC AND (CMAKE_VERSION VERSION_GREATER "3.6"))
         set_property(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
             PROPERTY
                 VS_STARTUP_PROJECT freeorion
         )
-    endif ()
-endif ()
+    endif()
+endif()
 
 target_compile_options(freeorion
     PRIVATE
@@ -429,12 +429,12 @@ target_include_directories(freeorion SYSTEM
         ${PROJECT_SOURCE_DIR}/GG
 )
 
-if (WIN32)
+if(WIN32)
     target_sources(freeorion
         PRIVATE
             ${CMAKE_CURRENT_LIST_DIR}/FreeOrion.ico
     )
-endif ()
+endif()
 
 target_link_libraries(freeorion
     freeorioncommon
@@ -522,7 +522,7 @@ foreach(SIZE 16 24 32 64 128 256)
     )
 endforeach()
 
-if (WIN32)
+if(WIN32)
     install(
         FILES
         OpenAL32.dll
@@ -548,7 +548,7 @@ if (WIN32)
         DESTINATION ${CMAKE_INSTALL_BINDIR}
         COMPONENT COMPONENT_FREEORION_WIN32_RUNTIME_DEPS
     )
-endif ()
+endif()
 
 set(CPACK_PACKAGE_VERSION ${FreeOrion_VERSION})
 
@@ -556,18 +556,18 @@ set(CPACK_PACKAGE_VENDOR "FreeOrion Community")
 set(CPACK_PACKAGE_CONTACT http://freeorion.org/forum)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game.")
 set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_HOME_DIRECTORY}/default/COPYING)
-if (BUILD_PACKAGING)
+if(BUILD_PACKAGING)
     set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
-    if (WIN32)
+    if(WIN32)
         set(PACKAGE_FILE_SYSTEM_NAME win32)
-    else ()
+    else()
         set(PACKAGE_FILE_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
-    endif ()
+    endif()
     set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
     set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${PACKAGE_FILE_SYSTEM_NAME}")
     string(TOLOWER ${CPACK_PACKAGE_FILE_NAME} CPACK_PACKAGE_FILE_NAME)
     set(CPACK_MONOLITHIC_INSTALL ON)
-endif ()
+endif()
 
 # NSIS-specific settings
 set(CPACK_NSIS_COMPRESSOR bzip2)
@@ -583,32 +583,32 @@ set(CPACK_RPM_PACKAGE_REQUIRES)
 set(CPACK_DEBIAN_PACKAGE_SECTION games)
 # TODO
 
-if (UNIX)
+if(UNIX)
     set(CPACK_GENERATOR "TGZ;TBZ2")
     find_program(RPMBUILD rpmbuild)
-    if (RPMBUILD)
+    if(RPMBUILD)
         list(APPEND CPACK_GENERATOR RPM)
-    endif ()
+    endif()
     set(RPMBUILD ${RPMBUILD} CACHE INTERNAL "")
     find_program(DPKG dpkg)
-    if (DPKG)
+    if(DPKG)
         list(APPEND CPACK_GENERATOR DEB)
-    endif ()
+    endif()
     set(DPKG ${DPKG} CACHE INTERNAL "")
-elseif (WIN32)
+elseif(WIN32)
     set(CPACK_GENERATOR "NSIS")
-endif ()
+endif()
 
 
 ########################################
 # Source Packaging                     #
 ########################################
 
-if (UNIX)
+if(UNIX)
     set(CPACK_SOURCE_GENERATOR "TGZ")
-elseif (WIN32)
+elseif(WIN32)
     set(CPACK_SOURCE_GENERATOR "ZIP")
-endif ()
+endif()
 
 set(CPACK_SOURCE_IGNORE_FILES
     "~$"
@@ -646,7 +646,7 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME
 
 include(CPack)
 
-if (WIN32)
+if(WIN32)
     cpack_add_component(
         COMPONENT_FREEORION_WIN32_RUNTIME_DEPS
         DISPLAY_NAME FreeOrion Win32 Runtime Dependencies
@@ -654,7 +654,7 @@ if (WIN32)
         HIDDEN
         REQUIRED
     )
-endif ()
+endif()
 
 cpack_add_component(
     COMPONENT_FREEORION_DATA
