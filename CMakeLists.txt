@@ -54,6 +54,10 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR})
 
 if(WIN32)
+    # Location of the FreeOrionSDK root
+    set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/..")
+    # Search dependency DLLs inside FreeOrionSDK
+    target_dependencies_add_search_path("${CMAKE_PREFIX_PATH}/bin")
     set(CMAKE_INSTALL_BINDIR ".")
     set(FreeOrion_INSTALL_LIBDIR ".")
 else()
@@ -95,11 +99,9 @@ if (WIN32)
         -DBOOST_ZLIB_BINARY=zlib.lib
     )
     if (MSVC)
-        set (CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/..")
         set (CMAKE_STATIC_LIBRARY_PREFIX "lib")
         set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
         set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-        target_dependencies_add_search_path("${CMAKE_PREFIX_PATH}/bin")
     endif ()
 elseif (APPLE)
     add_definitions(-DFREEORION_MACOSX)
