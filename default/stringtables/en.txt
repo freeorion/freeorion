@@ -1344,6 +1344,29 @@ Sets UI tooltip pop-up delay for alternate pop-ups, in ms.
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
 When searching the pedia, check for matches in article contents.
 
+# Section title for options window logging
+OPTIONS_DB_UI_LOGGING_SECTION
+Logging
+
+# Sub section title for log level of default logger for each process.
+OPTIONS_DB_UI_LOGGING_LEVEL_SINKS
+Log threshold for default logger for process.
+
+# Sub section title for log level of sources (section of code)
+OPTIONS_DB_UI_LOGGING_LEVEL_SOURCES
+Log threshold for individual sources.
+
+OPTIONS_DB_UI_LOGGING_SECTION_TOOLTIP
+'''Each log output file (freeorion.log, freeoriond.log and AI_x.log) collects log records from sources(sections of code). 
+Setting the threshold for a source will enable logs records of that level or higher for that source. 
+Each process client, server and ai has a default source and may have additional detailed sources.'''
+
+OPTIONS_DB_UI_LOGGING_LEVEL_SINKS_TOOLTIP
+'''Setting the threshold for a process will produce only log records of that level or higher for the default source.'''
+
+OPTIONS_DB_UI_LOGGING_LEVEL_SOURCES_TOOLTIP
+'''Setting the threshold for a source will produce logs of that level or higher for that source.'''
+
 OPTIONS_DB_KEYPRESS_REPEAT_DELAY
 Sets delay between holding a key and repeat keypresses being generated
 
