@@ -15,6 +15,7 @@
 #include "../../UI/MapWnd.h"
 
 #include <boost/format.hpp>
+#include <thread>
 
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
@@ -59,7 +60,6 @@ IntroMenu::IntroMenu(my_context ctx) :
     Base(ctx)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) IntroMenu";
-    Client().KillServer();
     Client().GetClientUI().ShowIntroScreen();
 }
 
@@ -85,6 +85,11 @@ boost::statechart::result IntroMenu::react(const JoinMPGameRequested& a) {
     return transit<WaitingForMPJoinAck>();
 }
 
+boost::statechart::result IntroMenu::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+    post_event(e);
+    return transit<QuittingGame>();
+}
 
 ////////////////////////////////////////////////////////////
 // WaitingForSPHostAck
@@ -107,6 +112,17 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
     return transit<PlayingGame>();
 }
 
+boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
+    //Note: Any transit<> transition must occur before the MessageBox().
+    // MessageBox blocks and can allow other events to transit<> to a new state
+    // which makes this transit fatal.
+    auto retval = discard_event();
+    Client().ResetToIntro();
+    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    return retval;
+}
+
 boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForSPHostAck.Error";
     std::string problem;
@@ -121,14 +137,22 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
-    boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-
+    auto retval = discard_event();
     if (fatal) {
+        Client().ResetToIntro();
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
-
     return retval;
+}
+
+boost::statechart::result WaitingForSPHostAck::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
 }
 
 
@@ -151,6 +175,17 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
     return transit<MPLobby>();
 }
 
+boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
+    //Note: Any transit<> transition must occur before the MessageBox().
+    // MessageBox blocks and can allow other events to transit<> to a new state
+    // which makes this transit fatal.
+    auto retval = discard_event();
+    Client().ResetToIntro();
+    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    return retval;
+}
+
 boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPHostAck.Error";
     std::string problem;
@@ -165,14 +200,22 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
-    boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-
+    auto retval = discard_event();
     if (fatal) {
+        Client().ResetToIntro();
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
-
     return retval;
+}
+
+boost::statechart::result WaitingForMPHostAck::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
 }
 
 
@@ -194,6 +237,17 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     return transit<MPLobby>();
 }
 
+boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
+    //Note: Any transit<> transition must occur before the MessageBox().
+    // MessageBox blocks and can allow other events to transit<> to a new state
+    // which makes this transit fatal.
+    auto retval = discard_event();
+    Client().ResetToIntro();
+    ClientUI::MessageBox(UserString("SERVER_LOST"), true);
+    return retval;
+}
+
 boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPJoinAck.Error";
     std::string problem;
@@ -208,14 +262,23 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
-    boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-
+    auto retval = discard_event();
     if (fatal) {
+        Client().ResetToIntro();
         ClientUI::MessageBox(UserString(problem), true);
         client.GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
     }
 
     return retval;
+}
+
+boost::statechart::result WaitingForMPJoinAck::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
 }
 
 
@@ -239,7 +302,8 @@ boost::statechart::result MPLobby::react(const Disconnection& d) {
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
-    boost::statechart::result retval = transit<IntroMenu>();
+    auto retval = discard_event();
+    Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
@@ -280,8 +344,12 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg) {
 boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
-    Client().EndGame(true);
-    return transit<IntroMenu>();
+    //Note: Any transit<> transition must occur before the MessageBox().
+    // MessageBox blocks and can allow other events to transit<> to a new state
+    // which makes this transit fatal.
+    auto retval = discard_event();
+    Client().ResetToIntro();
+    return retval;
 }
 
 boost::statechart::result MPLobby::react(const StartMPGameClicked& a) {
@@ -318,12 +386,22 @@ boost::statechart::result MPLobby::react(const Error& msg) {
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
-    boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-
-    if (fatal)
+    auto retval = discard_event();
+    if (fatal) {
+        Client().ResetToIntro();
         ClientUI::MessageBox(UserString(problem), true);
+    }
 
     return retval;
+}
+
+boost::statechart::result MPLobby::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
+
+    Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
+
+    post_event(e);
+    return transit<QuittingGame>();
 }
 
 
@@ -378,11 +456,11 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
 
 boost::statechart::result PlayingGame::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    Client().EndGame(true);
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
-    boost::statechart::result retval = transit<IntroMenu>();
+    auto retval = discard_event();
+    Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
     return retval;
 }
@@ -430,11 +508,9 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     bool error = false;
     switch (reason) {
     case Message::LOCAL_CLIENT_DISCONNECT:
-        Client().EndGame(true);
         reason_message = UserString("SERVER_LOST");
         break;
     case Message::PLAYER_DISCONNECT:
-        Client().EndGame(true);
         reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;
         break;
@@ -442,16 +518,19 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
-    boost::statechart::result retval = transit<IntroMenu>();
+    auto retval = discard_event();
+    Client().ResetToIntro();
     ClientUI::MessageBox(reason_message, error);
     return retval;
 }
 
-boost::statechart::result PlayingGame::react(const ResetToIntroMenu& msg) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.ResetToIntroMenu";
+boost::statechart::result PlayingGame::react(const StartQuittingGame& e) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) Quit or reset to main menu.";
 
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(UserString("RETURN_TO_INTRO") + "\n");
-    return transit<IntroMenu>();
+
+    post_event(e);
+    return transit<QuittingGame>();
 }
 
 boost::statechart::result PlayingGame::react(const Error& msg) {
@@ -463,18 +542,16 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
                   << problem << "\nProblem is" <<(fatal ? "":"non-")<<" fatal";
 
-    //Note: transit<> frees this pointer so Client() must be called before.
-    HumanClientApp& client = Client();
-
     //Note: Any transit<> transition must occur before the MessageBox().
     // MessageBox blocks and can allow other events to transit<> to a new state
     // which makes this transit fatal.
-    boost::statechart::result retval = fatal ? transit<IntroMenu>() : discard_event();
-    ClientUI::MessageBox(UserString(problem), false);
-
+    auto retval = discard_event();
     if (fatal) {
+        Client().ResetToIntro();
         ClientUI::MessageBox(UserString(problem), true);
-        client.EndGame(true);
+        return transit<IntroMenu>();
+    } else {
+        ClientUI::MessageBox(UserString(problem), false);
     }
     return retval;
 }
@@ -668,8 +745,7 @@ PlayingTurn::PlayingTurn(my_context ctx) :
             // if no auto turns left, and supposed to quit after that, quit
             DebugLogger() << "auto-quit ending game.";
             std::cout << "auto-quit ending game." << std::endl;
-            Client().EndGame(true);
-            throw HumanClientApp::CleanQuit();
+            Client().ExitApp();
         }
 
         // if there are still auto turns left, advance the turn automatically,
@@ -776,3 +852,124 @@ boost::statechart::result PlayingTurn::react(const DispatchCombatLogs& msg) {
     Client().UpdateCombatLogs(msg.m_message);
     return discard_event();
 }
+
+
+////////////////////////////////////////////////////////////
+// QuittingGame
+////////////////////////////////////////////////////////////
+/** The QuittingGame state expects to start with a StartQuittingGame message posted. */
+QuittingGame::QuittingGame(my_context c) :
+    my_base(c),
+    m_start_time(Clock::now()),
+    m_reset_to_intro(true),
+    m_server_process(nullptr)
+{
+    // Quit the game by sending a shutdown message to the server and waiting for
+    // the disconnection event.  Free the server if it starts an orderly
+    // shutdown, otherwise kill it.
+
+    if (TRACE_EXECUTION) DebugLogger() << "(Host) QuittingGame";
+
+    // Client().m_game_started = false;
+}
+
+QuittingGame::~QuittingGame()
+{ if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) ~QuittingGame"; }
+
+boost::statechart::result QuittingGame::react(const StartQuittingGame& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame set reset to intro = " << u.m_reset_to_intro;
+
+    m_reset_to_intro = u.m_reset_to_intro;
+    m_server_process = &u.m_server;
+
+    post_event(ShutdownServer());
+    return discard_event();
+}
+
+boost::statechart::result QuittingGame::react(const ShutdownServer& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.ShutdownServer";
+
+    if (!m_server_process) {
+        ErrorLogger() << "m_server_process is nullptr";
+        post_event(TerminateServer());
+        return discard_event();
+    }
+
+    if (m_server_process->Empty()) {
+        if (Client().Networking().IsTxConnected()) {
+            WarnLogger() << "Disconnecting from server that is already killed.";
+            Client().Networking().DisconnectFromServer();
+        }
+        post_event(TerminateServer());
+        return discard_event();
+    }
+
+    if (Client().Networking().IsTxConnected()) {
+        DebugLogger() << "Sending server shutdown message.";
+        Client().Networking().SendMessage(ShutdownServerMessage(Client().Networking().PlayerID()));
+
+        post_event(WaitForDisconnect());
+
+    } else {
+        post_event(TerminateServer());
+    }
+    return discard_event();
+}
+
+const auto QUITTING_TIMEOUT          = std::chrono::milliseconds(5000);
+const auto QUITTING_POLLING_INTERVAL = std::chrono::milliseconds(10);
+boost::statechart::result QuittingGame::react(const WaitForDisconnect& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.WaitForDisconnect";
+
+    if (!Client().Networking().IsConnected()) {
+        post_event(TerminateServer());
+        return discard_event();
+    }
+
+    // Wait until the timeout for a disconnect event
+    if (QUITTING_TIMEOUT > (Clock::now() - m_start_time)) {
+        std::this_thread::sleep_for(QUITTING_POLLING_INTERVAL);
+        post_event(WaitForDisconnect());
+        return discard_event();
+    }
+
+    // Otherwise kill the connection
+    Client().Networking().DisconnectFromServer();
+
+    post_event(TerminateServer());
+    return discard_event();
+ }
+
+boost::statechart::result QuittingGame::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
+
+    if (m_server_process) {
+        // Treat disconnection as acknowledgement of shutdown and free the
+        // process to allow orderly shutdown.
+        m_server_process->Free();
+    } else {
+        ErrorLogger() << "m_server_process is nullptr";
+    }
+
+    post_event(TerminateServer());
+    return discard_event();
+}
+
+boost::statechart::result QuittingGame::react(const TerminateServer& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.WaitForDisconnect";
+
+    if (m_server_process && !m_server_process->Empty()) {
+        DebugLogger() << "QuittingGame terminated server process.";
+        m_server_process->RequestTermination();
+    }
+
+    // Reset the game or quit the app as appropriate
+    if (m_reset_to_intro) {
+        Client().ResetClientData();
+        return transit<IntroMenu>();
+    } else {
+        throw HumanClientApp::CleanQuit();
+    }
+
+}
+

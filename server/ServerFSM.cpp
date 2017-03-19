@@ -20,7 +20,7 @@
 #include <boost/filesystem/path.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/lexical_cast.hpp>
-#include <boost/thread/thread.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 
 #include <iterator>
 
@@ -140,8 +140,8 @@ namespace {
     }
 
 
-    /** Note:  This Exits on fatal errors and does not return.*/
-    void HandleErrorMessage(const Error& msg, ServerApp &server) {
+    /** Return true for fatal errors.*/
+    bool HandleErrorMessage(const Error& msg, ServerApp &server) {
         std::string problem;
         bool fatal;
         ExtractErrorMessageData(msg.m_message, problem, fatal);
@@ -157,11 +157,11 @@ namespace {
         if (fatal) {
             FatalLogger() << ss.str();
             SendMessageToAllPlayers(msg.m_message);
-            boost::this_thread::sleep_for(boost::chrono::seconds(2));
-            server.Exit(1);
+        } else {
+            ErrorLogger() << ss.str();
         }
 
-        ErrorLogger() << ss.str();
+        return fatal;
     }
 }
 
@@ -239,9 +239,7 @@ void ServerFSM::HandleNonLobbyDisconnection(const Disconnection& d) {
     // independently of everything else, if there are no humans left, it's time to terminate
     if (m_server.m_networking.empty() || m_server.m_ai_client_processes.size() == m_server.m_networking.NumEstablishedPlayers()) {
         DebugLogger() << "ServerFSM::HandleNonLobbyDisconnection : All human players disconnected; server terminating.";
-        // HACK! Pause for a bit to let the player disconnected and end game messages propogate.
-        boost::this_thread::sleep_for(boost::chrono::seconds(2));
-        m_server.Exit(1);
+        m_server.m_fsm->process_event(ShutdownServer());
     }
 }
 
@@ -327,8 +325,16 @@ sc::result Idle::react(const HostSPGame& msg) {
     return transit<WaitingForSPGameJoiners>();
 }
 
+sc::result Idle::react(const ShutdownServer& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.ShutdownServer";
+
+    return transit<ShuttingDownServer>();
+}
+
 sc::result Idle::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal)
+        return transit<ShuttingDownServer>();
     return discard_event();
 }
 
@@ -382,7 +388,7 @@ sc::result MPLobby::react(const Disconnection& d) {
     // if there are no humans left, it's time to terminate
     if (server.m_networking.empty() || server.m_ai_client_processes.size() == server.m_networking.NumEstablishedPlayers()) {
         DebugLogger() << "MPLobby.Disconnection : All human players disconnected; server terminating.";
-        server.Exit(1);
+        return transit<ShuttingDownServer>();
     }
 
     if (server.m_networking.PlayerIsHost(player_connection->PlayerID()))
@@ -1025,8 +1031,16 @@ sc::result MPLobby::react(const HostSPGame& msg) {
     return discard_event();
 }
 
+sc::result MPLobby::react(const ShutdownServer& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.ShutdownServer";
+
+    return transit<ShuttingDownServer>();
+}
+
 sc::result MPLobby::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal)
+        return transit<ShuttingDownServer>();
     return discard_event();
 }
 
@@ -1235,7 +1249,11 @@ sc::result WaitingForSPGameJoiners::react(const LoadSaveFileFailed& u) {
 }
 
 sc::result WaitingForSPGameJoiners::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal) {
+        DebugLogger() << "fatal in joiners";
+        return transit<ShuttingDownServer>();
+    }
     return discard_event();
 }
 
@@ -1353,7 +1371,9 @@ sc::result WaitingForMPGameJoiners::react(const CheckStartConditions& u) {
 }
 
 sc::result WaitingForMPGameJoiners::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal)
+        return transit<ShuttingDownServer>();
     return discard_event();
 }
 
@@ -1431,6 +1451,12 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
     return discard_event();
 }
 
+sc::result PlayingGame::react(const ShutdownServer& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.ShutdownServer";
+
+    return transit<ShuttingDownServer>();
+}
+
 sc::result PlayingGame::react(const RequestCombatLogs& msg) {
     DebugLogger() << "(ServerFSM) PlayingGame::RequestCombatLogs message received";
     Server().UpdateCombatLogs(msg.m_message, msg.m_player_connection);
@@ -1438,7 +1464,11 @@ sc::result PlayingGame::react(const RequestCombatLogs& msg) {
 }
 
 sc::result PlayingGame::react(const Error& msg) {
-    HandleErrorMessage(msg, Server());
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal) {
+        DebugLogger() << "Fatal received.";
+        return transit<ShuttingDownServer>();
+    }
     return discard_event();
 }
 
@@ -1783,5 +1813,127 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
 
 sc::result ProcessingTurn::react(const CheckTurnEndConditions& c) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ProcessingTurn.CheckTurnEndConditions";
+    return discard_event();
+}
+
+
+////////////////////////////////////////////////////////////
+// ShuttingDownServer
+////////////////////////////////////////////////////////////
+const auto SHUTDOWN_POLLING_TIME = std::chrono::milliseconds(5000);
+
+ShuttingDownServer::ShuttingDownServer(my_context c) :
+    my_base(c),
+    m_player_id_ack_expected(),
+    m_timeout(Server().m_io_service, Clock::now() + SHUTDOWN_POLLING_TIME)
+{
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer";
+
+    ServerApp& server = Server();
+
+    if (server.m_ai_client_processes.empty() && server.m_networking.empty())
+        throw ServerApp::NormalExitException();
+
+    DebugLogger() << "ShuttingDownServer informing AIs game is ending";
+
+    // Inform all players that the game is ending.  Only check the AIs for acknowledgement, because
+    // they are the server's child processes.
+    for (PlayerConnectionPtr player : server.m_networking) {
+        auto good_connection = player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
+        if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+            if (good_connection) {
+                // Only expect acknowledgement from sockets that are up.
+                m_player_id_ack_expected.insert(player->PlayerID());
+            }
+        }
+    }
+
+    DebugLogger() << "ShuttingDownServer expecting " << m_player_id_ack_expected.size() << " AIs to ACK shutdown.";
+
+    // Set the timeout.  If all clients have not responded then kill the remainder and exit
+    m_timeout.async_wait(boost::bind(&ServerApp::ShutdownTimedoutHandler,
+                                     &server,
+                                     boost::asio::placeholders::error));
+
+    post_event(CheckEndConditions());
+}
+
+ShuttingDownServer::~ShuttingDownServer()
+{ if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ~ShuttingDownServer"; }
+
+sc::result ShuttingDownServer::react(const LeaveGame& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.LeaveGame";
+    const Message& message = msg.m_message;
+    int player_id = message.SendingPlayer();
+
+    auto ack_found = m_player_id_ack_expected.find(player_id);
+
+    if (ack_found != m_player_id_ack_expected.end()) {
+        DebugLogger() << "Shutdown ACK received for AI " << player_id;
+        m_player_id_ack_expected.erase(ack_found);
+    } else {
+        WarnLogger() << "Unexpected shutdown ACK received for AI " << player_id;
+    }
+
+    post_event(CheckEndConditions());
+    return discard_event();
+}
+
+sc::result ShuttingDownServer::react(const Disconnection& d) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.Disconnection";
+    PlayerConnectionPtr& player_connection = d.m_player_connection;
+    int player_id = player_connection->PlayerID();
+
+    // Treat disconnection as an implicit ACK.  Otherwise ignore it.
+    auto ack_found = m_player_id_ack_expected.find(player_id);
+
+    if (ack_found != m_player_id_ack_expected.end()) {
+        DebugLogger() << "Disconnect received for AI " << player_id << ".  Treating it as shutdown ACK.";
+        m_player_id_ack_expected.erase(ack_found);
+    }
+
+    post_event(CheckEndConditions());
+    return discard_event();
+}
+
+sc::result ShuttingDownServer::react(const CheckEndConditions& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.CheckEndConditions";
+    ServerApp& server = Server();
+
+    auto all_acked = m_player_id_ack_expected.empty();
+
+    if (all_acked) {
+        DebugLogger() << "All " << server.m_ai_client_processes.size() << " AIs acknowledged shutdown request.";
+
+        // Free the processes so that they can complete their shutdown.
+        for (Process& process : server.m_ai_client_processes)
+        { process.Free(); }
+
+        post_event(DisconnectClients());
+    }
+
+    return discard_event();
+}
+
+sc::result ShuttingDownServer::react(const DisconnectClients& u) {
+    if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.DisconnectClients";
+    ServerApp& server = Server();
+
+    // Remove the ai processes.  They either all acknowledged the shutdown and are free or were all killed.
+    server.m_ai_client_processes.clear();
+
+    // Disconnect
+    server.m_networking.DisconnectAll();
+
+    throw ServerApp::NormalExitException();
+
+    // Never reached.
+    return discard_event();
+}
+
+sc::result ShuttingDownServer::react(const Error& msg) {
+    auto fatal = HandleErrorMessage(msg, Server());
+    if (fatal)
+        return transit<ShuttingDownServer>();
     return discard_event();
 }

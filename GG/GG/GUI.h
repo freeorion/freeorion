@@ -411,6 +411,12 @@ public:
       * focus. bool parameter is true when gaining focus, and false otherwise.*/
      boost::signals2::signal<void (bool)>   FocusChangedSignal;
 
+    /** Emitted whenever the window manager requests the window close. */
+    boost::signals2::signal<void ()>    WindowClosingSignal;
+
+    /** Emitted whenever the app is requested to close. */
+    boost::signals2::signal<void ()>    AppQuittingSignal;
+
     /** \name Exceptions */ ///@{
     /** The base class for GUI exceptions. */
     GG_ABSTRACT_EXCEPTION(Exception);

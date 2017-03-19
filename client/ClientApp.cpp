@@ -15,6 +15,7 @@
 ClientApp::ClientApp() :
     IApp(),
     m_universe(),
+    m_networking(std::make_shared<ClientNetworking>()),
     m_empire_id(ALL_EMPIRES),
     m_current_turn(INVALID_GAME_TURN)
 {}
@@ -23,7 +24,7 @@ ClientApp::~ClientApp()
 {}
 
 int ClientApp::PlayerID() const
-{ return m_networking.PlayerID(); }
+{ return m_networking->PlayerID(); }
 
 int ClientApp::EmpireID() const
 { return m_empire_id; }
@@ -72,7 +73,7 @@ const OrderSet& ClientApp::Orders() const
 { return m_orders; }
 
 const ClientNetworking& ClientApp::Networking() const
-{ return m_networking; }
+{ return *m_networking; }
 
 int ClientApp::EmpirePlayerID(int empire_id) const {
     for (const std::map<int, PlayerInfo>::value_type& entry : m_player_info)
@@ -94,7 +95,7 @@ Networking::ClientType ClientApp::GetPlayerClientType(int player_id) const {
 }
 
 Networking::ClientType ClientApp::GetClientType() const
-{ return GetPlayerClientType(m_networking.PlayerID()); }
+{ return GetPlayerClientType(m_networking->PlayerID()); }
 
 const std::map<int, PlayerInfo>& ClientApp::Players() const
 { return m_player_info; }
@@ -115,7 +116,7 @@ void ClientApp::SetPlayerStatus(int player_id, Message::PlayerStatus status) {
 }
 
 void ClientApp::StartTurn() {
-    m_networking.SendMessage(TurnOrdersMessage(m_networking.PlayerID(), m_orders));
+    m_networking->SendMessage(TurnOrdersMessage(m_networking->PlayerID(), m_orders));
     m_orders.Reset();
 }
 
@@ -123,7 +124,7 @@ OrderSet& ClientApp::Orders()
 { return m_orders; }
 
 ClientNetworking& ClientApp::Networking()
-{ return m_networking; }
+{ return *m_networking; }
 
 std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject> object) {
     if (!object) {
@@ -140,7 +141,7 @@ std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
 
 int ClientApp::GetNewObjectID() {
     Message msg;
-    m_networking.SendSynchronousMessage(RequestNewObjectIDMessage(m_networking.PlayerID()), msg);
+    m_networking->SendSynchronousMessage(RequestNewObjectIDMessage(m_networking->PlayerID()), msg);
     std::string text = msg.Text();
     if (text.empty())
         throw std::runtime_error("ClientApp::GetNewObjectID() didn't get a new object ID");
@@ -149,7 +150,7 @@ int ClientApp::GetNewObjectID() {
 
 int ClientApp::GetNewDesignID() {
     Message msg;
-    m_networking.SendSynchronousMessage(RequestNewDesignIDMessage(m_networking.PlayerID()), msg);
+    m_networking->SendSynchronousMessage(RequestNewDesignIDMessage(m_networking->PlayerID()), msg);
     std::string text = msg.Text();
     if (text.empty())
         throw std::runtime_error("ClientApp::GetNewDesignID() didn't get a new design ID");

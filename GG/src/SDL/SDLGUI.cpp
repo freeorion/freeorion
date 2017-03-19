@@ -790,7 +790,7 @@ void SDLGUI::HandleSystemEvents()
                     SDL_DisableScreenSaver();
                     break;
                 case SDL_WINDOWEVENT_CLOSE:
-
+                    WindowClosingSignal();
                     break;
             }
             break;
@@ -807,7 +807,7 @@ void SDLGUI::HandleNonGGEvent(const SDL_Event& event)
 {
     switch (event.type) {
     case SDL_QUIT:
-        Exit(0);
+        AppQuittingSignal();
         break;
     }
 }

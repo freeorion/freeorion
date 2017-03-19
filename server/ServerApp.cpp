@@ -164,19 +164,9 @@ void ServerApp::operator()()
 { Run(); }
 
 void ServerApp::SignalHandler(const boost::system::error_code& error, int signal_number) {
-    if (!error)
-        throw NormalExitException();
-
-    ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
-    Exit(1);
-}
-
-void ServerApp::Exit(int code) {
-    DebugLogger() << "Initiating Exit (code " << code << " - " << (code ? "error" : "normal") << " termination)";
-    CleanupAIs();
-    if (code)
-        exit(code);
-    throw NormalExitException();
+    if (error)
+        ErrorLogger() << "Exiting due to OS error (" << error.value() << ") " << error.message();
+    m_fsm->process_event(ShutdownServer());
 }
 
 namespace {
@@ -336,8 +326,7 @@ void ServerApp::InitializePython() {
 
     if (!m_python_server.Initialize()) {
         ErrorLogger() << "Server's python interpreter failed to initialize.";
-        // TODO go to Shutdown in FSM.
-        Exit(0);
+        m_fsm->process_event(ShutdownServer());
     }
 }
 
@@ -423,6 +412,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::DEBUG:                    break;
 
     case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
+    case Message::AI_END_GAME_ACK:          m_fsm->process_event(LeaveGame(msg, player_connection));        break;
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
     case Message::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
@@ -442,7 +432,7 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
         return;
     }
     DebugLogger() << "ServerApp::HandleShutdownMessage shutting down";
-    Exit(0);
+    m_fsm->process_event(ShutdownServer());
 }
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
@@ -455,8 +445,8 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
     default:
         if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
             DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
-                                   << "connected player, who is local and so the request is being honored; server shutting down.";
-                                   Exit(0);
+                          << "connected player, who is local and so the request is being honored; server shutting down.";
+            m_fsm->process_event(ShutdownServer());
         } else {
             ErrorLogger() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
                                             << msg.Type() << "\" for a non-player Message.  Terminating connection.";
@@ -468,6 +458,14 @@ void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr p
 
 void ServerApp::PlayerDisconnected(PlayerConnectionPtr player_connection)
 { m_fsm->process_event(Disconnection(player_connection)); }
+
+void ServerApp::ShutdownTimedoutHandler(boost::system::error_code error) {
+    if (error)
+        DebugLogger() << "Shutdown timed out cancelled";
+
+    DebugLogger() << "Shutdown timed out.  Disconnecting remaining clients.";
+    m_fsm->process_event(DisconnectClients());
+}
 
 void ServerApp::SelectNewHost() {
     int new_host_id = Networking::INVALID_PLAYER_ID;
@@ -1316,7 +1314,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
         m_python_server.HandleErrorAlreadySet();
         if (!m_python_server.IsPythonRunning()) {
             ErrorLogger() << "Python interpreter is no longer running.  Exiting.";
-            Exit(0);
+            m_fsm->process_event(ShutdownServer());
         }
     }
 
@@ -1369,7 +1367,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
                 ErrorLogger() << "Python interpreter successfully restarted.";
             } else {
                 ErrorLogger() << "Python interpreter failed to restart.  Exiting.";
-                Exit(0);
+                m_fsm->process_event(ShutdownServer());
             }
         }
     }

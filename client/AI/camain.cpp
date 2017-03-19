@@ -93,7 +93,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         return 1;
     }
 #endif
-
+    DebugLogger() << "AI client main exited cleanly.";
     return 0;
 }
 

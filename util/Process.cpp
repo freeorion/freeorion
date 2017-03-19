@@ -63,6 +63,10 @@ bool Process::SetLowPriority(bool low) {
 }
 
 void Process::Kill() {
+    // Early exit if already killed.
+    if (!m_impl && m_empty && !m_low_priority)
+        return;
+
     DebugLogger() << "Process::Kill";
     if (m_impl) {
         DebugLogger() << "Process::Kill calling m_impl->Kill()";

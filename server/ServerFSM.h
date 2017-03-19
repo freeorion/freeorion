@@ -12,10 +12,13 @@
 #include <boost/statechart/in_state_reaction.hpp>
 #include <boost/statechart/state.hpp>
 #include <boost/statechart/state_machine.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 
 #include <memory>
 #include <set>
 #include <vector>
+#include <unordered_set>
+#include <chrono>
 
 
 struct MultiplayerLobbyData;
@@ -37,8 +40,11 @@ struct Disconnection : sc::event<Disconnection> {
 
 struct LoadSaveFileFailed : sc::event<LoadSaveFileFailed>               {};
 struct CheckStartConditions : sc::event<CheckStartConditions>           {};
+struct CheckEndConditions : sc::event<CheckEndConditions>               {};
 struct CheckTurnEndConditions : sc::event<CheckTurnEndConditions>       {};
 struct ProcessTurn : sc::event<ProcessTurn>                             {};
+struct DisconnectClients : sc::event<DisconnectClients>                 {};
+struct ShutdownServer : sc::event<ShutdownServer>                       {};
 
 
 //  Message events
@@ -58,6 +64,7 @@ struct MessageEventBase {
     (LobbyUpdate)                           \
     (LobbyChat)                             \
     (JoinGame)                              \
+    (LeaveGame)                             \
     (SaveGameRequest)                       \
     (TurnOrders)                            \
     (CombatTurnOrders)                      \
@@ -92,6 +99,7 @@ struct MPLobby;
 struct WaitingForSPGameJoiners;
 struct WaitingForMPGameJoiners;
 struct PlayingGame;
+struct ShuttingDownServer;
 
 // Substates of PlayingGame
 struct WaitingForTurnEnd;
@@ -127,6 +135,7 @@ struct Idle : sc::state<Idle, ServerFSM> {
     typedef boost::mpl::list<
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
+        sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -135,6 +144,7 @@ struct Idle : sc::state<Idle, ServerFSM> {
 
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
+    sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
 
     SERVER_ACCESSOR
@@ -151,6 +161,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
         sc::custom_reaction<StartMPGame>,
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
+        sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -164,6 +175,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     sc::result react(const StartMPGame& msg);
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);
+    sc::result react(const ShutdownServer& u);
     sc::result react(const Error& msg);
 
     std::shared_ptr<MultiplayerLobbyData> m_lobby_data;
@@ -244,6 +256,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
         sc::custom_reaction<Diplomacy>,
         sc::custom_reaction<ModeratorAct>,
         sc::custom_reaction<RequestCombatLogs>,
+        sc::custom_reaction<ShutdownServer>,
         sc::custom_reaction<Error>
     > reactions;
 
@@ -253,6 +266,7 @@ struct PlayingGame : sc::state<PlayingGame, ServerFSM, WaitingForTurnEnd> {
     sc::result react(const PlayerChat& msg);
     sc::result react(const Diplomacy& msg);
     sc::result react(const ModeratorAct& msg);
+    sc::result react(const ShutdownServer& u);
     sc::result react(const RequestCombatLogs& msg);
     sc::result react(const Error& msg);
 
@@ -344,6 +358,32 @@ struct ProcessingTurn : sc::state<ProcessingTurn, PlayingGame> {
 
     sc::result react(const ProcessTurn& u);
     sc::result react(const CheckTurnEndConditions& c);
+
+    SERVER_ACCESSOR
+};
+
+/** The server state in which the server is shutting down and waiting for AIs to exit. */
+struct ShuttingDownServer : sc::state<ShuttingDownServer, ServerFSM> {
+    using Clock = std::chrono::high_resolution_clock;
+    typedef boost::mpl::list<
+        sc::in_state_reaction<Disconnection>,
+        sc::custom_reaction<LeaveGame>,
+        sc::custom_reaction<CheckEndConditions>,
+        sc::custom_reaction<DisconnectClients>,
+        sc::custom_reaction<Error>
+    > reactions;
+
+    ShuttingDownServer(my_context c);
+    ~ShuttingDownServer();
+
+    sc::result react(const LeaveGame& msg);
+    sc::result react(const CheckEndConditions& u);
+    sc::result react(const DisconnectClients& u);
+    sc::result react(const Disconnection& d);
+    sc::result react(const Error& msg);
+
+    std::unordered_set<int>            m_player_id_ack_expected;
+    boost::asio::high_resolution_timer m_timeout;
 
     SERVER_ACCESSOR
 };

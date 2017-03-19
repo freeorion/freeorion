@@ -188,7 +188,7 @@ void InGameMenu::Options() {
 }
 
 void InGameMenu::Exit() {
-    HumanClientApp::GetApp()->EndGame();
+    HumanClientApp::GetApp()->ResetToIntro();
     CloseClicked();
 }
 

@@ -7,8 +7,9 @@
 #include <GG/SignalsAndSlots.h>
 
 #include <boost/iterator/filter_iterator.hpp>
-#include <boost/thread/thread.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
 
+#include <thread>
 
 using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
@@ -35,15 +36,6 @@ private:
 };
 
 namespace {
-    void WriteMessage(boost::asio::ip::tcp::socket& socket, const Message& message) {
-        Message::HeaderBuffer header_buf;
-        HeaderToBuffer(message, header_buf);
-        std::vector<boost::asio::const_buffer> buffers;
-        buffers.push_back(boost::asio::buffer(header_buf));
-        buffers.push_back(boost::asio::buffer(message.Data(), message.Size()));
-        boost::asio::write(socket, buffers);
-    }
-
     struct PlayerID {
         PlayerID(int id) :
             m_id(id)
@@ -64,6 +56,7 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
                                    MessageAndConnectionFn nonplayer_message_callback,
                                    MessageAndConnectionFn player_message_callback,
                                    ConnectionFn disconnected_callback) :
+    m_service(io_service),
     m_socket(io_service),
     m_ID(INVALID_PLAYER_ID),
     m_new_connection(true),
@@ -74,10 +67,27 @@ PlayerConnection::PlayerConnection(boost::asio::io_service& io_service,
 {}
 
 PlayerConnection::~PlayerConnection() {
-    boost::system::error_code ec;
-    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, ec);
-    if (ec) {
-        ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error \"" << ec << "\"";
+    boost::system::error_code error;
+    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
+    if (error && (m_ID != INVALID_PLAYER_ID)) {
+        if (error == boost::asio::error::eof)
+            DebugLogger() << "Player connection disconnected by EOF from client.";
+        else if (error == boost::asio::error::connection_reset)
+            DebugLogger() << "Player connection disconnected, reset by client.";
+        else if (error == boost::asio::error::operation_aborted)
+            DebugLogger() << "Player operation aborted by server.";
+        else if (error == boost::asio::error::shut_down)
+            DebugLogger() << "Player connection shutdown.";
+        else if (error == boost::asio::error::connection_aborted)
+            DebugLogger() << "Player connection closed by server.";
+        else if (error == boost::asio::error::not_connected)
+            DebugLogger() << "Player connection already down.";
+        else {
+
+            ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error #"
+                          << error.value() << " \"" << error.message() << "\""
+                          << " for player id " << m_ID;
+        }
     }
     m_socket.close();
 }
@@ -100,8 +110,9 @@ bool PlayerConnection::IsLocalConnection() const
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
-void PlayerConnection::SendMessage(const Message& message)
-{ WriteMessage(m_socket, message); }
+bool PlayerConnection::SendMessage(const Message& message) {
+    return SyncWriteMessage(message);
+}
 
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
                                        const std::string& client_version_string)
@@ -194,6 +205,7 @@ namespace {
         case Message::END_GAME:                 return "End Game";
         case Message::MODERATOR_ACTION:         return "Moderator Action";
         case Message::SHUT_DOWN_SERVER:         return "Shut Down Server";
+        case Message::AI_END_GAME_ACK:          return "Acknowledge Shut Down Server";
         case Message::REQUEST_SAVE_PREVIEWS:    return "Request save previews";
         case Message::REQUEST_COMBAT_LOGS:      return "Request combat logs";
         default:                                return "Unknown Type";
@@ -207,9 +219,12 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
     if (error) {
         if (error == boost::asio::error::eof ||
             error == boost::asio::error::connection_reset) {
+            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): "
+                          << "error #" << error.value() << " \"" << error.message() << "\"";
             EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
         } else {
-            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): error \"" << error << "\"";
+            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): "
+                          << "error #" << error.value() << " \"" << error.message() << "\"";
         }
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
@@ -247,16 +262,22 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         // mask the problem.  For now, this is sufficient, since rapid
         // connects and disconnects are not a priority.
         if (m_new_connection) {
+            ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
+                          << "new connection error #" << error.value() << " \""
+                          << error.message() << "\"" << " waiting for 0.5s";
             // wait half a second if the first data read is an error; we
             // probably just need more setup time
-            boost::this_thread::sleep_for(boost::chrono::milliseconds(500));
+            ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
+                          << "new connection error #" << error.value() << " \""
+                          << error.message() << "\"" << " waiting for 0.5s";
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
         } else {
             if (error == boost::asio::error::eof ||
                 error == boost::asio::error::connection_reset) {
                 EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
             } else {
                 ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
-                              << "error \"" << error << "\"";
+                              << "error #" << error.value() << " \"" << error.message() << "\"";
             }
         }
     } else {
@@ -281,6 +302,32 @@ void PlayerConnection::AsyncReadMessage() {
                                         shared_from_this(),
                                         boost::asio::placeholders::error,
                                         boost::asio::placeholders::bytes_transferred));
+}
+
+bool PlayerConnection::SyncWriteMessage(const Message& message) {
+    // Synchronously write and asynchronously signal the errors.  This prevents PlayerConnections
+    // being removed from the list while iterating to transmit to multiple receivers.
+    Message::HeaderBuffer header_buf;
+    HeaderToBuffer(message, header_buf);
+    std::vector<boost::asio::const_buffer> buffers;
+    buffers.push_back(boost::asio::buffer(header_buf));
+    buffers.push_back(boost::asio::buffer(message.Data(), message.Size()));
+
+    boost::system::error_code error;
+    boost::asio::write(m_socket, buffers, error);
+
+    if (error) {
+        ErrorLogger() << "PlayerConnection::WriteMessage(): player id = " << m_ID
+                      << " error #" << error.value() << " \"" << error.message();
+        boost::asio::high_resolution_timer t(m_service);
+        t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, this, error, boost::asio::placeholders::error));
+    }
+
+    return (!error);
+}
+
+void PlayerConnection::AsyncErrorHandler(boost::system::error_code handled_error, boost::system::error_code error) {
+    EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -393,34 +440,35 @@ bool ServerNetworking::ModeratorsInGame() const {
     return false;
 }
 
-void ServerNetworking::SendMessage(const Message& message,
+bool ServerNetworking::SendMessage(const Message& message,
                                    PlayerConnectionPtr player_connection)
 {
-    player_connection->SendMessage(message);
+    return player_connection->SendMessage(message);
 }
 
-void ServerNetworking::SendMessage(const Message& message) {
+bool ServerNetworking::SendMessage(const Message& message) {
     if (message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID) {
         // if recipient is INVALID_PLAYER_ID send message to all players
         for (ServerNetworking::const_established_iterator player_it = established_begin();
             player_it != established_end(); ++player_it)
         {
-            (*player_it)->SendMessage(message);
+            return (*player_it)->SendMessage(message);
         }
     } else {
         // send message to single player
         established_iterator it = GetPlayer(message.ReceivingPlayer());
         if (it == established_end()) {
             ErrorLogger() << "ServerNetworking::SendMessage couldn't find player with id " << message.ReceivingPlayer() << " to disconnect.  aborting";
-            return;
+            return false;
         }
         PlayerConnectionPtr player = *it;
         if (player->PlayerID() != message.ReceivingPlayer()) {
             ErrorLogger() << "ServerNetworking::SendMessage got PlayerConnectionPtr with inconsistent player id (" << message.ReceivingPlayer() << ") to what was requrested (" << message.ReceivingPlayer() << ")";
-            return;
+            return false;
         }
-        player->SendMessage(message);
+        return player->SendMessage(message);
     }
+    return false;
 }
 
 void ServerNetworking::Disconnect(int id) {

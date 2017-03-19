@@ -134,7 +134,6 @@ public:
 
     /** \name Mutators */ //@{
     void    operator()();               ///< external interface to Run()
-    void    Exit(int code);             ///< does basic clean-up, then calls exit(); callable from anywhere in user code via GetApp()
 
     /** Returns the galaxy setup data used for the current game */
     GalaxySetupData&    GetGalaxySetupData() { return m_galaxy_setup_data; }
@@ -285,6 +284,9 @@ private:
     /** Called by ServerNetworking when a player's TCP connection is closed*/
     void    PlayerDisconnected(PlayerConnectionPtr player_connection);
 
+    /** Handle shutdown timeout by killing all ais. */
+    void ShutdownTimedoutHandler(boost::system::error_code error);
+
     /** Called when the host player has disconnected.  Select a new host player*/
     void    SelectNewHost();
 
@@ -328,6 +330,7 @@ private:
     friend struct WaitingForTurnEndIdle;
     friend struct WaitingForSaveData;
     friend struct ProcessingTurn;
+    friend struct ShuttingDownServer;
 };
 
 // template implementations

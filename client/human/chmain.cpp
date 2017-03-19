@@ -286,7 +286,6 @@ int mainSetupAndRun() {
 
     } catch (const HumanClientApp::CleanQuit&) {
         // do nothing
-        std::cout << "mainSetupAndRun caught CleanQuit" << std::endl;
     }
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
     catch (const std::invalid_argument& e) {
@@ -308,6 +307,7 @@ int mainSetupAndRun() {
     }
 #endif
 
+    DebugLogger() << "Human client main exited cleanly.";
     return 0;
 }
 
