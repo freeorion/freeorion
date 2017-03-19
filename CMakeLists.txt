@@ -91,33 +91,38 @@ add_compile_options(
     $<$<CXX_COMPILER_ID:msvc>:/EHsc>
 )
 
-if (WIN32)
-    add_definitions(
-        -D_CRT_SECURE_NO_DEPRECATE
-        -D_SCL_SECURE_NO_DEPRECATE
-        -D_CRT_NONSTDC_NO_DEPRECATE
-        -D_UNICODE
-        -DFREEORION_WIN32
-        -D_WIN32_WINNT=0x0501
-    )
-    if (MSVC)
-        set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-        set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
-    endif ()
-elseif (APPLE)
-    add_definitions(-DFREEORION_MACOSX)
-elseif (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    add_definitions(
-        -DFREEORION_LINUX
-        -DENABLE_BINRELOC
-    )
-elseif (CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
-    add_definitions(
-        -DFREEORION_FREEBSD
-        -DENABLE_BINRELOC
-    )
-else ()
-    message(FATAL_ERROR "Unknown platform type! Your setup is not a supported platform for FreeOrion.")
+set_property(DIRECTORY APPEND
+    PROPERTY COMPILE_DEFINITIONS
+        # Set minimum Windows target version to WindowsXP
+        # https://msdn.microsoft.com/en-us/library/aa383745.aspx
+        $<$<PLATFORM_ID:Windows>:_WIN32_WINNT=_WIN32_WINNT_WINXP>
+        # Default to unicode variants when using Win32 API
+        # https://msdn.microsoft.com/en-us/library/dybsewaf.aspx
+        $<$<PLATFORM_ID:Windows>:_UNICODE>
+        # Disable "'<func>' was declared deprecated" warning
+        # https://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
+        $<$<PLATFORM_ID:Windows>:_CRT_SECURE_NO_WARNINGS>
+        # Disable '<func>': Function call with parameters that may be unsafe" warning
+        # https://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
+        $<$<PLATFORM_ID:Windows>:_SCL_SECURE_NO_WARNINGS>
+        # Disable '<func>': The POSIX name for this item is deprecated." warning
+        # https://msdn.microsoft.com/en-us/library/ttcz0bys.aspx
+        $<$<PLATFORM_ID:Windows>:_CRT_NONSTDC_NO_WARNINGS>
+
+        # Define platform specific macros
+        $<$<PLATFORM_ID:Windows>:FREEORION_WIN32>
+        $<$<PLATFORM_ID:Darwin>:FREEORION_MACOSX>
+        $<$<PLATFORM_ID:Linux>:FREEORION_LINUX>
+        $<$<PLATFORM_ID:FreeBSD>:FREEORION_FREEBSD>
+)
+
+if (WIN32 AND MSVC)
+    set (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+    set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+endif ()
+
+if (UNIX AND NOT APPLE)
+    add_definitions(-DENABLE_BINRELOC)
 endif ()
 
 
