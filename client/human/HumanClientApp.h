@@ -65,6 +65,9 @@ public:
      */
     void                UpdateCombatLogManager();
 
+    /** Update the logging system thresholds in the other processes if hosting. */
+    void                HandleLoggerUpdate();
+
     void                ResetToIntro();
     void                ExitApp();
     void                ResetClientData();

@@ -370,6 +370,14 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
+    case Message::LOGGER_CONFIG: {
+         std::set<std::tuple<std::string, std::string, LogLevel>> options;
+         ExtractLoggerConfigMessageData(msg, options);
+
+         SetLoggerThresholds(options);
+         break;
+    }
+
     default: {
         ErrorLogger() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
         break;

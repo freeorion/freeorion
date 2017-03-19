@@ -884,6 +884,23 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     }
 }
 
+void HumanClientApp::HandleLoggerUpdate(){
+    // Update the logger threshold from the OptionsDB
+    UpdateLoggerThresholdsFromOptionsDB();
+
+    // If not host then done.
+    if (!m_networking->PlayerIsHost(Networking().PlayerID()))
+        return;
+
+    // Host updates the server
+    const auto exec_loggers = LoggerExecutableOptionsLabelsAndLevels();
+    auto sources = LoggerSourceOptionsLabelsAndLevels();
+    for (const auto& exec_logger : exec_loggers)
+        sources.insert(exec_logger);
+
+    m_networking->SendMessage(LoggerConfigMessage(PlayerID(), sources));
+}
+
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     if (!Fullscreen()) {
         GetOptionsDB().Set<int>("app-left-windowed", Value(w));

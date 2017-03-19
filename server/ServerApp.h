@@ -277,6 +277,9 @@ private:
       * cleanly shut down this server process. */
     void    HandleShutdownMessage(const Message& msg, PlayerConnectionPtr player_connection);
 
+    /** Checks validity of logger config message and then update logger and loggers of all AIs. */
+    void    HandleLoggerConfig(const Message& msg, PlayerConnectionPtr player_connection);
+
     /** When Messages arrive from connections that are not established players,
       * they arrive via a call to this function*/
     void    HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection);
