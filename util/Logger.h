@@ -8,6 +8,8 @@
 #include <boost/log/sources/global_logger_storage.hpp>
 
 #include <string>
+#include <set>
+#include <tuple>
 
 #include "Export.h"
 
@@ -141,9 +143,6 @@ FO_COMMON_API void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, cons
 // Create the default logger
 CreateThreadedLogger();
 
-/** Sets the \p threshold of \p source.  \p source == "" is the default logger.*/
-FO_COMMON_API void SetLoggerThreshold(const std::string& source, LogLevel threshold);
-
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_severity, "Severity", LogLevel);
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_channel, "Channel", std::string)
 BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_filename, "SrcFilename", std::string);
@@ -166,6 +165,20 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 
 #define ErrorLogger(name) FO_LOGGER(name, LogLevel::error)
 
+
+/** Sets the \p threshold of \p source.  \p source == "" is the default logger.*/
+FO_COMMON_API void SetLoggerThreshold(const std::string& source, LogLevel threshold);
+
+FO_COMMON_API void UpdateLoggerThresholdsFromOptionsDB();
+
+/** Return the option names, labels and levels for all executables from OptionsDB. */
+FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerExecutableOptionsLabelsAndLevels();
+
+/** Return the option names, labels and levels for all sources/channels from OptionsDB. */
+FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerSourceOptionsLabelsAndLevels();
+
+/** Sets the logger thresholds from a list of options, labels and thresholds. */
+FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>&);
 
 extern int g_indent;
 

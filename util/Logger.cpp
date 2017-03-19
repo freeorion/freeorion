@@ -251,3 +251,73 @@ void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
     f_min_channel_severity[source] = threshold;
     logging::core::get()->set_filter(f_min_channel_severity);
 }
+
+
+void UpdateLoggerThresholdsFromOptionsDB() {
+    SetLoggerThresholds(LoggerExecutableOptionsLabelsAndLevels());
+    SetLoggerThresholds(LoggerSourceOptionsLabelsAndLevels());
+}
+
+namespace {
+
+    /** Returns the list of full option names, logger names and thresholds for loggers in
+        OptionsDB will \p prefix using \p prefix_regex.*/
+    std::set<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndLevels(
+        const std::string prefix, const std::regex& prefix_regex) {
+        // Get a list of all of the potential loggers
+        std::set<std::string> loggers;
+        GetOptionsDB().FindOptions(loggers, prefix, true);
+
+        std::set<std::tuple<std::string, std::string, LogLevel>> retval;
+        for (const auto& full_option : loggers) {
+            // Find the option name
+            std::smatch match;
+            std::regex_search(full_option, match, prefix_regex);
+            if (match.empty()) {
+                ErrorLogger() << "Unable to find a logger name from option name \"" << full_option << "\"";
+                continue;
+            }
+            const auto& option_name = match[1];
+
+            // Add it to options db and get the option value
+            const auto option_value = AddLoggerToOptionsDB(full_option);
+
+            // Add to return value
+            retval.insert(std::make_tuple(full_option, option_name, option_value));
+
+            DebugLogger() << "Found " << full_option << ",  name = " << option_name << " value = " << option_value;
+        }
+
+        return retval;
+    }
+}
+
+/** Return the option names, labels and levels for all executables from OptionsDB. */
+std::set<std::tuple<std::string, std::string, LogLevel>> LoggerExecutableOptionsLabelsAndLevels()
+{ return LoggerOptionsLabelsAndLevels(exec_option_name_prefix, exec_name_regex); }
+
+/** Return the option names, labels and levels for all sources/channels from OptionsDB. */
+std::set<std::tuple<std::string, std::string, LogLevel>> LoggerSourceOptionsLabelsAndLevels()
+{ return LoggerOptionsLabelsAndLevels(source_option_name_prefix, source_name_regex); }
+
+/** Sets the logger thresholds from a list of options, labels and thresholds. */
+void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& fulloption_name_and_levels) {
+    for (const auto& fulloption_name_and_level : fulloption_name_and_levels) {
+        const auto& full_option = std::get<0>(fulloption_name_and_level);
+        const auto& name = std::get<1>(fulloption_name_and_level);
+        const auto& value = std::get<2>(fulloption_name_and_level);
+
+
+        // Update the option in OptionsDB if it already exists.
+        if (GetOptionsDB().OptionExists(full_option))
+            GetOptionsDB().Set(full_option, to_string(value));
+
+        // Set the logger threshold.
+
+        std::smatch match;
+        std::regex_search(full_option, match, exec_name_regex);
+        bool is_my_root_logger = (!match.empty() && match[1] == f_root_logger_name);
+
+        SetLoggerThreshold((is_my_root_logger ? "" : name), value);
+    }
+}
