@@ -102,7 +102,7 @@
 */
 
 // The logging levels.
-enum class LogLevel {debug, info, warn, error, internal_logger};
+enum class LogLevel {debug, info, warn, error};
 
 constexpr LogLevel max_LogLevel = LogLevel::error;
 constexpr LogLevel min_LogLevel = LogLevel::debug;

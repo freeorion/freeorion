@@ -35,13 +35,19 @@ namespace sinks = boost::log::sinks;
 
 
 namespace {
+    // Create the log logger for logging of logger and logging related events.
+    // Manually created to prevent a recursive call during initialization.
+    BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                                \
+        FO_GLOBAL_LOGGER_NAME(log), NamedThreadedLogger)                \
+    {                                                                   \
+        return NamedThreadedLogger(                                     \
+            (boost::log::keywords::severity = LogLevel::debug),         \
+            (boost::log::keywords::channel = "log"));                   \
+    }
 
-    // internal_logger is intentionally omitted from all converters.  It is only used internally.
-    // Hence the name.
-#define InternalLogger(name) FO_LOGGER(name, LogLevel::internal_logger)
 
     // Compile time constant pointers to constant char arrays.
-    constexpr const char* const log_level_names[] = {"debug", "info", "warn", "error", "log"};
+    constexpr const char* const log_level_names[] = {"debug", "info", "warn", "error"};
 
     constexpr LogLevel default_sink_level = LogLevel::debug;
     constexpr LogLevel default_source_level = LogLevel::info;
@@ -75,7 +81,7 @@ namespace {
         bool is_a_channel_logger = !cmatch.empty();
 
         if (!is_an_exec_root_logger && !is_a_channel_logger)
-            InternalLogger() << "Adding a logger to OptionsDB with an unknown prefix. " << full_option_name;
+            WarnLogger(log) << "Adding a logger to OptionsDB with an unknown prefix. " << full_option_name;
 
         // Find the appropriate defaults.
         auto default_level = to_string(default_source_level);
@@ -117,8 +123,8 @@ LogLevel to_LogLevel(const std::string& text) {
     if (text == "1")    return LogLevel::info;
     if (text == "0")    return LogLevel::debug;
 
-    WarnLogger() << "\"" << text <<"\" is not a valid log level. "
-                 << "Valid levels are error, warn, info, and debug";
+    WarnLogger(log) << "\"" << text <<"\" is not a valid log level. "
+                    << "Valid levels are error, warn, info, and debug";
 
     return LogLevel::debug;
 }
@@ -193,6 +199,9 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
+    // Initialize the internal logger
+    RegisterLoggerWithOptionsDB(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
+
     // Setup the OptionsDB options for the file sink.
     LogLevel options_db_log_threshold = AddLoggerToOptionsDB(
         exec_option_name_prefix + f_root_logger_name);
@@ -202,15 +211,13 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
 
     // Print setup message.
     auto date_time = std::time(nullptr);
-    InternalLogger() << "Logger initialized at " << std::ctime(&date_time);
+    InfoLogger(log) << "Logger initialized at " << std::ctime(&date_time);
     InfoLogger() << FreeOrionVersionString();
 }
 
 void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, const std::string& name) {
     if (name.empty())
         return;
-
-    InternalLogger() << "Adding log source \"" << name << "\".";
 
     // Create a sink frontend for formatting.
     auto sink_frontend = boost::make_shared<TextFileSinkFrontend>(f_file_sink_backend);
@@ -236,6 +243,8 @@ void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, const std::string&
 
     // Use the option.
     SetLoggerThreshold(name, options_db_log_threshold);
+
+    InfoLogger(log) << "Added log source \"" << name << "\".";
 }
 
 namespace {
@@ -244,7 +253,7 @@ namespace {
 }
 
 void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
-    InternalLogger() << "Setting \"" << (source.empty() ? "default" : source)
+    InfoLogger(log) << "Setting \"" << (source.empty() ? "default" : source)
                      << "\" logger threshold to \"" << threshold << "\".";
 
     logging::core::get()->reset_filter();
@@ -274,7 +283,7 @@ namespace {
             std::smatch match;
             std::regex_search(full_option, match, prefix_regex);
             if (match.empty()) {
-                ErrorLogger() << "Unable to find a logger name from option name \"" << full_option << "\"";
+                ErrorLogger(log) << "Unable to find a logger name from option name \"" << full_option << "\"";
                 continue;
             }
             const auto& option_name = match[1];
@@ -285,7 +294,7 @@ namespace {
             // Add to return value
             retval.insert(std::make_tuple(full_option, option_name, option_value));
 
-            DebugLogger() << "Found " << full_option << ",  name = " << option_name << " value = " << option_value;
+            DebugLogger(log) << "Found " << full_option << ",  name = " << option_name << " value = " << option_value;
         }
 
         return retval;
