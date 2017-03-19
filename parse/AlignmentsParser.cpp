@@ -89,7 +89,7 @@ namespace parse {
         g_effects_groups = &effects_groups;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/alignments")) {
-            result &= detail::parse_file<rules, std::vector<Alignment> >(file, alignments_);
+            result &= detail::parse_file<rules, std::vector<Alignment>>(file, alignments_);
         }
 
         return result;

@@ -26,132 +26,132 @@ namespace parse {
             lowest_cost_enqueued_tech
                 =   tok.LowestCostEnqueuedTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             highest_cost_enqueued_tech
                 = tok.HighestCostEnqueuedTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             top_priority_enqueued_tech
                 = tok.TopPriorityEnqueuedTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             most_spent_enqueued_tech
                 = tok.MostSpentEnqueuedTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             random_enqueued_tech
                 = tok.RandomEnqueuedTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             lowest_cost_researchable_tech
                 = tok.LowestCostResearchableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             highest_cost_researchable_tech
                 = tok.HighestCostResearchableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             top_priority_researchable_tech
                 = tok.TopPriorityResearchableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             most_spent_researchable_tech
                 = tok.MostSpentResearchableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             random_researchable_tech
                 = tok.RandomResearchableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             random_complete_tech
                 =   tok.RandomCompleteTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             lowest_cost_transferrable_tech
                 =   tok.LowestCostTransferrableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                 >   detail::label(Empire_token)  > simple_int [ _c = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             highest_cost_transferrable_tech
                 =   tok.HighestCostTransferrableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                 >   detail::label(Empire_token)  > simple_int [ _c = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             top_priority_transferrable_tech
                 =   tok.TopPriorityTransferrableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                 >   detail::label(Empire_token)  > simple_int [ _c = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             most_spent_transferrable_tech
                 =   tok.MostSpentTransferrableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                 >   detail::label(Empire_token)  > simple_int [ _c = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             random_transferrable_tech
                 =   tok.RandomTransferrableTech_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
                 >   detail::label(Empire_token)  > simple_int [ _c = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             most_populous_species
                 =   tok.MostPopulousSpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             most_happy_species
                 = tok.MostHappySpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             least_happy_species
                 = tok.LeastHappySpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             ramdom_colonizable_species
                 = tok.RandomColonizableSpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             random_controlled_species
                 = tok.RandomControlledSpecies_ [ _a = construct<std::string>(_1) ]
                 >   detail::label(Empire_token)  > simple_int [ _b = _1 ]
-                    [ _val = new_<ValueRef::ComplexVariable<std::string> >(_a, _b, _c, _f, _d, _e) ]
+                    [ _val = new_<ValueRef::ComplexVariable<std::string>>(_a, _b, _c, _f, _d, _e) ]
                 ;
 
             start

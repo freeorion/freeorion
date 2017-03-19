@@ -198,7 +198,7 @@ struct FO_COMMON_API StealthChangeEvent : public CombatEvent {
 private:
     int bout;
 
-    std::map<int, std::vector<StealthChangeEventDetailPtr> > events;
+    std::map<int, std::vector<StealthChangeEventDetailPtr>> events;
 
     friend class boost::serialization::access;
     template <class Archive>

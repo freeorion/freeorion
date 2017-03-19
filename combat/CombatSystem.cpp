@@ -203,7 +203,7 @@ void CombatInfo::GetDestroyedObjectsToSerialize(std::set<int>& filtered_destroye
     filtered_destroyed_objects = this->destroyed_object_ids;
 }
 
-void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int> >&
+void CombatInfo::GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int>>&
                                                       filtered_destroyed_object_knowers,
                                                       int encoding_empire) const
 {
@@ -1049,7 +1049,7 @@ namespace {
                 for (int attacking_empire_id : combat_info.empire_ids) {
                     Visibility visibility = VIS_NO_VISIBILITY;
                     if (verbose_logging) DebugLogger() << "Target " << obj->Name() << " by empire = "<< attacking_empire_id;
-                    std::map<int, std::map<int, Visibility> >::const_iterator target_visible_it
+                    std::map<int, std::map<int, Visibility>>::const_iterator target_visible_it
                         = combat_info.empire_object_visibility.find(obj->Owner());
                     if (target_visible_it != combat_info.empire_object_visibility.end()) {
                         std::map<int, Visibility>::const_iterator target_attacker_visibility_it
@@ -1366,7 +1366,7 @@ namespace {
 
         // get how many fighters are initialy in each part type...
         // may be multiple hangar part types, each with different capacity (number of stored fighters)
-        std::map<std::string, std::pair<Meter*, Meter*> > part_type_fighter_hangar_capacities;
+        std::map<std::string, std::pair<Meter*, Meter*>> part_type_fighter_hangar_capacities;
 
         const ShipDesign* design = ship->Design();
         if (!design) {

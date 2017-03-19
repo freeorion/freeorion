@@ -254,26 +254,26 @@ namespace FreeOrionPython {
         ////////////////////////
         // Container Wrappers //
         ////////////////////////
-        class_<std::map<int, int> >("IntIntMap")
+        class_<std::map<int, int>>("IntIntMap")
             .def(boost::python::map_indexing_suite<std::map<int, int>, true>())
         ;
-        class_<std::map<int, double> >("IntDblMap")
+        class_<std::map<int, double>>("IntDblMap")
             .def(boost::python::map_indexing_suite<std::map<int, double>, true>())
         ;
-        class_<std::map<int, float> >("IntFltMap")
+        class_<std::map<int, float>>("IntFltMap")
             .def(boost::python::map_indexing_suite<std::map<int, float>, true>())
         ;
-        class_<std::map<Visibility,int> >("VisibilityIntMap")
+        class_<std::map<Visibility,int>>("VisibilityIntMap")
             .def(boost::python::map_indexing_suite<std::map<Visibility, int>, true>())
         ;
-        class_<std::vector<ShipSlotType> >("ShipSlotVec")
+        class_<std::vector<ShipSlotType>>("ShipSlotVec")
             .def(boost::python::vector_indexing_suite<std::vector<ShipSlotType>, true>())
         ;
-        class_<std::map<MeterType, Meter> >("MeterTypeMeterMap")
+        class_<std::map<MeterType, Meter>>("MeterTypeMeterMap")
             .def(boost::python::map_indexing_suite<std::map<MeterType, Meter>, true>())
         ;
         // typedef std::map<std::pair<MeterType, std::string>, Meter>          PartMeterMap;
-        class_<std::pair<MeterType, std::string> >("MeterTypeStringPair")
+        class_<std::pair<MeterType, std::string>>("MeterTypeStringPair")
             .add_property("meterType",  &std::pair<MeterType, std::string>::first)
             .add_property("string",     &std::pair<MeterType, std::string>::second)
         ;

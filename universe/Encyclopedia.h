@@ -33,8 +33,8 @@ struct FO_COMMON_API EncyclopediaArticle {
 
 struct FO_COMMON_API Encyclopedia {
     Encyclopedia();
-    std::map<std::string, std::vector<EncyclopediaArticle> >   articles;
-    const EncyclopediaArticle                                  empty_article;
+    std::map<std::string, std::vector<EncyclopediaArticle>> articles;
+    const EncyclopediaArticle                               empty_article;
 };
 
 FO_COMMON_API const Encyclopedia& GetEncyclopedia();

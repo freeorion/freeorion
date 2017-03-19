@@ -523,7 +523,7 @@ void ServerApp::NewMPGameInit(const MultiplayerLobbyData& multiplayer_lobby_data
     // before now because the lobby data was set up without connected/established
     // clients for the AIs.
     std::map<int, PlayerSetupData> player_id_setup_data;
-    const std::list<std::pair<int, PlayerSetupData> >& player_setup_data = multiplayer_lobby_data.m_players;
+    const std::list<std::pair<int, PlayerSetupData>>& player_setup_data = multiplayer_lobby_data.m_players;
 
     for (const std::pair<int, PlayerSetupData>& entry : player_setup_data) {
         const PlayerSetupData& psd = entry.second;
@@ -812,7 +812,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
                                std::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     // Need to determine which data in player_save_game_data should be assigned to which established player
-    std::vector<std::pair<int, int> > player_id_to_save_game_data_index;
+    std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
     ServerNetworking::const_established_iterator established_player_it = m_networking.established_begin();
 
@@ -882,7 +882,7 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     ExtractRequestCombatLogsMessageData(msg, ids);
 
     // Compose a vector of the requested ids and logs
-    std::vector<std::pair<int, const CombatLog> > logs;
+    std::vector<std::pair<int, const CombatLog>> logs;
     for (std::vector<int>::iterator it = ids.begin(); it != ids.end(); ++it) {
         boost::optional<const CombatLog&> log = GetCombatLogManager().GetLog(*it);
         if (!log) {
@@ -934,7 +934,7 @@ namespace {
     }
 
     /** Adds entry to \a player_id_to_save_game_data_index after validation. */
-    void GetSaveGameDataIndexForHumanPlayer(std::vector<std::pair<int, int> >& player_id_to_save_game_data_index,
+    void GetSaveGameDataIndexForHumanPlayer(std::vector<std::pair<int, int>>& player_id_to_save_game_data_index,
                                             const PlayerSetupData& psd, int setup_data_player_id,
                                             const std::vector<PlayerSaveGameData>& player_save_game_data,
                                             const ServerNetworking& sn)
@@ -978,7 +978,7 @@ namespace {
     }
 
     /** Adds entry to \a player_id_to_save_game_data_index after validation. */
-    void GetSaveGameDataIndexForAIPlayer(std::vector<std::pair<int, int> >& player_id_to_save_game_data_index,
+    void GetSaveGameDataIndexForAIPlayer(std::vector<std::pair<int, int>>& player_id_to_save_game_data_index,
                                          const PlayerSetupData& psd,
                                          const std::vector<PlayerSaveGameData>& player_save_game_data,
                                          const ServerNetworking& sn)
@@ -1030,9 +1030,9 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
                                std::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     // Need to determine which data in player_save_game_data should be assigned to which established player
-    std::vector<std::pair<int, int> > player_id_to_save_game_data_index;
+    std::vector<std::pair<int, int>> player_id_to_save_game_data_index;
 
-    const std::list<std::pair<int, PlayerSetupData> >& player_setup_data = lobby_data.m_players;
+    const std::list<std::pair<int, PlayerSetupData>>& player_setup_data = lobby_data.m_players;
 
     // * Multiplayer lobby data has a map from player ID to PlayerSetupData.
     // * PlayerSetupData contains an empire ID that the player will be controlling.
@@ -1070,7 +1070,7 @@ void ServerApp::LoadMPGameInit(const MultiplayerLobbyData& lobby_data,
 }
 
 void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                             const std::vector<std::pair<int, int> >& player_id_to_save_game_data_index,
+                             const std::vector<std::pair<int, int>>& player_id_to_save_game_data_index,
                              std::shared_ptr<ServerSaveGameData> server_save_game_data)
 {
     DebugLogger() << "ServerApp::LoadGameInit";
@@ -1534,7 +1534,7 @@ namespace {
         return retval;
     }
 
-    void GetEmpireFleetsAtSystem(std::map<int, std::set<int> >& empire_fleets, int system_id) {
+    void GetEmpireFleetsAtSystem(std::map<int, std::set<int>>& empire_fleets, int system_id) {
         empire_fleets.clear();
         std::shared_ptr<const System> system = GetSystem(system_id);
         if (!system)
@@ -1544,7 +1544,7 @@ namespace {
         }
     }
 
-    void GetEmpirePlanetsAtSystem(std::map<int, std::set<int> >& empire_planets, int system_id) {
+    void GetEmpirePlanetsAtSystem(std::map<int, std::set<int>>& empire_planets, int system_id) {
         empire_planets.clear();
         std::shared_ptr<const System> system = GetSystem(system_id);
         if (!system)
@@ -1685,7 +1685,7 @@ namespace {
         // native planets are treated as owned by an empire at war with all other empires
 
         // what empires have fleets here? (including monsters as id ALL_EMPIRES)
-        std::map<int, std::set<int> > empire_fleets_here;
+        std::map<int, std::set<int>> empire_fleets_here;
         GetEmpireFleetsAtSystem(empire_fleets_here, system_id);
         if (empire_fleets_here.empty())
             return false;
@@ -1712,7 +1712,7 @@ namespace {
 
         // what empires have planets here?  Unowned planets are included for
         // ALL_EMPIRES if they have population > 0
-        std::map<int, std::set<int> > empire_planets_here;
+        std::map<int, std::set<int>> empire_planets_here;
         GetEmpirePlanetsAtSystem(empire_planets_here, system_id);
         if (empire_planets_here.empty() && empire_fleets_here.size() <= 1)
             return false;
@@ -1725,7 +1725,7 @@ namespace {
         { empires_here.insert(empire_planets.first); }
 
         // what combinations of present empires are at war?
-        std::map<int, std::set<int> > empires_here_at_war;  // for each empire, what other empires here is it at war with?
+        std::map<int, std::set<int>> empires_here_at_war;  // for each empire, what other empires here is it at war with?
         for (std::set<int>::const_iterator emp1_it = empires_here.begin();
              emp1_it != empires_here.end(); ++emp1_it)
         {
@@ -1825,7 +1825,7 @@ namespace {
         // with changes from combat
         for (const CombatInfo& combat_info : combats) {
             // indexed by fleet id, which empire ids to inform that a fleet is destroyed
-            std::map<int, std::set<int> > empires_to_update_of_fleet_destruction;
+            std::map<int, std::set<int>> empires_to_update_of_fleet_destruction;
 
             // update visibilities.
             for (const Universe::EmpireObjectVisibilityMap::value_type& empire_vis : combat_info.empire_object_visibility) {
@@ -2150,7 +2150,7 @@ namespace {
       * appropriate colonization, and cleans up after colonization orders */
     void HandleColonization() {
         // collect, for each planet, what ships have been ordered to colonize it
-        std::map<int, std::map<int, std::set<int> > > planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
+        std::map<int, std::map<int, std::set<int>>> planet_empire_colonization_ship_ids; // map from planet ID to map from empire ID to set of ship IDs
 
         for (std::shared_ptr<Ship> ship : GetUniverse().Objects().FindObjects<Ship>()) {
             if (ship->Unowned())
@@ -2186,7 +2186,7 @@ namespace {
         // 2) multiple empires try to colonize a planet on the same turn
         for (std::map<int, std::map<int, std::set<int>>>::value_type& planet_colonization : planet_empire_colonization_ship_ids) {
             // can't colonize if multiple empires attempting to do so on same turn
-            std::map<int, std::set<int> >& empires_ships_colonizing = planet_colonization.second;
+            std::map<int, std::set<int>>& empires_ships_colonizing = planet_colonization.second;
             if (empires_ships_colonizing.size() != 1)
                 continue;
             int colonizing_empire_id = empires_ships_colonizing.begin()->first;
@@ -2286,7 +2286,7 @@ namespace {
     /** Determines which ships ordered to invade planets, does invasion and
       * ground combat resolution */
     void HandleInvasion() {
-        std::map<int, std::map<int, double> > planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
+        std::map<int, std::map<int, double>> planet_empire_troops;  // map from planet ID to map from empire ID to pair consisting of set of ship IDs and amount of troops empires have at planet
 
         // assemble invasion forces from each invasion ship
         for (std::shared_ptr<const Ship> ship : Objects().FindObjects<Ship>()) {

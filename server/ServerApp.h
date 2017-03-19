@@ -248,7 +248,7 @@ private:
       * about all players to send out to all other players are part of game
       * start messages. */
     void    LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_game_data,
-                         const std::vector<std::pair<int, int> >& player_id_to_save_game_data_index,
+                         const std::vector<std::pair<int, int>>& player_id_to_save_game_data_index,
                          std::shared_ptr<ServerSaveGameData> server_save_game_data);
 
     /** Calls Python universe generator script.

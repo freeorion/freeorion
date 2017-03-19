@@ -64,7 +64,7 @@ namespace {
                 ;
 
             constant
-                =   tok.double_ [ _val = new_<ValueRef::Constant<double> >(_1) ]
+                =   tok.double_ [ _val = new_<ValueRef::Constant<double>>(_1) ]
                 ;
         }
     };
@@ -93,23 +93,23 @@ namespace {
             const parse::value_ref_rule<double>& simple = double_simple();
 
             int_constant_cast
-                =   tok.int_ [ _val = new_<ValueRef::Constant<double> >(static_cast_<double>(_1)) ]
+                =   tok.int_ [ _val = new_<ValueRef::Constant<double>>(static_cast_<double>(_1)) ]
                 ;
 
             int_bound_variable_cast
-                =   int_bound_variable() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                =   int_bound_variable() [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
                 ;
 
             int_free_variable_cast
-                =   int_free_variable() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                =   int_free_variable() [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
                 ;
 
             int_statistic_cast
-                =   int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                =   int_var_statistic() [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
                 ;
 
             int_complex_variable_cast
-                =   int_var_complex() [ _val = new_<ValueRef::StaticCast<int, double> >(_1) ]
+                =   int_var_complex() [ _val = new_<ValueRef::StaticCast<int, double>>(_1) ]
                 ;
 
             statistic_value_ref_expr

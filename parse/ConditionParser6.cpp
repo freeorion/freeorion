@@ -106,7 +106,7 @@ namespace {
                 ;
 
             object_type
-                =   parse::detail::universe_object_type_rules().enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType> >(_1)) ]
+                =   parse::detail::universe_object_type_rules().enum_expr [ _val = new_<Condition::Type>(new_<ValueRef::Constant<UniverseObjectType>>(_1)) ]
                 |   (
                         tok.ObjectType_
                     >   parse::detail::label(Type_token) > parse::detail::universe_object_type_rules().expr [ _val = new_<Condition::Type>(_1) ]
@@ -154,17 +154,17 @@ namespace {
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<ValueRef::ValueRefBase<std::string>*> >
+            qi::locals<std::vector<ValueRef::ValueRefBase<std::string>*>>
         > building_rule;
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetType>*> >
+            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetType>*>>
         > planet_type_rule;
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetSize>*> >
+            qi::locals<std::vector<ValueRef::ValueRefBase<PlanetSize>*>>
         > planet_size_rule;
 
         typedef parse::detail::rule<

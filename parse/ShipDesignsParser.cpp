@@ -126,7 +126,7 @@ namespace {
 
 namespace parse {
     bool ship_designs(const boost::filesystem::path& path, std::map<std::string, ShipDesign*>& designs)
-    { return detail::parse_file<rules, std::map<std::string, ShipDesign*> >(path, designs); }
+    { return detail::parse_file<rules, std::map<std::string, ShipDesign*>>(path, designs); }
 
     bool ship_designs(std::map<std::string, ShipDesign*>& designs) {
         bool result = true;
@@ -142,7 +142,7 @@ namespace parse {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/monster_designs")) {
-            result &= detail::parse_file<rules, std::map<std::string, ShipDesign*> >(file, designs);
+            result &= detail::parse_file<rules, std::map<std::string, ShipDesign*>>(file, designs);
         }
 
         return result;

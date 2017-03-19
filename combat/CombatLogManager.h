@@ -53,7 +53,7 @@ public:
     boost::optional<const CombatLog&>  GetLog(int log_id) const;
 
     /** Return the ids of all incomplete logs or boost::none if they are all complete.*/
-    boost::optional<std::vector<int> > IncompleteLogIDs() const;
+    boost::optional<std::vector<int>> IncompleteLogIDs() const;
     //@}
 
     /** \name Mutators */ //@{

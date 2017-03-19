@@ -131,7 +131,7 @@ void Universe::serialize(Archive& ar, const unsigned int version)
         DebugLogger() << "Universe::serialize : updating empires' latest known object destruction states";
         // update known destroyed objects state in each empire's latest known objects
         for (std::map<int, ObjectMap>::value_type& elko : m_empire_latest_known_objects) {
-            std::map< int, std::set< int > >::iterator destroyed_ids_it =
+            std::map<int, std::set<int>>::iterator destroyed_ids_it =
                 m_empire_known_destroyed_object_ids.find(elko.first);
             if (destroyed_ids_it != m_empire_known_destroyed_object_ids.end())
                 elko.second.UpdateCurrentDestroyedObjects(destroyed_ids_it->second);
@@ -278,11 +278,11 @@ void SpeciesManager::serialize(Archive& ar, const unsigned int version)
     // species: their homeworlds in the current game, and their opinions of
     // empires and eachother
 
-    std::map<std::string, std::set<int> >                   species_homeworlds;
-    std::map<std::string, std::map<int, float> >            empire_opinions;
-    std::map<std::string, std::map<std::string, float> >    other_species_opinions;
-    std::map<std::string, std::map<int, float> >            species_object_populations;
-    std::map<std::string, std::map<std::string, int> >      species_ships_destroyed;
+    std::map<std::string, std::set<int>>                species_homeworlds;
+    std::map<std::string, std::map<int, float>>         empire_opinions;
+    std::map<std::string, std::map<std::string, float>> other_species_opinions;
+    std::map<std::string, std::map<int, float>>         species_object_populations;
+    std::map<std::string, std::map<std::string, int>>   species_ships_destroyed;
 
     if (Archive::is_saving::value) {
         species_homeworlds =        GetSpeciesHomeworldsMap(GetUniverse().EncodingEmpire());

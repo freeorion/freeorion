@@ -76,15 +76,15 @@ BOOST_PYTHON_MODULE(freeOrionAIInterface)
     ////////////////////
     // STL Containers //
     ////////////////////
-    class_<std::vector<int> >("IntVec")
-        .def(vector_indexing_suite<std::vector<int> >())
+    class_<std::vector<int>>("IntVec")
+        .def(vector_indexing_suite<std::vector<int>>())
     ;
-    class_<std::vector<std::string> >("StringVec")
-        .def(vector_indexing_suite<std::vector<std::string> >())
+    class_<std::vector<std::string>>("StringVec")
+        .def(vector_indexing_suite<std::vector<std::string>>())
     ;
 
-    class_<std::map<int, bool> >("IntBoolMap")
-        .def(map_indexing_suite<std::map<int, bool> >())
+    class_<std::map<int, bool>>("IntBoolMap")
+        .def(map_indexing_suite<std::map<int, bool>>())
     ;
 
     FreeOrionPython::SetWrapper<int>::Wrap("IntSet");

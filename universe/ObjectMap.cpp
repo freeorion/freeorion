@@ -303,12 +303,12 @@ void ObjectMap::UpdateCurrentDestroyedObjects(const std::set<int>& destroyed_obj
 
 void ObjectMap::AuditContainment(const std::set<int>& destroyed_object_ids) {
     // determine all objects that some other object thinks contains them
-    std::map<int, std::set<int> >   contained_objs;
-    std::map<int, std::set<int> >   contained_planets;
-    std::map<int, std::set<int> >   contained_buildings;
-    std::map<int, std::set<int> >   contained_fleets;
-    std::map<int, std::set<int> >   contained_ships;
-    std::map<int, std::set<int> >   contained_fields;
+    std::map<int, std::set<int>>    contained_objs;
+    std::map<int, std::set<int>>    contained_planets;
+    std::map<int, std::set<int>>    contained_buildings;
+    std::map<int, std::set<int>>    contained_fleets;
+    std::map<int, std::set<int>>    contained_ships;
+    std::map<int, std::set<int>>    contained_fields;
 
     for (std::shared_ptr<const UniverseObject> contained : *this) {
         if (destroyed_object_ids.find(contained->ID()) != destroyed_object_ids.end())
@@ -402,7 +402,7 @@ void ObjectMap::EraseFromMap(std::map<int, std::shared_ptr<T>>& map, int id)
 { map.erase(id); }
 
 template<class T>
-void ObjectMap::ClearMap(std::map<int, std::shared_ptr<T> >& map)
+void ObjectMap::ClearMap(std::map<int, std::shared_ptr<T>>& map)
 { map.clear(); }
 
 template<class T>

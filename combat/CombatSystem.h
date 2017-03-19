@@ -41,7 +41,7 @@ public:
     std::map<int, ObjectMap>            empire_known_objects;       ///< each empire's latest known state of objects relevant to combat
     std::set<int>                       damaged_object_ids;         ///< ids of objects damaged during this battle
     std::set<int>                       destroyed_object_ids;       ///< ids of objects destroyed during this battle
-    std::map<int, std::set<int> >       destroyed_object_knowers;   ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
+    std::map<int, std::set<int>>        destroyed_object_knowers;   ///< indexed by empire ID, the set of ids of objects the empire knows were destroyed during the combat
     Universe::EmpireObjectVisibilityMap empire_object_visibility;   ///< indexed by empire id and object id, the visibility level the empire has of each object.  may be increased during battle
     std::vector<CombatEventPtr>         combat_events;              ///< list of combat attack events that occur in combat
 
@@ -51,7 +51,7 @@ private:
     void    GetEmpireKnownObjectsToSerialize(    std::map<int, ObjectMap>&              filtered_empire_known_objects,      int encoding_empire) const;
     void    GetDamagedObjectsToSerialize(        std::set<int>&                         filtered_damaged_objects,           int encoding_empire) const;
     void    GetDestroyedObjectsToSerialize(      std::set<int>&                         filtered_destroyed_objects,         int encoding_empire) const;
-    void    GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int> >&         filtered_destroyed_object_knowers,  int encoding_empire) const;
+    void    GetDestroyedObjectKnowersToSerialize(std::map<int, std::set<int>>&          filtered_destroyed_object_knowers,  int encoding_empire) const;
     void    GetEmpireObjectVisibilityToSerialize(Universe::EmpireObjectVisibilityMap&   filtered_empire_object_visibility,  int encoding_empire) const;
     void    GetCombatEventsToSerialize(          std::vector<CombatEventPtr>&           filtered_combat_events,             int encoding_empire) const;
 
@@ -76,7 +76,7 @@ void CombatInfo::save(Archive & ar, const unsigned int version) const
     std::map<int, ObjectMap>            filtered_empire_known_objects;
     std::set<int>                       filtered_damaged_object_ids;
     std::set<int>                       filtered_destroyed_object_ids;
-    std::map<int, std::set<int> >       filtered_destroyed_object_knowers;
+    std::map<int, std::set<int>>        filtered_destroyed_object_knowers;
     Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
     std::vector<CombatEventPtr>         filtered_combat_events;
 
@@ -109,7 +109,7 @@ void CombatInfo::load(Archive & ar, const unsigned int version)
     std::map<int, ObjectMap>            filtered_empire_known_objects;
     std::set<int>                       filtered_damaged_object_ids;
     std::set<int>                       filtered_destroyed_object_ids;
-    std::map<int, std::set<int> >       filtered_destroyed_object_knowers;
+    std::map<int, std::set<int>>        filtered_destroyed_object_knowers;
     Universe::EmpireObjectVisibilityMap filtered_empire_object_visibility;
     std::vector<CombatEventPtr>         filtered_combat_events;
 

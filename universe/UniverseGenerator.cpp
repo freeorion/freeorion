@@ -382,7 +382,7 @@ namespace {
 namespace {
     /** Used by GenerateStarlanes.  Determines if two systems are connected by
       * maxLaneJumps or less edges on graph. */
-    bool ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int> >& laneSetArray) {
+    bool ConnectedWithin(int system1, int system2, int maxLaneJumps, std::vector<std::set<int>>& laneSetArray) {
         // list of indices of systems that are accessible from previously visited systems.
         // when a new system is found to be accessible, it is added to the back of the
         // list.  the list is iterated through from front to back to find systems
@@ -462,7 +462,7 @@ namespace {
 
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
-    void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int> >& laneSetArray,
+    void CullAngularlyTooCloseLanes(double maxLaneUVectDotProd, std::vector<std::set<int>>& laneSetArray,
                                     std::vector<std::shared_ptr<System>> &systems)
     {
         // start and end systems of a new lane being considered, and end points of lanes that already exist with that
@@ -486,8 +486,8 @@ namespace {
         // iterators to go through sets of lanes in array
         std::set<int>::iterator laneSetIter1, laneSetIter2, laneSetEnd;
 
-        std::set<std::pair<int, int> > lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
-        std::set<std::pair<int, int> >::iterator lanesToRemoveIter, lanesToRemoveEnd;
+        std::set<std::pair<int, int>> lanesToRemoveSet;  // start and end stars of lanes to be removed in final step...
+        std::set<std::pair<int, int>>::iterator lanesToRemoveIter, lanesToRemoveEnd;
         std::pair<int, int> lane1, lane2;
 
         int curNumLanes;
@@ -634,7 +634,7 @@ namespace {
 
     /** Removes lanes from passed graph that are angularly too close to
       * each other. */
-    void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int> >& laneSetArray,
+    void CullTooLongLanes(double maxLaneLength, std::vector<std::set<int>>& laneSetArray,
                           std::vector<std::shared_ptr<System>> &systems)
     {
         // start and end systems of a new lane being considered, and end points of lanes that already exist with that start
@@ -648,10 +648,10 @@ namespace {
         std::set<int>::iterator laneSetIter, laneSetEnd;
 
         // map, indexed by lane length, of start and end stars of lanes to be removed
-        std::multimap<double, std::pair<int, int>, std::greater<double> > lanesToRemoveMap;
-        std::multimap<double, std::pair<int, int>, std::greater<double> >::iterator lanesToRemoveIter, lanesToRemoveEnd;
+        std::multimap<double, std::pair<int, int>, std::greater<double>> lanesToRemoveMap;
+        std::multimap<double, std::pair<int, int>, std::greater<double>>::iterator lanesToRemoveIter, lanesToRemoveEnd;
         std::pair<int, int> lane;
-        typedef std::pair<double, std::pair<int, int> > MapInsertableTypeQQ;
+        typedef std::pair<double, std::pair<int, int>> MapInsertableTypeQQ;
 
         int num_systems = systems.size();
         // make sure data is consistent
@@ -731,10 +731,10 @@ void GenerateStarlanes(int max_jumps_between_systems, int max_starlane_length) {
     std::vector<int> triVerts;  // indices of stars that form vertices of a triangle
 
     // array of set to store final, included starlanes for each star
-    std::vector<std::set<int> > laneSetArray;
+    std::vector<std::set<int>> laneSetArray;
 
     // array of set to store possible starlanes for each star, as extracted form triangulation
-    std::vector<std::set<int> > potential_lane_set_array;
+    std::vector<std::set<int>> potential_lane_set_array;
 
     // iterators for traversing lists of starlanes
     std::set<int>::iterator laneSetIter, laneSetEnd, laneSetIter2, laneSetEnd2;

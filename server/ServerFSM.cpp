@@ -96,7 +96,7 @@ namespace {
         return "";
     }
 
-    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData> >& psd) {
+    void LogPlayerSetupData(const std::list<std::pair<int, PlayerSetupData>>& psd) {
         DebugLogger() << "PlayerSetupData:";
         for (const std::pair<int, PlayerSetupData>& entry : psd) {
             std::stringstream ss;
@@ -117,7 +117,7 @@ namespace {
     }
 
     std::string GenerateEmpireName(const std::string& player_name,
-                                   std::list<std::pair<int, PlayerSetupData> >& players)
+                                   std::list<std::pair<int, PlayerSetupData>>& players)
     {
         // load default empire names
         std::vector<std::string> empire_names = UserStringList("EMPIRE_NAMES");
@@ -398,7 +398,7 @@ sc::result MPLobby::react(const Disconnection& d) {
     // if player is in lobby, need to remove it
     int id = player_connection->PlayerID();
     bool player_was_in_lobby = false;
-    for (std::list<std::pair<int, PlayerSetupData> >::iterator it = m_lobby_data->m_players.begin();
+    for (std::list<std::pair<int, PlayerSetupData>>::iterator it = m_lobby_data->m_players.begin();
          it != m_lobby_data->m_players.end(); ++it)
     {
         if (it->first == id) {
@@ -428,7 +428,7 @@ sc::result MPLobby::react(const Disconnection& d) {
 }
 
 namespace {
-    GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData> >& psd) {
+    GG::Clr GetUnusedEmpireColour(const std::list<std::pair<int, PlayerSetupData>>& psd) {
         //DebugLogger() << "finding colours for empire of player " << player_name;
         GG::Clr empire_colour = GG::Clr(192, 192, 192, 255);
         for (const GG::Clr& possible_colour : EmpireColors()) {

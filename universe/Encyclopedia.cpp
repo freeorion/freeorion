@@ -23,7 +23,7 @@ Encyclopedia::Encyclopedia() :
 
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "(Category) Encyclopedia Articles:";
-        for (std::map<std::string, std::vector<EncyclopediaArticle> >::value_type& entry : articles) {
+        for (std::map<std::string, std::vector<EncyclopediaArticle>>::value_type& entry : articles) {
             const std::string& category = entry.first;
             for (const EncyclopediaArticle& article : entry.second)
             { DebugLogger() << "(" << category << ") : " << article.name; }

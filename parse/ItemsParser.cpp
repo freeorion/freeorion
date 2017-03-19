@@ -49,6 +49,6 @@ namespace {
 namespace parse {
     bool items(std::vector<ItemSpec>& items_) {
         const boost::filesystem::path& path = GetResourceDir() / "scripting/starting_unlocks/items.inf";
-        return detail::parse_file<rules, std::vector<ItemSpec> >(path, items_);
+        return detail::parse_file<rules, std::vector<ItemSpec>>(path, items_);
     }
 }

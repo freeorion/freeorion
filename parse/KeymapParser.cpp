@@ -12,7 +12,7 @@
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::map<int, int>&) { return os; 
-    inline ostream& operator<<(ostream& os, const std::map<std::string, std::map<int, int> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::map<int, int>>&) { return os; }
 }
 #endif
 

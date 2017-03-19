@@ -105,7 +105,7 @@ namespace {
     {
         int sitrep_turn = CurrentTurn() + 1;
 
-        std::vector<std::pair<std::string, std::string> > params;
+        std::vector<std::pair<std::string, std::string>> params;
 
         if (py_params) {
             for (int i = 0; i < len(py_params); i++) {

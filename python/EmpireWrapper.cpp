@@ -100,7 +100,7 @@ namespace {
 
     std::map<int, int> jumpsToSuppliedSystemP(const Empire& empire) {
         std::map<int, int> retval;
-        const std::map<int, std::set<int> >& empire_starlanes = empire.KnownStarlanes();
+        const std::map<int, std::set<int>>& empire_starlanes = empire.KnownStarlanes();
         std::list<int> propagating_list;
 
         for (int system_id : GetSupplyManager().FleetSupplyableSystemIDs(empire.EmpireID(), true)) {
@@ -117,7 +117,7 @@ namespace {
             int from_sys_dist = retval[from_sys_id];
 
             // get lanes connected to this system
-            std::map<int, std::set<int> >::const_iterator lane_set_it = empire_starlanes.find(from_sys_id);
+            std::map<int, std::set<int>>::const_iterator lane_set_it = empire_starlanes.find(from_sys_id);
             if (lane_set_it == empire_starlanes.end())
                 continue;   // no lanes to propagate from for this supply source
             const std::set<int>& lane_ends = lane_set_it->second;
@@ -195,11 +195,11 @@ namespace {
     }
     boost::function<std::map<std::set<int>, float>(const Empire& )> PlanetsWithAllocatedPP_Func =   &PlanetsWithAllocatedPP_P;
 
-    std::set<std::set<int> > PlanetsWithWastedPP_P(const Empire& empire) {
+    std::set<std::set<int>> PlanetsWithWastedPP_P(const Empire& empire) {
         const std::shared_ptr<ResourcePool>& industry_pool = empire.GetResourcePool(RE_INDUSTRY);
         const ProductionQueue& prodQueue = empire.GetProductionQueue();
-        std::set<std::set<int> > planetsWithWastedPP;
-        std::set<std::set<int> > objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
+        std::set<std::set<int>> planetsWithWastedPP;
+        std::set<std::set<int>> objectsWithWastedPP = prodQueue.ObjectsWithWastedPP(industry_pool);
         for (const std::set<int>&  objects : objectsWithWastedPP) {
                  std::set<int> planetSet;
                  for (int object_id : objects) {
@@ -211,7 +211,7 @@ namespace {
              }
              return planetsWithWastedPP;
     }
-    boost::function<std::set<std::set<int> >(const Empire&)>        PlanetsWithWastedPP_Func =      &PlanetsWithWastedPP_P;
+    boost::function<std::set<std::set<int>>(const Empire&)>         PlanetsWithWastedPP_Func =      &PlanetsWithWastedPP_P;
 }
 
 namespace FreeOrionPython {
@@ -250,10 +250,10 @@ namespace FreeOrionPython {
 
         boost::python::to_python_converter<IntPair, myIntIntPairConverter>();
 
-        class_<std::vector<IntPair> >("IntPairVec")
+        class_<std::vector<IntPair>>("IntPairVec")
             .def(boost::python::vector_indexing_suite<std::vector<IntPair>, true>())
         ;
-        class_<std::vector<ItemSpec> >("ItemSpecVec")
+        class_<std::vector<ItemSpec>>("ItemSpecVec")
             .def(boost::python::vector_indexing_suite<std::vector<ItemSpec>, true>())
         ;
         boost::python::to_python_converter<FloatIntPair, FloatIntPairConverter>();
@@ -261,7 +261,7 @@ namespace FreeOrionPython {
         class_<ResourcePool, std::shared_ptr<ResourcePool>, boost::noncopyable>("resPool", boost::python::no_init);
         //FreeOrionPython::SetWrapper<int>::Wrap("IntSet");
         FreeOrionPython::SetWrapper<IntSet>::Wrap("IntSetSet");
-        class_<std::map<std::set<int>, float> > ("resPoolMap")
+        class_<std::map<std::set<int>, float>> ("resPoolMap")
             .def(boost::python::map_indexing_suite<std::map<std::set<int>, float>, true>())
         ;
 
@@ -303,7 +303,7 @@ namespace FreeOrionPython {
             .add_property("planetsWithWastedPP",    make_function(
                                                         PlanetsWithWastedPP_Func,
                                                         return_value_policy<return_by_value>(),
-                                                        boost::mpl::vector<std::set<std::set<int> >, const Empire& >()
+                                                        boost::mpl::vector<std::set<std::set<int>>, const Empire& >()
                                                     ))
 
             .def("techResearched",                  &Empire::TechResearched)
@@ -446,7 +446,7 @@ namespace FreeOrionPython {
 
         boost::python::object techsFunc = make_function(boost::bind(TechNamesMemberFunc, &(GetTechManager())),
                                                         return_value_policy<boost::python::return_by_value>(),
-                                                        boost::mpl::vector<std::vector<std::string> >());
+                                                        boost::mpl::vector<std::vector<std::string>>());
         boost::python::setattr(techsFunc, "__doc__", boost::python::str("Returns the names of all techs (StringVec)."));
         def("techs", techsFunc);
 

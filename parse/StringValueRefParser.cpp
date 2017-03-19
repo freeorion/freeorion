@@ -31,7 +31,7 @@ namespace {
                 ;
 
             constant
-                =   tok.string          [ _val = new_<ValueRef::Constant<std::string> >(_1) ]
+                =   tok.string          [ _val = new_<ValueRef::Constant<std::string>>(_1) ]
                 |  (    tok.CurrentContent_
                     |   tok.ThisBuilding_
                     |   tok.ThisField_
@@ -40,12 +40,12 @@ namespace {
                     |   tok.ThisTech_
                     |   tok.ThisSpecies_
                     |   tok.ThisSpecial_
-                   ) [ _val = new_<ValueRef::Constant<std::string> >(TOK_CURRENT_CONTENT) ]
+                   ) [ _val = new_<ValueRef::Constant<std::string>>(TOK_CURRENT_CONTENT) ]
                 ;
 
             free_variable
-                =   tok.Value_          [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
-                |   tok.GalaxySeed_     [ _val = new_<ValueRef::Variable<std::string> >(ValueRef::NON_OBJECT_REFERENCE, _1) ]
+                =   tok.Value_          [ _val = new_<ValueRef::Variable<std::string>>(ValueRef::EFFECT_TARGET_VALUE_REFERENCE) ]
+                |   tok.GalaxySeed_     [ _val = new_<ValueRef::Variable<std::string>>(ValueRef::NON_OBJECT_REFERENCE, _1) ]
                 ;
 
             initialize_bound_variable_parser<std::string>(bound_variable, bound_variable_name);
@@ -67,7 +67,7 @@ namespace {
                             )
                             >  '('  >   expr [ push_back(_d, _1) ]
                             >*(','  >   expr [ push_back(_d, _1) ] )
-                            [ _val = new_<ValueRef::Operation<std::string> >(_c, _d) ] >   ')'
+                            [ _val = new_<ValueRef::Operation<std::string>>(_c, _d) ] >   ')'
                         )
                     |   (
                             tok.UserString_ >   '(' >   expr[ _val = new_<ValueRef::UserStringLookup<std::string>>(_1) ] >   ')'
@@ -84,13 +84,13 @@ namespace {
                         (
                                 function_expr [ _a = _1 ]
                             >>  lit('+') [ _c = ValueRef::PLUS ]
-                            >>  function_expr [ _b = new_<ValueRef::Operation<std::string> >(_c, _a, _1) ]
+                            >>  function_expr [ _b = new_<ValueRef::Operation<std::string>>(_c, _a, _1) ]
                             [ _val = _b ]
                         )
                     |   (
                                         function_expr [ push_back(_d, _1) ]     // template string
                             >>+('%' >   function_expr [ push_back(_d, _1) ] )   // must have at least one sub-string
-                            [ _val = new_<ValueRef::Operation<std::string> >(ValueRef::SUBSTITUTION, _d) ]
+                            [ _val = new_<ValueRef::Operation<std::string>>(ValueRef::SUBSTITUTION, _d) ]
                         )
                     |   (
                             function_expr [ _val = _1 ]

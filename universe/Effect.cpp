@@ -2867,7 +2867,7 @@ void GiveEmpireTech::SetTopLevelContent(const std::string& content_name) {
 ///////////////////////////////////////////////////////////
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
                                              ValueRef::ValueRefBase<int>* recipient_empire_id,
                                              EmpireAffiliationType affiliation,
                                              const std::string label,
@@ -2884,7 +2884,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              Condition::ConditionBase* condition,
                                              const std::string label,
@@ -2900,7 +2900,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >& message_parameters,
+                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              const std::string& label,
                                              bool stringtable_lookup):
@@ -2934,7 +2934,7 @@ void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
 
 
     // evaluate all parameter valuerefs so they can be substituted into sitrep template
-    std::vector<std::pair<std::string, std::string> > parameter_tag_values;
+    std::vector<std::pair<std::string, std::string>> parameter_tag_values;
     for (const std::pair<std::string, ValueRef::ValueRefBase<std::string>*>& entry : m_message_parameters) {
         parameter_tag_values.push_back(std::make_pair(entry.first, entry.second->Eval(context)));
 

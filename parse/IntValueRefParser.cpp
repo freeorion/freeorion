@@ -61,7 +61,7 @@ namespace {
                 ;
 
             constant
-                =   tok.int_    [ _val = new_<ValueRef::Constant<int> >(_1) ]
+                =   tok.int_    [ _val = new_<ValueRef::Constant<int>>(_1) ]
                 ;
         }
     };
@@ -109,7 +109,7 @@ namespace {
             qi::_val_type _val;
 
             castable_expr
-                = parse::double_value_ref() [ _val = new_<ValueRef::StaticCast<double, int> >(_1) ]
+                = parse::double_value_ref() [ _val = new_<ValueRef::StaticCast<double, int>>(_1) ]
                 ;
 
             flexible_int 

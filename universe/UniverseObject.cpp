@@ -24,7 +24,7 @@ const int       UniverseObject::INVALID_OBJECT_AGE = -(1 << 30) - 1;  // using b
 const int       UniverseObject::SINCE_BEFORE_TIME_AGE = (1 << 30) + 1;
 
 UniverseObject::UniverseObject() :
-    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void> >(GetUniverse().UniverseObjectSignalsInhibited())),
+    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(GetUniverse().UniverseObjectSignalsInhibited())),
     m_name(""),
     m_id(INVALID_OBJECT_ID),
     m_x(INVALID_POSITION),
@@ -38,7 +38,7 @@ UniverseObject::UniverseObject() :
 }
 
 UniverseObject::UniverseObject(const std::string name, double x, double y) :
-    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void> >(GetUniverse().UniverseObjectSignalsInhibited())),
+    StateChangedSignal(blocking_combiner<boost::signals2::optional_last_value<void>>(GetUniverse().UniverseObjectSignalsInhibited())),
     m_name(name),
     m_id(INVALID_OBJECT_ID),
     m_x(x),
@@ -104,7 +104,7 @@ void UniverseObject::Copy(std::shared_ptr<const UniverseObject> copied_object, V
         this->m_y =                     copied_object->m_y;
 
         this->m_specials.clear();
-        for (const std::map<std::string, std::pair<int, float> >::value_type& entry_special : copied_object->m_specials) {
+        for (const std::map<std::string, std::pair<int, float>>::value_type& entry_special : copied_object->m_specials) {
             if (visible_specials.find(entry_special.first) != visible_specials.end())
             { this->m_specials[entry_special.first] = entry_special.second; }
         }
@@ -152,21 +152,21 @@ int UniverseObject::Owner() const
 int UniverseObject::SystemID() const
 { return m_system_id; }
 
-const std::map<std::string, std::pair<int, float> >& UniverseObject::Specials() const
+const std::map<std::string, std::pair<int, float>>& UniverseObject::Specials() const
 { return m_specials; }
 
 bool UniverseObject::HasSpecial(const std::string& name) const
 { return m_specials.find(name) != m_specials.end(); }
 
 int UniverseObject::SpecialAddedOnTurn(const std::string& name) const {
-    std::map<std::string, std::pair<int, float> >::const_iterator it = m_specials.find(name);
+    std::map<std::string, std::pair<int, float>>::const_iterator it = m_specials.find(name);
     if (it == m_specials.end())
         return INVALID_GAME_TURN;
     return it->second.first;
 }
 
 float UniverseObject::SpecialCapacity(const std::string& name) const {
-    std::map<std::string, std::pair<int, float> >::const_iterator it = m_specials.find(name);
+    std::map<std::string, std::pair<int, float>>::const_iterator it = m_specials.find(name);
     if (it == m_specials.end())
         return 0.0f;
     return it->second.second;
@@ -218,7 +218,7 @@ std::string UniverseObject::Dump() const {
     }
     os << " created on turn: " << m_created_on_turn
        << " specials: ";
-    for (const std::map<std::string, std::pair<int, float> >::value_type& entry : m_specials)
+    for (const std::map<std::string, std::pair<int, float>>::value_type& entry : m_specials)
         os << "(" << entry.first << ", " << entry.second.first << ", " << entry.second.second << ") ";
     os << "  Meters: ";
     for (const std::map<MeterType, Meter>::value_type& entry : m_meters)

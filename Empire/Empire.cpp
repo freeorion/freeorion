@@ -177,7 +177,7 @@ namespace {
       * Elements will not receive funding if they cannot be produced by the
       * empire with the indicated \a empire_id this turn at their build location. */
     void SetProdQueueElementSpending(std::map<std::set<int>, float> available_pp,
-                                     const std::vector<std::set<int> >& queue_element_resource_sharing_object_groups,
+                                     const std::vector<std::set<int>>& queue_element_resource_sharing_object_groups,
                                      ProductionQueue::QueueType& queue, std::map<std::set<int>, float>& allocated_pp,
                                      int& projects_in_progress, int empire_id)
     {
@@ -208,7 +208,7 @@ namespace {
             return;
 
         // cache production item costs and times
-        std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int> > queue_item_costs_and_times;
+        std::map<std::pair<ProductionQueue::ProductionItem, int>, std::pair<float, int>> queue_item_costs_and_times;
         for (ProductionQueue::Element& elem : queue) {
             // for items that don't depend on location, only store cost/time once
             int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
@@ -434,7 +434,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
     const int DP_TURNS = TOO_MANY_TURNS; // track up to this many turns
 
-    std::map<std::string, std::set<std::string> > waiting_for_prereqs;
+    std::map<std::string, std::set<std::string>> waiting_for_prereqs;
     std::set<int> dp_researchable_techs;
 
     for (unsigned int i = 0; i < m_queue.size(); ++i) {
@@ -513,7 +513,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
                 if (tech)
                     unlocked_techs = tech->UnlockedTechs();
                 for (std::string u_tech_name : unlocked_techs) {
-                    std::map<std::string,std::set<std::string> >::iterator prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
+                    std::map<std::string,std::set<std::string>>::iterator prereq_tech_it = waiting_for_prereqs.find(u_tech_name);
                     if (prereq_tech_it != waiting_for_prereqs.end() ){
                         std::set<std::string> &these_prereqs = prereq_tech_it->second;
                         std::set<std::string>::iterator just_finished_it = these_prereqs.find(tech_name);
@@ -649,8 +649,8 @@ bool ProductionQueue::ProductionItem::operator<(const ProductionItem& rhs) const
     return false;
 }
 
-std::map<std::string, std::map<int, float> > ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {
-    std::map<std::string, std::map<int, float> > retval;
+std::map<std::string, std::map<int, float>> ProductionQueue::ProductionItem::CompletionSpecialConsumption(int location_id) const {
+    std::map<std::string, std::map<int, float>> retval;
 
     switch (build_type) {
     case BT_BUILDING: {
@@ -713,8 +713,8 @@ std::map<std::string, std::map<int, float> > ProductionQueue::ProductionItem::Co
     return retval;
 }
 
-std::map<MeterType, std::map<int, float> > ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const {
-    std::map<MeterType, std::map<int, float> > retval;
+std::map<MeterType, std::map<int, float>> ProductionQueue::ProductionItem::CompletionMeterConsumption(int location_id) const {
+    std::map<MeterType, std::map<int, float>> retval;
 
     switch (build_type) {
     case BT_BUILDING: {
@@ -898,10 +898,10 @@ std::map<std::set<int>, float> ProductionQueue::AvailablePP(
 const std::map<std::set<int>, float>& ProductionQueue::AllocatedPP() const
 { return m_object_group_allocated_pp; }
 
-std::set<std::set<int> > ProductionQueue::ObjectsWithWastedPP(
+std::set<std::set<int>> ProductionQueue::ObjectsWithWastedPP(
     const std::shared_ptr<ResourcePool>& industry_pool) const
 {
-    std::set<std::set<int> > retval;
+    std::set<std::set<int>> retval;
     if (!industry_pool) {
         ErrorLogger() << "ProductionQueue::ObjectsWithWastedPP passed invalid industry resource pool";
         return retval;
@@ -983,7 +983,7 @@ void ProductionQueue::Update() {
     std::map<std::set<int>, float> available_pp = AvailablePP(empire->GetResourcePool(RE_INDUSTRY));
 
     // determine which resource sharing group each queue item is located in
-    std::vector<std::set<int> > queue_element_groups;
+    std::vector<std::set<int>> queue_element_groups;
     for (const ProductionQueue::Element& element : m_queue) {
         // get location object for element
         int location_id = element.location;
@@ -1045,7 +1045,7 @@ void ProductionQueue::Update() {
 
     // duplicate production queue state for future simulation
     QueueType sim_queue = m_queue;
-    std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;
+    std::vector<std::set<int>>  sim_queue_element_groups = queue_element_groups;
     std::vector<int>            simulation_results(sim_queue.size(), -1);
     std::vector<unsigned int>   sim_queue_original_indices(sim_queue.size());
     for (unsigned int i = 0; i < sim_queue_original_indices.size(); ++i)
@@ -1106,7 +1106,7 @@ void ProductionQueue::Update() {
 
     // duplicate simulation production queue state (post-bad-item-removal) for dynamic programming
     QueueType                   dpsim_queue = sim_queue;
-    //std::vector<std::set<int> > sim_queue_element_groups = queue_element_groups;  //not necessary to duplicate this since won't be further modified
+    //std::vector<std::set<int>>  sim_queue_element_groups = queue_element_groups;  //not necessary to duplicate this since won't be further modified
     std::vector<int>            dpsimulation_results_to_next(sim_queue.size(), -1);
     std::vector<int>            dpsimulation_results_to_completion(sim_queue.size(), -1);
     std::vector<unsigned int>   dpsim_queue_original_indices(sim_queue_original_indices); 
@@ -1126,7 +1126,7 @@ void ProductionQueue::Update() {
 
     // cache production item costs and times
     std::map<std::pair<ProductionQueue::ProductionItem, int>,
-                std::pair<float, int> >                           queue_item_costs_and_times;
+                std::pair<float, int>>                           queue_item_costs_and_times;
     for (ProductionQueue::Element& elem : m_queue) {
         // for items that don't depend on location, only store cost/time once
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
@@ -2084,7 +2084,7 @@ void Empire::UpdateSupplyUnobstructedSystems(const std::set<int>& known_systems)
     const std::set<int>& known_destroyed_objects = GetUniverse().EmpireKnownDestroyedObjectIDs(this->EmpireID());
 
     // get empire supply ranges
-    std::map<int, std::map<int, float> > empire_system_supply_ranges;
+    std::map<int, std::map<int, float>> empire_system_supply_ranges;
     for (const std::map<int, Empire*>::value_type& entry : Empires()) {
         const Empire* empire = entry.second;
         empire_system_supply_ranges[entry.first] = empire->SystemSupplyRanges();
@@ -2208,7 +2208,7 @@ const std::set<int>& Empire::SupplyUnobstructedSystems() const
 { return m_supply_unobstructed_systems; }
 
 const bool Empire::UnrestrictedLaneTravel(int start_system_id, int dest_system_id) const {
-    std::map<int, std::set<int> >::const_iterator find_it = m_available_system_exit_lanes.find(start_system_id);
+    std::map<int, std::set<int>>::const_iterator find_it = m_available_system_exit_lanes.find(start_system_id);
     if (find_it != m_available_system_exit_lanes.end() ) {
         if (find_it->second.find(dest_system_id) != find_it->second.end())
             return true;
@@ -2219,9 +2219,9 @@ const bool Empire::UnrestrictedLaneTravel(int start_system_id, int dest_system_i
 const std::set<int>& Empire::ExploredSystems() const
 { return m_explored_systems; }
 
-const std::map<int, std::set<int> > Empire::KnownStarlanes() const {
+const std::map<int, std::set<int>> Empire::KnownStarlanes() const {
     // compile starlanes leading into or out of each system
-    std::map<int, std::set<int> > retval;
+    std::map<int, std::set<int>> retval;
 
     const Universe& universe = GetUniverse();
 
@@ -2247,8 +2247,8 @@ const std::map<int, std::set<int> > Empire::KnownStarlanes() const {
     return retval;
 }
 
-const std::map<int, std::set<int> > Empire::VisibleStarlanes() const {
-    std::map<int, std::set<int> > retval;   // compile starlanes leading into or out of each system
+const std::map<int, std::set<int>> Empire::VisibleStarlanes() const {
+    std::map<int, std::set<int>> retval;   // compile starlanes leading into or out of each system
 
     const Universe& universe = GetUniverse();
     const ObjectMap& objects = universe.Objects();
@@ -2913,7 +2913,7 @@ void Empire::CheckProductionProgress() {
     // items above it on the queue getting finished don't increase the
     // cost and result in it not being finished that turn.
     std::map<std::pair<ProductionQueue::ProductionItem, int>,
-             std::pair<float, int> >                           queue_item_costs_and_times;
+             std::pair<float, int>>                           queue_item_costs_and_times;
     for (ProductionQueue::Element& elem : m_production_queue) {
         // for items that don't depend on location, only store cost/time once
         int location_id = (elem.item.CostIsProductionLocationInvariant() ? INVALID_OBJECT_ID : elem.location);
@@ -3003,7 +3003,7 @@ void Empire::CheckProductionProgress() {
 
         // only if consumed resources are available, then item can be completd
         bool consumption_impossible = false;
-        std::map<std::string, std::map<int, float> > sc = elem.item.CompletionSpecialConsumption(elem.location);
+        std::map<std::string, std::map<int, float>> sc = elem.item.CompletionSpecialConsumption(elem.location);
         for (std::map<std::string, std::map<int, float>>::value_type& special_type : sc) {
             if (consumption_impossible)
                 break;
@@ -3016,7 +3016,7 @@ void Empire::CheckProductionProgress() {
                 }
             }
         }
-        std::map<MeterType, std::map<int, float> > mc = elem.item.CompletionMeterConsumption(elem.location);
+        std::map<MeterType, std::map<int, float>> mc = elem.item.CompletionMeterConsumption(elem.location);
         for (std::map<MeterType, std::map<int, float>>::value_type& meter_type : mc) {
             if (consumption_impossible)
                 break;
@@ -3329,7 +3329,7 @@ void Empire::InitResourcePools() {
     m_resource_pools[RE_INDUSTRY]->SetConnectedSupplyGroups(GetSupplyManager().ResourceSupplyGroups(m_id));
 
     // set non-blockadeable resource pools to share resources between all systems
-    std::set<std::set<int> > sets_set;
+    std::set<std::set<int>> sets_set;
     std::set<int> all_systems_set;
     for (const std::map<int, std::shared_ptr<UniverseObject>>::value_type& entry : Objects().ExistingSystems()) {
         all_systems_set.insert(entry.first);

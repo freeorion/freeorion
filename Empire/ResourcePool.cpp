@@ -135,7 +135,7 @@ std::string ResourcePool::Dump() const {
 void ResourcePool::SetObjects(const std::vector<int>& object_ids)
 { m_object_ids = object_ids; }
 
-void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int> >& connected_system_groups)
+void ResourcePool::SetConnectedSupplyGroups(const std::set<std::set<int>>& connected_system_groups)
 { m_connected_system_groups = connected_system_groups; }
 
 void ResourcePool::SetStockpileObject(int stockpile_object_id)

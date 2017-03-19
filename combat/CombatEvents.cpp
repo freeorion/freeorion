@@ -332,7 +332,7 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
         if (attack_empire.first == viewing_empire_id)
             continue;
 
-        std::map<int, std::set<std::pair<int, Visibility> > >::const_iterator target_empire
+        std::map<int, std::set<std::pair<int, Visibility>>>::const_iterator target_empire
             = attack_empire.second.find(viewing_empire_id);
         if (target_empire != attack_empire.second.end()
             && !target_empire->second.empty()) {

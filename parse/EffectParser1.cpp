@@ -113,9 +113,9 @@ namespace {
             string_and_string_ref
                 =    parse::detail::label(Tag_token)  >  tok.string [ _a = _1 ]
                 >    parse::detail::label(Data_token)
-                >  ( parse::int_value_ref()      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int> >(_1)) ]
-                   | parse::double_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double> >(_1)) ]
-                   | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string> >(_1)) ]
+                >  ( parse::int_value_ref()      [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<int>>(_1)) ]
+                   | parse::double_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::StringCast<double>>(_1)) ]
+                   | tok.string         [ _val = construct<string_and_string_ref_pair>(_a, new_<ValueRef::Constant<std::string>>(_1)) ]
                    | parse::string_value_ref()   [ _val = construct<string_and_string_ref_pair>(_a, _1) ]
                    )
                 ;
@@ -178,7 +178,7 @@ namespace {
             qi::locals<
                 std::string,
                 std::string,
-                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*> >,
+                std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>,
                 EmpireAffiliationType,
                 std::string,
                 bool

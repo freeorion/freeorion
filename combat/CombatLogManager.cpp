@@ -167,7 +167,7 @@ class CombatLogManager::Impl
     boost::optional<const CombatLog&>  GetLog(int log_id) const;
 
     /** Return the ids of all incomplete logs or none.*/
-    boost::optional<std::vector<int> > IncompleteLogIDs() const;
+    boost::optional<std::vector<int>> IncompleteLogIDs() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -247,7 +247,7 @@ void CombatLogManager::Impl::GetLogsToSerialize(
 void CombatLogManager::Impl::SetLog(int log_id, const CombatLog& log)
 { m_logs[log_id] = log; }
 
-boost::optional<std::vector<int> > CombatLogManager::Impl::IncompleteLogIDs() const
+boost::optional<std::vector<int>> CombatLogManager::Impl::IncompleteLogIDs() const
 {
     if (m_incomplete_logs.empty())
         return boost::none;
@@ -316,7 +316,7 @@ void CombatLogManager::CompleteLog(int id, const CombatLog& log)
 void CombatLogManager::Clear()
 { return m_impl->Clear(); }
 
-boost::optional<std::vector<int> > CombatLogManager::IncompleteLogIDs() const
+boost::optional<std::vector<int>> CombatLogManager::IncompleteLogIDs() const
 { return m_impl->IncompleteLogIDs(); }
 
 CombatLogManager& CombatLogManager::GetCombatLogManager() {

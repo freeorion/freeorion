@@ -89,7 +89,7 @@ namespace {
             environment_map_element
                 =    parse::detail::label(Type_token)        > parse::detail::planet_type_rules().enum_expr [ _a = _1 ]
                 >    parse::detail::label(Environment_token) > parse::detail::planet_environment_rules().enum_expr
-                     [ _val = construct<std::pair<PlanetType, PlanetEnvironment> >(_a, _1) ]
+                     [ _val = construct<std::pair<PlanetType, PlanetEnvironment>>(_a, _1) ]
                 ;
 
             environment_map
@@ -244,7 +244,7 @@ namespace parse {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/species")) {
-            result &= detail::parse_file<rules, std::map<std::string, Species*> >(file, species_);
+            result &= detail::parse_file<rules, std::map<std::string, Species*>>(file, species_);
         }
 
         return result;

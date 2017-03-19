@@ -64,7 +64,7 @@ namespace parse {
 
     FO_PARSE_API bool encyclopedia_articles(Encyclopedia& enc);
 
-    FO_PARSE_API bool keymaps(std::map<std::string, std::map<int, int> >& nkm);
+    FO_PARSE_API bool keymaps(std::map<std::string, std::map<int, int>>& nkm);
 
     FO_PARSE_API bool read_file(const boost::filesystem::path& path, std::string& file_contents);
 

@@ -177,7 +177,7 @@ namespace parse {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/ship_hulls")) {
-            result &= detail::parse_file<rules, std::map<std::string, HullType*> >(file, hulls);
+            result &= detail::parse_file<rules, std::map<std::string, HullType*>>(file, hulls);
         }
 
         return result;

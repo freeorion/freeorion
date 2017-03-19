@@ -32,8 +32,8 @@ namespace parse { namespace detail {
             std::set<std::string>,
             Condition::ConditionBase*,
             std::vector<std::shared_ptr<Effect::EffectsGroup>>,
-            std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >,
-            std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*> >,
+            std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>,
+            std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>,
             Condition::ConditionBase*
         >
     > common_params_rule;

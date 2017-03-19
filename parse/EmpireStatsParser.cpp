@@ -37,7 +37,7 @@ namespace {
                 =   tok.Statistic_
                 >   parse::detail::label(Name_token)    > tok.string [ _a = _1 ]
                 >   parse::detail::label(Value_token)   > parse::double_value_ref()
-                [ _val = construct<std::pair<std::string, ValueRef::ValueRefBase<double>*> >(_a, _1) ]
+                [ _val = construct<std::pair<std::string, ValueRef::ValueRefBase<double>*>>(_a, _1) ]
                 ;
 
             start
@@ -72,7 +72,7 @@ namespace parse {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/empire_statistics")) {
-            result &= detail::parse_file<rules, std::map<std::string, ValueRef::ValueRefBase<double>*> >(file, stats_);
+            result &= detail::parse_file<rules, std::map<std::string, ValueRef::ValueRefBase<double>*>>(file, stats_);
         }
 
         return result;

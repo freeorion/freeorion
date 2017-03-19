@@ -2064,7 +2064,7 @@ namespace {
             if (m_name.empty())
                 return !candidate->Specials().empty();
 
-            std::map<std::string, std::pair<int, float> >::const_iterator it = candidate->Specials().find(m_name);
+            std::map<std::string, std::pair<int, float>>::const_iterator it = candidate->Specials().find(m_name);
             if (it == candidate->Specials().end())
                 return false;
 
@@ -6932,7 +6932,7 @@ namespace {
         {
             // get (one of each of) set of systems that are or that contain any
             // destination objects
-            std::set<std::shared_ptr<const System> > dest_systems;
+            std::set<std::shared_ptr<const System>> dest_systems;
             for (std::shared_ptr<const UniverseObject> obj : destination_objects) {
                 if (std::shared_ptr<const System> sys = GetSystem(obj->SystemID()))
                     dest_systems.insert(sys);
@@ -7333,8 +7333,8 @@ namespace {
                 return false;
 
             const SupplyManager& supply = GetSupplyManager();
-            const std::map<int, std::set<int> >& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
-            std::map<int, std::set<int> >::const_iterator it = empire_supplyable_systems.find(m_empire_id);
+            const std::map<int, std::set<int>>& empire_supplyable_systems = supply.FleetSupplyableSystemIDs();
+            std::map<int, std::set<int>>::const_iterator it = empire_supplyable_systems.find(m_empire_id);
             if (it == empire_supplyable_systems.end())
                 return false;
             return it->second.find(candidate->SystemID()) != it->second.end();
@@ -7442,7 +7442,7 @@ namespace {
                 return false;
             if (m_from_objects.empty())
                 return false;
-            const std::set<std::set<int> >& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
+            const std::set<std::set<int>>& groups = GetSupplyManager().ResourceSupplyGroups(m_empire_id);
             if (groups.empty())
                 return false;
 

@@ -1036,7 +1036,7 @@ std::unordered_set<int> Pathfinder::PathfinderImpl::WithinJumps(
     size_t jumps, const std::vector<int>& candidates) const
 {
     std::unordered_set<int> near;
-    distance_matrix_cache< distance_matrix_storage<short> > cache(m_system_jumps);
+    distance_matrix_cache< distance_matrix_storage<short>> cache(m_system_jumps);
     for (auto candidate : candidates) {
         size_t system_index;
         try {

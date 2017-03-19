@@ -14,8 +14,8 @@
 #if DEBUG_VALUEREF_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<const char*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, ValueRef::ValueRefBase<int>*> >&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, ValueRef::ValueRefBase<double>*> >&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, ValueRef::ValueRefBase<int>*>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::vector<boost::variant<ValueRef::OpType, ValueRef::ValueRefBase<double>*>>&) { return os; }
 }
 #endif
 
@@ -106,7 +106,7 @@ void initialize_nonnumeric_statistic_parser(
             >>  tok.Mode_ [ _b = ValueRef::MODE ]
             >   parse::detail::label(Value_token)     >     value_ref [ _a = _1 ]
             >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
-                [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
+                [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
         ;
 }
 
@@ -128,7 +128,7 @@ void initialize_bound_variable_parser(
     bound_variable
         =   variable_scope() [ _b = _1 ] >> '.'
         >>-(container_type() [ push_back(_a, construct<std::string>(_1)) ] > '.')
-        >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T> >(_b, _a) ]
+        >>  variable_name    [ push_back(_a, construct<std::string>(_1)), _val = new_<ValueRef::Variable<T>>(_b, _a) ]
         ;
 }
 
@@ -170,7 +170,7 @@ struct enum_value_ref_rules {
                         )
                         >  '('  >   expr [ push_back(_d, _1) ]
                         >*(','  >   expr [ push_back(_d, _1) ] )
-                        [ _val = new_<ValueRef::Operation<T> >(_c, _d) ] >   ')'
+                        [ _val = new_<ValueRef::Operation<T>>(_c, _d) ] >   ')'
                     )
                 |   (
                         primary_expr [ _val = _1 ]
@@ -305,12 +305,12 @@ struct arithmetic_rules
                         |   tok.Log_    [ _c = ValueRef::LOGARITHM ]
                         |   tok.Abs_    [ _c = ValueRef::ABS ]
                         )
-                        >> '(' >> expr [ _val = new_<ValueRef::Operation<T> >(_c, _1) ] >> ')'
+                        >> '(' >> expr [ _val = new_<ValueRef::Operation<T>>(_c, _1) ] >> ')'
                     )
                 |   (
                             tok.RandomNumber_   [ _c = ValueRef::RANDOM_UNIFORM ]   // random number requires a min and max value
                         >  '(' >    expr [ _a = _1 ]
-                        >  ',' >    expr [ _val = new_<ValueRef::Operation<T> >(_c, _a, _1) ] >> ')'
+                        >  ',' >    expr [ _val = new_<ValueRef::Operation<T>>(_c, _a, _1) ] >> ')'
                     )
                 |   (
                         (
@@ -320,11 +320,11 @@ struct arithmetic_rules
                         )
                         >>  '(' >>  expr [ push_back(_d, _1) ]
                         >>(*(',' >  expr [ push_back(_d, _1) ] ))
-                        [ _val = new_<ValueRef::Operation<T> >(_c, _d) ] >> ')'
+                        [ _val = new_<ValueRef::Operation<T>>(_c, _d) ] >> ')'
                     )
                 |   (
                         lit('-') >> functional_expr                                   // single parameter math function with a function expression rather than any arbitrary expression as parameter, because negating more general expressions can be ambiguous
-                        [ _val = new_<ValueRef::Operation<T> >(ValueRef::NEGATE, _1) ]
+                        [ _val = new_<ValueRef::Operation<T>>(ValueRef::NEGATE, _1) ]
                     )
                 |   (
                         primary_expr [ _val = _1 ]
@@ -336,7 +336,7 @@ struct arithmetic_rules
             =   (
                     functional_expr [ _a = _1 ]
                     >> '^' >> functional_expr
-                    [ _val = new_<ValueRef::Operation<T> >( ValueRef::EXPONENTIATE, _a, _1 ) ]
+                    [ _val = new_<ValueRef::Operation<T>>( ValueRef::EXPONENTIATE, _a, _1 ) ]
                 )
             |   functional_expr [ _val = _1 ]
             ;
@@ -351,7 +351,7 @@ struct arithmetic_rules
                                     lit('*') [ _c = ValueRef::TIMES ]
                                 |   lit('/') [ _c = ValueRef::DIVIDE ]
                                 )
-                            >>   exponential_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
+                            >>   exponential_expr [ _b = new_<ValueRef::Operation<T>>(_c, _a, _1) ]
                             ) [ _a = _b ]
                         )
                     )
@@ -372,7 +372,7 @@ struct arithmetic_rules
                                             lit('+') [ _c = ValueRef::PLUS ]
                                         |   lit('-') [ _c = ValueRef::MINUS ]
                                         )
-                                    >>   multiplicative_expr [ _b = new_<ValueRef::Operation<T> >(_c, _a, _1) ]
+                                    >>   multiplicative_expr [ _b = new_<ValueRef::Operation<T>>(_c, _a, _1) ]
                                     ) [ _a = _b ]
                                 )
                             )
@@ -391,7 +391,7 @@ struct arithmetic_rules
                    |   tok.If_     [ _b = ValueRef::IF ]
                 )
                 >   parse::detail::label(Condition_token) >    parse::detail::condition_parser
-                    [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
+                    [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
             ;
 
         statistic_value_expr
@@ -399,7 +399,7 @@ struct arithmetic_rules
                 >>  parse::statistic_type_enum() [ _b = _1 ]
                 >   parse::detail::label(Value_token)     >     statistic_value_ref_expr [ _a = _1 ]
                 >   parse::detail::label(Condition_token) >     parse::detail::condition_parser
-                    [ _val = new_<ValueRef::Statistic<T> >(_a, _b, _1) ]
+                    [ _val = new_<ValueRef::Statistic<T>>(_a, _b, _1) ]
             ;
 
         statistic_expr

@@ -100,7 +100,7 @@ namespace parse {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/fields")) {
-            result &= detail::parse_file<rules, std::map<std::string, FieldType*> >(file, field_types);
+            result &= detail::parse_file<rules, std::map<std::string, FieldType*>>(file, field_types);
         }
 
         return result;

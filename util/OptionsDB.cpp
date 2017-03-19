@@ -222,7 +222,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
 
         os << std::string(description_column - 1, ' ');
 
-        typedef boost::tokenizer<boost::char_separator<char> > Tokenizer;
+        typedef boost::tokenizer<boost::char_separator<char>> Tokenizer;
         boost::char_separator<char> separator(" \t");
         Tokenizer tokens(UserString(option.second.description), separator);
         int curr_column = description_column;
@@ -494,7 +494,7 @@ std::string ListToString(const std::vector<std::string>& input_list) {
 
 std::vector<std::string> StringToList(const std::string& input_string) {
     std::vector<std::string> retval;
-    typedef boost::tokenizer<boost::char_separator<char> > Tokenizer;
+    typedef boost::tokenizer<boost::char_separator<char>> Tokenizer;
     Tokenizer tokens(input_string);
     for (const Tokenizer::value_type& token : tokens) {
         retval.push_back(token);

@@ -207,7 +207,7 @@ namespace {
 
         typedef parse::detail::rule<
             Condition::ConditionBase* (),
-            qi::locals<std::vector<Condition::ConditionBase*> >
+            qi::locals<std::vector<Condition::ConditionBase*>>
         > and_or_rule;
 
         typedef parse::detail::rule<
