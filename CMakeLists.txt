@@ -68,12 +68,14 @@ set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FreeOrion_INSTALL_LIBDIR}")
 set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 
 add_compile_options(
+    # Enable (almost) all warnings on compilers
     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wall-316
     $<$<CXX_COMPILER_ID:gnu>:-Wall>
     # http://clang.llvm.org/docs/DiagnosticsReference.html#wall
     $<$<CXX_COMPILER_ID:clang>:-Wall>
     # https://msdn.microsoft.com/en-us/library/thxezb7y.aspx#Anchor_1
     $<$<CXX_COMPILER_ID:msvc>:/W4>
+
     # Disable "'<param>': unreferenced formal parameter" warning
     $<$<CXX_COMPILER_ID:msvc>:/wd4100>
     # Disable "'<class>::<member>': class '<member-type>' needs to have dll-interface to be used by clients of class '<class>'" warning
@@ -84,7 +86,8 @@ add_compile_options(
     $<$<CXX_COMPILER_ID:msvc>:/wd4459>
     # Disable "function '<func>' marked as __forceinline not inlined" warning
     $<$<CXX_COMPILER_ID:msvc>:/wd4714>
-    # Enable C++ Exception unwind mechanics
+
+    # Enable C++ Exception unwind mechanics with DLL support
     $<$<CXX_COMPILER_ID:msvc>:/EHsc>
 )
 
