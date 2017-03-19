@@ -21,6 +21,9 @@
 
 #include <boost/lexical_cast.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/chrono/chrono_io.hpp>
+
+#include <chrono>
 
 #include <thread>
 
@@ -90,8 +93,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 }
 
 AIClientApp::~AIClientApp() {
-    if (Networking().Connected())
-        Networking().DisconnectFromServer();
+    Networking().DisconnectFromServer();
 
     DebugLogger() << "Shut down " + PlayerName() + " ai client.";
 }
@@ -128,7 +130,7 @@ void AIClientApp::Run() {
         while (1) {
             try {
 
-                if (!Networking().Connected())
+                if (!Networking().IsRxConnected())
                     break;
                 if (Networking().MessageAvailable()) {
                     Message msg;
@@ -156,25 +158,8 @@ void AIClientApp::Run() {
 }
 
 void AIClientApp::ConnectToServer() {
-    // connect
-    const int MAX_TRIES = 10;
-    int tries = 0;
-    volatile bool connected = false;
-    while (tries < MAX_TRIES) {
-        DebugLogger() << "Attempting to contact server";
-        connected = Networking().ConnectToLocalHostServer();
-        if (!connected) {
-            std::cerr << "FreeOrion AI client server contact attempt " << tries + 1 << " failed." << std::endl;
-            ErrorLogger() << "Server contact attempt " << tries + 1 << " failed";
-        } else {
-            break;
-        }
-        ++tries;
-    }
-    if (!connected) {
-        ErrorLogger() << "AIClientApp::Run : Failed to connect to localhost server after " << MAX_TRIES << " tries.  Exiting.";
+    if (!Networking().ConnectToLocalHostServer())
         Exit(1);
-    }
 }
 
 void AIClientApp::StartPythonAI() {
@@ -218,7 +203,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
                 ErrorLogger() << "AIClientApp::HandleMessage for HOST_ID : Couldn't parese message text: " << text;
             }
         }
-        m_networking.SetHostPlayerID(host_id);
+        m_networking->SetHostPlayerID(host_id);
         break;
     }
 
@@ -226,7 +211,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             if (PlayerID() == Networking::INVALID_PLAYER_ID) {
                 DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
-                m_networking.SetPlayerID(msg.ReceivingPlayer());
+                m_networking->SetPlayerID(msg.ReceivingPlayer());
             } else {
                 ErrorLogger() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";
             }

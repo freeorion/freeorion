@@ -13,6 +13,7 @@
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
 
+#include <thread>
 
 using boost::asio::ip::tcp;
 using namespace Networking;
@@ -63,7 +64,7 @@ namespace {
                                 this,
                                 boost::asio::placeholders::error,
                                 boost::asio::placeholders::bytes_transferred));
-                m_timer.expires_from_now(boost::posix_time::seconds(2));
+                m_timer.expires_from_now(std::chrono::seconds(2));
                 m_timer.async_wait(boost::bind(&ServerDiscoverer::CloseSocket, this));
                 m_io_service->run();
                 m_io_service->reset();
@@ -106,7 +107,7 @@ namespace {
         { m_socket.close(); }
 
         boost::asio::io_service*       m_io_service;
-        boost::asio::deadline_timer    m_timer;
+        boost::asio::high_resolution_timer m_timer;
         boost::asio::ip::udp::socket   m_socket;
 
         std::array<char, 1024> m_recv_buf;
@@ -127,13 +128,23 @@ ClientNetworking::ClientNetworking() :
     m_io_service(),
     m_socket(m_io_service),
     m_incoming_messages(m_mutex),
-    m_connected(false),
-    m_cancel_retries(false)
+    m_rx_connected(false),
+    m_tx_connected(false)
 {}
 
-bool ClientNetworking::Connected() const {
+bool ClientNetworking::IsConnected() const {
     boost::mutex::scoped_lock lock(m_mutex);
-    return m_connected;
+    return m_rx_connected && m_tx_connected;
+}
+
+bool ClientNetworking::IsRxConnected() const {
+    boost::mutex::scoped_lock lock(m_mutex);
+    return m_rx_connected;
+}
+
+bool ClientNetworking::IsTxConnected() const {
+    boost::mutex::scoped_lock lock(m_mutex);
+    return m_tx_connected;
 }
 
 bool ClientNetworking::MessageAvailable() const
@@ -152,7 +163,7 @@ bool ClientNetworking::PlayerIsHost(int player_id) const {
 }
 
 ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
-    if (!Connected())
+    if (!IsConnected())
         return ServerList();
     ServerDiscoverer discoverer(m_io_service);
     discoverer.DiscoverServers();
@@ -161,9 +172,11 @@ ClientNetworking::ServerList ClientNetworking::DiscoverLANServers() {
 
 bool ClientNetworking::ConnectToServer(
     const std::string& ip_address,
-    boost::posix_time::seconds timeout/* = boost::posix_time::seconds(5)*/)
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
 {
-    DebugLogger() << "ClientNetworking::ConnectToServer : attempting to connect to server at " << ip_address;
+    using Clock = std::chrono::high_resolution_clock;
+    Clock::time_point start_time = Clock::now();
+    auto deadline = start_time + timeout;
 
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
@@ -173,52 +186,83 @@ bool ClientNetworking::ConnectToServer(
 
     tcp::resolver::iterator end_it;
 
+    DebugLogger() << "Attempt to connect to server at one of these addresses:";
+    for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
+        DebugLogger() << "  tcp::resolver::iterator host_name: " << it->host_name()
+                      << "  address: " << it->endpoint().address()
+                      << "  port: " << it->endpoint().port();
+    }
+
     try {
-        for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-            DebugLogger() << "tcp::resolver::iterator host_name: " << it->host_name()
-                          << "  address: " << it->endpoint().address()
-                          << "  port: " << it->endpoint().port();
+        while(!IsConnected() && Clock::now() < deadline) {
+            for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
+                m_socket.close();
 
-            m_socket.close();
-            boost::asio::deadline_timer timer(m_io_service);
+                m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
+                                                        &it,
+                                                        boost::asio::placeholders::error));
+                m_io_service.run();
+                m_io_service.reset();
 
-            m_socket.async_connect(*it, boost::bind(&ClientNetworking::HandleConnection, this,
-                                                    &it,
-                                                    &timer,
-                                                    boost::asio::placeholders::error));
-            timer.expires_from_now(timeout);
-            timer.async_wait(boost::bind(&ClientNetworking::CancelRetries, this));
-            m_cancel_retries = false;
-            m_io_service.run();
-            m_io_service.reset();
+                auto connection_time = Clock::now() - start_time;
 
-            if (Connected()) {
-                DebugLogger() << "ClientNetworking::ConnectToServer : connected to server";
-                if (GetOptionsDB().Get<bool>("binary-serialization"))
-                    DebugLogger() << "ClientNetworking::ConnectToServer : this client using binary serialization.";
-                else
-                    DebugLogger() << "ClientNetworking::ConnectToServer : this client using xml serialization.";
-                m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
-                m_socket.set_option(boost::asio::socket_base::keep_alive(true));
-                DebugLogger() << "ClientNetworking::ConnectToServer : starting networking thread";
-                boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this));
-                break;
-            } else {
-                DebugLogger() << "ClientNetworking::ConnectToServer : no connection yet...";
+                if (IsConnected()) {
+                    DebugLogger() << "Connected to server at host_name: " << it->host_name()
+                                  << "  address: " << it->endpoint().address()
+                                  << "  port: " << it->endpoint().port();
+
+                    DebugLogger() << "ConnectToServer() : Client using "
+                                  << ((GetOptionsDB().Get<bool>("binary-serialization")) ? "binary": "xml")
+                                  << " serialization.";
+
+                    // Prepare the socket
+
+                    // linger option has different meanings on different platforms.  It affects the
+                    // behavior of the socket.close().  It can do the following:
+                    // - close both send and receive immediately,
+                    // - finish sending any pending send packets and wait up to SOCKET_LINGER_TIME for
+                    // ACKs,
+                    // - finish sending pending sent packets and wait up to SOCKET_LINGER_TIME for ACKs
+                    // and for the other side of the connection to close,
+                    // linger may/may not cause close() to block until the linger time has elapsed.
+                    m_socket.set_option(boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
+
+                    // keep alive is an OS dependent option that will keep the TCP connection alive and
+                    // then deliver an OS dependent error when/if the other side of the connection
+                    // times out or closes.
+                    m_socket.set_option(boost::asio::socket_base::keep_alive(true));
+                    DebugLogger() << "Connecting to server took "
+                                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
+
+                    DebugLogger() << "ConnectToServer() : starting networking thread";
+                    auto self = shared_from_this();
+                    boost::thread(boost::bind(&ClientNetworking::NetworkingThread, this, self));
+                    break;
+                } else {
+                    if (TRACE_EXECUTION)
+                        DebugLogger() << "Failed to connect to host_name: " << it->host_name()
+                                      << "  address: " << it->endpoint().address()
+                                      << "  port: " << it->endpoint().port();
+                    if (timeout < connection_time) {
+                        ErrorLogger() << "Timed out ("
+                                      << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms."
+                                      << ") attempting to connect to server.";
+                    }
+                }
             }
         }
-        if (!Connected())
-            DebugLogger() << "ClientNetworking::ConnectToServer : failed to connect to server (no exceptions)";
+        if (!IsConnected())
+            DebugLogger() << "ConnectToServer() : failed to connect to server.";
 
     } catch (const std::exception& e) {
-        ErrorLogger() << "ClientNetworking::ConnectToServer unable to connect to server at "
+        ErrorLogger() << "ConnectToServer() : unable to connect to server at "
                       << ip_address << " due to exception: " << e.what();
     }
-    return Connected();
+    return IsConnected();
 }
 
 bool ClientNetworking::ConnectToLocalHostServer(
-    boost::posix_time::seconds timeout/* = boost::posix_time::seconds(5)*/)
+    std::chrono::milliseconds timeout/* = std::chrono::seconds(10)*/)
 {
     bool retval = false;
 #if FREEORION_WIN32
@@ -235,10 +279,22 @@ bool ClientNetworking::ConnectToLocalHostServer(
 }
 
 void ClientNetworking::DisconnectFromServer() {
-    if (Connected())
+    bool is_open(false);
+
+    { // Create a scope for the mutex
+        boost::mutex::scoped_lock lock(m_mutex);
+        is_open = m_rx_connected || m_tx_connected;
+    } // Destroy the scope for the mutex.
+
+    if (is_open) {
+        // Depending behavior of linger on OS's of the sending and receiving machines this call to close could
+        // - immediately disconnect both send and receive channels
+        // - immediately disconnect send, but continue receiving until all pending sent packets are
+        // received and acknowledged.
+        // - send pending packets and wait for the receive side to terminate the connection.
+
         m_io_service.post(boost::bind(&ClientNetworking::DisconnectFromServerImpl, this));
-    // HACK! wait a bit for the disconnect to occur
-    boost::this_thread::sleep_for(boost::chrono::seconds(1));
+    }
 }
 
 void ClientNetworking::SetPlayerID(int player_id) {
@@ -250,8 +306,8 @@ void ClientNetworking::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
 
 void ClientNetworking::SendMessage(Message message) {
-    if (!Connected()) {
-        ErrorLogger() << "ClientNetworking::SendMessage can't send message when not connected";
+    if (!IsTxConnected()) {
+        ErrorLogger() << "ClientNetworking::SendMessage can't send message when not transmit connected";
         return;
     }
     if (TRACE_EXECUTION)
@@ -283,57 +339,43 @@ void ClientNetworking::SendSynchronousMessage(Message message, Message& response
 }
 
 void ClientNetworking::HandleConnection(tcp::resolver::iterator* it,
-                                        boost::asio::deadline_timer* timer,
                                         const boost::system::error_code& error)
 {
     if (error) {
-        if (!m_cancel_retries) {
-            if (TRACE_EXECUTION)
-                DebugLogger() << "ClientNetworking::HandleConnection : connection error ... retrying";
-            m_socket.async_connect(**it, boost::bind(&ClientNetworking::HandleConnection, this,
-                                                     it,
-                                                     timer,
-                                                     boost::asio::placeholders::error));
-        }
+        if (TRACE_EXECUTION)
+            DebugLogger() << "ClientNetworking::HandleConnection : connection "
+                          << "error #"<<error.value()<<" \"" << error.message() << "\""
+                          << "... retrying";
     } else {
         if (TRACE_EXECUTION)
             DebugLogger() << "ClientNetworking::HandleConnection : connected";
-        timer->cancel();
+
         boost::mutex::scoped_lock lock(m_mutex);
-        m_connected = true;
+        m_rx_connected = true;
+        m_tx_connected = true;
     }
 }
 
-void ClientNetworking::CancelRetries()
-{ m_cancel_retries = true; }
-
 void ClientNetworking::HandleException(const boost::system::system_error& error) {
-    if (error.code() == boost::asio::error::eof ||
-        error.code() == boost::asio::error::connection_reset ||
-        error.code() == boost::asio::error::operation_aborted)
-    {
-        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
-                      << "due to disconnect exception \"" << error.what() << "\"";
-    } else {
+    if (error.code() == boost::asio::error::eof)
+        DebugLogger() << "Client connection disconnected by EOF from server.";
+    else if (error.code() == boost::asio::error::connection_reset)
+        DebugLogger() << "Client connection disconnected, due to connection reset from server.";
+    else if (error.code() == boost::asio::error::operation_aborted)
+        DebugLogger() << "Client connection closed by client.";
+    else {
         ErrorLogger() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
                       << "due to unhandled exception \"" << error.what() << "\"";
     }
 }
 
-void ClientNetworking::NetworkingThread() {
+void ClientNetworking::NetworkingThread(std::shared_ptr<ClientNetworking>& self) {
+    auto protect_from_destruction_in_other_thread = self;
     try {
         if (!m_outgoing_messages.empty())
             AsyncWriteMessage();
         AsyncReadMessage();
-        while (1) {
-            try {
-                m_io_service.run();
-                break;
-            } catch (const boost::system::system_error& error) {
-                HandleException(error);
-                break;
-            }
-        }
+        m_io_service.run();
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
@@ -341,7 +383,8 @@ void ClientNetworking::NetworkingThread() {
     m_outgoing_messages.clear();
     m_io_service.reset();
     boost::mutex::scoped_lock lock(m_mutex);
-    m_connected = false;
+    m_rx_connected = false;
+    m_tx_connected = false;
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
@@ -422,5 +465,13 @@ void ClientNetworking::SendMessageImpl(Message message) {
         AsyncWriteMessage();
 }
 
-void ClientNetworking::DisconnectFromServerImpl()
-{ m_socket.close(); }
+void ClientNetworking::DisconnectFromServerImpl() {
+    // Stop sending new packets
+    { // Scope for the mutex
+        boost::mutex::scoped_lock lock(m_mutex);
+        m_tx_connected = false;
+    }
+
+    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
+    m_socket.close();
+}
