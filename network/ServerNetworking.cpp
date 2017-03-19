@@ -485,7 +485,8 @@ void ServerNetworking::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
 
 void ServerNetworking::Init() {
-    tcp::endpoint endpoint(tcp::v4(), Networking::MessagePort());
+    // use a dual stack (ipv6 + ipv4) socket
+    tcp::endpoint endpoint(tcp::v6(), Networking::MessagePort());
 
     if (GetOptionsDB().Get<bool>("singleplayer")) {
         // when hosting a single player game only accept connections from
@@ -499,6 +500,9 @@ void ServerNetworking::Init() {
     m_player_connection_acceptor.open(endpoint.protocol());
     m_player_connection_acceptor.set_option(
         boost::asio::socket_base::reuse_address(true));
+    if (endpoint.protocol() == boost::asio::ip::tcp::v6())
+        m_player_connection_acceptor.set_option(
+            boost::asio::ip::v6_only(false));  // may be true by default on some systems
     m_player_connection_acceptor.set_option(
         boost::asio::socket_base::linger(true, SOCKET_LINGER_TIME));
     m_player_connection_acceptor.bind(endpoint);

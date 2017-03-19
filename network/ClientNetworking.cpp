@@ -167,7 +167,7 @@ bool ClientNetworking::ConnectToServer(
 
     using namespace boost::asio::ip;
     tcp::resolver resolver(m_io_service);
-    tcp::resolver::query query(tcp::v4(), ip_address,
+    tcp::resolver::query query(ip_address,
                                std::to_string(Networking::MessagePort()),
                                boost::asio::ip::resolver_query_base::numeric_service);
 
