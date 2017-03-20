@@ -4,13 +4,13 @@ import AIstate
 import universe_object
 from EnumsAI import MissionType
 import FleetUtilsAI
-from CombatRatingsAI import combine_ratings, combine_ratings_list, rating_needed
+from CombatRatingsAI import combine_ratings
 import PlanetUtilsAI
 import PriorityAI
 import ColonisationAI
 import ProductionAI
 import CombatRatingsAI
-from freeorion_tools import ppstring, chat_human, print_error
+from freeorion_tools import ppstring
 from AIDependencies import INVALID_ID
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
