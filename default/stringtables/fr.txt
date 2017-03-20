@@ -3299,11 +3299,29 @@ Déclarer la guerre
 PEACE_PROPOSAL
 Proposer la paix
 
-PEACE_PROPOSAL_CANEL
+PEACE_PROPOSAL_CANCEL
 Annuler la proposition de paix
 
 PEACE_ACCEPT
 Accepter la proposition de paix
+
+PEACE_REJECT
+Rejeter la proposition de paix
+
+ALLIES_PROPOSAL
+Proposer une alliance
+
+ALLIES_PROPOSAL_CANCEL
+Annuler la proposition d'alliance
+
+ALLIES_ACCEPT
+Accepter la proposition d'alliance
+
+ALLIES_REJECT
+Rejeter la proposition d'alliance
+
+END_ALLIANCE_DECLARATION
+Mettre un terme à l'alliance
 
 
 ##
@@ -3910,16 +3928,16 @@ Agressivité max de l'IA: %10%
 '''
 
 ENC_SHIP_PART
-Astronef - Équipement
+-[Équipement Astronef]
 
 ENC_SHIP_PART_DESC
-Équipements d'astronef
+Un Équipement d'Astronef peut être monté sur une <encyclopedia ENC_SHIP_HULL>Coque d'Astronef</encyclopedia> (dans une [[encyclopedia SLOT_TITLE]]) lors de la conception d'un astronef, afin d'améliorer ses statistiques. Certains équipements d'entrée de gamme sont disponibles par défaut, mais [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]] permet de débloquer de meilleures versions ou de nouveaux types d'équipement. Chaque équipement d'astronef appartient à l'une des catégories listées ci-dessous.
 
 ENC_SHIP_HULL
-Astronef - Coque
+-[Coque Astronef]
 
 ENC_SHIP_HULL_DESC
-Coques d'Astronef
+Une Coque d'Astronef est l'élément de base de l'architecture d'un astronef, et définit les statistiques basiques d'un modèle d'astronef (si aucun <encyclopedia ENC_SHIP_PART>Équipement d'Astronef</encyclopedia> n'est encore monté). Certaines coques d'entrée de gamme sont disponibles par défaut, mais [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]] permet de débloquer de meilleures versions ou de nouvelles classes de coque. Les coques d'astronef sont classées selon les catégories listées ci-dessous.
 
 ENC_TECH  # translated
 Technologies
@@ -3928,7 +3946,7 @@ ENC_TECH_DESC
 [[encyclopedia RESEARCH_TECH_GUIDE_TITLE]] permet de débloquer de nouveaux effets, indicateurs planétaires améliorés, structures, ou équipements d'astronef, chacun d'entre eux appartenant à l'une des catégories ci-dessous.
 
 ENC_SPECIAL
-Particularité Planétaire ou Spatiale
+Particularité
 
 OBJECTS_WITH_SPECIAL
 '''Objets avec Particularité : '''
@@ -3939,11 +3957,14 @@ Type de Structures
 ENC_SPECIES
 Espèce
 
+ENC_SPECIES_DESC
+Chaque espèce est classifiée selon son [[encyclopedia METABOLISM_TITLE]]. 
+
 ENC_FIELD_TYPE
 Type de Régions
 
 ENC_SHIP_DESIGN
-Astronef - Modèle
+-[Modèle Astronef]
 
 SHIPS_OF_DESIGN
 '''Astronefs de ce modèle : '''
@@ -4086,8 +4107,8 @@ Aucun résultat trouvé
 #     (e.g. for a ship part it would be the ship part class).
 # %2% general type description of the thing described in the encyclopedia.
 #     (e.g. for a ship part it would be the content of 'ENC_SHIP_PART').
-#ENC_DETAIL_TYPE_STR
-#%1% %2%
+ENC_DETAIL_TYPE_STR
+%2% %1%
 
 ENC_PP  # translated
 PP
@@ -4687,7 +4708,7 @@ METER_FUEL_VALUE_LABEL
 Carburant
 
 METER_FUEL_VALUE_DESC
-Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale). La quantité initiale de carburant qu'embarque un <encyclopedia ENC_SHIP_DESIGN>Modèle d'astronef</encyclopedia> dépend de son type de <encyclopedia ENC_SHIP_HULL>Coque</encyclopedia>, et peut être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia>.
+Le carburant permet aux astronefs de parcourir les Voies spatiales non-situées dans les zones d'[[metertype METER_SUPPLY]] de l'empire. En dehors de ces dernières, un astronef brûle 1 unité de carburant pour chaque Voie spatiale parcourue. Un arrêt d'un astronef sur les lignes d'[[metertype METER_SUPPLY]] de l'empire permet de refaire le plein en carburant. S'il voyage au-delà des lignes d'approvisionnement de son empire, un astronef récupérera lentement son carburant seulement s'il est immobile (stationnaire dans un système, dans l'espace interstellaire, ou sur une Voie spatiale). La quantité initiale de carburant qu'embarque un <encyclopedia ENC_SHIP_DESIGN>Modèle d'Astronef</encyclopedia> dépend de son type de <encyclopedia ENC_SHIP_HULL>Coque</encyclopedia>, et peut être augmentée à l'aide de certains <encyclopedia ENC_SHIP_PART>Équipements d'Astronef</encyclopedia>.
 
 METER_SHIELD_VALUE_LABEL
 Boucliers
@@ -4832,7 +4853,7 @@ SLOT_TITLE
 Niche
 
 SLOT_TEXT
-Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>Coque d'astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>Équipements d'astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
+Une niche est un emplacement sur une <encyclopedia ENC_SHIP_HULL>Coque d'Astronef</encyclopedia> pouvant accueillir différents types d'<encyclopedia ENC_SHIP_PART>Équipements d'Astronef</encyclopedia> (armes, boucliers, blindages, motorisations, dispositifs de détection, etc.). Il existe trois types de niches: externe, interne, et centrale. Les descriptions des équipements d'astronef renseignent sur le type de niche compatible, certains équipements étant compatibles avec plusieurs types de niches. Cette information est également disponible sous forme graphique dans la [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]], chaque type de niche ayant une forme spécifique, de même que chaque type d'équipement. Plus une coque est vaste (et coûteuse), plus elle dispose de niches pouvant accueillir de nombreux équipements.
 
 DETECTION_TITLE
 Capacité de Détection
@@ -4864,25 +4885,25 @@ ORGANIC_SPECIES_TITLE
 Métabolisme Organique
 
 ORGANIC_SPECIES_TEXT
-Les espèces organiques sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
+Les espèces de type [[encyclopedia ORGANIC_SPECIES_CLASS]] sont plus ou moins 'la vie telle que nous la connaissons'. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Organique sont marqués d'un petit 'O' vert.
 
 LITHIC_SPECIES_TITLE
 Métabolisme Lithique
 
 LITHIC_SPECIES_TEXT
-Les espèces lithiques sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
+Les espèces de type [[encyclopedia LITHIC_SPECIES_CLASS]] sont des organismes à base de silicium ou de minéraux. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Lithique sont marqués d'un petit 'L' gris.
 
 ROBOTIC_SPECIES_TITLE
 Métabolisme Robotique
 
 ROBOTIC_SPECIES_TEXT
-Les espèces robotiques sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
+Les espèces de type [[encyclopedia ROBOTIC_SPECIES_CLASS]] sont des machines douées de conscience. La population maximale de ces espèces peut être augmentée lorsque leur Planète Natale est réglée sur le [[encyclopedia GROWTH_FOCUS_TITLE]] (et connectée par lignes d'[[metertype METER_SUPPLY]]), ou lorsqu'un Objet à Particularité de Croissance favorable à l'espèce est colonisé et focalisé sur la Croissance. Les Objets à Particularité de Croissance Robotique sont marqués d'un petit 'R' rouge.
 
 PHOTOTROPHIC_SPECIES_TITLE
 Métabolisme Phototropique
 
 PHOTOTROPHIC_SPECIES_TEXT
-'''Les espèces phototropiques vivent principalement, si ce n'est entièrement, de la lumière stellaire. La population maximale de ces espèces est fortement influencée par la luminosité de leur étoile et par la taille de leur planète - plus elles sont respectivement lumineuses ou grandes, plus le bénéfice est important. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
+'''Les espèces de type [[encyclopedia PHOTOTROPHIC_SPECIES_CLASS]] vivent principalement, si ce n'est entièrement, de la lumière stellaire. La population maximale de ces espèces est fortement influencée par la luminosité de leur étoile et par la taille de leur planète - plus elles sont respectivement lumineuses ou grandes, plus le bénéfice est important. Les Particularités de Croissance n'ont aucun effet sur ces organismes.
 
 Influence sur la population:
 
@@ -4900,7 +4921,7 @@ SELF_SUSTAINING_SPECIES_TITLE
 Métabolisme Autosuffisant
 
 SELF_SUSTAINING_SPECIES_TEXT
-Les espèces autosuffisantes sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément de trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
+Les espèces de type [[encyclopedia SELF_SUSTAINING_SPECIES_CLASS]] sont des organismes cristallins, voire purement énergétiques, et peut-être même d'une physiologie encore plus étrange. Leur constitution est telle qu'ils n'ont pas besoin d'apports vitaux, leur population maximale étant de ce fait très élevée. Tandis qu'aucune Particularité n'augmente leur Croissance, leur population maximale évolue plutôt à la manière d'une espèce profitant simultanément des trois Particularités basées sur le [[encyclopedia GROWTH_FOCUS_TITLE]].
 
 TELEPATHIC_TITLE
 Télépathie
@@ -6237,6 +6258,40 @@ Opinions des Empires :
 
 OPINIONS_OF_OTHER_SPECIES
 Opinions des autres Espèces :
+
+# Species Pedia Categories
+
+LITHIC_SPECIES_CLASS
+Lithique
+
+LITHIC_SPECIES_CLASS_DESC
+Liste des espèces à [[encyclopedia LITHIC_SPECIES_TITLE]]:
+
+ORGANIC_SPECIES_CLASS
+Organique
+
+ORGANIC_SPECIES_CLASS_DESC
+Liste des espèces à [[encyclopedia ORGANIC_SPECIES_TITLE]]:
+
+PHOTOTROPHIC_SPECIES_CLASS
+Phototrophique
+
+PHOTOTROPHIC_SPECIES_CLASS_DESC
+Liste des espèces à [[encyclopedia PHOTOTROPHIC_SPECIES_TITLE]]:
+
+ROBOTIC_SPECIES_CLASS
+Robotique
+
+ROBOTIC_SPECIES_CLASS_DESC
+Liste des espèces à [[encyclopedia ROBOTIC_SPECIES_TITLE]]:
+
+SELF_SUSTAINING_SPECIES_CLASS
+Autosuffisant
+
+SELF_SUSTAINING_SPECIES_CLASS_DESC
+Liste des espèces à [[encyclopedia SELF_SUSTAINING_SPECIES_TITLE]]:
+
+# Species Pedia Articles
 
 SP_HUMAN
 Humain
