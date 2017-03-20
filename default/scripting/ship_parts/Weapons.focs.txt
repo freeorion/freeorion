@@ -21,7 +21,7 @@ Part
     shots = 3
     NoDefaultCapacityEffect
     mountableSlotTypes = External
-    buildcost = 1 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 1
     tags = [ "PEDIA_PC_DIRECT_WEAPON" ]
     location = OwnedBy empire = Source.Owner
