@@ -137,11 +137,23 @@ def get_fleets_for_mission(target_stats, min_stats, cur_stats, starting_system,
                 troop_capacity = count_troops_in_fleet(fleet_id)
                 if troop_capacity <= 0:
                     continue
+
+            # check if we need additional rating vs planets
+            this_rating_vs_planets = 0
+            if 'ratingVsPlanets' in target_stats:
+                this_rating_vs_planets = foAI.foAIstate.get_rating(fleet_id, against_planets=True)
+                if this_rating_vs_planets <= 0 and cur_stats.get('rating', 0) >= target_stats.get('rating', 0):
+                    # we already have enough general rating, so do not add any more warships useless against planets
+                    continue
+
             # all checks passed, add ship to selected fleets and update the stats
             fleet_list.append(fleet_id)
             fleet_pool_set.remove(fleet_id)
             this_rating = foAI.foAIstate.get_rating(fleet_id)
             cur_stats['rating'] = CombatRatingsAI.combine_ratings(cur_stats.get('rating', 0), this_rating)
+            if 'ratingVsPlanets' in target_stats:
+                cur_stats['ratingVsPlanets'] = CombatRatingsAI.combine_ratings(cur_stats.get('ratingVsPlanets', 0),
+                                                                               this_rating_vs_planets)
             if 'troopCapacity' in target_stats:
                 cur_stats['troopCapacity'] = cur_stats.get('troopCapacity', 0) + troop_capacity
             # if we already meet the requirements, we can stop looking for more ships
