@@ -583,9 +583,16 @@ void HumanClientApp::CancelMultiplayerGameFromLobby()
 { m_fsm->process_event(CancelMPGameClicked()); }
 
 void HumanClientApp::SaveGame(const std::string& filename) {
+    m_save_game_in_progress = true;
     Message response_msg;
     m_networking->SendMessage(HostSaveGameInitiateMessage(PlayerID(), filename));
     DebugLogger() << "HumanClientApp::SaveGame sent save initiate message to server...";
+}
+
+void HumanClientApp::SaveGameCompleted() {
+    DebugLogger() << "HumanClientApp::SaveGameCompleted by server.";
+    m_save_game_in_progress = false;
+    SaveGameCompletedSignal();
 }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
@@ -1140,18 +1147,24 @@ namespace {
     };
 }
 
-void HumanClientApp::ResetToIntro() {
-    DebugLogger() << "HumanClientApp::ResetToIntro";
-    m_game_started = false;
-    m_fsm->process_event(StartQuittingGame(true, m_server_process));
-    return;
-}
+void HumanClientApp::ResetToIntro()
+{ ResetOrExitApp(true); }
 
-void HumanClientApp::ExitApp() {
-    DebugLogger() << "HumanClientApp::ExitApp";
+void HumanClientApp::ExitApp()
+{ ResetOrExitApp(false); }
+
+void HumanClientApp::ResetOrExitApp(bool reset) {
+    DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
+
     m_game_started = false;
 
-    m_fsm->process_event(StartQuittingGame(false, m_server_process));
+    if (m_save_game_in_progress) {
+        DebugLogger() << "save game in progress. Checking with player.";
+        auto dlg = SaveGamePendingDialog(this->SaveGameCompletedSignal);
+        dlg.Run();
+    }
+
+    m_fsm->process_event(StartQuittingGame(reset, m_server_process));
 }
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {
