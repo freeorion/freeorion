@@ -863,15 +863,13 @@ QuittingGame::QuittingGame(my_context c) :
     // shutdown, otherwise kill it.
 
     if (TRACE_EXECUTION) DebugLogger() << "(Host) QuittingGame";
-
-    // Client().m_game_started = false;
 }
 
 QuittingGame::~QuittingGame()
 { if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) ~QuittingGame"; }
 
 boost::statechart::result QuittingGame::react(const StartQuittingGame& u) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame set reset to intro = " << u.m_reset_to_intro;
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame reset to intro is " << u.m_reset_to_intro;
 
     m_reset_to_intro = u.m_reset_to_intro;
     m_server_process = &u.m_server;
@@ -950,7 +948,7 @@ boost::statechart::result QuittingGame::react(const Disconnection& d) {
 }
 
 boost::statechart::result QuittingGame::react(const TerminateServer& u) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.WaitForDisconnect";
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.TerminateServer";
 
     if (m_server_process && !m_server_process->Empty()) {
         DebugLogger() << "QuittingGame terminated server process.";
