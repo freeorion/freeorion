@@ -638,34 +638,19 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         for sys_id in other_targeted_system_ids:
             OutpostTargetAllocator(sys_id, allocation_helper).allocate()
 
-        # TODO this block is effectively not used as AIstate.opponentSystemIDs is never filled...
-        # blockade enemy systems
-        other_targeted_system_ids = []
-        targetable_ids = set(
-            ColonisationAI.systems_by_supply_tier.get(0, []) + ColonisationAI.systems_by_supply_tier.get(1, []))
-        for sys_id in AIstate.opponentSystemIDs:
-            if sys_id in targetable_ids:
-                other_targeted_system_ids.append(sys_id)
-            else:
-                for nID in universe.getImmediateNeighbors(sys_id, empire_id):
-                    if nID in targetable_ids:
-                        other_targeted_system_ids.append(sys_id)
-                        break
-        for sys_id in other_targeted_system_ids:
-            BlockadeAllocator(sys_id, allocation_helper).allocate()
+        # TODO blockade enemy systems
 
         # interior systems
-        current_mil_systems = [sid for sid, alloc, take_any, _ in allocation_helper.allocations]
+        targetable_ids = set(ColonisationAI.systems_by_supply_tier.get(0, []) +
+                             ColonisationAI.systems_by_supply_tier.get(1, []))
+        current_mil_systems = [sid for sid, _, _, _ in allocation_helper.allocations]
         interior_targets1 = targetable_ids.difference(current_mil_systems)
         interior_targets = [sid for sid in interior_targets1 if (
             allocation_helper.threat_bias + systems_status.get(sid, {}).get('totalThreat', 0) > 0.8 * allocation_helper.already_assigned_rating[sid])]
         for sys_id in interior_targets:
             InteriorTargetsAllocator(sys_id, allocation_helper).allocate()
 
-        # exploration targets
-        explo_target_ids = []
-        for sys_id in explo_target_ids:
-            ExplorationTargetAllocator(sys_id, allocation_helper).allocate()
+        # TODO Exploration targets
 
         # border protections
         visible_system_ids = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate.visBorderSystemIDs.keys()
