@@ -899,6 +899,12 @@ Error when reading save file.
 UNABLE_TO_SAVE_NOW_TRY_AGAIN
 Unable to save during AI processing. Try again when AIs have finished turns.
 
+SAVE_GAME_IN_PROGRESS
+A save game is in progress.  Click Stop Waiting to abandon the save.
+
+STOP_WAITING
+Stop waiting.
+
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 You do not control an empire and cannot issue orders.
 

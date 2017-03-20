@@ -33,6 +33,7 @@
 #include "../../parse/Parse.h"
 
 #include <GG/BrowseInfoWnd.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
 
@@ -1115,6 +1116,28 @@ void HumanClientApp::ResetClientData() {
     m_empires.Clear();
     m_orders.Reset();
     GetCombatLogManager().Clear();
+}
+
+namespace {
+    // Ask the player if they want to wait for the save game to complete
+    // The dialog automatically closes if the save completes while the user is waiting
+    class SaveGamePendingDialog : public GG::ThreeButtonDlg {
+        public:
+        SaveGamePendingDialog(boost::signals2::signal<void()>& save_completed_signal) :
+            GG::ThreeButtonDlg(
+                GG::X(320), GG::Y(200), UserString("SAVE_GAME_IN_PROGRESS"),
+                ClientUI::GetFont(ClientUI::Pts()+2),
+                ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
+                ClientUI::CtrlColor(), ClientUI::TextColor(), 1,
+                UserString("STOP_WAITING"))
+        { GG::Connect(save_completed_signal, &SaveGamePendingDialog::SaveCompletedHandler, this); }
+
+        void SaveCompletedHandler()
+        {
+            DebugLogger() << "SaveGamePendingDialog:: save game completed handled.";
+            m_done = true;
+        }
+    };
 }
 
 void HumanClientApp::ResetToIntro() {
