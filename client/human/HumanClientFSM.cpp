@@ -540,20 +540,14 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     ExtractErrorMessageData(msg.m_message, problem, fatal);
 
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
-                  << problem << "\nProblem is" <<(fatal ? "":"non-")<<" fatal";
+                  << problem << "\nProblem is" << (fatal ? "fatal" : "non-fatal");
 
-    // Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
-    auto retval = discard_event();
-    if (fatal) {
-        retval = transit<IntroMenu>();
-        Client().ResetToIntro();
-        ClientUI::MessageBox(UserString(problem), true);
-    } else {
-        ClientUI::MessageBox(UserString(problem), false);
-    }
-    return retval;
+    if (fatal)
+        Client().ResetToIntro();    // initiates state transition, so nothing extra required in this function
+
+    ClientUI::MessageBox(UserString(problem), fatal);
+
+    return discard_event();
 }
 
 boost::statechart::result PlayingGame::react(const TurnProgress& msg) {
