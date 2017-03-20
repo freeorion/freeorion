@@ -221,7 +221,7 @@ private:
     void HandleMessageHeaderRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
                                  boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage(const std::shared_ptr<const ClientNetworking>& keep_alive);
-    void HandleMessageWrite(        boost::system::error_code error, std::size_t bytes_transferred);
+    void HandleMessageWrite(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncWriteMessage();
     void SendMessageImpl(Message message);
     void DisconnectFromServerImpl();
@@ -457,17 +457,17 @@ void ClientNetworking::Impl::GetMessage(Message& message) {
 void ClientNetworking::Impl::SendSynchronousMessage(const Message& message, Message& response_message) {
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : sending message "
-                               << message;
+                      << message;
     SendMessage(message);
     // note that this is a blocking operation
     m_incoming_messages.EraseFirstSynchronousResponse(response_message);
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : received "
-                               << "response message " << response_message;
+                      << "response message " << response_message;
 }
 
 void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
-                                        const boost::system::error_code& error)
+                                              const boost::system::error_code& error)
 {
     if (error) {
         if (TRACE_EXECUTION)
@@ -523,7 +523,7 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
 }
 
 void ClientNetworking::Impl::HandleMessageBodyRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
-                                             boost::system::error_code error, std::size_t bytes_transferred)
+                                                   boost::system::error_code error, std::size_t bytes_transferred)
 {
     if (error)
         throw boost::system::system_error(error);
@@ -536,7 +536,7 @@ void ClientNetworking::Impl::HandleMessageBodyRead(const std::shared_ptr<const C
 }
 
 void ClientNetworking::Impl::HandleMessageHeaderRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
-                                               boost::system::error_code error, std::size_t bytes_transferred)
+                                                     boost::system::error_code error, std::size_t bytes_transferred)
 {
     if (error)
         throw boost::system::system_error(error);

@@ -90,7 +90,7 @@ public:
                                   std::chrono::seconds(10));
 
     /** Sends \a message to the server.  This function actually just enqueues
-        the message for sending a nd returns immediately. */
+        the message for sending and returns immediately. */
     void SendMessage(const Message& message);
 
     /** Gets the next incoming message from the server, places it into \a
