@@ -297,9 +297,8 @@ ClientNetworking::ServerNames ClientNetworking::Impl::DiscoverLANServerNames() {
         return ServerNames();
     ServerDiscoverer discoverer(m_io_service);
     discoverer.DiscoverServers();
-    auto servers = discoverer.Servers();
     ServerNames names;
-    for (const auto& server : servers) {
+    for (const auto& server : discoverer.Servers()) {
         names.push_back(server.second);
     }
     return names;
