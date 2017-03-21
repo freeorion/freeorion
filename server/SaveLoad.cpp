@@ -112,6 +112,10 @@ namespace {
     }
 
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
+
+    const std::string XML_COMPRESSED_MARKER("zlib-xml");
+    const std::string XML_DIRECT_MARKER("raw-xml");
+    const std::string BINARY_MARKER("binary");
 }
 
 int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_game_data,
@@ -176,6 +180,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     // then contains a string for compressed second archive
                     // that contains the main gamestate info
                     save_preview_data.SetBinary(false);
+                    save_preview_data.save_format_marker = XML_COMPRESSED_MARKER;
 
                     // allocate buffers for serialized gamestate
                     DebugLogger() << "Allocating buffers for XML serialization...";
@@ -242,6 +247,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                 // Attempt direct-to-disk uncompressed XML serialization
                 try {
                     save_preview_data.SetBinary(false);
+                    save_preview_data.save_format_marker = XML_DIRECT_MARKER;
 
                     // create archive with (preallocated) buffer...
                     freeorion_xml_oarchive xoa(ofs);
@@ -267,6 +273,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
         if (!save_completed_as_xml) {
             DebugLogger() << "Creating binary oarchive";
             save_preview_data.SetBinary(true);
+            save_preview_data.save_format_marker = BINARY_MARKER;
 
             freeorion_bin_oarchive boa(ofs);
             boa << BOOST_SERIALIZATION_NVP(save_preview_data);
@@ -346,16 +353,6 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             // reset to start of stream (attempted binary serialization will have consumed some input...)
             boost::iostreams::seek(ifs, 0, std::ios_base::beg);
 
-            // allocate buffers for serialized gamestate
-            DebugLogger() << "Allocating buffers for XML deserialization...";
-            std::string serial_str, compressed_str;
-            try {
-                serial_str.reserve(    std::pow(2.0, 29.0));
-                compressed_str.reserve(std::pow(2.0, 26.0));
-            } catch (...) {
-                DebugLogger() << "Unable to preallocate full deserialization buffers. Attempting deserialization with dynamic buffer allocation.";
-            }
-
             // create archive with (preallocated) buffer...
             freeorion_xml_iarchive xia(ifs);
             // read from save file: uncompressed header serialized data, with compressed main archive string at end...
@@ -365,39 +362,64 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             xia >> BOOST_SERIALIZATION_NVP(server_save_game_data);
             xia >> BOOST_SERIALIZATION_NVP(ignored_player_save_header_data);
             xia >> BOOST_SERIALIZATION_NVP(ignored_save_game_empire_data);
-            // extract compressed gamestate info
-            xia >> BOOST_SERIALIZATION_NVP(compressed_str);
 
-            // wrap compressed string in iostream::stream to extract compressed data
-            typedef boost::iostreams::basic_array_source<char> SourceDevice;
-            SourceDevice compressed_source(compressed_str.data(), compressed_str.size());
-            boost::iostreams::stream<SourceDevice> c_source(compressed_source);
 
-            // wrap uncompressed buffer string in iostream::stream to receive decompressed string
-            typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
-            InsertDevice serial_inserter(serial_str);
-            boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
+            if (ignored_save_preview_data.save_format_marker == XML_DIRECT_MARKER) {
+                // deserialize directly from file / disk to gamestate
 
-            // set up filter to decompress data
-            boost::iostreams::filtering_istreambuf i;
-            i.push(boost::iostreams::zlib_decompressor());
-            i.push(c_source);
-            boost::iostreams::copy(i, s_sink);
-            // The following line has been commented out because it caused an assertion in boost iostreams to fail
-            // s_sink.flush();
+                xia >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+                xia >> BOOST_SERIALIZATION_NVP(empire_manager);
+                xia >> BOOST_SERIALIZATION_NVP(species_manager);
+                xia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
+                xia >> BOOST_SERIALIZATION_NVP(universe);
 
-            // wrap uncompressed buffer string in iostream::stream to extract decompressed string
-            SourceDevice serial_source(serial_str.data(), serial_str.size());
-            boost::iostreams::stream<SourceDevice> s_source(serial_source);
+            } else {
+                // assume compressed XML
 
-            // create archive with (preallocated) buffer...
-            freeorion_xml_iarchive xia2(s_source);
-            // deserialize main gamestate info
-            xia2 >> BOOST_SERIALIZATION_NVP(player_save_game_data);
-            xia2 >> BOOST_SERIALIZATION_NVP(empire_manager);
-            xia2 >> BOOST_SERIALIZATION_NVP(species_manager);
-            xia2 >> BOOST_SERIALIZATION_NVP(combat_log_manager);
-            xia2 >> BOOST_SERIALIZATION_NVP(universe);
+                // allocate buffers for compressed and deceompressed serialized gamestate
+                DebugLogger() << "Allocating buffers for XML deserialization...";
+                std::string serial_str, compressed_str;
+                try {
+                    serial_str.reserve(    std::pow(2.0, 29.0));
+                    compressed_str.reserve(std::pow(2.0, 26.0));
+                } catch (...) {
+                    DebugLogger() << "Unable to preallocate full deserialization buffers. Attempting deserialization with dynamic buffer allocation.";
+                }
+
+                // extract compressed gamestate info
+                xia >> BOOST_SERIALIZATION_NVP(compressed_str);
+
+                // wrap compressed string in iostream::stream to extract compressed data
+                typedef boost::iostreams::basic_array_source<char> SourceDevice;
+                SourceDevice compressed_source(compressed_str.data(), compressed_str.size());
+                boost::iostreams::stream<SourceDevice> c_source(compressed_source);
+
+                // wrap uncompressed buffer string in iostream::stream to receive decompressed string
+                typedef boost::iostreams::back_insert_device<std::string> InsertDevice;
+                InsertDevice serial_inserter(serial_str);
+                boost::iostreams::stream<InsertDevice> s_sink(serial_inserter);
+
+                // set up filter to decompress data
+                boost::iostreams::filtering_istreambuf i;
+                i.push(boost::iostreams::zlib_decompressor());
+                i.push(c_source);
+                boost::iostreams::copy(i, s_sink);
+                // The following line has been commented out because it caused an assertion in boost iostreams to fail
+                // s_sink.flush();
+
+                // wrap uncompressed buffer string in iostream::stream to extract decompressed string
+                SourceDevice serial_source(serial_str.data(), serial_str.size());
+                boost::iostreams::stream<SourceDevice> s_source(serial_source);
+
+                // create archive with (preallocated) buffer...
+                freeorion_xml_iarchive xia2(s_source);
+                // deserialize main gamestate info
+                xia2 >> BOOST_SERIALIZATION_NVP(player_save_game_data);
+                xia2 >> BOOST_SERIALIZATION_NVP(empire_manager);
+                xia2 >> BOOST_SERIALIZATION_NVP(species_manager);
+                xia2 >> BOOST_SERIALIZATION_NVP(combat_log_manager);
+                xia2 >> BOOST_SERIALIZATION_NVP(universe);
+            }
         }
 
     } catch (const std::exception& err) {

@@ -111,7 +111,8 @@ SaveGamePreviewData::SaveGamePreviewData() :
     main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     current_turn(-1),
     number_of_empires(-1),
-    number_of_human_players(-1)
+    number_of_human_players(-1),
+    save_format_marker("")
 {}
 
 bool SaveGamePreviewData::Valid() const
@@ -129,6 +130,9 @@ void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
         }
         ar & BOOST_SERIALIZATION_NVP(description)
            & BOOST_SERIALIZATION_NVP(freeorion_version);
+        if (version >= 3) {
+            ar & BOOST_SERIALIZATION_NVP(save_format_marker);
+        }
     }
     ar & BOOST_SERIALIZATION_NVP(magic_number)
        & BOOST_SERIALIZATION_NVP(main_player_name);
