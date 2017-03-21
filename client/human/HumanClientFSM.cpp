@@ -959,9 +959,8 @@ boost::statechart::result QuittingGame::react(const TerminateServer& u) {
 
     // Reset the game or quit the app as appropriate
     if (m_reset_to_intro) {
-        auto retval = transit<IntroMenu>();
         Client().ResetClientData();
-        return retval;
+        return transit<IntroMenu>();
     } else {
         throw HumanClientApp::CleanQuit();
     }
