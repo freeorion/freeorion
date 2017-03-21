@@ -138,11 +138,26 @@ namespace {
         static std::vector<std::string> dir_names {
             "ENC_INDEX",        "ENC_SHIP_PART",    "ENC_SHIP_HULL",    "ENC_TECH",
             "ENC_BUILDING_TYPE","ENC_SPECIAL",      "ENC_SPECIES",      "ENC_FIELD_TYPE",
-            "ENC_METER_TYPE",   "ENC_EMPIRE",       "ENC_SHIP_DESIGN",  "ENC_SHIP",
-            "ENC_MONSTER",      "ENC_MONSTER_TYPE", "ENC_FLEET",        "ENC_PLANET",
-            "ENC_BUILDING",     "ENC_SYSTEM",       "ENC_FIELD",        "ENC_GRAPH",
-            "ENC_GALAXY_SETUP", "ENC_GAME_RULES"};
-        //  "ENC_HOMEWORLDS" omitted due to weird formatting of article titles
+            "ENC_METER_TYPE",   "ENC_EMPIRE_UNIVERSE_DATA", "ENC_GAME_RULES"};
+        return dir_names;
+    }
+
+    const std::vector<std::string>& GetEmpireDataDirNames() {
+        static std::vector<std::string> dir_names {
+            "ENC_EMPIRE",
+            "ENC_SHIP_DESIGN",
+            "ENC_SHIP",
+            "ENC_MONSTER",
+            "ENC_MONSTER_TYPE",
+            "ENC_FLEET",
+            "ENC_PLANET",
+            "ENC_BUILDING",
+            "ENC_SYSTEM",
+            "ENC_FIELD",
+            "ENC_GRAPH",
+            "ENC_GALAXY_SETUP",
+            "ENC_HOMEWORLDS"
+        };
         return dir_names;
     }
 
@@ -187,7 +202,7 @@ namespace {
                                              str}});
             }
 
-            for (const std::string& str : {"ENC_TEXTURES", "ENC_HOMEWORLDS"}) {
+            for (const std::string& str : {"ENC_TEXTURES"}) {
                 sorted_entries_list.insert({UserString(str),
                                             {LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, str) + "\n",
                                              str}});
@@ -203,6 +218,15 @@ namespace {
                 sorted_entries_list.insert({UserString(entry.first),
                                             {LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, entry.first) + "\n",
                                              entry.first}});
+            }
+
+        } else if (dir_name == "ENC_EMPIRE_UNIVERSE_DATA") {
+            for (const std::string& data_dir : GetEmpireDataDirNames()) {
+                if (data_dir == dir_name)
+                    continue;
+                sorted_entries_list.insert({UserString(data_dir),
+                                            {LinkTaggedText(TextLinker::ENCYCLOPEDIA_TAG, data_dir) + "\n",
+                                             data_dir}});
             }
 
         } else if (dir_name == "ENC_SHIP_PART") {

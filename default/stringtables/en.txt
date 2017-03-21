@@ -4187,6 +4187,14 @@ ENC_SUITABILITY_REPORT_WHEEL_INTRO
 Suitability is determined by distance from the preferred type of [[encyclopedia ENVIRONMENT_TITLE]] in this wheel:
 '''
 
+ENC_EMPIRE_UNIVERSE_DATA
+[Current Game - Universe]
+
+ENC_EMPIRE_UNIVERSE_DATA_DESC
+'''Information about the current universe.
+
+Not all objects or types are listed here, only those known to the viewing empire.'''
+
 # types of things that can be shown in encyclopedia
 ENC_GRAPH
 [Game - Graphs]
@@ -4257,7 +4265,7 @@ ENC_FIELD_TYPE
 Field Type
 
 ENC_SHIP_DESIGN
-Ship Design
+[Game - Ship Designs]
 
 SHIPS_OF_DESIGN
 '''Ships of this Design: '''
@@ -4358,10 +4366,10 @@ ENC_SHIP
 [Game - Ships]
 
 ENC_MONSTER
-[Game - Monster]
+[Game - Monsters]
 
 ENC_MONSTER_TYPE
-Monster Types
+[Game - Monster Types]
 
 ENC_FLEET
 [Game - Fleets]
