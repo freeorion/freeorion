@@ -1,7 +1,6 @@
 #ifndef _Logger_h_
 #define _Logger_h_
 
-#include <boost/log/trivial.hpp>
 #include <boost/log/sources/severity_channel_logger.hpp>
 #include <boost/log/expressions/keyword.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
