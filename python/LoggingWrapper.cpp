@@ -1,6 +1,7 @@
 #include <string>
 
 #include "../util/Logger.h"
+#include <boost/log/trivial.hpp>
 
 #include <boost/python.hpp>
 
