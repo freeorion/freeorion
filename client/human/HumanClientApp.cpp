@@ -1136,7 +1136,7 @@ namespace {
                 ClientUI::GetFont(ClientUI::Pts()+2),
                 ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
                 ClientUI::CtrlColor(), ClientUI::TextColor(), 1,
-                UserString("STOP_WAITING"))
+                UserString("ABORT_SAVE_AND_QUIT"))
         { GG::Connect(save_completed_signal, &SaveGamePendingDialog::SaveCompletedHandler, this); }
 
         void SaveCompletedHandler()
