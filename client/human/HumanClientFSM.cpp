@@ -114,8 +114,11 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
 
 boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -138,8 +141,11 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -185,8 +191,11 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
 
 boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -209,8 +218,11 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -255,8 +267,11 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
 
 boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -279,8 +294,11 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -323,8 +341,11 @@ MPLobby::~MPLobby() {
 
 boost::statechart::result MPLobby::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.Disconnection";
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -372,8 +393,11 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg) {
 boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -415,8 +439,11 @@ boost::statechart::result MPLobby::react(const Error& msg) {
 
     ErrorLogger() << "MPLobby::react(const Error& msg) error: " << problem;
 
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -492,8 +519,11 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
 
 boost::statechart::result PlayingGame::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -555,8 +585,11 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
         error = true;
         break;
     }
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
@@ -586,8 +619,11 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
                   << problem << "\nProblem is" << (fatal ? "fatal" : "non-fatal");
 
-    // Note: All transitions, transit<> or disable_event(), must occur in the order
-    // that they cause changes to the state machine.
+    // Note: All transitions, transit<> or discard_event(), must occur in the order
+    // that they cause changes to the state machine.  If a function is called that may internally
+    // cause a transition, then the transistion in this function must happen first lexically and
+    // the return value must be saved to return at the end of the function, so that temporally and
+    // state-wise all the transistions occur at the correct time and from/to the correct state.
     // - MessageBox blocks the UI, but continues handling events so other events
     //   can transit<> to a new state which makes this transition potentially fatal.
     // - Some client functions (ResetToIntro()) change the state machine, so a transition after
