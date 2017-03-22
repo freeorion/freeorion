@@ -1139,9 +1139,8 @@ namespace {
                 UserString("ABORT_SAVE_AND_QUIT"))
         { GG::Connect(save_completed_signal, &SaveGamePendingDialog::SaveCompletedHandler, this); }
 
-        void SaveCompletedHandler()
-        {
-            DebugLogger() << "SaveGamePendingDialog:: save game completed handled.";
+        void SaveCompletedHandler() {
+            DebugLogger() << "SaveGamePendingDialog::SaveCompletedHandler save game completed handled.";
             m_done = true;
         }
     };
