@@ -161,12 +161,15 @@ namespace {
     // The backend should be accessible synchronously from any thread by any sink frontend
     boost::shared_ptr<TextFileSinkBackend>  f_file_sink_backend;
 
-    std::string f_root_logger_name;
+    std::string f_default_exec_logger_name;
 }
 
-void InitLoggingSystem(const std::string& logFile, const std::string& _root_logger_name) {
-    f_root_logger_name = _root_logger_name;
-    std::transform(f_root_logger_name.begin(), f_root_logger_name.end(), f_root_logger_name.begin(),
+const std::string& DefaultExecLoggerName()
+{ return f_default_exec_logger_name; }
+
+void InitLoggingSystem(const std::string& logFile, const std::string& _default_exec_logger_name) {
+    f_default_exec_logger_name = _default_exec_logger_name;
+    std::transform(f_default_exec_logger_name.begin(), f_default_exec_logger_name.end(), f_default_exec_logger_name.begin(),
                    [](const char c) { return std::tolower(c); });
 
     // Register LogLevel so that the formatters will be found.
@@ -187,7 +190,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
         expr::stream
         << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
         << " [" << log_severity << "] "
-        << f_root_logger_name << " : " << log_src_filename << ":" << log_src_linenum << " : "
+        << f_default_exec_logger_name << " : " << log_src_filename << ":" << log_src_linenum << " : "
         << expr::message
     );
 
@@ -204,7 +207,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _root_logg
 
     // Setup the OptionsDB options for the file sink.
     LogLevel options_db_log_threshold = AddLoggerToOptionsDB(
-        exec_option_name_prefix + f_root_logger_name);
+        exec_option_name_prefix + f_default_exec_logger_name);
 
     // Use the option to set the threshold of the default logger
     SetLoggerThreshold("", options_db_log_threshold);
@@ -325,7 +328,7 @@ void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, Log
 
         std::smatch match;
         std::regex_search(full_option, match, exec_name_regex);
-        bool is_my_root_logger = (!match.empty() && match[1] == f_root_logger_name);
+        bool is_my_root_logger = (!match.empty() && match[1] == f_default_exec_logger_name);
 
         SetLoggerThreshold((is_my_root_logger ? "" : name), value);
     }

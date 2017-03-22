@@ -113,9 +113,11 @@ FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
 #define FO_GLOBAL_LOGGER_NAME(name) fo_logger_global_##name
 
 /** Initializes the logging system. Log to the given file.  If the file already
- * exists it will be deleted. \p root_logger_name is the name by which the
+ * exists it will be deleted. \p default_exec_logger_name is the name by which the
  * default logger "" appears in the log file.*/
-FO_COMMON_API void InitLoggingSystem(const std::string& logFile, const std::string& root_logger_name);
+FO_COMMON_API void InitLoggingSystem(const std::string& logFile, const std::string& default_exec_logger_name);
+
+FO_COMMON_API const std::string& DefaultExecLoggerName();
 
 /** A type for loggers (sources) that allows for severity and a logger name (channel in
     boost parlance) and supports multithreading.*/
