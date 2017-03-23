@@ -162,7 +162,7 @@ class OrderMove(AIFleetOrder):
         universe = fo.getUniverse()
         if main_fleet_mission.type == MissionType.INVASION and not trooper_move_reqs_met(main_fleet_mission, self, verbose):
             return False
-        if fleet_rating >= safety_factor * threat:
+        if fleet_rating >= safety_factor * threat and fleet_rating_vs_planets >= p_threat:
             return True
         elif not p_threat and self.target.id in fo.getEmpire().supplyUnobstructedSystems:
             return True
