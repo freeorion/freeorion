@@ -349,6 +349,20 @@ namespace {
         return py_items;
     }
 
+    // Wrapper for starting buildings
+    list LoadStartingBuildings() {
+        list py_items;
+        std::vector<ItemSpec> buildings;
+        parse::starting_buildings(buildings);
+        for (auto building : buildings) {
+            if (GetBuildingType(building.name))
+                py_items.append(object(building));
+            else
+                ErrorLogger() << "The item " << building.name << " in the starting building list is not a building.";
+        }
+        return py_items;
+    }
+
     // Wrappers for ship designs and premade ship designs
     bool ShipDesignCreate(const std::string& name, const std::string& description, const std::string& hull,
                           const list& py_parts,    const std::string& icon,        const std::string& model,
@@ -1315,6 +1329,7 @@ namespace FreeOrionPython {
         def("design_get_monster_list",              ShipDesignGetMonsterList);
 
         def("load_item_spec_list",                  LoadItemSpecList);
+        def("load_starting_buildings",              LoadStartingBuildings);
         def("load_fleet_plan_list",                 LoadFleetPlanList);
         def("load_monster_fleet_plan_list",         LoadMonsterFleetPlanList);
 

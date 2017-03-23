@@ -10,7 +10,7 @@ from options import (HS_ACCEPTABLE_PLANET_TYPES, HS_MIN_PLANETS_IN_VICINITY_TOTA
                      HS_MIN_PLANETS_IN_VICINITY_PER_SYSTEM, HS_MIN_DISTANCE_PRIORITY_LIMIT, HS_MAX_JUMP_DISTANCE_LIMIT,
                      HS_VICINITY_RANGE, HS_MIN_SYSTEMS_IN_VICINITY, HS_ACCEPTABLE_PLANET_SIZES)
 
-from util import load_string_list, report_error
+from util import report_error
 import statistics
 
 
@@ -500,10 +500,9 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         print "Player", player_name, ": no available foci on homeworld for starting species", starting_species
 
     # give homeworld starting buildings
-    # use the list provided in scripting/starting_unlocks/buildings.inf
     print "Player", player_name, ": add starting buildings to homeworld"
-    for building in load_string_list(os.path.join(fo.get_resource_dir(), "scripting/starting_unlocks/buildings.inf")):
-        fo.create_building(building, homeworld, empire)
+    for item in fo.load_starting_buildings():
+        fo.create_building(item.name, homeworld, empire)
 
     # unlock starting techs, buildings, hulls, ship parts, etc.
     # use default content file
