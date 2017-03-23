@@ -17,6 +17,53 @@
 #include <boost/format.hpp>
 #include <thread>
 
+/** \page statechart_notes Notes on Boost Statechart transitions
+
+    \section reaction_transition_note Transistion Ordering and Reaction return values.
+
+    Transitions, transit<> or discard_event(), from states must occur from the current state.
+    Transitioning from a state a second time causes indeterminate behavior and may crash.
+    Transitioning from a state that is not the current state causes indeterminate behavior and may crash.
+
+    Reactions handle events in states.  They return a statechart::result from a transit<> or discard_event().
+
+    In a reaction the state is transitioned when transit<> or discard_event() is called, not when
+    the reaction returns.  If a function is called within the reaction that may internally cause a
+    transition, then the transistion out of the reaction's initial state must happen before the
+    function is called.  Save the return value and return it at the end of the reaction.
+
+    This code is correct:
+    \code
+        boost::statechart::result SomeState::react(const SomeEvent& a) {
+
+            // Transition before calling other code that may also transition
+            auto retval = transit<SomeOtherState>();
+
+            // Or the transit could be a discard event
+            // auto retval = discard_event();
+
+            // Call functions that might also transition.
+            Client().ResetToIntro();
+            ClientUI::MessageBox("Some message", true);
+
+            // Return the state chart result from the only transition in this reaction.
+            return retval;
+        }
+    \endcode
+    discard_event() happens before any transitions inside ResetToIntro() or the MessageBox.
+
+    Two constructions that may cause problems are:
+
+        - MessageBox blocks execution locally and starts an EventPump that handles events that may
+          transit<> to a new state which makes a local transition lexically after the MessageBox
+          potentially fatal.
+
+        - Some client functions (ResetToIntro()) process events and change the state machine, so a
+          transition after the function is undefined and potentially fatal.
+
+ */
+
+
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
@@ -114,16 +161,8 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
 
 boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
 
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -141,16 +180,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
-
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         Client().ResetToIntro();
@@ -191,16 +221,8 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
 
 boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
 
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -218,16 +240,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
-
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         Client().ResetToIntro();
@@ -267,16 +280,8 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
 
 boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
 
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -294,16 +299,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
-
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         Client().ResetToIntro();
@@ -341,16 +337,8 @@ MPLobby::~MPLobby() {
 
 boost::statechart::result MPLobby::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.Disconnection";
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
 
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -393,16 +381,8 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg) {
 boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
 
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     return retval;
@@ -439,16 +419,7 @@ boost::statechart::result MPLobby::react(const Error& msg) {
 
     ErrorLogger() << "MPLobby::react(const Error& msg) error: " << problem;
 
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
-
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         Client().ResetToIntro();
@@ -519,16 +490,8 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
 
 boost::statechart::result PlayingGame::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
 
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -585,16 +548,8 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
         error = true;
         break;
     }
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
 
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(reason_message, error);
@@ -619,16 +574,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
                   << problem << "\nProblem is" << (fatal ? "fatal" : "non-fatal");
 
-    // Note: All transitions, transit<> or discard_event(), must occur in the order
-    // that they cause changes to the state machine.  If a function is called that may internally
-    // cause a transition, then the transistion in this function must happen first lexically and
-    // the return value must be saved to return at the end of the function, so that temporally and
-    // state-wise all the transistions occur at the correct time and from/to the correct state.
-    // - MessageBox blocks the UI, but continues handling events so other events
-    //   can transit<> to a new state which makes this transition potentially fatal.
-    // - Some client functions (ResetToIntro()) change the state machine, so a transition after
-    //   that function is undefined and potentially fatal.
-
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal)
         Client().ResetToIntro();
