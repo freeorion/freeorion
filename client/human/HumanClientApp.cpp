@@ -1130,13 +1130,13 @@ namespace {
     // The dialog automatically closes if the save completes while the user is waiting
     class SaveGamePendingDialog : public GG::ThreeButtonDlg {
         public:
-        SaveGamePendingDialog(boost::signals2::signal<void()>& save_completed_signal) :
+        SaveGamePendingDialog(bool reset, boost::signals2::signal<void()>& save_completed_signal) :
             GG::ThreeButtonDlg(
                 GG::X(320), GG::Y(200), UserString("SAVE_GAME_IN_PROGRESS"),
                 ClientUI::GetFont(ClientUI::Pts()+2),
                 ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
                 ClientUI::CtrlColor(), ClientUI::TextColor(), 1,
-                UserString("ABORT_SAVE_AND_QUIT"))
+                (reset ? UserString("ABORT_SAVE_AND_RESET") : UserString("ABORT_SAVE_AND_EXIT")))
         { GG::Connect(save_completed_signal, &SaveGamePendingDialog::SaveCompletedHandler, this); }
 
         void SaveCompletedHandler() {
@@ -1159,7 +1159,7 @@ void HumanClientApp::ResetOrExitApp(bool reset) {
 
     if (m_save_game_in_progress) {
         DebugLogger() << "save game in progress. Checking with player.";
-        auto dlg = SaveGamePendingDialog(this->SaveGameCompletedSignal);
+        auto dlg = SaveGamePendingDialog(reset, this->SaveGameCompletedSignal);
         dlg.Run();
     }
 
