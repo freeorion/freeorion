@@ -232,7 +232,7 @@ class AIstate(object):
                 for key in diff:
                     del planet_dict[key]
 
-        ExplorationAI.graphFlags.clear()
+        ExplorationAI.graph_flags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"
             print "Border Exploration Update (relative to %s)" % (PlanetUtilsAI.sys_name_ids([exploration_center, INVALID_ID])[0])

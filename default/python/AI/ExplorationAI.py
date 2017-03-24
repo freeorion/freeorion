@@ -12,7 +12,7 @@ from AIDependencies import INVALID_ID
 TARGET_POP = 'targetPop'
 TROOPS = 'troops'
 
-graphFlags = set()
+graph_flags = set()
 border_unexplored_system_ids = set()
 
 
@@ -133,9 +133,9 @@ def follow_vis_system_connections(start_system_id, home_system_id):
     exploration_list = [start_system_id]
     while exploration_list:
         cur_system_id = exploration_list.pop()
-        if cur_system_id in graphFlags:
+        if cur_system_id in graph_flags:
             continue
-        graphFlags.add(cur_system_id)
+        graph_flags.add(cur_system_id)
         system = universe.getSystem(cur_system_id)
         if cur_system_id in foAI.foAIstate.visBorderSystemIDs:
             pre_vis = "a border system"
@@ -191,7 +191,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
                 for sys_id in neighbors:
                     if sys_id not in foAI.foAIstate.exploredSystemIDs:
                         foAI.foAIstate.unexploredSystemIDs.add(sys_id)
-                    if (sys_id not in graphFlags) and (sys_id not in foAI.foAIstate.visInteriorSystemIDs):
+                    if (sys_id not in graph_flags) and (sys_id not in foAI.foAIstate.visInteriorSystemIDs):
                         foAI.foAIstate.visBorderSystemIDs.add(sys_id)
                         exploration_list.append(sys_id)
         if fo.currentTurn() < 50:
