@@ -2362,11 +2362,11 @@ void Universe::UpdateEmpireLatestKnownObjectsAndVisibilityTurns() {
 
     // for each object in universe
     for (std::shared_ptr<const UniverseObject> full_object : m_objects) {
-        int object_id = full_object->ID();
         if (!full_object) {
-            ErrorLogger() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects with id " << object_id;
+            ErrorLogger() << "UpdateEmpireLatestKnownObjectsAndVisibilityTurns found null object in m_objects";
             continue;
         }
+        int object_id = full_object->ID();
 
         // for each empire with a visibility map
         for (EmpireObjectVisibilityMap::value_type& empire_entry : m_empire_object_visibility) {
