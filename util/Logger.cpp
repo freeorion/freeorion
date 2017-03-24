@@ -164,6 +164,8 @@ namespace {
     std::string f_default_exec_logger_name;
 }
 
+LoggerCreatedSignalType LoggerCreatedSignal;
+
 const std::string& DefaultExecLoggerName()
 { return f_default_exec_logger_name; }
 
@@ -246,6 +248,7 @@ void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, const std::string&
 
     // Use the option.
     SetLoggerThreshold(name, options_db_log_threshold);
+    LoggerCreatedSignal(logger, name);
 
     InfoLogger(log) << "Added log source \"" << name << "\".";
 }

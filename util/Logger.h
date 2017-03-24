@@ -5,6 +5,7 @@
 #include <boost/log/expressions/keyword.hpp>
 #include <boost/log/utility/manipulators/add_value.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
+#include <boost/signals2/signal.hpp>
 
 #include <string>
 #include <set>
@@ -140,6 +141,10 @@ FO_COMMON_API void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, cons
         RegisterLoggerWithOptionsDB(lg, #name);                         \
         return lg;                                                      \
     }
+
+// Signal that logger \p name has been created
+using LoggerCreatedSignalType = boost::signals2::signal<void (const NamedThreadedLogger& logger, const std::string&)>;
+FO_COMMON_API extern LoggerCreatedSignalType LoggerCreatedSignal;
 
 // Create the default logger
 CreateThreadedLogger();
