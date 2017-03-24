@@ -13,7 +13,6 @@ TARGET_POP = 'targetPop'
 TROOPS = 'troops'
 
 graphFlags = {}
-interiorExploredSystemIDs = {}  # explored systems whose neighbors are also all
 borderExploredSystemIDs = {}
 borderUnexploredSystemIDs = {}
 
@@ -238,7 +237,6 @@ def update_explored_systems():
                 else:
                     next_list.append(neighbor_id)
             if all_explored:
-                interiorExploredSystemIDs[sys_id] = 1
                 if sys_id in borderExploredSystemIDs:
                     del borderExploredSystemIDs[sys_id]
             else:
