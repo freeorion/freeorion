@@ -1,6 +1,5 @@
 #include "ScopedTimer.h"
 
-#include "OptionsDB.h"
 #include "Logger.h"
 
 #include <boost/unordered_map.hpp>
@@ -30,7 +29,7 @@ public:
     }
 
     bool ShouldOutput(const std::chrono::nanoseconds & duration) {
-        return (duration >= m_threshold && (m_enable_output || GetOptionsDB().Get<bool>("verbose-logging")));
+        return ((duration >= m_threshold) && m_enable_output );
     }
 
     void FormatDuration(std::stringstream& ss, const std::chrono::nanoseconds & duration) {

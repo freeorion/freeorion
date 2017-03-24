@@ -360,8 +360,7 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
                                                     "", new Validator<std::string>(), false, false, false); // don't attempt to store options that have only been specified on the command line
                 }
 
-                if (GetOptionsDB().Get<bool>("verbose-logging"))
-                    DebugLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized.  It may not be registered yet or could be a typo.";
+                WarnLogger() << "Option \"" << option_name << "\", was specified on the command line but was not recognized.  It may not be registered yet or could be a typo.";
             } else {
                 Option& option = it->second;
                 if (option.value.empty())
@@ -475,8 +474,8 @@ void OptionsDB::SetFromXMLRecursive(const XMLElement& elem, const std::string& s
                 m_options[option_name] = Option(static_cast<char>(0), option_name, elem.Text(), elem.Text(),
                                                 "", new Validator<std::string>(), true, false, false);
             }
-            if (GetOptionsDB().Get<bool>("verbose-logging"))
-                DebugLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
+
+            TraceLogger() << "Option \"" << option_name << "\", was in config.xml but was not recognized.  It may not be registered yet or you may need to delete your config.xml if it is out of date.";
             m_dirty = true;
             return;
         }
