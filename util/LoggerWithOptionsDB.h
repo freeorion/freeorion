@@ -1,6 +1,8 @@
 #ifndef _LoggerWithOptionsDB_h_
 #define _LoggerWithOptionsDB_h_
 
+#include "OptionsDB.h"
+
 #include <string>
 #include <set>
 #include <tuple>
@@ -42,6 +44,8 @@
     The <sources> section controls the log threshold of the named loggers.
 
 */
+
+DiscreteValidator<std::string> LogLevelValidator();
 
 /** Initializes the logging system with settings from OptionsDB and starts capturing
  * LoggerCreatedSignal to add new loggers to OptionsDB on the fly. */

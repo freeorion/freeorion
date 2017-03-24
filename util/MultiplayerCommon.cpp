@@ -2,7 +2,7 @@
 
 #include "Directories.h"
 #include "i18n.h"
-#include "Logger.h"
+#include "LoggerWithOptionsDB.h"
 #include "OptionsDB.h"
 #include "Random.h"
 #include "../universe/Fleet.h"
@@ -24,7 +24,8 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add<std::string>("resource-dir",         UserStringNop("OPTIONS_DB_RESOURCE_DIR"),          PathString(GetRootDataDir() / "default"));
         db.Add<std::string>('S', "save-dir",        UserStringNop("OPTIONS_DB_SAVE_DIR"),              PathString(GetUserDataDir() / "save"));
-        db.Add<std::string>("log-level",            UserStringNop("OPTIONS_DB_LOG_LEVEL"),             "DEBUG");
+        db.Add<std::string>("log-level",            UserStringNop("OPTIONS_DB_LOG_LEVEL"),             "",
+                            OrValidator<std::string>(LogLevelValidator(), DiscreteValidator<std::string>("")));
         db.Add<std::string>("stringtable-filename", UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),  PathString(GetRootDataDir() / "default" / "stringtables" / "en.txt"));
         db.Add("binary-serialization",              UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),  false);
         db.Add("xml-zlib-serialization",            UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"),true);

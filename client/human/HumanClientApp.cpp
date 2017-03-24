@@ -209,6 +209,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
 
+    // Force the log threshold if requested.
+    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
+    if (!force_log_level.empty())
+        OverrideLoggerThresholds(to_LogLevel(force_log_level));
+
     InitLoggingSystem(HUMAN_CLIENT_LOG_FILENAME, "Client");
     InitLoggingOptionsDBSystem();
 
@@ -393,8 +398,12 @@ void HumanClientApp::StartServer() {
     args.push_back("\"" + SERVER_CLIENT_EXE + "\"");
     args.push_back("--resource-dir");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
-    args.push_back("--log-level");
-    args.push_back(GetOptionsDB().Get<std::string>("log-level"));
+
+    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
+    if (!force_log_level.empty()) {
+        args.push_back("--log-level");
+        args.push_back(GetOptionsDB().Get<std::string>("log-level"));
+    }
 
     if (ai_path != GetOptionsDB().GetDefaultValueString("ai-path")) {
         args.push_back("--ai-path");

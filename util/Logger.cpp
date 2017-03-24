@@ -21,6 +21,7 @@
 #include <boost/log/utility/setup/filter_parser.hpp>
 #include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
+#include <boost/optional.hpp>
 
 #include <ctime>
 #include <regex>
@@ -107,6 +108,8 @@ namespace {
     boost::shared_ptr<TextFileSinkBackend>  f_file_sink_backend;
 
     std::string f_default_exec_logger_name;
+
+    boost::optional<LogLevel> f_forced_threshold = boost::none;
 }
 
 LoggerCreatedSignalType LoggerCreatedSignal;
@@ -149,6 +152,8 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
+    SetLoggerThreshold("", max_LogLevel);
+
     // Initialize the internal logger
     ConfigureLogger(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
 
@@ -156,6 +161,11 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     auto date_time = std::time(nullptr);
     InfoLogger(log) << "Logger initialized at " << std::ctime(&date_time);
     InfoLogger() << FreeOrionVersionString();
+}
+
+void OverrideLoggerThresholds(const LogLevel threshold) {
+    InfoLogger(log) << "Forcing all logger threshold to be " << to_string(threshold);
+    f_forced_threshold = threshold;
 }
 
 void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
@@ -180,6 +190,8 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
 
     logging::core::get()->add_sink(sink_frontend);
 
+    SetLoggerThreshold(name, min_LogLevel);
+
     LoggerCreatedSignal(logger, name);
 
     InfoLogger(log) << "Added log source \"" << name << "\".";
@@ -191,10 +203,11 @@ namespace {
 }
 
 void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
-    InfoLogger(log) << "Setting \"" << (source.empty() ? "default" : source)
-                     << "\" logger threshold to \"" << threshold << "\".";
-
+    auto used_threshold = f_forced_threshold ? *f_forced_threshold : threshold;
     logging::core::get()->reset_filter();
-    f_min_channel_severity[source] = threshold;
+    f_min_channel_severity[source] = used_threshold;
     logging::core::get()->set_filter(f_min_channel_severity);
+
+    InfoLogger(log) << "Setting \"" << (source.empty() ? "default" : source)
+                    << "\" logger threshold to \"" << used_threshold << "\".";
 }

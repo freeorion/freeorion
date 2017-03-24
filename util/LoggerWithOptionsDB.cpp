@@ -21,14 +21,6 @@ namespace {
     constexpr LogLevel default_sink_level = LogLevel::debug;
     constexpr LogLevel default_source_level = LogLevel::debug;
 
-    DiscreteValidator<std::string> LogLevelValidator() {
-        std::set<std::string> valid_levels = {"debug", "info", "warn", "error",
-                                              "DEBUG", "INFO", "WARN", "ERROR",
-                                              "0", "1", "2", "3" };
-        auto validator = DiscreteValidator<std::string>(valid_levels);
-        return validator;
-    }
-
     constexpr auto exec_option_name_prefix = "logging.execs.";
     constexpr auto source_option_name_prefix = "logging.sources.";
 
@@ -71,6 +63,13 @@ namespace {
     }
 }
 
+DiscreteValidator<std::string> LogLevelValidator() {
+    std::set<std::string> valid_levels = {"debug", "info", "warn", "error",
+                                          "DEBUG", "INFO", "WARN", "ERROR",
+                                          "0", "1", "2", "3" };
+    auto validator = DiscreteValidator<std::string>(valid_levels);
+    return validator;
+}
 
 void InitLoggingOptionsDBSystem() {
     // Initialize the internal logger
@@ -100,7 +99,8 @@ void RegisterLoggerWithOptionsDB(const NamedThreadedLogger& logger, const std::s
     // Use the option.
     SetLoggerThreshold(name, options_db_log_threshold);
 
-    DebugLogger(log) << "Added log source \"" << name << "\" to optionsDB.";
+    DebugLogger(log) << "Configure log source \"" << name << "\" from optionsDB "
+                     << "using threshold " << to_string(options_db_log_threshold);
 }
 
 

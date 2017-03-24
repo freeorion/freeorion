@@ -91,6 +91,9 @@ FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
  * default logger "" appears in the log file.*/
 FO_COMMON_API void InitLoggingSystem(const std::string& logFile, const std::string& default_exec_logger_name);
 
+/** Overrides all logger thresholds to \p threshold.*/
+FO_COMMON_API void OverrideLoggerThresholds(const LogLevel threshold);
+
 FO_COMMON_API const std::string& DefaultExecLoggerName();
 
 /** A type for loggers (sources) that allows for severity and a logger name (channel in

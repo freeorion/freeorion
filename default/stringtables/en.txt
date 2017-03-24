@@ -1481,7 +1481,7 @@ OPTIONS_DB_RESOURCE_DIR
 Sets the root directory for the game resource files (game content and data files).
 
 OPTIONS_DB_LOG_LEVEL
-Sets the level at or above which log messages will be output (levels in order of increasing verbosity: FATAL, ERROR, WARN, INFO, DEBUG, TRACE)
+Sets all logger thresholds to this level at or above which log messages will be output (levels in order of increasing severity and/or verbosity: ERROR, WARN, INFO, DEBUG)
 
 OPTIONS_DB_LOGGER_FILE_SINK_LEVEL
 Sets the threshold at or above which log messages will be generated for the default source for a process. (levels in order of increasing severity: debug, info, warn, and error)
