@@ -451,8 +451,7 @@ namespace parse {
                 if (fn_ext == ".txt" && fn_stem_ext == ".focs") {
                     retval.push_back(file);
                 } else {
-                    // was  TraceLogger()
-                    DebugLogger() << "Parse: Skipping file " << file.string()
+                    TraceLogger() << "Parse: Skipping file " << file.string()
                                   << " due to extension (" << fn_stem_ext << fn_ext << ")";
                 }
             }

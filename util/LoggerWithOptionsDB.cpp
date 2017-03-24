@@ -64,9 +64,9 @@ namespace {
 }
 
 DiscreteValidator<std::string> LogLevelValidator() {
-    std::set<std::string> valid_levels = {"debug", "info", "warn", "error",
-                                          "DEBUG", "INFO", "WARN", "ERROR",
-                                          "0", "1", "2", "3" };
+    std::set<std::string> valid_levels = {"trace", "debug", "info", "warn", "error",
+                                          "TRACE", "DEBUG", "INFO", "WARN", "ERROR",
+                                          "0", "1", "2", "3", "4" };
     auto validator = DiscreteValidator<std::string>(valid_levels);
     return validator;
 }

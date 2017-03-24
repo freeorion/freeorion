@@ -520,7 +520,7 @@ std::vector<fs::path> ListDir(const fs::path& path) {
             if (fs::is_regular_file(dir_it->status())) {
                 retval.push_back(dir_it->path());
             } else if (!fs::is_directory(dir_it->status())) {
-                DebugLogger() << "Parse: Unknown file not included: " << PathString(dir_it->path());
+                TraceLogger() << "Parse: Unknown file not included: " << PathString(dir_it->path());
             }
         }
     }

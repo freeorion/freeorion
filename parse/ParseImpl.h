@@ -100,8 +100,7 @@ namespace parse { namespace detail {
 
         bool success = boost::spirit::qi::phrase_parse(it, l.end(), rules.start(boost::phoenix::ref(arg1)), in_state("WS")[l.self]);
 
-        //was TraceLogger()
-        DebugLogger() << "Parse: Elapsed time to parse " << path.string() << " = " << (timer.elapsed() * 1000.0);
+        TraceLogger() << "Parse: Elapsed time to parse " << path.string() << " = " << (timer.elapsed() * 1000.0);
 
         std::ptrdiff_t distance = std::distance(first, parse::detail::s_end);
 
