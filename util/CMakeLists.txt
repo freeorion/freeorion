@@ -6,6 +6,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/EnumText.h
         ${CMAKE_CURRENT_LIST_DIR}/i18n.h
         ${CMAKE_CURRENT_LIST_DIR}/Logger.h
+        ${CMAKE_CURRENT_LIST_DIR}/LoggerWithOptionsDB.h
         ${CMAKE_CURRENT_LIST_DIR}/ModeratorAction.h
         ${CMAKE_CURRENT_LIST_DIR}/MultiplayerCommon.h
         ${CMAKE_CURRENT_LIST_DIR}/OptionsDB.h
@@ -29,6 +30,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/EnumText.cpp
         ${CMAKE_CURRENT_LIST_DIR}/i18n.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Logger.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/LoggerWithOptionsDB.cpp
         ${CMAKE_CURRENT_LIST_DIR}/ModeratorAction.cpp
         ${CMAKE_CURRENT_LIST_DIR}/MultiplayerCommon.cpp
         ${CMAKE_CURRENT_LIST_DIR}/OptionsDB.cpp

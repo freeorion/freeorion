@@ -71,6 +71,7 @@
 		3A1BF3EB1748875300812237 /* Version.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A1BF3EA1748875200812237 /* Version.cpp */; };
 		3A5105541748D68B00DC258B /* i18n.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105521748D68B00DC258B /* i18n.cpp */; };
 		3A5105571748D6A700DC258B /* Logger.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105551748D6A600DC258B /* Logger.cpp */; };
+		3A5105571748D6A700DC258C /* LoggerWithOptionsDB.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 3A5105551748D6A600DC258C /* LoggerWithOptionsDB.cpp */; };
 		3A76046217499F3000363653 /* PlanetEnvironmentValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F5147E3B1B00B840A5 /* PlanetEnvironmentValueRefParser.cpp */; };
 		3A76046317499F3D00363653 /* PlanetSizeValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F6147E3B1B00B840A5 /* PlanetSizeValueRefParser.cpp */; };
 		3A76046417499F4C00363653 /* PlanetTypeValueRefParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 825936F7147E3B1B00B840A5 /* PlanetTypeValueRefParser.cpp */; };
@@ -573,7 +574,9 @@
 		3A5105521748D68B00DC258B /* i18n.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = i18n.cpp; sourceTree = "<group>"; };
 		3A5105531748D68B00DC258B /* i18n.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = i18n.h; sourceTree = "<group>"; };
 		3A5105551748D6A600DC258B /* Logger.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Logger.cpp; sourceTree = "<group>"; };
+		3A5105551748D6A600DC258C /* LoggerWithOptionsDB.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LoggerWithOptionsDB.cpp; sourceTree = "<group>"; };
 		3A5105561748D6A700DC258B /* Logger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Logger.h; sourceTree = "<group>"; };
+		3A5105561748D6A700DC258C /* LoggerWithOptionsDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoggerWithOptionsDB.h; sourceTree = "<group>"; };
 		4710233D0CEF3AAB00A7DF2B /* GGDoc.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = GGDoc.txt; sourceTree = "<group>"; };
 		4710233F0CEF3AAB00A7DF2B /* AlignmentFlags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlignmentFlags.h; sourceTree = "<group>"; };
 		471023400CEF3AAB00A7DF2B /* Base.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Base.h; sourceTree = "<group>"; };
@@ -1832,7 +1835,9 @@
 				3A5105521748D68B00DC258B /* i18n.cpp */,
 				3A5105531748D68B00DC258B /* i18n.h */,
 				3A5105551748D6A600DC258B /* Logger.cpp */,
+				3A5105551748D6A600DC258C /* LoggerWithOptionsDB.cpp */,
 				3A5105561748D6A700DC258B /* Logger.h */,
+				3A5105561748D6A700DC258C /* LoggerWithOptionsDB.h */,
 				825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */,
 				825EA75F16DB9DB10002A797 /* ModeratorAction.h */,
 				471D5D270A98A3F900DA9C21 /* MultiplayerCommon.cpp */,
@@ -2506,6 +2511,7 @@
 				3A1BF3EB1748875300812237 /* Version.cpp in Sources */,
 				3A5105541748D68B00DC258B /* i18n.cpp in Sources */,
 				3A5105571748D6A700DC258B /* Logger.cpp in Sources */,
+				3A5105571748D6A700DC258C /* LoggerWithOptionsDB.cpp in Sources */,
 				8242C81C176B0C8E001E1CF2 /* ScopedTimer.cpp in Sources */,
 				82E68F63190ECB8400BB1AD9 /* EnumText.cpp in Sources */,
 				82E68F64190ECB8400BB1AD9 /* SaveGamePreviewUtils.cpp in Sources */,

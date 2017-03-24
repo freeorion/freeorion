@@ -15,8 +15,7 @@
 
 
 /** \file
-    \brief The logging system consists of named loggers, with levels using
-    OptionsDB for configuration.
+    \brief The logging system consists of named loggers with levels.
 
     The system is a thin wrapper around boost::log.
 
@@ -73,32 +72,6 @@
     InfoLogger(name_of_logger)  << "streamable output";
     WarnLogger(name_of_logger)  << "streamable output";
     ErrorLogger(name_of_logger) << "streamable output";
-
-    Enabling/disabling the sinks and sources is controlled statically on startup
-    through OptionsDB, with either the files config.xml and/or
-    persistent_config.xml or dynamically with the app options window.
-
-    The logging section in the configuration file looks like:
-
-    <logging>
-      <sinks>
-        <client>info</client>
-        <server>debug</server>
-        <ai>debug</ai>
-      </sinks>
-      <sources>
-        <combat>debug</combat>
-        <combat-log>info</combat-log>
-        <network>warn</network>
-        <ai>debug</ai>
-      </sources>
-    </logging>
-
-    The <sinks> section controls the log level of the client (freeorion.log), server
-    (freeoriond.log) and AI (AI_x.log) files.
-
-    The <sources> section controls the log level of the named loggers.
-
 */
 
 // The logging levels.
@@ -127,8 +100,8 @@ using NamedThreadedLogger = boost::log::sources::severity_channel_logger_mt<
     std::string   ///< the channel name of the logger
     >;
 
-// Lookup and/or register the \p name logger in OptionsDB.  Sets the initial level.
-FO_COMMON_API void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, const std::string& name);
+// Setup file sink, formatting, and \p name channel filter for \p logger.
+FO_COMMON_API void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name);
 
 // Place in source file to create the previously defined global logger \p name
 #define CreateThreadedLogger(name)                                      \
@@ -138,7 +111,7 @@ FO_COMMON_API void RegisterLoggerWithOptionsDB(NamedThreadedLogger& logger, cons
         auto lg = NamedThreadedLogger(                                  \
             (boost::log::keywords::severity = LogLevel::debug),         \
             (boost::log::keywords::channel = #name));                   \
-        RegisterLoggerWithOptionsDB(lg, #name);                         \
+        ConfigureLogger(lg, #name);                                     \
         return lg;                                                      \
     }
 
@@ -174,17 +147,6 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 
 /** Sets the \p threshold of \p source.  \p source == "" is the default logger.*/
 FO_COMMON_API void SetLoggerThreshold(const std::string& source, LogLevel threshold);
-
-FO_COMMON_API void UpdateLoggerThresholdsFromOptionsDB();
-
-/** Return the option names, labels and levels for all executables from OptionsDB. */
-FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerExecutableOptionsLabelsAndLevels();
-
-/** Return the option names, labels and levels for all sources/channels from OptionsDB. */
-FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerSourceOptionsLabelsAndLevels();
-
-/** Sets the logger thresholds from a list of options, labels and thresholds. */
-FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>&);
 
 extern int g_indent;
 

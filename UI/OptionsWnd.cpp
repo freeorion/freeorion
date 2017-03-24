@@ -4,6 +4,7 @@
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/LoggerWithOptionsDB.h"
 
 #include "ClientUI.h"
 #include "CUISpin.h"

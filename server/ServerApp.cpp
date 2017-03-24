@@ -21,6 +21,7 @@
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/LoggerWithOptionsDB.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
@@ -141,6 +142,7 @@ ServerApp::ServerApp() :
     const std::string SERVER_LOG_FILENAME((GetUserDataDir() / "freeoriond.log").string());
 
     InitLoggingSystem(SERVER_LOG_FILENAME, "Server");
+    InitLoggingOptionsDBSystem();
 
     LogDependencyVersions();
 

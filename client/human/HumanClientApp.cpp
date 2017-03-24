@@ -18,6 +18,7 @@
 #include "../../network/Networking.h"
 #include "../../network/ClientNetworking.h"
 #include "../../util/i18n.h"
+#include "../../util/LoggerWithOptionsDB.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Process.h"
@@ -209,6 +210,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
 
     InitLoggingSystem(HUMAN_CLIENT_LOG_FILENAME, "Client");
+    InitLoggingOptionsDBSystem();
 
     try {
         InfoLogger() << "GL Version String: " << GetGLVersionString();

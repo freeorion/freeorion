@@ -2,6 +2,7 @@
 
 #include "../../python/AI/AIFramework.h"
 #include "../../util/Logger.h"
+#include "../../util/LoggerWithOptionsDB.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
@@ -88,6 +89,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     }
 
     InitLoggingSystem(AICLIENT_LOG_FILENAME, "AI");
+    InitLoggingOptionsDBSystem();
     DebugLogger() << PlayerName() + " ai client initialized.";
 }
 
