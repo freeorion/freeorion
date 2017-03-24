@@ -138,7 +138,7 @@ class AIstate(object):
         self.visBorderSystemIDs = {self.__origin_home_system_id}
         self.visInteriorSystemIDs = set()
         self.exploredSystemIDs = set()
-        self.unexploredSystemIDs = {self.__origin_home_system_id: 1}
+        self.unexploredSystemIDs = {self.__origin_home_system_id}
         self.fleetStatus = {}  # keys: 'sysID', 'nships', 'rating'
         # systemStatus keys: 'name', 'neighbors' (sysIDs), '2jump_ring' (sysIDs), '3jump_ring', '4jump_ring', 'enemy_ship_count'
         # 'fleetThreat', 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'totalThreat', 'localEnemyFleetIDs',

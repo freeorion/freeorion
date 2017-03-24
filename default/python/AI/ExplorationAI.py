@@ -193,7 +193,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
                 status_info.append(" -- has neighbors %s" % sorted(neighbors))
                 for sys_id in neighbors:
                     if sys_id not in foAI.foAIstate.exploredSystemIDs:
-                        foAI.foAIstate.unexploredSystemIDs[sys_id] = 1
+                        foAI.foAIstate.unexploredSystemIDs.add(sys_id)
                     if (sys_id not in graphFlags) and (sys_id not in foAI.foAIstate.visInteriorSystemIDs):
                         foAI.foAIstate.visBorderSystemIDs.add(sys_id)
                         exploration_list.append(sys_id)
@@ -216,7 +216,7 @@ def update_explored_systems():
     still_unexplored = []
     for sys_id in list(foAI.foAIstate.unexploredSystemIDs):
         if empire.hasExploredSystem(sys_id):  # consider making determination according to visibility rather than actual visit, which I think is what empire.hasExploredSystem covers
-            del foAI.foAIstate.unexploredSystemIDs[sys_id]
+            foAI.foAIstate.unexploredSystemIDs.discard(sys_id)
             foAI.foAIstate.exploredSystemIDs.add(sys_id)
             system = universe.getSystem(sys_id)
             print "Moved system %s from unexplored list to explored list" % system
