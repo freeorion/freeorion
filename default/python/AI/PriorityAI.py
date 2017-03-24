@@ -188,7 +188,7 @@ def _calculate_research_priority():
 def _calculate_exploration_priority():
     """Calculates the demand for scouts by unexplored systems."""
     empire = fo.getEmpire()
-    num_unexplored_systems = len(ExplorationAI.borderUnexploredSystemIDs)
+    num_unexplored_systems = len(ExplorationAI.border_unexplored_system_ids)
     num_scouts = sum([foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(
         MissionType.EXPLORATION)])
     production_queue = empire.productionQueue
