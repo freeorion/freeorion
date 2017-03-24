@@ -122,12 +122,10 @@ PartTypeManager::PartTypeManager() {
         throw;
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "Part Types:";
-        for (const std::map<std::string, PartType*>::value_type& entry : m_parts) {
-            const PartType* p = entry.second;
-            DebugLogger() << " ... " << p->Name() << " class: " << p->Class();
-        }
+    TraceLogger() << "Part Types:";
+    for (const std::map<std::string, PartType*>::value_type& entry : m_parts) {
+        const PartType* p = entry.second;
+        TraceLogger() << " ... " << p->Name() << " class: " << p->Class();
     }
 
     // Only update the global pointer on sucessful construction.
@@ -483,12 +481,10 @@ HullTypeManager::HullTypeManager() {
         throw;
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "Hull Types:";
-        for (const std::map<std::string, HullType*>::value_type& entry : m_hulls) {
-            const HullType* h = entry.second;
-            DebugLogger() << " ... " << h->Name();
-        }
+    TraceLogger() << "Hull Types:";
+    for (const std::map<std::string, HullType*>::value_type& entry : m_hulls) {
+        const HullType* h = entry.second;
+        TraceLogger() << " ... " << h->Name();
     }
 
     // Only update the global pointer on sucessful construction.
@@ -1075,17 +1071,15 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
         throw;
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "Predefined Ship Designs:";
-        for (const std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs) {
-            const ShipDesign* d = entry.second;
-            DebugLogger() << " ... " << d->Name();
-        }
-        DebugLogger() << "Monster Ship Designs:";
-        for (const std::map<std::string, ShipDesign*>::value_type& entry : m_monster_designs) {
-            const ShipDesign* d = entry.second;
-            DebugLogger() << " ... " << d->Name();
-        }
+    TraceLogger() << "Predefined Ship Designs:";
+    for (const std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs) {
+        const ShipDesign* d = entry.second;
+        TraceLogger() << " ... " << d->Name();
+    }
+    TraceLogger() << "Monster Ship Designs:";
+    for (const std::map<std::string, ShipDesign*>::value_type& entry : m_monster_designs) {
+        const ShipDesign* d = entry.second;
+        TraceLogger() << " ... " << d->Name();
     }
 
     // Only update the global pointer on sucessful construction.

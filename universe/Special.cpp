@@ -23,11 +23,9 @@ namespace {
                 throw e;
             }
 
-            if (GetOptionsDB().Get<bool>("verbose-logging")) {
-                DebugLogger() << "Specials:";
-                for (const std::map<std::string, Special*>::value_type& entry : m_specials) {
-                    DebugLogger() << " ... " << entry.first;
-                }
+            TraceLogger() << "Specials:";
+            for (const std::map<std::string, Special*>::value_type& entry : m_specials) {
+                TraceLogger() << " ... " << entry.first;
             }
         }
         ~SpecialManager() {

@@ -320,9 +320,7 @@ BuildingTypeManager::BuildingTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
-    }
+    TraceLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
 
     try {
         parse::buildings(m_building_types);
@@ -331,11 +329,9 @@ BuildingTypeManager::BuildingTypeManager() {
         throw e;
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "Building Types:";
-        for (const std::map<const std::string, BuildingType*>::value_type& entry : m_building_types) {
-            DebugLogger() << " ... " << entry.first;
-        }
+    TraceLogger() << "Building Types:";
+    for (const std::map<const std::string, BuildingType*>::value_type& entry : m_building_types) {
+        TraceLogger() << " ... " << entry.first;
     }
 
     // Only update the global pointer on sucessful construction.
