@@ -13,7 +13,6 @@ TARGET_POP = 'targetPop'
 TROOPS = 'troops'
 
 graphFlags = {}
-borderExploredSystemIDs = {}
 borderUnexploredSystemIDs = {}
 
 
@@ -236,11 +235,6 @@ def update_explored_systems():
                     all_explored = False
                 else:
                     next_list.append(neighbor_id)
-            if all_explored:
-                if sys_id in borderExploredSystemIDs:
-                    del borderExploredSystemIDs[sys_id]
-            else:
-                borderExploredSystemIDs[sys_id] = 1
 
     for sys_id in still_unexplored:
         neighbors = list(universe.getImmediateNeighbors(sys_id, empire_id))
