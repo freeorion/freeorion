@@ -298,13 +298,11 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     std::map<std::string, std::map<int, int>> named_key_maps;
     parse::keymaps(named_key_maps);
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "Keymaps:";
-        for (std::map<std::string, std::map<int, int>>::value_type& km : named_key_maps) {
-            DebugLogger() << "Keymap name = \"" << km.first << "\"";
-            for (std::map<int, int>::value_type& keys : km.second)
-                DebugLogger() << "    " << char(keys.first) << " : " << char(keys.second);
-        }
+    TraceLogger() << "Keymaps:";
+    for (std::map<std::string, std::map<int, int>>::value_type& km : named_key_maps) {
+        TraceLogger() << "Keymap name = \"" << km.first << "\"";
+        for (std::map<int, int>::value_type& keys : km.second)
+            TraceLogger() << "    " << char(keys.first) << " : " << char(keys.second);
     }
     std::map<std::string, std::map<int, int>>::const_iterator km_it = named_key_maps.find("TEST");
     if (km_it != named_key_maps.end()) {
