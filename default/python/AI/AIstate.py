@@ -220,18 +220,8 @@ class AIstate(object):
         if exploration_center == INVALID_ID:  # a bad state probably from an old savegame, or else empire has lost (or almost has)
             exploration_center = self.__origin_home_system_id
 
-        # check if planets in cache is still present. Remove destroyed.
         for system_id, info in sorted(self.systemStatus.items()):
             self.systemStatus[system_id]['enemy_ship_count'] = 0  # clear now in prep for update_system_status()
-            planet_dict = info.get('planets', {})
-            cache_planet_set = set(planet_dict)
-            system_planet_set = set(*(sys.planetIDs for sys in [universe.getSystem(system_id)] if sys))
-            diff = cache_planet_set - system_planet_set
-            if diff:
-                print "Removing destroyed planets from systemStatus for system %s: planets to be removed: %s" % (system_id, sorted(diff))
-                for key in diff:
-                    del planet_dict[key]
-
         ExplorationAI.graph_flags.clear()
         if fo.currentTurn() < 50:
             print "-------------------------------------------------"

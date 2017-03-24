@@ -163,29 +163,6 @@ def follow_vis_system_connections(start_system_id, home_system_id):
             foAI.foAIstate.visBorderSystemIDs.discard(cur_system_id)
             neighbors = set(dict_from_map(universe.getSystemNeighborsMap(cur_system_id, empire_id)).keys())
             sys_status.setdefault('neighbors', set()).update(neighbors)
-            sys_planets = sys_status.setdefault('planets', {})
-            if fo.currentTurn() < 50:
-                print "    previously known planets: %s" % sys_planets.keys()
-            if system:
-                for planet_id in system.planetIDs:
-                    sys_planets.setdefault(planet_id, {}).setdefault(TARGET_POP, 0)
-                    sys_planets[planet_id].setdefault(TROOPS, 0)
-                    planet = universe.getPlanet(planet_id)
-
-                    if planet:
-                        new_pop = planet.currentMeterValue(fo.meterType.targetPopulation)
-                        if new_pop != sys_planets[planet_id][TARGET_POP]:
-                            if fo.currentTurn() < 50:
-                                print "  * updating targetPop of planet %s to %.2f from %.2f" % (planet, new_pop, sys_planets[planet_id][TARGET_POP])
-                        troops = planet.currentMeterValue(fo.meterType.troops)
-                        if troops != sys_planets[planet_id].get(TROOPS, 0):
-                            if fo.currentTurn() < 50:
-                                print "  * updating troops of planet %s to %.2f from %.2f" % (planet, troops, sys_planets[planet_id][
-                                    TROOPS])
-                        sys_planets[planet_id][TARGET_POP] = new_pop
-                        sys_planets[planet_id][TROOPS] = troops
-            if fo.currentTurn() < 50:
-                print "    known planets %s" % sys_planets.keys()
             if neighbors:
                 status_info.append(" -- has neighbors %s" % sorted(neighbors))
                 for sys_id in neighbors:
