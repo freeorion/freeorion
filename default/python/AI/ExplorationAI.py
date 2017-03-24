@@ -12,7 +12,7 @@ from AIDependencies import INVALID_ID
 TARGET_POP = 'targetPop'
 TROOPS = 'troops'
 
-graphFlags = {}
+graphFlags = set()
 border_unexplored_system_ids = set()
 
 
@@ -135,7 +135,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
         cur_system_id = exploration_list.pop()
         if cur_system_id in graphFlags:
             continue
-        graphFlags[cur_system_id] = 1
+        graphFlags.add(cur_system_id)
         system = universe.getSystem(cur_system_id)
         if cur_system_id in foAI.foAIstate.visBorderSystemIDs:
             pre_vis = "a border system"
