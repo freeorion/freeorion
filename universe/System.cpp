@@ -162,10 +162,15 @@ void System::Copy(std::shared_ptr<const UniverseObject> copied_object, int empir
             // to exist any more
 
             // remove previously known lanes that aren't currently visible
-            for (std::map<int, bool>::value_type& entry : this->m_starlanes_wormholes) {
-                int lane_end_sys_id = entry.first;
-                if (visible_lanes_holes.find(lane_end_sys_id) == visible_lanes_holes.end())
-                    this->m_starlanes_wormholes.erase(lane_end_sys_id);
+            for (auto entry_it = m_starlanes_wormholes.begin(); entry_it != m_starlanes_wormholes.end();
+                 /* conditional increment in deleting loop */)
+            {
+                int lane_end_sys_id = entry_it->first;
+                if (visible_lanes_holes.find(lane_end_sys_id) == visible_lanes_holes.end()) {
+                    entry_it = m_starlanes_wormholes.erase(entry_it);
+                } else {
+                    ++entry_it;
+                }
             }
         }
     }
