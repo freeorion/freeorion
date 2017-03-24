@@ -131,10 +131,7 @@ class AIstate(object):
         empire = fo.getEmpire()
         self.empireID = empire.empireID
         homeworld = universe.getPlanet(empire.capitalID)
-        if homeworld:
-            self.__origin_home_system_id = homeworld.systemID
-        else:
-            self.__origin_home_system_id = INVALID_ID
+        self.__origin_home_system_id = homeworld and homeworld.systemID or INVALID_ID
         self.visBorderSystemIDs = {self.__origin_home_system_id}
         self.visInteriorSystemIDs = set()
         self.exploredSystemIDs = set()
