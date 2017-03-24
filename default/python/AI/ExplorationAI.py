@@ -162,7 +162,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
         status_info.append("    -- is%s visibly connected to homesystem" % ([" not", ""][is_connected]))
         if has_been_visible:
             sys_status = foAI.foAIstate.systemStatus.setdefault(cur_system_id, {})
-            foAI.foAIstate.visInteriorSystemIDs[cur_system_id] = 1
+            foAI.foAIstate.visInteriorSystemIDs.add(cur_system_id)
             if cur_system_id in foAI.foAIstate.visBorderSystemIDs:
                 del foAI.foAIstate.visBorderSystemIDs[cur_system_id]
             neighbors = set(dict_from_map(universe.getSystemNeighborsMap(cur_system_id, empire_id)).keys())
