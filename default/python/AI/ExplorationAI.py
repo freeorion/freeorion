@@ -13,7 +13,7 @@ TARGET_POP = 'targetPop'
 TROOPS = 'troops'
 
 graphFlags = {}
-borderUnexploredSystemIDs = {}
+borderUnexploredSystemIDs = set()
 
 
 def get_current_exploration_info():
@@ -40,10 +40,9 @@ def assign_scouts_to_explore_systems():
     universe = fo.getUniverse()
     capital_sys_id = PlanetUtilsAI.get_capital_sys_id()
     # order fleets to explore
-    explorable_system_ids = list(borderUnexploredSystemIDs)
-    if not explorable_system_ids or (capital_sys_id == INVALID_ID):
+    if not borderUnexploredSystemIDs or (capital_sys_id == INVALID_ID):
         return
-    exp_systems_by_dist = sorted((universe.linearDistance(capital_sys_id, x), x) for x in explorable_system_ids)
+    exp_systems_by_dist = sorted((universe.linearDistance(capital_sys_id, x), x) for x in borderUnexploredSystemIDs)
     print "Exploration system considering following system-distance pairs:\n  %s" % ("\n  ".join("%3d: %5.1f" % info for info in exp_systems_by_dist))
     explore_list = [sys_id for dist, sys_id in exp_systems_by_dist]
 
@@ -218,8 +217,7 @@ def update_explored_systems():
             foAI.foAIstate.exploredSystemIDs.add(sys_id)
             system = universe.getSystem(sys_id)
             print "Moved system %s from unexplored list to explored list" % system
-            if sys_id in borderUnexploredSystemIDs:
-                del borderUnexploredSystemIDs[sys_id]
+            borderUnexploredSystemIDs.discard(sys_id)
             newly_explored.append(sys_id)
         else:
             still_unexplored.append(sys_id)
@@ -243,5 +241,5 @@ def update_explored_systems():
             if neighbor_id in foAI.foAIstate.exploredSystemIDs:  # consider changing to unexplored test -- when it matters, unexplored will be smaller than explored, but need to not get previously untreated neighbors
                 any_explored = True
         if any_explored:
-            borderUnexploredSystemIDs[sys_id] = 1
+            borderUnexploredSystemIDs.add(sys_id)
     return newly_explored
