@@ -135,7 +135,7 @@ class AIstate(object):
             self.__origin_home_system_id = homeworld.systemID
         else:
             self.__origin_home_system_id = INVALID_ID
-        self.visBorderSystemIDs = {self.__origin_home_system_id: 1}
+        self.visBorderSystemIDs = {self.__origin_home_system_id}
         self.visInteriorSystemIDs = set()
         self.exploredSystemIDs = set()
         self.unexploredSystemIDs = {self.__origin_home_system_id: 1}
@@ -240,10 +240,10 @@ class AIstate(object):
             print "-------------------------------------------------"
             print "Border Exploration Update (relative to %s)" % (PlanetUtilsAI.sys_name_ids([exploration_center, INVALID_ID])[0])
             print "-------------------------------------------------"
-        if self.visBorderSystemIDs.keys() == [INVALID_ID]:
+        if self.visBorderSystemIDs == {INVALID_ID}:
             self.visBorderSystemIDs.clear()
-            self.visBorderSystemIDs[exploration_center] = 1
-        for sys_id in self.visBorderSystemIDs.keys():  # This dict modified during iteration.
+            self.visBorderSystemIDs.add(exploration_center)
+        for sys_id in list(self.visBorderSystemIDs):  # This set is modified during iteration.
             if fo.currentTurn() < 50:
                 print "Considering border system %s" % (PlanetUtilsAI.sys_name_ids([sys_id, INVALID_ID])[0])
             ExplorationAI.follow_vis_system_connections(sys_id, exploration_center)

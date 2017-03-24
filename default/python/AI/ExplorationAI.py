@@ -163,8 +163,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
         if has_been_visible:
             sys_status = foAI.foAIstate.systemStatus.setdefault(cur_system_id, {})
             foAI.foAIstate.visInteriorSystemIDs.add(cur_system_id)
-            if cur_system_id in foAI.foAIstate.visBorderSystemIDs:
-                del foAI.foAIstate.visBorderSystemIDs[cur_system_id]
+            foAI.foAIstate.visBorderSystemIDs.discard(cur_system_id)
             neighbors = set(dict_from_map(universe.getSystemNeighborsMap(cur_system_id, empire_id)).keys())
             sys_status.setdefault('neighbors', set()).update(neighbors)
             sys_planets = sys_status.setdefault('planets', {})
@@ -196,7 +195,7 @@ def follow_vis_system_connections(start_system_id, home_system_id):
                     if sys_id not in foAI.foAIstate.exploredSystemIDs:
                         foAI.foAIstate.unexploredSystemIDs[sys_id] = 1
                     if (sys_id not in graphFlags) and (sys_id not in foAI.foAIstate.visInteriorSystemIDs):
-                        foAI.foAIstate.visBorderSystemIDs[sys_id] = 1
+                        foAI.foAIstate.visBorderSystemIDs.add(sys_id)
                         exploration_list.append(sys_id)
         if fo.currentTurn() < 50:
             print '\n'.join(status_info)
