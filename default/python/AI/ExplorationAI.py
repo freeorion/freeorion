@@ -210,10 +210,6 @@ def update_explored_systems():
 
     for sys_id in still_unexplored:
         neighbors = list(universe.getImmediateNeighbors(sys_id, empire_id))
-        any_explored = False
-        for neighbor_id in neighbors:
-            if neighbor_id in foAI.foAIstate.exploredSystemIDs:  # consider changing to unexplored test -- when it matters, unexplored will be smaller than explored, but need to not get previously untreated neighbors
-                any_explored = True
-        if any_explored:
+        if any(nid in foAI.foAIstate.exploredSystemIDs for nid in neighbors):
             border_unexplored_system_ids.add(sys_id)
     return newly_explored
