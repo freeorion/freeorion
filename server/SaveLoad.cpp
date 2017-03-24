@@ -228,6 +228,9 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     boost::iostreams::copy(s_source, o);
                     c_sink.flush();
 
+                    save_preview_data.uncompressed_text_size = serial_str.size();
+                    save_preview_data.compressed_text_size = compressed_str.size();
+
                     // write to save file: uncompressed header serialized data, with compressed main archive string at end...
                     freeorion_xml_oarchive xoa2(ofs);
                     // serialize uncompressed save header info
@@ -380,8 +383,18 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                 DebugLogger() << "Allocating buffers for XML deserialization...";
                 std::string serial_str, compressed_str;
                 try {
-                    serial_str.reserve(    std::pow(2.0, 29.0));
-                    compressed_str.reserve(std::pow(2.0, 26.0));
+                    if (ignored_save_preview_data.uncompressed_text_size > 0) {
+                        DebugLogger() << "Based on header info for uncompressed state string, attempting to reserve: " << ignored_save_preview_data.uncompressed_text_size << " bytes";
+                        serial_str.reserve(ignored_save_preview_data.uncompressed_text_size);
+                    } else {
+                        serial_str.reserve(    std::pow(2.0, 29.0));
+                    }
+                    if (ignored_save_preview_data.compressed_text_size > 0) {
+                        DebugLogger() << "Based on header info for compressed state string, attempting to reserve: " << ignored_save_preview_data.compressed_text_size << " bytes";
+                        compressed_str.reserve(ignored_save_preview_data.compressed_text_size);
+                    } else {
+                        compressed_str.reserve(    std::pow(2.0, 26.0));
+                    }
                 } catch (...) {
                     DebugLogger() << "Unable to preallocate full deserialization buffers. Attempting deserialization with dynamic buffer allocation.";
                 }

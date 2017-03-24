@@ -132,6 +132,10 @@ void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
            & BOOST_SERIALIZATION_NVP(freeorion_version);
         if (version >= 3) {
             ar & BOOST_SERIALIZATION_NVP(save_format_marker);
+            if (version >= 4) {
+                ar & BOOST_SERIALIZATION_NVP(uncompressed_text_size)
+                   & BOOST_SERIALIZATION_NVP(compressed_text_size);
+            }
         }
     }
     ar & BOOST_SERIALIZATION_NVP(magic_number)
