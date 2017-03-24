@@ -218,7 +218,7 @@ def update_explored_systems():
     for sys_id in list(foAI.foAIstate.unexploredSystemIDs):
         if empire.hasExploredSystem(sys_id):  # consider making determination according to visibility rather than actual visit, which I think is what empire.hasExploredSystem covers
             del foAI.foAIstate.unexploredSystemIDs[sys_id]
-            foAI.foAIstate.exploredSystemIDs[sys_id] = 1
+            foAI.foAIstate.exploredSystemIDs.add(sys_id)
             system = universe.getSystem(sys_id)
             print "Moved system %s from unexplored list to explored list" % system
             if sys_id in borderUnexploredSystemIDs:
