@@ -343,6 +343,16 @@ target_compile_options(freeorionparse
 )
 
 if(APPLE)
+    # Xcode doesn't build freeorionparse because it doesn't have any
+    # source code files associated and only links the freeorionparselib
+    # objects into a shared library.  Adding an empty file fixes this.
+    # https://cmake.org/cmake/help/v3.0/command/add_library.html
+    file(WRITE xcode_dummy.cpp "")
+    target_sources(freeorionparse
+        PRIVATE
+            xcode_dummy.cpp
+    )
+
     set_target_properties(freeorionparse
         PROPERTIES
         LINK_FLAGS "-undefined dynamic_lookup"
