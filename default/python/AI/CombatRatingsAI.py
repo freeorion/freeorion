@@ -98,7 +98,6 @@ class ShipCombatStats(object):
         self.__ship_id = ship_id
         self._consider_refuel = consider_refuel
         if stats:
-            print stats
             self._basic_stats = self.BasicStats(*stats[0:3])  # TODO: Should probably determine size dynamically
             self._fighter_stats = self.FighterStats(*stats[3:])
         else:
