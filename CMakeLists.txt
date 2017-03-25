@@ -68,7 +68,7 @@ if(APPLE)
     set(CMAKE_PROGRAM_PATH "${CMAKE_FRAMEWORK_PATH}/Python.framework/Versions/Current/bin")
 endif()
 
-if(UNIX AND NOT APPLE)
+if(UNIX)
     set(FreeOrion_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/freeorion")
 endif()
 
