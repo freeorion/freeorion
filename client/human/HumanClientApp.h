@@ -56,6 +56,8 @@ public:
     void                StartMultiPlayerGameFromLobby();                ///< begins
     void                CancelMultiplayerGameFromLobby();               ///< cancels out of multiplayer game
     void                SaveGame(const std::string& filename);          ///< saves the current game; blocks until all save-related network traffic is resolved.
+    /** Accepts acknowledgement that server has completed the save.*/
+    void                SaveGameCompleted();
     void                StartGame();
 
     /** Check if the CombatLogManager has incomplete logs that need fetching and start fetching
@@ -122,6 +124,7 @@ private:
 
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
 
+    void            ResetOrExitApp(bool reset);
 
     std::unique_ptr<HumanClientFSM> m_fsm;
 
@@ -135,6 +138,9 @@ private:
     bool                        m_connected;            ///< true if we are in a state in which we are supposed to be connected to the server
     int                         m_auto_turns;           ///< auto turn counter
     bool                        m_have_window_focus;
+
+    bool                        m_save_game_in_progress;
+    boost::signals2::signal<void ()> SaveGameCompletedSignal;
 };
 
 #endif // _HumanClientApp_h_

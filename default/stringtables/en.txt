@@ -899,6 +899,15 @@ Error when reading save file.
 UNABLE_TO_SAVE_NOW_TRY_AGAIN
 Unable to save during AI processing. Try again when AIs have finished turns.
 
+SAVE_GAME_IN_PROGRESS
+A save game is in progress.
+
+ABORT_SAVE_AND_RESET
+Return to Main Menu without saving.
+
+ABORT_SAVE_AND_EXIT
+Exit FreeOrion without saving.
+
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 You do not control an empire and cannot issue orders.
 

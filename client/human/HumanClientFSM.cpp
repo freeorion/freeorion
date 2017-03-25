@@ -692,11 +692,11 @@ boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg)
     int bytes_written;
     ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
 
-
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
 
-    DebugLogger() << "Save Complete on Server";
+    Client().SaveGameCompleted();
+
     return discard_event();
 }
 
@@ -803,11 +803,10 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     int bytes_written;
     ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
 
-
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
 
-    DebugLogger() << "Save Complete on Server";
+    Client().SaveGameCompleted();
     return discard_event();
 }
 
