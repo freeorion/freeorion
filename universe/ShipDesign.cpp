@@ -88,6 +88,51 @@ namespace {
         // have an ID yet) is the same as one that has already been added
         // (which does have an ID)
     }
+
+    constexpr unsigned int CHECKSUM_MODULUS = static_cast<unsigned int>(10'000'000);
+
+    template <class C>
+    void CheckSumCombine(unsigned int& sum, const C& c) {
+        for (const C::value_type& t : c)
+            CheckSumCombine(sum, t);
+
+        sum += c.size();
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    template <>
+    void CheckSumCombine(unsigned int& sum, const bool& t) {
+        sum += t;
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    template <>
+    void CheckSumCombine(unsigned int& sum, const char& t) {
+        sum += t;
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    template <>
+    void CheckSumCombine(unsigned int& sum, const unsigned int& t) {
+        sum += t;
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    template <>
+    void CheckSumCombine(unsigned int& sum, const int& t) {
+        sum += std::abs(t);
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    template <>
+    void CheckSumCombine(unsigned int& sum, const double& t) {
+        // biggest and smallest possible float should be ~10^(+/-308)
+        // taking log gives a number in the range +/- 309
+        // adding 400 gives numbers in the range ~0 to 800
+        // multiplying by 10'000 gives numbers in the range ~0 to 8'000'000
+        sum += static_cast<unsigned int>((std::log(std::abs(t)) + 400.0) * 10'000);
+        sum %= CHECKSUM_MODULUS;
+    }
 }
 
 ////////////////////////////////////////////////
@@ -564,6 +609,8 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
         ErrorLogger() << Dump();
     }
     BuildStatCaches();
+
+    DebugLogger() << "ShipDesign " << m_name << " checksum: " << GetCheckSum();
 }
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description,
@@ -1010,6 +1057,23 @@ std::string ShipDesign::Dump() const {
     return retval; 
 }
 
+unsigned int ShipDesign::GetCheckSum() const {
+    unsigned int retval{0};
+    CheckSumCombine(retval, m_id);
+    CheckSumCombine(retval, m_name);
+    CheckSumCombine(retval, m_description);
+    CheckSumCombine(retval, m_designed_on_turn);
+    CheckSumCombine(retval, m_designed_by_empire);
+    CheckSumCombine(retval, m_hull);
+    CheckSumCombine(retval, m_parts);
+    CheckSumCombine(retval, m_is_monster);
+    CheckSumCombine(retval, m_icon);
+    CheckSumCombine(retval, m_3D_model);
+    CheckSumCombine(retval, m_name_desc_in_stringtable);
+
+    return static_cast<unsigned int>(retval);
+}
+
 bool operator ==(const ShipDesign& first, const ShipDesign& second) {
     if (first.Hull() != second.Hull())
         return false;
@@ -1070,6 +1134,8 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "PredefinedShipDesignManager checksum: " << GetCheckSum();
 }
 
 namespace {
@@ -1165,6 +1231,15 @@ int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
     if (it == m_design_generic_ids.end())
         return INVALID_DESIGN_ID;
     return it->second;
+}
+
+unsigned int PredefinedShipDesignManager::GetCheckSum() const {
+    unsigned int retval{0};
+    for (auto const& id_design_pair : m_ship_designs)
+        CheckSumCombine(retval, id_design_pair.second->GetCheckSum());
+    CheckSumCombine(retval, m_ship_designs.size());
+
+    return retval;
 }
 
 

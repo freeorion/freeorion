@@ -508,6 +508,14 @@ public:
 
     std::string                     Dump() const;                                   ///< returns a data file format representation of this object
 
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                    GetCheckSum() const;
+
     friend FO_COMMON_API bool operator ==(const ShipDesign& first, const ShipDesign& second);
     //@}
 
@@ -599,6 +607,14 @@ public:
       * with the specified \a name.  If there is generic design available for
       * the specified \a name, then INVALID_DESIGN_ID is returned. */
     int                 GetDesignID(const std::string& name) const;
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int        GetCheckSum() const;
     //@}
 
     /** Adds designs in this manager to the universe with the design creator
