@@ -4,6 +4,8 @@ else()
     cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 endif()
 
+cmake_policy(SET CMP0042 NEW)
+
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9 CACHE STRING "Set the minimum OSX deployment target version")
 set(CMAKE_OSX_ARCHITECTURES x86_64 CACHE STRING "Set the architecture the universal binaries for OSX should be built for")
@@ -75,8 +77,18 @@ if(UNIX)
     set(FreeOrion_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/freeorion")
 endif()
 
-set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FreeOrion_INSTALL_LIBDIR}")
-set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH
+        "@loader_path/../SharedSupport"
+        "@loader_path/../Frameworks"
+    )
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH TRUE)
+endif()
+
+if(NOT APPLE)
+    set(CMAKE_INSTALL_RPATH "${CMAKE_INSTALL_PREFIX}/${FreeOrion_INSTALL_LIBDIR}")
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+endif()
 
 add_compile_options(
     # Enable (almost) all warnings on compilers
@@ -233,10 +245,6 @@ set_property(DIRECTORY APPEND
         $<$<PLATFORM_ID:FreeBSD>:BOOST_DATE_TIME_NO_LOCALE>
 )
 
-link_directories(
-    ${Boost_LIBRARY_DIRS}
-)
-
 
 ##
 ## Define main project targets.
@@ -257,6 +265,14 @@ set_source_files_properties(
     PROPERTIES
     GENERATED TRUE
 )
+
+if(Apple)
+    set_source_files_properties(
+        "${CMAKE_CURRENT_SOURCE_DIR}/Xcode/Info.plist"
+        PROPERTIES
+        GENERATED TRUE
+    )
+endif()
 
 
 add_library(freeorioncommon "")
@@ -480,6 +496,46 @@ if(NOT BUILD_HEADLESS)
         endif()
     endif()
 
+    if(APPLE)
+        set_property(TARGET freeorion
+            PROPERTY
+                OUTPUT_NAME FreeOrion
+        )
+
+        list(APPEND FREEORION_ASSETS
+            Changelog.md
+            default
+            Xcode/FreeOrion.icns
+            Xcode/main.xib
+        )
+        target_sources(freeorion
+            PRIVATE
+                ${FREEORION_ASSETS}
+        )
+        set_property(
+            SOURCE
+                ${FREEORION_ASSETS}
+            PROPERTY
+                MACOSX_PACKAGE_LOCATION "Resources/"
+        )
+        # Workaround for creating the initial Info.plist, which needs to exist
+        # at configuration time.
+        execute_process(
+            COMMAND
+            "${PYTHON_EXECUTABLE}"
+            "${CMAKE_SOURCE_DIR}/cmake/make_versioncpp.py"
+            "${CMAKE_SOURCE_DIR}"
+            "CMake"
+        )
+        set_target_properties(freeorion
+            PROPERTIES
+                MACOSX_BUNDLE TRUE
+                MACOSX_BUNDLE_BUNDLE_NAME "${PROJECT_NAME}"
+                MACOSX_BUNDLE_INFO_PLIST "${PROJECT_SOURCE_DIR}/Xcode/Info.plist"
+                RESOURCE "${PROJECT_SOURCE_DIR}/Xcode/main.xib"
+        )
+    endif()
+
     target_compile_options(freeorion
         PRIVATE
             $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
@@ -536,6 +592,30 @@ if(NOT BUILD_HEADLESS)
     target_dependent_data_symlink_to_build(freeorion ${PROJECT_SOURCE_DIR}/default)
 endif()
 
+if(APPLE)
+    add_custom_command(TARGET freeorion POST_BUILD
+        COMMAND
+            ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:freeorion>/../Executables"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionca>" "$<TARGET_FILE_DIR:freeorion>/../Executables"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeoriond>" "$<TARGET_FILE_DIR:freeorion>/../Executables"
+        COMMAND
+            ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorioncommon>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:freeorionparse>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:GiGi>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
+           ${CMAKE_COMMAND} -E copy_if_different "$<TARGET_FILE:GiGiSDL>" "$<TARGET_FILE_DIR:freeorion>/../SharedSupport"
+        COMMAND
+            ${CMAKE_COMMAND} -E copy_directory "${CMAKE_FRAMEWORK_PATH}" "$<TARGET_FILE_DIR:freeorion>/../Frameworks"
+    )
+endif()
+
+
 ##
 ## Recurse into sources.
 ##
@@ -574,6 +654,8 @@ install(
         freeoriond
         freeorionca
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    BUNDLE DESTINATION .
+    RESOURCE
 )
 
 install(
