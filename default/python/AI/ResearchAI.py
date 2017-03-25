@@ -605,7 +605,8 @@ def get_research_queue_techs():
 
 def exclude_tech(tech_name):
     return ((not foAI.foAIstate.character.may_research_tech(tech_name))
-            or tech_name in TechsListsAI.unusable_techs())
+            or tech_name in TechsListsAI.unusable_techs()
+            or tech_name in Dep.UNRESEARCHABLE_TECHS)
 
 
 def generate_classic_research_orders():
