@@ -68,7 +68,7 @@ function(ENABLE_COVERAGE)
         return()
     endif()
 
-    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "CLANG")
+    if("${CMAKE_CXX_COMPILER_ID}" MATCHES "Clang")
         if("${CMAKE_CXX_COMPILER_VERSION}" VERSION_LESS 3)
             message(FATAL_ERROR "Requires Clang 3.0.0 or greater to create code coverage")
         endif()

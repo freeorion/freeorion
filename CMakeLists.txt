@@ -1,9 +1,5 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
-if(POLICY CMP0044)
-    cmake_policy(SET CMP0044 OLD)
-endif()
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 IF(NOT CMAKE_BUILD_TYPE)
@@ -78,25 +74,25 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 add_compile_options(
     # Enable (almost) all warnings on compilers
     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wall-316
-    $<$<CXX_COMPILER_ID:gnu>:-Wall>
+    $<$<CXX_COMPILER_ID:GNU>:-Wall>
     # http://clang.llvm.org/docs/DiagnosticsReference.html#wall
-    $<$<CXX_COMPILER_ID:clang>:-Wall>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall>
     # https://msdn.microsoft.com/en-us/library/thxezb7y.aspx#Anchor_1
-    $<$<CXX_COMPILER_ID:msvc>:/W4>
+    $<$<CXX_COMPILER_ID:MSVC>:/W4>
 
     # Disable "'<param>': unreferenced formal parameter" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4100>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
     # Disable "'<class>::<member>': class '<member-type>' needs to have dll-interface to be used by clients of class '<class>'" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4251>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4251>
     # Disable "'<func>': unreferenced local function has been removed" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4505>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4505>
     # Disable "declaration of '<type>' hides global declaration" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4459>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
     # Disable "function '<func>' marked as __forceinline not inlined" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4714>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4714>
 
     # Enable C++ Exception unwind mechanics with DLL support
-    $<$<CXX_COMPILER_ID:msvc>:/EHsc>
+    $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
 )
 
 set_property(DIRECTORY APPEND
@@ -243,8 +239,8 @@ endif()
 
 target_compile_options(freeorioncommon
     PRIVATE
-        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
 )
 
 target_compile_definitions(freeorioncommon
@@ -298,9 +294,9 @@ endif()
 
 target_compile_options(
     freeorionparseobj PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:gnu>>:-O3>
-    $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+    $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
+    $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
 )
 
 target_compile_definitions(freeorionparseobj
@@ -314,7 +310,7 @@ add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
 
 target_compile_options(
     freeorionparse PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+    $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
 )
 
 
@@ -329,7 +325,7 @@ endif()
 
 target_compile_options(freeoriond
     PRIVATE
-        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeoriond
@@ -368,7 +364,7 @@ endif()
 
 target_compile_options(
     freeorionca PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+    $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeorionca
@@ -413,7 +409,7 @@ endif()
 
 target_compile_options(freeorion
     PRIVATE
-        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeorion
