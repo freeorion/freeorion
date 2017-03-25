@@ -62,6 +62,7 @@ if(APPLE)
     # Location of the FreeOrionSDK root
     set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/Xcode/dep/")
     set(CMAKE_FRAMEWORK_PATH "${CMAKE_SOURCE_DIR}/Xcode/dep/Frameworks")
+    set(CMAKE_PROGRAM_PATH "${CMAKE_FRAMEWORK_PATH}/Python.framework/Versions/Current/bin")
 endif()
 
 if(UNIX AND NOT APPLE)
