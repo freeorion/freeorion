@@ -216,6 +216,14 @@ set_property(DIRECTORY APPEND
         # This define enables the usage of the old boost::optional
         # implementation.  Boost upstream tracks this bug as #12349
         $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.60>:BOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL>
+
+        # We don't need localized output of Boost date_time and not setting
+        # the define causes the inclusion of code, which contains std::tolower.
+        # This however causes a macro substitutions caused by the libpython
+        # headers, which in turn breaks the build.  Python 2.7.13 should have
+        # fixed this with python bug #10910
+        $<$<PLATFORM_ID:Darwin>:BOOST_DATE_TIME_NO_LOCALE>
+        $<$<PLATFORM_ID:FreeBSD>:BOOST_DATE_TIME_NO_LOCALE>
 )
 
 link_directories(
