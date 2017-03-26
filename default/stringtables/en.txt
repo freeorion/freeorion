@@ -1260,6 +1260,18 @@ Toggles whether to draw circles around systems.
 OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
 Sets size of circles around systems on map, relative to system icon size.
 
+OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH
+Sets the line width of the inner system circle when the map is zoomed in.
+
+OPTIONS_DB_UI_SYSTEM_OUTER_CIRCLE_WIDTH
+Sets the line width of the outer system circle.
+
+OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_MAX_WIDTH
+Sets the line width of the inner system circle when the map is zoomed out.
+
+OPTIONS_DB_UI_SYSTEM_CIRCLE_DISTANCE
+Sets the distance (in pixels) between the inner and outer system circles at close zoom.
+
 OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY
 Show a different MapWindow mouseover overlay for systems that the player's empire has not yet explored.
 
