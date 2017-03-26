@@ -14,7 +14,7 @@ using boost::asio::ip::udp;
 using namespace Networking;
 
 namespace {
-    const bool TRACE_EXECUTION = true;
+    CreateThreadedLogger(network);
 }
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams
@@ -69,22 +69,22 @@ PlayerConnection::~PlayerConnection() {
     m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both, error);
     if (error && (m_ID != INVALID_PLAYER_ID)) {
         if (error == boost::asio::error::eof)
-            DebugLogger() << "Player connection disconnected by EOF from client.";
+            TraceLogger(network) << "Player connection disconnected by EOF from client.";
         else if (error == boost::asio::error::connection_reset)
-            DebugLogger() << "Player connection disconnected, reset by client.";
+            TraceLogger(network) << "Player connection disconnected, reset by client.";
         else if (error == boost::asio::error::operation_aborted)
-            DebugLogger() << "Player operation aborted by server.";
+            TraceLogger(network) << "Player operation aborted by server.";
         else if (error == boost::asio::error::shut_down)
-            DebugLogger() << "Player connection shutdown.";
+            TraceLogger(network) << "Player connection shutdown.";
         else if (error == boost::asio::error::connection_aborted)
-            DebugLogger() << "Player connection closed by server.";
+            TraceLogger(network) << "Player connection closed by server.";
         else if (error == boost::asio::error::not_connected)
-            DebugLogger() << "Player connection already down.";
+            TraceLogger(network) << "Player connection already down.";
         else {
 
-            ErrorLogger() << "PlayerConnection::~PlayerConnection: shutdown error #"
-                          << error.value() << " \"" << error.message() << "\""
-                          << " for player id " << m_ID;
+            ErrorLogger(network) << "PlayerConnection::~PlayerConnection: shutdown error #"
+                                 << error.value() << " \"" << error.message() << "\""
+                                 << " for player id " << m_ID;
         }
     }
     m_socket.close();
@@ -115,29 +115,28 @@ bool PlayerConnection::SendMessage(const Message& message) {
 void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, Networking::ClientType client_type,
                                        const std::string& client_version_string)
 {
-    if (TRACE_EXECUTION)
-        DebugLogger() << "PlayerConnection(@ " << this << ")::EstablishPlayer("
-                      << id << ", " << player_name << ", "
-                      << client_type << ", " << client_version_string << ")";
+    TraceLogger(network) << "PlayerConnection(@ " << this << ")::EstablishPlayer("
+                         << id << ", " << player_name << ", "
+                         << client_type << ", " << client_version_string << ")";
 
     // ensure that this connection isn't already established
     if (m_ID != INVALID_PLAYER_ID || !m_player_name.empty() || m_client_type != Networking::INVALID_CLIENT_TYPE) {
-        ErrorLogger() << "PlayerConnection::EstablishPlayer attempting to re-establish an already established connection.";
+        ErrorLogger(network) << "PlayerConnection::EstablishPlayer attempting to re-establish an already established connection.";
         return;
     }
 
     if (id < 0) {
-        ErrorLogger() << "PlayerConnection::EstablishPlayer attempting to establish a player with an invalid id: " << id;
+        ErrorLogger(network) << "PlayerConnection::EstablishPlayer attempting to establish a player with an invalid id: " << id;
         return;
     }
     // TODO (maybe): Verify that no other players have this ID in server networking
 
     if (player_name.empty()) {
-        ErrorLogger() << "PlayerConnection::EstablishPlayer attempting to establish a player with an empty name";
+        ErrorLogger(network) << "PlayerConnection::EstablishPlayer attempting to establish a player with an empty name";
         return;
     }
     if (client_type == Networking::INVALID_CLIENT_TYPE || client_type >= NUM_CLIENT_TYPES) {
-        ErrorLogger() << "PlayerConnection::EstablishPlayer passed invalid client type: " << client_type;
+        ErrorLogger(network) << "PlayerConnection::EstablishPlayer passed invalid client type: " << client_type;
         return;
     }
     m_ID = id;
@@ -149,7 +148,7 @@ void PlayerConnection::EstablishPlayer(int id, const std::string& player_name, N
 void PlayerConnection::SetClientType(Networking::ClientType client_type) {
     m_client_type = client_type;
     if (m_client_type == Networking::INVALID_CLIENT_TYPE)
-        ErrorLogger() << "PlayerConnection client type set to INVALID_CLIENT_TYPE...?";
+        ErrorLogger(network) << "PlayerConnection client type set to INVALID_CLIENT_TYPE...?";
 }
 
 const std::string& PlayerConnection::ClientVersionString() const
@@ -216,21 +215,21 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
     if (error) {
         if (error == boost::asio::error::eof ||
             error == boost::asio::error::connection_reset) {
-            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): "
-                          << "error #" << error.value() << " \"" << error.message() << "\"";
+            ErrorLogger(network) << "PlayerConnection::HandleMessageBodyRead(): "
+                                 << "error #" << error.value() << " \"" << error.message() << "\"";
             EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
         } else {
-            ErrorLogger() << "PlayerConnection::HandleMessageBodyRead(): "
-                          << "error #" << error.value() << " \"" << error.message() << "\"";
+            ErrorLogger(network) << "PlayerConnection::HandleMessageBodyRead(): "
+                                 << "error #" << error.value() << " \"" << error.message() << "\"";
         }
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[Message::Parts::SIZE]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[Message::Parts::SIZE]) {
-            if (TRACE_EXECUTION && m_incoming_message.Type() != Message::REQUEST_NEW_DESIGN_ID) {   // new design id messages ignored due to log spam
-                DebugLogger() << "Server received message from player id: " << m_ID
-                              << " of type " << MessageTypeName(m_incoming_message.Type())
-                              << " and size " << m_incoming_message.Size();
-                //DebugLogger() << "     Full message: " << m_incoming_message;
+            if (m_incoming_message.Type() != Message::REQUEST_NEW_DESIGN_ID) {   // new design id messages ignored due to log spam
+                TraceLogger(network) << "Server received message from player id: " << m_ID
+                                     << " of type " << MessageTypeName(m_incoming_message.Type())
+                                     << " and size " << m_incoming_message.Size();
+                //TraceLogger(network) << "     Full message: " << m_incoming_message;
             }
             if (EstablishedPlayer()) {
                 EventSignal(boost::bind(m_player_message_callback,
@@ -259,22 +258,22 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         // mask the problem.  For now, this is sufficient, since rapid
         // connects and disconnects are not a priority.
         if (m_new_connection) {
-            ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
-                          << "new connection error #" << error.value() << " \""
-                          << error.message() << "\"" << " waiting for 0.5s";
+            ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
+                                 << "new connection error #" << error.value() << " \""
+                                 << error.message() << "\"" << " waiting for 0.5s";
             // wait half a second if the first data read is an error; we
             // probably just need more setup time
-            ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
-                          << "new connection error #" << error.value() << " \""
-                          << error.message() << "\"" << " waiting for 0.5s";
+            ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
+                                 << "new connection error #" << error.value() << " \""
+                                 << error.message() << "\"" << " waiting for 0.5s";
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
         } else {
             if (error == boost::asio::error::eof ||
                 error == boost::asio::error::connection_reset) {
                 EventSignal(boost::bind(m_disconnected_callback, shared_from_this()));
             } else {
-                ErrorLogger() << "PlayerConnection::HandleMessageHeaderRead(): "
-                              << "error #" << error.value() << " \"" << error.message() << "\"";
+                ErrorLogger(network) << "PlayerConnection::HandleMessageHeaderRead(): "
+                                     << "error #" << error.value() << " \"" << error.message() << "\"";
             }
         }
     } else {
@@ -314,8 +313,8 @@ bool PlayerConnection::SyncWriteMessage(const Message& message) {
     boost::asio::write(m_socket, buffers, error);
 
     if (error) {
-        ErrorLogger() << "PlayerConnection::WriteMessage(): player id = " << m_ID
-                      << " error #" << error.value() << " \"" << error.message();
+        ErrorLogger(network) << "PlayerConnection::WriteMessage(): player id = " << m_ID
+                             << " error #" << error.value() << " \"" << error.message();
         boost::asio::high_resolution_timer t(m_service);
         t.async_wait(boost::bind(&PlayerConnection::AsyncErrorHandler, this, error, boost::asio::placeholders::error));
     }
@@ -450,12 +449,12 @@ bool ServerNetworking::SendMessageAll(const Message& message) {
 void ServerNetworking::Disconnect(int id) {
     established_iterator it = GetPlayer(id);
     if (it == established_end()) {
-        ErrorLogger() << "ServerNetworking::Disconnect couldn't find player with id " << id << " to disconnect.  aborting";
+        ErrorLogger(network) << "ServerNetworking::Disconnect couldn't find player with id " << id << " to disconnect.  aborting";
         return;
     }
     PlayerConnectionPtr player = *it;
     if (player->PlayerID() != id) {
-        ErrorLogger() << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->PlayerID() << ") to what was requrested (" << id << ")";
+        ErrorLogger(network) << "ServerNetworking::Disconnect got PlayerConnectionPtr with inconsistent player id (" << player->PlayerID() << ") to what was requrested (" << id << ")";
         return;
     }
     Disconnect(player);
@@ -463,12 +462,12 @@ void ServerNetworking::Disconnect(int id) {
 
 void ServerNetworking::Disconnect(PlayerConnectionPtr player_connection)
 {
-    DebugLogger() << "ServerNetworking::Disconnect";
+    TraceLogger(network) << "ServerNetworking::Disconnect";
     DisconnectImpl(player_connection);
 }
 
 void ServerNetworking::DisconnectAll() {
-    DebugLogger() << "ServerNetworking::DisconnectAll";
+    TraceLogger(network) << "ServerNetworking::DisconnectAll";
     for (const_iterator it = m_player_connections.begin();
          it != m_player_connections.end(); ) {
         PlayerConnectionPtr player_connection = *it++;
@@ -555,8 +554,7 @@ void ServerNetworking::AcceptConnection(PlayerConnectionPtr player_connection,
                                         const boost::system::error_code& error)
 {
     if (!error) {
-        if (TRACE_EXECUTION)
-            DebugLogger() << "ServerNetworking::AcceptConnection : connected to new player";
+        TraceLogger(network) << "ServerNetworking::AcceptConnection : connected to new player";
         m_player_connections.insert(player_connection);
         player_connection->Start();
         AcceptNextConnection();
@@ -566,9 +564,8 @@ void ServerNetworking::AcceptConnection(PlayerConnectionPtr player_connection,
 }
 
 void ServerNetworking::DisconnectImpl(PlayerConnectionPtr player_connection) {
-    if (TRACE_EXECUTION)
-        DebugLogger() << "ServerNetworking::DisconnectImpl : disconnecting player "
-                      << player_connection->PlayerID();
+    TraceLogger(network) << "ServerNetworking::DisconnectImpl : disconnecting player "
+                         << player_connection->PlayerID();
     m_player_connections.erase(player_connection);
     m_disconnected_callback(player_connection);
 }
