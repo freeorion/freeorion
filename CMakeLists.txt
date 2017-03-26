@@ -179,29 +179,30 @@ add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
 
-if(WIN32)
-    add_definitions(
-        -DBOOST_ZLIB_BINARY=zlib.lib
-    )
-endif()
+set_property(DIRECTORY APPEND
+    PROPERTY COMPILE_DEFINITIONS
+        # Disable Boost auto-linking
+        # http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/index.html#boost_config.configuring_boost_for_your_platform.user_settable_options
+        BOOST_ALL_NO_LINK
 
-if(NOT FO_LINK_STATIC_BOOST_LIBS)
-    add_definitions(
-        -DBOOST_ALL_NO_LINK
-        -DBOOST_ALL_DYN_LINK
-        -DBOOST_LOG_DYN_LINK
-    )
-endif()
+        # Boost iostreams doesn't honor BOOST_ALL_NO_LINK when linking zlib.
+        # It also tries to link by default to the boost in-source zlib librar,
+        # which we don't want.
+        # http://www.boost.org/doc/libs/1_59_0/boost/iostreams/detail/config/zlib.hpp
+        $<$<PLATFORM_ID:Windows>:BOOST_ZLIB_BINARY=zlib.lib>
 
-if(${Boost_VERSION} GREATER "106000")
-    # with boost 1.61 some boost::optional internals were changed. However
-    # boost::spirit relies on some API the old implementation provided.  This
-    # define enables the usage of the old boost::optional implementation.
-    # boost upstream tracks this bug as #12349
-    add_definitions(
-        -DBOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL
-    )
-endif()
+        # Link all boost libraries dynamically unless the user requests
+        # otherwise.
+        # http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/index.html#boost_config.configuring_boost_for_your_platform.user_settable_options
+        $<$<NOT:$<BOOL:${FO_LINK_STATIC_BOOST_LIBS}>>:BOOST_ALL_DYN_LINK>
+
+        # with boost 1.61 some boost::optional internals were changed. However
+        # boost::spirit relies on some API the old implementation provided.
+        # This define enables the usage of the old boost::optional
+        # implementation.  Boost upstream tracks this bug as #12349
+        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.60>:BOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL>
+)
+
 
 link_directories(
     ${Boost_LIBRARY_DIRS}
