@@ -194,7 +194,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     m_game_started(false),
     m_connected(false),
     m_auto_turns(0),
-    m_have_window_focus(true)
+    m_have_window_focus(true),
+    m_save_game_in_progress(false)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
