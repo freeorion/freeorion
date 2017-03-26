@@ -8,6 +8,23 @@
 
 #include <memory>
 
+#ifdef FREEORION_WIN32
+#include "Message.h"
+#include "MessageQueue.h"
+
+// boost::asio pulls in windows.h which in turn defines the macros Message,
+// MessageBox, min and max. Disabling the generation of the min and max macros
+// and undefining those should avoid name collisions with std c++ library and
+// FreeOrion function names.
+#define NOMINMAX
+#include <boost/asio.hpp>
+#include <boost/asio/high_resolution_timer.hpp>
+
+// Undef Message and MessageBox from the windows API
+#   undef Message
+#   undef MessageBox
+#endif
+
 class Message;
 
 /** Encapsulates the networking facilities of the client.  The client must

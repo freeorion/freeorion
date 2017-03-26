@@ -50,6 +50,7 @@
 #  ifdef MessageBox
 #    undef MessageBox
 #  endif
+#  undef PlaySound
 #endif
 
 const Tech* GetTech(const std::string& name);
