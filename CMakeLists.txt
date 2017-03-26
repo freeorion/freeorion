@@ -253,6 +253,8 @@ endif()
 target_compile_options(freeorioncommon
     PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
         $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
         $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
 )
@@ -307,12 +309,14 @@ if(WIN32)
     )
 endif()
 
-target_compile_options(
-    freeorionparseobj PRIVATE
-    $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
-    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
-    $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
-    $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
+target_compile_options(freeorionparseobj
+    PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
+        $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
+        $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
 )
 
 target_compile_definitions(freeorionparseobj
@@ -324,9 +328,11 @@ target_compile_definitions(freeorionparseobj
 
 add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
 
-target_compile_options(
-    freeorionparse PRIVATE
-    $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+target_compile_options(freeorionparse
+    PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
 
 
@@ -342,6 +348,8 @@ endif()
 target_compile_options(freeoriond
     PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeoriond
@@ -378,9 +386,11 @@ if(WIN32)
     )
 endif()
 
-target_compile_options(
-    freeorionca PRIVATE
-    $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+target_compile_options(freeorionca
+    PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeorionca
@@ -426,6 +436,8 @@ endif()
 target_compile_options(freeorion
     PRIVATE
         $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeorion
