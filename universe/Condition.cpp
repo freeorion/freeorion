@@ -6347,6 +6347,114 @@ void OwnerHasShipDesignAvailable::SetTopLevelContent(const std::string& content_
 }
 
 ///////////////////////////////////////////////////////////
+// OwnerHasShipPartAvailable                             //
+///////////////////////////////////////////////////////////
+OwnerHasShipPartAvailable::OwnerHasShipPartAvailable(const std::string& name) :
+    ConditionBase(),
+    m_name(new ValueRef::Constant<std::string>(name))
+{}
+
+OwnerHasShipPartAvailable::~OwnerHasShipPartAvailable()
+{ delete m_name; }
+
+bool OwnerHasShipPartAvailable::operator==(const ConditionBase& rhs) const {
+    if (this == &rhs)
+        return true;
+    if (typeid(*this) != typeid(rhs))
+        return false;
+
+    const OwnerHasShipPartAvailable& rhs_ =
+        static_cast<const OwnerHasShipPartAvailable&>(rhs);
+
+    CHECK_COND_VREF_MEMBER(m_name)
+
+    return true;
+}
+
+namespace {
+    struct OwnerHasShipPartAvailableSimpleMatch {
+        OwnerHasShipPartAvailableSimpleMatch(const std::string& name) :
+            m_name(name)
+        {}
+
+        bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
+            if (!candidate)
+                return false;
+
+            if (candidate->Unowned())
+                return false;
+
+            if (const Empire* empire = GetEmpire(candidate->Owner()))
+                return empire->ShipPartAvailable(m_name);
+
+            return false;
+        }
+
+        std::string m_name;
+    };
+}
+
+void OwnerHasShipPartAvailable::Eval(const ScriptingContext& parent_context,
+                                     ObjectSet& matches, ObjectSet& non_matches,
+                                     SearchDomain search_domain/* = NON_MATCHES*/) const
+{
+    bool simple_eval_safe = (!m_name || m_name->LocalCandidateInvariant()) &&
+                            (parent_context.condition_root_candidate ||
+                             RootCandidateInvariant());
+    if (simple_eval_safe) {
+        // evaluate number limits once, use to match all candidates
+        std::shared_ptr<const UniverseObject> no_object;
+        ScriptingContext local_context(parent_context, no_object);
+        std::string name = m_name ? m_name->Eval(local_context) : "";
+        EvalImpl(matches, non_matches, search_domain,
+                 OwnerHasShipPartAvailableSimpleMatch(name));
+    } else {
+        // re-evaluate allowed turn range for each candidate object
+        ConditionBase::Eval(parent_context, matches, non_matches, search_domain);
+    }
+}
+
+bool OwnerHasShipPartAvailable::RootCandidateInvariant() const
+{ return !m_name || m_name->RootCandidateInvariant(); }
+
+bool OwnerHasShipPartAvailable::TargetInvariant() const
+{ return !m_name || m_name->TargetInvariant(); }
+
+bool OwnerHasShipPartAvailable::SourceInvariant() const
+{ return !m_name || m_name->SourceInvariant(); }
+
+std::string OwnerHasShipPartAvailable::Description(bool negated/* = false*/) const {
+    return (!negated)
+        ? UserString("DESC_OWNER_HAS_SHIP_PART")
+        : UserString("DESC_OWNER_HAS_SHIP_PART_NOT");
+}
+
+std::string OwnerHasShipPartAvailable::Dump() const {
+    std::string retval = DumpIndent() + "OwnerHasShipPartAvailable";
+    if (m_name)
+        retval += " name = " + m_name->Dump();
+    retval += "\n";
+    return retval;
+}
+
+bool OwnerHasShipPartAvailable::Match(const ScriptingContext& local_context) const {
+    std::shared_ptr<const UniverseObject> candidate =
+        local_context.condition_local_candidate;
+    if (!candidate) {
+        ErrorLogger() << "OwnerHasShipPart::Match passed no candidate object";
+        return false;
+    }
+
+    std::string name = m_name ? m_name->Eval(local_context) : "";
+    return OwnerHasShipPartAvailableSimpleMatch(name)(candidate);
+}
+
+void OwnerHasShipPartAvailable::SetTopLevelContent(const std::string& content_name) {
+    if (m_name)
+        m_name->SetTopLevelContent(content_name);
+}
+
+///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
 VisibleToEmpire::~VisibleToEmpire()

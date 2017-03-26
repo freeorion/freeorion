@@ -1915,6 +1915,44 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+/** Matches all objects whose owner who has the ship part @a name available. */
+struct FO_COMMON_API OwnerHasShipPartAvailable : public ConditionBase {
+    explicit OwnerHasShipPartAvailable(const std::string& name);
+
+    explicit OwnerHasShipPartAvailable(ValueRef::ValueRefBase<std::string>* name) :
+        ConditionBase(),
+        m_name(name)
+    {}
+
+    virtual ~OwnerHasShipPartAvailable();
+
+    bool operator==(const ConditionBase& rhs) const override;
+
+    void Eval(const ScriptingContext& parent_context, ObjectSet& matches,
+              ObjectSet& non_matches, SearchDomain search_domain = NON_MATCHES) const override;
+
+    bool RootCandidateInvariant() const override;
+
+    bool TargetInvariant() const override;
+
+    bool SourceInvariant() const override;
+
+    std::string Description(bool negated = false) const override;
+
+    std::string Dump() const override;
+
+    void SetTopLevelContent(const std::string& content_name) override;
+
+private:
+    bool Match(const ScriptingContext& local_context) const override;
+
+    ValueRef::ValueRefBase<std::string>* m_name;
+
+    friend class boost::serialization::access;
+    template <class Archive>
+    void serialize(Archive& ar, const unsigned int version);
+};
+
 /** Matches all objects that are visible to at least one Empire in \a empire_ids. */
 struct FO_COMMON_API VisibleToEmpire : public ConditionBase {
     explicit VisibleToEmpire(ValueRef::ValueRefBase<int>* empire_id) :
@@ -2888,6 +2926,14 @@ void OwnerHasShipDesignAvailable::serialize(Archive& ar, const unsigned int vers
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
         & BOOST_SERIALIZATION_NVP(m_id);
+}
+
+template <class Archive>
+void OwnerHasShipPartAvailable::serialize(Archive& ar,
+                                          const unsigned int version)
+{
+    ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(ConditionBase)
+        & BOOST_SERIALIZATION_NVP(m_name);
 }
 
 template <class Archive>

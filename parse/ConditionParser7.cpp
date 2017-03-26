@@ -75,12 +75,21 @@ namespace {
                 [ _val = new_<Condition::Location>(_a, _b, _c) ]
                 ;
 
+            owner_has_shippart_available
+                =   (tok.OwnerHasShipPartAvailable_
+                    >>  (parse::detail::label(Name_token)
+                         > parse::string_value_ref() [ _val = new_<Condition::OwnerHasShipPartAvailable>(_1) ]
+                        )
+                    )
+                ;
+
             start
                 %=   ordered_bombarded_by
                 |    contains
                 |    contained_by
                 |    star_type
                 |    location
+                |    owner_has_shippart_available
                 ;
 
             ordered_bombarded_by.name("OrderedBombardedBy");
@@ -88,6 +97,7 @@ namespace {
             contained_by.name("ContainedBy");
             star_type.name("StarType");
             location.name("Location");
+            owner_has_shippart_available.name("OwnerHasShipPartAvailable");
 
 #if DEBUG_CONDITION_PARSERS
             debug(ordered_bombarded_by);
@@ -95,6 +105,7 @@ namespace {
             debug(contained_by);
             debug(star_type);
             debug(location);
+            debug(owner_has_shippart_available);
 #endif
         }
 
@@ -117,6 +128,7 @@ namespace {
         parse::condition_parser_rule            contained_by;
         star_type_vec_rule                      star_type;
         string_ref_rule                         location;
+        parse::condition_parser_rule            owner_has_shippart_available;
         parse::condition_parser_rule            start;
     };
 }
