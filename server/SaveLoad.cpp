@@ -209,7 +209,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     xoa << BOOST_SERIALIZATION_NVP(empire_manager);
                     xoa << BOOST_SERIALIZATION_NVP(species_manager);
                     xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
-                    xoa << BOOST_SERIALIZATION_NVP(universe);
+                    Serialize(xoa, universe);
                     s_sink.flush();
 
                     // wrap gamestate string in iostream::stream to extract serialized data
@@ -264,7 +264,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
                     xoa << BOOST_SERIALIZATION_NVP(empire_manager);
                     xoa << BOOST_SERIALIZATION_NVP(species_manager);
                     xoa << BOOST_SERIALIZATION_NVP(combat_log_manager);
-                    xoa << BOOST_SERIALIZATION_NVP(universe);
+                    Serialize(xoa, universe);
 
                     save_completed_as_xml = true;
                 } catch (...) {
@@ -289,7 +289,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
             boa << BOOST_SERIALIZATION_NVP(empire_manager);
             boa << BOOST_SERIALIZATION_NVP(species_manager);
             boa << BOOST_SERIALIZATION_NVP(combat_log_manager);
-            boa << BOOST_SERIALIZATION_NVP(universe);
+            Serialize(boa, universe);
 
             DebugLogger() << "Done serializing";
         }
@@ -347,7 +347,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
             ia >> BOOST_SERIALIZATION_NVP(empire_manager);
             ia >> BOOST_SERIALIZATION_NVP(species_manager);
             ia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
-            ia >> BOOST_SERIALIZATION_NVP(universe);
+            Deserialize(ia, universe);
 
             DebugLogger() << "Done deserializing";
         } catch (...) {
@@ -374,7 +374,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                 xia >> BOOST_SERIALIZATION_NVP(empire_manager);
                 xia >> BOOST_SERIALIZATION_NVP(species_manager);
                 xia >> BOOST_SERIALIZATION_NVP(combat_log_manager);
-                xia >> BOOST_SERIALIZATION_NVP(universe);
+                Deserialize(xia, universe);
 
             } else {
                 // assume compressed XML
@@ -431,7 +431,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
                 xia2 >> BOOST_SERIALIZATION_NVP(empire_manager);
                 xia2 >> BOOST_SERIALIZATION_NVP(species_manager);
                 xia2 >> BOOST_SERIALIZATION_NVP(combat_log_manager);
-                xia2 >> BOOST_SERIALIZATION_NVP(universe);
+                Deserialize(xia2, universe);
             }
         }
 
