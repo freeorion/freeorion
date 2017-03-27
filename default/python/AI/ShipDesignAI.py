@@ -1735,14 +1735,14 @@ class CarrierShipDesigner(WarShipDesigner):
 
     # TODO Implement _starting_guess() for faster convergence
 
-    def _filling_algorithm(self, available_parts, verbose=True):
+    def _filling_algorithm(self, available_parts, verbose=False):
         # Currently, only one type of hangar part is allowed due to game mechanics.
         # However, in the generic _filling_algorithm(), only one part is exchanged per time.
         # Therefore, after using (multiple) entries of one hangar part, the algorithm won't consider different parts.
         # Workaround: Do multiple passes with only one hangar part each and choose the best rated one.
-
-        print "Calling _filling_algorithm() for Carrier-Style ships!"
-        print "Available parts: ", available_parts
+        if verbose:
+            print "Calling _filling_algorithm() for Carrier-Style ships!"
+            print "Available parts: ", available_parts
         # first, get all available hangar parts.
         hangar_parts = set()
         for partlist in available_parts.values():
