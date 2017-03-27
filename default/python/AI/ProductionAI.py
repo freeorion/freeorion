@@ -1391,7 +1391,7 @@ def generate_production_orders():
                     if leading_block_pp > 0.5 * total_pp or (military_emergency and this_priority == PriorityType.PRODUCTION_MILITARY):
                         prioritized = True
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
-                if (not prioritized) and (priority == PriorityType.PRODUCTION_INVASION):
+                if (not prioritized) and (this_priority == PriorityType.PRODUCTION_INVASION):
                     fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
         print
     fo.updateProductionQueue()
