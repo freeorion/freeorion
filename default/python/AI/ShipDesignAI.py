@@ -623,7 +623,7 @@ class AdditionalSpecifications(object):
         self.avg_enemy_weapon_strength = 0
         self.expected_turns_till_fight = 2
         current_turn = fo.currentTurn()
-        if current_turn < 50:
+        if current_turn < 80:
             self.enemy_mine_dmg = 0  # TODO: Implement the detection of actual enemy mine damage
         elif current_turn < 150:
             self.enemy_mine_dmg = 2
