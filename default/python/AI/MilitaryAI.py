@@ -16,7 +16,6 @@ from AIDependencies import INVALID_ID
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
 _military_allocations = []
 _min_mil_allocations = {}
-num_milships = 0
 _verbose_mil_reporting = False
 _best_ship_rating_cache = {}  # indexed by turn, value is rating of that turn
 
@@ -519,7 +518,7 @@ def enemies_nearly_supplying_system(sys_id):
 
 def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
     """Get armed military fleets."""
-    global _military_allocations, num_milships
+    global _military_allocations
 
     universe = fo.getUniverse()
     empire_id = fo.empireID()
@@ -532,7 +531,6 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         try_again(all_military_fleet_ids, try_reset=False, thisround=thisround + " Reset")
         return
 
-    num_milships = sum(foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0) for fid in all_military_fleet_ids)
     mil_fleets_ids = list(FleetUtilsAI.extract_fleet_ids_without_mission_types(all_military_fleet_ids))
     mil_needing_repair_ids, mil_fleets_ids = avail_mil_needing_repair(mil_fleets_ids, split_ships=True)
     avail_mil_rating = sum(map(CombatRatingsAI.get_fleet_rating, mil_fleets_ids))
@@ -819,3 +817,9 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
 def get_tot_mil_rating():
     return sum(CombatRatingsAI.get_fleet_rating(fleet_id)
                for fleet_id in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
+
+
+@cache_by_turn
+def get_num_military_ships():
+    return sum(foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0)
+               for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
