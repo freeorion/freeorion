@@ -1,5 +1,6 @@
 import math
 import random
+import sys
 import traceback
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -319,8 +320,8 @@ def generate_production_orders():
                     res = fo.issueEnqueueBuildingProductionOrder("BLD_SHIPYARD_BASE", homeworld.id)
                     print "Enqueueing BLD_SHIPYARD_BASE, with result %d" % res
                 except:
-                    print "Error: cant build shipyard at new capital, probably no population; we're hosed"
-                    print "Error: exception triggered and caught: ", traceback.format_exc()
+                    print >> sys.stderr, "Can't build shipyard at new capital, probably no population; we're hosed"
+                    print >> sys.stderr, "Exception triggered and caught: ", traceback.format_exc()
 
             for building_name in ["BLD_SHIPYARD_ORG_ORB_INC"]:
                 if (building_name in possible_building_types) and (building_name not in (capital_buildings + queued_building_names)) and (building_expense < building_ratio * total_pp):
@@ -333,7 +334,7 @@ def generate_production_orders():
                             res = fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                             print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
                     except:
-                        print "Error: exception triggered and caught: ", traceback.format_exc()
+                        print >> sys.stderr, "Exception triggered and caught: ", traceback.format_exc()
 
             if ("BLD_IMPERIAL_PALACE" in possible_building_types) and ("BLD_IMPERIAL_PALACE" not in (capital_buildings + queued_building_names)):
                 res = fo.issueEnqueueBuildingProductionOrder("BLD_IMPERIAL_PALACE", homeworld.id)
@@ -367,7 +368,7 @@ def generate_production_orders():
             if (element.buildType == EmpireProductionTypes.BT_SHIP) and (foAI.foAIstate.get_ship_role(element.designID) == ShipRoleType.BASE_DEFENSE):
                 planet = universe.getPlanet(element.locationID)
                 if not planet:
-                    print "Error: Problem getting Planet for build loc %s" % element.locationID
+                    print >> sys.stderr, "Problem getting Planet for build loc %s" % element.locationID
                     continue
                 sys_id = planet.systemID
                 queued_defenses[sys_id] = queued_defenses.get(sys_id, 0) + element.blocksize*element.remaining
@@ -962,7 +963,7 @@ def generate_production_orders():
                         fo.issueRequeueProductionOrder(production_queue.size - 1, 0)  # move to front
                     else:
                         # TODO: enable location condition reporting a la mapwnd BuildDesignatorWnd
-                        print "Error enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting " % planet.name, can_build_camp
+                        print >> sys.stderr, "Enqueing Conc Camp at %s despite building_type.canBeProduced(empire.empireID, pid) reporting " % planet.name, can_build_camp
         if verbose_camp:
             print "conc camp status at %s : checkedCamp: %s, built_camp: %s" % (planet.name, can_build_camp, built_camp)
 
@@ -1053,7 +1054,7 @@ def generate_production_orders():
                         print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
                     break
                 else:
-                    print "Error failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
+                    print >> sys.stderr, "Failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
 
     building_name = "BLD_XENORESURRECTION_LAB"
     queued_xeno_lab_locs = [element.locationID for element in production_queue if element.name == building_name]
@@ -1067,7 +1068,7 @@ def generate_production_orders():
             print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
             break
         else:
-            print "Error failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
+            print >> sys.stderr, "Failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
 
     queued_clny_bld_locs = [element.locationID for element in production_queue if element.name.startswith('BLD_COL_')]
     colony_bldg_entries = ([entry for entry in foAI.foAIstate.colonisablePlanetIDs.items() if entry[1][0] > 60 and
@@ -1087,7 +1088,7 @@ def generate_production_orders():
             print "Requeueing %s to front of build queue, with result %d" % (building_name, res)
             break
         else:
-            print "Error failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
+            print >> sys.stderr, "Failed enqueueing %s at planet %d (%s) , with result %d" % (building_name, pid, planet.name, res)
 
     building_name = "BLD_EVACUATION"
     for pid in AIstate.popCtrIDs:
@@ -1343,7 +1344,7 @@ def generate_production_orders():
                         break
                 loc, best_design_id, best_design = choice[1:4]
                 if best_design is None:
-                    print "Error: problem with mil_build_choices; with selector (%s) chose loc (%s), best_design_id (%s), best_design (None) from mil_build_choices: %s" % (selector, loc, best_design_id, mil_build_choices)
+                    print >> sys.stderr, "problem with mil_build_choices; with selector (%s) chose loc (%s), best_design_id (%s), best_design (None) from mil_build_choices: %s" % (selector, loc, best_design_id, mil_build_choices)
                     continue
             else:
                 loc = random.choice(build_choices)

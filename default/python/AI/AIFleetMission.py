@@ -1,3 +1,5 @@
+import sys
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
@@ -403,7 +405,7 @@ class AIFleetMission(object):
                     sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
                     planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
                     if planet_partial_vis_turn == sys_partial_vis_turn and not planet.currentMeterValue(fo.meterType.population):
-                        print "Potential Error: Fleet %d has tentatively completed its colonize mission but will wait to confirm population." % self.fleet.id
+                        print >> sys.stderr, "Fleet %d has tentatively completed its colonize mission but will wait to confirm population." % self.fleet.id
                         print "    Order details are %s" % last_order
                         print "    Order is valid: %s; issued: %s; executed: %s" % (last_order.is_valid(), last_order.order_issued, last_order.executed)
                         if not last_order.is_valid():

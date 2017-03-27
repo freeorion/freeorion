@@ -491,7 +491,7 @@ def get_colony_fleets():
             best_ship, col_design, build_choices = ProductionAI.get_best_ship_info(
                 PriorityType.PRODUCTION_ORBITAL_OUTPOST, loc)
             if best_ship is None:
-                print "Error: can't get standard best outpost base design that can be built at ", PlanetUtilsAI.planet_name_ids([loc])
+                print >> sys.stderr, "Can't get standard best outpost base design that can be built at ", PlanetUtilsAI.planet_name_ids([loc])
                 outpost_base_design_ids = [design for design in empire.availableShipDesigns if "SD_OUTPOST_BASE" == fo.getShipDesign(design).name]
                 if outpost_base_design_ids:
                     print "trying fallback outpost base design SD_OUTPOST_BASE"
@@ -1238,7 +1238,7 @@ def assign_colony_fleets_to_colonise():
         avail_planets = set(system.planetIDs).intersection(set(foAI.foAIstate.qualifyingOutpostBaseTargets.keys()))
         targets = [pid for pid in avail_planets if foAI.foAIstate.qualifyingOutpostBaseTargets[pid][1] != -1]
         if not targets:
-            print "Error found no valid target for outpost base in system %s (%d)" % (system.name, sys_id)
+            print >> sys.stderr, "Found no valid target for outpost base in system %s (%d)" % (system.name, sys_id)
             continue
         target_id = INVALID_ID
         best_score = -1
@@ -1296,7 +1296,7 @@ def send_colony_ships(colony_fleet_ids, evaluated_planets, mission_type):
     for fid in fleet_pool:
         fleet = universe.getFleet(fid)
         if not fleet or fleet.empty:
-            print "Error: bad fleet ( ID %d ) given to colonization routine; will be skipped" % fid
+            print >> sys.stderr, "Bad fleet ( ID %d ) given to colonization routine; will be skipped" % fid
             fleet_pool.remove(fid)
             continue
         report_str = "Fleet ID (%d): %d ships; species: " % (fid, fleet.numShips)
