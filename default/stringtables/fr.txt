@@ -899,6 +899,15 @@ Erreur de lecture du fichier de sauvegarde.
 UNABLE_TO_SAVE_NOW_TRY_AGAIN
 Impossible de sauvegarder pendant le calcul de l'IA. Veuillez réessayer lorsque l'IA aura terminé son tour.
 
+SAVE_GAME_IN_PROGRESS
+Une sauvegarde de partie est en cours.
+
+ABORT_SAVE_AND_RESET
+Retourner au Menu Principal sans sauvegarder.
+
+ABORT_SAVE_AND_EXIT
+Quitter FreeOrion sans sauvegarder.
+
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 Vous ne contrôlez aucun empire et ne pouvez émettre aucun ordre.
 
@@ -1249,7 +1258,19 @@ OPTIONS_DB_UI_SYSTEM_CIRCLES
 Affiche/Cache sur la carte galactique les cercles entourant les icônes de systèmes stellaires.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
-Fixe la taille sur la carte galactique des cercles entourant les icônes de systèmes stellaires, relativement à celle de ces dernières.
+Fixe la taille sur la carte galactique des cercles entourant les icônes de systèmes stellaires, relativement à la taille des icônes de système.
+
+OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH
+Fixe l'épaisseur du cercle interne entourant l'icône d'un système stellaire lors d'un zoom sur la carte.
+
+OPTIONS_DB_UI_SYSTEM_OUTER_CIRCLE_WIDTH
+Fixe l'épaisseur du cercle externe entourant l'icône d'un système stellaire.
+
+OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_MAX_WIDTH
+Fixe l'épaisseur du cercle interne entourant l'icône d'un système stellaire lorsque la carte est dézoomée.
+
+OPTIONS_DB_UI_SYSTEM_CIRCLE_DISTANCE
+Fixe la distance (en pixels) entre les cercles internes et externes entourant l'icône d'un système stellaire en zoom rapproché.
 
 OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY
 Affiche un calque différent de survol de souris pour les systèmes encore non-explorés par l'empire du joueur.
@@ -1258,16 +1279,16 @@ OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR
 Définit la couleur sur la carte galactique des noms des systèmes stellaires qu'aucun empire ne contrôle.
 
 OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel les icônes des flottes moyennes apparaissent sur la carte galactique.
+Fixe le niveau minimal de zoom auquel les icônes de taille moyenne des flottes apparaissent sur la carte galactique.
 
 OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel les icônes des petites flottes apparaissent sur la carte galactique.
+Fixe le niveau minimal de zoom auquel les icônes de petite taille des flottes apparaissent sur la carte galactique.
 
 OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM
-Fixe le niveau minimal de zoom auquel les icônes des flottes minuscules apparaissent sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
+Fixe le niveau minimal de zoom auquel les icônes de taille minimale des flottes apparaissent sur la carte galactique. À un niveau de zoom inférieur, aucune icône de flotte n'est visible sur la carte galactique.
 
 OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE
-Fixe la taille sur la carte galactique des cercles entourant les icônes de flottes sélectionnées, relativement à celle de ces dernières.
+Fixe la taille sur la carte galactique de l'indicateur de sélection d'une flotte, relativement à la taille des icônes de flotte.
 
 OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR
 Définit la couleur des rayures horizontales (brouillard de guerre) sur les astronefs/flottes non-visibles dans la Fenêtre Flottes.
@@ -1279,10 +1300,10 @@ OPTIONS_DB_SHOW_IDS_AFTER_NAMES
 Afficher les IDs à la suite des noms des objets.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE
-Fixe la taille sur la carte galactique des cercles entourant les icônes de système stellaire sélectionnées, relativement à celle de ces dernières.
+Fixe la taille sur la carte galactique de l'indicateur de sélection d'un système stellaire, relativement à la taille des icônes de système.
 
 OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS
-Fixe la vitesse de rotation (en tours par minute) des cercles entourant les icônes de systèmes stellaire sélectionnés.
+Fixe la vitesse de rotation (en tours par minute) de l'indicateur de sélection d'un système stellaire.
 
 OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD
 Fixe la taille des icônes de système stellaire au-dessous de laquelle les icônes minimales affichées auront une taille fixe.
@@ -2796,8 +2817,9 @@ PL_OUTPOST
 Placer un avant-poste
 
 # %1% number of ground troops that will be deployed on the planet.
+# %2% number of defending troops present on planet
 PL_INVADE
-Envahir (+%1%)
+Envahir (+%1% / %2%)
 
 PL_CANCEL_INVADE
 Annuler invasion
@@ -9191,6 +9213,12 @@ DESC_OWNER_HAS_SHIP_DESIGN
 
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
 ''' modèle d'astronef non débloqué pour l'empire'''
+
+DESC_OWNER_HAS_SHIP_PART
+''' équipement d'astronef débloqué pour l'empire'''
+
+DESC_OWNER_HAS_SHIP_PART_NOT
+''' équipement d'astronef non débloqué pour l'empire'''
 
 # %1% FIXME
 # %2% FIXME
