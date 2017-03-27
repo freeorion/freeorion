@@ -2817,8 +2817,9 @@ PL_OUTPOST
 Place Outpost
 
 # %1% number of ground troops that will be deployed on the planet.
+# %2% number of defending troops present on planet
 PL_INVADE
-Invade (+%1%)
+Invade (+%1% / %2%)
 
 PL_CANCEL_INVADE
 Cancel Invasion
