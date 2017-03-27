@@ -1214,7 +1214,7 @@ def generate_production_orders():
     max_outpost_fleets = max_colony_fleets
 
     _, _, colony_build_choices = get_best_ship_info(PriorityType.PRODUCTION_COLONISATION)
-    military_emergency = PriorityAI.unmetThreat > (2.0 * MilitaryAI.totMilRating)
+    military_emergency = PriorityAI.unmetThreat > (2.0 * MilitaryAI.get_tot_mil_rating())
 
     print "Production Queue Priorities:"
     filtered_priorities = {}

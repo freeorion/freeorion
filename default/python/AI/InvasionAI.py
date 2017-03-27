@@ -435,7 +435,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         else:
             supply_val *= 0.2
 
-    threat_factor = min(1, 0.2*MilitaryAI.totMilRating/(sys_total_threat+0.001))**2  # devalue invasions that would require too much military force
+    threat_factor = min(1, 0.2*MilitaryAI.get_tot_mil_rating()/(sys_total_threat+0.001))**2  # devalue invasions that would require too much military force
 
     design_id, _, locs = ProductionAI.get_best_ship_info(PriorityType.PRODUCTION_INVASION)
     if not locs or not universe.getPlanet(locs[0]):
