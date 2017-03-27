@@ -2309,7 +2309,8 @@ namespace {
                 continue;
 
             // how many troops are invading?
-            planet_empire_troops[invade_planet_id][ship->Owner()] += ship->TroopCapacity();
+            float effective_troops = ship->TroopCapacityAgainstShields(planet->CurrentMeterValue(METER_SHIELD));
+            planet_empire_troops[invade_planet_id][ship->Owner()] += effective_troops;
 
             std::shared_ptr<System> system = GetSystem(ship->SystemID());
 
@@ -2326,8 +2327,10 @@ namespace {
             if (system)
                 system->Remove(ship->ID());
 
-            DebugLogger() << "HandleInvasion has accounted for "<< ship->TroopCapacity()
+            DebugLogger() << "HandleInvasion has accounted for " << ship->TroopCapacity()
                           << " troops to invade " << planet->Name()
+                          << " which has shieids " << planet->CurrentMeterValue(METER_SHIELD)
+                          << " giving effective invading troops " << effective_troops
                           << " and is destroying ship " << ship->ID()
                           << " named " << ship->Name();
 
