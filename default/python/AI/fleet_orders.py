@@ -164,7 +164,7 @@ class OrderMove(AIFleetOrder):
         if fleet_rating >= safety_factor * threat:
             return True
         elif not p_threat and self.target.id in fo.getEmpire().supplyUnobstructedSystems:
-                    return True
+            return True
         else:
             sys1 = universe.getSystem(system_id)
             sys1_name = sys1 and sys1.name or "unknown"
