@@ -8000,7 +8000,7 @@ Direct Weapon
 PC_DIRECT_WEAPON_DESC
 '''Direct-fire weapons attack and can damage targets each combat round (unlike [[encyclopedia FIGHTER_TECHS]], which must first be launched before they can attack).
 
-Some weapons in this category are capable of firing multiple shots per combat round.'''
+Some weapons in this category are capable of firing multiple shots per combat round. Ships built by species with the piloting trait can affect the weapon damage.'''
 
 # Ship part classes
 PC_FIGHTER_HANGAR
@@ -10448,91 +10448,92 @@ SHP_WEAPON_1_2
 Mass Driver 2
 
 SHP_WEAPON_1_2_DESC
-Improves Mass Driver by one level, increasing strength by 1.
+All ships with Mass Driver weapons within [[metertype METER_SUPPLY]] are improved by one level, increasing shot [[encyclopedia DAMAGE_TITLE]] to 4. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 1 per bonus (malus) level.
 
 SHP_WEAPON_1_3
 Mass Driver 3
 
 SHP_WEAPON_1_3_DESC
-Improves Mass Driver by two levels, increasing strength by 2.
+All ships with Mass Driver weapons within [[metertype METER_SUPPLY]] are improved by two levels, increasing shot [[encyclopedia DAMAGE_TITLE]] to 5. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 1 per bonus (malus) level.
 
 SHP_WEAPON_1_4
 Mass Driver 4
 
 SHP_WEAPON_1_4_DESC
-Improves Mass Driver by three levels, increasing strength by 3.
+The ultimate refinement of the Mass Driver. All ships with Mass Driver weapons within [[metertype METER_SUPPLY]] are improved by three levels, increasing shot [[encyclopedia DAMAGE_TITLE]] to 6. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 1 per bonus (malus) level.
 
 SHP_WEAPON_2_1
 Laser Weapons
 
 SHP_WEAPON_2_1_DESC
-Unlocks the Laser, a more powerful ship's weapon than the Mass Driver.
+Unlocks the Laser, a more powerful ship's weapon than the Mass Driver. Modifiers, like a ship built by a species with a piloting trait, will increase (decrease) shot damage by 2 per bonus (malus) level.
 
 SHP_WEAPON_2_2
 Laser 2
 
 SHP_WEAPON_2_2_DESC
-Improves Laser weapons by one level, increasing strength by 2.
+All ships with Laser weapons within [[metertype METER_SUPPLY]] are improved by one level, increasing shot [[encyclopedia DAMAGE_TITLE]] to 7. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 2 per bonus (malus) level.
 
 SHP_WEAPON_2_3
 Laser 3
 
 SHP_WEAPON_2_3_DESC
-Improves Laser weapons by two levels, increasing strength by 4.
+All ships with Laser weapons within [[metertype METER_SUPPLY]] are improved by two levels, increasing shot [[encyclopedia DAMAGE_TITLE]] to 9. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 2 per bonus (malus) level.
 
 SHP_WEAPON_2_4
 Laser 4
 
 SHP_WEAPON_2_4_DESC
-Improves Laser weapons by three levels, increasing strength by 6.
+The ultimate refinement of the Laser weapon. All ships with Laser weapons within [[metertype METER_SUPPLY]] are improved by three levels, increasing shot [[encyclopedia DAMAGE_TITLE]] to 11. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 2 per bonus (malus) level.
 
 SHP_WEAPON_3_1
 Plasma Cannons
 
 SHP_WEAPON_3_1_DESC
-Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser.
+Unlocks the Plasma Cannon, a more powerful ship's weapon than the Laser. Modifiers, like a ship built by a species with a piloting trait, will increase (decrease) shot damage by 3 per bonus (malus) level.
 
 SHP_WEAPON_3_2
 Plasma Cannon 2
 
 SHP_WEAPON_3_2_DESC
-Improves Plasma Cannon by one level, increasing strength by 3.
+All ships with Plasma Cannon weapons within [[metertype METER_SUPPLY]] are improved by one level, increasing shot [[encyclopedia DAMAGE_TITLE]] to 12. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 3 per bonus (malus) level.
 
 SHP_WEAPON_3_3
 Plasma Cannon 3
 
 SHP_WEAPON_3_3_DESC
-Improves Plasma Cannon two levels increasing strength by 6.
+All ships with Plasma Cannon weapons within [[metertype METER_SUPPLY]] are improved by two levels, increasing shot [[encyclopedia DAMAGE_TITLE]] to 15. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 3 per bonus (malus) level.
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
 
 SHP_WEAPON_3_4_DESC
-Improves Plasma Cannon three levels increasing base strength by 9.
+The ultimate refinement of the Plasma Cannon. All ships with Plasma Cannon weapons within [[metertype METER_SUPPLY]] are improved by three levels, increasing shot [[encyclopedia DAMAGE_TITLE]] to 18. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 3 per bonus (malus) level.
 
 SHP_WEAPON_4_1
 Death Rays
 
 SHP_WEAPON_4_1_DESC
-Unlocks the Death Ray, the ultimate ship's weapon.
+Unlocks the Death Ray, the ultimate ship's weapon. Modifiers, like a ship built by a species with a piloting trait, will increase (decrease) shot damage by 5 per bonus (malus) level.
 
 SHP_WEAPON_4_2
 Death Ray 2
 
 SHP_WEAPON_4_2_DESC
-Improves Death Ray by one level, increasing strength by 5.
+All ships with Death Ray weapons within [[metertype METER_SUPPLY]] are improved by one level, increasing shot [[encyclopedia DAMAGE_TITLE]] to 20. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 5 per bonus (malus) level.
 
 SHP_WEAPON_4_3
 Death Ray 3
 
 SHP_WEAPON_4_3_DESC
-Improves Death Ray by two levels, increasing strength by 10.
+All ships with Death Ray weapons within [[metertype METER_SUPPLY]] are improved by two levels, increasing shot [[encyclopedia DAMAGE_TITLE]] to 25. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 5 per bonus (malus) level.
 
 SHP_WEAPON_4_4
 Death Ray 4
 
 SHP_WEAPON_4_4_DESC
-Improves Death Ray by three levels increasing strength by 15. The ultimate refinement of the ultimate weapon.
+The ultimate refinement of the ultimate weapon. All ships with Death Ray weapons within [[metertype METER_SUPPLY]] are improved by three levels, increasing shot [[encyclopedia DAMAGE_TITLE]] to 30. Modifiers, like a ship built by a species with a piloting trait, will further increase (decrease) shot damage by 5 per bonus (malus) level.
+
 
 SHP_ION_CANNON
 Ion Cannon
@@ -11749,25 +11750,25 @@ SR_WEAPON_1_1
 Mass Driver
 
 SR_WEAPON_1_1_DESC
-The Mass Driver, a basic weapon.
+The Mass Driver, a basic weapon. Upgrading the weapon technology will increase the shot damage.  Modifiers, like a ship built by a species with a piloting trait, will increase (decrease) shot damage by 1 per bonus (malus) level.
 
 SR_WEAPON_2_1
 Laser Weapon
 
 SR_WEAPON_2_1_DESC
-The Laser, a more powerful ship's weapon than the Mass Driver.
+The Laser, a more powerful ship's weapon than the Mass Driver. Upgrading the weapon technology will increase the shot damage.  Modifiers, like a ship built by a species with a piloting trait, will increase (decrease) shot damage by 2 per bonus (malus) level.
 
 SR_WEAPON_3_1
 Plasma Cannons
 
 SR_WEAPON_3_1_DESC
-The Plasma Cannon, a more powerful ship's weapon than the Laser.
+The Plasma Cannon, a more powerful ship's weapon than the Laser. Upgrading the weapon technology will increase the shot damage.  Modifiers, like a ship built by a species with a piloting trait, will increase (decrease) shot damage by 3 per bonus (malus) level.
 
 SR_WEAPON_4_1
 Death Ray
 
 SR_WEAPON_4_1_DESC
-The Death Ray, the ultimate ship's weapon.
+The Death Ray, the ultimate ship's weapon. Upgrading the weapon technology will increase the shot damage.  Modifiers, like a ship built by a species with a piloting trait, will increase (decrease) shot damage by 5 per bonus (malus) level.
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
