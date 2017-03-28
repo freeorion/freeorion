@@ -89,7 +89,7 @@ namespace {
         // (which does have an ID)
     }
 
-    constexpr unsigned int CHECKSUM_MODULUS = static_cast<unsigned int>(10'000'000);
+    const unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
 
     template <class C>
     void CheckSumCombine(unsigned int& sum, const C& c) {
@@ -126,11 +126,13 @@ namespace {
 
     template <>
     void CheckSumCombine(unsigned int& sum, const double& t) {
+        if (t == 0.0)
+            return;
         // biggest and smallest possible float should be ~10^(+/-308)
         // taking log gives a number in the range +/- 309
         // adding 400 gives numbers in the range ~0 to 800
         // multiplying by 10'000 gives numbers in the range ~0 to 8'000'000
-        sum += static_cast<unsigned int>((std::log(std::abs(t)) + 400.0) * 10'000);
+        sum += static_cast<unsigned int>((std::log10(std::abs(t)) + 400.0) * 10000.0);
         sum %= CHECKSUM_MODULUS;
     }
 }
