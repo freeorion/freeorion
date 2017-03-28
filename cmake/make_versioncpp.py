@@ -43,10 +43,9 @@ class Generator(object):
 
     def execute(self, version, branch, build_no, build_sys):
         if build_no == INVALID_BUILD_NO:
-            print "WARNING: Can't determine git commit, %s not updated!" % self.outfile
-            return
+            print "WARNING: Can't determine git commit!"
 
-        if os.path.isfile(self.outfile):
+        if os.path.isfile(self.outfile) and not build_no == INVALID_BUILD_NO:
             with open(self.outfile) as check_file:
                 if build_no in check_file.read():
                     return
@@ -128,7 +127,7 @@ try:
     timestamp = float(check_output(["git", "show", "-s", "--format=%ct", "HEAD"]).strip())
     build_no = ".".join([datetime.utcfromtimestamp(timestamp).strftime("%Y-%m-%d"), commit])
 except:
-    print "WARNING: git not installed"
+    print "WARNING: git not installed or not setup correctly"
 
 for generator in generators:
     generator.execute(version, branch, build_no, build_sys)
