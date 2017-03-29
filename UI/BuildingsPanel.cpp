@@ -243,7 +243,6 @@ void BuildingsPanel::DoLayout() {
 
     Resize(GG::Pt(Width(), height));
 
-    Wnd::MoveChildUp(m_expand_button);
 
     m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
 
