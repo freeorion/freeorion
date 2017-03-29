@@ -2623,6 +2623,9 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
             throw std::runtime_error("double ValueRef evaluated with an unknown or invalid OpType.");
             break;
     }
+
+    // Dummy return value to prevent spurious compiler warning
+    return 0.0;
 }
 
 template <>
@@ -2720,5 +2723,8 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
             throw std::runtime_error("int ValueRef evaluated with an unknown or invalid OpType.");
             break;
     }
+
+    // Dummy return value to prevent spurious compiler warning
+    return 0.0;
 }
 } // namespace ValueRef
