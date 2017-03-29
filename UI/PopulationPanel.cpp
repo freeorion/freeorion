@@ -188,6 +188,14 @@ void PopulationPanel::Update() {
 }
 
 void PopulationPanel::Refresh() {
+    for (auto& meter_stat : m_meter_stats)
+        meter_stat.second->RequirePreRender();
+
+    RequirePreRender();
+}
+
+void PopulationPanel::PreRender() {
+    AccordionPanel::PreRender();
     Update();
     DoLayout();
 }

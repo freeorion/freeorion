@@ -25,6 +25,8 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    void PreRender() override;
+
     bool EventFilter(GG::Wnd* w, const GG::WndEvent& event) override;
 
     /** expands or collapses panel to show details or just summary info */

@@ -25,6 +25,7 @@ public:
     //@}
 
     /** \name Mutators */ //@{
+    void PreRender() override;
     /** expands or collapses panel to show details or just summary info */
     void ExpandCollapse(bool expanded);
 

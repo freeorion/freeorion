@@ -172,6 +172,14 @@ void MilitaryPanel::Update() {
 }
 
 void MilitaryPanel::Refresh() {
+    for (auto& meter_stat : m_meter_stats)
+        meter_stat.second->RequirePreRender();
+
+    RequirePreRender();
+}
+
+void MilitaryPanel::PreRender() {
+    AccordionPanel::PreRender();
     Update();
     DoLayout();
 }

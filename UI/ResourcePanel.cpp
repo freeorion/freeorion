@@ -105,7 +105,7 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_rescenter_id]) return; // nothing to do
     s_expanded_map[m_rescenter_id] = expanded;
 
-    DoLayout();
+    RequirePreRender();
 }
 
 bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
@@ -204,6 +204,14 @@ void ResourcePanel::Update() {
 }
 
 void ResourcePanel::Refresh() {
+    for (auto& meter_stat : m_meter_stats)
+        meter_stat.second->RequirePreRender();
+
+    RequirePreRender();
+}
+
+void ResourcePanel::PreRender() {
+    AccordionPanel::PreRender();
     Update();
     DoLayout();
 }
