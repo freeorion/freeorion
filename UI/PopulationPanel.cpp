@@ -210,16 +210,19 @@ void PopulationPanel::DoLayout() {
     if (!s_expanded_map[m_popcenter_id]) {
         // position and reattach icons to be shown
         int n = 0;
+        GG::X stride = MeterIconSize().x * 7/2;
         for (const std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
-            GG::X x = MeterIconSize().x*n*7/2;
-
-            if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
+            GG::X x = n * stride;
 
             StatisticIcon* icon = meter_stat.second;
-            AttachChild(icon);
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
             icon->SizeMove(icon_ul, icon_lr);
+
+            if (x + icon->MinUsableSize().x >= ClientWidth())
+                break;
+
+            AttachChild(icon);
             icon->Show();
 
             n++;
