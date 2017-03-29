@@ -183,6 +183,7 @@ void BuildingsPanel::ExpandCollapseButtonPressed()
 { ExpandCollapse(!s_expanded_map[m_planet_id]); }
 
 void BuildingsPanel::DoLayout() {
+    auto old_size = Size();
     AccordionPanel::DoLayout();
 
     int row = 0;
@@ -248,6 +249,9 @@ void BuildingsPanel::DoLayout() {
     m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
 
     SetCollapsed(!s_expanded_map[m_planet_id]);
+
+    if (old_size != Size() && Parent())
+        Parent()->RequirePreRender();
 }
 
 std::map<int, bool> BuildingsPanel::s_expanded_map;
