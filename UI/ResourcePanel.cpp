@@ -46,18 +46,28 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     GG::Connect(m_expand_button->LeftClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
+    const auto obj = GetUniverseObject(m_rescenter_id);
+    if (!obj) {
+        ErrorLogger() << "Invalid object id " << m_rescenter_id;
+        return;
+    }
+
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.push_back(
-        std::make_pair(METER_INDUSTRY, new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
+        std::make_pair(METER_INDUSTRY, new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY),
+                                                         obj->InitialMeterValue(METER_INDUSTRY), 3, false,
                                                          GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_RESEARCH, new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
+        std::make_pair(METER_RESEARCH, new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH),
+                                                         obj->InitialMeterValue(METER_RESEARCH), 3, false,
                                                          GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_TRADE, new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
+        std::make_pair(METER_TRADE, new StatisticIcon(ClientUI::MeterIcon(METER_TRADE),
+                                                      obj->InitialMeterValue(METER_TRADE), 3, false,
                                                       GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY), 0, 3, false,
+        std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY),
+                                                       obj->InitialMeterValue(METER_SUPPLY), 3, false,
                                                        GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
 
     // meter and production indicators
