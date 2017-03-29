@@ -238,8 +238,6 @@ void MilitaryPanel::DoLayout() {
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->Bottom() + EDGE_PAD - top));
     }
 
-    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
-
     SetCollapsed(!s_expanded_map[m_planet_id]);
 }
 
