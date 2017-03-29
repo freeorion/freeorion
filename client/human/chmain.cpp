@@ -238,7 +238,6 @@ int mainSetupAndRun() {
     try {
         RegisterOptions(&HumanClientApp::AddWindowSizeOptionsAfterMainStart);
 
-        int colour_depth = GetOptionsDB().Get<int>("color-depth");
         bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
         bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
 
@@ -246,8 +245,6 @@ int mainSetupAndRun() {
         int width(width_height.first), height(width_height.second);
         std::pair<int, int> left_top = HumanClientApp::GetWindowLeftTop();
         int left(left_top.first), top(left_top.second);
-
-        int fullscreen_monitor_id = GetOptionsDB().Get<int>("fullscreen-monitor-id");
 
 #ifdef FREEORION_WIN32
 #  ifdef IDI_ICON1

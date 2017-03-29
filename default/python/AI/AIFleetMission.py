@@ -321,7 +321,7 @@ class AIFleetMission(object):
         if fleet.nextSystemID != last_move_target_id:
             return True
         universe = fo.getUniverse()
-        current_dest_system =  universe.getSystem(fleet.nextSystemID)
+        current_dest_system = universe.getSystem(fleet.nextSystemID)
         if not current_dest_system:
             # shouldn't really happen, but just to be safe
             return True
