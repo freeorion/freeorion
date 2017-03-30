@@ -15,8 +15,18 @@
 #include <GG/Layout.h>
 #include <GG/TabWnd.h>
 
-#include <boost/format.hpp>
+//boost::spirit::classic pulls in windows.h which in turn defines the macros
+//MessageBox, PlaySound, min and max. Disabling the generation of the min and
+// max macros and undefining those should avoid name collisions with std c++
+// library and FreeOrion function names.
+#define NOMINMAX
 #include <boost/spirit/include/classic.hpp>
+#ifdef FREEORION_WIN32
+#  undef MessageBox
+#  undef PlaySound
+#endif
+
+#include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
 
