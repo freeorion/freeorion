@@ -11,16 +11,16 @@
 struct Disconnection : boost::statechart::event<Disconnection> {};
 
 
-//  Message events
+//  MessagePacket events
 /** The base class for all state machine events that are based on Messages. */
 struct MessageEventBase
 {
-    MessageEventBase(Message& message);
+    MessageEventBase(MessagePacket& message);
 
-    Message m_message;
+    MessagePacket m_message;
 };
 
-// Define Boost.Preprocessor list of all Message events
+// Define Boost.Preprocessor list of all MessagePacket events
 #define MESSAGE_EVENTS                         \
     (DispatchCombatLogs)                       \
     (Error)                                    \
@@ -48,7 +48,7 @@ struct MessageEventBase
         boost::statechart::event<name>,                                 \
         MessageEventBase                                                \
     {                                                                   \
-        name(Message& message) : MessageEventBase(message) {}           \
+        name(MessagePacket& message) : MessageEventBase(message) {}           \
     };
 
 BOOST_PP_SEQ_FOR_EACH(DECLARE_MESSAGE_EVENT, _, MESSAGE_EVENTS)

@@ -172,7 +172,7 @@ void InGameMenu::Save() {
 
     } catch (const std::exception& e) {
         ErrorLogger() << "Exception thrown attempting save: " << e.what();
-        ClientUI::MessageBox(e.what(), true);
+        ClientUI::MessagePopup(e.what(), true);
     }
 }
 

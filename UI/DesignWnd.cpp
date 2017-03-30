@@ -246,7 +246,7 @@ namespace {
 
         } catch (const std::exception& e) {
             ErrorLogger() << "Error writing design file.  Exception: " << ": " << e.what();
-            ClientUI::MessageBox(e.what(), true);
+            ClientUI::MessagePopup(e.what(), true);
         }
     }
 
@@ -287,7 +287,7 @@ namespace {
                 WriteDesignToFile(design_id, save_path);
             }
         } catch (const std::exception& e) {
-            ClientUI::MessageBox(e.what(), true);
+            ClientUI::MessagePopup(e.what(), true);
             return;
         }
     }

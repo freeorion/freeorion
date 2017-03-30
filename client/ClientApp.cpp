@@ -7,6 +7,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Networking.h"
+#include "../network/ClientNetworking.h"
 
 #include <stdexcept>
 #include <boost/bind.hpp>
@@ -103,13 +104,13 @@ const std::map<int, PlayerInfo>& ClientApp::Players() const
 std::map<int, PlayerInfo>& ClientApp::Players()
 { return m_player_info; }
 
-const std::map<int, Message::PlayerStatus>& ClientApp::PlayerStatus() const
+const std::map<int, MessagePacket::PlayerStatus>& ClientApp::PlayerStatus() const
 { return m_player_status; }
 
-std::map<int, Message::PlayerStatus>& ClientApp::PlayerStatus()
+std::map<int, MessagePacket::PlayerStatus>& ClientApp::PlayerStatus()
 { return m_player_status; }
 
-void ClientApp::SetPlayerStatus(int player_id, Message::PlayerStatus status) {
+void ClientApp::SetPlayerStatus(int player_id, MessagePacket::PlayerStatus status) {
     if (player_id == Networking::INVALID_PLAYER_ID)
         return;
     m_player_status[player_id] = status;
@@ -140,7 +141,7 @@ std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
 }
 
 int ClientApp::GetNewObjectID() {
-    Message msg;
+    MessagePacket msg;
     m_networking->SendSynchronousMessage(RequestNewObjectIDMessage(m_networking->PlayerID()), msg);
     std::string text = msg.Text();
     if (text.empty())
@@ -149,7 +150,7 @@ int ClientApp::GetNewObjectID() {
 }
 
 int ClientApp::GetNewDesignID() {
-    Message msg;
+    MessagePacket msg;
     m_networking->SendSynchronousMessage(RequestNewDesignIDMessage(m_networking->PlayerID()), msg);
     std::string text = msg.Text();
     if (text.empty())

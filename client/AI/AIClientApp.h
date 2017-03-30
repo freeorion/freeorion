@@ -39,7 +39,7 @@ private:
     void                ConnectToServer();
     void                StartPythonAI();
     void                HandlePythonAICrash();
-    void                HandleMessage(const Message& msg);
+    void                HandleMessage(const MessagePacket& msg);
 
 
     /** Implementation of AI logic. */

@@ -1,5 +1,5 @@
 #include "ClientFSMEvents.h"
 
 
-MessageEventBase::MessageEventBase(Message& message)
+MessageEventBase::MessageEventBase(MessagePacket& message)
 { swap(m_message, message); }

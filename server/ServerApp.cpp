@@ -195,7 +195,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         }
     }
     if (need_AIs)
-        m_networking.SendMessage(TurnProgressMessage(Message::STARTING_AIS));
+        m_networking.SendMessage(TurnProgressMessage(MessagePacket::STARTING_AIS));
 
 
     // disconnect any old AI clients
@@ -340,7 +340,7 @@ void ServerApp::CleanupAIs() {
     try {
         for (PlayerConnectionPtr player : m_networking) {
             if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
+                player->SendMessage(EndGameMessage(player->PlayerID(), MessagePacket::PLAYER_DISCONNECT));
                 ai_connection_lingering = true;
             }
         }
@@ -384,7 +384,7 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
     }
 }
 
-void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleMessage(const MessagePacket& msg, PlayerConnectionPtr player_connection) {
     if (msg.SendingPlayer() != player_connection->PlayerID()) {
         ErrorLogger() << "ServerApp::HandleMessage : Received an message with a sender ID ("
                       << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
@@ -395,27 +395,27 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     //DebugLogger() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
 
     switch (msg.Type()) {
-    case Message::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg, player_connection));       break;
-    case Message::START_MP_GAME:            m_fsm->process_event(StartMPGame(msg, player_connection));      break;
-    case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
-    case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg, player_connection));        break;
-    case Message::SAVE_GAME_INITIATE:       m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
-    case Message::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
-    case Message::CLIENT_SAVE_DATA:         m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
-    case Message::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
-    case Message::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
-    case Message::REQUEST_NEW_OBJECT_ID:    m_fsm->process_event(RequestObjectID(msg, player_connection));  break;
-    case Message::REQUEST_NEW_DESIGN_ID:    m_fsm->process_event(RequestDesignID(msg, player_connection));  break;
-    case Message::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
+    case MessagePacket::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg, player_connection));       break;
+    case MessagePacket::START_MP_GAME:            m_fsm->process_event(StartMPGame(msg, player_connection));      break;
+    case MessagePacket::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
+    case MessagePacket::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg, player_connection));        break;
+    case MessagePacket::SAVE_GAME_INITIATE:       m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
+    case MessagePacket::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
+    case MessagePacket::CLIENT_SAVE_DATA:         m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
+    case MessagePacket::PLAYER_CHAT:              m_fsm->process_event(PlayerChat(msg, player_connection));       break;
+    case MessagePacket::DIPLOMACY:                m_fsm->process_event(Diplomacy(msg, player_connection));        break;
+    case MessagePacket::REQUEST_NEW_OBJECT_ID:    m_fsm->process_event(RequestObjectID(msg, player_connection));  break;
+    case MessagePacket::REQUEST_NEW_DESIGN_ID:    m_fsm->process_event(RequestDesignID(msg, player_connection));  break;
+    case MessagePacket::MODERATOR_ACTION:         m_fsm->process_event(ModeratorAct(msg, player_connection));     break;
 
-    case Message::ERROR_MSG:
-    case Message::DEBUG:                    break;
+    case MessagePacket::ERROR_MSG:
+    case MessagePacket::DEBUG:                    break;
 
-    case Message::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
-    case Message::AI_END_GAME_ACK:          m_fsm->process_event(LeaveGame(msg, player_connection));        break;
+    case MessagePacket::SHUT_DOWN_SERVER:         HandleShutdownMessage(msg, player_connection);  break;
+    case MessagePacket::AI_END_GAME_ACK:          m_fsm->process_event(LeaveGame(msg, player_connection));        break;
 
-    case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
-    case Message::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
+    case MessagePacket::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
+    case MessagePacket::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
 
     default:
         ErrorLogger() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
@@ -424,7 +424,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     }
 }
 
-void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleShutdownMessage(const MessagePacket& msg, PlayerConnectionPtr player_connection) {
     int player_id = player_connection->PlayerID();
     bool is_host = m_networking.PlayerIsHost(player_id);
     if (!is_host) {
@@ -435,21 +435,21 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
     m_fsm->process_event(ShutdownServer());
 }
 
-void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
+void ServerApp::HandleNonPlayerMessage(const MessagePacket& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {
-    case Message::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
-    case Message::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
-    case Message::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
-    case Message::ERROR_MSG:    m_fsm->process_event(Error(msg, player_connection));        break;
-    case Message::DEBUG:        break;
+    case MessagePacket::HOST_SP_GAME: m_fsm->process_event(HostSPGame(msg, player_connection));   break;
+    case MessagePacket::HOST_MP_GAME: m_fsm->process_event(HostMPGame(msg, player_connection));   break;
+    case MessagePacket::JOIN_GAME:    m_fsm->process_event(JoinGame(msg, player_connection));     break;
+    case MessagePacket::ERROR_MSG:    m_fsm->process_event(Error(msg, player_connection));        break;
+    case MessagePacket::DEBUG:        break;
     default:
-        if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == Message::SHUT_DOWN_SERVER)) {
-            DebugLogger() << "ServerApp::HandleNonPlayerMessage received Message::SHUT_DOWN_SERVER from the sole "
+        if ((m_networking.size() == 1) && (player_connection->IsLocalConnection()) && (msg.Type() == MessagePacket::SHUT_DOWN_SERVER)) {
+            DebugLogger() << "ServerApp::HandleNonPlayerMessage received MessagePacket::SHUT_DOWN_SERVER from the sole "
                           << "connected player, who is local and so the request is being honored; server shutting down.";
             m_fsm->process_event(ShutdownServer());
         } else {
             ErrorLogger() << "ServerApp::HandleNonPlayerMessage : Received an invalid message type \""
-                                            << msg.Type() << "\" for a non-player Message.  Terminating connection.";
+                                            << msg.Type() << "\" for a non-player MessagePacket.  Terminating connection.";
             m_networking.Disconnect(player_connection);
             break;
         }
@@ -630,7 +630,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // create universe and empires for players
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners: Creating Universe";
-    m_networking.SendMessage(TurnProgressMessage(Message::GENERATING_UNIVERSE));
+    m_networking.SendMessage(TurnProgressMessage(MessagePacket::GENERATING_UNIVERSE));
 
 
     // m_current_turn set above so that every UniverseObject created before game
@@ -849,7 +849,7 @@ void ServerApp::LoadSPGameInit(const std::vector<PlayerSaveGameData>& player_sav
     LoadGameInit(player_save_game_data, player_id_to_save_game_data_index, server_save_game_data);
 }
 
-void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection){
+void ServerApp::UpdateSavePreviews(const MessagePacket& msg, PlayerConnectionPtr player_connection){
     DebugLogger() << "ServerApp::UpdateSavePreviews: ServerApp UpdateSavePreviews";
 
     std::string directory_name;
@@ -877,7 +877,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     DebugLogger() << "ServerApp::UpdateSavePreviews: Previews sent.";
 }
 
-void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection){
+void ServerApp::UpdateCombatLogs(const MessagePacket& msg, PlayerConnectionPtr player_connection){
     std::vector<int> ids;
     ExtractRequestCombatLogsMessageData(msg, ids);
 
@@ -2660,7 +2660,7 @@ void ServerApp::PreCombatProcessTurns() {
     DebugLogger() << "ServerApp::ProcessTurns executing orders";
 
     // inform players of order execution
-    m_networking.SendMessage(TurnProgressMessage(Message::PROCESSING_ORDERS));
+    m_networking.SendMessage(TurnProgressMessage(MessagePacket::PROCESSING_ORDERS));
 
     // clear bombardment state before executing orders, so result after is only
     // determined by what orders set.
@@ -2694,7 +2694,7 @@ void ServerApp::PreCombatProcessTurns() {
     }
 
     // player notifications
-    m_networking.SendMessage(TurnProgressMessage(Message::COLONIZE_AND_SCRAP));
+    m_networking.SendMessage(TurnProgressMessage(MessagePacket::COLONIZE_AND_SCRAP));
 
     DebugLogger() << "ServerApp::ProcessTurns colonization";
     HandleColonization();
@@ -2713,7 +2713,7 @@ void ServerApp::PreCombatProcessTurns() {
     // process movement phase
 
     // player notifications
-    m_networking.SendMessage(TurnProgressMessage(Message::FLEET_MOVEMENT));
+    m_networking.SendMessage(TurnProgressMessage(MessagePacket::FLEET_MOVEMENT));
 
 
     // fleet movement
@@ -2747,7 +2747,7 @@ void ServerApp::PreCombatProcessTurns() {
     }
 
     // indicate that the clients are waiting for their new Universes
-    m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING));
+    m_networking.SendMessage(TurnProgressMessage(MessagePacket::DOWNLOADING));
 
     // send partial turn updates to all players after orders and movement
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
@@ -2764,7 +2764,7 @@ void ServerApp::PreCombatProcessTurns() {
 void ServerApp::ProcessCombats() {
     ScopedTimer timer("ServerApp::ProcessCombats", true);
     DebugLogger() << "ServerApp::ProcessCombats";
-    m_networking.SendMessage(TurnProgressMessage(Message::COMBAT));
+    m_networking.SendMessage(TurnProgressMessage(MessagePacket::COMBAT));
 
     std::set<int> human_controlled_empire_ids = HumanControlledEmpires(this, m_networking);
     std::vector<CombatInfo> combats;   // map from system ID to CombatInfo for that system
@@ -2897,7 +2897,7 @@ void ServerApp::PostCombatProcessTurns() {
     // process production and growth phase
 
     // notify players that production and growth is being processed
-    m_networking.SendMessage(TurnProgressMessage(Message::EMPIRE_PRODUCTION));
+    m_networking.SendMessage(TurnProgressMessage(MessagePacket::EMPIRE_PRODUCTION));
     DebugLogger() << "ServerApp::PostCombatProcessTurns effects and meter updates";
 
 
@@ -3069,7 +3069,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // indicate that the clients are waiting for their new gamestate
-    m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING));
+    m_networking.SendMessage(TurnProgressMessage(MessagePacket::DOWNLOADING));
 
 
     // compile map of PlayerInfo, indexed by player ID

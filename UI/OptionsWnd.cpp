@@ -1,3 +1,10 @@
+#ifdef FREEORION_WIN32
+// windows.h defines the macros min and max. Disabling the generation of
+// the min and max macros and undefining those should avoid name collisions
+// with std c++ library and FreeOrion function names.
+#define NOMINMAX
+#endif
+
 #include "OptionsWnd.h"
 
 #include "../client/human/HumanClientApp.h"
@@ -19,7 +26,6 @@
 #include <boost/spirit/include/classic.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
-
 
 namespace fs = boost::filesystem;
 
@@ -105,7 +111,7 @@ namespace {
                     m_edit->EditedSignal(m_edit->Text());
                 }
             } catch (const std::exception& e) {
-                ClientUI::MessageBox(e.what(), true);
+                ClientUI::MessagePopup(e.what(), true);
             }
         }
 
@@ -1145,7 +1151,7 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
         try {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("UI.sound.enabled", true);
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+            Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
@@ -1181,7 +1187,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int hig
 void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("UI.sound.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
-    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+    Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
 }
 
 void OptionsWnd::SoundOptionsFeedback::SetMusicButton(GG::StateButton* button)
@@ -1197,5 +1203,5 @@ void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::Initial
         m_effects_button->SetCheck(false);
     if (m_music_button)
         m_music_button->SetCheck(false);
-    ClientUI::MessageBox(UserString(e.what()), false);
+    ClientUI::MessagePopup(UserString(e.what()), false);
 }

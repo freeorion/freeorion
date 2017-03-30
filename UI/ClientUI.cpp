@@ -46,12 +46,6 @@
 #include <string>
 #include <algorithm>
 
-#ifdef FREEORION_WIN32
-#  ifdef MessageBox
-#    undef MessageBox
-#  endif
-#endif
-
 const Tech* GetTech(const std::string& name);
 
 bool TextureFileNameCompare(const std::shared_ptr<GG::Texture> t1, const std::shared_ptr<GG::Texture> t2)
@@ -974,12 +968,12 @@ void ClientUI::RestoreFromSaveData(const SaveGameUIData& ui_data)
 ClientUI* ClientUI::GetClientUI()
 { return s_the_UI; }
 
-void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = false*/) {
+void ClientUI::MessagePopup(const std::string& message, bool play_alert_sound/* = false*/) {
     GG::ThreeButtonDlg dlg(GG::X(320), GG::Y(200), message, GetFont(Pts()+2),
                            WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
     if (play_alert_sound)
-        Sound::GetSound().PlaySound(SoundDir() / "alert.ogg", true);
+        Sound::GetSound().PlaySoundEffect(SoundDir() / "alert.ogg", true);
     dlg.Run();
 }
 

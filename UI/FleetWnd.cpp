@@ -244,7 +244,7 @@ namespace {
                 ScopedTimer get_id_timer("GetNewObjectID");
                 new_fleet_id = GetNewObjectID();
                 if (new_fleet_id == INVALID_OBJECT_ID) {
-                    ClientUI::MessageBox(UserString("SERVER_TIMEOUT"), true);
+                    ClientUI::MessagePopup(UserString("SERVER_TIMEOUT"), true);
                     return;
                 }
             }

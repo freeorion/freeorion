@@ -279,7 +279,7 @@ void LoadGame(const std::string& filename, ServerSaveGameData& server_save_game_
 
     // player notifications
     if (ServerApp* server = ServerApp::GetApp())
-        server->Networking().SendMessage(TurnProgressMessage(Message::LOADING_GAME));
+        server->Networking().SendMessage(TurnProgressMessage(MessagePacket::LOADING_GAME));
 
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;
 

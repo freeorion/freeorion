@@ -208,10 +208,10 @@ public:
                            std::shared_ptr<ServerSaveGameData> server_save_game_data);
     //@}
 
-    void UpdateSavePreviews(const Message& msg, PlayerConnectionPtr player_connection);
+    void UpdateSavePreviews(const MessagePacket& msg, PlayerConnectionPtr player_connection);
 
     /** Send the requested combat logs to the client.*/
-    void UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_connection);
+    void UpdateCombatLogs(const MessagePacket& msg, PlayerConnectionPtr player_connection);
 
     ServerNetworking&           Networking();     ///< returns the networking object for the server
 
@@ -271,15 +271,15 @@ private:
 
     /** Handles an incoming message from the server with the appropriate action
       * or response */
-    void    HandleMessage(const Message& msg, PlayerConnectionPtr player_connection);
+    void    HandleMessage(const MessagePacket& msg, PlayerConnectionPtr player_connection);
 
     /** Checks validity of shut down message from player, then attempts to
       * cleanly shut down this server process. */
-    void    HandleShutdownMessage(const Message& msg, PlayerConnectionPtr player_connection);
+    void    HandleShutdownMessage(const MessagePacket& msg, PlayerConnectionPtr player_connection);
 
     /** When Messages arrive from connections that are not established players,
       * they arrive via a call to this function*/
-    void    HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection);
+    void    HandleNonPlayerMessage(const MessagePacket& msg, PlayerConnectionPtr player_connection);
 
     /** Called by ServerNetworking when a player's TCP connection is closed*/
     void    PlayerDisconnected(PlayerConnectionPtr player_connection);
