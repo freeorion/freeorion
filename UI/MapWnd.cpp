@@ -277,7 +277,7 @@ namespace {
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     void PlayTurnButtonClickSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
 
     bool ToggleBoolOption(const std::string& option_name) {
         bool initially_enabled = GetOptionsDB().Get<bool>(option_name);
@@ -2743,7 +2743,7 @@ void MapWnd::InitTurn() {
     }
 
     if (GetOptionsDB().Get<bool>("UI.sound.new-turn.toggle"))
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.new-turn.sound-file"), true);
+        Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.new-turn.sound-file"), true);
 }
 
 void MapWnd::MidTurnUpdate() {

@@ -48,7 +48,7 @@ namespace detail {
     inline void PlayValueChangedSound::operator()(double) const
     {
         std::string file_name = GetOptionsDB().Get<std::string>("UI.sound.button-click");
-        Sound::GetSound().PlaySound(file_name, true);
+        Sound::GetSound().PlaySoundEffect(file_name, true);
     }
     inline void PlayValueChangedSound::operator()(int) const {operator()(0.0);}
 }

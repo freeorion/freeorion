@@ -48,7 +48,7 @@ public:
     void StopMusic();
 
     /** Plays a sound file. */
-    void PlaySound(const boost::filesystem::path& path, bool is_ui_sound = false);
+    void PlaySoundEffect(const boost::filesystem::path& path, bool is_ui_sound = false);
 
     /** Frees the cached sound data associated with the filename. */
     void FreeSound(const boost::filesystem::path& path);
@@ -185,8 +185,8 @@ void Sound::ResumeMusic()
 void Sound::StopMusic()
 { m_impl->StopMusic(); }
 
-void Sound::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/)
-{ m_impl->PlaySound(path, is_ui_sound); }
+void Sound::PlaySoundEffect(const boost::filesystem::path& path, bool is_ui_sound/* = false*/)
+{ m_impl->PlaySoundEffect(path, is_ui_sound); }
 
 void Sound::FreeSound(const boost::filesystem::path& path)
 { m_impl->FreeSound(path); }
@@ -488,7 +488,7 @@ void Sound::Impl::StopMusic() {
     }
 }
 
-void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/) {
+void Sound::Impl::PlaySoundEffect(const boost::filesystem::path& path, bool is_ui_sound/* = false*/) {
     if (!m_initialized || !GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
@@ -556,13 +556,13 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
                     }
                     else
                     {
-                        ErrorLogger() << "PlaySound: unable to open file " << filename.c_str() << " too big to buffer. Aborting\n";
+                        ErrorLogger() << "PlaySoundEffect: unable to open file " << filename.c_str() << " too big to buffer. Aborting\n";
                     }
                     ov_clear(&ogg_file);
                 }
                 else
                 {
-                    ErrorLogger() << "PlaySound: unable to open file " << filename.c_str() << " possibly not a .ogg vorbis file. Aborting\n";
+                    ErrorLogger() << "PlaySoundEffect: unable to open file " << filename.c_str() << " possibly not a .ogg vorbis file. Aborting\n";
                 }
             }
         }
@@ -578,11 +578,11 @@ void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_soun
                 }
             }
             if (!found_source)
-                ErrorLogger() << "PlaySound: Could not find aviable source - playback aborted\n";
+                ErrorLogger() << "PlaySoundEffect: Could not find aviable source - playback aborted\n";
         }
         source_state = alGetError();
         if (source_state != AL_NONE)
-            ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(source_state);
+            ErrorLogger() << "PlaySoundEffect: OpenAL ERROR: " << alGetString(source_state);
             /* it's important to check for errors, as some functions won't work properly if
              * they're called when there is a unchecked previous error. */
     }
@@ -644,7 +644,7 @@ void Sound::Impl::SetMusicVolume(int vol) {
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
-            ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
+            ErrorLogger() << "PlaySoundEffect: OpenAL ERROR: " << alGetString(m_openal_error);
     }
 }
 
@@ -663,7 +663,7 @@ void Sound::Impl::SetUISoundsVolume(int vol) {
         /* it is highly unlikely that we'll get an error here but better safe than sorry */
         m_openal_error = alGetError();
         if (m_openal_error != AL_NONE)
-            ErrorLogger() << "PlaySound: OpenAL ERROR: " << alGetString(m_openal_error);
+            ErrorLogger() << "PlaySoundEffect: OpenAL ERROR: " << alGetString(m_openal_error);
     }
 }
 

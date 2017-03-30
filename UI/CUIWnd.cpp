@@ -20,11 +20,11 @@
 
 namespace {
     void PlayMinimizeSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-maximize"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.window-maximize"), true); }
     void PlayMaximizeSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
     void PlayCloseSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
 
     void AddOptions(OptionsDB& db) {
         db.AddFlag('w', "window-reset", UserStringNop("OPTIONS_DB_WINDOW_RESET"), false);

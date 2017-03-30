@@ -42,7 +42,7 @@ public:
     void StopMusic();
 
     /** Plays a sound file. */
-    void PlaySound(const boost::filesystem::path& path, bool is_ui_sound = false);
+    void PlaySoundEffect(const boost::filesystem::path& path, bool is_ui_sound = false);
 
     /** Frees the cached sound data associated with the filename. */
     void FreeSound(const boost::filesystem::path& path);

@@ -27,22 +27,22 @@
 
 namespace {
     void PlayButtonClickSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
 
     void PlayButtonRolloverSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.button-rollover"), true); }
 
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
 
     void PlayDropDownListOpenSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
 
     void PlayItemDropSound(GG::ListBox::iterator)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.item-drop"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.item-drop"), true); }
 
     void PlayTextTypingSound(const std::string&)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.text-typing"), true); }
+    { Sound::GetSound().PlaySoundEffect(GetOptionsDB().Get<std::string>("UI.sound.text-typing"), true); }
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;
