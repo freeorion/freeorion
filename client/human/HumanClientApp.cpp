@@ -77,11 +77,11 @@ void SigHandler(int sig) {
         close(fd);
     }
 
-    // Now we try to display a MessageBox; this might fail and also
+    // Now we try to display a MessagePopup; this might fail and also
     // corrupt the heap, but since we're dying anyway that's no big
     // deal
 
-    ClientUI::MessageBox("The client has just crashed!\nFile a bug report and\nattach the file called 'crash.txt'\nif necessary", true);
+    ClientUI::MessagePopup("The client has just crashed!\nFile a bug report and\nattach the file called 'crash.txt'\nif necessary", true);
 
     raise(sig);
 }
@@ -299,7 +299,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     // Placed after mouse initialization.
     if (inform_user_sound_failed)
-        ClientUI::MessageBox(UserString("ERROR_SOUND_INITIALIZATION_FAILED"), false);
+        ClientUI::MessagePopup(UserString("ERROR_SOUND_INITIALIZATION_FAILED"), false);
 
     // Register LinkText tags with GG::Font
     RegisterLinkTags();
@@ -426,7 +426,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
             StartServer();
         } catch (const std::runtime_error& err) {
             ErrorLogger() << "HumanClientApp::NewSinglePlayerGame : Couldn't start server.  Got error message: " << err.what();
-            ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+            ClientUI::MessagePopup(UserString("SERVER_WONT_START"), true);
             return;
         }
     }
@@ -441,7 +441,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
         ResetToIntro();
-        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        ClientUI::MessagePopup(UserString("ERR_CONNECT_TIMED_OUT"), true);
         return;
     }
 
@@ -551,7 +551,7 @@ void HumanClientApp::MultiPlayerGame() {
                 FreeServer();
             } catch (const std::runtime_error& err) {
                 ErrorLogger() << "Couldn't start server.  Got error message: " << err.what();
-                ClientUI::MessageBox(UserString("SERVER_WONT_START"), true);
+                ClientUI::MessagePopup(UserString("SERVER_WONT_START"), true);
                 return;
             }
             server_name = "localhost";
@@ -562,7 +562,7 @@ void HumanClientApp::MultiPlayerGame() {
 
     m_connected = m_networking->ConnectToServer(server_name);
     if (!m_connected) {
-        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        ClientUI::MessagePopup(UserString("ERR_CONNECT_TIMED_OUT"), true);
         if (server_connect_wnd.Result().second == "HOST GAME SELECTED")
             ResetToIntro();
         return;
@@ -614,7 +614,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
             if (!sfd.Result().empty())
                 filename = sfd.Result();
         } catch (const std::exception& e) {
-            ClientUI::MessageBox(e.what(), true);
+            ClientUI::MessagePopup(e.what(), true);
         }
     }
 
@@ -645,7 +645,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
     m_connected = m_networking->ConnectToLocalHostServer();
     if (!m_connected) {
         ResetToIntro();
-        ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+        ClientUI::MessagePopup(UserString("ERR_CONNECT_TIMED_OUT"), true);
         return;
     }
 
@@ -679,7 +679,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         m_connected = m_networking->ConnectToLocalHostServer();
         if (!m_connected) {
             ResetToIntro();
-            ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
+            ClientUI::MessagePopup(UserString("ERR_CONNECT_TIMED_OUT"), true);
             return;
         }
     }

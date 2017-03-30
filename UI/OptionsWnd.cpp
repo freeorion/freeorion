@@ -120,7 +120,7 @@ namespace {
                     m_edit->EditedSignal(m_edit->Text());
                 }
             } catch (const std::exception& e) {
-                ClientUI::MessageBox(e.what(), true);
+                ClientUI::MessagePopup(e.what(), true);
             }
         }
 
@@ -1212,5 +1212,5 @@ void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::Initial
         m_effects_button->SetCheck(false);
     if (m_music_button)
         m_music_button->SetCheck(false);
-    ClientUI::MessageBox(UserString(e.what()), false);
+    ClientUI::MessagePopup(UserString(e.what()), false);
 }

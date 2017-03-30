@@ -109,7 +109,7 @@ public:
     /** Shows a message dialog box with the given message; if
       * \a play_alert_sound is true, and UI sound effects are currently enabled,
       * the default alert sound will be played as the message box opens */
-    static void MessageBox(const std::string& message, bool play_alert_sound = false);
+    static void MessagePopup(const std::string& message, bool play_alert_sound = false);
 
     /** Loads the requested texture from file \a name; mipmap textures are
       * generated if \a mipmap is true; loads default missing.png if name isn't
