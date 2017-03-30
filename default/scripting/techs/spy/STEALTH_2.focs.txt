@@ -3,8 +3,8 @@ Tech
     description = "SPY_STEALTH_2_DESC"
     short_description = "PLANET_PROTECT_SHORT_DESC"
     category = "SPY_CATEGORY"
-    researchcost = 200 * [[TECH_COST_MULTIPLIER]] - (100 * [[TECH_COST_MULTIPLIER]] * Statistic If Condition = OwnerHasTech Name = "SPY_STEALTH_PART_2" )
-    researchturns = 6
+    researchcost = 200 * [[TECH_COST_MULTIPLIER]]
+    researchturns = 7 - (3 * Statistic If condition = OwnerHasTech Name = "SPY_STEALTH_PART_2")
     tags = [ "PEDIA_SPY_CATEGORY" ]
     prerequisites = "SPY_STEALTH_1"
     effectsgroups =
