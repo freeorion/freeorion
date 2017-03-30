@@ -27,15 +27,6 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
 
-#ifdef FREEORION_WIN32
-// windows.h defines the macros Message, MessageBox, and
-// PlaySound. Undefining those should avoid name collisions with std c++
-// library and FreeOrion function names.
-#   undef Message
-#   undef MessageBox
-#   undef PlaySound
-#endif
-
 namespace fs = boost::filesystem;
 
 namespace {
