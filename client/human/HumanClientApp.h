@@ -83,7 +83,7 @@ public:
     float               GLVersion() const;
 
     void                HandleSaveGameDataRequest();
-    void                UpdateCombatLogs(const Message& msg);
+    void                UpdateCombatLogs(const MessagePacket& msg);
 
     void                OpenURL(const std::string& url);
     //@}
@@ -108,7 +108,7 @@ private:
 
     void RenderBegin() override;
 
-    void            HandleMessage(Message& msg);
+    void            HandleMessage(MessagePacket& msg);
 
     void            HandleWindowMove(GG::X w, GG::Y h);
     void            HandleWindowResize(GG::X w, GG::Y h);

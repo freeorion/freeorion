@@ -25,7 +25,7 @@
 #   undef MessageBox
 #endif
 
-class Message;
+class MessagePacket;
 
 /** Encapsulates the networking facilities of the client.  The client must
     execute its networking code in a separate thread from its main processing
@@ -108,18 +108,18 @@ public:
 
     /** Sends \a message to the server.  This function actually just enqueues
         the message for sending and returns immediately. */
-    void SendMessage(const Message& message);
+    void SendMessage(const MessagePacket& message);
 
     /** Gets the next incoming message from the server, places it into \a
         message, and removes it from the incoming message queue.  The function
         assumes that there is at least one message in the incoming queue.
         Users must call MessageAvailable() first to make sure this is the
         case. */
-    void GetMessage(Message& message);
+    void GetMessage(MessagePacket& message);
 
     /** Sends \a message to the server, then blocks until it sees the first
         synchronous response from the server. */
-    void SendSynchronousMessage(const Message& message, Message& response_message);
+    void SendSynchronousMessage(const MessagePacket& message, MessagePacket& response_message);
 
     /** Disconnects the client from the server. First tries to send any pending transmit messages. */
     void DisconnectFromServer();

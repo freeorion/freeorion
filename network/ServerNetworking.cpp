@@ -110,7 +110,7 @@ bool PlayerConnection::IsLocalConnection() const
 void PlayerConnection::Start()
 { AsyncReadMessage(); }
 
-bool PlayerConnection::SendMessage(const Message& message) {
+bool PlayerConnection::SendMessage(const MessagePacket& message) {
     return SyncWriteMessage(message);
 }
 
@@ -171,43 +171,43 @@ PlayerConnectionPtr PlayerConnection::NewConnection(boost::asio::io_service& io_
 }
 
 namespace {
-    std::string MessageTypeName(Message::MessageType type) {
+    std::string MessageTypeName(MessagePacket::MessageType type) {
         switch(type) {
-        case Message::UNDEFINED:                return "Undefined";
-        case Message::DEBUG:                    return "Debug";
-        case Message::ERROR_MSG:                return "Error";
-        case Message::HOST_SP_GAME:             return "Host SP Game";
-        case Message::HOST_MP_GAME:             return "Host MP Game";
-        case Message::JOIN_GAME:                return "Join Game";
-        case Message::HOST_ID:                  return "Host ID";
-        case Message::LOBBY_UPDATE:             return "Lobby Update";
-        case Message::LOBBY_CHAT:               return "Lobby Chat";
-        case Message::LOBBY_EXIT:               return "Lobby Exit";
-        case Message::START_MP_GAME:            return "Start MP Game";
-        case Message::SAVE_GAME_INITIATE:       return "Save Game";
-        case Message::SAVE_GAME_DATA_REQUEST:   return "Save Game";
-        case Message::SAVE_GAME_COMPLETE:       return "Save Game";
-        case Message::LOAD_GAME:                return "Load Game";
-        case Message::GAME_START:               return "Game Start";
-        case Message::TURN_UPDATE:              return "Turn Update";
-        case Message::TURN_PARTIAL_UPDATE:      return "Turn Partial Update";
-        case Message::TURN_ORDERS:              return "Turn Orders";
-        case Message::TURN_PROGRESS:            return "Turn Progress";
-        case Message::PLAYER_STATUS:            return "Player Status";
-        case Message::CLIENT_SAVE_DATA:         return "Client Save Data";
-        case Message::PLAYER_CHAT:              return "Player Chat";
-        case Message::DIPLOMACY:                return "Diplomacy";
-        case Message::DIPLOMATIC_STATUS:        return "Diplomatic Status";
-        case Message::REQUEST_NEW_OBJECT_ID:    return "Request New Object ID";
-        case Message::DISPATCH_NEW_OBJECT_ID:   return "Dispatch New Object ID";
-        case Message::REQUEST_NEW_DESIGN_ID:    return "Request New Design ID";
-        case Message::DISPATCH_NEW_DESIGN_ID:   return "Dispatch New Design ID";
-        case Message::END_GAME:                 return "End Game";
-        case Message::MODERATOR_ACTION:         return "Moderator Action";
-        case Message::SHUT_DOWN_SERVER:         return "Shut Down Server";
-        case Message::AI_END_GAME_ACK:          return "Acknowledge Shut Down Server";
-        case Message::REQUEST_SAVE_PREVIEWS:    return "Request save previews";
-        case Message::REQUEST_COMBAT_LOGS:      return "Request combat logs";
+        case MessagePacket::UNDEFINED:                return "Undefined";
+        case MessagePacket::DEBUG:                    return "Debug";
+        case MessagePacket::ERROR_MSG:                return "Error";
+        case MessagePacket::HOST_SP_GAME:             return "Host SP Game";
+        case MessagePacket::HOST_MP_GAME:             return "Host MP Game";
+        case MessagePacket::JOIN_GAME:                return "Join Game";
+        case MessagePacket::HOST_ID:                  return "Host ID";
+        case MessagePacket::LOBBY_UPDATE:             return "Lobby Update";
+        case MessagePacket::LOBBY_CHAT:               return "Lobby Chat";
+        case MessagePacket::LOBBY_EXIT:               return "Lobby Exit";
+        case MessagePacket::START_MP_GAME:            return "Start MP Game";
+        case MessagePacket::SAVE_GAME_INITIATE:       return "Save Game";
+        case MessagePacket::SAVE_GAME_DATA_REQUEST:   return "Save Game";
+        case MessagePacket::SAVE_GAME_COMPLETE:       return "Save Game";
+        case MessagePacket::LOAD_GAME:                return "Load Game";
+        case MessagePacket::GAME_START:               return "Game Start";
+        case MessagePacket::TURN_UPDATE:              return "Turn Update";
+        case MessagePacket::TURN_PARTIAL_UPDATE:      return "Turn Partial Update";
+        case MessagePacket::TURN_ORDERS:              return "Turn Orders";
+        case MessagePacket::TURN_PROGRESS:            return "Turn Progress";
+        case MessagePacket::PLAYER_STATUS:            return "Player Status";
+        case MessagePacket::CLIENT_SAVE_DATA:         return "Client Save Data";
+        case MessagePacket::PLAYER_CHAT:              return "Player Chat";
+        case MessagePacket::DIPLOMACY:                return "Diplomacy";
+        case MessagePacket::DIPLOMATIC_STATUS:        return "Diplomatic Status";
+        case MessagePacket::REQUEST_NEW_OBJECT_ID:    return "Request New Object ID";
+        case MessagePacket::DISPATCH_NEW_OBJECT_ID:   return "Dispatch New Object ID";
+        case MessagePacket::REQUEST_NEW_DESIGN_ID:    return "Request New Design ID";
+        case MessagePacket::DISPATCH_NEW_DESIGN_ID:   return "Dispatch New Design ID";
+        case MessagePacket::END_GAME:                 return "End Game";
+        case MessagePacket::MODERATOR_ACTION:         return "Moderator Action";
+        case MessagePacket::SHUT_DOWN_SERVER:         return "Shut Down Server";
+        case MessagePacket::AI_END_GAME_ACK:          return "Acknowledge Shut Down Server";
+        case MessagePacket::REQUEST_SAVE_PREVIEWS:    return "Request save previews";
+        case MessagePacket::REQUEST_COMBAT_LOGS:      return "Request combat logs";
         default:                                return "Unknown Type";
         };
     }
@@ -229,7 +229,7 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
     } else {
         assert(static_cast<int>(bytes_transferred) <= m_incoming_header_buffer[4]);
         if (static_cast<int>(bytes_transferred) == m_incoming_header_buffer[4]) {
-            if (TRACE_EXECUTION && m_incoming_message.Type() != Message::REQUEST_NEW_DESIGN_ID) {   // new design id messages ignored due to log spam
+            if (TRACE_EXECUTION && m_incoming_message.Type() != MessagePacket::REQUEST_NEW_DESIGN_ID) {   // new design id messages ignored due to log spam
                 DebugLogger() << "Server received message from player id: " << m_incoming_message.SendingPlayer()
                               << " of type " << MessageTypeName(m_incoming_message.Type())
                               << " and size " << m_incoming_message.Size();
@@ -244,7 +244,7 @@ void PlayerConnection::HandleMessageBodyRead(boost::system::error_code error,
                                         m_incoming_message,
                                         shared_from_this()));
             }
-            m_incoming_message = Message();
+            m_incoming_message = MessagePacket();
             AsyncReadMessage();
         }
     }
@@ -282,8 +282,8 @@ void PlayerConnection::HandleMessageHeaderRead(boost::system::error_code error,
         }
     } else {
         m_new_connection = false;
-        assert(bytes_transferred <= Message::HeaderBufferSize);
-        if (bytes_transferred == Message::HeaderBufferSize) {
+        assert(bytes_transferred <= MessagePacket::HeaderBufferSize);
+        if (bytes_transferred == MessagePacket::HeaderBufferSize) {
             BufferToHeader(m_incoming_header_buffer, m_incoming_message);
             m_incoming_message.Resize(m_incoming_header_buffer[4]);
             boost::asio::async_read(
@@ -304,10 +304,10 @@ void PlayerConnection::AsyncReadMessage() {
                                         boost::asio::placeholders::bytes_transferred));
 }
 
-bool PlayerConnection::SyncWriteMessage(const Message& message) {
+bool PlayerConnection::SyncWriteMessage(const MessagePacket& message) {
     // Synchronously write and asynchronously signal the errors.  This prevents PlayerConnections
     // being removed from the list while iterating to transmit to multiple receivers.
-    Message::HeaderBuffer header_buf;
+    MessagePacket::HeaderBuffer header_buf;
     HeaderToBuffer(message, header_buf);
     std::vector<boost::asio::const_buffer> buffers;
     buffers.push_back(boost::asio::buffer(header_buf));
@@ -440,13 +440,13 @@ bool ServerNetworking::ModeratorsInGame() const {
     return false;
 }
 
-bool ServerNetworking::SendMessage(const Message& message,
+bool ServerNetworking::SendMessage(const MessagePacket& message,
                                    PlayerConnectionPtr player_connection)
 {
     return player_connection->SendMessage(message);
 }
 
-bool ServerNetworking::SendMessage(const Message& message) {
+bool ServerNetworking::SendMessage(const MessagePacket& message) {
     if (message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID) {
         // if recipient is INVALID_PLAYER_ID send message to all players
         for (ServerNetworking::const_established_iterator player_it = established_begin();

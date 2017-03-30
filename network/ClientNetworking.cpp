@@ -187,18 +187,18 @@ public:
 
     /** Sends \a message to the server.  This function actually just enqueues
         the message for sending and returns immediately. */
-    void SendMessage(const Message& message);
+    void SendMessage(const MessagePacket& message);
 
     /** Gets the next incoming message from the server, places it into \a
         message, and removes it from the incoming message queue.  The function
         assumes that there is at least one message in the incoming queue.
         Users must call MessageAvailable() first to make sure this is the
         case. */
-    void GetMessage(Message& message);
+    void GetMessage(MessagePacket& message);
 
     /** Sends \a message to the server, then blocks until it sees the first
         synchronous response from the server. */
-    void SendSynchronousMessage(const Message& message, Message& response_message);
+    void SendSynchronousMessage(const MessagePacket& message, MessagePacket& response_message);
 
     /** Disconnects the client from the server. */
     void DisconnectFromServer();
@@ -223,7 +223,7 @@ private:
     void AsyncReadMessage(const std::shared_ptr<const ClientNetworking>& keep_alive);
     void HandleMessageWrite(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncWriteMessage();
-    void SendMessageImpl(Message message);
+    void SendMessageImpl(MessagePacket message);
     void DisconnectFromServerImpl();
 
     int                             m_player_id;
@@ -239,13 +239,13 @@ private:
     mutable boost::mutex            m_mutex;
 
     MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
-    std::list<Message>              m_outgoing_messages;
+    std::list<MessagePacket>              m_outgoing_messages;
     bool                            m_rx_connected;      // accessed from multiple threads
     bool                            m_tx_connected;      // accessed from multiple threads
 
-    Message::HeaderBuffer           m_incoming_header;
-    Message                         m_incoming_message;
-    Message::HeaderBuffer           m_outgoing_header;
+    MessagePacket::HeaderBuffer           m_incoming_header;
+    MessagePacket                         m_incoming_message;
+    MessagePacket::HeaderBuffer           m_outgoing_header;
 };
 
 
@@ -433,7 +433,7 @@ void ClientNetworking::Impl::SetPlayerID(int player_id) {
 void ClientNetworking::Impl::SetHostPlayerID(int host_player_id)
 { m_host_player_id = host_player_id; }
 
-void ClientNetworking::Impl::SendMessage(const Message& message) {
+void ClientNetworking::Impl::SendMessage(const MessagePacket& message) {
     if (!IsTxConnected()) {
         ErrorLogger() << "ClientNetworking::SendMessage can't send message when not transmit connected";
         return;
@@ -443,7 +443,7 @@ void ClientNetworking::Impl::SendMessage(const Message& message) {
     m_io_service.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
-void ClientNetworking::Impl::GetMessage(Message& message) {
+void ClientNetworking::Impl::GetMessage(MessagePacket& message) {
     if (!MessageAvailable()) {
         ErrorLogger() << "ClientNetworking::GetMessage can't get message if none available";
         return;
@@ -454,7 +454,7 @@ void ClientNetworking::Impl::GetMessage(Message& message) {
                       << message;
 }
 
-void ClientNetworking::Impl::SendSynchronousMessage(const Message& message, Message& response_message) {
+void ClientNetworking::Impl::SendSynchronousMessage(const MessagePacket& message, MessagePacket& response_message) {
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : sending message "
                       << message;
@@ -540,8 +540,8 @@ void ClientNetworking::Impl::HandleMessageHeaderRead(const std::shared_ptr<const
 {
     if (error)
         throw boost::system::system_error(error);
-    assert(bytes_transferred <= Message::HeaderBufferSize);
-    if (bytes_transferred != Message::HeaderBufferSize)
+    assert(bytes_transferred <= MessagePacket::HeaderBufferSize);
+    if (bytes_transferred != MessagePacket::HeaderBufferSize)
         return;
 
     BufferToHeader(m_incoming_header, m_incoming_message);
@@ -575,8 +575,8 @@ void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error,
         return;
     }
 
-    assert(static_cast<int>(bytes_transferred) <= static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[4]);
-    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[4])
+    assert(static_cast<int>(bytes_transferred) <= static_cast<int>(MessagePacket::HeaderBufferSize) + m_outgoing_header[4]);
+    if (static_cast<int>(bytes_transferred) != static_cast<int>(MessagePacket::HeaderBufferSize) + m_outgoing_header[4])
         return;
 
     m_outgoing_messages.pop_front();
@@ -613,9 +613,9 @@ void ClientNetworking::Impl::AsyncWriteMessage() {
                                          boost::asio::placeholders::bytes_transferred));
 }
 
-void ClientNetworking::Impl::SendMessageImpl(Message message) {
+void ClientNetworking::Impl::SendMessageImpl(MessagePacket message) {
     bool start_write = m_outgoing_messages.empty();
-    m_outgoing_messages.push_back(Message());
+    m_outgoing_messages.push_back(MessagePacket());
     swap(m_outgoing_messages.back(), message);
     if (start_write)
         AsyncWriteMessage();
@@ -704,11 +704,11 @@ void ClientNetworking::SetPlayerID(int player_id)
 void ClientNetworking::SetHostPlayerID(int host_player_id)
 { return m_impl->SetHostPlayerID(host_player_id); }
 
-void ClientNetworking::SendMessage(const Message& message)
+void ClientNetworking::SendMessage(const MessagePacket& message)
 { return m_impl->SendMessage(message); }
 
-void ClientNetworking::GetMessage(Message& message)
+void ClientNetworking::GetMessage(MessagePacket& message)
 { m_impl->GetMessage(message); }
 
-void ClientNetworking::SendSynchronousMessage(const Message& message, Message& response_message)
+void ClientNetworking::SendSynchronousMessage(const MessagePacket& message, MessagePacket& response_message)
 { m_impl->SendSynchronousMessage(message, response_message); }

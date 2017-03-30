@@ -385,40 +385,40 @@ void MessageWnd::HandlePlayerChatMessage(const std::string& text, int sender_pla
     m_display_show_time = GG::GUI::GetGUI()->Ticks();
 }
 
-void MessageWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id)
+void MessageWnd::HandlePlayerStatusUpdate(MessagePacket::PlayerStatus player_status, int about_player_id)
 {}
 
-void MessageWnd::HandleTurnPhaseUpdate(Message::TurnProgressPhase phase_id) {
+void MessageWnd::HandleTurnPhaseUpdate(MessagePacket::TurnProgressPhase phase_id) {
     std::string phase_str;
     switch (phase_id) {
-    case Message::FLEET_MOVEMENT:
+    case MessagePacket::FLEET_MOVEMENT:
         phase_str = UserString("TURN_PROGRESS_PHASE_FLEET_MOVEMENT");
         break;
-    case Message::COMBAT:
+    case MessagePacket::COMBAT:
         phase_str = UserString("TURN_PROGRESS_PHASE_COMBAT");
         break;
-    case Message::EMPIRE_PRODUCTION:
+    case MessagePacket::EMPIRE_PRODUCTION:
         phase_str = UserString("TURN_PROGRESS_PHASE_EMPIRE_GROWTH");
         break;
-    case Message::WAITING_FOR_PLAYERS:
+    case MessagePacket::WAITING_FOR_PLAYERS:
         phase_str = UserString("TURN_PROGRESS_PHASE_WAITING");
         break;
-    case Message::PROCESSING_ORDERS:
+    case MessagePacket::PROCESSING_ORDERS:
         phase_str = UserString("TURN_PROGRESS_PHASE_ORDERS");
         break;
-    case Message::COLONIZE_AND_SCRAP:
+    case MessagePacket::COLONIZE_AND_SCRAP:
         phase_str = UserString("TURN_PROGRESS_COLONIZE_AND_SCRAP");
         break;
-    case Message::DOWNLOADING:
+    case MessagePacket::DOWNLOADING:
         phase_str = UserString("TURN_PROGRESS_PHASE_DOWNLOADING");
         break;
-    case Message::LOADING_GAME:
+    case MessagePacket::LOADING_GAME:
         phase_str = UserString("TURN_PROGRESS_PHASE_LOADING_GAME");
         break;
-    case Message::GENERATING_UNIVERSE:
+    case MessagePacket::GENERATING_UNIVERSE:
         phase_str = UserString("TURN_PROGRESS_PHASE_GENERATING_UNIVERSE");
         break;
-    case Message::STARTING_AIS:
+    case MessagePacket::STARTING_AIS:
         phase_str = UserString("TURN_PROGRESS_STARTING_AIS");
         break;
     default:

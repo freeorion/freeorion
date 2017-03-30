@@ -47,16 +47,16 @@ struct DisconnectClients : sc::event<DisconnectClients>                 {};
 struct ShutdownServer : sc::event<ShutdownServer>                       {};
 
 
-//  Message events
+//  MessagePacket events
 /** The base class for all state machine events that are based on Messages. */
 struct MessageEventBase {
-    MessageEventBase(const Message& message, PlayerConnectionPtr& player_connection);
+    MessageEventBase(const MessagePacket& message, PlayerConnectionPtr& player_connection);
 
-    Message              m_message;
+    MessagePacket              m_message;
     PlayerConnectionPtr  m_player_connection;
 };
 
-// Define Boost.Preprocessor list of all Message events
+// Define Boost.Preprocessor list of all MessagePacket events
 #define MESSAGE_EVENTS                      \
     (HostMPGame)                            \
     (HostSPGame)                            \
@@ -83,7 +83,7 @@ struct MessageEventBase {
         sc::event<name>,                                                        \
         MessageEventBase                                                        \
     {                                                                           \
-        name(const Message& message, PlayerConnectionPtr& player_connection) :  \
+        name(const MessagePacket& message, PlayerConnectionPtr& player_connection) :  \
             MessageEventBase(message, player_connection)                        \
         {}                                                                      \
     };

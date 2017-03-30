@@ -17,7 +17,7 @@ class DiscoveryServer;
 class PlayerConnection;
 
 typedef std::shared_ptr<PlayerConnection> PlayerConnectionPtr;
-typedef boost::function<void (Message, PlayerConnectionPtr)> MessageAndConnectionFn;
+typedef boost::function<void (MessagePacket, PlayerConnectionPtr)> MessageAndConnectionFn;
 typedef boost::function<void (PlayerConnectionPtr)> ConnectionFn;
 typedef boost::function<void ()> NullaryFn;
 
@@ -89,10 +89,10 @@ public:
 
     /** \name Mutators */ //@{
     /** Sends a synchronous message \a message to \a player_connection and returns true on success. */
-    bool SendMessage(const Message& message, PlayerConnectionPtr player_connection);
+    bool SendMessage(const MessagePacket& message, PlayerConnectionPtr player_connection);
 
     /** Sends a synchronous message \a message to the player indicated in the message and returns true on success. */
-    bool SendMessage(const Message& message);
+    bool SendMessage(const MessagePacket& message);
 
     /** Disconnects the server from player \a id. */
     void Disconnect(int id);
@@ -198,7 +198,7 @@ public:
     void Start();
 
     /** Sends \a synchronous message to out on the connection and return true on success. */
-    bool SendMessage(const Message& message);
+    bool SendMessage(const MessagePacket& message);
 
     /** Establishes a connection as a player with a specific name and id.
         This function must only be called once. */
@@ -224,13 +224,13 @@ private:
     void HandleMessageBodyRead(boost::system::error_code error, std::size_t bytes_transferred);
     void HandleMessageHeaderRead(boost::system::error_code error, std::size_t bytes_transferred);
     void AsyncReadMessage();
-    bool SyncWriteMessage(const Message& message);
+    bool SyncWriteMessage(const MessagePacket& message);
     void AsyncErrorHandler(boost::system::error_code handled_error, boost::system::error_code error);
 
     boost::asio::io_service&        m_service;
     boost::asio::ip::tcp::socket    m_socket;
-    Message::HeaderBuffer           m_incoming_header_buffer;
-    Message                         m_incoming_message;
+    MessagePacket::HeaderBuffer           m_incoming_header_buffer;
+    MessagePacket                         m_incoming_message;
     int                             m_ID;
     std::string                     m_player_name;
     bool                            m_new_connection;

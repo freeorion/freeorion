@@ -68,8 +68,8 @@ public:
      *      their player identifier as key.
      *
      * @{ */
-    std::map<int, Message::PlayerStatus>& PlayerStatus();
-    const std::map<int, Message::PlayerStatus>& PlayerStatus() const;
+    std::map<int, MessagePacket::PlayerStatus>& PlayerStatus();
+    const std::map<int, MessagePacket::PlayerStatus>& PlayerStatus() const;
     /** @} */
 
     /** @brief Return the ::Universe known to this client
@@ -219,13 +219,13 @@ public:
      */
     void SetSinglePlayerGame(bool single_player = true);
 
-    /** @brief Set the Message::PlayerStatus @a status for @a player_id
+    /** @brief Set the MessagePacket::PlayerStatus @a status for @a player_id
      *
      * @param player_id A player identifier.
-     * @param status The new Message::PlayerStatus of the player identified by
+     * @param status The new MessagePacket::PlayerStatus of the player identified by
      *      @a player_id.
      */
-    void SetPlayerStatus(int player_id, Message::PlayerStatus status);
+    void SetPlayerStatus(int player_id, MessagePacket::PlayerStatus status);
 
     /** @brief Return a new universe object identifier
      *
@@ -268,7 +268,7 @@ protected:
     /** Indexed by player id, contains the last known PlayerStatus for each
      *      player.
      */
-    std::map<int, Message::PlayerStatus>
+    std::map<int, MessagePacket::PlayerStatus>
                                 m_player_status;
 
 private:

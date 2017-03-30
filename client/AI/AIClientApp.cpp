@@ -132,7 +132,7 @@ void AIClientApp::Run() {
                 if (!Networking().IsRxConnected())
                     break;
                 if (Networking().MessageAvailable()) {
-                    Message msg;
+                    MessagePacket msg;
                     Networking().GetMessage(msg);
                     HandleMessage(msg);
                 } else {
@@ -181,15 +181,15 @@ void AIClientApp::HandlePythonAICrash() {
 }
 
 
-void AIClientApp::HandleMessage(const Message& msg) {
+void AIClientApp::HandleMessage(const MessagePacket& msg) {
     //DebugLogger() << "AIClientApp::HandleMessage " << msg.Type();
     switch (msg.Type()) {
-    case Message::ERROR_MSG: {
+    case MessagePacket::ERROR_MSG: {
         ErrorLogger() << "AIClientApp::HandleMessage : Received ERROR message from server: " << msg.Text();
         break;
     }
 
-    case Message::HOST_ID: {
+    case MessagePacket::HOST_ID: {
         const std::string& text = msg.Text();
         int host_id = Networking::INVALID_PLAYER_ID;
         if (text.empty()) {
@@ -205,7 +205,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::JOIN_GAME: {
+    case MessagePacket::JOIN_GAME: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             if (PlayerID() == Networking::INVALID_PLAYER_ID) {
                 DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
@@ -217,7 +217,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::GAME_START: {
+    case MessagePacket::GAME_START: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             DebugLogger() << "AIClientApp::HandleMessage : Received GAME_START message; starting AI turn...";
             bool single_player_game;        // ignored
@@ -305,17 +305,17 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::SAVE_GAME_DATA_REQUEST: {
-        //DebugLogger() << "AIClientApp::HandleMessage Message::SAVE_GAME_DATA_REQUEST";
+    case MessagePacket::SAVE_GAME_DATA_REQUEST: {
+        //DebugLogger() << "AIClientApp::HandleMessage MessagePacket::SAVE_GAME_DATA_REQUEST";
         Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), m_AI->GetSaveStateString()));
         //DebugLogger() << "AIClientApp::HandleMessage sent save data message";
         break;
     }
 
-    case Message::SAVE_GAME_COMPLETE:
+    case MessagePacket::SAVE_GAME_COMPLETE:
         break;
 
-    case Message::TURN_UPDATE: {
+    case MessagePacket::TURN_UPDATE: {
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
             //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
             ExtractTurnUpdateMessageData(msg,                     m_empire_id,        m_current_turn,
@@ -329,16 +329,16 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::TURN_PARTIAL_UPDATE:
+    case MessagePacket::TURN_PARTIAL_UPDATE:
         if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID)
             ExtractTurnPartialUpdateMessageData(msg, m_empire_id, m_universe);
         break;
 
-    case Message::TURN_PROGRESS:
-    case Message::PLAYER_STATUS:
+    case MessagePacket::TURN_PROGRESS:
+    case MessagePacket::PLAYER_STATUS:
         break;
 
-    case Message::END_GAME: {
+    case MessagePacket::END_GAME: {
         DebugLogger() << "Message::END_GAME : Exiting";
         DebugLogger() << "Acknowledge server shutdown message.";
         Networking().SendMessage(AIEndGameAcknowledgeMessage(Networking().PlayerID()));
@@ -346,18 +346,18 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
     }
 
-    case Message::PLAYER_CHAT:
+    case MessagePacket::PLAYER_CHAT:
         m_AI->HandleChatMessage(msg.SendingPlayer(), msg.Text());
         break;
 
-    case Message::DIPLOMACY: {
+    case MessagePacket::DIPLOMACY: {
         DiplomaticMessage diplo_message;
         ExtractDiplomacyMessageData(msg, diplo_message);
         m_AI->HandleDiplomaticMessage(diplo_message);
         break;
     }
 
-    case Message::DIPLOMATIC_STATUS: {
+    case MessagePacket::DIPLOMATIC_STATUS: {
         DiplomaticStatusUpdateInfo diplo_update;
         ExtractDiplomaticStatusMessageData(msg, diplo_update);
         m_AI->HandleDiplomaticStatusUpdate(diplo_update);
@@ -365,7 +365,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
     }
 
     default: {
-        ErrorLogger() << "AIClientApp::HandleMessage : Received unknown Message type code " << msg.Type();
+        ErrorLogger() << "AIClientApp::HandleMessage : Received unknown MessagePacket type code " << msg.Type();
         break;
     }
     }

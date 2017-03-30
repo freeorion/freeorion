@@ -502,7 +502,7 @@ boost::statechart::result PlayingGame::react(const Disconnection& d) {
 boost::statechart::result PlayingGame::react(const PlayerStatus& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.PlayerStatus";
     int about_player_id;
-    Message::PlayerStatus status;
+    MessagePacket::PlayerStatus status;
     ExtractPlayerStatusMessageData(msg.m_message, about_player_id, status);
 
     Client().SetPlayerStatus(about_player_id, status);
@@ -535,16 +535,16 @@ boost::statechart::result PlayingGame::react(const DiplomaticStatusUpdate& u) {
 
 boost::statechart::result PlayingGame::react(const EndGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.EndGame";
-    Message::EndGameReason reason;
+    MessagePacket::EndGameReason reason;
     std::string reason_player_name;
     ExtractEndGameMessageData(msg.m_message, reason, reason_player_name);
     std::string reason_message;
     bool error = false;
     switch (reason) {
-    case Message::LOCAL_CLIENT_DISCONNECT:
+    case MessagePacket::LOCAL_CLIENT_DISCONNECT:
         reason_message = UserString("SERVER_LOST");
         break;
-    case Message::PLAYER_DISCONNECT:
+    case MessagePacket::PLAYER_DISCONNECT:
         reason_message = boost::io::str(FlexibleFormat(UserString("PLAYER_DISCONNECTED")) % reason_player_name);
         error = true;
         break;
@@ -588,7 +588,7 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
 boost::statechart::result PlayingGame::react(const TurnProgress& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.TurnProgress";
 
-    Message::TurnProgressPhase phase_id;
+    MessagePacket::TurnProgressPhase phase_id;
     ExtractTurnProgressMessageData(msg.m_message, phase_id);
     Client().GetClientUI().GetMessageWnd()->HandleTurnPhaseUpdate(phase_id);
 
@@ -748,9 +748,9 @@ PlayingTurn::PlayingTurn(my_context ctx) :
     // TODO: reselect last fleet if stored in save game ui data?
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("TURN_BEGIN")) % CurrentTurn()) + "\n");
-    Client().GetClientUI().GetMessageWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
+    Client().GetClientUI().GetMessageWnd()->HandlePlayerStatusUpdate(MessagePacket::PLAYING_TURN, Client().PlayerID());
     Client().GetClientUI().GetPlayerListWnd()->Refresh();
-    Client().GetClientUI().GetPlayerListWnd()->HandlePlayerStatusUpdate(Message::PLAYING_TURN, Client().PlayerID());
+    Client().GetClientUI().GetPlayerListWnd()->HandlePlayerStatusUpdate(MessagePacket::PLAYING_TURN, Client().PlayerID());
 
     if (Client().GetApp()->GetClientType() != Networking::CLIENT_TYPE_HUMAN_OBSERVER)
         Client().GetClientUI().GetMapWnd()->EnableOrderIssuing(true);
@@ -836,7 +836,7 @@ boost::statechart::result PlayingTurn::react(const TurnEnded& msg) {
 boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingTurn.PlayerStatus";
     int about_player_id;
-    Message::PlayerStatus status;
+    MessagePacket::PlayerStatus status;
     ExtractPlayerStatusMessageData(msg.m_message, about_player_id, status);
 
     Client().SetPlayerStatus(about_player_id, status);
@@ -848,7 +848,7 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
     {
         // check status of all non-mod non-obs players: are they all done their turns?
         bool all_participants_waiting = true;
-        const std::map<int, Message::PlayerStatus>& player_status = Client().PlayerStatus();
+        const std::map<int, MessagePacket::PlayerStatus>& player_status = Client().PlayerStatus();
         for (std::map<int, PlayerInfo>::value_type& entry : Client().Players()) {
             int player_id = entry.first;
 
@@ -856,12 +856,12 @@ boost::statechart::result PlayingTurn::react(const PlayerStatus& msg) {
                 entry.second.client_type != Networking::CLIENT_TYPE_HUMAN_PLAYER)
             { continue; }   // only active participants matter...
 
-            std::map<int, Message::PlayerStatus>::const_iterator status_it = player_status.find(player_id);
+            std::map<int, MessagePacket::PlayerStatus>::const_iterator status_it = player_status.find(player_id);
             if (status_it == player_status.end()) {
                 all_participants_waiting = false;
                 break;
             }
-            if (status_it->second != Message::WAITING) {
+            if (status_it->second != MessagePacket::WAITING) {
                 all_participants_waiting = false;
                 break;
             }

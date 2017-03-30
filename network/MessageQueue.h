@@ -9,7 +9,7 @@
 #include "../util/Export.h"
 
 
-class Message;
+class MessagePacket;
 
 /** A thread-safe message queue.  The entire public interface is guarded with mutex locks. */
 class FO_COMMON_API MessageQueue
@@ -27,17 +27,17 @@ public:
     void Clear();
 
     /** Adds \a message to the end of the queue. */
-    void PushBack(Message& message);
+    void PushBack(MessagePacket& message);
 
     /** Returns the front message in the queue. */
-    void PopFront(Message& message);
+    void PopFront(MessagePacket& message);
 
     /** Returns the first synchronous repsonse message in the queue.  If no such message is found, this function blocks
         the calling thread until a synchronous response element is added. */
-    void EraseFirstSynchronousResponse(Message& message);
+    void EraseFirstSynchronousResponse(MessagePacket& message);
 
 private:
-    std::list<Message> m_queue;
+    std::list<MessagePacket> m_queue;
     boost::condition   m_have_synchronous_response;
     boost::mutex&      m_monitor;
 };

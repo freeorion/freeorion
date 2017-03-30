@@ -114,7 +114,7 @@ namespace {
             m_empire_research_text(nullptr),
             m_empire_detection_text(nullptr),
             m_diplo_status(INVALID_DIPLOMATIC_STATUS),
-            m_player_status(Message::WAITING),
+            m_player_status(MessagePacket::WAITING),
             m_player_type(Networking::INVALID_CLIENT_TYPE),
             m_host(false),
             m_win_status(NEITHER),
@@ -193,9 +193,9 @@ namespace {
 
             // render player status icon
             switch (m_player_status) {
-            case Message::PLAYING_TURN:     PlayingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
-            case Message::RESOLVING_COMBAT: CombatIcon()->OrthoBlit( UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
-            case Message::WAITING:          WaitingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
+            case MessagePacket::PLAYING_TURN:     PlayingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
+            case MessagePacket::RESOLVING_COMBAT: CombatIcon()->OrthoBlit( UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
+            case MessagePacket::WAITING:          WaitingIcon()->OrthoBlit(UpperLeft() + m_player_status_icon_ul, UpperLeft() + m_player_status_icon_ul + ICON_SIZE); break;
             default:    break;
             }
 
@@ -342,7 +342,7 @@ namespace {
             m_host = player_info.host;
         }
 
-        void            SetStatus(Message::PlayerStatus player_status)
+        void            SetStatus(MessagePacket::PlayerStatus player_status)
         { m_player_status = player_status; }
 
     private:
@@ -436,7 +436,7 @@ namespace {
         GG::Pt                  m_win_status_icon_ul;
 
         DiplomaticStatus        m_diplo_status;
-        Message::PlayerStatus   m_player_status;
+        MessagePacket::PlayerStatus   m_player_status;
         Networking::ClientType  m_player_type;
         bool                    m_host;
         enum {
@@ -474,7 +474,7 @@ namespace {
                 m_panel->Update();
         }
 
-        void    SetStatus(Message::PlayerStatus player_status) {
+        void    SetStatus(MessagePacket::PlayerStatus player_status) {
             if (m_panel)
                 m_panel->SetStatus(player_status);
         }
@@ -568,7 +568,7 @@ std::set<int> PlayerListWnd::SelectedPlayerIDs() const {
     return retval;
 }
 
-void PlayerListWnd::HandlePlayerStatusUpdate(Message::PlayerStatus player_status, int about_player_id) {
+void PlayerListWnd::HandlePlayerStatusUpdate(MessagePacket::PlayerStatus player_status, int about_player_id) {
     for (CUIListBox::Row* row : *m_player_list) {
         if (PlayerRow* player_row = dynamic_cast<PlayerRow*>(row)) {
             if (about_player_id == Networking::INVALID_PLAYER_ID) {
