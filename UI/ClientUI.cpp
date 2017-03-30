@@ -37,7 +37,15 @@
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/RichText/ImageBlock.h>
 
+// boost::spirit::classic pulls in windows.h which in turn defines the macros
+// MessageBox and PlaySound. Undefining those should avoid name collisions with
+// FreeOrion function names
 #include <boost/spirit/include/classic.hpp>
+#ifdef FREEORION_WIN32
+#  undef MessageBox
+#  undef PlaySound
+#endif
+
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -46,11 +54,6 @@
 #include <string>
 #include <algorithm>
 
-#ifdef FREEORION_WIN32
-#  ifdef MessageBox
-#    undef MessageBox
-#  endif
-#endif
 
 const Tech* GetTech(const std::string& name);
 

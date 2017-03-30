@@ -3,11 +3,13 @@
 
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Supply.h"
-#include "../network/ClientNetworking.h"
+#include "../network/Message.h"
 #include "../universe/Universe.h"
 #include "../util/OrderSet.h"
 #include "../util/AppInterface.h"
 #include "../util/MultiplayerCommon.h"
+
+class ClientNetworking;
 
 /** \brief Abstract base class for the application framework classes
  *

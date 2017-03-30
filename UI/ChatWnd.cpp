@@ -6,6 +6,7 @@
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "../network/Message.h"
+#include "../network/ClientNetworking.h"
 #include "../universe/Universe.h"
 #include "../universe/Ship.h"
 #include "../universe/ShipDesign.h"
@@ -22,7 +23,14 @@
 #include <GG/GUI.h>
 
 #include <boost/algorithm/string/predicate.hpp>
+
+// boost::spirit::classic pulls in windows.h which in turn defines the macros
+// SendMessage. Undefining those should avoid name collisions with FreeOrion
+// function names
 #include <boost/spirit/include/classic.hpp>
+#ifdef FREEORION_WIN32
+#  undef SendMessage
+#endif
 
 
 namespace {

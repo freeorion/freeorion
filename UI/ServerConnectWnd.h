@@ -6,7 +6,6 @@
 #include <GG/ListBox.h>
 
 #include "CUIWnd.h"
-#include "../network/ClientNetworking.h"
 
 
 /** server connections window */
@@ -55,8 +54,6 @@ private:
     GG::Edit*                           m_player_name_edit;
     GG::Button*                         m_ok_bn;
     GG::Button*                         m_cancel_bn;
-
-    ClientNetworking::ServerList        m_LAN_servers;
 };
 
 #endif // _ServerConnectWnd_h_

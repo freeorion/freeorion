@@ -9,6 +9,7 @@
 #include "../util/Logger.h"
 #include "../util/Serialize.h"
 #include "../network/Message.h"
+#include "../network/ClientNetworking.h"
 #include "../client/human/HumanClientApp.h"
 #include "CUIControls.h"
 #include "Hotkeys.h"
