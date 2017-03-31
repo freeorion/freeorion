@@ -10448,19 +10448,19 @@ SHP_WEAPON_1_2
 Mass Driver 2
 
 SHP_WEAPON_1_2_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 4.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 4.
 
 SHP_WEAPON_1_3
 Mass Driver 3
 
 SHP_WEAPON_1_3_DESC
-Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 5.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 5.
 
 SHP_WEAPON_1_4
 Mass Driver 4
 
 SHP_WEAPON_1_4_DESC
-The ultimate refinement of the Mass Driver. Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 6.
+Upgrades [[shippart SR_WEAPON_1_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 6.
 
 SHP_WEAPON_2_1
 Laser Weapons
@@ -10472,19 +10472,19 @@ SHP_WEAPON_2_2
 Laser 2
 
 SHP_WEAPON_2_2_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 7.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 7.
 
 SHP_WEAPON_2_3
 Laser 3
 
 SHP_WEAPON_2_3_DESC
-Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 9.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 9.
 
 SHP_WEAPON_2_4
 Laser 4
 
 SHP_WEAPON_2_4_DESC
-The ultimate refinement of the Laser weapon. Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 11.
+Upgrades [[shippart SR_WEAPON_2_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 11.
 
 SHP_WEAPON_3_1
 Plasma Cannons
@@ -10496,43 +10496,43 @@ SHP_WEAPON_3_2
 Plasma Cannon 2
 
 SHP_WEAPON_3_2_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 12.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 12.
 
 SHP_WEAPON_3_3
 Plasma Cannon 3
 
 SHP_WEAPON_3_3_DESC
-Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 15.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 15.
 
 SHP_WEAPON_3_4
 Plasma Cannon 4
 
 SHP_WEAPON_3_4_DESC
-The ultimate refinement of the Plasma Cannon. Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 18.
+Upgrades [[shippart SR_WEAPON_3_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 18.
 
 SHP_WEAPON_4_1
 Death Rays
 
 SHP_WEAPON_4_1_DESC
-Unlocks the [[shippart SR_WEAPON_4_1]], a more powerful ship's weapon than the [[shippart SR_WEAPON_3_1]]. The ultimate ship's weapon.
+Unlocks the [[shippart SR_WEAPON_4_1]], a more powerful ship's weapon than the [[shippart SR_WEAPON_3_1]].
 
 SHP_WEAPON_4_2
 Death Ray 2
 
 SHP_WEAPON_4_2_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 20.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 20.
 
 SHP_WEAPON_4_3
 Death Ray 3
 
 SHP_WEAPON_4_3_DESC
-Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 25.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 25.
 
 SHP_WEAPON_4_4
 Death Ray 4
 
 SHP_WEAPON_4_4_DESC
-The ultimate refinement of the ultimate weapon. Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]], increasing shot [[encyclopedia DAMAGE_TITLE]] to 30.
+Upgrades [[shippart SR_WEAPON_4_1]] parts on all ships within [[metertype METER_SUPPLY]] (or after entering it later). The improved weapon part has shot damage of 30.
 
 
 SHP_ION_CANNON
@@ -11746,41 +11746,48 @@ Flak Cannon
 SR_WEAPON_0_1_DESC
 '''The flak cannon does negligible damage to most ships, but is inexpensive and effective at destroying fighters.
 
-Each flak cannon on a ship built by a species with the piloting trait will have an additional 1 shot per piloting level (-1 shot for Bad Pilots).'''
+Each flak cannon on a ship built by a species with the piloting trait will have an additional number of shots equal to 1 per piloting level (-1 shot for Bad Pilots).'''
 
 SR_WEAPON_1_1
 Mass Driver
 
 SR_WEAPON_1_1_DESC
-'''The Mass Driver, a basic weapon. Upgrading the weapon technology will increase the shot damage.
+'''The Mass Driver, a basic weapon.
 
-Each mass driver on a ship built by a species with the piloting trait will do an additional 1 shot damage per piloting level (-1 for Bad Pilots).'''
+Upgrading the weapon technology will increase the shot damage.
+
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each mass driver on a ship built by a species with the piloting trait will do an additional 1 damage per piloting level (-1 for Bad Pilots).'''
 
 SR_WEAPON_2_1
 Laser Weapon
 
 SR_WEAPON_2_1_DESC
-'''The Laser, a more powerful ship's weapon than the Mass Driver. Upgrading the weapon technology will increase the shot damage.
+'''The Laser, a more powerful ship's weapon than the Mass Driver.
 
-Each laser weapon on a ship built by a species with the piloting trait will do an additional 2 shot damage per piloting level (-2 for Bad Pilots).
+Upgrading the weapon technology will increase the shot damage.
 
-Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].'''
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each laser weapon on a ship built by a species with the piloting trait will do an additional 2 damage per piloting level (-2 for Bad Pilots). Laser weapon damage can also be enhanced on [[shiphull SH_ORGANIC]] ships with a [[shippart SP_SOLAR_CONCENTRATOR]].
+'''
 
 SR_WEAPON_3_1
 Plasma Cannons
 
 SR_WEAPON_3_1_DESC
-'''The Plasma Cannon, a more powerful ship's weapon than the Laser. Upgrading the weapon technology will increase the shot damage.
+'''The Plasma Cannon, a more powerful ship's weapon than the Laser.
 
-Each plasma cannon on a ship built by a species with the piloting trait will do an additional 3 shot damage per piloting level (-3 for Bad Pilots).'''
+Upgrading the weapon technology will increase the shot damage.
+
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each plasma cannon on a ship built by a species with the piloting trait will do an additional 3 damage per piloting level (-3 for Bad Pilots).'''
 
 SR_WEAPON_4_1
 Death Ray
 
 SR_WEAPON_4_1_DESC
-'''The Death Ray, the ultimate ship's weapon. Upgrading the weapon technology will increase the shot damage.
+'''The Death Ray, a more powerful ship's weapon than the Plasma Cannon.
 
-Each death ray on a ship built by a species with the piloting trait will do an additional 5 shot damage per piloting level (-5 for Bad Pilots).'''
+Upgrading the weapon technology will increase the shot damage.
+
+The weapon's [[encyclopedia DAMAGE_TITLE]] is a combination of the shot damage and any active modifiers. Each death ray on a ship built by a species with the piloting trait will do an additional 5 damage per piloting level (-5 for Bad Pilots).'''
 
 SR_SPINAL_ANTIMATTER
 Spinal Antimatter Cannon
