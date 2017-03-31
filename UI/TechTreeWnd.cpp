@@ -2021,10 +2021,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     {
         TechStatus tech_status = status_button.first;
         GG::Connect(status_button.second->CheckedSignal, [this, tech_status](bool checked) {
-            if(checked)
-                this->ShowStatus(tech_status);
-            else
-                this->HideStatus(tech_status);
+            this->SetTechStatus(tech_status, checked);
         });
     }
 
@@ -2036,9 +2033,9 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     //long time and generates errors, but is never seen by the user.
     if (!m_init_flag) {
         ShowAllCategories();
-        ShowStatus(TS_RESEARCHABLE);
-        ShowStatus(TS_HAS_RESEARCHED_PREREQ);
-        ShowStatus(TS_COMPLETE);
+        SetTechStatus(TS_RESEARCHABLE, true);
+        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, true);
+        SetTechStatus(TS_COMPLETE, true);
         // leave unresearchable hidden by default
     }
 
@@ -2107,9 +2104,9 @@ void TechTreeWnd::Show(bool children) {
     if (m_init_flag) {
         m_init_flag = false;
         ShowAllCategories();
-        ShowStatus(TS_RESEARCHABLE);
-        ShowStatus(TS_HAS_RESEARCHED_PREREQ);
-        ShowStatus(TS_COMPLETE);
+        SetTechStatus(TS_RESEARCHABLE, true);
+        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, true);
+        SetTechStatus(TS_COMPLETE, true);
         // leave unresearchable hidden by default
     }
 }
@@ -2160,14 +2157,14 @@ void TechTreeWnd::ToggleAllCategories() {
         ShowAllCategories();
 }
 
-void TechTreeWnd::ShowStatus(TechStatus status) {
-    m_layout_panel->ShowStatus(status);
-    m_tech_list->ShowStatus(status);
-}
-
-void TechTreeWnd::HideStatus(TechStatus status) {
-    m_layout_panel->HideStatus(status);
-    m_tech_list->HideStatus(status);
+void TechTreeWnd::SetTechStatus(const TechStatus status, const bool state) {
+    if (state) {
+        m_layout_panel->ShowStatus(status);
+        m_tech_list->ShowStatus(status);
+    } else {
+        m_layout_panel->HideStatus(status);
+        m_tech_list->HideStatus(status);
+    }
 }
 
 void TechTreeWnd::ToggleViewType(bool show_list_view)
@@ -2197,7 +2194,7 @@ void TechTreeWnd::CenterOnTech(const std::string& tech_name) {
     if (!tech) return;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire)
-        ShowStatus(empire->GetTechStatus(tech_name));
+        SetTechStatus(empire->GetTechStatus(tech_name), true);
     ShowCategory(tech->Category());
 
     // centre on it

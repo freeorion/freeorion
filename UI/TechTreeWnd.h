@@ -52,8 +52,7 @@ public:
     void            HideAllCategories();
     void            ToggleAllCategories();
 
-    void            ShowStatus(const TechStatus status);
-    void            HideStatus(const TechStatus status);
+    void            SetTechStatus(const TechStatus status, const bool state);
 
     void            ToggleViewType(bool show_list_view);
     void            ShowTreeView();
