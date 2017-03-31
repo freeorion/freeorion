@@ -132,13 +132,26 @@ namespace {
 
     template <>
     void CheckSumCombine(unsigned int& sum, const double& t) {
+        assert(DBL_MAX_10_EXP < 400);
         if (t == 0.0)
             return;
-        // biggest and smallest possible float should be ~10^(+/-308)
+        // biggest and smallest possible double should be ~10^(+/-308)
         // taking log gives a number in the range +/- 309
         // adding 400 gives numbers in the range ~0 to 800
         // multiplying by 10'000 gives numbers in the range ~0 to 8'000'000
         sum += static_cast<unsigned int>((std::log10(std::abs(t)) + 400.0) * 10000.0);
+        sum %= CHECKSUM_MODULUS;
+    }
+    template <>
+    void CheckSumCombine(unsigned int& sum, const float& t) {
+        assert(FLT_MAX_10_EXP < 40);
+        if (t == 0.0f)
+            return;
+        // biggest and smallest possible float should be ~10^(+/-38)
+        // taking log gives a number in the range +/- 39
+        // adding 400 ives numbers in the range ~0 to 80
+        // multiplying by 100'000 gives numbers in the range ~0 to 8'000'000
+        sum += static_cast<unsigned int>((std::log10(std::abs(t)) + 40.0f) * 100000.0f);
         sum %= CHECKSUM_MODULUS;
     }
 }
@@ -520,6 +533,30 @@ int HullType::ProductionTime(int empire_id, int location_id) const {
     }
 }
 
+unsigned int HullType::GetCheckSum() const {
+    unsigned int retval{0};
+    CheckSumCombine(retval, m_name);
+    CheckSumCombine(retval, m_description);
+    CheckSumCombine(retval, m_speed);
+    CheckSumCombine(retval, m_fuel);
+    CheckSumCombine(retval, m_stealth);
+    CheckSumCombine(retval, m_structure);
+    //CheckSumCombine(retval, m_production_cost);
+    //CheckSumCombine(retval, m_production_time);
+    CheckSumCombine(retval, m_producible);
+    //CheckSumCombine(retval, m_slots);
+    CheckSumCombine(retval, m_tags);
+    //CheckSumCombine(retval, m_production_meter_consumption);
+    //CheckSumCombine(retval, m_production_special_consumption);
+    //CheckSumCombine(retval, m_location);
+    CheckSumCombine(retval, m_exclusions);
+    //CheckSumCombine(retval, m_effects);
+    CheckSumCombine(retval, m_graphic);
+    CheckSumCombine(retval, m_icon);
+
+    return retval;
+}
+
 
 /////////////////////////////////////
 // HullTypeManager                 //
@@ -546,6 +583,8 @@ HullTypeManager::HullTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "HullTypeManager checksum: " << GetCheckSum();
 }
 
 HullTypeManager::~HullTypeManager() {
@@ -570,6 +609,16 @@ HullTypeManager::iterator HullTypeManager::begin() const
 HullTypeManager::iterator HullTypeManager::end() const
 { return m_hulls.end(); }
 
+unsigned int HullTypeManager::GetCheckSum() const {
+    unsigned int retval{0};
+    for (auto const& name_hull_pair : m_hulls) {
+        CheckSumCombine(retval, name_hull_pair.first);
+        CheckSumCombine(retval, name_hull_pair.second->GetCheckSum());
+    }
+    CheckSumCombine(retval, m_hulls.size());
+
+    return retval;
+}
 
 ////////////////////////////////////////////////
 // ShipDesign
@@ -617,8 +666,6 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
         ErrorLogger() << Dump();
     }
     BuildStatCaches();
-
-    DebugLogger() << "ShipDesign " << m_name << " checksum: " << GetCheckSum();
 }
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description,
@@ -1079,7 +1126,7 @@ unsigned int ShipDesign::GetCheckSum() const {
     CheckSumCombine(retval, m_3D_model);
     CheckSumCombine(retval, m_name_desc_in_stringtable);
 
-    return static_cast<unsigned int>(retval);
+    return retval;
 }
 
 bool operator ==(const ShipDesign& first, const ShipDesign& second) {
