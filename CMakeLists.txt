@@ -1,4 +1,8 @@
-cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+if(APPLE)
+    cmake_minimum_required(VERSION 3.4 FATAL_ERROR)
+else()
+    cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
 set(CMAKE_OSX_DEPLOYMENT_TARGET 10.9 CACHE STRING "Set the minimum OSX deployment target version")
