@@ -641,52 +641,55 @@ add_subdirectory(doc)
 ## Install targets and package project.
 ##
 
-install(
-    TARGETS
-        freeorioncommon
-        freeorionparse
-    LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-)
-
-install(
-    TARGETS
-        freeoriond
-        freeorionca
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    BUNDLE DESTINATION .
-    RESOURCE
-)
-
-install(
-    DIRECTORY default/
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
-    PATTERN "*~" EXCLUDE
-    PATTERN "*.pyc" EXCLUDE
-)
-
-if(NOT BUILD_HEADLESS)
+if(UNIX AND NOT APPLE)
     install(
         TARGETS
-            freeorion
+            freeorioncommon
+            freeorionparse
+        LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
 
     install(
-        FILES
-        ${CMAKE_SOURCE_DIR}/freeorion.desktop
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+        TARGETS
+            freeoriond
+            freeorionca
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        BUNDLE DESTINATION .
     )
-endif()
 
-foreach(SIZE 16 24 32 64 128 256)
+    if(NOT BUILD_HEADLESS)
+        install(
+            TARGETS
+                freeorion
+            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+            BUNDLE DESTINATION .
+            RESOURCE
+        )
+
+        install(
+            FILES
+            ${CMAKE_SOURCE_DIR}/freeorion.desktop
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
+        )
+    endif()
+
     install(
-        FILES
-        ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
-        DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
-        RENAME freeorion.png
+        DIRECTORY default/
+        DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
+        PATTERN "*~" EXCLUDE
+        PATTERN "*.pyc" EXCLUDE
     )
-endforeach()
+
+    foreach(SIZE 16 24 32 64 128 256)
+        install(
+            FILES
+            ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
+            DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
+            RENAME freeorion.png
+        )
+    endforeach()
+endif()
 
 if(WIN32)
     install(
