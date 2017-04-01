@@ -141,30 +141,38 @@ public:
     { return m_effects; }
 
     const std::string&      Icon() const            { return m_icon; }              ///< returns icon graphic that represents part in UI
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int GetCheckSum() const;
     //@}
 
 private:
     void Init(const std::vector<std::shared_ptr<Effect::EffectsGroup>>& effects);
 
-    std::string                                             m_name;
-    std::string                                             m_description;
-    ShipPartClass                                           m_class;
-    float                                                   m_capacity;
-    float                                                   m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
-    ValueRef::ValueRefBase<double>*                         m_production_cost;
-    ValueRef::ValueRefBase<int>*                            m_production_time;
-    bool                                                    m_producible;
-    std::vector<ShipSlotType>                               m_mountable_slot_types;
-    std::set<std::string>                                   m_tags;
+    std::string                     m_name;
+    std::string                     m_description;
+    ShipPartClass                   m_class;
+    float                           m_capacity;
+    float                           m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
+    ValueRef::ValueRefBase<double>* m_production_cost;
+    ValueRef::ValueRefBase<int>*    m_production_time;
+    bool                            m_producible;
+    std::vector<ShipSlotType>       m_mountable_slot_types;
+    std::set<std::string>           m_tags;
     std::map<MeterType, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            m_production_meter_consumption;
+                                    m_production_meter_consumption;
     std::map<std::string, std::pair<ValueRef::ValueRefBase<double>*, Condition::ConditionBase*>>
-                                                            m_production_special_consumption;
-    Condition::ConditionBase*                               m_location;
-    std::set<std::string>                                   m_exclusions;
+                                    m_production_special_consumption;
+    Condition::ConditionBase*       m_location;
+    std::set<std::string>           m_exclusions;
     std::vector<std::shared_ptr<Effect::EffectsGroup>> m_effects;
-    std::string                                             m_icon;
-    bool                                                    m_add_standard_capacity_effect;
+    std::string                     m_icon;
+    bool                            m_add_standard_capacity_effect;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -188,6 +196,14 @@ public:
 
     /** returns the instance of this singleton class; you should use the free function GetPartTypeManager() instead */
     static const PartTypeManager& GetPartTypeManager();
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int        GetCheckSum() const;
     //@}
 
 private:
