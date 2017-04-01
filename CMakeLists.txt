@@ -550,7 +550,6 @@ install(
         freeorionparse
     LIBRARY DESTINATION ${FreeOrion_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT COMPONENT_FREEORION
 )
 
 install(
@@ -559,13 +558,11 @@ install(
         freeorionca
         freeorion
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT COMPONENT_FREEORION
 )
 
 install(
     DIRECTORY default/
     DESTINATION ${CMAKE_INSTALL_DATADIR}/freeorion/default
-    COMPONENT COMPONENT_FREEORION_DATA
     PATTERN "*~" EXCLUDE
     PATTERN "*.pyc" EXCLUDE
 )
@@ -574,7 +571,6 @@ install(
     FILES
     ${CMAKE_SOURCE_DIR}/freeorion.desktop
     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications
-    COMPONENT COMPONENT_FREEORION
 )
 
 foreach(SIZE 16 24 32 64 128 256)
@@ -583,7 +579,6 @@ foreach(SIZE 16 24 32 64 128 256)
         ${CMAKE_SOURCE_DIR}/default/data/art/icons/FO_Icon_${SIZE}x${SIZE}.png
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/${SIZE}x${SIZE}/apps/
         RENAME freeorion.png
-        COMPONENT COMPONENT_FREEORION
     )
 endforeach()
 
@@ -611,25 +606,22 @@ if(WIN32)
         z.dll
         zlib1.dll
         DESTINATION ${CMAKE_INSTALL_BINDIR}
-        COMPONENT COMPONENT_FREEORION_WIN32_RUNTIME_DEPS
     )
 endif()
 
+set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
 set(CPACK_PACKAGE_VERSION ${FreeOrion_VERSION})
-
 set(CPACK_PACKAGE_VENDOR "FreeOrion Community")
 set(CPACK_PACKAGE_CONTACT http://freeorion.org/forum)
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "FreeOrion is a free, open source, turn-based space empire and galactic conquest (4X) computer game being designed and built by the FreeOrion project. FreeOrion is inspired by the tradition of the Master of Orion games, but is not a clone or remake of that series or any other game.")
-set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_HOME_DIRECTORY}/default/COPYING)
+set(CPACK_RESOURCE_FILE_LICENSE ${CMAKE_SOURCE_DIR}/default/COPYING)
 set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME})
 if(WIN32)
     set(PACKAGE_FILE_SYSTEM_NAME win32)
 else()
     set(PACKAGE_FILE_SYSTEM_NAME ${CPACK_SYSTEM_NAME})
 endif()
-set(CPACK_PACKAGE_NAME ${CMAKE_PROJECT_NAME})
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${PACKAGE_FILE_SYSTEM_NAME}")
-string(TOLOWER ${CPACK_PACKAGE_FILE_NAME} CPACK_PACKAGE_FILE_NAME)
 set(CPACK_MONOLITHIC_INSTALL ON)
 
 # NSIS-specific settings
@@ -640,14 +632,12 @@ string(REPLACE "/" "\\\\" cmake_home_directory_with_native_windows_path_separato
 # RPM-specific settings
 set(CPACK_RPM_PACKAGE_LICENSE GPL)
 set(CPACK_RPM_PACKAGE_REQUIRES)
-# TODO
 
 # Deb-specific settings
 set(CPACK_DEBIAN_PACKAGE_SECTION games)
-# TODO
 
 if(UNIX)
-    set(CPACK_GENERATOR "TGZ;TBZ2")
+    set(CPACK_GENERATOR TGZ TBZ2)
     find_program(RPMBUILD rpmbuild)
     if(RPMBUILD)
         list(APPEND CPACK_GENERATOR RPM)
@@ -659,7 +649,7 @@ if(UNIX)
     endif()
     set(DPKG ${DPKG} CACHE INTERNAL "")
 elseif(WIN32)
-    set(CPACK_GENERATOR "NSIS")
+    set(CPACK_GENERATOR NSIS)
 endif()
 
 
@@ -668,9 +658,9 @@ endif()
 ########################################
 
 if(UNIX)
-    set(CPACK_SOURCE_GENERATOR "TGZ")
+    set(CPACK_SOURCE_GENERATOR TGZ)
 elseif(WIN32)
-    set(CPACK_SOURCE_GENERATOR "ZIP")
+    set(CPACK_SOURCE_GENERATOR ZIP)
 endif()
 
 set(CPACK_SOURCE_IGNORE_FILES
@@ -708,45 +698,3 @@ set(CPACK_SOURCE_PACKAGE_FILE_NAME
 )
 
 include(CPack)
-
-if(WIN32)
-    cpack_add_component(
-        COMPONENT_FREEORION_WIN32_RUNTIME_DEPS
-        DISPLAY_NAME FreeOrion Win32 Runtime Dependencies
-        DESCRIPTION ""
-        HIDDEN
-        REQUIRED
-    )
-endif()
-
-cpack_add_component(
-    COMPONENT_FREEORION_DATA
-    DISPLAY_NAME FreeOrion Data
-    DESCRIPTION ""
-    HIDDEN
-    REQUIRED
-)
-
-cpack_add_component(
-    COMPONENT_FREEORION
-    DISPLAY_NAME FreeOrion Client
-    DESCRIPTION ""
-    HIDDEN
-    REQUIRED
-)
-
-cpack_add_component(
-    COMPONENT_FREEORIOND
-    DISPLAY_NAME FreeOrion Server
-    DESCRIPTION ""
-    HIDDEN
-    REQUIRED
-)
-
-cpack_add_component(
-    COMPONENT_FREEORIONCA
-    DISPLAY_NAME FreeOrion AI
-    DESCRIPTION ""
-    HIDDEN
-    REQUIRED
-)
