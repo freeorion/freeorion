@@ -1769,8 +1769,22 @@ void SidePanel::PlanetPanel::Refresh() {
         for (std::shared_ptr<const Ship> invasion_ship : invasion_ships) {
             invasion_troops += invasion_ship->TroopCapacity();
         }
-        std::string invasion_troops_text = DoubleToString(invasion_troops, 2, false);
-        std::string defending_troops_text = DoubleToString(planet->CurrentMeterValue(METER_TROOPS), 2, false);
+        std::string invasion_troops_text = DoubleToString(invasion_troops, 3, false);
+
+        // adjust defending troops number before passing into DoubleToString to ensure
+        // rounding up, as it's better to slightly overestimate defending troops than
+        // underestimate, since one needs to drop more droops than there are defenders
+        // to capture a planet
+        float defending_troops = planet->CurrentMeterValue(METER_TROOPS);
+        //std::cout << "def troops: " << defending_troops << std::endl;
+        float log10_df = floor(std::log10(defending_troops));
+        //std::cout << "def troops log10: " << log10_df << std::endl;
+        float rounding_adjustment = std::pow(10.0f, log10_df - 2.0f);
+        //std::cout << "adjustment: " << rounding_adjustment << std::endl;
+        defending_troops += rounding_adjustment;
+        //std::cout << "adjusted def troops: " << defending_troops<< std::endl;
+
+        std::string defending_troops_text = DoubleToString(defending_troops, 3, false);
         std::string invasion_text = boost::io::str(FlexibleFormat(UserString("PL_INVADE"))
                                                    % invasion_troops_text % defending_troops_text);
         // todo: tooltip breaking down which or how many ships are being used to invade, their troop composition / contribution
