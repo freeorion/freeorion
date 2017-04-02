@@ -1,14 +1,17 @@
 # FreeOrion
 
 FreeOrion is a free, Open Source, turn-based space empire and galactic conquest
-computer game being designed and built by the FreeOrion project.
+computer game.
 
-Freeorion builds on the classic *4X* model by incorporating the nation-building
-elements of games such as *Europa Universalis 2*.  While its modular,
-Open Source design allows for a significant degree of customization of the game
-engine and the story elements by the community, the FreeOrion project is
-dedicated to the construction of a living, breathing universe in a
-*grand campaign* model.
+FreeOrion is inspired by the tradition of the Master of Orion games, but does
+not try to be a clone or remake of that series or any other game.  It builds
+on the classic *4X* model by incorporating the nation-building elements of games
+such as *Europa Universalis 2*.
+
+While its modular, Open Source design allows for a significant degree of
+customization of the game engine and the story elements by the community, the
+FreeOrion project is dedicated to the construction of a living, breathing
+universe in a *grand campaign* model.
 
 
 ## Requirements
