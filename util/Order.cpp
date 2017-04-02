@@ -454,7 +454,12 @@ void FleetTransferOrder::ExecuteImpl() const {
     for (std::shared_ptr<Fleet> modified_fleet : modified_fleets) {
         if (!modified_fleet->Empty())
             modified_fleet->StateChangedSignal();
-        // if modified fleet is empty, it should be immently destroyed, so that updating it now is redundant
+        else {
+            if (std::shared_ptr<System> system = GetSystem(modified_fleet->SystemID()))
+                system->Remove(modified_fleet->ID());
+
+            GetUniverse().Destroy(modified_fleet->ID());
+        }
     }
 }
 
