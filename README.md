@@ -28,8 +28,8 @@ to be working by users, but are not actively supported by the FreeOrion project.
 Releases can be obtained as native installer binaries for Windows and Mac OSX
 or as source releases for Linux and other UNIX-ish platforms from GitHub.
 
-Also some Linux distributions like Fedora, Debian and Arch do provide prebuilt
-packages of FreeOrion.
+Also some Linux distributions like Fedora, Debian and Arch do provide packages
+of FreeOrion.
 
 [FreeOrion Weekly Releases] are in-development releases intended for enthusiasts
 and testers, who want to track or contribute to the development.  Weekly
