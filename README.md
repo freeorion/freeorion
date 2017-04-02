@@ -53,7 +53,6 @@ packages via the command line.
   * [Debian package] stable release: `# apt-get install freeorion`
   * [Ubuntu package] stable release: `# apt-get install freeorion`
   * [Fedora package] stable release: `# dnf install freeorion`
-                                  or `# yum install freeorion`
   * [ArchLinux package] stable release
 
 
