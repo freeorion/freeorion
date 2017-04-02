@@ -75,19 +75,18 @@ details please see the [Contribution Guidelines](CONTRIBUTING.md).
 
 ## License
 
-Artistic or creative content is licensed under the *Creative Commons
-Attribution-Share Alike 3.0 Unported* license
-(http://creativecommons.org/licenses/by-sa/3.0/).
+The FreeOrion source code is licensed under the terms of [GPL v2],
+game assets are licensed under the terms of [CC-BY-SA-3.0].  For more details
+please see the [License File](default/COPYING).
 
-This includes artwork, music, sounds, text that determines how art, music or
-sound is played or displayed in game, game content such as technologies,
-buildings, specials and their associated in-game text, and the scripts that
-determine their in-game functionality.
+Additional to the immediate project sources the FreeOrion source tree bundles
+some third party projects or assets which may be licensed under different
+terms than the FreeOrion project.  For more details please consult the
+accompanying license file.
 
-Game content scripts are also licensed under the *GNU General Public License,
-Version 2* (http://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
-
-Everything else is licensed under the GNU General Public License, Version 2.
+  * *GiGi* library located within the `GG/` directory.
+  * *Roboto* font located within the `default/data/fonts/` directory.
+  * *DejaVuSans* located within the `default/data/fonts/` directory.
 
 
 [FreeOrion Homepage]: http://www.freeorion.org/
@@ -100,3 +99,5 @@ Everything else is licensed under the GNU General Public License, Version 2.
 [Ubuntu Package]: https://launchpad.net/ubuntu/+source/freeorion
 [Fedora Package]: https://admin.fedoraproject.org/pkgdb/package/rpms/freeorion/
 [ArchLinux Package]: https://aur.archlinux.org/packages/freeorion/
+[GPL v2]: https://www.gnu.org/licenses/gpl-2.0.txt
+[CC-BY-SA-3.0]: https://creativecommons.org/licenses/by-sa/3.0/legalcode
