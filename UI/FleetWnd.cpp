@@ -1383,19 +1383,17 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
         return;
     std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id);
     if (fleet) {
-        if (!ClientPlayerIsModerator()) {
-            int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-            if (client_empire_id == ALL_EMPIRES)
-                return;
+        if (ClientPlayerIsModerator())
+            return; // todo: handle moderator actions for this...
+        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (client_empire_id == ALL_EMPIRES)
+            return;
 
-            bool new_aggression_state = !fleet->Aggressive();
+        bool new_aggression_state = !fleet->Aggressive();
 
-            // toggle fleet aggression status
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_state)));
-        } else {
-            // TODO: Moderator action to alter non-player fleet aggression
-        }
+        // toggle fleet aggression status
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_state)));
     } else if (m_new_fleet_drop_target) {
         // cycle new fleet aggression
         if (m_new_fleet_aggression == INVALID_FLEET_AGGRESSION)
@@ -1846,6 +1844,9 @@ public:
         }
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
+        if (ClientPlayerIsModerator())
+            return; // todo: handle moderator actions for this...
+
         if (!dropped_fleets.empty()) {
             //DebugLogger() << " ... processing dropped " << dropped_fleets.size() << " fleets";
             // dropping fleets.  get each ships of all source fleets and transfer to the target fleet
@@ -1861,18 +1862,14 @@ public:
                 const std::set<int>& ship_ids_set = dropped_fleet->ShipIDs();
                 const std::vector<int> ship_ids_vec(ship_ids_set.begin(), ship_ids_set.end());
 
-                if (!ClientPlayerIsModerator()) {
-                    // order the transfer
-                    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                        new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
+                // order the transfer
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
 
-                    // delete empty fleets
-                    if (dropped_fleet->Empty())
-                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                            new DeleteFleetOrder(empire_id, dropped_fleet_id)));
-                } else {
-                    // TODO: moderator action to transfer ships / remove empty fleets
-                }
+                // delete empty fleets
+                if (dropped_fleet->Empty())
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        OrderPtr(new DeleteFleetOrder(empire_id, dropped_fleet_id)));
             }
 
         } else if (!dropped_ships.empty()) {
@@ -1895,21 +1892,18 @@ public:
                 dropped_ships_fleets.insert(ship->FleetID());
             }
 
-            if (!ClientPlayerIsModerator()) {
-                // order the transfer
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
+            // order the transfer
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
 
-                // delete empty fleets
-                for (int fleet_id : dropped_ships_fleets) {
-                    std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
-                    if (fleet && fleet->Empty())
-                        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                            new DeleteFleetOrder(empire_id, fleet->ID())));
-                }
-            } else {
-                    // TODO: moderator action to transfer ships / remove empty fleets
+            // delete empty fleets
+            for (int fleet_id : dropped_ships_fleets) {
+                std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+                if (fleet && fleet->Empty())
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        OrderPtr(new DeleteFleetOrder(empire_id, fleet->ID())));
             }
+
         }
         //DebugLogger() << "FleetsListBox::AcceptDrops finished";
     }
@@ -2294,19 +2288,18 @@ public:
         int dropped_ship_fleet_id = ship_from_dropped_wnd->FleetID();
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
-        if (!ClientPlayerIsModerator()) {
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new FleetTransferOrder(empire_id, m_fleet_id, ship_ids)));
+        if (ClientPlayerIsModerator())
+            return; // todo: handle moderator actions for this...
 
-            // delete old fleet if now empty
-            const ObjectMap& objects = GetUniverse().Objects();
-            if (std::shared_ptr<const Fleet> dropped_ship_old_fleet = objects.Object<Fleet>(dropped_ship_fleet_id))
-                if (dropped_ship_old_fleet->Empty())
-                    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                        new DeleteFleetOrder(empire_id, dropped_ship_fleet_id)));
-        } else {
-            // TODO: moderator action to transfer ships / remove empty fleets
-        }
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            OrderPtr(new FleetTransferOrder(empire_id, m_fleet_id, ship_ids)));
+
+        // delete old fleet if now empty
+        const ObjectMap& objects = GetUniverse().Objects();
+        if (std::shared_ptr<const Fleet> dropped_ship_old_fleet = objects.Object<Fleet>(dropped_ship_fleet_id))
+            if (dropped_ship_old_fleet->Empty())
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new DeleteFleetOrder(empire_id, dropped_ship_fleet_id)));
     }
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -3479,13 +3472,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
             std::string new_name = edit_wnd.Result();
 
-            if (!ClientPlayerIsModerator()) {
-                if (!new_name.empty() && new_name != fleet_name) {
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new RenameOrder(client_empire_id, fleet->ID(), new_name)));
-                }
-            } else {
-                // TODO: Moderator action for renaming fleet
+            if (ClientPlayerIsModerator())
+                break; // todo: handle moderator actions for this...
+
+            if (!new_name.empty() && new_name != fleet_name) {
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new RenameOrder(client_empire_id, fleet->ID(), new_name)));
             }
             break;
         }
