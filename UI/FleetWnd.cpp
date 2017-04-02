@@ -388,20 +388,6 @@ namespace {
         // order ships moved into target fleet
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new FleetTransferOrder(client_empire_id, target_fleet->ID(), empire_system_ship_ids)));
-
-
-        // delete empty fleets from which ships have been taken
-        GetUniverse().InhibitUniverseObjectSignals(true);
-        for (int fleet_id : empire_system_fleet_ids) {
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-               new DeleteFleetOrder(client_empire_id, fleet_id)));
-        }
-        GetUniverse().InhibitUniverseObjectSignals(false);
-
-        // signal to update UI
-        system->FleetsRemovedSignal(empire_system_fleets);
-        system->StateChangedSignal();
-        target_fleet->StateChangedSignal();
     }
 
    /** Returns map from object ID to issued colonize orders affecting it. */
@@ -1865,11 +1851,6 @@ public:
                 // order the transfer
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
-
-                // delete empty fleets
-                if (dropped_fleet->Empty())
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new DeleteFleetOrder(empire_id, dropped_fleet_id)));
             }
 
         } else if (!dropped_ships.empty()) {
@@ -1895,15 +1876,6 @@ public:
             // order the transfer
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 OrderPtr(new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
-
-            // delete empty fleets
-            for (int fleet_id : dropped_ships_fleets) {
-                std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
-                if (fleet && fleet->Empty())
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new DeleteFleetOrder(empire_id, fleet->ID())));
-            }
-
         }
         //DebugLogger() << "FleetsListBox::AcceptDrops finished";
     }
@@ -2285,7 +2257,6 @@ public:
         if (!ship_from_dropped_wnd)
             return;
 
-        int dropped_ship_fleet_id = ship_from_dropped_wnd->FleetID();
         int empire_id = HumanClientApp::GetApp()->EmpireID();
 
         if (ClientPlayerIsModerator())
@@ -2293,13 +2264,6 @@ public:
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new FleetTransferOrder(empire_id, m_fleet_id, ship_ids)));
-
-        // delete old fleet if now empty
-        const ObjectMap& objects = GetUniverse().Objects();
-        if (std::shared_ptr<const Fleet> dropped_ship_old_fleet = objects.Object<Fleet>(dropped_ship_fleet_id))
-            if (dropped_ship_old_fleet->Empty())
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new DeleteFleetOrder(empire_id, dropped_ship_fleet_id)));
     }
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
