@@ -42,8 +42,11 @@ from Sourceforge.
 
 ## Install
 
-For both Windows and Mac OSX execute the native installer binaries and follow
-the on-screen instructions of the installer to install FreeOrion.
+For Windows execute the native installer binary and follow the on-screen
+instructions of the installer to install FreeOrion.
+
+For Mac OSX, open the downloaded DMG file and copy the contained FreeOrion
+application to your system Applications folder by Drag and Drop.
 
 For Linux or other from-source installations in general please refer to the
 [Compile Instructions].
