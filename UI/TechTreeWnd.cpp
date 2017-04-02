@@ -62,7 +62,7 @@ namespace {
         // Default status for TechTreeControl filter.
         db.Add<bool>("UI.research.tech-tree-control.status.unresearchable",
                      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_UNRESEARCHABLE"),
-                     false,         Validator<bool>());
+                     false,        Validator<bool>());
         db.Add<bool>("UI.research.tech-tree-control.status.has_researched_prereq",
                      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_HAS_RESEARCHED_PREREQ"),
                      true,         Validator<bool>());
