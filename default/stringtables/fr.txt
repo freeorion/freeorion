@@ -8000,7 +8000,7 @@ Armement
 PC_DIRECT_WEAPON_DESC
 '''L'armement d'un astronef permet d'attaquer et d'endommager des cibles lors de chaque passe de combat (à la différence des [[encyclopedia FIGHTER_TECHS]], qui nécessitent au préalable d'être lancés avant de pouvoir attaquer).
 
-Certaines armes sont capables de faire feu plusieurs fois par passe de combat.'''
+Certaines armes sont capables de faire feu plusieurs fois par passe de combat. Les astronefs construits par les espèces présentant l'attribut "Pilotes" voient les dommages de leur armement modifiés.'''
 
 # Ship part classes
 PC_FIGHTER_HANGAR
@@ -10448,91 +10448,92 @@ SHP_WEAPON_1_2
 Canon Mitrailleur 2
 
 SHP_WEAPON_1_2_DESC
-Améliore le Canon Mitrailleur d'un niveau, augmentant sa Puissance de 1.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 4 une fois l'équipement amélioré.
 
 SHP_WEAPON_1_3
 Canon Mitrailleur 3
 
 SHP_WEAPON_1_3_DESC
-Améliore le Canon Mitrailleur de deux niveaux, augmentant sa Puissance de 2.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 5 une fois l'équipement amélioré.
 
 SHP_WEAPON_1_4
 Canon Mitrailleur 4
 
 SHP_WEAPON_1_4_DESC
-Améliore le Canon Mitrailleur de trois niveaux, augmentant sa Puissance de 3.
+Améliore l'équipement [[shippart SR_WEAPON_1_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 6 une fois l'équipement amélioré.
 
 SHP_WEAPON_2_1
 Canons Laser
 
 SHP_WEAPON_2_1_DESC
-Débloque le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
+Débloque le [[shippart SR_WEAPON_2_1]], un armement d'astronef plus puissant que le [[shippart SR_WEAPON_1_1]].
 
 SHP_WEAPON_2_2
 Canon Laser 2
 
 SHP_WEAPON_2_2_DESC
-Améliore le Canon Laser d'un niveau, augmentant sa Puissance de 2.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 7 une fois l'équipement amélioré.
 
 SHP_WEAPON_2_3
 Canon Laser 3
 
 SHP_WEAPON_2_3_DESC
-Améliore le Canon Laser de deux niveaux, augmentant sa Puissance de 4.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 9 une fois l'équipement amélioré.
 
 SHP_WEAPON_2_4
 Canon Laser 4
 
 SHP_WEAPON_2_4_DESC
-Améliore le Canon Laser de trois niveaux, augmentant sa Puissance de 6.
+Améliore l'équipement [[shippart SR_WEAPON_2_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 11 une fois l'équipement amélioré.
 
 SHP_WEAPON_3_1
 Canons Plasma
 
 SHP_WEAPON_3_1_DESC
-Débloque le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
+Débloque le [[shippart SR_WEAPON_3_1]], un armement d'astronef plus puissant que le [[shippart SR_WEAPON_2_1]].
 
 SHP_WEAPON_3_2
 Canon Plasma 2
 
 SHP_WEAPON_3_2_DESC
-Améliore le Canon Plasma d'un niveau, augmentant sa Puissance de 3.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 12 une fois l'équipement amélioré.
 
 SHP_WEAPON_3_3
 Canon Plasma 3
 
 SHP_WEAPON_3_3_DESC
-Améliore le Canon Plasma de deux niveaux, augmentant sa Puissance de 6.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 15 une fois l'équipement amélioré.
 
 SHP_WEAPON_3_4
 Canon Plasma 4
 
 SHP_WEAPON_3_4_DESC
-Améliore le Canon Plasma de trois niveaux, augmentant sa Puissance de 9.
+Améliore l'équipement [[shippart SR_WEAPON_3_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 18 une fois l'équipement amélioré.
 
 SHP_WEAPON_4_1
 Rayons Gamma
 
 SHP_WEAPON_4_1_DESC
-Débloque le Rayon Gamma, l'armement ultime des astronefs.
+Débloque le [[shippart SR_WEAPON_4_1]], un armement d'astronef plus puissant que le [[shippart SR_WEAPON_3_1]].
 
 SHP_WEAPON_4_2
 Rayon Gamma 2
 
 SHP_WEAPON_4_2_DESC
-Améliore le Rayon Gamma d'un niveau, augmentant sa Puissance de 5.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 20 une fois l'équipement amélioré.
 
 SHP_WEAPON_4_3
 Rayon Gamma 3
 
 SHP_WEAPON_4_3_DESC
-Améliore le Rayon Gamma de deux niveaux, augmentant sa Puissance de 10.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 25 une fois l'équipement amélioré.
 
 SHP_WEAPON_4_4
 Rayon Gamma 4
 
 SHP_WEAPON_4_4_DESC
-Améliore le Rayon Gamma de trois niveaux, augmentant sa Puissance de 15. Le perfectionnement ultime de l'arme ultime.
+Améliore l'équipement [[shippart SR_WEAPON_4_1]] de tous les astronefs situés en zone d'[[metertype METER_SUPPLY]] (ou s'ils s'y rendent ultérieurement). Les [[encyclopedia DAMAGE_TITLE]] par tir sont de 30 une fois l'équipement amélioré.
+
 
 SHP_ION_CANNON
 Canon Ionique
@@ -11743,31 +11744,50 @@ SR_WEAPON_0_1
 Canon Antiaérien
 
 SR_WEAPON_0_1_DESC
-Le Canon Antiaérien inflige des dommages négligeables à la plupart des astronefs, mais reste bon marché et efficace pour contrer les chasseurs.
+'''Le Canon Antiaérien inflige des dommages négligeables à la plupart des astronefs, mais reste bon marché et efficace pour contrer les chasseurs.
+
+Chaque Canon Antiaérien monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", aura un nombre additionnel de tirs égal à 1 par rang de Pilotes (-1 tir pour "Mauvais Pilotes").'''
 
 SR_WEAPON_1_1
 Canon Mitrailleur
 
 SR_WEAPON_1_1_DESC
-Le Canon Mitrailleur, une arme de base.
+'''Le Canon Mitrailleur, une arme de base.
+
+Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
+
+Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Mitrailleur monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 1 par rang de Pilotes (-1 pour "Mauvais Pilotes").'''
 
 SR_WEAPON_2_1
 Canon Laser
 
 SR_WEAPON_2_1_DESC
-Le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
+'''Le Canon Laser, un armement d'astronef plus puissant que le Canon Mitrailleur.
+
+Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
+
+Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Laser monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 2 par rang de Pilotes (-2 pour "Mauvais Pilotes"). Les dommages du Canon Laser peuvent également être améliorés sur les astronefs dotés d'une [[shiphull SH_ORGANIC]] couplée à un [[shippart SP_SOLAR_CONCENTRATOR]].
+'''
 
 SR_WEAPON_3_1
 Canon Plasma
 
 SR_WEAPON_3_1_DESC
-Le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
+'''Le Canon Plasma, un armement d'astronef plus puissant que le Canon Laser.
+
+Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
+
+Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Canon Plasma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 3 par rang de Pilotes (-3 pour "Mauvais Pilotes").'''
 
 SR_WEAPON_4_1
 Rayon Gamma
 
 SR_WEAPON_4_1_DESC
-Le Rayon Gamma, l'armement ultime des astronefs.
+'''Le Rayon Gamma, un armement d'astronef plus puissant que le Canon Plasma.
+
+Améliorer la technologie de cet armement augmentera la valeur des dommages par tir.
+
+Les [[encyclopedia DAMAGE_TITLE]] d'un armement combinent la valeur des dommages par tir et celle de tout modificateur actif. Chaque Rayon Gamma monté sur un astronef construit par une espèce présentant l'attribut "Pilotes", infligera des dommages additionnels de 5 par rang de Pilotes (-5 pour "Mauvais Pilotes").'''
 
 SR_SPINAL_ANTIMATTER
 Canon Anti-Matière
