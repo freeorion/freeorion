@@ -444,7 +444,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         build_time = 4
         planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
         planned_troops += .01  # we must attack with more troops than there are defenders
-        troop_cost = math.ceil(planned_troops / 6.0) * 20 * FleetUtilsAI.get_fleet_upkeep()
+        troop_cost = math.ceil((planned_troops+_TROOPS_SAFETY_MARGIN) / 6.0) * 20 * FleetUtilsAI.get_fleet_upkeep()
     else:
         loc = locs[0]
         species_here = universe.getPlanet(loc).speciesName
@@ -455,7 +455,7 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
                                                                CombatRatingsAI.get_species_troops_grade(species_here))
         planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
         planned_troops += .01  # we must attack with more troops than there are defenders
-        ships_needed = math.ceil(planned_troops / float(troops_per_ship))
+        ships_needed = math.ceil((planned_troops+_TROOPS_SAFETY_MARGIN) / float(troops_per_ship))
         troop_cost = ships_needed * cost_per_ship  # fleet upkeep is already included in query from server
 
     # apply some bias to expensive operations
