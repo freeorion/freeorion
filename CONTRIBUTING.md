@@ -5,12 +5,6 @@ developers and one time contributors.  This guide should help you to create
 contributions that can be easily integrated into the FreeOrion project.
 
 
-## Respect the FreeOrion Vision Statement when contributing
-
-All contributions should follow the spirit of the [FreeOrion Vision Statement].
-We can't consider any contributions that miss or oppose the Vision Statement.
-
-
 ## I found an error in the game or I want to file a bug report
 
 So you stumbled on a reproducible error in FreeOrion?  You can report it in
