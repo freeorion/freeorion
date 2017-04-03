@@ -148,7 +148,6 @@ def check_supply():
     for sys_id, supply_val in system_supply.items():
         systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
 
-    print "Known Systems:", list(universe.systemIDs)
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
     print "Supply connected systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
     print
