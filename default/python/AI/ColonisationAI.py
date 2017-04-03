@@ -728,7 +728,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
         vis_map = universe.getVisibilityTurnsMap(planet_id, empire.empireID)
         print "Planet %d object not available; visMap: %s" % (planet_id, vis_map)
         return 0
-    detail.append("%s : " % planet.name)
     # only count existing presence if not target planet
     # TODO: consider neighboring sytems for smaller contribution, and bigger contributions for
     # local colonies versus local outposts
