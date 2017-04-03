@@ -197,13 +197,13 @@ class AIstate(object):
         current_turn = fo.currentTurn()
         # assess fleet and planet threats
         threat_table = Table([
-            Text('System Threat'), Text('Vis.'), Float('Total'), Float('by Monsters'), Float('by Fleets'),
-            Float('by Planets'), Text('Threat [1, 2, 3] jumps away')],
+            Text('System'), Text('Vis.'), Float('Total'), Float('by Monsters'), Float('by Fleets'),
+            Float('by Planets'), Float('1 jump away'), Float('2 jumps'), Float('3 jumps')],
             table_name="System Threat Turn %d" % current_turn
         )
         defense_table = Table([
             Text('System Defenses'), Float('Total'), Float('by Planets'), Float('by Fleets'),
-            Text('Fleet strength [1, 2, 3] jumps away')],
+            Float('Fleets 1 jump away'), Float('2 jumps'), Float('3 jumps')],
             table_name="System Defenses Turn %d" % current_turn
         )
         for sys_id in sys_id_list:
@@ -216,16 +216,18 @@ class AIstate(object):
                 sys_status.get('monsterThreat', 0),
                 sys_status.get('fleetThreat', 0),
                 sys_status.get('planetThreat', 0),
-                [sys_status.get('neighborThreat', 0.0), sys_status.get('jump2_threat', 0.0),
-                 sys_status.get('jump3_threat', 0.0)]
+                sys_status.get('neighborThreat', 0.0),
+                sys_status.get('jump2_threat', 0.0),
+                sys_status.get('jump3_threat', 0.0),
             ])
             defense_table.add_row([
                 system,
                 sys_status.get('all_local_defenses', 0.0),
                 sys_status.get('mydefenses', {}).get('overall', 0.0),
                 sys_status.get('myFleetRating', 0.0),
-                [sys_status.get('my_neighbor_rating', 0.0), sys_status.get('my_jump2_rating', 0.0),
-                 sys_status.get('my_jump3_rating', 0.0)]
+                sys_status.get('my_neighbor_rating', 0.0),
+                sys_status.get('my_jump2_rating', 0.0),
+                sys_status.get('my_jump3_rating', 0.0),
             ])
         threat_table.print_table()
         defense_table.print_table()
