@@ -1058,6 +1058,7 @@ class FleetDataPanel : public GG::Control {
 public:
     FleetDataPanel(GG::X w, GG::Y h, int fleet_id);
     FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target);
+    ~FleetDataPanel();
 
     /** Upper left plus border insets. */
     GG::Pt ClientUpperLeft() const override;
@@ -1161,6 +1162,16 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
 {
     RequirePreRender();
     SetChildClippingMode(ClipToClient);
+}
+
+FleetDataPanel::~FleetDataPanel() {
+    for (auto& entry : m_stat_icons) {
+        const auto& icon = entry.second;
+
+        // Some of the icons may not be currently attached.
+        DetachChild(icon);
+        delete icon;
+    }
 }
 
 GG::Pt FleetDataPanel::ClientUpperLeft() const
@@ -1535,68 +1546,68 @@ void FleetDataPanel::SetStatIconValues() {
     for (std::pair<MeterType, StatisticIcon*> entry : m_stat_icons) {
         MeterType stat_name = entry.first;
         const auto& icon = entry.second;
-        icon->Hide();
+        DetachChild(icon);
         switch(stat_name) {
         case METER_SIZE:
             icon->SetValue(ship_count);
-            icon->Show();
+            AttachChild(icon);
             break;
         case METER_CAPACITY:
             icon->SetValue(damage_tally);
             if (fleet->HasArmedShips())
-                icon->Show();
+                AttachChild(icon);
             break;
         case METER_SECONDARY_STAT:
             icon->SetValue(fighters_tally);
             if (fleet->HasFighterShips())
-                icon->Show();
+                AttachChild(icon);
             break;
         case METER_TROOPS:
             icon->SetValue(troops_tally);
             if (fleet->HasTroopShips())
-                icon->Show();
+                AttachChild(icon);
             break;
         case METER_POPULATION:
             icon->SetValue(colony_tally);
             if (fleet->HasColonyShips())
-                icon->Show();
+                AttachChild(icon);
             break;
         case METER_INDUSTRY: {
             const auto resource_output = fleet->ResourceOutput(RE_INDUSTRY);
             icon->SetValue(resource_output);
             if (resource_output > 0.0f)
-                icon->Show();
+                AttachChild(icon);
         }
             break;
         case METER_RESEARCH: {
             const auto resource_output = fleet->ResourceOutput(RE_RESEARCH);
             icon->SetValue(resource_output);
             if (resource_output > 0.0f)
-                icon->Show();
+                AttachChild(icon);
         }
             break;
         case METER_TRADE: {
             const auto resource_output = fleet->ResourceOutput(RE_TRADE);
             icon->SetValue(resource_output);
             if (resource_output > 0.0f)
-                icon->Show();
+                AttachChild(icon);
         }
             break;
         case METER_STRUCTURE:
             icon->SetValue(structure_tally);
-            icon->Show();
+            AttachChild(icon);
             break;
         case METER_SHIELD:
             icon->SetValue(shield_tally/ship_count);
-            icon->Show();
+            AttachChild(icon);
             break;
         case METER_FUEL:
             icon->SetValue(min_fuel);
-            icon->Show();
+            AttachChild(icon);
             break;
         case METER_SPEED:
             icon->SetValue(min_speed);
-            icon->Show();
+            AttachChild(icon);
             break;
         default:
             break;
@@ -1671,7 +1682,7 @@ void FleetDataPanel::DoLayout() {
     // position stat icons, centering them vertically if there's more space than required
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
     for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
-        if (!entry.second->Visible())
+        if (entry.second->Parent() != this)
             continue;
         entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
