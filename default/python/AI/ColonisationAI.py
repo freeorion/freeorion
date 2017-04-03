@@ -1357,7 +1357,7 @@ def _print_empire_species_roster():
         number_of_shipyards = len(empire_ship_builders.get(species_name, []))
         this_row = [species_name, planet_ids, is_colonizer, number_of_shipyards]
         this_row.extend(grade_symbol(tag) for tag in grade_tags)
-        this_row.append([tag for tag in species_tags if not any(s in tag for s in grade_tags)])
+        this_row.append([tag for tag in species_tags if not any(s in tag for s in grade_tags) and 'PEDIA' not in tag])
         species_table.add_row(this_row)
     print
     species_table.print_table()
