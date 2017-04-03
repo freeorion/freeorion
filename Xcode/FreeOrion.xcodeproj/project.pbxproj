@@ -2852,7 +2852,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
@@ -2901,6 +2901,7 @@
 					"-ftemplate-depth=1024",
 				);
 				OTHER_LDFLAGS = "-stdlib=libc++";
+				SDKROOT = macosx10.7;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = NO;
 				SYMROOT = $SRCROOT/build;
@@ -2980,7 +2981,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
@@ -3035,6 +3036,7 @@
 					"-ftemplate-depth=1024",
 				);
 				OTHER_LDFLAGS = "-stdlib=libc++";
+				SDKROOT = macosx10.7;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = $SRCROOT/build;
@@ -3129,7 +3131,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
@@ -3149,7 +3151,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
@@ -3209,6 +3211,7 @@
 					"-ftemplate-depth=1024",
 				);
 				OTHER_LDFLAGS = "-stdlib=libc++";
+				SDKROOT = macosx10.7;
 				SEPARATE_STRIP = NO;
 				STRIP_INSTALLED_PRODUCT = YES;
 				SYMROOT = $SRCROOT/build;
@@ -3303,7 +3306,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
@@ -3323,7 +3326,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
