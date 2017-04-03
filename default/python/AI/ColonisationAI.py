@@ -1,7 +1,7 @@
 import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common.print_utils import Table, Text, Sequence, Bool
+from common.print_utils import Table, Text, Sequence, Bool, Float
 import AIDependencies
 import universe_object
 import AIstate
@@ -1383,9 +1383,9 @@ def __print_candidate_table(candidates, mission):
     universe = fo.getUniverse()
     if mission == 'Colonization':
         col1 = Text('(Score, Species)')
-        col1_value = lambda x: (x[0], x[1])
+        col1_value = lambda x: (round(x[0], 2), x[1])
     elif mission == 'Outposts':
-        col1 = Text('Score')
+        col1 = Float('Score')
         col1_value = lambda x: x[0]
     else:
         print >> sys.stderr, "__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission)
