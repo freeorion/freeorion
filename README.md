@@ -5,8 +5,7 @@ computer game.
 
 FreeOrion is inspired by the tradition of the Master of Orion games, but does
 not try to be a clone or remake of that series or any other game.  It builds
-on the classic *4X* model by incorporating the nation-building elements of games
-such as *Europa Universalis 2*.
+on the classic *4X* (eXplore, eXpand, eXploit and eXterminate) model.
 
 While its modular, Open Source design allows for a significant degree of
 customization of the game engine and the story elements by the community, the
@@ -20,7 +19,7 @@ FreeOrion requires an *OpenGL 2.1* capable graphic card and a display with a
 minimum resolution of at least *800x600*.
 
 FreeOrion requires at least *Windows XP* with *Service Pack 2* or later,
-*Mac OSX 10.7* or later or any reasonable recent Linux distribution on x86
+*Mac OSX 10.7* or later or any reasonably recent Linux distribution on x86
 compatible processors.  Other operating systems and architectures have reported
 to be working by users, but are not actively supported by the FreeOrion project.
 
@@ -75,11 +74,12 @@ details please see the [Contribution Guidelines](CONTRIBUTING.md).
 
 ## License
 
-The FreeOrion source code is licensed under the terms of [GPL v2],
-game assets are licensed under the terms of [CC-BY-SA-3.0].  For more details
-please see the [License File](default/COPYING).
+The FreeOrion *source code* is licensed under the terms of [GPL v2],
+*game assets* are licensed under the terms of [CC-BY-SA-3.0] and *game content
+scripts* are licensed under the terms of both [GPL v2] and [CC-BY-SA-3.0].
+For more details please see the [License File](default/COPYING).
 
-Additional to the immediate project sources the FreeOrion source tree bundles
+Additional to the immediate project sources, the FreeOrion source tree bundles
 some third party projects or assets which may be licensed under different
 terms than the FreeOrion project.  For more details please consult the
 accompanying license file.
