@@ -1842,7 +1842,6 @@ public:
                     ErrorLogger() << "FleetsListBox::AcceptDrops  unable to get dropped fleet?";
                     continue;
                 }
-                int dropped_fleet_id = dropped_fleet->ID();
 
                 // get fleet's ships in a vector, as this is what FleetTransferOrder takes
                 const std::set<int>& ship_ids_set = dropped_fleet->ShipIDs();
