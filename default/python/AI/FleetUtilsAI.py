@@ -1,3 +1,5 @@
+import sys
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
 from EnumsAI import MissionType, ShipRoleType
@@ -189,7 +191,7 @@ def split_fleet(fleet_id):
         if new_fleet_id:
             new_fleet = universe.getFleet(new_fleet_id)
             if not new_fleet:
-                print "Error: newly split fleet %d not available from universe" % new_fleet_id
+                print >> sys.stderr, "Newly split fleet %d not available from universe" % new_fleet_id
             fo.issueRenameOrder(new_fleet_id, "Fleet %4d" % new_fleet_id)  # to ease review of debugging logs
             fo.issueAggressionOrder(new_fleet_id, True)
             foAI.foAIstate.update_fleet_rating(new_fleet_id)
@@ -197,9 +199,9 @@ def split_fleet(fleet_id):
             foAI.foAIstate.newlySplitFleets[new_fleet_id] = True
         else:
             if fleet.systemID == INVALID_ID:
-                print "Error - tried to split ship id (%d) from fleet %d when fleet is in starlane" % (ship_id, fleet_id)
+                print >> sys.stderr, "Tried to split ship id (%d) from fleet %d when fleet is in starlane" % (ship_id, fleet_id)
             else:
-                print "Error - got no fleet ID back after trying to split ship id (%d) from fleet %d" % (ship_id, fleet_id)
+                print >> sys.stderr, "Got no fleet ID back after trying to split ship id (%d) from fleet %d" % (ship_id, fleet_id)
     foAI.foAIstate.get_fleet_role(fleet_id, force_new=True)
     foAI.foAIstate.update_fleet_rating(fleet_id)
     if newfleets:

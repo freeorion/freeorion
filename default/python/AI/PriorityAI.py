@@ -199,7 +199,7 @@ def _calculate_exploration_priority():
             if foAI.foAIstate.get_ship_role(element.designID) == ShipRoleType.CIVILIAN_EXPLORATION:
                 queued_scout_ships += element.remaining * element.blocksize
 
-    mil_ships = MilitaryAI.num_milships
+    mil_ships = MilitaryAI.get_num_military_ships()
     # intent of the following calc is essentially
     # new_scouts_needed = min(need_cap_A, need_cap_B, base_need) - already_got_or_queued
     # where need_cap_A is to help prevent scouting needs from swamping military needs, and

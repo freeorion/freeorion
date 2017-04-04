@@ -183,5 +183,5 @@ def tuple_to_dict(tup):
         try:
             return {k: v for k, v in [tup]}
         except:
-            print "Error: Can't convert tuple_list to dict: ", tup
+            print >> sys.stderr, "Can't convert tuple_list to dict: ", tup
             return {}

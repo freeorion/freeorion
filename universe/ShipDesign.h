@@ -482,8 +482,6 @@ public:
     std::vector<std::string>        Parts(ShipSlotType slot_type) const;            ///< returns vector of names of parts in slots of indicated type in this design, unrelated to slot positions
     std::vector<std::string>        Weapons() const;                                ///< returns vector of names of weapon parts in, unrelated to slot positions
 
-    std::vector<std::string>        Tags() const;                                   ///< returns tags that would apply to ships of this design, from parts or the hull (but not from species or any other source of tags)
-
     const std::string&              Icon() const            { return m_icon; }      ///< returns filename for small-size icon graphic for design
     const std::string&              Model() const           { return m_3D_model; }  ///< returns filename of 3D model that represents ships of design
     bool                            LookupInStringtable() const { return m_name_desc_in_stringtable; }

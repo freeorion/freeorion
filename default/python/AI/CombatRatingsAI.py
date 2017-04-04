@@ -98,7 +98,6 @@ class ShipCombatStats(object):
         self.__ship_id = ship_id
         self._consider_refuel = consider_refuel
         if stats:
-            print stats
             self._basic_stats = self.BasicStats(*stats[0:3])  # TODO: Should probably determine size dynamically
             self._fighter_stats = self.FighterStats(*stats[3:])
         else:
@@ -280,7 +279,7 @@ def _get_species_grades(species_name, grade_type):
         if species:
             spec_tags = species.tags
         else:
-            sys.stderr.write("Error: get_species_grades couldn't retrieve species '%s'\n" % species_name)
+            print >> sys.stderr, "get_species_grades() couldn't retrieve species '%s'\n" % species_name
     return get_ai_tag_grade(spec_tags, grade_type)
 
 

@@ -1,10 +1,9 @@
 cmake_minimum_required(VERSION 3.1 FATAL_ERROR)
 
-if(POLICY CMP0044)
-    cmake_policy(SET CMP0044 OLD)
-endif()
-
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_HOME_DIRECTORY}/cmake ${CMAKE_HOME_DIRECTORY}/GG/cmake)
+set(CMAKE_OSX_DEPLOYMENT_TARGET 10.7 CACHE STRING "Set the minimum OSX deployment target version")
+set(CMAKE_OSX_ARCHITECTURES i386 CACHE STRING "Set the architecture the universal binaries for OSX should be built for")
+
 set(CMAKE_CONFIGURATION_TYPES Debug Release)
 IF(NOT CMAKE_BUILD_TYPE)
   MESSAGE(STATUS "Setting build type to 'Release' as none was specified.")
@@ -33,7 +32,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 option(BUILD_TESTING "Build the testing tree." OFF)
 option(BUILD_PACKAGING "Build the installer/binary package" OFF)
-option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." OFF)
+option(FO_LINK_STATIC_BOOST_LIBS "Link static boost libraries." ${APPLE})
 
 
 if(BUILD_TESTING)
@@ -66,9 +65,10 @@ if(APPLE)
     # Location of the FreeOrionSDK root
     set(CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/Xcode/dep/")
     set(CMAKE_FRAMEWORK_PATH "${CMAKE_SOURCE_DIR}/Xcode/dep/Frameworks")
+    set(CMAKE_PROGRAM_PATH "${CMAKE_FRAMEWORK_PATH}/Python.framework/Versions/Current/bin")
 endif()
 
-if(UNIX AND NOT APPLE)
+if(UNIX)
     set(FreeOrion_INSTALL_LIBDIR "${CMAKE_INSTALL_LIBDIR}/freeorion")
 endif()
 
@@ -78,25 +78,25 @@ set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 add_compile_options(
     # Enable (almost) all warnings on compilers
     # https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wall-316
-    $<$<CXX_COMPILER_ID:gnu>:-Wall>
+    $<$<CXX_COMPILER_ID:GNU>:-Wall>
     # http://clang.llvm.org/docs/DiagnosticsReference.html#wall
-    $<$<CXX_COMPILER_ID:clang>:-Wall>
+    $<$<CXX_COMPILER_ID:Clang>:-Wall>
     # https://msdn.microsoft.com/en-us/library/thxezb7y.aspx#Anchor_1
-    $<$<CXX_COMPILER_ID:msvc>:/W4>
+    $<$<CXX_COMPILER_ID:MSVC>:/W4>
 
     # Disable "'<param>': unreferenced formal parameter" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4100>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4100>
     # Disable "'<class>::<member>': class '<member-type>' needs to have dll-interface to be used by clients of class '<class>'" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4251>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4251>
     # Disable "'<func>': unreferenced local function has been removed" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4505>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4505>
     # Disable "declaration of '<type>' hides global declaration" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4459>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4459>
     # Disable "function '<func>' marked as __forceinline not inlined" warning
-    $<$<CXX_COMPILER_ID:msvc>:/wd4714>
+    $<$<CXX_COMPILER_ID:MSVC>:/wd4714>
 
     # Enable C++ Exception unwind mechanics with DLL support
-    $<$<CXX_COMPILER_ID:msvc>:/EHsc>
+    $<$<CXX_COMPILER_ID:MSVC>:/EHsc>
 )
 
 set_property(DIRECTORY APPEND
@@ -127,6 +127,13 @@ set_property(DIRECTORY APPEND
 if(WIN32 AND MSVC)
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} /NODEFAULTLIB:LIBCMT")
+endif()
+
+if(APPLE)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -stdlib=libc++")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -stdlib=libc++")
+    set(CMAKE_ARCHIVE_LINKER_FLAGS "${CMAKE_ARCHIVE_LINKER_FLAGS} -stdlib=libc++")
 endif()
 
 if(UNIX AND NOT APPLE)
@@ -171,6 +178,11 @@ find_package(OpenAL REQUIRED)
 find_package(Ogg REQUIRED)
 find_package(Vorbis REQUIRED)
 
+if(APPLE)
+    find_library(CORE_FOUNDATION_LIBRARY CoreFoundation)
+    find_library(ICONV_LIBRARY iconv)
+endif()
+
 if(BUILD_TESTING)
     add_subdirectory(test)
 endif()
@@ -182,29 +194,37 @@ add_subdirectory(GG)
 set(CMAKE_INSTALL_LIBDIR ${_ORIG_CMAKE_INSTALL_LIBDIR})
 unset(_ORIG_CMAKE_INSTALL_LIBDIR)
 
-if(WIN32)
-    add_definitions(
-        -DBOOST_ZLIB_BINARY=zlib.lib
-    )
-endif()
+set_property(DIRECTORY APPEND
+    PROPERTY COMPILE_DEFINITIONS
+        # Disable Boost auto-linking
+        # http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/index.html#boost_config.configuring_boost_for_your_platform.user_settable_options
+        BOOST_ALL_NO_LINK
 
-if(NOT FO_LINK_STATIC_BOOST_LIBS)
-    add_definitions(
-        -DBOOST_ALL_NO_LINK
-        -DBOOST_ALL_DYN_LINK
-        -DBOOST_LOG_DYN_LINK
-    )
-endif()
+        # Boost iostreams doesn't honor BOOST_ALL_NO_LINK when linking zlib.
+        # It also tries to link by default to the boost in-source zlib librar,
+        # which we don't want.
+        # http://www.boost.org/doc/libs/1_59_0/boost/iostreams/detail/config/zlib.hpp
+        $<$<PLATFORM_ID:Windows>:BOOST_ZLIB_BINARY=zlib.lib>
 
-if(${Boost_VERSION} GREATER "106000")
-    # with boost 1.61 some boost::optional internals were changed. However
-    # boost::spirit relies on some API the old implementation provided.  This
-    # define enables the usage of the old boost::optional implementation.
-    # boost upstream tracks this bug as #12349
-    add_definitions(
-        -DBOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL
-    )
-endif()
+        # Link all boost libraries dynamically unless the user requests
+        # otherwise.
+        # http://www.boost.org/doc/libs/1_59_0/libs/config/doc/html/index.html#boost_config.configuring_boost_for_your_platform.user_settable_options
+        $<$<NOT:$<BOOL:${FO_LINK_STATIC_BOOST_LIBS}>>:BOOST_ALL_DYN_LINK>
+
+        # with boost 1.61 some boost::optional internals were changed. However
+        # boost::spirit relies on some API the old implementation provided.
+        # This define enables the usage of the old boost::optional
+        # implementation.  Boost upstream tracks this bug as #12349
+        $<$<VERSION_GREATER:${Boost_MAJOR_VERSION}.${Boost_MINOR_VERSION},1.60>:BOOST_OPTIONAL_CONFIG_USE_OLD_IMPLEMENTATION_OF_OPTIONAL>
+
+        # We don't need localized output of Boost date_time and not setting
+        # the define causes the inclusion of code, which contains std::tolower.
+        # This however causes a macro substitutions caused by the libpython
+        # headers, which in turn breaks the build.  Python 2.7.13 should have
+        # fixed this with python bug #10910
+        $<$<PLATFORM_ID:Darwin>:BOOST_DATE_TIME_NO_LOCALE>
+        $<$<PLATFORM_ID:FreeBSD>:BOOST_DATE_TIME_NO_LOCALE>
+)
 
 link_directories(
     ${Boost_LIBRARY_DIRS}
@@ -243,9 +263,19 @@ endif()
 
 target_compile_options(freeorioncommon
     PRIVATE
-        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-        $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
+        $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
 )
+
+if(APPLE)
+    set_target_properties(freeorioncommon
+        PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup"
+    )
+endif()
 
 target_compile_definitions(freeorioncommon
     PRIVATE
@@ -271,6 +301,7 @@ target_link_libraries(freeorioncommon
     ${Boost_SYSTEM_LIBRARY}
     ${Boost_THREAD_LIBRARY}
     ${ZLIB_LIBRARIES}
+    ${CORE_FOUNDATION_LIBRARY}
 )
 
 add_dependencies(freeorioncommon freeorionversion)
@@ -296,11 +327,14 @@ if(WIN32)
     )
 endif()
 
-target_compile_options(
-    freeorionparseobj PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
-    $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:gnu>>:-O3>
-    $<$<CXX_COMPILER_ID:clang>:-ftemplate-depth=512>
+target_compile_options(freeorionparseobj
+    PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-ftemplate-depth=512>
+        $<$<CXX_COMPILER_ID:AppleClang>:-ftemplate-depth=512>
+        $<$<AND:$<NOT:$<BOOL:${BUILD_TESTING}>>,$<CXX_COMPILER_ID:GNU>>:-O3>
 )
 
 target_compile_definitions(freeorionparseobj
@@ -312,10 +346,29 @@ target_compile_definitions(freeorionparseobj
 
 add_library(freeorionparse $<TARGET_OBJECTS:freeorionparseobj>)
 
-target_compile_options(
-    freeorionparse PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+target_compile_options(freeorionparse
+    PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
+
+if(APPLE)
+    # Xcode doesn't build freeorionparse because it doesn't have any
+    # source code files associated and only links the freeorionparselib
+    # objects into a shared library.  Adding an empty file fixes this.
+    # https://cmake.org/cmake/help/v3.0/command/add_library.html
+    file(WRITE xcode_dummy.cpp "")
+    target_sources(freeorionparse
+        PRIVATE
+            xcode_dummy.cpp
+    )
+
+    set_target_properties(freeorionparse
+        PROPERTIES
+        LINK_FLAGS "-undefined dynamic_lookup"
+    )
+endif()
 
 
 add_executable(freeoriond "")
@@ -329,7 +382,9 @@ endif()
 
 target_compile_options(freeoriond
     PRIVATE
-        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeoriond
@@ -366,9 +421,11 @@ if(WIN32)
     )
 endif()
 
-target_compile_options(
-    freeorionca PRIVATE
-    $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+target_compile_options(freeorionca
+    PRIVATE
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeorionca
@@ -413,7 +470,9 @@ endif()
 
 target_compile_options(freeorion
     PRIVATE
-        $<$<CXX_COMPILER_ID:gnu>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:GNU>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:Clang>:-fvisibility=hidden>
+        $<$<CXX_COMPILER_ID:AppleClang>:-fvisibility=hidden>
 )
 
 target_compile_definitions(freeorion
@@ -455,6 +514,7 @@ target_link_libraries(freeorion
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${Boost_LOCALE_LIBRARY}
+    ${ICONV_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 

@@ -495,7 +495,8 @@ std::string ListToString(const std::vector<std::string>& input_list) {
 std::vector<std::string> StringToList(const std::string& input_string) {
     std::vector<std::string> retval;
     typedef boost::tokenizer<boost::char_separator<char>> Tokenizer;
-    Tokenizer tokens(input_string);
+    boost::char_separator<char> separator(",");
+    Tokenizer tokens(input_string, separator);
     for (const Tokenizer::value_type& token : tokens) {
         retval.push_back(token);
     }

@@ -1,3 +1,5 @@
+import sys
+
 from EnumsAI import ShipRoleType, MissionType
 import AIstate
 import FleetUtilsAI
@@ -10,6 +12,7 @@ from freeorion_tools import print_error
 from universe_object import Fleet, System, Planet
 from AIDependencies import INVALID_ID
 dumpTurn = 0
+
 
 def trooper_move_reqs_met(main_fleet_mission, order, verbose):
     """
@@ -161,7 +164,7 @@ class OrderMove(AIFleetOrder):
         if fleet_rating >= safety_factor * threat:
             return True
         elif not p_threat and self.target.id in fo.getEmpire().supplyUnobstructedSystems:
-                    return True
+            return True
         else:
             sys1 = universe.getSystem(system_id)
             sys1_name = sys1 and sys1.name or "unknown"
@@ -363,7 +366,7 @@ class OrderColonize(AIFleetOrder):
         universe = fo.getUniverse()
         ship = universe.getShip(ship_id)
         if ship and not ship.canColonize:
-            print "Error: colonization fleet %d has no colony ship" % self.fleet.id
+            print >> sys.stderr, "colonization fleet %d has no colony ship" % self.fleet.id
         return ship is not None and self.fleet.get_system() == self.target.get_system() and ship.canColonize
 
 

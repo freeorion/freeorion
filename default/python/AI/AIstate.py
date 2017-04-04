@@ -1,4 +1,5 @@
 import copy
+import sys
 from collections import OrderedDict as odict
 from time import time
 
@@ -668,14 +669,14 @@ class AIstate(object):
         destroyed_object_ids = universe.destroyedObjectIDs(fo.empireID())
 
         fleet_table = Table([
-            Text('Fleet'), Float('Old rating'), Float('New rating'),
+            Text('Fleet'), Float('Rating'), Float('Troops'),
             Text('Location'), Text('Destination')],
             table_name="Fleet Summary Turn %d" % fo.currentTurn()
         )
         for fleet_id in fleet_list:
             status = self.fleetStatus.setdefault(fleet_id, {})
-            old_rating = status.get('rating', 0)
-            new_rating = CombatRatingsAI.get_fleet_rating(fleet_id, self.get_standard_enemy())
+            rating = CombatRatingsAI.get_fleet_rating(fleet_id, self.get_standard_enemy())
+            troops = FleetUtilsAI.count_troops_in_fleet(fleet_id)
             old_sys_id = status.get('sysID', -2)
             fleet = universe.getFleet(fleet_id)
             if fleet:
@@ -692,7 +693,7 @@ class AIstate(object):
                 if (fleet and self.__fleetRoleByID.get(fleet_id, -1) != -1 and fleet_id not in destroyed_object_ids and
                                 [ship_id for ship_id in fleet.shipIDs if ship_id not in destroyed_object_ids]):
                     if not just_resumed:
-                        fleetsLostBySystem.setdefault(old_sys_id, []).append(max(old_rating, MilitaryAI.MinThreat))
+                        fleetsLostBySystem.setdefault(old_sys_id, []).append(max(rating, MilitaryAI.MinThreat))
                 if fleet_id in self.__fleetRoleByID:
                     del self.__fleetRoleByID[fleet_id]
                 if fleet_id in self.__aiMissionsByFleetID:
@@ -707,13 +708,13 @@ class AIstate(object):
                 fleet_table.add_row(
                     [
                         fleet,
-                        old_rating,
-                        new_rating,
+                        rating,
+                        troops,
                         this_sys or 'starlane',
                         next_sys or '-',
                     ])
 
-                status['rating'] = new_rating
+                status['rating'] = rating
                 if next_sys:
                     status['sysID'] = next_sys.id
                 elif this_sys:
@@ -754,7 +755,7 @@ class AIstate(object):
     def split_new_fleets(self):
         """Split any new fleets (at new game creation, can have unplanned mix of ship roles)."""
         universe = fo.getUniverse()
-        mission_table = Table([Text('Fleet'), Text('Mission'), Text('Ships'), Text('Rating'), Text('Target')],
+        mission_table = Table([Text('Fleet'), Text('Mission'), Text('Ships'), Float('Rating'), Float('Troops'), Text('Target')],
                               table_name="Turn %d: Fleet Mission Review from Last Turn" % fo.currentTurn())
         for fleet_id, mission in self.get_fleet_missions_map().items():
             fleet = universe.getFleet(fleet_id)
@@ -768,6 +769,7 @@ class AIstate(object):
                     mission.type or "None",
                     len(fleet.shipIDs),
                     CombatRatingsAI.get_fleet_rating(fleet_id),
+                    FleetUtilsAI.count_troops_in_fleet(fleet_id),
                     mission.target or "-"
                 ])
         mission_table.print_table()
@@ -782,7 +784,7 @@ class AIstate(object):
             for fleet_id in fleets_to_split:
                 fleet = universe.getFleet(fleet_id)
                 if not fleet:
-                    print "Error splitting new fleets; resulting fleet ID %d appears to not exist" % fleet_id
+                    print >> sys.stderr, "After splitting fleet: resulting fleet ID %d appears to not exist" % fleet_id
                     continue
                 fleet_len = len(list(fleet.shipIDs))
                 if fleet_len == 1:

@@ -1,3 +1,5 @@
+import sys
+
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 
 from fleet_orders import OrderMove, OrderOutpost, OrderColonize, OrderMilitary, OrderInvade, OrderDefend
@@ -319,7 +321,7 @@ class AIFleetMission(object):
         if fleet.nextSystemID != last_move_target_id:
             return True
         universe = fo.getUniverse()
-        current_dest_system =  universe.getSystem(fleet.nextSystemID)
+        current_dest_system = universe.getSystem(fleet.nextSystemID)
         if not current_dest_system:
             # shouldn't really happen, but just to be safe
             return True
@@ -391,6 +393,7 @@ class AIFleetMission(object):
                             self.clear_fleet_orders()
                             self.clear_target()
                             return
+                break  # do not order the next order until this one is finished.
         else:  # went through entire order list
             if order_completed:
                 print "Final order is completed"
@@ -403,7 +406,7 @@ class AIFleetMission(object):
                     sys_partial_vis_turn = universe.getVisibilityTurnsMap(planet.systemID, fo.empireID()).get(fo.visibility.partial, -9999)
                     planet_partial_vis_turn = universe.getVisibilityTurnsMap(planet.id, fo.empireID()).get(fo.visibility.partial, -9999)
                     if planet_partial_vis_turn == sys_partial_vis_turn and not planet.currentMeterValue(fo.meterType.population):
-                        print "Potential Error: Fleet %d has tentatively completed its colonize mission but will wait to confirm population." % self.fleet.id
+                        print >> sys.stderr, "Fleet %d has tentatively completed its colonize mission but will wait to confirm population." % self.fleet.id
                         print "    Order details are %s" % last_order
                         print "    Order is valid: %s; issued: %s; executed: %s" % (last_order.is_valid(), last_order.order_issued, last_order.executed)
                         if not last_order.is_valid():

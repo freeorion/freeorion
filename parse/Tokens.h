@@ -265,6 +265,7 @@
     (OutpostsOwned)                             \
     (OwnedBy)                                   \
     (Owner)                                     \
+    (OwnerHasShipPartAvailable)                 \
     (OwnerHasTech)                              \
     (OwnerTradeStockpile)                       \
     (Parameters)                                \

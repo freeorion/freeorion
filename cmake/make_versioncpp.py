@@ -13,6 +13,7 @@ from glob import glob
 INVALID_BUILD_NO = "???"
 
 required_boost_libraries = [
+    "boost_chrono",
     "boost_date_time",
     "boost_filesystem",
     "boost_iostreams",

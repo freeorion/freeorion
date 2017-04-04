@@ -1770,7 +1770,10 @@ void SidePanel::PlanetPanel::Refresh() {
             invasion_troops += invasion_ship->TroopCapacity();
         }
         std::string invasion_troops_text = DoubleToString(invasion_troops, 2, false);
-        std::string invasion_text = boost::io::str(FlexibleFormat(UserString("PL_INVADE")) % invasion_troops_text);
+        std::string defending_troops_text = DoubleToString(planet->CurrentMeterValue(METER_TROOPS), 2, false);
+        std::string invasion_text = boost::io::str(FlexibleFormat(UserString("PL_INVADE"))
+                                                   % invasion_troops_text % defending_troops_text);
+        // todo: tooltip breaking down which or how many ships are being used to invade, their troop composition / contribution
         if (m_invade_button)
             m_invade_button->SetText(invasion_text);
 

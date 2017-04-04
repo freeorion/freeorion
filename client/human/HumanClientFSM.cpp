@@ -17,6 +17,53 @@
 #include <boost/format.hpp>
 #include <thread>
 
+/** \page statechart_notes Notes on Boost Statechart transitions
+
+    \section reaction_transition_note Transistion Ordering and Reaction return values.
+
+    Transitions, transit<> or discard_event(), from states must occur from the current state.
+    Transitioning from a state a second time causes indeterminate behavior and may crash.
+    Transitioning from a state that is not the current state causes indeterminate behavior and may crash.
+
+    Reactions handle events in states.  They return a statechart::result from a transit<> or discard_event().
+
+    In a reaction the state is transitioned when transit<> or discard_event() is called, not when
+    the reaction returns.  If a function is called within the reaction that may internally cause a
+    transition, then the transistion out of the reaction's initial state must happen before the
+    function is called.  Save the return value and return it at the end of the reaction.
+
+    This code is correct:
+    \code
+        boost::statechart::result SomeState::react(const SomeEvent& a) {
+
+            // Transition before calling other code that may also transition
+            auto retval = transit<SomeOtherState>();
+
+            // Or the transit could be a discard event
+            // auto retval = discard_event();
+
+            // Call functions that might also transition.
+            Client().ResetToIntro();
+            ClientUI::MessageBox("Some message", true);
+
+            // Return the state chart result from the only transition in this reaction.
+            return retval;
+        }
+    \endcode
+    discard_event() happens before any transitions inside ResetToIntro() or the MessageBox.
+
+    Two constructions that may cause problems are:
+
+        - MessageBox blocks execution locally and starts an EventPump that handles events that may
+          transit<> to a new state which makes a local transition lexically after the MessageBox
+          potentially fatal.
+
+        - Some client functions (ResetToIntro()) process events and change the state machine, so a
+          transition after the function is undefined and potentially fatal.
+
+ */
+
+
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
@@ -114,9 +161,8 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
 
 boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -134,9 +180,7 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         Client().ResetToIntro();
@@ -177,9 +221,8 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
 
 boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -197,9 +240,7 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         Client().ResetToIntro();
@@ -239,9 +280,8 @@ boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
 
 boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -259,9 +299,7 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     //Note: transit<> frees this pointer so Client() must be called before.
     HumanClientApp& client = Client();
 
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         Client().ResetToIntro();
@@ -299,9 +337,8 @@ MPLobby::~MPLobby() {
 
 boost::statechart::result MPLobby::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.Disconnection";
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -344,9 +381,8 @@ boost::statechart::result MPLobby::react(const LobbyChat& msg) {
 boost::statechart::result MPLobby::react(const CancelMPGameClicked& a)
 {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.CancelMPGameClicked";
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     return retval;
@@ -383,9 +419,7 @@ boost::statechart::result MPLobby::react(const Error& msg) {
 
     ErrorLogger() << "MPLobby::react(const Error& msg) error: " << problem;
 
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+    // See reaction_transition_note.
     auto retval = discard_event();
     if (fatal) {
         Client().ResetToIntro();
@@ -456,9 +490,8 @@ boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
 
 boost::statechart::result PlayingGame::react(const Disconnection& d) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Disconnection";
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(UserString("SERVER_LOST"), true);
@@ -515,9 +548,8 @@ boost::statechart::result PlayingGame::react(const EndGame& msg) {
         error = true;
         break;
     }
-    //Note: Any transit<> transition must occur before the MessageBox().
-    // MessageBox blocks and can allow other events to transit<> to a new state
-    // which makes this transit fatal.
+
+    // See reaction_transition_note.
     auto retval = discard_event();
     Client().ResetToIntro();
     ClientUI::MessageBox(reason_message, error);
@@ -542,12 +574,14 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
                   << problem << "\nProblem is" << (fatal ? "fatal" : "non-fatal");
 
+    // See reaction_transition_note.
+    auto retval = discard_event();
     if (fatal)
-        Client().ResetToIntro();    // initiates state transition, so nothing extra required in this function
+        Client().ResetToIntro();
 
     ClientUI::MessageBox(UserString(problem), fatal);
 
-    return discard_event();
+    return retval;
 }
 
 boost::statechart::result PlayingGame::react(const TurnProgress& msg) {
@@ -658,11 +692,11 @@ boost::statechart::result WaitingForTurnData::react(const SaveGameComplete& msg)
     int bytes_written;
     ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
 
-
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
 
-    DebugLogger() << "Save Complete on Server";
+    Client().SaveGameCompleted();
+
     return discard_event();
 }
 
@@ -769,11 +803,10 @@ boost::statechart::result PlayingTurn::react(const SaveGameComplete& msg) {
     int bytes_written;
     ExtractServerSaveGameCompleteMessageData(msg.m_message, save_filename, bytes_written);
 
-
     Client().GetClientUI().GetMessageWnd()->HandleGameStatusUpdate(
         boost::io::str(FlexibleFormat(UserString("SERVER_SAVE_COMPLETE")) % save_filename % bytes_written) + "\n");
 
-    DebugLogger() << "Save Complete on Server";
+    Client().SaveGameCompleted();
     return discard_event();
 }
 
@@ -863,15 +896,13 @@ QuittingGame::QuittingGame(my_context c) :
     // shutdown, otherwise kill it.
 
     if (TRACE_EXECUTION) DebugLogger() << "(Host) QuittingGame";
-
-    // Client().m_game_started = false;
 }
 
 QuittingGame::~QuittingGame()
 { if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) ~QuittingGame"; }
 
 boost::statechart::result QuittingGame::react(const StartQuittingGame& u) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame set reset to intro = " << u.m_reset_to_intro;
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame reset to intro is " << u.m_reset_to_intro;
 
     m_reset_to_intro = u.m_reset_to_intro;
     m_server_process = &u.m_server;
@@ -950,7 +981,7 @@ boost::statechart::result QuittingGame::react(const Disconnection& d) {
 }
 
 boost::statechart::result QuittingGame::react(const TerminateServer& u) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.WaitForDisconnect";
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) QuittingGame.TerminateServer";
 
     if (m_server_process && !m_server_process->Empty()) {
         DebugLogger() << "QuittingGame terminated server process.";
@@ -959,9 +990,8 @@ boost::statechart::result QuittingGame::react(const TerminateServer& u) {
 
     // Reset the game or quit the app as appropriate
     if (m_reset_to_intro) {
-        auto retval = transit<IntroMenu>();
         Client().ResetClientData();
-        return retval;
+        return transit<IntroMenu>();
     } else {
         throw HumanClientApp::CleanQuit();
     }

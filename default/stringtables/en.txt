@@ -902,6 +902,15 @@ Error when reading save file.
 UNABLE_TO_SAVE_NOW_TRY_AGAIN
 Unable to save during AI processing. Try again when AIs have finished turns.
 
+SAVE_GAME_IN_PROGRESS
+A save game is in progress.
+
+ABORT_SAVE_AND_RESET
+Return to Main Menu without saving.
+
+ABORT_SAVE_AND_EXIT
+Exit FreeOrion without saving.
+
 EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS
 You do not control an empire and cannot issue orders.
 
@@ -1253,6 +1262,18 @@ Toggles whether to draw circles around systems.
 
 OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE
 Sets size of circles around systems on map, relative to system icon size.
+
+OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH
+Sets the line width of the inner system circle when the map is zoomed in.
+
+OPTIONS_DB_UI_SYSTEM_OUTER_CIRCLE_WIDTH
+Sets the line width of the outer system circle.
+
+OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_MAX_WIDTH
+Sets the line width of the inner system circle when the map is zoomed out.
+
+OPTIONS_DB_UI_SYSTEM_CIRCLE_DISTANCE
+Sets the distance (in pixels) between the inner and outer system circles at close zoom.
 
 OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY
 Show a different MapWindow mouseover overlay for systems that the player's empire has not yet explored.
@@ -2799,8 +2820,9 @@ PL_OUTPOST
 Place Outpost
 
 # %1% number of ground troops that will be deployed on the planet.
+# %2% number of defending troops present on planet
 PL_INVADE
-Invade (+%1%)
+Invade (+%1% / %2%)
 
 PL_CANCEL_INVADE
 Cancel Invasion
@@ -9194,6 +9216,12 @@ DESC_OWNER_HAS_SHIP_DESIGN
 
 DESC_OWNER_HAS_SHIP_DESIGN_NOT
 ''' ship design not unlocked for empire'''
+
+DESC_OWNER_HAS_SHIP_PART
+''' ship part unlocked for empire'''
+
+DESC_OWNER_HAS_SHIP_PART_NOT
+''' ship part not unlocked for empire'''
 
 # %1% FIXME
 # %2% FIXME

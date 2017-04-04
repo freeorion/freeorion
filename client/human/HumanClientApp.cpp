@@ -33,6 +33,7 @@
 #include "../../parse/Parse.h"
 
 #include <GG/BrowseInfoWnd.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/Cursor.h>
 #include <GG/utf8/checked.h>
 
@@ -193,7 +194,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     m_game_started(false),
     m_connected(false),
     m_auto_turns(0),
-    m_have_window_focus(true)
+    m_have_window_focus(true),
+    m_save_game_in_progress(false)
 {
 #ifdef ENABLE_CRASH_BACKTRACE
     signal(SIGSEGV, SigHandler);
@@ -581,9 +583,16 @@ void HumanClientApp::CancelMultiplayerGameFromLobby()
 { m_fsm->process_event(CancelMPGameClicked()); }
 
 void HumanClientApp::SaveGame(const std::string& filename) {
+    m_save_game_in_progress = true;
     Message response_msg;
     m_networking->SendMessage(HostSaveGameInitiateMessage(PlayerID(), filename));
     DebugLogger() << "HumanClientApp::SaveGame sent save initiate message to server...";
+}
+
+void HumanClientApp::SaveGameCompleted() {
+    DebugLogger() << "HumanClientApp::SaveGameCompleted by server.";
+    m_save_game_in_progress = false;
+    SaveGameCompletedSignal();
 }
 
 void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
@@ -1116,18 +1125,45 @@ void HumanClientApp::ResetClientData() {
     GetCombatLogManager().Clear();
 }
 
-void HumanClientApp::ResetToIntro() {
-    DebugLogger() << "HumanClientApp::ResetToIntro";
-    m_game_started = false;
-    m_fsm->process_event(StartQuittingGame(true, m_server_process));
-    return;
+namespace {
+    // Ask the player if they want to wait for the save game to complete
+    // The dialog automatically closes if the save completes while the user is waiting
+    class SaveGamePendingDialog : public GG::ThreeButtonDlg {
+        public:
+        SaveGamePendingDialog(bool reset, boost::signals2::signal<void()>& save_completed_signal) :
+            GG::ThreeButtonDlg(
+                GG::X(320), GG::Y(200), UserString("SAVE_GAME_IN_PROGRESS"),
+                ClientUI::GetFont(ClientUI::Pts()+2),
+                ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
+                ClientUI::CtrlColor(), ClientUI::TextColor(), 1,
+                (reset ? UserString("ABORT_SAVE_AND_RESET") : UserString("ABORT_SAVE_AND_EXIT")))
+        { GG::Connect(save_completed_signal, &SaveGamePendingDialog::SaveCompletedHandler, this); }
+
+        void SaveCompletedHandler() {
+            DebugLogger() << "SaveGamePendingDialog::SaveCompletedHandler save game completed handled.";
+            m_done = true;
+        }
+    };
 }
 
-void HumanClientApp::ExitApp() {
-    DebugLogger() << "HumanClientApp::ExitApp";
+void HumanClientApp::ResetToIntro()
+{ ResetOrExitApp(true); }
+
+void HumanClientApp::ExitApp()
+{ ResetOrExitApp(false); }
+
+void HumanClientApp::ResetOrExitApp(bool reset) {
+    DebugLogger() << (reset ? "HumanClientApp::ResetToIntro" : "HumanClientApp::ExitApp");
+
     m_game_started = false;
 
-    m_fsm->process_event(StartQuittingGame(false, m_server_process));
+    if (m_save_game_in_progress) {
+        DebugLogger() << "save game in progress. Checking with player.";
+        auto dlg = SaveGamePendingDialog(reset, this->SaveGameCompletedSignal);
+        dlg.Run();
+    }
+
+    m_fsm->process_event(StartQuittingGame(reset, m_server_process));
 }
 
 void HumanClientApp::InitAutoTurns(int auto_turns) {
