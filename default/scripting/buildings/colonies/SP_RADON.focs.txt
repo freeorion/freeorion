@@ -1,0 +1,116 @@
+BuildingType
+    name = "BLD_COL_RADON"
+    description = "BLD_COL_RADON_DESC"
+    buildcost = 50 * [[COLONY_UPKEEP_MULTIPLICATOR]]
+    buildtime = 1.0 * max(5.0, 1.0 +
+        (Statistic Min Value = ShortestPath Object = Target.SystemID Object = LocalCandidate.SystemID
+            Condition = And [
+                Planet
+                OwnedBy empire = Source.Owner
+                Species name = "SP_RADON"
+                Population low = [[MIN_RECOLONIZING_SIZE]]
+                Happiness low = 5
+                ResourceSupplyConnected empire = Source.Owner condition = Target
+            ]
+        ) / (60
+             + 20 * (Statistic If Condition = Or [
+                 OwnerHasTech name = "SHP_MIL_ROBO_CONT"
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (Statistic If Condition = Or [
+                 OwnerHasTech name = "SHP_ORG_HULL"
+                 OwnerHasTech name = "SHP_QUANT_ENRG_MAG"
+             ])
+             + 20 * (Statistic If Condition = OwnerHasTech name = "SHP_QUANT_ENRG_MAG")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_IMPROVED_ENGINE_COUPLINGS")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_N_DIMENSIONAL_ENGINE_MATRIX")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_SINGULARITY_ENGINE_CORE")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_TRANSSPACE_DRIVE")
+             + 10 * (Statistic If Condition = OwnerHasTech name = "SHP_INTSTEL_LOG")
+        )
+    )
+    tags = [ "SP_RADON" ]
+    location = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_RADON"
+        Not Contains Building name = "BLD_COL_RADON"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_RADON"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    EnqueueLocation = And [
+        Planet
+        OwnedBy empire = Source.Owner
+        Population high = 0
+        Not Planet environment = Uninhabitable species = "SP_RADON"
+        Not Contains Building name = "BLD_COL_RADON"
+        Not Enqueued type = Building name = "BLD_COL_RADON"
+        ResourceSupplyConnected empire = Source.Owner condition = And [
+            Planet
+            OwnedBy empire = Source.Owner
+            Species name = "SP_RADON"
+            Population low = [[MIN_RECOLONIZING_SIZE]]
+            Happiness low = 5
+        ]
+    ]
+    effectsgroups = [
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                Not OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_RADON"
+                SetPopulation value = 1
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = And [
+                OwnerHasTech name = "GRO_LIFECYCLE_MAN"
+                Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            ]
+            effects = [
+                SetSpecies name = "SP_RADON"
+                SetPopulation value = [[MIN_RECOLONIZING_SIZE]]
+            ]
+        EffectsGroup
+            scope = And [
+                Object id = Source.PlanetID
+                Planet
+            ]
+            activation = Turn low = Source.CreationTurn + 1 high = Source.CreationTurn + 1
+            effects = [
+                GenerateSitRepMessage
+                    message = "SITREP_NEW_COLONY_ESTABLISHED"
+                    label = "SITREP_NEW_COLONY_ESTABLISHED_LABEL"
+                    icon = "icons/species/robotic-05.png"
+                    parameters = [
+                        tag = "species" data = "SP_RADON"
+                        tag = "planet" data = Target.ID
+                    ]
+                    empire = Source.Owner
+            ]
+        EffectsGroup
+            scope = Source
+            activation = Turn low = Source.CreationTurn + 2
+            effects = Destroy
+    ]
+    icon = "icons/species/robotic-05.png"
+
+#include "/scripting/common/misc.macros"
+
+#include "/scripting/common/upkeep.macros"

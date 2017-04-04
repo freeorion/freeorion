@@ -1,13 +1,12 @@
 Species
-    name = "SP_SCYLIOR"
-    description = "SP_SCYLIOR_DESC"
-    gameplay_description = "SP_SCYLIOR_GAMEPLAY_DESC"
+    name = "SP_RADON"
+    description = "SP_RADON_DESC"
+    gameplay_description = "SP_RADON_GAMEPLAY_DESC"
     Playable
-    //Native
     CanProduceShips
     CanColonize
 
-    tags = [ "ORGANIC" "GREAT_RESEARCH" "GOOD_POPULATION" "AVERAGE_SUPPLY" "PEDIA_ORGANIC_SPECIES_CLASS" ]
+    tags = [ "ROBOTIC" "GOOD_INDUSTRY" "BAD_RESEARCH" "AVERAGE_SUPPLY" ]
 
     foci = [
         [[HAS_INDUSTRY_FOCUS]]
@@ -16,26 +15,27 @@ Species
         [[HAS_ADVANCED_FOCI]]
     ]
 
-    preferredfocus = "FOCUS_RESEARCH"
+    preferredfocus = "FOCUS_INDUSTRY"
 
     effectsgroups = [
-        [[AVERAGE_INDUSTRY]]
-        [[GREAT_RESEARCH]]
+        [[GOOD_INDUSTRY]]
+        [[BAD_RESEARCH]]
 
-        [[GOOD_POPULATION]]
+        [[AVERAGE_POPULATION]]
         [[AVERAGE_HAPPINESS]]
         [[AVERAGE_SUPPLY]]
-        [[AVERAGE_DEFENSE_TROOPS]]
+        [[GOOD_DEFENSE_TROOPS]]
 
         // not for description
         [[AVERAGE_PLANETARY_SHIELDS]]
         [[AVERAGE_PLANETARY_DEFENSE]]
+        [[LARGE_PLANET]]
         [[STANDARD_SHIP_SHIELDS]]
     ]
 
-    [[OCEAN_STANDARD_EP]]
+    [[RADIATED_STANDARD_EP]]
 
-    graphic = "icons/species/scylior.png"
+    graphic = "icons/species/robotic-05.png"
 
 #include "common/*.macros"
 

@@ -1,0 +1,9 @@
+Tech
+    name = "TECH_COL_RADON"
+    description = "TECH_COL_MISIORLA_DESC"
+    short_description = "EXTINCT_UNLOCK_SHORT_DESC"
+    category = "SPY_CATEGORY"
+    researchcost = 1
+    researchturns = 1
+    unlock = Item type = Building name = "BLD_COL_RADON"
+    graphic = "icons/species/misiorla.png"
