@@ -2,5 +2,4 @@ COLONY_UPKEEP_MULTIPLICATOR
 '''(1 + 0.06 * SpeciesColoniesOwned empire = Source.Owner)'''
 
 FLEET_UPKEEP_MULTIPLICATOR
-'''(1 + 0.01 * ShipDesignsOwned empire = Source.Owner)'''
-
+'''(1 + (0.002 * ShipPartsOwned empire = Source.Owner class = ShortRange) + (0.002 * ShipPartsOwned empire = Source.Owner class = FighterHangar) + (0.002 * ShipPartsOwned empire = Source.Owner class = Armour) + (0.002 * ShipPartsOwned empire = Source.Owner class = Troops) + (0.002 * ShipDesignsOwned))'''
