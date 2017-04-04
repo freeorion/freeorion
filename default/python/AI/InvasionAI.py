@@ -21,6 +21,7 @@ from AIDependencies import INVALID_ID
 
 MAX_BASE_TROOPERS_GOOD_INVADERS = 20
 MAX_BASE_TROOPERS_POOR_INVADERS = 10
+_TROOPS_SAFETY_MARGIN = 1  # try to send this amount of additional troops to account for uncertainties in calculation
 
 invasion_timer = AITimer('get_invasion_fleets()', write_log=False)
 
@@ -442,7 +443,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         # We are in trouble anyway, so just calculate whatever approximation...
         build_time = 4
         planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
-        troop_cost = math.ceil(planned_troops / 6.0) * 20 * FleetUtilsAI.get_fleet_upkeep()
+        planned_troops += .01  # we must attack with more troops than there are defenders
+        troop_cost = math.ceil((planned_troops+_TROOPS_SAFETY_MARGIN) / 6.0) * 20 * FleetUtilsAI.get_fleet_upkeep()
     else:
         loc = locs[0]
         species_here = universe.getPlanet(loc).speciesName
@@ -452,7 +454,8 @@ def evaluate_invasion_planet(planet_id, secure_fleet_missions, verbose=True):
         troops_per_ship = CombatRatingsAI.weight_attack_troops(design.troopCapacity,
                                                                CombatRatingsAI.get_species_troops_grade(species_here))
         planned_troops = troops if system_secured else min(troops + max_jumps + build_time, max_troops)
-        ships_needed = math.ceil(planned_troops / float(troops_per_ship))
+        planned_troops += .01  # we must attack with more troops than there are defenders
+        ships_needed = math.ceil((planned_troops+_TROOPS_SAFETY_MARGIN) / float(troops_per_ship))
         troop_cost = ships_needed * cost_per_ship  # fleet upkeep is already included in query from server
 
     # apply some bias to expensive operations
@@ -494,7 +497,7 @@ def send_invasion_fleets(fleet_ids, evaluated_planets, mission_type):
         found_fleets = []
         found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': ptroops}
-        target_stats = {'rating': 10, 'troopCapacity': ptroops+1}
+        target_stats = {'rating': 10, 'troopCapacity': ptroops + _TROOPS_SAFETY_MARGIN}
         these_fleets = FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
                                                            starting_system=sys_id, fleet_pool_set=invasion_fleet_pool,
                                                            fleet_list=found_fleets)
@@ -555,7 +558,7 @@ def assign_invasion_bases():
         troops_needed = max(0, target_troops - FleetUtilsAI.count_troops_in_fleet(fid))
         found_stats = {}
         min_stats = {'rating': 0, 'troopCapacity': troops_needed}
-        target_stats = {'rating': 10, 'troopCapacity': troops_needed}
+        target_stats = {'rating': 10, 'troopCapacity': troops_needed + _TROOPS_SAFETY_MARGIN}
 
         FleetUtilsAI.get_fleets_for_mission(target_stats, min_stats, found_stats,
                                             starting_system=sys_id, fleet_pool_set=local_base_troops,
