@@ -1230,6 +1230,18 @@ Sets bar color of progress bars in the tech tree.
 OPTIONS_DB_UI_TECH_PROGRESS
 Sets background color of progress bars in the tech tree.
 
+OPTIONS_DB_UI_TECH_TREE_STATUS_UNRESEARCHABLE
+Stores the tech tree control filter unresearchable status.
+
+OPTIONS_DB_UI_TECH_TREE_STATUS_HAS_RESEARCHED_PREREQ
+Stores the tech tree control filter has researched prereq status.
+
+OPTIONS_DB_UI_TECH_TREE_STATUS_RESEARCHABLE
+Stores the tech tree control filter researchable status.
+
+OPTIONS_DB_UI_TECH_TREE_STATUS_COMPLETED
+Stores the tech tree control filter completed status.
+
 OPTIONS_DB_UI_SCROLL_WIDTH
 Sets UI scroll width.
 

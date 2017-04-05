@@ -58,6 +58,20 @@ namespace {
                default_pts * 12,        StepValidator<int>(1));
         db.Add("UI.research.listbox.column-widths.description", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
                default_pts * 18,        StepValidator<int>(1));
+
+        // Default status for TechTreeControl filter.
+        db.Add<bool>("UI.research.tech-tree-control.status.unresearchable",
+                     UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_UNRESEARCHABLE"),
+                     false,        Validator<bool>());
+        db.Add<bool>("UI.research.tech-tree-control.status.has_researched_prereq",
+                     UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_HAS_RESEARCHED_PREREQ"),
+                     true,         Validator<bool>());
+        db.Add<bool>("UI.research.tech-tree-control.status.researchable",
+                     UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_RESEARCHABLE"),
+                     true,         Validator<bool>());
+        db.Add<bool>("UI.research.tech-tree-control.status.completed",
+                     UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_COMPLETED"),
+                     true,         Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -282,28 +296,32 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
                                                               std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "01_locked.png", true)), icon_color));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_LOCKED"), ""));
     m_status_buttons[TS_UNRESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
-    m_status_buttons[TS_UNRESEARCHABLE]->SetCheck(false);
+    m_status_buttons[TS_UNRESEARCHABLE]->SetCheck(
+        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.unresearchable"));
     AttachChild(m_status_buttons[TS_UNRESEARCHABLE]);
 
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                                                      std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "02_partial.png", true)), icon_color));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
-    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(true);
+    m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(
+        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
     AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
 
     m_status_buttons[TS_RESEARCHABLE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                                             std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "03_unlocked.png", true)), icon_color));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_RESEARCHABLE"), ""));
     m_status_buttons[TS_RESEARCHABLE]->SetBrowseModeTime(tooltip_delay);
-    m_status_buttons[TS_RESEARCHABLE]->SetCheck(true);
+    m_status_buttons[TS_RESEARCHABLE]->SetCheck(
+        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
     AttachChild(m_status_buttons[TS_RESEARCHABLE]);
 
     m_status_buttons[TS_COMPLETE] = new GG::StateButton("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
                                                         std::make_shared<CUIIconButtonRepresenter>(std::make_shared<GG::SubTexture>(ClientUI::GetTexture(icon_dir / "04_completed.png", true)), icon_color));
     m_status_buttons[TS_COMPLETE]->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("TECH_WND_STATUS_COMPLETED"), ""));
     m_status_buttons[TS_COMPLETE]->SetBrowseModeTime(tooltip_delay);
-    m_status_buttons[TS_COMPLETE]->SetCheck(true);
+    m_status_buttons[TS_COMPLETE]->SetCheck(
+        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.completed"));
     AttachChild(m_status_buttons[TS_COMPLETE]);
 
     // create button to switch between tree and list views
@@ -2021,10 +2039,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     {
         TechStatus tech_status = status_button.first;
         GG::Connect(status_button.second->CheckedSignal, [this, tech_status](bool checked) {
-            if(checked)
-                this->ShowStatus(tech_status);
-            else
-                this->HideStatus(tech_status);
+            this->SetTechStatus(tech_status, checked);
         });
     }
 
@@ -2036,10 +2051,10 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     //long time and generates errors, but is never seen by the user.
     if (!m_init_flag) {
         ShowAllCategories();
-        ShowStatus(TS_RESEARCHABLE);
-        ShowStatus(TS_HAS_RESEARCHED_PREREQ);
-        ShowStatus(TS_COMPLETE);
-        // leave unresearchable hidden by default
+        SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.completed"));
+        SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.unresearchable"));
+        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
+        SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
     }
 
     ShowTreeView();
@@ -2107,10 +2122,10 @@ void TechTreeWnd::Show(bool children) {
     if (m_init_flag) {
         m_init_flag = false;
         ShowAllCategories();
-        ShowStatus(TS_RESEARCHABLE);
-        ShowStatus(TS_HAS_RESEARCHED_PREREQ);
-        ShowStatus(TS_COMPLETE);
-        // leave unresearchable hidden by default
+        SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.completed"));
+        SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.unresearchable"));
+        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
+        SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
     }
 }
 
@@ -2160,14 +2175,32 @@ void TechTreeWnd::ToggleAllCategories() {
         ShowAllCategories();
 }
 
-void TechTreeWnd::ShowStatus(TechStatus status) {
-    m_layout_panel->ShowStatus(status);
-    m_tech_list->ShowStatus(status);
-}
+void TechTreeWnd::SetTechStatus(const TechStatus status, const bool state) {
+    switch (status) {
+    case TS_UNRESEARCHABLE:
+        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.unresearchable", state);
+        break;
+    case TS_HAS_RESEARCHED_PREREQ:
+        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.has_researched_prereq", state);
+        break;
+    case TS_RESEARCHABLE:
+        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.researchable", state);
+        break;
+    case TS_COMPLETE:
+        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.completed", state);
+        break;
+    default:
+        ; // do nothing
+    }
+    GetOptionsDB().Commit();
 
-void TechTreeWnd::HideStatus(TechStatus status) {
-    m_layout_panel->HideStatus(status);
-    m_tech_list->HideStatus(status);
+    if (state) {
+        m_layout_panel->ShowStatus(status);
+        m_tech_list->ShowStatus(status);
+    } else {
+        m_layout_panel->HideStatus(status);
+        m_tech_list->HideStatus(status);
+    }
 }
 
 void TechTreeWnd::ToggleViewType(bool show_list_view)
@@ -2197,7 +2230,7 @@ void TechTreeWnd::CenterOnTech(const std::string& tech_name) {
     if (!tech) return;
     const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (empire)
-        ShowStatus(empire->GetTechStatus(tech_name));
+        SetTechStatus(empire->GetTechStatus(tech_name), true);
     ShowCategory(tech->Category());
 
     // centre on it
