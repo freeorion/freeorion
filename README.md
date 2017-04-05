@@ -7,10 +7,9 @@ FreeOrion is inspired by the tradition of the Master of Orion games, but does
 not try to be a clone or remake of that series or any other game.  It builds
 on the classic *4X* (eXplore, eXpand, eXploit and eXterminate) model.
 
-While its modular, Open Source design allows for a significant degree of
-customization of the game engine and the story elements by the community, the
-FreeOrion project is dedicated to the construction of a living, breathing
-universe in a *grand campaign* model.
+By adding scripting capabilities to the game engine the FreeOrion project aims
+to give the community an easy way to customize the game mechanics and
+presentation to create a living, breathing universe in a *grand campaign* model.
 
 
 ## Requirements
