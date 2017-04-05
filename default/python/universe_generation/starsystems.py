@@ -58,6 +58,7 @@ def name_planets(system):
         name = fo.user_string("NEW_PLANET_NAME")
         name = name.replace("%1%", sys_name)
         name = name.replace("%2%", fo.planet_cardinal_suffix(planet))
+        name = name.strip()
         fo.set_name(planet, name)
 
 
