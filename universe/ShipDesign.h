@@ -14,6 +14,7 @@
 #include <boost/variant.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/uuid/uuid.hpp>
 
 #include "EnumsFwd.h"
 
@@ -111,6 +112,7 @@ public:
     /** \name Accessors */ //@{
     const std::string&      Name() const            { return m_name; };             ///< returns name of part
     const std::string&      Description() const     { return m_description; }       ///< returns description string, generally a UserString key.
+
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
     float                   Capacity() const;
     std::string             CapacityDescription() const;                            ///< returns a translated description of the part capacity, with numeric value
@@ -432,6 +434,11 @@ public:
     const std::string&              Name(bool stringtable_lookup = true) const;
     void                            SetName(const std::string& name);
 
+    /** Return the UUID. */
+    boost::uuids::uuid              UUID() const { return m_uuid; }
+    /** Set the UUID. */
+    void                            SetUUID(const boost::uuids::uuid& uuid);
+
     /** returns description of design.  if \a stringtable_lookup is true and
       * the design was constructed specifying name_desc_in_stringtable true,
       * the description string is looked up in the stringtable before being
@@ -519,6 +526,7 @@ private:
 
     std::string                 m_name;
     std::string                 m_description;
+    boost::uuids::uuid          m_uuid;
 
     int                         m_designed_on_turn;
     int                         m_designed_by_empire;

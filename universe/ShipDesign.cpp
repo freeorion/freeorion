@@ -18,6 +18,7 @@
 
 #include <cfloat>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/uuid/uuid_generators.hpp>
 
 extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
 
@@ -522,6 +523,7 @@ HullTypeManager::iterator HullTypeManager::end() const
 ShipDesign::ShipDesign() :
     m_name(),
     m_description(),
+    m_uuid(boost::uuids::random_generator()()),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
     m_designed_by_empire(ALL_EMPIRES),
     m_hull(),
@@ -539,6 +541,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
                        bool name_desc_in_stringtable, bool monster) :
     m_name(name),
     m_description(description),
+    m_uuid(boost::uuids::random_generator()()),
     m_designed_on_turn(designed_on_turn),
     m_designed_by_empire(designed_by_empire),
     m_hull(hull),
@@ -572,6 +575,10 @@ void ShipDesign::SetName(const std::string& name) {
     if (m_name != "") {
         m_name = name;
     }
+}
+
+void ShipDesign::SetUUID(const boost::uuids::uuid& uuid) {
+    m_uuid = (m_uuid == boost::uuids::uuid{{0}}) ? boost::uuids::random_generator()() : uuid;
 }
 
 const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */) const {
