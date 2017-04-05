@@ -393,6 +393,7 @@ class AIFleetMission(object):
                             self.clear_fleet_orders()
                             self.clear_target()
                             return
+                break  # do not order the next order until this one is finished.
         else:  # went through entire order list
             if order_completed:
                 print "Final order is completed"
