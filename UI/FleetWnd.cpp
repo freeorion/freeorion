@@ -1058,6 +1058,7 @@ class FleetDataPanel : public GG::Control {
 public:
     FleetDataPanel(GG::X w, GG::Y h, int fleet_id);
     FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_drop_target);
+    ~FleetDataPanel();
 
     /** Upper left plus border insets. */
     GG::Pt ClientUpperLeft() const override;
@@ -1161,6 +1162,16 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
 {
     RequirePreRender();
     SetChildClippingMode(ClipToClient);
+}
+
+FleetDataPanel::~FleetDataPanel() {
+    for (auto& entry : m_stat_icons) {
+        const auto& icon = entry.second;
+
+        // Some of the icons may not be currently attached.
+        DetachChild(icon);
+        delete icon;
+    }
 }
 
 GG::Pt FleetDataPanel::ClientUpperLeft() const
@@ -1531,32 +1542,76 @@ void FleetDataPanel::SetStatIconValues() {
         min_fuel = *std::min_element(fuels.begin(), fuels.end());
     if (!speeds.empty())
         min_speed = *std::min_element(speeds.begin(), speeds.end());
+
     for (std::pair<MeterType, StatisticIcon*> entry : m_stat_icons) {
         MeterType stat_name = entry.first;
-        if (stat_name == METER_SPEED)
-            entry.second->SetValue(min_speed);
-        else if (stat_name == METER_FUEL)
-            entry.second->SetValue(min_fuel);
-        else if (stat_name == METER_SHIELD)
-            entry.second->SetValue(shield_tally/ship_count);
-        else if (stat_name == METER_STRUCTURE)
-            entry.second->SetValue(structure_tally);
-        else if (stat_name == METER_CAPACITY)
-            entry.second->SetValue(damage_tally);
-        else if (stat_name == METER_SECONDARY_STAT)
-            entry.second->SetValue(fighters_tally);
-        else if (stat_name == METER_POPULATION)
-            entry.second->SetValue(colony_tally);
-        else if (stat_name == METER_SIZE)
-            entry.second->SetValue(ship_count);
-        else if (stat_name == METER_TROOPS)
-            entry.second->SetValue(troops_tally);
-        else if (stat_name == METER_INDUSTRY)
-            entry.second->SetValue(fleet->ResourceOutput(RE_INDUSTRY));
-        else if (stat_name == METER_RESEARCH)
-            entry.second->SetValue(fleet->ResourceOutput(RE_RESEARCH));
-        else if (stat_name == METER_TRADE)
-            entry.second->SetValue(fleet->ResourceOutput(RE_TRADE));
+        const auto& icon = entry.second;
+        DetachChild(icon);
+        switch(stat_name) {
+        case METER_SIZE:
+            icon->SetValue(ship_count);
+            AttachChild(icon);
+            break;
+        case METER_CAPACITY:
+            icon->SetValue(damage_tally);
+            if (fleet->HasArmedShips())
+                AttachChild(icon);
+            break;
+        case METER_SECONDARY_STAT:
+            icon->SetValue(fighters_tally);
+            if (fleet->HasFighterShips())
+                AttachChild(icon);
+            break;
+        case METER_TROOPS:
+            icon->SetValue(troops_tally);
+            if (fleet->HasTroopShips())
+                AttachChild(icon);
+            break;
+        case METER_POPULATION:
+            icon->SetValue(colony_tally);
+            if (fleet->HasColonyShips())
+                AttachChild(icon);
+            break;
+        case METER_INDUSTRY: {
+            const auto resource_output = fleet->ResourceOutput(RE_INDUSTRY);
+            icon->SetValue(resource_output);
+            if (resource_output > 0.0f)
+                AttachChild(icon);
+        }
+            break;
+        case METER_RESEARCH: {
+            const auto resource_output = fleet->ResourceOutput(RE_RESEARCH);
+            icon->SetValue(resource_output);
+            if (resource_output > 0.0f)
+                AttachChild(icon);
+        }
+            break;
+        case METER_TRADE: {
+            const auto resource_output = fleet->ResourceOutput(RE_TRADE);
+            icon->SetValue(resource_output);
+            if (resource_output > 0.0f)
+                AttachChild(icon);
+        }
+            break;
+        case METER_STRUCTURE:
+            icon->SetValue(structure_tally);
+            AttachChild(icon);
+            break;
+        case METER_SHIELD:
+            icon->SetValue(shield_tally/ship_count);
+            AttachChild(icon);
+            break;
+        case METER_FUEL:
+            icon->SetValue(min_fuel);
+            AttachChild(icon);
+            break;
+        case METER_SPEED:
+            icon->SetValue(min_speed);
+            AttachChild(icon);
+            break;
+        default:
+            break;
+        }
     }
 }
 
@@ -1627,6 +1682,8 @@ void FleetDataPanel::DoLayout() {
     // position stat icons, centering them vertically if there's more space than required
     GG::Pt icon_ul = GG::Pt(name_ul.x, LabelHeight() + std::max(GG::Y0, (ClientHeight() - LabelHeight() - StatIconSize().y) / 2));
     for (std::pair<MeterType, StatisticIcon*>& entry : m_stat_icons) {
+        if (entry.second->Parent() != this)
+            continue;
         entry.second->SizeMove(icon_ul, icon_ul + StatIconSize());
         icon_ul.x += StatIconSize().x;
     }
@@ -1660,21 +1717,13 @@ void FleetDataPanel::Init() {
 
         std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
         meters_icons_browsetext.emplace_back(METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY");
-        if (fleet->HasArmedShips())
-            meters_icons_browsetext.emplace_back(METER_CAPACITY, DamageIcon(), "FW_FLEET_DAMAGE_SUMMARY");
-        if (fleet->HasFighterShips())
-            meters_icons_browsetext.emplace_back(METER_SECONDARY_STAT, FightersIcon(), "FW_FLEET_FIGHTER_SUMMARY");
-        if (fleet->HasTroopShips())
-            meters_icons_browsetext.emplace_back(METER_TROOPS, TroopIcon(), "FW_FLEET_TROOP_SUMMARY");
-        if (fleet->HasColonyShips())
-            meters_icons_browsetext.emplace_back(METER_POPULATION, ColonyIcon(), "FW_FLEET_COLONY_SUMMARY");
-        if (fleet->ResourceOutput(RE_INDUSTRY) > 0.0f)
-            meters_icons_browsetext.emplace_back(METER_INDUSTRY, IndustryIcon(), "FW_FLEET_INDUSTRY_SUMMARY");
-        if (fleet->ResourceOutput(RE_RESEARCH) > 0.0f)
-            meters_icons_browsetext.emplace_back(METER_RESEARCH, ResearchIcon(), "FW_FLEET_RESEARCH_SUMMARY");
-        if (fleet->ResourceOutput(RE_TRADE) > 0.0f)
-            meters_icons_browsetext.emplace_back(METER_TRADE, TradeIcon(), "FW_FLEET_TRADE_SUMMARY");
-
+        meters_icons_browsetext.emplace_back(METER_CAPACITY, DamageIcon(), "FW_FLEET_DAMAGE_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_SECONDARY_STAT, FightersIcon(), "FW_FLEET_FIGHTER_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_TROOPS, TroopIcon(), "FW_FLEET_TROOP_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_POPULATION, ColonyIcon(), "FW_FLEET_COLONY_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_INDUSTRY, IndustryIcon(), "FW_FLEET_INDUSTRY_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_RESEARCH, ResearchIcon(), "FW_FLEET_RESEARCH_SUMMARY");
+        meters_icons_browsetext.emplace_back(METER_TRADE, TradeIcon(), "FW_FLEET_TRADE_SUMMARY");
         meters_icons_browsetext.emplace_back(METER_STRUCTURE, ClientUI::MeterIcon(METER_STRUCTURE), "FW_FLEET_STRUCTURE_SUMMARY");
         meters_icons_browsetext.emplace_back(METER_SHIELD, ClientUI::MeterIcon(METER_SHIELD), "FW_FLEET_SHIELD_SUMMARY");
         meters_icons_browsetext.emplace_back(METER_FUEL, ClientUI::MeterIcon(METER_FUEL), "FW_FLEET_FUEL_SUMMARY");
