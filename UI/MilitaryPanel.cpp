@@ -41,16 +41,27 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
 
     GG::Connect(m_expand_button->LeftClickedSignal, &MilitaryPanel::ExpandCollapseButtonPressed, this);
 
+    const auto obj = GetUniverseObject(m_planet_id);
+    if (!obj) {
+        ErrorLogger() << "Invalid object id " << m_planet_id;
+        return;
+    }
+
     // small meter indicators - for use when panel is collapsed
-    m_meter_stats.push_back({METER_SHIELD, new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 3, false,
+    m_meter_stats.push_back({METER_SHIELD, new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD),
+                                                             obj->InitialMeterValue(METER_SHIELD), 3, false,
                                                              GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
-    m_meter_stats.push_back({METER_DEFENSE, new StatisticIcon(ClientUI::MeterIcon(METER_DEFENSE), 0, 3, false,
+    m_meter_stats.push_back({METER_DEFENSE, new StatisticIcon(ClientUI::MeterIcon(METER_DEFENSE),
+                                                              obj->InitialMeterValue(METER_DEFENSE), 3, false,
                                                               GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
-    m_meter_stats.push_back({METER_TROOPS, new StatisticIcon(ClientUI::MeterIcon(METER_TROOPS), 0, 3, false,
+    m_meter_stats.push_back({METER_TROOPS, new StatisticIcon(ClientUI::MeterIcon(METER_TROOPS),
+                                                             obj->InitialMeterValue(METER_TROOPS), 3, false,
                                                              GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
-    m_meter_stats.push_back({METER_DETECTION, new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false,
+    m_meter_stats.push_back({METER_DETECTION, new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION),
+                                                                obj->InitialMeterValue(METER_DETECTION), 3, false,
                                                                 GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
-    m_meter_stats.push_back({METER_STEALTH, new StatisticIcon(ClientUI::MeterIcon(METER_STEALTH), 0, 3, false,
+    m_meter_stats.push_back({METER_STEALTH, new StatisticIcon(ClientUI::MeterIcon(METER_STEALTH),
+                                                              obj->InitialMeterValue(METER_STEALTH), 3, false,
                                                               GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
 
     // meter and production indicators
@@ -161,6 +172,14 @@ void MilitaryPanel::Update() {
 }
 
 void MilitaryPanel::Refresh() {
+    for (auto& meter_stat : m_meter_stats)
+        meter_stat.second->RequirePreRender();
+
+    RequirePreRender();
+}
+
+void MilitaryPanel::PreRender() {
+    AccordionPanel::PreRender();
     Update();
     DoLayout();
 }
@@ -183,16 +202,19 @@ void MilitaryPanel::DoLayout() {
     if (!s_expanded_map[m_planet_id]) {
         // position and reattach icons to be shown
         int n = 0;
+        GG::X stride = MeterIconSize().x * 7/2;
         for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
-            GG::X x = MeterIconSize().x*n*7/2;
-
-            if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
+            GG::X x = n * stride;
 
             StatisticIcon* icon = meter_stat.second;
-            AttachChild(icon);
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
             icon->SizeMove(icon_ul, icon_lr);
+
+            if (x + icon->MinUsableSize().x >= ClientWidth())
+                break;
+
+            AttachChild(icon);
             icon->Show();
 
             n++;
@@ -215,8 +237,6 @@ void MilitaryPanel::DoLayout() {
 
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->Bottom() + EDGE_PAD - top));
     }
-
-    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
 
     SetCollapsed(!s_expanded_map[m_planet_id]);
 }

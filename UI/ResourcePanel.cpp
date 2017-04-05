@@ -46,18 +46,28 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
 
     GG::Connect(m_expand_button->LeftClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
 
+    const auto obj = GetUniverseObject(m_rescenter_id);
+    if (!obj) {
+        ErrorLogger() << "Invalid object id " << m_rescenter_id;
+        return;
+    }
+
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.push_back(
-        std::make_pair(METER_INDUSTRY, new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
+        std::make_pair(METER_INDUSTRY, new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY),
+                                                         obj->InitialMeterValue(METER_INDUSTRY), 3, false,
                                                          GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_RESEARCH, new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
+        std::make_pair(METER_RESEARCH, new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH),
+                                                         obj->InitialMeterValue(METER_RESEARCH), 3, false,
                                                          GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_TRADE, new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
+        std::make_pair(METER_TRADE, new StatisticIcon(ClientUI::MeterIcon(METER_TRADE),
+                                                      obj->InitialMeterValue(METER_TRADE), 3, false,
                                                       GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY), 0, 3, false,
+        std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY),
+                                                       obj->InitialMeterValue(METER_SUPPLY), 3, false,
                                                        GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
 
     // meter and production indicators
@@ -95,7 +105,7 @@ void ResourcePanel::ExpandCollapse(bool expanded) {
     if (expanded == s_expanded_map[m_rescenter_id]) return; // nothing to do
     s_expanded_map[m_rescenter_id] = expanded;
 
-    DoLayout();
+    RequirePreRender();
 }
 
 bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
@@ -194,6 +204,14 @@ void ResourcePanel::Update() {
 }
 
 void ResourcePanel::Refresh() {
+    for (auto& meter_stat : m_meter_stats)
+        meter_stat.second->RequirePreRender();
+
+    RequirePreRender();
+}
+
+void ResourcePanel::PreRender() {
+    AccordionPanel::PreRender();
     Update();
     DoLayout();
 }
@@ -216,16 +234,19 @@ void ResourcePanel::DoLayout() {
     if (!s_expanded_map[m_rescenter_id]) {
         // position and reattach icons to be shown
         int n = 0;
+        GG::X stride = MeterIconSize().x * 7/2;
         for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
-            GG::X x = MeterIconSize().x*n*7/2;
-
-            if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
+            GG::X x = n * stride;
 
             StatisticIcon* icon = meter_stat.second;
-            AttachChild(icon);
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
             icon->SizeMove(icon_ul, icon_lr);
+
+            if (x + icon->MinUsableSize().x >= ClientWidth())
+                break;
+
+            AttachChild(icon);
             icon->Show();
 
             n++;
@@ -248,8 +269,6 @@ void ResourcePanel::DoLayout() {
 
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->Bottom() + EDGE_PAD - top));
     }
-
-    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
 
     SetCollapsed(!s_expanded_map[m_rescenter_id]);
 }

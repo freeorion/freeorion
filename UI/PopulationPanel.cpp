@@ -41,15 +41,24 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
 
     GG::Connect(m_expand_button->LeftClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
 
+    const auto obj = GetUniverseObject(m_popcenter_id);
+    if (!obj) {
+        ErrorLogger() << "Invalid object id " << m_popcenter_id;
+        return;
+    }
+
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.push_back(
-        std::make_pair(METER_POPULATION, new StatisticIcon(ClientUI::SpeciesIcon(pop->SpeciesName()), 0, 3, false,
+        std::make_pair(METER_POPULATION, new StatisticIcon(ClientUI::SpeciesIcon(pop->SpeciesName()),
+                                                           obj->InitialMeterValue(METER_POPULATION), 3, false,
                                                            GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_HAPPINESS, new StatisticIcon(ClientUI::MeterIcon(METER_HAPPINESS), 0, 3, false,
+        std::make_pair(METER_HAPPINESS, new StatisticIcon(ClientUI::MeterIcon(METER_HAPPINESS),
+                                                          obj->InitialMeterValue(METER_HAPPINESS), 3, false,
                                                           GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
-        std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION), 0, 3, false,
+        std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION),
+                                                             obj->InitialMeterValue(METER_CONSTRUCTION), 3, false,
                                                              GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
 
     // meter and production indicators
@@ -179,6 +188,14 @@ void PopulationPanel::Update() {
 }
 
 void PopulationPanel::Refresh() {
+    for (auto& meter_stat : m_meter_stats)
+        meter_stat.second->RequirePreRender();
+
+    RequirePreRender();
+}
+
+void PopulationPanel::PreRender() {
+    AccordionPanel::PreRender();
     Update();
     DoLayout();
 }
@@ -201,16 +218,19 @@ void PopulationPanel::DoLayout() {
     if (!s_expanded_map[m_popcenter_id]) {
         // position and reattach icons to be shown
         int n = 0;
+        GG::X stride = MeterIconSize().x * 7/2;
         for (const std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
-            GG::X x = MeterIconSize().x*n*7/2;
-
-            if (x > Width() - m_expand_button->Width() - MeterIconSize().x*5/2) break;  // ensure icon doesn't extend past right edge of panel
+            GG::X x = n * stride;
 
             StatisticIcon* icon = meter_stat.second;
-            AttachChild(icon);
             GG::Pt icon_ul(x, GG::Y0);
             GG::Pt icon_lr = icon_ul + MeterIconSize();
             icon->SizeMove(icon_ul, icon_lr);
+
+            if (x + icon->MinUsableSize().x >= ClientWidth())
+                break;
+
+            AttachChild(icon);
             icon->Show();
 
             n++;
@@ -233,8 +253,6 @@ void PopulationPanel::DoLayout() {
 
         Resize(GG::Pt(Width(), m_multi_meter_status_bar->Bottom() + EDGE_PAD - top));
     }
-
-    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
 
     SetCollapsed(!s_expanded_map[m_popcenter_id]);
 }

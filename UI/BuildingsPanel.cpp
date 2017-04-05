@@ -244,10 +244,6 @@ void BuildingsPanel::DoLayout() {
 
     Resize(GG::Pt(Width(), height));
 
-    Wnd::MoveChildUp(m_expand_button);
-
-    m_expand_button->MoveTo(GG::Pt(Width() - m_expand_button->Width(), GG::Y0));
-
     SetCollapsed(!s_expanded_map[m_planet_id]);
 
     if (old_size != Size() && Parent())

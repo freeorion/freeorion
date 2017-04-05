@@ -426,6 +426,7 @@ public:
 
     /** \name Accessors */ //@{
     double          GetValue(int index = 0) const;
+    GG::Pt          MinUsableSize() const override;
     //@}
 
     /** \name Mutators */ //@{

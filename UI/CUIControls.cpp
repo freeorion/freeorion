@@ -1398,6 +1398,20 @@ GG::Clr StatisticIcon::ValueColor(int index) const {
     return ClientUI::TextColor();
 }
 
+GG::Pt StatisticIcon::MinUsableSize() const {
+    if (!m_icon)
+        return GG::Pt(GG::X1, GG::Y1);
+
+    if (m_num_values <= 0 || !m_text)
+        return m_icon->Size();
+
+    if (Width() >= Value(Height()))
+        return GG::Pt(m_text->RelativeUpperLeft().x + m_text->MinUsableSize().x,
+                      std::max(m_icon->RelativeLowerRight().y, m_text->MinUsableSize().y));
+     else
+        return GG::Pt(std::max(m_icon->RelativeLowerRight().x, m_text->MinUsableSize().x),
+                      m_icon->RelativeLowerRight().y + m_text->MinUsableSize().y);
+}
 
 ///////////////////////////////////////
 // class CUIToolBar
