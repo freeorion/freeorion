@@ -423,7 +423,14 @@ public:
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false,
-               const boost::uuids::uuid& uuid = boost::uuids::uuid{{0}}
+               const std::string uuid = ""
+              );
+    ShipDesign(const std::string& name, const std::string& description,
+               const std::string& hull,
+               const std::vector<std::string>& parts,
+               const std::string& icon, const std::string& model,
+               bool name_desc_in_stringtable = false, bool monster = false,
+               const std::string& uuid = ""
               );
     //@}
 
