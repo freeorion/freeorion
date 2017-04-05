@@ -80,7 +80,7 @@ scripts* are licensed under the terms of both [GPL v2] and [CC-BY-SA-3.0].
 For more details please see the [License File](default/COPYING).
 
 Additional to the immediate project sources, the FreeOrion source tree bundles
-some third party projects or assets which may be licensed under different
+some third party projects or assets which may be also licensed under different
 terms than the FreeOrion project.  For more details please consult the
 accompanying license file.
 
