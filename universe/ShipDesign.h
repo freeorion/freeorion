@@ -422,7 +422,9 @@ public:
                int designed_on_turn, int designed_by_empire, const std::string& hull,
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
-               bool name_desc_in_stringtable = false, bool monster = false);
+               bool name_desc_in_stringtable = false, bool monster = false,
+               const boost::uuids::uuid& uuid = boost::uuids::uuid{{0}}
+              );
     //@}
 
     /** \name Accessors */ //@{

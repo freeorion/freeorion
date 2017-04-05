@@ -19,6 +19,7 @@
 #include <cfloat>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
 
@@ -538,10 +539,11 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
                        int designed_on_turn, int designed_by_empire, const std::string& hull,
                        const std::vector<std::string>& parts,
                        const std::string& icon, const std::string& model,
-                       bool name_desc_in_stringtable, bool monster) :
+                       bool name_desc_in_stringtable, bool monster,
+                       const boost::uuids::uuid& uuid) :
     m_name(name),
     m_description(description),
-    m_uuid(boost::uuids::random_generator()()),
+    m_uuid{uuid == boost::uuids::uuid{{0}} ? boost::uuids::random_generator()() : uuid},
     m_designed_on_turn(designed_on_turn),
     m_designed_by_empire(designed_by_empire),
     m_hull(hull),
