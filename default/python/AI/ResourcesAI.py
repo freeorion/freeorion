@@ -19,6 +19,7 @@ import random
 import ColonisationAI
 import AIDependencies
 import CombatRatingsAI
+from common.print_utils import Table, Text, Float
 from freeorion_tools import tech_is_complete, AITimer
 
 resource_timer = AITimer('timer_bucket')
@@ -250,8 +251,6 @@ class Reporter(object):
         universe = fo.getUniverse()
         empire = fo.getEmpire()
         empire_planet_ids = PlanetUtilsAI.get_owned_planets_by_empire(universe.planetIDs)
-        print "Resource Management:"
-        print
         print "Resource Priorities:"
         resource_priorities = {}
         for priority_type in get_priority_resource_types():
@@ -263,27 +262,38 @@ class Reporter(object):
         for evaluation_priority, evaluation_score in sorted_priorities:
             if top_priority < 0:
                 top_priority = evaluation_priority
-            print "    ResourcePriority |Score: %s | %s " % (evaluation_priority, evaluation_score)
+            print "  %s: %.2f" % (evaluation_priority, evaluation_score)
 
         # what is the focus of available resource centers?
         print
         warnings = {}
-        # TODO combine this with previous table to reduce report duplication?
-        print "Planet Resources Foci:"
+        foci_table = Table([
+                Text('Planet'),
+                Text('Size'),
+                Text('Type'),
+                Text('Focus'),
+                Text('Species'),
+                Text('Pop')
+            ], table_name="Planetary Foci Overview Turn %d" % fo.currentTurn())
         for pid in empire_planet_ids:
             planet = universe.getPlanet(pid)
             population = planet.currentMeterValue(fo.meterType.population)
             max_population = planet.currentMeterValue(fo.meterType.targetPopulation)
             if max_population < 1 and population > 0:
                 warnings[planet.name] = (population, max_population)
-            print "  ID: %d Name: % 18s -- % 6s % 8s  Focus: % 8s Species: %s Pop: %2d/%2d" % (pid, planet.name, planet.size, planet.type, "_".join(str(planet.focus).split("_")[1:])[:8], planet.speciesName, population, max_population)
-        print "\n\nEmpire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n" % (empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
-        if warnings != {}:
-            for name in warnings:
-                mp, cp = warnings[name]
-                print "Population Warning! -- %s has unsustainable current pop %d -- target %d" % (name, cp, mp)
-            print
-        warnings.clear()
+            foci_table.add_row([
+                planet,
+                planet.size,
+                planet.type,
+                "_".join(str(planet.focus).split("_")[1:])[:8],
+                planet.speciesName,
+                "%.1f/%.1f" % (population, max_population)
+            ])
+        foci_table.print_table()
+        print "Empire Totals:\nPopulation: %5d \nProduction: %5d\nResearch: %5d\n" % (
+            empire.population(), empire.productionPoints, empire.resourceProduction(fo.resourceType.research))
+        for name, (cp, mp) in warnings.iteritems():
+            print "Population Warning! -- %s has unsustainable current pop %d -- target %d" % (name, cp, mp)
 
 
 def weighted_sum_output(outputs):

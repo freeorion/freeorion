@@ -1,7 +1,7 @@
 import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
-from common.print_utils import Table, Text, Sequence, Bool
+from common.print_utils import Table, Text, Sequence, Bool, Float
 import AIDependencies
 import universe_object
 import AIstate
@@ -148,7 +148,6 @@ def check_supply():
     for sys_id, supply_val in system_supply.items():
         systems_by_supply_tier.setdefault(min(0, supply_val), []).append(sys_id)
 
-    print "Known Systems:", list(universe.systemIDs)
     print "Base Supply:", dict_from_map(empire.systemSupplyRanges)
     print "Supply connected systems: ", ', '.join(PlanetUtilsAI.sys_name_ids(systems_by_supply_tier.get(0, [])))
     print
@@ -728,7 +727,6 @@ def evaluate_planet(planet_id, mission_type, spec_name, detail=None):
         vis_map = universe.getVisibilityTurnsMap(planet_id, empire.empireID)
         print "Planet %d object not available; visMap: %s" % (planet_id, vis_map)
         return 0
-    detail.append("%s : " % planet.name)
     # only count existing presence if not target planet
     # TODO: consider neighboring sytems for smaller contribution, and bigger contributions for
     # local colonies versus local outposts
@@ -1359,7 +1357,7 @@ def _print_empire_species_roster():
         number_of_shipyards = len(empire_ship_builders.get(species_name, []))
         this_row = [species_name, planet_ids, is_colonizer, number_of_shipyards]
         this_row.extend(grade_symbol(tag) for tag in grade_tags)
-        this_row.append([tag for tag in species_tags if not any(s in tag for s in grade_tags)])
+        this_row.append([tag for tag in species_tags if not any(s in tag for s in grade_tags) and 'PEDIA' not in tag])
         species_table.add_row(this_row)
     print
     species_table.print_table()
@@ -1385,9 +1383,9 @@ def __print_candidate_table(candidates, mission):
     universe = fo.getUniverse()
     if mission == 'Colonization':
         col1 = Text('(Score, Species)')
-        col1_value = lambda x: (x[0], x[1])
+        col1_value = lambda x: (round(x[0], 2), x[1])
     elif mission == 'Outposts':
-        col1 = Text('Score')
+        col1 = Float('Score')
         col1_value = lambda x: x[0]
     else:
         print >> sys.stderr, "__print_candidate_table(%s, %s): Invalid mission type" % (candidates, mission)
