@@ -19,7 +19,7 @@ except:
 
 built_product_dir = sys.argv[2]
 app = os.path.join(built_product_dir, "FreeOrion.app")
-dmg_file = "FreeOrion_%s_MacOSX_10.7.dmg" % build_no
+dmg_file = "FreeOrion_%s_MacOSX_10.9.dmg" % build_no
 out_path = os.path.join(built_product_dir, dmg_file)
 if os.path.exists(out_path):
     os.remove(out_path)

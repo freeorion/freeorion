@@ -2852,7 +2852,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
@@ -2892,7 +2892,7 @@
 				LD_GENERATE_MAP_FILE = YES;
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/dep/lib\"";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -2980,7 +2980,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
@@ -3026,7 +3026,7 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/dep/lib\"";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -3129,7 +3129,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
@@ -3149,7 +3149,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
@@ -3200,7 +3200,7 @@
 				);
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks";
 				LIBRARY_SEARCH_PATHS = "\"$(SRCROOT)/dep/lib\"";
-				MACOSX_DEPLOYMENT_TARGET = 10.7;
+				MACOSX_DEPLOYMENT_TARGET = 10.9;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -3303,7 +3303,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
@@ -3323,7 +3323,7 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden"
+					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
