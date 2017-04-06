@@ -120,7 +120,7 @@ namespace {
 
     const std::string DESIGN_FILENAME_EXTENSION = ".txt";
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
-    boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns"; }
+    boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
     class SavedDesignsManager {
     public:
@@ -143,32 +143,18 @@ namespace {
             if (!exists(saved_designs_dir))
                 return;
 
-            // scan files, parse for designs, add to this manager's designs
-            std::vector<path> design_files;
-            for (directory_iterator dir_it(saved_designs_dir);
-                 dir_it != directory_iterator(); ++dir_it)
-            {
-                const path& file_path = dir_it->path();
-                if (!is_regular_file(file_path))
-                    continue;
-                if (file_path.extension() != DESIGN_FILENAME_EXTENSION)
-                { continue; }
-                design_files.push_back(file_path);
+            DebugLogger() << "Parsing all files in " << saved_designs_dir << " for ship designs";
+            std::map<std::string, std::unique_ptr<ShipDesign>> file_designs;
+            try {
+                parse::ship_designs(saved_designs_dir, file_designs);
+            } catch (const std::runtime_error& e) {
+                ErrorLogger() << "Failed to parse designs in " << saved_designs_dir << " because " << e.what();;
+                return;
             }
 
-            for (const path& design_path : design_files) {
-                try {
-                    std::map<std::string, std::unique_ptr<ShipDesign>> file_designs;
-                    parse::ship_designs(design_path, file_designs);
-
-                    for (auto&& design_entry : file_designs) {
-                        if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {
-                            m_saved_designs[design_entry.first] = std::move(design_entry.second);
-                        }
-                    }
-                } catch (...) {
-                    ErrorLogger() << "Failed to parse designs in " << PathString(design_path);
-                    continue;
+            for (auto& design_entry : file_designs) {
+                if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {
+                    m_saved_designs[design_entry.first] = std::move(design_entry.second);
                 }
             }
         }
