@@ -2773,9 +2773,12 @@ void Universe::UpdateStatRecords() {
 
     std::map<int, std::shared_ptr<const UniverseObject>> empire_sources;
     for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
+        if (empire_entry.second->Eliminated())
+            continue;
         std::shared_ptr<const UniverseObject> source = empire_entry.second->Source();
         if (!source) {
-            ErrorLogger() << "Universe::UpdateStatRecords() unable to find source for empire.  Skipping.";
+            ErrorLogger() << "Universe::UpdateStatRecords() unable to find source for empire, id = "
+                          <<  empire_entry.second->EmpireID();
             continue;
         }
         empire_sources[empire_entry.first] = source;
