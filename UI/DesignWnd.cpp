@@ -143,14 +143,8 @@ namespace {
             if (!exists(saved_designs_dir))
                 return;
 
-            DebugLogger() << "Parsing all files in " << saved_designs_dir << " for ship designs";
             std::map<std::string, std::unique_ptr<ShipDesign>> file_designs;
-            try {
-                parse::ship_designs(saved_designs_dir, file_designs);
-            } catch (const std::runtime_error& e) {
-                ErrorLogger() << "Failed to parse designs in " << saved_designs_dir << " because " << e.what();;
-                return;
-            }
+            parse::ship_designs(saved_designs_dir, file_designs);
 
             for (auto& design_entry : file_designs) {
                 if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {

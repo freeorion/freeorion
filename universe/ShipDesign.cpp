@@ -1041,19 +1041,8 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
-    try {
-        parse::ship_designs(m_ship_designs);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing ship designs: error: " << e.what();
-        throw;
-    }
-
-    try {
-        parse::monster_designs(m_monster_designs);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing monster designs: error: " << e.what();
-        throw;
-    }
+    parse::ship_designs(m_ship_designs);
+    parse::monster_designs(m_monster_designs);
 
     TraceLogger() << "Predefined Ship Designs:";
     for (const auto& entry : m_ship_designs)

@@ -142,28 +142,19 @@ namespace parse {
     bool ship_designs(const boost::filesystem::path& path, std::map<std::string, std::unique_ptr<ShipDesign>>& designs) {
         bool result = true;
         for(const boost::filesystem::path& file : ListScripts(path)) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(file, designs);
+            try {
+                result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(file, designs);
+            } catch (const std::runtime_error& e) {
+                result = false;
+                ErrorLogger() << "Failed to parse ship design in " << file << " from " << path << " because " << e.what();;
+            }
         }
         return result;
     }
 
-    bool ship_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs) {
-        bool result = true;
+    bool ship_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs)
+    { return ship_designs("scripting/ship_designs", designs); }
 
-        for(const boost::filesystem::path& file : ListScripts("scripting/ship_designs")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(file, designs);
-        }
-
-        return result;
-    }
-
-    bool monster_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs) {
-        bool result = true;
-
-        for (const boost::filesystem::path& file : ListScripts("scripting/monster_designs")) {
-            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(file, designs);
-        }
-
-        return result;
-    }
+    bool monster_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs)
+    { return ship_designs("scripting/monster_designs", designs); }
 }
