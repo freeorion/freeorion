@@ -942,9 +942,16 @@ void Fleet::MovementPhase() {
             if (fleet->m_travel_route.front() == system->ID()) {
                 m_travel_route.erase(m_travel_route.begin());
             } else {
-                ErrorLogger() << "Fleet::MovementPahse: Encountered a system not on route."
-                              << " Expected system id is " << system->ID()
-                              << " but front of route is " << fleet->m_travel_route.front();
+                std::stringstream ss;
+                for (const auto& loc : m_travel_route) {
+                    auto route_system = GetSystem(loc);
+                    ss << (route_system ? route_system->Name() : "invalid id") << "("<< loc << ") ";
+                }
+                ErrorLogger() << "Fleet::MovementPhase: Encountered an unexpected system on route."
+                              << "  Fleet is " << fleet->Name() << "(" << fleet->ID() << ")"
+                              << " Expected system is " << system->Name() << "(" << system->ID() << ")"
+                              << " but front of route is " << fleet->m_travel_route.front()
+                              << " Whole route is [" << ss.str() <<"]";
                 // TODO: Notify the suer with a sitrep?
             }
 
