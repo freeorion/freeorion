@@ -1230,6 +1230,18 @@ Définit la couleur de fond des barres de progression dans l'arbre des technolog
 OPTIONS_DB_UI_TECH_PROGRESS
 Définit la couleur des barres de progression dans l'arbre des technologies.
 
+OPTIONS_DB_UI_TECH_TREE_STATUS_UNRESEARCHABLE
+Conserve l'état du filtre "Verrouillé" de l'arbre des technologies.
+
+OPTIONS_DB_UI_TECH_TREE_STATUS_HAS_RESEARCHED_PREREQ
+Conserve l'état du filtre "Partiellement déverrouillé" de l'arbre des technologies.
+
+OPTIONS_DB_UI_TECH_TREE_STATUS_RESEARCHABLE
+Conserve l'état du filtre "Accessible" de l'arbre des technologies.
+
+OPTIONS_DB_UI_TECH_TREE_STATUS_COMPLETED
+Conserve l'état du filtre "Assimilé" de l'arbre des technologies.
+
 OPTIONS_DB_UI_SCROLL_WIDTH
 Fixe la largeur du défilement de l'interface.
 
@@ -3368,7 +3380,7 @@ TECH_TURNS_LEFT_NEVER
 Jamais
 
 TECH_WND_STATUS_COMPLETED
-Acquis
+Assimilé
 
 TECH_WND_STATUS_RESEARCHABLE
 Accessible
@@ -3386,7 +3398,7 @@ TECH_WND_ENQUEUED
 En file d'attente
 
 TECH_WND_UNRESEARCHED_PREREQUISITES
-'''Prérequis non acquis : '''
+'''Prérequis non assimilé : '''
 
 TECH_WND_VIEW_TYPE
 Arbre / Liste
