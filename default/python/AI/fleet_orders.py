@@ -152,6 +152,7 @@ class OrderMove(AIFleetOrder):
         main_fleet_mission = foAI.foAIstate.get_fleet_mission(self.fleet.id)
 
         fleet_rating = CombatRatingsAI.get_fleet_rating(self.fleet.id)
+        fleet_rating_vs_planets = CombatRatingsAI.get_fleet_rating_against_planets(self.fleet.id)
         target_sys_status = foAI.foAIstate.systemStatus.get(self.target.id, {})
         f_threat = target_sys_status.get('fleetThreat', 0)
         m_threat = target_sys_status.get('monsterThreat', 0)
@@ -161,7 +162,7 @@ class OrderMove(AIFleetOrder):
         universe = fo.getUniverse()
         if main_fleet_mission.type == MissionType.INVASION and not trooper_move_reqs_met(main_fleet_mission, self, verbose):
             return False
-        if fleet_rating >= safety_factor * threat:
+        if fleet_rating >= safety_factor * threat and fleet_rating_vs_planets >= p_threat:
             return True
         elif not p_threat and self.target.id in fo.getEmpire().supplyUnobstructedSystems:
             return True
@@ -170,15 +171,16 @@ class OrderMove(AIFleetOrder):
             sys1_name = sys1 and sys1.name or "unknown"
             target_system = self.target.get_system()
             target_system_name = (target_system and target_system.get_object().name) or "unknown"
-            my_other_fleet_rating = foAI.foAIstate.systemStatus.get(self.target.id, {}).get('myFleetRating', 0)  # TODO: adjust calc for any departing fleets
+            # TODO: adjust calc for any departing fleets
+            my_other_fleet_rating = foAI.foAIstate.systemStatus.get(self.target.id, {}).get('myFleetRating', 0)
+            my_other_fleet_rating_vs_planets = foAI.foAIstate.systemStatus.get(self.target.id, {}).get('myFleetRatingVsPlanets', 0)
             is_military = foAI.foAIstate.get_fleet_role(self.fleet.id) == MissionType.MILITARY
 
+            # TODO(Morlic): Is there any reason to add this linearly instead of using CombineRatings?
             total_rating = my_other_fleet_rating + fleet_rating
-            if any((
-                (my_other_fleet_rating > 3 * safety_factor * threat),
-                (is_military and total_rating > safety_factor * threat),
-                (is_military and total_rating > 0.8 * safety_factor * threat and fleet_rating > 0.2 * threat)
-            )):
+            total_rating_vs_planets = my_other_fleet_rating_vs_planets + fleet_rating_vs_planets
+            if (my_other_fleet_rating > 3 * safety_factor * threat or
+                    (is_military and total_rating_vs_planets > 2.5*p_threat and total_rating > safety_factor * threat)):
                 if verbose:
                     print "\tAdvancing fleet %d (rating %d) at system %d (%s) into system %d (%s) with threat %d because of sufficient empire fleet strength already at destination" % (
                         self.fleet.id, fleet_rating, system_id, sys1_name, self.target.id, target_system_name, threat)

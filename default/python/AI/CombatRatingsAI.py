@@ -166,15 +166,20 @@ class ShipCombatStats(object):
         """
         return self._fighter_stats.get_stats()
 
-    def get_rating(self, enemy_stats=None):
+    def get_rating(self, enemy_stats=None, ignore_fighters=False):
         """Calculate a rating against specified enemy.
 
         :param enemy_stats: Enemy stats to be rated against
         :type enemy_stats: ShipCombatStats
+        :param ignore_fighters: If True, acts as if fighters are not launched
+        :type ignore_fighters: bool
         :return: rating against specified enemy
         :rtype: float
         """
         # adjust base stats according to enemy stats
+        def _rating():
+            return my_total_attack * my_structure
+
         my_attacks, my_structure, my_shields = self.get_basic_stats()
         e_avg_attack = 1
         if enemy_stats:
@@ -192,6 +197,9 @@ class ShipCombatStats(object):
             my_total_attack = sum(n*dmg for dmg, n in my_attacks.iteritems())
             my_structure += my_shields
 
+        if ignore_fighters:
+            return _rating()
+
         # consider fighter attacks
         capacity, launch_rate, fighter_damage = self.get_fighter_stats()
         launched_1st_bout = min(capacity, launch_rate)
@@ -205,7 +213,10 @@ class ShipCombatStats(object):
         fighters_shot_down = (1-survival_rate**2) * launched_1st_bout + (1-survival_rate) * launched_2nd_bout
         damage_prevented = fighters_shot_down * e_avg_attack
         my_structure += damage_prevented
-        return my_total_attack * my_structure
+        return _rating()
+
+    def get_rating_vs_planets(self):
+        return self.get_rating(ignore_fighters=True)
 
     def get_stats(self, hashable=False):
         """ Get all combat related stats of the ship.
@@ -238,15 +249,20 @@ class FleetCombatStats(object):
         """Returns list of ShipCombatStats of fleet."""
         return list(self.__ship_stats)
 
-    def get_rating(self, enemy_stats=None):
+    def get_rating(self, enemy_stats=None, ignore_fighters=False):
         """Calculates the rating of the fleet by combining all its ships ratings.
 
         :param enemy_stats: enemy to be rated against
         :type enemy_stats: ShipCombatStats
+        :param ignore_fighters: If True, acts as if fighters are not launched
+        :type ignore_fighters: bool
         :return: Rating of the fleet
         :rtype: float
         """
-        return combine_ratings_list(map(lambda x: x.get_rating(enemy_stats), self.__ship_stats))
+        return combine_ratings_list(map(lambda x: x.get_rating(enemy_stats, ignore_fighters), self.__ship_stats))
+
+    def get_rating_vs_planets(self):
+        return self.get_rating(ignore_fighters=True)
 
     def __get_stats_from_fleet(self):
         """Calculate fleet combat stats (i.e. the stats of all its ships)."""
@@ -269,6 +285,10 @@ def get_fleet_rating(fleet_id, enemy_stats=None):
     :rtype: float
     """
     return FleetCombatStats(fleet_id, consider_refuel=False).get_rating(enemy_stats)
+
+
+def get_fleet_rating_against_planets(fleet_id):
+    return FleetCombatStats(fleet_id, consider_refuel=False).get_rating_vs_planets()
 
 
 @cache_by_session

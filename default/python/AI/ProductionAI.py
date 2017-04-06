@@ -55,7 +55,7 @@ def find_best_designs_this_turn():
         _design_cache[priority_type] = designer().optimize_design()
     best_military_stats = ShipDesignAI.MilitaryShipDesigner().optimize_design()
     best_carrier_stats = ShipDesignAI.CarrierShipDesigner().optimize_design()
-    best_stats = best_military_stats + best_carrier_stats
+    best_stats = best_military_stats + best_carrier_stats if random.random() < .8 else best_military_stats
     best_stats.sort(reverse=True)
     _design_cache[PriorityType.PRODUCTION_MILITARY] = best_stats
     design_timer.start('Krill Spawner')

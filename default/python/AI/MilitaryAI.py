@@ -15,7 +15,6 @@ from AIDependencies import INVALID_ID
 
 MinThreat = 10  # the minimum threat level that will be ascribed to an unknown threat capable of killing scouts
 _military_allocations = []
-_min_mil_allocations = {}
 _verbose_mil_reporting = False
 _best_ship_rating_cache = {}  # indexed by turn, value is rating of that turn
 
@@ -78,8 +77,9 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
         fleet_ok = (sum(ships_cur_health) >= cutoff * sum(ships_max_health))
         local_status = foAI.foAIstate.systemStatus.get(this_sys_id, {})
         my_local_rating = combine_ratings(local_status.get('mydefenses', {}).get('overall', 0), local_status.get('myFleetRating', 0))
+        my_local_rating_vs_planets = local_status.get('myFleetRatingVsPlanets', 0)
         needed_here = local_status.get('totalThreat', 0) > 0  # TODO: assess if remaining other forces are sufficient
-        safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0)  # TODO: improve both assessment prongs
+        safely_needed = needed_here and my_local_rating > local_status.get('totalThreat', 0) and my_local_rating_vs_planets > local_status.get('planetThreat', 0)# TODO: improve both assessment prongs
         if not fleet_ok:
             if safely_needed:
                 print "Fleet %d at %s needs repair but deemed safely needed to remain for defense" % (fleet_id, ppstring(PlanetUtilsAI.sys_name_ids([fleet.systemID])))
@@ -95,7 +95,7 @@ def avail_mil_needing_repair(mil_fleet_ids, split_ships=False, on_mission=False,
 # TODO Move relevant initialization code from get_military_fleets into this class
 class AllocationHelper(object):
 
-    def __init__(self, already_assigned_rating, available_rating, try_reset):
+    def __init__(self, already_assigned_rating, already_assigned_rating_vs_planets, available_rating, try_reset):
         """
         :param dict already_assigned_rating:
         :param float available_rating:
@@ -111,6 +111,7 @@ class AllocationHelper(object):
         self.safety_factor = foAI.foAIstate.character.military_safety_factor()
 
         self.already_assigned_rating = dict(already_assigned_rating)
+        self.already_assigned_rating_vs_planets = dict(already_assigned_rating_vs_planets)
         # store the number of empires which have supply or have supply within 2 jumps of the system
         self.enemy_supply = {sys_id: min(2, len(enemies_nearly_supplying_system(sys_id)))
                              for sys_id in fo.getUniverse().systemIDs}
@@ -123,8 +124,8 @@ class AllocationHelper(object):
     def remaining_rating(self, value):
         self._remaining_rating = max(0, value)
 
-    def allocate(self, group, sys_id, min_rating, take_any, max_rating):
-        tup = (sys_id, min_rating, take_any, max_rating)
+    def allocate(self, group, sys_id, min_rating, min_rating_vs_planets, take_any, max_rating):
+        tup = (sys_id, min_rating, min_rating_vs_planets, take_any, max_rating)
         self.allocations.append(tup)
         self.allocation_by_groups.setdefault(group, []).append(tup)
         self._remaining_rating -= min_rating
@@ -184,15 +185,20 @@ class Allocator(object):
         threat = self._calculate_threat()
         min_alloc = self._minimum_allocation(threat)
         max_alloc = self._maximum_allocation(threat)
-        if min_alloc <= 0:
+        alloc_vs_planets = self._allocation_vs_planets()
+        if min_alloc <= 0 and alloc_vs_planets <= 0:
             # nothing to allocate here...
             return
+        min_alloc = max(min_alloc, alloc_vs_planets)
+        max_alloc = max(max_alloc, alloc_vs_planets)
+
         ratio = self._allocation_helper.remaining_rating / float(min_alloc)
         if self._allocation_helper.remaining_rating > min_alloc or self._take_any():
             self._allocation_helper.allocate(
                 group=self._allocation_group,
                 sys_id=self.sys_id,
                 min_rating=min(min_alloc, self._allocation_helper.remaining_rating),
+                min_rating_vs_planets=min(alloc_vs_planets, self._allocation_helper.remaining_rating),
                 take_any=self._take_any(),
                 max_rating=max_alloc,
             )
@@ -256,6 +262,11 @@ class Allocator(object):
                 self._max_alloc_factor * threat,
                 self.assigned_rating)
 
+    def _allocation_vs_planets(self):
+        return CombatRatingsAI.rating_needed(
+            self.safety_factor * self._planet_threat(),
+            self.assigned_rating_vs_planets)
+
     def _take_any(self):
         """
         If true, forces smaller than the minimum allocation are accepted.
@@ -297,6 +308,10 @@ class Allocator(object):
         """The combined rating of existing missions assigned to the system."""
         return self._allocation_helper.already_assigned_rating.get(self.sys_id, 0)
 
+    @property
+    def assigned_rating_vs_planets(self):
+        return self._allocation_helper.already_assigned_rating_vs_planets.get(self.sys_id, 0)
+
     def _local_threat(self):
         """Military rating of enemies present in the system."""
         return get_system_local_threat(self.sys_id)
@@ -320,6 +335,9 @@ class Allocator(object):
     def _potential_support(self):
         """Military rating of our forces in neighboring systems."""
         return get_system_neighbor_support(self.sys_id)
+
+    def _planet_threat(self):
+        return get_system_planetary_threat(self.sys_id)
 
 
 class CapitalDefenseAllocator(Allocator):
@@ -503,6 +521,10 @@ def get_system_regional_threat(sys_id):
     return foAI.foAIstate.systemStatus.get(sys_id, {}).get('regional_threat', 0.)
 
 
+def get_system_planetary_threat(sys_id):
+    return foAI.foAIstate.systemStatus.get(sys_id, {}).get('planetThreat', 0.)
+
+
 def enemy_rating():
     """:rtype: float"""
     return foAI.foAIstate.empire_standard_enemy_rating
@@ -542,10 +564,12 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     # for each system, get total rating of fleets assigned to it
     already_assigned_rating = {}
+    already_assigned_rating_vs_planets = {}
     systems_status = foAI.foAIstate.systemStatus
     enemy_sup_factor = {}  # enemy supply
     for sys_id in universe.systemIDs:
         already_assigned_rating[sys_id] = 0
+        already_assigned_rating_vs_planets[sys_id] = 0
         enemy_sup_factor[sys_id] = min(2, len(systems_status.get(sys_id, {}).get('enemies_nearly_supplied', [])))
     for fleet_id in [fid for fid in all_military_fleet_ids if fid not in mil_fleets_ids]:
         ai_fleet_mission = foAI.foAIstate.get_fleet_mission(fleet_id)
@@ -553,7 +577,11 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
             continue
         last_sys = ai_fleet_mission.target.get_system().id  # will count this fleet as assigned to last system in target list  # TODO last_sys or target sys?
         this_rating = CombatRatingsAI.get_fleet_rating(fleet_id)
-        already_assigned_rating[last_sys] = CombatRatingsAI.combine_ratings(already_assigned_rating.get(last_sys, 0), this_rating)
+        this_rating_vs_planets = CombatRatingsAI.get_fleet_rating_against_planets(fleet_id)
+        already_assigned_rating[last_sys] = CombatRatingsAI.combine_ratings(
+                already_assigned_rating.get(last_sys, 0), this_rating)
+        already_assigned_rating_vs_planets[last_sys] = CombatRatingsAI.combine_ratings(
+                already_assigned_rating_vs_planets.get(last_sys, 0), this_rating_vs_planets)
     for sys_id in universe.systemIDs:
         my_defense_rating = systems_status.get(sys_id, {}).get('mydefenses', {}).get('overall', 0)
         already_assigned_rating[sys_id] = CombatRatingsAI.combine_ratings(my_defense_rating, already_assigned_rating[sys_id])
@@ -604,7 +632,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     try:
         # capital defense
-        allocation_helper = AllocationHelper(already_assigned_rating, avail_mil_rating, try_reset)
+        allocation_helper = AllocationHelper(already_assigned_rating, already_assigned_rating_vs_planets, avail_mil_rating, try_reset)
         if capital_sys_id is not None:
             CapitalDefenseAllocator(capital_sys_id, allocation_helper).allocate()
 
@@ -636,7 +664,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         # interior systems
         targetable_ids = set(ColonisationAI.systems_by_supply_tier.get(0, []) +
                              ColonisationAI.systems_by_supply_tier.get(1, []))
-        current_mil_systems = [sid for sid, _, _, _ in allocation_helper.allocations]
+        current_mil_systems = [sid for sid, _, _, _, _ in allocation_helper.allocations]
         interior_targets1 = targetable_ids.difference(current_mil_systems)
         interior_targets = [sid for sid in interior_targets1 if (
             allocation_helper.threat_bias + systems_status.get(sid, {}).get('totalThreat', 0) > 0.8 * allocation_helper.already_assigned_rating[sid])]
@@ -649,7 +677,7 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         visible_system_ids = foAI.foAIstate.visInteriorSystemIDs.keys() + foAI.foAIstate.visBorderSystemIDs.keys()
         accessible_system_ids = [sys_id for sys_id in visible_system_ids if
                                  universe.systemsConnected(sys_id, home_system_id, empire_id)]
-        current_mil_systems = [sid for sid, alloc, take_any, _ in allocation_helper.allocations if alloc > 0]
+        current_mil_systems = [sid for sid, alloc, rvp, take_any, _ in allocation_helper.allocations if alloc > 0]
         border_targets1 = [sid for sid in accessible_system_ids if sid not in current_mil_systems]
         border_targets = [sid for sid in border_targets1 if (
             allocation_helper.threat_bias + systems_status.get(sid, {}).get('fleetThreat', 0) + systems_status.get(sid, {}).get(
@@ -660,54 +688,49 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         try_again(all_military_fleet_ids)
         return
 
-    allocation_groups = allocation_helper.allocation_by_groups
-    allocations = allocation_helper.allocations
-
     new_allocations = []
     remaining_mil_rating = avail_mil_rating
     # for top categories assign max_alloc right away as available
     for cat in ['capitol', 'occupied', 'topTargets']:
-        for sid, alloc, take_any, max_alloc in allocation_groups.get(cat, []):
+        for sid, alloc, rvp, take_any, max_alloc in allocation_helper.allocation_by_groups.get(cat, []):
             if remaining_mil_rating <= 0:
                 break
             this_alloc = min(remaining_mil_rating, max_alloc)
-            new_allocations.append((sid, this_alloc, alloc, take_any))
+            new_allocations.append((sid, this_alloc, alloc, rvp, take_any))
             remaining_mil_rating -= this_alloc
 
     base_allocs = set()
     # for lower priority categories, first assign base_alloc around to all, then top up as available
     for cat in ['otherTargets', 'accessibleTargets', 'exploreTargets']:
-        for sid, alloc, take_any, max_alloc in allocation_groups.get(cat, []):
+        for sid, alloc, rvp, take_any, max_alloc in allocation_helper.allocation_by_groups.get(cat, []):
             if remaining_mil_rating <= 0:
                 break
             base_allocs.add(sid)
             remaining_mil_rating -= alloc
     for cat in ['otherTargets', 'accessibleTargets', 'exploreTargets']:
-        for sid, alloc, take_any, max_alloc in allocation_groups.get(cat, []):
+        for sid, alloc, rvp, take_any, max_alloc in allocation_helper.allocation_by_groups.get(cat, []):
             if sid not in base_allocs:
                 break
             if remaining_mil_rating <= 0:
-                new_allocations.append((sid, alloc, alloc, take_any))
+                new_allocations.append((sid, alloc, alloc, rvp, take_any))
             else:
                 new_rating = min(remaining_mil_rating + alloc, max_alloc)
-                new_allocations.append((sid, new_rating, alloc, take_any))
+                new_allocations.append((sid, new_rating, alloc, rvp, take_any))
                 remaining_mil_rating -= (new_rating - alloc)
 
     if "Main" in thisround:
         _military_allocations = new_allocations
-    _min_mil_allocations.clear()
-    _min_mil_allocations.update([(sid, alloc) for sid, alloc, take_any, _ in allocations])
     if _verbose_mil_reporting or "Main" in thisround:
-        print "------------------------------\nFinal %s Round Military Allocations: %s \n-----------------------" % (thisround, dict([(sid, alloc) for sid, alloc, minalloc, take_any in new_allocations]))
+        print "------------------------------\nFinal %s Round Military Allocations: %s \n-----------------------" % (thisround, dict([(sid, alloc) for sid, alloc, _, _, _ in new_allocations]))
         print "(Apparently) remaining military rating: %.1f" % remaining_mil_rating
 
     # export military systems for other AI modules
     if "Main" in thisround:
-        AIstate.militarySystemIDs = list(set([sid for sid, alloc, minalloc, take_any in new_allocations]).union(
+        AIstate.militarySystemIDs = list(set([sid for sid, _, _, _, _ in new_allocations]).union(
                 [sid for sid in allocation_helper.already_assigned_rating
                  if allocation_helper.already_assigned_rating[sid] > 0]))
     else:
-        AIstate.militarySystemIDs = list(set([sid for sid, alloc, minalloc, take_any in new_allocations]).union(AIstate.militarySystemIDs))
+        AIstate.militarySystemIDs = list(set([sid for sid, _, _, _, _ in new_allocations]).union(AIstate.militarySystemIDs))
     return new_allocations
 
 
@@ -755,12 +778,13 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
     # get systems to defend
 
     avail_mil_fleet_ids = set(avail_mil_fleet_ids)
-    for sys_id, alloc, minalloc, takeAny in these_allocations:
+    for sys_id, alloc, minalloc, rvp, takeAny in these_allocations:
         if not doing_main and not avail_mil_fleet_ids:
             break
         found_fleets = []
         found_stats = {}
-        these_fleets = FleetUtilsAI.get_fleets_for_mission({'rating': alloc}, {'rating': minalloc}, found_stats,
+        these_fleets = FleetUtilsAI.get_fleets_for_mission({'rating': alloc, 'ratingVsPlanets': rvp},
+                                                           {'rating': minalloc, 'ratingVsPlanets': rvp}, found_stats,
                                                            starting_system=sys_id, fleet_pool_set=avail_mil_fleet_ids,
                                                            fleet_list=found_fleets)
         if not these_fleets:
@@ -772,12 +796,6 @@ def assign_military_fleets_to_systems(use_fleet_id_list=None, allocations=None, 
                 continue
             else:
                 these_fleets = found_fleets
-                rating = CombatRatingsAI.combine_ratings_list(map(CombatRatingsAI.get_fleet_rating, found_fleets))
-                if doing_main and _verbose_mil_reporting:
-                    if rating < _min_mil_allocations.get(sys_id, 0):
-                        print "PARTIAL military allocation for system %d ( %s ) -- requested allocation %8d -- got %8d with fleets %s" % (sys_id, universe.getSystem(sys_id).name, minalloc, rating, these_fleets)
-                    else:
-                        print "FULL MIN military allocation for system %d ( %s ) -- requested allocation %8d -- got %8d with fleets %s" % (sys_id, universe.getSystem(sys_id).name, _min_mil_allocations.get(sys_id, 0), rating, these_fleets)
         elif doing_main and _verbose_mil_reporting:
             print "FULL+ military allocation for system %d ( %s ) -- requested allocation %8d, got %8d with fleets %s" % (sys_id, universe.getSystem(sys_id).name, alloc, found_stats.get('rating', 0), these_fleets)
         target = universe_object.System(sys_id)
