@@ -363,12 +363,12 @@ class TechGroup3(TechGroup):
         ])
         self.economy.extend([
             "PRO_INDUSTRY_CENTER_I",
-            "PRO_SOL_ORB_GEN",
             "GRO_GENETIC_ENG",
             "GRO_GENETIC_MED",
             "GRO_XENO_GENETICS",
-            "PRO_INDUSTRY_CENTER_II",
             "LRN_QUANT_NET",
+            "PRO_SOL_ORB_GEN",
+            "PRO_INDUSTRY_CENTER_II",
             "GRO_XENO_HYBRIDS",
             "CON_ORBITAL_HAB",
             "CON_NDIM_STRC",
@@ -508,12 +508,13 @@ class TechGroup3Sparse(TechGroup3):
         super(TechGroup3Sparse, self).__init__()
         self.enqueue(
             self.hull,
-            self.economy,
-            self.economy,
-            self.economy,
-            self.economy,
             self.defense,
             self.defense,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.economy,
+            self.economy,
             self.misc,
             self.economy,
             self.weapon,
@@ -546,7 +547,6 @@ class TechGroup3Sparse(TechGroup3):
             self.defense,
             self.economy,
             self.misc,
-            self.economy
         )
 
 
@@ -568,15 +568,14 @@ class TechGroup5(TechGroup):
     def __init__(self):
         super(TechGroup5, self).__init__()
         self._tech_queue.extend([
-            "LRN_DISTRIB_THOUGHT",
             "DEF_GARRISON_4",
             "DEF_PLAN_BARRIER_SHLD_4",
             "LRN_XENOARCH",
             "LRN_GRAVITONICS",
+            "LRN_STELLAR_TOMOGRAPHY",
             "LRN_ENCLAVE_VOID",
             "SHP_MONOMOLEC_LATTICE",
             "SHP_ADV_DAM_CONT",
-            "LRN_STELLAR_TOMOGRAPHY",
             "LRN_TIME_MECH",
             "SPY_DETECT_4",
             "SHP_CONT_SYMB",
@@ -584,16 +583,17 @@ class TechGroup5(TechGroup):
             "GRO_CYBORG",
             "GRO_TERRAFORM",
             "GRO_ENERGY_META",
+            "LRN_DISTRIB_THOUGHT",
             "SHP_WEAPON_4_1",
             "SHP_WEAPON_4_2",
             "SHP_FIGHTERS_4",
             "SHP_WEAPON_4_3",
-            "SHP_WEAPON_4_4",
             "PRO_INDUSTRY_CENTER_III",
             "PRO_SINGULAR_GEN",
             "SHP_QUANT_ENRG_MAG",
             "SHP_PLASMA_SHIELD",
             "SHP_ENRG_BOUND_MAN",
+            "SHP_WEAPON_4_4",
             "PRO_NEUTRONIUM_EXTRACTION",
             "SHP_SOLAR_CONT",
             "CON_CONC_CAMP",
