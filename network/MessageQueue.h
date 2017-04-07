@@ -3,6 +3,7 @@
 
 #include <boost/thread/condition.hpp>
 #include <boost/thread/mutex.hpp>
+#include <boost/optional/optional_fwd.hpp>
 
 #include <list>
 
@@ -30,7 +31,7 @@ public:
     void PushBack(Message& message);
 
     /** Returns the front message in the queue. */
-    void PopFront(Message& message);
+    boost::optional<Message> PopFront();
 
     /** Returns the first synchronous repsonse message in the queue.  If no such message is found, this function blocks
         the calling thread until a synchronous response element is added. */

@@ -436,14 +436,10 @@ void ClientNetworking::Impl::SendMessage(const Message& message) {
 }
 
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {
-    if (m_incoming_messages.Empty())
-        return boost::none;
-
-    Message message;
-    m_incoming_messages.PopFront(message);
-    if (TRACE_EXECUTION)
+    const auto message = m_incoming_messages.PopFront();
+    if (message && TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::GetMessage() : received message "
-                      << message;
+                      << *message;
     return message;
 }
 

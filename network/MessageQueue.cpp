@@ -2,6 +2,7 @@
 
 #include "Message.h"
 
+#include <boost/optional/optional.hpp>
 
 namespace {
     struct SynchronousResponseMessage {
@@ -37,10 +38,14 @@ void MessageQueue::PushBack(Message& message) {
         m_have_synchronous_response.notify_one();
 }
 
-void MessageQueue::PopFront(Message& message) {
+boost::optional<Message> MessageQueue::PopFront() {
     boost::mutex::scoped_lock lock(m_monitor);
+    if (m_queue.empty())
+        return boost::none;
+    Message message;
     swap(message, m_queue.front());
     m_queue.pop_front();
+    return message;
 }
 
 void MessageQueue::EraseFirstSynchronousResponse(Message& message) {
