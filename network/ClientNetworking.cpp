@@ -27,6 +27,7 @@
 #include <boost/bind.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <thread>
 
@@ -155,9 +156,6 @@ public:
     /** Returns true iff the client is connected to send to the server. */
     bool IsTxConnected() const;
 
-    /** Returns true iff there is at least one incoming message available. */
-    bool MessageAvailable() const;
-
     /** Returns the ID of the player on this client. */
     int PlayerID() const;
 
@@ -189,12 +187,9 @@ public:
         the message for sending and returns immediately. */
     void SendMessage(const Message& message);
 
-    /** Gets the next incoming message from the server, places it into \a
-        message, and removes it from the incoming message queue.  The function
-        assumes that there is at least one message in the incoming queue.
-        Users must call MessageAvailable() first to make sure this is the
-        case. */
-    void GetMessage(Message& message);
+    /** Return the next incoming message from the server if available or boost::none.
+        Remove the message from the incoming message queue. */
+    boost::optional<Message> GetMessage();
 
     /** Sends \a message to the server, then blocks until it sees the first
         synchronous response from the server. */
@@ -276,9 +271,6 @@ bool ClientNetworking::Impl::IsTxConnected() const {
     boost::mutex::scoped_lock lock(m_mutex);
     return m_tx_connected;
 }
-
-bool ClientNetworking::Impl::MessageAvailable() const
-{ return !m_incoming_messages.Empty(); }
 
 int ClientNetworking::Impl::PlayerID() const
 { return m_player_id; }
@@ -443,15 +435,16 @@ void ClientNetworking::Impl::SendMessage(const Message& message) {
     m_io_service.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
-void ClientNetworking::Impl::GetMessage(Message& message) {
-    if (!MessageAvailable()) {
-        ErrorLogger() << "ClientNetworking::GetMessage can't get message if none available";
-        return;
-    }
+boost::optional<Message> ClientNetworking::Impl::GetMessage() {
+    if (m_incoming_messages.Empty())
+        return boost::none;
+
+    Message message;
     m_incoming_messages.PopFront(message);
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::GetMessage() : received message "
                       << message;
+    return message;
 }
 
 void ClientNetworking::Impl::SendSynchronousMessage(const Message& message, Message& response_message) {
@@ -671,9 +664,6 @@ bool ClientNetworking::IsRxConnected() const
 bool ClientNetworking::IsTxConnected() const
 { return m_impl->IsTxConnected(); }
 
-bool ClientNetworking::MessageAvailable() const
-{ return m_impl->MessageAvailable(); }
-
 int ClientNetworking::PlayerID() const
 { return m_impl->PlayerID(); }
 
@@ -707,8 +697,8 @@ void ClientNetworking::SetHostPlayerID(int host_player_id)
 void ClientNetworking::SendMessage(const Message& message)
 { return m_impl->SendMessage(message); }
 
-void ClientNetworking::GetMessage(Message& message)
-{ m_impl->GetMessage(message); }
+boost::optional<Message> ClientNetworking::GetMessage()
+{ return m_impl->GetMessage(); }
 
 void ClientNetworking::SendSynchronousMessage(const Message& message, Message& response_message)
 { m_impl->SendSynchronousMessage(message, response_message); }

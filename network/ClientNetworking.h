@@ -1,6 +1,8 @@
 #ifndef _ClientNetworking_h_
 #define _ClientNetworking_h_
 
+#include <boost/optional/optional_fwd.hpp>
+
 #include <string>
 #include <vector>
 #include <memory>
@@ -61,9 +63,6 @@ public:
     /** Returns true iff the client is connected to send to the server. */
     bool IsTxConnected() const;
 
-    /** Returns true iff there is at least one incoming message available. */
-    bool MessageAvailable() const;
-
     /** Returns the ID of the player on this client. */
     int PlayerID() const;
 
@@ -93,12 +92,9 @@ public:
         the message for sending and returns immediately. */
     void SendMessage(const Message& message);
 
-    /** Gets the next incoming message from the server, places it into \a
-        message, and removes it from the incoming message queue.  The function
-        assumes that there is at least one message in the incoming queue.
-        Users must call MessageAvailable() first to make sure this is the
-        case. */
-    void GetMessage(Message& message);
+    /** Return the next incoming message from the server if available or boost::none.
+        Remove the message from the incoming message queue. */
+    boost::optional<Message> GetMessage();
 
     /** Sends \a message to the server, then blocks until it sees the first
         synchronous response from the server. */
