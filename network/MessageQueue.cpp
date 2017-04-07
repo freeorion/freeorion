@@ -12,7 +12,7 @@ namespace {
 }
 
 MessageQueue::MessageQueue(boost::mutex& monitor) :
-    m_monitor(monitor)
+    m_monitor(monitor), m_stopped_growing(false)
 {}
 
 bool MessageQueue::Empty() const {
@@ -46,6 +46,12 @@ boost::optional<Message> MessageQueue::PopFront() {
     swap(message, m_queue.front());
     m_queue.pop_front();
     return message;
+}
+
+void MessageQueue::StopGrowing() {
+    boost::mutex::scoped_lock lock(m_monitor);
+    m_stopped_growing = true;
+    m_have_synchronous_response.notify_one();
 }
 
 void MessageQueue::EraseFirstSynchronousResponse(Message& message) {
