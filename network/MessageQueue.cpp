@@ -54,7 +54,7 @@ void MessageQueue::StopGrowing() {
     m_have_synchronous_response.notify_one();
 }
 
-void MessageQueue::EraseFirstSynchronousResponse(Message& message) {
+void MessageQueue::GetFirstSynchronousMessage(Message& message) {
     boost::mutex::scoped_lock lock(m_monitor);
     std::list<Message>::iterator it = std::find_if(m_queue.begin(), m_queue.end(), SynchronousResponseMessage());
     while (it == m_queue.end()) {

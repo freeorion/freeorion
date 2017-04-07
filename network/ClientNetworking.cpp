@@ -449,7 +449,7 @@ void ClientNetworking::Impl::SendSynchronousMessage(const Message& message, Mess
                       << message;
     SendMessage(message);
     // note that this is a blocking operation
-    m_incoming_messages.EraseFirstSynchronousResponse(response_message);
+    m_incoming_messages.GetFirstSynchronousMessage(response_message);
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : received "
                       << "response message " << response_message;
