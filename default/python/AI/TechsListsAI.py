@@ -145,9 +145,10 @@ class TechGroup1a(TechGroup1):
         self.enqueue(
             self.weapon,
             self.weapon,
+            self.weapon,
             self.economy,
             self.economy,
-            self.hull
+            self.hull,
         )
 
 
@@ -158,7 +159,9 @@ class TechGroup1b(TechGroup1):
             self.weapon,
             self.hull,
             self.economy,
-            self.weapon
+            self.weapon,
+            self.weapon,
+
         )
 
 
@@ -171,6 +174,8 @@ class TechGroup1SparseA(TechGroup1):
             self.hull,
             self.weapon,
             self.weapon,
+            self.weapon,
+
             "SHP_SPACE_FLUX_DRIVE"
         )
 
@@ -183,6 +188,7 @@ class TechGroup1SparseB(TechGroup1):
             self.economy,
             "PRO_FUSION_GEN",
             "GRO_SYMBIOTIC_BIO",
+            self.weapon,
             self.weapon,
             self.weapon,
             "PRO_ORBITAL_GEN",
@@ -274,6 +280,7 @@ class TechGroup2A(TechGroup2):
             self.economy,
             self.weapon,
             self.weapon,
+            self.weapon,
             self.economy
         )
 
@@ -292,6 +299,7 @@ class TechGroup2B(TechGroup2):
             self.defense,
             self.defense,
             self.defense,
+            self.weapon,
             self.weapon,
             self.weapon,
             self.economy,
@@ -316,6 +324,7 @@ class TechGroup2SparseA(TechGroup2):
             self.weapon,
             self.defense,
             self.weapon,
+            self.weapon,
             self.weapon
         )
 
@@ -336,6 +345,7 @@ class TechGroup2SparseB(TechGroup2):
             self.defense,
             self.defense,
             self.armor,
+            self.weapon,
             self.weapon,
             self.weapon
         )
@@ -440,6 +450,7 @@ class TechGroup3A(TechGroup3):
             self.weapon,
             self.weapon,
             self.weapon,
+            self.weapon,
             self.weapon
         )
 
@@ -466,6 +477,7 @@ class TechGroup3B(TechGroup3):
             self.misc,
             self.economy,
             self.misc,
+            self.weapon,
             self.weapon,
             self.hull,
             self.hull,
@@ -512,6 +524,7 @@ class TechGroup3Sparse(TechGroup3):
             self.misc,
             self.economy,
             self.misc,
+            self.weapon,
             self.weapon,
             self.hull,
             self.hull,
