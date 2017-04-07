@@ -30,12 +30,13 @@ public:
     /** Adds \a message to the end of the queue. */
     void PushBack(Message& message);
 
-    /** Returns the front message in the queue. */
+    /** Return and remove the first message in the queue. */
     boost::optional<Message> PopFront();
 
-    /** Returns the first synchronous repsonse message in the queue.  If no such message is found, this function blocks
-        the calling thread until a synchronous response element is added. */
-    void GetFirstSynchronousMessage(Message& message);
+    /** Return and remove the first synchronous repsonse message from the queue or return
+        boost::none if there is no synchronous message and the queue has stopped growwing. */
+    boost::optional<Message> GetFirstSynchronousMessage();
+
     /** Indicates that no more new message will be added to the queue. This causes any pending
         GetFirstSynchronousMessage() to return boost::none.*/
     void StopGrowing();

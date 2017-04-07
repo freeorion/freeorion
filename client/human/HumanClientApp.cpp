@@ -684,13 +684,12 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         }
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
-    Message response;
-    m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
-    if (response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
-        ExtractDispatchSavePreviewsMessageData(response, previews);
+    const auto response = m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory));
+    if (response && response->Type() == Message::DISPATCH_SAVE_PREVIEWS){
+        ExtractDispatchSavePreviewsMessageData(*response, previews);
         DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
     }else{
-        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << response.Type();
+        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << response->Type();
     }
 }
 
