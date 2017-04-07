@@ -131,13 +131,10 @@ void AIClientApp::Run() {
 
                 if (!Networking().IsRxConnected())
                     break;
-                if (Networking().MessageAvailable()) {
-                    Message msg;
-                    Networking().GetMessage(msg);
-                    HandleMessage(msg);
-                } else {
+                if (const auto msg = Networking().GetMessage())
+                    HandleMessage(*msg);
+                else
                     std::this_thread::sleep_for(std::chrono::milliseconds(10));
-                }
 
             } catch (boost::python::error_already_set) {
                 /* If the python interpreter is still running then keep
