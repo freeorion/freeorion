@@ -141,21 +141,17 @@ std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
 }
 
 int ClientApp::GetNewObjectID() {
-    Message msg;
-    m_networking->SendSynchronousMessage(RequestNewObjectIDMessage(m_networking->PlayerID()), msg);
-    std::string text = msg.Text();
-    if (text.empty())
+    const auto msg = m_networking->SendSynchronousMessage(RequestNewObjectIDMessage(m_networking->PlayerID()));
+    if (!msg || msg->Text().empty())
         throw std::runtime_error("ClientApp::GetNewObjectID() didn't get a new object ID");
-    return boost::lexical_cast<int>(text);
+    return boost::lexical_cast<int>(msg->Text());
 }
 
 int ClientApp::GetNewDesignID() {
-    Message msg;
-    m_networking->SendSynchronousMessage(RequestNewDesignIDMessage(m_networking->PlayerID()), msg);
-    std::string text = msg.Text();
-    if (text.empty())
+    const auto msg = m_networking->SendSynchronousMessage(RequestNewDesignIDMessage(m_networking->PlayerID()));
+    if (!msg || msg->Text().empty())
         throw std::runtime_error("ClientApp::GetNewDesignID() didn't get a new design ID");
-    return boost::lexical_cast<int>(text);
+    return boost::lexical_cast<int>(msg->Text());
 }
 
 ClientApp* ClientApp::GetApp()

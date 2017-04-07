@@ -193,7 +193,7 @@ public:
 
     /** Sends \a message to the server, then blocks until it sees the first
         synchronous response from the server. */
-    void SendSynchronousMessage(const Message& message, Message& response_message);
+    boost::optional<Message> SendSynchronousMessage(const Message& message);
 
     /** Disconnects the client from the server. */
     void DisconnectFromServer();
@@ -443,16 +443,19 @@ boost::optional<Message> ClientNetworking::Impl::GetMessage() {
     return message;
 }
 
-void ClientNetworking::Impl::SendSynchronousMessage(const Message& message, Message& response_message) {
+boost::optional<Message> ClientNetworking::Impl::SendSynchronousMessage(const Message& message) {
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : sending message "
                       << message;
     SendMessage(message);
     // note that this is a blocking operation
-    m_incoming_messages.GetFirstSynchronousMessage(response_message);
-    if (TRACE_EXECUTION)
+    auto response_message = m_incoming_messages.GetFirstSynchronousMessage();
+
+    if (response_message && TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : received "
-                      << "response message " << response_message;
+                      << "response message " << *response_message;
+
+    return response_message;
 }
 
 void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
@@ -696,5 +699,5 @@ void ClientNetworking::SendMessage(const Message& message)
 boost::optional<Message> ClientNetworking::GetMessage()
 { return m_impl->GetMessage(); }
 
-void ClientNetworking::SendSynchronousMessage(const Message& message, Message& response_message)
-{ m_impl->SendSynchronousMessage(message, response_message); }
+boost::optional<Message> ClientNetworking::SendSynchronousMessage(const Message& message)
+{ return m_impl->SendSynchronousMessage(message); }

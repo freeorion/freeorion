@@ -98,7 +98,7 @@ public:
 
     /** Sends \a message to the server, then blocks until it sees the first
         synchronous response from the server. */
-    void SendSynchronousMessage(const Message& message, Message& response_message);
+    boost::optional<Message> SendSynchronousMessage(const Message& message);
 
     /** Disconnects the client from the server. First tries to send any pending transmit messages. */
     void DisconnectFromServer();
