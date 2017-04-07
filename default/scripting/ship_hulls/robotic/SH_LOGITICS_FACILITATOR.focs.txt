@@ -48,7 +48,7 @@ Hull
             scope = And [
                 Ship
                 InSystem id = Source.SystemID
-                Turn low = Target.CreationTurn + 1
+                Turn low = LocalCandidate.CreationTurn + 1
                 Turn low = LocalCandidate.System.LastTurnBattleHere + 1
                 Structure high = LocalCandidate.MaxStructure - 0.001
                 Or [
@@ -68,7 +68,7 @@ Hull
             scope = And [
                 Ship
                 InSystem id = Source.SystemID
-                Turn low = Target.CreationTurn + 1
+                Turn low = LocalCandidate.CreationTurn + 1
                 Structure high = LocalCandidate.MaxStructure - 0.001
                 Or [
                     OwnedBy empire = Source.Owner
