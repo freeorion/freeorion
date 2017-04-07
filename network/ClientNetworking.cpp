@@ -233,10 +233,11 @@ private:
     // protected to prevent unpredictable results.
     mutable boost::mutex            m_mutex;
 
-    MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
-    std::list<Message>              m_outgoing_messages;
     bool                            m_rx_connected;      // accessed from multiple threads
     bool                            m_tx_connected;      // accessed from multiple threads
+
+    MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
+    std::list<Message>              m_outgoing_messages;
 
     Message::HeaderBuffer           m_incoming_header;
     Message                         m_incoming_message;
@@ -252,9 +253,9 @@ ClientNetworking::Impl::Impl() :
     m_host_player_id(Networking::INVALID_PLAYER_ID),
     m_io_service(),
     m_socket(m_io_service),
-    m_incoming_messages(m_mutex),
     m_rx_connected(false),
-    m_tx_connected(false)
+    m_tx_connected(false),
+    m_incoming_messages(m_mutex, m_rx_connected)
 {}
 
 bool ClientNetworking::Impl::IsConnected() const {
@@ -502,7 +503,7 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
-    m_incoming_messages.StopGrowing();
+    m_incoming_messages.RxDisconnected();
     m_outgoing_messages.clear();
     m_io_service.reset();
     { // Mutex scope

@@ -11,8 +11,8 @@ namespace {
     };
 }
 
-MessageQueue::MessageQueue(boost::mutex& monitor) :
-    m_monitor(monitor), m_stopped_growing(false)
+MessageQueue::MessageQueue(boost::mutex& monitor, const bool& rx_connected) :
+    m_monitor{monitor}, m_rx_connected{rx_connected}
 {}
 
 bool MessageQueue::Empty() const {
@@ -48,9 +48,8 @@ boost::optional<Message> MessageQueue::PopFront() {
     return message;
 }
 
-void MessageQueue::StopGrowing() {
+void MessageQueue::RxDisconnected() {
     boost::mutex::scoped_lock lock(m_monitor);
-    m_stopped_growing = true;
     m_have_synchronous_response.notify_one();
 }
 
@@ -58,7 +57,7 @@ boost::optional<Message> MessageQueue::GetFirstSynchronousMessage() {
     boost::mutex::scoped_lock lock(m_monitor);
     std::list<Message>::iterator it = std::find_if(m_queue.begin(), m_queue.end(), SynchronousResponseMessage());
     while (it == m_queue.end()) {
-        if (m_stopped_growing)
+        if (!m_rx_connected)
             return boost::none;
         m_have_synchronous_response.wait(lock);
         it = std::find_if(m_queue.begin(), m_queue.end(), SynchronousResponseMessage());
