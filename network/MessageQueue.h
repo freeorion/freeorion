@@ -36,11 +36,15 @@ public:
     /** Returns the first synchronous repsonse message in the queue.  If no such message is found, this function blocks
         the calling thread until a synchronous response element is added. */
     void EraseFirstSynchronousResponse(Message& message);
+    /** Indicates that no more new message will be added to the queue. This causes any pending
+        GetFirstSynchronousMessage() to return boost::none.*/
+    void StopGrowing();
 
 private:
     std::list<Message> m_queue;
     boost::condition   m_have_synchronous_response;
     boost::mutex&      m_monitor;
+    bool               m_stopped_growing = false;
 };
 
 
