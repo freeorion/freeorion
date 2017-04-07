@@ -499,7 +499,6 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
-    m_incoming_messages.Clear();
     m_outgoing_messages.clear();
     m_io_service.reset();
     { // Mutex scope
