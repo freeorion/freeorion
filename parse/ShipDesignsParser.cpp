@@ -6,6 +6,7 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/phoenix/function/adapt_function.hpp>
+#include <boost/uuid/uuid_io.hpp>
 
 FO_COMMON_API extern const int ALL_EMPIRES;
 
@@ -35,6 +36,19 @@ namespace {
         auto inserted_design = designs.insert(std::make_pair(design->Name(false), std::move(design)));
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_ship_design_, insert_ship_design, 9)
+
+    // A UUID parser
+    boost::uuids::uuid parse_uuid(const std::string& uuid_string) {
+        try {
+            return boost::lexical_cast<boost::uuids::uuid>(uuid_string);
+        } catch (boost::bad_lexical_cast&) {
+            std::stringstream ss;
+            ss << uuid_string << " is not a valid UUID.  A valid UUID looks like 01234567-89ab-cdef-0123-456789abcdef";
+            throw parse::FOCS_ParseError(ss.str());
+        }
+    };
+    // A lazy UUID parser
+    BOOST_PHOENIX_ADAPT_FUNCTION(boost::uuids::uuid, parse_uuid_, parse_uuid, 1)
 
     struct rules {
         rules() {
