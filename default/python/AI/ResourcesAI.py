@@ -32,7 +32,7 @@ PRODUCTION = FocusType.FOCUS_PROTECTION
 _focus_names = {INDUSTRY: "Industry", RESEARCH: "Research", GROWTH: "Growth", PRODUCTION: "Defense"}
 
 # TODO use the priorityRatio to weight
-RESEARCH_WEIGHTING = 2.0
+RESEARCH_WEIGHTING = 2.3
 
 useGrowth = True
 limitAssessments = False
