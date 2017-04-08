@@ -1047,42 +1047,6 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     s_instance = this;
 }
 
-void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
-                                                         const std::vector<std::string>& design_names) const
-{
-    if (!empire || design_names.empty())
-        return;
-    int empire_id = empire->EmpireID();
-    Universe& universe = GetUniverse();
-
-    for (const std::string& design_name : design_names) {
-        const auto& design_it = m_ship_designs.find(design_name);
-        if (design_it == m_ship_designs.end()) {
-            ErrorLogger() << "Couldn't find predefined ship design with name " << design_name << " to add to empire";
-            continue;
-        }
-
-        // only add producible designs to empires
-        const std::unique_ptr<ShipDesign>& d = design_it->second;
-        if (!d->Producible())
-            continue;
-
-        // safety / santiy check
-        if (design_it->first != d->Name(false))
-            ErrorLogger() << "Predefined ship design name in map (" << design_it->first << ") doesn't match name in ShipDesign::m_name (" << d->Name(false) << ")";
-
-        int design_id = this->GetDesignID(design_name);
-
-        if (design_id == INVALID_DESIGN_ID) {
-            ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
-            continue;
-        } else {
-            universe.SetEmpireKnowledgeOfShipDesign(design_id, empire_id);
-            empire->AddShipDesign(design_id);
-        }
-    }
-}
-
 namespace {
     void AddDesignToUniverse(std::map<std::string, int>& design_generic_ids,
                              const std::unique_ptr<ShipDesign>& design, bool monster)

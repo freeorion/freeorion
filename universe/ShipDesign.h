@@ -598,11 +598,6 @@ public:
     int                 GetDesignID(const std::string& name) const;
     //@}
 
-    /** Adds designs in this manager to the specified \a empire using that
-      * Empire's AddShipDesign(ShipDesign*) function.  Only designs specified in
-      * \a design_names are added; others in this manager are not. */
-    void                AddShipDesignsToEmpire(Empire* empire, const std::vector<std::string>& design_names) const;
-
     /** Adds designs in this manager to the universe with the design creator
       * left as no empire.  Returns a map from ship design name to design id in
       * the universe. */
