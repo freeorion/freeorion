@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_ENG_SCOUT"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca33"
     description = "SD_ENG_SCOUT_DESC"
     hull = "SH_COMPRESSED_ENERGY"
     parts = [

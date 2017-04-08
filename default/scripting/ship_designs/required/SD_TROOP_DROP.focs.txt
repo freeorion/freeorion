@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_TROOP_DROP"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca17"
     description = "SD_TROOP_DROP_DESC"
     hull = "SH_COLONY_BASE"
     parts = [

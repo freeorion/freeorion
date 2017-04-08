@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_ROBOTIC1"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca26"
     description = "SD_ROBOTIC1_DESC"
     hull = "SH_ROBOTIC"
     parts = [

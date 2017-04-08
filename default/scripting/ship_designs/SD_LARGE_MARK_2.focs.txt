@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_LARGE_MARK_2"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca09"
     description = "SD_LARGE_MARK2_DESC"
     hull = "SH_STANDARD"
     parts = [

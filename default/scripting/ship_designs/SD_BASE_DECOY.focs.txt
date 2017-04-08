@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_BASE_DECOY"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca10"
     description = "SD_BASE_DECOY_DESC"
     hull = "SH_COLONY_BASE"
     parts = ""
