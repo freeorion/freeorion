@@ -1085,6 +1085,7 @@ public:
     bool                Selected() const;
     NewFleetAggression  GetNewFleetAggression() const;
     void                Select(bool b);
+    void                SetSystemID(int id);
 
     mutable boost::signals2::signal<void (const std::vector<int>&)> NewFleetFromShipsSignal;
 
@@ -1105,7 +1106,7 @@ private:
     void                ColorTextForSelect();
 
     const int           m_fleet_id;
-    const int           m_system_id;
+    int                 m_system_id;
     const bool          m_is_new_fleet_drop_target;
     NewFleetAggression  m_new_fleet_aggression;
 
@@ -1357,6 +1358,9 @@ void FleetDataPanel::Select(bool b) {
 
     ColorTextForSelect();
 }
+
+void FleetDataPanel::SetSystemID(int id)
+{ m_system_id = id; }
 
 void FleetDataPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
@@ -3013,6 +3017,9 @@ void FleetWnd::Refresh() {
     }
 
     m_system_id = location.first;
+
+    if (m_new_fleet_drop_target)
+        m_new_fleet_drop_target->SetSystemID(m_system_id);
 
     // If the location is a system add in any ships from m_empire_id that are in the system.
     if (std::shared_ptr<const System> system = GetSystem(m_system_id)) {
