@@ -2866,9 +2866,6 @@ void Empire::CheckResearchProgress() {
     std::multimap<double, std::string> costs_to_complete_available_unpaused_techs;
     for (const Tech* tech : GetTechManager()) {
         const std::string& tech_name = tech->Name();
-        const Tech* tech = GetTech(tech_name);
-        if (!tech)
-            continue;
         if (techs_not_suitable_for_auto_allocation.count(tech_name) > 0)
             continue;
         if (this->GetTechStatus(tech_name) != TS_RESEARCHABLE)
