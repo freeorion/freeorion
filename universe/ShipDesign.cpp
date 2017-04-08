@@ -18,7 +18,7 @@
 
 #include <cfloat>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/uuid/uuid_generators.hpp>
+#include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -525,7 +525,7 @@ HullTypeManager::iterator HullTypeManager::end() const
 ShipDesign::ShipDesign() :
     m_name(),
     m_description(),
-    m_uuid(boost::uuids::random_generator()()),
+    m_uuid(boost::uuids::nil_generator()()),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
     m_designed_by_empire(ALL_EMPIRES),
     m_hull(),
@@ -541,10 +541,10 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
                        const std::vector<std::string>& parts,
                        const std::string& icon, const std::string& model,
                        bool name_desc_in_stringtable, bool monster,
-                       const std::string uuid) :
+                       const boost::uuids::uuid uuid /*= boost::uuids::uuid{{0}}*/) :
     m_name(name),
     m_description(description),
-    m_uuid{(uuid.empty()) ? boost::uuids::random_generator()() : boost::lexical_cast<boost::uuids::uuid>(uuid)},
+    m_uuid{uuid},
     m_designed_on_turn(designed_on_turn),
     m_designed_by_empire(designed_by_empire),
     m_hull(hull),
@@ -572,7 +572,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
                        const std::vector<std::string>& parts,
                        const std::string& icon, const std::string& model,
                        bool name_desc_in_stringtable, bool monster,
-                       const std::string& uuid) :
+                       const boost::uuids::uuid uuid /*= boost::uuids::uuid{{0}}*/) :
     ShipDesign(name, description, 0, ALL_EMPIRES, hull, parts, icon, model, name_desc_in_stringtable, monster, uuid)
 {}
 
@@ -589,9 +589,8 @@ void ShipDesign::SetName(const std::string& name) {
     }
 }
 
-void ShipDesign::SetUUID(const boost::uuids::uuid& uuid) {
-    m_uuid = (m_uuid == boost::uuids::uuid{{0}}) ? boost::uuids::random_generator()() : uuid;
-}
+void ShipDesign::SetUUID(const boost::uuids::uuid& uuid)
+{ m_uuid = uuid; }
 
 const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)

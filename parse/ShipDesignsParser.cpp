@@ -6,6 +6,7 @@
 
 #include <boost/spirit/include/phoenix.hpp>
 #include <boost/phoenix/function/adapt_function.hpp>
+#include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 
 FO_COMMON_API extern const int ALL_EMPIRES;
@@ -27,7 +28,7 @@ namespace {
                             const std::string& name, const std::string& description,
                             const std::string& hull, const std::vector<std::string>& parts,
                             const std::string& icon, const std::string& model,
-                            bool name_desc_in_stringtable, const std::string& uuid)
+                            bool name_desc_in_stringtable, const boost::uuids::uuid& uuid)
     {
         // TODO use make_unique when converting to C++14
         auto design = std::unique_ptr<ShipDesign>(
@@ -37,14 +38,28 @@ namespace {
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_ship_design_, insert_ship_design, 9)
 
+    // A UUID validator
+    bool is_valid_uuid(const std::string& uuid_string) {
+        try {
+            boost::lexical_cast<boost::uuids::uuid>(uuid_string);
+        } catch (boost::bad_lexical_cast&) {
+            ErrorLogger() << uuid_string << " is not a valid UUID.  A valid UUID looks like 01234567-89ab-cdef-0123-456789abcdef";
+            return false;
+        }
+        return true;
+    };
+
+    // A lazy UUID parser
+    BOOST_PHOENIX_ADAPT_FUNCTION(bool, is_valid_uuid_, is_valid_uuid, 1)
+
     // A UUID parser
     boost::uuids::uuid parse_uuid(const std::string& uuid_string) {
         try {
             return boost::lexical_cast<boost::uuids::uuid>(uuid_string);
         } catch (boost::bad_lexical_cast&) {
-            std::stringstream ss;
-            ss << uuid_string << " is not a valid UUID.  A valid UUID looks like 01234567-89ab-cdef-0123-456789abcdef";
-            throw parse::FOCS_ParseError(ss.str());
+            // This should never happen because the previous is_valid should short circuit.
+            ErrorLogger() << uuid_string << " is not a valid UUID.  A valid UUID looks like 01234567-89ab-cdef-0123-456789abcdef";
+            return boost::uuids::uuid{{0}};
         }
     };
     // A lazy UUID parser
@@ -84,8 +99,9 @@ namespace {
                 =    tok.ShipDesign_
                 >    parse::detail::label(Name_token)
                 >    tok.string        [ _pass = is_unique_(_r6, ShipDesign_token, _1), _r1 = _1 ]
-                >    (parse::detail::label(UUID_token)        > tok.string [ _r5 = _1 ]
-                      | eps [ _r5 = "" ]
+                >    ((parse::detail::label(UUID_token)
+                       > tok.string [_pass = is_valid_uuid_(_1),  _r5 = parse_uuid_(_1) ])
+                      | eps [ _r5 = boost::uuids::nil_generator()() ]
                      )
                 >    parse::detail::label(Description_token) > tok.string [ _r2 = _1 ]
                 > (
@@ -124,10 +140,10 @@ namespace {
             qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
         }
 
-        typedef parse::detail::rule<
-            void (std::string&, std::string&, std::string&, bool&, std::string&,
+        using design_prefix_rule = parse::detail::rule<
+            void (std::string&, std::string&, std::string&, bool&, boost::uuids::uuid&,
                   const std::map<std::string, std::unique_ptr<ShipDesign>>&)
-        > design_prefix_rule;
+        >;
 
         typedef parse::detail::rule<
             void (std::map<std::string, std::unique_ptr<ShipDesign>>&),
@@ -138,7 +154,7 @@ namespace {
                 std::vector<std::string>,
                 std::string,
                 bool,
-                std::string
+                boost::uuids::uuid
             >
         > design_rule;
 
