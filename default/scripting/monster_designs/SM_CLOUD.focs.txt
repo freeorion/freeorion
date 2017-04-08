@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_CLOUD"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca20"
     description = "SM_CLOUD_DESC"
     hull = "SH_NEBULOUS_BODY"
     parts = [

@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_SNOWFLAKE_3"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca27"
     description = "SM_SNOWFLAKE_3_DESC"
     hull = "SH_SNOWFLAKE_3_BODY"
     parts = [

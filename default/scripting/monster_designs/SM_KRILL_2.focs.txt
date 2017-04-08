@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_KRILL_2"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca28"
     description = "SM_KRILL_2_DESC"
     hull = "SH_KRILL_2_BODY"
     parts = [

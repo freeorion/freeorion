@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_DAMPENING_CLOUD"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca33"
     description = "SM_DAMPENING_CLOUD_DESC"
     hull = "SH_DAMPENING_CLOUD_BODY"
     parts = [

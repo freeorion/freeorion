@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_JUGGERNAUT_3"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca03"
     description = "SM_JUGGERNAUT_3_DESC"
     hull = "SH_JUGGERNAUT_3_BODY"
     parts = [

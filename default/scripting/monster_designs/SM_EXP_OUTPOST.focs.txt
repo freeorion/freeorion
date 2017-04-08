@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_EXP_OUTPOST"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca07"
     description = "SM_EXP_OUTPOST_DESC"
     hull = "SH_EXP_OUTPOST_HULL"
     parts = [

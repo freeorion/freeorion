@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_DRAGON"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca06"
     description = "SM_DRAGON_DESC"
     hull = "SH_STRONG_MONSTER_BODY"
     parts = [
