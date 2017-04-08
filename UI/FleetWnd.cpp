@@ -1106,7 +1106,7 @@ private:
 
     const int           m_fleet_id;
     const int           m_system_id;
-    const bool          m_new_fleet_drop_target;
+    const bool          m_is_new_fleet_drop_target;
     NewFleetAggression  m_new_fleet_aggression;
 
     boost::signals2::connection  m_fleet_connection;
@@ -1128,7 +1128,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_fleet_id(fleet_id),
     m_system_id(INVALID_OBJECT_ID),
-    m_new_fleet_drop_target(false),
+    m_is_new_fleet_drop_target(false),
     m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
     m_fleet_icon(nullptr),
     m_fleet_name_text(nullptr),
@@ -1148,7 +1148,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     Control(GG::X0, GG::Y0, w, h, GG::INTERACTIVE),
     m_fleet_id(INVALID_OBJECT_ID),
     m_system_id(system_id),
-    m_new_fleet_drop_target(new_fleet_drop_target), // should be true?
+    m_is_new_fleet_drop_target(new_fleet_drop_target),
     m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
     m_fleet_icon(nullptr),
     m_fleet_name_text(nullptr),
@@ -1216,7 +1216,7 @@ void FleetDataPanel::Render() {
 void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                   GG::Flags<GG::ModKey> mod_keys)
 {
-    if (!m_new_fleet_drop_target) {
+    if (!m_is_new_fleet_drop_target) {
         // normally the containing row (or the listbox that contains that) will
         // handle drag-drop related things
         //std::cout << "FleetDataPanel::DragDropHere forwarding to parent..." << std::endl << std::flush;
@@ -1251,7 +1251,7 @@ void FleetDataPanel::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, boo
 void FleetDataPanel::CheckDrops(const GG::Pt& pt, std::map<const GG::Wnd*, bool>& drop_wnds_acceptable,
                                 GG::Flags<GG::ModKey> mod_keys)
 {
-    if (!m_new_fleet_drop_target) {
+    if (!m_is_new_fleet_drop_target) {
         // normally the containing row (or the listbox that contains that) will
         // handle drag-drop related things
         ForwardEventToParent();
@@ -1268,7 +1268,7 @@ void FleetDataPanel::DragDropLeave()
 void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                                      const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
 {
-    if (!m_new_fleet_drop_target) {
+    if (!m_is_new_fleet_drop_target) {
         //std::cout << "FleetDataPanel::DropsAcceptable default rejecting all" << std::endl << std::flush;
         // reject all
         Wnd::DropsAcceptable(first, last, pt, mod_keys);
@@ -1306,7 +1306,8 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
         if (!ship->OwnedBy(this_client_empire_id))
             continue;
 
-        if (m_new_fleet_drop_target) {
+        if (m_is_new_fleet_drop_target) {
+            // only allows dropping ships?
             // reject drops of ships not located in the same system as this drop target
             if (ship->SystemID() != m_system_id || m_system_id == INVALID_OBJECT_ID)
                 continue;
@@ -1323,7 +1324,7 @@ void FleetDataPanel::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableI
 }
 
 void FleetDataPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
-    if (!m_new_fleet_drop_target && Parent()) {
+    if (!m_is_new_fleet_drop_target && Parent()) {
         // normally the containing row (or the listbox that contains that) will
         // handle drag-drops
         ForwardEventToParent();
@@ -1405,7 +1406,7 @@ void FleetDataPanel::AggressionToggleButtonPressed() {
         // toggle fleet aggression status
         HumanClientApp::GetApp()->Orders().IssueOrder(
             OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_state)));
-    } else if (m_new_fleet_drop_target) {
+    } else if (m_is_new_fleet_drop_target) {
         // cycle new fleet aggression
         if (m_new_fleet_aggression == INVALID_FLEET_AGGRESSION)
             m_new_fleet_aggression = FLEET_AGGRESSIVE;
@@ -1428,7 +1429,7 @@ void FleetDataPanel::Refresh() {
     delete m_gift_indicator;
     m_gift_indicator = nullptr;
 
-    if (m_new_fleet_drop_target) {
+    if (m_is_new_fleet_drop_target) {
         m_fleet_name_text->SetText(UserString("FW_NEW_FLEET_LABEL"));
         m_fleet_destination_text->Clear();
 
@@ -1623,7 +1624,7 @@ void FleetDataPanel::UpdateAggressionToggle() {
 
     NewFleetAggression aggression = FLEET_AGGRESSIVE;
 
-    if (m_new_fleet_drop_target) {
+    if (m_is_new_fleet_drop_target) {
         aggression = m_new_fleet_aggression;
     } else if (std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         aggression = fleet->Aggressive() ? FLEET_AGGRESSIVE : FLEET_PASSIVE;
@@ -1640,7 +1641,7 @@ void FleetDataPanel::UpdateAggressionToggle() {
             FleetAggressiveIcon(), UserString("FW_AGGRESSIVE"), UserString("FW_AGGRESSIVE_DESC")));
     } else if (aggression == FLEET_PASSIVE) {
         m_aggression_toggle->SetUnpressedGraphic(GG::SubTexture(FleetPassiveIcon()));
-        if (m_new_fleet_drop_target)
+        if (m_is_new_fleet_drop_target)
             m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAutoIcon()));
         else
             m_aggression_toggle->SetPressedGraphic  (GG::SubTexture(FleetAggressiveIcon()));
