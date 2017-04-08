@@ -12,7 +12,8 @@ namespace {
 }
 
 MessageQueue::MessageQueue(boost::mutex& monitor, const bool& rx_connected) :
-    m_monitor{monitor}, m_rx_connected{rx_connected}
+    m_monitor{monitor},
+    m_rx_connected{rx_connected}
 {}
 
 bool MessageQueue::Empty() const {
