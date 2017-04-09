@@ -4,7 +4,6 @@ import string
 
 
 species_list = [
-    ("SP_SUPER_TEST", "Super Tester", "icons/species/other-04.png"),
     ("SP_ABADDONI", "Abaddoni", "icons/species/abaddonnian.png"),
     ("SP_BANFORO", "Banforo", "icons/species/banforo.png"),
     ("SP_CHATO", "Chato", "icons/species/chato-matou-gormoshk.png"),
