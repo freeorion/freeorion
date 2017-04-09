@@ -122,8 +122,8 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Removed build cost increase mechanic from stargate.
 - Massively increased cost of the Transformer building.
 - Reduced other buildings' production times to equal the Transformer's production time.
-- Prevented ancient guardian on homeworlds.
-- Restricted growth focus to be available on homeworlds on species that are on the planet, not any species' homeworld.
+- Prevented Ancient Guardians on homeworlds.
+- Restricted growth focus to be available on homeworlds of species that are on the planet, not any species' homeworld.
 - Removed frontloading of production (due to changing to fractional production progress mechanic).
 - Salted the PRNG seed with galaxy setup seed to hopefully avoid often getting the same random effect results due to using just the turn number as the seed.
 - Added option to control whether to re-seed the PRNG repeatedly on the server.
@@ -135,7 +135,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Adjusted AI to further prioritize automation, exobots, and some growth techs.
 - In sparse galaxies, moderated the reduction in AI colonization activity that occurs after spotting enemies.
 - Adjusted AI value for asteriods during first 40 turns.
-- Removed requirement that shipyard and arteroid shipyard be supply connected.
+- Made neutronium and asteroid armor parts available only to supply connected shipyards.
 - Stopped monsters maturing during combat.
 - Made Cultural Archives required for research bonus of Auto History Analyser.
 - Added allied diplomatic status between empires. Allies share visibility and supply networks.
