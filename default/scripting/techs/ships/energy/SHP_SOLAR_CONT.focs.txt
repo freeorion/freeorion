@@ -13,7 +13,7 @@ Tech
     ]
     unlock = [
         Item type = ShipHull name = "SH_SOLAR"
-        Item type = Building name = "BLD_SHIPYARD_ENRG_SOLAR"
+        //Item type = Building name = "BLD_SHIPYARD_ENRG_SOLAR"
     ]
     graphic = "icons/ship_hulls/solar_hull_small.png"
 

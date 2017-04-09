@@ -12658,9 +12658,9 @@ SH_SOLAR
 Solar Hull
 
 SH_SOLAR_DESC
-'''This mighty flagship is essentially a miniature sun, and as such is a great source of both [[metertype METER_FUEL]] and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[metertype METER_STEALTH]]. This hull has eighteen external slots, eight internal slots and a core slot—a far greater internal capacity than any other hull.
+'''This mighty flagship is essentially a miniature sun, and as such is a great source of both [[metertype METER_FUEL]] and visibility. All accompanying friendly ships completely recover fuel between combat, and all enemy ships in the vicinity receive a penalty to [[metertype METER_STEALTH]]. This hull has 16 external slots, 4 internal slots and a core slot—a greater internal capacity than any other hull.
 
-[[metertype METER_STRUCTURE]] is extremely high, [[metertype METER_STEALTH]] is very low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high. However, this ship has the ability to enter a star and hide, giving it perfect [[metertype METER_STEALTH]] on the galaxy map when it is in a system with a star of type other than [[STAR_BLACK]] or [[STAR_NEUTRON]], and in combat, when it is hiding inside such a star.
+[[metertype METER_STRUCTURE]] is high, [[metertype METER_STEALTH]] is very low, [[metertype METER_DETECTION]] is medium and [[metertype METER_SPEED]] is very high. However, this ship has the ability to enter a star and hide, giving it perfect [[metertype METER_STEALTH]] on the galaxy map when it is in a system with a star of type other than [[STAR_BLACK]] or [[STAR_NEUTRON]], and in combat, when it is hiding inside such a star.
 
 This ship requires a tremendous amount of energy to construct and must harness energy from particle-antiparticle collisions on the event horizon of a [[STAR_BLACK]] in its formation. It can only be built at a location with a [[buildingtype BLD_SHIPYARD_BASE]], an [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and a [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]].'''
 

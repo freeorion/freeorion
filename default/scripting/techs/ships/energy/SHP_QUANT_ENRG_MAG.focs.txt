@@ -10,7 +10,10 @@ Tech
         "LRN_GRAVITONICS"
         "SHP_ENRG_FRIGATE"
     ]
-    unlock = Item type = ShipHull name = "SH_QUANTUM_ENERGY"
+    unlock = [
+        Item type = ShipHull name = "SH_QUANTUM_ENERGY"
+        Item type = Building name = "BLD_SHIPYARD_ENRG_SOLAR"
+    ]
     graphic = "icons/ship_hulls/quantum_energy_hull_small.png"
 
 #include "/scripting/common/base_prod.macros"
