@@ -145,7 +145,8 @@ namespace {
                 return;
 
             std::vector<std::unique_ptr<ShipDesign>> file_designs;
-            parse::ship_designs(saved_designs_dir, file_designs);
+            std::vector<boost::uuids::uuid> ordering;
+            parse::ship_designs(saved_designs_dir, file_designs, ordering);
 
             for (auto& design_entry : file_designs)
                 if (!m_saved_designs.count(design_entry->Name()))

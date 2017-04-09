@@ -1040,7 +1040,8 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
     std::vector<std::unique_ptr<ShipDesign>> designs;
-    parse::ship_designs(designs);
+    std::vector<boost::uuids::uuid> ordering;
+    parse::ship_designs(designs, ordering);
 
     for (auto& design : designs)
         if (m_ship_designs.count(design->Name()))
@@ -1049,7 +1050,8 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
             m_ship_designs[design->Name()] = std::move(design);
 
     designs.clear();
-    parse::monster_designs(designs);
+    ordering.clear();
+    parse::monster_designs(designs, ordering);
 
     for (auto& design : designs)
         if (m_monster_designs.count(design->Name()))

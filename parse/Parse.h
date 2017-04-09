@@ -10,6 +10,7 @@
 #include "../universe/Tech.h"
 
 #include <boost/filesystem/path.hpp>
+#include <boost/uuid/uuid.hpp>
 
 class Alignment;
 class BuildingType;
@@ -50,11 +51,14 @@ namespace parse {
     /** Parse all ship designs in directory \p path, store them in \p designs. If a file exists
         called ShipDesignManifest.focs.txt, parse it and store the order in \p ordering. */
     FO_PARSE_API bool ship_designs(const boost::filesystem::path& path,
-                                   std::vector<std::unique_ptr<ShipDesign>>& designs);
+                                   std::vector<std::unique_ptr<ShipDesign>>& designs,
+                                   std::vector<boost::uuids::uuid>& ordering);
 
-    FO_PARSE_API bool ship_designs(std::vector<std::unique_ptr<ShipDesign>>& designs);
+    FO_PARSE_API bool ship_designs(std::vector<std::unique_ptr<ShipDesign>>& designs,
+                                   std::vector<boost::uuids::uuid>& ordering);
 
-    FO_PARSE_API bool monster_designs(std::vector<std::unique_ptr<ShipDesign>>& designs);
+    FO_PARSE_API bool monster_designs(std::vector<std::unique_ptr<ShipDesign>>& designs,
+                                      std::vector<boost::uuids::uuid>& ordering);
 
     FO_PARSE_API bool fleet_plans(std::vector<FleetPlan*>& fleet_plans_);
 

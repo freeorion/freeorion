@@ -206,7 +206,8 @@ namespace {
 
 namespace parse {
     bool ship_designs(const boost::filesystem::path& path,
-                      std::vector<std::unique_ptr<ShipDesign>>& designs)
+                      std::vector<std::unique_ptr<ShipDesign>>& designs,
+                      std::vector<boost::uuids::uuid>& ordering)
     {
         boost::filesystem::path manifest_file;
 
@@ -228,12 +229,22 @@ namespace parse {
                 ErrorLogger() << "Failed to parse ship design in " << file << " from " << path << " because " << e.what();;
             }
         }
+
+        if (!manifest_file.empty()) {
+            try {
+                result &= detail::parse_file<manifest_rules, std::vector<boost::uuids::uuid>>(manifest_file, ordering);
+            } catch (const std::runtime_error& e) {
+                ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file << " from " << path
+                              << " because " << e.what();;
+            }
+        }
+
         return result;
     }
 
-    bool ship_designs(std::vector<std::unique_ptr<ShipDesign>>& designs)
-    { return ship_designs("scripting/ship_designs", designs); }
+    bool ship_designs(std::vector<std::unique_ptr<ShipDesign>>& designs, std::vector<boost::uuids::uuid>& ordering)
+    { return ship_designs("scripting/ship_designs", designs, ordering); }
 
-    bool monster_designs(std::vector<std::unique_ptr<ShipDesign>>& designs)
-    { return ship_designs("scripting/monster_designs", designs); }
+    bool monster_designs(std::vector<std::unique_ptr<ShipDesign>>& designs, std::vector<boost::uuids::uuid>& ordering)
+    { return ship_designs("scripting/monster_designs", designs, ordering); }
 }
