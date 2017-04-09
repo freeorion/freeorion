@@ -39,11 +39,15 @@ struct FO_COMMON_API SaveGamePreviewData {
     short               number_of_empires;              /// The number of empires in the game
     short               number_of_human_players;        /// The number of human players in the game
 
+    std::string         save_format_marker = "";        /// What format was used for this save?
+    unsigned int        uncompressed_text_size = 0;     /// How many bytes capacity does the uncompressed save text take up? (ie. the part that was / will be compressed with zlib for compressed xml format saves)
+    unsigned int        compressed_text_size = 0;       /// How many bytes capacity does the compressed save text take up?
+
     template <class Archive>
     void serialize(Archive& ar, unsigned int version);
 };
 
-BOOST_CLASS_VERSION(SaveGamePreviewData, 2);
+BOOST_CLASS_VERSION(SaveGamePreviewData, 4);
 
 extern template FO_COMMON_API void SaveGamePreviewData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, unsigned int);
 extern template FO_COMMON_API void SaveGamePreviewData::serialize<freeorion_bin_iarchive>(freeorion_bin_iarchive&, unsigned int);
@@ -62,7 +66,7 @@ private:
 };
 
 /** The preview information the server sends to the client. */
-struct FO_COMMON_API PreviewInformation{
+struct FO_COMMON_API PreviewInformation {
     std::vector<std::string>    subdirectories; /// A list of all subfolders of the save game directory, in the format /name1/child1/grandchild
     std::string                 folder;         /// The directory whose previews are being listed now
     std::vector<FullPreview>    previews;       /// The previews of the saves in this folder

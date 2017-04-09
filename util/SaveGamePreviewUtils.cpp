@@ -29,7 +29,7 @@ namespace fs = boost::filesystem;
 
 namespace {
     const std::string UNABLE_TO_OPEN_FILE("Unable to open file");
-    const std::string XML_SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed, and the main gamestate information is stored as zlib-comprssed XML archive in the last entry in the main archive.");
+    const std::string XML_SAVE_FILE_DESCRIPTION("This is an XML archive FreeOrion saved game. Initial header information is uncompressed. The main gamestate information follows, possibly stored as zlib-comprssed XML archive in the last entry in the main archive.");
     const std::string BIN_SAVE_FILE_DESCRIPTION("This is binary archive FreeOrion saved game.");
 
     /// Splits time and date on separate lines for an ISO datetime string
@@ -111,7 +111,8 @@ SaveGamePreviewData::SaveGamePreviewData() :
     main_player_empire_name(UserString("UNKNOWN_VALUE_SYMBOL_2")),
     current_turn(-1),
     number_of_empires(-1),
-    number_of_human_players(-1)
+    number_of_human_players(-1),
+    save_format_marker("")
 {}
 
 bool SaveGamePreviewData::Valid() const
@@ -129,6 +130,13 @@ void SaveGamePreviewData::serialize(Archive& ar, unsigned int version)
         }
         ar & BOOST_SERIALIZATION_NVP(description)
            & BOOST_SERIALIZATION_NVP(freeorion_version);
+        if (version >= 3) {
+            ar & BOOST_SERIALIZATION_NVP(save_format_marker);
+            if (version >= 4) {
+                ar & BOOST_SERIALIZATION_NVP(uncompressed_text_size)
+                   & BOOST_SERIALIZATION_NVP(compressed_text_size);
+            }
+        }
     }
     ar & BOOST_SERIALIZATION_NVP(magic_number)
        & BOOST_SERIALIZATION_NVP(main_player_name);

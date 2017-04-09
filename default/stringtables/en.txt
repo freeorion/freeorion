@@ -1555,6 +1555,9 @@ Automatically quits once any turns specified by --auto-advance-n-turns are compl
 OPTIONS_DB_BINARY_SERIALIZATION
 Use Binary serialization for saving games. Binary serialization is faster to save and load, but may not be possible to load on a different operating system.
 
+OPTIONS_DB_XML_ZLIB_SERIALIZATION
+When saving games with XML serialization, compress most of the XML before writing the file. Compression substantially reduces save file sizes, but may make saves unloadable due to memory requirements to decompress the save data.
+
 OPTIONS_DB_UI_WINDOWS_EXISTS
 True if the window with a given config name currently exists, false if one was created and deleted, doesn't exist if no window has yet been created with that name.
 
@@ -2579,6 +2582,9 @@ Add All Saved Ship Designs at Game Start
 
 OPTIONS_USE_BINARY_SERIALIZATION
 Create Binary Save Files
+
+OPTIONS_USE_XML_ZLIB_SERIALIZATION
+Use Compression for XML Save Files 
 
 
 ##
