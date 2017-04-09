@@ -168,10 +168,7 @@ namespace {
             }
         }
 
-        if (total_RPs_spent >= RPs - EPSILON)
-            return; // don't further allocate if nothing left to spend
-
-        DebugLogger() << "Allocated: " << total_RPs_spent << " of " << RPs << " available";
+        DebugLogger() << "SetTechQueueElementSpending allocated: " << total_RPs_spent << " of " << RPs << " available";
     }
 
     /** Sets the allocated_pp value for each Element in the passed
