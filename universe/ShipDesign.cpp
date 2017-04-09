@@ -1039,8 +1039,24 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
-    parse::ship_designs(m_ship_designs);
-    parse::monster_designs(m_monster_designs);
+    std::vector<std::unique_ptr<ShipDesign>> designs;
+    parse::ship_designs(designs);
+
+    for (auto& design : designs)
+        if (m_ship_designs.count(design->Name()))
+            ErrorLogger() << design->Name() << " ship design does not have a unique name.";
+        else
+            m_ship_designs[design->Name()] = std::move(design);
+
+    designs.clear();
+    parse::monster_designs(designs);
+
+    for (auto& design : designs)
+        if (m_monster_designs.count(design->Name()))
+            ErrorLogger() << design->Name() << " ship design does not have a unique name.";
+        else
+            m_monster_designs[design->Name()] = std::move(design);
+
 
     TraceLogger() << "Predefined Ship Designs:";
     for (const auto& entry : m_ship_designs)
