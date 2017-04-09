@@ -72,7 +72,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Made droplists scroll to keep the selected row visible when navigating with the keyboard.
 - Made numpad keys work with droplist navigation.
 - Made current item visible when drop down list opens.
-- Changed colours used to render some scanlines (indicating a not-visible objects).
+- Changed colours used to render some scanlines (indicating a not-visible object).
 - Added right-click menu command to split from a fleet ships that have less than full fighter complement.
 - Used human player's name as default empire's name in multiplayer.
 - Added option for random species selection during game setup.
@@ -89,7 +89,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added new galaxy type images.
 - Made Enter/Return KeyPress events on EncyclopediaDetailPanel set the focus to the search edit.
 - Made some scrollable GUI widgets respond to keypresses to scroll their contents.
-- Madee ListBox header show for empty list boxes.
+- Made ListBox header show for empty list boxes.
 - Paused music when the application loses focus.
 - Closed credits if the app is resized.
 - Update FPS immediately when the option changes.
