@@ -1348,7 +1348,7 @@ OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
 Active/Désactive le repositionnement automatique des fenêtres lorsque la taille d'affichage de l'application est modifiée.
 
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
-Au démarrage d'une partie, ajoute automatiquement tous les modèles d'astronef conçus et sauvegardés par le joueur à la liste des modèles connus de l'Empire du joueur.
+Ajoute automatiquement tous les modèles d'astronef conçus et sauvegardés par le joueur à la liste des modèles connus de l'Empire du joueur, si et seulement si la fenêtre Conception est consultée au Tour 1.
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 Dans la Fenêtre Conception, met à jour dynamiquement l'article de l'Encyclopédie lorsque le nom du modèle est modifié.
@@ -12658,9 +12658,9 @@ SH_SOLAR
 Coque Solaire
 
 SH_SOLAR_DESC
-'''Cette magnifique coque est essentiellement un soleil miniature, disposant donc de grandes réserves de [[metertype METER_FUEL]] mais étant en contrepartie très voyante. Tous les astronefs alliés se trouvant à proximité régénèrent complètement leur Carburant entre chaque combat, tandis que tous les astronefs ennemis aux alentours subissent une pénalité de [[metertype METER_STEALTH]]. Cette coque dispose de dix-huit niches externes, de huit niches internes, et d'une niche centrale, soit une capacité d'accueil d'équipements bien plus élevée que n'importe quelle autre coque.
+'''Cette magnifique coque est essentiellement un soleil miniature, disposant donc de grandes réserves de [[metertype METER_FUEL]] mais étant en contrepartie très voyante. Tous les astronefs alliés se trouvant à proximité régénèrent complètement leur Carburant entre chaque combat, tandis que tous les astronefs ennemis aux alentours subissent une pénalité de [[metertype METER_STEALTH]]. Cette coque dispose de 16 niches externes, de 4 niches internes, et d'une niche centrale, soit une capacité d'accueil d'équipements plus élevée que n'importe quelle autre coque.
 
-Sa [[metertype METER_STRUCTURE]] est extrêmement élevée, sa [[metertype METER_STEALTH]] est très faible, son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] très élevée. Toutefois, cet astronef a la capacité de pénétrer une étoile et de s'y cacher, lui conférant ainsi une [[metertype METER_STEALTH]] parfaite sur la carte galactique, lorsqu'il se trouve dans un système abritant une étoile autre qu'une Étoile [[STAR_NEUTRON]] ou qu'un [[STAR_BLACK]], ainsi qu'en combat, lorsqu'il se dissimule dans une étoile adéquate.
+Sa [[metertype METER_STRUCTURE]] est élevée, sa [[metertype METER_STEALTH]] est très faible, son [[metertype METER_DETECTION]] est standard et sa [[metertype METER_SPEED]] très élevée. Toutefois, cet astronef a la capacité de pénétrer une étoile et de s'y cacher, lui conférant ainsi une [[metertype METER_STEALTH]] parfaite sur la carte galactique, lorsqu'il se trouve dans un système abritant une étoile autre qu'une Étoile [[STAR_NEUTRON]] ou qu'un [[STAR_BLACK]], ainsi qu'en combat, lorsqu'il se dissimule dans une étoile adéquate.
 
 Cet astronef nécessite un gigantesque apport d'énergie lors de sa construction, cette dernière devant être collectée à partir des collisions entre particules et antiparticules aux abords de l'horizon des événements d'un [[STAR_BLACK]]. Il ne peut donc être construit que dans un lieu disposant d'un [[buildingtype BLD_SHIPYARD_BASE]], d'un [[buildingtype BLD_SHIPYARD_ENRG_COMP]], et d'une [[buildingtype BLD_SHIPYARD_ENRG_SOLAR]].'''
 
