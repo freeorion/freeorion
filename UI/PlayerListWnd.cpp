@@ -114,7 +114,7 @@ namespace {
             m_empire_research_text(nullptr),
             m_empire_detection_text(nullptr),
             m_diplo_status(INVALID_DIPLOMATIC_STATUS),
-            m_player_status(Message::WAITING),
+            m_player_status(Message::PLAYING_TURN),
             m_player_type(Networking::INVALID_CLIENT_TYPE),
             m_host(false),
             m_win_status(NEITHER),
