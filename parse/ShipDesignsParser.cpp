@@ -166,6 +166,47 @@ namespace {
         design_rule design;
         start_rule start;
     };
+
+    struct manifest_rules {
+        manifest_rules() {
+            namespace phoenix = boost::phoenix;
+            namespace qi = boost::spirit::qi;
+
+            using phoenix::push_back;
+
+            qi::_1_type _1;
+            qi::_2_type _2;
+            qi::_3_type _3;
+            qi::_4_type _4;
+            qi::_r1_type _r1;
+
+            const parse::lexer& tok = parse::lexer::instance();
+
+            design_manifest
+                =    tok.ShipDesignManifest_
+                >    *(parse::detail::label(UUID_token)       > tok.string [ push_back(_r1, parse_uuid_(_1)) ])
+                ;
+
+            start
+                =   +design_manifest(_r1)
+                ;
+
+            design_manifest.name("ShipDesignManifest");
+
+#if DEBUG_PARSERS
+            debug(design_manifest);
+#endif
+
+            qi::on_error<qi::fail>(start, parse::report_error(_1, _2, _3, _4));
+        }
+
+        using manifest_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
+        using start_rule = parse::detail::rule<void (std::vector<boost::uuids::uuid>&)>;
+
+        manifest_rule design_manifest;
+        start_rule start;
+    };
+
 }
 
 namespace parse {
