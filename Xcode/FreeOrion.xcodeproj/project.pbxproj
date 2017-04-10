@@ -244,6 +244,7 @@
 		82655A401716D9240007EEDD /* CombatSystem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 471D5C6D0A98A3F900DA9C21 /* CombatSystem.cpp */; };
 		82682D8219C24DEC0041C465 /* libGLEW.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82E250AD19C2317700F0E2F2 /* libGLEW.a */; };
 		82714D771ADABE680071A329 /* libboost_log.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82714D761ADABE680071A329 /* libboost_log.a */; };
+		82714D771ADABE680071A330 /* libboost_log_setup.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82714D761ADABE680071A330 /* libboost_log_setup.a */; };
 		8275F3F91AD31381003568FF /* AccordionPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3DD1AD31381003568FF /* AccordionPanel.cpp */; };
 		8275F3FA1AD31381003568FF /* BuildingsPanel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3DF1AD31381003568FF /* BuildingsPanel.cpp */; };
 		8275F3FB1AD31381003568FF /* CensusBrowseWnd.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8275F3E11AD31381003568FF /* CensusBrowseWnd.cpp */; };
@@ -972,6 +973,7 @@
 		825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorAction.cpp; sourceTree = "<group>"; };
 		825EA75F16DB9DB10002A797 /* ModeratorAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorAction.h; sourceTree = "<group>"; };
 		82714D761ADABE680071A329 /* libboost_log.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_log.a; sourceTree = "<group>"; };
+		82714D761ADABE680071A330 /* libboost_log_setup.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_log.a; sourceTree = "<group>"; };
 		8275F3DD1AD31381003568FF /* AccordionPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccordionPanel.cpp; sourceTree = "<group>"; };
 		8275F3DE1AD31381003568FF /* AccordionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccordionPanel.h; sourceTree = "<group>"; };
 		8275F3DF1AD31381003568FF /* BuildingsPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuildingsPanel.cpp; sourceTree = "<group>"; };
@@ -1142,6 +1144,7 @@
 				3ABEAB801749C51B00E34912 /* libboost_thread.a in Frameworks */,
 				8280AC5D19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */,
 				82714D771ADABE680071A329 /* libboost_log.a in Frameworks */,
+				82714D771ADABE680071A330 /* libboost_log_setup.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1152,6 +1155,8 @@
 				8288432E1850A1770023C4D7 /* Python.framework in Frameworks */,
 				82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */,
 				8280AC5E19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */,
+				82714D771ADABE680071A329 /* libboost_log.a in Frameworks */,
+				82714D771ADABE680071A330 /* libboost_log_setup.a in Frameworks */,
 				8288432F1850A1960023C4D7 /* libboost_python.a in Frameworks */,
 				3ABEAB971749C93400E34912 /* libboost_signals.a in Frameworks */,
 				3ABEAB901749C8F500E34912 /* libboost_thread.a in Frameworks */,
@@ -1167,6 +1172,8 @@
 			files = (
 				34F0E429113F497500A10EED /* Python.framework in Frameworks */,
 				8280AC6019C0741C00ADDB65 /* libboost_iostreams.a in Frameworks */,
+				82714D771ADABE680071A329 /* libboost_log.a in Frameworks */,
+				82714D771ADABE680071A330 /* libboost_log_setup.a in Frameworks */,
 				9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */,
 				9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */,
 				3ABEABA11749C9CA00E34912 /* libboost_thread.a in Frameworks */,
@@ -1187,6 +1194,8 @@
 				82682D8219C24DEC0041C465 /* libGLEW.a in Frameworks */,
 				8280AC5F19C0741C00ADDB65 /* libboost_iostreams.a in Frameworks */,
 				CEDABCF01C688D050085A4DC /* libboost_locale.a in Frameworks */,
+				82714D771ADABE680071A329 /* libboost_log.a in Frameworks */,
+				82714D771ADABE680071A330 /* libboost_log_setup.a in Frameworks */,
 				82AB1D13194D97A1009C8220 /* libboost_regex.a in Frameworks */,
 				3ABEAB9C1749C96400E34912 /* libboost_signals.a in Frameworks */,
 				82E5238F192FE8CE001E2374 /* AppKit.framework in Frameworks */,
@@ -1921,6 +1930,7 @@
 				8280AC5C19C0741B00ADDB65 /* libboost_iostreams.a */,
 				CEDABCEF1C688D050085A4DC /* libboost_locale.a */,
 				82714D761ADABE680071A329 /* libboost_log.a */,
+				82714D761ADABE680071A330 /* libboost_log_setup.a */,
 				9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */,
 				9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */,
 				9EEEEA7613ACB91A0085B1A0 /* libboost_serialization.a */,
