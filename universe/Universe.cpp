@@ -45,7 +45,6 @@ namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
     void AddOptions(OptionsDB& db) {
-        db.Add("verbose-logging",           UserStringNop("OPTIONS_DB_VERBOSE_LOGGING_DESC"),           false,  Validator<bool>());
         db.Add("effects-threads-ui",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_UI_DESC"),        8,      RangedValidator<int>(1, 32));
         db.Add("effects-threads-ai",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,      RangedValidator<int>(1, 32));
         db.Add("effects-threads-server",    UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
