@@ -203,44 +203,24 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 
 #else
 
+
 // Note: The is a workaround for Visual C++ non-conformant pre-processor
 // handling of empty macro arguments.
 // https://msdn.microsoft.com/en-us/library/hh567368.aspx
 // https://blogs.msdn.microsoft.com/vcblog/2017/03/07/c-standards-conformance-from-microsoft/
-#define FO_LOGGER_NO_ARG(lvl)                                           \
+#define FO_LOGGER_PRESTITCHED(lvl, logger)                              \
     BOOST_LOG_STREAM_WITH_PARAMS(                                       \
-        fo_logger_global_::get(),                                       \
+        logger::get(),                                                  \
         (boost::log::keywords::severity = lvl))                         \
     << boost::log::add_value("SrcFilename", __BASE_FILENAME__)          \
     << boost::log::add_value("SrcLinenum", __LINE__)
 
-#define FO_LOGGER_ONE_ARG(lvl, name)                                    \
-    BOOST_LOG_STREAM_WITH_PARAMS(                                       \
-        FO_GLOBAL_LOGGER_NAME(name)::get(),                             \
-        (boost::log::keywords::severity = lvl))                         \
-    << boost::log::add_value("SrcFilename", __BASE_FILENAME__)          \
-    << boost::log::add_value("SrcLinenum", __LINE__)
+#define TraceLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::trace, fo_logger_global_##__VA_ARGS__)
+#define DebugLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::debug, fo_logger_global_##__VA_ARGS__)
+#define InfoLogger(...)  FO_LOGGER_PRESTITCHED(LogLevel::info,  fo_logger_global_##__VA_ARGS__)
+#define WarnLogger(...)  FO_LOGGER_PRESTITCHED(LogLevel::warn,  fo_logger_global_##__VA_ARGS__)
+#define ErrorLogger(...) FO_LOGGER_PRESTITCHED(LogLevel::error, fo_logger_global_##__VA_ARGS__)
 
-#define TraceLogger(...)                                                \
-    BOOST_PP_IF(BOOST_PP_IS_EMPTY(__VA_ARGS__),                         \
-                FO_LOGGER_NO_ARG(LogLevel::trace),                      \
-                FO_LOGGER_ONE_ARG(LogLevel::trace, __VA_ARGS__))
-#define DebugLogger(...) \
-    BOOST_PP_IF(BOOST_PP_IS_EMPTY(__VA_ARGS__),                         \
-                FO_LOGGER_NO_ARG(LogLevel::debug),                      \
-                FO_LOGGER_ONE_ARG(LogLevel::debug, __VA_ARGS__))
-#define InfoLogger(...)                                                 \
-    BOOST_PP_IF(BOOST_PP_IS_EMPTY(__VA_ARGS__),                         \
-                FO_LOGGER_NO_ARG(LogLevel::info),                      \
-                FO_LOGGER_ONE_ARG(LogLevel::info, __VA_ARGS__))
-#define WarnLogger(...)                                                 \
-    BOOST_PP_IF(BOOST_PP_IS_EMPTY(__VA_ARGS__),                         \
-                FO_LOGGER_NO_ARG(LogLevel::warn),                      \
-                FO_LOGGER_ONE_ARG(LogLevel::warn, __VA_ARGS__))
-#define ErrorLogger(...)                                                \
-    BOOST_PP_IF(BOOST_PP_IS_EMPTY(__VA_ARGS__),                         \
-                FO_LOGGER_NO_ARG(LogLevel::error),                      \
-                FO_LOGGER_ONE_ARG(LogLevel::error, __VA_ARGS__))
 
 #endif
 
