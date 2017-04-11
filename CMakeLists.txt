@@ -406,6 +406,8 @@ target_link_libraries(freeoriond
     freeorionparse
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -447,6 +449,8 @@ target_link_libraries(freeorionca
     freeorionparse
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -515,6 +519,8 @@ target_link_libraries(freeorion
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${Boost_LOCALE_LIBRARY}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${ICONV_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
