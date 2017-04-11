@@ -174,7 +174,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed issue with AIs not storing their aggression correctly in save games.
 - Fixed AI trying to enqueue unresearchable techs.
 - Fix for client crash / access violation upon receiving fatal error message from server.
-- Fixed bug which prevented construction of colony buildings for tech gated species when you don't have the required tech, but own a colony of the species.
+- Fixed bug which prevented construction of colony buildings for tech gated species when a player doesn't have the required tech, but owns a colony of the species.
 - Fixed unonwed mines not destroying ships after reducing their structure to 0.
 - Fixed numbers in planet suitability report being wrong on the turn right after a planet has been depopulated.
 
