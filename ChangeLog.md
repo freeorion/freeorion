@@ -66,6 +66,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Multiplayer game starts when all human players are ready.
 - Made droplists close when Esc is pressed and respond better to mouse actions.
 - Added right-click context menus for various icons in the GUI, such as meters in the planet panels.
+- Label fleets window as "Near System X" for fleets in transit.
 - Showed empire name in fleets window for fleets in transit.
 - Added ability to rename systems in SidePanel. System sorting considers the system's id to disambiguate if necessary.
 - Made mousewheel not scroll drop lists when the pointer is outside the list.
@@ -98,6 +99,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added indication of defending troops to invade button.
 - Added an inner system circle on the galaxy map, which is drawn for systems with colonies.
 - Addded dialog to ask user about waiting for savegame to complete before quitting.
+- In sidepanel, display tooltip not only for selected focus, but also for available focus settings in the focus dropdown list.
 
 
 #### Content
@@ -172,6 +174,10 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed issue with AIs not storing their aggression correctly in save games.
 - Fixed AI trying to enqueue unresearchable techs.
 - Fix for client crash / access violation upon receiving fatal error message from server.
+- Fixed planet panel not resizing when expanded building panel resizes.
+- Fixed bug which prevented construction of colony buildings for tech gates species when you don't have the required tech, but own a colony of the species.
+- Fixed issue where unowned mines didn't properly destroy ships when their structure got reduced to 0.
+- Fixed numbers in planet suitability report being wrong on the turn right after a planet has been depopulated.
 
 
 #### Technical / Internal
