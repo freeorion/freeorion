@@ -1099,34 +1099,64 @@ namespace {
                     }
                 }
 
-                DebugLogger(combat) << [&combat_info, &obj, this]() {
-                    std::stringstream ss;
-                    ss << "Considering attackability of object " << obj->Name()
-                       << " owned by " << std::to_string(obj->Owner())
-                       << " attackable by ";
-
-                    bool no_one{true};
-                    for (int attacking_empire_id : combat_info.empire_ids) {
-                        if (attacking_empire_id == ALL_EMPIRES
-                            && ObjectAttackableByMonsters(obj, monster_detection))
-                        {
-                            ss << "monsters and ";
-                            no_one = false;
-                        } else if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
-                            if (!no_one)
-                                ss << ", ";
-                            ss << std::to_string(attacking_empire_id);
-                            no_one = false;
-                        }
-                    }
-                    if (no_one)
-                        ss << "none of the empires present";
-                    return ss.str();
-                }();
+                DebugLogger(combat) << ReportAttackabilityOfTarget(combat_info, obj);
             }
+        }
+
+        // Return a log report of attackability of \p obj
+        std::string ReportAttackabilityOfTarget(const CombatInfo& combat_info,
+                                                const std::shared_ptr<const UniverseObject>& obj)
+        {
+            std::stringstream ss;
+            ss << "Considering attackability of object " << obj->Name()
+               << " owned by " << std::to_string(obj->Owner())
+               << " attackable by ";
+
+            bool no_one{true};
+            for (int attacking_empire_id : combat_info.empire_ids) {
+                if (attacking_empire_id == ALL_EMPIRES
+                    && ObjectAttackableByMonsters(obj, monster_detection))
+                {
+                    ss << "monsters and ";
+                    no_one = false;
+                } else if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
+                    if (!no_one)
+                        ss << ", ";
+                    ss << std::to_string(attacking_empire_id);
+                    no_one = false;
+                }
+            }
+            if (no_one)
+                ss << "none of the empires present";
+            return ss.str();
         }
     };
 
+
+    // Return a report of invalid targets
+    std::string ReportInvalidTargets(const std::shared_ptr<UniverseObject>& attacker,
+                                     const std::set<int>& potential_target_ids,
+                                     const AutoresolveInfo& combat_state)
+    {
+        std::stringstream ss;
+        ss << "Attacker " << attacker->ID() << " can't attack potential targets: ";
+
+        for (int target_id : potential_target_ids) {
+            std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
+            if (!target)
+                continue;
+
+            // planets can only attack ships (not other planets or fighters)
+            if (attacker->ObjectType() == OBJ_PLANET && target->ObjectType() != OBJ_SHIP)
+                ss << std::to_string(target_id) << " ";
+
+            // fighters can't attack planets
+            else if (attacker->ObjectType() == OBJ_FIGHTER && target->ObjectType() == OBJ_PLANET)
+                ss << std::to_string(target_id) << " ";
+        }
+
+        return ss.str();
+    }
 
     const std::set<int> ValidTargetsForAttackerType(std::shared_ptr<UniverseObject>& attacker,
                                                     AutoresolveInfo& combat_state,
@@ -1163,26 +1193,7 @@ namespace {
         }
 
         if (any_invalid_targets)
-            DebugLogger(combat) << [&attacker, &potential_target_ids, &combat_state](){
-                std::stringstream ss;
-                ss << "Attacker " << attacker->ID() << " can't attack potential targets: ";
-
-                for (int target_id : potential_target_ids) {
-                    std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
-                    if (!target)
-                        continue;
-
-                    // planets can only attack ships (not other planets or fighters)
-                    if (attacker->ObjectType() == OBJ_PLANET && target->ObjectType() != OBJ_SHIP)
-                        ss << std::to_string(target_id) << " ";
-
-                    // fighters can't attack planets
-                    else if (attacker->ObjectType() == OBJ_FIGHTER && target->ObjectType() == OBJ_PLANET)
-                        ss << std::to_string(target_id) << " ";
-                }
-
-                return ss.str();
-            }();
+            DebugLogger(combat) << ReportInvalidTargets(attacker, potential_target_ids, combat_state);
 
         return valid_target_ids;
     }
