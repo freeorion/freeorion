@@ -4,7 +4,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
-## [v0.4.7] - 2017-04-??
+## [v0.4.7] - 2017-04-13
 
 
 ### Key Changes
@@ -66,7 +66,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Multiplayer game starts when all human players are ready.
 - Made droplists close when Esc is pressed and respond better to mouse actions.
 - Added right-click context menus for various icons in the GUI, such as meters in the planet panels.
-- Label fleets window as "Near System X" for fleets in transit.
+- Labeled fleets window as "Near System X" for fleets in transit.
 - Showed empire name in fleets window for fleets in transit.
 - Added ability to rename systems in SidePanel. System sorting considers the system's id to disambiguate if necessary.
 - Made mousewheel not scroll drop lists when the pointer is outside the list.
@@ -99,7 +99,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added indication of defending troops to invade button.
 - Added an inner system circle on the galaxy map, which is drawn for systems with colonies.
 - Addded dialog to ask user about waiting for savegame to complete before quitting.
-- In sidepanel, display tooltip not only for selected focus, but also for available focus settings in the focus dropdown list.
+- In sidepanel, displayed tooltip not only for the selected focus, but also for available focus settings in the focus dropdown list.
 
 
 #### Content
@@ -142,6 +142,8 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Made Cultural Archives required for research bonus of Auto History Analyser.
 - Added allied diplomatic status between empires. Allies share visibility and supply networks.
 - Tweaked AI ship designer logic.
+- Adjusted build costs and stats of the Solar hull, raised build costs of Titanic and Scattered Asteroid hulls.
+- Lowered Protoplasmic and Symbiotic hull base stealth.
 
 
 #### Bugs
