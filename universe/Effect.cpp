@@ -367,10 +367,10 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
         TargetSet                           targets               = targets_and_cause.target_set;
 
 
-        DebugLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
-        DebugLogger(effects) << "SetMeter execute targets before: ";
+        TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
+        TraceLogger(effects) << "SetMeter execute targets before: ";
         for (std::shared_ptr<UniverseObject> target : targets)
-            DebugLogger(effects) << " ... " << target->Dump();
+            TraceLogger(effects) << " ... " << target->Dump();
 
         if (!accounting_map) {
             // without accounting, can do default batch execute
@@ -416,9 +416,9 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
             }
         }
 
-        DebugLogger(effects) << "SetMeter execute targets after: ";
+        TraceLogger(effects) << "SetMeter execute targets after: ";
         for (std::shared_ptr<UniverseObject> target : targets)
-            DebugLogger(effects) << " ... " << target->Dump();
+            TraceLogger(effects) << " ... " << target->Dump();
     }
 }
 
@@ -582,16 +582,16 @@ void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMa
         const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
 
-        DebugLogger(effects) << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
-        DebugLogger(effects) << "SetShipPartMeter execute targets before: ";
+        TraceLogger(effects) << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
+        TraceLogger(effects) << "SetShipPartMeter execute targets before: ";
         for (std::shared_ptr<UniverseObject> target : targets)
-            DebugLogger(effects) << " ... " << target->Dump();
+            TraceLogger(effects) << " ... " << target->Dump();
 
         Execute(source_context, targets);
 
-        DebugLogger(effects) << "SetShipPartMeter execute targets after: ";
+        TraceLogger(effects) << "SetShipPartMeter execute targets after: ";
         for (std::shared_ptr<UniverseObject> target : targets)
-            DebugLogger(effects) << " ... " << target->Dump();
+            TraceLogger(effects) << " ... " << target->Dump();
     }
 }
 
