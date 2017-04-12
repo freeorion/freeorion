@@ -124,7 +124,7 @@ namespace {
 
     class SavedDesignsManager {
     public:
-        const std::map<std::string, ShipDesign*>& GetDesigns() const
+        const std::map<std::string, std::unique_ptr<ShipDesign>>& GetDesigns() const
         { return m_saved_designs; }
 
         static SavedDesignsManager& GetSavedDesignsManager() {
@@ -132,10 +132,8 @@ namespace {
             return manager;
         }
 
-        void ClearDesigns() {
-            for (std::map<std::string, ShipDesign*>::value_type& entry : m_saved_designs)
-            { delete entry.second; }
-        }
+        void ClearDesigns()
+        { m_saved_designs.clear(); }
 
         void RefreshDesigns() {
             using namespace boost::filesystem;
@@ -160,15 +158,12 @@ namespace {
 
             for (const path& design_path : design_files) {
                 try {
-                    std::map<std::string, ShipDesign*> file_designs;
+                    std::map<std::string, std::unique_ptr<ShipDesign>> file_designs;
                     parse::ship_designs(design_path, file_designs);
 
-                    for (std::map<std::string, ShipDesign*>::value_type& design_entry : file_designs) {
+                    for (auto& design_entry : file_designs) {
                         if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {
-                            m_saved_designs[design_entry.first] = design_entry.second;
-                        } else {
-                            // duplicate design name!
-                            delete design_entry.second;
+                            m_saved_designs[design_entry.first] = std::move(design_entry.second);
                         }
                     }
                 } catch (...) {
@@ -179,21 +174,21 @@ namespace {
         }
 
         const ShipDesign* GetDesign(const std::string& design_name) {
-            std::map<std::string, ShipDesign*>::const_iterator it = m_saved_designs.find(design_name);
+            const auto& it = m_saved_designs.find(design_name);
             if (it == m_saved_designs.end())
                 return nullptr;
-            return it->second;
+            return it->second.get();
         }
 
-        std::map<std::string, ShipDesign*>::iterator begin() { return m_saved_designs.begin(); }
-        std::map<std::string, ShipDesign*>::iterator end()   { return m_saved_designs.end(); }
+        std::map<std::string, std::unique_ptr<ShipDesign>>::iterator begin() { return m_saved_designs.begin(); }
+        std::map<std::string, std::unique_ptr<ShipDesign>>::iterator end()   { return m_saved_designs.end(); }
 
         /* Causes the human client Empire to add all saved designs. */
         void LoadAllSavedDesigns() {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
             if (const Empire* empire = GetEmpire(empire_id)) {
                 DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
-                for (std::map<std::string, ShipDesign*>::value_type& entry : *this) {
+                for (const auto& entry : *this) {
                     bool already_got = false;
                     for (int id : empire->OrderedShipDesigns()) {
                         const ShipDesign& ship_design = *GetShipDesign(id);
@@ -227,7 +222,7 @@ namespace {
         ~SavedDesignsManager()
         { ClearDesigns(); }
 
-        std::map<std::string, ShipDesign*>  m_saved_designs;
+        std::map<std::string, std::unique_ptr<ShipDesign>>  m_saved_designs;
         static SavedDesignsManager*         s_instance;
     };
     SavedDesignsManager* SavedDesignsManager::s_instance = nullptr;
@@ -1763,7 +1758,7 @@ void BasesListBox::PopulateWithSavedDesigns() {
     Clear();
     const GG::Pt row_size = ListRowSize();
 
-    for (std::map<std::string, ShipDesign*>::value_type& entry : GetSavedDesignsManager()) {
+    for (const auto& entry : GetSavedDesignsManager()) {
         SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, entry.first);
         Insert(row);
         row->Resize(row_size);

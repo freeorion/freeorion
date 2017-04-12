@@ -1070,23 +1070,15 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     }
 
     TraceLogger() << "Predefined Ship Designs:";
-    for (const auto& entry : m_ship_designs) {
-        const ShipDesign* d = entry.second;
-        TraceLogger() << " ... " << d->Name();
-    }
+    for (const auto& entry : m_ship_designs)
+        TraceLogger() << " ... " << entry.second->Name();
+
     TraceLogger() << "Monster Ship Designs:";
-    for (const auto& entry : m_monster_designs) {
-        const ShipDesign* d = entry.second;
-        TraceLogger() << " ... " << d->Name();
-    }
+    for (const auto& entry : m_monster_designs)
+        TraceLogger() << " ... " << entry.second->Name();
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
-}
-
-PredefinedShipDesignManager::~PredefinedShipDesignManager() {
-    for (std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs)
-        delete entry.second;
 }
 
 void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
@@ -1098,14 +1090,14 @@ void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
     Universe& universe = GetUniverse();
 
     for (const std::string& design_name : design_names) {
-        std::map<std::string, ShipDesign*>::const_iterator design_it = m_ship_designs.find(design_name);
+        const auto& design_it = m_ship_designs.find(design_name);
         if (design_it == m_ship_designs.end()) {
             ErrorLogger() << "Couldn't find predefined ship design with name " << design_name << " to add to empire";
             continue;
         }
 
         // only add producible designs to empires
-        const ShipDesign* d = design_it->second;
+        const std::unique_ptr<ShipDesign>& d = design_it->second;
         if (!d->Producible())
             continue;
 
@@ -1127,7 +1119,7 @@ void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
 
 namespace {
     void AddDesignToUniverse(std::map<std::string, int>& design_generic_ids,
-                             ShipDesign* design, bool monster)
+                             const std::unique_ptr<ShipDesign>& design, bool monster)
     {
         if (!design)
             return;
@@ -1183,15 +1175,11 @@ namespace {
 const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
     m_design_generic_ids.clear();   // std::map<std::string, int>
 
-    for (const std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs) {
-        ShipDesign* d = entry.second;
-        AddDesignToUniverse(m_design_generic_ids, d, false);
-    }
+    for (const auto& entry : m_ship_designs)
+        AddDesignToUniverse(m_design_generic_ids, entry.second, false);
 
-    for (const std::map<std::string, ShipDesign*>::value_type& entry : m_monster_designs) {
-        ShipDesign* d = entry.second;
-        AddDesignToUniverse(m_design_generic_ids, d, true);
-    }
+    for (const auto& entry : m_monster_designs)
+        AddDesignToUniverse(m_design_generic_ids, entry.second, true);
 
     return m_design_generic_ids;
 }

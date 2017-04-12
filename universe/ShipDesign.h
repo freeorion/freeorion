@@ -570,7 +570,7 @@ FO_COMMON_API const ShipDesign* GetShipDesign(int ship_design_id);
 
 class FO_COMMON_API PredefinedShipDesignManager {
 public:
-    typedef std::map<std::string, ShipDesign*>::const_iterator iterator;
+    typedef std::map<std::string, std::unique_ptr<ShipDesign>>::const_iterator iterator;
     typedef std::map<std::string, int>::const_iterator generic_iterator;
 
     /** \name Accessors */ //@{
@@ -614,10 +614,9 @@ public:
 
 private:
     PredefinedShipDesignManager();
-    ~PredefinedShipDesignManager();
 
-    std::map<std::string, ShipDesign*>  m_ship_designs;
-    std::map<std::string, ShipDesign*>  m_monster_designs;
+    std::map<std::string, std::unique_ptr<ShipDesign>>  m_ship_designs;
+    std::map<std::string, std::unique_ptr<ShipDesign>>  m_monster_designs;
     mutable std::map<std::string, int>  m_design_generic_ids;   // ids of designs from this manager that have been added to the universe with no empire as the creator
 
     static PredefinedShipDesignManager* s_instance;

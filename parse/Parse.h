@@ -49,11 +49,11 @@ namespace parse {
     FO_PARSE_API bool ship_hulls(std::map<std::string, HullType*>& hulls);
 
     FO_PARSE_API bool ship_designs(const boost::filesystem::path& path,
-                                   std::map<std::string, ShipDesign*>& designs);
+                                   std::map<std::string, std::unique_ptr<ShipDesign>>& designs);
 
-    FO_PARSE_API bool ship_designs(std::map<std::string, ShipDesign*>& designs);
+    FO_PARSE_API bool ship_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs);
 
-    FO_PARSE_API bool monster_designs(std::map<std::string, ShipDesign*>& designs);
+    FO_PARSE_API bool monster_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs);
 
     FO_PARSE_API bool fleet_plans(std::vector<FleetPlan*>& fleet_plans_);
 
