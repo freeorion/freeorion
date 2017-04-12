@@ -816,6 +816,9 @@ namespace {
             boost::shared_mutex&                                    the_global_mutex
         );
         void operator ()();
+
+        /** Return a report of that state of this work item. */
+        std::string GenerateReport() const;
     private:
         // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe. 
         std::shared_ptr<Effect::EffectsGroup> m_effects_group;
@@ -958,23 +961,25 @@ namespace {
         return *target_set; 
     }
 
+    std::string StoreTargetsAndCausesOfEffectsGroupsWorkItem::GenerateReport() const {
+        boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
+        std::stringstream ss;
+        ss << "StoreTargetsAndCausesOfEffectsGroups: effects_group: "
+           << m_effects_group->AccountingLabel()
+           << "  specific_cause: " << m_specific_cause_name
+           << "  sources: ";
+        for (std::shared_ptr<const UniverseObject> obj : *m_sources) {
+            ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
+        }
+        ss << ")";
+        return ss.str();
+    }
+
     void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator()()
     {
         ScopedTimer timer("StoreTargetsAndCausesOfEffectsGroups");
 
-        DebugLogger(effects) << [this](){
-            boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
-            std::stringstream ss;
-            ss << "StoreTargetsAndCausesOfEffectsGroups: effects_group: "
-               << m_effects_group->AccountingLabel()
-               << "  specific_cause: " << m_specific_cause_name
-               << "  sources: ";
-            for (std::shared_ptr<const UniverseObject> obj : *m_sources) {
-                ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
-            }
-            ss << ")";
-            return ss.str();
-        }();
+        DebugLogger(effects) << GenerateReport();
 
         // get objects matched by scope
         const Condition::ConditionBase* scope = m_effects_group->Scope();
