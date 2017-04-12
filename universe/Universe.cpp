@@ -691,14 +691,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
         }
     }
 
-    DebugLogger(effects) << [&object_ptrs]() {
-        std::stringstream ss;
-        ss << "UpdateMeterEstimatesImpl after resetting meters objects:";
-        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
-            ss << obj->Dump();
-        }
-        return ss.str();
-    }();
+    DebugLogger(effects) << "UpdateMeterEstimatesImpl after resetting meters objects:";
+    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+            DebugLogger(effects) << obj->Dump();
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -708,14 +703,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     // Apply and record effect meter adjustments
     ExecuteEffects(targets_causes, do_accounting, true, false, false, false);
 
-    DebugLogger(effects) << [&object_ptrs]() {
-        std::stringstream ss;
-        ss << "UpdateMeterEstimatesImpl after executing effects objects:";
-        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
-            ss << obj->Dump();
-        }
-        return ss.str();
-    }();
+    DebugLogger(effects) << "UpdateMeterEstimatesImpl after executing effects objects:";
+    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+        DebugLogger(effects) << obj->Dump();
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
@@ -740,7 +730,7 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
 
                 if (meter) {
                     DebugLogger(effects) << "object " << obj_id << " has meter " << type
-                                          << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
+                                         << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
 
                     meter->AddToCurrent(discrepancy);
 
@@ -763,14 +753,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
         obj->ClampMeters();
     }
 
-    DebugLogger(effects) << [&object_ptrs]() {
-        std::stringstream ss;
-        ss << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
-        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
-            ss << obj->Dump();
-        }
-        return ss.str();
-    }();
+    DebugLogger(effects) << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
+    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+        DebugLogger(effects) << obj->Dump();
 
 }
 
@@ -1057,15 +1042,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets = m_objects.FindObjects(target_objects);
 
-    DebugLogger(effects) << [&all_potential_targets]() {
-        std::stringstream ss;
-        ss << "target objects:";
-        for (std::shared_ptr<UniverseObject> obj : all_potential_targets) {
-            ss << obj->Dump();
-        }
-        return ss.str();
-    }();
-
+    DebugLogger(effects) << "target objects:";
+    for (std::shared_ptr<UniverseObject> obj : all_potential_targets)
+        DebugLogger(effects) << obj->Dump();
 
     // caching space for each source object's results of finding matches for
     // scope conditions. Index INVALID_OBJECT_ID stores results for

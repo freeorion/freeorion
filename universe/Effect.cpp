@@ -366,14 +366,11 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
         const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
 
-        DebugLogger(effects) << [&targets, this]() {
-            std::stringstream ss;
-            ss << "\n\nExecute SetMeter effect: \n" << Dump();
-            ss << "SetMeter execute targets before: ";
-            for (std::shared_ptr<UniverseObject> target : targets)
-                ss << " ... " << target->Dump();
-            return ss.str();
-        }();
+
+        DebugLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
+        DebugLogger(effects) << "SetMeter execute targets before: ";
+        for (std::shared_ptr<UniverseObject> target : targets)
+            DebugLogger(effects) << " ... " << target->Dump();
 
         if (!accounting_map) {
             // without accounting, can do default batch execute
@@ -419,14 +416,9 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
             }
         }
 
-        DebugLogger(effects) << [&targets]() {
-            std::stringstream ss;
-            ss << "SetMeter execute targets after: ";
-            for (std::shared_ptr<UniverseObject> target : targets) {
-                ss << " ... " << target->Dump();
-            }
-            return ss.str();
-        }();
+        DebugLogger(effects) << "SetMeter execute targets after: ";
+        for (std::shared_ptr<UniverseObject> target : targets)
+            DebugLogger(effects) << " ... " << target->Dump();
     }
 }
 
@@ -590,24 +582,16 @@ void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMa
         const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
 
-        DebugLogger(effects) << [&targets, this]() {
-            std::stringstream ss;
-            ss << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
-            ss << "SetShipPartMeter execute targets before: ";
-            for (std::shared_ptr<UniverseObject> target : targets)
-                ss << " ... " << target->Dump();
-            return ss.str();
-        }();
+        DebugLogger(effects) << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
+        DebugLogger(effects) << "SetShipPartMeter execute targets before: ";
+        for (std::shared_ptr<UniverseObject> target : targets)
+            DebugLogger(effects) << " ... " << target->Dump();
 
         Execute(source_context, targets);
 
-        DebugLogger(effects) << [&targets, this]() {
-            std::stringstream ss;
-            ss  << "SetShipPartMeter execute targets after: ";
-            for (std::shared_ptr<UniverseObject> target : targets)
-               ss << " ... " << target->Dump();
-            return ss.str();
-        }();
+        DebugLogger(effects) << "SetShipPartMeter execute targets after: ";
+        for (std::shared_ptr<UniverseObject> target : targets)
+            DebugLogger(effects) << " ... " << target->Dump();
     }
 }
 
