@@ -6,6 +6,7 @@
 #include <boost/unordered_map.hpp>
 
 #include <iomanip>
+#include <sstream>
 
 class ScopedTimer::Impl {
 public:
