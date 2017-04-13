@@ -233,6 +233,8 @@ namespace {
             meter_name_map["MaxCapacity"] =        METER_MAX_CAPACITY;
             meter_name_map["SecondaryStat"] =      METER_SECONDARY_STAT;
             meter_name_map["MaxSecondaryStat"] =   METER_MAX_SECONDARY_STAT;
+            meter_name_map["Noisiness"] =          METER_TERTIARY_STAT;
+            meter_name_map["MaxNoisiness"] =       METER_MAX_TERTIARY_STAT;
             meter_name_map["Size"] =               METER_SIZE;
         }
         return meter_name_map;

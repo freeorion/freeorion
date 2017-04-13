@@ -84,6 +84,7 @@ namespace FreeOrionPython {
             .value("maxDamage",         METER_MAX_CAPACITY)
             .value("maxCapacity",       METER_MAX_CAPACITY)
             .value("maxSecondaryStat",  METER_MAX_SECONDARY_STAT)
+            .value("maxNoisiness",      METER_MAX_TERTIARY_STAT)
 
             .value("maxFuel",           METER_MAX_FUEL)
             .value("maxShield",         METER_MAX_SHIELD)
@@ -103,6 +104,7 @@ namespace FreeOrionPython {
             .value("damage",            METER_CAPACITY)
             .value("capacity",          METER_CAPACITY)
             .value("secondaryStat",     METER_SECONDARY_STAT)
+            .value("noisiness",         METER_TERTIARY_STAT)
 
             .value("fuel",              METER_FUEL)
             .value("shield",            METER_SHIELD)

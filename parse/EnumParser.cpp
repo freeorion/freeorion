@@ -216,7 +216,7 @@ namespace parse {
             |   tok.SetCapacity_            [ _val = METER_CAPACITY ]
             |   tok.SetDamage_              [ _val = METER_CAPACITY ]
             |   tok.SetSecondaryStat_       [ _val = METER_SECONDARY_STAT ]
-
+            |   tok.SetTertiaryStat_        [ _val = METER_TERTIARY_STAT ]
             ;
     }
 

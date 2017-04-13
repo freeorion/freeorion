@@ -202,10 +202,13 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
         icon_filename = "happiness.png";    break;
     case METER_CAPACITY:
     case METER_MAX_CAPACITY:
-        icon_filename = "capacity.png";   break;
+        icon_filename = "capacity.png";     break;
     case METER_SECONDARY_STAT:
     case METER_MAX_SECONDARY_STAT:
-        icon_filename = "secondary.png";   break;
+        icon_filename = "secondary.png";    break;
+    case METER_TERTIARY_STAT:
+    case METER_MAX_TERTIARY_STAT:
+        icon_filename = "tertiary.png";     break;
     case METER_STRUCTURE:
     case METER_MAX_STRUCTURE:
         icon_filename = "structure.png";    break;

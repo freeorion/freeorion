@@ -87,7 +87,7 @@ class FO_COMMON_API PartType {
 public:
     /** \name Structors */ //@{
     PartType();
-    PartType(ShipPartClass part_class, double capacity, double stat2,
+    PartType(ShipPartClass part_class, double capacity, double stat2, double stat3,
              CommonParams& common_params, const MoreCommonParams& more_common_params,
              std::vector<ShipSlotType> mountable_slot_types,
              const std::string& icon, bool add_standard_capacity_effect = true);
@@ -102,6 +102,7 @@ public:
     float                   Capacity() const;
     std::string             CapacityDescription() const;                            ///< returns a translated description of the part capacity, with numeric value
     float                   SecondaryStat() const;
+    float                   TertiaryStat() const;
 
     bool                    CanMountInSlotType(ShipSlotType slot_type) const;       ///< returns true if this part can be placed in a slot of the indicated type
     const std::vector<ShipSlotType>&
@@ -144,6 +145,7 @@ private:
     ShipPartClass                   m_class;
     float                           m_capacity;
     float                           m_secondary_stat;   // damage for a hangar bay, shots per turn for a weapon, etc.
+    float                           m_tertiary_stat;    // stealth reduction in combat per shot for weapons / bays
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_production_cost;
     std::unique_ptr<ValueRef::ValueRefBase<int>>    m_production_time;
     bool                            m_producible;
@@ -738,6 +740,7 @@ void PartType::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_class)
         & BOOST_SERIALIZATION_NVP(m_capacity)
         & BOOST_SERIALIZATION_NVP(m_secondary_stat)
+        & BOOST_SERIALIZATION_NVP(m_tertiary_stat)
         & BOOST_SERIALIZATION_NVP(m_production_cost)
         & BOOST_SERIALIZATION_NVP(m_production_time)
         & BOOST_SERIALIZATION_NVP(m_producible)

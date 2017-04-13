@@ -31,9 +31,18 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
+    struct StatWrapper {
+        StatWrapper(double capacity_, double stat2_, double stat3_) :
+            capacity(capacity_), stat2(stat2_), stat3(stat3_)
+        {}
+        double capacity = 0.0;
+        double stat2 = 0.0;
+        double stat3 = 0.0;
+    };
+
     void insert_parttype(std::map<std::string, std::unique_ptr<PartType>>& part_types,
                          ShipPartClass part_class,
-                         std::pair<double, double> capacity_and_stat2,
+                         StatWrapper stats,
                          const parse::detail::MovableEnvelope<CommonParams>& common_params,
                          const MoreCommonParams& more_common_params,
                          std::vector<ShipSlotType> mountable_slot_types,
@@ -42,7 +51,7 @@ namespace {
                          bool& pass)
     {
         auto part_type = boost::make_unique<PartType>(
-            part_class, capacity_and_stat2.first, capacity_and_stat2.second,
+            part_class, StatWrapper.capacity, StatWrapper.stat2, StatWrapper.stat3,
             *common_params.OpenEnvelope(pass), more_common_params, mountable_slot_types, icon,
             add_standard_capacity_effect);
 
@@ -87,6 +96,7 @@ namespace {
             qi::_g_type _g;
             qi::_h_type _h;
             qi::_i_type _i;
+            qi::_j_type _j;
             qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::eps_type eps;
@@ -114,14 +124,17 @@ namespace {
                    | (labeller.rule(Shots_token)     > double_rule [ _h = _1 ])   // shots is secondary for direct fire weapons
                    |  eps [ _h = 1.0 ]
                   )
+                > (  (labeller.rule(Noisiness_token) > double_rule [ _i = _1 ])   // noisiness for weapons / fighter bays
+                   |  eps [ _i = 1.0 ]
+                  )
                 > (   tok.NoDefaultCapacityEffect_ [ _g = false ]
                    |  eps [ _g = true ]
                   )
                 >   slots(_f)
                 >   common_rules.common           [ _e = _1 ]
                 >   labeller.rule(Icon_token)        > tok.string    [ _b = _1 ]
-                  ) [ _i = construct<std::pair<double, double>>(_d, _h),
-                      insert_parttype_(_r1, _c, _i, _e, _a, _f, _b, _g, _pass) ]
+                  ) [ _j = construct<StatWrapper>(_d, _h, _i),
+                      insert_parttype_(_r1, _c, _j, _e, _a, _f, _b, _g, _pass) ]
                 ;
 
             start
@@ -154,7 +167,8 @@ namespace {
                 std::vector<ShipSlotType>,
                 bool,
                 double,
-                std::pair<double, double>
+                double,
+                StatWrapper
             >
         > part_type_rule;
 
