@@ -256,6 +256,7 @@ GG_ENUM(ShipPartClass,
     PC_RESEARCH,            ///< generates research points for owner
     PC_TRADE,               ///< generates trade points for owner
     PC_PRODUCTION_LOCATION, ///< allows production items to be produced at its location
+    PC_BATTLE_SCANNER,      ///< improves detection during battle
     NUM_SHIP_PART_CLASSES
 )
 

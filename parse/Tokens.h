@@ -30,6 +30,7 @@
     (Attack)                                    \
     (Barren)                                    \
     (Basic)                                     \
+    (BattleScanner)                             \
     (BlackHole)                                 \
     (Blue)                                      \
     (Bombard)                                   \
