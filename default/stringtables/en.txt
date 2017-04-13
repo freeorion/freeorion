@@ -579,13 +579,13 @@ SM_TREE
 Dyson Forest
 
 SM_TREE_DESC
-A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate. At intervals they may send out a seed through the starlanes to colonize other stars.
+A "forest" made up of numerous space-born "trees" with filamentous branches. The trees multiply and align themselves in a bubble at the proper distance around their host star. Dyson Forests are a hazard to navigation, and as time passes, the forest expands and becomes harder to eradicate.  If not destroyed, they will periodically send out a seed through the starlanes to colonize other star systems.  A [[SM_TREE]] seed is known as a [[predefinedshipdesign SM_FLOATER]], and may be difficult to detect.
 
 SM_FLOATER
 Floater
 
 SM_FLOATER_DESC
-A gas-filled bulbous sac drifting through space, sent as a seed by a Dyson Forest to found a new forest around other stars.
+A gas-filled bulbous sac drifting through space, sent as a seed by a [[predefinedshipdesign SM_TREE]] to found a new forest around other stars.  It is generally advisable to destroy [[SM_FLOATER]]s as soon as possible.  However, they are small and difficult to detect; it will generally require the [[tech SPY_DETECT_2]] technology to do so.
 
 SM_DRAGON
 Vacuum Dragon
