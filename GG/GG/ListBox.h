@@ -650,8 +650,6 @@ private:
 
     bool            m_add_padding_at_end;
 
-    iterator*       m_iterator_being_erased;
-
     friend class DropDownList; ///< allow complete access to DropDownList, which relies on ListBox to do its rendering
 };
 

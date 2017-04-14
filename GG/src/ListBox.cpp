@@ -557,8 +557,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_auto_scroll_timer(250),
     m_normalize_rows_on_insert(true),
     m_manage_column_props(true),
-    m_add_padding_at_end(true),
-    m_iterator_being_erased(nullptr)
+    m_add_padding_at_end(true)
 {
     Control::SetColor(color);
     ValidateStyle();
@@ -1086,9 +1085,6 @@ void ListBox::Clear()
     m_vscroll = nullptr;
     DeleteChild(m_hscroll);
     m_hscroll = nullptr;
-
-    if (m_iterator_being_erased)
-        *m_iterator_being_erased = m_rows.end();
 
     RequirePreRender();
     ClearedSignal();
@@ -1987,11 +1983,6 @@ ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
     if (it == m_rows.end())
         return nullptr;
 
-    if (m_iterator_being_erased) {
-        *m_iterator_being_erased = m_rows.end();
-        return nullptr;
-    }
-
     RequirePreRender();
 
     Row* row = *it;
@@ -2105,9 +2096,6 @@ void ListBox::Resort()
                      RowSorter(m_sort_cmp, m_sort_col, m_style & LIST_SORTDESCENDING));
     m_rows.clear();
     m_rows.insert(m_rows.begin(), rows_vec.begin(), rows_vec.end());
-
-    if (m_iterator_being_erased)
-        *m_iterator_being_erased = m_rows.end();
 
     RequirePreRender();
 
