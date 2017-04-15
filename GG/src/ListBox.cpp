@@ -1251,23 +1251,14 @@ void ListBox::BringRowIntoView(iterator target)
 
 void ListBox::SetFirstRowShown(iterator it)
 {
-    if (it == m_rows.end())
+    if (it == m_rows.end() && !m_rows.empty())
         return;
 
     RequirePreRender();
 
+    m_first_row_shown = it;
+
     AdjustScrolls(false);
-
-    if (!m_vscroll && m_first_row_shown == m_rows.begin())
-        return;
-
-    m_first_row_shown = m_vscroll ? it : m_rows.begin();
-
-    Y acc(0);
-    for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
-        acc += (*it2)->Height();
-    m_vscroll->ScrollTo(Value(acc));
-    SignalScroll(*m_vscroll, true);
 }
 
 void ListBox::SetVScrollWheelIncrement(unsigned int increment)
