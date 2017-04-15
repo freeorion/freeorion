@@ -10,24 +10,24 @@ Notable changes to the FreeOrion project will be documented in this file.
 ### Key Changes
 
 - Fighters
--- Launch during combat and attack on subsequent rounds
--- Ignore shields when attacking
--- Cannot attack planets and are not attacked by planets
--- Destroyed by any attack by other fighters or ships
--- Flak weapon shoots multiple times per round and can destroy fighters, but does minimal damage to ships
+    - Launch during combat and attack on subsequent rounds
+    - Ignore shields when attacking
+    - Cannot attack planets and are not attacked by planets
+    - Destroyed by any attack by other fighters or ships
+    - Flak weapon shoots multiple times per round and can destroy fighters, but does minimal damage to ships
 
 - Alliance Supply
--- Empires may propose and agree to an alliance with eachother
--- Allied empires connect their supply networks through eachothers' supply connections
--- Allied empires resupply ships within eachothers' supplied systems
--- Allied empires share visibility information
+    - Empires may propose and agree to an alliance with eachother
+    - Allied empires connect their supply networks through each others' supply connections
+    - Allied empires resupply ships within eachothers' supplied systems
+    - Allied empires share visibility information
 
 - Fractional Production Progress
--- Production item progress is now stored as a fraction of completion, rather than amount of PP accumulated.
--- Changes in the production cost now can't instantly complete something that has had its production cost reduced.
+    - Production item progress is now stored as a fraction of completion, rather than amount of PP accumulated.
+    - Changes in the production cost now can't instantly complete something that has had its production cost reduced.
 
 - Beginner Bonus
--- When the max AI aggression is set to Beginner Mode, the human player gets bonuses to ship shields, planet troop garrisons, and resource output.
+    - When the max AI aggression is set to Beginner Mode, the human player gets bonuses to ship shields, planet troop garrisons, and resource output.
 
 - AI Improvements
 - Many new pedia articles, categorization, and improved search
@@ -40,66 +40,85 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 #### Graphics / GUI
 
-- Added access to pedia from intro screen.
-- Made ctrl + left click in the design window obsolete designs.
-- Reworked window layout updates and rendering timing to improve GUI responsiveness.
-- Made some options window GUI widgets resize with window.
-- Enable screensaver when minimizing the game and disable when maximizing.
-- Added right-click pause and resume commands to research queue in GUI.
-- Added pause and resume research functions to Empire, and getters to check if a tech / queue id is paused to research queue.
-- Made tech list columns sortable.
-- Included more pedia articles in search results
-- Changed Fleets window quick close option from right click to left click
-- Added numerous new column options in the Objects window, and reorganized the options.
-- Made some tooltips use the set browse time option value, rather than a default other time
-- Made ordering of systems in cycling commands alphabetical.
-- Allowed SitRep right-click menu from majority of sitrep area.
-- Added Copy to sitrep right-click context menu.
-- Made tooltip rendering more consistent in style.
-- Added link to help article on sitrep entry right click menu.
-- Added turn sound option.
-- Added right click context to hide/show types of SitReps.
-- Added automatic selection of ships for bombarding.
-- Added more and more flexible indicator icons to fleet and ship panels.
-- Fixed formatting and layout in the save file dialog.
-- Reworked layout in multiplayer lobby window.
-- Multiplayer game starts when all human players are ready.
-- Made droplists close when Esc is pressed and respond better to mouse actions.
-- Added right-click context menus for various icons in the GUI, such as meters in the planet panels.
-- Labeled fleets window as "Near System X" for fleets in transit.
-- Showed empire name in fleets window for fleets in transit.
-- Added ability to rename systems in SidePanel. System sorting considers the system's id to disambiguate if necessary.
-- Made mousewheel not scroll drop lists when the pointer is outside the list.
-- Made droplists scroll to keep the selected row visible when navigating with the keyboard.
-- Made numpad keys work with droplist navigation.
-- Made current item visible when drop down list opens.
-- Changed colours used to render some scanlines (indicating a not-visible object).
-- Added right-click menu command to split from a fleet ships that have less than full fighter complement.
-- Used human player's name as default empire's name in multiplayer.
-- Added option for random species selection during game setup.
-- Displayed identical parts as one entry in ship browse windows.
-- Changed default extended tooltip delay to 3.5 s.
-- Displayed source planet in growth special accounting labels.
-- Changed combat log to use empire color to designate destroyed objects.
-- Added a tooltip to fleet summary icon at top of screen.
-- Added option to show IDs after object names in GUI.
-- Changed display of map scale distance to integers.
-- Prevented multiple players from having the same name in a multiplayer game by adding numeric postfixes.
-- Made mousewheel manipulate credits scrolling.
-- Fixed droplists falling outside the application window.
-- Added new galaxy type images.
-- Made Enter/Return KeyPress events on EncyclopediaDetailPanel set the focus to the search edit.
-- Made some scrollable GUI widgets respond to keypresses to scroll their contents.
-- Made ListBox header show for empty list boxes.
-- Paused music when the application loses focus.
-- Closed credits if the app is resized.
-- Update FPS immediately when the option changes.
-- Adjusted planet suitability report for tech-gated species.
-- Stopped save file dialog from reloading saves after window focus changes.
-- Added indication of defending troops to invade button.
-- Added an inner system circle on the galaxy map, which is drawn for systems with colonies.
-- Addded dialog to ask user about waiting for savegame to complete before quitting.
-- In sidepanel, displayed tooltip not only for the selected focus, but also for available focus settings in the focus dropdown list.
+- General
+    - Reworked window layout updates and rendering timing to improve GUI responsiveness.
+    - Made some options window GUI widgets resize with window.
+    - Enable screensaver when minimizing the game and disable when maximizing.
+    - Made some tooltips use the set browse time option value, rather than a default other time
+    - Made tooltip rendering more consistent in style.
+    - Added turn sound option.
+    - Made droplists close when Esc is pressed and respond better to mouse actions.
+    - Added right-click context menus for various icons in the GUI, such as meters in the planet panels.
+    - Made mousewheel not scroll drop lists when the pointer is outside the list.
+    - Made droplists scroll to keep the selected row visible when navigating with the keyboard.
+    - Made numpad keys work with droplist navigation.
+    - Made current item visible when drop down list opens.
+    - Fixed formatting and layout in the save file dialog.
+    - Changed default extended tooltip delay to 3.5 s.
+    - Added a tooltip to fleet summary icon at top of screen.
+    - Added option to show IDs after object names in GUI.
+    - Made mousewheel manipulate credits scrolling.
+    - Fixed droplists falling outside the application window.
+    - Made some scrollable GUI widgets respond to keypresses to scroll their contents.
+    - Made ListBox header show for empty list boxes.
+    - Paused music when the application loses focus.
+    - Closed credits if the app is resized.
+    - Update FPS immediately when the option changes.
+    - Stopped save file dialog from reloading saves after window focus changes.
+    - Added dialog to ask user about waiting for savegame to complete before quitting.
+
+- Pedia
+    - Added access to pedia from intro screen.
+    - Included more pedia articles in search results
+    - Displayed identical parts as one entry in ship browse windows.
+    - Made Enter/Return KeyPress events on EncyclopediaDetailPanel set the focus to the search edit.
+    - Adjusted planet suitability report for tech-gated species.
+
+- Map Window
+    - Changed Fleets window quick close option from right click to left click
+    - Made ordering of systems in cycling commands alphabetical.
+    - Changed colours used to render some scanlines (indicating a not-visible object).
+    - Changed display of map scale distance to integers.
+    - Added an inner system circle on the galaxy map, which is drawn for systems with colonies.
+
+- Sidepanel
+    - Added automatic selection of ships for bombarding.
+    - Added ability to rename systems in SidePanel. System sorting considers the system's id to disambiguate if necessary.
+    - Displayed source planet in growth special accounting labels.
+    - Added indication of defending troops to invade button.
+    - In sidepanel, displayed tooltip not only for the selected focus, but also for available focus settings in the focus dropdown list.
+
+- Fleet Window
+    - Added more and more flexible indicator icons to fleet and ship panels.
+    - Labeled fleets window as "Near System X" for fleets in transit.
+    - Showed empire name in fleets window for fleets in transit.
+    - Added right-click menu command to split from a fleet ships that have less than full fighter complement.
+
+- SitRep Window
+    - Allowed SitRep right-click menu from majority of sitrep area.
+    - Added Copy to sitrep right-click context menu.
+    - Added link to help article on sitrep entry right click menu.
+    - Added right click context to hide/show types of SitReps.
+    - Changed combat log to use empire color to designate destroyed objects.
+
+- Objects Window
+    - Added numerous new column options in the Objects window, and reorganized the options.
+
+- Design Window
+    - Made ctrl + left click in the design window obsolete designs.
+
+- Research Window
+    - Added right-click pause and resume commands to research queue in GUI.
+    - Added pause and resume research functions to Empire, and getters to check if a tech / queue id is paused to research queue.
+    - Made tech list columns sortable.
+    
+- Game setup / Multiplayer Lobby
+    - Reworked layout in multiplayer lobby window.
+    - Multiplayer game starts when all human players are ready.
+    - Used human player's name as default empire's name in multiplayer.
+    - Added option for random species selection during game setup.
+    - Prevented multiple players from having the same name in a multiplayer game by adding numeric postfixes.
+    - Added new galaxy type images.
 
 
 #### Content
@@ -121,10 +140,10 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added stealth effects to Spatial Flux hull and increased build cost.
 - Reset to 0 a planet's detection upon conquering.
 - Adjusted supply propagation by adding tie-breaking conditions related to (unobstructed) distance to the nearest supply source.
-- Removed build cost increase mechanic from stargate.
+- Removed build cost increase mechanic from Stargate.
 - Massively increased cost of the Transformer building.
 - Reduced other buildings' production times to equal the Transformer's production time.
-- Prevented Ancient Guardians on homeworlds.
+- Prevented Ancient Guardians on native homeworlds.
 - Restricted growth focus to be available on homeworlds of species that are on the planet, not any species' homeworld.
 - Removed frontloading of production (due to changing to fractional production progress mechanic).
 - Salted the PRNG seed with galaxy setup seed to hopefully avoid often getting the same random effect results due to using just the turn number as the seed.
