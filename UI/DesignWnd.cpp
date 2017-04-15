@@ -1583,18 +1583,27 @@ void BasesListBox::Populate() {
 
     DebugLogger() << "BasesListBox::Populate";
 
+    // make note of first visible row to preserve state
+    auto init_first_row_shown = FirstRowShown();
+    std::size_t init_first_row_offset = std::distance(begin(), init_first_row_shown);
+
     // populate list as appropriate for types of bases shown
-    if (m_showing_empty_hulls)
+    if (m_showing_empty_hulls) {
         PopulateWithEmptyHulls();
 
+        if (Empty() || init_first_row_shown == FirstRowShown() || init_first_row_offset < NumRows())
+            return;
+
+        SetFirstRowShown(begin());
+        BringRowIntoView(--end());
+    }
+
     if (m_showing_completed_designs) {
-        // make note of first visible row to preserve state
-        std::size_t first_visible_row = std::distance(begin(), FirstRowShown());
         PopulateWithCompletedDesigns();
         if (!Empty())
             BringRowIntoView(--end());
-        if (first_visible_row < NumRows())
-            BringRowIntoView(std::next(begin(), first_visible_row));
+        if (init_first_row_offset < NumRows())
+            BringRowIntoView(std::next(begin(), init_first_row_offset));
     }
 
     if (m_showing_saved_designs)
