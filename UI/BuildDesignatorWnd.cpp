@@ -1051,7 +1051,7 @@ void BuildDesignatorWnd::CenterOnBuild(int queue_idx, bool open) {
             MapWnd* map = ClientUI::GetClientUI()->GetMapWnd();
             map->CenterOnObject(system_id);
             if (open) {
-                SelectSystem(system_id);
+                HumanClientApp::GetApp()->GetClientUI().GetMapWnd()->SelectSystem(system_id);
                 SelectPlanet(location_id);
             }
         }
