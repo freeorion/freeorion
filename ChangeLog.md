@@ -17,9 +17,9 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Flak weapon shoots multiple times per round and can destroy fighters, but does minimal damage to ships
 
 - Alliance Supply
-    - Empires may propose and agree to an alliance with eachother
+    - Empires may propose and agree to an alliance with each other
     - Allied empires connect their supply networks through each others' supply connections
-    - Allied empires resupply ships within eachothers' supplied systems
+    - Allied empires resupply ships within each others' supplied systems
     - Allied empires share visibility information
 
 - Fractional Production Progress
@@ -89,12 +89,12 @@ Notable changes to the FreeOrion project will be documented in this file.
     - In sidepanel, displayed tooltip not only for the selected focus, but also for available focus settings in the focus dropdown list.
 
 - Fleet Window
-    - Added more and more flexible indicator icons to fleet and ship panels.
+    - Added greater variety and more flexible indicator icons to fleet and ship panels.
     - Labeled fleets window as "Near System X" for fleets in transit.
     - Showed empire name in fleets window for fleets in transit.
     - Added right-click menu command to split from a fleet ships that have less than full fighter complement.
 
-- SitRep Window
+- SitRep Window / Combat Log 
     - Allowed SitRep right-click menu from majority of sitrep area.
     - Added Copy to sitrep right-click context menu.
     - Added link to help article on sitrep entry right click menu.
@@ -167,7 +167,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 #### Bugs
 
-- Fixed window installer continuing install before uninstall completes.
+- Fixed Windows installer continuing install before uninstall completes.
 - Fixed issues with non-ascii characters in Windows usernames / filenames.
 - Made the map distance scale circle track the selected system when the production window is open.
 - Fixed some meter change estimates not considering some contributions, such as ship fuel regeneration.
@@ -196,7 +196,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed AI trying to enqueue unresearchable techs.
 - Fix for client crash / access violation upon receiving fatal error message from server.
 - Fixed bug which prevented construction of colony buildings for tech gated species when a player doesn't have the required tech, but owns a colony of the species.
-- Fixed unonwed mines not destroying ships after reducing their structure to 0.
+- Fixed unowned mines not destroying ships after reducing their structure to 0.
 - Fixed numbers in planet suitability report being wrong on the turn right after a planet has been depopulated.
 
 
@@ -209,7 +209,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Dropped support for MSVC compilers before 2015 version.
 - Added separate description strings for binary and xml save files. Previously, the XML text was appearing in readable form in the binary save files.
 - Hopefully made binary saving an automatic fallback for when xml serialization fails.
-- Implemented <sup> and <sub> text formatting tags.
+- Implemented sup and sub text formatting tags.
 - Optimizations of effect evaluation.
 - Optimized universe generation, substantially reducing time for bigger galaxies and many empires setups.
 - Made universe generation more robust to platform / operating system differences.
