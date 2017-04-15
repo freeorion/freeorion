@@ -82,7 +82,8 @@ namespace {
                 ClientUI::GetClientUI()->ZoomToShipPart(data);
             } else if (link_type == VarText::SPECIES_TAG) {
                 ClientUI::GetClientUI()->ZoomToSpecies(data);
-
+            } else if (link_type == VarText::METER_TYPE_TAG) {
+                ClientUI::GetClientUI()->ZoomToMeterTypeArticle(data);
             } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
                 ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(data);
             }
