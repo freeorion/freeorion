@@ -7091,45 +7091,6 @@ namespace {
             }
 
 
-            // check if any of the proposed lanes are too close to any already-
-            // present lanes of any of the destination systems
-            //std::cout << "... Checking lanes of destination systems:" << std::endl;
-            for (std::shared_ptr<const System> dest_sys : m_destination_systems) {
-                // check this destination system's existing lanes against a lane
-                // to the candidate system
-                for (const std::map<int, bool>::value_type& dest_lane : dest_sys->StarlanesWormholes()) {
-                    std::shared_ptr<const System> dest_lane_end_sys = GetSystem(dest_lane.first);
-                    if (!dest_lane_end_sys)
-                        continue;
-
-                    if (LanesAngularlyTooClose(dest_sys, candidate_sys, dest_lane_end_sys)) {
-                        //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys->UniverseObject::Name() << " due to existing lane from dest to " << dest_lane_end_sys->UniverseObject::Name() << std::endl;
-                        return false;
-                    }
-                }
-            }
-
-
-            // check if any of the proposed lanes are too close to eachother
-            //std::cout << "... Checking proposed lanes against eachother" << std::endl;
-            for (std::vector<std::shared_ptr<const System>>::const_iterator it1 = m_destination_systems.begin();
-                 it1 != m_destination_systems.end(); ++it1)
-            {
-                std::shared_ptr<const System> dest_sys1 = *it1;
-
-                // don't need to check a lane in both directions, so start at one past it1
-                std::vector<std::shared_ptr<const System>>::const_iterator it2 = it1;
-                ++it2;
-                for (; it2 != m_destination_systems.end(); ++it2) {
-                    std::shared_ptr<const System> dest_sys2 = *it2;
-                    if (LanesAngularlyTooClose(candidate_sys, dest_sys1, dest_sys2)) {
-                        //std::cout << " ... ... can't add lane from candidate: " << candidate_sys->UniverseObject::Name() << " to " << dest_sys1->UniverseObject::Name() << " and also to " << dest_sys2->UniverseObject::Name() << std::endl;
-                        return false;
-                    }
-                }
-            }
-
-
             // check that the proposed lanes are not too close to any existing
             // system they are not connected to
             //std::cout << "... Checking proposed lanes for proximity to other systems" <<std::endl;
