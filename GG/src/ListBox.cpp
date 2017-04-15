@@ -2215,6 +2215,11 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
     // Remove unecessary vscroll
     if (m_vscroll && !vertical_needed) {
         vscroll_added_or_removed = true;
+
+        //Scroll back to zero
+        m_vscroll->ScrollTo(0);
+        SignalScroll(*m_vscroll, true);
+
         DeleteChild(m_vscroll);
         m_vscroll = nullptr;
     }
@@ -2244,6 +2249,13 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
                               line_size, std::max(line_size, page_size));
 
         MoveChildUp(m_vscroll);
+
+        // Scroll to the correct location
+        Y acc(0);
+        for (iterator it2 = m_rows.begin(); it2 != m_first_row_shown; ++it2)
+            acc += (*it2)->Height();
+        m_vscroll->ScrollTo(Value(acc));
+        SignalScroll(*m_vscroll, true);
     }
 
     bool hscroll_added_or_removed = false;
@@ -2251,6 +2263,11 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
     // Remove unecessary hscroll
     if (m_hscroll && !horizontal_needed) {
         hscroll_added_or_removed = true;
+
+        //Scroll back to zero
+        m_hscroll->ScrollTo(0);
+        SignalScroll(*m_hscroll, true);
+
         DeleteChild(m_hscroll);
         m_hscroll = nullptr;
     }
