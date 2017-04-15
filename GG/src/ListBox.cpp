@@ -2008,10 +2008,8 @@ ListBox::Row* ListBox::Erase(iterator it, bool removing_duplicate, bool signal)
     }
 
     // remove row from selections and contained rows.
-    if (it != m_rows.end()) {
-        m_selections.erase(it);
-        m_rows.erase(it);
-    }
+    m_selections.erase(it);
+    m_rows.erase(it);
 
     if (check_first_row_and_caret_for_end && m_first_row_shown == m_rows.end() && !m_rows.empty())
         --m_first_row_shown;
