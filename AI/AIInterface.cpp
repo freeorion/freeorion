@@ -605,10 +605,6 @@ namespace AIInterface {
         return 1;
     }
 
-    int IssueDeleteFleetOrder() {
-        return 0;
-    }
-
     int IssueAggressionOrder(int object_id, bool aggressive) {
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
