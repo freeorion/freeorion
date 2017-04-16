@@ -6,7 +6,7 @@ Tech
     researchcost = 75 * [[TECH_COST_MULTIPLIER]]
     researchturns = 4
     tags = [ "PEDIA_DETECTION_PART_TECHS" ]
-    prerequisites = "LRN_EVERYTHING"
+    prerequisites = "SPY_LIGHTHOUSE"
     unlock = Item type = ShipPart name = "SP_DISTORTION_MODULATOR"
     graphic = "icons/ship_parts/distortion_modulator.png"
 

@@ -12,7 +12,7 @@ Part
             scope = WithinDistance distance = 0 condition = Source
             activation = Source
             stackinggroup = "SP_DISTORTION_MODULATOR_STACK"
-            effects = SetStealth value = Value - 20
+            effects = SetStealth value = Value - 30
     icon = "icons/ship_parts/distortion_modulator.png"
 
 #include "/scripting/common/upkeep.macros"

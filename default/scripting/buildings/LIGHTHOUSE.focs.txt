@@ -11,7 +11,7 @@ BuildingType
     EnqueueLocation = [[ENQUEUE_BUILD_ONE_PER_PLANET]]
     effectsgroups = [
         EffectsGroup
-            scope = WithinDistance distance = 0.00001 condition = Source
+            scope = WithinDistance distance = 100 condition = Source
             stackinggroup = "LIGHTHOUSE_STEALTH_STACK"
             effects = SetStealth value = Value - 30
 
