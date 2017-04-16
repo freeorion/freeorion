@@ -490,7 +490,9 @@ class OrderMilitary(AIFleetOrder):
         target_sys_id = self.target.id
         fleet = self.target.get_object()
         system_status = foAI.foAIstate.systemStatus.get(target_sys_id, {})
-        if fleet and fleet.systemID == target_sys_id and not (system_status.get('fleetThreat', 0) + system_status.get('planetThreat', 0) + system_status.get('monsterThreat', 0)):
+        if all((fleet, fleet.systemID == target_sys_id, system_status.get('currently_visible', False),
+               not (system_status.get('fleetThreat', 0) + system_status.get('planetThreat', 0) +
+                        system_status.get('monsterThreat', 0)))):
             self.order_issued = True
 
 
