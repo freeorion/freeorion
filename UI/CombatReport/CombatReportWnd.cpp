@@ -139,14 +139,6 @@ private:
     GG::ScrollPanel*        m_log_scroller;
     GG::Pt                  m_min_size; //< Minimum size according to the contents, is not constrained by the app window size
 
-    void SetFocus(int id)
-    { DebugLogger() << "SetFocus " << id; }
-
-    void RectangleEnter(int data) {
-        DebugLogger() << "RectangleHover " << data;
-        SetFocus(data);
-    }
-
     void UpdateMinSize() {
         m_min_size = GG::Pt(GG::X0, GG::Y0);
 
