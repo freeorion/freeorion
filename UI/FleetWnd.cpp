@@ -276,14 +276,6 @@ namespace {
             OrderPtr(new NewFleetOrder(client_empire_id, order_fleet_names, order_fleet_ids,
                                        *systems_containing_new_fleets.begin(),
                                        order_ship_id_groups, order_ship_aggressives)));
-
-
-        // delete empty fleets from which ships may have been taken
-        for (std::shared_ptr<const Fleet> fleet : Objects().FindObjects<Fleet>(original_fleet_ids)) {
-            if (fleet && fleet->Empty())
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                    new DeleteFleetOrder(client_empire_id, fleet->ID())));
-        }
     }
 
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids,
