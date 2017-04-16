@@ -167,6 +167,7 @@ void NewFleetOrder::ExecuteImpl() const {
     std::vector<std::shared_ptr<Fleet>> created_fleets;
     created_fleets.reserve(m_ship_id_groups.size());
 
+    std::unordered_set<std::shared_ptr<Fleet>> modified_fleets;
 
     // create fleet for each group of ships
     for (int i = 0; i < static_cast<int>(m_ship_id_groups.size()); ++i) {
@@ -221,8 +222,10 @@ void NewFleetOrder::ExecuteImpl() const {
 
         // remove ships from old fleet(s) and add to new
         for (std::shared_ptr<Ship> ship : validated_ships) {
-            if (std::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID()))
+            if (std::shared_ptr<Fleet> old_fleet = GetFleet(ship->FleetID())) {
+                modified_fleets.insert(old_fleet);
                 old_fleet->RemoveShip(ship->ID());
+            }
             ship->SetFleetID(fleet->ID());
         }
         fleet->AddShips(validated_ships_ids);
@@ -237,6 +240,19 @@ void NewFleetOrder::ExecuteImpl() const {
 
     system->FleetsInsertedSignal(created_fleets);
     system->StateChangedSignal();
+
+    // signal change to fleet states
+    for (std::shared_ptr<Fleet> modified_fleet : modified_fleets) {
+        if (!modified_fleet->Empty())
+            modified_fleet->StateChangedSignal();
+        else {
+            if (std::shared_ptr<System> system = GetSystem(modified_fleet->SystemID()))
+                system->Remove(modified_fleet->ID());
+
+            GetUniverse().Destroy(modified_fleet->ID());
+        }
+    }
+
 }
 
 ////////////////////////////////////////////////
