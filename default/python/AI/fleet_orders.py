@@ -304,7 +304,7 @@ class OrderOutpost(AIFleetOrder):
         if ship_id is None:
             ship_id = FleetUtilsAI.get_ship_id_with_role(self.fleet.id, ShipRoleType.BASE_OUTPOST)
         ship = universe.getShip(ship_id)
-        return ship is not None and self.fleet.get_system() == self.target.get_system() and ship.canColonize
+        return ship is not None and self.fleet.get_object().systemID == self.target.get_system().id and ship.canColonize
 
     def issue_order(self):
         if not super(OrderOutpost, self).issue_order():
@@ -369,7 +369,7 @@ class OrderColonize(AIFleetOrder):
         ship = universe.getShip(ship_id)
         if ship and not ship.canColonize:
             print >> sys.stderr, "colonization fleet %d has no colony ship" % self.fleet.id
-        return ship is not None and self.fleet.get_system() == self.target.get_system() and ship.canColonize
+        return ship is not None and self.fleet.get_object().systemID == self.target.get_system().id and ship.canColonize
 
 
 class OrderAttack(AIFleetOrder):
@@ -420,7 +420,7 @@ class OrderInvade(AIFleetOrder):
         planet = self.target.get_object()
         return all((
             ship is not None,
-            self.fleet.get_system().id == planet.systemID,
+            self.fleet.get_object().systemID == planet.systemID,
             ship.canInvade,
             not planet.currentMeterValue(fo.meterType.shield)
         ))
@@ -482,7 +482,7 @@ class OrderMilitary(AIFleetOrder):
         ship_id = FleetUtilsAI.get_ship_id_with_role(self.fleet.id, ShipRoleType.MILITARY)
         universe = fo.getUniverse()
         ship = universe.getShip(ship_id)
-        return ship is not None and self.fleet.get_system() == self.target and (ship.isArmed or ship.hasFighters)
+        return ship is not None and self.fleet.get_object().systemID == self.target.id and (ship.isArmed or ship.hasFighters)
 
     def issue_order(self):
         if not super(OrderMilitary, self).issue_order():
