@@ -507,24 +507,17 @@ class AIFleetMission(object):
                     self.orders.append(resupply_fleet_order)
             return  # no targets
 
-        # for some targets fleet has to visit systems and therefore fleet visit them
         if self.target:
+            # for some targets fleet has to visit systems and therefore fleet visit them
             system_to_visit = self.target.get_system()
             orders_to_visit_systems = MoveUtilsAI.create_move_orders_to_system(self.fleet, system_to_visit)
             # TODO: if fleet doesn't have enough fuel to get to final target, consider resetting Mission
             for fleet_order in orders_to_visit_systems:
                 self.orders.append(fleet_order)
 
-        # if fleet is in some system = fleet.system_id >=0, then also generate system AIFleetOrders
-        if system_id >= 0 and self.target:
-            # system in where fleet is
-            system_target = System(system_id)
-            # if mission aiTarget has required system where fleet is, then generate fleet_order from this aiTarget
-            # for all targets in all mission types get required systems to visit
-            if system_target == self.target.get_system():
-                # from target required to visit get fleet orders to accomplish target
-                fleet_order = self._get_fleet_order_from_target(self.type, self.target)
-                self.orders.append(fleet_order)
+            # also generate appropriate final orders
+            fleet_order = self._get_fleet_order_from_target(self.type, self.target)
+            self.orders.append(fleet_order)
 
     def _need_repair(self, repair_limit=0.70):
         """Check if fleet needs to be repaired.
