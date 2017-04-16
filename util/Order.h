@@ -281,6 +281,7 @@ private:
      *
      *  Postconditions:
      *     - all ships in m_add_ships will be moved from their initial fleet to the destination fleet
+     *     - any resulting empty fleets will be deleted
      */
     void ExecuteImpl() const override;
 
