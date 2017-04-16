@@ -386,7 +386,7 @@ void CombatLogWnd::Impl::SetLog(int log_id) {
                            GetOptionsDB().Get<bool>("verbose-combat-logging");
 
     m_wnd.DeleteChildren();
-    GG::Layout* layout = new GG::DeferredLayout(m_wnd.UpperLeft().x, m_wnd.UpperLeft().y,
+    GG::Layout* layout = new GG::DeferredLayout(m_wnd.RelativeUpperLeft().x, m_wnd.RelativeUpperLeft().y,
                                                 m_wnd.Width(), m_wnd.Height(),
                                                 1, 1, ///< numrows, numcols
                                                 0, 0 ///< wnd margin, cell margin
