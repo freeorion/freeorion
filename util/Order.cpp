@@ -797,44 +797,6 @@ bool BombardOrder::UndoImpl() const {
 }
 
 ////////////////////////////////////////////////
-// DeleteFleetOrder
-////////////////////////////////////////////////
-DeleteFleetOrder::DeleteFleetOrder() :
-    Order(),
-    m_fleet(-1)
-{}
-
-DeleteFleetOrder::DeleteFleetOrder(int empire, int fleet) :
-    Order(empire),
-    m_fleet(fleet)
-{}
-
-void DeleteFleetOrder::ExecuteImpl() const {
-    ValidateEmpireID();
-
-    std::shared_ptr<Fleet> fleet = GetFleet(FleetID());
-
-    if (!fleet) {
-        ErrorLogger() << "Illegal fleet id specified in fleet delete order: " << FleetID();
-        return;
-    }
-
-    if (!fleet->OwnedBy(EmpireID())) {
-        ErrorLogger() << "Empire attempted to issue deletion order to another's fleet.";
-        return;
-    }
-
-    if (!fleet->Empty())
-        return; // should be no ships to delete
-
-    std::shared_ptr<System> system = GetSystem(fleet->SystemID());
-    if (system)
-        system->Remove(fleet->ID());
-
-    GetUniverse().Destroy(FleetID());
-}
-
-////////////////////////////////////////////////
 // ChangeFocusOrder
 ////////////////////////////////////////////////
 ChangeFocusOrder::ChangeFocusOrder() :
