@@ -579,13 +579,13 @@ SM_TREE
 Forêt Dyson
 
 SM_TREE_DESC
-Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Par intervalles, ces forêts relâchent des graines le long des Voies spatiales afin de coloniser d'autres étoiles.
+Une Forêt Dyson est composée de nombreux "arbres" spatiaux à branches filamenteuses. Ces arbres se multiplient et s'organisent en bulle autour de leur étoile hôte. Les Forêts Dyson constituent un risque pour la navigation interstellaire et s'étendent au fil du temps, devenant de plus en plus difficiles à éradiquer. Si elles ne sont pas détruites, ces forêts relâchent périodiquement des graines le long des Voies spatiales afin de coloniser d'autres systèmes stellaires. Une graine de [[SM_TREE]] est répertoriée sous l'appellation de [[predefinedshipdesign SM_FLOATER]], et peut s'avérer difficile à détecter.
 
 SM_FLOATER
 Flotteur
 
 SM_FLOATER_DESC
-Les Forêts Dyson produisent par intermittence des bulbes remplis de gaz, relâchés sous forme de graines dérivant sur les Voies spatiales à la recherche d'autres étoiles autour desquelles fonder de nouvelles forêts.
+Un bulbe de contenu gazeux dérivant sur les Voies spatiales, relâché sous forme de graine par une [[predefinedshipdesign SM_TREE]] afin de fonder une nouvelle forêt autour d'autres étoiles. Il est généralement conseillé de de détruire les [[SM_FLOATER]]s dès que possible. Cependant, de par leur petite taille, ils s'avèrent difficiles à détecter et requièrent la technologie [[tech SPY_DETECT_2]] afin d'y parvenir.
 
 SM_DRAGON
 Dragon du Vide
@@ -11122,6 +11122,8 @@ Compresseur d'Énergie
 BLD_SHIPYARD_ENRG_COMP_DESC
 '''Amélioration du [[buildingtype BLD_SHIPYARD_BASE]] requise pour la production de toutes les coques à énergie et avant toute construction de structures additionnelles pour Compresseur d'Énergie.
 
+En raison de l'important apport d'énergie nécessaire, ne peut être construit qu'au sein d'un système abritant une Étoile [[STAR_BLUE]], [[STAR_WHITE]] ou un [[STAR_BLACK]].
+
 Une structure hautement spécialisée conçue pour créer et assembler des coques constituées de grandes quantités d'énergie fortement compressées. S'agissant d'un processus délicat, le compresseur serait détruit dans une puissante explosion s'il venait à encaisser davantage qu'une infime quantité de [[encyclopedia DAMAGE_TITLE]].'''
 
 BLD_SHIPYARD_ENRG_SOLAR
@@ -11129,6 +11131,8 @@ Unité de Confinement Solaire
 
 BLD_SHIPYARD_ENRG_SOLAR_DESC
 '''Amélioration du [[buildingtype BLD_SHIPYARD_ENRG_COMP]] permettant la production de la [[shiphull SH_SOLAR]].
+
+En raison de l'important apport d'énergie nécessaire, ne peut être construit qu'au sein d'un système abritant un [[STAR_BLACK]].
 
 Créer un soleil miniature est en soi une entreprise gargantuesque. Mais produire une coque intégrant ce soleil miniature, et sur laquelle des équipements d'astronef pourraient être montés en toute sécurité, dépasse encore plus l'entendement.'''
 
