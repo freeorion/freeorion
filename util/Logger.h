@@ -151,6 +151,10 @@ FO_COMMON_API void ConfigureLogger(NamedThreadedLogger& logger, const std::strin
 using LoggerCreatedSignalType = boost::signals2::signal<void (const std::string logger)>;
 FO_COMMON_API extern LoggerCreatedSignalType LoggerCreatedSignal;
 
+// Return all loggers created since app start.  Used to provide the UI a complete list of global
+// loggers intialized during static initialization.
+FO_COMMON_API std::vector<std::string> CreatedLoggersNames();
+
 // Create the default logger
 #ifndef FREEORION_WIN32
 

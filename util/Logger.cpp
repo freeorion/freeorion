@@ -22,9 +22,11 @@
 #include <boost/log/sinks/text_file_backend.hpp>
 #include <boost/log/sinks/sync_frontend.hpp>
 #include <boost/optional.hpp>
+#include <boost/thread/thread.hpp>
 
 #include <ctime>
 #include <regex>
+#include <unordered_map>
 
 namespace logging = boost::log;
 namespace expr = boost::log::expressions;
@@ -104,6 +106,18 @@ std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
 namespace {
+    std::string& LocalDefaultExecLoggerName() {
+        // Create default logger name as a static function variable to avoid static initialization fiasco
+        static std::string default_exec_logger_name;
+        return default_exec_logger_name;
+    }
+
+    boost::optional<LogLevel>& ForcedThreshold() {
+        // Create forced threshold as a static function variable to avoid static initialization fiasco
+        static boost::optional<LogLevel> forced_threshold = boost::none;
+        return forced_threshold;
+    }
+
     using TextFileSinkBackend  = sinks::text_file_backend;
     using TextFileSinkFrontend = sinks::synchronous_sink<TextFileSinkBackend>;
 
@@ -114,6 +128,31 @@ namespace {
         return m_sink_backend;
     }
 
+    boost::mutex& LoggersMutex() {
+        // Create loggers_mutex as a static function variable to avoid static initialization fiasco
+        // loggers_mutex protects the set of created_loggers_names.
+        static boost::mutex loggers_mutex;
+        return loggers_mutex;
+    }
+
+    std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>>& LoggersToSinkFrontEnds() {
+        // Create loggers_names as a static function variable to avoid static initialization fiasco
+        // loggers_names is used to track all global loggers created to
+        //   - bind their backends to a new file when initialized
+        //   - to provide to something like OptionsDB.
+        static std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>> loggers_names{};
+        return loggers_names;
+    }
+
+    void AddLoggerName(const std::string& name) {
+        boost::mutex::scoped_lock(LoggersMutex());
+
+        if (LoggersToSinkFrontEnds().count(name))
+            return;
+        LoggersToSinkFrontEnds().insert({name, nullptr});
+        InfoLogger(log) << "Added logger name = " << name << " of " << LoggersToSinkFrontEnds().size();
+    }
+
     void CreateFileSinkFrontEnd(const std::string& name) {
         auto& file_sink_backend = GetSinkBackend();
 
@@ -122,7 +161,8 @@ namespace {
             return;
 
         // Create a sink frontend for formatting.
-        auto sink_frontend = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
+        boost::shared_ptr<TextFileSinkFrontend> sink_frontend
+            = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
 
         // Create the format
         sink_frontend->set_formatter(
@@ -137,29 +177,37 @@ namespace {
         // Set a filter to only format this channel
         sink_frontend->set_filter(log_channel == name);
 
+        // Remove any previous frontend for this channel
+        {
+            boost::mutex::scoped_lock(LoggersMutex());
+
+            // const std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>>::iterator&
+            const auto&
+                name_and_old_frontend = LoggersToSinkFrontEnds().find(name);
+            if (name_and_old_frontend != LoggersToSinkFrontEnds().end()) {
+                logging::core::get()->remove_sink(name_and_old_frontend->second);
+                LoggersToSinkFrontEnds().erase(name_and_old_frontend);
+            }
+
+            LoggersToSinkFrontEnds().insert({name, sink_frontend});
+        }
+
+        // Add the frontend.
         logging::core::get()->add_sink(sink_frontend);
+
     }
-}
-
-LoggerCreatedSignalType LoggerCreatedSignal;
-
-namespace {
-    std::string& LocalDefaultExecLoggerName() {
-        // Create default logger name as a static function variable to avoid static initialization fiasco
-        static std::string default_exec_logger_name;
-        return default_exec_logger_name;
-    }
-
-    boost::optional<LogLevel>& ForcedThreshold() {
-        // Create forced threshold as a static function variable to avoid static initialization fiasco
-        static boost::optional<LogLevel> forced_threshold = boost::none;
-        return forced_threshold;
-    }
-
 }
 
 const std::string& DefaultExecLoggerName()
 { return LocalDefaultExecLoggerName(); }
+
+std::vector<std::string> CreatedLoggersNames() {
+    boost::mutex::scoped_lock(f_loggers_mutex);
+    std::vector<std::string> retval;
+    for (const auto& name_and_frontend : LoggersToSinkFrontEnds())
+        retval.push_back(name_and_frontend.first);
+    return retval;
+}
 
 void InitLoggingSystem(const std::string& logFile, const std::string& _default_exec_logger_name) {
     auto& default_exec_logger_name = LocalDefaultExecLoggerName();
@@ -203,6 +251,10 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     // Initialize the internal logger
     ConfigureLogger(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
 
+    // Create sink front ends for all previously created loggers.
+    for(const auto& name : CreatedLoggersNames())
+        CreateFileSinkFrontEnd(name);
+
     // Print setup message.
     auto date_time = std::time(nullptr);
     InfoLogger(log) << "Logger initialized at " << std::ctime(&date_time);
@@ -214,6 +266,8 @@ void OverrideLoggerThresholds(const LogLevel threshold) {
     ForcedThreshold() = threshold;
 }
 
+LoggerCreatedSignalType LoggerCreatedSignal;
+
 void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     if (name.empty())
         return;
@@ -222,9 +276,11 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
 
     SetLoggerThreshold(name, min_LogLevel);
 
+    AddLoggerName(name);
 
-    InfoLogger(log) << "Added log source \"" << name << "\".";
     LoggerCreatedSignal(name);
+
+    InfoLogger(log) << "Created \"" << name << "\" logger.";
 }
 
 namespace {
