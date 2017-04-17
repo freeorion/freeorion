@@ -1914,7 +1914,7 @@ void AddStarlanes::Execute(const ScriptingContext& context) const {
     // connected to the source system
     m_other_lane_endpoint_condition->Eval(context, endpoint_objects);
 
-    // early exit if there are no valid locations - can't move anything if there's nowhere to move to
+    // early exit if there are no valid locations
     if (endpoint_objects.empty())
         return; // nothing to do!
 
