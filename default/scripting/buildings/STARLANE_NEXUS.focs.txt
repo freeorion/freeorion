@@ -7,10 +7,13 @@ BuildingType
     effectsgroups = [
         EffectsGroup
             scope = Object id = Source.SystemID
-            effects = AddStarlanes endpoint = And [
-                System
-                WithinDistance distance = 250 condition = Source
-                CanAddStarlanesTo condition = Source
+            effects = [
+                RemoveStarlanes endpoint = System
+                AddStarlanes endpoint = And [
+                    System
+                    WithinDistance distance = 250 condition = Source
+                    CanAddStarlanesTo condition = Source
+                ]
             ]
         EffectsGroup
             scope = Source
