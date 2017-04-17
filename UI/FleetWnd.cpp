@@ -971,11 +971,11 @@ namespace {
         if (ship->InitialMeterValue(METER_TRADE) > 0.0f)
             meters_icons.push_back({METER_TRADE,          TradeIcon()});
 
-        meters_icons.push_back({METER_SHIELD,     ClientUI::MeterIcon(METER_SHIELD)});
-        meters_icons.push_back({METER_FUEL,       ClientUI::MeterIcon(METER_FUEL)});
-        meters_icons.push_back({METER_DETECTION,  ClientUI::MeterIcon(METER_DETECTION)});
-        meters_icons.push_back({METER_STEALTH,    ClientUI::MeterIcon(METER_STEALTH)});
-        meters_icons.push_back({METER_SPEED,      ClientUI::MeterIcon(METER_SPEED)});
+        for (auto& meter : {METER_SHIELD, METER_FUEL, METER_DETECTION,
+                            METER_STEALTH, METER_SPEED})
+        {
+            meters_icons.push_back({meter, ClientUI::MeterIcon(meter)});
+        }
 
         for (auto& entry : meters_icons) {
             auto icon = GG::Wnd::Create<StatisticIcon>(entry.second, 0, 0, false, StatIconSize().x, StatIconSize().y);
