@@ -114,7 +114,31 @@ namespace {
         return m_sink_backend;
     }
 
+    void CreateFileSinkFrontEnd(const std::string& name) {
+        auto& file_sink_backend = GetSinkBackend();
 
+        // Return if the file sink backed has not been configured
+        if (!file_sink_backend)
+            return;
+
+        // Create a sink frontend for formatting.
+        auto sink_frontend = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
+
+        // Create the format
+        sink_frontend->set_formatter(
+            expr::stream
+            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+            << " [" << log_severity << "] "
+            << name
+            << " : " << log_src_filename << ":" << log_src_linenum << " : "
+            << expr::message
+        );
+
+        // Set a filter to only format this channel
+        sink_frontend->set_filter(log_channel == name);
+
+        logging::core::get()->add_sink(sink_frontend);
+    }
 }
 
 LoggerCreatedSignalType LoggerCreatedSignal;
@@ -194,25 +218,7 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     if (name.empty())
         return;
 
-    if (auto& file_sink_backend = GetSinkBackend()) {
-        // Create a sink frontend for formatting.
-        auto sink_frontend = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
-
-        // Create the format
-        sink_frontend->set_formatter(
-            expr::stream
-            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
-            << " [" << log_severity << "] "
-            << name
-            << " : " << log_src_filename << ":" << log_src_linenum << " : "
-            << expr::message
-        );
-
-        // Set a filter to only format this channel
-        sink_frontend->set_filter(log_channel == name);
-
-        logging::core::get()->add_sink(sink_frontend);
-    }
+    CreateFileSinkFrontEnd(name);
 
     SetLoggerThreshold(name, min_LogLevel);
 
