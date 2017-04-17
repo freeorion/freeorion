@@ -11122,7 +11122,7 @@ Energy Compressor
 BLD_SHIPYARD_ENRG_COMP_DESC
 '''This is an upgrade to the [[buildingtype BLD_SHIPYARD_BASE]] and is required for the formation of all energy hulls and all further energy hull shipyard upgrades.
 
-Requiring a high density star to siphon energy from, it can only be built at a system with a [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star type.
+Requiring a high energy star to siphon energy from, it can only be built at a system with a [[STAR_BLUE]], [[STAR_WHITE]] or [[STAR_BLACK]] star type.
 
 A highly specialized shipyard designed to create and mount parts on large bundles of densely compressed energy. This is a fragile process, and this shipyard will explode mightily if it takes more than a very small amount of [[encyclopedia DAMAGE_TITLE]].'''
 
@@ -11132,7 +11132,7 @@ Solar Containment Unit
 BLD_SHIPYARD_ENRG_SOLAR_DESC
 '''This is an upgrade to the [[buildingtype BLD_SHIPYARD_ENRG_COMP]] and allows formation of [[shiphull SH_SOLAR]]s.
 
-Requiring a very high density star to siphon energy from, it can only be built at a system with a [[STAR_BLACK]] star type.
+Requiring a very high energy star to siphon energy from, it can only be built at a system with a [[STAR_BLACK]] star type.
 
 The task of creating a miniature sun is a gargantuan task in and of itself. The production of such a body on which ship parts can be safely mounted is even more so.'''
 
