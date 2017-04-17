@@ -222,9 +222,9 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
 
     SetLoggerThreshold(name, min_LogLevel);
 
-    LoggerCreatedSignal(logger, name);
 
     InfoLogger(log) << "Added log source \"" << name << "\".";
+    LoggerCreatedSignal(name);
 }
 
 namespace {

@@ -148,7 +148,7 @@ FO_COMMON_API void ConfigureLogger(NamedThreadedLogger& logger, const std::strin
     }
 
 // Signal that logger \p name has been created
-using LoggerCreatedSignalType = boost::signals2::signal<void (const NamedThreadedLogger& logger, const std::string&)>;
+using LoggerCreatedSignalType = boost::signals2::signal<void (const std::string logger)>;
 FO_COMMON_API extern LoggerCreatedSignalType LoggerCreatedSignal;
 
 // Create the default logger

@@ -73,7 +73,7 @@ DiscreteValidator<std::string> LogLevelValidator() {
 
 void InitLoggingOptionsDBSystem() {
     // Initialize the internal logger
-    RegisterLoggerWithOptionsDB(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
+    RegisterLoggerWithOptionsDB("log");
 
     // Setup the OptionsDB options for the file sink.
     LogLevel options_db_log_threshold = AddLoggerToOptionsDB(
@@ -88,7 +88,7 @@ void InitLoggingOptionsDBSystem() {
     InfoLogger(log) << "Initialized OptionsDB logging configuration.";
 }
 
-void RegisterLoggerWithOptionsDB(const NamedThreadedLogger& logger, const std::string& name) {
+void RegisterLoggerWithOptionsDB(const std::string name) {
     if (name.empty())
         return;
 
