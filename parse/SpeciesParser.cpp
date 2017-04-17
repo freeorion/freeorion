@@ -31,7 +31,7 @@ namespace {
 
         void operator()(std::map<std::string, Species*>& species, Species* specie) const {
             if (!species.insert(std::make_pair(specie->Name(), specie)).second) {
-                std::string error_str = "ERROR: More than one species in species.txt has the name " + specie->Name();
+                std::string error_str = "ERROR: More than one species has the name " + specie->Name();
                 throw std::runtime_error(error_str.c_str());
             }
         }

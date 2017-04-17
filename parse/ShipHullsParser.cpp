@@ -34,7 +34,7 @@ namespace {
 
         void operator()(std::map<std::string, HullType*>& hulls, HullType* hull) const {
             if (!hulls.insert(std::make_pair(hull->Name(), hull)).second) {
-                std::string error_str = "ERROR: More than one ship hull in ship_hulls.txt has the name " + hull->Name();
+                std::string error_str = "ERROR: More than one ship hull has the name " + hull->Name();
                 throw std::runtime_error(error_str.c_str());
             }
         }

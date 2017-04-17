@@ -32,7 +32,7 @@ namespace {
 
         void operator()(std::map<std::string, PartType*>& part_types, PartType* part_type) const {
             if (!part_types.insert(std::make_pair(part_type->Name(), part_type)).second) {
-                std::string error_str = "ERROR: More than one ship part in ship_parts.txt has the name " + part_type->Name();
+                std::string error_str = "ERROR: More than one ship part has the name " + part_type->Name();
                 throw std::runtime_error(error_str.c_str());
             }
         }

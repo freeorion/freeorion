@@ -24,7 +24,7 @@ namespace {
 
         void operator()(std::map<std::string, FieldType*>& fields, FieldType* field_type) const {
             if (!fields.insert(std::make_pair(field_type->Name(), field_type)).second) {
-                std::string error_str = "ERROR: More than one field type in fields.txt has the name " + field_type->Name();
+                std::string error_str = "ERROR: More than one field type has the name " + field_type->Name();
                 throw std::runtime_error(error_str.c_str());
             }
         }

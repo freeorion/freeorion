@@ -25,7 +25,7 @@ namespace {
 
         void operator()(std::map<std::string, Special*>& specials, Special* special) const {
             if (!specials.insert(std::make_pair(special->Name(), special)).second) {
-                std::string error_str = "ERROR: More than one special in specials.txt has the name " + special->Name();
+                std::string error_str = "ERROR: More than one special has the name " + special->Name();
                 throw std::runtime_error(error_str.c_str());
             }
         }

@@ -329,7 +329,7 @@ TechManager::TechManager() {
         for (const std::string& empty_defined_category : empty_defined_categories) {
             stream << " \"" << empty_defined_category << "\"";
         }
-        std::string error_str = "ERROR: The following categories were defined in techs.txt, but no "
+        std::string error_str = "ERROR: The following tech categories were defined, but no "
             "techs were defined that fell within them:" + stream.str();
         ErrorLogger() << error_str;
         std::cerr << error_str << std::endl;
@@ -340,7 +340,7 @@ TechManager::TechManager() {
         for (const std::string& category_seen_in_techs : categories_seen_in_techs) {
             stream << " \"" << category_seen_in_techs << "\"";
         }
-        std::string error_str = "ERROR: The following categories were never defined in techs.txt, but some "
+        std::string error_str = "ERROR: The following tech categories were never defined, but some "
             "techs were defined that fell within them:" + stream.str();
         ErrorLogger() << error_str;
         std::cerr << error_str << std::endl;
@@ -392,7 +392,7 @@ std::string TechManager::FindIllegalDependencies() {
     for (const Tech* tech : m_techs) {
         if (!tech) {
             std::stringstream stream;
-            stream << "ERROR: Missing tech referenced in techs.txt for unknown reasons...";
+            stream << "ERROR: Missing tech referenced in other tech, for unknown reasons...";
             return stream.str();
         }
 
@@ -438,7 +438,7 @@ std::string TechManager::FindFirstDependencyCycle() {
                 if (stack_duplicate_it != stack.rend()) {
                     std::stringstream stream;
                     std::string current_tech_name = prereq_tech->Name();
-                    stream << "ERROR: Tech dependency cycle found in techs.txt (A <-- B means A is a prerequisite of B): \""
+                    stream << "ERROR: Tech dependency cycle found (A <-- B means A is a prerequisite of B): \""
                             << current_tech_name << "\"";
                     for (std::vector<const Tech*>::reverse_iterator stack_it = stack.rbegin();
                             stack_it != stack_duplicate_it;
@@ -488,7 +488,7 @@ std::string TechManager::FindRedundantDependency() {
             std::map<std::string, std::string>::const_iterator map_it = techs_unlocked_by_prereqs.find(prereq_name);
             if (map_it != techs_unlocked_by_prereqs.end()) {
                 std::stringstream stream;
-                stream << "ERROR: Redundant dependency found in techs.txt (A <-- B means A is a prerequisite of B): "
+                stream << "ERROR: Redundant tech dependency found (A <-- B means A is a prerequisite of B): "
                        << map_it->second << " <-- " << map_it->first << ", "
                        << map_it->first << " <-- " << tech->Name() << ", "
                        << map_it->second << " <-- " << tech->Name() << "; remove the " << map_it->second << " <-- " << tech->Name()

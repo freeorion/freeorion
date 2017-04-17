@@ -120,7 +120,7 @@ PartTypeManager::PartTypeManager() {
     try {
         parse::ship_parts(m_parts);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing ship_parts.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing ship parts: error: " << e.what();
         throw;
     }
 
@@ -480,7 +480,7 @@ HullTypeManager::HullTypeManager() {
     try {
         parse::ship_hulls(m_hulls);
     } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing ship_hulls.txt: error: " << e.what();
+        ErrorLogger() << "Failed parsing ship hulls: error: " << e.what();
         throw;
     }
 

@@ -79,7 +79,7 @@ namespace EmpireStatistics {
             try {
                 parse::statistics(s_stats);
             } catch (const std::exception& e) {
-                ErrorLogger() << "Failed parsing empire_statistics.txt: error: " << e.what();
+                ErrorLogger() << "Failed parsing empire statistics: error: " << e.what();
                 throw e;
             }
         }
