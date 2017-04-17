@@ -1,0 +1,6 @@
+Article
+    name = "PC_BATTLE_SCANNER"
+    category = "ENC_SHIP_PART"
+    short_description = "PC_BATTLE_SCANNER"
+    description = "PC_BATTLE_SCANNER_DESC"
+    icon = "icons/ship_parts/battle_scanner-1.png"

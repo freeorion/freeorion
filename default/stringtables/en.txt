@@ -8818,6 +8818,12 @@ PC_DETECTION_DESC
 
 An empire's [[encyclopedia DETECTION_TITLE]] must equal or exceed an object's [[metertype METER_STEALTH]] to detect the object.'''
 
+PC_BATTLE_SCANNER
+Battle Scanner
+
+PC_BATTLE_SCANNER_DESC
+'''Battle scanner parts make enemy ships more easily detected during combat.'''
+
 # Ship part classes
 PC_STEALTH
 Stealth
@@ -12855,6 +12861,33 @@ Very long-range detection.
 
 FU_ENGINE_PART_LIMIT
 Only one engine part may be equipped on a ship.
+
+DT_DETECTOR_4_DESC
+Very long-range detection.
+
+BS_SCANNER_1
+Interferometric Scanner
+
+BS_SCANNER_1_DESC
+Weak in-battle detection.
+
+BS_SCANNER_2
+Holographic Scanner
+
+BS_SCANNER_2_DESC
+Moderate in-battle detection.
+
+BS_SCANNER_3
+Cherenkov Scanner
+
+BS_SCANNER_3_DESC
+Good in-battle detection.
+
+BS_SCANNER_4
+Tachyon Scanner
+
+BS_SCANNER_4_DESC
+Ultimate in-battle detection.
 
 FU_IMPROVED_ENGINE_COUPLINGS
 Improved Engine Couplings
