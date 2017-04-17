@@ -107,8 +107,12 @@ namespace {
     using TextFileSinkBackend  = sinks::text_file_backend;
     using TextFileSinkFrontend = sinks::synchronous_sink<TextFileSinkBackend>;
 
-    // The backend should be accessible synchronously from any thread by any sink frontend
-    boost::shared_ptr<TextFileSinkBackend>  f_file_sink_backend;
+    boost::shared_ptr<TextFileSinkBackend>& GetSinkBackend() {
+        // Create the sink backend as a function local static variable to avoid the static
+        // initilization fiasco.
+        static boost::shared_ptr<TextFileSinkBackend> m_sink_backend;
+        return m_sink_backend;
+    }
 
 
 }
@@ -144,13 +148,14 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     logging::register_simple_filter_factory<LogLevel>("Severity");
 
     // Create a sink backend that logs to a file
-    f_file_sink_backend = boost::make_shared<TextFileSinkBackend>(
+    auto& file_sink_backend = GetSinkBackend();
+    file_sink_backend = boost::make_shared<TextFileSinkBackend>(
         keywords::file_name = logFile.c_str(),
         keywords::auto_flush = true
     );
 
     // Create the frontend for formatting default records.
-    auto file_sink_frontend = boost::make_shared<TextFileSinkFrontend>(f_file_sink_backend);
+    auto file_sink_frontend = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
 
     // Create the format
     file_sink_frontend->set_formatter(
@@ -189,23 +194,25 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     if (name.empty())
         return;
 
-    // Create a sink frontend for formatting.
-    auto sink_frontend = boost::make_shared<TextFileSinkFrontend>(f_file_sink_backend);
+    if (auto& file_sink_backend = GetSinkBackend()) {
+        // Create a sink frontend for formatting.
+        auto sink_frontend = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
 
-    // Create the format
-    sink_frontend->set_formatter(
-        expr::stream
-        << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
-        << " [" << log_severity << "] "
-        << name
-        << " : " << log_src_filename << ":" << log_src_linenum << " : "
-        << expr::message
-    );
+        // Create the format
+        sink_frontend->set_formatter(
+            expr::stream
+            << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
+            << " [" << log_severity << "] "
+            << name
+            << " : " << log_src_filename << ":" << log_src_linenum << " : "
+            << expr::message
+        );
 
-    // Set a filter to only format this channel
-    sink_frontend->set_filter(log_channel == name);
+        // Set a filter to only format this channel
+        sink_frontend->set_filter(log_channel == name);
 
-    logging::core::get()->add_sink(sink_frontend);
+        logging::core::get()->add_sink(sink_frontend);
+    }
 
     SetLoggerThreshold(name, min_LogLevel);
 
