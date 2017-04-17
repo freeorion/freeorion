@@ -111,7 +111,6 @@ namespace {
     boost::shared_ptr<TextFileSinkBackend>  f_file_sink_backend;
 
 
-    boost::optional<LogLevel> f_forced_threshold = boost::none;
 }
 
 LoggerCreatedSignalType LoggerCreatedSignal;
@@ -122,6 +121,13 @@ namespace {
         static std::string default_exec_logger_name;
         return default_exec_logger_name;
     }
+
+    boost::optional<LogLevel>& ForcedThreshold() {
+        // Create forced threshold as a static function variable to avoid static initialization fiasco
+        static boost::optional<LogLevel> forced_threshold = boost::none;
+        return forced_threshold;
+    }
+
 }
 
 const std::string& DefaultExecLoggerName()
@@ -176,7 +182,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
 
 void OverrideLoggerThresholds(const LogLevel threshold) {
     InfoLogger(log) << "Forcing all logger threshold to be " << to_string(threshold);
-    f_forced_threshold = threshold;
+    ForcedThreshold() = threshold;
 }
 
 void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
@@ -214,7 +220,7 @@ namespace {
 }
 
 void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
-    auto used_threshold = f_forced_threshold ? *f_forced_threshold : threshold;
+    auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
     logging::core::get()->reset_filter();
     f_min_channel_severity[source] = used_threshold;
     logging::core::get()->set_filter(f_min_channel_severity);
