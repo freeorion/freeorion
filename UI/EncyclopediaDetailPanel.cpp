@@ -2160,7 +2160,9 @@ namespace {
             % typical_shot
             % enemy_DR
             % typical_strength
-            % (typical_strength / cost)).str();
+            % (typical_strength / cost)
+            % ship->CurrentMeterValue(METER_BATTLE_DETECTION)
+               ).str();
     }
 
     void RefreshDetailPanelShipDesignTag(   const std::string& item_type, const std::string& item_name,

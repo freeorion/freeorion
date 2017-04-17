@@ -227,6 +227,7 @@ void Planet::Init() {
     AddMeter(METER_TROOPS);
     AddMeter(METER_MAX_TROOPS);
     AddMeter(METER_DETECTION);
+    AddMeter(METER_BATTLE_DETECTION);
     AddMeter(METER_REBEL_TROOPS);
 }
 

@@ -118,6 +118,7 @@ namespace FreeOrionPython {
             .value("size",              METER_SIZE)
             .value("stealth",           METER_STEALTH)
             .value("detection",         METER_DETECTION)
+            .value("battleDetection",   METER_BATTLE_DETECTION)
             .value("speed",             METER_SPEED)
         ;
         enum_<DiplomaticStatus>("diplomaticStatus")

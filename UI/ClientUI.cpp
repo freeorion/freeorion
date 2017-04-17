@@ -224,6 +224,7 @@ std::shared_ptr<GG::Texture> ClientUI::MeterIcon(MeterType meter_type) {
     case METER_STEALTH:
         icon_filename = "stealth.png";      break;
     case METER_DETECTION:
+    case METER_BATTLE_DETECTION:
         icon_filename = "detection.png";    break;
     case METER_SHIELD:
     case METER_MAX_SHIELD:

@@ -140,12 +140,13 @@ namespace parse {
             |   tok.Supply_                 [ _val = METER_SUPPLY ]
             |   tok.Stockpile_              [ _val = METER_STOCKPILE ]
 
-            |   tok.RebelTroops_            [ _val = METER_REBEL_TROOPS ]
-            |   tok.Stealth_                [ _val = METER_STEALTH ]
-            |   tok.Detection_              [ _val = METER_DETECTION ]
-            |   tok.Speed_                  [ _val = METER_SPEED ]
+            |    tok.RebelTroops_           [ _val = METER_REBEL_TROOPS ]
+            |    tok.Stealth_               [ _val = METER_STEALTH ]
+            |    tok.Detection_             [ _val = METER_DETECTION ]
+            |    tok.BattleDetection_       [ _val = METER_BATTLE_DETECTION ]
+            |    tok.Speed_                 [ _val = METER_SPEED ]
 
-            |   tok.Size_                   [ _val = METER_SIZE ]
+            |    tok.Size_                  [ _val = METER_SIZE ]
 
             ;
     }
@@ -199,6 +200,7 @@ namespace parse {
             |   tok.SetRebelTroops_         [ _val = METER_REBEL_TROOPS ]
             |   tok.SetStealth_             [ _val = METER_STEALTH ]
             |   tok.SetDetection_           [ _val = METER_DETECTION ]
+            |   tok.SetBattleDetection_     [ _val = METER_BATTLE_DETECTION ]
             |   tok.SetSpeed_               [ _val = METER_SPEED ]
 
             |   tok.SetSize_                [ _val = METER_SIZE ]
