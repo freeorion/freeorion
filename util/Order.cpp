@@ -241,7 +241,7 @@ void NewFleetOrder::ExecuteImpl() const {
     system->FleetsInsertedSignal(created_fleets);
     system->StateChangedSignal();
 
-    // signal change to fleet states
+    // Signal changed state of modified fleets and remove any empty fleets.
     for (std::shared_ptr<Fleet> modified_fleet : modified_fleets) {
         if (!modified_fleet->Empty())
             modified_fleet->StateChangedSignal();
