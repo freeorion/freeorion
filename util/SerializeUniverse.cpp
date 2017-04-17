@@ -273,7 +273,7 @@ template <class Archive>
 void SpeciesManager::serialize(Archive& ar, const unsigned int version)
 {
     // Don't need to send all the data about species, as this is derived from
-    // content data files in species.txt that should be available to any
+    // content data files in scripting/species that should be available to any
     // client or server.  Instead, just need to send the gamestate portion of
     // species: their homeworlds in the current game, and their opinions of
     // empires and eachother

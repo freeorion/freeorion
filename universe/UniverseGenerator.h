@@ -10,8 +10,9 @@
 struct PlayerSetupData;
 
 /** A combination of names of ShipDesign that can be put together to make a
- * fleet of ships, and a name for such a fleet, loaded from starting_fleets.txt
- * ShipDesign names refer to designs listed in premade_ship_designs.txt.
+ * fleet of ships, and a name for such a fleet, loaded from
+ * default/scripting/starting_unlocks/fleets.inf
+ * ShipDesign names refer to designs listed in default/scripting/ship_designs.
  * Useful for saving or specifying prearranged combinations of prearranged
  * ShipDesigns to automatically put together, such as during universe creation.*/
 class FleetPlan {
