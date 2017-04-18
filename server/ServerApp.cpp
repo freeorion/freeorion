@@ -147,6 +147,7 @@ ServerApp::ServerApp() :
     InitLoggingSystem(SERVER_LOG_FILENAME, "Server");
     InitLoggingOptionsDBSystem();
 
+    InfoLogger() << FreeOrionVersionString();
     LogDependencyVersions();
 
     m_fsm->initiate();
