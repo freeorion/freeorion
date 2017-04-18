@@ -1496,10 +1496,10 @@ def find_automatic_historic_analyzer_candidates():
         # aggression: (min_pp, min_turn, min_pp_to_queue_another_one)
         fo.aggression.beginner: (100, 100, ARB_LARGE_NUMBER),
         fo.aggression.turtle: (75, 75, ARB_LARGE_NUMBER),
-        fo.aggression.cautious: (60, 60, ARB_LARGE_NUMBER),
-        fo.aggression.typical: (30, 50, ARB_LARGE_NUMBER),
-        fo.aggression.aggressive: (25, 50, ARB_LARGE_NUMBER),
-        fo.aggression.maniacal: (25, 50, 100)
+        fo.aggression.cautious: (40, 40, ARB_LARGE_NUMBER),
+        fo.aggression.typical: (20, 20, 50),
+        fo.aggression.aggressive: (10, 10, 40),
+        fo.aggression.maniacal: (8, 5, 30)
     }
 
     min_pp, turn_trigger, min_pp_per_additional = conditions.get(foAI.foAIstate.character.get_trait(Aggression).key,

@@ -112,6 +112,7 @@ class TechGroup1(TechGroup):
             "GRO_PLANET_ECOL",
             "GRO_SUBTER_HAB",
             "LRN_ALGO_ELEGANCE",
+            "LRN_PHYS_BRAIN",
             "LRN_ARTIF_MINDS",
             "CON_ORBITAL_CON",  # not a economy tech in the strictest sense but bonus supply often equals more planets
             "PRO_ROBOTIC_PROD",
@@ -128,8 +129,9 @@ class TechGroup1(TechGroup):
         self.hull.extend([
             "SHP_MIL_ROBO_CONT",
         ])
-        # always start with the same first 6 techs
+        # always start with the same first 7 techs; leaves 2 econ, 3 weap, 1 hull
         self.enqueue(
+            self.economy,
             self.economy,
             self.economy,
             self.economy,
@@ -161,7 +163,7 @@ class TechGroup1b(TechGroup1):
             self.economy,
             self.weapon,
             self.weapon,
-
+            self.economy,
         )
 
 
