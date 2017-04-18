@@ -153,7 +153,7 @@ namespace {
         InfoLogger(log) << "Added logger name = " << name << " of " << LoggersToSinkFrontEnds().size();
     }
 
-    void CreateFileSinkFrontEnd(const std::string& name) {
+    void CreateFileSinkFrontEnd(const std::string& channel_name) {
         auto& file_sink_backend = GetSinkBackend();
 
         // Return if the file sink backed has not been configured
@@ -164,18 +164,19 @@ namespace {
         boost::shared_ptr<TextFileSinkFrontend> sink_frontend
             = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
 
+        auto display_name = channel_name.empty() ? LocalDefaultExecLoggerName() : channel_name;
         // Create the format
         sink_frontend->set_formatter(
             expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
             << " [" << log_severity << "] "
-            << name
+            << display_name
             << " : " << log_src_filename << ":" << log_src_linenum << " : "
             << expr::message
         );
 
         // Set a filter to only format this channel
-        sink_frontend->set_filter(log_channel == name);
+        sink_frontend->set_filter(log_channel == channel_name);
 
         // Remove any previous frontend for this channel
         {
@@ -183,13 +184,13 @@ namespace {
 
             // const std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>>::iterator&
             const auto&
-                name_and_old_frontend = LoggersToSinkFrontEnds().find(name);
+                name_and_old_frontend = LoggersToSinkFrontEnds().find(channel_name);
             if (name_and_old_frontend != LoggersToSinkFrontEnds().end()) {
                 logging::core::get()->remove_sink(name_and_old_frontend->second);
                 LoggersToSinkFrontEnds().erase(name_and_old_frontend);
             }
 
-            LoggersToSinkFrontEnds().insert({name, sink_frontend});
+            LoggersToSinkFrontEnds().insert({channel_name, sink_frontend});
         }
 
         // Add the frontend.
@@ -250,21 +251,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     );
 
     // Create the frontend for formatting default records.
-    auto file_sink_frontend = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
-
-    // Create the format
-    file_sink_frontend->set_formatter(
-        expr::stream
-        << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
-        << " [" << log_severity << "] "
-        << default_exec_logger_name << " : " << log_src_filename << ":" << log_src_linenum << " : "
-        << expr::message
-    );
-
-    // Set a filter to only use records from the default channel
-    file_sink_frontend->set_filter(log_channel == "");
-
-    logging::core::get()->add_sink(file_sink_frontend);
+    CreateFileSinkFrontEnd("");
 
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
