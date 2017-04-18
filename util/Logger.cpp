@@ -209,6 +209,29 @@ std::vector<std::string> CreatedLoggersNames() {
     return retval;
 }
 
+namespace {
+    // Create a minimum severity table filter
+    auto f_min_channel_severity = expr::channel_severity_filter(log_channel, log_severity);
+
+    // Set the logger threshold and return the logger name and threshold used.
+    std::pair<std::string, LogLevel> SetLoggerThresholdCore(const std::string& source, LogLevel threshold) {
+        auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
+        logging::core::get()->reset_filter();
+        f_min_channel_severity[source] = used_threshold;
+        logging::core::get()->set_filter(f_min_channel_severity);
+
+        auto& logger_name = (source.empty() ? LocalDefaultExecLoggerName() : source);
+        return {logger_name, used_threshold};
+    }
+}
+
+void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
+    const auto& name_and_threshold = SetLoggerThresholdCore(source, threshold);
+
+    InfoLogger(log) << "Setting \"" << name_and_threshold.first
+                    << "\" logger threshold to \"" << name_and_threshold.second << "\".";
+}
+
 void InitLoggingSystem(const std::string& logFile, const std::string& _default_exec_logger_name) {
     auto& default_exec_logger_name = LocalDefaultExecLoggerName();
     default_exec_logger_name = _default_exec_logger_name;
@@ -246,7 +269,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
-    SetLoggerThreshold("", max_LogLevel);
+    SetLoggerThresholdCore("", default_LogLevel);
 
     // Initialize the internal logger
     ConfigureLogger(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
@@ -269,12 +292,12 @@ void OverrideLoggerThresholds(const LogLevel threshold) {
 LoggerCreatedSignalType LoggerCreatedSignal;
 
 void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
+    SetLoggerThresholdCore(name, default_LogLevel);
+
     if (name.empty())
         return;
 
     CreateFileSinkFrontEnd(name);
-
-    SetLoggerThreshold(name, default_LogLevel);
 
     AddLoggerName(name);
 
@@ -283,17 +306,3 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     InfoLogger(log) << "Created \"" << name << "\" logger.";
 }
 
-namespace {
-    // Create a minimum severity table filter
-    auto f_min_channel_severity = expr::channel_severity_filter(log_channel, log_severity);
-}
-
-void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
-    auto used_threshold = ForcedThreshold() ? *ForcedThreshold() : threshold;
-    logging::core::get()->reset_filter();
-    f_min_channel_severity[source] = used_threshold;
-    logging::core::get()->set_filter(f_min_channel_severity);
-
-    InfoLogger(log) << "Setting \"" << (source.empty() ? "default" : source)
-                    << "\" logger threshold to \"" << used_threshold << "\".";
-}
