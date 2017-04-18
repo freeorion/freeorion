@@ -85,6 +85,10 @@ void InitLoggingOptionsDBSystem() {
     // Link the logger created signal to the OptionsDB registration
     LoggerCreatedSignal.connect(&RegisterLoggerWithOptionsDB);
 
+    // Register all loggers created during static initialization
+    for (const auto& name: CreatedLoggersNames())
+        RegisterLoggerWithOptionsDB(name);
+
     InfoLogger(log) << "Initialized OptionsDB logging configuration.";
 }
 
