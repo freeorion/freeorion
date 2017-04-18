@@ -2211,6 +2211,8 @@ void TechTreeWnd::ShowTreeView() {
     MoveChildDown(m_layout_panel);
     DetachChild(m_tech_list);
     MoveChildUp(m_tech_tree_controls);
+    if (!PediaVisible())
+        MoveChildDown(m_enc_detail_panel);
 }
 
 void TechTreeWnd::ShowListView() {
@@ -2219,6 +2221,8 @@ void TechTreeWnd::ShowListView() {
     MoveChildDown(m_tech_list);
     DetachChild(m_layout_panel);
     MoveChildUp(m_tech_tree_controls);
+    if (!PediaVisible())
+        MoveChildDown(m_enc_detail_panel);
 }
 
 void TechTreeWnd::SetScale(double scale)
@@ -2244,6 +2248,10 @@ void TechTreeWnd::SelectTech(const std::string& tech_name)
 { m_layout_panel->ShowTech(tech_name); }
 
 void TechTreeWnd::ShowPedia() {
+    if (!PediaVisible()) {
+        MoveChildUp(m_enc_detail_panel);
+        MoveChildUp(m_tech_tree_controls);
+    }
     m_enc_detail_panel->Refresh();
     m_enc_detail_panel->Show();
 
@@ -2252,6 +2260,7 @@ void TechTreeWnd::ShowPedia() {
 }
 
 void TechTreeWnd::HidePedia() {
+    MoveChildDown(m_enc_detail_panel);
     m_enc_detail_panel->Hide();
 
     OptionsDB& db = GetOptionsDB();
