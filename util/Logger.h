@@ -91,6 +91,11 @@ enum class LogLevel {trace, debug, info, warn, error};
 
 constexpr LogLevel max_LogLevel = LogLevel::error;
 constexpr LogLevel min_LogLevel = LogLevel::trace;
+#ifdef NDEBUG
+constexpr LogLevel default_LogLevel = LogLevel::info;
+#else
+constexpr LogLevel default_LogLevel = LogLevel::debug;
+#endif
 
 FO_COMMON_API std::string to_string(const LogLevel level);
 FO_COMMON_API LogLevel to_LogLevel(const std::string& name);

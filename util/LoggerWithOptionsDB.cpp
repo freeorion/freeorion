@@ -18,8 +18,8 @@ namespace {
             (boost::log::keywords::channel = "log"));                   \
     }
 
-    constexpr LogLevel default_sink_level = LogLevel::debug;
-    constexpr LogLevel default_source_level = LogLevel::debug;
+    constexpr LogLevel default_sink_level = default_LogLevel;
+    constexpr LogLevel default_source_level = default_LogLevel;
 
     constexpr auto exec_option_name_prefix = "logging.execs.";
     constexpr auto source_option_name_prefix = "logging.sources.";

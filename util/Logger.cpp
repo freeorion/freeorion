@@ -274,7 +274,7 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
 
     CreateFileSinkFrontEnd(name);
 
-    SetLoggerThreshold(name, min_LogLevel);
+    SetLoggerThreshold(name, default_LogLevel);
 
     AddLoggerName(name);
 
