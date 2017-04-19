@@ -45,6 +45,7 @@ Ship::Ship(int empire_id, int design_id, const std::string& species_name,
     AddMeter(METER_SHIELD);
     AddMeter(METER_MAX_SHIELD);
     AddMeter(METER_DETECTION);
+    AddMeter(METER_BATTLE_DETECTION);
     AddMeter(METER_STRUCTURE);
     AddMeter(METER_MAX_STRUCTURE);
     AddMeter(METER_SPEED);
@@ -642,6 +643,7 @@ void Ship::ResetTargetMaxUnpairedMeters() {
     UniverseObject::GetMeter(METER_TARGET_TRADE)->ResetCurrent();
 
     UniverseObject::GetMeter(METER_DETECTION)->ResetCurrent();
+    UniverseObject::GetMeter(METER_BATTLE_DETECTION)->ResetCurrent();
     UniverseObject::GetMeter(METER_SPEED)->ResetCurrent();
     //UniverseObject::GetMeter(METER_STEALTH)->ResetCurrent(); redundant with base class function
 
@@ -713,6 +715,7 @@ void Ship::ClampMeters() {
     UniverseObject::GetMeter(METER_TRADE)->ClampCurrentToRange();
 
     UniverseObject::GetMeter(METER_DETECTION)->ClampCurrentToRange();
+    UniverseObject::GetMeter(METER_BATTLE_DETECTION)->ClampCurrentToRange();
     UniverseObject::GetMeter(METER_SPEED)->ClampCurrentToRange();
 
     // clamp most part meters to basic range limits
