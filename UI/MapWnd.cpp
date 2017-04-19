@@ -1965,16 +1965,22 @@ void MapWnd::RenderSystems() {
                             has_empire_planet = true;
 
                             std::map<int, int>::iterator it = colony_count_by_empire_id.find(planet->Owner()) ;
-                            if (it != colony_count_by_empire_id.end()) {
+                            if (it != colony_count_by_empire_id.end())
                                 it->second++;
-                            } else {
+                            else
                                 colony_count_by_empire_id.insert({planet->Owner(), 1});
-                            }
                         }
 
                         // remember if this system has neutrals
-                        if (planet->Unowned() && !planet->SpeciesName().empty() && planet->CurrentMeterValue(METER_POPULATION) > 0.0)
+                        if (planet->Unowned() && !planet->SpeciesName().empty() && planet->CurrentMeterValue(METER_POPULATION) > 0.0) {
                             has_neutrals = true;
+
+                            std::map<int, int>::iterator it = colony_count_by_empire_id.find(ALL_EMPIRES);
+                            if (it != colony_count_by_empire_id.end())
+                                it->second++;
+                            else
+                                colony_count_by_empire_id.insert({ALL_EMPIRES, 1});
+                        }
                     }
 
                     // draw outer circle in color of supplying empire
@@ -2016,11 +2022,13 @@ void MapWnd::RenderSystems() {
                     float segment = static_cast<float>(TWO_PI) / colonised_planets;
 
                     for (std::pair<int, int> it : colony_count_by_empire_id) {
-                        if (const Empire* empire = GetEmpire(it.first)) {
+                        if (const Empire* empire = GetEmpire(it.first))
                             glColor(empire->Color());
-                            CircleArc(inner_circle_ul, inner_circle_lr, position * segment, (it.second + position) * segment, false);
-                            position += it.second;
-                        }
+                        else
+                            glColor(ClientUI::TextColor());
+
+                        CircleArc(inner_circle_ul, inner_circle_lr, position * segment, (it.second + position) * segment, false);
+                        position += it.second;
                     }
                 }
             }
