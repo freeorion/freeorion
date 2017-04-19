@@ -430,7 +430,7 @@ SD_ROBOTIC1_DESC
 Cruiser designed for fleet and independent action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC2
-Destroyer Mfs-DG
+Destroyer Mfs DG
 
 SD_ROBOTIC2_DESC
 Robotic hull equipped for fleet actions. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
@@ -441,14 +441,32 @@ Robocruiser Lzi
 SD_ROBOTIC3_DESC
 Robotic ship equipped for long range independent action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
+SD_ROBOTIC_CARRIER1
+Fleet Carrier MBs
+
+SD_ROBOTIC_CARRIER1_DESC
+Attack Carrier designed for fleet action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC_CARRIER2
+Fleet Carrier LBz
+
+SD_ROBOTIC_CARRIER2_DESC
+Attack Carrier designed for fleet action. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC_CARRIER3
+Escort Carrier MIs
+
+SD_ROBOTIC_CARRIER3_DESC
+Escort Carrier designed for convoy and picket duties. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
 SD_GRAVITATING1
-Battleship Pfd-DS
+Battleship Pfd DS
 
 SD_GRAVITATING1_DESC
 Self-gravitating battleship equipped for large fleet actions. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_GRAVITATING2
-Battleship Dfx-BS
+Battleship Dfx BS
 
 SD_GRAVITATING2_DESC
 Large state-of-art battleship armed and protected with top technology. Priced accordingly. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]

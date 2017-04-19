@@ -1,0 +1,12 @@
+ShipDesign
+    name = "SD_ROBOTIC_CARRIER1"
+    description = "SD_ROBOTIC_CARRIER1_DESC"
+    hull = "SH_ROBOTIC"
+    parts = [
+        "FT_BAY_1"
+        "SR_WEAPON_1_1"
+        "AR_STD_PLATE"
+        "AR_STD_PLATE"
+        "FT_HANGAR_3"
+    ]
+    model = "mark1"
