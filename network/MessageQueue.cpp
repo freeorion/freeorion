@@ -2,6 +2,7 @@
 
 #include "Message.h"
 
+#include <boost/optional/optional.hpp>
 
 namespace {
     struct SynchronousResponseMessage {
@@ -10,8 +11,9 @@ namespace {
     };
 }
 
-MessageQueue::MessageQueue(boost::mutex& monitor) :
-    m_monitor(monitor)
+MessageQueue::MessageQueue(boost::mutex& monitor, const bool& rx_connected) :
+    m_monitor{monitor},
+    m_rx_connected{rx_connected}
 {}
 
 bool MessageQueue::Empty() const {
@@ -37,19 +39,32 @@ void MessageQueue::PushBack(Message& message) {
         m_have_synchronous_response.notify_one();
 }
 
-void MessageQueue::PopFront(Message& message) {
+boost::optional<Message> MessageQueue::PopFront() {
     boost::mutex::scoped_lock lock(m_monitor);
+    if (m_queue.empty())
+        return boost::none;
+    Message message;
     swap(message, m_queue.front());
     m_queue.pop_front();
+    return message;
 }
 
-void MessageQueue::EraseFirstSynchronousResponse(Message& message) {
+void MessageQueue::RxDisconnected() {
+    boost::mutex::scoped_lock lock(m_monitor);
+    m_have_synchronous_response.notify_one();
+}
+
+boost::optional<Message> MessageQueue::GetFirstSynchronousMessage() {
     boost::mutex::scoped_lock lock(m_monitor);
     std::list<Message>::iterator it = std::find_if(m_queue.begin(), m_queue.end(), SynchronousResponseMessage());
     while (it == m_queue.end()) {
+        if (!m_rx_connected)
+            return boost::none;
         m_have_synchronous_response.wait(lock);
         it = std::find_if(m_queue.begin(), m_queue.end(), SynchronousResponseMessage());
     }
+    Message message;
     swap(message, *it);
     m_queue.erase(it);
+    return message;
 }

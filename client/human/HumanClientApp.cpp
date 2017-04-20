@@ -684,13 +684,12 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         }
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
-    Message response;
-    m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory), response);
-    if (response.Type() == Message::DISPATCH_SAVE_PREVIEWS){
-        ExtractDispatchSavePreviewsMessageData(response, previews);
+    const auto response = m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory));
+    if (response && response->Type() == Message::DISPATCH_SAVE_PREVIEWS) {
+        ExtractDispatchSavePreviewsMessageData(*response, previews);
         DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
-    }else{
-        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << response.Type();
+    } else {
+        ErrorLogger() << "HumanClientApp::RequestSavePreviews: Wrong response type from server: " << response->Type();
     }
 }
 
@@ -799,14 +798,12 @@ void HumanClientApp::HandleSystemEvents() {
     if (m_connected && !m_networking->IsConnected()) {
         m_connected = false;
         DisconnectedFromServer();
-    } else if (m_networking->MessageAvailable()) {
-        Message msg;
-        m_networking->GetMessage(msg);
+    } else if (auto msg = Networking().GetMessage()) {
         try {
-            HandleMessage(msg);
+            HandleMessage(*msg);
         } catch (const std::exception& e) {
             ErrorLogger() << "exception handing message: " << e.what();
-            ErrorLogger() << "message type: " << msg.Type() << " and text: " << msg.Text();
+            ErrorLogger() << "message type: " << msg->Type() << " and text: " << msg->Text();
         }
     }
 }

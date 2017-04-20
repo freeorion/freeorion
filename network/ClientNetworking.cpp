@@ -27,6 +27,7 @@
 #include <boost/bind.hpp>
 #include <boost/thread/condition.hpp>
 #include <boost/thread/thread.hpp>
+#include <boost/optional/optional.hpp>
 
 #include <thread>
 
@@ -155,9 +156,6 @@ public:
     /** Returns true iff the client is connected to send to the server. */
     bool IsTxConnected() const;
 
-    /** Returns true iff there is at least one incoming message available. */
-    bool MessageAvailable() const;
-
     /** Returns the ID of the player on this client. */
     int PlayerID() const;
 
@@ -189,16 +187,13 @@ public:
         the message for sending and returns immediately. */
     void SendMessage(const Message& message);
 
-    /** Gets the next incoming message from the server, places it into \a
-        message, and removes it from the incoming message queue.  The function
-        assumes that there is at least one message in the incoming queue.
-        Users must call MessageAvailable() first to make sure this is the
-        case. */
-    void GetMessage(Message& message);
+    /** Return the next incoming message from the server if available or boost::none.
+        Remove the message from the incoming message queue. */
+    boost::optional<Message> GetMessage();
 
     /** Sends \a message to the server, then blocks until it sees the first
         synchronous response from the server. */
-    void SendSynchronousMessage(const Message& message, Message& response_message);
+    boost::optional<Message> SendSynchronousMessage(const Message& message);
 
     /** Disconnects the client from the server. */
     void DisconnectFromServer();
@@ -238,10 +233,11 @@ private:
     // protected to prevent unpredictable results.
     mutable boost::mutex            m_mutex;
 
-    MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
-    std::list<Message>              m_outgoing_messages;
     bool                            m_rx_connected;      // accessed from multiple threads
     bool                            m_tx_connected;      // accessed from multiple threads
+
+    MessageQueue                    m_incoming_messages; // accessed from multiple threads, but its interface is threadsafe
+    std::list<Message>              m_outgoing_messages;
 
     Message::HeaderBuffer           m_incoming_header;
     Message                         m_incoming_message;
@@ -257,9 +253,9 @@ ClientNetworking::Impl::Impl() :
     m_host_player_id(Networking::INVALID_PLAYER_ID),
     m_io_service(),
     m_socket(m_io_service),
-    m_incoming_messages(m_mutex),
     m_rx_connected(false),
-    m_tx_connected(false)
+    m_tx_connected(false),
+    m_incoming_messages(m_mutex, m_rx_connected)
 {}
 
 bool ClientNetworking::Impl::IsConnected() const {
@@ -276,9 +272,6 @@ bool ClientNetworking::Impl::IsTxConnected() const {
     boost::mutex::scoped_lock lock(m_mutex);
     return m_tx_connected;
 }
-
-bool ClientNetworking::Impl::MessageAvailable() const
-{ return !m_incoming_messages.Empty(); }
 
 int ClientNetworking::Impl::PlayerID() const
 { return m_player_id; }
@@ -443,27 +436,27 @@ void ClientNetworking::Impl::SendMessage(const Message& message) {
     m_io_service.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
-void ClientNetworking::Impl::GetMessage(Message& message) {
-    if (!MessageAvailable()) {
-        ErrorLogger() << "ClientNetworking::GetMessage can't get message if none available";
-        return;
-    }
-    m_incoming_messages.PopFront(message);
-    if (TRACE_EXECUTION)
+boost::optional<Message> ClientNetworking::Impl::GetMessage() {
+    const auto message = m_incoming_messages.PopFront();
+    if (message && TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::GetMessage() : received message "
-                      << message;
+                      << *message;
+    return message;
 }
 
-void ClientNetworking::Impl::SendSynchronousMessage(const Message& message, Message& response_message) {
+boost::optional<Message> ClientNetworking::Impl::SendSynchronousMessage(const Message& message) {
     if (TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : sending message "
                       << message;
     SendMessage(message);
     // note that this is a blocking operation
-    m_incoming_messages.EraseFirstSynchronousResponse(response_message);
-    if (TRACE_EXECUTION)
+    auto response_message = m_incoming_messages.GetFirstSynchronousMessage();
+
+    if (response_message && TRACE_EXECUTION)
         DebugLogger() << "ClientNetworking::SendSynchronousMessage : received "
-                      << "response message " << response_message;
+                      << "response message " << *response_message;
+
+    return response_message;
 }
 
 void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
@@ -510,7 +503,7 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
     } catch (const boost::system::system_error& error) {
         HandleException(error);
     }
-    m_incoming_messages.Clear();
+    m_incoming_messages.RxDisconnected();
     m_outgoing_messages.clear();
     m_io_service.reset();
     { // Mutex scope
@@ -671,9 +664,6 @@ bool ClientNetworking::IsRxConnected() const
 bool ClientNetworking::IsTxConnected() const
 { return m_impl->IsTxConnected(); }
 
-bool ClientNetworking::MessageAvailable() const
-{ return m_impl->MessageAvailable(); }
-
 int ClientNetworking::PlayerID() const
 { return m_impl->PlayerID(); }
 
@@ -707,8 +697,8 @@ void ClientNetworking::SetHostPlayerID(int host_player_id)
 void ClientNetworking::SendMessage(const Message& message)
 { return m_impl->SendMessage(message); }
 
-void ClientNetworking::GetMessage(Message& message)
-{ m_impl->GetMessage(message); }
+boost::optional<Message> ClientNetworking::GetMessage()
+{ return m_impl->GetMessage(); }
 
-void ClientNetworking::SendSynchronousMessage(const Message& message, Message& response_message)
-{ m_impl->SendSynchronousMessage(message, response_message); }
+boost::optional<Message> ClientNetworking::SendSynchronousMessage(const Message& message)
+{ return m_impl->SendSynchronousMessage(message); }
