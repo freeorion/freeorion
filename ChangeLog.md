@@ -4,7 +4,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
-## [v0.4.7] - 2017-04-13
+## [v0.4.7] - 2017-04-21
 
 
 ### Key Changes
@@ -100,19 +100,25 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Added link to help article on sitrep entry right click menu.
     - Added right click context to hide/show types of SitReps.
     - Changed combat log to use empire color to designate destroyed objects.
+    - Added SitRep navigation for meter type pedia links.
+    - Fixed combat log window layout issues.
 
 - Objects Window
     - Added numerous new column options in the Objects window, and reorganized the options.
 
 - Design Window
     - Made ctrl + left click in the design window obsolete designs.
+    - Fixed hull list display issue.
 
 - Research Window
     - Added right-click pause and resume commands to research queue in GUI.
     - Added pause and resume research functions to Empire, and getters to check if a tech / queue id is paused to research queue.
     - Made tech list columns sortable.
     - Display preferences for complete, researchable, unresearchable and partially unlocked techs will now persist between games
-    
+
+- Production Window
+    - Fixed double click on production queue item so that it completes the map window system selection.
+
 - Game setup / Multiplayer Lobby
     - Reworked layout in multiplayer lobby window.
     - Multiplayer game starts when all human players are ready.
@@ -134,6 +140,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Added the Automated History Analyser building.
 - Added Ancient Guardians as alternative to Sentries for Specials.
 - Added the native species Lembala'Lam.
+- Added mention of star type restriction to energy shipyard descriptions.
 
 
 #### Balance
@@ -199,6 +206,9 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed bug which prevented construction of colony buildings for tech gated species when a player doesn't have the required tech, but owns a colony of the species.
 - Fixed unowned mines not destroying ships after reducing their structure to 0.
 - Fixed numbers in planet suitability report being wrong on the turn right after a planet has been depopulated.
+- Fixed issue with the Starlane Nexus building where lanes created together can be closer in angle than allowed, causing problems with later lane creations.
+- Fixed bug causing AIs to be crippled by eventually switching an excessively high amount of colonies to research focus.
+- Fixed issue in network code which could cause AI client processes to hang.
 
 
 #### Technical / Internal
