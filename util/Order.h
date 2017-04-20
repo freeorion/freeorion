@@ -434,46 +434,6 @@ private:
 
 
 /////////////////////////////////////////////////////
-// DeleteFleetOrder
-/////////////////////////////////////////////////////
-/** The Order subclass that represents removing an existing fleet that contains
-  * no ships. This is mainly a utility order that is issued automatically by the
-  * game when the user removes all ships from a fleet. */
-class FO_COMMON_API DeleteFleetOrder : public Order {
-public:
-    /** \name Structors */ //@{
-    DeleteFleetOrder();
-
-    DeleteFleetOrder(int empire, int fleet);
-    //@}
-
-    /** \name Accessors */ //@{
-    /** Returns ID of the fleet to be deleted. */
-    int FleetID() const
-    { return m_fleet; }
-    //@}
-
-private:
-    /**
-     *  Preconditions:
-     *     - m_fleet must be the ID of a fleet owned by issuing empire
-     *     - the fleet must contain no ships
-     *
-     *  Postconditions:
-     *     - the fleet is deleted
-     */
-    //< either ExecuteServerApply or ExecuteServerRevoke is called!!!
-    void ExecuteImpl() const override;
-
-    int m_fleet;
-
-    friend class boost::serialization::access;
-    template <class Archive>
-    void serialize(Archive& ar, const unsigned int version);
-};
-
-
-/////////////////////////////////////////////////////
 // ChangeFocusOrder
 /////////////////////////////////////////////////////
 /** the Order subclass that represents changing a planet focus*/
