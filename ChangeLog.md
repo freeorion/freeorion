@@ -111,6 +111,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Added right-click pause and resume commands to research queue in GUI.
     - Added pause and resume research functions to Empire, and getters to check if a tech / queue id is paused to research queue.
     - Made tech list columns sortable.
+    - Display preferences for complete, researchable, unresearchable and partially unlocked techs will now persist between games
     
 - Game setup / Multiplayer Lobby
     - Reworked layout in multiplayer lobby window.
