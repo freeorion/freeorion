@@ -1076,6 +1076,7 @@
 		CE0ED5F81BCFE16E00375001 /* AIWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIWrapper.h; sourceTree = "<group>"; };
 		CE13B48D1C8CB0CF0085A4DC /* CommonParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonParams.h; sourceTree = "<group>"; };
 		CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CommonParamsParser.cpp; sourceTree = "<group>"; };
+		CE2227D41EA971A10085A4DC /* EnumsFwd.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EnumsFwd.h; sourceTree = "<group>"; };
 		CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pathfinder.cpp; sourceTree = "<group>"; };
 		CE2BAD8E1E3E43E40085A4DC /* Pathfinder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Pathfinder.h; sourceTree = "<group>"; };
 		CE2C454B1C65036F0085A4DC /* ResourceBrowseWnd.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ResourceBrowseWnd.cpp; sourceTree = "<group>"; };
@@ -1759,6 +1760,7 @@
 				82EC868A1B40504700D4584D /* Encyclopedia.h */,
 				471D5CF20A98A3F900DA9C21 /* Enums.cpp */,
 				471D5CF30A98A3F900DA9C21 /* Enums.h */,
+				CE2227D41EA971A10085A4DC /* EnumsFwd.h */,
 				8250FDE315FCEFDD00523C1C /* Field.cpp */,
 				8250FDE415FCEFDE00523C1C /* Field.h */,
 				CED6E5501C6DDC0F0085A4DC /* Fighter.cpp */,
