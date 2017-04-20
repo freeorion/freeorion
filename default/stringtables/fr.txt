@@ -379,25 +379,25 @@ SD_LARGE_MARK_1
 Croiseur Ms
 
 SD_LARGE_MARK1_DESC
-Croiseur équipé de lasers améliorés et d'un blindage standard pour missions indépendantes de longue portée. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Croiseur équipé de lasers améliorés et d'un blindage standard pour opérations indépendantes de longue portée. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_2
 Croiseur Lz
 
 SD_LARGE_MARK2_DESC
-Croiseur conçu pour missions indépendantes de longue portée. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Croiseur conçu pour opérations indépendantes de longue portée. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_3  # translated
 Destroyer Ms
 
 SD_LARGE_MARK3_DESC
-Destroyer conçu pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Destroyer conçu pour opérer au sein de flottes. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_LARGE_MARK_4  # translated
 Destroyer Lz
 
 SD_LARGE_MARK4_DESC
-Destroyer équipé de Canons Laser et Blindage améliorés pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_REQUIRED]]
+Destroyer équipé de Canons Laser et Blindage améliorés pour opérations au sein de flottes. [[BLD_SHIPYARD_BASE_REQUIRED]]
 
 SD_ROBOTIC_OUTPOST
 Bâtisseur Robotique
@@ -427,28 +427,46 @@ SD_ROBOTIC1
 Robocroiseur Mfs
 
 SD_ROBOTIC1_DESC
-Croiseur conçu pour missions indépendantes ou au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Croiseur conçu pour opérer au sein de flottes ou pour opérations indépendantes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC2  # translated
-Destroyer Mfs-DG
+Destroyer Mfs DG
 
 SD_ROBOTIC2_DESC
-Destroyer à coque robotique conçu pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Destroyer à coque robotique conçu pour opérer au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_ROBOTIC3
 Robocroiseur Lzi
 
 SD_ROBOTIC3_DESC
-Astronef robotique conçu pour missions indépendantes de longue portée. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+Astronef robotique conçu pour opérations indépendantes de longue portée. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC_CARRIER1
+Transporteur Flotte MBs
+
+SD_ROBOTIC_CARRIER1_DESC
+Transporteur offensif conçu pour opérer au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC_CARRIER2
+Transporteur Flotte LBz
+
+SD_ROBOTIC_CARRIER2_DESC
+Transporteur offensif conçu pour opérer au sein de flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
+
+SD_ROBOTIC_CARRIER3
+Transporteur d'Escorte MIs
+
+SD_ROBOTIC_CARRIER3_DESC
+Transporteur d'escorte conçu pour opérer au sein de convois et opérations de  protection. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_REQUIRED]]
 
 SD_GRAVITATING1
-Cuirassé Pfd-DS
+Cuirassé Pfd DS
 
 SD_GRAVITATING1_DESC
-Cuirassé auto-gravitationnel conçu pour missions au sein de larges flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
+Cuirassé auto-gravitationnel conçu pour opérer au sein de larges flottes. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
 
 SD_GRAVITATING2
-Cuirassé Dfx-BS
+Cuirassé Dfx BS
 
 SD_GRAVITATING2_DESC
 Cuirassé de grand standing équipé des toutes dernières technologies de pointe en matière d'armement et de protection. Prix en conséquence. [[BLD_SHIPYARD_BASE_ORBITAL_DRYDOCK_CON_GEOINT_REQUIRED]]
@@ -463,7 +481,7 @@ SD_AST_1
 Destroyer Rock (L)
 
 SD_AST_1_DESC
-Destroyer à coque astéroïdale conçu pour missions au sein de flottes. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
+Destroyer à coque astéroïdale conçu pour opérer au sein de flottes. [[BLD_SHIPYARD_BASE_AST_REQUIRED]]
 
 SD_COLONY_SHIP
 Colon Galactique
@@ -585,7 +603,7 @@ SM_FLOATER
 Flotteur
 
 SM_FLOATER_DESC
-Un bulbe de contenu gazeux dérivant sur les Voies spatiales, relâché sous forme de graine par une [[predefinedshipdesign SM_TREE]] afin de fonder une nouvelle forêt autour d'autres étoiles. Il est généralement conseillé de de détruire les [[SM_FLOATER]]s dès que possible. Cependant, de par leur petite taille, ils s'avèrent difficiles à détecter et requièrent la technologie [[tech SPY_DETECT_2]] afin d'y parvenir.
+Un bulbe de contenu gazeux dérivant sur les Voies spatiales, relâché sous forme de graine par une [[predefinedshipdesign SM_TREE]] afin de fonder une nouvelle forêt autour d'autres étoiles. Il est généralement conseillé de détruire les [[SM_FLOATER]]s dès que possible. Cependant, de par leur petite taille, ils s'avèrent difficiles à détecter et requièrent la technologie [[tech SPY_DETECT_2]] afin d'y parvenir.
 
 SM_DRAGON
 Dragon du Vide
@@ -7291,7 +7309,7 @@ Planète Métaphysique
 PHILOSOPHER_SPECIAL_DESC
 '''Aussi longtemps que la Planète Métaphysique demeure inhabitée, toutes les planètes habitées du même système stellaire voient leur [[metertype METER_RESEARCH]] accrue de 5 points. L'indicateur [[metertype METER_CONSTRUCTION]] d'une colonie installée sur une Planète Métaphysique est réduit de 20 points.
 
-L'unique et dernier représentant d'une espèce vagabonde de taille planétaire a trouvé sa dernière demeure près de cette étoile, autour de laquelle il orbite comme une planète normale. Âgé de milliers d'années, il a perdu l'envie et la capacité de voyager et se consacre désormais à méditer sur tous les mystères de l'univers qu'il a rencontré au cours de sa longue existence. Déroutant et légèrement perturbé, il refuse de communiquer avec quiconque n'étant ni de sa taille ni de de sa forme, ne laissant pas aux savants d'autres choix que de l'interroger via la voix de la planète sur laquelle ils résident. Sans surprise, coloniser la Planète Métaphysique la perturbe gravement et provoque un mutisme profond. La construction à sa surface s'avère difficile, comme il pouvait l'être présumé sur une entité vivante.'''
+L'unique et dernier représentant d'une espèce vagabonde de taille planétaire a trouvé sa dernière demeure près de cette étoile, autour de laquelle il orbite comme une planète normale. Âgé de milliers d'années, il a perdu l'envie et la capacité de voyager et se consacre désormais à la méditation sur tous les mystères de l'univers qu'il a rencontré au cours de sa longue existence. Déroutant et légèrement perturbé, il refuse de communiquer avec quiconque n'étant ni de sa taille ni de sa forme, ne laissant pas aux savants d'autres choix que de l'interroger via la voix de la planète sur laquelle ils résident. Sans surprise, coloniser la Planète Métaphysique la perturbe gravement et provoque un mutisme profond. La construction à sa surface s'avère difficile, comme il pouvait l'être présumé sur une entité vivante.'''
 
 ABANDONED_COLONY_SPECIAL
 Colonie Abandonnée
@@ -10268,7 +10286,7 @@ Dispositif Défense Planétaire 1
 DEF_DEFENSE_NET_1_DESC
 '''Augmente la [[metertype METER_DEFENSE]] max de 5 sur toutes les planètes.
 
-Avec l'exploration galactique vient la possibilité de rencontrer de nouvelles races - mais aussi de nouveaux ennemis. En disposant plusieurs bases de défense armées en orbite autour d'une planète, il est possible de conférer à cette planète une capacité défensive importante sans qu'il soit nécessaire de de recourir à des astronefs.'''
+Avec l'exploration galactique vient la possibilité de rencontrer de nouvelles races - mais aussi de nouveaux ennemis. En disposant plusieurs bases de défense armées en orbite autour d'une planète, il est possible de conférer à cette planète une capacité défensive importante sans qu'il soit nécessaire de recourir à des astronefs.'''
 
 DEF_DEFENSE_NET_2
 Dispositif Défense Planétaire 2
