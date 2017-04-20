@@ -177,6 +177,8 @@ class Reporter(object):
     def print_table_footer(self, priority_ratio):
         current_industry_target = 0
         current_research_target = 0
+        new_industry_target = 0
+        new_research_target = 0
         all_industry_industry_target = 0
         all_industry_research_target = 0
         all_research_industry_target = 0
@@ -186,9 +188,13 @@ class Reporter(object):
             if info.current_focus != info.future_focus:
                 total_changed += 1
 
+            old_pp, old_rp = info.possible_output[info.current_focus]
+            current_industry_target += old_pp
+            current_research_target += old_rp
+
             future_pp, future_rp = info.possible_output[info.future_focus]
-            current_industry_target += future_pp
-            current_research_target += future_rp
+            new_industry_target += future_pp
+            new_research_target += future_rp
 
             industry_pp, industry_rp = info.possible_output[INDUSTRY] if INDUSTRY in info.possible_output else (future_pp, future_rp)
             all_industry_industry_target += industry_pp
@@ -199,7 +205,7 @@ class Reporter(object):
             all_research_research_target += research_rp
 
         print "-----------------------------------"
-        print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current ratio of %.2f ( %.1f / %.1f )" \
+        print "Planet Focus Assignments to achieve target RP/PP ratio of %.2f from current target ratio of %.2f ( %.1f / %.1f )" \
             % (priority_ratio, current_research_target / (current_industry_target + 0.0001),
                current_research_target, current_industry_target)
         print "Max Industry assignments would result in target RP/PP ratio of %.2f ( %.1f / %.1f )" \
@@ -210,8 +216,8 @@ class Reporter(object):
                all_research_research_target, all_research_industry_target)
         print "-----------------------------------"
         print "Final Ratio Target (turn %4d) RP/PP : %.2f ( %.1f / %.1f ) after %d Focus changes" \
-            % (fo.currentTurn(), current_research_target / (current_industry_target + 0.0001),
-               current_research_target, current_industry_target, total_changed)
+            % (fo.currentTurn(), new_research_target / (new_industry_target + 0.0001),
+               new_research_target, new_industry_target, total_changed)
 
     def print_table(self, priority_ratio):
         """Prints a table of all of the captured sections of assignments."""
