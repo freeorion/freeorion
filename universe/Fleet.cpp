@@ -163,8 +163,8 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
                                                                       copied_fleet_route.back()).second;
                     } catch (...) {
                         DebugLogger() << "Fleet::Copy couldn't find route to system(s):"
-                                               << " travel route back: " << travel_route.back()
-                                               << " or copied fleet route back: " << copied_fleet_route.back();
+                                      << " travel route back: " << travel_route.back()
+                                      << " or copied fleet route back: " << copied_fleet_route.back();
                     }
                 }
 
