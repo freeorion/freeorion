@@ -35,7 +35,6 @@ Special
             scope = Source
             activation = AND [
                 Turn high = 0
-                Random probability = 0.9
                 (GalaxyMaxAIAggression >= 1)
                 (GalaxyMonsterFrequency >= 1)
             ]
