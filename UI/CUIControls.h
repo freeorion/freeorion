@@ -741,4 +741,10 @@ public:
     CUIPopupMenuClassic(GG::X x, GG::Y y, const GG::MenuItem& menu);
 };
 
+/** Consistently rendered popup menu */
+class CUIPopupMenu : public GG::PopupMenu {
+public:
+    CUIPopupMenu(GG::X x, GG::Y y);
+};
+
 #endif // _CUIControls_h_
