@@ -15,7 +15,7 @@
 # Change dataDir to '<user>/AppData/Roaming/'
 
 
-from pylab import *
+import pylab
 import os
 import sys
 from glob import glob
@@ -137,8 +137,8 @@ def main():
             caption = "Res:Prod Ratio"
         else:
             caption = plotType
-        figure(figsize=(10, 6))
-        ax = gca()
+        pylab.figure(figsize=(10, 6))
+        ax = pylab.gca()
         ymin = 9999
         ymax = 0
         rankings = []
@@ -168,9 +168,9 @@ def main():
                 break
             turns = range(1, len(allData.values()[0].get(plotType, [])) + 1)
         rankings.sort()
-        xlabel('Turn')
-        ylabel(plotType)
-        title(caption + ' Progression')
+        pylab.xlabel('Turn')
+        pylab.ylabel(plotType)
+        pylab.title(caption + ' Progression')
         if ymax >= 100:
             ax.set_yscale('log', basey=10)
 
@@ -190,16 +190,16 @@ def main():
             print name
             if name in empireColors:
                 adata = allData[name].get(plotType, [])
-                plot(range(turns[0], turns[0] + len(adata)), adata, color=empireColors[name], label="%s: %s - %.1f" % (name, species[name], sum(adata)), linewidth=2.0)
+                pylab.plot(range(turns[0], turns[0] + len(adata)), adata, color=empireColors[name], label="%s: %s - %.1f" % (name, species[name], sum(adata)), linewidth=2.0)
             else:
                 print "can't find empire color for ", name
                 # plot(range(turns[0], turns[0]+len(allData[name])), allData[name].get(plotType, []), label="(%d) "%(empires.index(name)+1)+name+" : "+species[name], linewidth=2.0)
         # legend(loc='upper left',prop={"size":'medium'})
-        legend(loc='upper left', prop={"size": 9}, labelspacing=0.2)
-        xlabel('Turn')
-        ylabel(plotType)
-        title(caption + ' Progression ')
-        x1, x2, y1, y2 = axis()
+        pylab.legend(loc='upper left', prop={"size": 9}, labelspacing=0.2)
+        pylab.xlabel('Turn')
+        pylab.ylabel(plotType)
+        pylab.title(caption + ' Progression ')
+        x1, x2, y1, y2 = pylab.axis()
         newY2 = y2
         if plotType in ["PP + 2RP", "PP", "RP", "ShipCount"]:
             for yi in range(1, 10):
@@ -208,17 +208,17 @@ def main():
                     break
             print "y1: %.1f ; ymin: %.1f ; newY2/100: %.1f" % (y1, ymin, newY2 / 100)
             y1 = max(y1, 4, ymin, newY2 / 100)
-        axis((x1, x2, y1, newY2))
-        grid(b=True, which='major', color='0.25', linestyle='-')
-        grid(b=True, which='minor', color='0.1', linestyle='--')
-        ax.yaxis.set_minor_formatter(FuncFormatter(show_only_some))
+        pylab.axis((x1, x2, y1, newY2))
+        pylab.grid(b=True, which='major', color='0.25', linestyle='-')
+        pylab.grid(b=True, which='minor', color='0.1', linestyle='--')
+        ax.yaxis.set_minor_formatter(pylab.FuncFormatter(show_only_some))
         ax.yaxis.set_ticks_position('right')
         ax.yaxis.set_ticks_position('both')
         ax.tick_params(labelleft='on')  # for matplotlib versions where 'both' doesn't work
         # ax.tick_params(labelright='on')
         if saveFile:
-            savefig(graphDir + os.sep + plotType + "_" + fileRoot + ".png")
-        show()
+            pylab.savefig(graphDir + os.sep + plotType + "_" + fileRoot + ".png")
+        pylab.show()
 
 if __name__ == "__main__":
     main()
