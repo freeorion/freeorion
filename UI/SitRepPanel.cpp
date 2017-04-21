@@ -567,7 +567,7 @@ void SitRepPanel::FilterClicked() {
     menu_contents.next_level.push_back(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
                                        ALL_INDEX, false, false));
 
-    CUIPopupMenu popup(m_filter_button->Left(), m_filter_button->Bottom(), menu_contents);
+    CUIPopupMenuClassic popup(m_filter_button->Left(), m_filter_button->Bottom(), menu_contents);
     if (!popup.Run())
         return;
     int selected_menu_item = popup.MenuID();
@@ -671,7 +671,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
                                                     UserString("SITREP_IGNORE_BLOCK_TITLE"),                         10,
                                                     false, false));
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
     if (!popup.Run())
         return;
     int selected_menu_item = popup.MenuID();

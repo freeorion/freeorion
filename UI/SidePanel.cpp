@@ -807,7 +807,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         if (m_order_issuing_enabled && system->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
             menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), 1, false, false));
 
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+        GG::PopupMenuClassic popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
                             ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
         if (popup.Run()) {
@@ -2073,7 +2073,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
     }
 
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
 
     if (popup.Run()) {
         switch (popup.MenuID()) {

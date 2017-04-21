@@ -200,11 +200,11 @@ private:
 
 /** \brief A modal pop-up menu.
 
-    PopupMenu gives calling code the abiltiy to create a pop-up menu (usually
+    PopupMenuClassic gives calling code the abiltiy to create a pop-up menu (usually
     in response to a right mouse click), allow the pop-up to execute, and then
     obtain an integer ID representing the selected menu item, by calling
     MenuID().  If no menu item has been selected, MenuID() returns 0.  Though
-    every MenuItem in a PopupMenu may be attached to a slot directly, it is
+    every MenuItem in a PopupMenuClassic may be attached to a slot directly, it is
     not recommended.  The intent of this class is to act as a tool to get
     immediate input from the user, inline.  However, attaching MenuItem
     signals directly to slots will work, and it will certainly be useful in
@@ -214,7 +214,7 @@ private:
     to the BrowsedSignalType object returned by BrowsedSignal.  Whenever the
     mouse moves to a new menu item, this signal is emitted with the ID number
     of the item under the cursor. */
-class GG_API PopupMenu : public Wnd
+class GG_API PopupMenuClassic : public Wnd
 {
 public:
     /** \name Signal Types */ ///@{
@@ -225,7 +225,7 @@ public:
     /** \name Structors */ ///@{
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
-    PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color = CLR_WHITE,
+    PopupMenuClassic(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color = CLR_WHITE,
               Clr border_color = CLR_BLACK, Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
     //@}
 
@@ -239,7 +239,7 @@ public:
     Clr         HiliteColor() const;       ///< returns the color used to indicate a hilited menu item
     Clr         SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
 
-    mutable BrowsedSignalType BrowsedSignal; ///< the browsed signal object for this PopupMenu
+    mutable BrowsedSignalType BrowsedSignal; ///< the browsed signal object for this PopupMenuClassic
     //@}
 
     /** \name Mutators */ ///@{

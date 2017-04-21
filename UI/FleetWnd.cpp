@@ -2590,7 +2590,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     }
 
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // rename ship
@@ -3473,7 +3473,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         }
    }
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
 
     if (popup.Run()) {
         switch (popup.MenuID()) {

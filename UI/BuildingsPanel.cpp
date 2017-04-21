@@ -436,7 +436,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 3: { // scrap building

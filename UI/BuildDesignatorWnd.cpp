@@ -934,7 +934,7 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
     menu_contents.next_level.push_back(GG::MenuItem(popup_label, 3, false, false));
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
 
     if (popup.Run()) {
         switch (popup.MenuID()) {

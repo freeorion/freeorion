@@ -736,9 +736,9 @@ private:
 };
 
 /** Consistently rendered popup menu */
-class CUIPopupMenu : public GG::PopupMenu {
+class CUIPopupMenuClassic : public GG::PopupMenuClassic {
 public:
-    CUIPopupMenu(GG::X x, GG::Y y, const GG::MenuItem& menu);
+    CUIPopupMenuClassic(GG::X x, GG::Y y, const GG::MenuItem& menu);
 };
 
 #endif // _CUIControls_h_

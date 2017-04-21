@@ -108,7 +108,7 @@ void FieldIcon::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(field_type_name));
     menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
 
     if (!popup.Run() || popup.MenuID() != 1)
         return;

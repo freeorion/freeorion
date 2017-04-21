@@ -72,7 +72,7 @@ void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 2: { // copy
@@ -879,7 +879,7 @@ void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     // todo: italicize, underline, or colour selected text
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // cut
@@ -1000,7 +1000,7 @@ void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     // todo: italicize, underline, or colour selected text
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
         case 1: { // cut
@@ -1091,7 +1091,7 @@ void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
 
     // todo: italicize, underline, or colour selected text
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
     if (popup.Run()) {
         switch (popup.MenuID()) {
 
@@ -1682,7 +1682,7 @@ void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     GG::MenuItem menu_contents;
     menu_contents.next_level.push_back(GG::MenuItem(UserString("RESET"), 1, false, false));
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
 
     if (popup.Run()) {
         switch (popup.MenuID()) {
@@ -2316,8 +2316,12 @@ void RotatingGraphic::Render() {
     glPopMatrix();
 }
 
-CUIPopupMenu::CUIPopupMenu(GG::X x, GG::Y y, const GG::MenuItem& menu) :
-    GG::PopupMenu(x, y, ClientUI::GetFont(), menu, ClientUI::TextColor(), ClientUI::WndOuterBorderColor(),
+////////////////////////////////////////////////
+// CUIPopupMenu
+////////////////////////////////////////////////
+
+CUIPopupMenuClassic::CUIPopupMenuClassic(GG::X x, GG::Y y, const GG::MenuItem& menu) :
+    GG::PopupMenuClassic(x, y, ClientUI::GetFont(), menu, ClientUI::TextColor(), ClientUI::WndOuterBorderColor(),
                   ClientUI::WndColor(), ClientUI::EditHiliteColor())
 {}
 

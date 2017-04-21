@@ -136,7 +136,7 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
     menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+    CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
 
     bool retval = false;
 

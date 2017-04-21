@@ -206,13 +206,13 @@ void MenuBar::LButtonDown(const Pt& pt, Flags<ModKey> mod_keys)
                 m_caret = INVALID_CARET;
                 BrowsedSignal(0);
                 // since a MenuBar is usually modeless, but becomes modal when a menu is opened, we do something kludgey here:
-                // we launch a PopupMenu whenever a menu item is selected, then use the ID returned from it to find the
+                // we launch a PopupMenuClassic whenever a menu item is selected, then use the ID returned from it to find the
                 // menu item that was chosen; we then emit a signal from that item
                 if (m_menu_data.next_level[i].next_level.empty()) {
                     (*m_menu_data.next_level[i].SelectedIDSignal)(m_menu_data.next_level[i].item_ID);
                     (*m_menu_data.next_level[i].SelectedSignal)();
                 } else {
-                    PopupMenu menu(m_menu_labels[i]->Left(), m_menu_labels[i]->Bottom(), m_font, m_menu_data.next_level[i], m_text_color, m_border_color, m_int_color);
+                    PopupMenuClassic menu(m_menu_labels[i]->Left(), m_menu_labels[i]->Bottom(), m_font, m_menu_data.next_level[i], m_text_color, m_border_color, m_int_color);
                     menu.SetHiliteColor(m_hilite_color);
                     menu.SetSelectedTextColor(m_sel_text_color);
                     Connect(menu.BrowsedSignal, boost::ref(BrowsedSignal));
@@ -341,16 +341,16 @@ void MenuBar::AdjustLayout(bool reset/* = false*/)
 
 
 ////////////////////////////////////////////////
-// GG::PopupMenu
+// GG::PopupMenuClassic
 ////////////////////////////////////////////////
 namespace {
-    // distance to leave between edge of PopupMenu contents and the control's border
+    // distance to leave between edge of PopupMenuClassic contents and the control's border
     const X HORIZONTAL_MARGIN(3);
 }
 
-const std::size_t PopupMenu::INVALID_CARET = std::numeric_limits<std::size_t>::max();
+const std::size_t PopupMenuClassic::INVALID_CARET = std::numeric_limits<std::size_t>::max();
 
-PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color/* = CLR_WHITE*/,
+PopupMenuClassic::PopupMenuClassic(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color/* = CLR_WHITE*/,
                      Clr border_color/* = CLR_BLACK*/, Clr interior_color/* = CLR_SHADOW*/, Clr hilite_color/* = CLR_GRAY*/) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth() - 1, GUI::GetGUI()->AppHeight() - 1, INTERACTIVE | MODAL),
     m_font(font),
@@ -368,31 +368,31 @@ PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem
     m_open_levels.resize(1);
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(BrowsedSignal, MenuSignalEcho("PopupMenu::BrowsedSignal"));
+        Connect(BrowsedSignal, MenuSignalEcho("PopupMenuClassic::BrowsedSignal"));
 }
 
-Pt PopupMenu::ClientUpperLeft() const
+Pt PopupMenuClassic::ClientUpperLeft() const
 { return m_origin; }
 
-int PopupMenu::MenuID() const
+int PopupMenuClassic::MenuID() const
 { return (m_item_selected ? m_item_selected->item_ID : 0); }
 
-Clr PopupMenu::BorderColor() const
+Clr PopupMenuClassic::BorderColor() const
 { return m_border_color; }
 
-Clr PopupMenu::InteriorColor() const
+Clr PopupMenuClassic::InteriorColor() const
 { return m_int_color; }
 
-Clr PopupMenu::TextColor() const
+Clr PopupMenuClassic::TextColor() const
 { return m_text_color; }
 
-Clr PopupMenu::HiliteColor() const
+Clr PopupMenuClassic::HiliteColor() const
 { return m_hilite_color; }
 
-Clr PopupMenu::SelectedTextColor() const
+Clr PopupMenuClassic::SelectedTextColor() const
 { return m_sel_text_color; }
 
-void PopupMenu::Render()
+void PopupMenuClassic::Render()
 {
     if (m_menu_data.next_level.size())
     {
@@ -515,7 +515,7 @@ void PopupMenu::Render()
     }
 }
 
-void PopupMenu::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+void PopupMenuClassic::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
 {
     if (m_caret[0] != INVALID_CARET) {
         MenuItem* menu_ptr = &m_menu_data;
@@ -534,10 +534,10 @@ void PopupMenu::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
     BrowsedSignal(0);
 }
 
-void PopupMenu::LClick(const Pt& pt, Flags<ModKey> mod_keys)
+void PopupMenuClassic::LClick(const Pt& pt, Flags<ModKey> mod_keys)
 { LButtonUp(pt, mod_keys); }
 
-void PopupMenu::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
+void PopupMenuClassic::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
 {
     bool cursor_is_in_menu = false;
     for (int i = static_cast<int>(m_open_levels.size()) - 1; i >= 0; --i) {
@@ -583,16 +583,16 @@ void PopupMenu::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
     BrowsedSignal(update_ID);
 }
 
-void PopupMenu::RButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
+void PopupMenuClassic::RButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
 { LButtonUp(pt, mod_keys); }
 
-void PopupMenu::RClick(const Pt& pt, Flags<ModKey> mod_keys)
+void PopupMenuClassic::RClick(const Pt& pt, Flags<ModKey> mod_keys)
 { LButtonUp(pt, mod_keys); }
 
-void PopupMenu::MouseHere(const Pt& pt, Flags<ModKey> mod_keys)
+void PopupMenuClassic::MouseHere(const Pt& pt, Flags<ModKey> mod_keys)
 { LDrag(pt, Pt(), mod_keys); }
 
-bool PopupMenu::Run()
+bool PopupMenuClassic::Run()
 {
     bool retval = Wnd::Run();
     if (m_item_selected) {
@@ -602,32 +602,32 @@ bool PopupMenu::Run()
     return retval;
 }
 
-void PopupMenu::SetBorderColor(Clr clr)
+void PopupMenuClassic::SetBorderColor(Clr clr)
 { m_border_color = clr; }
 
-void PopupMenu::SetInteriorColor(Clr clr)
+void PopupMenuClassic::SetInteriorColor(Clr clr)
 { m_int_color = clr; }
 
-void PopupMenu::SetTextColor(Clr clr)
+void PopupMenuClassic::SetTextColor(Clr clr)
 { m_text_color = clr; }
 
-void PopupMenu::SetHiliteColor(Clr clr)
+void PopupMenuClassic::SetHiliteColor(Clr clr)
 { m_hilite_color = clr; }
 
-void PopupMenu::SetSelectedTextColor(Clr clr)
+void PopupMenuClassic::SetSelectedTextColor(Clr clr)
 { m_sel_text_color = clr; }
 
-const std::shared_ptr<Font>& PopupMenu::GetFont() const
+const std::shared_ptr<Font>& PopupMenuClassic::GetFont() const
 { return m_font; }
 
-const MenuItem& PopupMenu::MenuData() const
+const MenuItem& PopupMenuClassic::MenuData() const
 { return m_menu_data; }
 
-const std::vector<Rect>& PopupMenu::OpenLevels() const
+const std::vector<Rect>& PopupMenuClassic::OpenLevels() const
 { return m_open_levels; }
 
-const std::vector<std::size_t>& PopupMenu::Caret() const
+const std::vector<std::size_t>& PopupMenuClassic::Caret() const
 { return m_caret; }
 
-const MenuItem* PopupMenu::ItemSelected() const
+const MenuItem* PopupMenuClassic::ItemSelected() const
 { return m_item_selected; }

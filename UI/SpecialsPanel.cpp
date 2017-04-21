@@ -140,7 +140,7 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
         GG::MenuItem menu_contents;
         menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
-        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+        CUIPopupMenuClassic popup(pt.x, pt.y, menu_contents);
 
         if (!popup.Run() || popup.MenuID() != 1) {
             return false;
