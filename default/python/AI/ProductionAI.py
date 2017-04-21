@@ -128,11 +128,16 @@ def get_best_ship_info(priority, loc=None):
         if not best_designs:
             return None, None, None
 
+        # best_designs are already sorted by rating high to low, so the top rating is the first encountered within
+        # our planet search list
         for design_stats in best_designs:
             top_rating, pid, top_id, cost, stats = design_stats
             if pid in planet_ids:
                 break
-        valid_locs = [item[1] for item in best_designs if item[0] == top_rating and item[2] == top_id]
+        else:
+            return None, None, None  # apparently can't build for this priority within the desired planet group
+        valid_locs = [pid for rating, pid, design_id, _, _ in best_designs if
+                      rating == top_rating and design_id == top_id and pid in planet_ids]
         return top_id, fo.getShipDesign(top_id), valid_locs
     else:
         return None, None, None  # must be missing a Shipyard or other orbital (or missing tech)
