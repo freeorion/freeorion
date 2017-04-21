@@ -84,6 +84,14 @@ TESTDESIGN_PREFERRED_HULL = "SH_BASIC_MEDIUM"
 MISSING_REQUIREMENT_MULTIPLIER = -1000
 INVALID_DESIGN_RATING = -999  # this needs to be negative but greater than MISSING_REQUIREMENT_MULTIPLIER
 
+# For Trooper designs, set a maximum number of troopers per ship that will be considered for ratings purposes, to
+# prevent the AI from settling on trooper designs with the absolute largest hulls, which may nominally have the lowest
+# per-unit-cost but which then result in much trooper overkill/waste when actually deployed.  The application of this
+# limit does (in normal use) take into account shipbuilder species modifiers.
+# Current limit set to 48 to allow up to a grav hull filled with Advanced Troop Pods and Good offensive troopers (or
+# partly filled with Great advanced offensive troopers)
+MAX_TROOPERS_PER_SHIP = 48
+
 # Potentially, not adding techs to AIDependencies is intended for testing purposes.
 # Therefore, chat the player only once to inform him about the issue to prevent spam.
 _raised_warnings = set()
@@ -1796,7 +1804,7 @@ class TroopShipDesignerBaseClass(ShipDesigner):
         if self.design_stats.troops == 0:
             return INVALID_DESIGN_RATING
         else:
-            return self.design_stats.troops/self._adjusted_production_cost()
+            return min(MAX_TROOPERS_PER_SHIP, self.design_stats.troops)/self._adjusted_production_cost()
 
     def _starting_guess(self, available_parts, num_slots):
         # fill completely with biggest troop pods. If none are available for this slot type, leave empty.
