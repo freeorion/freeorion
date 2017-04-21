@@ -637,7 +637,7 @@ const MenuItem* PopupMenuClassic::ItemSelected() const
 ////////////////////////////////////////////////
 const std::size_t PopupMenu::INVALID_CARET = std::numeric_limits<std::size_t>::max();
 
-PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color/* = CLR_WHITE*/,
+PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color/* = CLR_WHITE*/,
                      Clr border_color/* = CLR_BLACK*/, Clr interior_color/* = CLR_SHADOW*/, Clr hilite_color/* = CLR_GRAY*/) :
     Wnd(X0, Y0, GUI::GetGUI()->AppWidth() - 1, GUI::GetGUI()->AppHeight() - 1, INTERACTIVE | MODAL),
     m_font(font),
@@ -646,7 +646,7 @@ PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem
     m_text_color(text_color),
     m_hilite_color(hilite_color),
     m_sel_text_color(text_color),
-    m_menu_data(m),
+    m_menu_data(MenuItem()),
     m_open_levels(),
     m_caret(1, INVALID_CARET),
     m_origin(x, y),
@@ -656,6 +656,11 @@ PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem
 
     if (INSTRUMENT_ALL_SIGNALS)
         Connect(BrowsedSignal, MenuSignalEcho("PopupMenu::BrowsedSignal"));
+}
+
+void PopupMenu::AddMenuItem(MenuItem&& menu_item)
+{
+    m_menu_data.next_level.push_back(std::forward<MenuItem>(menu_item));
 }
 
 Pt PopupMenu::ClientUpperLeft() const

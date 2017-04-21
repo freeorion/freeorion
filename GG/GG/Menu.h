@@ -303,12 +303,14 @@ private:
     inline.  However, attaching MenuItem signals directly to slots will
     work, and it will certainly be useful in some cases to do this.  When
     PopupMenu is Run(), on completion the callback of the selected MenuItem
-    will be called.  Also, if some action is to be taken as the user
-    browses the menu items, such as displaying some visual cue to indicate
-    the result of chosing a particular menu entry, you can attach a slot
-    function to the BrowsedSignalType object returned by BrowsedSignal.
-    Whenever the mouse moves to a new menu item, this signal is emitted
-    with a pointer to the item under the cursor. */
+    will be called.  
+
+    Also, if some action is to be taken as the user browses the menu items,
+    such as displaying some visual cue to indicate the result of chosing a
+    particular menu entry, you can attach a slot function to the
+    BrowsedSignalType object returned by BrowsedSignal.  Whenever the mouse
+    moves to a new menu item, this signal is emitted with a pointer to the
+    item under the cursor. */
 class GG_API PopupMenu : public Wnd
 {
 public:
@@ -320,7 +322,7 @@ public:
     /** \name Structors */ ///@{
     /** Ctor.  Parameter \a m should contain the desired menu in its
         next_level member. */
-    PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color = CLR_WHITE,
+    PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color = CLR_WHITE,
               Clr border_color = CLR_BLACK, Clr interior_color = CLR_SHADOW, Clr hilite_color = CLR_GRAY);
     //@}
 
@@ -338,6 +340,8 @@ public:
     //@}
 
     /** \name Mutators */ ///@{
+    /** Add \p menu_item to the end of the popup menu and store its callback.*/
+    void AddMenuItem(MenuItem&& menu_item);
     void Render() override;
     void LButtonUp(const Pt& pt, Flags<ModKey> mod_keys) override;
     void LClick(const Pt& pt, Flags<ModKey> mod_keys) override;
