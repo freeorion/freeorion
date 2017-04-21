@@ -206,7 +206,6 @@ class TechGroup1SparseC(TechGroup1):
             self.economy,
             self.economy,
             self.weapon,
-            "LRN_PHYS_BRAIN",
             "SHP_ORG_HULL",
             self.weapon,
             "PRO_NANOTECH_PROD",
