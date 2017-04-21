@@ -1825,7 +1825,8 @@ class TroopShipDesignerBaseClass(ShipDesigner):
 
     def _class_specific_filter(self, partname_dict):
         for slot in partname_dict:
-            remaining_parts = [part for part in partname_dict[slot] if get_part_type(part).partClass in TROOPS]
+            remaining_parts = [part for part in partname_dict[slot] if
+                               get_part_type(part).partClass in TROOPS.union(ARMOUR)]
             partname_dict[slot] = remaining_parts
 
 
