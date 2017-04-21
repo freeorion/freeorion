@@ -1,8 +1,7 @@
 #ifndef _CHMAIN_H
 #define _CHMAIN_H
 
-#include <string>
-#include <vector>
+#include "../ConfigFileProcess.h"
 
 int mainConfigOptionsSetup(const std::vector<std::string>& args);
 int mainSetupAndRun();
