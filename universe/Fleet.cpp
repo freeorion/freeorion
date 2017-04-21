@@ -150,17 +150,21 @@ void Fleet::Copy(std::shared_ptr<const UniverseObject> copied_object, int empire
 
                 const std::list<int>& copied_fleet_route = copied_fleet->m_travel_route;
 
-                if (m_travel_route.empty() && !copied_fleet->m_travel_route.empty())
+                m_travel_route.clear();
+                if (!copied_fleet->m_travel_route.empty())
                     m_travel_route.push_back(moving_to);
                 ShortenRouteToEndAtSystem(travel_route, moving_to);
-                if (!travel_route.empty() && travel_route.front() != 0 && travel_route.size() != copied_fleet_route.size()) {
+                if (!travel_route.empty()
+                    && travel_route.front() != INVALID_OBJECT_ID
+                    && travel_route.size() != copied_fleet_route.size())
+                {
                     try {
                         travel_distance -= GetPathfinder()->ShortestPath(travel_route.back(),
                                                                       copied_fleet_route.back()).second;
                     } catch (...) {
                         DebugLogger() << "Fleet::Copy couldn't find route to system(s):"
-                                               << " travel route back: " << travel_route.back()
-                                               << " or copied fleet route back: " << copied_fleet_route.back();
+                                      << " travel route back: " << travel_route.back()
+                                      << " or copied fleet route back: " << copied_fleet_route.back();
                     }
                 }
 
