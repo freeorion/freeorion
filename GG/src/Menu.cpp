@@ -62,17 +62,22 @@ MenuItem::MenuItem(bool separator) :
     item_ID(0),
     disabled(true),
     checked(false),
-    separator(true)
+    separator(true),
+    next_level(),
+    m_selected_on_close_callback{}
 {}
 
-MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check) :
+MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check,
+                   std::function<void()> selected_on_close_callback) :
     SelectedIDSignal(new SelectedIDSignalType()),
     SelectedSignal(new SelectedSignalType()),
     label(str),
     item_ID(id),
     disabled(disable),
     checked(check),
-    separator(false)
+    separator(false),
+    next_level(),
+    m_selected_on_close_callback{selected_on_close_callback}
 {
     if (INSTRUMENT_ALL_SIGNALS) {
         Connect(*SelectedIDSignal, MenuSignalEcho("MenuItem::SelectedIDSignal"));
@@ -891,6 +896,12 @@ bool PopupMenu::Run()
         (*m_item_selected->SelectedIDSignal)(m_item_selected->item_ID);
         (*m_item_selected->SelectedSignal)();
     }
+
+    if (retval
+        && m_item_selected
+        && m_item_selected->m_selected_on_close_callback)
+        m_item_selected->m_selected_on_close_callback();
+
     return retval;
 }
 

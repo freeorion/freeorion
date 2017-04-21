@@ -33,6 +33,7 @@
 #include <GG/ClrConstants.h>
 #include <GG/Control.h>
 
+#include <functional>
 
 namespace GG {
 
@@ -46,7 +47,11 @@ class TextControl;
     is emmitted with its menu_ID member whenever it is selected. Such signals
     may be emitted even when the menu_ID is 0.  These signals allow each
     MenuItem to be attached directly to code that should be executed when that
-    item is selected. */
+    item is selected.
+
+    MenuItems have a selected_on_close callback which is called from
+    PopUpMenus if this MenuItem is selected when the menu closes.
+*/
 struct GG_API MenuItem
 {
     /** \name Signal Types */ ///@{
@@ -60,7 +65,8 @@ struct GG_API MenuItem
     /** \name Structors */ ///@{
     MenuItem();
 
-    MenuItem(const std::string& str, int id, bool disable, bool check);
+    MenuItem(const std::string& str, int id, bool disable, bool check,
+             std::function<void()> selected_on_close_callback = std::function<void()>());
 
     explicit MenuItem(bool separator);
 
@@ -82,6 +88,9 @@ struct GG_API MenuItem
     bool                  checked;    ///< set to true when this menu item can be toggled, and is currently on
     bool                  separator;  ///< set to true to render this menu item as a separator bar, rather than showing its text
     std::vector<MenuItem> next_level; ///< submenu off of this menu item; may be emtpy
+
+    /** A callback to be called if this menu item is selected on close.*/
+    std::function<void()> m_selected_on_close_callback;
 };
 
 
