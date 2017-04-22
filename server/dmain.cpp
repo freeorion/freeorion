@@ -1,16 +1,10 @@
 #include "ServerApp.h"
 
 #include "../parse/Parse.h"
-#include "../util/OptionsDB.h"
-#include "../util/Directories.h"
-#include "../util/i18n.h"
+#include "../util/ConfigFileProcess.h"
 #include "../util/Logger.h"
-#include "../util/Version.h"
-#include "../util/XMLDoc.h"
 
 #include <GG/utf8/checked.h>
-
-#include <boost/filesystem/fstream.hpp>
 
 #if defined(FREEORION_LINUX)
 /* Freeorion aims to have exceptions handled and operation continue normally.
@@ -53,31 +47,7 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
         GetOptionsDB().AddFlag('v', "version",      UserStringNop("OPTIONS_DB_VERSION"),      false);
         GetOptionsDB().AddFlag('s', "singleplayer", UserStringNop("OPTIONS_DB_SINGLEPLAYER"), false);
 
-        // TODO Code combining config, persistent_config and commandline args is copy-pasted
-        // slightly differently in chmain, dmain and camain.  Make it into a single function.
-
-        // read config.xml and set options entries from it, if present
-        XMLDoc doc;
-        {
-            boost::filesystem::ifstream ifs(GetConfigPath());
-            if (ifs) {
-                doc.ReadDoc(ifs);
-                GetOptionsDB().SetFromXML(doc);
-            }
-
-            try {
-                boost::filesystem::ifstream pifs(GetPersistentConfigPath());
-                if (pifs) {
-                    doc.ReadDoc(pifs);
-                    GetOptionsDB().SetFromXML(doc);
-                }
-            } catch (const std::exception&) {
-                ErrorLogger() << "main() unable to read persistent option config file: " 
-                              << GetPersistentConfigPath() << std::endl;
-            }
-        }
-
-        GetOptionsDB().SetFromCommandLine(args);
+        ConfigFileProcess(args);
 
         if (GetOptionsDB().Get<bool>("help")) {
             GetOptionsDB().GetUsage(std::cerr);
