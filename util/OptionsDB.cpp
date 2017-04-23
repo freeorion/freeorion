@@ -431,6 +431,24 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
     }
 }
 
+void OptionsDB::SetFromFile(const boost::filesystem::path& file_path,
+                            const std::string& version) {
+    XMLDoc doc;
+    try {
+        boost::filesystem::ifstream ifs(file_path);
+        if (ifs) {
+            doc.ReadDoc(ifs);
+            if (version.empty() || (doc.root_node.ContainsChild("version-string") &&
+                                    doc.root_node.Child("version-string").Text() == version)) {
+                GetOptionsDB().SetFromXML(doc);
+            }
+        }
+    } catch (const std::exception&) {
+        std::cerr << UserString("UNABLE_TO_READ_CONFIG_XML")  << ": "
+                  << file_path << std::endl;
+    }
+}
+
 void OptionsDB::SetFromXML(const XMLDoc& doc) {
     for (const XMLElement& child : doc.root_node.children)
     { SetFromXMLRecursive(child, ""); }
