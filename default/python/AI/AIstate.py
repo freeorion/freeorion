@@ -76,7 +76,7 @@ class AIstate(object):
         self.exploredSystemIDs = {}
         self.unexploredSystemIDs = {self.__origin_home_system_id: 1}
         self.fleetStatus = {}  # keys: 'sysID', 'nships', 'rating'
-        # systemStatus keys: 'name', 'neighbors' (sysIDs), '2jump_ring' (sysIDs), '3jump_ring', '4jump_ring'
+        # systemStatus keys: 'name', 'neighbors' (sysIDs), '2jump_ring' (sysIDs), '3jump_ring', '4jump_ring', 'enemy_ship_count'
         # 'fleetThreat', 'planetThreat', 'monsterThreat' (specifically, immobile nonplanet threat), 'totalThreat', 'localEnemyFleetIDs',
         # 'neighborThreat', 'max_neighbor_threat', 'jump2_threat' (up to 2 jumps away), 'jump3_threat', 'jump4_threat', 'regional_threat'
         # 'myDefenses' (planet rating), 'myfleets', 'myFleetsAccessible'(not just next desitination), 'myFleetRating'
@@ -144,9 +144,10 @@ class AIstate(object):
 
         # check if planets in cache is still present. Remove destroyed.
         for system_id, info in sorted(self.systemStatus.items()):
+            self.systemStatus[system_id]['enemy_ship_count'] = 0  # clear now in prep for update_system_status()
             planet_dict = info.get('planets', {})
             cache_planet_set = set(planet_dict)
-            system_planet_set = set(universe.getSystem(system_id).planetIDs)
+            system_planet_set = set(*(sys.planetIDs for sys in [universe.getSystem(system_id)] if sys))
             diff = cache_planet_set - system_planet_set
             if diff:
                 print "Removing destroyed planets from systemStatus for system %s: planets to be removed: %s" % (system_id, sorted(diff))
@@ -313,8 +314,13 @@ class AIstate(object):
                             if attacks:
                                 e_f_dict.setdefault(stats, [0])[0] += 1
                     partial_vis_turn = universe.getVisibilityTurnsMap(fleet_id, empire_id).get(fo.visibility.partial, -9999)
-                    if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
-                        if not dead_fleet:
+                    if not dead_fleet:
+                        # TODO: consider checking death of individual ships.  If ships had been moved from this fleet
+                        # into another fleet, we might have witnessed their death in that other fleet but if this fleet
+                        # had not been seen since before that transfer then the ships might also still be listed here.
+                        sys_status = self.systemStatus.setdefault(this_system_id, {})
+                        sys_status['enemy_ship_count'] = sys_status.get('enemy_ship_count', 0) + len(fleet.shipIDs)
+                        if partial_vis_turn >= current_turn - 1:  # only interested in immediately recent data
                             saw_enemies_at_system[fleet.systemID] = True
                             enemy_fleet_ids.append(fleet_id)
                             enemies_by_system.setdefault(this_system_id, []).append(fleet_id)
