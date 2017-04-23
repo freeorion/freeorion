@@ -91,38 +91,6 @@ namespace {
 
     const unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
 
-    // applies to pairs (including map value types)
-    template <class C, class D>
-    void CheckSumCombine(unsigned int& sum, const std::pair<C, D>& p)
-    {
-        std::cout << "CheckSumCombine(pair): " << typeid(p).name() << std::endl << std::endl;
-        CheckSumCombine(sum, p.first);
-        CheckSumCombine(sum, p.second);
-    }
-
-    // should apply to vectors, maps, and strings
-    template <class C>
-    void CheckSumCombine(unsigned int& sum, const C& c,
-                         const typename C::const_iterator* it = nullptr,
-                         const typename C::value_type* val = nullptr)
-    {
-        std::cout << "CheckSumCombine(C container): " << typeid(c).name() << std::endl << std::endl;
-        for (const typename C::value_type& t : c)
-            CheckSumCombine(sum, t);
-        sum += c.size();
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    // applies to classes that have GetCheckSum methods
-    template <class C>
-    void CheckSumCombine(unsigned int& sum, C& c,
-                         decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)
-    {
-        std::cout << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name() << std::endl << std::endl;
-        sum += c.GetCheckSum();
-        sum %= CHECKSUM_MODULUS;
-    }
-
     // unsigned types (eg. bool, unsigned int, unsigned long int, unsigned char)
     template <class T, typename std::enable_if<std::is_unsigned<T>::value, T>::type* = nullptr>
     void CheckSumCombine(unsigned int& sum, const T& t) {
@@ -159,6 +127,38 @@ namespace {
     // fallback do nothing for unsupported types (without GetCheckSum functions)
     void CheckSumCombine(...)
     { std::cout << "CheckSumCombine(...)" << std::endl << std::endl; }
+
+    // applies to pairs (including map value types)
+    template <class C, class D>
+    void CheckSumCombine(unsigned int& sum, const std::pair<C, D>& p)
+    {
+        std::cout << "CheckSumCombine(pair): " << typeid(p).name() << std::endl << std::endl;
+        CheckSumCombine(sum, p.first);
+        CheckSumCombine(sum, p.second);
+    }
+
+    // should apply to vectors, maps, and strings
+    template <class C>
+    void CheckSumCombine(unsigned int& sum, const C& c,
+                         const typename C::const_iterator* it = nullptr,
+                         const typename C::value_type* val = nullptr)
+    {
+        std::cout << "CheckSumCombine(C container): " << typeid(c).name() << std::endl << std::endl;
+        for (const typename C::value_type& t : c)
+            CheckSumCombine(sum, t);
+        sum += c.size();
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    // applies to classes that have GetCheckSum methods
+    template <class C>
+    void CheckSumCombine(unsigned int& sum, C& c,
+                         decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)
+    {
+        std::cout << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name() << std::endl << std::endl;
+        sum += c.GetCheckSum();
+        sum %= CHECKSUM_MODULUS;
+    }
 
     // doubles
     void CheckSumCombine(unsigned int& sum, const double& t) {
