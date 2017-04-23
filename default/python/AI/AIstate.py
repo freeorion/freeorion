@@ -191,7 +191,7 @@ class AIstate(object):
         Generates unique identifier.
         It is hexed number of milliseconds.
         To set self.uid use flag first=True result will be
-            number of mils between current time and some recent date
+        number of mils between current time and some recent date
         For turn result is mils between uid and current time
         """
         time_delta = (time() - 1433809768) * 1000
