@@ -652,7 +652,7 @@ private:
     }
 
     GG::X   DropListWidth() const
-    { return GG::X(ClientUI::Pts()*18); }
+    { return GG::X(ClientUI::Pts()*15); }
 
     GG::X   ParamsDropListWidth() const
     { return CONDITION_WIDGET_WIDTH - DropListWidth(); }
