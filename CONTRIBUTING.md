@@ -64,6 +64,6 @@ when working within the FreeOrion project.  Those are:
 [GitHub Issue/PR Labels]: .github/labels.md
 [Release Issue template]: .github/RELEASE_TEMPLATE.md
 [Code Standards]: http://www.freeorion.org/index.php/Code_Standards
-[Pull Request]: https://help.github.com/articles/proposing-changes-to-a-project-with-pull-requests/
+[Pull Request]: https://help.github.com/articles/proposing-changes-to-your-work-with-pull-requests/
 [Commit Messages]: http://chris.beams.io/posts/git-commit/
 [PEP 8]: https://www.python.org/dev/peps/pep-0008/
