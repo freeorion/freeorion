@@ -24,8 +24,8 @@
    whatwasthataddress@gmail.com */
 
 /** \file Menu.h \brief Contains the MenuItem class, which represents menu
-    data; the MenuBar control class; and the PopupMenu class, which is used to
-    provide immediate context menus. */
+    data and the PopupMenu class, which is used to provide immediate
+    context menus. */
 
 #ifndef _GG_Menu_h_
 #define _GG_Menu_h_
@@ -40,14 +40,9 @@ namespace GG {
 class Font;
 class TextControl;
 
-/** \brief Serves as a single menu entry in a GG::MenuBar or GG::PopupMenu.
+/** \brief Serves as a single menu entry in a GG::PopupMenu.
 
-    May include a submenu.  All legal item_IDs are positive (and so non-zero);
-    any item_ID <= 0 is considered invalid.  Each MenuItem has a signal that
-    is emmitted with its menu_ID member whenever it is selected. Such signals
-    may be emitted even when the menu_ID is 0.  These signals allow each
-    MenuItem to be attached directly to code that should be executed when that
-    item is selected.
+    May include a submenu.
 
     MenuItems have a selected_on_close callback which is called from
     PopUpMenus if this MenuItem is selected when the menu closes.
@@ -60,7 +55,7 @@ struct GG_API MenuItem
     /** \name Structors */ ///@{
     MenuItem();
 
-    MenuItem(const std::string& str, int id, bool disable, bool check,
+    MenuItem(const std::string& str, bool disable, bool check,
              std::function<void()> selected_on_close_callback = std::function<void()>());
 
     explicit MenuItem(bool separator);
@@ -72,7 +67,6 @@ struct GG_API MenuItem
     //@}
 
     std::string           label;      ///< text shown for this menu item
-    int                   item_ID;    ///< ID number associated with this menu item
     bool                  disabled;   ///< set to true when this menu item is disabled
     bool                  checked;    ///< set to true when this menu item can be toggled, and is currently on
     bool                  separator;  ///< set to true to render this menu item as a separator bar, rather than showing its text
@@ -85,7 +79,7 @@ struct GG_API MenuItem
 
 /** \brief A modal pop-up menu.
 
-    PopupMenu gives calling code the abiltiy to create a pop-up menu
+    PopupMenu gives calling code the ability to create a pop-up menu
     (usually in response to a right mouse click).  MenuItems are added with
     AddMenuItem(menuitem, callback).  When PopupMenu is Run(), on
     completion the callback of the selected MenuItem will be called.  */
@@ -105,7 +99,6 @@ public:
     /** \name Accessors */ ///@{
     Pt ClientUpperLeft() const override;
 
-    int         MenuID() const;            ///< returns the integer ID of the menu item selected by the user, or 0 if none was selected
     Clr         BorderColor() const;       ///< returns the color used to render the border of the control
     Clr         InteriorColor() const;     ///< returns the color used to render the interior of the control
     Clr         TextColor() const;         ///< returns the color used to render menu item text

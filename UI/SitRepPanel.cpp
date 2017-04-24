@@ -547,7 +547,6 @@ void SitRepPanel::FilterClicked() {
     std::map<int, bool> menu_index_checked;
     int index = 1;
     bool all_checked = true;
-    int ALL_INDEX = 9999;
 
     std::vector<std::string> all_templates = AllSitRepTemplateStrings();
 
@@ -575,7 +574,7 @@ void SitRepPanel::FilterClicked() {
             }
         };
 
-        popup.AddMenuItem(GG::MenuItem(menu_label, index, false, check, select_template_action));
+        popup.AddMenuItem(GG::MenuItem(menu_label, false, check, select_template_action));
         ++index;
     }
 
@@ -592,7 +591,7 @@ void SitRepPanel::FilterClicked() {
         }
     };
     popup.AddMenuItem(GG::MenuItem((all_checked ? UserString("NONE") : UserString("ALL")),
-                                   ALL_INDEX, false, false, all_templates_action));
+                                   false, false, all_templates_action));
 
     if (!popup.Run())
         return;
@@ -635,11 +634,11 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
             auto snooze10_action = [&sitrep_text, start_turn]() { SnoozeSitRepForNTurns(sitrep_text, start_turn, 10); };
             auto snooze_indefinite_action = [&sitrep_text]() { permanently_snoozed_sitreps.insert(sitrep_text); };
 
-            submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_5_TURNS"),      1,
+            submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_5_TURNS"),
                                                              false, false, snooze5_action));
-            submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_10_TURNS"),     2,
+            submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_10_TURNS"),
                                                              false, false, snooze10_action));
-            submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_INDEFINITE"),   3,
+            submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_INDEFINITE"),
                                                              false, false, snooze_indefinite_action));
             submenu_ignore.next_level.push_back(separator_item);
         }
@@ -651,9 +650,9 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
         snoozed_sitreps.clear();
         permanently_snoozed_sitreps.clear();
     };
-    submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_CLEAR_ALL"),            4,
+    submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_CLEAR_ALL"),
                                                      false, false, snooze_clear_action));
-    submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"),     5,
+    submenu_ignore.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SNOOZE_CLEAR_INDEFINITE"),
                                                      false, false, snooze_clear_indefinite_action));
     CUIPopupMenu popup(pt.x, pt.y);
     popup.AddMenuItem(std::move(submenu_ignore));
@@ -671,7 +670,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
                 Update();
             };
             submenu_block.next_level.push_back(GG::MenuItem(entry_margin + str(FlexibleFormat(UserString("SITREP_HIDE_TEMPLATE"))
-                                                                               % sitrep_label),                       7,
+                                                                               % sitrep_label),
                                                             false, false, hide_template_action));
         }
     }
@@ -683,7 +682,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
             SetHiddenSitRepTemplateStringsInOptions(m_hidden_sitrep_templates);
             Update();
         };
-        submenu_block.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SHOWALL_TEMPLATES"),        8,
+        submenu_block.next_level.push_back(GG::MenuItem(entry_margin + UserString("SITREP_SHOWALL_TEMPLATES"),
                                                         false, false, showall_action));
     }
     popup.AddMenuItem(std::move(submenu_block));
@@ -695,10 +694,9 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
     };
     auto help_action = []() {ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE");};
 
-    popup.AddMenuItem(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"),                         9,
-                                   false, false, copy_action));
+    popup.AddMenuItem(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"), false, false, copy_action));
     popup.AddMenuItem(GG::MenuItem(entry_margin + UserString("POPUP_MENU_PEDIA_PREFIX") +
-                                                    UserString("SITREP_IGNORE_BLOCK_TITLE"),                         10,
+                                   UserString("SITREP_IGNORE_BLOCK_TITLE"),
                                    false, false, help_action));
 
     if (!popup.Run())

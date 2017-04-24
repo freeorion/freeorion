@@ -658,9 +658,9 @@ namespace {
 
             CUIPopupMenu popup(pt.x, pt.y);
 
-            popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false, MoveToTopAction(it)));
-            popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false, MoveToBottomAction(it)));
-            popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false, DeleteAction(it)));
+            popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+            popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+            popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
 
             // inspect clicked item: was it a ship?
             GG::ListBox::Row* row = *it;
@@ -670,15 +670,15 @@ namespace {
                 // for ships, add a set rally point command
                 if (std::shared_ptr<const System> system = GetSystem(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
-                    popup.AddMenuItem(GG::MenuItem(rally_prompt,               4, false, false, rally_to_action));
+                    popup.AddMenuItem(GG::MenuItem(rally_prompt,               false, false, rally_to_action));
                 }
             }
 
             // pause / resume commands
             if (queue_row && queue_row->elem.paused) {
-                popup.AddMenuItem(GG::MenuItem(UserString("RESUME"),           7, false, false, resume_action));
+                popup.AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
             } else {
-                popup.AddMenuItem(GG::MenuItem(UserString("PAUSE"),            8, false, false, pause_action));
+                popup.AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
             }
 
             // pedia lookup
@@ -694,7 +694,7 @@ namespace {
             if (UserStringExists(item_name))
                 item_name = UserString(item_name);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
-            popup.AddMenuItem(GG::MenuItem(popup_label, 5, false, false, pedia_action));
+            popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
             popup.Run();
         }

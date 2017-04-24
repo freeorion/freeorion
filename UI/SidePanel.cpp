@@ -820,7 +820,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         };
 
         if (m_order_issuing_enabled && system->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            popup.AddMenuItem(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), 1, false, false, rename_action));
+            popup.AddMenuItem(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action));
 
         popup.Run();
     }
@@ -2050,12 +2050,12 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             }
 
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false, rename_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action));
     }
 
     auto pedia_to_planet_action = [this]() { ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id); };
 
-    popup.AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false, pedia_to_planet_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, pedia_to_planet_action));
 
     if (planet->OwnedBy(client_empire_id)
         && !peaceful_empires_in_system.empty()
@@ -2064,7 +2064,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         popup.AddMenuItem(GG::MenuItem(true));
 
         // submenus for each available recipient empire
-        GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), -1, false, false);
+        GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), false, false);
         for (std::map<int, Empire*>::value_type& entry : Empires()) {
             int recipient_empire_id = entry.first;
             auto gift_action = [recipient_empire_id, client_empire_id, planet]() {
@@ -2073,7 +2073,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             };
             if (peaceful_empires_in_system.find(recipient_empire_id) == peaceful_empires_in_system.end())
                 continue;
-            give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), 100 + recipient_empire_id, false, false, gift_action));
+            give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), false, false, gift_action));
         }
         popup.AddMenuItem(std::move(give_away_menu));
 
@@ -2092,7 +2092,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
                 }
 
             };
-            GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_PLANET"), 12, false, false, ungift_action);
+            GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_PLANET"), false, false, ungift_action);
             popup.AddMenuItem(std::move(cancel_give_away_menu));
         }
     }

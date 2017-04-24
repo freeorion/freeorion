@@ -43,11 +43,10 @@ namespace {
 // GG::MenuItem
 ////////////////////////////////////////////////
 MenuItem::MenuItem() :
-    MenuItem("", 0, false, false)
+    MenuItem("", false, false)
 {}
 
 MenuItem::MenuItem(bool separator) :
-    item_ID(0),
     disabled(true),
     checked(false),
     separator(true),
@@ -55,10 +54,9 @@ MenuItem::MenuItem(bool separator) :
     m_selected_on_close_callback{}
 {}
 
-MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check,
+MenuItem::MenuItem(const std::string& str, bool disable, bool check,
                    std::function<void()> selected_on_close_callback) :
     label(str),
-    item_ID(id),
     disabled(disable),
     checked(check),
     separator(false),
@@ -105,9 +103,6 @@ void PopupMenu::AddMenuItem(MenuItem&& menu_item)
 
 Pt PopupMenu::ClientUpperLeft() const
 { return m_origin; }
-
-int PopupMenu::MenuID() const
-{ return (m_item_selected ? m_item_selected->item_ID : 0); }
 
 Clr PopupMenu::BorderColor() const
 { return m_border_color; }

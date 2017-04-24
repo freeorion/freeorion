@@ -896,10 +896,10 @@ void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
 
     CUIPopupMenu popup(pt.x, pt.y);
     if (!(m_enqueued) && !(m_status == TS_COMPLETE))
-        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false, dclick_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
-    popup.AddMenuItem(GG::MenuItem(popup_label, 2, false, false, pedia_display_action));
+    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
     popup.Run();
 }
 
@@ -1928,10 +1928,10 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
 
     CUIPopupMenu popup(pt.x, pt.y);
     if (!empire->TechResearched(tech_name))
-        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false, tech_dclick_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, tech_dclick_action));
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
-    popup.AddMenuItem(GG::MenuItem(popup_label, 2, false, false, pedia_display_action));
+    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
     popup.Run();
 }
 

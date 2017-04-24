@@ -434,10 +434,10 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     if (m_order_issuing_enabled) {
         if (!building->OrderedScrapped()) {
             // create popup menu with "Scrap" option
-            popup.AddMenuItem(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), 3, false, false, scrap_building_action));
+            popup.AddMenuItem(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), false, false, scrap_building_action));
         } else {
             // create popup menu with "Cancel Scrap" option
-            popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), 4, false, false, un_scrap_building_action));
+            popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), false, false, un_scrap_building_action));
         }
     }
 
@@ -446,7 +446,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     if (bt) {
         auto pedia_lookup_building_type_action = [building_type]() { ClientUI::GetClientUI()->ZoomToBuildingType(building_type); };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
-        popup.AddMenuItem(GG::MenuItem(popup_label, 5, false, false, pedia_lookup_building_type_action));
+        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_building_type_action));
     }
 
     popup.Run();

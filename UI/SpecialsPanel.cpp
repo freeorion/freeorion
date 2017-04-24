@@ -145,7 +145,7 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         CUIPopupMenu popup(pt.x, pt.y);
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(entry.first));
 
-        popup.AddMenuItem(GG::MenuItem(popup_label, 1, false, false, zoom_action));
+        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
 
         popup.Run();
         return retval;

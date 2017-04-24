@@ -1612,11 +1612,11 @@ private:
             SetColumnName(column_id, "");
             ColumnsChangedSignal();
         };
-        popup.AddMenuItem(GG::MenuItem("", 0, false, current_column_type.empty(), empty_col_action));
+        popup.AddMenuItem(GG::MenuItem("", false, current_column_type.empty(), empty_col_action));
 
-        GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"),  -1, false, false);
-        GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"),-2, false, false);
-        GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),  -3, false, false);
+        GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"),   false, false);
+        GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"), false, false);
+        GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),   false, false);
 
         for (const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>::value_type& entry : available_column_types) {
             const auto& new_column_type = entry.first.first;
@@ -1631,13 +1631,13 @@ private:
 
             // put meters into root or submenus...
             if (entry.first.second.empty())
-                popup.AddMenuItem(GG::MenuItem(menu_label, index, false, check, col_action));
+                popup.AddMenuItem(GG::MenuItem(menu_label, false, check, col_action));
             else if (entry.first.second == "METERS_SUBMENU")
-                meters_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check, col_action));
+                meters_submenu.next_level.push_back(GG::MenuItem(menu_label,  false, check, col_action));
             else if (entry.first.second == "PLANETS_SUBMENU")
-                planets_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check, col_action));
+                planets_submenu.next_level.push_back(GG::MenuItem(menu_label, false, check, col_action));
             else if (entry.first.second == "FLEETS_SUBMENU")
-                fleets_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check, col_action));
+                fleets_submenu.next_level.push_back(GG::MenuItem(menu_label,  false, check, col_action));
             ++index;
         }
         popup.AddMenuItem(std::move(meters_submenu));
@@ -2377,7 +2377,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     CUIPopupMenu popup(pt.x, pt.y);
 
     // create popup menu with object commands in it
-    popup.AddMenuItem(GG::MenuItem(UserString("DUMP"), 1, false, false, dump_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("DUMP"), false, false, dump_action));
 
     std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
@@ -2395,7 +2395,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     UniverseObjectType type = obj->ObjectType();
     Empire* cur_empire = GetEmpire(app->EmpireID());
     if (type == OBJ_PLANET) {
-        popup.AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false, suitability_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action));
 
         for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
             ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
@@ -2420,7 +2420,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 }
             }
         }
-        GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), 3, false, false/*, no action*/);
+        GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), false, false/*, no action*/);
         for (std::map<std::string, int>::value_type& entry : all_foci) {
             menuitem_id++;
             auto focus_action = [this, entry, app, &focus_ship_building_common_action]() {
@@ -2441,12 +2441,12 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
             std::stringstream out;
             out << UserString(entry.first) << " (" << entry.second << ")";
-            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), menuitem_id, false, false, focus_action));
+            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), false, false, focus_action));
         }
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
             popup.AddMenuItem(std::move(focusMenuItem));
 
-        GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), 4, false, false);
+        GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), false, false);
         for (std::map<int, int>::iterator it = avail_designs.begin();
              it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++it)
         {
@@ -2474,13 +2474,13 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
             std::stringstream out;
             out << GetShipDesign(it->first)->Name() << " (" << it->second << ")";
-            ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), ship_menuitem_id, false, false, produce_ship_action));
+            ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_ship_action));
         }
 
         if (ship_menuitem_id > MENUITEM_SET_SHIP_BASE)
             popup.AddMenuItem(std::move(ship_menu_item));
 
-        GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), 5, false, false);
+        GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), false, false);
         for (std::map<std::string, int>::value_type& entry : avail_blds) {
             bld_menuitem_id++;
 
@@ -2510,7 +2510,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
             std::stringstream out;
             out << UserString(entry.first) << " (" << entry.second << ")";
-            building_menu_item.next_level.push_back(GG::MenuItem(out.str(), bld_menuitem_id, false, false, produce_building_action));
+            building_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_building_action));
         }
 
         if (bld_menuitem_id > MENUITEM_SET_BUILDING_BASE)
@@ -2524,8 +2524,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         auto set_owner_action = [object_id, app, &net]() {
             net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::SetOwner(object_id, ALL_EMPIRES)));
         };
-        popup.AddMenuItem(GG::MenuItem(UserString("MOD_DESTROY"),      10, false, false, destroy_object_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("MOD_SET_OWNER"),    11, false, false, set_owner_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("MOD_SET_OWNER"),    false, false, set_owner_action));
     }
 
     popup.Run();

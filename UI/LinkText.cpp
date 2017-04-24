@@ -85,10 +85,10 @@ void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
     // create popup menu
     CUIPopupMenu popup(pt.x, pt.y);
     if (GetLinkUnderPt(pt) != -1) {
-        popup.AddMenuItem(GG::MenuItem(UserString("OPEN"),     9, false, false, rclick_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPEN"),     false, false, rclick_action));
         popup.AddMenuItem(GG::MenuItem(true)); // separator
     }
-    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),  2, false, false, copy_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),  false, false, copy_action));
 
     popup.Run();
 }

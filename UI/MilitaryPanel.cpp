@@ -130,7 +130,7 @@ bool MilitaryPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
 
     CUIPopupMenu popup(pt.x, pt.y);
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
-    popup.AddMenuItem(GG::MenuItem(popup_label, 2, false, false, zoom_action));
+    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
 
     return retval;
 }

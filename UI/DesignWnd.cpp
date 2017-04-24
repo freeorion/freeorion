@@ -1862,14 +1862,14 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 
         // delete design
         if (client_empire_id != ALL_EMPIRES)
-            popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_OBSOLETE"), 1, false, false, delete_design_action));
+            popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_OBSOLETE"), false, false, delete_design_action));
 
         // rename design
         if (design->DesignedByEmpire() == client_empire_id)
-            popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false, rename_design_action));
+            popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"), false, false, rename_design_action));
 
         // save design
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), 3, false, false, save_design_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), false, false, save_design_action));
 
         popup.Run();
 
@@ -1905,8 +1905,8 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 
         // create popup menu with a commands in it
         CUIPopupMenu popup(pt.x, pt.y);
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       1, false, false, add_design_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   2, false, false, add_all_saved_designs_action)); 
+        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   false, false, add_all_saved_designs_action));
         popup.Run();
     }
 }

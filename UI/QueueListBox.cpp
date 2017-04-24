@@ -212,9 +212,9 @@ void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 
 void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     CUIPopupMenu popup(pt.x, pt.y);
-    popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false, MoveToTopAction(it)));
-    popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false, MoveToBottomAction(it)));
-    popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false, DeleteAction(it)));
+    popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+    popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+    popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
     popup.Run();
 }
 

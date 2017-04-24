@@ -154,14 +154,14 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
         species_name = pc->SpeciesName();
         if (!species_name.empty()) {
             std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-            popup.AddMenuItem(GG::MenuItem(species_label, 1, false, false, zoom_species_action));
+            popup.AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
         }
     }
 
     if (!meter_title.empty()) {
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                 meter_title);
-        popup.AddMenuItem(GG::MenuItem(popup_label, 2, false, false, zoom_article_action));
+        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
     }
     popup.Run();
 

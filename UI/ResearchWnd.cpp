@@ -308,9 +308,9 @@ protected:
 
         CUIPopupMenu popup(pt.x, pt.y);
 
-        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false, MoveToTopAction(it)));
-        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false, MoveToBottomAction(it)));
-        popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false, DeleteAction(it)));
+        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+        popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
 
         GG::ListBox::Row* row = *it;
         QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : nullptr;
@@ -319,9 +319,9 @@ protected:
 
         // pause / resume commands
         if (queue_row->elem.paused) {
-            popup.AddMenuItem(GG::MenuItem(UserString("RESUME"),           7, false, false, resume_action));
+            popup.AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
         } else {
-            popup.AddMenuItem(GG::MenuItem(UserString("PAUSE"),            8, false, false, pause_action));
+            popup.AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
         }
 
         // pedia lookup
@@ -335,7 +335,7 @@ protected:
             tech_name = UserString(queue_row->elem.name);
 
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % tech_name);
-        popup.AddMenuItem(GG::MenuItem(popup_label, 4, false, false, pedia_action));
+        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
         popup.Run();
     }
