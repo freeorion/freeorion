@@ -12158,7 +12158,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Robotic Interface: Shields
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by [[encyclopedia ROBOTIC_SPECIES_TITLE]] species and can only be placed in one of [[shiphull SH_ROBOTIC]], [[shiphull SH_SELF_GRAVITATING]], [[shiphull SH_NANOROBOTIC]], [[shiphull SH_LOGISTICS_FACILITATOR]], [[shiphull SH_TITANIC]].
+'''Robotic Interface: Shields have a shield strength of roughly 1 shield strength per other Robotic Interface: Shielded ships at the same location, though with diminishing returns at higher numbers. The effect is capped at 20 shield strength, only applies to ships crewed by [[encyclopedia ROBOTIC_SPECIES_TITLE]] species and can only be placed in a [[encyclopedia HULL_LINE_ROBOTIC]] ship.
 
 Robotic species have an inherent ability to network together and thereby substantially increase their sheer computational power. Robotic Interface: Shields use that network to calculate the trajectory of incoming fire and applying shield strength at the point of impact.
 '''
@@ -12297,13 +12297,13 @@ SP_SOLAR_CONCENTRATOR
 Solar Concentrator
 
 SP_SOLAR_CONCENTRATOR_DESC
-The Solar Concentrator uses the phototropic effect of [[tech SHP_ORG_HULL]]s to increase the strength of [[tech SHP_WEAPON_2_1]]. The effectiveness depends on the brightness of the star at the current location. It is expected to increase the weapons strength between 1.5 and 4.5. The research of [[tech SHP_SOLAR_CONNECTION]] suggest to increase the collecting surface to maximize the effect.
+The Solar Concentrator uses the phototropic effect of [[encyclopedia HULL_LINE_ORGANIC]] ships to increase the strength of [[tech SHP_WEAPON_2_1]]. The effectiveness depends on the brightness of the star at the current location. It is expected to increase the weapons strength between 1.5 and 4.5. The research of [[tech SHP_SOLAR_CONNECTION]] suggest to increase the collecting surface to maximize the effect.
 
 SHP_SOLAR_CONNECTION
 Solarweb
 
 SHP_SOLAR_CONNECTION_DESC
-This upgrade for the [[shippart SP_SOLAR_CONCENTRATOR]] is applied by the ships crew. It enables the ship to establish one energy web between ships of the same empire at the same star system. This [[SHP_SOLAR_CONNECTION]] provides an additional surface to collect photons which are evenly distributed among [[tech SHP_ORG_HULL]]s. Theoretical gigantic webs can increase the intensity of [[tech SHP_WEAPON_2_1]] by 130% under ideal conditions. A more realistic approach suggests 100 concentrators to achieve an increase by 80% while 20 concentrators provide an amplification of 50%. The finely woven [[SHP_SOLAR_CONNECTION]] collapse when the ship enters a starlane whereas the effects disappears shortly after.
+This upgrade for the [[shippart SP_SOLAR_CONCENTRATOR]] is applied by the ships crew. It enables the ship to establish one energy web between ships of the same empire at the same star system. This [[SHP_SOLAR_CONNECTION]] provides an additional surface to collect photons which are evenly distributed among [[encyclopedia HULL_LINE_ORGANIC]] ships. Theoretical gigantic webs can increase the intensity of [[tech SHP_WEAPON_2_1]] by 130% under ideal conditions. A more realistic approach suggests 100 concentrators to achieve an increase by 80% while 20 concentrators provide an amplification of 50%. The finely woven [[SHP_SOLAR_CONNECTION]] collapse when the ship enters a starlane whereas the effects disappears shortly after.
 
 SHP_SOLAR_CONNECTION_SHORT_DESC
 Establishes an energy web between [[SP_SOLAR_CONCENTRATOR]]
@@ -12312,7 +12312,7 @@ SHP_ORGANIC_WAR_ADAPTION
 Organic War Adaption
 
 SHP_ORGANIC_WAR_ADAPTION_DESC
-It seems [[tech SHP_ORG_HULL]]s are able collect photonic energy which can be redirected to empower certain ship systems.
+It seems [[encyclopedia HULL_LINE_ORGANIC]] ships are able collect photonic energy which can be redirected to empower certain ship systems.
 
 SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
 Increases strength of [[SR_WEAPON_2_1]] depending on the star.
