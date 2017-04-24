@@ -317,6 +317,7 @@
 		82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
+		B70466811EABD2DA004A291B /* ConfigFileProcess.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B70466801EABD2DA004A291B /* ConfigFileProcess.cpp */; };
 		CE0ED5F91BCFE16E00375001 /* AIWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */; };
 		CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */; };
 		CE2BAD8F1E3E43E40085A4DC /* Pathfinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */; };
@@ -1072,6 +1073,8 @@
 		9EEEEA7713ACB91A0085B1A0 /* libboost_signals.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_signals.a; sourceTree = "<group>"; };
 		9EEEEA7813ACB91A0085B1A0 /* libboost_system.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_system.a; sourceTree = "<group>"; };
 		9EEEEA7913ACB91A0085B1A0 /* libboost_thread.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_thread.a; sourceTree = "<group>"; };
+		B70466801EABD2DA004A291B /* ConfigFileProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigFileProcess.cpp; sourceTree = "<group>"; };
+		B70466821EABD2F0004A291B /* ConfigFileProcess.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ConfigFileProcess.h; sourceTree = "<group>"; };
 		CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AIWrapper.cpp; sourceTree = "<group>"; };
 		CE0ED5F81BCFE16E00375001 /* AIWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AIWrapper.h; sourceTree = "<group>"; };
 		CE13B48D1C8CB0CF0085A4DC /* CommonParams.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CommonParams.h; sourceTree = "<group>"; };
@@ -1818,6 +1821,8 @@
 			isa = PBXGroup;
 			children = (
 				471D5D180A98A3F900DA9C21 /* AppInterface.cpp */,
+				B70466801EABD2DA004A291B /* ConfigFileProcess.cpp */,
+				B70466821EABD2F0004A291B /* ConfigFileProcess.h */,
 				471D5D190A98A3F900DA9C21 /* AppInterface.h */,
 				471D5D1A0A98A3F900DA9C21 /* binreloc.c */,
 				471D5D1B0A98A3F900DA9C21 /* binreloc.h */,
@@ -2498,6 +2503,7 @@
 				82592EF0147E381B00B840A5 /* EffectAccounting.cpp in Sources */,
 				82592EF6147E387100B840A5 /* ObjectMap.cpp in Sources */,
 				82BEB659159853B300B024CB /* Diplomacy.cpp in Sources */,
+				B70466811EABD2DA004A291B /* ConfigFileProcess.cpp in Sources */,
 				8250FDE515FCEFDE00523C1C /* Field.cpp in Sources */,
 				825EA76016DB9DB10002A797 /* ModeratorAction.cpp in Sources */,
 				82C96D0B16E4C1F900579E56 /* SerializeModeratorAction.cpp in Sources */,
