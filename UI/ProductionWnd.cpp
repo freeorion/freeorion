@@ -943,8 +943,10 @@ bool ProductionWnd::PediaVisible()
 void ProductionWnd::CenterOnBuild(int queue_idx, bool open)
 { m_build_designator_wnd->CenterOnBuild(queue_idx, open); }
 
-void ProductionWnd::SelectPlanet(int planet_id)
-{ m_build_designator_wnd->SelectPlanet(planet_id); }
+void ProductionWnd::SelectPlanet(int planet_id) {
+    m_build_designator_wnd->SelectPlanet(planet_id);
+    UpdateInfoPanel();
+}
 
 void ProductionWnd::SelectDefaultPlanet()
 { m_build_designator_wnd->SelectDefaultPlanet(); }
