@@ -432,14 +432,16 @@ void OptionsDB::SetFromCommandLine(const std::vector<std::string>& args) {
 }
 
 void OptionsDB::SetFromFile(const boost::filesystem::path& file_path,
-                            const std::string& version) {
+                            const std::string& version)
+{
     XMLDoc doc;
     try {
         boost::filesystem::ifstream ifs(file_path);
         if (ifs) {
             doc.ReadDoc(ifs);
             if (version.empty() || (doc.root_node.ContainsChild("version-string") &&
-                                    doc.root_node.Child("version-string").Text() == version)) {
+                                    doc.root_node.Child("version-string").Text() == version))
+            {
                 GetOptionsDB().SetFromXML(doc);
             }
         }
