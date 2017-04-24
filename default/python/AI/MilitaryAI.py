@@ -339,6 +339,9 @@ class Allocator(object):
     def _planet_threat(self):
         return get_system_planetary_threat(self.sys_id)
 
+    def _enemy_ship_count(self):
+        return foAI.foAIstate.systemStatus.get(self.sys_id, {}).get('enemy_ship_count', 0.)
+
 
 class CapitalDefenseAllocator(Allocator):
 
@@ -420,6 +423,22 @@ class TargetAllocator(Allocator):
 
     def _take_any(self):
         return self.assigned_rating > 0
+
+    def _planet_threat_multiplier(self):
+        # to the extent that enemy planetary defenses are bolstered by fleet defenses, a smaller portion of our
+        # attacks will land on the planet and hence we need a greater portion of planet-effective attacks.  One
+        # desired characteristic of the following planet_threat_multiplier is that if the entire local threat is
+        # due to planetary threat then we want the multiplier to be unity.  Furthermore, the more enemy ships are
+        # present, the smaller proportion of our attacks would be directed against the enemy planet.  The following is
+        # just one of many forms of calculation that might work reasonably.
+        # TODO: assess and revamp the planet_threat_multiplier calculation
+        return  ((self._enemy_ship_count() + self._local_threat()/self._planet_threat())**0.5
+                 if self._planet_threat() > 0 else 1.0)
+
+    def _allocation_vs_planets(self):
+        return CombatRatingsAI.rating_needed(
+            self.safety_factor*self._planet_threat_multiplier()*self._planet_threat(),
+            self.assigned_rating_vs_planets)
 
 
 class TopTargetAllocator(TargetAllocator):
