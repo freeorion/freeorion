@@ -40,6 +40,15 @@ protected:
 
     virtual void    ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
+    /** Return a functor that will signal that \p it should be moved to the top of the list.*/
+    virtual std::function<void()> MoveToTopAction(GG::ListBox::iterator it) const;
+
+    /** Return a functor that will signal that \p it should be moved to the bottom of the list.*/
+    virtual std::function<void()> MoveToBottomAction(GG::ListBox::iterator it) const;
+
+    /** Return a functor that will signal that \p it should be deleted.*/
+    virtual std::function<void()> DeleteAction(GG::ListBox::iterator it) const;
+
 private:
     void            ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void            EnsurePromptHiddenSlot(iterator it);

@@ -299,17 +299,6 @@ public:
 protected:
     void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
         // mostly duplicated equivalent in QueueListBox, but with an extra command...
-
-        auto move_up_action = [&it, this]() {
-            if (GG::ListBox::Row* row = *it)
-                this->QueueItemMovedSignal(row, 0);
-        };
-        auto move_down_action = [&it, this]() {
-            if (GG::ListBox::Row* row = *it)
-                this->QueueItemMovedSignal(row, NumRows());
-        };
-        auto delete_action = [&it, this]() { this->QueueItemDeletedSignal(it); };
-
         auto pedia_action = [&it, this, pt, modkeys]() {
             ShowPediaSignal();
             this->LeftClickedSignal(it, pt, modkeys);
@@ -319,9 +308,9 @@ protected:
 
         CUIPopupMenu popup(pt.x, pt.y);
 
-        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false, move_up_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false, move_down_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false, delete_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false, MoveToTopAction(it)));
+        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false, MoveToBottomAction(it)));
+        popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false, DeleteAction(it)));
 
         GG::ListBox::Row* row = *it;
         QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : nullptr;
