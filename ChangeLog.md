@@ -4,7 +4,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 
 
-## [v0.4.7] - 2017-04-21
+## [v0.4.7] - 2017-04-24
 
 
 ### Key Changes
@@ -94,7 +94,7 @@ Notable changes to the FreeOrion project will be documented in this file.
     - Showed empire name in fleets window for fleets in transit.
     - Added right-click menu command to split from a fleet ships that have less than full fighter complement.
 
-- SitRep Window / Combat Log 
+- SitRep Window / Combat Log
     - Allowed SitRep right-click menu from majority of sitrep area.
     - Added Copy to sitrep right-click context menu.
     - Added link to help article on sitrep entry right click menu.
@@ -105,6 +105,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 - Objects Window
     - Added numerous new column options in the Objects window, and reorganized the options.
+    - Reapportioned horizontal space in filter dialog parameter dropdown to improve legibility.
 
 - Design Window
     - Made ctrl + left click in the design window obsolete designs.
@@ -118,6 +119,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 
 - Production Window
     - Fixed double click on production queue item so that it completes the map window system selection.
+    - Fixed planet selection when the production window is open so that the production window info panel gets updated when another planet is selected.
 
 - Game setup / Multiplayer Lobby
     - Reworked layout in multiplayer lobby window.
@@ -171,6 +173,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Tweaked AI ship designer logic.
 - Adjusted build costs and stats of the Solar hull, raised build costs of Titanic and Scattered Asteroid hulls.
 - Lowered Protoplasmic and Symbiotic hull base stealth.
+- Have the AI combat planning deem planetary defenses to be more significant when they are bolstered by fleet forces.
 
 
 #### Bugs
@@ -209,6 +212,7 @@ Notable changes to the FreeOrion project will be documented in this file.
 - Fixed issue with the Starlane Nexus building where lanes created together can be closer in angle than allowed, causing problems with later lane creations.
 - Fixed bug causing AIs to be crippled by eventually switching an excessively high amount of colonies to research focus.
 - Fixed issue in network code which could cause AI client processes to hang.
+- Fixed issues with AI troop ship design and production.
 
 
 #### Technical / Internal
