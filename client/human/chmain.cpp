@@ -1,24 +1,17 @@
-
+#include "chmain.h"
 
 #include "HumanClientApp.h"
 #include "../../parse/Parse.h"
-#include "../../util/OptionsDB.h"
-#include "../../util/Directories.h"
 #include "../../util/Logger.h"
-#include "../../util/Version.h"
-#include "../../util/XMLDoc.h"
-#include "../../util/i18n.h"
 #include "../../UI/Hotkeys.h"
 
 #include <GG/utf8/checked.h>
 
 #include <boost/format.hpp>
 #include <boost/filesystem/operations.hpp>
-#include <boost/filesystem/fstream.hpp>
 
 #include <thread>
 #include <chrono>
-#include <iostream>
 
 #if defined(FREEORION_LINUX)
 /* Freeorion aims to have exceptions handled and operation continue normally.
@@ -136,42 +129,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         // Add the keyboard shortcuts
         Hotkey::AddOptions(GetOptionsDB());
 
-
-        // TODO Code combining config, persistent_config and commandline args is copy-pasted
-        // slightly differently in chmain, dmain and camain.  Make it into a single function.
-
-        // read config.xml and set options entries from it, if present
-        {
-            XMLDoc doc;
-            try {
-                boost::filesystem::ifstream ifs(GetConfigPath());
-                if (ifs) {
-                    doc.ReadDoc(ifs);
-                    // reject config files from out-of-date version
-                    if (doc.root_node.ContainsChild("version-string") &&
-                        doc.root_node.Child("version-string").Text() == FreeOrionVersionString())
-                    {
-                        GetOptionsDB().SetFromXML(doc);
-                    }
-                }
-            } catch (const std::exception&) {
-                std::cerr << UserString("UNABLE_TO_READ_CONFIG_XML") << std::endl;
-            }
-            try {
-                boost::filesystem::ifstream pifs(GetPersistentConfigPath());
-                if (pifs) {
-                    doc.ReadDoc(pifs);
-                    GetOptionsDB().SetFromXML(doc);
-                }
-            } catch (const std::exception&) {
-                std::cerr << UserString("UNABLE_TO_READ_PERSISTENT_CONFIG_XML")  << ": " 
-                          << GetPersistentConfigPath() << std::endl;
-            }
-        }
-
-
-        // override previously-saved and default options with command line parameters and flags
-        GetOptionsDB().SetFromCommandLine(args);
+        ConfigFileProcess(args);
 
         CompleteXDGMigration();
 
