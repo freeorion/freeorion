@@ -55,11 +55,6 @@ class TextControl;
 struct GG_API MenuItem
 {
     /** \name Signal Types */ ///@{
-    /** invokes the appropriate functor to handle the menu selection, and
-        passes the ID assigned to the item */
-    typedef boost::signals2::signal<void (int)> SelectedIDSignalType;
-    /** invokes the appropriate functor to handle the menu selection */
-    typedef boost::signals2::signal<void ()>    SelectedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -74,12 +69,6 @@ struct GG_API MenuItem
     //@}
 
     /** \name Accessors */ ///@{
-    /** The selected signal object for this MenuItem that conveys the selected
-        menu item ID. */
-    mutable std::shared_ptr<SelectedIDSignalType> SelectedIDSignal;
-
-    /** The selected signal object for this MenuItem. */
-    mutable std::shared_ptr<SelectedSignalType> SelectedSignal;
     //@}
 
     std::string           label;      ///< text shown for this menu item
@@ -98,26 +87,12 @@ struct GG_API MenuItem
 
     PopupMenu gives calling code the abiltiy to create a pop-up menu
     (usually in response to a right mouse click).  MenuItems are added with
-    AddMenuItem(menuitem, callback).  Though every MenuItem in a PopupMenu
-    may be attached to a slot directly, it is not recommended.  The intent
-    of this class is to act as a tool to get immediate input from the user,
-    inline.  However, attaching MenuItem signals directly to slots will
-    work, and it will certainly be useful in some cases to do this.  When
-    PopupMenu is Run(), on completion the callback of the selected MenuItem
-    will be called.  
-
-    Also, if some action is to be taken as the user browses the menu items,
-    such as displaying some visual cue to indicate the result of chosing a
-    particular menu entry, you can attach a slot function to the
-    BrowsedSignalType object returned by BrowsedSignal.  Whenever the mouse
-    moves to a new menu item, this signal is emitted with a pointer to the
-    item under the cursor. */
+    AddMenuItem(menuitem, callback).  When PopupMenu is Run(), on
+    completion the callback of the selected MenuItem will be called.  */
 class GG_API PopupMenu : public Wnd
 {
 public:
     /** \name Signal Types */ ///@{
-    /** emits the ID of an item in the menu when the cursor moves over it */
-    typedef boost::signals2::signal<void (int)> BrowsedSignalType;
     //@}
 
     /** \name Structors */ ///@{
@@ -136,8 +111,6 @@ public:
     Clr         TextColor() const;         ///< returns the color used to render menu item text
     Clr         HiliteColor() const;       ///< returns the color used to indicate a hilited menu item
     Clr         SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
-
-    mutable BrowsedSignalType BrowsedSignal; ///< the browsed signal object for this PopupMenu
     //@}
 
     /** \name Mutators */ ///@{

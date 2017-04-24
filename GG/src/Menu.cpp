@@ -34,16 +34,6 @@
 using namespace GG;
 
 namespace {
-    struct MenuSignalEcho
-    {
-        MenuSignalEcho(const std::string& name) : m_name(name) {}
-        void operator()()
-        { std::cerr << "GG SIGNAL : " << m_name << "()" << std::endl; }
-        void operator()(int id)
-        { std::cerr << "GG SIGNAL : " << m_name << "(id=" << id << ")" << std::endl; }
-        std::string m_name;
-    };
-
     const int BORDER_THICKNESS = 1; // thickness with which to draw menu borders
     const int MENU_SEPARATION = 10; // distance between menu texts in a MenuBar, in pixels
 }
@@ -57,8 +47,6 @@ MenuItem::MenuItem() :
 {}
 
 MenuItem::MenuItem(bool separator) :
-    SelectedIDSignal(),
-    SelectedSignal(),
     item_ID(0),
     disabled(true),
     checked(false),
@@ -69,8 +57,6 @@ MenuItem::MenuItem(bool separator) :
 
 MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check,
                    std::function<void()> selected_on_close_callback) :
-    SelectedIDSignal(new SelectedIDSignalType()),
-    SelectedSignal(new SelectedSignalType()),
     label(str),
     item_ID(id),
     disabled(disable),
@@ -78,12 +64,7 @@ MenuItem::MenuItem(const std::string& str, int id, bool disable, bool check,
     separator(false),
     next_level(),
     m_selected_on_close_callback{selected_on_close_callback}
-{
-    if (INSTRUMENT_ALL_SIGNALS) {
-        Connect(*SelectedIDSignal, MenuSignalEcho("MenuItem::SelectedIDSignal"));
-        Connect(*SelectedSignal, MenuSignalEcho("MenuItem::SelectedSignal"));
-    }
-}
+{}
 
 MenuItem::~MenuItem()
 {}
@@ -115,9 +96,6 @@ PopupMenu::PopupMenu(X x, Y y, const std::shared_ptr<Font>& font, Clr text_color
     m_item_selected(nullptr)
 {
     m_open_levels.resize(1);
-
-    if (INSTRUMENT_ALL_SIGNALS)
-        Connect(BrowsedSignal, MenuSignalEcho("PopupMenu::BrowsedSignal"));
 }
 
 void PopupMenu::AddMenuItem(MenuItem&& menu_item)
@@ -285,7 +263,6 @@ void PopupMenu::LButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
     } else {
         m_done = true;
     }
-    BrowsedSignal(0);
 }
 
 void PopupMenu::LClick(const Pt& pt, Flags<ModKey> mod_keys)
@@ -324,17 +301,6 @@ void PopupMenu::LDrag(const Pt& pt, const Pt& move, Flags<ModKey> mod_keys)
         m_caret.resize(1);
         m_caret[0] = INVALID_CARET;
     }
-    int update_ID = 0;
-    if (m_caret[0] != INVALID_CARET) {
-        MenuItem* menu_ptr = &m_menu_data;
-        for (std::size_t caret : m_caret) {
-            if (caret == INVALID_CARET)
-                break;
-            menu_ptr = &menu_ptr->next_level[caret];
-        }
-        update_ID = menu_ptr->item_ID;
-    }
-    BrowsedSignal(update_ID);
 }
 
 void PopupMenu::RButtonUp(const Pt& pt, Flags<ModKey> mod_keys)
@@ -349,11 +315,6 @@ void PopupMenu::MouseHere(const Pt& pt, Flags<ModKey> mod_keys)
 bool PopupMenu::Run()
 {
     bool retval = Wnd::Run();
-    if (m_item_selected) {
-        (*m_item_selected->SelectedIDSignal)(m_item_selected->item_ID);
-        (*m_item_selected->SelectedSignal)();
-    }
-
     if (retval
         && m_item_selected
         && m_item_selected->m_selected_on_close_callback)
