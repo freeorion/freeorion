@@ -2219,11 +2219,6 @@ void RotatingGraphic::Render() {
 // CUIPopupMenu
 ////////////////////////////////////////////////
 
-CUIPopupMenuClassic::CUIPopupMenuClassic(GG::X x, GG::Y y, const GG::MenuItem& menu) :
-    GG::PopupMenuClassic(x, y, ClientUI::GetFont(), menu, ClientUI::TextColor(), ClientUI::WndOuterBorderColor(),
-                  ClientUI::WndColor(), ClientUI::EditHiliteColor())
-{}
-
 CUIPopupMenu::CUIPopupMenu(GG::X x, GG::Y y) :
     GG::PopupMenu(x, y, ClientUI::GetFont(), ClientUI::TextColor(), ClientUI::WndOuterBorderColor(),
                   ClientUI::WndColor(), ClientUI::EditHiliteColor())
