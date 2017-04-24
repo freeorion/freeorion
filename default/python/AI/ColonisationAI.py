@@ -614,8 +614,8 @@ def get_defense_value(species_name):
     """
     :param species_name:
     :type species_name: str
-    :return:planet defenses contribution towards planet evaluations
-    :rtype float
+    :return: planet defenses contribution towards planet evaluations
+    :rtype: float
     """
     # TODO: assess species defense characteristics
     if species_name:
