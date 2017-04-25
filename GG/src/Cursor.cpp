@@ -83,6 +83,6 @@ void TextureCursor::Render(const Pt& pt)
 
         glPopClientAttrib();
     }
-    glColor3ub(255, 255, 255);
+    glColor4ub(255, 255, 255, 255);
     m_texture->OrthoBlit(ul);
 }
