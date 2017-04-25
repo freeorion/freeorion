@@ -142,7 +142,7 @@ ServerApp::ServerApp() :
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty())
-        OverrideLoggerThresholds(to_LogLevel(force_log_level));
+        OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
 
     InitLoggingSystem(SERVER_LOG_FILENAME, "Server");
     InitLoggingOptionsDBSystem();

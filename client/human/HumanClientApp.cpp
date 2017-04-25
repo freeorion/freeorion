@@ -212,7 +212,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty())
-        OverrideLoggerThresholds(to_LogLevel(force_log_level));
+        OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
 
     InitLoggingSystem(HUMAN_CLIENT_LOG_FILENAME, "Client");
     InitLoggingOptionsDBSystem();

@@ -126,8 +126,8 @@ FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
  * their own name.*/
 FO_COMMON_API void InitLoggingSystem(const std::string& log_file, const std::string& unnamed_logger_identifier);
 
-/** Overrides all logger thresholds to \p threshold.*/
-FO_COMMON_API void OverrideLoggerThresholds(const LogLevel threshold);
+/** Sets all loggers' thresholds to \p threshold permanently.*/
+FO_COMMON_API void OverrideAllLoggersThresholds(const LogLevel threshold);
 
 FO_COMMON_API const std::string& DefaultExecLoggerName();
 

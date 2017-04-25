@@ -292,8 +292,8 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     InfoLogger() << FreeOrionVersionString();
 }
 
-void OverrideLoggerThresholds(const LogLevel threshold) {
-    InfoLogger(log) << "Forcing all logger threshold to be " << to_string(threshold);
+void OverrideAllLoggersThresholds(const LogLevel threshold) {
+    InfoLogger(log) << "Overriding the thresholds of all loggers to be " << to_string(threshold);
     ForcedThreshold() = threshold;
 }
 
