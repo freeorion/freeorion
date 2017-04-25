@@ -32,7 +32,7 @@ namespace {
         void operator()(TechManager::TechContainer& techs, Tech* tech) const {
             g_categories_seen->insert(tech->Category());
             if (techs.get<TechManager::NameIndex>().find(tech->Name()) != techs.get<TechManager::NameIndex>().end()) {
-                std::string error_str = "ERROR: More than one tech in techs.txt has the name " + tech->Name();
+                std::string error_str = "ERROR: More than one tech has the name " + tech->Name();
                 throw std::runtime_error(error_str.c_str());
             }
             if (tech->Prerequisites().find(tech->Name()) != tech->Prerequisites().end()) {
@@ -49,7 +49,7 @@ namespace {
 
         void operator()(std::map<std::string, TechCategory*>& categories, TechCategory* category) const {
             if (!categories.insert(std::make_pair(category->name, category)).second) {
-                std::string error_str = "ERROR: More than one tech category in techs.txt name " + category->name;
+                std::string error_str = "ERROR: More than one tech category has the name " + category->name;
                 throw std::runtime_error(error_str.c_str());
             }
         }

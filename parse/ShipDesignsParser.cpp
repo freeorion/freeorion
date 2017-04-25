@@ -25,7 +25,7 @@ namespace {
 
         void operator()(std::map<std::string, ShipDesign*>& designs, ShipDesign* design) const {
             if (!designs.insert(std::make_pair(design->Name(false), design)).second) {
-                std::string error_str = "ERROR: More than one predefined ship design in predefined_ship_designs.txt has the name " + design->Name(false);
+                std::string error_str = "ERROR: More than one predefined ship design has the name " + design->Name(false);
                 throw std::runtime_error(error_str.c_str());
             }
         }

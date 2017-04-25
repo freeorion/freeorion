@@ -26,7 +26,7 @@ namespace {
 
         void operator()(std::map<std::string, BuildingType*>& building_types, BuildingType* building_type) const {
             if (!building_types.insert(std::make_pair(building_type->Name(), building_type)).second) {
-                std::string error_str = "ERROR: More than one building type in buildings.txt has the name " + building_type->Name();
+                std::string error_str = "ERROR: More than one building type has the name " + building_type->Name();
                 throw std::runtime_error(error_str.c_str());
             }
         }
