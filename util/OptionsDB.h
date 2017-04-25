@@ -6,6 +6,7 @@
 #include "OptionValidators.h"
 
 #include <boost/any.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <boost/signals2/signal.hpp>
 
 #include <map>
@@ -305,6 +306,12 @@ public:
         m_dirty |= it->second.SetFromValue(value);
     }
 
+    /** if an xml file exists at \a file_path and has the same version tag as \a version, fill the
+      * DB options contained in that file (read the file using XMLDoc, then fill the DB using SetFromXML)
+      * if the \a version string is empty, bypass that check */
+    void        SetFromFile(const boost::filesystem::path& file_path,
+                            const std::string& version = "");
+    
     /** fills some or all of the options of the DB from values passed in from
       * the command line */
     void        SetFromCommandLine(const std::vector<std::string>& args);

@@ -4,7 +4,7 @@
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
 #include "../../util/Logger.h"
-#include "../../util/XMLDoc.h"
+#include "../../util/Version.h"
 
 #include <GG/utf8/checked.h>
 
@@ -44,26 +44,9 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     InitDirs((args.empty() ? "" : *args.begin()));
 #endif
 
-    try {
-        // TODO Code combining config, persistent_config and commandline args is copy-pasted
-        // slightly differently in chmain, dmain and camain.  Make it into a single function.
-        XMLDoc doc;
-        {
-            boost::filesystem::ifstream ifs(GetConfigPath());
-            if (ifs) {
-                doc.ReadDoc(ifs);
-                GetOptionsDB().SetFromXML(doc);
-            }
-            boost::filesystem::ifstream pifs(GetPersistentConfigPath());
-            if (pifs) {
-                doc.ReadDoc(pifs);
-                GetOptionsDB().SetFromXML(doc);
-            }
-        }
-        GetOptionsDB().SetFromCommandLine(args);
-    } catch (const std::exception&) {
-        std::cerr << "main() unable to read config file: " << std::endl;
-    }
+    // if config.xml and persistent_config.xml are present, read and set options entries
+    GetOptionsDB().SetFromFile(GetConfigPath(), FreeOrionVersionString());
+    GetOptionsDB().SetFromFile(GetPersistentConfigPath());
 
 #ifndef FREEORION_CAMAIN_KEEP_STACKTRACE
     try {
