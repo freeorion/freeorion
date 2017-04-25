@@ -56,17 +56,11 @@ std::string to_string(const LogLevel level)
 { return log_level_names[static_cast<std::size_t>(level)]; }
 
 LogLevel to_LogLevel(const std::string& text) {
-    if (text == "error")    return LogLevel::error;
-    if (text == "warn")     return LogLevel::warn;
-    if (text == "info")     return LogLevel::info;
-    if (text == "debug")    return LogLevel::debug;
-    if (text == "trace")    return LogLevel::trace;
-
-    if (text == "ERROR")    return LogLevel::error;
-    if (text == "WARN")     return LogLevel::warn;
-    if (text == "INFO")     return LogLevel::info;
-    if (text == "DEBUG")    return LogLevel::debug;
-    if (text == "TRACE")    return LogLevel::trace;
+    if (text == to_string(LogLevel::error))    return LogLevel::error;
+    if (text == to_string(LogLevel::warn))     return LogLevel::warn;
+    if (text == to_string(LogLevel::info))     return LogLevel::info;
+    if (text == to_string(LogLevel::debug))    return LogLevel::debug;
+    if (text == to_string(LogLevel::trace))    return LogLevel::trace;
 
     if (text == "4")    return LogLevel::error;
     if (text == "3")    return LogLevel::warn;
@@ -74,8 +68,23 @@ LogLevel to_LogLevel(const std::string& text) {
     if (text == "1")    return LogLevel::debug;
     if (text == "0")    return LogLevel::trace;
 
+    // Allow mixed case.
+    std::string mixed_case = text;
+    std::transform(mixed_case.begin(), mixed_case.end(), mixed_case.begin(),
+                   [](const char c) { return std::tolower(c); });
+
+    if (mixed_case == to_string(LogLevel::error))    return LogLevel::error;
+    if (mixed_case == to_string(LogLevel::warn))     return LogLevel::warn;
+    if (mixed_case == to_string(LogLevel::info))     return LogLevel::info;
+    if (mixed_case == to_string(LogLevel::debug))    return LogLevel::debug;
+    if (mixed_case == to_string(LogLevel::trace))    return LogLevel::trace;
+
     WarnLogger(log) << "\"" << text <<"\" is not a valid log level. "
-                    << "Valid levels are error, warn, info, debug and trace";
+                    << "Valid levels are " << to_string(LogLevel::trace)
+                    << ", " << to_string(LogLevel::debug)
+                    << ", " << to_string(LogLevel::info)
+                    << ", " << to_string(LogLevel::warn)
+                    << " and " << to_string(LogLevel::error);
 
     return LogLevel::debug;
 }
