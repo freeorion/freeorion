@@ -120,10 +120,11 @@ FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
 
 #endif
 
-/** Initializes the logging system. Log to the given file.  If the file already
- * exists it will be deleted. \p default_exec_logger_name is the name by which the
- * default logger "" appears in the log file.*/
-FO_COMMON_API void InitLoggingSystem(const std::string& logFile, const std::string& default_exec_logger_name);
+/** Initializes the logging system. Log to the \p log_file.  If \p log_file already exists it will
+ * be deleted. \p unnamed_logger_identifier is the name used in the log file to identify logs from
+ * the singular unnamed logger for this executable.  Logs from the named loggers are identified by
+ * their own name.*/
+FO_COMMON_API void InitLoggingSystem(const std::string& log_file, const std::string& unnamed_logger_identifier);
 
 /** Overrides all logger thresholds to \p threshold.*/
 FO_COMMON_API void OverrideLoggerThresholds(const LogLevel threshold);

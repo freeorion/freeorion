@@ -106,10 +106,10 @@ std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
 namespace {
-    std::string& LocalDefaultExecLoggerName() {
+    std::string& LocalUnnamedLoggerIdentifier() {
         // Create default logger name as a static function variable to avoid static initialization fiasco
-        static std::string default_exec_logger_name;
-        return default_exec_logger_name;
+        static std::string unnamed_logger_identifier;
+        return unnamed_logger_identifier;
     }
 
     boost::optional<LogLevel>& ForcedThreshold() {
@@ -197,7 +197,7 @@ namespace {
         boost::shared_ptr<TextFileSinkFrontend> sink_frontend
             = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
 
-        auto display_name = channel_name.empty() ? LocalDefaultExecLoggerName() : channel_name;
+        auto display_name = channel_name.empty() ? LocalUnnamedLoggerIdentifier() : channel_name;
         // Create the format
         sink_frontend->set_formatter(
             expr::stream
@@ -217,7 +217,7 @@ namespace {
 }
 
 const std::string& DefaultExecLoggerName()
-{ return LocalDefaultExecLoggerName(); }
+{ return LocalUnnamedLoggerIdentifier(); }
 
 std::vector<std::string> CreatedLoggersNames()
 { return GetLoggersToSinkFrontEnds().LoggersNames(); }
@@ -233,7 +233,7 @@ namespace {
         f_min_channel_severity[source] = used_threshold;
         logging::core::get()->set_filter(f_min_channel_severity);
 
-        auto& logger_name = (source.empty() ? LocalDefaultExecLoggerName() : source);
+        auto& logger_name = (source.empty() ? LocalUnnamedLoggerIdentifier() : source);
         return {logger_name, used_threshold};
     }
 }
@@ -245,10 +245,10 @@ void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
                     << "\" logger threshold to \"" << name_and_threshold.second << "\".";
 }
 
-void InitLoggingSystem(const std::string& logFile, const std::string& _default_exec_logger_name) {
-    auto& default_exec_logger_name = LocalDefaultExecLoggerName();
-    default_exec_logger_name = _default_exec_logger_name;
-    std::transform(default_exec_logger_name.begin(), default_exec_logger_name.end(), default_exec_logger_name.begin(),
+void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_logger_identifier) {
+    auto& unnamed_logger_identifier = LocalUnnamedLoggerIdentifier();
+    unnamed_logger_identifier = _unnamed_logger_identifier;
+    std::transform(unnamed_logger_identifier.begin(), unnamed_logger_identifier.end(), unnamed_logger_identifier.begin(),
                    [](const char c) { return std::tolower(c); });
 
     // Register LogLevel so that the formatters will be found.
@@ -258,7 +258,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     // Create a sink backend that logs to a file
     auto& file_sink_backend = GetSinkBackend();
     file_sink_backend = boost::make_shared<TextFileSinkBackend>(
-        keywords::file_name = logFile.c_str(),
+        keywords::file_name = log_file.c_str(),
         keywords::auto_flush = true
     );
 
