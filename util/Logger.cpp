@@ -22,9 +22,9 @@
 #include <boost/log/utility/setup/formatter_parser.hpp>
 
 #include <boost/optional.hpp>
-#include <boost/thread/thread.hpp>
 
 #include <ctime>
+#include <mutex>
 #include <regex>
 #include <unordered_map>
 
@@ -128,29 +128,62 @@ namespace {
         return m_sink_backend;
     }
 
-    boost::mutex& LoggersMutex() {
-        // Create loggers_mutex as a static function variable to avoid static initialization fiasco
-        // loggers_mutex protects the set of created_loggers_names.
-        static boost::mutex loggers_mutex;
-        return loggers_mutex;
-    }
+    /** LoggersToSinkFrontEnds is used to track all of the global named loggers.  It maps the
+        names to the sink front ends.
 
-    std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>>& LoggersToSinkFrontEnds() {
-        // Create loggers_names as a static function variable to avoid static initialization fiasco
-        // loggers_names is used to track all global loggers created to
-        //   - bind their backends to a new file when initialized
-        //   - to provide to something like OptionsDB.
-        static std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>> loggers_names{};
-        return loggers_names;
-    }
+        It is used to:
+          - bind their sink front ends to the file logger backend
+          - to provide a complete list of loggers names (i.e. to OptionsDB)
+    */
+    class LoggersToSinkFrontEnds {
+        /// m_mutex serializes access from different threads
+        std::mutex m_mutex = {};
+        std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>> m_names_to_front_ends = {};
 
-    void AddLoggerName(const std::string& name) {
-        boost::mutex::scoped_lock(LoggersMutex());
+        public:
 
-        if (LoggersToSinkFrontEnds().count(name))
-            return;
-        LoggersToSinkFrontEnds().insert({name, nullptr});
-        InfoLogger(log) << "Added logger name = " << name << " of " << LoggersToSinkFrontEnds().size();
+        void AddOrReplaceLoggerName(const std::string& channel_name,
+                                    boost::shared_ptr<TextFileSinkFrontend> front_end = nullptr)
+        {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            // Remove the old front end if it is different.
+            const auto& name_and_old_frontend = m_names_to_front_ends.find(channel_name);
+            if (name_and_old_frontend != m_names_to_front_ends.end()) {
+
+                if (front_end == name_and_old_frontend->second)
+                    return;
+
+                logging::core::get()->remove_sink(name_and_old_frontend->second);
+                m_names_to_front_ends.erase(name_and_old_frontend);
+            }
+
+            m_names_to_front_ends.insert({channel_name, front_end});
+
+            // Add the new frontend if it is non null.
+            if (!front_end)
+                return;
+
+            logging::core::get()->add_sink(front_end);
+
+            InfoLogger(log) << "Added logger named \"" << channel_name << "\"";
+        }
+
+        std::vector<std::string> LoggersNames() {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            std::vector<std::string> retval;
+            for (const auto& name_and_frontend : m_names_to_front_ends)
+                retval.push_back(name_and_frontend.first);
+            return retval;
+        }
+
+    };
+
+    LoggersToSinkFrontEnds& GetLoggersToSinkFrontEnds() {
+        // Create loggers_names_to_front_ends as a static function variable to avoid static initialization fiasco.
+        static LoggersToSinkFrontEnds loggers_names_to_front_ends{};
+        return loggers_names_to_front_ends;
     }
 
     void CreateFileSinkFrontEnd(const std::string& channel_name) {
@@ -178,37 +211,16 @@ namespace {
         // Set a filter to only format this channel
         sink_frontend->set_filter(log_channel == channel_name);
 
-        // Remove any previous frontend for this channel
-        {
-            boost::mutex::scoped_lock(LoggersMutex());
-
-            // const std::unordered_map<std::string, boost::shared_ptr<TextFileSinkFrontend>>::iterator&
-            const auto&
-                name_and_old_frontend = LoggersToSinkFrontEnds().find(channel_name);
-            if (name_and_old_frontend != LoggersToSinkFrontEnds().end()) {
-                logging::core::get()->remove_sink(name_and_old_frontend->second);
-                LoggersToSinkFrontEnds().erase(name_and_old_frontend);
-            }
-
-            LoggersToSinkFrontEnds().insert({channel_name, sink_frontend});
-        }
-
-        // Add the frontend.
-        logging::core::get()->add_sink(sink_frontend);
-
+        // Replace any previous frontend for this channel
+        GetLoggersToSinkFrontEnds().AddOrReplaceLoggerName(channel_name, sink_frontend);
     }
 }
 
 const std::string& DefaultExecLoggerName()
 { return LocalDefaultExecLoggerName(); }
 
-std::vector<std::string> CreatedLoggersNames() {
-    boost::mutex::scoped_lock(f_loggers_mutex);
-    std::vector<std::string> retval;
-    for (const auto& name_and_frontend : LoggersToSinkFrontEnds())
-        retval.push_back(name_and_frontend.first);
-    return retval;
-}
+std::vector<std::string> CreatedLoggersNames()
+{ return GetLoggersToSinkFrontEnds().LoggersNames(); }
 
 namespace {
     // Create a minimum severity table filter
@@ -279,6 +291,9 @@ void OverrideLoggerThresholds(const LogLevel threshold) {
 LoggerCreatedSignalType LoggerCreatedSignal;
 
 void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
+    // Note: Do not log in this function.  If a logger is used during
+    // static initialization it will cause boost::log to recursively call
+    // its internal global_locker_storage mutex and lock up.
     SetLoggerThresholdCore(name, default_LogLevel);
 
     if (name.empty())
@@ -286,10 +301,5 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
 
     CreateFileSinkFrontEnd(name);
 
-    AddLoggerName(name);
-
     LoggerCreatedSignal(name);
-
-    InfoLogger(log) << "Created \"" << name << "\" logger.";
 }
-
