@@ -49,43 +49,69 @@ namespace {
 
     // Compile time constant pointers to constant char arrays.
     constexpr const char* const log_level_names[] = {"trace", "debug", "info", "warn", "error"};
+
+    std::unordered_map<std::string, LogLevel> InitializeLogLevelMap() {
+        std::unordered_map<std::string, LogLevel> retval{};
+
+        for(int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
+            auto log_level = static_cast<LogLevel>(ii);
+
+            //Insert the number
+            retval.emplace(std::to_string(ii), log_level);
+
+            // Insert the lower case
+            auto name = to_string(log_level);
+            retval.emplace(name, log_level);
+
+            // Insert the upper case
+            std::transform(name.begin(), name.end(), name.begin(),
+                   [](const char c) { return std::toupper(c); });
+            retval.emplace(name, log_level);
+        }
+        return retval;
+    }
+
+    std::stringstream ValidLogLevelWarning(const std::string& text){
+        std::stringstream ss;
+        ss << "\"" << text <<"\" is not a valid log level. "
+           << "Valid levels are ";
+
+        for(int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
+            auto log_level = static_cast<LogLevel>(ii);
+            auto name = to_string(log_level);
+
+            // Add commas between names
+            if (ii != static_cast<int>(LogLevel::min) && ii != static_cast<int>(LogLevel::max))
+                ss << ", ";
+
+            // Except before the last name
+            if (ii != static_cast<int>(LogLevel::min) && ii == static_cast<int>(LogLevel::max))
+                ss << " and ";
+
+            ss << name;
+        }
+
+        ss << ".";
+        return ss;
+    }
 }
 
 
 std::string to_string(const LogLevel level)
 { return log_level_names[static_cast<std::size_t>(level)]; }
 
+
 LogLevel to_LogLevel(const std::string& text) {
-    if (text == to_string(LogLevel::error))    return LogLevel::error;
-    if (text == to_string(LogLevel::warn))     return LogLevel::warn;
-    if (text == to_string(LogLevel::info))     return LogLevel::info;
-    if (text == to_string(LogLevel::debug))    return LogLevel::debug;
-    if (text == to_string(LogLevel::trace))    return LogLevel::trace;
 
-    if (text == "4")    return LogLevel::error;
-    if (text == "3")    return LogLevel::warn;
-    if (text == "2")    return LogLevel::info;
-    if (text == "1")    return LogLevel::debug;
-    if (text == "0")    return LogLevel::trace;
+    // Use a static local variable so that during static initialization it
+    // is initialized on first use in any compilation unit.
+    static std::unordered_map<std::string, LogLevel> string_to_log_level = InitializeLogLevelMap();
 
-    // Allow mixed case.
-    std::string mixed_case = text;
-    std::transform(mixed_case.begin(), mixed_case.end(), mixed_case.begin(),
-                   [](const char c) { return std::tolower(c); });
+    auto it = string_to_log_level.find(text);
+    if (it != string_to_log_level.end())
+        return it->second;
 
-    if (mixed_case == to_string(LogLevel::error))    return LogLevel::error;
-    if (mixed_case == to_string(LogLevel::warn))     return LogLevel::warn;
-    if (mixed_case == to_string(LogLevel::info))     return LogLevel::info;
-    if (mixed_case == to_string(LogLevel::debug))    return LogLevel::debug;
-    if (mixed_case == to_string(LogLevel::trace))    return LogLevel::trace;
-
-    WarnLogger(log) << "\"" << text <<"\" is not a valid log level. "
-                    << "Valid levels are " << to_string(LogLevel::trace)
-                    << ", " << to_string(LogLevel::debug)
-                    << ", " << to_string(LogLevel::info)
-                    << ", " << to_string(LogLevel::warn)
-                    << " and " << to_string(LogLevel::error);
-
+    WarnLogger(log) << ValidLogLevelWarning(text).str();
     return LogLevel::debug;
 }
 
