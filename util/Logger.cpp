@@ -147,6 +147,10 @@ namespace {
         return unnamed_logger_identifier;
     }
 
+    const std::string& DisplayName(const std::string& channel_name) {
+        return (channel_name.empty() ? LocalUnnamedLoggerIdentifier() : channel_name);
+    }
+
     boost::optional<LogLevel>& ForcedThreshold() {
         // Create forced threshold as a static function variable to avoid static initialization fiasco
         static boost::optional<LogLevel> forced_threshold = boost::none;
@@ -201,7 +205,7 @@ namespace {
 
             logging::core::get()->add_sink(front_end);
 
-            InfoLogger(log) << "Added logger named \"" << channel_name << "\"";
+            InfoLogger(log) << "Added logger named \"" << DisplayName(channel_name) << "\"";
         }
 
         std::vector<std::string> LoggersNames() {
@@ -239,13 +243,12 @@ namespace {
         boost::shared_ptr<TextFileSinkFrontend> sink_frontend
             = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
 
-        auto display_name = channel_name.empty() ? LocalUnnamedLoggerIdentifier() : channel_name;
         // Create the format
         sink_frontend->set_formatter(
             expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
             << " [" << log_severity << "] "
-            << display_name
+            << DisplayName(channel_name)
             << " : " << log_src_filename << ":" << log_src_linenum << " : "
             << expr::message
         );
@@ -275,8 +278,7 @@ namespace {
         f_min_channel_severity[source] = used_threshold;
         logging::core::get()->set_filter(f_min_channel_severity);
 
-        auto& logger_name = (source.empty() ? LocalUnnamedLoggerIdentifier() : source);
-        return {logger_name, used_threshold};
+        return {DisplayName(source), used_threshold};
     }
 }
 
