@@ -394,7 +394,7 @@ void FleetButton::PlayFleetButtonRolloverSound()
 { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("map.fleet.button.rollover.sound.path"), true); }
 
 void FleetButton::PlayFleetButtonOpenSound()
-{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("map.fleet.button.rollover.click.path"), true); }
+{ Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("map.fleet.button.click.sound.path"), true); }
 
 /////////////////////
 // Free Functions

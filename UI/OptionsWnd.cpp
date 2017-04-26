@@ -506,7 +506,7 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_BUTTON"));
     SoundFileOption(current_page, 1, "ui.control.button.click.sound.path", UserString("OPTIONS_SOUND_CLICK"));
     SoundFileOption(current_page, 1, "ui.control.button.rollover.sound.path", UserString("OPTIONS_SOUND_ROLLOVER"));
-    SoundFileOption(current_page, 1, "map.fleet.button.rollover.click.path", UserString("OPTIONS_SOUND_FLEET_CLICK"));
+    SoundFileOption(current_page, 1, "map.fleet.button.click.sound.path", UserString("OPTIONS_SOUND_FLEET_CLICK"));
     SoundFileOption(current_page, 1, "map.fleet.button.rollover.sound.path", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
     SoundFileOption(current_page, 1, "UI.sound.system-icon-rollover",  UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
     SoundFileOption(current_page, 1, "ui.control.button.turn.click.sound.path", UserString("OPTIONS_SOUND_TURN"));
