@@ -510,7 +510,6 @@ void OptionsWnd::CompleteConstruction() {
     SoundFileOption(current_page, 1, "ui.map.fleet.button.rollover.sound.path", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
     SoundFileOption(current_page, 1, "ui.map.system.icon.rollover.sound.path", UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
     SoundFileOption(current_page, 1, "ui.button.turn.press.sound.path", UserString("OPTIONS_SOUND_TURN"));
-    SoundFileOption(current_page, 1, "UI.sound.planet-button-click",   UserString("OPTIONS_SOUND_PLANET"));
 
     m_tabs->SetCurrentWnd(0);
 
