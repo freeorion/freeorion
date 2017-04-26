@@ -1134,30 +1134,30 @@ void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std:
 void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     std::shared_ptr<const RangedValidator<int>> width_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-width"));
+            GetOptionsDB().GetValidator("video.fullscreen.width"));
     std::shared_ptr<const RangedValidator<int>> height_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-height"));
+            GetOptionsDB().GetValidator("video.fullscreen.height"));
     std::shared_ptr<const RangedValidator<int>> windowed_width_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-width-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.width"));
     std::shared_ptr<const RangedValidator<int>> windowed_height_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-height-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.height"));
     std::shared_ptr<const RangedValidator<int>> windowed_left_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-left-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.left_edge"));
     std::shared_ptr<const RangedValidator<int>> windowed_top_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-top-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.top_edge"));
 
     // compile list of resolutions available on this system
 
     std::vector<std::string> resolutions = GG::GUI::GetGUI()->GetSupportedResolutions();
 
     // find text representation of current fullscreen resolution selection
-    int width = GetOptionsDB().Get<int>("app-width");
-    int height = GetOptionsDB().Get<int>("app-height");
+    int width = GetOptionsDB().Get<int>("video.fullscreen.width");
+    int height = GetOptionsDB().Get<int>("video.fullscreen.height");
     std::string current_video_mode_str = boost::io::str(boost::format("%1% x %2%") % width % height);
 
     // find which index in list, if any, represents current fullscreen resolution selection
@@ -1204,14 +1204,14 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
         drop_list->Select(current_resolution_index);
 
     // fullscreen / windowed toggle
-    BoolOption(page, indentation_level, "fullscreen",            UserString("OPTIONS_FULLSCREEN"));
+    BoolOption(page, indentation_level, "video.fullscreen.enabled", UserString("OPTIONS_FULLSCREEN"));
     // Fake mode change is not possible without the opengl frame buffer extension
     if (GG::SDLGUI::GetGUI()->FramebuffersAvailable()) {
-        BoolOption(page, indentation_level, "fake-mode-change",       UserString("OPTIONS_FAKE_MODE_CHANGE"));
+        BoolOption(page, indentation_level, "video.fullscreen.fake.enabled", UserString("OPTIONS_FAKE_MODE_CHANGE"));
     } else {
-        GetOptionsDB().Set<bool>("fake-mode-change", false);
+        GetOptionsDB().Set<bool>("video.fullscreen.fake.enabled", false);
     }
-    IntOption(page, indentation_level,  "fullscreen-monitor-id", UserString("OPTIONS_FULLSCREEN_MONITOR_ID"));
+    IntOption(page, indentation_level, "video.monitor.id", UserString("OPTIONS_FULLSCREEN_MONITOR_ID"));
 
 
     // customizable windowed width and height
@@ -1224,25 +1224,25 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), windowed_spinner_label, indentation_level));
     page->Insert(row);
 
-    IntOption(page, indentation_level, "app-width-windowed",  UserString("OPTIONS_APP_WIDTH_WINDOWED"));
-    IntOption(page, indentation_level, "app-height-windowed", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
-    IntOption(page, indentation_level, "app-left-windowed",   UserString("OPTIONS_APP_LEFT_WINDOWED"));
-    IntOption(page, indentation_level, "app-top-windowed",    UserString("OPTIONS_APP_TOP_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.width",  UserString("OPTIONS_APP_WIDTH_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.height", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.left_edge", UserString("OPTIONS_APP_LEFT_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.top_edge", UserString("OPTIONS_APP_TOP_WINDOWED"));
 
     // fps
-    BoolOption(page, indentation_level, "show-fps", UserString("OPTIONS_SHOW_FPS"));
+    BoolOption(page, indentation_level, "video.fps.shown", UserString("OPTIONS_SHOW_FPS"));
 
-    //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
+    //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "video.fps.max.enabled", UserString("OPTIONS_LIMIT_FPS"));
     //GG::Spin<double>* max_fps_spin =
-    DoubleOption(page, indentation_level,  "max-fps",          UserString("OPTIONS_MAX_FPS"));
+    DoubleOption(page, indentation_level,  "video.fps.max",    UserString("OPTIONS_MAX_FPS"));
     //limit_FPS_button->CheckedSignal, [max_fps_spin](bool checked) { max_fps_spin->Disable(!checked); });
-    //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
+    //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("video.fps.max.enabled"));
     //limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
-    //GG::StateButton* limit_FPS_nofocus_button = BoolOption(page, indentation_level, "limit-fps-no-focus", UserString("OPTIONS_LIMIT_FPS_NO_FOCUS"));
+    //GG::StateButton* limit_FPS_nofocus_button = BoolOption(page, indentation_level, "video.fps.unfocused.enabled", UserString("OPTIONS_LIMIT_FPS_NO_FOCUS"));
     //GG::Spin<double>* max_fps_nofocus_spin =
-    DoubleOption(page, indentation_level,  "max-fps-no_focus", UserString("OPTIONS_MAX_FPS_NO_FOCUS"));
-    //limit_FPS_nofocus_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps-no-focus"));
+    DoubleOption(page, indentation_level,  "video.fps.unfocused", UserString("OPTIONS_MAX_FPS_NO_FOCUS"));
+    //limit_FPS_nofocus_button->SetCheck(GetOptionsDB().Get<bool>("video.fps.unfocused.enabled"));
 
 
     // apply button, sized to fit text
@@ -1264,8 +1264,8 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             namespace classic = boost::spirit::classic;
             classic::rule<> resolution_p = classic::int_p[classic::assign_a(w)] >> classic::str_p(" x ") >> classic::int_p[classic::assign_a(h)];
             classic::parse(drop_list_row->Name().c_str(), resolution_p);
-            GetOptionsDB().Set<int>("app-width", w);
-            GetOptionsDB().Set<int>("app-height", h);
+            GetOptionsDB().Set<int>("video.fullscreen.width", w);
+            GetOptionsDB().Set<int>("video.fullscreen.height", h);
         }
     );
 }

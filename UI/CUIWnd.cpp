@@ -196,7 +196,7 @@ void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     if (!m_config_name.empty()) {
         if (db.OptionExists("UI.windows." + m_config_name + ".initialized")) {
             std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-            if (!db.Get<bool>("fullscreen"))
+            if (!db.Get<bool>("video.fullscreen.enabled"))
                 windowed = "-windowed";
             // If the window has already had its default position specified
             // (either in the ctor or a previous call to this function), apply
@@ -704,7 +704,7 @@ void CUIWnd::SaveOptions() const {
         size = Size();
 
     std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-    if (!db.Get<bool>("fullscreen"))
+    if (!db.Get<bool>("video.fullscreen.enabled"))
         windowed = "-windowed";
 
     db.Set<int>("UI.windows."+m_config_name+".left"+windowed,   Value(RelativeUpperLeft().x));
@@ -736,7 +736,7 @@ void CUIWnd::LoadOptions() {
     // things like the fullscreen/windowed mode instead of using global program
     // state like this?
     std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-    if (!db.Get<bool>("fullscreen"))
+    if (!db.Get<bool>("video.fullscreen.enabled"))
         windowed = "-windowed";
 
     GG::Pt ul   = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".left"+windowed)),
@@ -862,7 +862,7 @@ void CUIWnd::InvalidateWindowOptions(const std::string& config_name) {
     }
 
     std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-    if (!db.Get<bool>("fullscreen"))
+    if (!db.Get<bool>("video.fullscreen.enabled"))
         windowed = "-windowed";
 
     db.Set<int>("UI.windows."+config_name+".left"+windowed, INVALID_POS);

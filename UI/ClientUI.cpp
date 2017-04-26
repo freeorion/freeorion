@@ -476,12 +476,12 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("show-fps",              UserStringNop("OPTIONS_DB_SHOW_FPS"),              false);
-        db.Add("limit-fps",             UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
-        db.Add("max-fps",               UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,
-               RangedStepValidator<double>(1.0, 1.0, 240.0));
-        db.Add("limit-fps-no-focus",    UserStringNop("OPTIONS_DB_LIMIT_FPS_NO_FOCUS"),    true);
-        db.Add("max-fps-no_focus",      UserStringNop("OPTIONS_DB_MAX_FPS_NO_FOCUS"),      15.0,
+        db.Add("video.fps.shown",       UserStringNop("OPTIONS_DB_SHOW_FPS"), false);
+        db.Add("video.fps.max.enabled", UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
+        db.Add("video.fps.max",         UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,
+               RangedStepValidator<double>(1.0, 0.0, 240.0));
+        db.Add("video.fps.unfocused.enabled", UserStringNop("OPTIONS_DB_LIMIT_FPS_NO_FOCUS"), true);
+        db.Add("video.fps.unfocused",   UserStringNop("OPTIONS_DB_MAX_FPS_NO_FOCUS"),      15.0,
                RangedStepValidator<double>(1.0, 1.0, 30.0));
 
         // sound and music
@@ -632,13 +632,13 @@ ClientUI::ClientUI() :
     m_multiplayer_lobby_wnd = GG::Wnd::Create<MultiPlayerLobbyWnd>();
     m_password_enter_wnd = GG::Wnd::Create<PasswordEnterWnd>();
 
-    GetOptionsDB().OptionChangedSignal("app-width").connect(
+    GetOptionsDB().OptionChangedSignal("video.fullscreen.width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
-    GetOptionsDB().OptionChangedSignal("app-height").connect(
+    GetOptionsDB().OptionChangedSignal("video.fullscreen.height").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
-    GetOptionsDB().OptionChangedSignal("app-width-windowed").connect(
+    GetOptionsDB().OptionChangedSignal("video.windowed.width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, false));
-    GetOptionsDB().OptionChangedSignal("app-height-windowed").connect(
+    GetOptionsDB().OptionChangedSignal("video.windowed.height").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, false));
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&ClientUI::InitializeWindows, this));
@@ -1010,7 +1010,7 @@ void ClientUI::HandleFullscreenSwitch() const {
     OptionsDB& db = GetOptionsDB();
 
     std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-    if (!db.Get<bool>("fullscreen"))
+    if (!db.Get<bool>("video.fullscreen.enabled"))
         windowed = "-windowed";
 
     // Check if the message window position has been invalidated as a stand-in

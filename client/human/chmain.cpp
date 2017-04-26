@@ -122,10 +122,10 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddFlag('h', "help",                 UserStringNop("OPTIONS_DB_HELP"),                  false);
         GetOptionsDB().AddFlag('v', "version",              UserStringNop("OPTIONS_DB_VERSION"),               false);
         GetOptionsDB().AddFlag('g', "generate-config-xml",  UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),   false);
-        GetOptionsDB().AddFlag('f', "fullscreen",           UserStringNop("OPTIONS_DB_FULLSCREEN"),            STORE_FULLSCREEN_FLAG);
-        GetOptionsDB().Add("reset-fullscreen-size",         UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
-        GetOptionsDB().Add<bool>("fake-mode-change",        UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),     FAKE_MODE_CHANGE_FLAG);
-        GetOptionsDB().Add<int>("fullscreen-monitor-id",    UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
+        GetOptionsDB().AddFlag('f', "video.fullscreen.enabled", UserStringNop("OPTIONS_DB_FULLSCREEN"),        STORE_FULLSCREEN_FLAG);
+        GetOptionsDB().Add("video.fullscreen.reset",        UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
+        GetOptionsDB().Add<bool>("video.fullscreen.fake.enabled", UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),      FAKE_MODE_CHANGE_FLAG);
+        GetOptionsDB().Add<int>("video.monitor.id",         UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
         GetOptionsDB().AddFlag('q', "quickstart",           UserStringNop("OPTIONS_DB_QUICKSTART"),            false);
         GetOptionsDB().AddFlag("continue",                  UserStringNop("OPTIONS_DB_CONTINUE"),              false);
         GetOptionsDB().AddFlag("auto-quit",                 UserStringNop("OPTIONS_DB_AUTO_QUIT"),             false);
@@ -185,7 +185,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         if (GetOptionsDB().Get<bool>("render-simple")) {
             GetOptionsDB().Set<bool>("UI.galaxy-gas-background",false);
             GetOptionsDB().Set<bool>("UI.galaxy-starfields",    false);
-            GetOptionsDB().Set<bool>("show-fps",                true);
+            GetOptionsDB().Set<bool>("video.fps.shown", true);
         }
 
 #ifndef FREEORION_CHMAIN_KEEP_STACKTRACE
@@ -214,8 +214,8 @@ int mainSetupAndRun() {
 #endif
         RegisterOptions(&HumanClientApp::AddWindowSizeOptionsAfterMainStart);
 
-        bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
-        bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
+        bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+        bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
 
         std::pair<int, int> width_height = HumanClientApp::GetWindowWidthHeight();
         int width(width_height.first), height(width_height.second);

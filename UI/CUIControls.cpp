@@ -2275,7 +2275,7 @@ FPSIndicator::FPSIndicator(void) :
     m_enabled(false),
     m_displayed_FPS(0)
 {
-    GetOptionsDB().OptionChangedSignal("show-fps").connect(
+    GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
         boost::bind(&FPSIndicator::UpdateEnabled, this));
     UpdateEnabled();
     RequirePreRender();
@@ -2304,7 +2304,7 @@ void FPSIndicator::Render() {
 }
 
 void FPSIndicator::UpdateEnabled()
-{ m_enabled = GetOptionsDB().Get<bool>("show-fps"); }
+{ m_enabled = GetOptionsDB().Get<bool>("video.fps.shown"); }
 
 
 //////////////////////////////////////////////////

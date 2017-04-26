@@ -817,8 +817,8 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
 
 void ProductionWnd::CompleteConstruction() {
      GG::Wnd::CompleteConstruction();
-   //DebugLogger() << "ProductionWindow:  app-width: "<< GetOptionsDB().Get<int>("app-width")
-    //              << " ; windowed width: " << GetOptionsDB().Get<int>("app-width-windowed");
+   //DebugLogger() << "ProductionWindow:  fullscreen width: "<< GetOptionsDB().Get<int>("video.fullscreen.width")
+   //              << " ; windowed width: " << GetOptionsDB().Get<int>("video.windowed.width");
 
     GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
     GG::Y info_height(ClientUI::Pts()*10);

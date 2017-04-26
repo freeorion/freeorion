@@ -2663,7 +2663,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     if (GetOptionsDB().Get<bool>("UI.map-right-click-popup-menu")) {
         // create popup menu with map options in it.
-        bool fps            = GetOptionsDB().Get<bool>("show-fps");
+        bool fps            = GetOptionsDB().Get<bool>("video.fps.shown");
         bool showPlanets    = GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown");
         bool systemCircles  = GetOptionsDB().Get<bool>("UI.system-circles");
         bool resourceColor  = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
@@ -2675,7 +2675,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
         bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
 
-        auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("show-fps",                       !fps);         };
+        auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("video.fps.shown",                !fps);         };
         auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("UI.sidepanel-planet-shown",      !showPlanets);  };
         auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("UI.system-circles",              !systemCircles); };
         auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("UI.resource-starlane-colouring", !resourceColor);  };

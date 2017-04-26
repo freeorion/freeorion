@@ -192,12 +192,12 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
     const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
 
-    db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
-    db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-    db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
-    db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
-    db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
-    db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
+    db.Add("video.fullscreen.width", UserStringNop("OPTIONS_DB_APP_WIDTH"),            DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+    db.Add("video.fullscreen.height", UserStringNop("OPTIONS_DB_APP_HEIGHT"),          DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+    db.Add("video.windowed.width",  UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+    db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+    db.Add("video.windowed.left_edge", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),  DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
+    db.Add("video.windowed.top_edge", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),    DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
 }
 
 HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
@@ -281,9 +281,9 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     EnableFPS();
     UpdateFPSLimit();
-    GetOptionsDB().OptionChangedSignal("show-fps").connect(
+    GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
-    GetOptionsDB().OptionChangedSignal("max-fps").connect(
+    GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
 
     std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
@@ -807,8 +807,8 @@ void HumanClientApp::RequestSavePreviews(const std::string& relative_directory) 
 std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     int left(0), top(0);
 
-    left = GetOptionsDB().Get<int>("app-left-windowed");
-    top = GetOptionsDB().Get<int>("app-top-windowed");
+    left = GetOptionsDB().Get<int>("video.windowed.left_edge");
+    top = GetOptionsDB().Get<int>("video.windowed.top_edge");
 
     // clamp to edges to avoid weird bug with maximizing windows setting their
     // left and top to -9 which lead to weird issues when attmepting to recreate
@@ -824,31 +824,31 @@ std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
 std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     int width(800), height(600);
 
-    bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
+    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
     if (!fullscreen) {
-        width = GetOptionsDB().Get<int>("app-width-windowed");
-        height = GetOptionsDB().Get<int>("app-height-windowed");
+        width = GetOptionsDB().Get<int>("video.windowed.width");
+        height = GetOptionsDB().Get<int>("video.windowed.height");
         return {width, height};
     }
 
-    bool reset_fullscreen = GetOptionsDB().Get<bool>("reset-fullscreen-size");
+    bool reset_fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.reset");
     if (!reset_fullscreen) {
-        width = GetOptionsDB().Get<int>("app-width");
-        height = GetOptionsDB().Get<int>("app-height");
+        width = GetOptionsDB().Get<int>("video.fullscreen.width");
+        height = GetOptionsDB().Get<int>("video.fullscreen.height");
         return {width, height};
     }
 
-    GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
-    GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("fullscreen-monitor-id"));
-    GetOptionsDB().Set("app-width", Value(default_resolution.x));
-    GetOptionsDB().Set("app-height", Value(default_resolution.y));
+    GetOptionsDB().Set<bool>("video.fullscreen.reset", false);
+    GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("video.monitor.id"));
+    GetOptionsDB().Set("video.fullscreen.width", Value(default_resolution.x));
+    GetOptionsDB().Set("video.fullscreen.height", Value(default_resolution.y));
     GetOptionsDB().Commit();
     return {Value(default_resolution.x), Value(default_resolution.y)};
 }
 
 void HumanClientApp::Reinitialize() {
-    bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
-    bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
+    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+    bool fake_mode_change = GetOptionsDB().Get<bool>("video.fullscreen.fake.enabled");
     std::pair<int, int> size = GetWindowWidthHeight();
 
     bool fullscreen_transition = Fullscreen() != fullscreen;
@@ -1018,8 +1018,8 @@ void HumanClientApp::SendLoggingConfigToServer() {
 
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     if (!Fullscreen()) {
-        GetOptionsDB().Set<int>("app-left-windowed", Value(w));
-        GetOptionsDB().Set<int>("app-top-windowed", Value(h));
+        GetOptionsDB().Set<int>("video.windowed.left_edge", Value(w));
+        GetOptionsDB().Set<int>("video.windowed.top_edge", Value(h));
         GetOptionsDB().Commit();
     }
 }
@@ -1032,9 +1032,9 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
             intro_screen->Resize(GG::Pt(w, h));
     }
 
-    if (!GetOptionsDB().Get<bool>("fullscreen") &&
-         (GetOptionsDB().Get<int>("app-width-windowed") != w ||
-          GetOptionsDB().Get<int>("app-height-windowed") != h))
+    if (!GetOptionsDB().Get<bool>("video.fullscreen.enabled") &&
+         (GetOptionsDB().Get<int>("video.windowed.width") != w ||
+          GetOptionsDB().Get<int>("video.windowed.height") != h))
     {
         if (GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
             // Reposition windows if in windowed mode.
@@ -1042,8 +1042,8 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
         }
         // store resize if window is not full-screen (so that fullscreen
         // resolution doesn't overwrite windowed resolution)
-        GetOptionsDB().Set<int>("app-width-windowed", Value(w));
-        GetOptionsDB().Set<int>("app-height-windowed", Value(h));
+        GetOptionsDB().Set<int>("video.windowed.width", Value(w));
+        GetOptionsDB().Set<int>("video.windowed.height", Value(h));
     }
 
     glViewport(0, 0, Value(w), Value(h));
@@ -1060,8 +1060,8 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
 
     // limit rendering frequency when defocused to limit CPU use, and disable sound
     if (!m_have_window_focus) {
-        if (GetOptionsDB().Get<bool>("limit-fps-no-focus"))
-            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps-no_focus"));
+        if (GetOptionsDB().Get<bool>("video.fps.unfocused.enabled"))
+            this->SetMaxFPS(GetOptionsDB().Get<double>("video.fps.unfocused"));
         else
             this->SetMaxFPS(0.0);
 
@@ -1069,8 +1069,8 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
             Sound::GetSound().PauseMusic();
     }
     else {
-        if (GetOptionsDB().Get<bool>("limit-fps"))
-            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps"));
+        if (GetOptionsDB().Get<bool>("video.fps.max.enabled"))
+            this->SetMaxFPS(GetOptionsDB().Get<double>("video.fps.max"));
         else
             this->SetMaxFPS(0.0);
 
@@ -1101,8 +1101,8 @@ bool HumanClientApp::HandleHotkeyExitApp() {
 }
 
 bool HumanClientApp::ToggleFullscreen() {
-    bool fs = GetOptionsDB().Get<bool>("fullscreen");
-    GetOptionsDB().Set<bool>("fullscreen", !fs);
+    bool fs = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+    GetOptionsDB().Set<bool>("video.fullscreen.enabled", !fs);
     Reinitialize();
     return true;
 }
@@ -1438,8 +1438,8 @@ int HumanClientApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects-threads-ui"); }
 
 void HumanClientApp::UpdateFPSLimit() {
-    if (GetOptionsDB().Get<bool>("limit-fps")) {
-        double fps = GetOptionsDB().Get<double>("max-fps");
+    if (GetOptionsDB().Get<bool>("video.fps.max.enabled")) {
+        double fps = GetOptionsDB().Get<double>("video.fps.max");
         SetMaxFPS(fps);
         DebugLogger() << "Limited FPS to " << fps;
     } else {
