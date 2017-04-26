@@ -1237,10 +1237,10 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("video.fps.max.enabled"));
     //limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
-    //GG::StateButton* limit_FPS_nofocus_button = BoolOption(page, indentation_level, "limit-fps-no-focus", UserString("OPTIONS_LIMIT_FPS_NO_FOCUS"));
+    //GG::StateButton* limit_FPS_nofocus_button = BoolOption(page, indentation_level, "video.fps.unfocused.enabled", UserString("OPTIONS_LIMIT_FPS_NO_FOCUS"));
     //GG::Spin<double>* max_fps_nofocus_spin =
     DoubleOption(page, indentation_level,  "video.fps.unfocused", UserString("OPTIONS_MAX_FPS_NO_FOCUS"));
-    //limit_FPS_nofocus_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps-no-focus"));
+    //limit_FPS_nofocus_button->SetCheck(GetOptionsDB().Get<bool>("video.fps.unfocused.enabled"));
 
 
     // apply button, sized to fit text
