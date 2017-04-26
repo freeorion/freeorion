@@ -475,7 +475,7 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db) {
         db.Add("video.fps.shown",       UserStringNop("OPTIONS_DB_SHOW_FPS"), false);
-        db.Add("limit-fps",             UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
+        db.Add("video.fps.max.enabled", UserStringNop("OPTIONS_DB_LIMIT_FPS"),             true);
         db.Add("video.fps.max",         UserStringNop("OPTIONS_DB_MAX_FPS"),               60.0,
                RangedStepValidator<double>(1.0, 0.0, 240.0));
         db.Add("limit-fps-no-focus",    UserStringNop("OPTIONS_DB_LIMIT_FPS_NO_FOCUS"),    true);

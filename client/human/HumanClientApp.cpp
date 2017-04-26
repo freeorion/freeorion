@@ -1069,7 +1069,7 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
             Sound::GetSound().PauseMusic();
     }
     else {
-        if (GetOptionsDB().Get<bool>("limit-fps"))
+        if (GetOptionsDB().Get<bool>("video.fps.max.enabled"))
             this->SetMaxFPS(GetOptionsDB().Get<double>("video.fps.max"));
         else
             this->SetMaxFPS(0.0);
@@ -1427,7 +1427,7 @@ int HumanClientApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects-threads-ui"); }
 
 void HumanClientApp::UpdateFPSLimit() {
-    if (GetOptionsDB().Get<bool>("limit-fps")) {
+    if (GetOptionsDB().Get<bool>("video.fps.max.enabled")) {
         double fps = GetOptionsDB().Get<double>("video.fps.max");
         SetMaxFPS(fps);
         DebugLogger() << "Limited FPS to " << fps;
