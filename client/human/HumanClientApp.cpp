@@ -265,10 +265,10 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     bool inform_user_sound_failed(false);
     try {
-        if (GetOptionsDB().Get<bool>("UI.sound.enabled") || GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        if (GetOptionsDB().Get<bool>("UI.sound.enabled") || GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().Enable();
 
-        if ((GetOptionsDB().Get<bool>("UI.sound.music-enabled")))
+        if ((GetOptionsDB().Get<bool>("audio.music.enabled")))
             Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
 
         Sound::GetSound().SetMusicVolume(GetOptionsDB().Get<int>("UI.sound.music-volume"));
@@ -1065,7 +1065,7 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
         else
             this->SetMaxFPS(0.0);
 
-        if (GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        if (GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().PauseMusic();
     }
     else {
@@ -1074,7 +1074,7 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
         else
             this->SetMaxFPS(0.0);
 
-        if (GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        if (GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().ResumeMusic();
     }
 

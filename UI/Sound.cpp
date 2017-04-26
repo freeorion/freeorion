@@ -216,7 +216,7 @@ Sound::Impl::Impl() :
     m_temporary_disable_count(0),
     m_initialized(false)
 {
-    if (!GetOptionsDB().Get<bool>("UI.sound.enabled") && !GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+    if (!GetOptionsDB().Get<bool>("UI.sound.enabled") && !GetOptionsDB().Get<bool>("audio.music.enabled"))
         return;
 
     try {
