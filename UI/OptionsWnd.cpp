@@ -464,7 +464,7 @@ void OptionsWnd::CompleteConstruction() {
     AttachChild(m_done_button);
     AttachChild(m_tabs);
 
-    bool UI_sound_enabled = GetOptionsDB().Get<bool>("UI.sound.enabled");
+    bool UI_sound_enabled = GetOptionsDB().Get<bool>("audio.effects.enabled");
     GG::ListBox* current_page = nullptr;
 
     Sound::TempUISoundDisabler sound_disabler;
@@ -478,8 +478,8 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUDIO"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_VOLUME_AND_MUSIC"));
     MusicVolumeOption(current_page, 0, m_sound_feedback);
-    VolumeOption(current_page, 0, "UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
-    FileOption(current_page, 0, "UI.sound.bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
+    VolumeOption(current_page, 0, "audio.effects.enabled", "audio.effects.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
+    FileOption(current_page, 0, "audio.music.path", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
                ValidMusicFile);
 
@@ -489,8 +489,8 @@ void OptionsWnd::CompleteConstruction() {
     SoundFileOption(current_page, 1, "UI.sound.text-typing", UserString("OPTIONS_SOUND_TYPING"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_NEWTURN"));
-    BoolOption(current_page,      1, "UI.sound.new-turn.toggle",       UserString("OPTIONS_SOUND_NEWTURN_TOGGLE"));
-    SoundFileOption(current_page, 1, "UI.sound.new-turn.sound-file",   UserString("OPTIONS_SOUND_NEWTURN_FILE"));
+    BoolOption(current_page, 1, "ui.turn.start.sound.enabled", UserString("OPTIONS_SOUND_NEWTURN_TOGGLE"));
+    SoundFileOption(current_page, 1, "ui.turn.start.sound.path", UserString("OPTIONS_SOUND_NEWTURN_FILE"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_WINDOW"));
     SoundFileOption(current_page, 1, "UI.sound.window-close",    UserString("OPTIONS_SOUND_CLOSE"));
@@ -973,11 +973,11 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     auto row = GG::Wnd::Create<GG::ListBox::Row>();
     auto button = GG::Wnd::Create<CUIStateButton>(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
-    button->SetCheck(GetOptionsDB().Get<bool>("UI.sound.music-enabled"));
-    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator("UI.sound.music-volume"));
+    button->SetCheck(GetOptionsDB().Get<bool>("audio.music.enabled"));
+    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator("audio.music.volume"));
     assert(validator);
     auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max, GG::HORIZONTAL);
-    slider->SlideTo(GetOptionsDB().Get<int>("UI.sound.music-volume"));
+    slider->SlideTo(GetOptionsDB().Get<int>("audio.music.volume"));
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
@@ -985,9 +985,9 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
     page->Insert(row);
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    button->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-enabled")));
+    button->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.enabled")));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-volume")));
+    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
     slider->SlidSignal.connect(
@@ -1299,14 +1299,14 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
     if (checked) {
         try {
             Sound::GetSound().Enable();
-            GetOptionsDB().Set("UI.sound.enabled", true);
+            GetOptionsDB().Set("audio.effects.enabled", true);
             Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
     } else {
-        GetOptionsDB().Set("UI.sound.enabled", false);
-        if (!GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+        GetOptionsDB().Set("audio.effects.enabled", false);
+        if (!GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().Disable();
     }
 }
@@ -1315,26 +1315,26 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
     if (checked) {
         try {
             Sound::GetSound().Enable();
-            GetOptionsDB().Set("UI.sound.music-enabled", true);
-            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("UI.sound.bg-music"), -1);
+            GetOptionsDB().Set("audio.music.enabled", true);
+            Sound::GetSound().PlayMusic(GetOptionsDB().Get<std::string>("audio.music.path"), -1);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
     } else {
-        GetOptionsDB().Set("UI.sound.music-enabled", false);
+        GetOptionsDB().Set("audio.music.enabled", false);
         Sound::GetSound().StopMusic();
-        if (!GetOptionsDB().Get<bool>("UI.sound.enabled"))
+        if (!GetOptionsDB().Get<bool>("audio.effects.enabled"))
             Sound::GetSound().Disable();
     }
 }
 
 void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const {
-    GetOptionsDB().Set("UI.sound.music-volume", pos);
+    GetOptionsDB().Set("audio.music.volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
 void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
-    GetOptionsDB().Set("UI.sound.volume", pos);
+    GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
 }
@@ -1346,8 +1346,8 @@ void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(std::shared_ptr<GG::Stat
 { m_effects_button = button; }
 
 void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::InitializationFailureException const &e) {
-    GetOptionsDB().Set("UI.sound.enabled", false);
-    GetOptionsDB().Set("UI.sound.music-enabled", false);
+    GetOptionsDB().Set("audio.effects.enabled", false);
+    GetOptionsDB().Set("audio.music.enabled", false);
     if (m_effects_button)
         m_effects_button->SetCheck(false);
     if (m_music_button)

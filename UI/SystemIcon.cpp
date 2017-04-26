@@ -28,7 +28,7 @@
 #include <boost/format.hpp>
 
 namespace {
-    bool PlaySounds()                   { return GetOptionsDB().Get<bool>("UI.sound.enabled"); }
+    bool PlaySounds()                   { return GetOptionsDB().Get<bool>("audio.effects.enabled"); }
     void PlaySystemIconRolloverSound()  { if (PlaySounds()) Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.system-icon-rollover")); }
 
     // Wrap content int an rgba tag with color color. Opacity ignored.

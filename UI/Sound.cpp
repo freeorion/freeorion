@@ -216,7 +216,7 @@ Sound::Impl::Impl() :
     m_temporary_disable_count(0),
     m_initialized(false)
 {
-    if (!GetOptionsDB().Get<bool>("UI.sound.enabled") && !GetOptionsDB().Get<bool>("UI.sound.music-enabled"))
+    if (!GetOptionsDB().Get<bool>("audio.effects.enabled") && !GetOptionsDB().Get<bool>("audio.music.enabled"))
         return;
 
     try {
@@ -500,7 +500,7 @@ void Sound::Impl::StopMusic() {
 }
 
 void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/) {
-    if (!m_initialized || !GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
+    if (!m_initialized || !GetOptionsDB().Get<bool>("audio.effects.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
     std::string filename = PathToString(path);
@@ -648,7 +648,7 @@ void Sound::Impl::SetMusicVolume(int vol) {
 
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
-    GetOptionsDB().Set<int>("UI.sound.music-volume", vol);
+    GetOptionsDB().Set<int>("audio.music.volume", vol);
     if (alcGetCurrentContext())
     {
         alSourcef(m_sources[0], AL_GAIN, ((ALfloat) vol)/255.0);
@@ -667,7 +667,7 @@ void Sound::Impl::SetUISoundsVolume(int vol) {
 
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
-    GetOptionsDB().Set<int>("UI.sound.volume", vol);
+    GetOptionsDB().Set<int>("audio.effects.volume", vol);
     if (alcGetCurrentContext()) {
         for (int it = 1; it < NUM_SOURCES; ++it)
             alSourcef(m_sources[it], AL_GAIN, ((ALfloat) vol)/255.0);

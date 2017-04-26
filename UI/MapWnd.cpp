@@ -2920,8 +2920,8 @@ void MapWnd::InitTurn() {
         m_btn_auto_turn->Show();
     }
 
-    if (GetOptionsDB().Get<bool>("UI.sound.new-turn.toggle"))
-        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.new-turn.sound-file"), true);
+    if (GetOptionsDB().Get<bool>("ui.turn.start.sound.enabled"))
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.turn.start.sound.path"), true);
 }
 
 void MapWnd::MidTurnUpdate() {
