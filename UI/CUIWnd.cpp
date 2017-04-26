@@ -20,7 +20,7 @@
 
 namespace {
     void PlayMinimizeSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-maximize"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.maximize.sound.path"), true); }
     void PlayMaximizeSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
     void PlayCloseSound()
