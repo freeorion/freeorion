@@ -1141,7 +1141,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             GetOptionsDB().GetValidator("app-width-windowed"));
     std::shared_ptr<const RangedValidator<int>> windowed_height_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-height-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.height"));
     std::shared_ptr<const RangedValidator<int>> windowed_left_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
             GetOptionsDB().GetValidator("app-left-windowed"));
@@ -1223,7 +1223,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     page->Insert(row);
 
     IntOption(page, indentation_level, "app-width-windowed",  UserString("OPTIONS_APP_WIDTH_WINDOWED"));
-    IntOption(page, indentation_level, "app-height-windowed", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.height", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
     IntOption(page, indentation_level, "app-left-windowed",   UserString("OPTIONS_APP_LEFT_WINDOWED"));
     IntOption(page, indentation_level, "app-top-windowed",    UserString("OPTIONS_APP_TOP_WINDOWED"));
 

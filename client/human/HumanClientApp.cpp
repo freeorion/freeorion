@@ -195,7 +195,7 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     db.Add("video.fullscreen.width", UserStringNop("OPTIONS_DB_APP_WIDTH"),            DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
     db.Add("video.fullscreen.height", UserStringNop("OPTIONS_DB_APP_HEIGHT"),          DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
     db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
-    db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
+    db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
     db.Add("app-left-windowed",     UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),     DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
     db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
 }
@@ -827,7 +827,7 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
     if (!fullscreen) {
         width = GetOptionsDB().Get<int>("app-width-windowed");
-        height = GetOptionsDB().Get<int>("app-height-windowed");
+        height = GetOptionsDB().Get<int>("video.windowed.height");
         return {width, height};
     }
 
@@ -1034,7 +1034,7 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
 
     if (!GetOptionsDB().Get<bool>("fullscreen") &&
          (GetOptionsDB().Get<int>("app-width-windowed") != w ||
-          GetOptionsDB().Get<int>("app-height-windowed") != h))
+          GetOptionsDB().Get<int>("video.windowed.height") != h))
     {
         if (GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
             // Reposition windows if in windowed mode.
@@ -1043,7 +1043,7 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
         // store resize if window is not full-screen (so that fullscreen
         // resolution doesn't overwrite windowed resolution)
         GetOptionsDB().Set<int>("app-width-windowed", Value(w));
-        GetOptionsDB().Set<int>("app-height-windowed", Value(h));
+        GetOptionsDB().Set<int>("video.windowed.height", Value(h));
     }
 
     glViewport(0, 0, Value(w), Value(h));

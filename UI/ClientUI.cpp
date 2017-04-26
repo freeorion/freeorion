@@ -636,7 +636,7 @@ ClientUI::ClientUI() :
         boost::bind(&ClientUI::HandleSizeChange, this, true));
     GetOptionsDB().OptionChangedSignal("app-width-windowed").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, false));
-    GetOptionsDB().OptionChangedSignal("app-height-windowed").connect(
+    GetOptionsDB().OptionChangedSignal("video.windowed.height").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, false));
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
         boost::bind(&ClientUI::InitializeWindows, this));
