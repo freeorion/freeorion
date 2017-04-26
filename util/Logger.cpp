@@ -277,7 +277,7 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
-    SetLoggerThresholdCore("", default_LogLevel);
+    SetLoggerThresholdCore("", default_log_level_threshold);
 
     // Initialize the internal logger
     ConfigureLogger(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
@@ -315,7 +315,7 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     // Note: Do not log in this function.  If a logger is used during
     // static initialization it will cause boost::log to recursively call
     // its internal global_locker_storage mutex and lock up.
-    SetLoggerThresholdCore(name, default_LogLevel);
+    SetLoggerThresholdCore(name, default_log_level_threshold);
 
     if (name.empty())
         return;
