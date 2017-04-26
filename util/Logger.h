@@ -87,10 +87,8 @@
 */
 
 // The logging levels.
-enum class LogLevel {trace, debug, info, warn, error};
+enum class LogLevel {trace, debug, info, warn, error, min = trace, max = error};
 
-constexpr LogLevel max_LogLevel = LogLevel::error;
-constexpr LogLevel min_LogLevel = LogLevel::trace;
 #ifdef NDEBUG
 constexpr LogLevel default_LogLevel = LogLevel::info;
 #else

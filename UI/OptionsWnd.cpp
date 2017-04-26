@@ -387,14 +387,14 @@ namespace {
         GG::Label* logger_label = new CUILabel(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
 
         // Create a drop down list for the filtering levels
-        auto num_log_levels = 1 + static_cast<std::size_t>(max_LogLevel) - static_cast<std::size_t>(min_LogLevel);
+        auto num_log_levels = 1 + static_cast<std::size_t>(LogLevel::max) - static_cast<std::size_t>(LogLevel::min);
         GG::DropDownList* drop_list = new CUIDropDownList(num_log_levels);
         drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, GG::Y(ClientUI::Pts() + 4)));
         drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
         drop_list->SetStyle(GG::LIST_NOSORT);
 
         // Insert the levels into the list
-        for (auto ii = static_cast<std::size_t>(min_LogLevel); ii <= static_cast<std::size_t>(max_LogLevel); ++ii) {
+        for (auto ii = static_cast<std::size_t>(LogLevel::min); ii <= static_cast<std::size_t>(LogLevel::max); ++ii) {
             auto level_name = to_string(static_cast<LogLevel>(ii));
             auto* priority_row = new CUISimpleDropDownListRow(level_name);
             // use the row's name to store the option value.
