@@ -488,7 +488,7 @@ namespace {
         db.Add("audio.effects.volume",                          UserStringNop("OPTIONS_DB_UI_SOUND_VOLUME"),                   255,                    RangedValidator<int>(0, 255));
         db.Add<std::string>("ui.control.button.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),     (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg").string());
         db.Add<std::string>("ui.control.button.click.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_CLICK"),           (GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg").string());
-        db.Add<std::string>("UI.sound.turn-button-click",       UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"),        (GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.ogg").string());
+        db.Add<std::string>("ui.control.button.turn.click.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"), (GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.ogg").string());
         db.Add<std::string>("UI.sound.list-select",             UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),              (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());
         db.Add<std::string>("UI.sound.item-drop",               UserStringNop("OPTIONS_DB_UI_SOUND_ITEM_DROP"),                (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());//TODO: replace with dedicated 'item_drop' sound
         db.Add<std::string>("UI.sound.list-pulldown",           UserStringNop("OPTIONS_DB_UI_SOUND_LIST_PULLDOWN"),            (GetRootDataDir() / "default" / "data" / "sound" / "list_pulldown.ogg").string());
