@@ -35,7 +35,7 @@ namespace {
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.button.rollover.sound.path"), true); }
 
     void PlayListSelectSound(const GG::ListBox::SelectionSet&)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-select"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.listbox.select.sound.path"), true); }
 
     void PlayDropDownListOpenSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
