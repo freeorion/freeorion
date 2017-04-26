@@ -486,7 +486,7 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SOUNDS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UI_SOUNDS"));
     SoundFileOption(current_page, 1, "UI.sound.alert",       UserString("OPTIONS_SOUND_ALERT"));
-    SoundFileOption(current_page, 1, "UI.sound.text-typing", UserString("OPTIONS_SOUND_TYPING"));
+    SoundFileOption(current_page, 1, "ui.input.keyboard.sound.path", UserString("OPTIONS_SOUND_TYPING"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_NEWTURN"));
     BoolOption(current_page, 1, "ui.turn.start.sound.enabled", UserString("OPTIONS_SOUND_NEWTURN_TOGGLE"));
@@ -517,7 +517,7 @@ void OptionsWnd::CompleteConstruction() {
     // UI settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_UI"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_MISC_UI"));
-    BoolOption(current_page, 0, "UI.swap-mouse-lr",              UserString("OPTIONS_SWAP_MOUSE_LR"));
+    BoolOption(current_page, 0, "ui.input.mouse.button_swap.enabled", UserString("OPTIONS_SWAP_MOUSE_LR"));
     BoolOption(current_page, 0, "UI.multiple-fleet-windows",     UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption(current_page, 0, "UI.window-quickclose",          UserString("OPTIONS_QUICK_CLOSE_WNDS"));
     BoolOption(current_page, 0, "UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
@@ -546,10 +546,10 @@ void OptionsWnd::CompleteConstruction() {
         &FlushLoadedStringTables);
 
     IntOption(current_page, 0, "UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
-    IntOption(current_page, 0, "UI.keypress-repeat-delay",       UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
-    IntOption(current_page, 0, "UI.keypress-repeat-interval",    UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
-    IntOption(current_page, 0, "UI.mouse-click-repeat-delay",    UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
-    IntOption(current_page, 0, "UI.mouse-click-repeat-interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
+    IntOption(current_page, 0, "ui.input.keyboard.repeat.delay", UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
+    IntOption(current_page, 0, "ui.input.keyboard.repeat.interval", UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
+    IntOption(current_page, 0, "ui.input.mouse.button.repeat.delay", UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
+    IntOption(current_page, 0, "ui.input.mouse.button.repeat.interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONTS"));
     FontOption(current_page, 0, "UI.font",       UserString("OPTIONS_FONT_TEXT"));

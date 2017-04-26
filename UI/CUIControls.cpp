@@ -44,7 +44,7 @@ namespace {
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.listbox.drop.sound.path"), true); }
 
     void PlayTextTypingSound(const std::string&)
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.text-typing"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.input.keyboard.sound.path"), true); }
 
     const double ARROW_BRIGHTENING_SCALE_FACTOR = 1.5;
     const double STATE_BUTTON_BRIGHTENING_SCALE_FACTOR = 1.25;

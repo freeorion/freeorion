@@ -103,11 +103,11 @@ namespace {
         db.Add("save.auto.file.limit",              UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 10000));
         db.Add("save.auto.initial.enabled",     UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
         db.Add("save.auto.exit.enabled",        UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
-        db.Add("UI.swap-mouse-lr",              UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),           false);
-        db.Add("UI.keypress-repeat-delay",      UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),      360,    RangedValidator<int>(0, 1000));
-        db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
-        db.Add("UI.mouse-click-repeat-delay",   UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),         360,    RangedValidator<int>(0, 1000));
-        db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
+        db.Add("ui.input.mouse.button_swap.enabled", UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),      false);
+        db.Add("ui.input.keyboard.repeat.delay", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),     360,    RangedValidator<int>(0, 1000));
+        db.Add("ui.input.keyboard.repeat.interval", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"), 20,   RangedValidator<int>(0, 1000));
+        db.Add("ui.input.mouse.button.repeat.delay", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),    360,    RangedValidator<int>(0, 1000));
+        db.Add("ui.input.mouse.button.repeat.interval", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"), 15, RangedValidator<int>(0, 1000));
         db.Add("UI.display-timestamp",          UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),          true,   Validator<bool>());
 
         Hotkey::AddHotkey("exit",       UserStringNop("HOTKEY_EXIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
@@ -297,10 +297,10 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
-    EnableKeyPressRepeat(GetOptionsDB().Get<int>("UI.keypress-repeat-delay"),
-                         GetOptionsDB().Get<int>("UI.keypress-repeat-interval"));
-    EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("UI.mouse-click-repeat-delay"),
-                                GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
+    EnableKeyPressRepeat(GetOptionsDB().Get<int>("ui.input.keyboard.repeat.delay"),
+                         GetOptionsDB().Get<int>("ui.input.keyboard.repeat.interval"));
+    EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.delay"),
+                                GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.interval"));
     EnableModalAcceleratorSignals(true);
 
     WindowResizedSignal.connect(
@@ -317,7 +317,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
 
-    this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("UI.swap-mouse-lr"));
+    this->SetMouseLRSwapped(GetOptionsDB().Get<bool>("ui.input.mouse.button_swap.enabled"));
 
     auto named_key_maps = parse::keymaps(GetResourceDir() / "scripting/keymaps.inf");
     TraceLogger() << "Keymaps:";
