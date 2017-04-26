@@ -492,7 +492,7 @@ namespace {
         db.Add<std::string>("ui.control.listbox.select.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),          (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());
         db.Add<std::string>("ui.control.listbox.drop.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_ITEM_DROP"),              (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());//TODO: replace with dedicated 'item_drop' sound
         db.Add<std::string>("ui.control.dropdownlist.click.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_LIST_PULLDOWN"),    (GetRootDataDir() / "default" / "data" / "sound" / "list_pulldown.ogg").string());
-        db.Add<std::string>("UI.sound.text-typing",             UserStringNop("OPTIONS_DB_UI_SOUND_TEXT_TYPING"),              (GetRootDataDir() / "default" / "data" / "sound" / "text_typing.ogg").string());
+        db.Add<std::string>("ui.input.keyboard.sound.path",     UserStringNop("OPTIONS_DB_UI_SOUND_TEXT_TYPING"),              (GetRootDataDir() / "default" / "data" / "sound" / "text_typing.ogg").string());
         db.Add<std::string>("UI.sound.window-maximize",         UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MAXIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_maximize.ogg").string());
         db.Add<std::string>("UI.sound.window-minimize",         UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_MINIMIZE"),          (GetRootDataDir() / "default" / "data" / "sound" / "window_minimize.ogg").string());
         db.Add<std::string>("UI.sound.window-close",            UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),             (GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg").string());

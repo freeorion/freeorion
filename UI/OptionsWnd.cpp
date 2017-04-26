@@ -486,7 +486,7 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SOUNDS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UI_SOUNDS"));
     SoundFileOption(current_page, 1, "UI.sound.alert",       UserString("OPTIONS_SOUND_ALERT"));
-    SoundFileOption(current_page, 1, "UI.sound.text-typing", UserString("OPTIONS_SOUND_TYPING"));
+    SoundFileOption(current_page, 1, "ui.input.keyboard.sound.path", UserString("OPTIONS_SOUND_TYPING"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_NEWTURN"));
     BoolOption(current_page,      1, "UI.sound.new-turn.toggle",       UserString("OPTIONS_SOUND_NEWTURN_TOGGLE"));
