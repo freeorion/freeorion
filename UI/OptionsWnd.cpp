@@ -1232,7 +1232,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
     //GG::Spin<double>* max_fps_spin =
-    DoubleOption(page, indentation_level,  "max-fps",          UserString("OPTIONS_MAX_FPS"));
+    DoubleOption(page, indentation_level,  "video.fps.max",    UserString("OPTIONS_MAX_FPS"));
     //limit_FPS_button->CheckedSignal, [max_fps_spin](bool checked) { max_fps_spin->Disable(!checked); });
     //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
     //limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());

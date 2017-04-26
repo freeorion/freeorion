@@ -283,7 +283,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     UpdateFPSLimit();
     GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
-    GetOptionsDB().OptionChangedSignal("max-fps").connect(
+    GetOptionsDB().OptionChangedSignal("video.fps.max").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
 
     std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
@@ -1070,7 +1070,7 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
     }
     else {
         if (GetOptionsDB().Get<bool>("limit-fps"))
-            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps"));
+            this->SetMaxFPS(GetOptionsDB().Get<double>("video.fps.max"));
         else
             this->SetMaxFPS(0.0);
 
@@ -1428,7 +1428,7 @@ int HumanClientApp::EffectsProcessingThreads() const
 
 void HumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("limit-fps")) {
-        double fps = GetOptionsDB().Get<double>("max-fps");
+        double fps = GetOptionsDB().Get<double>("video.fps.max");
         SetMaxFPS(fps);
         DebugLogger() << "Limited FPS to " << fps;
     } else {
