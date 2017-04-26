@@ -283,7 +283,7 @@ namespace {
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
 
     void PlayTurnButtonClickSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.turn-button-click"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.turn.press.sound.path"), true); }
 
     bool ToggleBoolOption(const std::string& option_name) {
         bool initially_enabled = GetOptionsDB().Get<bool>(option_name);

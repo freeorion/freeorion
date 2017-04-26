@@ -499,17 +499,17 @@ void OptionsWnd::CompleteConstruction() {
     SoundFileOption(current_page, 1, "UI.sound.sidepanel-open",  UserString("OPTIONS_SOUND_SIDEPANEL"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_LIST"));
-    SoundFileOption(current_page, 1, "UI.sound.item-drop",     UserString("OPTIONS_SOUND_DROP"));
-    SoundFileOption(current_page, 1, "UI.sound.list-pulldown", UserString("OPTIONS_SOUND_PULLDOWN"));
-    SoundFileOption(current_page, 1, "UI.sound.list-select",   UserString("OPTIONS_SOUND_SELECT"));
+    SoundFileOption(current_page, 1, "ui.listbox.drop.sound.path", UserString("OPTIONS_SOUND_DROP"));
+    SoundFileOption(current_page, 1, "ui.dropdownlist.select.sound.path", UserString("OPTIONS_SOUND_PULLDOWN"));
+    SoundFileOption(current_page, 1, "ui.listbox.select.sound.path", UserString("OPTIONS_SOUND_SELECT"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_BUTTON"));
-    SoundFileOption(current_page, 1, "UI.sound.button-click",          UserString("OPTIONS_SOUND_CLICK"));
-    SoundFileOption(current_page, 1, "UI.sound.button-rollover",       UserString("OPTIONS_SOUND_ROLLOVER"));
-    SoundFileOption(current_page, 1, "UI.sound.fleet-button-click",    UserString("OPTIONS_SOUND_FLEET_CLICK"));
-    SoundFileOption(current_page, 1, "UI.sound.fleet-button-rollover", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
-    SoundFileOption(current_page, 1, "UI.sound.system-icon-rollover",  UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
-    SoundFileOption(current_page, 1, "UI.sound.turn-button-click",     UserString("OPTIONS_SOUND_TURN"));
+    SoundFileOption(current_page, 1, "ui.button.press.sound.path", UserString("OPTIONS_SOUND_CLICK"));
+    SoundFileOption(current_page, 1, "ui.button.rollover.sound.path", UserString("OPTIONS_SOUND_ROLLOVER"));
+    SoundFileOption(current_page, 1, "ui.map.fleet.button.press.sound.path", UserString("OPTIONS_SOUND_FLEET_CLICK"));
+    SoundFileOption(current_page, 1, "ui.map.fleet.button.rollover.sound.path", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
+    SoundFileOption(current_page, 1, "ui.map.system.icon.rollover.sound.path", UserString("OPTIONS_SOUND_SYSTEM_ROLLOVER"));
+    SoundFileOption(current_page, 1, "ui.button.turn.press.sound.path", UserString("OPTIONS_SOUND_TURN"));
     SoundFileOption(current_page, 1, "UI.sound.planet-button-click",   UserString("OPTIONS_SOUND_PLANET"));
 
     m_tabs->SetCurrentWnd(0);
@@ -657,11 +657,11 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 0, "UI.wnd-outer-border-color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_CONTROL_COLORS"));
-    ColorOption(current_page, 0, "UI.ctrl-color",               UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 0, "UI.ctrl-border-color",        UserString("OPTIONS_BORDER_COLOR"));
-    ColorOption(current_page, 0, "UI.edit-hilite",              UserString("OPTIONS_HIGHLIGHT_COLOR"));
-    ColorOption(current_page, 0, "UI.dropdownlist-arrow-color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
-    ColorOption(current_page, 0, "UI.state-button-color",       UserString("OPTIONS_STATE_BUTTON_COLOR"));
+    ColorOption(current_page, 0, "ui.control.background.color", UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 0, "ui.control.border.color",     UserString("OPTIONS_BORDER_COLOR"));
+    ColorOption(current_page, 0, "ui.control.edit.highlight.color", UserString("OPTIONS_HIGHLIGHT_COLOR"));
+    ColorOption(current_page, 0, "ui.dropdownlist.arrow.color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
+    ColorOption(current_page, 0, "ui.button.state.color",   UserString("OPTIONS_STATE_BUTTON_COLOR"));
     ColorOption(current_page, 0, "UI.stat-increase-color",      UserString("OPTIONS_STAT_INCREASE_COLOR"));
     ColorOption(current_page, 0, "UI.stat-decrease-color",      UserString("OPTIONS_STAT_DECREASE_COLOR"));
 
@@ -1300,7 +1300,7 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
         try {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("audio.effects.enabled", true);
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
@@ -1336,7 +1336,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int hig
 void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
-    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.button.press.sound.path"), true);
 }
 
 void OptionsWnd::SoundOptionsFeedback::SetMusicButton(std::shared_ptr<GG::StateButton> button)
