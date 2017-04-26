@@ -31,9 +31,6 @@
         <combat>debug</combat>
         <combat-log>info</combat-log>
         <network>warn</network>
-
-        ...
-
         <ai>debug</ai>
       </sources>
     </logging>

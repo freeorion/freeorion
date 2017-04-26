@@ -70,8 +70,8 @@ private:
     void                DoLayout();
 
     GG::ListBox*        CreatePage(const std::string& name);
-    void                CreateSectionHeader(
-        GG::ListBox* page, int indentation_level, const std::string& name, const std::string& tooltip = "");
+    void                CreateSectionHeader(GG::ListBox* page, int indentation_level,
+                                            const std::string& name, const std::string& tooltip = "");
     void                HotkeysPage();
     GG::StateButton*    BoolOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);
     GG::Spin<int>*      IntOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text);

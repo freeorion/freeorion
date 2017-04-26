@@ -27,7 +27,6 @@ namespace {
     std::regex exec_name_regex("(?:logging\\.execs\\.)(\\S+)");
     std::regex source_name_regex("(?:logging\\.sources\\.)(\\S+)");
 
-
     /** Add the log threshold for a logger with \p full_option_name to OptionsDB and return the
         threshold read from OptionsDB. */
     LogLevel AddLoggerToOptionsDB(const std::string& full_option_name) {
@@ -114,7 +113,6 @@ void UpdateLoggerThresholdsFromOptionsDB() {
 }
 
 namespace {
-
     /** Returns the list of full option names, logger names and thresholds for loggers in
         OptionsDB will \p prefix using \p prefix_regex.*/
     std::set<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndLevels(
@@ -139,8 +137,6 @@ namespace {
 
             // Add to return value
             retval.insert(std::make_tuple(full_option, option_name, option_value));
-
-            // DebugLogger(log) << "Found " << full_option << ",  name = " << option_name << " value = " << option_value;
         }
 
         return retval;
@@ -162,13 +158,11 @@ void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, Log
         const auto& name = std::get<1>(fulloption_name_and_level);
         const auto& value = std::get<2>(fulloption_name_and_level);
 
-
         // Update the option in OptionsDB if it already exists.
         if (GetOptionsDB().OptionExists(full_option))
             GetOptionsDB().Set(full_option, to_string(value));
 
         // Set the logger threshold.
-
         std::smatch match;
         std::regex_search(full_option, match, exec_name_regex);
         bool is_my_root_logger = (!match.empty() && match[1] == DefaultExecLoggerName());

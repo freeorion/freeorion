@@ -380,8 +380,8 @@ namespace {
 
 
     /**Create UI controls for a logger level option.*/
-    void LoggerLevelOption(
-        GG::ListBox& page, bool is_sink, const std::string& label, const std::string& option_name)
+    void LoggerLevelOption(GG::ListBox& page, bool is_sink,
+                           const std::string& label, const std::string& option_name)
     {
         // Create the label
         GG::Label* logger_label = new CUILabel(label, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
@@ -404,14 +404,13 @@ namespace {
 
         // Select the current filtering level in the list
         auto selected_level = static_cast<std::size_t>(to_LogLevel(GetOptionsDB().GetValueString(option_name)));
-        // Select the current filter level
         if (drop_list->NumRows() >= 1)
             drop_list->Select(selected_level);
 
         // Make a layout with a row etc. for this option
         GG::Layout* layout = new GG::Layout(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, LAYOUT_MARGIN);
         layout->Add(logger_label, 0, 0);
-        layout->Add(drop_list   , 0, 1, 1, 1, GG::ALIGN_VCENTER);
+        layout->Add(drop_list,    0, 1, 1, 1, GG::ALIGN_VCENTER);
 
         GG::ListBox::Row* row = new GG::ListBox::Row();
         // row->Resize(GG::Pt(ROW_WIDTH, drop_list->MinUsableSize().y + LAYOUT_MARGIN + drop_list->MaxSize().y + 6));
@@ -777,8 +776,8 @@ GG::ListBox* OptionsWnd::CreatePage(const std::string& name) {
     return page;
 }
 
-void OptionsWnd::CreateSectionHeader(
-    GG::ListBox* page, int indentation_level, const std::string& name, const std::string& tooltip)
+void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
+                                     const std::string& name, const std::string& tooltip)
 {
     assert(0 <= indentation_level);
     GG::Label* heading_text = new CUILabel(name, GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
