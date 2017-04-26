@@ -667,7 +667,7 @@ void Sound::Impl::SetUISoundsVolume(int vol) {
 
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
-    GetOptionsDB().Set<int>("UI.sound.volume", vol);
+    GetOptionsDB().Set<int>("audio.effects.volume", vol);
     if (alcGetCurrentContext()) {
         for (int it = 1; it < NUM_SOURCES; ++it)
             alSourcef(m_sources[it], AL_GAIN, ((ALfloat) vol)/255.0);

@@ -478,7 +478,7 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUDIO"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_VOLUME_AND_MUSIC"));
     MusicVolumeOption(current_page, 0, m_sound_feedback);
-    VolumeOption(current_page, 0, "audio.effects.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
+    VolumeOption(current_page, 0, "audio.effects.enabled", "audio.effects.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
     FileOption(current_page, 0, "UI.sound.bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
                ValidMusicFile);
@@ -1332,7 +1332,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int hig
 }
 
 void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
-    GetOptionsDB().Set("UI.sound.volume", pos);
+    GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
     Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
 }
