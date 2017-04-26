@@ -292,9 +292,21 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     InfoLogger() << FreeOrionVersionString();
 }
 
-void OverrideAllLoggersThresholds(const LogLevel threshold) {
-    InfoLogger(log) << "Overriding the thresholds of all loggers to be " << to_string(threshold);
+void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold) {
+    if (threshold)
+        InfoLogger(log) << "Overriding the thresholds of all loggers to be " << to_string(*threshold);
+    else
+        InfoLogger(log) << "Removing override of loggers' thresholds.  Thresholds may now be changed to any value.";
+
     ForcedThreshold() = threshold;
+
+    if (!threshold)
+        return;
+
+    SetLoggerThreshold("", *threshold);
+
+    for (const auto& name : GetLoggersToSinkFrontEnds().LoggersNames())
+        SetLoggerThreshold(name, *threshold);
 }
 
 LoggerCreatedSignalType LoggerCreatedSignal;

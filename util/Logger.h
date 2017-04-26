@@ -126,8 +126,9 @@ FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
  * their own name.*/
 FO_COMMON_API void InitLoggingSystem(const std::string& log_file, const std::string& unnamed_logger_identifier);
 
-/** Sets all loggers' thresholds to \p threshold permanently.*/
-FO_COMMON_API void OverrideAllLoggersThresholds(const LogLevel threshold);
+/** Sets all logger thresholds to \p threshold permanently. If \p threshold is boost::none then
+    remove the ovverride and allow subsequent SetLoggerThreshold() to work as normal. */
+FO_COMMON_API void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold);
 
 FO_COMMON_API const std::string& DefaultExecLoggerName();
 
