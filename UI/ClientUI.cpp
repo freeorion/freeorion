@@ -989,7 +989,7 @@ void ClientUI::MessageBox(const std::string& message, bool play_alert_sound/* = 
                            WndColor(), WndOuterBorderColor(), CtrlColor(), TextColor(), 1,
                            UserString("OK"));
     if (play_alert_sound)
-        Sound::GetSound().PlaySound(SoundDir() / "alert.ogg", true);
+        Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.alert"), true);
     dlg.Run();
 }
 
