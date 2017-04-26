@@ -500,7 +500,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_LIST"));
     SoundFileOption(current_page, 1, "ui.control.listbox.drop.sound.path", UserString("OPTIONS_SOUND_DROP"));
-    SoundFileOption(current_page, 1, "UI.sound.list-pulldown", UserString("OPTIONS_SOUND_PULLDOWN"));
+    SoundFileOption(current_page, 1, "ui.control.dropdownlist.click.sound.path", UserString("OPTIONS_SOUND_PULLDOWN"));
     SoundFileOption(current_page, 1, "ui.control.listbox.select.sound.path", UserString("OPTIONS_SOUND_SELECT"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_BUTTON"));

@@ -38,7 +38,7 @@ namespace {
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.listbox.select.sound.path"), true); }
 
     void PlayDropDownListOpenSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.list-pulldown"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.dropdownlist.click.sound.path"), true); }
 
     void PlayItemDropSound(GG::ListBox::iterator)
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.listbox.drop.sound.path"), true); }
