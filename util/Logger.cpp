@@ -50,27 +50,6 @@ namespace {
     // Compile time constant pointers to constant char arrays.
     constexpr const char* const log_level_names[] = {"trace", "debug", "info", "warn", "error"};
 
-    std::unordered_map<std::string, LogLevel> InitializeLogLevelMap() {
-        std::unordered_map<std::string, LogLevel> retval{};
-
-        for(int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
-            auto log_level = static_cast<LogLevel>(ii);
-
-            //Insert the number
-            retval.emplace(std::to_string(ii), log_level);
-
-            // Insert the lower case
-            auto name = to_string(log_level);
-            retval.emplace(name, log_level);
-
-            // Insert the upper case
-            std::transform(name.begin(), name.end(), name.begin(),
-                   [](const char c) { return std::toupper(c); });
-            retval.emplace(name, log_level);
-        }
-        return retval;
-    }
-
     std::stringstream ValidLogLevelWarning(const std::string& text){
         std::stringstream ss;
         ss << "\"" << text <<"\" is not a valid log level. "
@@ -105,7 +84,7 @@ LogLevel to_LogLevel(const std::string& text) {
 
     // Use a static local variable so that during static initialization it
     // is initialized on first use in any compilation unit.
-    static std::unordered_map<std::string, LogLevel> string_to_log_level = InitializeLogLevelMap();
+    static std::unordered_map<std::string, LogLevel> string_to_log_level = ValidNameToLogLevel();
 
     auto it = string_to_log_level.find(text);
     if (it != string_to_log_level.end())
@@ -113,6 +92,27 @@ LogLevel to_LogLevel(const std::string& text) {
 
     WarnLogger(log) << ValidLogLevelWarning(text).str();
     return LogLevel::debug;
+}
+
+std::unordered_map<std::string, LogLevel> ValidNameToLogLevel() {
+    std::unordered_map<std::string, LogLevel> retval{};
+
+    for(int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
+        auto log_level = static_cast<LogLevel>(ii);
+
+        //Insert the number
+        retval.emplace(std::to_string(ii), log_level);
+
+        // Insert the lower case
+        auto name = to_string(log_level);
+        retval.emplace(name, log_level);
+
+        // Insert the upper case
+        std::transform(name.begin(), name.end(), name.begin(),
+                       [](const char c) { return std::toupper(c); });
+        retval.emplace(name, log_level);
+    }
+    return retval;
 }
 
 // Provide a LogLevel stream out formatter for streaming logs

@@ -17,8 +17,7 @@
 #endif
 
 #include <string>
-#include <set>
-#include <tuple>
+#include <unordered_map>
 
 #include "Export.h"
 
@@ -143,6 +142,8 @@ constexpr LogLevel default_log_level_threshold = LogLevel::debug;
 
 FO_COMMON_API std::string to_string(const LogLevel level);
 FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
+
+std::unordered_map<std::string, LogLevel> ValidNameToLogLevel();
 
 // Prefix \p name to create a global logger name less likely to collide.
 #ifndef FREEORION_WIN32
