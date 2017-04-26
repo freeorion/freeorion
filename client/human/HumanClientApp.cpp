@@ -848,7 +848,7 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
 
 void HumanClientApp::Reinitialize() {
     bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
-    bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
+    bool fake_mode_change = GetOptionsDB().Get<bool>("video.fake_mode.enabled");
     std::pair<int, int> size = GetWindowWidthHeight();
 
     bool fullscreen_transition = Fullscreen() != fullscreen;

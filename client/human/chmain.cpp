@@ -124,7 +124,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddFlag('g', "generate-config-xml",  UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),   false);
         GetOptionsDB().AddFlag('f', "video.fullscreen.enabled", UserStringNop("OPTIONS_DB_FULLSCREEN"),        STORE_FULLSCREEN_FLAG);
         GetOptionsDB().Add("reset-fullscreen-size",         UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
-        GetOptionsDB().Add<bool>("fake-mode-change",        UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),     FAKE_MODE_CHANGE_FLAG);
+        GetOptionsDB().Add<bool>("video.fake_mode.enabled", UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),      FAKE_MODE_CHANGE_FLAG);
         GetOptionsDB().Add<int>("fullscreen-monitor-id",    UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
         GetOptionsDB().AddFlag('q', "quickstart",           UserStringNop("OPTIONS_DB_QUICKSTART"),            false);
         GetOptionsDB().AddFlag("continue",                  UserStringNop("OPTIONS_DB_CONTINUE"),              false);
@@ -213,7 +213,7 @@ int mainSetupAndRun() {
         RegisterOptions(&HumanClientApp::AddWindowSizeOptionsAfterMainStart);
 
         bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
-        bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
+        bool fake_mode_change = GetOptionsDB().Get<bool>("video.fake_mode.enabled");
 
         std::pair<int, int> width_height = HumanClientApp::GetWindowWidthHeight();
         int width(width_height.first), height(width_height.second);
