@@ -632,7 +632,7 @@ ClientUI::ClientUI() :
 
     GetOptionsDB().OptionChangedSignal("video.fullscreen.width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
-    GetOptionsDB().OptionChangedSignal("app-height").connect(
+    GetOptionsDB().OptionChangedSignal("video.fullscreen.height").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
     GetOptionsDB().OptionChangedSignal("app-width-windowed").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, false));
