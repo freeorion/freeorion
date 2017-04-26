@@ -486,7 +486,7 @@ namespace {
         db.Add<std::string>("audio.music.path",                 UserStringNop("OPTIONS_DB_BG_MUSIC"),                          (GetRootDataDir() / "default" / "data" / "sound" / "artificial_intelligence_v3.ogg").string());
         db.Add("audio.music.volume",                            UserStringNop("OPTIONS_DB_MUSIC_VOLUME"),                      127,                    RangedValidator<int>(1, 255));
         db.Add("audio.effects.volume",                          UserStringNop("OPTIONS_DB_UI_SOUND_VOLUME"),                   255,                    RangedValidator<int>(0, 255));
-        db.Add<std::string>("UI.sound.button-rollover",         UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),          (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg").string());
+        db.Add<std::string>("ui.control.button.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_ROLLOVER"),     (GetRootDataDir() / "default" / "data" / "sound" / "button_rollover.ogg").string());
         db.Add<std::string>("UI.sound.button-click",            UserStringNop("OPTIONS_DB_UI_SOUND_BUTTON_CLICK"),             (GetRootDataDir() / "default" / "data" / "sound" / "button_click.ogg").string());
         db.Add<std::string>("UI.sound.turn-button-click",       UserStringNop("OPTIONS_DB_UI_SOUND_TURN_BUTTON_CLICK"),        (GetRootDataDir() / "default" / "data" / "sound" / "turn_button_click.ogg").string());
         db.Add<std::string>("UI.sound.list-select",             UserStringNop("OPTIONS_DB_UI_SOUND_LIST_SELECT"),              (GetRootDataDir() / "default" / "data" / "sound" / "list_select.ogg").string());
