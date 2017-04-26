@@ -648,7 +648,7 @@ void Sound::Impl::SetMusicVolume(int vol) {
 
     /* normalize value, then apply to all sound sources */
     vol = std::max(0, std::min(vol, 255));
-    GetOptionsDB().Set<int>("UI.sound.music-volume", vol);
+    GetOptionsDB().Set<int>("audio.music.volume", vol);
     if (alcGetCurrentContext())
     {
         alSourcef(m_sources[0], AL_GAIN, ((ALfloat) vol)/255.0);

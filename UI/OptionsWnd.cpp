@@ -972,10 +972,10 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     auto button = GG::Wnd::Create<CUIStateButton>(UserString("OPTIONS_MUSIC"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
     button->Resize(button->MinUsableSize());
     button->SetCheck(GetOptionsDB().Get<bool>("audio.music.enabled"));
-    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator("UI.sound.music-volume"));
+    std::shared_ptr<const RangedValidator<int>> validator = std::dynamic_pointer_cast<const RangedValidator<int>>(GetOptionsDB().GetValidator("audio.music.volume"));
     assert(validator);
     auto slider = GG::Wnd::Create<CUISlider<int>>(validator->m_min, validator->m_max, GG::HORIZONTAL);
-    slider->SlideTo(GetOptionsDB().Get<int>("UI.sound.music-volume"));
+    slider->SlideTo(GetOptionsDB().Get<int>("audio.music.volume"));
     auto layout = GG::Wnd::Create<GG::Layout>(GG::X0, GG::Y0, GG::X1, GG::Y1, 1, 2, 0, 5);
     layout->Add(button, 0, 0);
     layout->Add(slider, 0, 1);
@@ -985,7 +985,7 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.enabled")));
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-volume")));
+    slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
     slider->SlidSignal.connect(
@@ -1327,7 +1327,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
 }
 
 void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int high) const {
-    GetOptionsDB().Set("UI.sound.music-volume", pos);
+    GetOptionsDB().Set("audio.music.volume", pos);
     Sound::GetSound().SetMusicVolume(pos);
 }
 
