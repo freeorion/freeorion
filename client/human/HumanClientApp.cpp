@@ -1061,7 +1061,7 @@ void HumanClientApp::HandleFocusChange(bool gained_focus) {
     // limit rendering frequency when defocused to limit CPU use, and disable sound
     if (!m_have_window_focus) {
         if (GetOptionsDB().Get<bool>("limit-fps-no-focus"))
-            this->SetMaxFPS(GetOptionsDB().Get<double>("max-fps-no_focus"));
+            this->SetMaxFPS(GetOptionsDB().Get<double>("video.fps.unfocused"));
         else
             this->SetMaxFPS(0.0);
 
