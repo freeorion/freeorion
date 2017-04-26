@@ -197,7 +197,7 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     db.Add("video.windowed.width",  UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
     db.Add("video.windowed.height", UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
     db.Add("video.windowed.left_edge", UserStringNop("OPTIONS_DB_APP_LEFT_WINDOWED"),  DEFAULT_LEFT,        OrValidator<int>( RangedValidator<int>(-max_width_plus_one, max_width_plus_one), DiscreteValidator<int>(DEFAULT_LEFT) ));
-    db.Add("app-top-windowed",      UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),      DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
+    db.Add("video.windowed.top_edge", UserStringNop("OPTIONS_DB_APP_TOP_WINDOWED"),    DEFAULT_TOP,         RangedValidator<int>(-max_height_plus_one, max_height_plus_one));
 }
 
 HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const std::string& name,
@@ -808,7 +808,7 @@ std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
     int left(0), top(0);
 
     left = GetOptionsDB().Get<int>("video.windowed.left_edge");
-    top = GetOptionsDB().Get<int>("app-top-windowed");
+    top = GetOptionsDB().Get<int>("video.windowed.top_edge");
 
     // clamp to edges to avoid weird bug with maximizing windows setting their
     // left and top to -9 which lead to weird issues when attmepting to recreate
@@ -1019,7 +1019,7 @@ void HumanClientApp::SendLoggingConfigToServer() {
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {
     if (!Fullscreen()) {
         GetOptionsDB().Set<int>("video.windowed.left_edge", Value(w));
-        GetOptionsDB().Set<int>("app-top-windowed", Value(h));
+        GetOptionsDB().Set<int>("video.windowed.top_edge", Value(h));
         GetOptionsDB().Commit();
     }
 }

@@ -1147,7 +1147,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             GetOptionsDB().GetValidator("video.windowed.left_edge"));
     std::shared_ptr<const RangedValidator<int>> windowed_top_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-top-windowed"));
+            GetOptionsDB().GetValidator("video.windowed.top_edge"));
 
     // compile list of resolutions available on this system
 
@@ -1225,7 +1225,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     IntOption(page, indentation_level, "video.windowed.width",  UserString("OPTIONS_APP_WIDTH_WINDOWED"));
     IntOption(page, indentation_level, "video.windowed.height", UserString("OPTIONS_APP_HEIGHT_WINDOWED"));
     IntOption(page, indentation_level, "video.windowed.left_edge", UserString("OPTIONS_APP_LEFT_WINDOWED"));
-    IntOption(page, indentation_level, "app-top-windowed",    UserString("OPTIONS_APP_TOP_WINDOWED"));
+    IntOption(page, indentation_level, "video.windowed.top_edge", UserString("OPTIONS_APP_TOP_WINDOWED"));
 
     // fps
     BoolOption(page, indentation_level, "show-fps", UserString("OPTIONS_SHOW_FPS"));
