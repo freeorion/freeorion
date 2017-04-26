@@ -1006,7 +1006,7 @@ void ClientUI::HandleFullscreenSwitch() const {
     OptionsDB& db = GetOptionsDB();
 
     std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-    if (!db.Get<bool>("fullscreen"))
+    if (!db.Get<bool>("video.fullscreen.enabled"))
         windowed = "-windowed";
 
     // Check if the message window position has been invalidated as a stand-in

@@ -1202,7 +1202,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
         drop_list->Select(current_resolution_index);
 
     // fullscreen / windowed toggle
-    BoolOption(page, indentation_level, "fullscreen",            UserString("OPTIONS_FULLSCREEN"));
+    BoolOption(page, indentation_level, "video.fullscreen.enabled", UserString("OPTIONS_FULLSCREEN"));
     // Fake mode change is not possible without the opengl frame buffer extension
     if (GG::SDLGUI::GetGUI()->FramebuffersAvailable()) {
         BoolOption(page, indentation_level, "fake-mode-change",       UserString("OPTIONS_FAKE_MODE_CHANGE"));

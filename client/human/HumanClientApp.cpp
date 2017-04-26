@@ -824,7 +824,7 @@ std::pair<int, int> HumanClientApp::GetWindowLeftTop() {
 std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
     int width(800), height(600);
 
-    bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
+    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
     if (!fullscreen) {
         width = GetOptionsDB().Get<int>("video.windowed.width");
         height = GetOptionsDB().Get<int>("video.windowed.height");
@@ -847,7 +847,7 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
 }
 
 void HumanClientApp::Reinitialize() {
-    bool fullscreen = GetOptionsDB().Get<bool>("fullscreen");
+    bool fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
     bool fake_mode_change = GetOptionsDB().Get<bool>("fake-mode-change");
     std::pair<int, int> size = GetWindowWidthHeight();
 
@@ -1032,7 +1032,7 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
             intro_screen->Resize(GG::Pt(w, h));
     }
 
-    if (!GetOptionsDB().Get<bool>("fullscreen") &&
+    if (!GetOptionsDB().Get<bool>("video.fullscreen.enabled") &&
          (GetOptionsDB().Get<int>("video.windowed.width") != w ||
           GetOptionsDB().Get<int>("video.windowed.height") != h))
     {
@@ -1101,8 +1101,8 @@ bool HumanClientApp::HandleHotkeyExitApp() {
 }
 
 bool HumanClientApp::ToggleFullscreen() {
-    bool fs = GetOptionsDB().Get<bool>("fullscreen");
-    GetOptionsDB().Set<bool>("fullscreen", !fs);
+    bool fs = GetOptionsDB().Get<bool>("video.fullscreen.enabled");
+    GetOptionsDB().Set<bool>("video.fullscreen.enabled", !fs);
     Reinitialize();
     return true;
 }
