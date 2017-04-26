@@ -22,7 +22,7 @@ namespace {
     void PlayMinimizeSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.maximize.sound.path"), true); }
     void PlayMaximizeSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-minimize"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.minimize.sound.path"), true); }
     void PlayCloseSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
 

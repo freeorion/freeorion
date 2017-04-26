@@ -495,7 +495,7 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_WINDOW"));
     SoundFileOption(current_page, 1, "UI.sound.window-close",    UserString("OPTIONS_SOUND_CLOSE"));
     SoundFileOption(current_page, 1, "ui.window.maximize.sound.path", UserString("OPTIONS_SOUND_MAXIMIZE"));
-    SoundFileOption(current_page, 1, "UI.sound.window-minimize", UserString("OPTIONS_SOUND_MINIMIZE"));
+    SoundFileOption(current_page, 1, "ui.window.minimize.sound.path", UserString("OPTIONS_SOUND_MINIMIZE"));
     SoundFileOption(current_page, 1, "UI.sound.sidepanel-open",  UserString("OPTIONS_SOUND_SIDEPANEL"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_LIST"));
