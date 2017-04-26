@@ -630,7 +630,7 @@ ClientUI::ClientUI() :
     m_multiplayer_lobby_wnd = GG::Wnd::Create<MultiPlayerLobbyWnd>();
     m_password_enter_wnd = GG::Wnd::Create<PasswordEnterWnd>();
 
-    GetOptionsDB().OptionChangedSignal("app-width").connect(
+    GetOptionsDB().OptionChangedSignal("video.fullscreen.width").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));
     GetOptionsDB().OptionChangedSignal("app-height").connect(
         boost::bind(&ClientUI::HandleSizeChange, this, true));

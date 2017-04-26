@@ -192,7 +192,7 @@ void HumanClientApp::AddWindowSizeOptionsAfterMainStart(OptionsDB& db) {
     const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
     const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
 
-    db.Add("app-width",             UserStringNop("OPTIONS_DB_APP_WIDTH"),             DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
+    db.Add("video.fullscreen.width", UserStringNop("OPTIONS_DB_APP_WIDTH"),            DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
     db.Add("app-height",            UserStringNop("OPTIONS_DB_APP_HEIGHT"),            DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
     db.Add("app-width-windowed",    UserStringNop("OPTIONS_DB_APP_WIDTH_WINDOWED"),    DEFAULT_WIDTH,       RangedValidator<int>(MIN_WIDTH, max_width_plus_one));
     db.Add("app-height-windowed",   UserStringNop("OPTIONS_DB_APP_HEIGHT_WINDOWED"),   DEFAULT_HEIGHT,      RangedValidator<int>(MIN_HEIGHT, max_height_plus_one));
@@ -833,14 +833,14 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
 
     bool reset_fullscreen = GetOptionsDB().Get<bool>("reset-fullscreen-size");
     if (!reset_fullscreen) {
-        width = GetOptionsDB().Get<int>("app-width");
+        width = GetOptionsDB().Get<int>("video.fullscreen.width");
         height = GetOptionsDB().Get<int>("app-height");
         return {width, height};
     }
 
     GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
     GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("fullscreen-monitor-id"));
-    GetOptionsDB().Set("app-width", Value(default_resolution.x));
+    GetOptionsDB().Set("video.fullscreen.width", Value(default_resolution.x));
     GetOptionsDB().Set("app-height", Value(default_resolution.y));
     GetOptionsDB().Commit();
     return {Value(default_resolution.x), Value(default_resolution.y)};

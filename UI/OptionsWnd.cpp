@@ -1132,7 +1132,7 @@ void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std:
 void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     std::shared_ptr<const RangedValidator<int>> width_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
-            GetOptionsDB().GetValidator("app-width"));
+            GetOptionsDB().GetValidator("video.fullscreen.width"));
     std::shared_ptr<const RangedValidator<int>> height_validator =
         std::dynamic_pointer_cast<const RangedValidator<int>>(
             GetOptionsDB().GetValidator("app-height"));
@@ -1154,7 +1154,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     std::vector<std::string> resolutions = GG::GUI::GetGUI()->GetSupportedResolutions();
 
     // find text representation of current fullscreen resolution selection
-    int width = GetOptionsDB().Get<int>("app-width");
+    int width = GetOptionsDB().Get<int>("video.fullscreen.width");
     int height = GetOptionsDB().Get<int>("app-height");
     std::string current_video_mode_str = boost::io::str(boost::format("%1% x %2%") % width % height);
 
@@ -1262,7 +1262,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
             using namespace boost::spirit::classic;
             rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)];
             parse(drop_list_row->Name().c_str(), resolution_p);
-            GetOptionsDB().Set<int>("app-width", w);
+            GetOptionsDB().Set<int>("video.fullscreen.width", w);
             GetOptionsDB().Set<int>("app-height", h);
         }
     );
