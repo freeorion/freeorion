@@ -60,7 +60,7 @@ namespace {
     /** @content_tag{CTRL_BOMBARD_} Prefix tag allowing automatic ship selection for bombard, must post-fix a valid planet tag **/
     const std::string TAG_BOMBARD_PREFIX = "CTRL_BOMBARD_";
 
-    void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.sidepanel-open"), true);}
+    void        PlaySidePanelOpenSound()       {Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.sidepanel.open.sound.path"), true);}
 
     struct RotatingPlanetData {
         RotatingPlanetData(const XMLElement& elem) {
