@@ -24,7 +24,7 @@ namespace {
     void PlayMaximizeSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.minimize.sound.path"), true); }
     void PlayCloseSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.window-close"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.window.close.sound.path"), true); }
 
     void AddOptions(OptionsDB& db) {
         db.AddFlag('w', "window-reset", UserStringNop("OPTIONS_DB_WINDOW_RESET"), false);
