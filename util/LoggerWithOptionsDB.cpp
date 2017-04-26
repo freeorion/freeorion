@@ -92,18 +92,18 @@ void InitLoggingOptionsDBSystem() {
     InfoLogger(log) << "Initialized OptionsDB logging configuration.";
 }
 
-void RegisterLoggerWithOptionsDB(const std::string name) {
-    if (name.empty())
+void RegisterLoggerWithOptionsDB(const std::string& logger_name) {
+    if (logger_name.empty())
         return;
 
     // Setup the OptionsDB options for this source.
     LogLevel options_db_log_threshold = AddLoggerToOptionsDB(
-        source_option_name_prefix + name);
+        source_option_name_prefix + logger_name);
 
     // Use the option.
-    SetLoggerThreshold(name, options_db_log_threshold);
+    SetLoggerThreshold(logger_name, options_db_log_threshold);
 
-    DebugLogger(log) << "Configure log source \"" << name << "\" from optionsDB "
+    DebugLogger(log) << "Configure log source \"" << logger_name << "\" from optionsDB "
                      << "using threshold " << to_string(options_db_log_threshold);
 }
 
