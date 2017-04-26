@@ -502,7 +502,7 @@ namespace {
         db.Add<std::string>("map.system.icon.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),  (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
         db.Add<std::string>("ui.window.sidepanel.open.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),        (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
         db.Add("audio.effects.new_turn.enabled",                UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE"),           false);
-        db.Add<std::string>("UI.sound.new-turn.sound-file",     UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),             (GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg").string());
+        db.Add<std::string>("audio.effects.new_turn.path",      UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),             (GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg").string());
 
         // fonts
         db.Add<std::string>("UI.font",          UserStringNop("OPTIONS_DB_UI_FONT"),                       (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Regular.ttf").string());
