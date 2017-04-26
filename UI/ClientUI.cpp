@@ -498,7 +498,7 @@ namespace {
         db.Add<std::string>("ui.window.close.sound.path",       UserStringNop("OPTIONS_DB_UI_SOUND_WINDOW_CLOSE"),             (GetRootDataDir() / "default" / "data" / "sound" / "window_close.ogg").string());
         db.Add<std::string>("audio.effects.alert.path",         UserStringNop("OPTIONS_DB_UI_SOUND_ALERT"),                    (GetRootDataDir() / "default/data/sound/alert.ogg").string());
         db.Add<std::string>("map.fleet.button.rollover.sound.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_ROLLOVER"), (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
-        db.Add<std::string>("UI.sound.fleet-button-click",      UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),       (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
+        db.Add<std::string>("map.fleet.button.rollover.click.path", UserStringNop("OPTIONS_DB_UI_SOUND_FLEET_BUTTON_CLICK"),   (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_click.ogg").string());
         db.Add<std::string>("UI.sound.system-icon-rollover",    UserStringNop("OPTIONS_DB_UI_SOUND_SYSTEM_ICON_ROLLOVER"),     (GetRootDataDir() / "default" / "data" / "sound" / "fleet_button_rollover.ogg").string());
         db.Add<std::string>("UI.sound.sidepanel-open",          UserStringNop("OPTIONS_DB_UI_SOUND_SIDEPANEL_OPEN"),           (GetRootDataDir() / "default" / "data" / "sound" / "sidepanel_open.ogg").string());
         db.Add("UI.sound.new-turn.toggle",                      UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_TOGGLE"),           false);
