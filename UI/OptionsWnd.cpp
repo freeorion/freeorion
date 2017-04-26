@@ -1228,7 +1228,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     IntOption(page, indentation_level, "video.windowed.top_edge", UserString("OPTIONS_APP_TOP_WINDOWED"));
 
     // fps
-    BoolOption(page, indentation_level, "show-fps", UserString("OPTIONS_SHOW_FPS"));
+    BoolOption(page, indentation_level, "video.fps.shown", UserString("OPTIONS_SHOW_FPS"));
 
     //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
     //GG::Spin<double>* max_fps_spin =

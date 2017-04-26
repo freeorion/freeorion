@@ -281,7 +281,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     EnableFPS();
     UpdateFPSLimit();
-    GetOptionsDB().OptionChangedSignal("show-fps").connect(
+    GetOptionsDB().OptionChangedSignal("video.fps.shown").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
     GetOptionsDB().OptionChangedSignal("max-fps").connect(
         boost::bind(&HumanClientApp::UpdateFPSLimit, this));
