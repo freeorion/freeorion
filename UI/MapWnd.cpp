@@ -2827,7 +2827,7 @@ void MapWnd::InitTurn() {
         m_btn_auto_turn->Show();
     }
 
-    if (GetOptionsDB().Get<bool>("UI.sound.new-turn.toggle"))
+    if (GetOptionsDB().Get<bool>("audio.effects.new_turn.enabled"))
         Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.new-turn.sound-file"), true);
 }
 
