@@ -132,7 +132,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().Add<int>("auto-advance-n-turns",     UserStringNop("OPTIONS_DB_AUTO_N_TURNS"),          0, RangedValidator<int>(0, 400), false);
         GetOptionsDB().Add<std::string>("load",             UserStringNop("OPTIONS_DB_LOAD"),                  "", Validator<std::string>(), false);
         GetOptionsDB().Add("audio.music.enabled",           UserStringNop("OPTIONS_DB_MUSIC_ON"),              true);
-        GetOptionsDB().Add("UI.sound.enabled",              UserStringNop("OPTIONS_DB_SOUND_ON"),              true);
+        GetOptionsDB().Add("audio.effects.enabled",         UserStringNop("OPTIONS_DB_SOUND_ON"),              true);
         GetOptionsDB().Add<std::string>("version-string",   UserStringNop("OPTIONS_DB_VERSION_STRING"),
                                         FreeOrionVersionString(),   Validator<std::string>(),                  true);
         GetOptionsDB().AddFlag('r', "render-simple",        UserStringNop("OPTIONS_DB_RENDER_SIMPLE"),         false);

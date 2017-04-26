@@ -464,7 +464,7 @@ void OptionsWnd::CompleteConstruction() {
     AttachChild(m_done_button);
     AttachChild(m_tabs);
 
-    bool UI_sound_enabled = GetOptionsDB().Get<bool>("UI.sound.enabled");
+    bool UI_sound_enabled = GetOptionsDB().Get<bool>("audio.effects.enabled");
     GG::ListBox* current_page = nullptr;
 
     Sound::TempUISoundDisabler sound_disabler;
@@ -478,7 +478,7 @@ void OptionsWnd::CompleteConstruction() {
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUDIO"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_VOLUME_AND_MUSIC"));
     MusicVolumeOption(current_page, 0, m_sound_feedback);
-    VolumeOption(current_page, 0, "UI.sound.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
+    VolumeOption(current_page, 0, "audio.effects.enabled", "UI.sound.volume", UserString("OPTIONS_UI_SOUNDS"), UI_sound_enabled, m_sound_feedback);
     FileOption(current_page, 0, "UI.sound.bg-music", UserString("OPTIONS_BACKGROUND_MUSIC"), ClientUI::SoundDir(),
                std::make_pair(UserString("OPTIONS_MUSIC_FILE"), "*" + MUSIC_FILE_SUFFIX),
                ValidMusicFile);
@@ -1297,13 +1297,13 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
     if (checked) {
         try {
             Sound::GetSound().Enable();
-            GetOptionsDB().Set("UI.sound.enabled", true);
+            GetOptionsDB().Set("audio.effects.enabled", true);
             Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
     } else {
-        GetOptionsDB().Set("UI.sound.enabled", false);
+        GetOptionsDB().Set("audio.effects.enabled", false);
         if (!GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().Disable();
     }
@@ -1321,7 +1321,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicClicked(bool checked) {
     } else {
         GetOptionsDB().Set("audio.music.enabled", false);
         Sound::GetSound().StopMusic();
-        if (!GetOptionsDB().Get<bool>("UI.sound.enabled"))
+        if (!GetOptionsDB().Get<bool>("audio.effects.enabled"))
             Sound::GetSound().Disable();
     }
 }
@@ -1344,7 +1344,7 @@ void OptionsWnd::SoundOptionsFeedback::SetEffectsButton(std::shared_ptr<GG::Stat
 { m_effects_button = button; }
 
 void OptionsWnd::SoundOptionsFeedback::SoundInitializationFailure(Sound::InitializationFailureException const &e) {
-    GetOptionsDB().Set("UI.sound.enabled", false);
+    GetOptionsDB().Set("audio.effects.enabled", false);
     GetOptionsDB().Set("audio.music.enabled", false);
     if (m_effects_button)
         m_effects_button->SetCheck(false);

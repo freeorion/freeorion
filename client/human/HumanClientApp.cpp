@@ -265,7 +265,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     bool inform_user_sound_failed(false);
     try {
-        if (GetOptionsDB().Get<bool>("UI.sound.enabled") || GetOptionsDB().Get<bool>("audio.music.enabled"))
+        if (GetOptionsDB().Get<bool>("audio.effects.enabled") || GetOptionsDB().Get<bool>("audio.music.enabled"))
             Sound::GetSound().Enable();
 
         if ((GetOptionsDB().Get<bool>("audio.music.enabled")))

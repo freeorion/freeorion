@@ -216,7 +216,7 @@ Sound::Impl::Impl() :
     m_temporary_disable_count(0),
     m_initialized(false)
 {
-    if (!GetOptionsDB().Get<bool>("UI.sound.enabled") && !GetOptionsDB().Get<bool>("audio.music.enabled"))
+    if (!GetOptionsDB().Get<bool>("audio.effects.enabled") && !GetOptionsDB().Get<bool>("audio.music.enabled"))
         return;
 
     try {
@@ -500,7 +500,7 @@ void Sound::Impl::StopMusic() {
 }
 
 void Sound::Impl::PlaySound(const boost::filesystem::path& path, bool is_ui_sound/* = false*/) {
-    if (!m_initialized || !GetOptionsDB().Get<bool>("UI.sound.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
+    if (!m_initialized || !GetOptionsDB().Get<bool>("audio.effects.enabled") || (is_ui_sound && UISoundsTemporarilyDisabled()))
         return;
 
     std::string filename = PathToString(path);
