@@ -1209,7 +1209,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     } else {
         GetOptionsDB().Set<bool>("video.fake_mode.enabled", false);
     }
-    IntOption(page, indentation_level,  "fullscreen-monitor-id", UserString("OPTIONS_FULLSCREEN_MONITOR_ID"));
+    IntOption(page, indentation_level, "video.monitor.id", UserString("OPTIONS_FULLSCREEN_MONITOR_ID"));
 
 
     // customizable windowed width and height
