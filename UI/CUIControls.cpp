@@ -29,7 +29,7 @@
 
 namespace {
     void PlayButtonClickSound()
-    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true); }
+    { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.button.click.sound.path"), true); }
 
     void PlayButtonRolloverSound()
     { Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.button.rollover.sound.path"), true); }

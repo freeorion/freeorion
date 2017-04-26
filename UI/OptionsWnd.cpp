@@ -504,7 +504,7 @@ void OptionsWnd::CompleteConstruction() {
     SoundFileOption(current_page, 1, "UI.sound.list-select",   UserString("OPTIONS_SOUND_SELECT"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_SOUND_BUTTON"));
-    SoundFileOption(current_page, 1, "UI.sound.button-click",          UserString("OPTIONS_SOUND_CLICK"));
+    SoundFileOption(current_page, 1, "ui.control.button.click.sound.path", UserString("OPTIONS_SOUND_CLICK"));
     SoundFileOption(current_page, 1, "ui.control.button.rollover.sound.path", UserString("OPTIONS_SOUND_ROLLOVER"));
     SoundFileOption(current_page, 1, "UI.sound.fleet-button-click",    UserString("OPTIONS_SOUND_FLEET_CLICK"));
     SoundFileOption(current_page, 1, "UI.sound.fleet-button-rollover", UserString("OPTIONS_SOUND_FLEET_ROLLOVER"));
@@ -1298,7 +1298,7 @@ void OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked(bool checked) {
         try {
             Sound::GetSound().Enable();
             GetOptionsDB().Set("audio.effects.enabled", true);
-            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+            Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.button.click.sound.path"), true);
         } catch (Sound::InitializationFailureException const &e) {
             SoundInitializationFailure(e);
         }
@@ -1334,7 +1334,7 @@ void OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid(int pos, int low, int hig
 void OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid(int pos, int low, int high) const {
     GetOptionsDB().Set("audio.effects.volume", pos);
     Sound::GetSound().SetUISoundsVolume(pos);
-    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("UI.sound.button-click"), true);
+    Sound::GetSound().PlaySound(GetOptionsDB().Get<std::string>("ui.control.button.click.sound.path"), true);
 }
 
 void OptionsWnd::SoundOptionsFeedback::SetMusicButton(std::shared_ptr<GG::StateButton> button)
