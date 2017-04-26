@@ -831,14 +831,14 @@ std::pair<int, int> HumanClientApp::GetWindowWidthHeight() {
         return {width, height};
     }
 
-    bool reset_fullscreen = GetOptionsDB().Get<bool>("reset-fullscreen-size");
+    bool reset_fullscreen = GetOptionsDB().Get<bool>("video.fullscreen.reset");
     if (!reset_fullscreen) {
         width = GetOptionsDB().Get<int>("video.fullscreen.width");
         height = GetOptionsDB().Get<int>("video.fullscreen.height");
         return {width, height};
     }
 
-    GetOptionsDB().Set<bool>("reset-fullscreen-size", false);
+    GetOptionsDB().Set<bool>("video.fullscreen.reset", false);
     GG::Pt default_resolution = GetDefaultResolutionStatic(GetOptionsDB().Get<int>("video.monitor.id"));
     GetOptionsDB().Set("video.fullscreen.width", Value(default_resolution.x));
     GetOptionsDB().Set("video.fullscreen.height", Value(default_resolution.y));

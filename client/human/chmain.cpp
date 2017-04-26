@@ -123,7 +123,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         GetOptionsDB().AddFlag('v', "version",              UserStringNop("OPTIONS_DB_VERSION"),               false);
         GetOptionsDB().AddFlag('g', "generate-config-xml",  UserStringNop("OPTIONS_DB_GENERATE_CONFIG_XML"),   false);
         GetOptionsDB().AddFlag('f', "video.fullscreen.enabled", UserStringNop("OPTIONS_DB_FULLSCREEN"),        STORE_FULLSCREEN_FLAG);
-        GetOptionsDB().Add("reset-fullscreen-size",         UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
+        GetOptionsDB().Add("video.fullscreen.reset",        UserStringNop("OPTIONS_DB_RESET_FSSIZE"),          true);
         GetOptionsDB().Add<bool>("video.fake_mode.enabled", UserStringNop("OPTIONS_DB_FAKE_MODE_CHANGE"),      FAKE_MODE_CHANGE_FLAG);
         GetOptionsDB().Add<int>("video.monitor.id",         UserStringNop("OPTIONS_DB_FULLSCREEN_MONITOR_ID"), 0, RangedValidator<int>(0, 5));
         GetOptionsDB().AddFlag('q', "quickstart",           UserStringNop("OPTIONS_DB_QUICKSTART"),            false);
