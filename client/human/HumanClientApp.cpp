@@ -206,9 +206,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 #endif
     m_fsm.reset(new HumanClientFSM(*this));
 
-    const std::string HUMAN_CLIENT_LOG_FILENAME((GetUserDataDir() / "freeorion.log").string());
-
-    InitLogger(HUMAN_CLIENT_LOG_FILENAME, "Client");
+    // TODO Add an increment here to support multiple human clients (hotseat)
+    InitLogger("HumanClient");
 
     try {
         InfoLogger() << "GL Version String: " << GetGLVersionString();

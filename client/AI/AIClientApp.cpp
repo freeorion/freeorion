@@ -82,12 +82,11 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     // read command line args
 
     m_player_name = args.at(1);
-    const std::string AICLIENT_LOG_FILENAME((GetUserDataDir() / (m_player_name + ".log")).string());
     if (args.size() >=3) {
         m_max_aggression = boost::lexical_cast<int>(args.at(2));
     }
 
-    InitLogger(AICLIENT_LOG_FILENAME, "AI");
+    InitLogger(m_player_name);
     DebugLogger() << PlayerName() + " ai client initialized.";
 }
 

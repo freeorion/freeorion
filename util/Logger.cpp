@@ -14,11 +14,15 @@
 #include <boost/log/utility/setup/formatter_parser.hpp>
 #include <boost/log/utility/setup/filter_parser.hpp>
 #include <boost/log/support/date_time.hpp>
+#include <boost/filesystem/path.hpp>
+#include <chrono>
+#include <boost/filesystem/operations.hpp>
 
 namespace logging = boost::log;
 namespace expr = boost::log::expressions;
 namespace attr = boost::log::attributes;
 namespace keywords = boost::log::keywords;
+namespace fs = boost::filesystem;
 
 
 namespace {
@@ -50,24 +54,38 @@ int g_indent = 0;
 std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
-void InitLogger(const std::string& logFile, const std::string& process) {
+void InitLogger(const std::string& process_name) {
+    unsigned int rot_size_mb = GetOptionsDB().Get<unsigned int>("logging.rotate-mb");
+    fs::path log_dir = GetOptionsDB().Get<std::string>("logging.directory");
+    if (!fs::exists(log_dir))
+        fs::create_directories(log_dir);
+    std::string ts_str = std::to_string(std::chrono::system_clock::to_time_t(
+        std::chrono::system_clock::now()));
+
+    // create the sink (frontend)
+    std::string filename_mask = process_name + "-%3N-" + ts_str + ".log";
     logging::add_file_log(
-        keywords::file_name = logFile.c_str(),
+        keywords::file_name = (log_dir / filename_mask).string().c_str(),
+        keywords::rotation_size = std::max(1u, rot_size_mb) * 1024 * 1024,
         keywords::auto_flush = true,
         keywords::format = expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%Y-%m-%d %H:%M:%S.%f")
             << " [" << expr::attr<logging::trivial::severity_level>("Severity") << "] "
-            << process << " : " << log_src_filename << ":" << log_src_linenum << " : "
-            << expr::message
-        );
+            << " : " << log_src_filename << ":" << log_src_linenum << " : "
+            << expr::message);
 
-    logging::core::get()->set_filter(logging::trivial::severity >= logging::trivial::trace);
-    logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
+    logging::core::get()->set_filter(
+        logging::trivial::severity >= logging::trivial::trace);
 
-    DebugLogger() << "Logger initialized";
+    logging::core::get()->add_global_attribute(
+        "TimeStamp", attr::local_clock());
+
+
+    TraceLogger() << "Logging initialized for process " << process_name;
     InfoLogger() << FreeOrionVersionString();
 
-    int options_db_log_priority = PriorityValue(GetOptionsDB().Get<std::string>("log-level"));
+    int options_db_log_priority = PriorityValue(
+        GetOptionsDB().Get<std::string>("log-level"));
     SetLoggerPriority(options_db_log_priority);
 }
 

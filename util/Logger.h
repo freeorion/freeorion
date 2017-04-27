@@ -8,9 +8,11 @@
 #include "Export.h"
 
 
-/** Initializes the logging system. Log to the given file.
- * If the file already exists it will be deleted. */
-FO_COMMON_API void InitLogger(const std::string& logFile, const std::string& pattern);
+/** Initializes the logging system.
+ * 
+ * @param[in] process_name name for this log, used in file and directory naming
+ */
+FO_COMMON_API void InitLogger(const std::string& process_name);
 
 /** Accessors for the App's logger */
 FO_COMMON_API void SetLoggerPriority(int priority);
