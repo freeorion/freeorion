@@ -182,7 +182,7 @@ namespace {
         // disabled, to hopefully improve frame rate.
         if (version_number < 2.0) {
             GetOptionsDB().Set<bool>("map.system.background.gas.shown", false);
-            GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
+            GetOptionsDB().Set<bool>("map.system.background.starfields.shown", false);
             GetOptionsDB().Set<bool>("map.scanlines.shown", false);
         }
     }

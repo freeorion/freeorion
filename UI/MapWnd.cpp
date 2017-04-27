@@ -108,7 +108,7 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         db.Add("map.system.background.gas.shown",   UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                     true,       Validator<bool>());
-        db.Add("UI.galaxy-starfields",              UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),              true,       Validator<bool>());
+        db.Add("map.system.background.starfields.shown", UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),         true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale-circle",   UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
         db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
@@ -1724,7 +1724,7 @@ void MapWnd::Render() {
 }
 
 void MapWnd::RenderStarfields() {
-    if (!GetOptionsDB().Get<bool>("UI.galaxy-starfields"))
+    if (!GetOptionsDB().Get<bool>("map.system.background.starfields.shown"))
         return;
 
     double starfield_width = GetUniverse().UniverseWidth();
@@ -2580,7 +2580,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool resourceColor  = GetOptionsDB().Get<bool>("map.starlane.empire.color.shown");
         bool fleetSupply    = GetOptionsDB().Get<bool>("map.fleet.supply_line.shown");
         bool gas            = GetOptionsDB().Get<bool>("map.system.background.gas.shown");
-        bool starfields     = GetOptionsDB().Get<bool>("UI.galaxy-starfields");
+        bool starfields     = GetOptionsDB().Get<bool>("map.system.background.starfields.shown");
         bool scale          = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
         bool scaleCircle    = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle");
         bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
@@ -2592,7 +2592,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("map.starlane.empire.color.shown", !resourceColor);  };
         auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("map.fleet.supply_line.shown",    !fleetSupply);     };
         auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("map.system.background.gas.shown", !gas);        };
-        auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  };
+        auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("map.system.background.starfields.shown", !starfields);  };
         auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        };
         auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale-circle",!scaleCircle);   };
         auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);      };
