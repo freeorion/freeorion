@@ -40,7 +40,7 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("ui.window.research.tree.spacing.horizontal", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 0.25, RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("ui.window.research.tree.spacing.vertical", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
-        db.Add("UI.tech-layout-zoom-scale",     UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
+        db.Add("ui.window.research.tree.zoom.scale", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"), 1.0, RangedStepValidator<double>(1.0, -25.0, 10.0));
         db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
         db.Add("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
 
@@ -1092,7 +1092,7 @@ void TechTreeWnd::LayoutPanel::CompleteConstruction() {
 
     SetChildClippingMode(ClipToClient);
 
-    m_scale = std::pow(ZOOM_STEP_SIZE, GetOptionsDB().Get<double>("UI.tech-layout-zoom-scale")); //(LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
+    m_scale = std::pow(ZOOM_STEP_SIZE, GetOptionsDB().Get<double>("ui.window.research.tree.zoom.scale")); // (LATHANDA) Initialise Fullzoom and do real zooming using GL. TODO: Check best size
 
     m_layout_surface = GG::Wnd::Create<LayoutSurface>();
 
@@ -1249,7 +1249,7 @@ void TechTreeWnd::LayoutPanel::SetScale(double scale) {
     if (MAX_SCALE < scale)
         scale = MAX_SCALE;
     m_scale = scale;
-    GetOptionsDB().Set<double>("UI.tech-layout-zoom-scale", std::floor(0.1 + (std::log(m_scale) / std::log(ZOOM_STEP_SIZE))));
+    GetOptionsDB().Set<double>("ui.window.research.tree.zoom.scale", std::floor(0.1 + (std::log(m_scale) / std::log(ZOOM_STEP_SIZE))));
 
     for (auto& entry : m_techs)
         entry.second->RequirePreRender();
