@@ -566,8 +566,8 @@ namespace {
         db.Add("ui.name.id.shown",              UserStringNop("OPTIONS_DB_SHOW_IDS_AFTER_NAMES"),          false);
 
         // Other
-        db.Add("auto-add-saved-designs",        UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),        true);
-        db.Add("auto-add-default-designs",      UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),           true);
+        db.Add("shipdesign.auto_add.saved.enabled",    UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"), true);
+        db.Add("shipdesign.auto_add.default.enabled",  UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),    true);
 
     }
     bool temp_bool = RegisterOptions(&AddOptions);

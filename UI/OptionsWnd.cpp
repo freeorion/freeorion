@@ -736,8 +736,8 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page, 0, "effects.ui.threads",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
     IntOption(current_page, 0, "effects.server.threads",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
     IntOption(current_page, 0, "effects.ai.threads",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
-    BoolOption(current_page, 0, "auto-add-saved-designs",   UserString("OPTIONS_ADD_SAVED_DESIGNS"));
-    BoolOption(current_page, 0, "auto-add-default-designs", UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
+    BoolOption(current_page, 0, "shipdesign.auto_add.saved.enabled",   UserString("OPTIONS_ADD_SAVED_DESIGNS"));
+    BoolOption(current_page, 0, "shipdesign.auto_add.default.enabled", UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
     BoolOption(current_page, 0, "binary-serialization",     UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
     BoolOption(current_page, 0, "xml-zlib-serialization",   UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
     BoolOption(current_page, 0, "ui.window.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));

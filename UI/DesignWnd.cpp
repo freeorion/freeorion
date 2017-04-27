@@ -465,7 +465,7 @@ namespace {
         m_is_new_game = false;
 
         // If requested on the first turn copy all of the saved designs to the client empire.
-        if (GetOptionsDB().Get<bool>("auto-add-saved-designs")) {
+        if (GetOptionsDB().Get<bool>("shipdesign.auto_add.saved.enabled")) {
             const auto empire_id = HumanClientApp::GetApp()->EmpireID();
             TraceLogger() << "Adding saved designs to empire.";
             for (const auto& uuid : m_ordered_uuids)
@@ -758,7 +758,7 @@ void ShipDesignManager::StartGame(int empire_id, bool is_new_game) {
         return;
 
     // If requested initialize the current designs to all designs known by the empire
-    if(GetOptionsDB().Get<bool>("auto-add-default-designs")) {
+    if(GetOptionsDB().Get<bool>("shipdesign.auto_add.default.enabled")) {
 
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
@@ -2577,9 +2577,9 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     };
 
     // toggle the option to add all saved designs at game start.
-    const auto add_defaults = GetOptionsDB().Get<bool>("auto-add-default-designs");
+    const auto add_defaults = GetOptionsDB().Get<bool>("shipdesign.auto_add.default.enabled");
     auto toggle_add_default_designs_at_game_start_action = [add_defaults]() {
-        GetOptionsDB().Set<bool>("auto-add-default-designs", !add_defaults);
+        GetOptionsDB().Set<bool>("shipdesign.auto_add.default.enabled", !add_defaults);
     };
 
     // create popup menu with a commands in it
@@ -2649,9 +2649,9 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     };
 
     // toggle the option to add all saved designs at game start.
-    const auto add_all = GetOptionsDB().Get<bool>("auto-add-saved-designs");
+    const auto add_all = GetOptionsDB().Get<bool>("shipdesign.auto_add.saved.enabled");
     auto toggle_add_all_saved_game_start_action = [add_all]() {
-        GetOptionsDB().Set<bool>("auto-add-saved-designs", !add_all);
+        GetOptionsDB().Set<bool>("shipdesign.auto_add.saved.enabled", !add_all);
     };
 
     
