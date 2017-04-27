@@ -114,7 +114,7 @@ namespace {
         db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
         db.Add("map.starlane.thickness",            UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                      2.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
-        db.Add("UI.resource-starlane-colouring",    UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
+        db.Add("map.starlane.empire.color.shown",   UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
         db.Add("UI.fleet-supply-lines",             UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                 true,       Validator<bool>());
         db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.fleet-supply-line-dot-spacing",  UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
@@ -2121,7 +2121,7 @@ void MapWnd::RenderStarlanes() {
     if (GetGameRules().Get<bool>("RULE_STARLANES_EVERYWHERE"))
         return;
 
-    bool coloured = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
+    bool coloured = GetOptionsDB().Get<bool>("map.starlane.empire.color.shown");
     float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("UI.starlane-core-multiplier"));
     RenderStarlanes(m_RC_starlane_vertices, m_RC_starlane_colors, core_multiplier * ZoomFactor(), coloured, false);
     RenderStarlanes(m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
@@ -2577,7 +2577,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool fps            = GetOptionsDB().Get<bool>("video.fps.shown");
         bool showPlanets    = GetOptionsDB().Get<bool>("ui.window.sidepanel.planet.shown");
         bool systemCircles  = GetOptionsDB().Get<bool>("map.system.circle.shown");
-        bool resourceColor  = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
+        bool resourceColor  = GetOptionsDB().Get<bool>("map.starlane.empire.color.shown");
         bool fleetSupply    = GetOptionsDB().Get<bool>("UI.fleet-supply-lines");
         bool gas            = GetOptionsDB().Get<bool>("UI.galaxy-gas-background");
         bool starfields     = GetOptionsDB().Get<bool>("UI.galaxy-starfields");
@@ -2589,7 +2589,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("video.fps.shown",                !fps);         };
         auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("ui.window.sidepanel.planet.shown", !showPlanets);  };
         auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("map.system.circle.shown",        !systemCircles); };
-        auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("UI.resource-starlane-colouring", !resourceColor);  };
+        auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("map.starlane.empire.color.shown", !resourceColor);  };
         auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("UI.fleet-supply-lines",          !fleetSupply);     };
         auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        };
         auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  };
