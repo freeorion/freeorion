@@ -607,7 +607,7 @@ void OptionsWnd::CompleteConstruction() {
     DoubleOption(current_page, 0, "map.starlane.thickness.core_multiplier", UserString("OPTIONS_DB_STARLANE_CORE"));
     BoolOption(current_page,   0, "map.fleet.supply_line.shown",           UserString("OPTIONS_FLEET_SUPPLY_LINES"));
     DoubleOption(current_page, 0, "map.fleet.supply_line.width",           UserString("OPTIONS_FLEET_SUPPLY_LINE_WIDTH"));
-    IntOption(current_page,    0, "UI.fleet-supply-line-dot-spacing",      UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
+    IntOption(current_page,    0, "map.fleet.supply_line.dot.spacing",     UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_SPACING"));
     DoubleOption(current_page, 0, "UI.fleet-supply-line-dot-rate",         UserString("OPTIONS_FLEET_SUPPLY_LINE_DOT_RATE"));
     ColorOption(current_page,  0, "UI.unowned-starlane-colour",            UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
 
