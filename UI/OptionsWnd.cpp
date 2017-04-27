@@ -548,7 +548,7 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page, 0, "ui.input.keyboard.repeat.delay", UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
     IntOption(current_page, 0, "ui.input.keyboard.repeat.interval", UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
     IntOption(current_page, 0, "ui.input.mouse.button.repeat.delay", UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
-    IntOption(current_page, 0, "UI.mouse-click-repeat-interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
+    IntOption(current_page, 0, "ui.input.mouse.button.repeat.interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONTS"));
     FontOption(current_page, 0, "UI.font",       UserString("OPTIONS_FONT_TEXT"));

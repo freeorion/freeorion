@@ -107,7 +107,7 @@ namespace {
         db.Add("ui.input.keyboard.repeat.delay", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),     360,    RangedValidator<int>(0, 1000));
         db.Add("ui.input.keyboard.repeat.interval", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"), 20,   RangedValidator<int>(0, 1000));
         db.Add("ui.input.mouse.button.repeat.delay", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),    360,    RangedValidator<int>(0, 1000));
-        db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
+        db.Add("ui.input.mouse.button.repeat.interval", UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"), 15, RangedValidator<int>(0, 1000));
         db.Add("UI.display-timestamp",          UserStringNop("OPTIONS_DB_DISPLAY_TIMESTAMP"),          true,   Validator<bool>());
 
         Hotkey::AddHotkey("exit",       UserStringNop("HOTKEY_EXIT"),       GG::GGK_NONE,   GG::MOD_KEY_NONE);
@@ -300,7 +300,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     EnableKeyPressRepeat(GetOptionsDB().Get<int>("ui.input.keyboard.repeat.delay"),
                          GetOptionsDB().Get<int>("ui.input.keyboard.repeat.interval"));
     EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.delay"),
-                                GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
+                                GetOptionsDB().Get<int>("ui.input.mouse.button.repeat.interval"));
     EnableModalAcceleratorSignals(true);
 
     WindowResizedSignal.connect(
