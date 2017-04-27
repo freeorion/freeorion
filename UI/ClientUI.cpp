@@ -348,7 +348,7 @@ GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptions
 GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("research.completed.border.color"); }
 GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<GG::Clr>("research.background.color"); }
 GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<GG::Clr>("research.border.color"); }
-GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<GG::Clr>("UI.unresearchable-tech"); }
+GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<GG::Clr>("research.unresearchable.background.color"); }
 GG::Clr     ClientUI::UnresearchableTechTextAndBorderColor() { return GetOptionsDB().Get<GG::Clr>("UI.unresearchable-tech-border"); }
 GG::Clr     ClientUI::TechWndProgressBarBackgroundColor()    { return GetOptionsDB().Get<GG::Clr>("research.incomplete.background.color"); }
 GG::Clr     ClientUI::TechWndProgressBarColor()              { return GetOptionsDB().Get<GG::Clr>("research.incomplete.progress.color"); }
@@ -544,7 +544,7 @@ namespace {
         db.Add("research.completed.border.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),        GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
         db.Add("research.background.color",     UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"),          GG::Clr(48, 48, 48, 255),    Validator<GG::Clr>());
         db.Add("research.border.color",         UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"),   GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
-        db.Add("UI.unresearchable-tech",        UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"),        GG::Clr(30, 30, 30, 255),    Validator<GG::Clr>());
+        db.Add("research.unresearchable.background.color", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"), GG::Clr(30, 30, 30, 255), Validator<GG::Clr>());
         db.Add("UI.unresearchable-tech-border", UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH_BORDER"), GG::Clr(86, 86, 86, 255),    Validator<GG::Clr>());
         db.Add("research.incomplete.background.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS_BACKGROUND"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
         db.Add("research.incomplete.progress.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"),         GG::Clr(40, 40, 40, 255),    Validator<GG::Clr>());
