@@ -408,7 +408,7 @@ namespace {
     void        AddOptions(OptionsDB& db) {
         db.Add("UI.sidepanel-planet-max-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),  128,    RangedValidator<int>(16, 512));
         db.Add("UI.sidepanel-planet-min-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),  24,     RangedValidator<int>(8,  128));
-        db.Add("UI.sidepanel-planet-shown",          UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),         true,   Validator<bool>());
+        db.Add("ui.window.sidepanel.planet.shown",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),         true,   Validator<bool>());
         db.Add("UI.sidepanel-planet-fog-of-war-clr", UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),                 GG::Clr(0, 0, 0, 128),  Validator<GG::Clr>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -1103,7 +1103,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 
 void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
     std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
-    if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
+    if (!planet || !GetOptionsDB().Get<bool>("ui.window.sidepanel.planet.shown"))
         return;
 
     DetachChildAndReset(m_planet_graphic);

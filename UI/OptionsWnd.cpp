@@ -519,7 +519,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "ui.input.mouse.button_swap.enabled", UserString("OPTIONS_SWAP_MOUSE_LR"));
     BoolOption(current_page, 0, "ui.window.fleet.multiple.enabled", UserString("OPTIONS_MULTIPLE_FLEET_WNDS"));
     BoolOption(current_page, 0, "ui.window.quickclose.enabled", UserString("OPTIONS_QUICK_CLOSE_WNDS"));
-    BoolOption(current_page, 0, "UI.sidepanel-planet-shown",     UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
+    BoolOption(current_page, 0, "ui.window.sidepanel.planet.shown", UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"));
     BoolOption(current_page, 0, "ui.window.reposition.enabled",  UserString("OPTIONS_AUTO_REPOSITION_WINDOWS"));
     BoolOption(current_page, 0, "UI.display-timestamp",          UserString("OPTIONS_DISPLAY_TIMESTAMP"));
 
