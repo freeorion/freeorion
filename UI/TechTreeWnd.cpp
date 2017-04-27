@@ -63,7 +63,7 @@ namespace {
         db.Add<bool>("research.unresearchable.shown",
                      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_UNRESEARCHABLE"),
                      false,        Validator<bool>());
-        db.Add<bool>("UI.research.tech-tree-control.status.has_researched_prereq",
+        db.Add<bool>("research.has_prereq.shown",
                      UserStringNop("OPTIONS_DB_UI_TECH_TREE_STATUS_HAS_RESEARCHED_PREREQ"),
                      true,         Validator<bool>());
         db.Add<bool>("UI.research.tech-tree-control.status.researchable",
@@ -311,7 +311,7 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(UserString("TECH_WND_STATUS_PARTIAL_UNLOCK"), ""));
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetBrowseModeTime(tooltip_delay);
     m_status_buttons[TS_HAS_RESEARCHED_PREREQ]->SetCheck(
-        GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
+        GetOptionsDB().Get<bool>("research.has_prereq.shown"));
     AttachChild(m_status_buttons[TS_HAS_RESEARCHED_PREREQ]);
 
     m_status_buttons[TS_RESEARCHABLE] = GG::Wnd::Create<GG::StateButton>("", ClientUI::GetFont(), GG::FORMAT_NONE, GG::CLR_ZERO,
@@ -2140,7 +2140,7 @@ void TechTreeWnd::CompleteConstruction() {
         ShowAllCategories();
         SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("research.completed.shown"));
         SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("research.unresearchable.shown"));
-        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
+        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("research.has_prereq.shown"));
         SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
     }
 
@@ -2209,7 +2209,7 @@ void TechTreeWnd::Show() {
         ShowAllCategories();
         SetTechStatus(TS_COMPLETE, GetOptionsDB().Get<bool>("research.completed.shown"));
         SetTechStatus(TS_UNRESEARCHABLE, GetOptionsDB().Get<bool>("research.unresearchable.shown"));
-        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.has_researched_prereq"));
+        SetTechStatus(TS_HAS_RESEARCHED_PREREQ, GetOptionsDB().Get<bool>("research.has_prereq.shown"));
         SetTechStatus(TS_RESEARCHABLE, GetOptionsDB().Get<bool>("UI.research.tech-tree-control.status.researchable"));
     }
 }
@@ -2264,7 +2264,7 @@ void TechTreeWnd::SetTechStatus(const TechStatus status, const bool state) {
         GetOptionsDB().Set<bool>("research.unresearchable.shown", state);
         break;
     case TS_HAS_RESEARCHED_PREREQ:
-        GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.has_researched_prereq", state);
+        GetOptionsDB().Set<bool>("research.has_prereq.shown", state);
         break;
     case TS_RESEARCHABLE:
         GetOptionsDB().Set<bool>("UI.research.tech-tree-control.status.researchable", state);
