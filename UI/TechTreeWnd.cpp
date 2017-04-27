@@ -38,7 +38,7 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.tech-layout-horz-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 0.25,  RangedStepValidator<double>(0.25, 0.25, 4.0));
+        db.Add("ui.window.research.tree.spacing.horizontal", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 0.25, RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("UI.tech-layout-vert-spacing",   UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("UI.tech-layout-zoom-scale",     UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"),   1.0,  RangedStepValidator<double>(1.0, -25.0, 10.0));
         db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
@@ -1361,7 +1361,7 @@ GG::Pt TechTreeWnd::LayoutPanel::ConvertPtZoomedToScreen(const GG::Pt& pt) const
 void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
     const GG::X TECH_PANEL_MARGIN_X(ClientUI::Pts()*16);
     const GG::Y TECH_PANEL_MARGIN_Y(ClientUI::Pts()*16 + 100);
-    const double RANK_SEP = Value(TechPanelWidth()) * GetOptionsDB().Get<double>("UI.tech-layout-horz-spacing");
+    const double RANK_SEP = Value(TechPanelWidth()) * GetOptionsDB().Get<double>("ui.window.research.tree.spacing.horizontal");
     const double NODE_SEP = Value(TechPanelHeight()) * GetOptionsDB().Get<double>("UI.tech-layout-vert-spacing");
     const double WIDTH = Value(TechPanelWidth());
     const double HEIGHT = Value(TechPanelHeight());

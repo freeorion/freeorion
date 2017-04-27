@@ -566,7 +566,7 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page,    0, "ui.font.title.size",                    UserString("OPTIONS_FONT_TITLE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_RESEARCH_WND"));
-    DoubleOption(current_page, 0, "UI.tech-layout-horz-spacing",           UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
+    DoubleOption(current_page, 0, "ui.window.research.tree.spacing.horizontal", UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
     DoubleOption(current_page, 0, "UI.tech-layout-vert-spacing",           UserString("OPTIONS_TECH_SPACING_VERTICAL"));
     DoubleOption(current_page, 0, "UI.tech-layout-zoom-scale",             UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
     DoubleOption(current_page, 0, "UI.tech-controls-graphic-size",         UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
