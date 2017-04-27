@@ -468,7 +468,7 @@ std::shared_ptr<FleetWnd> FleetUIManager::NewFleetWnd(const std::vector<int>& fl
                                       GG::Flags<GG::WndFlag> flags/* = GG::INTERACTIVE | GG::DRAGABLE | GG::ONTOP | CLOSABLE | GG::RESIZABLE*/)
 {
     std::string config_name = "";
-    if (!GetOptionsDB().Get<bool>("UI.multiple-fleet-windows")) {
+    if (!GetOptionsDB().Get<bool>("ui.window.fleet.multiple.enabled")) {
         CloseAll();
         // Only write to OptionsDB if in single fleet window mode.
         config_name = FLEET_WND_NAME;
