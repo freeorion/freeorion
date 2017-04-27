@@ -118,7 +118,7 @@ GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().
 
 double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("map.fleet.button.tiny.zoom_threshold"); }
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("map.fleet.button.small.zoom_threshold"); }
-double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("UI.medium-fleet-button-minimum-zoom"); }
+double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("map.fleet.button.medium.zoom_threshold"); }
 
 bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("UI.display-timestamp"); }
 
