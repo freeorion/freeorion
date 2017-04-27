@@ -1149,10 +1149,10 @@ OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS
 Valid columns: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq'''
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS
-If UI.save-file-dialog.[name].wide-as is set, the column will always be wide enough to contain the text there.
+If ui.window.save_load.columns.[name].width.chars is set, the column will always be wide enough to contain the text there.
 
 OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH
-If UI.save-file-dialog.[name].stretch is set, the column will get that stretch factor if visible.
+If ui.window.save_load.columns.[name].stretch is set, the column will get that stretch factor if visible.
 
 OPTIONS_DB_GALAXY_MAP_GAS
 Render gassy substance around systems to give galaxy shape. May slow rendering on older systems.

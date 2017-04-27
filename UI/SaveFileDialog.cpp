@@ -38,7 +38,7 @@ namespace {
     const GG::X SAVE_FILE_DIALOG_MIN_WIDTH ( 160 );
     const GG::Y SAVE_FILE_DIALOG_MIN_HEIGHT ( 100 );
 
-    const std::string SAVE_FILE_WND_NAME = "save-load";
+    const std::string SAVE_FILE_WND_NAME = "save_load";
 
     const GG::X PROMT_WIDTH(200);
     const GG::Y PROMPT_HEIGHT(75);
@@ -52,7 +52,7 @@ namespace {
     const std::string PATH_DELIM_BEGIN = "[";
     const std::string PATH_DELIM_END = "]";
 
-    const std::string WIDE_AS = "wide-as";
+    const std::string WIDE_AS = "width.chars";
     const std::string STRETCH = "stretch";
 
     const std::string SERVER_LABEL = "SERVER";
@@ -72,22 +72,22 @@ namespace {
         // List the columns to show, separated by colons.
         // Valid: time, turn, player, empire, systems, seed, galaxy_age, galaxy_shape, planet_freq, native_freq, specials_freq, starlane_freq
         // These settings are not visible in the options panel; the defaults should be good for regular users.
-        db.Add<std::vector<std::string>>("UI.save-file-dialog.columns", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS"),
-                                          StringToList("time,turn,player,empire,file"));
-        db.Add<std::string>("UI.save-file-dialog.time." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"),
+        db.Add<std::vector<std::string>>("ui.window.save_load.columns", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMNS"),
+                                         StringToList("time,turn,player,empire,file"));
+        db.Add<std::string>("ui.window.save_load.columns.time." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"),
                             "YYYY-MM-DD");
-        db.Add<std::string>("UI.save-file-dialog.turn." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"),
+        db.Add<std::string>("ui.window.save_load.columns.turn." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"),
                             "9999");
-        db.Add("UI.save-file-dialog.player." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 1.0);
-        db.Add("UI.save-file-dialog.empire." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 1.0);
-        db.Add("UI.save-file-dialog.file." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 2.0);
-        db.Add<std::string>("UI.save-file-dialog.galaxy_size." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"), "9999");
-        db.Add("UI.save-file-dialog.seed." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 0.75);
+        db.Add("ui.window.save_load.columns.player." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 1.0);
+        db.Add("ui.window.save_load.columns.empire." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 1.0);
+        db.Add("ui.window.save_load.columns.file." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 2.0);
+        db.Add<std::string>("ui.window.save_load.columns.galaxy_size." + WIDE_AS, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_WIDE_AS"), "9999");
+        db.Add("ui.window.save_load.columns.seed." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 0.75);
 
-        db.Add("UI.save-file-dialog.default." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 1.0);
+        db.Add("ui.window.save_load.columns.default." + STRETCH, UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_COLUMN_STRETCH"), 1.0);
 
         // We give them a custom delay since the general one is a bit quick
-        db.Add("UI.save-file-dialog.tooltip-delay", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_TOOLTIP_DELAY"), 800);
+        db.Add("ui.window.save_load.tooltip.delay", UserStringNop("OPTIONS_DB_UI_SAVE_DIALOG_TOOLTIP_DELAY"), 800);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -176,7 +176,7 @@ public:
 
 private:
     static SaveFileColumn GetColumn(const std::string& name, GG::X max_width) {
-        const std::string prefix = "UI.save-file-dialog.";
+        const std::string prefix = "ui.window.save_load.columns.";
         std::string option = prefix + name + ".";
         OptionsDB&  db = GetOptionsDB();
 
@@ -515,7 +515,7 @@ public:
     /// Loads preview data on all save files in a directory specidifed by path.
     /// @param [in] previews The preview data
     void LoadSaveGamePreviews(const std::vector<FullPreview>& previews) {
-        int tooltip_delay = GetOptionsDB().Get<int>("UI.save-file-dialog.tooltip-delay");
+        int tooltip_delay = GetOptionsDB().Get<int>("ui.window.save_load.tooltip.delay");
 
         std::vector<std::shared_ptr<Row>> rows;
         for (const FullPreview& preview : previews) {
@@ -573,7 +573,7 @@ private:
     static std::shared_ptr<std::vector<SaveFileColumn>> FilterColumns(
         const std::shared_ptr<std::vector<SaveFileColumn>>& all_cols)
     {
-        std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string>>("UI.save-file-dialog.columns");
+        std::vector<std::string> names = GetOptionsDB().Get<std::vector<std::string>>("ui.window.save_load.columns");
         auto columns = std::make_shared<std::vector<SaveFileColumn>>();
         for (const std::string& column_name : names) {
             bool found_col = false;
