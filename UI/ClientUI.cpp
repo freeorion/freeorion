@@ -73,7 +73,7 @@ fs::path    ClientUI::SoundDir()                { return GetResourceDir() / "dat
 int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("ui.font.size"); }
 int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("ui.font.title.size"); }
 
-GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("UI.text-color"); }
+GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("ui.font.color"); }
 GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("UI.default-link-color"); }
 GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("UI.rollover-link-color"); }
 
@@ -536,7 +536,7 @@ namespace {
 
         db.Add("UI.state-button-color",         UserStringNop("OPTIONS_DB_UI_STATE_BUTTON_COLOR"),         GG::Clr(0, 127, 0, 255),     Validator<GG::Clr>());
 
-        db.Add("UI.text-color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 GG::Clr(255, 255, 255, 255), Validator<GG::Clr>());
+        db.Add("ui.font.color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 GG::Clr(255, 255, 255, 255), Validator<GG::Clr>());
         db.Add("UI.default-link-color",         UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
         db.Add("UI.rollover-link-color",        UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
 
