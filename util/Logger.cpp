@@ -329,10 +329,10 @@ void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold) {
     if (!threshold)
         return;
 
-    SetLoggerThreshold("", *threshold);
+    SetLoggerThresholdCore("", *threshold);
 
     for (const auto& name : GetLoggersToSinkFrontEnds().LoggersNames())
-        SetLoggerThreshold(name, *threshold);
+        SetLoggerThresholdCore(name, *threshold);
 }
 
 LoggerCreatedSignalType LoggerCreatedSignal;
