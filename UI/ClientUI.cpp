@@ -97,7 +97,7 @@ GG::Clr     ClientUI::ButtonHiliteBorderColor() {
     return colour;
 }
 
-int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>("UI.scroll-width"); }
+int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>("ui.control.scroll.width"); }
 
 GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<GG::Clr>("ui.control.dropdownlist.arrow.color"); }
 
@@ -550,7 +550,7 @@ namespace {
         db.Add("research.incomplete.progress.color", UserStringNop("OPTIONS_DB_UI_TECH_PROGRESS"),         GG::Clr(40, 40, 40, 255),    Validator<GG::Clr>());
 
         // misc
-        db.Add("UI.scroll-width",               UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),               14,         RangedValidator<int>(8, 30));
+        db.Add("ui.control.scroll.width",       UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),               14,         RangedValidator<int>(8, 30));
 
         // UI behavior
         db.Add("ui.tooltip.delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
