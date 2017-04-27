@@ -551,7 +551,7 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page, 0, "ui.input.mouse.button.repeat.interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONTS"));
-    FontOption(current_page, 0, "UI.font",       UserString("OPTIONS_FONT_TEXT"));
+    FontOption(current_page, 0, "ui.font.path",  UserString("OPTIONS_FONT_TEXT"));
     FontOption(current_page, 0, "UI.title-font", UserString("OPTIONS_FONT_TITLE"));
 
     // show font texture button
