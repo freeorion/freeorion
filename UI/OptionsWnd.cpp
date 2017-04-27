@@ -741,7 +741,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "save.serialization.binary.enabled",   UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
     BoolOption(current_page, 0, "save.serialization.compression.enabled", UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
     BoolOption(current_page, 0, "ui.window.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
-    BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
+    BoolOption(current_page, 0, "effects.accounting.enabled", UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
     // Create persistent config button
     auto persistent_config_button = GG::Wnd::Create<CUIButton>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG"));
