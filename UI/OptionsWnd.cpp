@@ -569,7 +569,7 @@ void OptionsWnd::CompleteConstruction() {
     DoubleOption(current_page, 0, "ui.window.research.tree.spacing.horizontal", UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
     DoubleOption(current_page, 0, "ui.window.research.tree.spacing.vertical", UserString("OPTIONS_TECH_SPACING_VERTICAL"));
     DoubleOption(current_page, 0, "ui.window.research.tree.zoom.scale",    UserString("OPTIONS_TECH_LAYOUT_ZOOM"));
-    DoubleOption(current_page, 0, "UI.tech-controls-graphic-size",         UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
+    DoubleOption(current_page, 0, "ui.window.research.control.graphic.size", UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_QUEUES"));
     IntOption(current_page,    0, "UI.queue-width",                        UserString("OPTIONS_UI_QUEUE_WIDTH"));

@@ -41,7 +41,7 @@ namespace {
         db.Add("ui.window.research.tree.spacing.horizontal", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_HORZ_SPACING"), 0.25, RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("ui.window.research.tree.spacing.vertical", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("ui.window.research.tree.zoom.scale", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"), 1.0, RangedStepValidator<double>(1.0, -25.0, 10.0));
-        db.Add("UI.tech-controls-graphic-size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"),      3.0,  RangedStepValidator<double>(0.25, 0.5,  12.0));
+        db.Add("ui.window.research.control.graphic.size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"), 3.0, RangedStepValidator<double>(0.25, 0.5,  12.0));
         db.Add("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
 
         // TechListBox::TechRow column widths
@@ -353,7 +353,7 @@ void TechTreeWnd::TechTreeControls::DoButtonLayout() {
     const int PTS = ClientUI::Pts();
     const GG::X RIGHT_EDGE_PAD(PTS / 3);
     const GG::X USABLE_WIDTH = std::max(ClientWidth() - RIGHT_EDGE_PAD, GG::X1);   // space in which to do layout
-    const GG::X BUTTON_WIDTH = GG::X(PTS * std::max(GetOptionsDB().Get<double>("UI.tech-controls-graphic-size"), 0.5));
+    const GG::X BUTTON_WIDTH = GG::X(PTS * std::max(GetOptionsDB().Get<double>("ui.window.research.control.graphic.size"), 0.5));
     const GG::Y BUTTON_HEIGHT = GG::Y(Value(BUTTON_WIDTH));
 
     m_col_offset = BUTTON_WIDTH + BUTTON_SEPARATION;    // horizontal distance between each column of buttons
