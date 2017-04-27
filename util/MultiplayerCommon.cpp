@@ -30,7 +30,7 @@ namespace {
         db.Add<std::string>("log-file",             UserStringNop("OPTIONS_DB_LOG_FILE"),              "",
                             Validator<std::string>() , false);
         db.Add<std::string>("ui.stringtable.path",  UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),  PathToString(GetRootDataDir() / "default" / "stringtables" / "en.txt"));
-        db.Add("binary-serialization",              UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),  false);
+        db.Add("save.serialization.binary.enabled", UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),  false);
         db.Add("xml-zlib-serialization",            UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"),true);
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget;

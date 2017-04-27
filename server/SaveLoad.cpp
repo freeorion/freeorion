@@ -126,7 +126,7 @@ int SaveGame(const std::string& filename, const ServerSaveGameData& server_save_
 {
     ScopedTimer timer("SaveGame: " + filename, true);
 
-    bool use_binary = GetOptionsDB().Get<bool>("binary-serialization");
+    bool use_binary = GetOptionsDB().Get<bool>("save.serialization.binary.enabled");
     bool use_zlib_for_zml = GetOptionsDB().Get<bool>("xml-zlib-serialization");
     DebugLogger() << "SaveGame(" << (use_binary ? "binary" : (use_zlib_for_zml ? "zlib-xml" : "raw-xml")) << ") filename: " << filename;
     GetUniverse().EncodingEmpire() = ALL_EMPIRES;

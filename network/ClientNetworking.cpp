@@ -341,7 +341,7 @@ bool ClientNetworking::Impl::ConnectToServer(
                                          << "  port: " << it->endpoint().port();
 
                     //DebugLogger(network) << "ConnectToServer() : Client using "
-                    //                     << ((GetOptionsDB().Get<bool>("binary-serialization")) ? "binary": "xml")
+                    //                     << ((GetOptionsDB().Get<bool>("save.serialization.binary.enabled")) ? "binary": "xml")
                     //                     << " serialization.";
 
                     // Prepare the socket
