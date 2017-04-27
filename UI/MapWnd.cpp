@@ -115,7 +115,7 @@ namespace {
         db.Add("map.starlane.thickness",            UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("map.starlane.thickness.core_multiplier", UserStringNop("OPTIONS_DB_STARLANE_CORE"),                 2.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
         db.Add("map.starlane.empire.color.shown",   UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
-        db.Add("UI.fleet-supply-lines",             UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                 true,       Validator<bool>());
+        db.Add("map.fleet.supply_line.shown",       UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                 true,       Validator<bool>());
         db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.fleet-supply-line-dot-spacing",  UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
         db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
@@ -2578,7 +2578,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool showPlanets    = GetOptionsDB().Get<bool>("ui.window.sidepanel.planet.shown");
         bool systemCircles  = GetOptionsDB().Get<bool>("map.system.circle.shown");
         bool resourceColor  = GetOptionsDB().Get<bool>("map.starlane.empire.color.shown");
-        bool fleetSupply    = GetOptionsDB().Get<bool>("UI.fleet-supply-lines");
+        bool fleetSupply    = GetOptionsDB().Get<bool>("map.fleet.supply_line.shown");
         bool gas            = GetOptionsDB().Get<bool>("UI.galaxy-gas-background");
         bool starfields     = GetOptionsDB().Get<bool>("UI.galaxy-starfields");
         bool scale          = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
@@ -2590,7 +2590,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("ui.window.sidepanel.planet.shown", !showPlanets);  };
         auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("map.system.circle.shown",        !systemCircles); };
         auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("map.starlane.empire.color.shown", !resourceColor);  };
-        auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("UI.fleet-supply-lines",          !fleetSupply);     };
+        auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("map.fleet.supply_line.shown",    !fleetSupply);     };
         auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        };
         auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  };
         auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        };
