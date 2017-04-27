@@ -54,7 +54,7 @@ namespace {
                default_pts * 8,         StepValidator<int>(1));
         db.Add("UI.research.listbox.column-widths.time",        UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_TIME"),
                default_pts * 6,         StepValidator<int>(1));
-        db.Add("UI.research.listbox.column-widths.category",    UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
+        db.Add("ui.window.research.list.column.category.width", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
                default_pts * 12,        StepValidator<int>(1));
         db.Add("ui.window.research.list.column.description.width", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
                default_pts * 18,        StepValidator<int>(1));
@@ -1612,7 +1612,7 @@ std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_widt
     GG::X name_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.name"));
     GG::X cost_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.cost"));
     GG::X time_width(       GetOptionsDB().Get<int>("UI.research.listbox.column-widths.time"));
-    GG::X category_width(   GetOptionsDB().Get<int>("UI.research.listbox.column-widths.category"));
+    GG::X category_width(GetOptionsDB().Get<int>("ui.window.research.list.column.category.width"));
 
     GG::X cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
 
