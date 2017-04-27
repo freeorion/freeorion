@@ -693,7 +693,8 @@ void OptionsWnd::CompleteConstruction() {
                UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"));
     BoolOption(current_page, 0, "save.auto.single_player.end.enabled",
                UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"));
-    BoolOption(current_page, 0, "autosave.multiplayer.turn-start",   UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
+    BoolOption(current_page, 0, "save.auto.multiplayer.start.enabled",
+               UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
     IntOption(current_page,  0, "autosave.turns",           UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
     IntOption(current_page,  0, "autosave.turn-limit",      UserString("OPTIONS_AUTOSAVE_LIMIT"));
     BoolOption(current_page, 0, "autosave.galaxy-creation", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
