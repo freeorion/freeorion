@@ -30,12 +30,12 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("ui.window.sitrep.invalid.shown", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"), false, Validator<bool>());
         db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
-        db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 24, RangedValidator<int>(12, 64));
+        db.Add("ui.window.sitrep.icon.size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 24, RangedValidator<int>(12, 64));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     int GetIconSize()
-    { return GetOptionsDB().Get<int>("UI.sitrep-icon-size"); }
+    { return GetOptionsDB().Get<int>("ui.window.sitrep.icon.size"); }
 
     std::map<std::string, std::string> label_display_map;
     std::map<int, std::set<std::string>> snoozed_sitreps;
