@@ -542,7 +542,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency");
         setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency");
         setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency");
-        setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression");
+        setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("setup.ai.aggression");
         setup_data.m_game_rules =       game_rules;
 
 

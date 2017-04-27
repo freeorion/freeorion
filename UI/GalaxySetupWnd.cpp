@@ -164,7 +164,7 @@ namespace {
         db.Add("GameSetup.empire-color",        UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),            9,                  RangedValidator<int>(0, 100));
         db.Add("GameSetup.starting-species",    UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),   std::string("SP_HUMAN"),    Validator<std::string>());
         db.Add("GameSetup.ai-players",          UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),          6,                  RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
-        db.Add("GameSetup.ai-aggression",       UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),       MANIACAL,           RangedValidator<Aggression>(BEGINNER, MANIACAL));
+        db.Add("setup.ai.aggression",           UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),       MANIACAL,           RangedValidator<Aggression>(BEGINNER, MANIACAL));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -628,7 +628,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     // ai aggression
     m_ai_aggression_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-aggression")));
+    m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.ai.aggression")));
     m_ai_aggression_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
 
@@ -760,7 +760,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency"));
     m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency"));
     m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency"));
-    m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression"));
+    m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("setup.ai.aggression"));
 
     SettingsChangedSignal();
 }
@@ -1197,7 +1197,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("GameSetup.specials-frequency",  m_galaxy_setup_panel->GetSpecialsFrequency());
     GetOptionsDB().Set("GameSetup.monster-frequency",   m_galaxy_setup_panel->GetMonsterFrequency());
     GetOptionsDB().Set("GameSetup.native-frequency",    m_galaxy_setup_panel->GetNativeFrequency());
-    GetOptionsDB().Set("GameSetup.ai-aggression",       m_galaxy_setup_panel->GetAIAggression());
+    GetOptionsDB().Set("setup.ai.aggression", m_galaxy_setup_panel->GetAIAggression());
     GetOptionsDB().Set("GameSetup.player-name",         m_player_name_edit->Text());
     GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
     GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));

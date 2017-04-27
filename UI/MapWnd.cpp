@@ -2709,7 +2709,8 @@ void MapWnd::InitTurn() {
 
     timer.EnterSection("sitreps");
     // are there any sitreps to show?
-    bool show_intro_sitreps = CurrentTurn() == 1 && GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression") <= TYPICAL;
+    bool show_intro_sitreps = CurrentTurn() == 1 &&
+        GetOptionsDB().Get<Aggression>("setup.ai.aggression") <= TYPICAL;
     DebugLogger() << "showing intro sitreps : " << show_intro_sitreps;
     if (show_intro_sitreps || m_sitrep_panel->NumVisibleSitrepsThisTurn() > 0) {
         m_sitrep_panel->ShowSitRepsForTurn(CurrentTurn());
