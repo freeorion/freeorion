@@ -445,7 +445,7 @@ int SystemIcon::EnclosingCircleDiameter() const
 void SystemIcon::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     Wnd::SizeMove(ul, lr);
 
-    const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold");
+    const bool USE_TINY_GRAPHICS = Value(Width()) < GetOptionsDB().Get<int>("map.system.icon.size.tiny_threshold");
     GG::Pt middle = GG::Pt(Width() / 2, Height() / 2);
 
     // tiny graphic?

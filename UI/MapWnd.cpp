@@ -141,7 +141,7 @@ namespace {
         db.Add("map.system.circle.distance",        UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_DISTANCE"),          2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
         db.Add("UI.show-unexplored_system_overlay", UserStringNop("OPTIONS_DB_UI_SYSTEM_UNEXPLORED_OVERLAY"),       true,       Validator<bool>());
 
-        db.Add("UI.system-tiny-icon-size-threshold",UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"), 10,         RangedValidator<int>(1, 16));
+        db.Add("map.system.icon.size.tiny_threshold", UserStringNop("OPTIONS_DB_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"), 10,       RangedValidator<int>(1, 16));
         db.Add("map.system.selection_indicator.size", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"), 1.625,    RangedStepValidator<double>(0.125, 0.5, 5));
         db.Add("map.system.selection_indicator.rpm", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"), 12,         RangedValidator<int>(1, 60));
 

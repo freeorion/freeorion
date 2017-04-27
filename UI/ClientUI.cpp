@@ -109,7 +109,7 @@ GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<GG::
 GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<GG::Clr>("UI.state-button-color"); }
 
 int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("map.system.icon.size"); }
-int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("UI.system-tiny-icon-size-threshold"); }
+int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("map.system.icon.size.tiny_threshold"); }
 int         ClientUI::SystemCircleSize()                { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("map.system.circle.size")); }
 int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("map.system.selection_indicator.size")); }
 int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("map.system.selection_indicator.rpm"); }
