@@ -35,7 +35,7 @@ using boost::asio::ip::tcp;
 using namespace Networking;
 
 namespace {
-    CreateThreadedLogger(network);
+    DeclareThreadSafeLogger(network);
 
     /** A simple client that broadcasts UDP datagrams on the local network for
         FreeOrion servers, and reports any it finds. */

@@ -29,7 +29,7 @@ class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
 namespace {
-    CreateThreadedLogger(FSM);
+    DeclareThreadSafeLogger(FSM);
 
     void SendMessageToAllPlayers(const Message& message) {
         ServerApp* server = ServerApp::GetApp();

@@ -94,10 +94,9 @@
     TraceLogger() << "Put any streamable output here.  It will only be
                   << "computed at the trace threshold or greater.";
 
-
     The named loggers are declared with:
 
-    CreateThreadedLogger(name_of_logger);
+    DeclareThreadSafeLogger(name_of_logger);
 
     A good place for the declaration is an anonymous namespace.  It is
     idempotent, so multiple calls won't change the logging system state.  It is
@@ -215,7 +214,7 @@ using NamedThreadedLogger = boost::log::sources::severity_channel_logger_mt<
 FO_COMMON_API void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name);
 
 // Place in source file to create the previously defined global logger \p name
-#define CreateThreadedLogger(name)                                      \
+#define DeclareThreadSafeLogger(name)                                   \
     BOOST_LOG_INLINE_GLOBAL_LOGGER_INIT(                                \
         FO_GLOBAL_LOGGER_NAME(name), NamedThreadedLogger)               \
     {                                                                   \
@@ -237,7 +236,7 @@ FO_COMMON_API std::vector<std::string> CreatedLoggersNames();
 // Create the default logger
 #ifndef FREEORION_WIN32
 
-CreateThreadedLogger();
+DeclareThreadSafeLogger();
 
 #else
 

@@ -20,7 +20,7 @@
 #include "../../Empire/Empire.h"
 
 namespace {
-    CreateThreadedLogger(combat_log);
+    DeclareThreadSafeLogger(combat_log);
 }
 
 class CombatLogWnd::Impl {

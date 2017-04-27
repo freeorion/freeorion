@@ -14,7 +14,7 @@ using boost::asio::ip::udp;
 using namespace Networking;
 
 namespace {
-    CreateThreadedLogger(network);
+    DeclareThreadSafeLogger(network);
 }
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams

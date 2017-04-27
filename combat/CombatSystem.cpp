@@ -25,7 +25,7 @@
 #include <sstream>
 
 namespace {
-    CreateThreadedLogger(combat);
+    DeclareThreadSafeLogger(combat);
 }
 
 ////////////////////////////////////////////////

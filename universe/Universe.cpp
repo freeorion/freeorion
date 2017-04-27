@@ -30,7 +30,7 @@
 #include <boost/timer.hpp>
 
 namespace {
-    CreateThreadedLogger(effects);
+    DeclareThreadSafeLogger(effects);
 }
 
 #if defined(_MSC_VER)

@@ -30,7 +30,7 @@
 #include <iterator>
 
 namespace {
-    CreateThreadedLogger(effects);
+    DeclareThreadSafeLogger(effects);
 }
 
 using boost::io::str;
