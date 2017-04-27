@@ -34,7 +34,7 @@
 
 namespace {
     const std::string RES_PEDIA_WND_NAME = "research.pedia";
-    const std::string RES_CONTROLS_WND_NAME = "research.tech-controls";
+    const std::string RES_CONTROLS_WND_NAME = "research.control";
 
     // command-line options
     void AddOptions(OptionsDB& db) {
