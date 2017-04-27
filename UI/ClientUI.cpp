@@ -79,7 +79,7 @@ GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::
 
 // windows
 GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("ui.window.background.color"); }
-GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<GG::Clr>("UI.wnd-outer-border-color"); }
+GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<GG::Clr>("ui.window.border.outer.color"); }
 GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<GG::Clr>("ui.window.border.inner.color"); }
 
 // controls
@@ -521,7 +521,7 @@ namespace {
 
         // colors
         db.Add("ui.window.background.color",    UserStringNop("OPTIONS_DB_UI_WND_COLOR"),                  GG::Clr(35, 35, 35, 240),    Validator<GG::Clr>());
-        db.Add("UI.wnd-outer-border-color",     UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),     GG::Clr(64, 64, 64, 255),    Validator<GG::Clr>());
+        db.Add("ui.window.border.outer.color",  UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),     GG::Clr(64, 64, 64, 255),    Validator<GG::Clr>());
         db.Add("ui.window.border.inner.color",  UserStringNop("OPTIONS_DB_UI_WND_INNER_BORDER_COLOR"),     GG::Clr(192, 192, 192, 255), Validator<GG::Clr>());
 
         db.Add("UI.ctrl-color",                 UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                 GG::Clr(15, 15, 15, 255),    Validator<GG::Clr>());
