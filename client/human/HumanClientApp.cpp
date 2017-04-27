@@ -537,7 +537,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         setup_data.m_size =             GetOptionsDB().Get<int>("GameSetup.stars");
         setup_data.m_shape =            GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape");
         setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("GameSetup.galaxy-age");
-        setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.starlane-frequency");
+        setup_data.m_starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
         setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density");
         setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
         setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");

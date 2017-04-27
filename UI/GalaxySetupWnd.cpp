@@ -155,7 +155,7 @@ namespace {
         db.Add("GameSetup.galaxy-shape",        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),            DISC,               RangedValidator<Shape>(SPIRAL_2, RANDOM));
         db.Add("GameSetup.galaxy-age",          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("GameSetup.planet-density",      UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.starlane-frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.starlane.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("setup.specials.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add("setup.monster.frequency",       UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),       GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add("setup.native.frequency",        UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),        GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
@@ -593,7 +593,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     // starlane frequency
     m_starlane_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARLANE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
+    m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.starlane.frequency")));
     m_starlane_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
@@ -755,7 +755,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
     m_galaxy_ages_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.galaxy-age") - 1);
-    m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.starlane-frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
+    m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
     m_planet_density_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density") - 1);
     m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency"));
     m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency"));
@@ -1192,7 +1192,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("GameSetup.stars",               m_galaxy_setup_panel->Systems());
     GetOptionsDB().Set("GameSetup.galaxy-shape",        m_galaxy_setup_panel->GetShape());
     GetOptionsDB().Set("GameSetup.galaxy-age",          m_galaxy_setup_panel->GetAge());
-    GetOptionsDB().Set("GameSetup.starlane-frequency",  m_galaxy_setup_panel->GetStarlaneFrequency());
+    GetOptionsDB().Set("setup.starlane.frequency", m_galaxy_setup_panel->GetStarlaneFrequency());
     GetOptionsDB().Set("GameSetup.planet-density",      m_galaxy_setup_panel->GetPlanetDensity());
     GetOptionsDB().Set("setup.specials.frequency", m_galaxy_setup_panel->GetSpecialsFrequency());
     GetOptionsDB().Set("setup.monster.frequency", m_galaxy_setup_panel->GetMonsterFrequency());
