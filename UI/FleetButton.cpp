@@ -57,7 +57,7 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.fleet-selection-indicator-size", UserStringNop("OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE"), 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
+        db.Add("map.fleet.selection_indicator.size", UserStringNop("OPTIONS_DB_UI_FLEET_SELECTION_INDICATOR_SIZE"), 1.625, RangedStepValidator<double>(0.125, 0.5, 5));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -305,7 +305,7 @@ void FleetButton::LayoutIcons() {
     if (m_selection_indicator) {
         //GG::SubTexture subtexture = m_selection_indicator->GetTexture();
         //GG::Pt subtexture_sz = GG::Pt(subtexture.Width(), subtexture.Height());
-        double sel_ind_scale = GetOptionsDB().Get<double>("UI.fleet-selection-indicator-size");
+        double sel_ind_scale = GetOptionsDB().Get<double>("map.fleet.selection_indicator.size");
         GG::Pt subtexture_sz = Size() * sel_ind_scale;
         GG::Pt graphic_ul = middle - subtexture_sz / 2;
         m_selection_indicator->SizeMove(graphic_ul, graphic_ul + subtexture_sz);

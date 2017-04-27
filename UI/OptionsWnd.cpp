@@ -599,7 +599,7 @@ void OptionsWnd::CompleteConstruction() {
     DoubleOption(current_page, 0, "map.fleet.button.tiny.zoom_threshold",  UserString("OPTIONS_UI_TINY_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption(current_page, 0, "map.fleet.button.small.zoom_threshold", UserString("OPTIONS_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"));
     DoubleOption(current_page, 0, "map.fleet.button.medium.zoom_threshold", UserString("OPTIONS_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"));
-    DoubleOption(current_page, 0, "UI.fleet-selection-indicator-size",     UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
+    DoubleOption(current_page, 0, "map.fleet.selection_indicator.size",    UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_STARLANES"));
     DoubleOption(current_page, 0, "UI.starlane-thickness",                 UserString("OPTIONS_STARLANE_THICKNESS"));
