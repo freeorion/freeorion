@@ -305,7 +305,7 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
 
     SetLoggerThresholdCore("", default_log_level_threshold);
 
-    // Initialize the internal logger
+    // Initialize the logging system's logger
     ConfigureLogger(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
 
     // Create sink front ends for all previously created loggers.

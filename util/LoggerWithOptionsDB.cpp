@@ -30,7 +30,6 @@ namespace {
     /** Add the log threshold for a logger with \p full_option_name to OptionsDB and return the
         threshold read from OptionsDB. */
     LogLevel AddLoggerToOptionsDB(const std::string& full_option_name) {
-
         // Determine the type of logger, executable default or channel.
         std::smatch ematch;
         std::regex_search(full_option_name, ematch, exec_name_regex);
@@ -54,8 +53,8 @@ namespace {
 
         // Create the new option if necessary.
         if (!GetOptionsDB().OptionExists(full_option_name))
-            GetOptionsDB().Add<std::string>(
-                full_option_name, description, default_level, LogLevelValidator());
+            GetOptionsDB().Add<std::string>(full_option_name, description,
+                                            default_level, LogLevelValidator());
 
         // Return the threshold from the db.
         return to_LogLevel(GetOptionsDB().Get<std::string>(full_option_name));
@@ -71,7 +70,7 @@ DiscreteValidator<std::string> LogLevelValidator() {
 }
 
 void InitLoggingOptionsDBSystem() {
-    // Initialize the internal logger
+    // Initialize the logging system's logger
     RegisterLoggerWithOptionsDB("log");
 
     // Setup the OptionsDB options for the file sink.
