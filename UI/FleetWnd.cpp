@@ -887,7 +887,7 @@ namespace {
             } else if (entry.first == METER_SECONDARY_STAT) {
                 entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                                                    m_ship_id, entry.first));
-                entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
+                entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.extended_delay"), 1);
                 entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                                                    m_ship_id, entry.first, true), 1);
 
