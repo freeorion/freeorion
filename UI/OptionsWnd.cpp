@@ -651,7 +651,7 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 0, "ui.font.link.rollover.color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_WINDOW_COLORS"));
-    ColorOption(current_page, 0, "UI.wnd-color",              UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 0, "ui.window.background.color", UserString("OPTIONS_FILL_COLOR"));
     ColorOption(current_page, 0, "UI.wnd-inner-border-color", UserString("OPTIONS_INNER_BORDER_COLOR"));
     ColorOption(current_page, 0, "UI.wnd-outer-border-color", UserString("OPTIONS_OUTER_BORDER_COLOR"));
 
