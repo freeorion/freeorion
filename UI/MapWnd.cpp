@@ -127,7 +127,7 @@ namespace {
         db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
 
         db.Add("map.scanlines.shown",               UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                      true,       Validator<bool>());
-        db.Add("UI.system-fog-of-war-spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),              4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
+        db.Add("map.system.scanlines.spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),              4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
         db.Add("UI.system-fog-of-war-clr",          UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_CLR"),                  GG::Clr(36, 36, 36, 192),       Validator<GG::Clr>());
         db.Add("UI.field-fog-of-war-clr",           UserStringNop("OPTIONS_DB_UI_FIELD_FOG_CLR"),                   GG::Clr(0, 0, 0, 64),           Validator<GG::Clr>());
 
