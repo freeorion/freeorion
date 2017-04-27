@@ -135,7 +135,7 @@ namespace {
 
         db.Add("map.system.circle.shown",           UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                  true,       Validator<bool>());
         db.Add("map.system.circle.size",            UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),              1.5,        RangedStepValidator<double>(0.125, 1.0, 2.5));
-        db.Add("UI.system-inner-circle-width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
+        db.Add("map.system.circle.inner.width",     UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
         db.Add("UI.system-outer-circle-width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_OUTER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
         db.Add("UI.system-inner-circle-max-width",  UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_MAX_WIDTH"),   5.0,        RangedStepValidator<double>(0.5, 1.0, 12.0));
         db.Add("UI.system-circle-distance",         UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_DISTANCE"),          2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
@@ -1988,7 +1988,8 @@ void MapWnd::RenderSystems() {
 
         const double circle_distance = GetOptionsDB().Get<double>("UI.system-circle-distance");               // distance between inner and outer system circle
         const double outer_circle_width = GetOptionsDB().Get<double>("UI.system-outer-circle-width");         // width of outer...
-        const double inner_circle_width = GetOptionsDB().Get<double>("UI.system-inner-circle-width");         // ... and inner circle line at close zoom
+        // ... and inner circle line at close zoom
+        const double inner_circle_width = GetOptionsDB().Get<double>("map.system.circle.inner.width");
         const double max_inner_circle_width = GetOptionsDB().Get<double>("UI.system-inner-circle-max-width"); // width of inner circle line when map is zoomed out
 
         for (const auto& system_icon : m_system_icons) {
