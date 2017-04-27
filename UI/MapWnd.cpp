@@ -118,7 +118,7 @@ namespace {
         db.Add("map.fleet.supply_line.shown",       UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                 true,       Validator<bool>());
         db.Add("map.fleet.supply_line.width",       UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("map.fleet.supply_line.dot.spacing", UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_SPACING"),      20,         RangedStepValidator<int>(1, 3, 40));
-        db.Add("UI.fleet-supply-line-dot-rate",     UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
+        db.Add("map.fleet.supply_line.dot.rate",    UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_DOT_RATE"),         0.02,       RangedStepValidator<double>(0.01, 0.01, 0.1));
         db.Add("UI.fleet.explore.hostile.ignored",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),       false,      Validator<bool>());
         db.Add("UI.fleet.explore.system.route.limit", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"), 25,         StepValidator<int>(1, -1));
         db.Add("UI.fleet.explore.system.known.multiplier", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER"), 10.0f, Validator<float>());
@@ -2183,7 +2183,7 @@ void MapWnd::RenderFleetMovementLines() {
 
     // determine animation shift for move lines
     int dot_spacing = GetOptionsDB().Get<int>("map.fleet.supply_line.dot.spacing");
-    float rate = static_cast<float>(GetOptionsDB().Get<double>("UI.fleet-supply-line-dot-rate"));
+    float rate = static_cast<float>(GetOptionsDB().Get<double>("map.fleet.supply_line.dot.rate"));
     int ticks = GG::GUI::GetGUI()->Ticks();
     /* Updated each frame to shift rendered posistion of dots that are drawn to
      * show fleet move lines. */
