@@ -615,7 +615,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page,   0, "map.system.background.gas.shown",       UserString("OPTIONS_GALAXY_MAP_GAS"));
     BoolOption(current_page,   0, "map.system.background.starfields.shown", UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
     BoolOption(current_page,   0, "map.scale.legend.shown",                UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
-    BoolOption(current_page,   0, "UI.show-galaxy-map-scale-circle",       UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
+    BoolOption(current_page,   0, "map.scale.circle.shown",                UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));
     BoolOption(current_page,   0, "UI.show-galaxy-map-zoom-slider",        UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"));
     BoolOption(current_page,   0, "UI.show-detection-range",               UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"));
     IntOption(current_page,    0, "UI.detection-range-opacity",            UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE_OPACITY"));
