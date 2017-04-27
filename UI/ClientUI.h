@@ -139,7 +139,7 @@ public:
     static std::shared_ptr<GG::Font> GetFont(int pts = Pts());
 
     /** Returns the default font in the specified point size.  Uses
-      * "UI.font-bold" option setting as the font filename, and provides
+      * "ui.font.bold.path" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use.
       * */
     static std::shared_ptr<GG::Font> GetBoldFont(int pts = Pts());

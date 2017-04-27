@@ -506,7 +506,7 @@ namespace {
 
         // fonts
         db.Add<std::string>("ui.font.path",                     UserStringNop("OPTIONS_DB_UI_FONT"),                           (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
-        db.Add<std::string>("UI.font-bold",     UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                  (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
+        db.Add<std::string>("ui.font.bold.path", UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                 (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
 #ifdef FREEORION_MACOSX
         db.Add("ui.font.size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  15,                     RangedValidator<int>(4, 40));
 #else
@@ -1093,10 +1093,10 @@ std::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
 
 std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
     try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font-bold"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.bold.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
         try {
-             return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.font-bold"),
+             return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.bold.path"),
                                                pts, RequiredCharsets().begin(), RequiredCharsets().end());
         } catch (...) {
              return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
