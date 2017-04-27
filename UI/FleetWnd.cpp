@@ -386,16 +386,18 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.fleet-wnd-aggression",   UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"),       INVALID_FLEET_AGGRESSION,   Validator<NewFleetAggression>());
+        db.Add("ui.window.fleet.aggression", UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"), INVALID_FLEET_AGGRESSION, Validator<NewFleetAggression>());
         db.Add("UI.fleet-wnd-scanline-clr", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"),  GG::Clr(24, 24, 24, 192),   Validator<GG::Clr>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
-    NewFleetAggression NewFleetsAggressiveOptionSetting()
-    { return GetOptionsDB().Get<NewFleetAggression>("UI.fleet-wnd-aggression"); }
+    NewFleetAggression NewFleetsAggressiveOptionSetting() {
+        return GetOptionsDB().Get<NewFleetAggression>("ui.window.fleet.aggression");
+    }
 
-    void SetNewFleetAggressiveOptionSetting(NewFleetAggression aggression)
-    { GetOptionsDB().Set<NewFleetAggression>("UI.fleet-wnd-aggression", aggression); }
+    void SetNewFleetAggressiveOptionSetting(NewFleetAggression aggression) {
+        GetOptionsDB().Set<NewFleetAggression>("ui.window.fleet.aggression", aggression);
+    }
 
     std::shared_ptr<GG::Texture> FleetAggressiveIcon()
     { return ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "fleet_aggressive.png"); }
