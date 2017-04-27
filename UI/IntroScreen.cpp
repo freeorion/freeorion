@@ -33,7 +33,7 @@ namespace {
 
     void Options(OptionsDB& db) {
         db.AddFlag("force-external-server",             UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),     false);
-        db.Add<std::string>("external-server-address",  UserStringNop("OPTIONS_DB_EXTERNAL_SERVER_ADDRESS"),   "localhost");
+        db.Add<std::string>("server.external.address",  UserStringNop("OPTIONS_DB_EXTERNAL_SERVER_ADDRESS"),   "localhost");
         db.Add("ui.window.intro.menu.center.x",         UserStringNop("OPTIONS_DB_UI_MAIN_MENU_X"),            0.75,   RangedStepValidator<double>(0.01, 0.0, 1.0));
         db.Add("ui.window.intro.menu.center.y",         UserStringNop("OPTIONS_DB_UI_MAIN_MENU_Y"),            0.5,    RangedStepValidator<double>(0.01, 0.0, 1.0));
         db.Add("checked-gl-version",                    UserStringNop("OPTIONS_DB_CHECKED_GL_VERSION"),        false);

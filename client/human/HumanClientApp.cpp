@@ -639,7 +639,7 @@ void HumanClientApp::MultiPlayerGame() {
             }
             server_name = "localhost";
         }
-        server_name = GetOptionsDB().Get<std::string>("external-server-address");
+        server_name = GetOptionsDB().Get<std::string>("server.external.address");
     }
 
     m_connected = m_networking->ConnectToServer(server_name);
