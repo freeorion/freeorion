@@ -183,7 +183,7 @@ namespace {
         if (version_number < 2.0) {
             GetOptionsDB().Set<bool>("UI.galaxy-gas-background",        false);
             GetOptionsDB().Set<bool>("UI.galaxy-starfields",            false);
-            GetOptionsDB().Set<bool>("UI.system-fog-of-war",            false);
+            GetOptionsDB().Set<bool>("map.scanlines.shown", false);
         }
     }
 }

@@ -315,7 +315,7 @@ void BuildingIndicator::Render() {
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("map.scanlines.shown"))
         return;
     if (m_building_id == INVALID_OBJECT_ID)
         return;

@@ -126,7 +126,7 @@ namespace {
 
         db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
 
-        db.Add("UI.system-fog-of-war",              UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                      true,       Validator<bool>());
+        db.Add("map.scanlines.shown",               UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                      true,       Validator<bool>());
         db.Add("UI.system-fog-of-war-spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),              4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
         db.Add("UI.system-fog-of-war-clr",          UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_CLR"),                  GG::Clr(36, 36, 36, 192),       Validator<GG::Clr>());
         db.Add("UI.field-fog-of-war-clr",           UserStringNop("OPTIONS_DB_UI_FIELD_FOG_CLR"),                   GG::Clr(0, 0, 0, 64),           Validator<GG::Clr>());
@@ -1850,7 +1850,7 @@ void MapWnd::RenderFields() {
     // if any, render scanlines over not-visible fields
     if (!m_field_scanline_circles.empty()
         && HumanClientApp::GetApp()->EmpireID() != ALL_EMPIRES
-        && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+        && GetOptionsDB().Get<bool>("map.scanlines.shown"))
     {
         glDisableClientState(GL_TEXTURE_COORD_ARRAY);
         m_field_scanline_circles.activate();
@@ -1975,7 +1975,7 @@ void MapWnd::RenderSystems() {
     bool fog_scanlines = false;
     Universe& universe = GetUniverse();
 
-    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id != ALL_EMPIRES && GetOptionsDB().Get<bool>("map.scanlines.shown"))
         fog_scanlines = true;
 
     RenderScaleCircle();

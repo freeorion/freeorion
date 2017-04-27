@@ -814,7 +814,7 @@ namespace {
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if ((ship->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
-            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+            && GetOptionsDB().Get<bool>("map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
                                                                   GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
@@ -1538,7 +1538,7 @@ void FleetDataPanel::Refresh() {
             add_overlay("gifting.png");
 
         if ((fleet->GetVisibility(client_empire_id) < VIS_BASIC_VISIBILITY)
-            && GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+            && GetOptionsDB().Get<bool>("map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
                                                                   GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));

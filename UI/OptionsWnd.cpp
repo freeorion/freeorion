@@ -592,7 +592,7 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page,    0, "map.system.selection_indicator.rpm",    UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
     IntOption(current_page,    0, "map.system.icon.size.tiny_threshold",   UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
     ColorOption(current_page,  0, "map.system.unowned.name.color",         UserString("OPTIONS_UI_SYSTEM_NAME_UNOWNED_COLOR"));
-    BoolOption(current_page,   0, "UI.system-fog-of-war",                  UserString("OPTIONS_UI_SYSTEM_FOG"));
+    BoolOption(current_page,   0, "map.scanlines.shown",                   UserString("OPTIONS_UI_SYSTEM_FOG"));
     DoubleOption(current_page, 0, "UI.system-fog-of-war-spacing",          UserString("OPTIONS_UI_SYSTEM_FOG_SPACING"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FLEET_ICONS"));

@@ -219,7 +219,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("map.scanlines.shown"))
         return;
 
     // Create scanline renderer control, use opposite color of fleet btn
@@ -236,7 +236,7 @@ void FleetButton::CompleteConstruction() {
 
     // Scanlines for not currently-visible objects?
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("UI.system-fog-of-war"))
+    if (empire_id == ALL_EMPIRES || !GetOptionsDB().Get<bool>("map.scanlines.shown"))
         return;
 
     bool at_least_one_fleet_visible = false;
