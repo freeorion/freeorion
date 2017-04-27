@@ -512,7 +512,7 @@ namespace {
 #else
         db.Add("ui.font.size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  16,                     RangedValidator<int>(4, 40));
 #endif
-        db.Add<std::string>("UI.title-font",    UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),                 (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Regular.ttf").string());
+        db.Add<std::string>("ui.font.title.path", UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),               (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
 #ifdef FREEORION_MACOSX
         db.Add("UI.title-font-size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            16,                     RangedValidator<int>(4, 40));
 #else
@@ -1106,10 +1106,10 @@ std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
 
 std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/) {
     try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.title-font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.title.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
         try {
-            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.title-font"),
+            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.title.path"),
                                               pts, RequiredCharsets().begin(), RequiredCharsets().end());
         } catch (...) {
              return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);

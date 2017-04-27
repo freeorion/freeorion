@@ -552,7 +552,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONTS"));
     FontOption(current_page, 0, "ui.font.path",  UserString("OPTIONS_FONT_TEXT"));
-    FontOption(current_page, 0, "UI.title-font", UserString("OPTIONS_FONT_TITLE"));
+    FontOption(current_page, 0, "ui.font.title.path", UserString("OPTIONS_FONT_TITLE"));
 
     // show font texture button
     auto show_font_texture_button = Wnd::Create<CUIButton>(UserString("SHOW_FONT_TEXTURES"));
