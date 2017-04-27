@@ -1626,7 +1626,7 @@ Networking::ClientType ServerApp::GetPlayerClientType(int player_id) const {
 }
 
 int ServerApp::EffectsProcessingThreads() const
-{ return GetOptionsDB().Get<int>("effects-threads-server"); }
+{ return GetOptionsDB().Get<int>("effects.server.threads"); }
 
 void ServerApp::AddEmpireTurn(int empire_id)
 { m_turn_sequence[empire_id].reset(nullptr); }

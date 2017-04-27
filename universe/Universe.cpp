@@ -53,7 +53,7 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("effects.ui.threads",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_UI_DESC"),        8,      RangedValidator<int>(1, 32));
         db.Add("effects.ai.threads",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,      RangedValidator<int>(1, 32));
-        db.Add("effects-threads-server",    UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
+        db.Add("effects.server.threads",    UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
         db.Add("effect-accounting",         UserStringNop("OPTIONS_DB_EFFECT_ACCOUNTING"),              true,   Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
