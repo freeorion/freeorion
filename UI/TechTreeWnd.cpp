@@ -42,7 +42,7 @@ namespace {
         db.Add("ui.window.research.tree.spacing.vertical", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_VERT_SPACING"), 0.75, RangedStepValidator<double>(0.25, 0.25, 4.0));
         db.Add("ui.window.research.tree.zoom.scale", UserStringNop("OPTIONS_DB_UI_TECH_LAYOUT_ZOOM_SCALE"), 1.0, RangedStepValidator<double>(1.0, -25.0, 10.0));
         db.Add("ui.window.research.control.graphic.size", UserStringNop("OPTIONS_DB_UI_TECH_CTRL_ICON_SIZE"), 3.0, RangedStepValidator<double>(0.25, 0.5,  12.0));
-        db.Add("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
+        db.Add("ui.window." + RES_PEDIA_WND_NAME + ".persistently_hidden.enabled", UserStringNop("OPTIONS_DB_RESEARCH_PEDIA_HIDDEN"), false, Validator<bool>());
 
         // TechListBox::TechRow column widths
         int default_pts = 16;
@@ -2333,14 +2333,14 @@ void TechTreeWnd::ShowPedia() {
     m_enc_detail_panel->Show();
 
     OptionsDB& db = GetOptionsDB();
-    db.Set("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", false);
+    db.Set("ui.window." + RES_PEDIA_WND_NAME + ".persistently_hidden.enabled", false);
 }
 
 void TechTreeWnd::HidePedia() {
     m_enc_detail_panel->Hide();
 
     OptionsDB& db = GetOptionsDB();
-    db.Set("UI.windows." + RES_PEDIA_WND_NAME + ".persistently-hidden", true);
+    db.Set("ui.window." + RES_PEDIA_WND_NAME + ".persistently_hidden.enabled", true);
 }
 
 void TechTreeWnd::TogglePedia() {

@@ -35,8 +35,9 @@ namespace {
     const std::string PROD_SELECTOR_WND_NAME = "production.selector";
     const std::string PROD_SIDEPANEL_WND_NAME = "production.sidepanel";
 
-    void    AddOptions(OptionsDB& db)
-    { db.Add("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false, Validator<bool>()); }
+    void    AddOptions(OptionsDB& db) {
+        db.Add("ui.window." + PROD_PEDIA_WND_NAME + ".persistently_hidden.enabled", UserStringNop("OPTIONS_DB_PRODUCTION_PEDIA_HIDDEN"), false, Validator<bool>());
+    }
     bool temp_bool = RegisterOptions(&AddOptions);
 
     //////////////////////////////////
@@ -1277,14 +1278,14 @@ void BuildDesignatorWnd::ShowPedia() {
     m_enc_detail_panel->Show();
 
     OptionsDB& db = GetOptionsDB();
-    db.Set("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", false);
+    db.Set("ui.window." + PROD_PEDIA_WND_NAME + ".persistently_hidden.enabled", false);
 }
 
 void BuildDesignatorWnd::HidePedia() {
     m_enc_detail_panel->Hide();
 
     OptionsDB& db = GetOptionsDB();
-    db.Set("UI.windows." + PROD_PEDIA_WND_NAME + ".persistently-hidden", true);
+    db.Set("ui.window." + PROD_PEDIA_WND_NAME + ".persistently_hidden.enabled", true);
 }
 
 void BuildDesignatorWnd::TogglePedia() {

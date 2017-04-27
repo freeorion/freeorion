@@ -6194,7 +6194,7 @@ void MapWnd::ShowResearch() {
     GG::GUI::GetGUI()->MoveUp(m_research_wnd);
 
     // hide pedia again if it is supposed to be hidden persistently
-    if (GetOptionsDB().Get<bool>("UI.windows.research.pedia.persistently-hidden"))
+    if (GetOptionsDB().Get<bool>("ui.window.research.pedia.persistently_hidden.enabled"))
         m_research_wnd->HidePedia();
 
     // indicate selection on button
@@ -6237,7 +6237,7 @@ void MapWnd::ShowProduction() {
     m_production_wnd->Show();
 
     // hide pedia again if it is supposed to be hidden persistently
-    if (GetOptionsDB().Get<bool>("UI.windows.production.pedia.persistently-hidden"))
+    if (GetOptionsDB().Get<bool>("ui.window.production.pedia.persistently_hidden.enabled"))
         m_production_wnd->TogglePedia();
 
     m_in_production_view_mode = true;
