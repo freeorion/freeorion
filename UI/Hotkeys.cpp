@@ -139,7 +139,7 @@ void Hotkey::AddOptions(OptionsDB& db) {
         return;
     for (const auto& entry : *s_hotkeys) {
         const Hotkey& hotkey = entry.second;
-        std::string n = "UI.hotkeys.";
+        std::string n = "ui.hotkeys.";
         n += hotkey.m_name;
         db.Add(n, hotkey.GetDescription(),
                hotkey.ToString(), Validator<std::string>());
@@ -190,7 +190,7 @@ void Hotkey::ReadFromOptions(OptionsDB& db) {
     for (auto& entry : *s_hotkeys) {
         Hotkey& hotkey = entry.second;
 
-        std::string options_db_name = "UI.hotkeys." + hotkey.m_name;
+        std::string options_db_name = "ui.hotkeys." + hotkey.m_name;
         if (!db.OptionExists(options_db_name)) {
             ErrorLogger() << "Hotkey::ReadFromOptions : no option for " << options_db_name;
             continue;
@@ -298,14 +298,14 @@ void Hotkey::SetHotkey(const Hotkey& hotkey, GG::Key key, GG::Flags<GG::ModKey> 
     hk.m_key = key;
     hk.m_mod_keys = GG::MassagedAccelModKeys(mod);
 
-    GetOptionsDB().Set<std::string>("UI.hotkeys." + hk.m_name, hk.ToString());
+    GetOptionsDB().Set<std::string>("ui.hotkeys." + hk.m_name, hk.ToString());
 }
 
 void Hotkey::ResetHotkey(const Hotkey& old_hotkey) {
     Hotkey& hk = PrivateNamedHotkey(old_hotkey.m_name);
     hk.m_key = hk.m_key_default;
     hk.m_mod_keys = hk.m_mod_keys_default;
-    GetOptionsDB().Set<std::string>("UI.hotkeys." + hk.m_name, hk.ToString());
+    GetOptionsDB().Set<std::string>("ui.hotkeys." + hk.m_name, hk.ToString());
 }
 
 void Hotkey::ClearHotkey(const Hotkey& old_hotkey)
