@@ -83,7 +83,7 @@ GG::Clr     ClientUI::WndOuterBorderColor()     { return GetOptionsDB().Get<GG::
 GG::Clr     ClientUI::WndInnerBorderColor()     { return GetOptionsDB().Get<GG::Clr>("ui.window.border.inner.color"); }
 
 // controls
-GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<GG::Clr>("UI.ctrl-color"); }
+GG::Clr     ClientUI::CtrlColor()               { return GetOptionsDB().Get<GG::Clr>("ui.control.background.color"); }
 GG::Clr     ClientUI::CtrlBorderColor()         { return GetOptionsDB().Get<GG::Clr>("UI.ctrl-border-color"); }
 GG::Clr     ClientUI::ButtonHiliteColor() {
     GG::Clr colour = CtrlColor();
@@ -524,7 +524,7 @@ namespace {
         db.Add("ui.window.border.outer.color",  UserStringNop("OPTIONS_DB_UI_WND_OUTER_BORDER_COLOR"),     GG::Clr(64, 64, 64, 255),    Validator<GG::Clr>());
         db.Add("ui.window.border.inner.color",  UserStringNop("OPTIONS_DB_UI_WND_INNER_BORDER_COLOR"),     GG::Clr(192, 192, 192, 255), Validator<GG::Clr>());
 
-        db.Add("UI.ctrl-color",                 UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                 GG::Clr(15, 15, 15, 255),    Validator<GG::Clr>());
+        db.Add("ui.control.background.color",   UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                 GG::Clr(15, 15, 15, 255),    Validator<GG::Clr>());
         db.Add("UI.ctrl-border-color",          UserStringNop("OPTIONS_DB_UI_CTRL_BORDER_COLOR"),          GG::Clr(124, 124, 124, 255), Validator<GG::Clr>());
 
         db.Add("UI.dropdownlist-arrow-color",   UserStringNop("OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR"),   GG::Clr(130, 130, 0, 255),   Validator<GG::Clr>());
