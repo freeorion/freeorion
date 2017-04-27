@@ -124,7 +124,7 @@ namespace {
         db.Add("UI.fleet.explore.system.known.multiplier", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER"), 10.0f, Validator<float>());
         db.Add("map.starlane.color",                UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
 
-        db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
+        db.Add("map.detection_range.shown",         UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
 
         db.Add("map.scanlines.shown",               UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG"),                      true,       Validator<bool>());
         db.Add("map.system.scanlines.spacing",      UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_SPACING"),              4.0,        RangedStepValidator<double>(0.25, 1.5, 8.0));
@@ -2407,7 +2407,7 @@ void MapWnd::RenderMovementLineETAIndicators(const MapWnd::MovementLineData& mov
 }
 
 void MapWnd::RenderVisibilityRadii() {
-    if (!GetOptionsDB().Get<bool>("UI.show-detection-range"))
+    if (!GetOptionsDB().Get<bool>("map.detection_range.shown"))
         return;
 
     glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);
@@ -2583,7 +2583,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool scale          = GetOptionsDB().Get<bool>("map.scale.legend.shown");
         bool scaleCircle    = GetOptionsDB().Get<bool>("map.scale.circle.shown");
         bool zoomSlider     = GetOptionsDB().Get<bool>("map.zoom.slider.shown");
-        bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
+        bool detectionRange = GetOptionsDB().Get<bool>("map.detection_range.shown");
 
         auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("video.fps.shown",                !fps);         };
         auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("ui.window.sidepanel.planet.shown", !showPlanets);  };
@@ -2595,7 +2595,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("map.scale.legend.shown",          !scale);        };
         auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("map.scale.circle.shown",          !scaleCircle);   };
         auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("map.zoom.slider.shown",           !zoomSlider);      };
-        auto detection_range_action = [&detectionRange]() { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange);   };
+        auto detection_range_action = [&detectionRange]() { GetOptionsDB().Set<bool>("map.detection_range.shown",       !detectionRange);   };
 
         auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
         popup->AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),                     false, fps,            show_fps_action));
