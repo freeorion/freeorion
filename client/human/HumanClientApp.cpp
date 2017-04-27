@@ -102,7 +102,7 @@ namespace {
                false,   Validator<bool>());
         db.Add("save.auto.multiplayer.start.enabled",   UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"),
                true,    Validator<bool>());
-        db.Add("autosave.turns",                    UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
+        db.Add("save.auto.interval.turns",          UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
         db.Add("autosave.turn-limit",               UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
         db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
         db.Add("autosave.game-close",           UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
@@ -1271,12 +1271,12 @@ void HumanClientApp::Autosave() {
         return;
 
     // Create an auto save for 1) new games on turn 1, 2) if auto save is
-    // requested on turn number modulo autosave.turns or 3) on the last turn of
+    // requested on turn number modulo save.auto.interval.turns or 3) on the last turn of
     // play.
 
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
-    int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
+    int autosave_turns = GetOptionsDB().Get<int>("save.auto.interval.turns");
     bool is_single_player_enabled =
         (m_single_player_game
          && (GetOptionsDB().Get<bool>("save.auto.single_player.start.enabled")
