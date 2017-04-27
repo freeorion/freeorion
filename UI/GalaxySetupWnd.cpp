@@ -158,8 +158,8 @@ namespace {
         db.Add("GameSetup.starlane-frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("GameSetup.specials-frequency",  UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
         db.Add("GameSetup.monster-frequency",   UserStringNop("OPTIONS_DB_GAMESETUP_MONSTER_FREQUENCY"),       GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.native-frequency",    UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),        GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
-        db.Add("GameSetup.empire-name",         UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),             std::string(""),    Validator<std::string>());
+        db.Add("setup.native.frequency",        UserStringNop("OPTIONS_DB_GAMESETUP_NATIVE_FREQUENCY"),        GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
+        db.Add("setup.empire.name",             UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),             std::string(""),    Validator<std::string>());
         db.Add("setup.player.name",             UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),             std::string(""),    Validator<std::string>());
         db.Add("setup.empire.color",            UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),            9,                  RangedValidator<int>(0, 100));
         db.Add("setup.initial.species",         UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),   std::string("SP_HUMAN"),    Validator<std::string>());
@@ -621,7 +621,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     // native frequency
     m_native_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NATIVE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.native-frequency")));
+    m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.native.frequency")));
     m_native_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
@@ -759,7 +759,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_planet_density_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density") - 1);
     m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency"));
     m_monster_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency"));
-    m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency"));
+    m_native_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency"));
     m_ai_aggression_list->Select(GetOptionsDB().Get<Aggression>("setup.ai.aggression"));
 
     SettingsChangedSignal();
@@ -1196,7 +1196,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("GameSetup.planet-density",      m_galaxy_setup_panel->GetPlanetDensity());
     GetOptionsDB().Set("GameSetup.specials-frequency",  m_galaxy_setup_panel->GetSpecialsFrequency());
     GetOptionsDB().Set("GameSetup.monster-frequency",   m_galaxy_setup_panel->GetMonsterFrequency());
-    GetOptionsDB().Set("GameSetup.native-frequency",    m_galaxy_setup_panel->GetNativeFrequency());
+    GetOptionsDB().Set("setup.native.frequency", m_galaxy_setup_panel->GetNativeFrequency());
     GetOptionsDB().Set("setup.ai.aggression", m_galaxy_setup_panel->GetAIAggression());
     GetOptionsDB().Set("setup.player.name", m_player_name_edit->Text());
     GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
