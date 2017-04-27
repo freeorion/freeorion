@@ -56,7 +56,7 @@ namespace {
                default_pts * 6,         StepValidator<int>(1));
         db.Add("UI.research.listbox.column-widths.category",    UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_CATEGORY"),
                default_pts * 12,        StepValidator<int>(1));
-        db.Add("UI.research.listbox.column-widths.description", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
+        db.Add("ui.window.research.list.column.description.width", UserStringNop("OPTIONS_DB_UI_TECH_LISTBOX_COL_WIDTH_DESCRIPTION"),
                default_pts * 18,        StepValidator<int>(1));
 
         // Default status for TechTreeControl filter.
@@ -1616,7 +1616,7 @@ std::vector<GG::X> TechTreeWnd::TechListBox::TechRow::ColWidths(GG::X total_widt
 
     GG::X cols_width_sum = graphic_width + name_width + cost_width + time_width + category_width;
 
-    GG::X desc_width(std::max(GetOptionsDB().Get<int>("UI.research.listbox.column-widths.description"),
+    GG::X desc_width(std::max(GetOptionsDB().Get<int>("ui.window.research.list.column.description.width"),
                               Value(total_width - cols_width_sum)));
 
     return {graphic_width, name_width, cost_width, time_width, category_width, desc_width};
