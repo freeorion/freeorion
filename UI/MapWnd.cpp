@@ -112,7 +112,7 @@ namespace {
         db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale-circle",   UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
         db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
-        db.Add("UI.starlane-thickness",             UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
+        db.Add("map.starlane.thickness",            UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                      2.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
         db.Add("UI.resource-starlane-colouring",    UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
         db.Add("UI.fleet-supply-lines",             UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                 true,       Validator<bool>());
@@ -2136,7 +2136,7 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
 
-        glLineWidth(static_cast<GLfloat>(thickness * GetOptionsDB().Get<double>("UI.starlane-thickness")));
+        glLineWidth(static_cast<GLfloat>(thickness * GetOptionsDB().Get<double>("map.starlane.thickness")));
 
         glPushAttrib(GL_COLOR_BUFFER_BIT);
         glPushClientAttrib(GL_CLIENT_ALL_ATTRIB_BITS);

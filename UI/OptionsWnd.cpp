@@ -602,7 +602,7 @@ void OptionsWnd::CompleteConstruction() {
     DoubleOption(current_page, 0, "map.fleet.selection_indicator.size",    UserString("OPTIONS_UI_FLEET_SELECTION_INDICATOR_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_STARLANES"));
-    DoubleOption(current_page, 0, "UI.starlane-thickness",                 UserString("OPTIONS_STARLANE_THICKNESS"));
+    DoubleOption(current_page, 0, "map.starlane.thickness",                UserString("OPTIONS_STARLANE_THICKNESS"));
     BoolOption(current_page,   0, "UI.resource-starlane-colouring",        UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"));
     DoubleOption(current_page, 0, "UI.starlane-core-multiplier",           UserString("OPTIONS_DB_STARLANE_CORE"));
     BoolOption(current_page,   0, "UI.fleet-supply-lines",                 UserString("OPTIONS_FLEET_SUPPLY_LINES"));
