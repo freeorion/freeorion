@@ -612,7 +612,7 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page,  0, "map.starlane.color",                    UserString("OPTIONS_UNOWNED_STARLANE_COLOUR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_GALAXY_MAP_GENERAL"));
-    BoolOption(current_page,   0, "UI.galaxy-gas-background",              UserString("OPTIONS_GALAXY_MAP_GAS"));
+    BoolOption(current_page,   0, "map.system.background.gas.shown",       UserString("OPTIONS_GALAXY_MAP_GAS"));
     BoolOption(current_page,   0, "UI.galaxy-starfields",                  UserString("OPTIONS_GALAXY_MAP_STARFIELDS"));
     BoolOption(current_page,   0, "UI.show-galaxy-map-scale",              UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"));
     BoolOption(current_page,   0, "UI.show-galaxy-map-scale-circle",       UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"));

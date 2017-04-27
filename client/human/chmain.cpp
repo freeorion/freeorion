@@ -183,7 +183,7 @@ int mainConfigOptionsSetup(const std::vector<std::string>& args) {
         }
 
         if (GetOptionsDB().Get<bool>("render-simple")) {
-            GetOptionsDB().Set<bool>("UI.galaxy-gas-background",false);
+            GetOptionsDB().Set<bool>("map.system.background.gas.shown", false);
             GetOptionsDB().Set<bool>("UI.galaxy-starfields",    false);
             GetOptionsDB().Set<bool>("video.fps.shown", true);
         }

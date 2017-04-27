@@ -107,7 +107,7 @@ namespace {
     }
 
     void AddOptions(OptionsDB& db) {
-        db.Add("UI.galaxy-gas-background",          UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                     true,       Validator<bool>());
+        db.Add("map.system.background.gas.shown",   UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                     true,       Validator<bool>());
         db.Add("UI.galaxy-starfields",              UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),              true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale-circle",   UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
@@ -1898,7 +1898,7 @@ namespace {
 }
 
 void MapWnd::RenderGalaxyGas() {
-    if (!GetOptionsDB().Get<bool>("UI.galaxy-gas-background"))
+    if (!GetOptionsDB().Get<bool>("map.system.background.gas.shown"))
         return;
     glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
 
@@ -2579,7 +2579,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool systemCircles  = GetOptionsDB().Get<bool>("map.system.circle.shown");
         bool resourceColor  = GetOptionsDB().Get<bool>("map.starlane.empire.color.shown");
         bool fleetSupply    = GetOptionsDB().Get<bool>("map.fleet.supply_line.shown");
-        bool gas            = GetOptionsDB().Get<bool>("UI.galaxy-gas-background");
+        bool gas            = GetOptionsDB().Get<bool>("map.system.background.gas.shown");
         bool starfields     = GetOptionsDB().Get<bool>("UI.galaxy-starfields");
         bool scale          = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
         bool scaleCircle    = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle");
@@ -2591,7 +2591,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("map.system.circle.shown",        !systemCircles); };
         auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("map.starlane.empire.color.shown", !resourceColor);  };
         auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("map.fleet.supply_line.shown",    !fleetSupply);     };
-        auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        };
+        auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("map.system.background.gas.shown", !gas);        };
         auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  };
         auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        };
         auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale-circle",!scaleCircle);   };
