@@ -34,7 +34,7 @@ namespace {
         // queue width used also on research screen. prevent double-adding...
         if (!db.OptionExists("ui.window.queue.width"))
             db.Add("ui.window.queue.width", UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"), 350, RangedValidator<int>(200, 500));
-        db.Add("UI.show-production-location-on-queue",  UserStringNop("OPTIONS_DB_UI_PROD_QUEUE_LOCATION"), true,   Validator<bool>());
+        db.Add("ui.window.queue.production_location.shown", UserStringNop("OPTIONS_DB_UI_PROD_QUEUE_LOCATION"), true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -453,7 +453,7 @@ namespace {
         bool system_selected = false;
         if (std::shared_ptr<const UniverseObject> location = GetUniverseObject(elem.location)) {
             system_selected = (location->SystemID() != -1 && location ->SystemID() == SidePanel::SystemID());
-            if (GetOptionsDB().Get<bool>("UI.show-production-location-on-queue"))
+            if (GetOptionsDB().Get<bool>("ui.window.queue.production_location.shown"))
                 location_text = boost::io::str(FlexibleFormat(UserString("PRODUCTION_QUEUE_ITEM_LOCATION")) % location->Name()) + " ";
         }
 

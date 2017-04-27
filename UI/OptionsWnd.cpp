@@ -573,7 +573,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_QUEUES"));
     IntOption(current_page,    0, "ui.window.queue.width",                 UserString("OPTIONS_UI_QUEUE_WIDTH"));
-    BoolOption(current_page,   0, "UI.show-production-location-on-queue",  UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
+    BoolOption(current_page,   0, "ui.window.queue.production_location.shown", UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
     BoolOption(current_page,   0, "UI.dump-effects-descriptions",          UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
