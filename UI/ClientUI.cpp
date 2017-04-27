@@ -71,7 +71,7 @@ fs::path    ClientUI::ArtDir()                  { return GetResourceDir() / "dat
 fs::path    ClientUI::SoundDir()                { return GetResourceDir() / "data" / "sound"; }
 
 int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("ui.font.size"); }
-int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
+int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("ui.font.title.size"); }
 
 GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("UI.text-color"); }
 GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("UI.default-link-color"); }
@@ -514,9 +514,9 @@ namespace {
 #endif
         db.Add<std::string>("ui.font.title.path", UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),               (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
 #ifdef FREEORION_MACOSX
-        db.Add("UI.title-font-size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            16,                     RangedValidator<int>(4, 40));
+        db.Add("ui.font.title.size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            16,                          RangedValidator<int>(4, 40));
 #else
-        db.Add("UI.title-font-size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            17,                     RangedValidator<int>(4, 40));
+        db.Add("ui.font.title.size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            17,                          RangedValidator<int>(4, 40));
 #endif
 
         // colors

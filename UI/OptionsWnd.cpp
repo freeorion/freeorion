@@ -563,7 +563,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONT_SIZES"));
     IntOption(current_page,    0, "ui.font.size",                          UserString("OPTIONS_FONT_TEXT"));
-    IntOption(current_page,    0, "UI.title-font-size",                    UserString("OPTIONS_FONT_TITLE"));
+    IntOption(current_page,    0, "ui.font.title.size",                    UserString("OPTIONS_FONT_TITLE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_RESEARCH_WND"));
     DoubleOption(current_page, 0, "UI.tech-layout-horz-spacing",           UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
