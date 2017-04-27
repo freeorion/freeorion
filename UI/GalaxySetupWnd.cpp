@@ -153,7 +153,7 @@ namespace {
         db.Add("setup.seed",                    UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                    std::string("0"),   Validator<std::string>());
         db.Add("GameSetup.stars",               UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                   150,                RangedValidator<int>(10, 5000));
         db.Add("GameSetup.galaxy-shape",        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),            DISC,               RangedValidator<Shape>(SPIRAL_2, RANDOM));
-        db.Add("GameSetup.galaxy-age",          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
+        db.Add("setup.galaxy.age",              UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("setup.planet.density",          UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("setup.starlane.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_STARLANE_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(ALLOW_NO_STARLANES ? GALAXY_SETUP_NONE : GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("setup.specials.frequency",      UserStringNop("OPTIONS_DB_GAMESETUP_SPECIALS_FREQUENCY"),      GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_NONE, GALAXY_SETUP_RANDOM));
@@ -586,7 +586,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     // galaxy age
     m_galaxy_ages_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AGE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
+    m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.galaxy.age")));
     m_galaxy_ages_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
@@ -754,7 +754,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
-    m_galaxy_ages_list->Select(GetOptionsDB().Get<GalaxySetupOption>("GameSetup.galaxy-age") - 1);
+    m_galaxy_ages_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age") - 1);
     m_starlane_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency") - (ALLOW_NO_STARLANES ? 0 : 1));
     m_planet_density_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density") - 1);
     m_specials_freq_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency"));
@@ -1191,7 +1191,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("setup.seed", m_galaxy_setup_panel->GetSeed());
     GetOptionsDB().Set("GameSetup.stars",               m_galaxy_setup_panel->Systems());
     GetOptionsDB().Set("GameSetup.galaxy-shape",        m_galaxy_setup_panel->GetShape());
-    GetOptionsDB().Set("GameSetup.galaxy-age",          m_galaxy_setup_panel->GetAge());
+    GetOptionsDB().Set("setup.galaxy.age", m_galaxy_setup_panel->GetAge());
     GetOptionsDB().Set("setup.starlane.frequency", m_galaxy_setup_panel->GetStarlaneFrequency());
     GetOptionsDB().Set("setup.planet.density", m_galaxy_setup_panel->GetPlanetDensity());
     GetOptionsDB().Set("setup.specials.frequency", m_galaxy_setup_panel->GetSpecialsFrequency());
