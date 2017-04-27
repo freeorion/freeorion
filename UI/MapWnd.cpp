@@ -148,7 +148,7 @@ namespace {
         db.Add("map.system.unowned.name.color",     UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       GG::Clr(160, 160, 160, 255), Validator<GG::Clr>());
 
         db.Add("map.fleet.button.tiny.zoom_threshold", UserStringNop("OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM"),   0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
-        db.Add("UI.small-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"),     1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
+        db.Add("map.fleet.button.small.zoom_threshold", UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"), 1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.medium-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"),   4.00,       RangedStepValidator<double>(0.125, 0.125, 4.0));
 
         db.Add("UI.detection-range-opacity",        UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"), 3,          RangedValidator<int>(0, 8));

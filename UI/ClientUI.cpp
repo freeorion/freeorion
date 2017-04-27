@@ -117,7 +117,7 @@ int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().
 GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<GG::Clr>("map.system.unowned.name.color"); }
 
 double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("map.fleet.button.tiny.zoom_threshold"); }
-double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }
+double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("map.fleet.button.small.zoom_threshold"); }
 double      ClientUI::MediumFleetButtonZoomThreshold()  { return GetOptionsDB().Get<double>("UI.medium-fleet-button-minimum-zoom"); }
 
 bool        ClientUI::DisplayTimestamp()                { return GetOptionsDB().Get<bool>("UI.display-timestamp"); }
