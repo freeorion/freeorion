@@ -204,7 +204,7 @@ OwnerColoredSystemName::OwnerColoredSystemName(int system_id, int font_size,
         text_color = ClientUI::TextColor();
     }
 
-    if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+    if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
         wrapped_system_name = wrapped_system_name + " (" + std::to_string(system_id) + ")";
     }
 

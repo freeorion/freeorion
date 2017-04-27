@@ -565,7 +565,7 @@ namespace {
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
         db.Add("ui.design.pedia.title.dynamic.enabled", UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),  false);
         db.Add("ui.map.fleet.eta.shown",        UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                true);
-        db.Add("UI.show-id-after-names",        UserStringNop("OPTIONS_DB_SHOW_IDS_AFTER_NAMES"),          false);
+        db.Add("ui.name.id.shown",              UserStringNop("OPTIONS_DB_SHOW_IDS_AFTER_NAMES"),          false);
 
         // Other
         db.Add("resource.shipdesign.saved.enabled",     UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"), true);
