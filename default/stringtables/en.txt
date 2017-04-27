@@ -1728,7 +1728,7 @@ OPTIONS_DB_AUTO_N_TURNS
 Hits the "Turn" button automatically on the first N turns (up to 400 turns, defaults to zero); useful for various testing particularly with --quickstart or --load, possibly also --auto-quit.
 
 OPTIONS_DB_CHECKED_GL_VERSION
-Stores whether the OpenGL version of this system has been checked. If false, several rendering options may be altered depending on the GL version, after which, this option will be set to true.
+Stores whether the OpenGL version of this system has not been checked. If true, several rendering options may be altered depending on the GL version, after which, this option will be set to false.
 
 OPTIONS_DB_RESET_FSSIZE
 Stores whether to reset the stored fullscreen resolution. If false, the stored values are used, but if true, the values are reset to the max the rendering system supports.

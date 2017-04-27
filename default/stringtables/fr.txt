@@ -1716,7 +1716,7 @@ OPTIONS_DB_AUTO_N_TURNS
 Clique le bouton "Tour" automatiquement pour les N premiers tours (jusqu'à 400 tours, valeur défaut à zéro); utile pour le débogage notamment avec --quickstart ou --load, et éventuellement --auto-quit.
 
 OPTIONS_DB_CHECKED_GL_VERSION
-Indique si la version d'OpenGL du système a été vérifiée. Si non, diverses options de rendu (selon la version d'OpenGL effectivement présente) peuvent être modifiées, afin de provoquer cette vérification.
+Indique si la version d'OpenGL du système a non été vérifiée. Si vrai, diverses options de rendu (selon la version d'OpenGL effectivement présente) peuvent être modifiées, afin de provoquer cette vérification.
 
 OPTIONS_DB_RESET_FSSIZE
 Enregistre ou réinitialise la résolution en plein écran. Si non, la valeur enregistrée est utilisée. Si oui, la valeur est réinitialisée à la résolution maximale que le système peut afficher.
