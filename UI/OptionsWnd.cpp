@@ -733,15 +733,15 @@ void OptionsWnd::CompleteConstruction() {
 
     // Misc
     current_page = CreatePage(UserString("OPTIONS_PAGE_MISC"));
-    IntOption(current_page, 0, "effects-threads-ui",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
-    IntOption(current_page, 0, "effects-threads-server",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
-    IntOption(current_page, 0, "effects-threads-ai",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
+    IntOption(current_page, 0, "effects.ui.threads",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
+    IntOption(current_page, 0, "effects.server.threads",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
+    IntOption(current_page, 0, "effects.ai.threads",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
     BoolOption(current_page, 0, "resource.shipdesign.saved.enabled",    UserString("OPTIONS_ADD_SAVED_DESIGNS"));
     BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
     BoolOption(current_page, 0, "save.format.binary.enabled",    UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
     BoolOption(current_page, 0, "save.format.xml.zlib.enabled", UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
     BoolOption(current_page, 0, "ui.map.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
-    BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
+    BoolOption(current_page, 0, "effects.accounting.enabled", UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
     // Create persistent config button
     auto persistent_config_button = GG::Wnd::Create<CUIButton>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG"));

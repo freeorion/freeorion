@@ -1435,7 +1435,7 @@ bool HumanClientApp::HaveWindowFocus() const
 { return m_have_window_focus; }
 
 int HumanClientApp::EffectsProcessingThreads() const
-{ return GetOptionsDB().Get<int>("effects-threads-ui"); }
+{ return GetOptionsDB().Get<int>("effects.ui.threads"); }
 
 void HumanClientApp::UpdateFPSLimit() {
     if (GetOptionsDB().Get<bool>("video.fps.max.enabled")) {
