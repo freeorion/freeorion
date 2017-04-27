@@ -32,8 +32,8 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         // queue width used also on research screen. prevent double-adding...
-        if (!db.OptionExists("UI.queue-width"))
-            db.Add("UI.queue-width",                    UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"),         350,    RangedValidator<int>(200, 500));
+        if (!db.OptionExists("ui.window.queue.width"))
+            db.Add("ui.window.queue.width", UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"), 350, RangedValidator<int>(200, 500));
         db.Add("UI.show-production-location-on-queue",  UserStringNop("OPTIONS_DB_UI_PROD_QUEUE_LOCATION"), true,   Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -807,7 +807,7 @@ void ProductionWnd::CompleteConstruction() {
    //DebugLogger() << "ProductionWindow:  fullscreen width: "<< GetOptionsDB().Get<int>("video.fullscreen.width")
    //              << " ; windowed width: " << GetOptionsDB().Get<int>("video.windowed.width");
 
-    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
+    GG::X queue_width(GetOptionsDB().Get<int>("ui.window.queue.width"));
     GG::Y info_height(ClientUI::Pts()*8);
 
     m_production_info_panel = GG::Wnd::Create<ProductionInfoPanel>(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
@@ -868,7 +868,7 @@ void ProductionWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 }
 
 void ProductionWnd::DoLayout() {
-    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
+    GG::X queue_width(GetOptionsDB().Get<int>("ui.window.queue.width"));
     GG::Y info_height(ClientUI::Pts()*6 + 34);
 
     m_production_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));

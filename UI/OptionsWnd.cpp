@@ -572,7 +572,7 @@ void OptionsWnd::CompleteConstruction() {
     DoubleOption(current_page, 0, "ui.window.research.control.graphic.size", UserString("OPTIONS_TECH_CTRL_ICON_SIZE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_QUEUES"));
-    IntOption(current_page,    0, "UI.queue-width",                        UserString("OPTIONS_UI_QUEUE_WIDTH"));
+    IntOption(current_page,    0, "ui.window.queue.width",                 UserString("OPTIONS_UI_QUEUE_WIDTH"));
     BoolOption(current_page,   0, "UI.show-production-location-on-queue",  UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));

@@ -28,8 +28,8 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         // queue width used also on production screen. prevent double-adding...
-        if (!db.OptionExists("UI.queue-width"))
-            db.Add("UI.queue-width",    UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"), 300,    RangedValidator<int>(200, 500));
+        if (!db.OptionExists("ui.window.queue.width"))
+            db.Add("ui.window.queue.width", UserStringNop("OPTIONS_DB_UI_QUEUE_WIDTH"), 300, RangedValidator<int>(200, 500));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -414,8 +414,8 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_enabled(false),
     m_empire_shown_id(ALL_EMPIRES)
 {
-    GG::X queue_width(GetOptionsDB().Get<int>("UI.queue-width"));
-    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")), GG::Y0);
+    GG::X queue_width(GetOptionsDB().Get<int>("ui.window.queue.width"));
+    GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(GG::X(GetOptionsDB().Get<int>("ui.window.queue.width")), GG::Y0);
 
     m_research_info_panel = GG::Wnd::Create<ProductionInfoPanel>(
         UserString("RESEARCH_WND_TITLE"), UserString("RESEARCH_INFO_RP"),
@@ -463,8 +463,8 @@ void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 void ResearchWnd::DoLayout(bool init) {
     m_research_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
-    GG::X queue_width = GG::X(init ? GetOptionsDB().GetDefault<int>("UI.queue-width") :
-                                     GetOptionsDB().Get<int>("UI.queue-width"));
+    GG::X queue_width = GG::X(init ? GetOptionsDB().GetDefault<int>("ui.window.queue.width") :
+                                     GetOptionsDB().Get<int>("ui.window.queue.width"));
     if (init) {
         GG::Pt info_ul = m_research_info_panel->UpperLeft();
         GG::Pt info_lr(info_ul.x + queue_width, info_ul.y + m_research_info_panel->MinUsableSize().y);
