@@ -31,7 +31,7 @@ namespace {
                             Validator<std::string>() , false);
         db.Add<std::string>("ui.stringtable.path",  UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),  PathToString(GetRootDataDir() / "default" / "stringtables" / "en.txt"));
         db.Add("save.serialization.binary.enabled", UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),  false);
-        db.Add("xml-zlib-serialization",            UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"),true);
+        db.Add("save.serialization.compression.enabled", UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"), true);
 
         // AI Testing options-- the following options are to facilitate AI testing and do not currently have an options page widget;
         // they are intended to be changed via the command line and are not currently storable in the configuration file.
