@@ -5448,7 +5448,7 @@ HIDDEN_SETTINGS__ARTICLE_TEXT
 
 In addition to a great many entries for the size/location of various UI elements, these 'Hidden Settings' include:
 
-UI.design-pedia-dynamic : controls whether or not the design detail pedia page in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] will be dynamically updated as the design name is edited (can cause lag)
+ui.window.design.pedia.title.dynamic.enabled : controls whether or not the design detail pedia page in the [[encyclopedia DESIGN_WINDOW_ARTICLE_TITLE]] will be dynamically updated as the design name is edited (can cause lag)
 
 show-fleet-eta : controls whether a fleet's Estimated Time of Arrival (ETA), in number of turns from the current turn, is shown in its Fleet Panel in the Fleet Window
 
