@@ -699,20 +699,8 @@ OptionsWnd::OptionsWnd():
     DirectoryOption(current_page, 0, "save-dir",     UserString("OPTIONS_FOLDER_SAVE"),     GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 
-    // Misc
-    current_page = CreatePage(UserString("OPTIONS_PAGE_MISC"));
-    IntOption(current_page, 0, "effects-threads-ui",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
-    IntOption(current_page, 0, "effects-threads-server",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
-    IntOption(current_page, 0, "effects-threads-ai",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
-    BoolOption(current_page, 0, "auto-add-saved-designs",   UserString("OPTIONS_ADD_SAVED_DESIGNS"));
-    BoolOption(current_page, 0, "binary-serialization",     UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
-    BoolOption(current_page, 0, "xml-zlib-serialization",   UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
-    BoolOption(current_page, 0, "verbose-logging",          UserString("OPTIONS_VERBOSE_LOGGING_DESC"));
-    BoolOption(current_page, 0, "verbose-sitrep",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
-    BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
-    m_tabs->SetCurrentWnd(0);
-
-    // Logging section
+    // Logging page
+    current_page = CreatePage(UserString("OPTIONS_PAGE_LOGS"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGING_SECTION"),
                         UserString("OPTIONS_DB_UI_LOGGING_SECTION_TOOLTIP"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SINKS"),
@@ -734,6 +722,18 @@ OptionsWnd::OptionsWnd():
         const auto& option_label = std::get<1>(source);
         LoggerLevelOption(*current_page, false, option_label, option);
     }
+
+    // Misc
+    current_page = CreatePage(UserString("OPTIONS_PAGE_MISC"));
+    IntOption(current_page, 0, "effects-threads-ui",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
+    IntOption(current_page, 0, "effects-threads-server",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
+    IntOption(current_page, 0, "effects-threads-ai",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
+    BoolOption(current_page, 0, "auto-add-saved-designs",   UserString("OPTIONS_ADD_SAVED_DESIGNS"));
+    BoolOption(current_page, 0, "binary-serialization",     UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
+    BoolOption(current_page, 0, "xml-zlib-serialization",   UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
+    BoolOption(current_page, 0, "verbose-sitrep",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
+    m_tabs->SetCurrentWnd(0);
 
     DoLayout();
 
