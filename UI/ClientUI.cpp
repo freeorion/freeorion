@@ -70,12 +70,12 @@ namespace fs = boost::filesystem;
 fs::path    ClientUI::ArtDir()                  { return GetResourceDir() / "data" / "art"; }
 fs::path    ClientUI::SoundDir()                { return GetResourceDir() / "data" / "sound"; }
 
-int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("UI.font-size"); }
-int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("UI.title-font-size"); }
+int         ClientUI::Pts()                     { return GetOptionsDB().Get<int>("ui.font.size"); }
+int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>("ui.font.title.size"); }
 
-GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("UI.text-color"); }
-GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("UI.default-link-color"); }
-GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("UI.rollover-link-color"); }
+GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("ui.font.color"); }
+GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("ui.font.link.color"); }
+GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("ui.font.link.rollover.color"); }
 
 // windows
 GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("ui.window.background.color"); }
@@ -103,8 +103,8 @@ GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<GG::
 
 GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<GG::Clr>("ui.control.edit.highlight.color"); }
 
-GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<GG::Clr>("UI.stat-increase-color"); }
-GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<GG::Clr>("UI.stat-decrease-color"); }
+GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<GG::Clr>("ui.font.stat.increase.color"); }
+GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<GG::Clr>("ui.font.stat.decrease.color"); }
 
 GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<GG::Clr>("ui.button.state.color"); }
 
@@ -507,18 +507,18 @@ namespace {
         db.Add<std::string>("ui.turn.start.sound.path",      UserStringNop("OPTIONS_DB_UI_SOUND_NEWTURN_FILE"),             (GetRootDataDir() / "default" / "data" / "sound" / "newturn.ogg").string());
 
         // fonts
-        db.Add<std::string>("UI.font",          UserStringNop("OPTIONS_DB_UI_FONT"),                       (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Regular.ttf").string());
-        db.Add<std::string>("UI.font-bold",     UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                  (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
+        db.Add<std::string>("ui.font.path",                     UserStringNop("OPTIONS_DB_UI_FONT"),                           (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
+        db.Add<std::string>("ui.font.bold.path", UserStringNop("OPTIONS_DB_UI_FONT_BOLD"),                 (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Bold.ttf").string());
 #ifdef FREEORION_MACOSX
-        db.Add("UI.font-size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  15,                     RangedValidator<int>(4, 40));
+        db.Add("ui.font.size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  15,                     RangedValidator<int>(4, 40));
 #else
-        db.Add("UI.font-size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  16,                     RangedValidator<int>(4, 40));
+        db.Add("ui.font.size",                  UserStringNop("OPTIONS_DB_UI_FONT_SIZE"),                  16,                     RangedValidator<int>(4, 40));
 #endif
-        db.Add<std::string>("UI.title-font",    UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),                 (GetRootDataDir() / "default" / "data" / "fonts" / "Roboto-Regular.ttf").string());
+        db.Add<std::string>("ui.font.title.path", UserStringNop("OPTIONS_DB_UI_TITLE_FONT"),               (GetRootDataDir() / "default/data/fonts/Roboto-Regular.ttf").string());
 #ifdef FREEORION_MACOSX
-        db.Add("UI.title-font-size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            16,                     RangedValidator<int>(4, 40));
+        db.Add("ui.font.title.size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            16,                          RangedValidator<int>(4, 40));
 #else
-        db.Add("UI.title-font-size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            17,                     RangedValidator<int>(4, 40));
+        db.Add("ui.font.title.size",            UserStringNop("OPTIONS_DB_UI_TITLE_FONT_SIZE"),            17,                          RangedValidator<int>(4, 40));
 #endif
 
         // colors
@@ -533,14 +533,14 @@ namespace {
 
         db.Add("ui.control.edit.highlight.color", UserStringNop("OPTIONS_DB_UI_EDIT_HILITE"),              GG::Clr(43, 81, 102, 255),   Validator<GG::Clr>());
 
-        db.Add("UI.stat-increase-color",        UserStringNop("OPTIONS_DB_UI_STAT_INCREASE_COLOR"),        GG::Clr(0, 255, 0, 255),     Validator<GG::Clr>());
-        db.Add("UI.stat-decrease-color",        UserStringNop("OPTIONS_DB_UI_STAT_DECREASE_COLOR"),        GG::Clr(255, 0, 0, 255),     Validator<GG::Clr>());
+        db.Add("ui.font.stat.increase.color",   UserStringNop("OPTIONS_DB_UI_STAT_INCREASE_COLOR"),        GG::Clr(0, 255, 0, 255),     Validator<GG::Clr>());
+        db.Add("ui.font.stat.decrease.color",   UserStringNop("OPTIONS_DB_UI_STAT_DECREASE_COLOR"),        GG::Clr(255, 0, 0, 255),     Validator<GG::Clr>());
 
         db.Add("ui.button.state.color",         UserStringNop("OPTIONS_DB_UI_STATE_BUTTON_COLOR"),          GG::Clr(0, 127, 0, 255),    Validator<GG::Clr>());
 
-        db.Add("UI.text-color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 GG::Clr(255, 255, 255, 255), Validator<GG::Clr>());
-        db.Add("UI.default-link-color",         UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
-        db.Add("UI.rollover-link-color",        UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
+        db.Add("ui.font.color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 GG::Clr(255, 255, 255, 255), Validator<GG::Clr>());
+        db.Add("ui.font.link.color",            UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
+        db.Add("ui.font.link.rollover.color",   UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
 
         db.Add("ui.research.status.completed.background.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"), GG::Clr(72, 72, 72, 255), Validator<GG::Clr>());
         db.Add("ui.research.status.completed.border.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"), GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
@@ -555,8 +555,8 @@ namespace {
         db.Add("ui.scroll.width",               UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),                14,         RangedValidator<int>(8, 30));
 
         // UI behavior
-        db.Add("UI.tooltip-delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
-        db.Add("UI.tooltip.extended-delay",     UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),         3500,       RangedValidator<int>(0, 30000));
+        db.Add("ui.tooltip.delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
+        db.Add("ui.tooltip.extended.delay",     UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),         3500,       RangedValidator<int>(0, 30000));
         db.Add("ui.fleet.multiple.enabled", UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),         false);
         db.Add("ui.quickclose.enabled",  UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),                 true);
         db.Add("ui.reposition.auto.enabled",  UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),      true);
@@ -1079,10 +1079,10 @@ std::shared_ptr<GG::Texture> ClientUI::GetTexture(const boost::filesystem::path&
 
 std::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
      try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
      } catch (...) {
          try {
-            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.font"),
+            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.path"),
                                               pts, RequiredCharsets().begin(), RequiredCharsets().end());
         } catch (...) {
              return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
@@ -1092,10 +1092,10 @@ std::shared_ptr<GG::Font> ClientUI::GetFont(int pts/* = Pts()*/) {
 
 std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
     try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.font-bold"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.bold.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
         try {
-             return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.font-bold"),
+             return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.bold.path"),
                                                pts, RequiredCharsets().begin(), RequiredCharsets().end());
         } catch (...) {
              return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);
@@ -1105,10 +1105,10 @@ std::shared_ptr<GG::Font> ClientUI::GetBoldFont(int pts/* = Pts()*/) {
 
 std::shared_ptr<GG::Font> ClientUI::GetTitleFont(int pts/* = TitlePts()*/) {
     try {
-        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("UI.title-font"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
+        return GG::GUI::GetGUI()->GetFont(GetOptionsDB().Get<std::string>("ui.font.title.path"), pts, RequiredCharsets().begin(), RequiredCharsets().end());
     } catch (...) {
         try {
-            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("UI.title-font"),
+            return GG::GUI::GetGUI()->GetFont(GetOptionsDB().GetDefault<std::string>("ui.font.title.path"),
                                               pts, RequiredCharsets().begin(), RequiredCharsets().end());
         } catch (...) {
              return GG::GUI::GetGUI()->GetStyleFactory()->DefaultFont(pts);

@@ -879,7 +879,7 @@ void PartControl::CompleteConstruction() {
     SetDragDropDataType(PART_CONTROL_DROP_TYPE_STRING);
 
     //DebugLogger() << "PartControl::PartControl part name: " << m_part->Name();
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(
         ClientUI::PartIcon(m_part->Name()),
         UserString(m_part->Name()),
@@ -1895,7 +1895,7 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::stri
 
     m_hull_panel = GG::Wnd::Create<HullAndNamePanel>(w, h, hull, name);
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 }
 
 void BasesListBox::BasesListBoxRow::CompleteConstruction() {
@@ -3085,7 +3085,7 @@ void SlotControl::CompleteConstruction() {
     m_background->Show();
     AttachChild(m_background);
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // set up empty slot tool tip
     std::string title_text;
@@ -3259,7 +3259,7 @@ void SlotControl::SetPart(const PartType* part_type) {
         // double click clears slot
         m_part_control->DoubleClickedSignal.connect(
             [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr); });
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         // set part occupying slot's tool tip to say slot type
         std::string title_text;
@@ -3520,8 +3520,8 @@ void DesignWnd::MainPanel::CompleteConstruction() {
     m_confirm_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_ADD_FINISHED"));
     m_clear_button = Wnd::Create<CUIButton>(UserString("DESIGN_WND_CLEAR"));
 
-    m_replace_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
-    m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_replace_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
+    m_confirm_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     AttachChild(m_design_name_label);
     AttachChild(m_design_name);

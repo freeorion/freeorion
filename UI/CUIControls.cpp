@@ -1372,7 +1372,7 @@ void StatisticIcon::CompleteConstruction() {
 
     SetName("StatisticIcon");
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     AttachChild(m_icon);
 
@@ -1579,7 +1579,7 @@ namespace {
             m_icon->Resize(GG::Pt(GG::X(Value(height - 5)), height - 5));
             m_species_label = GG::Wnd::Create<CUILabel>(localized_name, GG::FORMAT_LEFT | GG::FORMAT_VCENTER);
             if (!species_desc.empty()) {
-                SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
                 SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(species_icon, localized_name,
                                                                      species_desc));
             }

@@ -887,7 +887,7 @@ namespace {
             } else if (entry.first == METER_SECONDARY_STAT) {
                 entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                                                    m_ship_id, entry.first));
-                entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip.extended-delay"), 1);
+                entry.second->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.extended.delay"), 1);
                 entry.second->SetBrowseInfoWnd(GG::Wnd::Create<ShipFightersBrowseWnd>(
                                                    m_ship_id, entry.first, true), 1);
 
@@ -979,7 +979,7 @@ namespace {
         }
 
 
-        int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+        int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
         std::vector<std::pair<MeterType, std::shared_ptr<GG::Texture>>> meters_icons;
         meters_icons.push_back({METER_STRUCTURE,          ClientUI::MeterIcon(METER_STRUCTURE)});
@@ -1691,7 +1691,7 @@ void FleetDataPanel::SetStatIconValues() {
 void FleetDataPanel::UpdateAggressionToggle() {
     if (!m_aggression_toggle)
         return;
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
     m_aggression_toggle->SetBrowseModeTime(tooltip_delay);
 
     NewFleetAggression aggression = FLEET_AGGRESSIVE;
@@ -1787,7 +1787,7 @@ void FleetDataPanel::Init() {
             boost::bind(&FleetDataPanel::ToggleAggression, this));
 
     } else if (auto fleet = GetFleet(m_fleet_id)) {
-        int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+        int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
         std::vector<std::tuple<MeterType, std::shared_ptr<GG::Texture>, std::string>> meters_icons_browsetext;
         meters_icons_browsetext.emplace_back(METER_SIZE, FleetCountIcon(), "FW_FLEET_COUNT_SUMMARY");
@@ -2802,7 +2802,7 @@ void FleetWnd::CompleteConstruction() {
     Sound::TempUISoundDisabler sound_disabler;
 
     // add fleet aggregate stat icons
-    int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+    int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
 
     for (auto entry : {
             std::make_tuple(METER_SIZE, FleetCountIcon(), UserStringNop("FW_FLEET_COUNT_SUMMARY")),

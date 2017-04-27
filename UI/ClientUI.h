@@ -133,19 +133,19 @@ public:
       * found. */
     static std::shared_ptr<GG::Texture> GetTexture(const boost::filesystem::path& path, bool mipmap = false);
 
-    /** Returns the default font in the specified point size.  Uses "UI.font"
+    /** Returns the default font in the specified point size. Uses "ui.font.path"
       * option setting as the font filename, and provides Unicode character sets
       * based on the contents of the stringtable in use. */
     static std::shared_ptr<GG::Font> GetFont(int pts = Pts());
 
     /** Returns the default font in the specified point size.  Uses
-      * "UI.font-bold" option setting as the font filename, and provides
+      * "ui.font.bold.path" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use.
       * */
     static std::shared_ptr<GG::Font> GetBoldFont(int pts = Pts());
 
     /** Returns the default font in the specified point size.  Uses
-      * "UI.title-font" option setting as the font filename, and provides
+      * "ui.font.title.path" option setting as the font filename, and provides
       * Unicode character sets based on the contents of the stringtable in use. */
     static std::shared_ptr<GG::Font> GetTitleFont(int pts = TitlePts());
 

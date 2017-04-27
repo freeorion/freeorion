@@ -278,7 +278,7 @@ void GameRulesPanel::CreateSectionHeader(GG::ListBox* page, int indentation_leve
                                             heading_text, indentation_level);
 
     if (!tooltip.empty()) {
-        row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row->SetBrowseText(tooltip);
     }
 
@@ -294,7 +294,7 @@ GG::StateButton* GameRulesPanel::BoolRuleWidget(GG::ListBox* page, int indentati
                                             button, indentation_level);
 
     button->SetCheck(GetGameRules().Get<bool>(rule_name));
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
     button->CheckedSignal.connect(boost::bind(&GameRulesPanel::BoolRuleChanged, this, button.get(),
                                               rule_name));
@@ -341,9 +341,9 @@ GG::Spin<int>* GameRulesPanel::IntRuleWidget(GG::ListBox* page, int indentation_
                                             layout, indentation_level);
     page->Insert(row);
 
-    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::IntRuleChanged,
@@ -389,9 +389,9 @@ GG::Spin<double>* GameRulesPanel::DoubleRuleWidget(GG::ListBox* page, int indent
                                             layout, indentation_level);
     page->Insert(row);
 
-    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     spin->ValueChangedSignal.connect(boost::bind(&GameRulesPanel::DoubleRuleChanged,
@@ -458,9 +458,9 @@ GG::DropDownList* GameRulesPanel::StringRuleWidget(GG::ListBox* page, int indent
                                             layout, indentation_level);
     page->Insert(row);
 
-    drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     drop->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetGameRules().GetDescription(rule_name)));
 
     drop->SelChangedSignal.connect(boost::bind(&GameRulesPanel::StringRuleChanged,
@@ -554,7 +554,7 @@ void GalaxySetupPanel::CompleteConstruction() {
 
     // seed
     m_seed_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
     m_seed_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.seed"));
 
@@ -567,66 +567,66 @@ void GalaxySetupPanel::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "randomize_mouseover.png")));
 
     m_random->SetBrowseText(UserString("GSETUP_RANDOM_SEED"));
-    m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_random->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // number of stars
     m_stars_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
     m_stars_spin = GG::Wnd::Create<CUISpin<int>>(100, 1, 10, 5000, true);
 
     // galaxy shape
     m_galaxy_shapes_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SHAPE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_galaxy_shapes_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_galaxy_shapes_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-shape")));
     m_galaxy_shapes_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_shapes_list->SetStyle(GG::LIST_NOSORT);
 
     // galaxy age
     m_galaxy_ages_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AGE"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_galaxy_ages_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_galaxy_ages_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.galaxy-age")));
     m_galaxy_ages_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_galaxy_ages_list->SetStyle(GG::LIST_NOSORT);
 
     // starlane frequency
     m_starlane_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARLANE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_starlane_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_starlane_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starlane-frequency")));
     m_starlane_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_starlane_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // planet density
     m_planet_density_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_PLANET_DENSITY"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_planet_density_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_planet_density_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.planet-density")));
     m_planet_density_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_planet_density_list->SetStyle(GG::LIST_NOSORT);
 
     // specials frequency
     m_specials_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIALS_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_specials_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_specials_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.specials-frequency")));
     m_specials_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_specials_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // monster frequency
     m_monster_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_MONSTER_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_monster_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_monster_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.monster-frequency")));
     m_monster_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_monster_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // native frequency
     m_native_freq_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NATIVE_FREQ"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_native_freq_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_native_freq_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.native-frequency")));
     m_native_freq_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_native_freq_list->SetStyle(GG::LIST_NOSORT);
 
     // ai aggression
     m_ai_aggression_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_AI_AGGR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_ai_aggression_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_ai_aggression_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-aggression")));
     m_ai_aggression_list = GG::Wnd::Create<CUIDropDownList>(5);
     m_ai_aggression_list->SetStyle(GG::LIST_NOSORT);
@@ -967,26 +967,26 @@ void GalaxySetupWnd::CompleteConstruction() {
 
     // player name
     m_player_name_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_PLAYER_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_player_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_player_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.player-name")));
     m_player_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.player-name"));
 
     // empire name
     m_empire_name_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_NAME"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_empire_name_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_empire_name_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-name")));
     m_empire_name_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.empire-name"));
 
     // empire color
     m_empire_color_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_EMPIRE_COLOR"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_empire_color_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_empire_color_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.empire-color")));
     m_empire_color_selector = GG::Wnd::Create<EmpireColorSelector>(CONTROL_HEIGHT - CONTROL_VMARGIN);
     m_empire_color_selector->Select(GetOptionsDB().Get<int>("GameSetup.empire-color"));
 
     // starting species
     m_starting_species_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIES"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starting-species")));
     // Subtract the drop down entry padding for the inner element height.
     m_starting_secies_selector = GG::Wnd::Create<SpeciesSelector>(LABELS_WIDTH, CONTROL_HEIGHT - 5);
@@ -1016,7 +1016,7 @@ void GalaxySetupWnd::CompleteConstruction() {
 
     // number of AIs
     m_number_ais_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NUMBER_AIS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
-    m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
     m_number_ais_spin = GG::Wnd::Create<CUISpin<int>>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
 

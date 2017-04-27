@@ -83,7 +83,7 @@ void SpecialsPanel::Update() {
             graphic = GG::Wnd::Create<StatisticIcon>(ClientUI::SpecialIcon(special->Name()),
                                                      SPECIAL_ICON_WIDTH, SPECIAL_ICON_HEIGHT);
 
-        graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        graphic->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         std::string desc = special->Description();
 

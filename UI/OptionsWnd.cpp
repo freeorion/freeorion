@@ -421,7 +421,7 @@ namespace {
         row->Resize(GG::Pt(ROW_WIDTH, drop_list->MinUsableSize().y + LAYOUT_MARGIN));
 
         auto row_wnd = GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, 0);
-        row_wnd->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row_wnd->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row_wnd->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
         row->push_back(row_wnd);
 
@@ -544,15 +544,15 @@ void OptionsWnd::CompleteConstruction() {
     flush_button->LeftClickedSignal.connect(
         &FlushLoadedStringTables);
 
-    IntOption(current_page, 0, "UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
+    IntOption(current_page, 0, "ui.tooltip.delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
     IntOption(current_page, 0, "ui.input.keyboard.repeat.delay", UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
     IntOption(current_page, 0, "ui.input.keyboard.repeat.interval", UserString("OPTIONS_KEYPRESS_REPEAT_INTERVAL"));
     IntOption(current_page, 0, "ui.input.mouse.button.repeat.delay", UserString("OPTIONS_MOUSE_REPEAT_DELAY"));
     IntOption(current_page, 0, "ui.input.mouse.button.repeat.interval", UserString("OPTIONS_MOUSE_REPEAT_INTERVAL"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONTS"));
-    FontOption(current_page, 0, "UI.font",       UserString("OPTIONS_FONT_TEXT"));
-    FontOption(current_page, 0, "UI.title-font", UserString("OPTIONS_FONT_TITLE"));
+    FontOption(current_page, 0, "ui.font.path",  UserString("OPTIONS_FONT_TEXT"));
+    FontOption(current_page, 0, "ui.font.title.path", UserString("OPTIONS_FONT_TITLE"));
 
     // show font texture button
     auto show_font_texture_button = Wnd::Create<CUIButton>(UserString("SHOW_FONT_TEXTURES"));
@@ -562,8 +562,8 @@ void OptionsWnd::CompleteConstruction() {
         &ShowFontTextureWnd);
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONT_SIZES"));
-    IntOption(current_page,    0, "UI.font-size",                          UserString("OPTIONS_FONT_TEXT"));
-    IntOption(current_page,    0, "UI.title-font-size",                    UserString("OPTIONS_FONT_TITLE"));
+    IntOption(current_page,    0, "ui.font.size",                          UserString("OPTIONS_FONT_TEXT"));
+    IntOption(current_page,    0, "ui.font.title.size",                    UserString("OPTIONS_FONT_TITLE"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_RESEARCH_WND"));
     DoubleOption(current_page, 0, "ui.research.tree.spacing.horizontal", UserString("OPTIONS_TECH_SPACING_HORIZONTAL"));
@@ -646,9 +646,9 @@ void OptionsWnd::CompleteConstruction() {
     // Colors tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_COLORS"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_GENERAL_COLORS"));
-    ColorOption(current_page, 0, "UI.text-color",          UserString("OPTIONS_TEXT_COLOR"));
-    ColorOption(current_page, 0, "UI.default-link-color",  UserString("OPTIONS_DEFAULT_LINK_COLOR"));
-    ColorOption(current_page, 0, "UI.rollover-link-color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
+    ColorOption(current_page, 0, "ui.font.color",          UserString("OPTIONS_TEXT_COLOR"));
+    ColorOption(current_page, 0, "ui.font.link.color",     UserString("OPTIONS_DEFAULT_LINK_COLOR"));
+    ColorOption(current_page, 0, "ui.font.link.rollover.color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_WINDOW_COLORS"));
     ColorOption(current_page, 0, "ui.window.background.color", UserString("OPTIONS_FILL_COLOR"));
@@ -661,8 +661,8 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 0, "ui.control.edit.highlight.color", UserString("OPTIONS_HIGHLIGHT_COLOR"));
     ColorOption(current_page, 0, "ui.dropdownlist.arrow.color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
     ColorOption(current_page, 0, "ui.button.state.color",   UserString("OPTIONS_STATE_BUTTON_COLOR"));
-    ColorOption(current_page, 0, "UI.stat-increase-color",      UserString("OPTIONS_STAT_INCREASE_COLOR"));
-    ColorOption(current_page, 0, "UI.stat-decrease-color",      UserString("OPTIONS_STAT_DECREASE_COLOR"));
+    ColorOption(current_page, 0, "ui.font.stat.increase.color", UserString("OPTIONS_STAT_INCREASE_COLOR"));
+    ColorOption(current_page, 0, "ui.font.stat.decrease.color", UserString("OPTIONS_STAT_DECREASE_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_COMBAT_COLORS"));
     ColorOption(current_page, 0, "ui.combat.summary.dead.color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
@@ -744,7 +744,7 @@ void OptionsWnd::CompleteConstruction() {
 
     // Create persistent config button
     auto persistent_config_button = GG::Wnd::Create<CUIButton>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG"));
-    persistent_config_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    persistent_config_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     persistent_config_button->SetBrowseInfoWnd(
         GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE"),
                                        UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC"), ROW_WIDTH));
@@ -813,7 +813,7 @@ void OptionsWnd::CreateSectionHeader(GG::ListBox* page, int indentation_level,
                                                heading_text, indentation_level);
 
     if (!tooltip.empty()) {
-        row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
         row->SetBrowseText(tooltip);
     }
 
@@ -825,7 +825,7 @@ GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                button, indentation_level);
     page->Insert(row);
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetCheck(GetOptionsDB().Get<bool>(option_name));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     button->CheckedSignal.connect(
@@ -922,9 +922,9 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
 
-    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
         [option_name](const int& new_value){ GetOptionsDB().Set(option_name, new_value); });
@@ -959,9 +959,9 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, spin->MinUsableSize().y, layout, indentation_level);
     page->Insert(row);
 
-    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    spin->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     spin->ValueChangedSignal.connect(
         [option_name](const double& new_value){ GetOptionsDB().Set(option_name, new_value); });
@@ -983,9 +983,9 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
     page->Insert(row);
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.enabled")));
-    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("audio.music.volume")));
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
@@ -1012,9 +1012,9 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     row->Resize(GG::Pt(ROW_WIDTH, std::max(button->MinUsableSize().y, slider->MinUsableSize().y) + 6));
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
     page->Insert(row);
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(toggle_option_name)));
-    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    slider->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
     button->CheckedSignal.connect(
         boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
@@ -1055,11 +1055,11 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     auto row = GG::Wnd::Create<OptionsListRow>(ROW_WIDTH, layout->Height() + 6, layout, indentation_level);
     page->Insert(row);
 
-    edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    edit->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     edit->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     edit->EditedSignal.connect(
         [option_name, edit, string_validator](const std::string& str) {
@@ -1116,9 +1116,9 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
     row->Resize(GG::Pt(ROW_WIDTH, std::max(text_control->MinUsableSize().y, color_selector->MinUsableSize().y) + 6));
     row->push_back(GG::Wnd::Create<RowContentsWnd>(row->Width(), row->Height(), layout, indentation_level));
     page->Insert(row);
-    color_selector->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    color_selector->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     color_selector->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     color_selector->ColorChangedSignal.connect(
         [option_name](const GG::Clr& clr) { GetOptionsDB().Set<GG::Clr>(option_name, clr); });
@@ -1170,14 +1170,14 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     // drop list and label
     auto drop_list_label = GG::Wnd::Create<CUILabel>(UserString("OPTIONS_VIDEO_MODE"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
-    drop_list_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop_list_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     drop_list_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
 
     auto drop_list = GG::Wnd::Create<CUIDropDownList>(6);
     drop_list->Resize(GG::Pt(drop_list->MinUsableSize().x, GG::Y(ClientUI::Pts() + 4)));
     drop_list->SetMaxSize(GG::Pt(drop_list->MaxSize().x, drop_list->Size().y));
     drop_list->SetStyle(GG::LIST_NOSORT);
-    drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    drop_list->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     drop_list->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_LIST_DESCRIPTION"));
     drop_list->SetOnlyMouseScrollWhenDropped(true);
 
@@ -1215,7 +1215,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
 
     // customizable windowed width and height
     auto windowed_spinner_label = GG::Wnd::Create<CUILabel>(UserString("OPTIONS_VIDEO_MODE_WINDOWED"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP, GG::INTERACTIVE);
-    windowed_spinner_label->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    windowed_spinner_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     windowed_spinner_label->SetBrowseText(UserString("OPTIONS_VIDEO_MODE_WINDOWED_SPINNERS_DESCRIPTION"));
 
     row = GG::Wnd::Create<GG::ListBox::Row>();
