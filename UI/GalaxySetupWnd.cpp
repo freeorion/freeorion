@@ -150,7 +150,7 @@ namespace {
 
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
-        db.Add("GameSetup.seed",                UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                    std::string("0"),   Validator<std::string>());
+        db.Add("setup.seed",                    UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                    std::string("0"),   Validator<std::string>());
         db.Add("GameSetup.stars",               UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                   150,                RangedValidator<int>(10, 5000));
         db.Add("GameSetup.galaxy-shape",        UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),            DISC,               RangedValidator<Shape>(SPIRAL_2, RANDOM));
         db.Add("GameSetup.galaxy-age",          UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
@@ -556,8 +556,8 @@ void GalaxySetupPanel::CompleteConstruction() {
     // seed
     m_seed_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SEED"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_seed_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.seed")));
-    m_seed_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("GameSetup.seed"));
+    m_seed_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.seed")));
+    m_seed_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.seed"));
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -750,7 +750,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     m_ai_aggression_list->Insert(GG::Wnd::Create<CUISimpleDropDownListRow>(UserString("GSETUP_MANIACAL")));
 
     // initial settings from stored results or defaults
-    m_seed_edit->SetText(GetOptionsDB().Get<std::string>("GameSetup.seed"));
+    m_seed_edit->SetText(GetOptionsDB().Get<std::string>("setup.seed"));
     m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
@@ -1188,7 +1188,7 @@ void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
 
 void GalaxySetupWnd::OkClicked() {
     // record selected galaxy setup options as new defaults
-    GetOptionsDB().Set("GameSetup.seed",                m_galaxy_setup_panel->GetSeed());
+    GetOptionsDB().Set("setup.seed", m_galaxy_setup_panel->GetSeed());
     GetOptionsDB().Set("GameSetup.stars",               m_galaxy_setup_panel->Systems());
     GetOptionsDB().Set("GameSetup.galaxy-shape",        m_galaxy_setup_panel->GetShape());
     GetOptionsDB().Set("GameSetup.galaxy-age",          m_galaxy_setup_panel->GetAge());
