@@ -133,7 +133,7 @@ namespace {
 
         db.Add("map.system.icon.size",              UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                14,         RangedValidator<int>(8, 50));
 
-        db.Add("UI.system-circles",                 UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                  true,       Validator<bool>());
+        db.Add("map.system.circle.shown",           UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                  true,       Validator<bool>());
         db.Add("UI.system-circle-size",             UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),              1.5,        RangedStepValidator<double>(0.125, 1.0, 2.5));
         db.Add("UI.system-inner-circle-width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
         db.Add("UI.system-outer-circle-width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_OUTER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
@@ -1971,7 +1971,7 @@ void MapWnd::RenderSystems() {
     }
 
     // circles around system icons and fog over unexplored systems
-    bool circles = GetOptionsDB().Get<bool>("UI.system-circles");
+    bool circles = GetOptionsDB().Get<bool>("map.system.circle.shown");
     bool fog_scanlines = false;
     Universe& universe = GetUniverse();
 
@@ -2572,7 +2572,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         // create popup menu with map options in it.
         bool fps            = GetOptionsDB().Get<bool>("video.fps.shown");
         bool showPlanets    = GetOptionsDB().Get<bool>("ui.window.sidepanel.planet.shown");
-        bool systemCircles  = GetOptionsDB().Get<bool>("UI.system-circles");
+        bool systemCircles  = GetOptionsDB().Get<bool>("map.system.circle.shown");
         bool resourceColor  = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
         bool fleetSupply    = GetOptionsDB().Get<bool>("UI.fleet-supply-lines");
         bool gas            = GetOptionsDB().Get<bool>("UI.galaxy-gas-background");
@@ -2584,7 +2584,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
         auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("video.fps.shown",                !fps);         };
         auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("ui.window.sidepanel.planet.shown", !showPlanets);  };
-        auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("UI.system-circles",              !systemCircles); };
+        auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("map.system.circle.shown",        !systemCircles); };
         auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("UI.resource-starlane-colouring", !resourceColor);  };
         auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("UI.fleet-supply-lines",          !fleetSupply);     };
         auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        };
