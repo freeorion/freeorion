@@ -387,7 +387,7 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         db.Add("ui.window.fleet.aggression", UserStringNop("OPTIONS_DB_FLEET_WND_AGGRESSION"), INVALID_FLEET_AGGRESSION, Validator<NewFleetAggression>());
-        db.Add("UI.fleet-wnd-scanline-clr", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"),  GG::Clr(24, 24, 24, 192),   Validator<GG::Clr>());
+        db.Add("ui.window.fleet.scanline.color", UserStringNop("OPTIONS_DB_UI_FLEET_WND_SCANLINE_CLR"), GG::Clr(24, 24, 24, 192), Validator<GG::Clr>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -819,7 +819,7 @@ namespace {
             && GetOptionsDB().Get<bool>("map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, m_ship_icon->Width(), m_ship_icon->Height(), true,
-                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+                                                                  GetOptionsDB().Get<GG::Clr>("ui.window.fleet.scanline.color"));
             AttachChild(m_scanline_control);
         }
     }
@@ -1543,7 +1543,7 @@ void FleetDataPanel::Refresh() {
             && GetOptionsDB().Get<bool>("map.scanlines.shown"))
         {
             m_scanline_control = GG::Wnd::Create<ScanlineControl>(GG::X0, GG::Y0, DataPanelIconSpace().x, ClientHeight(), true,
-                                                                  GetOptionsDB().Get<GG::Clr>("UI.fleet-wnd-scanline-clr"));
+                                                                  GetOptionsDB().Get<GG::Clr>("ui.window.fleet.scanline.color"));
             AttachChild(m_scanline_control);
         }
 
