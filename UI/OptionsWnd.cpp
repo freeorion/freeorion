@@ -675,7 +675,7 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 1, "research.completed.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_RESEARCHABLE_TECH_COLORS"));
-    ColorOption(current_page, 1, "UI.researchable-tech",        UserString("OPTIONS_FILL_COLOR"));
+    ColorOption(current_page, 1, "research.background.color",   UserString("OPTIONS_FILL_COLOR"));
     ColorOption(current_page, 1, "research.border.color",       UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
