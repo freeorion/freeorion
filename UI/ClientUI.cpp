@@ -114,7 +114,7 @@ int         ClientUI::SystemCircleSize()                { return static_cast<int
 int         ClientUI::SystemSelectionIndicatorSize()    { return static_cast<int>(SystemIconSize() * GetOptionsDB().Get<double>("map.system.selection_indicator.size")); }
 int         ClientUI::SystemSelectionIndicatorRPM()     { return GetOptionsDB().Get<int>("map.system.selection_indicator.rpm"); }
 
-GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<GG::Clr>("UI.system-name-unowned-color"); }
+GG::Clr     ClientUI::SystemNameTextColor()             { return GetOptionsDB().Get<GG::Clr>("map.system.unowned.name.color"); }
 
 double      ClientUI::TinyFleetButtonZoomThreshold()    { return GetOptionsDB().Get<double>("UI.tiny-fleet-button-minimum-zoom"); }
 double      ClientUI::SmallFleetButtonZoomThreshold()   { return GetOptionsDB().Get<double>("UI.small-fleet-button-minimum-zoom"); }

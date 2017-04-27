@@ -145,7 +145,7 @@ namespace {
         db.Add("map.system.selection_indicator.size", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_SIZE"), 1.625,    RangedStepValidator<double>(0.125, 0.5, 5));
         db.Add("map.system.selection_indicator.rpm", UserStringNop("OPTIONS_DB_UI_SYSTEM_SELECTION_INDICATOR_FPS"), 12,         RangedValidator<int>(1, 60));
 
-        db.Add("UI.system-name-unowned-color",      UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       GG::Clr(160, 160, 160, 255),    Validator<GG::Clr>());
+        db.Add("map.system.unowned.name.color",     UserStringNop("OPTIONS_DB_UI_SYSTEM_NAME_UNOWNED_COLOR"),       GG::Clr(160, 160, 160, 255), Validator<GG::Clr>());
 
         db.Add("UI.tiny-fleet-button-minimum-zoom", UserStringNop("OPTIONS_DB_UI_TINY_FLEET_BUTTON_MIN_ZOOM"),      0.75,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("UI.small-fleet-button-minimum-zoom",UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"),     1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
