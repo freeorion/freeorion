@@ -381,7 +381,7 @@ namespace {
     }
 
     int         MaxPlanetDiameter()
-    { return GetOptionsDB().Get<int>("UI.sidepanel-planet-max-diameter"); }
+    { return GetOptionsDB().Get<int>("ui.window.sidepanel.planet.diameter.max"); }
 
     int         PlanetDiameter(PlanetSize size) {
         double scale = 0.0;
@@ -406,7 +406,7 @@ namespace {
 
     /** Adds options related to sidepanel to Options DB. */
     void        AddOptions(OptionsDB& db) {
-        db.Add("UI.sidepanel-planet-max-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),  128,    RangedValidator<int>(16, 512));
+        db.Add("ui.window.sidepanel.planet.diameter.max", UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"), 128, RangedValidator<int>(16, 512));
         db.Add("ui.window.sidepanel.planet.diameter.min", UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"), 24, RangedValidator<int>(8,  128));
         db.Add("ui.window.sidepanel.planet.shown",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),         true,   Validator<bool>());
         db.Add("ui.window.sidepanel.planet.scanlane.color", UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),          GG::Clr(0, 0, 0, 128),  Validator<GG::Clr>());
