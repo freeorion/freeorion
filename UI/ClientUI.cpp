@@ -106,7 +106,7 @@ GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<GG::
 GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<GG::Clr>("UI.stat-increase-color"); }
 GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<GG::Clr>("UI.stat-decrease-color"); }
 
-GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<GG::Clr>("UI.state-button-color"); }
+GG::Clr     ClientUI::StateButtonColor()        { return GetOptionsDB().Get<GG::Clr>("ui.control.button.state.color"); }
 
 int         ClientUI::SystemIconSize()                  { return GetOptionsDB().Get<int>("map.system.icon.size"); }
 int         ClientUI::SystemTinyIconSizeThreshold()     { return GetOptionsDB().Get<int>("map.system.icon.size.tiny_threshold"); }
@@ -534,7 +534,7 @@ namespace {
         db.Add("UI.stat-increase-color",        UserStringNop("OPTIONS_DB_UI_STAT_INCREASE_COLOR"),        GG::Clr(0, 255, 0, 255),     Validator<GG::Clr>());
         db.Add("UI.stat-decrease-color",        UserStringNop("OPTIONS_DB_UI_STAT_DECREASE_COLOR"),        GG::Clr(255, 0, 0, 255),     Validator<GG::Clr>());
 
-        db.Add("UI.state-button-color",         UserStringNop("OPTIONS_DB_UI_STATE_BUTTON_COLOR"),         GG::Clr(0, 127, 0, 255),     Validator<GG::Clr>());
+        db.Add("ui.control.button.state.color", UserStringNop("OPTIONS_DB_UI_STATE_BUTTON_COLOR"),         GG::Clr(0, 127, 0, 255),     Validator<GG::Clr>());
 
         db.Add("ui.font.color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 GG::Clr(255, 255, 255, 255), Validator<GG::Clr>());
         db.Add("ui.font.link.color",            UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
