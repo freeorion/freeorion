@@ -911,7 +911,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
         return;
     }
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     // create planet name text
 
@@ -957,7 +957,7 @@ void SidePanel::PlanetPanel::CompleteConstruction() {
         boost::bind(&SidePanel::PlanetPanel::FocusDropListSelectionChangedSlot, this, _1));
     this->FocusChangedSignal.connect(
         boost::bind(&SidePanel::PlanetPanel::SetFocus, this, _1));
-    m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_focus_drop->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_focus_drop->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_focus_drop->ManuallyManageColProps();
     m_focus_drop->SetNumCols(2);
@@ -1793,7 +1793,7 @@ void SidePanel::PlanetPanel::Refresh() {
             graphic->Resize(GG::Pt(MeterIconSize().x*3/2, MeterIconSize().y*3/2));
             auto row = GG::Wnd::Create<GG::DropDownList::Row>(graphic->Width(), graphic->Height(), "FOCUS");
 
-            row->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            row->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             row->SetBrowseText(
                 boost::io::str(FlexibleFormat(UserString("RP_FOCUS_TOOLTIP"))
                                % UserString(focus_name)));

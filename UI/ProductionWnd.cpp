@@ -355,7 +355,7 @@ namespace {
                 pp_accumulated);
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
 
-            SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+            SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
             SetBrowseInfoWnd(ProductionItemBrowseWnd(elem));
 
             panel->PanelUpdateQuantSignal.connect(

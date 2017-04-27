@@ -250,7 +250,7 @@ void FleetButton::CompleteConstruction() {
     if (!at_least_one_fleet_visible)
         AttachChild(m_scanline_control);
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 }
 
 FleetButton::~FleetButton()

@@ -351,7 +351,7 @@ void BuildingIndicator::PreRender() {
 }
 
 void BuildingIndicator::Refresh() {
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
     std::shared_ptr<const Building> building = GetBuilding(m_building_id);
     if (!building)

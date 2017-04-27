@@ -57,7 +57,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "nomoderatoraction_mouseover.png")));
 
-    m_no_action_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_no_action_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_no_action_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_NONE"), UserString("MOD_NONE")));
     AttachChild(m_no_action_button);
@@ -70,7 +70,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstar_mouseover.png")));
 
-    m_create_system_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_create_system_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_create_system_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_CREATE_SYSTEM"), UserString("MOD_CREATE_SYSTEM")));
     AttachChild(m_create_system_button);
@@ -98,7 +98,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addplanet_mouseover.png")));
 
-    m_create_planet_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_create_planet_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_create_planet_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET")));
     AttachChild(m_create_planet_button);
@@ -141,7 +141,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "delete_mouseover.png")));
 
-    m_delete_object_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_delete_object_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_delete_object_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_DESTROY"), UserString("MOD_DESTROY")));
     AttachChild(m_delete_object_button);
@@ -154,7 +154,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "setowner_mouseover.png")));
 
-    m_set_owner_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_set_owner_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_set_owner_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_SET_OWNER"), UserString("MOD_SET_OWNER")));
     AttachChild(m_set_owner_button);
@@ -173,7 +173,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "addstarlane_mouseover.png")));
 
-    m_add_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_add_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_add_starlane_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_ADD_STARLANE"), UserString("MOD_ADD_STARLANE")));
     AttachChild(m_add_starlane_button);
@@ -186,7 +186,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane_clicked.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "removestarlane_mouseover.png")));
 
-    m_remove_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_remove_starlane_button->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_remove_starlane_button->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
         UserString("MOD_REMOVE_STARLANE"), UserString("MOD_REMOVE_STARLANE")));
     AttachChild(m_remove_starlane_button);

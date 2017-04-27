@@ -249,7 +249,7 @@ namespace {
                 push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
                                                              GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
-                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
                 at(5)->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
@@ -304,7 +304,7 @@ namespace {
                 push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
                                                              GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
                 at(5)->SetMinSize(GG::Pt(GG::X(ClientUI::Pts()), PlayerFontHeight()));
-                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
                 at(5)->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
@@ -418,7 +418,7 @@ namespace {
             } else {
                 push_back(GG::Wnd::Create<GG::StaticGraphic>(GetReadyTexture(m_player_data.m_player_ready),
                                                              GG::GRAPHIC_CENTER | GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE, GG::INTERACTIVE));
-                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+                at(5)->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
                 at(5)->SetBrowseInfoWnd(GG::Wnd::Create<TextBrowseWnd>(
                     m_player_data.m_player_ready ? UserString("READY_BN") : UserString("NOT_READY_BN"),
                     "", PlayerReadyBrowseWidth()));
@@ -546,7 +546,7 @@ void MultiPlayerLobbyWnd::CompleteConstruction() {
     m_chat_box->SetMaxLinesOfHistory(250);
 
     m_any_can_edit = GG::Wnd::Create<CUIStateButton>(UserString("EDITABLE_GALAXY_SETTINGS"), GG::FORMAT_LEFT, std::make_shared<CUICheckBoxRepresenter>());
-    m_any_can_edit->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    m_any_can_edit->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     m_any_can_edit->SetBrowseText(UserString("EDITABLE_GALAXY_SETTINGS_DESC"));
 
     m_galaxy_setup_panel = GG::Wnd::Create<GalaxySetupPanel>(GALAXY_SETUP_PANEL_WIDTH, GALAXY_SETUP_PANEL_HEIGHT);

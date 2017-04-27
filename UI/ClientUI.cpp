@@ -553,7 +553,7 @@ namespace {
         db.Add("UI.scroll-width",               UserStringNop("OPTIONS_DB_UI_SCROLL_WIDTH"),               14,         RangedValidator<int>(8, 30));
 
         // UI behavior
-        db.Add("UI.tooltip-delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
+        db.Add("ui.tooltip.delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
         db.Add("UI.tooltip.extended-delay",     UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),         3500,       RangedValidator<int>(0, 30000));
         db.Add("ui.window.fleet.multiple.enabled", UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),  false);
         db.Add("ui.window.quickclose.enabled",  UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),          true);

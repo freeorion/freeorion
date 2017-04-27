@@ -274,7 +274,7 @@ TechTreeWnd::TechTreeControls::TechTreeControls(const std::string& config_name) 
 {}
 
 void TechTreeWnd::TechTreeControls::CompleteConstruction() {
-   const int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
+   const int tooltip_delay = GetOptionsDB().Get<int>("ui.tooltip.delay");
     const boost::filesystem::path icon_dir = ClientUI::ArtDir() / "icons" / "tech" / "controls";
 
     // create a button for each tech category...
@@ -711,12 +711,12 @@ TechTreeWnd::LayoutPanel::TechPanel::TechPanel(const std::string& tech_name, con
 
     // intentionally not attaching as child; TechPanel::Render the child Render() function instead.
 
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::CompleteConstruction() {
     GG::Wnd::CompleteConstruction();
-    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
     Update();
 }
 

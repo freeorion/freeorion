@@ -276,7 +276,7 @@ public:
                           DoubleToString(participant.max_health, 3, false)
             );
         }
-        SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+        SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
 
         OptionsDB& options = GetOptionsDB();
         m_dead_color = options.Get<GG::Clr>("UI.combat.summary.dead-color");
