@@ -585,7 +585,7 @@ void OptionsWnd::CompleteConstruction() {
     // Galaxy Map Page
     current_page = CreatePage(UserString("OPTIONS_GALAXY_MAP"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SYSTEM_ICONS"));
-    IntOption(current_page,    0, "UI.system-icon-size",                   UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
+    IntOption(current_page,    0, "map.system.icon.size",                  UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
     BoolOption(current_page,   0, "UI.system-circles",                     UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
     DoubleOption(current_page, 0, "UI.system-circle-size",                 UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
     DoubleOption(current_page, 0, "UI.system-selection-indicator-size",    UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));

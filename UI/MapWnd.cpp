@@ -131,7 +131,7 @@ namespace {
         db.Add("UI.system-fog-of-war-clr",          UserStringNop("OPTIONS_DB_UI_SYSTEM_FOG_CLR"),                  GG::Clr(36, 36, 36, 192),       Validator<GG::Clr>());
         db.Add("UI.field-fog-of-war-clr",           UserStringNop("OPTIONS_DB_UI_FIELD_FOG_CLR"),                   GG::Clr(0, 0, 0, 64),           Validator<GG::Clr>());
 
-        db.Add("UI.system-icon-size",               UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                14,         RangedValidator<int>(8, 50));
+        db.Add("map.system.icon.size",              UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                14,         RangedValidator<int>(8, 50));
 
         db.Add("UI.system-circles",                 UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                  true,       Validator<bool>());
         db.Add("UI.system-circle-size",             UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),              1.5,        RangedStepValidator<double>(0.125, 1.0, 2.5));
