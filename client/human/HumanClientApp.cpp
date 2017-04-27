@@ -492,7 +492,7 @@ void HumanClientApp::FreeServer() {
 }
 
 void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
-    if (!GetOptionsDB().Get<bool>("force-external-server")) {
+    if (!GetOptionsDB().Get<bool>("server.external.force.enabled")) {
         m_single_player_game = true;
         try {
             StartServer();
@@ -624,7 +624,7 @@ void HumanClientApp::MultiPlayerGame() {
         return;
 
     if (server_name == "HOST GAME SELECTED") {
-        if (!GetOptionsDB().Get<bool>("force-external-server")) {
+        if (!GetOptionsDB().Get<bool>("server.external.force.enabled")) {
             m_single_player_game = false;
             try {
                 StartServer();
@@ -732,7 +732,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         DebugLogger() << "HumanClientApp::LoadSinglePlayerGame() not already in a game, so don't need to end it";
     }
 
-    if (!GetOptionsDB().Get<bool>("force-external-server")) {
+    if (!GetOptionsDB().Get<bool>("server.external.force.enabled")) {
         m_single_player_game = true;
         try {
             StartServer();

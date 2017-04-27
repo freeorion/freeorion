@@ -32,7 +32,7 @@ namespace {
     const GG::Y MAIN_MENU_HEIGHT(450);
 
     void Options(OptionsDB& db) {
-        db.AddFlag("force-external-server",             UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),     false);
+        db.AddFlag("server.external.force.enabled",     UserStringNop("OPTIONS_DB_FORCE_EXTERNAL_SERVER"),     false);
         db.Add<std::string>("server.external.address",  UserStringNop("OPTIONS_DB_EXTERNAL_SERVER_ADDRESS"),   "localhost");
         db.Add("ui.window.intro.menu.center.x",         UserStringNop("OPTIONS_DB_UI_MAIN_MENU_X"),            0.75,   RangedStepValidator<double>(0.01, 0.0, 1.0));
         db.Add("ui.window.intro.menu.center.y",         UserStringNop("OPTIONS_DB_UI_MAIN_MENU_Y"),            0.5,    RangedStepValidator<double>(0.01, 0.0, 1.0));
