@@ -177,9 +177,9 @@ namespace {
         }
 
         // only execute default option setting once
-        if (GetOptionsDB().Get<bool>("checked-gl-version"))
+        if (!GetOptionsDB().Get<bool>("gl_version.check.enabled"))
             return;
-        GetOptionsDB().Set<bool>("checked-gl-version", true);
+        GetOptionsDB().Set<bool>("gl_version.check.enabled", false);
 
         // if GL version is too low, set various map rendering options to
         // disabled, to hopefully improve frame rate.
