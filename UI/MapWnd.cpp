@@ -111,7 +111,7 @@ namespace {
         db.Add("map.system.background.starfields.shown", UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),         true,       Validator<bool>());
         db.Add("map.scale.legend.shown",            UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
         db.Add("map.scale.circle.shown",            UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
-        db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
+        db.Add("map.zoom.slider.shown",             UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
         db.Add("map.starlane.thickness",            UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
         db.Add("map.starlane.thickness.core_multiplier", UserStringNop("OPTIONS_DB_STARLANE_CORE"),                 2.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
         db.Add("map.starlane.empire.color.shown",   UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
@@ -1413,7 +1413,7 @@ void MapWnd::CompleteConstruction() {
     m_zoom_slider->Hide();
     m_zoom_slider->SlidSignal.connect(
         boost::bind(&MapWnd::SetZoom, this, _1, false));
-    GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider").connect(
+    GetOptionsDB().OptionChangedSignal("map.zoom.slider.shown").connect(
         boost::bind(&MapWnd::RefreshSliders, this));
 
     ///////////////////
@@ -2582,7 +2582,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool starfields     = GetOptionsDB().Get<bool>("map.system.background.starfields.shown");
         bool scale          = GetOptionsDB().Get<bool>("map.scale.legend.shown");
         bool scaleCircle    = GetOptionsDB().Get<bool>("map.scale.circle.shown");
-        bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
+        bool zoomSlider     = GetOptionsDB().Get<bool>("map.zoom.slider.shown");
         bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
 
         auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("video.fps.shown",                !fps);         };
@@ -2594,7 +2594,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("map.system.background.starfields.shown", !starfields);  };
         auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("map.scale.legend.shown",          !scale);        };
         auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("map.scale.circle.shown",          !scaleCircle);   };
-        auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);      };
+        auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("map.zoom.slider.shown",           !zoomSlider);      };
         auto detection_range_action = [&detectionRange]() { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange);   };
 
         auto popup = GG::Wnd::Create<CUIPopupMenu>(pt.x, pt.y);
@@ -5044,7 +5044,7 @@ void MapWnd::RefreshFleetSignals() {
 
 void MapWnd::RefreshSliders() {
     if (m_zoom_slider) {
-        if (GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider") && Visible())
+        if (GetOptionsDB().Get<bool>("map.zoom.slider.shown") && Visible())
             m_zoom_slider->Show();
         else
             m_zoom_slider->Hide();
