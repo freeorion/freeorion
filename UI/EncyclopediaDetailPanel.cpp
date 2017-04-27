@@ -58,7 +58,7 @@ namespace {
 
     void    AddOptions(OptionsDB& db) {
         db.Add("ui.description.effects.shown", UserStringNop("OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC"),  false,  Validator<bool>());
-        db.Add("UI.encyclopedia.search.articles", UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"),  true,   Validator<bool>());
+        db.Add("ui.window.pedia.search.articles.enabled", UserStringNop("OPTIONS_DB_UI_ENC_SEARCH_ARTICLE"), true, Validator<bool>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -1051,7 +1051,7 @@ void EncyclopediaDetailPanel::HandleSearchTextEntered() {
     std::multimap<std::string, std::string> partial_match_report;
     std::multimap<std::string, std::string> article_match_report;
 
-    bool search_desc = GetOptionsDB().Get<bool>("UI.encyclopedia.search.articles");
+    bool search_desc = GetOptionsDB().Get<bool>("ui.window.pedia.search.articles.enabled");
 
     for (const auto& entry : all_pedia_entries_list) {
         // search for exact title matches
