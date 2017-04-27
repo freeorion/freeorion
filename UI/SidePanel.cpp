@@ -409,7 +409,7 @@ namespace {
         db.Add("UI.sidepanel-planet-max-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),  128,    RangedValidator<int>(16, 512));
         db.Add("UI.sidepanel-planet-min-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),  24,     RangedValidator<int>(8,  128));
         db.Add("ui.window.sidepanel.planet.shown",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),         true,   Validator<bool>());
-        db.Add("UI.sidepanel-planet-fog-of-war-clr", UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),                 GG::Clr(0, 0, 0, 128),  Validator<GG::Clr>());
+        db.Add("ui.window.sidepanel.planet.scanlane.color", UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),          GG::Clr(0, 0, 0, 128),  Validator<GG::Clr>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -674,7 +674,7 @@ public:
 
         // render fog of war over planet if it's not visible to this client's player
         if ((m_visibility <= VIS_BASIC_VISIBILITY) && GetOptionsDB().Get<bool>("map.scanlines.shown")) {
-            s_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("UI.sidepanel-planet-fog-of-war-clr"));
+            s_scanline_shader.SetColor(GetOptionsDB().Get<GG::Clr>("ui.window.sidepanel.planet.scanlane.color"));
             s_scanline_shader.RenderCircle(ul, lr);
         }
     }
