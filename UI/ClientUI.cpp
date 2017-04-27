@@ -996,8 +996,8 @@ void ClientUI::HandleSizeChange(bool fullscreen) const {
 
         // Invalidate the message window position so that we know to
         // recalculate positions on the next resize or fullscreen switch...
-        db.Set<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed,
-                    db.GetDefault<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed));
+        db.Set<int>("ui.window."+MESSAGE_WND_NAME+".left"+windowed,
+                    db.GetDefault<int>("ui.window."+MESSAGE_WND_NAME+".left"+windowed));
     }
 }
 
@@ -1014,8 +1014,8 @@ void ClientUI::HandleFullscreenSwitch() const {
     // std::numeric_limits<GG::X::value_type>::min(), defined in UI/CUIWnd.cpp).
     // This relies on the message window not supplying a default position to
     // the CUIWnd constructor...
-    if (db.Get<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed) ==
-        db.GetDefault<int>("UI.windows."+MESSAGE_WND_NAME+".left"+windowed))
+    if (db.Get<int>("ui.window."+MESSAGE_WND_NAME+".left"+windowed) ==
+        db.GetDefault<int>("ui.window."+MESSAGE_WND_NAME+".left"+windowed))
     {
         HumanClientApp::GetApp()->RepositionWindowsSignal();
     }

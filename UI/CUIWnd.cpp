@@ -147,7 +147,7 @@ CUIWnd::CUIWnd(const std::string& wnd_name,
     SetName(wnd_name);
     if (!m_config_name.empty()) {
         // Default position was already supplied
-        GetOptionsDB().Set<bool>("UI.windows." + m_config_name + ".initialized", true);
+        GetOptionsDB().Set<bool>("ui.window." + m_config_name + ".initialized", true);
     }
 }
 
@@ -194,21 +194,21 @@ void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     OptionsDB& db = GetOptionsDB();
 
     if (!m_config_name.empty()) {
-        if (db.OptionExists("UI.windows." + m_config_name + ".initialized")) {
+        if (db.OptionExists("ui.window." + m_config_name + ".initialized")) {
             std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
             if (!db.Get<bool>("video.fullscreen.enabled"))
                 windowed = "-windowed";
             // If the window has already had its default position specified
             // (either in the ctor or a previous call to this function), apply
             // this position to the window.
-            if (db.Get<bool>("UI.windows." + m_config_name + ".initialized") ||
-                db.Get<int>("UI.windows." + m_config_name + ".left" + windowed) == INVALID_X)
+            if (db.Get<bool>("ui.window." + m_config_name + ".initialized") ||
+                db.Get<int>("ui.window." + m_config_name + ".left" + windowed) == INVALID_X)
             {
                 SetDefaultedOptions();
                 SizeMove(ul, lr);
                 SaveDefaultedOptions();
             }
-            db.Set<bool>("UI.windows."+m_config_name+".initialized", true);
+            db.Set<bool>("ui.window."+m_config_name+".initialized", true);
         } else {
             ErrorLogger() << "CUIWnd::InitSizeMove() : attempted to check if window using name \"" << m_config_name
                           << "\" was initialized but the options do not appear to be registered in the OptionsDB.";
@@ -220,10 +220,10 @@ void CUIWnd::InitSizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 
 CUIWnd::~CUIWnd() {
     try {
-        if (!m_config_name.empty() && GetOptionsDB().OptionExists("UI.windows." + m_config_name + ".initialized"))
-            GetOptionsDB().Remove("UI.windows."+m_config_name+".initialized");
+        if (!m_config_name.empty() && GetOptionsDB().OptionExists("ui.window." + m_config_name + ".initialized"))
+            GetOptionsDB().Remove("ui.window."+m_config_name+".initialized");
     } catch (std::exception& e) { // catch std::runtime_error, boost::bad_any_cast
-        ErrorLogger() << "CUIWnd::~CUIWnd() : caught exception while removing \"UI.windows." << m_config_name
+        ErrorLogger() << "CUIWnd::~CUIWnd() : caught exception while removing \"ui.window." << m_config_name
                       << ".initialized\": " << e.what();
     }
     m_vertex_buffer.clear();
@@ -624,7 +624,7 @@ GG::Rect CUIWnd::CalculatePosition() const
 void CUIWnd::SetDefaultedOptions() {
     OptionsDB& db = GetOptionsDB();
     std::set<std::string> window_options;
-    db.FindOptions(window_options, "UI.windows." + m_config_name);
+    db.FindOptions(window_options, "ui.window." + m_config_name);
     for (auto& option : window_options) {
         if (db.IsDefaultValue(option))
             m_defaulted_options.emplace(option);
@@ -633,7 +633,7 @@ void CUIWnd::SetDefaultedOptions() {
 
 void CUIWnd::SaveDefaultedOptions() {
     OptionsDB& db = GetOptionsDB();
-    std::string config_prefix = "UI.windows." + m_config_name;
+    std::string config_prefix = "ui.window." + m_config_name;
     std::string windowed = "";
     if (!db.Get<bool>("fullscreen"))
         windowed = "-windowed";
@@ -689,10 +689,10 @@ void CUIWnd::SaveOptions() const {
     auto gui = GG::GUI::GetGUI();
     if (m_config_name.empty() || !m_config_save || !gui || gui->DragWnd(this, 0)) {
         return;
-    } else if (!db.OptionExists("UI.windows."+m_config_name+".initialized")) {
+    } else if (!db.OptionExists("ui.window."+m_config_name+".initialized")) {
         ErrorLogger() << "CUIWnd::SaveOptions() : attempted to save window options using name \"" << m_config_name << "\" but the options do not appear to be registered in the OptionsDB.";
         return;
-    } else if (!db.Get<bool>("UI.windows."+m_config_name+".initialized")) {
+    } else if (!db.Get<bool>("ui.window."+m_config_name+".initialized")) {
         // Don't save until the window has been given its proper default values
         return;
     }
@@ -707,15 +707,15 @@ void CUIWnd::SaveOptions() const {
     if (!db.Get<bool>("video.fullscreen.enabled"))
         windowed = "-windowed";
 
-    db.Set<int>("UI.windows."+m_config_name+".left"+windowed,   Value(RelativeUpperLeft().x));
-    db.Set<int>("UI.windows."+m_config_name+".top"+windowed,    Value(RelativeUpperLeft().y));
-    db.Set<int>("UI.windows."+m_config_name+".width"+windowed,  Value(size.x));
-    db.Set<int>("UI.windows."+m_config_name+".height"+windowed, Value(size.y));
+    db.Set<int>("ui.window."+m_config_name+".left"+windowed,   Value(RelativeUpperLeft().x));
+    db.Set<int>("ui.window."+m_config_name+".top"+windowed,    Value(RelativeUpperLeft().y));
+    db.Set<int>("ui.window."+m_config_name+".width"+windowed,  Value(size.x));
+    db.Set<int>("ui.window."+m_config_name+".height"+windowed, Value(size.y));
 
     if (!Modal()) {
-        db.Set<bool>("UI.windows."+m_config_name+".visible", Visible());
-        db.Set<bool>("UI.windows."+m_config_name+".pinned", m_pinned);
-        db.Set<bool>("UI.windows."+m_config_name+".minimized", m_minimized);
+        db.Set<bool>("ui.window."+m_config_name+".visible", Visible());
+        db.Set<bool>("ui.window."+m_config_name+".pinned", m_pinned);
+        db.Set<bool>("ui.window."+m_config_name+".minimized", m_minimized);
     }
 
     db.Commit();
@@ -727,7 +727,7 @@ void CUIWnd::LoadOptions() {
     // The default empty string means 'do not save/load properties'
     if (m_config_name.empty()) {
         return;
-    } else if (!db.OptionExists("UI.windows."+m_config_name+".initialized")) {
+    } else if (!db.OptionExists("ui.window."+m_config_name+".initialized")) {
         ErrorLogger() << "CUIWnd::LoadOptions() : attempted to load window options using name \"" << m_config_name << "\" but the options do not appear to be registered in the OptionsDB.";
         return;
     }
@@ -739,10 +739,10 @@ void CUIWnd::LoadOptions() {
     if (!db.Get<bool>("video.fullscreen.enabled"))
         windowed = "-windowed";
 
-    GG::Pt ul   = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".left"+windowed)),
-                         GG::Y(db.Get<int>("UI.windows."+m_config_name+".top"+windowed)));
-    GG::Pt size = GG::Pt(GG::X(db.Get<int>("UI.windows."+m_config_name+".width"+windowed)),
-                         GG::Y(db.Get<int>("UI.windows."+m_config_name+".height"+windowed)));
+    GG::Pt ul   = GG::Pt(GG::X(db.Get<int>("ui.window."+m_config_name+".left"+windowed)),
+                         GG::Y(db.Get<int>("ui.window."+m_config_name+".top"+windowed)));
+    GG::Pt size = GG::Pt(GG::X(db.Get<int>("ui.window."+m_config_name+".width"+windowed)),
+                         GG::Y(db.Get<int>("ui.window."+m_config_name+".height"+windowed)));
 
     m_config_save = false;
 
@@ -763,17 +763,17 @@ void CUIWnd::LoadOptions() {
     }
 
     if (!Modal()) {
-        if (db.Get<bool>("UI.windows."+m_config_name+".visible")) {
+        if (db.Get<bool>("ui.window."+m_config_name+".visible")) {
             Show();
         } else {
             Hide();
         }
 
-        if (db.Get<bool>("UI.windows."+m_config_name+".pinned") != m_pinned) {
+        if (db.Get<bool>("ui.window."+m_config_name+".pinned") != m_pinned) {
             PinClicked();
         }
 
-        if (db.Get<bool>("UI.windows."+m_config_name+".minimized") != m_minimized) {
+        if (db.Get<bool>("ui.window."+m_config_name+".minimized") != m_minimized) {
             MinimizeClicked();
         }
     }
@@ -789,49 +789,49 @@ const std::string CUIWnd::AddWindowOptions(const std::string& config_name,
     OptionsDB& db = GetOptionsDB();
     std::string new_name = "";
 
-    if (db.OptionExists("UI.windows."+config_name+".left")) {
+    if (db.OptionExists("ui.window."+config_name+".left")) {
         // If the option has already been added, a window was previously created with this name...
         if (config_name.empty()) {
             // Should never happen, but just in case.
-            db.Remove("UI.windows..left");
-            db.Remove("UI.windows..top");
-            db.Remove("UI.windows..left-windowed");
-            db.Remove("UI.windows..top-windowed");
-            db.Remove("UI.windows..width");
-            db.Remove("UI.windows..height");
-            db.Remove("UI.windows..width-windowed");
-            db.Remove("UI.windows..height-windowed");
-            db.Remove("UI.windows..visible");
-            db.Remove("UI.windows..pinned");
-            db.Remove("UI.windows..minimized");
+            db.Remove("ui.window..left");
+            db.Remove("ui.window..top");
+            db.Remove("ui.window..left-windowed");
+            db.Remove("ui.window..top-windowed");
+            db.Remove("ui.window..width");
+            db.Remove("ui.window..height");
+            db.Remove("ui.window..width-windowed");
+            db.Remove("ui.window..height-windowed");
+            db.Remove("ui.window..visible");
+            db.Remove("ui.window..pinned");
+            db.Remove("ui.window..minimized");
             ErrorLogger() << "CUIWnd::AddWindowOptions() : Found window options with a blank name, removing those options.";
-        } else if (db.OptionExists("UI.windows."+config_name+".initialized")) {
+        } else if (db.OptionExists("ui.window."+config_name+".initialized")) {
             // If the window's still there, shouldn't use the same name (but the window can still be created so don't throw)
             ErrorLogger() << "CUIWnd::AddWindowOptions() : Attempted to create a window with config_name = " << config_name << " but one already exists with that name.";
         } else {
             // Old window has been destroyed, use the properties it had.
-            db.Add<bool>("UI.windows."+config_name+".initialized",      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(),              false);
+            db.Add<bool>("ui.window."+config_name+".initialized",      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(),              false);
             new_name = config_name;
         }
     } else if (!config_name.empty()) {
         const int max_width_plus_one = HumanClientApp::MaximumPossibleWidth() + 1;
         const int max_height_plus_one = HumanClientApp::MaximumPossibleHeight() + 1;
 
-        db.Add<bool>("UI.windows."+config_name+".initialized",      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(),              false);
+        db.Add<bool>("ui.window."+config_name+".initialized",      UserStringNop("OPTIONS_DB_UI_WINDOWS_EXISTS"),          false,      Validator<bool>(),              false);
 
-        db.Add<int> ("UI.windows."+config_name+".left",             UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one), DiscreteValidator<int>(INVALID_POS)));
-        db.Add<int> ("UI.windows."+config_name+".top",              UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one), DiscreteValidator<int>(INVALID_POS)));
-        db.Add<int> ("UI.windows."+config_name+".left-windowed",    UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one), DiscreteValidator<int>(INVALID_POS)));
-        db.Add<int> ("UI.windows."+config_name+".top-windowed",     UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("ui.window."+config_name+".left",             UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT"),            left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("ui.window."+config_name+".top",              UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP"),             top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("ui.window."+config_name+".left-windowed",    UserStringNop("OPTIONS_DB_UI_WINDOWS_LEFT_WINDOWED"),   left,       OrValidator<int>(RangedValidator<int>(0, max_width_plus_one), DiscreteValidator<int>(INVALID_POS)));
+        db.Add<int> ("ui.window."+config_name+".top-windowed",     UserStringNop("OPTIONS_DB_UI_WINDOWS_TOP_WINDOWED"),    top,        OrValidator<int>(RangedValidator<int>(0, max_height_plus_one), DiscreteValidator<int>(INVALID_POS)));
 
-        db.Add<int> ("UI.windows."+config_name+".width",            UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH"),           width,      RangedValidator<int>(0, max_width_plus_one));
-        db.Add<int> ("UI.windows."+config_name+".height",           UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT"),          height,     RangedValidator<int>(0, max_height_plus_one));
-        db.Add<int> ("UI.windows."+config_name+".width-windowed",   UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH_WINDOWED"),  width,      RangedValidator<int>(0, max_width_plus_one));
-        db.Add<int> ("UI.windows."+config_name+".height-windowed",  UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED"), height,     RangedValidator<int>(0, max_height_plus_one));
+        db.Add<int> ("ui.window."+config_name+".width",            UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH"),           width,      RangedValidator<int>(0, max_width_plus_one));
+        db.Add<int> ("ui.window."+config_name+".height",           UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT"),          height,     RangedValidator<int>(0, max_height_plus_one));
+        db.Add<int> ("ui.window."+config_name+".width-windowed",   UserStringNop("OPTIONS_DB_UI_WINDOWS_WIDTH_WINDOWED"),  width,      RangedValidator<int>(0, max_width_plus_one));
+        db.Add<int> ("ui.window."+config_name+".height-windowed",  UserStringNop("OPTIONS_DB_UI_WINDOWS_HEIGHT_WINDOWED"), height,     RangedValidator<int>(0, max_height_plus_one));
 
-        db.Add<bool>("UI.windows."+config_name+".visible",          UserStringNop("OPTIONS_DB_UI_WINDOWS_VISIBLE"),         visible,    Validator<bool>());
-        db.Add<bool>("UI.windows."+config_name+".pinned",           UserStringNop("OPTIONS_DB_UI_WINDOWS_PINNED"),          pinned,     Validator<bool>());
-        db.Add<bool>("UI.windows."+config_name+".minimized",        UserStringNop("OPTIONS_DB_UI_WINDOWS_MINIMIZED"),       minimized,  Validator<bool>());
+        db.Add<bool>("ui.window."+config_name+".visible",          UserStringNop("OPTIONS_DB_UI_WINDOWS_VISIBLE"),         visible,    Validator<bool>());
+        db.Add<bool>("ui.window."+config_name+".pinned",           UserStringNop("OPTIONS_DB_UI_WINDOWS_PINNED"),          pinned,     Validator<bool>());
+        db.Add<bool>("ui.window."+config_name+".minimized",        UserStringNop("OPTIONS_DB_UI_WINDOWS_MINIMIZED"),       minimized,  Validator<bool>());
 
         new_name = config_name;
     }
@@ -852,11 +852,11 @@ const std::string CUIWnd::AddWindowOptions(const std::string& config_name,
 
 void CUIWnd::InvalidateWindowOptions(const std::string& config_name) {
     OptionsDB& db = GetOptionsDB();
-    if (db.OptionExists("UI.windows."+config_name+".initialized")) {
+    if (db.OptionExists("ui.window."+config_name+".initialized")) {
         // Should be removed in window dtor.
         ErrorLogger() << "CUIWnd::RemoveWindowOptions() : attempted to remove window options using name \"" << config_name << "\" but they appear to be in use by a window.";
         return;
-    } else if (!db.OptionExists("UI.windows."+config_name+".left")) {
+    } else if (!db.OptionExists("ui.window."+config_name+".left")) {
         ErrorLogger() << "CUIWnd::RemoveWindowOptions() : attempted to remove window options using name \"" << config_name << "\" but the options do not appear to be registered in the OptionsDB.";
         return;
     }
@@ -865,16 +865,16 @@ void CUIWnd::InvalidateWindowOptions(const std::string& config_name) {
     if (!db.Get<bool>("video.fullscreen.enabled"))
         windowed = "-windowed";
 
-    db.Set<int>("UI.windows."+config_name+".left"+windowed, INVALID_POS);
-    db.Set<int>("UI.windows."+config_name+".top"+windowed,  INVALID_POS);
-    db.Set<bool>("UI.windows."+config_name+".visible", db.GetDefault<bool>("UI.windows."+config_name+".visible"));
-    db.Set<bool>("UI.windows."+config_name+".pinned", db.GetDefault<bool>("UI.windows."+config_name+".pinned"));
-    db.Set<bool>("UI.windows."+config_name+".minimized", db.GetDefault<bool>("UI.windows."+config_name+".minimized"));
+    db.Set<int>("ui.window."+config_name+".left"+windowed, INVALID_POS);
+    db.Set<int>("ui.window."+config_name+".top"+windowed,  INVALID_POS);
+    db.Set<bool>("ui.window."+config_name+".visible", db.GetDefault<bool>("ui.window."+config_name+".visible"));
+    db.Set<bool>("ui.window."+config_name+".pinned", db.GetDefault<bool>("ui.window."+config_name+".pinned"));
+    db.Set<bool>("ui.window."+config_name+".minimized", db.GetDefault<bool>("ui.window."+config_name+".minimized"));
 }
 
 void CUIWnd::InvalidateUnusedOptions() {
     OptionsDB& db = GetOptionsDB();
-    std::string prefix("UI.windows.");
+    std::string prefix("ui.window.");
     std::string suffix_used(".initialized"); // this is present if the options are being used by a window
     std::string suffix_exist(".left");
 
