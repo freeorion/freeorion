@@ -170,50 +170,50 @@ namespace {
         db.Add("ui.map.sidepanel.width",                    UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                     512,                            Validator<int>());
 
         // Register hotkey names/default values for the context "map".
-        Hotkey::AddHotkey("map.return_to_map",        UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),        GG::GGK_ESCAPE);
-        Hotkey::AddHotkey("map.open_chat",            UserStringNop("HOTKEY_MAP_OPEN_CHAT"),            GG::GGK_t,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.end_turn",             UserStringNop("HOTKEY_MAP_END_TURN"),             GG::GGK_RETURN,     GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.sit_rep",              UserStringNop("HOTKEY_MAP_SIT_REP"),              GG::GGK_n,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.research",             UserStringNop("HOTKEY_MAP_RESEARCH"),             GG::GGK_r,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.production",           UserStringNop("HOTKEY_MAP_PRODUCTION"),           GG::GGK_p,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.design",               UserStringNop("HOTKEY_MAP_DESIGN"),               GG::GGK_d,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.objects",              UserStringNop("HOTKEY_MAP_OBJECTS"),              GG::GGK_o,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.messages",             UserStringNop("HOTKEY_MAP_MESSAGES"),             GG::GGK_t,          GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("map.empires",              UserStringNop("HOTKEY_MAP_EMPIRES"),              GG::GGK_e,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.pedia",                UserStringNop("HOTKEY_MAP_PEDIA"),                GG::GGK_F1);
-        Hotkey::AddHotkey("map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_NONE);
-        Hotkey::AddHotkey("map.menu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
-        Hotkey::AddHotkey("map.zoom_in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_in_alt",          UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),          GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_out",             UserStringNop("HOTKEY_MAP_ZOOM_OUT"),             GG::GGK_x,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_out_alt",         UserStringNop("HOTKEY_MAP_ZOOM_OUT_ALT"),         GG::GGK_KP_MINUS,   GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_home_system",     UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),     GG::GGK_h,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_prev_system",     UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),     GG::GGK_COMMA,      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_next_system",     UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),     GG::GGK_PERIOD,     GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_prev_owned_system",UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),GG::GGK_LESS,     GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("map.zoom_next_owned_system",UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),GG::GGK_GREATER,  GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("map.zoom_prev_fleet",      UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),      GG::GGK_f,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_next_fleet",      UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),      GG::GGK_g,          GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.zoom_prev_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"), GG::GGK_f,          GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("map.zoom_next_idle_fleet", UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"), GG::GGK_g,          GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.open",        UserStringNop("HOTKEY_MAP_RETURN_TO_MAP"),        GG::GGK_ESCAPE);
+        Hotkey::AddHotkey("ui.map.messages.open",            UserStringNop("HOTKEY_MAP_OPEN_CHAT"),            GG::GGK_t,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.turn.end",             UserStringNop("HOTKEY_MAP_END_TURN"),             GG::GGK_RETURN,     GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.sitrep",              UserStringNop("HOTKEY_MAP_SIT_REP"),              GG::GGK_n,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.research",             UserStringNop("HOTKEY_MAP_RESEARCH"),             GG::GGK_r,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.production",           UserStringNop("HOTKEY_MAP_PRODUCTION"),           GG::GGK_p,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.design",               UserStringNop("HOTKEY_MAP_DESIGN"),               GG::GGK_d,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.objects",              UserStringNop("HOTKEY_MAP_OBJECTS"),              GG::GGK_o,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.messages",             UserStringNop("HOTKEY_MAP_MESSAGES"),             GG::GGK_t,          GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.empires",              UserStringNop("HOTKEY_MAP_EMPIRES"),              GG::GGK_e,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pedia",                UserStringNop("HOTKEY_MAP_PEDIA"),                GG::GGK_F1);
+        Hotkey::AddHotkey("ui.map.graphs",               UserStringNop("HOTKEY_MAP_GRAPHS"),               GG::GGK_NONE);
+        Hotkey::AddHotkey("ui.gamemenu",                 UserStringNop("HOTKEY_MAP_MENU"),                 GG::GGK_F10);
+        Hotkey::AddHotkey("ui.zoom.in",              UserStringNop("HOTKEY_MAP_ZOOM_IN"),              GG::GGK_z,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.in.alt",          UserStringNop("HOTKEY_MAP_ZOOM_IN_ALT"),          GG::GGK_KP_PLUS,    GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.out",             UserStringNop("HOTKEY_MAP_ZOOM_OUT"),             GG::GGK_x,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.zoom.out.alt",         UserStringNop("HOTKEY_MAP_ZOOM_OUT_ALT"),         GG::GGK_KP_MINUS,   GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.home",     UserStringNop("HOTKEY_MAP_ZOOM_HOME_SYSTEM"),     GG::GGK_h,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.prev",     UserStringNop("HOTKEY_MAP_ZOOM_PREV_SYSTEM"),     GG::GGK_COMMA,      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.zoom.next",     UserStringNop("HOTKEY_MAP_ZOOM_NEXT_SYSTEM"),     GG::GGK_PERIOD,     GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.system.owned.zoom.prev",UserStringNop("HOTKEY_MAP_ZOOM_PREV_OWNED_SYSTEM"),GG::GGK_LESS,     GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.map.system.owned.zoom.next",UserStringNop("HOTKEY_MAP_ZOOM_NEXT_OWNED_SYSTEM"),GG::GGK_GREATER,  GG::MOD_KEY_CTRL | GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.map.fleet.zoom.prev",      UserStringNop("HOTKEY_MAP_ZOOM_PREV_FLEET"),      GG::GGK_f,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.fleet.zoom.next",      UserStringNop("HOTKEY_MAP_ZOOM_NEXT_FLEET"),      GG::GGK_g,          GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.prev", UserStringNop("HOTKEY_MAP_ZOOM_PREV_IDLE_FLEET"), GG::GGK_f,          GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.fleet.idle.zoom.next", UserStringNop("HOTKEY_MAP_ZOOM_NEXT_IDLE_FLEET"), GG::GGK_g,          GG::MOD_KEY_ALT);
 
-        Hotkey::AddHotkey("map.pan_right",            UserStringNop("HOTKEY_MAP_PAN_RIGHT"),            GG::GGK_RIGHT,      GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.pan_left",             UserStringNop("HOTKEY_MAP_PAN_LEFT"),             GG::GGK_LEFT,       GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.pan_up",               UserStringNop("HOTKEY_MAP_PAN_UP"),               GG::GGK_UP,         GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("map.pan_down",             UserStringNop("HOTKEY_MAP_PAN_DOWN"),             GG::GGK_DOWN,       GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.right",            UserStringNop("HOTKEY_MAP_PAN_RIGHT"),            GG::GGK_RIGHT,      GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.left",             UserStringNop("HOTKEY_MAP_PAN_LEFT"),             GG::GGK_LEFT,       GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.up",               UserStringNop("HOTKEY_MAP_PAN_UP"),               GG::GGK_UP,         GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.pan.down",             UserStringNop("HOTKEY_MAP_PAN_DOWN"),             GG::GGK_DOWN,       GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("map.toggle_scale_line",    UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_LINE"),    GG::GGK_l,          GG::MOD_KEY_ALT);
-        Hotkey::AddHotkey("map.toggle_scale_circle",  UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_CIRCLE"),  GG::GGK_c,          GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.scale.legend",    UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_LINE"),    GG::GGK_l,          GG::MOD_KEY_ALT);
+        Hotkey::AddHotkey("ui.map.scale.circle",  UserStringNop("HOTKEY_MAP_TOGGLE_SCALE_CIRCLE"),  GG::GGK_c,          GG::MOD_KEY_ALT);
 
-        Hotkey::AddHotkey("cut",                      UserStringNop("HOTKEY_CUT"),            GG::GGK_x,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("copy",                     UserStringNop("HOTKEY_COPY"),           GG::GGK_c,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("paste",                    UserStringNop("HOTKEY_PASTE"),          GG::GGK_v,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.cut",                      UserStringNop("HOTKEY_CUT"),            GG::GGK_x,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.copy",                     UserStringNop("HOTKEY_COPY"),           GG::GGK_c,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.paste",                    UserStringNop("HOTKEY_PASTE"),          GG::GGK_v,  GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("select_all",               UserStringNop("HOTKEY_SELECT_ALL"),     GG::GGK_a,  GG::MOD_KEY_CTRL);
-        Hotkey::AddHotkey("deselect",                 UserStringNop("HOTKEY_DESELECT"),       GG::GGK_d,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.select.all",               UserStringNop("HOTKEY_SELECT_ALL"),     GG::GGK_a,  GG::MOD_KEY_CTRL);
+        Hotkey::AddHotkey("ui.select.none",                 UserStringNop("HOTKEY_DESELECT"),       GG::GGK_d,  GG::MOD_KEY_CTRL);
 
-        Hotkey::AddHotkey("focus_prev_wnd",           UserStringNop("HOTKEY_FOCUS_PREV_WND"), GG::GGK_TAB,GG::MOD_KEY_SHIFT);
-        Hotkey::AddHotkey("focus_next_wnd",           UserStringNop("HOTKEY_FOCUS_NEXT_WND"), GG::GGK_TAB);
+        Hotkey::AddHotkey("ui.focus.prev",           UserStringNop("HOTKEY_FOCUS_PREV_WND"), GG::GGK_TAB,GG::MOD_KEY_SHIFT);
+        Hotkey::AddHotkey("ui.focus.next",           UserStringNop("HOTKEY_FOCUS_NEXT_WND"), GG::GGK_TAB);
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -6971,89 +6971,89 @@ namespace {
 void MapWnd::ConnectKeyboardAcceleratorSignals() {
     HotkeyManager* hkm = HotkeyManager::GetManager();
 
-    hkm->Connect(boost::bind(&MapWnd::ReturnToMap, this), "map.return_to_map",
+    hkm->Connect(boost::bind(&MapWnd::ReturnToMap, this), "ui.map.open",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::OpenMessages, this), "map.open_chat",
+    hkm->Connect(boost::bind(&MapWnd::OpenMessages, this), "ui.map.messages.open",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::EndTurn, this), "map.end_turn",
+    hkm->Connect(boost::bind(&MapWnd::EndTurn, this), "ui.turn.end",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleSitRep, this), "map.sit_rep",
+    hkm->Connect(boost::bind(&MapWnd::ToggleSitRep, this), "ui.map.sitrep",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleResearch, this), "map.research",
+    hkm->Connect(boost::bind(&MapWnd::ToggleResearch, this), "ui.research",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleProduction, this), "map.production",
+    hkm->Connect(boost::bind(&MapWnd::ToggleProduction, this), "ui.production",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleDesign, this), "map.design",
+    hkm->Connect(boost::bind(&MapWnd::ToggleDesign, this), "ui.design",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleObjects, this), "map.objects",
+    hkm->Connect(boost::bind(&MapWnd::ToggleObjects, this), "ui.map.objects",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleMessages, this), "map.messages",
+    hkm->Connect(boost::bind(&MapWnd::ToggleMessages, this), "ui.map.messages",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ToggleEmpires, this), "map.empires",
+    hkm->Connect(boost::bind(&MapWnd::ToggleEmpires, this), "ui.map.empires",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::TogglePedia, this), "map.pedia",
+    hkm->Connect(boost::bind(&MapWnd::TogglePedia, this), "ui.pedia",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ShowGraphs, this), "map.graphs",
+    hkm->Connect(boost::bind(&MapWnd::ShowGraphs, this), "ui.map.graphs",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ShowMenu, this), "map.menu",
+    hkm->Connect(boost::bind(&MapWnd::ShowMenu, this), "ui.gamemenu",
                  AndCondition({VisibleWindowCondition(this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "map.zoom_in",
+    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "ui.zoom.in",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "map.zoom_in_alt",
+    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomIn, this), "ui.zoom.in.alt",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "map.zoom_out",
+    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "ui.zoom.out",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "map.zoom_out_alt",
+    hkm->Connect(boost::bind(&MapWnd::KeyboardZoomOut, this), "ui.zoom.out.alt",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToHomeSystem, this), "map.zoom_home_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToHomeSystem, this), "ui.map.system.zoom.home",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevSystem, this), "map.zoom_prev_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevSystem, this), "ui.map.system.zoom.prev",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToNextSystem, this), "map.zoom_next_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToNextSystem, this), "ui.map.system.zoom.next",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevOwnedSystem, this), "map.zoom_prev_owned_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevOwnedSystem, this), "ui.map.system.owned.zoom.prev",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToNextOwnedSystem, this), "map.zoom_next_owned_system",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToNextOwnedSystem, this), "ui.map.system.owned.zoom.next",
                  AndCondition({NotCoveredMapWndCondition(*this), NoModalWndsOpenCondition}));
 
     // the list of windows for which the fleet shortcuts are blacklisted.
     std::initializer_list<const GG::Wnd*> bl = {m_research_wnd.get(), m_production_wnd.get(), m_design_wnd.get()};
 
-    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevFleet, this), "map.zoom_prev_fleet",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevFleet, this), "ui.map.fleet.zoom.prev",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToNextFleet, this), "map.zoom_next_fleet",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToNextFleet, this), "ui.map.fleet.zoom.next",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevIdleFleet, this), "map.zoom_prev_idle_fleet",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToPrevIdleFleet, this), "ui.map.fleet.idle.zoom.prev",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::ZoomToNextIdleFleet, this), "map.zoom_next_idle_fleet",
-                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-
-    hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(50)),   "map.pan_right",
-                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(-50)),  "map.pan_left",
-                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(50)),   "map.pan_down",
-                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(-50)),  "map.pan_up",
+    hkm->Connect(boost::bind(&MapWnd::ZoomToNextIdleFleet, this), "ui.map.fleet.idle.zoom.next",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
-    hkm->Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.legend.shown"), "map.toggle_scale_line",
+    hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(50)),   "ui.pan.right",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
-    hkm->Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.circle.shown"), "map.toggle_scale_circle",
+    hkm->Connect(boost::bind(&MapWnd::PanX, this, GG::X(-50)),  "ui.pan.left",
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
+    hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(50)),   "ui.pan.down",
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
+    hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(-50)),  "ui.pan.up",
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
+
+    hkm->Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.legend.shown"), "ui.map.scale.legend",
+                 AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
+    hkm->Connect(boost::bind(&ToggleBoolOption, "ui.map.scale.circle.shown"), "ui.map.scale.circle",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
 
     // these are general-use hotkeys, only connected here as a convenient location to do so once.
-    hkm->Connect(boost::bind(&GG::GUI::CutFocusWndText, GG::GUI::GetGUI()), "cut");
-    hkm->Connect(boost::bind(&GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()), "copy");
-    hkm->Connect(boost::bind(&GG::GUI::PasteFocusWndClipboardText, GG::GUI::GetGUI()), "paste");
+    hkm->Connect(boost::bind(&GG::GUI::CutFocusWndText, GG::GUI::GetGUI()), "ui.cut");
+    hkm->Connect(boost::bind(&GG::GUI::CopyFocusWndText, GG::GUI::GetGUI()), "ui.copy");
+    hkm->Connect(boost::bind(&GG::GUI::PasteFocusWndClipboardText, GG::GUI::GetGUI()), "ui.paste");
 
-    hkm->Connect(boost::bind(&GG::GUI::FocusWndSelectAll, GG::GUI::GetGUI()), "select_all");
-    hkm->Connect(boost::bind(&GG::GUI::FocusWndDeselect, GG::GUI::GetGUI()), "deselect");
+    hkm->Connect(boost::bind(&GG::GUI::FocusWndSelectAll, GG::GUI::GetGUI()), "ui.select.all");
+    hkm->Connect(boost::bind(&GG::GUI::FocusWndDeselect, GG::GUI::GetGUI()), "ui.select.none");
 
-    hkm->Connect(boost::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "focus_prev_wnd",
+    hkm->Connect(boost::bind(&GG::GUI::SetPrevFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.prev",
                  NoModalWndsOpenCondition);
-    hkm->Connect(boost::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "focus_next_wnd",
+    hkm->Connect(boost::bind(&GG::GUI::SetNextFocusWndInCycle, GG::GUI::GetGUI()), "ui.focus.next",
                  NoModalWndsOpenCondition);
 
     hkm->RebuildShortcuts();

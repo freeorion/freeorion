@@ -30,6 +30,7 @@
 #include <boost/format.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/operations.hpp>
+#include <regex>
 
 
 namespace fs = boost::filesystem;
@@ -1269,9 +1270,45 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     );
 }
 
+namespace {
+    std::string ValidSectionForHotkey(const std::string& hotkey_name) {
+        std::string retval { "HOTKEYS_GENERAL" };
+
+        std::string name { hotkey_name };
+        std::transform(name.begin(), name.end(), name.begin(), ::toupper);
+
+        const std::regex dot { "\\.+" };
+        const std::vector<std::string> nodes {
+            std::sregex_token_iterator(name.cbegin(), name.cend(), dot, -1),
+            std::sregex_token_iterator()
+        };
+
+        std::string current_node { "" };
+        for (const auto& node : nodes) {
+            if (current_node == name)
+                break;
+
+            current_node.append( "_" + node);
+            if (UserStringExists("HOTKEYS" + current_node))
+                retval = "HOTKEYS" + current_node;
+        }
+
+        return retval;
+    }
+
+    std::map<std::string, std::set<std::string>> HotkeysBySection() {
+        std::map<std::string, std::set<std::string>> retval;
+        for (const auto& entry : Hotkey::DefinedHotkeys()) {
+            retval[ValidSectionForHotkey(entry)].insert(entry);
+        }
+        return retval;
+    }
+}
+
 void OptionsWnd::HotkeysPage() {
+
     GG::ListBox* page = CreatePage(UserString("OPTIONS_PAGE_HOTKEYS"));
-    for (const auto& class_hotkeys : Hotkey::ClassifyHotkeys()) {
+    for (const auto& class_hotkeys : HotkeysBySection()) {
         CreateSectionHeader(page, 0, UserString(class_hotkeys.first));
         for (const std::string& hotkey : class_hotkeys.second)
             HotkeyOption(page, 0, hotkey);

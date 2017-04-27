@@ -60,11 +60,6 @@ public:
     /// Returns the name of all defined hotkeys
     static std::set<std::string> DefinedHotkeys();
 
-    /// Returns the names of all defined hotkeys, classified by
-    /// "sections" (ie "namespace"), converted into user string by
-    /// naming it HOTKEYS_uppercase)
-    static std::map<std::string, std::set<std::string>> ClassifyHotkeys();
-
     /// Returns the Hotkey of the given name, or raises an exception
     /// if there is no such hotkey.
     static const Hotkey& NamedHotkey(const std::string& name);
