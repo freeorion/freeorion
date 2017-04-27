@@ -96,13 +96,13 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("autosave.single-player.turn-start", UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"),     true,   Validator<bool>());
-        db.Add("autosave.single-player.turn-end",   UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"),     false,   Validator<bool>());
-        db.Add("autosave.multiplayer.turn-start",   UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"),       true,   Validator<bool>());
-        db.Add("autosave.turns",                    UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
-        db.Add("autosave.turn-limit",               UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 10000));
-        db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
-        db.Add("autosave.game-close",           UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
+        db.Add("save.auto.turn.start.enabled", UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"), true,    Validator<bool>());
+        db.Add("save.auto.turn.end.enabled",   UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"), false,   Validator<bool>());
+        db.Add("save.auto.turn.multiplayer.start.enabled",   UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"), true,    Validator<bool>());
+        db.Add("save.auto.turn.interval",          UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
+        db.Add("save.auto.file.limit",              UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 10000));
+        db.Add("save.auto.initial.enabled",     UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
+        db.Add("save.auto.exit.enabled",        UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
         db.Add("UI.swap-mouse-lr",              UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),           false);
         db.Add("UI.keypress-repeat-delay",      UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),      360,    RangedValidator<int>(0, 1000));
         db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
@@ -897,7 +897,7 @@ void HumanClientApp::StartTurn() {
     }
 
     // Do the turn end autosave.
-    if (m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player.turn-end")) {
+    if (m_single_player_game && GetOptionsDB().Get<bool>("save.auto.turn.end.enabled")) {
         DebugLogger() << "Starting end of turn autosave.";
         Autosave();
     }
@@ -1268,27 +1268,27 @@ void HumanClientApp::Autosave() {
         return;
 
     // Create an auto save for 1) new games on turn 1, 2) if auto save is
-    // requested on turn number modulo autosave.turns or 3) on the last turn of
+    // requested on turn number modulo save.auto.turn.interval or 3) on the last turn of
     // play.
 
     // autosave only on appropriate turn numbers, and when enabled for current
     // game type (single vs. multiplayer)
-    int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
+    int autosave_turns = GetOptionsDB().Get<int>("save.auto.turn.interval");
     bool is_single_player_enabled =
         (m_single_player_game
-         && (GetOptionsDB().Get<bool>("autosave.single-player.turn-start")
-             || GetOptionsDB().Get<bool>("autosave.single-player.turn-end")));
+         && (GetOptionsDB().Get<bool>("save.auto.turn.start.enabled")
+             || GetOptionsDB().Get<bool>("save.auto.turn.end.enabled")));
     bool is_multi_player_enabled =
         (!m_single_player_game
-         && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-start"));
+         && GetOptionsDB().Get<bool>("save.auto.turn.multiplayer.start.enabled"));
     bool is_valid_autosave =
         (autosave_turns > 0
          && CurrentTurn() % autosave_turns == 0
          && (is_single_player_enabled || is_multi_player_enabled));
 
     // is_initial_save is gated in HumanClientFSM for new game vs loaded game
-    bool is_initial_save = (GetOptionsDB().Get<bool>("autosave.galaxy-creation") && CurrentTurn() == 1);
-    bool is_final_save = (GetOptionsDB().Get<bool>("autosave.game-close") && !m_game_started);
+    bool is_initial_save = (GetOptionsDB().Get<bool>("save.auto.initial.enabled") && CurrentTurn() == 1);
+    bool is_final_save = (GetOptionsDB().Get<bool>("save.auto.exit.enabled") && !m_game_started);
 
     if (!(is_initial_save || is_valid_autosave || is_final_save))
         return;
@@ -1297,18 +1297,18 @@ void HumanClientApp::Autosave() {
 
     // check for and remove excess oldest autosaves.
     boost::filesystem::path autosave_dir_path((m_single_player_game ? GetSaveDir() : GetServerSaveDir()) / "auto");
-    int max_turns = std::max(1, GetOptionsDB().Get<int>("autosave.turn-limit"));
+    int max_turns = std::max(1, GetOptionsDB().Get<int>("save.auto.file.limit"));
     bool is_two_saves_per_turn =
         (m_single_player_game
-         && GetOptionsDB().Get<bool>("autosave.single-player.turn-start")
-         && GetOptionsDB().Get<bool>("autosave.single-player.turn-end"))
+         && GetOptionsDB().Get<bool>("save.auto.turn.start.enabled")
+         && GetOptionsDB().Get<bool>("save.auto.turn.end.enabled"))
         ||
         (!m_single_player_game
-         && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-start"));
+         && GetOptionsDB().Get<bool>("save.auto.turn.multiplayer.start.enabled"));
     int max_autosaves =
         (max_turns * (is_two_saves_per_turn ? 2 : 1)
-         + (GetOptionsDB().Get<bool>("autosave.galaxy-creation") ? 1 : 0)
-         + (GetOptionsDB().Get<bool>("autosave.game-close") ? 1 : 0));
+         + (GetOptionsDB().Get<bool>("save.auto.initial.enabled") ? 1 : 0)
+         + (GetOptionsDB().Get<bool>("save.auto.exit.enabled") ? 1 : 0));
     RemoveOldestFiles(max_autosaves, autosave_dir_path);
 
     // create new save
@@ -1398,7 +1398,7 @@ void HumanClientApp::ResetOrExitApp(bool reset, bool skip_savegame, int exit_cod
 
     // Only save if not exiting due to an error.
     if (!skip_savegame) {
-        if (was_playing && GetOptionsDB().Get<bool>("autosave.game-close"))
+        if (was_playing && GetOptionsDB().Get<bool>("save.auto.exit.enabled"))
             Autosave();
 
         if (!m_game_saves_in_progress.empty()) {

@@ -13,7 +13,7 @@
 FO_COMMON_API void CompleteXDGMigration();
 
 /** This function completes the migration of directories to the XDG
-  * specified location by updating the save-dir option to the new location
+  * specified location by updating the save.path option to the new location
   * after the option is loaded from XML files.  It only updates the option
   * if it is set to the old default option. */
 FO_COMMON_API void InitDirs(const std::string& argv0);

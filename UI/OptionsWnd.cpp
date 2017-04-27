@@ -690,13 +690,13 @@ void OptionsWnd::CompleteConstruction() {
 
     // Ausosave settings tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_AUTOSAVE"));
-    BoolOption(current_page, 0, "autosave.single-player.turn-start", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"));
-    BoolOption(current_page, 0, "autosave.single-player.turn-end",   UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"));
-    BoolOption(current_page, 0, "autosave.multiplayer.turn-start",   UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
-    IntOption(current_page,  0, "autosave.turns",           UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
-    IntOption(current_page,  0, "autosave.turn-limit",      UserString("OPTIONS_AUTOSAVE_LIMIT"));
-    BoolOption(current_page, 0, "autosave.galaxy-creation", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
-    BoolOption(current_page, 0, "autosave.game-close",      UserString("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"));
+    BoolOption(current_page, 0, "save.auto.turn.start.enabled", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"));
+    BoolOption(current_page, 0, "save.auto.turn.end.enabled", UserString("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"));
+    BoolOption(current_page, 0, "save.auto.turn.multiplayer.start.enabled", UserString("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"));
+    IntOption(current_page,  0, "save.auto.turn.interval", UserString("OPTIONS_AUTOSAVE_TURNS_BETWEEN"));
+    IntOption(current_page,  0, "save.auto.file.limit",     UserString("OPTIONS_AUTOSAVE_LIMIT"));
+    BoolOption(current_page, 0, "save.auto.initial.enabled", UserString("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"));
+    BoolOption(current_page, 0, "save.auto.exit.enabled",   UserString("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"));
     m_tabs->SetCurrentWnd(0);
 
     // Keyboard shortcuts tab
@@ -707,8 +707,8 @@ void OptionsWnd::CompleteConstruction() {
     /** GetRootDataDir() returns the default browse path when modifying this directory option.
      *  The actual default directory (before modifying) is gotten from the specified option name "resource.path" */
     DirectoryOption(current_page, 0, "resource.path", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir(), is_game_running);
-    DirectoryOption(current_page, 0, "save-dir", UserString("OPTIONS_FOLDER_SAVE"),     GetUserDataDir());
-    DirectoryOption(current_page, 0, "server-save-dir", UserString("OPTIONS_SERVER_FOLDER_SAVE"),     GetUserDataDir());
+    DirectoryOption(current_page, 0, "save.path", UserString("OPTIONS_FOLDER_SAVE"), GetUserDataDir());
+    DirectoryOption(current_page, 0, "save.server.path", UserString("OPTIONS_SERVER_FOLDER_SAVE"), GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
 
     // Logging page
@@ -738,8 +738,8 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page, 0, "effects-threads-ai",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
     BoolOption(current_page, 0, "resource.shipdesign.saved.enabled",    UserString("OPTIONS_ADD_SAVED_DESIGNS"));
     BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
-    BoolOption(current_page, 0, "binary-serialization",     UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
-    BoolOption(current_page, 0, "xml-zlib-serialization",   UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
+    BoolOption(current_page, 0, "save.format.binary.enabled",    UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
+    BoolOption(current_page, 0, "save.format.xml.zlib.enabled", UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
     BoolOption(current_page, 0, "verbose-sitrep",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
