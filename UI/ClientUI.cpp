@@ -345,7 +345,7 @@ std::shared_ptr<GG::Texture> ClientUI::ShipDesignIcon(int design_id) {
 
 // tech screen
 GG::Clr     ClientUI::KnownTechFillColor()                   { return GetOptionsDB().Get<GG::Clr>("research.completed.background.color"); }
-GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("UI.known-tech-border"); }
+GG::Clr     ClientUI::KnownTechTextAndBorderColor()          { return GetOptionsDB().Get<GG::Clr>("research.completed.border.color"); }
 GG::Clr     ClientUI::ResearchableTechFillColor()            { return GetOptionsDB().Get<GG::Clr>("UI.researchable-tech"); }
 GG::Clr     ClientUI::ResearchableTechTextAndBorderColor()   { return GetOptionsDB().Get<GG::Clr>("UI.researchable-tech-border"); }
 GG::Clr     ClientUI::UnresearchableTechFillColor()          { return GetOptionsDB().Get<GG::Clr>("UI.unresearchable-tech"); }
@@ -541,7 +541,7 @@ namespace {
         db.Add("ui.font.link.rollover.color",   UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
 
         db.Add("research.completed.background.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"),           GG::Clr(72, 72, 72, 255),    Validator<GG::Clr>());
-        db.Add("UI.known-tech-border",          UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),          GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
+        db.Add("research.completed.border.color", UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),        GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
         db.Add("UI.researchable-tech",          UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH"),          GG::Clr(48, 48, 48, 255),    Validator<GG::Clr>());
         db.Add("UI.researchable-tech-border",   UserStringNop("OPTIONS_DB_UI_RESEARCHABLE_TECH_BORDER"),   GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());
         db.Add("UI.unresearchable-tech",        UserStringNop("OPTIONS_DB_UI_UNRESEARCHABLE_TECH"),        GG::Clr(30, 30, 30, 255),    Validator<GG::Clr>());
