@@ -586,7 +586,7 @@ void SystemIcon::MouseEnter(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         Empire* this_empire = GetEmpire(client_empire_id);
         bool explored = !this_empire || (this_empire && this_empire->HasExploredSystem(m_system_id)) ||
                 !m_mouseover_unexplored_indicator;
-        if (explored || !GetOptionsDB().Get<bool>("UI.show-unexplored_system_overlay")){
+        if (explored || !GetOptionsDB().Get<bool>("map.system.unexplored.rollover.enabled")) {
             AttachChild(m_mouseover_indicator);
             MoveChildUp(m_mouseover_indicator);
         } else {
