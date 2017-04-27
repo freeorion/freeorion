@@ -49,7 +49,7 @@ DiscreteValidator<std::string> LogLevelValidator();
 FO_COMMON_API void InitLoggingOptionsDBSystem();
 
 // Configure a logger and lookup and/or register the \p name logger in OptionsDB.  Set the initial threshold.
-FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger_name);
+FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger_name, const bool is_exec_logger = false);
 
 FO_COMMON_API void UpdateLoggerThresholdsFromOptionsDB();
 

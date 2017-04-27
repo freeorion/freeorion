@@ -3,6 +3,7 @@
 #include "OptionsDB.h"
 #include "i18n.h"
 
+#include <functional>
 #include <regex>
 
 // TODO consider adding thread and process id as options
@@ -81,7 +82,7 @@ void InitLoggingOptionsDBSystem() {
     SetLoggerThreshold("", options_db_log_threshold);
 
     // Link the logger created signal to the OptionsDB registration
-    LoggerCreatedSignal.connect(&RegisterLoggerWithOptionsDB);
+    LoggerCreatedSignal.connect([](const std::string& logger_name){ RegisterLoggerWithOptionsDB(logger_name); });
 
     // Register all loggers created during static initialization
     for (const auto& name: CreatedLoggersNames())
@@ -90,13 +91,13 @@ void InitLoggingOptionsDBSystem() {
     InfoLogger(log) << "Initialized OptionsDB logging configuration.";
 }
 
-void RegisterLoggerWithOptionsDB(const std::string& logger_name) {
+void RegisterLoggerWithOptionsDB(const std::string& logger_name, const bool is_exec_logger/*= false*/) {
     if (logger_name.empty())
         return;
 
     // Setup the OptionsDB options for this source.
     LogLevel options_db_log_threshold = AddLoggerToOptionsDB(
-        source_option_name_prefix + logger_name);
+        (is_exec_logger ? exec_option_name_prefix : source_option_name_prefix) + logger_name);
 
     // Use the option.
     SetLoggerThreshold(logger_name, options_db_log_threshold);
