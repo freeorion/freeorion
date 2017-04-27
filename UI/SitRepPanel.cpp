@@ -29,7 +29,7 @@ namespace {
     /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db) {
         db.Add("ui.window.sitrep.invalid.shown", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"), false, Validator<bool>());
-        db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
+        db.Add<std::string>("ui.window.sitrep.hidden_templates.stringlist", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
         db.Add("ui.window.sitrep.icon.size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 24, RangedValidator<int>(12, 64));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -158,7 +158,7 @@ namespace {
 
     std::set<std::string> HiddenSitRepTemplateStringsFromOptions() {
         std::set<std::string> result;
-        std::string saved_template_string = GetOptionsDB().Get<std::string>("hidden-sitrep-templates");
+        std::string saved_template_string = GetOptionsDB().Get<std::string>("ui.window.sitrep.hidden_templates.stringlist");
 
         // Split a space-delimited sequence of strings.
         std::istringstream ss(saved_template_string);
@@ -180,7 +180,7 @@ namespace {
             std::ostream_iterator<std::string>(ss, " ")
         );
 
-        GetOptionsDB().Set<std::string>("hidden-sitrep-templates", ss.str());
+        GetOptionsDB().Set<std::string>("ui.window.sitrep.hidden_templates.stringlist", ss.str());
         GetOptionsDB().Commit();
     }
 
