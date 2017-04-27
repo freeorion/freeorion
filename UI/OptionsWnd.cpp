@@ -657,7 +657,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_CONTROL_COLORS"));
     ColorOption(current_page, 0, "ui.control.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 0, "UI.ctrl-border-color",        UserString("OPTIONS_BORDER_COLOR"));
+    ColorOption(current_page, 0, "ui.control.border.color",     UserString("OPTIONS_BORDER_COLOR"));
     ColorOption(current_page, 0, "UI.edit-hilite",              UserString("OPTIONS_HIGHLIGHT_COLOR"));
     ColorOption(current_page, 0, "UI.dropdownlist-arrow-color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
     ColorOption(current_page, 0, "UI.state-button-color",       UserString("OPTIONS_STATE_BUTTON_COLOR"));
