@@ -531,7 +531,7 @@ void OptionsWnd::CompleteConstruction() {
     window_reset_button->LeftClickedSignal.connect(
         HumanClientApp::GetApp()->RepositionWindowsSignal);
 
-    FileOption(current_page, 0, "stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
+    FileOption(current_page, 0, "ui.stringtable.path",           UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
                std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
                "*" + STRINGTABLE_FILE_SUFFIX),

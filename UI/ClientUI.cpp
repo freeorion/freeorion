@@ -428,7 +428,7 @@ namespace {
 
             std::set<GG::UnicodeCharset> stringtable_charsets;
             {
-                std::string file_name = GetOptionsDB().Get<std::string>("stringtable-filename");
+                std::string file_name = GetOptionsDB().Get<std::string>("ui.stringtable.path");
                 std::string stringtable_str;
                 boost::filesystem::ifstream ifs(file_name);
                 while (ifs) {
@@ -441,9 +441,9 @@ namespace {
                 DebugLogger() << "loading " << stringtable_charsets.size() << " charsets for current stringtable characters";
             }
 
-            if (!GetOptionsDB().IsDefaultValue("stringtable-filename")) {
+            if (!GetOptionsDB().IsDefaultValue("ui.stringtable.path")) {
                 DebugLogger() << "Non-default stringtable!";
-                std::string file_name = GetOptionsDB().GetDefault<std::string>("stringtable-filename");
+                std::string file_name = GetOptionsDB().GetDefault<std::string>("ui.stringtable.path");
                 std::string stringtable_str;
                 boost::filesystem::ifstream ifs(file_name);
                 while (ifs) {
