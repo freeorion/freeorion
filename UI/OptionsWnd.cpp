@@ -659,7 +659,7 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 0, "ui.control.background.color", UserString("OPTIONS_FILL_COLOR"));
     ColorOption(current_page, 0, "ui.control.border.color",     UserString("OPTIONS_BORDER_COLOR"));
     ColorOption(current_page, 0, "ui.control.edit.highlight.color", UserString("OPTIONS_HIGHLIGHT_COLOR"));
-    ColorOption(current_page, 0, "UI.dropdownlist-arrow-color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
+    ColorOption(current_page, 0, "ui.control.dropdownlist.arrow.color", UserString("OPTIONS_DROPLIST_ARROW_COLOR"));
     ColorOption(current_page, 0, "UI.state-button-color",       UserString("OPTIONS_STATE_BUTTON_COLOR"));
     ColorOption(current_page, 0, "UI.stat-increase-color",      UserString("OPTIONS_STAT_INCREASE_COLOR"));
     ColorOption(current_page, 0, "UI.stat-decrease-color",      UserString("OPTIONS_STAT_DECREASE_COLOR"));

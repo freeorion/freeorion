@@ -99,7 +99,7 @@ GG::Clr     ClientUI::ButtonHiliteBorderColor() {
 
 int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>("UI.scroll-width"); }
 
-GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<GG::Clr>("UI.dropdownlist-arrow-color"); }
+GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<GG::Clr>("ui.control.dropdownlist.arrow.color"); }
 
 GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<GG::Clr>("ui.control.edit.highlight.color"); }
 
@@ -527,7 +527,7 @@ namespace {
         db.Add("ui.control.background.color",   UserStringNop("OPTIONS_DB_UI_CTRL_COLOR"),                 GG::Clr(15, 15, 15, 255),    Validator<GG::Clr>());
         db.Add("ui.control.border.color",       UserStringNop("OPTIONS_DB_UI_CTRL_BORDER_COLOR"),          GG::Clr(124, 124, 124, 255), Validator<GG::Clr>());
 
-        db.Add("UI.dropdownlist-arrow-color",   UserStringNop("OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR"),   GG::Clr(130, 130, 0, 255),   Validator<GG::Clr>());
+        db.Add("ui.control.dropdownlist.arrow.color", UserStringNop("OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR"), GG::Clr(130, 130, 0, 255), Validator<GG::Clr>());
 
         db.Add("ui.control.edit.highlight.color", UserStringNop("OPTIONS_DB_UI_EDIT_HILITE"),              GG::Clr(43, 81, 102, 255),   Validator<GG::Clr>());
 
