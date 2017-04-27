@@ -3,6 +3,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
+#include "../util/CheckSums.h"
 #include "../parse/Parse.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
@@ -89,104 +90,6 @@ namespace {
         // (which does have an ID)
     }
 
-    const unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
-
-    // unsigned types (eg. bool, unsigned int, unsigned long int, unsigned char)
-    template <class T, typename std::enable_if<std::is_unsigned<T>::value, T>::type* = nullptr>
-    void CheckSumCombine(unsigned int& sum, const T& t) {
-        std::cout << "CheckSumCombine(unsigned T): " << typeid(t).name() << std::endl << std::endl;
-        sum += static_cast<unsigned int>(t);
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    // signed types (eg. int, char) but not float or double which are covered by specialized functions
-    template <class T, typename std::enable_if<std::is_signed<T>::value, T>::type* = nullptr>
-    void CheckSumCombine(unsigned int& sum, const T& t) {
-        //std::cout << "CheckSumCombine(signed T): " << typeid(t).name() << std::endl << std::endl;
-        sum += static_cast<unsigned int>(std::abs(t));
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    // enums
-    template <class T>
-    void CheckSumCombine(unsigned int& sum, T t, typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr) {
-        std::cout << "CheckSumCombine(enum): " << typeid(t).name() << std::endl << std::endl;
-        CheckSumCombine(sum, static_cast<int>(t) + 10);
-    }
-
-    // pointer types
-    template <class T>
-    void CheckSumCombine(unsigned int& sum, T p,
-                         decltype(*std::declval<T>())* val = nullptr)
-    {
-        std::cout << "CheckSumCombine(T*): " << typeid(p).name() << std::endl << std::endl;
-        if (p)
-            CheckSumCombine(sum, *p);
-    }
-
-    // fallback do nothing for unsupported types (without GetCheckSum functions)
-    void CheckSumCombine(...)
-    { std::cout << "CheckSumCombine(...)" << std::endl << std::endl; }
-
-    // applies to pairs (including map value types)
-    template <class C, class D>
-    void CheckSumCombine(unsigned int& sum, const std::pair<C, D>& p)
-    {
-        std::cout << "CheckSumCombine(pair): " << typeid(p).name() << std::endl << std::endl;
-        CheckSumCombine(sum, p.first);
-        CheckSumCombine(sum, p.second);
-    }
-
-    // should apply to vectors, maps, and strings
-    template <class C>
-    void CheckSumCombine(unsigned int& sum, const C& c,
-                         const typename C::const_iterator* it = nullptr,
-                         const typename C::value_type* val = nullptr)
-    {
-        std::cout << "CheckSumCombine(C container): " << typeid(c).name() << std::endl << std::endl;
-        for (const typename C::value_type& t : c)
-            CheckSumCombine(sum, t);
-        sum += c.size();
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    // applies to classes that have GetCheckSum methods
-    template <class C>
-    void CheckSumCombine(unsigned int& sum, C& c,
-                         decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)
-    {
-        std::cout << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name() << std::endl << std::endl;
-        sum += c.GetCheckSum();
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    // doubles
-    void CheckSumCombine(unsigned int& sum, const double& t) {
-        std::cout << "CheckSumCombine(double): " << typeid(t).name() << std::endl << std::endl;
-        assert(DBL_MAX_10_EXP < 400);
-        if (t == 0.0)
-            return;
-        // biggest and smallest possible double should be ~10^(+/-308)
-        // taking log gives a number in the range +/- 309
-        // adding 400 gives numbers in the range ~0 to 800
-        // multiplying by 10'000 gives numbers in the range ~0 to 8'000'000
-        sum += static_cast<unsigned int>((std::log10(std::abs(t)) + 400.0) * 10000.0);
-        sum %= CHECKSUM_MODULUS;
-    }
-    // floats
-    void CheckSumCombine(unsigned int& sum, const float& t) {
-        std::cout << "CheckSumCombine(float): " << typeid(t).name() << std::endl << std::endl;
-        assert(FLT_MAX_10_EXP < 40);
-        if (t == 0.0f)
-            return;
-        // biggest and smallest possible float should be ~10^(+/-38)
-        // taking log gives a number in the range +/- 39
-        // adding 400 ives numbers in the range ~0 to 80
-        // multiplying by 100'000 gives numbers in the range ~0 to 8'000'000
-        sum += static_cast<unsigned int>((std::log10(std::abs(t)) + 40.0f) * 100000.0f);
-        sum %= CHECKSUM_MODULUS;
-    }
-
     void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot) {
         std::cout << "CheckSumCombine(Slot): " << typeid(slot).name() << std::endl << std::endl;
         CheckSumCombine(sum, slot.x);
@@ -266,8 +169,8 @@ PartTypeManager::iterator PartTypeManager::end() const
 unsigned int PartTypeManager::GetCheckSum() const {
     unsigned int retval{0};
     for (auto const& name_part_pair : m_parts)
-        CheckSumCombine(retval, name_part_pair);
-    CheckSumCombine(retval, m_parts.size());
+        CheckSums::CheckSumCombine(retval, name_part_pair);
+    CheckSums::CheckSumCombine(retval, m_parts.size());
 
     return retval;
 }
@@ -489,23 +392,23 @@ int PartType::ProductionTime(int empire_id, int location_id) const {
 unsigned int PartType::GetCheckSum() const {
     unsigned int retval{0};
 
-    CheckSumCombine(retval, m_name);
-    CheckSumCombine(retval, m_description);
-    CheckSumCombine(retval, m_class);
-    CheckSumCombine(retval, m_capacity);
-    CheckSumCombine(retval, m_secondary_stat);
-    CheckSumCombine(retval, m_production_cost);
-    CheckSumCombine(retval, m_production_time);
-    CheckSumCombine(retval, m_producible);
-    CheckSumCombine(retval, m_mountable_slot_types);
-    CheckSumCombine(retval, m_tags);
-    CheckSumCombine(retval, m_production_meter_consumption);
-    CheckSumCombine(retval, m_production_special_consumption);
-    CheckSumCombine(retval, m_location);
-    CheckSumCombine(retval, m_exclusions);
-    CheckSumCombine(retval, m_effects);
-    CheckSumCombine(retval, m_icon);
-    CheckSumCombine(retval, m_add_standard_capacity_effect);
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_class);
+    CheckSums::CheckSumCombine(retval, m_capacity);
+    CheckSums::CheckSumCombine(retval, m_secondary_stat);
+    CheckSums::CheckSumCombine(retval, m_production_cost);
+    CheckSums::CheckSumCombine(retval, m_production_time);
+    CheckSums::CheckSumCombine(retval, m_producible);
+    CheckSums::CheckSumCombine(retval, m_mountable_slot_types);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_production_meter_consumption);
+    CheckSums::CheckSumCombine(retval, m_production_special_consumption);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_exclusions);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_icon);
+    CheckSums::CheckSumCombine(retval, m_add_standard_capacity_effect);
 
     return retval;
 }
@@ -617,24 +520,24 @@ unsigned int HullType::GetCheckSum() const {
     //return retval;
     //// end test
 
-    CheckSumCombine(retval, m_name);
-    CheckSumCombine(retval, m_description);
-    CheckSumCombine(retval, m_speed);
-    CheckSumCombine(retval, m_fuel);
-    CheckSumCombine(retval, m_stealth);
-    CheckSumCombine(retval, m_structure);
-    CheckSumCombine(retval, m_production_cost);
-    CheckSumCombine(retval, m_production_time);
-    CheckSumCombine(retval, m_producible);
-    CheckSumCombine(retval, m_slots);
-    CheckSumCombine(retval, m_tags);
-    CheckSumCombine(retval, m_production_meter_consumption);
-    CheckSumCombine(retval, m_production_special_consumption);
-    CheckSumCombine(retval, m_location);
-    CheckSumCombine(retval, m_exclusions);
-    CheckSumCombine(retval, m_effects);
-    CheckSumCombine(retval, m_graphic);
-    CheckSumCombine(retval, m_icon);
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_speed);
+    CheckSums::CheckSumCombine(retval, m_fuel);
+    CheckSums::CheckSumCombine(retval, m_stealth);
+    CheckSums::CheckSumCombine(retval, m_structure);
+    CheckSums::CheckSumCombine(retval, m_production_cost);
+    CheckSums::CheckSumCombine(retval, m_production_time);
+    CheckSums::CheckSumCombine(retval, m_producible);
+    CheckSums::CheckSumCombine(retval, m_slots);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_production_meter_consumption);
+    CheckSums::CheckSumCombine(retval, m_production_special_consumption);
+    CheckSums::CheckSumCombine(retval, m_location);
+    CheckSums::CheckSumCombine(retval, m_exclusions);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_graphic);
+    CheckSums::CheckSumCombine(retval, m_icon);
 
     return retval;
 }
@@ -694,8 +597,8 @@ HullTypeManager::iterator HullTypeManager::end() const
 unsigned int HullTypeManager::GetCheckSum() const {
     unsigned int retval{0};
     for (auto const& name_hull_pair : m_hulls)
-        CheckSumCombine(retval, name_hull_pair);
-    CheckSumCombine(retval, m_hulls.size());
+        CheckSums::CheckSumCombine(retval, name_hull_pair);
+    CheckSums::CheckSumCombine(retval, m_hulls.size());
 
     return retval;
 }
@@ -1194,17 +1097,17 @@ std::string ShipDesign::Dump() const {
 
 unsigned int ShipDesign::GetCheckSum() const {
     unsigned int retval{0};
-    CheckSumCombine(retval, m_id);
-    CheckSumCombine(retval, m_name);
-    CheckSumCombine(retval, m_description);
-    CheckSumCombine(retval, m_designed_on_turn);
-    CheckSumCombine(retval, m_designed_by_empire);
-    CheckSumCombine(retval, m_hull);
-    CheckSumCombine(retval, m_parts);
-    CheckSumCombine(retval, m_is_monster);
-    CheckSumCombine(retval, m_icon);
-    CheckSumCombine(retval, m_3D_model);
-    CheckSumCombine(retval, m_name_desc_in_stringtable);
+    CheckSums::CheckSumCombine(retval, m_id);
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_designed_on_turn);
+    CheckSums::CheckSumCombine(retval, m_designed_by_empire);
+    CheckSums::CheckSumCombine(retval, m_hull);
+    CheckSums::CheckSumCombine(retval, m_parts);
+    CheckSums::CheckSumCombine(retval, m_is_monster);
+    CheckSums::CheckSumCombine(retval, m_icon);
+    CheckSums::CheckSumCombine(retval, m_3D_model);
+    CheckSums::CheckSumCombine(retval, m_name_desc_in_stringtable);
 
     return retval;
 }
@@ -1371,8 +1274,8 @@ int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
 unsigned int PredefinedShipDesignManager::GetCheckSum() const {
     unsigned int retval{0};
     for (auto const& name_design_pair : m_ship_designs)
-        CheckSumCombine(retval, name_design_pair);
-    CheckSumCombine(retval, m_ship_designs.size());
+        CheckSums::CheckSumCombine(retval, name_design_pair);
+    CheckSums::CheckSumCombine(retval, m_ship_designs.size());
 
     return retval;
 }

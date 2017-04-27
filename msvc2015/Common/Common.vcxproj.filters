@@ -229,6 +229,9 @@
     <ClInclude Include="..\..\universe\Pathfinder.h">
       <Filter>Header Files\universe</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\util\CheckSums.h">
+      <Filter>Header Files\util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\network\MessageQueue.cpp">
