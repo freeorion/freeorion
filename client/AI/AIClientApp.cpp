@@ -125,7 +125,7 @@ void AIClientApp::Exit(int code) {
 }
 
 int AIClientApp::EffectsProcessingThreads() const
-{ return GetOptionsDB().Get<int>("effects-threads-ai"); }
+{ return GetOptionsDB().Get<int>("effects.ai.threads"); }
 
 AIClientApp* AIClientApp::GetApp()
 { return static_cast<AIClientApp*>(s_app); }
