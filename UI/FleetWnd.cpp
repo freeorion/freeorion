@@ -109,7 +109,7 @@ namespace {
 
             // name of final destination
             std::string dest_name = dest_sys->ApparentName(client_empire_id);
-            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 dest_name = dest_name + " (" + std::to_string(dest_sys->ID()) + ")";
             }
 
@@ -150,7 +150,7 @@ namespace {
 
         } else if (cur_sys) {
             std::string cur_system_name = cur_sys->ApparentName(client_empire_id);
-            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 cur_system_name = cur_system_name + " (" + std::to_string(cur_sys->ID()) + ")";
             }
 
@@ -845,7 +845,7 @@ namespace {
         // name and design name update
         const std::string& ship_name = ship->PublicName(empire_id);
         std::string id_name_part;
-        if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+        if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
             id_name_part = " (" + std::to_string(m_ship_id) + ")";
         }
         if (!ship->Unowned() && ship_name == UserString("FW_FOREIGN_SHIP")) {
@@ -961,7 +961,7 @@ namespace {
         if (ship)
             ship_name = ship->Name();
 
-        if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+        if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
             ship_name = ship_name + " (" + std::to_string(m_ship_id) + ")";
         }
 
@@ -1450,12 +1450,12 @@ void FleetDataPanel::Refresh() {
             const Empire* ship_owner_empire = GetEmpire(fleet->Owner());
             const std::string& owner_name = (ship_owner_empire ? ship_owner_empire->Name() : UserString("FW_FOREIGN"));
             std::string fleet_name = boost::io::str(FlexibleFormat(UserString("FW_EMPIRE_FLEET")) % owner_name);
-            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 fleet_name = fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             }
             m_fleet_name_text->SetText(fleet_name);
         } else {
-            if (GetOptionsDB().Get<bool>("UI.show-id-after-names")) {
+            if (GetOptionsDB().Get<bool>("ui.name.id.shown")) {
                 public_fleet_name = public_fleet_name + " (" + std::to_string(m_fleet_id) + ")";
             }
             m_fleet_name_text->SetText(public_fleet_name);
