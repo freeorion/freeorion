@@ -141,7 +141,7 @@ namespace {
             else {
                 // "FW_FLEET_MOVING_TO" userstring is currently truncated to drop ETA info
                 // so as to fit better in a small fleet window
-                std::string moving_key = GetOptionsDB().Get<bool>("UI.show-fleet-eta")
+                std::string moving_key = GetOptionsDB().Get<bool>("ui.window.fleet.eta.shown")
                     ? UserString("FW_FLEET_MOVING_TO_ETA")
                     : UserString("FW_FLEET_MOVING_TO");
                 retval = boost::io::str(FlexibleFormat(moving_key) %

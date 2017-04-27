@@ -562,7 +562,7 @@ namespace {
         // UI behavior, hidden options
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
         db.Add("UI.design-pedia-dynamic",       UserStringNop("OPTIONS_DB_DESIGN_PEDIA_DYNAMIC"),          false);
-        db.Add("UI.show-fleet-eta",             UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                true);
+        db.Add("ui.window.fleet.eta.shown",     UserStringNop("OPTIONS_DB_SHOW_FLEET_ETA"),                true);
         db.Add("ui.name.id.shown",              UserStringNop("OPTIONS_DB_SHOW_IDS_AFTER_NAMES"),          false);
 
         // Other
