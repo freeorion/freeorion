@@ -577,7 +577,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
     BoolOption(current_page,   0, "ui.description.effects.shown",          UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
-    BoolOption(current_page,   0, "verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page,   0, "ui.window.sitrep.invalid.shown",        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page,   0, "UI.show-id-after-names",                UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
 
     m_tabs->SetCurrentWnd(0);
@@ -737,7 +737,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "auto-add-default-designs", UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
     BoolOption(current_page, 0, "binary-serialization",     UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
     BoolOption(current_page, 0, "xml-zlib-serialization",   UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
-    BoolOption(current_page, 0, "verbose-sitrep",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
+    BoolOption(current_page, 0, "ui.window.sitrep.invalid.shown", UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
 
     // Create persistent config button

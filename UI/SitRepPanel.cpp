@@ -28,7 +28,7 @@ namespace {
 
     /** Adds options related to SitRepPanel to Options DB. */
     void AddOptions(OptionsDB& db) {
-        db.Add("verbose-sitrep", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"),  false,  Validator<bool>());
+        db.Add("ui.window.sitrep.invalid.shown", UserStringNop("OPTIONS_DB_VERBOSE_SITREP_DESC"), false, Validator<bool>());
         db.Add<std::string>("hidden-sitrep-templates", UserStringNop("OPTIONS_DB_HIDDEN_SITREP_TEMPLATES_DESC"), "");
         db.Add("UI.sitrep-icon-size", UserStringNop("OPTIONS_DB_UI_SITREP_ICONSIZE"), 24, RangedValidator<int>(12, 64));
     }
@@ -483,7 +483,7 @@ namespace {
     /* Sort empire's sitreps for each turn */
     std::map<int, std::list<SitRepEntry>> GetSitRepsSortedByTurn(int empire_id, std::set<std::string> hidden_sitrep_templates) {
         std::map<int, std::list<SitRepEntry>> turns;
-        bool verbose_sitrep = GetOptionsDB().Get<bool>("verbose-sitrep");
+        bool verbose_sitrep = GetOptionsDB().Get<bool>("ui.window.sitrep.invalid.shown");
         std::set<Empire*> sr_empires;
         Empire* empire = GetEmpire(empire_id);
         if (empire) {
