@@ -75,7 +75,7 @@ int         ClientUI::TitlePts()                { return GetOptionsDB().Get<int>
 
 GG::Clr     ClientUI::TextColor()               { return GetOptionsDB().Get<GG::Clr>("ui.font.color"); }
 GG::Clr     ClientUI::DefaultLinkColor()        { return GetOptionsDB().Get<GG::Clr>("ui.font.link.color"); }
-GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("UI.rollover-link-color"); }
+GG::Clr     ClientUI::RolloverLinkColor()       { return GetOptionsDB().Get<GG::Clr>("ui.font.link.rollover.color"); }
 
 // windows
 GG::Clr     ClientUI::WndColor()                { return GetOptionsDB().Get<GG::Clr>("UI.wnd-color"); }
@@ -538,7 +538,7 @@ namespace {
 
         db.Add("ui.font.color",                 UserStringNop("OPTIONS_DB_UI_TEXT_COLOR"),                 GG::Clr(255, 255, 255, 255), Validator<GG::Clr>());
         db.Add("ui.font.link.color",            UserStringNop("OPTIONS_DB_UI_DEFAULT_LINK_COLOR"),         GG::Clr(80, 255, 128, 255),  Validator<GG::Clr>());
-        db.Add("UI.rollover-link-color",        UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
+        db.Add("ui.font.link.rollover.color",   UserStringNop("OPTIONS_DB_UI_ROLLOVER_LINK_COLOR"),        GG::Clr(192, 80, 255, 255),  Validator<GG::Clr>());
 
         db.Add("UI.known-tech",                 UserStringNop("OPTIONS_DB_UI_KNOWN_TECH"),                 GG::Clr(72, 72, 72, 255),    Validator<GG::Clr>());
         db.Add("UI.known-tech-border",          UserStringNop("OPTIONS_DB_UI_KNOWN_TECH_BORDER"),          GG::Clr(164, 164, 164, 255), Validator<GG::Clr>());

@@ -648,7 +648,7 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_GENERAL_COLORS"));
     ColorOption(current_page, 0, "ui.font.color",          UserString("OPTIONS_TEXT_COLOR"));
     ColorOption(current_page, 0, "ui.font.link.color",     UserString("OPTIONS_DEFAULT_LINK_COLOR"));
-    ColorOption(current_page, 0, "UI.rollover-link-color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
+    ColorOption(current_page, 0, "ui.font.link.rollover.color", UserString("OPTIONS_ROLLOVER_LINK_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_WINDOW_COLORS"));
     ColorOption(current_page, 0, "UI.wnd-color",              UserString("OPTIONS_FILL_COLOR"));
