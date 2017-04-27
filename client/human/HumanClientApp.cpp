@@ -217,6 +217,16 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     InitLoggingSystem(HUMAN_CLIENT_LOG_FILENAME, "Client");
     InitLoggingOptionsDBSystem();
 
+    // Force loggers to always appear in the config.xml and OptionsWnd even before their
+    // initialization on first use.
+    // This is not needed for the loggers to work correctly.
+    // this is not needed for the loggers to automatically be added to the config.xml on
+    // first use.
+    // This only needs to be done in one of the executables connected to the same config.xml
+    RegisterLoggerWithOptionsDB("ai", true);
+    RegisterLoggerWithOptionsDB("client", true);
+    RegisterLoggerWithOptionsDB("server", true);
+
     try {
         InfoLogger() << "GL Version String: " << GetGLVersionString();
     } catch (...) {
