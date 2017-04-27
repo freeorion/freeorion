@@ -430,7 +430,7 @@ namespace {
 
             std::set<GG::UnicodeCharset> stringtable_charsets;
             {
-                std::string file_name = GetOptionsDB().Get<std::string>("stringtable-filename");
+                std::string file_name = GetOptionsDB().Get<std::string>("resource.stringtable.path");
                 std::string stringtable_str;
                 boost::filesystem::ifstream ifs(file_name);
                 while (ifs) {
@@ -443,9 +443,9 @@ namespace {
                 DebugLogger() << "loading " << stringtable_charsets.size() << " charsets for current stringtable characters";
             }
 
-            if (!GetOptionsDB().IsDefaultValue("stringtable-filename")) {
+            if (!GetOptionsDB().IsDefaultValue("resource.stringtable.path")) {
                 DebugLogger() << "Non-default stringtable!";
-                std::string file_name = GetOptionsDB().GetDefault<std::string>("stringtable-filename");
+                std::string file_name = GetOptionsDB().GetDefault<std::string>("resource.stringtable.path");
                 std::string stringtable_str;
                 boost::filesystem::ifstream ifs(file_name);
                 while (ifs) {
@@ -569,8 +569,8 @@ namespace {
         db.Add("UI.show-id-after-names",        UserStringNop("OPTIONS_DB_SHOW_IDS_AFTER_NAMES"),          false);
 
         // Other
-        db.Add("auto-add-saved-designs",        UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),        true);
-        db.Add("auto-add-default-designs",      UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),           true);
+        db.Add("resource.shipdesign.saved.enabled",     UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"), true);
+        db.Add("resource.shipdesign.default.enabled",   UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),    true);
 
     }
     bool temp_bool = RegisterOptions(&AddOptions);

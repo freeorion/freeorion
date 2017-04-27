@@ -532,7 +532,7 @@ void OptionsWnd::CompleteConstruction() {
     window_reset_button->LeftClickedSignal.connect(
         HumanClientApp::GetApp()->RepositionWindowsSignal);
 
-    FileOption(current_page, 0, "stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
+    FileOption(current_page, 0, "resource.stringtable.path",    UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
                std::make_pair(UserString("OPTIONS_LANGUAGE_FILE"),
                "*" + STRINGTABLE_FILE_SUFFIX),
@@ -577,7 +577,7 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page,   0, "UI.show-production-location-on-queue",  UserString("OPTIONS_UI_PROD_QUEUE_LOCATION"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
-    BoolOption(current_page,   0, "UI.dump-effects-descriptions",          UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
+    BoolOption(current_page,   0, "resource.effects.description.shown",    UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
     BoolOption(current_page,   0, "verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page,   0, "UI.show-id-after-names",                UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
 
@@ -704,7 +704,9 @@ void OptionsWnd::CompleteConstruction() {
 
     // Directories tab
     current_page = CreatePage(UserString("OPTIONS_PAGE_DIRECTORIES"));
-    DirectoryOption(current_page, 0, "resource-dir", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir(), is_game_running);  // GetRootDataDir() returns the default browse path when modifying this directory option.  the actual default directory (before modifying) is gotten from the specified option name "resource-dir"
+    /** GetRootDataDir() returns the default browse path when modifying this directory option.
+     *  The actual default directory (before modifying) is gotten from the specified option name "resource.path" */
+    DirectoryOption(current_page, 0, "resource.path", UserString("OPTIONS_FOLDER_SETTINGS"), GetRootDataDir(), is_game_running);
     DirectoryOption(current_page, 0, "save-dir", UserString("OPTIONS_FOLDER_SAVE"),     GetUserDataDir());
     DirectoryOption(current_page, 0, "server-save-dir", UserString("OPTIONS_SERVER_FOLDER_SAVE"),     GetUserDataDir());
     m_tabs->SetCurrentWnd(0);
@@ -734,8 +736,8 @@ void OptionsWnd::CompleteConstruction() {
     IntOption(current_page, 0, "effects-threads-ui",        UserString("OPTIONS_EFFECTS_THREADS_UI"));
     IntOption(current_page, 0, "effects-threads-server",    UserString("OPTIONS_EFFECTS_THREADS_SERVER"));
     IntOption(current_page, 0, "effects-threads-ai",        UserString("OPTIONS_EFFECTS_THREADS_AI"));
-    BoolOption(current_page, 0, "auto-add-saved-designs",   UserString("OPTIONS_ADD_SAVED_DESIGNS"));
-    BoolOption(current_page, 0, "auto-add-default-designs", UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
+    BoolOption(current_page, 0, "resource.shipdesign.saved.enabled",    UserString("OPTIONS_ADD_SAVED_DESIGNS"));
+    BoolOption(current_page, 0, "resource.shipdesign.default.enabled",  UserString("OPTIONS_ADD_DEFAULT_DESIGNS"));
     BoolOption(current_page, 0, "binary-serialization",     UserString("OPTIONS_USE_BINARY_SERIALIZATION"));
     BoolOption(current_page, 0, "xml-zlib-serialization",   UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
     BoolOption(current_page, 0, "verbose-sitrep",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));

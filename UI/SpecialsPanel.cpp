@@ -95,7 +95,7 @@ void SpecialsPanel::Update() {
         else
             desc += "\n" + UserString("ADDED_ON_INITIAL_TURN");
 
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !special->Effects().empty()) {
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !special->Effects().empty()) {
             desc += "\n" + Dump(special->Effects());
         }
 

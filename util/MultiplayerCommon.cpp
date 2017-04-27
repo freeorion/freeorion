@@ -22,7 +22,7 @@ const std::string SP_SAVE_FILE_EXTENSION = ".sav";
 namespace {
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add<std::string>("resource-dir",         UserStringNop("OPTIONS_DB_RESOURCE_DIR"),          PathToString(GetRootDataDir() / "default"));
+        db.Add<std::string>("resource.path",        UserStringNop("OPTIONS_DB_RESOURCE_DIR"),          PathToString(GetRootDataDir() / "default"));
         db.Add<std::string>('S', "save-dir",        UserStringNop("OPTIONS_DB_SAVE_DIR"),              PathToString(GetUserDataDir() / "save"));
         db.Add<std::string>("server-save-dir",      UserStringNop("OPTIONS_DB_SERVER_SAVE_DIR"),       PathToString(GetUserDataDir() / "save"));
         db.Add<std::string>("log-level",            UserStringNop("OPTIONS_DB_LOG_LEVEL"),             "",
@@ -30,7 +30,7 @@ namespace {
         db.Add<std::string>("log-file",             UserStringNop("OPTIONS_DB_LOG_FILE"),              "",
                             Validator<std::string>() , false);
         // Default stringtable filename is deferred to i18n.cpp::InitStringtableFileName to determine if user specified
-        db.Add<std::string>("stringtable-filename", UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),  "");
+        db.Add<std::string>("resource.stringtable.path", UserStringNop("OPTIONS_DB_STRINGTABLE_FILENAME"),  "");
         db.Add("binary-serialization",              UserStringNop("OPTIONS_DB_BINARY_SERIALIZATION"),  false);
         db.Add("xml-zlib-serialization",            UserStringNop("OPTIONS_DB_XML_ZLIB_SERIALIZATION"),true);
 

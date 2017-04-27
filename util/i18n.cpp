@@ -25,13 +25,13 @@ namespace {
         stringtable_filename_init = true;
 
         bool was_specified = false;
-        if (!GetOptionsDB().IsDefaultValue("stringtable-filename"))
+        if (!GetOptionsDB().IsDefaultValue("resource.stringtable.path"))
             was_specified = true;
 
         // Set the english stingtable as the default option
-        GetOptionsDB().SetDefault("stringtable-filename", PathToString(GetResourceDir() / "stringtables/en.txt"));
+        GetOptionsDB().SetDefault("resource.stringtable.path", PathToString(GetResourceDir() / "stringtables/en.txt"));
         if (was_specified) {
-            DebugLogger() << "Detected language: Previously specified " << GetOptionsDB().Get<std::string>("stringtable-filename");
+            DebugLogger() << "Detected language: Previously specified " << GetOptionsDB().Get<std::string>("resource.stringtable.path");
             return;
         }
 
@@ -59,7 +59,7 @@ namespace {
         boost::filesystem::path stringtable_file { GetResourceDir() / "stringtables" / lang_filename };
 
         if (IsExistingFile(stringtable_file))
-            GetOptionsDB().Set("stringtable-filename", PathToString(stringtable_file));
+            GetOptionsDB().Set("resource.stringtable.path", PathToString(stringtable_file));
         else
             WarnLogger() << "Stringtable file " << PathToString(stringtable_file)
                          << " not found, falling back to default";
@@ -68,7 +68,7 @@ namespace {
     std::string GetStringTableFileName() {
         InitStringtableFileName();
 
-        std::string option_filename = GetOptionsDB().Get<std::string>("stringtable-filename");
+        std::string option_filename = GetOptionsDB().Get<std::string>("resource.stringtable.path");
         if (option_filename.empty())
             return GetDefaultStringTableFileName();
         else

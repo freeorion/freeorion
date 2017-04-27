@@ -370,7 +370,7 @@ void BuildingIndicator::Refresh() {
         std::string desc = UserString(type->Description());
         if (building->GetMeter(METER_STEALTH))
             desc = UserString("METER_STEALTH") + boost::io::str(boost::format(": %3.1f\n\n") % building->GetMeter(METER_STEALTH)->Current()) + desc;
-        if (GetOptionsDB().Get<bool>("UI.dump-effects-descriptions") && !type->Effects().empty())
+        if (GetOptionsDB().Get<bool>("resource.effects.description.shown") && !type->Effects().empty())
             desc += "\n" + Dump(type->Effects());
 
         SetBrowseInfoWnd(GG::Wnd::Create<IconTextBrowseWnd>(

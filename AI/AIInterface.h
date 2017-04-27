@@ -264,7 +264,7 @@ namespace AIInterface {
 
     /** @brief Return the canonical AI directory path
      *
-     * The value depends on the ::OptionsDB `resource-dir` and `ai-path` keys.
+     * The value depends on the ::OptionsDB `resource.path` and `ai-path` keys.
      *
      * @return The canonical path pointing to the directory containing all
      *      python AI scripts.
