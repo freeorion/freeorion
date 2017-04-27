@@ -151,7 +151,7 @@ namespace {
         db.Add("map.fleet.button.small.zoom_threshold", UserStringNop("OPTIONS_DB_UI_SMALL_FLEET_BUTTON_MIN_ZOOM"), 1.50,       RangedStepValidator<double>(0.125, 0.125, 4.0));
         db.Add("map.fleet.button.medium.zoom_threshold", UserStringNop("OPTIONS_DB_UI_MEDIUM_FLEET_BUTTON_MIN_ZOOM"), 4.00,     RangedStepValidator<double>(0.125, 0.125, 4.0));
 
-        db.Add("UI.detection-range-opacity",        UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"), 3,          RangedValidator<int>(0, 8));
+        db.Add("map.detection_range.opacity",       UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"), 3,          RangedValidator<int>(0, 8));
 
         db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                false,      Validator<bool>());
 
@@ -4054,7 +4054,7 @@ void MapWnd::InitVisibilityRadiiRenderingBuffers() {
             continue;
 
         GG::Clr circle_colour = empire->Color();
-        circle_colour.a = 8*GetOptionsDB().Get<int>("UI.detection-range-opacity");
+        circle_colour.a = 8*GetOptionsDB().Get<int>("map.detection_range.opacity");
 
         GG::Pt circle_centre = GG::Pt(GG::X(detection_circle.first.second.first), GG::Y(detection_circle.first.second.second));
         GG::Pt ul = circle_centre - GG::Pt(GG::X(static_cast<int>(radius)), GG::Y(static_cast<int>(radius)));
