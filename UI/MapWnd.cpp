@@ -153,7 +153,7 @@ namespace {
 
         db.Add("map.detection_range.opacity",       UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE_OPACITY"), 3,          RangedValidator<int>(0, 8));
 
-        db.Add("UI.map-right-click-popup-menu",     UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                false,      Validator<bool>());
+        db.Add("map.popup_menu.enabled",            UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                false,      Validator<bool>());
 
         db.Add("UI.hide-map-panels",                UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                 false,      Validator<bool>());
 
@@ -2571,7 +2571,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         }
     }
 
-    if (GetOptionsDB().Get<bool>("UI.map-right-click-popup-menu")) {
+    if (GetOptionsDB().Get<bool>("map.popup_menu.enabled")) {
         // create popup menu with map options in it.
         bool fps            = GetOptionsDB().Get<bool>("video.fps.shown");
         bool showPlanets    = GetOptionsDB().Get<bool>("ui.window.sidepanel.planet.shown");
