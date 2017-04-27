@@ -163,7 +163,7 @@ namespace {
         db.Add("GameSetup.player-name",         UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),             std::string(""),    Validator<std::string>());
         db.Add("GameSetup.empire-color",        UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),            9,                  RangedValidator<int>(0, 100));
         db.Add("GameSetup.starting-species",    UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),   std::string("SP_HUMAN"),    Validator<std::string>());
-        db.Add("GameSetup.ai-players",          UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),          6,                  RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
+        db.Add("setup.ai.player.count",         UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),          6,                  RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
         db.Add("setup.ai.aggression",           UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),       MANIACAL,           RangedValidator<Aggression>(BEGINNER, MANIACAL));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -1018,8 +1018,8 @@ void GalaxySetupWnd::CompleteConstruction() {
     // number of AIs
     m_number_ais_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_NUMBER_AIS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_number_ais_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.ai-players")));
-    m_number_ais_spin = GG::Wnd::Create<CUISpin<int>>(GetOptionsDB().Get<int>("GameSetup.ai-players"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
+    m_number_ais_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.ai.player.count")));
+    m_number_ais_spin = GG::Wnd::Create<CUISpin<int>>(GetOptionsDB().Get<int>("setup.ai.player.count"), 1, 0, IApp::MAX_AI_PLAYERS(), true);
 
     // create a temporary texture and static graphic
     static auto temp_tex = std::make_shared<GG::Texture>();
@@ -1202,7 +1202,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
     GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
     GetOptionsDB().Set("GameSetup.starting-species",    m_starting_secies_selector->CurrentSpeciesName());
-    GetOptionsDB().Set("GameSetup.ai-players",          m_number_ais_spin->Value());
+    GetOptionsDB().Set("setup.ai.player.count", m_number_ais_spin->Value());
     GetOptionsDB().Commit();
 
     m_ended_with_ok = true;

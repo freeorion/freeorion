@@ -586,7 +586,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
 
         // AI player setup data.  One entry for each requested AI
-        int num_AIs = GetOptionsDB().Get<int>("GameSetup.ai-players");
+        int num_AIs = GetOptionsDB().Get<int>("setup.ai.player.count");
         for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
             PlayerSetupData ai_setup_data;
 
