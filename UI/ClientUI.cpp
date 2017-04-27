@@ -556,7 +556,7 @@ namespace {
         db.Add("UI.tooltip-delay",              UserStringNop("OPTIONS_DB_UI_TOOLTIP_DELAY"),              500,        RangedValidator<int>(0, 3000));
         db.Add("UI.tooltip.extended-delay",     UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),         3500,       RangedValidator<int>(0, 30000));
         db.Add("ui.window.fleet.multiple.enabled", UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),  false);
-        db.Add("UI.window-quickclose",          UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),          true);
+        db.Add("ui.window.quickclose.enabled",  UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),          true);
         db.Add("UI.auto-reposition-windows",    UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),    true);
 
         // UI behavior, hidden options

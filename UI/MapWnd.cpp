@@ -2542,7 +2542,7 @@ void MapWnd::LButtonUp(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
 void MapWnd::LClick(const GG::Pt &pt, GG::Flags<GG::ModKey> mod_keys) {
     m_drag_offset = GG::Pt(-GG::X1, -GG::Y1);
     FleetUIManager& manager = FleetUIManager::GetFleetUIManager();
-    bool quick_close_wnds = GetOptionsDB().Get<bool>("UI.window-quickclose");
+    bool quick_close_wnds = GetOptionsDB().Get<bool>("ui.window.quickclose.enabled");
 
     // if a fleet window is visible, hide it and deselect fleet; if not, hide sidepanel
     if (!m_dragged && !m_in_production_view_mode && manager.ActiveFleetWnd() && quick_close_wnds) {
