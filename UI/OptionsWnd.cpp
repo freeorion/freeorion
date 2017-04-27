@@ -680,7 +680,7 @@ void OptionsWnd::CompleteConstruction() {
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_UNRESEARCHABLE_TECH_COLORS"));
     ColorOption(current_page, 1, "research.unresearchable.background.color", UserString("OPTIONS_FILL_COLOR"));
-    ColorOption(current_page, 1, "UI.unresearchable-tech-border", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
+    ColorOption(current_page, 1, "research.unresearchable.border.color", UserString("OPTIONS_TEXT_AND_BORDER_COLOR"));
 
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_TECH_PROGRESS_COLORS"));
     ColorOption(current_page, 1, "research.incomplete.progress.color", UserString("OPTIONS_PROGRESS_BAR_COLOR"));
