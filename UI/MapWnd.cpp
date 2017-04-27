@@ -83,7 +83,7 @@ namespace {
     const std::string MAP_PEDIA_WND_NAME = "map.pedia";
     const std::string OBJECT_WND_NAME = "map.objects";
     const std::string MODERATOR_WND_NAME = "map.moderator";
-    const std::string COMBAT_REPORT_WND_NAME = "map.combat-report";
+    const std::string COMBAT_REPORT_WND_NAME = "map.combat_report";
     const std::string MAP_SIDEPANEL_WND_NAME = "map.sidepanel";
 
     const GG::Y     ZOOM_SLIDER_HEIGHT(200);

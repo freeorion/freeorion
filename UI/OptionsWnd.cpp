@@ -665,9 +665,9 @@ void OptionsWnd::CompleteConstruction() {
     ColorOption(current_page, 0, "ui.font.stat.decrease.color", UserString("OPTIONS_STAT_DECREASE_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_COMBAT_COLORS"));
-    ColorOption(current_page, 0, "UI.combat.summary.dead-color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
-    ColorOption(current_page, 0, "UI.combat.summary.wound-color", UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
-    ColorOption(current_page, 0, "UI.combat.summary.health-color", UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
+    ColorOption(current_page, 0, "ui.window.combat_report.summary.dead.color", UserString("OPTIONS_COMBAT_SUMMARY_DEAD_COLOR"));
+    ColorOption(current_page, 0, "ui.window.combat_report.summary.damaged.color", UserString("OPTIONS_COMBAT_SUMMARY_WOUND_COLOR"));
+    ColorOption(current_page, 0, "ui.window.combat_report.summary.undamaged.color", UserString("OPTIONS_COMBAT_SUMMARY_HEALTH_COLOR"));
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_TECH_COLORS"));
     CreateSectionHeader(current_page, 1, UserString("OPTIONS_KNOWN_TECH_COLORS"));
