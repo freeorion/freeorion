@@ -564,7 +564,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         else
             human_player_setup_data.m_empire_color = GG::CLR_GREEN;
 
-        human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
+        human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
         if (human_player_setup_data.m_starting_species_name == "1")
             human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 

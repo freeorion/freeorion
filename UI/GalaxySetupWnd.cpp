@@ -162,7 +162,7 @@ namespace {
         db.Add("GameSetup.empire-name",         UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_NAME"),             std::string(""),    Validator<std::string>());
         db.Add("GameSetup.player-name",         UserStringNop("OPTIONS_DB_GAMESETUP_PLAYER_NAME"),             std::string(""),    Validator<std::string>());
         db.Add("GameSetup.empire-color",        UserStringNop("OPTIONS_DB_GAMESETUP_EMPIRE_COLOR"),            9,                  RangedValidator<int>(0, 100));
-        db.Add("GameSetup.starting-species",    UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),   std::string("SP_HUMAN"),    Validator<std::string>());
+        db.Add("setup.initial.species",         UserStringNop("OPTIONS_DB_GAMESETUP_STARTING_SPECIES_NAME"),   std::string("SP_HUMAN"),    Validator<std::string>());
         db.Add("setup.ai.player.count",         UserStringNop("OPTIONS_DB_GAMESETUP_NUM_AI_PLAYERS"),          6,                  RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
         db.Add("setup.ai.aggression",           UserStringNop("OPTIONS_DB_GAMESETUP_AI_MAX_AGGRESSION"),       MANIACAL,           RangedValidator<Aggression>(BEGINNER, MANIACAL));
     }
@@ -988,10 +988,10 @@ void GalaxySetupWnd::CompleteConstruction() {
     // starting species
     m_starting_species_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_SPECIES"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_starting_species_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.starting-species")));
+    m_starting_species_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.initial.species")));
     // Subtract the drop down entry padding for the inner element height.
     m_starting_secies_selector = GG::Wnd::Create<SpeciesSelector>(LABELS_WIDTH, CONTROL_HEIGHT - 5);
-    std::string default_starting_species = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
+    std::string default_starting_species = GetOptionsDB().Get<std::string>("setup.initial.species");
 
     if (default_starting_species.empty() || default_starting_species == "1") {
         // kludge / bug workaround for bug with options storage and retreival.
@@ -1201,7 +1201,7 @@ void GalaxySetupWnd::OkClicked() {
     GetOptionsDB().Set("GameSetup.player-name",         m_player_name_edit->Text());
     GetOptionsDB().Set("GameSetup.empire-name",         EmpireName());
     GetOptionsDB().Set("GameSetup.empire-color",        static_cast<int>(m_empire_color_selector->CurrentItemIndex()));
-    GetOptionsDB().Set("GameSetup.starting-species",    m_starting_secies_selector->CurrentSpeciesName());
+    GetOptionsDB().Set("setup.initial.species", m_starting_secies_selector->CurrentSpeciesName());
     GetOptionsDB().Set("setup.ai.player.count", m_number_ais_spin->Value());
     GetOptionsDB().Commit();
 
