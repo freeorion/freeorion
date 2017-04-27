@@ -113,7 +113,7 @@ namespace {
         db.Add("UI.show-galaxy-map-scale-circle",   UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
         db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
         db.Add("map.starlane.thickness",            UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
-        db.Add("UI.starlane-core-multiplier",       UserStringNop("OPTIONS_DB_STARLANE_CORE"),                      2.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
+        db.Add("map.starlane.thickness.core_multiplier", UserStringNop("OPTIONS_DB_STARLANE_CORE"),                 2.0,        RangedStepValidator<double>(1.0, 1.0, 10.0));
         db.Add("map.starlane.empire.color.shown",   UserStringNop("OPTIONS_DB_RESOURCE_STARLANE_COLOURING"),        true,       Validator<bool>());
         db.Add("UI.fleet-supply-lines",             UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINES"),                 true,       Validator<bool>());
         db.Add("UI.fleet-supply-line-width",        UserStringNop("OPTIONS_DB_FLEET_SUPPLY_LINE_WIDTH"),            3.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
@@ -2122,7 +2122,7 @@ void MapWnd::RenderStarlanes() {
         return;
 
     bool coloured = GetOptionsDB().Get<bool>("map.starlane.empire.color.shown");
-    float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("UI.starlane-core-multiplier"));
+    float core_multiplier = static_cast<float>(GetOptionsDB().Get<double>("map.starlane.thickness.core_multiplier"));
     RenderStarlanes(m_RC_starlane_vertices, m_RC_starlane_colors, core_multiplier * ZoomFactor(), coloured, false);
     RenderStarlanes(m_starlane_vertices, m_starlane_colors, 1.0, coloured, true);
 }
