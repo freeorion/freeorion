@@ -96,8 +96,10 @@ namespace {
 
     // command-line options
     void AddOptions(OptionsDB& db) {
-        db.Add("autosave.single-player.turn-start", UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"),     true,   Validator<bool>());
-        db.Add("autosave.single-player.turn-end",   UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"),     false,   Validator<bool>());
+        db.Add("save.auto.single_player.start.enabled", UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_START"),
+               true,    Validator<bool>());
+        db.Add("save.auto.single_player.end.enabled",   UserStringNop("OPTIONS_DB_AUTOSAVE_SINGLE_PLAYER_TURN_END"),
+               false,   Validator<bool>());
         db.Add("autosave.multiplayer.turn-start",   UserStringNop("OPTIONS_DB_AUTOSAVE_MULTIPLAYER_TURN_START"),       true,   Validator<bool>());
         db.Add("autosave.turns",                    UserStringNop("OPTIONS_DB_AUTOSAVE_TURNS"),             1,      RangedValidator<int>(1, 50));
         db.Add("autosave.turn-limit",               UserStringNop("OPTIONS_DB_AUTOSAVE_LIMIT"),             10,     RangedValidator<int>(1, 100));
@@ -897,7 +899,7 @@ void HumanClientApp::StartTurn() {
     }
 
     // Do the turn end autosave.
-    if (m_single_player_game && GetOptionsDB().Get<bool>("autosave.single-player.turn-end")) {
+    if (m_single_player_game && GetOptionsDB().Get<bool>("save.auto.single_player.end.enabled")) {
         DebugLogger() << "Starting end of turn autosave.";
         Autosave();
     }
@@ -1276,8 +1278,8 @@ void HumanClientApp::Autosave() {
     int autosave_turns = GetOptionsDB().Get<int>("autosave.turns");
     bool is_single_player_enabled =
         (m_single_player_game
-         && (GetOptionsDB().Get<bool>("autosave.single-player.turn-start")
-             || GetOptionsDB().Get<bool>("autosave.single-player.turn-end")));
+         && (GetOptionsDB().Get<bool>("save.auto.single_player.start.enabled")
+             || GetOptionsDB().Get<bool>("save.auto.single_player.end.enabled")));
     bool is_multi_player_enabled =
         (!m_single_player_game
          && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-start"));
@@ -1300,8 +1302,8 @@ void HumanClientApp::Autosave() {
     int max_turns = std::max(1, GetOptionsDB().Get<int>("autosave.turn-limit"));
     bool is_two_saves_per_turn =
         (m_single_player_game
-         && GetOptionsDB().Get<bool>("autosave.single-player.turn-start")
-         && GetOptionsDB().Get<bool>("autosave.single-player.turn-end"))
+         && GetOptionsDB().Get<bool>("save.auto.single_player.start.enabled")
+         && GetOptionsDB().Get<bool>("save.auto.single_player.end.enabled"))
         ||
         (!m_single_player_game
          && GetOptionsDB().Get<bool>("autosave.multiplayer.turn-start"));
