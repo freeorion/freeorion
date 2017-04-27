@@ -122,7 +122,7 @@ namespace {
         db.Add("UI.fleet.explore.hostile.ignored",  UserStringNop("OPTIONS_DB_FLEET_EXPLORE_IGNORE_HOSTILE"),       false,      Validator<bool>());
         db.Add("UI.fleet.explore.system.route.limit", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_ROUTE_LIMIT"), 25,         StepValidator<int>(1, -1));
         db.Add("UI.fleet.explore.system.known.multiplier", UserStringNop("OPTIONS_DB_FLEET_EXPLORE_SYSTEM_KNOWN_MULTIPLIER"), 10.0f, Validator<float>());
-        db.Add("UI.unowned-starlane-colour",        UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
+        db.Add("map.starlane.color",                UserStringNop("OPTIONS_DB_UNOWNED_STARLANE_COLOUR"),            GG::Clr(72,  72,  72,  255),    Validator<GG::Clr>());
 
         db.Add("UI.show-detection-range",           UserStringNop("OPTIONS_DB_GALAXY_MAP_DETECTION_RANGE"),         true,       Validator<bool>());
 
@@ -2064,7 +2064,7 @@ void MapWnd::RenderSystems() {
                         else
                             ErrorLogger() << "MapWnd::RenderSystems(): could not load empire with id " << supply_empire_id;
                     } else
-                        glColor(GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour"));
+                        glColor(GetOptionsDB().Get<GG::Clr>("map.starlane.color"));
 
                     glLineWidth(outer_circle_width);
                     CircleArc(circle_ul, circle_lr, 0.0, TWO_PI, false);
@@ -2131,7 +2131,7 @@ void MapWnd::RenderStarlanes(GG::GL2DVertexBuffer& vertices, GG::GLRGBAColorBuff
                              double thickness, bool coloured, bool do_base_render) {
     if (vertices.size() && (colours.size() || !coloured) && (coloured || do_base_render)) {
         // render starlanes with vertex buffer (and possibly colour buffer)
-        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("map.starlane.color");
 
         glDisable(GL_TEXTURE_2D);
         glEnable(GL_LINE_SMOOTH);
@@ -3514,7 +3514,7 @@ namespace {
     {
         const auto& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+        const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("map.starlane.color");
 
         std::set<std::pair<int, int>> already_rendered_full_lanes;
 
@@ -3618,7 +3618,7 @@ namespace {
 
         const std::set<int>& this_client_known_destroyed_objects =
             GetUniverse().EmpireKnownDestroyedObjectIDs(HumanClientApp::GetApp()->EmpireID());
-        //unused variable const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("UI.unowned-starlane-colour");
+        //unused variable const GG::Clr UNOWNED_LANE_COLOUR = GetOptionsDB().Get<GG::Clr>("map.starlane.color");
 
 
         for (const auto& id_icon : sys_icons) {
