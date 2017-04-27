@@ -134,7 +134,7 @@ namespace {
         db.Add("map.system.icon.size",              UserStringNop("OPTIONS_DB_UI_SYSTEM_ICON_SIZE"),                14,         RangedValidator<int>(8, 50));
 
         db.Add("map.system.circle.shown",           UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLES"),                  true,       Validator<bool>());
-        db.Add("UI.system-circle-size",             UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),              1.5,        RangedStepValidator<double>(0.125, 1.0, 2.5));
+        db.Add("map.system.circle.size",            UserStringNop("OPTIONS_DB_UI_SYSTEM_CIRCLE_SIZE"),              1.5,        RangedStepValidator<double>(0.125, 1.0, 2.5));
         db.Add("UI.system-inner-circle-width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
         db.Add("UI.system-outer-circle-width",      UserStringNop("OPTIONS_DB_UI_SYSTEM_OUTER_CIRCLE_WIDTH"),       2.0,        RangedStepValidator<double>(0.5, 1.0, 8.0));
         db.Add("UI.system-inner-circle-max-width",  UserStringNop("OPTIONS_DB_UI_SYSTEM_INNER_CIRCLE_MAX_WIDTH"),   5.0,        RangedStepValidator<double>(0.5, 1.0, 12.0));

@@ -587,7 +587,7 @@ void OptionsWnd::CompleteConstruction() {
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_SYSTEM_ICONS"));
     IntOption(current_page,    0, "map.system.icon.size",                  UserString("OPTIONS_UI_SYSTEM_ICON_SIZE"));
     BoolOption(current_page,   0, "map.system.circle.shown",               UserString("OPTIONS_UI_SYSTEM_CIRCLES"));
-    DoubleOption(current_page, 0, "UI.system-circle-size",                 UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
+    DoubleOption(current_page, 0, "map.system.circle.size",                UserString("OPTIONS_UI_SYSTEM_CIRCLE_SIZE"));
     DoubleOption(current_page, 0, "UI.system-selection-indicator-size",    UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_SIZE"));
     IntOption(current_page,    0, "UI.system-selection-indicator-rpm",     UserString("OPTIONS_UI_SYSTEM_SELECTION_INDICATOR_FPS"));
     IntOption(current_page,    0, "UI.system-tiny-icon-size-threshold",    UserString("OPTIONS_UI_SYSTEM_TINY_ICON_SIZE_THRESHOLD"));
