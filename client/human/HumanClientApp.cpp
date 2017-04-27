@@ -860,7 +860,7 @@ void HumanClientApp::Reinitialize() {
         FullscreenSwitchSignal(fullscreen); // after video mode is changed but before DoLayout() calls
     } else if (fullscreen &&
                (old_width != size.first || old_height != size.second) &&
-               GetOptionsDB().Get<bool>("UI.auto-reposition-windows"))
+               GetOptionsDB().Get<bool>("ui.window.reposition.enabled"))
     {
         // Reposition windows if in fullscreen mode... handled here instead of
         // HandleWindowResize() because the prev. fullscreen resolution is only
@@ -1036,7 +1036,7 @@ void HumanClientApp::HandleWindowResize(GG::X w, GG::Y h) {
          (GetOptionsDB().Get<int>("video.windowed.width") != w ||
           GetOptionsDB().Get<int>("video.windowed.height") != h))
     {
-        if (GetOptionsDB().Get<bool>("UI.auto-reposition-windows")) {
+        if (GetOptionsDB().Get<bool>("ui.window.reposition.enabled")) {
             // Reposition windows if in windowed mode.
             RepositionWindowsSignal();
         }

@@ -557,7 +557,7 @@ namespace {
         db.Add("UI.tooltip.extended-delay",     UserStringNop("OPTIONS_DB_UI_TOOLTIP_LONG_DELAY"),         3500,       RangedValidator<int>(0, 30000));
         db.Add("ui.window.fleet.multiple.enabled", UserStringNop("OPTIONS_DB_UI_MULTIPLE_FLEET_WINDOWS"),  false);
         db.Add("ui.window.quickclose.enabled",  UserStringNop("OPTIONS_DB_UI_WINDOW_QUICKCLOSE"),          true);
-        db.Add("UI.auto-reposition-windows",    UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),    true);
+        db.Add("ui.window.reposition.enabled",  UserStringNop("OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS"),    true);
 
         // UI behavior, hidden options
         // currently lacking an options page widget, so can only be user-adjusted by manually editing config file or specifying on command line
@@ -649,7 +649,7 @@ ClientUI::ClientUI() :
         boost::bind(&ClientUI::HandleFullscreenSwitch, this),
         boost::signals2::at_front);
 
-    ConditionalConnectOption("UI.auto-reposition-windows",
+    ConditionalConnectOption("ui.window.reposition.enabled",
                              HumanClientApp::GetApp()->RepositionWindowsSignal,
                              true, std::equal_to<bool>());
 
@@ -989,7 +989,7 @@ void ClientUI::InitializeWindows() {
 void ClientUI::HandleSizeChange(bool fullscreen) const {
     OptionsDB& db = GetOptionsDB();
 
-    if (db.Get<bool>("UI.auto-reposition-windows")) {
+    if (db.Get<bool>("ui.window.reposition.enabled")) {
         std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
         if (!fullscreen)
             windowed = "-windowed";
