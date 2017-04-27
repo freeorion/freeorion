@@ -155,7 +155,7 @@ namespace {
 
         db.Add("map.popup_menu.enabled",            UserStringNop("OPTIONS_DB_UI_GALAXY_MAP_POPUP"),                false,      Validator<bool>());
 
-        db.Add("UI.hide-map-panels",                UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),                 false,      Validator<bool>());
+        db.Add("ui.window.production.other_panels.removed", UserStringNop("OPTIONS_DB_UI_HIDE_MAP_PANELS"),         false,      Validator<bool>());
 
         db.Add("UI.sidepanel-width",                UserStringNop("OPTIONS_DB_UI_SIDEPANEL_WIDTH"),                 512,        Validator<int>());
 
@@ -6226,7 +6226,7 @@ void MapWnd::ShowProduction() {
     HideDesign();
     HideSidePanel();
     HidePedia();
-    if (GetOptionsDB().Get<bool>("UI.hide-map-panels")) {
+    if (GetOptionsDB().Get<bool>("ui.window.production.other_panels.removed")) {
         RemoveWindows();
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetMessageWnd());
         GG::GUI::GetGUI()->Remove(ClientUI::GetClientUI()->GetPlayerListWnd());
@@ -6268,8 +6268,8 @@ void MapWnd::HideProduction() {
     m_btn_production->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production.png")));
     m_btn_production->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "production_mouseover.png")));
 
-    // Don't check UI.hide-map-panels to avoid a situation where the option is
-    // changed and the panels aren't re-registered.
+    // Don't check ui.window.production.other_panels.removed to avoid a
+    // situation where the option is changed and the panels aren't re-registered.
     RegisterWindows();
     GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetMessageWnd());
     GG::GUI::GetGUI()->Register(ClientUI::GetClientUI()->GetPlayerListWnd());
