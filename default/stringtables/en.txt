@@ -1345,26 +1345,26 @@ OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
 When searching the pedia, check for matches in article contents.
 
 # Section title for options window logging
-OPTIONS_DB_UI_LOGGING_SECTION
-Logging
+OPTIONS_DB_UI_LOGGER_THRESHOLDS
+Logger thresholds
 
-# Sub section title for log level of default logger for each process.
-OPTIONS_DB_UI_LOGGING_LEVEL_SINKS
-Log threshold for default logger for process.
+# Sub section title for logger threshold per application.
+OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS
+Per process
 
-# Sub section title for log level of sources (section of code)
-OPTIONS_DB_UI_LOGGING_LEVEL_SOURCES
-Log threshold for individual sources.
+# Sub section title for logger threshold of individual sources
+OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE
+Per source
 
-OPTIONS_DB_UI_LOGGING_SECTION_TOOLTIP
+OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP
 '''Each log output file (freeorion.log, freeoriond.log and AI_x.log) collects log records from sources(sections of code). 
 Setting the threshold for a source will enable logs records of that level or higher for that source. 
 Each process client, server and ai has a default source and may have additional detailed sources.'''
 
-OPTIONS_DB_UI_LOGGING_LEVEL_SINKS_TOOLTIP
+OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS_TOOLTIP
 '''Setting the threshold for a process will produce only log records of that level or higher for the default source.'''
 
-OPTIONS_DB_UI_LOGGING_LEVEL_SOURCES_TOOLTIP
+OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE_TOOLTIP
 '''Setting the threshold for a source will produce logs of that level or higher for that source.'''
 
 OPTIONS_DB_KEYPRESS_REPEAT_DELAY
@@ -1504,13 +1504,13 @@ OPTIONS_DB_RESOURCE_DIR
 Sets the root directory for the game resource files (game content and data files).
 
 OPTIONS_DB_LOG_LEVEL
-Sets all logger thresholds to this level at or above which log messages will be output (levels in order of increasing severity: trace, debug, info, warn, and error)
+Overrides all loggers' thresholds to this level at or above which log messages will be output.
 
 OPTIONS_DB_LOGGER_FILE_SINK_LEVEL
-Sets the threshold at or above which log messages will be generated for the default source for a process. (levels in order of increasing severity: trace, debug, info, warn, and error)
+Sets the threshold at or above which log messages will be generated for the default source for this process.
 
 OPTIONS_DB_LOGGER_SOURCE_LEVEL
-Sets the threshold at or above which log messages will be generated for this source. (levels in order of increasing severity: trace, debug, info, warn, and error)
+Sets the threshold at or above which log messages will be generated for this source.
 
 OPTIONS_DB_STRINGTABLE_FILENAME
 Sets the language-specific string table filename.

@@ -701,10 +701,10 @@ OptionsWnd::OptionsWnd():
 
     // Logging page
     current_page = CreatePage(UserString("OPTIONS_PAGE_LOGS"));
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGING_SECTION"),
-                        UserString("OPTIONS_DB_UI_LOGGING_SECTION_TOOLTIP"));
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SINKS"),
-                        UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SINKS_TOOLTIP"));
+    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLDS"),
+                        UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP"));
+    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS"),
+                        UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS_TOOLTIP"));
 
     const auto log_file_sinks = LoggerExecutableOptionsLabelsAndLevels();
     for (const auto& sink : log_file_sinks) {
@@ -713,8 +713,8 @@ OptionsWnd::OptionsWnd():
         LoggerLevelOption(*current_page, true, option_label, option);
     }
 
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SOURCES"),
-                        UserString("OPTIONS_DB_UI_LOGGING_LEVEL_SOURCES_TOOLTIP"));
+    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE"),
+                        UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE_TOOLTIP"));
 
     const auto log_file_sources = LoggerSourceOptionsLabelsAndLevels();
     for (const auto& source : log_file_sources) {
