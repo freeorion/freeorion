@@ -534,7 +534,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
         // GalaxySetupData
         setup_data.m_seed = GetOptionsDB().Get<std::string>("setup.seed");
-        setup_data.m_size =             GetOptionsDB().Get<int>("GameSetup.stars");
+        setup_data.m_size = GetOptionsDB().Get<int>("setup.star.count");
         setup_data.m_shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
         setup_data.m_age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
         setup_data.m_starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");

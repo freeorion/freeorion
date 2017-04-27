@@ -151,7 +151,7 @@ namespace {
     // persistant between-executions galaxy setup settings, mainly so I don't have to redo these settings to what I want every time I run FO to test something
     void AddOptions(OptionsDB& db) {
         db.Add("setup.seed",                    UserStringNop("OPTIONS_DB_GAMESETUP_SEED"),                    std::string("0"),   Validator<std::string>());
-        db.Add("GameSetup.stars",               UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                   150,                RangedValidator<int>(10, 5000));
+        db.Add("setup.star.count",              UserStringNop("OPTIONS_DB_GAMESETUP_STARS"),                   150,                RangedValidator<int>(10, 5000));
         db.Add("setup.galaxy.shape",            UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_SHAPE"),            DISC,               RangedValidator<Shape>(SPIRAL_2, RANDOM));
         db.Add("setup.galaxy.age",              UserStringNop("OPTIONS_DB_GAMESETUP_GALAXY_AGE"),              GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
         db.Add("setup.planet.density",          UserStringNop("OPTIONS_DB_GAMESETUP_PLANET_DENSITY"),          GALAXY_SETUP_MEDIUM,RangedValidator<GalaxySetupOption>(GALAXY_SETUP_LOW, GALAXY_SETUP_RANDOM));
@@ -573,7 +573,7 @@ void GalaxySetupPanel::CompleteConstruction() {
     // number of stars
     m_stars_label = GG::Wnd::Create<CUILabel>(UserString("GSETUP_STARS"), GG::FORMAT_RIGHT, GG::INTERACTIVE);
     m_stars_label->SetBrowseModeTime(GetOptionsDB().Get<int>("ui.tooltip.delay"));
-    m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("GameSetup.stars")));
+    m_stars_label->SetBrowseText(UserString(GetOptionsDB().GetDescription("setup.star.count")));
     m_stars_spin = GG::Wnd::Create<CUISpin<int>>(100, 1, 10, 5000, true);
 
     // galaxy shape
@@ -751,7 +751,7 @@ void GalaxySetupPanel::CompleteConstruction() {
 
     // initial settings from stored results or defaults
     m_seed_edit->SetText(GetOptionsDB().Get<std::string>("setup.seed"));
-    m_stars_spin->SetValue(GetOptionsDB().Get<int>("GameSetup.stars"));
+    m_stars_spin->SetValue(GetOptionsDB().Get<int>("setup.star.count"));
     m_galaxy_shapes_list->Select(GetOptionsDB().Get<Shape>("setup.galaxy.shape"));
     ShapeChanged(m_galaxy_shapes_list->CurrentItem());
     m_galaxy_ages_list->Select(GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age") - 1);
@@ -1189,7 +1189,7 @@ void GalaxySetupWnd::PlayerNameChanged(const std::string& name)
 void GalaxySetupWnd::OkClicked() {
     // record selected galaxy setup options as new defaults
     GetOptionsDB().Set("setup.seed", m_galaxy_setup_panel->GetSeed());
-    GetOptionsDB().Set("GameSetup.stars",               m_galaxy_setup_panel->Systems());
+    GetOptionsDB().Set("setup.star.count", m_galaxy_setup_panel->Systems());
     GetOptionsDB().Set("setup.galaxy.shape", m_galaxy_setup_panel->GetShape());
     GetOptionsDB().Set("setup.galaxy.age", m_galaxy_setup_panel->GetAge());
     GetOptionsDB().Set("setup.starlane.frequency", m_galaxy_setup_panel->GetStarlaneFrequency());
