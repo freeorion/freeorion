@@ -109,7 +109,7 @@ namespace {
     void AddOptions(OptionsDB& db) {
         db.Add("map.system.background.gas.shown",   UserStringNop("OPTIONS_DB_GALAXY_MAP_GAS"),                     true,       Validator<bool>());
         db.Add("map.system.background.starfields.shown", UserStringNop("OPTIONS_DB_GALAXY_MAP_STARFIELDS"),         true,       Validator<bool>());
-        db.Add("UI.show-galaxy-map-scale",          UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
+        db.Add("map.scale.legend.shown",            UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_LINE"),              true,       Validator<bool>());
         db.Add("UI.show-galaxy-map-scale-circle",   UserStringNop("OPTIONS_DB_GALAXY_MAP_SCALE_CIRCLE"),            false,      Validator<bool>());
         db.Add("UI.show-galaxy-map-zoom-slider",    UserStringNop("OPTIONS_DB_GALAXY_MAP_ZOOM_SLIDER"),             false,      Validator<bool>());
         db.Add("map.starlane.thickness",            UserStringNop("OPTIONS_DB_STARLANE_THICKNESS"),                 2.0,        RangedStepValidator<double>(0.25, 0.25, 10.0));
@@ -531,7 +531,7 @@ public:
         AttachChild(m_label);
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);
-        GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-scale").connect(
+        GetOptionsDB().OptionChangedSignal("map.scale.legend.shown").connect(
             boost::bind(&MapScaleLine::UpdateEnabled, this));
         UpdateEnabled();
     }
@@ -689,7 +689,7 @@ public:
 
 private:
     void UpdateEnabled() {
-        m_enabled = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
+        m_enabled = GetOptionsDB().Get<bool>("map.scale.legend.shown");
         if (m_enabled)
             AttachChild(m_label);
         else
@@ -2453,9 +2453,8 @@ void MapWnd::RenderVisibilityRadii() {
 void MapWnd::RenderScaleCircle() {
     if (SidePanel::SystemID() == INVALID_OBJECT_ID)
         return;
-    if (!GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale") ||
-        !GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle"))
-    { return; }
+    if (!GetOptionsDB().Get<bool>("map.scale.legend.shown") || !GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle"))
+        return;
     if (m_scale_circle_vertices.empty())
         InitScaleCircleRenderingBuffer();
 
@@ -2581,7 +2580,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool fleetSupply    = GetOptionsDB().Get<bool>("map.fleet.supply_line.shown");
         bool gas            = GetOptionsDB().Get<bool>("map.system.background.gas.shown");
         bool starfields     = GetOptionsDB().Get<bool>("map.system.background.starfields.shown");
-        bool scale          = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale");
+        bool scale          = GetOptionsDB().Get<bool>("map.scale.legend.shown");
         bool scaleCircle    = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle");
         bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
         bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
@@ -2593,7 +2592,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("map.fleet.supply_line.shown",    !fleetSupply);     };
         auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("map.system.background.gas.shown", !gas);        };
         auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("map.system.background.starfields.shown", !starfields);  };
-        auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        };
+        auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("map.scale.legend.shown",          !scale);        };
         auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale-circle",!scaleCircle);   };
         auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);      };
         auto detection_range_action = [&detectionRange]() { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange);   };
@@ -6888,7 +6887,7 @@ void MapWnd::ConnectKeyboardAcceleratorSignals() {
     hkm->Connect(boost::bind(&MapWnd::PanY, this, GG::Y(-50)),  "map.pan_up",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
 
-    hkm->Connect(boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale"), "map.toggle_scale_line",
+    hkm->Connect(boost::bind(&ToggleBoolOption, "map.scale.legend.shown"), "map.toggle_scale_line",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
     hkm->Connect(boost::bind(&ToggleBoolOption, "UI.show-galaxy-map-scale-circle"), "map.toggle_scale_circle",
                  AndCondition({OrCondition({InvisibleWindowCondition(bl), VisibleWindowCondition(this)}), NoModalWndsOpenCondition}));
