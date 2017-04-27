@@ -101,7 +101,7 @@ int         ClientUI::ScrollWidth()             { return GetOptionsDB().Get<int>
 
 GG::Clr     ClientUI::DropDownListArrowColor()  { return GetOptionsDB().Get<GG::Clr>("UI.dropdownlist-arrow-color"); }
 
-GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<GG::Clr>("UI.edit-hilite"); }
+GG::Clr     ClientUI::EditHiliteColor()         { return GetOptionsDB().Get<GG::Clr>("ui.control.edit.highlight.color"); }
 
 GG::Clr     ClientUI::StatIncrColor()           { return GetOptionsDB().Get<GG::Clr>("UI.stat-increase-color"); }
 GG::Clr     ClientUI::StatDecrColor()           { return GetOptionsDB().Get<GG::Clr>("UI.stat-decrease-color"); }
@@ -529,7 +529,7 @@ namespace {
 
         db.Add("UI.dropdownlist-arrow-color",   UserStringNop("OPTIONS_DB_UI_DROPDOWNLIST_ARROW_COLOR"),   GG::Clr(130, 130, 0, 255),   Validator<GG::Clr>());
 
-        db.Add("UI.edit-hilite",                UserStringNop("OPTIONS_DB_UI_EDIT_HILITE"),                GG::Clr(43, 81, 102, 255),   Validator<GG::Clr>());
+        db.Add("ui.control.edit.highlight.color", UserStringNop("OPTIONS_DB_UI_EDIT_HILITE"),              GG::Clr(43, 81, 102, 255),   Validator<GG::Clr>());
 
         db.Add("UI.stat-increase-color",        UserStringNop("OPTIONS_DB_UI_STAT_INCREASE_COLOR"),        GG::Clr(0, 255, 0, 255),     Validator<GG::Clr>());
         db.Add("UI.stat-decrease-color",        UserStringNop("OPTIONS_DB_UI_STAT_DECREASE_COLOR"),        GG::Clr(255, 0, 0, 255),     Validator<GG::Clr>());
