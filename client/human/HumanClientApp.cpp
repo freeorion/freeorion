@@ -137,10 +137,10 @@ namespace {
 
     /* Sets the value of options that need language-dependent default values.*/
     void SetStringtableDependentOptionDefaults() {
-        SetEmptyStringDefaultOption("GameSetup.empire-name", UserString("DEFAULT_EMPIRE_NAME"));
+        SetEmptyStringDefaultOption("setup.empire.name", UserString("DEFAULT_EMPIRE_NAME"));
         std::string player_name = UserString("DEFAULT_PLAYER_NAME");
-        SetEmptyStringDefaultOption("GameSetup.player-name", player_name);
-        SetEmptyStringDefaultOption("multiplayersetup.player-name", player_name);
+        SetEmptyStringDefaultOption("setup.player.name", player_name);
+        SetEmptyStringDefaultOption("setup.multiplayer.player.name", player_name);
     }
 
     std::string GetGLVersionString()
@@ -530,16 +530,16 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         // from just having run GalaxySetupWnd
 
         // GalaxySetupData
-        setup_data.m_seed =             GetOptionsDB().Get<std::string>("GameSetup.seed");
-        setup_data.m_size =             GetOptionsDB().Get<int>("GameSetup.stars");
-        setup_data.m_shape =            GetOptionsDB().Get<Shape>("GameSetup.galaxy-shape");
-        setup_data.m_age =              GetOptionsDB().Get<GalaxySetupOption>("GameSetup.galaxy-age");
-        setup_data.m_starlane_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.starlane-frequency");
-        setup_data.m_planet_density =   GetOptionsDB().Get<GalaxySetupOption>("GameSetup.planet-density");
-        setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("GameSetup.specials-frequency");
-        setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("GameSetup.monster-frequency");
-        setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("GameSetup.native-frequency");
-        setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("GameSetup.ai-aggression");
+        setup_data.m_seed = GetOptionsDB().Get<std::string>("setup.seed");
+        setup_data.m_size = GetOptionsDB().Get<int>("setup.star.count");
+        setup_data.m_shape = GetOptionsDB().Get<Shape>("setup.galaxy.shape");
+        setup_data.m_age = GetOptionsDB().Get<GalaxySetupOption>("setup.galaxy.age");
+        setup_data.m_starlane_freq = GetOptionsDB().Get<GalaxySetupOption>("setup.starlane.frequency");
+        setup_data.m_planet_density = GetOptionsDB().Get<GalaxySetupOption>("setup.planet.density");
+        setup_data.m_specials_freq =    GetOptionsDB().Get<GalaxySetupOption>("setup.specials.frequency");
+        setup_data.m_monster_freq =     GetOptionsDB().Get<GalaxySetupOption>("setup.monster.frequency");
+        setup_data.m_native_freq =      GetOptionsDB().Get<GalaxySetupOption>("setup.native.frequency");
+        setup_data.m_ai_aggr =          GetOptionsDB().Get<Aggression>("setup.ai.aggression");
         setup_data.m_game_rules =       game_rules;
 
 
@@ -549,19 +549,19 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
         // Human player setup data
         PlayerSetupData human_player_setup_data;
-        human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("GameSetup.player-name");
-        human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("GameSetup.empire-name");
+        human_player_setup_data.m_player_name = GetOptionsDB().Get<std::string>("setup.player.name");
+        human_player_setup_data.m_empire_name = GetOptionsDB().Get<std::string>("setup.empire.name");
 
         // DB stores index into array of available colours, so need to get that array to look up value of index.
         // if stored value is invalid, use a default colour
         const std::vector<GG::Clr>& empire_colours = EmpireColors();
-        int colour_index = GetOptionsDB().Get<int>("GameSetup.empire-color");
+        int colour_index = GetOptionsDB().Get<int>("setup.empire.color.index");
         if (colour_index >= 0 && colour_index < static_cast<int>(empire_colours.size()))
             human_player_setup_data.m_empire_color = empire_colours[colour_index];
         else
             human_player_setup_data.m_empire_color = GG::CLR_GREEN;
 
-        human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("GameSetup.starting-species");
+        human_player_setup_data.m_starting_species_name = GetOptionsDB().Get<std::string>("setup.initial.species");
         if (human_player_setup_data.m_starting_species_name == "1")
             human_player_setup_data.m_starting_species_name = "SP_HUMAN";   // kludge / bug workaround for bug with options storage and retreival.  Empty-string options are stored, but read in as "true" boolean, and converted to string equal to "1"
 
@@ -583,7 +583,7 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
 
 
         // AI player setup data.  One entry for each requested AI
-        int num_AIs = GetOptionsDB().Get<int>("GameSetup.ai-players");
+        int num_AIs = GetOptionsDB().Get<int>("setup.ai.player.count");
         for (int ai_i = 1; ai_i <= num_AIs; ++ai_i) {
             PlayerSetupData ai_setup_data;
 
