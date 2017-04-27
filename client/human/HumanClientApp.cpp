@@ -104,7 +104,7 @@ namespace {
         db.Add("autosave.galaxy-creation",      UserStringNop("OPTIONS_DB_AUTOSAVE_GALAXY_CREATION"),      true,   Validator<bool>());
         db.Add("autosave.game-close",           UserStringNop("OPTIONS_DB_AUTOSAVE_GAME_CLOSE"),         true,   Validator<bool>());
         db.Add("ui.input.mouse.button_swap.enabled", UserStringNop("OPTIONS_DB_UI_MOUSE_LR_SWAP"),      false);
-        db.Add("UI.keypress-repeat-delay",      UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),      360,    RangedValidator<int>(0, 1000));
+        db.Add("ui.input.keyboard.repeat.delay", UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_DELAY"),     360,    RangedValidator<int>(0, 1000));
         db.Add("UI.keypress-repeat-interval",   UserStringNop("OPTIONS_DB_KEYPRESS_REPEAT_INTERVAL"),   20,     RangedValidator<int>(0, 1000));
         db.Add("UI.mouse-click-repeat-delay",   UserStringNop("OPTIONS_DB_MOUSE_REPEAT_DELAY"),         360,    RangedValidator<int>(0, 1000));
         db.Add("UI.mouse-click-repeat-interval",UserStringNop("OPTIONS_DB_MOUSE_REPEAT_INTERVAL"),      15,     RangedValidator<int>(0, 1000));
@@ -297,7 +297,7 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     SetCursor(std::make_shared<GG::TextureCursor>(cursor_texture, GG::Pt(GG::X(6), GG::Y(3))));
     RenderCursor(true);
 
-    EnableKeyPressRepeat(GetOptionsDB().Get<int>("UI.keypress-repeat-delay"),
+    EnableKeyPressRepeat(GetOptionsDB().Get<int>("ui.input.keyboard.repeat.delay"),
                          GetOptionsDB().Get<int>("UI.keypress-repeat-interval"));
     EnableMouseButtonDownRepeat(GetOptionsDB().Get<int>("UI.mouse-click-repeat-delay"),
                                 GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
