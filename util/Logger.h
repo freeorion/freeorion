@@ -184,6 +184,20 @@ std::unordered_map<std::string, LogLevel> ValidNameToLogLevel();
  * their own name.*/
 FO_COMMON_API void InitLoggingSystem(const std::string& log_file, const std::string& unnamed_logger_identifier);
 
+/** Shutdown the file sink.  This should be called near the end of main() before the start of
+    static de-initialization.
+
+    The file sink may not be safe to use during static deinitialization, because of the
+    following bug:
+
+    http://www.boost.org/doc/libs/1_64_0/libs/log/doc/html/log/rationale/why_crash_on_term.html
+    https://svn.boost.org/trac/boost/ticket/8642
+    https://svn.boost.org/trac/boost/ticket/9119
+
+    When either ticket is fixed the ShutdownLoggingSystemFileSink() function can be removed.
+*/
+FO_COMMON_API void ShutdownLoggingSystemFileSink();
+
 /** Sets all logger thresholds to \p threshold permanently. If \p threshold is boost::none then
     remove the ovverride and allow subsequent SetLoggerThreshold() to work as normal. */
 FO_COMMON_API void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold);

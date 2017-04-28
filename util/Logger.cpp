@@ -213,6 +213,13 @@ namespace {
             return retval;
         }
 
+        void ShutdownFileSinks() {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            for (const auto& name_and_frontend : m_names_to_front_ends)
+                logging::core::get()->remove_sink(name_and_frontend.second);
+        }
+
     };
 
     LoggersToSinkFrontEnds& GetLoggersToSinkFrontEnds() {
@@ -316,6 +323,19 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     auto date_time = std::time(nullptr);
     InfoLogger(log) << "Logger initialized at " << std::ctime(&date_time);
     InfoLogger() << FreeOrionVersionString();
+}
+
+void ShutdownLoggingSystemFileSink() {
+    // The file sink may not be safe to use during static deinitialization, because of the
+    // following bug:
+
+    // http://www.boost.org/doc/libs/1_64_0/libs/log/doc/html/log/rationale/why_crash_on_term.html
+    // https://svn.boost.org/trac/boost/ticket/8642
+    // https://svn.boost.org/trac/boost/ticket/9119
+
+    // When either ticket is fixed the ShutdownLoggingSystem() function can be removed.
+
+    GetLoggersToSinkFrontEnds().ShutdownFileSinks();
 }
 
 void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold) {

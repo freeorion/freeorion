@@ -61,22 +61,27 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
     } catch (const std::invalid_argument& e) {
         ErrorLogger() << "main() caught exception(std::invalid_arg): " << e.what();
         std::cerr << "main() caught exception(std::invalid_arg): " << e.what() << std::endl;
+        ShutdownLoggingSystemFileSink();
         return 1;
     } catch (const std::runtime_error& e) {
         ErrorLogger() << "main() caught exception(std::runtime_error): " << e.what();
         std::cerr << "main() caught exception(std::runtime_error): " << e.what() << std::endl;
+        ShutdownLoggingSystemFileSink();
         return 1;
     } catch (const std::exception& e) {
         ErrorLogger() << "main() caught exception(std::exception): " << e.what();
         std::cerr << "main() caught exception(std::exception): " << e.what() << std::endl;
+        ShutdownLoggingSystemFileSink();
         return 1;
     } catch (...) {
         ErrorLogger() << "main() caught unknown exception.";
         std::cerr << "main() caught unknown exception." << std::endl;
+        ShutdownLoggingSystemFileSink();
         return 1;
     }
 #endif
     DebugLogger() << "AI client main exited cleanly.";
+    ShutdownLoggingSystemFileSink();
     return 0;
 }
 

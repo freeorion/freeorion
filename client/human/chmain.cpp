@@ -64,6 +64,7 @@ int main(int argc, char* argv[]) {
     // set options from command line or config.xml, or generate config.xml
     if (mainConfigOptionsSetup(args) != 0) {
         std::cerr << "main() failed config." << std::endl;
+        ShutdownLoggingSystemFileSink() ;
         return 1;
     }
 #endif
@@ -87,21 +88,25 @@ int wmain(int argc, wchar_t* argv[], wchar_t* envp[]) {
 #ifndef FREEORION_MACOSX
     // did the player request help output?
     if (GetOptionsDB().Get<bool>("help")) {
+        ShutdownLoggingSystemFileSink();
         GetOptionsDB().GetUsage(std::cout);
         return 0;   // quit without actually starting game
     }
 
     // did the player request the version output?
     if (GetOptionsDB().Get<bool>("version")) {
+        ShutdownLoggingSystemFileSink();
         std::cout << "FreeOrionCH " << FreeOrionVersionString() << std::endl;
         return 0;   // quit without actually starting game
     }
 
     // set up rendering and run game
     if (mainSetupAndRun() != 0) {
+        ShutdownLoggingSystemFileSink();
         std::cerr << "main() failed to setup or run SDL." << std::endl;
         return 1;
     }
+    ShutdownLoggingSystemFileSink();
     return 0;
 }
 #endif
