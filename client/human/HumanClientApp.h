@@ -127,6 +127,9 @@ private:
 
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
 
+    /** If hosting then send the logger state to the server. */
+    void            SendLoggingConfigToServer();
+
     void            ResetOrExitApp(bool reset);
 
     std::unique_ptr<HumanClientFSM> m_fsm;

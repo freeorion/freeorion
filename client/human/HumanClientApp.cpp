@@ -473,6 +473,8 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         return;
     }
 
+    SendLoggingConfigToServer();
+
     if (quickstart || ended_with_ok) {
 
         SinglePlayerSetupData setup_data;
@@ -596,6 +598,8 @@ void HumanClientApp::MultiPlayerGame() {
         return;
     }
 
+    SendLoggingConfigToServer();
+
     if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
         m_networking->SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
         m_fsm->process_event(HostMPGameRequested());
@@ -677,6 +681,8 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         return;
     }
 
+    SendLoggingConfigToServer();
+
     m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
@@ -710,6 +716,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             return;
         }
+        SendLoggingConfigToServer();
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     const auto response = m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(generic_directory));
@@ -894,10 +901,14 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     }
 }
 
-void HumanClientApp::HandleLoggerUpdate(){
+void HumanClientApp::HandleLoggerUpdate() {
     // Update the logger threshold from the OptionsDB
     UpdateLoggerThresholdsFromOptionsDB();
 
+    SendLoggingConfigToServer();
+}
+
+void HumanClientApp::SendLoggingConfigToServer() {
     // If not host then done.
     if (!m_networking->PlayerIsHost(Networking().PlayerID()))
         return;
