@@ -24,8 +24,8 @@
    whatwasthataddress@gmail.com */
 
 /** \file Menu.h \brief Contains the MenuItem class, which represents menu
-    data; the MenuBar control class; and the PopupMenu class, which is used to
-    provide immediate context menus. */
+    data; and the PopupMenu class, which is used to provide immediate
+    context menus. */
 
 #ifndef _GG_Menu_h_
 #define _GG_Menu_h_
@@ -39,7 +39,7 @@ namespace GG {
 class Font;
 class TextControl;
 
-/** \brief Serves as a single menu entry in a GG::MenuBar or GG::PopupMenu.
+/** \brief Serves as a single menu entry in a GG::PopupMenu.
 
     May include a submenu.  All legal item_IDs are positive (and so non-zero);
     any item_ID <= 0 is considered invalid.  Each MenuItem has a signal that
@@ -82,119 +82,6 @@ struct GG_API MenuItem
     bool                  checked;    ///< set to true when this menu item can be toggled, and is currently on
     bool                  separator;  ///< set to true to render this menu item as a separator bar, rather than showing its text
     std::vector<MenuItem> next_level; ///< submenu off of this menu item; may be emtpy
-};
-
-
-/** \brief A menu bar control providing "browse" updates to user navigation of
-    the menu.
-
-    Whenever a menu item is selected, a signal is emitted which includes the
-    ID of the selected item.  It is recommended that the user attach each menu
-    item to an appropriate function the will execute the actions associated
-    with the menu item, rather than attaching all the items to a single slot
-    which uses the int ID parameter to deduce the appropriate action.  The int
-    ID parameter is best used when there are several menu items that should
-    execute the same code with different parameters.  For instance, if a
-    submenu contains a list of recently used files, each item that contains a
-    filename might be attached to a Reopen(int) function, and the int can be
-    used to determine which file from the list should be opened. If some
-    action is to be taken as the user browses the menu items, such as
-    displaying some visual cue to indicate the result of chosing a particular
-    menu entry, you can attach a slot function to the BrowsedSignalType object
-    returned by BrowsedSignal.  Whenever the mouse moves to a new menu item,
-    this signal is emitted with the ID number of the item under the
-    cursor.  */
-class GG_API MenuBar : public Control
-{
-public:
-    /** \name Signal Types */ ///@{
-    /** emits the ID of an item in the menu when the cursor moves over it */
-    typedef boost::signals2::signal<void (int)> BrowsedSignalType;
-    //@}
-
-    /** \name Structors */ ///@{
-    /** Ctor.  Parameter \a m should contain the desired menu in its
-        next_level member. */
-    MenuBar(X x, Y y, X w, const std::shared_ptr<Font>& font, Clr text_color = CLR_WHITE, Clr color = CLR_BLACK, Clr interior = CLR_SHADOW);
-
-    /** Ctor that takes a MenuItem containing menus with which to populate the
-        MenuBar. */
-    MenuBar(X x, Y y, X w, const std::shared_ptr<Font>& font, const MenuItem& m, Clr text_color = CLR_WHITE, Clr color = CLR_BLACK, Clr interior = CLR_SHADOW);
-    //@}
-
-    /** \name Accessors */ ///@{
-    Pt MinUsableSize() const override;
-
-    const MenuItem&   AllMenus() const;                           ///< returns a const reference to the MenuItem that contains all the menus and their contents
-    bool              ContainsMenu(const std::string& str) const; ///< returns true if there is a top-level menu in the MenuBar whose label is \a str
-    std::size_t       NumMenus() const;                           ///< returns the number of top-level menus in the MenuBar
-
-    /** returns a const reference to the top-level menu in the MenuBar whose label is \a str.  \note No check is made to ensure such a menu exists. */
-    const MenuItem&   GetMenu(const std::string& str) const;
-
-    const MenuItem&   GetMenu(std::size_t n) const;///< returns a const reference to the \a nth menu in the MenuBar; not range-checked
-
-    Clr               BorderColor() const;       ///< returns the color used to render the border of the control
-    Clr               InteriorColor() const;     ///< returns the color used to render the interior of the control
-    Clr               TextColor() const;         ///< returns the color used to render menu item text
-    Clr               HiliteColor() const;       ///< returns the color used to indicate a hilited menu item
-    Clr               SelectedTextColor() const; ///< returns the color used to render a hilited menu item's text
-
-    mutable BrowsedSignalType BrowsedSignal; ///< the browsed signal object for this PopupMenu
-    //@}
-
-    /** \name Mutators */ ///@{
-    void Render() override;
-    void LButtonDown(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void MouseHere(const Pt& pt, Flags<ModKey> mod_keys) override;
-    void MouseLeave() override;
-
-    void SizeMove(const Pt& ul, const Pt& lr) override;
-
-    MenuItem&      AllMenus();                    ///< returns a reference to the MenuItem that contains all the menus and their contents
-
-    /** Returns a reference to the top-level menu in the MenuBar whose label
-        is \a str.  \note No check is made to ensure such a menu exists. */
-    MenuItem&      GetMenu(const std::string& str);
-
-    MenuItem&      GetMenu(int n);                ///< returns a reference to the \a nth menu in the MenuBar; not range-checked
-    void           AddMenu(const MenuItem& menu); ///< adds \a menu to the end of the top level of menus
-
-    void           SetBorderColor(Clr clr);       ///< sets the color used to render the border of the control
-    void           SetInteriorColor(Clr clr);     ///< sets the color used to render the interior of the control
-    void           SetTextColor(Clr clr);         ///< sets the color used to render menu item text
-    void           SetHiliteColor(Clr clr);       ///< sets the color used to indicate a hilited menu item
-    void           SetSelectedTextColor(Clr clr); ///< sets the color used to render a hilited menu item's text
-    //@}
-
-    static const std::size_t INVALID_CARET;
-
-protected:
-    /** \name Accessors */ ///@{
-    /** Returns the font used to render text in the control. */
-    const std::shared_ptr<Font>& GetFont() const;
-
-    const std::vector<TextControl*>& MenuLabels() const; ///< returns the text for each top-level menu item
-    std::size_t                      Caret() const;      ///< returns the current position of the caret
-    //@}
-
-private:
-    /** Determines the rects in m_menu_labels, and puts the menus in multiple
-        rows if they will not fit in one */
-    void AdjustLayout(bool reset = false);
-
-    /** The font used to render the text in the control. */
-    std::shared_ptr<Font> m_font;
-
-    Clr                       m_border_color;   ///< the color of the menu's border
-    Clr                       m_int_color;      ///< color painted into the client area of the control
-    Clr                       m_text_color;     ///< color used to paint text in control
-    Clr                       m_hilite_color;   ///< color behind selected items
-    Clr                       m_sel_text_color; ///< color of selected text
-
-    MenuItem                  m_menu_data;      ///< this is not just a single menu item; the next_level element represents the entire menu
-    std::vector<TextControl*> m_menu_labels;    ///< the text for each top-level menu item
-    std::size_t               m_caret;          ///< the currently indicated top-level menu (open or under the cursor)
 };
 
 
