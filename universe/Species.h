@@ -52,15 +52,21 @@ public:
     const Condition::ConditionBase* Location() const    { return m_location.get(); }///< returns the condition that determines whether an UniverseObject can use this FocusType
     const std::string&              Graphic() const     { return m_graphic; }       ///< returns the name of the grapic file for this focus type
     std::string                     Dump() const;       ///< returns a data file format representation of this object
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                    GetCheckSum() const;
     //@}
 
 private:
-    std::string                                         m_name;
-    std::string                                         m_description;
-
+    std::string                                     m_name;
+    std::string                                     m_description;
     std::shared_ptr<const Condition::ConditionBase> m_location;
-
-    std::string                                         m_graphic;
+    std::string                                     m_graphic;
 };
 
 /** Used by parser due to limits on number of sub-items per parsed main item. */
@@ -168,8 +174,16 @@ public:
     bool                            Native() const          { return m_native; }            ///< returns whether this species is a suitable native species (for non player-controlled planets)
     bool                            CanColonize() const     { return m_can_colonize; }      ///< returns whether this species can colonize planets
     bool                            CanProduceShips() const { return m_can_produce_ships; } ///< returns whether this species can produce ships
-    const std::set<std::string>& Tags() const               { return m_tags; }
+    const std::set<std::string>&    Tags() const            { return m_tags; }
     const std::string&              Graphic() const         { return m_graphic; }           ///< returns the name of the grapic file for this species
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                    GetCheckSum() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -226,67 +240,77 @@ public:
     /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
       * free function GetSpecies() instead, mainly to save some typing. */
-    const Species*          GetSpecies(const std::string& name) const;
-    Species*                GetSpecies(const std::string& name);
+    const Species*      GetSpecies(const std::string& name) const;
+    Species*            GetSpecies(const std::string& name);
 
     /** returns a unique numeric id for reach species, or -1 for an invalid species name. */
-    int                     GetSpeciesID(const std::string& name) const;
+    int                 GetSpeciesID(const std::string& name) const;
 
     /** iterators for all species */
-    iterator                begin() const;
-    iterator                end() const;
+    iterator            begin() const;
+    iterator            end() const;
 
     /** iterators for playble species. */
-    playable_iterator       playable_begin() const;
-    playable_iterator       playable_end() const;
+    playable_iterator   playable_begin() const;
+    playable_iterator   playable_end() const;
 
     /** iterators for native species. */
-    native_iterator         native_begin() const;
-    native_iterator         native_end() const;
+    native_iterator     native_begin() const;
+    native_iterator     native_end() const;
 
     /** returns true iff this SpeciesManager is empty. */
-    bool                    empty() const;
+    bool                empty() const;
 
     /** returns the number of species stored in this manager. */
-    int                     NumSpecies() const;
-    int                     NumPlayableSpecies() const;
-    int                     NumNativeSpecies() const;
+    int                 NumSpecies() const;
+    int                 NumPlayableSpecies() const;
+    int                 NumNativeSpecies() const;
 
     /** returns the name of a species in this manager, or an empty string if
       * this manager is empty. */
-    const std::string&      RandomSpeciesName() const;
+    const std::string&  RandomSpeciesName() const;
 
     /** returns the name of a playable species in this manager, or an empty
       * string if there are no playable species. */
-    const std::string&      RandomPlayableSpeciesName() const;
-    const std::string&      SequentialPlayableSpeciesName(int id) const;
+    const std::string&  RandomPlayableSpeciesName() const;
+    const std::string&  SequentialPlayableSpeciesName(int id) const;
 
     /** returns a map from species name to a set of object IDs that are the
       * homeworld(s) of that species in the current game. */
-    std::map<std::string, std::set<int>>                            GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
+    std::map<std::string, std::set<int>>
+        GetSpeciesHomeworldsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns a map from species name to a map from empire id to each the
       * species' opinion of the empire */
-    const std::map<std::string, std::map<int, float>>&              GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+    const std::map<std::string, std::map<int, float>>&
+        GetSpeciesEmpireOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns opinion of species with name \a species_name about empire with
       * id \a empire_id or 0.0 if there is no such opinion yet recorded. */
-    float                                                           SpeciesEmpireOpinion(const std::string& species_name,
-                                                                                         int empire_id) const;
+    float SpeciesEmpireOpinion(const std::string& species_name, int empire_id) const;
 
     /** returns a map from species name to a map from other species names to the
       * opinion of the first species about the other species. */
-    const std::map<std::string, std::map<std::string, float>>&      GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
+    const std::map<std::string, std::map<std::string, float>>&
+        GetSpeciesSpeciesOpinionsMap(int encoding_empire = ALL_EMPIRES) const;
 
     /** returns opinion of species with name \a opinionated_species_name about
       * other species with name \a rated_species_name or 0.0 if there is no
       * such opinion yet recorded. */
-    float                                                           SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
-                                                                                          const std::string& rated_species_name) const;
+    float SpeciesSpeciesOpinion(const std::string& opinionated_species_name,
+                                const std::string& rated_species_name) const;
 
     /** returns the instance of this singleton class; you should use the free
       * function GetSpeciesManager() instead */
     static SpeciesManager&  GetSpeciesManager();
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int GetCheckSum() const;
     //@}
 
     /** \name Mutators */ //@{

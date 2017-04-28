@@ -91,7 +91,7 @@ namespace {
     }
 
     void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot) {
-        std::cout << "CheckSumCombine(Slot): " << typeid(slot).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(Slot): " << typeid(slot).name();
         CheckSumCombine(sum, slot.x);
         CheckSumCombine(sum, slot.y);
         CheckSumCombine(sum, slot.type);
@@ -142,6 +142,8 @@ PartTypeManager::PartTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "PartTypeManager checksum: " << GetCheckSum();
 }
 
 PartTypeManager::~PartTypeManager() {

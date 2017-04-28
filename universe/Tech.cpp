@@ -7,6 +7,7 @@
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 #include "../util/AppInterface.h"
+#include "../util/CheckSums.h"
 #include "../Empire/Empire.h"
 #include "../Empire/EmpireManager.h"
 #include "ValueRef.h"
@@ -69,6 +70,23 @@ namespace {
     }
 }
 
+namespace CheckSums {
+    void CheckSumCombine(unsigned int& sum, const ItemSpec& item) {
+        //std::cout << "CheckSumCombine(Slot): " << typeid(slot).name() << std::endl << std::endl;
+        CheckSumCombine(sum, item.type);
+        CheckSumCombine(sum, item.name);
+    }
+
+    void CheckSumCombine(unsigned int& sum, const TechCategory& cat) {
+        //std::cout << "CheckSumCombine(Slot): " << typeid(slot).name() << std::endl << std::endl;
+        CheckSumCombine(sum, cat.name);
+        CheckSumCombine(sum, cat.graphic);
+        CheckSumCombine(sum, cat.colour.r);
+        CheckSumCombine(sum, cat.colour.g);
+        CheckSumCombine(sum, cat.colour.b);
+        CheckSumCombine(sum, cat.colour.a);
+    }
+}
 
 ///////////////////////////////////////////////////////////
 // Tech                                                  //
@@ -189,6 +207,25 @@ int Tech::ResearchTime(int empire_id) const {
     }
 }
 
+unsigned int Tech::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_short_description);
+    CheckSums::CheckSumCombine(retval, m_category);
+    CheckSums::CheckSumCombine(retval, m_research_cost);
+    CheckSums::CheckSumCombine(retval, m_research_turns);
+    CheckSums::CheckSumCombine(retval, m_researchable);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_prerequisites);
+    CheckSums::CheckSumCombine(retval, m_unlocked_items);
+    CheckSums::CheckSumCombine(retval, m_graphic);
+    CheckSums::CheckSumCombine(retval, m_unlocked_techs);
+
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // ItemSpec                                              //
@@ -378,6 +415,8 @@ TechManager::TechManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "TechManager checksum: " << GetCheckSum();
 }
 
 TechManager::~TechManager() {
@@ -561,6 +600,20 @@ std::vector<std::string> TechManager::RecursivePrereqs(const std::string& tech_n
 
     return retval;
 }
+
+unsigned int TechManager::GetCheckSum() const {
+    unsigned int retval{0};
+    for (auto const& name_type_pair : m_categories)
+        CheckSums::CheckSumCombine(retval, name_type_pair);
+    CheckSums::CheckSumCombine(retval, m_categories.size());
+
+    for (auto const& tech : *this)
+        CheckSums::CheckSumCombine(retval, tech);
+    CheckSums::CheckSumCombine(retval, m_techs.size());
+
+    return retval;
+}
+
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //

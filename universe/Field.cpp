@@ -11,6 +11,7 @@
 #include "../util/AppInterface.h"
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
+#include "../util/CheckSums.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/filesystem/fstream.hpp>
@@ -215,6 +216,18 @@ std::string FieldType::Dump() const {
     return retval;
 }
 
+unsigned int FieldType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_description);
+    CheckSums::CheckSumCombine(retval, m_stealth);
+    CheckSums::CheckSumCombine(retval, m_tags);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_graphic);
+
+    return retval;
+}
 
 /////////////////////////////////////////////////
 // FieldTypeManager                         //
@@ -239,6 +252,8 @@ FieldTypeManager::FieldTypeManager() {
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;
+
+    DebugLogger() << "FieldTypeManager checksum: " << GetCheckSum();
 }
 
 FieldTypeManager::~FieldTypeManager() {
@@ -256,6 +271,16 @@ FieldTypeManager& FieldTypeManager::GetFieldTypeManager() {
     static FieldTypeManager manager;
     return manager;
 }
+
+unsigned int FieldTypeManager::GetCheckSum() const {
+    unsigned int retval{0};
+    for (auto const& name_type_pair : m_field_types)
+        CheckSums::CheckSumCombine(retval, name_type_pair);
+    CheckSums::CheckSumCombine(retval, m_field_types.size());
+
+    return retval;
+}
+
 
 ///////////////////////////////////////////////////////////
 // Free Functions                                        //

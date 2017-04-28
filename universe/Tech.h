@@ -132,6 +132,14 @@ public:
     const std::string&              Graphic() const       { return m_graphic; }         //!< returns the name of the grapic file for this tech
     const std::vector<ItemSpec>&    UnlockedItems() const { return m_unlocked_items; }  //!< returns the set all items that are unlocked by researching this tech
     const std::set<std::string>&    UnlockedTechs() const { return m_unlocked_techs; }  //!< returns the set of names of all techs for which this one is a prerequisite
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                    GetCheckSum() const;
     //@}
 
 private:
@@ -276,6 +284,14 @@ public:
       * those techs, etc. recursively. If \a min_required is false then prereqs
       * will be included and recursed into even if already known to the empire. */
     std::vector<std::string>        RecursivePrereqs(const std::string& tech_name, int empire_id, bool min_required = true) const;
+
+    /** Returns a number, calculated from the contained data, which should be
+      * different for different contained data, and must be the same for
+      * the same contained data, and must be the same on different platforms
+      * and executions of the program and the function. Useful to verify that
+      * the parsed content is consistent without sending it all between
+      * clients and server. */
+    unsigned int                    GetCheckSum() const;
     //@}
 
     /** returns the instance of this singleton class; you should use the free function GetTechManager() instead */
