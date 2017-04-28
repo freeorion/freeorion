@@ -903,10 +903,7 @@ void HumanClientApp::HandleLoggerUpdate(){
         return;
 
     // Host updates the server
-    const auto exec_loggers = LoggerExecutableOptionsLabelsAndLevels();
-    auto sources = LoggerSourceOptionsLabelsAndLevels();
-    for (const auto& exec_logger : exec_loggers)
-        sources.insert(exec_logger);
+    const auto sources = LoggerOptionsLabelsAndLevels(LoggerTypes::both);
 
     m_networking->SendMessage(LoggerConfigMessage(PlayerID(), sources));
 }

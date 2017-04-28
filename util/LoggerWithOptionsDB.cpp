@@ -107,10 +107,8 @@ void RegisterLoggerWithOptionsDB(const std::string& logger_name, const bool is_e
 }
 
 
-void UpdateLoggerThresholdsFromOptionsDB() {
-    SetLoggerThresholds(LoggerExecutableOptionsLabelsAndLevels());
-    SetLoggerThresholds(LoggerSourceOptionsLabelsAndLevels());
-}
+void UpdateLoggerThresholdsFromOptionsDB()
+{ SetLoggerThresholds(LoggerOptionsLabelsAndLevels(LoggerTypes::both)); }
 
 namespace {
     /** Returns the list of full option names, logger names and thresholds for loggers in
@@ -143,13 +141,25 @@ namespace {
     }
 }
 
-/** Return the option names, labels and levels for all executables from OptionsDB. */
-std::set<std::tuple<std::string, std::string, LogLevel>> LoggerExecutableOptionsLabelsAndLevels()
-{ return LoggerOptionsLabelsAndLevels(exec_option_name_prefix, exec_name_regex); }
-
-/** Return the option names, labels and levels for all sources/channels from OptionsDB. */
-std::set<std::tuple<std::string, std::string, LogLevel>> LoggerSourceOptionsLabelsAndLevels()
-{ return LoggerOptionsLabelsAndLevels(source_option_name_prefix, source_name_regex); }
+/** Return the option names, labels and levels for the requested types from OptionsDB. */
+std::set<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndLevels(const LoggerTypes types) {
+    switch (types) {
+    case LoggerTypes::exec:
+        // Only the per executable loggers
+        return LoggerOptionsLabelsAndLevels(exec_option_name_prefix, exec_name_regex);
+    case LoggerTypes::named:
+        // Only the standard source loggers
+        return LoggerOptionsLabelsAndLevels(source_option_name_prefix, source_name_regex);
+    default: {
+        // Combine both types of loggers into one set
+        const auto exec_loggers = LoggerOptionsLabelsAndLevels(exec_option_name_prefix, exec_name_regex);
+        auto source_loggers = LoggerOptionsLabelsAndLevels(source_option_name_prefix, source_name_regex);
+        for (const auto& exec_logger : exec_loggers)
+            source_loggers.insert(exec_logger);
+        return source_loggers;
+    }
+    }
+}
 
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
 void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& fulloption_name_and_levels) {

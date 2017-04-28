@@ -706,7 +706,7 @@ OptionsWnd::OptionsWnd():
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS"),
                         UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS_TOOLTIP"));
 
-    const auto log_file_sinks = LoggerExecutableOptionsLabelsAndLevels();
+    const auto log_file_sinks = LoggerOptionsLabelsAndLevels(LoggerTypes::exec);
     for (const auto& sink : log_file_sinks) {
         const auto& option = std::get<0>(sink);
         const auto& option_label = std::get<1>(sink);
@@ -716,7 +716,7 @@ OptionsWnd::OptionsWnd():
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE"),
                         UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE_TOOLTIP"));
 
-    const auto log_file_sources = LoggerSourceOptionsLabelsAndLevels();
+    const auto log_file_sources = LoggerOptionsLabelsAndLevels(LoggerTypes::named);
     for (const auto& source : log_file_sources) {
         const auto& option = std::get<0>(source);
         const auto& option_label = std::get<1>(source);

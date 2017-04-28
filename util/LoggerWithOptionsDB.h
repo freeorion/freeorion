@@ -53,11 +53,16 @@ FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger_name, c
 
 FO_COMMON_API void UpdateLoggerThresholdsFromOptionsDB();
 
-/** Return the option names, labels and levels for all executables from OptionsDB. */
-FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerExecutableOptionsLabelsAndLevels();
 
-/** Return the option names, labels and levels for all sources/channels from OptionsDB. */
-FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerSourceOptionsLabelsAndLevels();
+///
+enum class LoggerTypes {
+    exec = 1,  ///< the unnamed logger for a particular executable
+    named = 2, ///< a normal named source
+    both = exec | named};
+
+/** Return the option names, labels and levels for logger oy \p type from OptionsDB. */
+FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>>
+    LoggerOptionsLabelsAndLevels(const LoggerTypes types);
 
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
 FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>&);
