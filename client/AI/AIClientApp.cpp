@@ -50,7 +50,7 @@ namespace {
 
         for (int ii = 1; ii <= IApp::MAX_AI_PLAYERS(); ++ii) {
             std::stringstream ss;
-            ss << option_root << "AI_" << boost::lexical_cast<int>(ii);
+            ss << option_root << "AI_" << std::to_string(ii);
             db.Add<T>(ss.str(), UserStringNop(user_string_root + "_FORCE_VALUE"), def, validator);
         }
     }
