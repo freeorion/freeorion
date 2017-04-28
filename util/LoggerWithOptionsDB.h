@@ -62,10 +62,4 @@ FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerSou
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
 FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>&);
 
-extern int g_indent;
-
-/** A function that returns the correct amount of spacing for the current
-  * indentation level during a dump. */
-std::string DumpIndent();
-
 #endif // _LoggerWithOptionsDB_h_
