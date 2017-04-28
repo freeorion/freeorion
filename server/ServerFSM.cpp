@@ -11,6 +11,7 @@
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/LoggerWithOptionsDB.h"
 #include "../util/Order.h"
 #include "../util/OrderSet.h"
 #include "../util/Random.h"
@@ -527,6 +528,11 @@ sc::result MPLobby::react(const JoinGame& msg) {
 
     // inform player of host
     player_connection->SendMessage(HostIDMessage(server.m_networking.HostPlayerID()));
+
+    // Inform AI of logging configuration.
+    if (client_type == Networking::CLIENT_TYPE_AI_PLAYER)
+        player_connection->SendMessage(
+            LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
 
     // assign player info from defaults or from connection to lobby data players list
     PlayerSetupData player_setup_data;
@@ -1188,6 +1194,10 @@ sc::result WaitingForSPGameJoiners::react(const JoinGame& msg) {
             player_connection->EstablishPlayer(expected_it->second, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(expected_it->second));
 
+            // Inform AI of logging configuration.
+            player_connection->SendMessage(
+                LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
+
             // remove name from expected names list, so as to only allow one connection per AI
             m_expected_ai_names_and_ids.erase(player_name);
         }
@@ -1329,6 +1339,10 @@ sc::result WaitingForMPGameJoiners::react(const JoinGame& msg) {
             // let the networking system know what socket this player is on
             player_connection->EstablishPlayer(player_id, player_name, client_type, client_version_string);
             player_connection->SendMessage(JoinAckMessage(player_id));
+
+            // Inform AI of logging configuration.
+            player_connection->SendMessage(
+                LoggerConfigMessage(Networking::INVALID_PLAYER_ID, LoggerOptionsLabelsAndLevels(LoggerTypes::both)));
 
             // remove name from expected names list, so as to only allow one connection per AI
             m_expected_ai_player_names.erase(player_name);
