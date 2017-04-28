@@ -62,8 +62,8 @@ namespace {
 
         const int max_aggression = 5;
         const int no_value = -1;
-        AddTraitBypassOption<int>(db, "aggression", "AGGRESSION", no_value, RangedValidator<int>(0, max_aggression));
-        AddTraitBypassOption<int>(db, "empire-id", "EMPIREID", no_value, RangedValidator<int>(0, IApp::MAX_AI_PLAYERS()));
+        AddTraitBypassOption<int>(db, "aggression", "AGGRESSION", no_value, RangedValidator<int>(no_value, max_aggression));
+        AddTraitBypassOption<int>(db, "empire-id", "EMPIREID", no_value, RangedValidator<int>(no_value, IApp::MAX_AI_PLAYERS()));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
