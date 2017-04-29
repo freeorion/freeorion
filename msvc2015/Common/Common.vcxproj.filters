@@ -414,6 +414,9 @@
     <ClCompile Include="..\..\universe\Pathfinder.cpp">
       <Filter>Source Files\universe</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\util\CheckSums.cpp">
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="..\..\util\Version.cpp.in">

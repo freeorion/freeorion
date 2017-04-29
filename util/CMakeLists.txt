@@ -2,6 +2,7 @@ target_sources(freeorioncommon
     PUBLIC
         ${CMAKE_CURRENT_LIST_DIR}/AppInterface.h
         ${CMAKE_CURRENT_LIST_DIR}/blocking_combiner.h
+        ${CMAKE_CURRENT_LIST_DIR}/CheckSums.h
         ${CMAKE_CURRENT_LIST_DIR}/Directories.h
         ${CMAKE_CURRENT_LIST_DIR}/EnumText.h
         ${CMAKE_CURRENT_LIST_DIR}/i18n.h
@@ -26,6 +27,7 @@ target_sources(freeorioncommon
         ${CMAKE_CURRENT_LIST_DIR}/XMLDoc.h
     PRIVATE
         ${CMAKE_CURRENT_LIST_DIR}/AppInterface.cpp
+        ${CMAKE_CURRENT_LIST_DIR}/CheckSums.cpp
         ${CMAKE_CURRENT_LIST_DIR}/Directories.cpp
         ${CMAKE_CURRENT_LIST_DIR}/EnumText.cpp
         ${CMAKE_CURRENT_LIST_DIR}/i18n.cpp
