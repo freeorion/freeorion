@@ -354,7 +354,7 @@ public:
     /** \name Structors */ //@{
     ResearchQueueWnd(GG::X x, GG::Y y, GG::X w, GG::Y h) :
         CUIWnd("", x, y, w, h, GG::INTERACTIVE | GG::RESIZABLE | GG::DRAGABLE | GG::ONTOP | PINABLE,
-               "research.ResearchQueueWnd"),
+               "research.queue"),
         m_queue_lb(nullptr)
     {}
 
