@@ -127,7 +127,7 @@ namespace {
 
     class SavedDesignsManager {
     public:
-        const std::map<std::string, std::unique_ptr<ShipDesign>>& GetDesigns() const
+        const std::map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>& GetDesigns() const
         { return m_saved_designs; }
 
         static SavedDesignsManager& GetSavedDesignsManager() {
@@ -151,27 +151,27 @@ namespace {
             parse::ship_designs(saved_designs_dir, designs_and_paths, ordering);
 
             for (auto&& design_and_path : designs_and_paths) {
-                if (!m_saved_designs.count(design_and_path.first->Name()))
-                    m_saved_designs[design_and_path.first->Name()] = std::move(design_and_path.first);
+                if (!m_saved_designs.count(design_and_path.first->UUID()))
+                    m_saved_designs[design_and_path.first->UUID()] = std::move(design_and_path.first);
             }
         }
 
-        const ShipDesign* GetDesign(const std::string& design_name) {
-            const auto& it = m_saved_designs.find(design_name);
+        const ShipDesign* GetDesign(const boost::uuids::uuid& uuid) {
+            const auto& it = m_saved_designs.find(uuid);
             if (it == m_saved_designs.end())
                 return nullptr;
             return it->second.get();
         }
 
-        std::map<std::string, std::unique_ptr<ShipDesign>>::iterator begin() { return m_saved_designs.begin(); }
-        std::map<std::string, std::unique_ptr<ShipDesign>>::iterator end()   { return m_saved_designs.end(); }
+        std::map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>::iterator begin() { return m_saved_designs.begin(); }
+        std::map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>::iterator end()   { return m_saved_designs.end(); }
 
         /* Causes the human client Empire to add all saved designs. */
         void LoadAllSavedDesigns() {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
             if (const Empire* empire = GetEmpire(empire_id)) {
                 DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
-                for (const auto& entry : *this) {
+                for (const auto& entry : m_saved_designs) {
                     bool already_got = false;
                     for (int id : empire->OrderedShipDesigns()) {
                         const ShipDesign& ship_design = *GetShipDesign(id);
@@ -205,7 +205,7 @@ namespace {
         ~SavedDesignsManager()
         { ClearDesigns(); }
 
-        std::map<std::string, std::unique_ptr<ShipDesign>>  m_saved_designs;
+        std::map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>  m_saved_designs;
         static SavedDesignsManager*         s_instance;
     };
     SavedDesignsManager* SavedDesignsManager::s_instance = nullptr;
@@ -1175,7 +1175,7 @@ public:
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
                                                                 DesignComponentsSelectedSignal;
-    mutable boost::signals2::signal<void (const std::string&)>  SavedDesignSelectedSignal;
+    mutable boost::signals2::signal<void (const boost::uuids::uuid&)>  SavedDesignSelectedSignal;
 
     mutable boost::signals2::signal<void (const ShipDesign*)>   DesignClickedSignal;
     mutable boost::signals2::signal<void (const HullType*)>     HullClickedSignal;
@@ -1197,7 +1197,7 @@ public:
 
     class SavedDesignPanel : public GG::Control {
     public:
-        SavedDesignPanel(GG::X w, GG::Y h, const std::string& saved_design_name);
+        SavedDesignPanel(GG::X w, GG::Y h, const boost::uuids::uuid& saved_design_uuid);
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
@@ -1240,13 +1240,14 @@ public:
 
     class SavedDesignListBoxRow : public HullAndPartsListBoxRow {
     public:
-        SavedDesignListBoxRow(GG::X w, GG::Y h, const std::string& design_name);
+        SavedDesignListBoxRow(GG::X w, GG::Y h, const boost::uuids::uuid& design_uuid);
+        const boost::uuids::uuid        DesignUUID() const;
         const std::string&              DesignName() const;
         const std::string&              Description() const;
         bool                            LookupInStringtable() const;
 
     private:
-        std::string                     m_design_name;
+        boost::uuids::uuid              m_design_uuid;
     };
 
 protected:
@@ -1321,13 +1322,13 @@ void BasesListBox::HullPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         m_name->Resize(Size());
 }
 
-BasesListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const std::string& saved_design_name) :
+BasesListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const boost::uuids::uuid& saved_design_uuid) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_graphic(nullptr),
     m_name(nullptr)
 {
     SetChildClippingMode(ClipToClient);
-    const ShipDesign* design = GetSavedDesignsManager().GetDesign(saved_design_name);
+    const ShipDesign* design = GetSavedDesignsManager().GetDesign(saved_design_uuid);
     if (design) {
         m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(design->Hull()),
                                           GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
@@ -1379,20 +1380,38 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
 }
 
 BasesListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(GG::X w, GG::Y h,
-                                                           const std::string& design_name) :
+                                                           const boost::uuids::uuid& design_uuid) :
     HullAndPartsListBoxRow(w, h),
-    m_design_name(design_name)
+    m_design_uuid(design_uuid)
 {
-    push_back(new SavedDesignPanel(w, h, m_design_name));
+    push_back(new SavedDesignPanel(w, h, m_design_uuid));
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
+
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
+    if (!design)
+        WarnLogger() << "Design added to SavedDesignListBoxRow is not a valid saved design, uuid = " << design_uuid;
 }
 
-const std::string& BasesListBox::SavedDesignListBoxRow::DesignName() const
-{ return m_design_name; }
+const boost::uuids::uuid BasesListBox::SavedDesignListBoxRow::DesignUUID() const {
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
+    if (!design)
+        return boost::uuids::uuid{};
+    return design->UUID();
+}
+
+const std::string& BasesListBox::SavedDesignListBoxRow::DesignName() const {
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
+    if (!design)
+        return EMPTY_STRING;
+    return design->Name();
+}
 
 const std::string& BasesListBox::SavedDesignListBoxRow::Description() const {
     SavedDesignsManager& manager = GetSavedDesignsManager();
-    const ShipDesign* design = manager.GetDesign(m_design_name);
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
     if (!design)
         return EMPTY_STRING;
     return design->Description();
@@ -1400,7 +1419,7 @@ const std::string& BasesListBox::SavedDesignListBoxRow::Description() const {
 
 bool BasesListBox::SavedDesignListBoxRow::LookupInStringtable() const {
     SavedDesignsManager& manager = GetSavedDesignsManager();
-    const ShipDesign* design = manager.GetDesign(m_design_name);
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
     if (!design)
         return false;
     return design->LookupInStringtable();
@@ -1492,9 +1511,8 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         const BasesListBox::SavedDesignListBoxRow* design_row =
             boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
 
-        const std::string& design_name = design_row->DesignName();
         SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y,
-                                                               design_name);
+                                                               design_row->DesignUUID());
         Insert(row, insertion_point);
         row->Resize(row_size);
     }
@@ -1766,8 +1784,8 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, c
 
     SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
     if (saved_design_row) {
-        const std::string& design_name = saved_design_row->DesignName();
-        const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_name);
+        const auto design_uuid = saved_design_row->DesignUUID();
+        const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_uuid);
         if (design)
             DesignClickedSignal(design);
         return;
@@ -1841,9 +1859,9 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
         popup.Run();
 
     } else if (SavedDesignListBoxRow* design_row = dynamic_cast<SavedDesignListBoxRow*>(*it)) {
-        std::string design_name = design_row->DesignName();
+        const auto design_uuid = design_row->DesignUUID();
         SavedDesignsManager& manager = GetSavedDesignsManager();
-        const ShipDesign* design = manager.GetDesign(design_name);
+        const ShipDesign* design = manager.GetDesign(design_uuid);
         if (!design)
             return;
 
@@ -1854,7 +1872,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 
         DesignRightClickedSignal(design);
 
-        DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design_name;
+        DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design->Name();;
 
         // Context menu actions
         // add design
@@ -1889,11 +1907,8 @@ void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
         return;
     }
 
-    SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
-    if (sd_row) {
-        const std::string& design_name = sd_row->DesignName();
-        if (!design_name.empty())
-            SavedDesignSelectedSignal(design_name);
+    if (SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(*it)) {
+        SavedDesignSelectedSignal(sd_row->DesignUUID());
         return;
     }
 
@@ -2015,7 +2030,7 @@ public:
 
 private:
     void            DoLayout();
-    void            SavedDesignSelectedSlot(const std::string& design_name);
+    void            SavedDesignSelectedSlot(const boost::uuids::uuid& design_name);
 
     GG::TabWnd*     m_tabs;
     BasesListBox*   m_hulls_list;           // empty hulls on which a new design can be based
@@ -2189,10 +2204,8 @@ void DesignWnd::BaseSelector::DoLayout() {
     m_tabs->SizeMove(GG::Pt(left, top), ClientSize() - GG::Pt(LEFT_PAD, TOP_PAD));
 }
 
-void DesignWnd::BaseSelector::SavedDesignSelectedSlot(const std::string& design_name) {
-    if (design_name.empty())
-        return;
-    const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_name);
+void DesignWnd::BaseSelector::SavedDesignSelectedSlot(const boost::uuids::uuid& design_uuid) {
+    const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_uuid);
     if (!design)
         return;
 
@@ -3373,8 +3386,8 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::W
         const BasesListBox::SavedDesignListBoxRow* control =
             boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
         if (control) {
-            const std::string& name = control->DesignName();
-            const ShipDesign* design = GetSavedDesignsManager().GetDesign(name);
+            const auto& uuid = control->DesignUUID();
+            const ShipDesign* design = GetSavedDesignsManager().GetDesign(uuid);
             if (design) {
                 SetDesignComponents(design->Hull(), design->Parts(),
                                     design->Name(), design->Description());
