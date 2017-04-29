@@ -38,6 +38,15 @@
 
 #include <algorithm>
 #include <iterator>
+#include <functional>
+
+// Provide a hash function for boost::UUID
+namespace std {
+    template <> struct hash<boost::uuids::uuid> {
+        std::size_t operator()(const boost::uuids::uuid& x) const
+        { return boost::hash<boost::uuids::uuid>{}(x); }
+    };
+}
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
