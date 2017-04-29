@@ -2040,12 +2040,14 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         && m_planet_name->InClient(pt))
     {
         auto rename_action = [this, planet]() { // rename planet
-            std::string plt_name = planet->Name();
-            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), plt_name);
+            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
             edit_wnd.Run();
-            if (edit_wnd.Result() != "" && edit_wnd.Result() != planet->Name() && m_order_issuing_enabled)
+            if (edit_wnd.Result() != ""
+                && edit_wnd.Result() != planet->Name()
+                && m_order_issuing_enabled)
             {
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result())));
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result())));
                 Refresh();
             }
 

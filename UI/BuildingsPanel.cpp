@@ -418,16 +418,15 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         return;
     }
 
-
     auto scrap_building_action = [this, empire_id]() {
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ScrapOrder(empire_id, m_building_id)));};
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ScrapOrder(empire_id, m_building_id)));};
     auto un_scrap_building_action = [building]() {
-            // find order to scrap this building, and recind it
-            std::map<int, int> pending_scrap_orders = PendingScrapOrders();
-            std::map<int, int>::const_iterator it = pending_scrap_orders.find(building->ID());
-            if (it != pending_scrap_orders.end())
-                HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
-            };
+        // find order to scrap this building, and recind it
+        std::map<int, int> pending_scrap_orders = PendingScrapOrders();
+        std::map<int, int>::const_iterator it = pending_scrap_orders.find(building->ID());
+        if (it != pending_scrap_orders.end())
+            HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
+    };
 
     CUIPopupMenu popup(pt.x, pt.y);
 
@@ -444,7 +443,9 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     const std::string& building_type = building->BuildingTypeName();
     const BuildingType* bt = GetBuildingType(building_type);
     if (bt) {
-        auto pedia_lookup_building_type_action = [building_type]() { ClientUI::GetClientUI()->ZoomToBuildingType(building_type); };
+        auto pedia_lookup_building_type_action = [building_type]() {
+            ClientUI::GetClientUI()->ZoomToBuildingType(building_type);
+        };
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
         popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_building_type_action));
     }
