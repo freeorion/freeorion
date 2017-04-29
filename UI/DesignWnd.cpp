@@ -38,6 +38,8 @@
 
 #include <algorithm>
 #include <iterator>
+#include <unordered_set>
+#include <unordered_map>
 #include <functional>
 
 // Provide a hash function for boost::UUID
@@ -136,8 +138,8 @@ namespace {
 
     class SavedDesignsManager {
     public:
-        const std::map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>& GetDesigns() const
-        { return m_saved_designs; }
+        const std::vector<boost::uuids::uuid>& GetOrderedDesignUUIDs() const
+        { return m_ordering; }
 
         static SavedDesignsManager& GetSavedDesignsManager() {
             static SavedDesignsManager manager;
@@ -159,9 +161,37 @@ namespace {
             std::vector<boost::uuids::uuid> ordering;
             parse::ship_designs(saved_designs_dir, designs_and_paths, ordering);
 
+            m_saved_designs.clear();
             for (auto&& design_and_path : designs_and_paths) {
                 if (!m_saved_designs.count(design_and_path.first->UUID()))
                     m_saved_designs[design_and_path.first->UUID()] = std::move(design_and_path.first);
+                else
+                    WarnLogger() << "Duplicate ship design UUID " << design_and_path.first->UUID()
+                                 << " found for ship design " << design_and_path.first->Name()
+                                 << " in " << saved_designs_dir;
+            }
+
+            // Verify that all UUIDs in ordering exist
+            m_ordering.clear();
+            for (auto& uuid: ordering) {
+                if (!m_saved_designs.count(uuid)) {
+                    WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
+                                 << "a ship design that does not exist.";
+                    continue;
+                }
+                m_ordering.push_back(uuid);
+            }
+
+            // Verify that every design in m_saved_designs is in m_ordering.
+            if (m_ordering.size() != m_saved_designs.size()) {
+                std::unordered_set<boost::uuids::uuid> uuids_in_ordering{m_ordering.begin(), m_ordering.end()};
+                for (const auto& uuid_and_design: m_saved_designs) {
+                    if (!uuids_in_ordering.count(uuid_and_design.first)) {
+                        WarnLogger() << "Missing ship design " << uuid_and_design.second->Name()
+                                     << " added to the manifest.";
+                        m_ordering.push_back(uuid_and_design.first);
+                    }
+                }
             }
         }
 
@@ -172,10 +202,7 @@ namespace {
             return it->second.get();
         }
 
-        std::map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>::iterator begin() { return m_saved_designs.begin(); }
-        std::map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>::iterator end()   { return m_saved_designs.end(); }
-
-        /* Causes the human client Empire to add all saved designs. */
+         /* Causes the human client Empire to add all saved designs. */
         void LoadAllSavedDesigns() {
             int empire_id = HumanClientApp::GetApp()->EmpireID();
             if (const Empire* empire = GetEmpire(empire_id)) {
@@ -214,7 +241,8 @@ namespace {
         ~SavedDesignsManager()
         { ClearDesigns(); }
 
-        std::map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>  m_saved_designs;
+        std::vector<boost::uuids::uuid> m_ordering;
+        std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>  m_saved_designs;
         static SavedDesignsManager*         s_instance;
     };
     SavedDesignsManager* SavedDesignsManager::s_instance = nullptr;
@@ -1745,8 +1773,8 @@ void BasesListBox::PopulateWithSavedDesigns() {
     Clear();
     const GG::Pt row_size = ListRowSize();
 
-    for (const auto& entry : GetSavedDesignsManager()) {
-        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, entry.first);
+    for (const auto& entry : GetSavedDesignsManager().GetOrderedDesignUUIDs()) {
+        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, entry);
         Insert(row);
         row->Resize(row_size);
     }
