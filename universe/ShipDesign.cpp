@@ -967,7 +967,7 @@ std::string ShipDesign::Dump() const {
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
-    std::cout << "ShipDesign::Dump: m_name_desc_in_stringtable: " << m_name_desc_in_stringtable << std::endl;
+
     if (!m_name_desc_in_stringtable)
         retval += DumpIndent() + "NoStringtableLookup\n";
     retval += DumpIndent() + "hull = \"" + m_hull + "\"\n";
