@@ -23,7 +23,7 @@ namespace {
     // command-line options
     void AddOptions(OptionsDB& db) {
         db.Add<std::string>("dir.resource.path",    UserStringNop("OPTIONS_DB_RESOURCE_DIR"),          PathToString(GetRootDataDir() / "default"));
-        db.Add<std::string>('S', "save-dir",        UserStringNop("OPTIONS_DB_SAVE_DIR"),              PathToString(GetUserDataDir() / "save"));
+        db.Add<std::string>('S', "dir.save.path",   UserStringNop("OPTIONS_DB_SAVE_DIR"),              PathToString(GetUserDataDir() / "save"));
         db.Add<std::string>("server-save-dir",      UserStringNop("OPTIONS_DB_SERVER_SAVE_DIR"),       PathToString(GetUserDataDir() / "save"));
         db.Add<std::string>("log-level",            UserStringNop("OPTIONS_DB_LOG_LEVEL"),             "",
                             OrValidator<std::string>(LogLevelValidator(), DiscreteValidator<std::string>("")), false);
