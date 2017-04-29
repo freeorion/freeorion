@@ -812,7 +812,7 @@ void ProductionWnd::CompleteConstruction() {
 
     m_production_info_panel = GG::Wnd::Create<ProductionInfoPanel>(UserString("PRODUCTION_WND_TITLE"), UserString("PRODUCTION_INFO_PP"),
                                                       GG::X0, GG::Y0, queue_width, info_height,
-                                                      "production.InfoPanel");
+                                                      "production.info_panel");
     m_queue_wnd = GG::Wnd::Create<ProductionQueueWnd>(GG::X0, info_height, queue_width, ClientSize().y - info_height);
     m_build_designator_wnd = GG::Wnd::Create<BuildDesignatorWnd>(ClientSize().x, ClientSize().y);
 
