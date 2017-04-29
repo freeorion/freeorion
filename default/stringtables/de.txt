@@ -1078,9 +1078,6 @@ Die Lautstärke (0 bis 255) in welcher Musik gespielt werden soll.
 OPTIONS_DB_QUICKSTART
 Beginnt ein neues Schnellstartspiel. Das Hauptmenü wird umgangen.
 
-OPTIONS_DB_CHECKED_GL_VERSION
-Speichert ob die OpenGL Version des Systems überprüft wurde. Wenn nicht, werden einige Zeichenoptionen abhängig von der GL Version angepasst, nachdem die Version überprüft wurde.
-
 OPTIONS_DB_RESET_FSSIZE
 Speichert ob der Vollbildmodus zu den gespeicherten Wert zurückgesetzt werden soll. Wenn nicht gesetzt, wird die gespeicherte Auflösung genutzt, ansonsten wird die höchste Auflösung genutzt, welche unterstützt wird.
 
