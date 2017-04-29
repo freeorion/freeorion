@@ -507,10 +507,11 @@ void OptionsDB::SetFromFile(const boost::filesystem::path& file_path,
         boost::filesystem::ifstream ifs(file_path);
         if (ifs) {
             doc.ReadDoc(ifs);
-            if (version.empty() || (doc.root_node.ContainsChild("version-string") &&
-                                    doc.root_node.Child("version-string").Text() == version))
+            if (version.empty() || (doc.root_node.ContainsChild("version") &&
+                                    doc.root_node.Child("version").ContainsChild("string") &&
+                                    version == doc.root_node.Child("version").Child("string").Text()))
             {
-                GetOptionsDB().SetFromXML(doc);
+                    GetOptionsDB().SetFromXML(doc);
             }
         }
     } catch (const std::exception&) {
