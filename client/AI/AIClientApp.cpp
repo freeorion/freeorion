@@ -87,7 +87,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
         m_max_aggression = boost::lexical_cast<int>(args.at(2));
     }
 
-    InitLogger(AICLIENT_LOG_FILENAME, "AI");
+    InitLoggingSystem(AICLIENT_LOG_FILENAME, "AI");
     DebugLogger() << PlayerName() + " ai client initialized.";
 }
 

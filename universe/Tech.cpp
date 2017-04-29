@@ -504,7 +504,7 @@ void TechManager::AllChildren(const Tech* tech, std::map<std::string, std::strin
     for (const std::string& unlocked_tech : tech->UnlockedTechs()) {
         if (unlocked_tech == tech->Name()) {
             // infinite loop
-            FatalLogger() << "Tech " << unlocked_tech << " unlocks itself";
+            ErrorLogger() << "Tech " << unlocked_tech << " unlocks itself";
             continue;
         }
         children[unlocked_tech] = tech->Name();

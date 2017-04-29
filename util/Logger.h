@@ -8,9 +8,11 @@
 #include "Export.h"
 
 
-/** Initializes the logging system. Log to the given file.
- * If the file already exists it will be deleted. */
-FO_COMMON_API void InitLogger(const std::string& logFile, const std::string& pattern);
+
+/** Initializes the logging system. Log to the given file.  If the file already
+ * exists it will be deleted. \p root_logger_name is the name by which the
+ * default logger "" appears in the log file.*/
+FO_COMMON_API void InitLoggingSystem(const std::string& logFile, const std::string& root_logger_name);
 
 /** Accessors for the App's logger */
 FO_COMMON_API void SetLoggerPriority(int priority);
@@ -40,9 +42,6 @@ BOOST_LOG_ATTRIBUTE_KEYWORD(log_src_linenum, "SrcLinenum", int);
 
 #define ErrorLogger()\
     FO_LOGGER(error)
-
-#define FatalLogger()\
-    FO_LOGGER(fatal)
 
 extern int g_indent;
 
