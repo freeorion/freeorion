@@ -143,7 +143,7 @@ namespace {
         SetEmptyStringDefaultOption("GameSetup.empire-name", UserString("DEFAULT_EMPIRE_NAME"));
         std::string player_name = UserString("DEFAULT_PLAYER_NAME");
         SetEmptyStringDefaultOption("setup.player.name", player_name);
-        SetEmptyStringDefaultOption("multiplayersetup.player-name", player_name);
+        SetEmptyStringDefaultOption("setup.multiplayer.player.name", player_name);
     }
 
     std::string GetGLVersionString()
