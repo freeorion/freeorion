@@ -419,7 +419,7 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
 
     m_research_info_panel = GG::Wnd::Create<ProductionInfoPanel>(
         UserString("RESEARCH_WND_TITLE"), UserString("RESEARCH_INFO_RP"),
-        GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.InfoPanel");
+        GG::X0, GG::Y0, GG::X(queue_width), GG::Y(100), "research.info_panel");
     m_queue_wnd = GG::Wnd::Create<ResearchQueueWnd>(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = GG::Wnd::Create<TechTreeWnd>(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
