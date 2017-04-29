@@ -990,23 +990,19 @@ void ClientUI::HandleSizeChange(bool fullscreen) const {
     OptionsDB& db = GetOptionsDB();
 
     if (db.Get<bool>("ui.window.reposition.enabled")) {
-        std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-        if (!fullscreen)
-            windowed = "-windowed";
+        std::string window_mode = fullscreen ? ".fullscreen" : ".windowed";
+        std::string option_name = "ui.window." + MESSAGE_WND_NAME + window_mode + ".left_edge";
 
         // Invalidate the message window position so that we know to
         // recalculate positions on the next resize or fullscreen switch...
-        db.Set<int>("ui.window."+MESSAGE_WND_NAME+".left"+windowed,
-                    db.GetDefault<int>("ui.window."+MESSAGE_WND_NAME+".left"+windowed));
+        db.Set<int>(option_name, db.GetDefault<int>(option_name));
     }
 }
 
 void ClientUI::HandleFullscreenSwitch() const {
     OptionsDB& db = GetOptionsDB();
 
-    std::string windowed = ""; // empty string in fullscreen mode, appends -windowed in windowed mode
-    if (!db.Get<bool>("video.fullscreen.enabled"))
-        windowed = "-windowed";
+    std::string window_mode = db.Get<bool>("video.fullscreen.enabled") ? ".fullscreen" : ".windowed";
 
     // Check if the message window position has been invalidated as a stand-in
     // for actually checking if all windows have been given valid positions for
@@ -1014,9 +1010,8 @@ void ClientUI::HandleFullscreenSwitch() const {
     // std::numeric_limits<GG::X::value_type>::min(), defined in UI/CUIWnd.cpp).
     // This relies on the message window not supplying a default position to
     // the CUIWnd constructor...
-    if (db.Get<int>("ui.window."+MESSAGE_WND_NAME+".left"+windowed) ==
-        db.GetDefault<int>("ui.window."+MESSAGE_WND_NAME+".left"+windowed))
-    {
+    std::string option_name = "ui.window." + MESSAGE_WND_NAME + window_mode + ".left_edge";
+    if (db.Get<int>(option_name) == db.GetDefault<int>(option_name)) {
         HumanClientApp::GetApp()->RepositionWindowsSignal();
     }
 }
