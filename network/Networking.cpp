@@ -4,7 +4,7 @@
 
 namespace {
     void AddOptions(OptionsDB& db) {
-        db.Add("network.discovery-port",    UserStringNop("OPTIONS_DB_NETWORK_DISCOVERY_PORT"), 12345,  RangedValidator<int>(1025, 65535));
+        db.Add("network.discovery.port",    UserStringNop("OPTIONS_DB_NETWORK_DISCOVERY_PORT"), 12345,  RangedValidator<int>(1025, 65535));
         db.Add("network.message-port",      UserStringNop("OPTIONS_DB_NETWORK_MESSAGE_PORT"),   12346,  RangedValidator<int>(1025, 65535));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
@@ -17,7 +17,7 @@ namespace Networking {
     const int INVALID_PLAYER_ID = -1;
 
     int DiscoveryPort()
-    { return GetOptionsDB().Get<int>("network.discovery-port"); }
+    { return GetOptionsDB().Get<int>("network.discovery.port"); }
     int MessagePort()
     { return GetOptionsDB().Get<int>("network.message-port"); }
 }
