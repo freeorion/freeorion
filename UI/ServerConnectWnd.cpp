@@ -33,7 +33,7 @@ namespace {
 
     void AddOptions(OptionsDB& db) {
         db.Add("setup.multiplayer.player.name", UserStringNop("OPTIONS_DB_MP_PLAYER_NAME"),    std::string(""),            Validator<std::string>());
-        db.Add("multiplayersetup.host-address", UserStringNop("OPTIONS_DB_MP_HOST_ADDRESS"),   std::string("localhost"),   Validator<std::string>());
+        db.Add("setup.multiplayer.host.address", UserStringNop("OPTIONS_DB_MP_HOST_ADDRESS"),  std::string("localhost"),   Validator<std::string>());
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 }
@@ -67,7 +67,7 @@ void ServerConnectWnd::CompleteConstruction() {
     m_servers_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_SINGLESEL);
     m_find_LAN_servers_bn = Wnd::Create<CUIButton>(UserString("REFRESH_LIST_BN"));
     m_internet_game_label = GG::Wnd::Create<CUILabel>(UserString("INTERNET_GAME_LABEL"), GG::FORMAT_LEFT | GG::FORMAT_NOWRAP);
-    m_IP_address_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("multiplayersetup.host-address"));
+    m_IP_address_edit = GG::Wnd::Create<CUIEdit>(GetOptionsDB().Get<std::string>("setup.multiplayer.host.address"));
     m_ok_bn = Wnd::Create<CUIButton>(UserString("OK"));
     m_cancel_bn = Wnd::Create<CUIButton>(UserString("CANCEL"));
 
@@ -180,7 +180,7 @@ void ServerConnectWnd::IPAddressEdited(const std::string& str) {
 void ServerConnectWnd::OkClicked() {
     // record selected galaxy setup options as new defaults
     GetOptionsDB().Set("setup.multiplayer.player.name", m_player_name_edit->Text());
-    GetOptionsDB().Set("multiplayersetup.host-address", m_IP_address_edit->Text());
+    GetOptionsDB().Set("setup.multiplayer.host.address", m_IP_address_edit->Text());
     GetOptionsDB().Commit();
 
     m_result.first = *m_player_name_edit;
