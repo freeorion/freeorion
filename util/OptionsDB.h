@@ -183,7 +183,7 @@ public:
      * @param[in,out] doc  The document this OptionsDB should be written to.
      *      This resets the given @p doc.
      * @param[in] non_default_only Do not include options which are set to their
-     *      default value, is unrecognized, or is "version-string"
+     *      default value, is unrecognized, or is "version.string"
      */
     void        GetXML(XMLDoc& doc, bool non_default_only = false) const;
 

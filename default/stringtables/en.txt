@@ -5656,7 +5656,7 @@ When using this button, there are a couple of known issues:
 Some options may be included even though they were not changed by the user, as they were adjusted after their default value. After updating to a new version, it may be required to manually remove these options from the file to update their default setting.
 Windows that have not been open in the current session may not have previously changed settings retained. It is advised to have a game running and open all desired windows at least once to initialize the settings before using this button.
 
-The persistent configuration file may be manually created if desired, but should never contain the "version-string" option.
+The persistent configuration file may be manually created if desired, but should never contain the "version.string" option.
 
 
 Location of Config Files:
