@@ -8,9 +8,9 @@ Part
         "FU_TRANSPATIAL_DRIVE"
     ]
     class = Speed
-    capacity = 10
+    capacity = 20
     mountableSlotTypes = Internal
-    buildcost = 10 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildcost = 15 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 3
     tags = [ "PEDIA_PC_SPEED" ]
     location = OwnedBy empire = Source.Owner

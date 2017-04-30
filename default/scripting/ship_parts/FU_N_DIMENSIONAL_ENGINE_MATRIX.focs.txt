@@ -8,10 +8,10 @@ Part
         "FU_TRANSPATIAL_DRIVE"
     ]
     class = Speed
-    capacity = 20
+    capacity = 40
     mountableSlotTypes = Internal
-    buildcost = 20 * [[FLEET_UPKEEP_MULTIPLICATOR]]
-    buildtime = 4
+    buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
+    buildtime = 5
     tags = [ "PEDIA_PC_SPEED" ]
     location = OwnedBy empire = Source.Owner
     icon = "icons/ship_parts/engine-2.png"
