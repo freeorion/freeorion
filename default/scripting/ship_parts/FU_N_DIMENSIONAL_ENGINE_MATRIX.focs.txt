@@ -9,7 +9,7 @@ Part
     ]
     class = Speed
     capacity = 40
-    mountableSlotTypes = Internal
+    mountableSlotTypes = [ Internal Core ]
     buildcost = 25 * [[FLEET_UPKEEP_MULTIPLICATOR]]
     buildtime = 5
     tags = [ "PEDIA_PC_SPEED" ]
