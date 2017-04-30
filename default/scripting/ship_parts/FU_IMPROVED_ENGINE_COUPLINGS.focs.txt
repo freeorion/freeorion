@@ -1,6 +1,12 @@
 Part
     name = "FU_IMPROVED_ENGINE_COUPLINGS"
     description = "FU_IMPROVED_ENGINE_COUPLINGS_DESC"
+    exclusions = [
+        "FU_IMPROVED_ENGINE_COUPLINGS"
+        "FU_N_DIMENSIONAL_ENGINE_MATRIX"
+        "FU_SINGULARITY_ENGINE_CORE"
+        "FU_TRANSPATIAL_DRIVE"
+    ]
     class = Speed
     capacity = 10
     mountableSlotTypes = Internal
