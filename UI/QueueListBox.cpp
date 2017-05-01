@@ -188,16 +188,14 @@ void QueueListBox::Clear() {
     DragDropLeave();
 }
 
-std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) const
-{
+std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) const {
     return [it, this]() {
         if (GG::ListBox::Row* row = *it)
             QueueItemMovedSignal(row, 0);
     };
 }
 
-std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) const
-{
+std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) const {
     return [it, this]() {
         if (GG::ListBox::Row* row = *it)
             QueueItemMovedSignal(row, NumRows());

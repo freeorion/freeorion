@@ -2559,7 +2559,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
     // Zoom to design
     if (design) {
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % design->Name(true));
-        auto zoom_to_design_action = [design]() {ClientUI::GetClientUI()->ZoomToShipDesign(design->ID()); };
+        auto zoom_to_design_action = [design]() { ClientUI::GetClientUI()->ZoomToShipDesign(design->ID()); };
         popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_to_design_action));
     }
 

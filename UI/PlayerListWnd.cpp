@@ -728,10 +728,12 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         return;
     }
 
-    auto make_send_diplomatic_action = [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id](const std::function<DiplomaticMessage(int, int)>& message){
-        return [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id, &message](){
+    auto make_send_diplomatic_action = [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id](const std::function<DiplomaticMessage(int, int)>& message) {
+        return [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id, &message]() {
             HumanClientApp::GetApp()->Networking().SendMessage(
-                DiplomacyMessage(client_player_id, clicked_player_id, message(client_empire_id, clicked_empire_id)));};};
+                DiplomacyMessage(client_player_id, clicked_player_id, message(client_empire_id, clicked_empire_id)));
+        };
+    };
 
     // Actions
     auto war_declaration_action = make_send_diplomatic_action(WarDeclarationDiplomaticMessage);
@@ -742,7 +744,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     auto end_alliance_declaration_action = make_send_diplomatic_action(EndAllianceDiplomaticMessage);
     auto proposal_cancel_action = make_send_diplomatic_action(CancelDiplomaticMessage);
     auto proposal_reject_action = make_send_diplomatic_action(RejectProposalDiplomaticMessage);
-    auto pedia_lookup_action = [clicked_empire_id]() {ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id);};
+    auto pedia_lookup_action = [clicked_empire_id]() { ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id); };
 
     CUIPopupMenu popup(pt.x, pt.y);
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER &&

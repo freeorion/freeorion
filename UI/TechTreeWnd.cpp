@@ -1923,7 +1923,7 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     if (rq.find(tech_name) != rq.end())
         return;
 
-    auto tech_dclick_action = [this, it, pt]() {TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
+    auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
     auto pedia_display_action = [this, &tech_name]() { TechPediaDisplay(tech_name); };
 
     CUIPopupMenu popup(pt.x, pt.y);

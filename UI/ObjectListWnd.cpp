@@ -2456,7 +2456,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 int ship_design = it->first;
                 bool needs_queue_update(false);
                 for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
+                    ObjectRow* row = dynamic_cast<ObjectRow*>(*entry);
                     if (!row)
                         continue;
                     std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());

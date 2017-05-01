@@ -1839,8 +1839,8 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
         // Context menu actions
         auto delete_design_action = [&client_empire_id, &design_id]() {
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));}
-        ;
+                OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
+        };
 
         auto rename_design_action = [&client_empire_id, &design_id, design, &design_row]() {
             CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
@@ -1889,19 +1889,20 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 
         DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design_name;
 
-
         // Context menu actions
         // add design
-        auto add_design_action = [&design, empire_id](){
+        auto add_design_action = [&design, empire_id]() {
             DebugLogger() << "BasesListBox::BaseRightClicked Add Saved Design" << design->Name();
             int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));};
+                OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+        };
 
         // add all saved designs
-        auto add_all_saved_designs_action = [&manager](){
+        auto add_all_saved_designs_action = [&manager]() {
             DebugLogger() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
-            manager.LoadAllSavedDesigns();};
+            manager.LoadAllSavedDesigns();
+        };
 
         // create popup menu with a commands in it
         CUIPopupMenu popup(pt.x, pt.y);

@@ -313,7 +313,9 @@ bool PopupMenu::Run()
     if (retval
         && m_item_selected
         && m_item_selected->m_selected_on_close_callback)
+    {
         m_item_selected->m_selected_on_close_callback();
+    }
 
     return retval;
 }

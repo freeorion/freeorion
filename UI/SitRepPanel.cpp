@@ -692,7 +692,7 @@ void SitRepPanel::DismissalMenu(GG::ListBox::iterator it, const GG::Pt& pt, cons
             return;
         GG::GUI::GetGUI()->SetClipboardText(GG::Font::StripTags(sitrep_text));
     };
-    auto help_action = []() {ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE");};
+    auto help_action = []() { ClientUI::GetClientUI()->ZoomToEncyclopediaEntry("SITREP_IGNORE_BLOCK_TITLE"); };
 
     popup.AddMenuItem(GG::MenuItem(entry_margin + UserString("HOTKEY_COPY"), false, false, copy_action));
     popup.AddMenuItem(GG::MenuItem(entry_margin + UserString("POPUP_MENU_PEDIA_PREFIX") +
