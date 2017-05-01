@@ -5,6 +5,7 @@
 #include "../util/Export.h"
 #include "../util/i18n.h"
 #include "../util/Random.h"
+#include "../util/CheckSums.h"
 
 #include <boost/algorithm/string/case_conv.hpp>
 #include <boost/lexical_cast.hpp>
@@ -137,6 +138,9 @@ struct ValueRefBase
     virtual void SetTopLevelContent(const std::string& content_name)
     {}
 
+    virtual unsigned int GetCheckSum() const
+    { return 0; }
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -176,6 +180,8 @@ struct Constant : public ValueRefBase<T>
 
     T Value() const;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     T           m_value;
     std::string m_top_level_content;    // in the special case that T is std::string and m_value is "CurrentContent", return this instead
@@ -212,6 +218,8 @@ struct Variable : public ValueRefBase<T>
     ReferenceType GetReferenceType() const;
 
     const std::vector<std::string>& PropertyName() const;
+
+    unsigned int GetCheckSum() const override;
 
 protected:
     mutable ReferenceType       m_ref_type;
@@ -632,6 +640,17 @@ template <class T>
 void Constant<T>::SetTopLevelContent(const std::string& content_name)
 { m_top_level_content = content_name; }
 
+template <class T>
+unsigned int Constant<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
+    CheckSums::CheckSumCombine(retval, m_value);
+    std::cout << "GetCheckSum(Constant<T>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    return retval;
+}
+
 template <>
 FO_COMMON_API std::string Constant<int>::Description() const;
 
@@ -676,6 +695,7 @@ void Constant<T>::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_value)
         & BOOST_SERIALIZATION_NVP(m_top_level_content);
 }
+
 
 ///////////////////////////////////////////////////////////
 // Variable                                              //
@@ -739,6 +759,18 @@ std::string Variable<T>::Description() const
 template <class T>
 std::string Variable<T>::Dump() const
 { return ReconstructName(m_property_name, m_ref_type); }
+
+template <class T>
+unsigned int Variable<T>::GetCheckSum() const
+{
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
+    CheckSums::CheckSumCombine(retval, m_property_name);
+    CheckSums::CheckSumCombine(retval, m_ref_type);
+    std::cout << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    return retval;
+}
 
 template <>
 FO_COMMON_API PlanetSize Variable<PlanetSize>::Eval(const ScriptingContext& context) const;

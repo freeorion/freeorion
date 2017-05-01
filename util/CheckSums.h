@@ -4,6 +4,7 @@
 #include "Export.h"
 
 #include <iostream>
+#include <typeinfo>
 
 namespace CheckSums {
     const unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int

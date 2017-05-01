@@ -1,6 +1,7 @@
 #include "CheckSums.h"
 
 #include <cassert>
+#include <cmath>
 
 namespace CheckSums {
     void CheckSumCombine(...)
