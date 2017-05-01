@@ -133,8 +133,45 @@ namespace {
 
     const std::string DESIGN_FILENAME_PREFIX = "ShipDesign-";
     const std::string DESIGN_FILENAME_EXTENSION = ".focs.txt";
+    const std::string DESIGN_MANIFEST_PREFIX = "ShipDesignManifest";
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
     boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
+
+    void WriteDesignToFile(const ShipDesign& design, boost::filesystem::path& file) {
+        try {
+            boost::filesystem::ofstream ofs(file);
+            if (!ofs)
+                throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+            ofs << design.Dump();
+            TraceLogger() << "Wrote ship design to " << PathString(file);
+
+        } catch (const std::exception& e) {
+            ErrorLogger() << "Error writing design file.  Exception: " << ": " << e.what();
+            ClientUI::MessageBox(e.what(), true);
+        }
+    }
+
+    void SaveDesign(int design_id) {
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design)
+            return;
+
+        // ensure directory present
+        boost::filesystem::path designs_dir_path(SavedDesignsDir());
+        if (!exists(designs_dir_path))
+            boost::filesystem::create_directories(designs_dir_path);
+
+        // Since there is no easy way to guarantee that an arbitrary design name with possibly
+        // embedded decorator code is a safe file name, use the UUID. The users will never interact
+        // with this filename.
+        std::string file_name =
+            DESIGN_FILENAME_PREFIX + boost::uuids::to_string(design->UUID()) + DESIGN_FILENAME_EXTENSION;
+
+        boost::filesystem::path save_path =
+            boost::filesystem::absolute(PathString(designs_dir_path / file_name));
+
+        WriteDesignToFile(*design, save_path);
+    }
 
     class SavedDesignsManager {
     public:
@@ -237,6 +274,32 @@ namespace {
             }
         }
 
+        void SaveManifest() {
+            const std::vector<boost::uuids::uuid>& uuids = m_ordering;
+
+            // ensure directory present
+            boost::filesystem::path designs_dir_path(SavedDesignsDir());
+            if (!exists(designs_dir_path))
+                boost::filesystem::create_directories(designs_dir_path);
+
+            std::string file_name = DESIGN_MANIFEST_PREFIX + DESIGN_FILENAME_EXTENSION;
+
+            boost::filesystem::path file =
+                boost::filesystem::absolute(PathString(designs_dir_path / file_name));
+
+            try {
+                boost::filesystem::ofstream ofs(file);
+                if (!ofs)
+                    throw std::runtime_error(UNABLE_TO_OPEN_FILE);
+                ofs << "ShipDesignManifest\n";
+                for (const auto uuid: uuids)
+                    ofs << "    uuid = \"" << uuid << "\"\n";
+            } catch (const std::exception& e) {
+                ErrorLogger() << "Error writing ship design manifest file.  Exception: " << ": " << e.what();
+                ClientUI::MessageBox(e.what(), true);
+            }
+        }
+
     private:
         SavedDesignsManager() {
             if (s_instance)
@@ -256,42 +319,6 @@ namespace {
 
     SavedDesignsManager& GetSavedDesignsManager()
     { return SavedDesignsManager::GetSavedDesignsManager(); }
-
-    void WriteDesignToFile(const ShipDesign& design, boost::filesystem::path& file) {
-        try {
-            boost::filesystem::ofstream ofs(file);
-            if (!ofs)
-                throw std::runtime_error(UNABLE_TO_OPEN_FILE);
-            ofs << design.Dump();
-            TraceLogger() << "Wrote ship design to " << PathString(file);
-
-        } catch (const std::exception& e) {
-            ErrorLogger() << "Error writing design file.  Exception: " << ": " << e.what();
-            ClientUI::MessageBox(e.what(), true);
-        }
-    }
-
-    void SaveDesign(int design_id) {
-        const ShipDesign* design = GetShipDesign(design_id);
-        if (!design)
-            return;
-
-        // ensure directory present
-        boost::filesystem::path designs_dir_path(SavedDesignsDir());
-        if (!exists(designs_dir_path))
-            boost::filesystem::create_directories(designs_dir_path);
-
-        // Since there is no easy way to guarantee that an arbitrary design name with possibly
-        // embedded decorator code is a safe file name, use the UUID. The users will never interact
-        // with this filename.
-        std::string file_name =
-            DESIGN_FILENAME_PREFIX + boost::uuids::to_string(design->UUID()) + DESIGN_FILENAME_EXTENSION;
-
-        boost::filesystem::path save_path =
-            boost::filesystem::absolute(PathString(designs_dir_path / file_name));
-
-        WriteDesignToFile(*design, save_path);
-    }
 }
 
 //////////////////////////////////////////////////
