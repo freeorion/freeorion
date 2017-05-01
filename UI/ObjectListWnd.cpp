@@ -2426,14 +2426,16 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
             auto focus_action = [this, entry, app, &focus_ship_building_common_action]() {
                 std::string focus = entry.first;
                 for (const auto& selection : m_list_box->Selections()) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(*selection);
-                    if (row) {
-                        std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
-                        if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
-                            one_planet->SetFocus(focus);
-                            app->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(app->EmpireID(), one_planet->ID(), focus)));
-                        }
-                    }
+                    ObjectRow* row = dynamic_cast<ObjectRow*>(*selection);
+                    if (!row)
+                        continue;
+
+                    std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    if (!(one_planet && one_planet->OwnedBy(app->EmpireID())))
+                        continue;
+
+                    one_planet->SetFocus(focus);
+                    app->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(app->EmpireID(), one_planet->ID(), focus)));
                 }
 
                 focus_ship_building_common_action();
