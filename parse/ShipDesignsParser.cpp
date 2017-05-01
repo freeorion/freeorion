@@ -8,6 +8,7 @@
 #include <boost/phoenix/function/adapt_function.hpp>
 #include <boost/uuid/nil_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/optional/optional.hpp>
 
 FO_COMMON_API extern const int ALL_EMPIRES;
 
@@ -22,7 +23,7 @@ namespace std {
 #endif
 
 namespace {
-    void insert_ship_design(std::vector<std::unique_ptr<ShipDesign>>& designs,
+    void insert_ship_design(boost::optional<std::unique_ptr<ShipDesign>>& maybe_design,
                             const std::string& name, const std::string& description,
                             const std::string& hull, const std::vector<std::string>& parts,
                             const std::string& icon, const std::string& model,
@@ -33,7 +34,7 @@ namespace {
             new ShipDesign(name, description, 0, ALL_EMPIRES, hull, parts, icon, model,
                            name_desc_in_stringtable, false, uuid));
 
-        designs.push_back(std::move(design));
+        maybe_design = std::move(design);
     };
     BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_ship_design_, insert_ship_design, 9)
 
@@ -140,8 +141,8 @@ namespace {
         using design_prefix_rule = parse::detail::rule<
             void (std::string&, std::string&, std::string&, bool&, boost::uuids::uuid&)>;
 
-        typedef parse::detail::rule<
-            void (std::vector<std::unique_ptr<ShipDesign>>&),
+        using design_rule = parse::detail::rule<
+            void (boost::optional<std::unique_ptr<ShipDesign>>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -151,11 +152,11 @@ namespace {
                 bool,
                 boost::uuids::uuid
             >
-        > design_rule;
+        >;
 
-        typedef parse::detail::rule<
-            void (std::vector<std::unique_ptr<ShipDesign>>&)
-        > start_rule;
+        using start_rule = parse::detail::rule<
+            void (boost::optional<std::unique_ptr<ShipDesign>>&)
+        >;
 
         design_prefix_rule design_prefix;
         design_rule design;
@@ -206,7 +207,7 @@ namespace {
 
 namespace parse {
     bool ship_designs(const boost::filesystem::path& path,
-                      std::vector<std::unique_ptr<ShipDesign>>& designs,
+                      std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>>& designs_and_paths,
                       std::vector<boost::uuids::uuid>& ordering)
     {
         boost::filesystem::path manifest_file;
@@ -223,7 +224,13 @@ namespace parse {
             }
 
             try {
-                result &= detail::parse_file<rules, std::vector<std::unique_ptr<ShipDesign>>>(file, designs);
+                boost::optional<std::unique_ptr<ShipDesign>> maybe_design;
+                auto partial_result = detail::parse_file<rules, boost::optional<std::unique_ptr<ShipDesign>>>(file, maybe_design);
+                result &= partial_result;
+                if (!partial_result || !maybe_design)
+                    continue;
+                designs_and_paths.push_back({std::move(*maybe_design), file});
+
             } catch (const std::runtime_error& e) {
                 result = false;
                 ErrorLogger() << "Failed to parse ship design in " << file << " from " << path << " because " << e.what();;
@@ -234,6 +241,7 @@ namespace parse {
             try {
                 result &= detail::parse_file<manifest_rules, std::vector<boost::uuids::uuid>>(manifest_file, ordering);
             } catch (const std::runtime_error& e) {
+                result = false;
                 ErrorLogger() << "Failed to parse ship design manifest in " << manifest_file << " from " << path
                               << " because " << e.what();;
             }
@@ -241,10 +249,25 @@ namespace parse {
 
         return result;
     }
+}
+namespace {
+    /** Remove the file paths from the returned ShipDesigns.*/
+    bool only_ship_designs(const boost::filesystem::path& path,
+                           std::vector<std::unique_ptr<ShipDesign>>& designs,
+                           std::vector<boost::uuids::uuid>& ordering)
+    {
+        std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
+        auto result = parse::ship_designs(path,  designs_and_paths, ordering);
+        for (auto& design_and_path : designs_and_paths)
+            designs.push_back(std::move(design_and_path.first));
+        return result;
+    }
+}
 
+namespace parse {
     bool ship_designs(std::vector<std::unique_ptr<ShipDesign>>& designs, std::vector<boost::uuids::uuid>& ordering)
-    { return ship_designs("scripting/ship_designs", designs, ordering); }
+    { return only_ship_designs("scripting/ship_designs",  designs, ordering); }
 
     bool monster_designs(std::vector<std::unique_ptr<ShipDesign>>& designs, std::vector<boost::uuids::uuid>& ordering)
-    { return ship_designs("scripting/monster_designs", designs, ordering); }
+    { return only_ship_designs("scripting/monster_designs", designs, ordering); }
 }
