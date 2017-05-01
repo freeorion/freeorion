@@ -92,7 +92,7 @@ public:
     bool SendMessage(const Message& message, PlayerConnectionPtr player_connection);
 
     /** Sends a synchronous message \a message to the player indicated in the message and returns true on success. */
-    bool SendMessage(const Message& message);
+    bool SendMessageAll(const Message& message);
 
     /** Disconnects the server from player \a id. */
     void Disconnect(int id);

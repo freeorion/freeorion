@@ -643,7 +643,7 @@ void MultiPlayerLobbyWnd::Render() {
     CUIWnd::Render();
     GG::Pt image_ul = g_preview_ul + ClientUpperLeft(), image_lr = image_ul + PREVIEW_SZ;
     GG::FlatRectangle(GG::Pt(image_ul.x - PREVIEW_MARGIN, image_ul.y - PREVIEW_MARGIN),
-                      GG::Pt(image_lr.x + PREVIEW_MARGIN, image_lr.y + PREVIEW_MARGIN), 
+                      GG::Pt(image_lr.x + PREVIEW_MARGIN, image_lr.y + PREVIEW_MARGIN),
                       GG::CLR_BLACK, ClientUI::WndInnerBorderColor(), 1);
 }
 
@@ -651,9 +651,8 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG
     if ((key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER) &&
          GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit)
     {
-        int receiver = Networking::INVALID_PLAYER_ID;   // all players by default
         std::string text = m_chat_input_edit->Text();   // copy, so subsequent clearing doesn't affect typed message that is used later...
-        HumanClientApp::GetApp()->Networking().SendMessage(LobbyChatMessage(HumanClientApp::GetApp()->PlayerID(), receiver, text));
+        HumanClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(HumanClientApp::GetApp()->PlayerID(), text));
         m_chat_input_edit->SetText("");
 
         // look up this client's player name by ID

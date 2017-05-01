@@ -152,12 +152,19 @@ WaitingForSPHostAck::~WaitingForSPHostAck()
 boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForSPHostAck.HostSPGame";
 
-    Client().Networking().SetPlayerID(msg.m_message.ReceivingPlayer());
-    Client().Networking().SetHostPlayerID(msg.m_message.ReceivingPlayer());
+    try {
+        int host_id = boost::lexical_cast<int>(msg.m_message.Text());
 
-    Client().GetClientUI().GetMapWnd()->Sanitize();
+        Client().Networking().SetPlayerID(host_id);
+        Client().Networking().SetHostPlayerID(host_id);
 
-    return transit<PlayingGame>();
+        Client().GetClientUI().GetMapWnd()->Sanitize();
+
+        return transit<PlayingGame>();
+    } catch (...) {
+        ErrorLogger() << "WaitingForSPHostAck::react(const HostSPGame& msg) couldn't parese message text: " << msg.m_message.Text();
+        return transit<IntroMenu>();
+    }
 }
 
 boost::statechart::result WaitingForSPHostAck::react(const Disconnection& d) {
@@ -174,7 +181,8 @@ boost::statechart::result WaitingForSPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForSPHostAck.Error";
     std::string problem;
     bool fatal;
-    ExtractErrorMessageData(msg.m_message, problem, fatal);
+    int player_id;
+    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
 
     ErrorLogger() << "WaitingForSPHostAck::react(const Error& msg) error: " << problem;
 
@@ -214,10 +222,17 @@ WaitingForMPHostAck::~WaitingForMPHostAck()
 boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPHostAck.HostMPGame";
 
-    Client().Networking().SetPlayerID(msg.m_message.ReceivingPlayer());
-    Client().Networking().SetHostPlayerID(msg.m_message.ReceivingPlayer());
+    try {
+        int host_id = boost::lexical_cast<int>(msg.m_message.Text());
 
-    return transit<MPLobby>();
+        Client().Networking().SetPlayerID(host_id);
+        Client().Networking().SetHostPlayerID(host_id);
+
+        return transit<MPLobby>();
+    } catch (...) {
+        ErrorLogger() << "WaitingForMPHostAck::react(const HostMPGame& msg) couldn't parese message text: " << msg.m_message.Text();
+        return transit<IntroMenu>();
+    }
 }
 
 boost::statechart::result WaitingForMPHostAck::react(const Disconnection& d) {
@@ -234,7 +249,8 @@ boost::statechart::result WaitingForMPHostAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPHostAck.Error";
     std::string problem;
     bool fatal;
-    ExtractErrorMessageData(msg.m_message, problem, fatal);
+    int player_id;
+    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
 
     ErrorLogger() << "WaitingForMPHostAck::react(const Error& msg) error: " << problem;
 
@@ -274,9 +290,16 @@ WaitingForMPJoinAck::~WaitingForMPJoinAck()
 boost::statechart::result WaitingForMPJoinAck::react(const JoinGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPJoinAck.JoinGame";
 
-    Client().Networking().SetPlayerID(msg.m_message.ReceivingPlayer());
+    try {
+        int player_id = boost::lexical_cast<int>(msg.m_message.Text());
 
-    return transit<MPLobby>();
+        Client().Networking().SetPlayerID(player_id);
+
+        return transit<MPLobby>();
+    } catch (...) {
+        ErrorLogger() << "WaitingForMPJoinAck::react(const JoinGame& msg) couldn't parese message text: " << msg.m_message.Text();
+        return transit<IntroMenu>();
+    }
 }
 
 boost::statechart::result WaitingForMPJoinAck::react(const Disconnection& d) {
@@ -293,7 +316,8 @@ boost::statechart::result WaitingForMPJoinAck::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) WaitingForMPJoinAck.Error";
     std::string problem;
     bool fatal;
-    ExtractErrorMessageData(msg.m_message, problem, fatal);
+    int player_id;
+    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
 
     ErrorLogger() << "WaitingForMPJoinAck::react(const Error& msg) error: " << problem;
 
@@ -373,9 +397,14 @@ boost::statechart::result MPLobby::react(const LobbyUpdate& msg) {
     return discard_event();
 }
 
-boost::statechart::result MPLobby::react(const LobbyChat& msg) {
-    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.LobbyChat";
-    Client().GetClientUI().GetMultiPlayerLobbyWnd()->ChatMessage(msg.m_message.SendingPlayer(), msg.m_message.Text());
+boost::statechart::result MPLobby::react(const PlayerChat& msg) {
+    if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.PlayerChat";
+
+    int player_id;
+    std::string data;
+    ExtractServerPlayerChatMessageData(msg.m_message, player_id, data);
+
+    Client().GetClientUI().GetMultiPlayerLobbyWnd()->ChatMessage(player_id, data);
     return discard_event();
 }
 
@@ -416,7 +445,8 @@ boost::statechart::result MPLobby::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) MPLobby.Error";
     std::string problem;
     bool fatal;
-    ExtractErrorMessageData(msg.m_message, problem, fatal);
+    int player_id;
+    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
 
     ErrorLogger() << "MPLobby::react(const Error& msg) error: " << problem;
 
@@ -480,11 +510,11 @@ boost::statechart::result PlayingGame::react(const HostID& msg) {
 
 boost::statechart::result PlayingGame::react(const PlayerChat& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.PlayerChat: " << msg.m_message.Text();
-    const std::string& text = msg.m_message.Text();
-    int sending_player_id = msg.m_message.SendingPlayer();
-    int recipient_player_id = msg.m_message.ReceivingPlayer();
+    std::string text;
+    int sending_player_id;
+    ExtractPlayerChatMessageData(msg.m_message, sending_player_id, text);
 
-    Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, sending_player_id, recipient_player_id);
+    Client().GetClientUI().GetMessageWnd()->HandlePlayerChatMessage(text, sending_player_id, Client().PlayerID());
 
     return discard_event();
 }
@@ -570,7 +600,8 @@ boost::statechart::result PlayingGame::react(const Error& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(HumanClientFSM) PlayingGame.Error";
     std::string problem;
     bool fatal;
-    ExtractErrorMessageData(msg.m_message, problem, fatal);
+    int player_id;
+    ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
 
     ErrorLogger() << "PlayingGame::react(const Error& msg) error: "
                   << problem << "\nProblem is" << (fatal ? "fatal" : "non-fatal");

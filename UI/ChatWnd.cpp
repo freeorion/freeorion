@@ -260,7 +260,7 @@ void MessageWndEdit::AutoComplete() {
                 }
             }
             // If not an exact match try to complete the word
-            if (!exact_match) 
+            if (!exact_match)
                 CompleteWord(m_game_words, partial_word, cursor_pos, full_line);
         }
     }
@@ -291,7 +291,7 @@ bool MessageWndEdit::CompleteWord(const std::set<std::string>& names, const std:
             }
         }
     }
-  
+
     if (!partial_word_match)
         return false;
 
@@ -462,11 +462,11 @@ namespace {
         int sender_id = HumanClientApp::GetApp()->PlayerID();
 
         if (recipients.empty()) {
-            net.SendMessage(GlobalChatMessage(sender_id, text));
+            net.SendMessage(PlayerChatMessage(sender_id, text));
         } else {
             recipients.insert(sender_id);   // ensure recipient sees own sent message
             for (int recipient_id : recipients)
-                net.SendMessage(SingleRecipientChatMessage(sender_id, recipient_id, text));
+                net.SendMessage(PlayerChatMessage(sender_id, text, recipient_id));
         }
     }
 

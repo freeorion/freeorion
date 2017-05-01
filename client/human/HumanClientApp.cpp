@@ -835,7 +835,6 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::JOIN_GAME:                m_fsm->process_event(JoinGame(msg));                break;
     case Message::HOST_ID:                  m_fsm->process_event(HostID(msg));                  break;
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg));             break;
-    case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg));               break;
     case Message::SAVE_GAME_DATA_REQUEST:   m_fsm->process_event(SaveGameDataRequest(msg));     break;
     case Message::SAVE_GAME_COMPLETE:       m_fsm->process_event(SaveGameComplete(msg));        break;
 

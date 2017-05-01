@@ -144,7 +144,8 @@ namespace {
     bool HandleErrorMessage(const Error& msg, ServerApp &server) {
         std::string problem;
         bool fatal;
-        ExtractErrorMessageData(msg.m_message, problem, fatal);
+        int player_id;
+        ExtractErrorMessageData(msg.m_message, player_id, problem, fatal);
 
         std::stringstream ss;
 
@@ -156,7 +157,7 @@ namespace {
 
         if (fatal) {
             ErrorLogger() << ss.str();
-            SendMessageToAllPlayers(msg.m_message);
+            SendMessageToAllPlayers(ErrorMessage(problem, fatal, player_id));
         } else {
             ErrorLogger() << ss.str();
         }
@@ -349,9 +350,9 @@ MPLobby::MPLobby(my_context c) :
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby";
     ServerApp& server = Server();
     const SpeciesManager& sm = GetSpeciesManager();
-    const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(server.m_networking.HostPlayerID()));
-
     int host_id = server.m_networking.HostPlayerID();
+    const PlayerConnectionPtr& player_connection = *(server.m_networking.GetPlayer(host_id));
+
     ClockSeed();
 
     // create player setup data for host, and store in list
@@ -366,7 +367,7 @@ MPLobby::MPLobby(my_context c) :
     // leaving save game empire id as default
     player_setup_data.m_client_type =           player_connection->GetClientType();
 
-    server.m_networking.SendMessage(ServerLobbyUpdateMessage(server.m_networking.HostPlayerID(), *m_lobby_data));
+    player_connection->SendMessage(ServerLobbyUpdateMessage(host_id, *m_lobby_data));
 }
 
 MPLobby::~MPLobby()
@@ -562,6 +563,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.LobbyUpdate";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
 
     MultiplayerLobbyData incoming_lobby_data;
     ExtractLobbyUpdateMessageData(message, incoming_lobby_data);
@@ -578,7 +580,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     // save files, save game empire data from the save file, player data)
     // during this copying and is updated below from the save file(s)
 
-    if (server.m_networking.PlayerIsHost(message.SendingPlayer())) {
+    if (server.m_networking.PlayerIsHost(sender->PlayerID())) {
 
         DebugLogger() << "Get message from host.";
 
@@ -650,7 +652,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
         if (has_collision) {
             player_setup_data_changed = true;
             for (std::pair<int, PlayerSetupData>& player : m_lobby_data->m_players) {
-                if (player.first == message.SendingPlayer()) {
+                if (player.first == sender->PlayerID()) {
                     player.second.m_player_ready = false;
                     break;
                 }
@@ -780,12 +782,12 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     } else {
         // can change only himself
         for (std::pair<int, PlayerSetupData>& i_player : m_lobby_data->m_players) {
-            if (i_player.first != message.SendingPlayer())
+            if (i_player.first != sender->PlayerID())
                 continue;
 
             // found sender at m_lobby_data
             for (std::pair<int, PlayerSetupData>& j_player : incoming_lobby_data.m_players) {
-                if (j_player.first != message.SendingPlayer())
+                if (j_player.first != sender->PlayerID())
                     continue;
 
                 // found sender at incoming_lobby_data
@@ -794,7 +796,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                 std::set<GG::Clr> psd_colors;
                 std::set<std::string> psd_names;
                 for (std::pair<int, PlayerSetupData>& k_player : m_lobby_data->m_players) {
-                    if (k_player.first == message.SendingPlayer())
+                    if (k_player.first == sender->PlayerID())
                         continue;
 
                     psd_colors.emplace(k_player.second.m_empire_color);
@@ -845,8 +847,7 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
                                    m_lobby_data->m_save_game_empire_data);
         } catch (const std::exception&) {
             // inform player who attempted to change the save file that there was a problem
-            const PlayerConnectionPtr& player_connection = msg.m_player_connection;
-            player_connection->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), false));
+            sender->SendMessage(ErrorMessage(UserStringNop("UNABLE_TO_READ_SAVE_FILE"), false));
             // revert to old save file
             m_lobby_data->m_save_game = old_file;
         }
@@ -915,32 +916,39 @@ sc::result MPLobby::react(const LobbyUpdate& msg) {
     for (ServerNetworking::const_established_iterator player_connection_it = server.m_networking.established_begin();
          player_connection_it != server.m_networking.established_end(); ++player_connection_it)
     {
-        PlayerConnectionPtr player_connection = *player_connection_it;
+        const PlayerConnectionPtr& player_connection = *player_connection_it;
         int player_id = player_connection->PlayerID();
         // new save file update needs to be sent to everyone, as does an update
         // after a player is added or dropped.  otherwise, messages can just go
         // to players who didn't send the message that this function is
         // responding to.  TODO: check for add/drop
         if (new_save_file_selected || player_setup_data_changed ||
-            player_id != message.SendingPlayer() || has_important_changes )
+            player_id != sender->PlayerID() || has_important_changes )
             player_connection->SendMessage(ServerLobbyUpdateMessage(player_id, *m_lobby_data));
     }
 
     return discard_event();
 }
 
-sc::result MPLobby::react(const LobbyChat& msg) {
+sc::result MPLobby::react(const PlayerChat& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.LobbyChat";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    if (message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID) { // the receiver is everyone (except the sender)
+    std::string data;
+    int receiver;
+    ExtractPlayerChatMessageData(message, receiver, data);
+
+    if (receiver == Networking::INVALID_PLAYER_ID) { // the receiver is everyone (except the sender)
         for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin(); it != server.m_networking.established_end(); ++it) {
-            if ((*it)->PlayerID() != message.SendingPlayer())
-                (*it)->SendMessage(ServerLobbyChatMessage(message.SendingPlayer(), (*it)->PlayerID(), message.Text()));
+            if ((*it)->PlayerID() != sender->PlayerID())
+                (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), (*it)->PlayerID(), data));
         }
     } else {
-        server.m_networking.SendMessage(ServerLobbyChatMessage(message.SendingPlayer(), message.ReceivingPlayer(), message.Text()));
+        ServerNetworking::const_established_iterator it = server.m_networking.GetPlayer(receiver);
+        if (it != server.m_networking.established_end())
+            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(), receiver, data));
     }
 
     return discard_event();
@@ -949,10 +957,9 @@ sc::result MPLobby::react(const LobbyChat& msg) {
 sc::result MPLobby::react(const StartMPGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) MPLobby.StartMPGame";
     ServerApp& server = Server();
-    const Message& message = msg.m_message;
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    if (server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
+    if (server.m_networking.PlayerIsHost(sender->PlayerID())) {
         if (m_lobby_data->m_new_game) {
             // if all expected player already connected, can skip waiting for
             // MP joiners and go directly to playing game
@@ -1002,9 +1009,9 @@ sc::result MPLobby::react(const StartMPGame& msg) {
             // othewrise, transit to waiting for mp joiners
         }
     } else {
-        ErrorLogger() << "(ServerFSM) MPLobby.StartMPGame : Player #" << message.SendingPlayer()
+        ErrorLogger() << "(ServerFSM) MPLobby.StartMPGame : Player #" << sender->PlayerID()
                                << " attempted to initiate a game load, but is not the host.  Terminating connection.";
-        server.m_networking.Disconnect(player_connection);
+        server.m_networking.Disconnect(sender);
         return discard_event();
     }
 
@@ -1391,15 +1398,22 @@ PlayingGame::~PlayingGame()
 sc::result PlayingGame::react(const PlayerChat& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.PlayerChat";
     ServerApp& server = Server();
+    const Message& message = msg.m_message;
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
+
+    std::string data;
+    int receiver;
+    ExtractPlayerChatMessageData(message, receiver, data);
+
     for (ServerNetworking::const_established_iterator it = server.m_networking.established_begin();
          it != server.m_networking.established_end(); ++it)
     {
-        if (msg.m_message.ReceivingPlayer() == Networking::INVALID_PLAYER_ID ||
-            msg.m_message.ReceivingPlayer() == (*it)->PlayerID())
+        if (receiver == Networking::INVALID_PLAYER_ID ||
+            receiver == (*it)->PlayerID())
         {
-            (*it)->SendMessage(SingleRecipientChatMessage(msg.m_message.SendingPlayer(),
-                                                          (*it)->PlayerID(),
-                                                          msg.m_message.Text()));
+            (*it)->SendMessage(ServerPlayerChatMessage(sender->PlayerID(),
+                                                       (*it)->PlayerID(),
+                                                       data));
         }
     }
     return discard_event();
@@ -1419,11 +1433,11 @@ sc::result PlayingGame::react(const Diplomacy& msg) {
 sc::result PlayingGame::react(const ModeratorAct& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) PlayingGame.ModeratorAct";
     const Message& message = msg.m_message;
-    int player_id = message.SendingPlayer();
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
+    int player_id = sender->PlayerID();
     ServerApp& server = Server();
 
-    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
-    Networking::ClientType client_type = player_connection->GetClientType();
+    Networking::ClientType client_type = sender->GetClientType();
 
     if (client_type != Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
         ErrorLogger() << "PlayingGame::react(ModeratorAct): Non-moderator player sent moderator action, ignorning";
@@ -1440,10 +1454,10 @@ sc::result PlayingGame::react(const ModeratorAct& msg) {
         action->Execute();
 
         // update player(s) of changed gamestate as result of action
-        bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
-        server.m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING, player_id));
-        server.m_networking.SendMessage(TurnPartialUpdateMessage(player_id, server.PlayerEmpireID(player_id),
-                                                                 GetUniverse(), use_binary_serialization));
+        bool use_binary_serialization = sender->ClientVersionStringMatchesThisServer();
+        sender->SendMessage(TurnProgressMessage(Message::DOWNLOADING));
+        sender->SendMessage(TurnPartialUpdateMessage(player_id, server.PlayerEmpireID(player_id),
+                                                     GetUniverse(), use_binary_serialization));
     }
 
     delete action;
@@ -1489,31 +1503,30 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEnd.TurnOrders";
     ServerApp& server = Server();
     const Message& message = msg.m_message;
+    const PlayerConnectionPtr& sender = msg.m_player_connection;
 
     OrderSet* order_set = new OrderSet;
     ExtractTurnOrdersMessageData(message, *order_set);
 
-    assert(message.SendingPlayer() == msg.m_player_connection->PlayerID());
-
-    int player_id = message.SendingPlayer();
-    Networking::ClientType client_type = msg.m_player_connection->GetClientType();
+    int player_id = sender->PlayerID();
+    Networking::ClientType client_type = sender->GetClientType();
 
     if (client_type == Networking::CLIENT_TYPE_HUMAN_OBSERVER) {
         // observers cannot submit orders. ignore.
         ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
-                               << msg.m_player_connection->PlayerName()
-                               << "(player id: " << message.SendingPlayer() << ") "
+                               << sender->PlayerName()
+                               << "(player id: " << player_id << ") "
                                << "who is an observer and should not be sending orders. Orders being ignored.";
-        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
     } else if (client_type == Networking::INVALID_CLIENT_TYPE) {
         // ??? lingering connection? shouldn't get to here. ignore.
         ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player "
-                               << msg.m_player_connection->PlayerName()
-                               << "(player id: " << message.SendingPlayer() << ") "
+                               <<sender->PlayerName()
+                               << "(player id: " << player_id << ") "
                                << "who has an invalid player type. The server is confused, and the orders being ignored.";
-        server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+        sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
         return discard_event();
 
     } else if (client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR) {
@@ -1530,7 +1543,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
         const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id));
         if (!empire) {
             ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) couldn't get empire for player with id:" << player_id;
-            server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
+            sender->SendMessage(ErrorMessage(UserStringNop("EMPIRE_NOT_FOUND_CANT_HANDLE_ORDERS"), false));
             return discard_event();
         }
 
@@ -1542,14 +1555,14 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             }
             if (empire->EmpireID() != order->EmpireID()) {
                 ErrorLogger() << "WaitingForTurnEnd::react(TurnOrders&) received orders from player " << empire->PlayerName() << "(id: "
-                                       << message.SendingPlayer() << ") who controls empire " << empire->EmpireID()
+                                       << player_id << ") who controls empire " << empire->EmpireID()
                                        << " but those orders were for empire " << order->EmpireID() << ".  Orders being ignored.";
-                server.m_networking.SendMessage(ErrorMessage(message.SendingPlayer(), UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
+                sender->SendMessage(ErrorMessage(UserStringNop("ORDERS_FOR_WRONG_EMPIRE"), false));
                 return discard_event();
             }
         }
 
-        if (TRACE_EXECUTION) DebugLogger() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << message.SendingPlayer();
+        if (TRACE_EXECUTION) DebugLogger() << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id;
 
         server.SetEmpireTurnOrders(empire->EmpireID(), order_set);
     }
@@ -1561,15 +1574,14 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     {
         PlayerConnectionPtr player_ctn = *player_it;
         player_ctn->SendMessage(PlayerStatusMessage(player_ctn->PlayerID(),
-                                                    message.SendingPlayer(),
+                                                    player_id,
                                                     Message::WAITING));
     }
 
     // inform player who just submitted of their new status.  Note: not sure why
     // this only needs to be send to the submitting player and not all others as
     // well ...
-    server.m_networking.SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS,
-                                                        message.SendingPlayer()));
+    sender->SendMessage(TurnProgressMessage(Message::WAITING_FOR_PLAYERS));
 
     // if player who just submitted is the local human player, raise AI process priority
     // as raising process priority requires superuser privileges on OSX and Linux AFAIK,
@@ -1589,13 +1601,13 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
 sc::result WaitingForTurnEnd::react(const RequestObjectID& msg) {
     //if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEnd.RequestObjectID";
-    Server().m_networking.SendMessage(DispatchObjectIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateObjectID()));
+    msg.m_player_connection->SendMessage(DispatchObjectIDMessage(msg.m_player_connection->PlayerID(), GetUniverse().GenerateObjectID()));
     return discard_event();
 }
 
 sc::result WaitingForTurnEnd::react(const RequestDesignID& msg) {
     //if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) WaitingForTurnEnd.RequestDesignID";
-    Server().m_networking.SendMessage(DispatchDesignIDMessage(msg.m_message.SendingPlayer(), GetUniverse().GenerateDesignID()));
+    msg.m_player_connection->SendMessage(DispatchDesignIDMessage(msg.m_player_connection->PlayerID(), GetUniverse().GenerateDesignID()));
     return discard_event();
 }
 
@@ -1639,7 +1651,7 @@ sc::result WaitingForTurnEndIdle::react(const SaveGameRequest& msg) {
     const PlayerConnectionPtr& player_connection = msg.m_player_connection;
 
     if (!server.m_networking.PlayerIsHost(player_connection->PlayerID())) {
-        ErrorLogger() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << message.SendingPlayer()
+        ErrorLogger() << "WaitingForTurnEndIdle.SaveGameRequest : Player #" << player_connection->PlayerID()
                       << " attempted to initiate a game save, but is not the host.  Ignoring request connection.";
         player_connection->SendMessage(ErrorMessage(UserStringNop("NON_HOST_SAVE_REQUEST_IGNORED"), false));
         return discard_event();
@@ -1723,13 +1735,13 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // pack data into struct
     m_player_save_game_data.push_back(
         PlayerSaveGameData(player_connection->PlayerName(),
-                           server.PlayerEmpireID(message.SendingPlayer()),
+                           server.PlayerEmpireID(player_connection->PlayerID()),
                            order_set,       ui_data,    save_state_string,
                            client_type));
 
 
     // if all players have responded, proceed with save and continue game
-    m_players_responded.insert(message.SendingPlayer());
+    m_players_responded.insert(player_connection->PlayerID());
     if (m_players_responded == m_needed_reponses) {
         ServerSaveGameData server_data(server.m_current_turn);
 
@@ -1801,9 +1813,10 @@ sc::result ProcessingTurn::react(const ProcessTurn& u) {
                 recipient_player_it != server.m_networking.established_end();
                 ++recipient_player_it)
             {
-                PlayerConnectionPtr recipient_player_ctn = *recipient_player_it;
-                server.m_networking.SendMessage(
-                    PlayerStatusMessage(recipient_player_ctn->PlayerID(), player_ctn->PlayerID(), Message::PLAYING_TURN));
+                const PlayerConnectionPtr& recipient_player_ctn = *recipient_player_it;
+                recipient_player_ctn->SendMessage(PlayerStatusMessage(recipient_player_ctn->PlayerID(),
+                                                                      player_ctn->PlayerID(),
+                                                                      Message::PLAYING_TURN));
             }
         }
     }
@@ -1864,7 +1877,8 @@ ShuttingDownServer::~ShuttingDownServer()
 sc::result ShuttingDownServer::react(const LeaveGame& msg) {
     if (TRACE_EXECUTION) DebugLogger() << "(ServerFSM) ShuttingDownServer.LeaveGame";
     const Message& message = msg.m_message;
-    int player_id = message.SendingPlayer();
+    const PlayerConnectionPtr& player_connection = msg.m_player_connection;
+    int player_id = player_connection->PlayerID();
 
     auto ack_found = m_player_id_ack_expected.find(player_id);
 
