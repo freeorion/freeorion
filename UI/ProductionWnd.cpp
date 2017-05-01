@@ -647,11 +647,20 @@ namespace {
     protected:
         void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
             // mostly duplicated equivalent in QueueListBox, but with extra commands...
+            auto rally_to_action = [&it, this]() { this->QueueItemRalliedToSignal(it, SidePanel::SystemID()); };
 
-            GG::MenuItem menu_contents;
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false));
+            auto pedia_action = [&it, this, pt, modkeys]() {
+                ShowPediaSignal();
+                this->LeftClickedSignal(it, pt, modkeys);
+            };
+            auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
+            auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
+
+            CUIPopupMenu popup(pt.x, pt.y);
+
+            popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+            popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+            popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
 
             // inspect clicked item: was it a ship?
             GG::ListBox::Row* row = *it;
@@ -661,15 +670,15 @@ namespace {
                 // for ships, add a set rally point command
                 if (std::shared_ptr<const System> system = GetSystem(SidePanel::SystemID())) {
                     std::string rally_prompt = boost::io::str(FlexibleFormat(UserString("RALLY_QUEUE_ITEM")) % system->PublicName(HumanClientApp::GetApp()->EmpireID()));
-                    menu_contents.next_level.push_back(GG::MenuItem(rally_prompt,               4, false, false));
+                    popup.AddMenuItem(GG::MenuItem(rally_prompt,               false, false, rally_to_action));
                 }
             }
 
             // pause / resume commands
             if (queue_row && queue_row->elem.paused) {
-                menu_contents.next_level.push_back(GG::MenuItem(UserString("RESUME"),           7, false, false));
+                popup.AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
             } else {
-                menu_contents.next_level.push_back(GG::MenuItem(UserString("PAUSE"),            8, false, false));
+                popup.AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
             }
 
             // pedia lookup
@@ -685,51 +694,9 @@ namespace {
             if (UserStringExists(item_name))
                 item_name = UserString(item_name);
             std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
-            menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
+            popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
-
-            CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-            if (popup.Run()) {
-                switch (popup.MenuID()) {
-                case 1: { // move item to top
-                    if (GG::ListBox::Row* row = *it)
-                        this->QueueItemMovedSignal(row, 0);
-                    break;
-                }
-                case 2: { // move item to bottom
-                    if (GG::ListBox::Row* row = *it)
-                        this->QueueItemMovedSignal(row, NumRows());
-                    break;
-                }
-                case 3: { // delete item
-                    this->QueueItemDeletedSignal(it);
-                    break;
-                }
-
-                case 4: { // rally to
-                    this->QueueItemRalliedToSignal(it, SidePanel::SystemID());
-                    break;
-                }
-                case 5: { // pedia lookup
-                    ShowPediaSignal();
-                    this->LeftClickedSignal(it, pt, modkeys);
-                    break;
-                }
-
-                case 7: { // resume
-                    this->QueueItemPausedSignal(it, false);
-                    break;
-                }
-                case 8: { // pause
-                    this->QueueItemPausedSignal(it, true);
-                    break;
-                }
-
-                default:
-                    break;
-                }
-            }
+            popup.Run();
         }
     };
 }

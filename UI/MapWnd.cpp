@@ -2499,8 +2499,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 
     if (GetOptionsDB().Get<bool>("UI.map-right-click-popup-menu")) {
         // create popup menu with map options in it.
-        GG::MenuItem menu_contents;
-        bool fps            = GetOptionsDB().Get<bool>("show-fps");
+                bool fps            = GetOptionsDB().Get<bool>("show-fps");
         bool showPlanets    = GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown");
         bool systemCircles  = GetOptionsDB().Get<bool>("UI.system-circles");
         bool resourceColor  = GetOptionsDB().Get<bool>("UI.resource-starlane-colouring");
@@ -2511,35 +2510,34 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
         bool scaleCircle    = GetOptionsDB().Get<bool>("UI.show-galaxy-map-scale-circle");
         bool zoomSlider     = GetOptionsDB().Get<bool>("UI.show-galaxy-map-zoom-slider");
         bool detectionRange = GetOptionsDB().Get<bool>("UI.show-detection-range");
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),                     1, false, fps));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"),       3, false, showPlanets));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_UI_SYSTEM_CIRCLES"),            4, false, systemCircles));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"),  5, false, resourceColor));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_FLEET_SUPPLY_LINES"),           6, false, fleetSupply));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),               7, false, gas));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),        8, false, starfields));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),        9, false, scale));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"),      10,false, scaleCircle));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),       11,false, zoomSlider));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"),   12,false, detectionRange));
+
+        auto show_fps_action        = [&fps]()            { GetOptionsDB().Set<bool>("show-fps",                       !fps);         };
+        auto show_planets_action    = [&showPlanets]()    { GetOptionsDB().Set<bool>("UI.sidepanel-planet-shown",      !showPlanets);  };
+        auto system_circles_action  = [&systemCircles]()  { GetOptionsDB().Set<bool>("UI.system-circles",              !systemCircles); };
+        auto resource_color_action  = [&resourceColor]()  { GetOptionsDB().Set<bool>("UI.resource-starlane-colouring", !resourceColor);  };
+        auto fleet_supply_action    = [&fleetSupply]()    { GetOptionsDB().Set<bool>("UI.fleet-supply-lines",          !fleetSupply);     };
+        auto gas_action             = [&gas]()            { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        };
+        auto starfield_action       = [&starfields]()     { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  };
+        auto map_scale_action       = [&scale]()          { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        };
+        auto scale_circle_action    = [&scaleCircle]()    { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale-circle",!scaleCircle);   };
+        auto zoom_slider_action     = [&zoomSlider]()     { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);      };
+        auto detection_range_action = [&detectionRange]() { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange);   };
+
+        CUIPopupMenu popup(pt.x, pt.y);
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_FPS"),                     false, fps,            show_fps_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_SHOW_SIDEPANEL_PLANETS"),       false, showPlanets,    show_planets_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_UI_SYSTEM_CIRCLES"),            false, systemCircles,  system_circles_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_RESOURCE_STARLANE_COLOURING"),  false, resourceColor,  resource_color_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_FLEET_SUPPLY_LINES"),           false, fleetSupply,    fleet_supply_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_GAS"),               false, gas,            gas_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_STARFIELDS"),        false, starfields,     starfield_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_LINE"),        false, scale,          map_scale_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_SCALE_CIRCLE"),      false, scaleCircle,    scale_circle_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_ZOOM_SLIDER"),       false, zoomSlider,     zoom_slider_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("OPTIONS_GALAXY_MAP_DETECTION_RANGE"),   false, detectionRange, detection_range_action));
         // display popup menu
-        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-        if (popup.Run()) {
-            switch (popup.MenuID()) {
-                case 1: { GetOptionsDB().Set<bool>("show-fps",                       !fps);        break; }
-                case 3: { GetOptionsDB().Set<bool>("UI.sidepanel-planet-shown",      !showPlanets);  break; }
-                case 4: { GetOptionsDB().Set<bool>("UI.system-circles",              !systemCircles); break; }
-                case 5: { GetOptionsDB().Set<bool>("UI.resource-starlane-colouring", !resourceColor);  break; }
-                case 6: { GetOptionsDB().Set<bool>("UI.fleet-supply-lines",          !fleetSupply);     break; }
-                case 7: { GetOptionsDB().Set<bool>("UI.galaxy-gas-background",       !gas);        break; }
-                case 8: { GetOptionsDB().Set<bool>("UI.galaxy-starfields",           !starfields);  break; }
-                case 9: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale",       !scale);        break; }
-                case 10: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-scale-circle",!scaleCircle);  break; }
-                case 11: { GetOptionsDB().Set<bool>("UI.show-galaxy-map-zoom-slider",!zoomSlider);     break; }
-                case 12: { GetOptionsDB().Set<bool>("UI.show-detection-range",       !detectionRange);  break; }
-                default: break;
-            }
-        }
+        popup.Run();
+
     }
 }
 

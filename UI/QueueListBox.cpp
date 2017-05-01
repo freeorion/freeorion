@@ -188,38 +188,32 @@ void QueueListBox::Clear() {
     DragDropLeave();
 }
 
+std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) const {
+    return [it, this]() {
+        if (GG::ListBox::Row* row = *it)
+            QueueItemMovedSignal(row, 0);
+    };
+}
+
+std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) const {
+    return [it, this]() {
+        if (GG::ListBox::Row* row = *it)
+            QueueItemMovedSignal(row, NumRows());
+    };
+}
+
+std::function<void()> QueueListBox::DeleteAction(GG::ListBox::iterator it) const
+{ return [it, this]() { QueueItemDeletedSignal(it); }; }
+
 void QueueListBox::ItemRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 { this->ItemRightClickedImpl(it, pt, modkeys); }
 
 void QueueListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false));
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: { // move item to top
-            if (GG::ListBox::Row* row = *it)
-                QueueItemMovedSignal(row, 0);
-            break;
-        }
-        case 2: { // move item to bottom
-            if (GG::ListBox::Row* row = *it)
-                QueueItemMovedSignal(row, NumRows());
-            break;
-        }
-        case 3: { // delete item
-            QueueItemDeletedSignal(it);
-            break;
-        }
-
-        default:
-            break;
-        }
-    }
+    CUIPopupMenu popup(pt.x, pt.y);
+    popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+    popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+    popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
+    popup.Run();
 }
 
 void QueueListBox::EnsurePromptHiddenSlot(iterator it) {

@@ -1604,50 +1604,47 @@ private:
         const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>&
             available_column_types = AvailableColumnTypes();
 
-        std::map<int, std::string> menu_index_templates;
         int index = 1;
 
-        GG::MenuItem menu_contents;
-        menu_contents.next_level.push_back(GG::MenuItem("", 0, false, current_column_type.empty()));
+        CUIPopupMenu popup(clicked_button->Left(), clicked_button->Bottom());
 
-        GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"),  -1, false, false);
-        GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"),-2, false, false);
-        GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),  -3, false, false);
+        auto empty_col_action = [this, column_id]() {
+            SetColumnName(column_id, "");
+            ColumnsChangedSignal();
+        };
+        popup.AddMenuItem(GG::MenuItem("", false, current_column_type.empty(), empty_col_action));
+
+        GG::MenuItem meters_submenu(UserString("METERS_SUBMENU"),   false, false);
+        GG::MenuItem planets_submenu(UserString("PLANETS_SUBMENU"), false, false);
+        GG::MenuItem fleets_submenu(UserString("FLEETS_SUBMENU"),   false, false);
 
         for (const std::map<std::pair<std::string, std::string>, ValueRef::ValueRefBase<std::string>*>::value_type& entry : available_column_types) {
-            menu_index_templates[index] = entry.first.first;
-            bool check = (current_column_type == entry.first.first);
-            const std::string& menu_label = UserString(entry.first.first);
+            const auto& new_column_type = entry.first.first;
+            bool check = (current_column_type == new_column_type);
+            const std::string& menu_label = UserString(new_column_type);
+
+            auto col_action = [this, column_id, new_column_type]() {
+                // set clicked column to show the selected column type info
+                SetColumnName(column_id, new_column_type);
+                ColumnsChangedSignal();
+            };
+
             // put meters into root or submenus...
             if (entry.first.second.empty())
-                menu_contents.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
+                popup.AddMenuItem(GG::MenuItem(menu_label, false, check, col_action));
             else if (entry.first.second == "METERS_SUBMENU")
-                meters_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
+                meters_submenu.next_level.push_back(GG::MenuItem(menu_label,  false, check, col_action));
             else if (entry.first.second == "PLANETS_SUBMENU")
-                planets_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
+                planets_submenu.next_level.push_back(GG::MenuItem(menu_label, false, check, col_action));
             else if (entry.first.second == "FLEETS_SUBMENU")
-                fleets_submenu.next_level.push_back(GG::MenuItem(menu_label, index, false, check));
+                fleets_submenu.next_level.push_back(GG::MenuItem(menu_label,  false, check, col_action));
             ++index;
         }
-        menu_contents.next_level.push_back(meters_submenu);
-        menu_contents.next_level.push_back(planets_submenu);
-        menu_contents.next_level.push_back(fleets_submenu);
+        popup.AddMenuItem(std::move(meters_submenu));
+        popup.AddMenuItem(std::move(planets_submenu));
+        popup.AddMenuItem(std::move(fleets_submenu));
 
-
-        CUIPopupMenu popup(clicked_button->Left(), clicked_button->Bottom(), menu_contents);
-        if (!popup.Run())
-            return;
-        int selected_menu_item = popup.MenuID();
-        if (selected_menu_item < 0) // submenus
-            return;
-        if (selected_menu_item == 0)// empty column
-            SetColumnName(column_id, "");
-
-        // set clicked column to show the selected column type info
-        const std::string& selected_type = menu_index_templates[selected_menu_item];
-        SetColumnName(column_id, selected_type);
-
-        ColumnsChangedSignal();
+        popup.Run();
     }
 
     std::vector<GG::Button*>    GetControls() {
@@ -2366,9 +2363,21 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     // Right click on an unselected row should automatically select it
     m_list_box->SelectRow(it, true);
 
+    auto dump_action = [this, object_id]() { ObjectDumpSignal(object_id); };
+    auto suitability_action = [object_id]() { ClientUI::GetClientUI()->ZoomToPlanetPedia(object_id); };
+
+    // Refresh and clean up common to focus and production changes.
+    auto focus_ship_building_common_action = [this]() {
+        std::set<int> sel_ids = SelectedObjectIDs();
+        Refresh();
+        SetSelectedObjects(sel_ids);
+        ObjectSelectionChanged(m_list_box->Selections());
+    };
+
+    CUIPopupMenu popup(pt.x, pt.y);
+
     // create popup menu with object commands in it
-    GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("DUMP"), 1, false, false));
+    popup.AddMenuItem(GG::MenuItem(UserString("DUMP"), false, false, dump_action));
 
     std::shared_ptr<const UniverseObject> obj = GetUniverseObject(object_id);
     //DebugLogger() << "ObjectListBox::ObjectStateChanged: " << obj->Name();
@@ -2386,7 +2395,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     UniverseObjectType type = obj->ObjectType();
     Empire* cur_empire = GetEmpire(app->EmpireID());
     if (type == OBJ_PLANET) {
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
+        popup.AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, suitability_action));
 
         for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
             ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
@@ -2411,89 +2420,45 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 }
             }
         }
-        GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), 3, false, false);
+        GG::MenuItem focusMenuItem(UserString("MENUITEM_SET_FOCUS"), false, false/*, no action*/);
         for (std::map<std::string, int>::value_type& entry : all_foci) {
             menuitem_id++;
+            auto focus_action = [this, entry, app, &focus_ship_building_common_action]() {
+                std::string focus = entry.first;
+                for (const auto& selection : m_list_box->Selections()) {
+                    ObjectRow* row = dynamic_cast<ObjectRow*>(*selection);
+                    if (!row)
+                        continue;
+
+                    std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
+                    if (!(one_planet && one_planet->OwnedBy(app->EmpireID())))
+                        continue;
+
+                    one_planet->SetFocus(focus);
+                    app->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(app->EmpireID(), one_planet->ID(), focus)));
+                }
+
+                focus_ship_building_common_action();
+            };
+
             std::stringstream out;
             out << UserString(entry.first) << " (" << entry.second << ")";
-            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), menuitem_id, false, false));
+            focusMenuItem.next_level.push_back(GG::MenuItem(out.str(), false, false, focus_action));
         }
         if (menuitem_id > MENUITEM_SET_FOCUS_BASE)
-            menu_contents.next_level.push_back(focusMenuItem);
+            popup.AddMenuItem(std::move(focusMenuItem));
 
-        GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), 4, false, false);
+        GG::MenuItem ship_menu_item(UserString("MENUITEM_ENQUEUE_SHIPDESIGN"), false, false);
         for (std::map<int, int>::iterator it = avail_designs.begin();
              it != avail_designs.end() && ship_menuitem_id < MENUITEM_SET_BUILDING_BASE; ++it)
         {
             ship_menuitem_id++;
-            std::stringstream out;
-            out << GetShipDesign(it->first)->Name() << " (" << it->second << ")";
-            ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), ship_menuitem_id, false, false));
-        }
 
-        if (ship_menuitem_id > MENUITEM_SET_SHIP_BASE)
-            menu_contents.next_level.push_back(ship_menu_item);
-
-        GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), 5, false, false);
-        for (std::map<std::string, int>::value_type& entry : avail_blds) {
-            bld_menuitem_id++;
-            std::stringstream out;
-            out << UserString(entry.first) << " (" << entry.second << ")";
-            building_menu_item.next_level.push_back(GG::MenuItem(out.str(), bld_menuitem_id, false, false));
-        }
-
-        if (bld_menuitem_id > MENUITEM_SET_BUILDING_BASE)
-            menu_contents.next_level.push_back(building_menu_item);
-    }
-    // moderator actions...
-    if (moderator) {
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("MOD_DESTROY"),      10, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("MOD_SET_OWNER"),    11, false, false));
-    }
-
-    // run popup and respond
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: {
-            ObjectDumpSignal(object_id);
-            break;
-        }
-        case 2: {
-            ClientUI::GetClientUI()->ZoomToPlanetPedia(object_id);
-            break;
-        }
-        case 3: {
-                // should never happen, Set Focus parent menu item is disabled
-                break;
-        }
-        case 10: {
-            net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::DestroyUniverseObject(object_id)));
-            break;
-        }
-        case 11: {
-            net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::SetOwner(object_id, ALL_EMPIRES)));
-            break;
-        }
-        default: {
-            int id = popup.MenuID();
-            if (id > MENUITEM_SET_FOCUS_BASE && id <= menuitem_id) {
-                std::string focus = std::next(all_foci.begin(), id - MENUITEM_SET_FOCUS_BASE - 1)->first;
-                for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
-                    if (row) {
-                        std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
-                        if (one_planet && one_planet->OwnedBy(app->EmpireID())) {
-                            one_planet->SetFocus(focus);
-                            app->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(app->EmpireID(), one_planet->ID(), focus)));
-                         }
-                    }
-                }
-            } else if (id > MENUITEM_SET_SHIP_BASE && id <= ship_menuitem_id) {
-                int ship_design = std::next(avail_designs.begin(), id - MENUITEM_SET_SHIP_BASE - 1)->first;
+            auto produce_ship_action = [this, it, app, cur_empire, &focus_ship_building_common_action]() {
+                int ship_design = it->first;
                 bool needs_queue_update(false);
                 for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
-                    ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
+                    ObjectRow* row = dynamic_cast<ObjectRow*>(*entry);
                     if (!row)
                         continue;
                     std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
@@ -2505,8 +2470,24 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 }
                 if (needs_queue_update)
                     cur_empire->UpdateProductionQueue();
-            } else if (id > MENUITEM_SET_BUILDING_BASE && id <= bld_menuitem_id) {
-                std::string bld = std::next(avail_blds.begin(), id - MENUITEM_SET_BUILDING_BASE - 1)->first;
+
+                focus_ship_building_common_action();
+            };
+
+            std::stringstream out;
+            out << GetShipDesign(it->first)->Name() << " (" << it->second << ")";
+            ship_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_ship_action));
+        }
+
+        if (ship_menuitem_id > MENUITEM_SET_SHIP_BASE)
+            popup.AddMenuItem(std::move(ship_menu_item));
+
+        GG::MenuItem building_menu_item(UserString("MENUITEM_ENQUEUE_BUILDING"), false, false);
+        for (std::map<std::string, int>::value_type& entry : avail_blds) {
+            bld_menuitem_id++;
+
+            auto produce_building_action = [this, entry, app, cur_empire, &focus_ship_building_common_action]() {
+                std::string bld = entry.first;
                 bool needs_queue_update(false);
                 for (const GG::ListBox::SelectionSet::value_type& entry : m_list_box->Selections()) {
                     ObjectRow *row = dynamic_cast<ObjectRow *>(*entry);
@@ -2514,8 +2495,8 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
                     std::shared_ptr<Planet> one_planet = GetPlanet(row->ObjectID());
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID())
-                       || !cur_empire->EnqueuableItem(BT_BUILDING, bld, row->ObjectID())
-                       || !cur_empire->ProducibleItem(BT_BUILDING, bld, row->ObjectID()))
+                        || !cur_empire->EnqueuableItem(BT_BUILDING, bld, row->ObjectID())
+                        || !cur_empire->ProducibleItem(BT_BUILDING, bld, row->ObjectID()))
                     {
                         continue;
                     }
@@ -2525,16 +2506,31 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                 }
                 if (needs_queue_update)
                     cur_empire->UpdateProductionQueue();
-            }
 
-            std::set<int> sel_ids = SelectedObjectIDs();
-            Refresh();
-            SetSelectedObjects(sel_ids);
-            ObjectSelectionChanged(m_list_box->Selections());
-            break;
+                focus_ship_building_common_action();
+            };
+
+            std::stringstream out;
+            out << UserString(entry.first) << " (" << entry.second << ")";
+            building_menu_item.next_level.push_back(GG::MenuItem(out.str(), false, false, produce_building_action));
         }
-        }
+
+        if (bld_menuitem_id > MENUITEM_SET_BUILDING_BASE)
+            popup.AddMenuItem(std::move(building_menu_item));
     }
+    // moderator actions...
+    if (moderator) {
+        auto destroy_object_action = [object_id, app, &net]() {
+            net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::DestroyUniverseObject(object_id)));
+        };
+        auto set_owner_action = [object_id, app, &net]() {
+            net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::SetOwner(object_id, ALL_EMPIRES)));
+        };
+        popup.AddMenuItem(GG::MenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("MOD_SET_OWNER"),    false, false, set_owner_action));
+    }
+
+    popup.Run();
 }
 
 int ObjectListWnd::ObjectInRow(GG::ListBox::iterator it) const {

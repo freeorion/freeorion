@@ -136,19 +136,19 @@ bool SpecialsPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
         if (entry.second != w)
             continue;
 
+        bool retval = false;
+        auto zoom_action = [&entry, &retval]() {
+            retval = true;
+            ClientUI::GetClientUI()->ZoomToSpecial(entry.first);
+        };
+
+        CUIPopupMenu popup(pt.x, pt.y);
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(entry.first));
 
-        GG::MenuItem menu_contents;
-        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 1, false, false));
-        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
+        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_action));
 
-        if (!popup.Run() || popup.MenuID() != 1) {
-            return false;
-            break;
-        }
-
-        ClientUI::GetClientUI()->ZoomToSpecial(entry.first);
-        return true;
+        popup.Run();
+        return retval;
     }
     return false;
 }

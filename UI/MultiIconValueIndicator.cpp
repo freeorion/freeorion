@@ -141,42 +141,29 @@ bool MultiIconValueIndicator::EventFilter(GG::Wnd* w, const GG::WndEvent& event)
     if (UserStringExists(meter_string))
         meter_title = UserString(meter_string);
 
-    GG::MenuItem menu_contents;
     std::string species_name;
+
+    bool retval = false;
+    auto zoom_species_action = [&retval, &species_name]() { retval = ClientUI::GetClientUI()->ZoomToSpecies(species_name); };
+    auto zoom_article_action = [&retval, &meter_string]() { retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);};
+
+    CUIPopupMenu popup(pt.x, pt.y);
 
     std::shared_ptr<const PopCenter> pc = GetPopCenter(*m_object_ids.begin());
     if (meter_type == METER_POPULATION && pc && m_object_ids.size() == 1) {
-	species_name = pc->SpeciesName();
-	if (!species_name.empty()) {
-	    std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
-	    menu_contents.next_level.push_back(GG::MenuItem(species_label, 1, false, false));
-	}
+        species_name = pc->SpeciesName();
+        if (!species_name.empty()) {
+            std::string species_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(species_name));
+            popup.AddMenuItem(GG::MenuItem(species_label, false, false, zoom_species_action));
+        }
     }
 
     if (!meter_title.empty()) {
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) %
                                                                 meter_title);
-        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
+        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, zoom_article_action));
     }
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-    bool retval = false;
-
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-            case 1: {
-                retval = ClientUI::GetClientUI()->ZoomToSpecies(species_name);
-                break;
-            }
-            case 2: {
-                retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);
-                break;
-            }
-            default:
-                break;
-        }
-    }
+    popup.Run();
 
     return retval;
 }

@@ -78,31 +78,19 @@ void LinkText::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
 { TextLinker::LClick_(pt, mod_keys); }
 
 void LinkText::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+
+    auto rclick_action = [this, pt, mod_keys]() { TextLinker::RClick_(pt, mod_keys); };
+    auto copy_action = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
+
     // create popup menu
-    GG::MenuItem menu_contents;
+    CUIPopupMenu popup(pt.x, pt.y);
     if (GetLinkUnderPt(pt) != -1) {
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPEN"),     9, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
+        popup.AddMenuItem(GG::MenuItem(UserString("OPEN"),     false, false, rclick_action));
+        popup.AddMenuItem(GG::MenuItem(true)); // separator
     }
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),  2, false, false));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),  false, false, copy_action));
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 9: {
-            TextLinker::RClick_(pt, mod_keys);
-            break;
-        }
-
-        case 2: { // copy
-            GG::GUI::GetGUI()->CopyWndText(this);
-            break;
-        }
-
-        default:
-            break;
-        }
-    }
+    popup.Run();
 }
 
 void LinkText::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)

@@ -418,56 +418,39 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
         return;
     }
 
-    GG::MenuItem menu_contents;
+    auto scrap_building_action = [this, empire_id]() {
+        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ScrapOrder(empire_id, m_building_id)));};
+    auto un_scrap_building_action = [building]() {
+        // find order to scrap this building, and recind it
+        std::map<int, int> pending_scrap_orders = PendingScrapOrders();
+        std::map<int, int>::const_iterator it = pending_scrap_orders.find(building->ID());
+        if (it != pending_scrap_orders.end())
+            HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
+    };
 
-    if (!building->OrderedScrapped()) {
-        // create popup menu with "Scrap" option
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), 3, false, false));
-    } else {
-        // create popup menu with "Cancel Scrap" option
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), 4, false, false));
+    CUIPopupMenu popup(pt.x, pt.y);
+
+    if (m_order_issuing_enabled) {
+        if (!building->OrderedScrapped()) {
+            // create popup menu with "Scrap" option
+            popup.AddMenuItem(GG::MenuItem(UserString("ORDER_BUIDLING_SCRAP"), false, false, scrap_building_action));
+        } else {
+            // create popup menu with "Cancel Scrap" option
+            popup.AddMenuItem(GG::MenuItem(UserString("ORDER_CANCEL_BUIDLING_SCRAP"), false, false, un_scrap_building_action));
+        }
     }
 
     const std::string& building_type = building->BuildingTypeName();
     const BuildingType* bt = GetBuildingType(building_type);
     if (bt) {
-        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
-        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 5, false, false));
-    }
-
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 3: { // scrap building
-            if (m_order_issuing_enabled)
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ScrapOrder(empire_id, m_building_id)));
-            break;
-        }
-
-        case 4: { // un-scrap building
-            if (!m_order_issuing_enabled)
-                break;
-
-            // find order to scrap this building, and recind it
-            std::map<int, int> pending_scrap_orders = PendingScrapOrders();
-            std::map<int, int>::const_iterator it = pending_scrap_orders.find(building->ID());
-            if (it != pending_scrap_orders.end()) {
-                HumanClientApp::GetApp()->Orders().RescindOrder(it->second);
-            break;
-            }
-        }
-
-        case 5: { // pedia lookup building type
+        auto pedia_lookup_building_type_action = [building_type]() {
             ClientUI::GetClientUI()->ZoomToBuildingType(building_type);
-            break;
-        }
-
-        default:
-            break;
-        }
+        };
+        std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(building_type));
+        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_building_type_action));
     }
+
+    popup.Run();
 }
 
 void BuildingIndicator::EnableOrderIssuing(bool enable/* = true*/)

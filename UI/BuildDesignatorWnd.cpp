@@ -921,40 +921,26 @@ void BuildDesignatorWnd::BuildSelector::BuildItemRightClicked(GG::ListBox::itera
         return;
     }
 
-    GG::MenuItem menu_contents;
+    auto add_bottom_queue_action = [this, it]() { AddBuildItemToQueue(it, false); };
+    auto add_top_queue_action = [this, it]() { AddBuildItemToQueue(it, true); };
+    auto pedia_lookup_action = [this, it, pt, &modkeys]() {
+        ShowPediaSignal();
+        BuildItemLeftClicked(it, pt, modkeys);
+    };
+
+    CUIPopupMenu popup(pt.x, pt.y);
 
     if (!((*it)->Disabled())) {
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),   2, false, false));
+        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, add_bottom_queue_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_TOP_OF_QUEUE"),  false, false, add_top_queue_action));
     }
 
     if (UserStringExists(item_name))
         item_name = UserString(item_name);
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % item_name);
-    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 3, false, false));
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: { // add item to bottom of queue
-            AddBuildItemToQueue(it, false);
-            break;
-        }
-        case 2: { // add item to top of queue
-            AddBuildItemToQueue(it, true);
-            break;
-        }
-        case 3: { // pedia lookup
-            ShowPediaSignal();
-            BuildItemLeftClicked(it, pt, modkeys);
-            break;
-        }
-        default:
-            break;
-        }
-    }
+    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_lookup_action));
+    popup.Run();
 }
 
 //////////////////////////////////////////////////

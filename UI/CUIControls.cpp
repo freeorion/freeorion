@@ -68,22 +68,11 @@ CUILabel::CUILabel(const std::string& str,
 {}
 
 void CUILabel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    auto copy_wnd_action = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
     // create popup menu
-    GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 2: { // copy
-            GG::GUI::GetGUI()->CopyWndText(this);
-            break;
-        }
-
-        default:
-            break;
-        }
-    }
+    CUIPopupMenu popup(pt.x, pt.y);
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"), false, false, copy_wnd_action));
+    popup.Run();
 }
 
 
@@ -868,49 +857,23 @@ CUIEdit::CUIEdit(const std::string& str) :
 }
 
 void CUIEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    // create popup menu
-    GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_CUT"),           1, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_PASTE"),         3, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    4, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_DESELECT"),      5, false, false));
+    auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
+    auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
+    auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
+    auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
+    auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
+
+    CUIPopupMenu popup(pt.x, pt.y);
+
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),           false, false, hotkey_cut_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),         false, false, hotkey_paste_action));
+    popup.AddMenuItem(GG::MenuItem(true)); // separator
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup.Run();
 
     // todo: italicize, underline, or colour selected text
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: { // cut
-            GG::GUI::GetGUI()->CutWndText(this);
-            break;
-        }
-
-        case 2: { // copy
-            GG::GUI::GetGUI()->CopyWndText(this);
-            break;
-        }
-
-        case 3: { // paste
-            GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
-            break;
-        }
-
-        case 4: { // select all
-            GG::GUI::GetGUI()->WndSelectAll(this);
-            break;
-        }
-
-        case 5: { // deselect all
-            GG::GUI::GetGUI()->WndDeselect(this);
-            break;
-        }
-
-        default:
-            break;
-        }
-    }
 }
 
 void CUIEdit::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
@@ -987,51 +950,24 @@ void CUIMultiEdit::Render() {
 }
 
 void CUIMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
+    auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
+    auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
+    auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
+    auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
+
     // create popup menu
-    GG::MenuItem menu_contents;
+    CUIPopupMenu popup(pt.x, pt.y);
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_CUT"),       1, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
+        popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),       false, false, hotkey_cut_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_PASTE"),     3, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    4, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_DESELECT"),      5, false, false));
-
+        popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),     false, false, hotkey_paste_action));
+    popup.AddMenuItem(GG::MenuItem(true)); // separator
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup.Run();
     // todo: italicize, underline, or colour selected text
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: { // cut
-            GG::GUI::GetGUI()->CutWndText(this);
-            break;
-        }
-
-        case 2: { // copy
-            GG::GUI::GetGUI()->CopyWndText(this);
-            break;
-        }
-
-        case 3: { // paste
-            GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
-            break;
-        }
-
-        case 4: { // select all
-            GG::GUI::GetGUI()->WndSelectAll(this);
-            break;
-        }
-
-        case 5: { // deselect all
-            GG::GUI::GetGUI()->WndDeselect(this);
-            break;
-        }
-
-        default:
-            break;
-        }
-    }
 }
 
 
@@ -1074,61 +1010,30 @@ void CUILinkTextMultiEdit::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_ke
 }
 
 void CUILinkTextMultiEdit::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
+    auto rclick_action = [this, pt, mod_keys]() { TextLinker::RClick_(pt, mod_keys); };
+    auto hotkey_cut_action        = [this]() { GG::GUI::GetGUI()->CutWndText(this); };
+    auto hotkey_copy_action       = [this]() { GG::GUI::GetGUI()->CopyWndText(this); };
+    auto hotkey_paste_action      = [this]() { GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText()); };
+    auto hotkey_select_all_action = [this]() { GG::GUI::GetGUI()->WndSelectAll(this); };
+    auto hotkey_deselect_action   = [this]() { GG::GUI::GetGUI()->WndDeselect(this); };
+
     // create popup menu
-    GG::MenuItem menu_contents;
+    CUIPopupMenu popup(pt.x, pt.y);
     if (GetLinkUnderPt(pt) != -1) {
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("OPEN"),             9, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
+        popup.AddMenuItem(GG::MenuItem(UserString("OPEN"),             false, false, rclick_action));
+        popup.AddMenuItem(GG::MenuItem(true)); // separator
     }
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_CUT"),       1, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_COPY"),          2, false, false));
+        popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_CUT"),       false, false, hotkey_cut_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_COPY"),          false, false, hotkey_copy_action));
     if (!(this->Style() & GG::MULTI_READ_ONLY))
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_PASTE"),     3, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(true)); // separator
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    4, false, false));
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("HOTKEY_DESELECT"),      5, false, false));
+        popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_PASTE"),     false, false, hotkey_paste_action));
+    popup.AddMenuItem(GG::MenuItem(true)); // separator
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_SELECT_ALL"),    false, false, hotkey_select_all_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("HOTKEY_DESELECT"),      false, false, hotkey_deselect_action));
+    popup.Run();
 
     // todo: italicize, underline, or colour selected text
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-
-        case 9: {
-            TextLinker::RClick_(pt, mod_keys);
-            break;
-        }
-
-        case 1: { // cut
-            GG::GUI::GetGUI()->CutWndText(this);
-            break;
-        }
-
-        case 2: { // copy
-            GG::GUI::GetGUI()->CopyWndText(this);
-            break;
-        }
-
-        case 3: { // paste
-            GG::GUI::GetGUI()->PasteWndText(this, GG::GUI::GetGUI()->ClipboardText());
-            break;
-        }
-
-        case 4: { // select all
-            GG::GUI::GetGUI()->WndSelectAll(this);
-            break;
-        }
-
-        case 5: { // deselect all
-            GG::GUI::GetGUI()->WndDeselect(this);
-            break;
-        }
-
-        default:
-            break;
-        }
-    }
 }
 
 void CUILinkTextMultiEdit::MouseHere(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -1679,20 +1584,14 @@ void ColorSelector::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
 }
 
 void ColorSelector::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
-    GG::MenuItem menu_contents;
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("RESET"), 1, false, false));
+    auto reset_color_action = [this]() {
+        SetColor(m_default_color);
+        ColorChangedSignal(m_default_color);
+    };
 
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: // reset colour option to default value
-            SetColor(m_default_color);
-            ColorChangedSignal(m_default_color);
-        default:
-            break;
-        }
-    }
+    CUIPopupMenu popup(pt.x, pt.y);
+    popup.AddMenuItem(GG::MenuItem(UserString("RESET"), false, false, reset_color_action));
+    popup.Run();
 }
 
 
@@ -2316,11 +2215,14 @@ void RotatingGraphic::Render() {
     glPopMatrix();
 }
 
-CUIPopupMenu::CUIPopupMenu(GG::X x, GG::Y y, const GG::MenuItem& menu) :
-    GG::PopupMenu(x, y, ClientUI::GetFont(), menu, ClientUI::TextColor(), ClientUI::WndOuterBorderColor(),
+////////////////////////////////////////////////
+// CUIPopupMenu
+////////////////////////////////////////////////
+
+CUIPopupMenu::CUIPopupMenu(GG::X x, GG::Y y) :
+    GG::PopupMenu(x, y, ClientUI::GetFont(), ClientUI::TextColor(), ClientUI::WndOuterBorderColor(),
                   ClientUI::WndColor(), ClientUI::EditHiliteColor())
 {}
-
 
 ////////////////////////////////////////////////
 // ScanlineControl

@@ -891,29 +891,16 @@ void TechTreeWnd::LayoutPanel::TechPanel::LClick(const GG::Pt& pt, GG::Flags<GG:
 void TechTreeWnd::LayoutPanel::TechPanel::RClick(const GG::Pt& pt,
                                                  GG::Flags<GG::ModKey> mod_keys)
 {
-    GG::MenuItem menu_contents;
+    auto dclick_action = [this, pt, mod_keys]() { LDoubleClick(pt, mod_keys); };
+    auto pedia_display_action = [this]() { TechPediaDisplaySignal(m_tech_name); };
+
+    CUIPopupMenu popup(pt.x, pt.y);
     if (!(m_enqueued) && !(m_status == TS_COMPLETE))
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, dclick_action));
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(m_tech_name));
-    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: {
-            LDoubleClick(pt, mod_keys);
-            break;
-        }
-        case 2: {
-            TechPediaDisplaySignal(m_tech_name);
-            break;
-        }
-        default:
-            break;
-        }
-    }
+    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
+    popup.Run();
 }
 
 void TechTreeWnd::LayoutPanel::TechPanel::LDoubleClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
@@ -1936,30 +1923,16 @@ void TechTreeWnd::TechListBox::TechRightClicked(GG::ListBox::iterator it, const 
     if (rq.find(tech_name) != rq.end())
         return;
 
-    GG::MenuItem menu_contents;
+    auto tech_dclick_action = [this, it, pt]() { TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>()); };
+    auto pedia_display_action = [this, &tech_name]() { TechPediaDisplay(tech_name); };
 
+    CUIPopupMenu popup(pt.x, pt.y);
     if (!empire->TechResearched(tech_name))
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   1, false, false));
+        popup.AddMenuItem(GG::MenuItem(UserString("PRODUCTION_DETAIL_ADD_TO_QUEUE"),   false, false, tech_dclick_action));
 
     std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % UserString(tech_name));
-    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: {
-            TechDoubleClicked(it, pt, GG::Flags<GG::ModKey>());
-            break;
-        }
-        case 2: {
-            TechPediaDisplay(tech_name);
-            break;
-        }
-        default:
-            break;
-        }
-    }
+    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_display_action));
+    popup.Run();
 }
 
 void TechTreeWnd::TechListBox::TechPediaDisplay(const std::string& tech_name) {

@@ -728,7 +728,25 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         return;
     }
 
-    GG::MenuItem menu_contents;
+    auto make_send_diplomatic_action = [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id](const std::function<DiplomaticMessage(int, int)>& message) {
+        return [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id, &message]() {
+            HumanClientApp::GetApp()->Networking().SendMessage(
+                DiplomacyMessage(client_player_id, clicked_player_id, message(client_empire_id, clicked_empire_id)));
+        };
+    };
+
+    // Actions
+    auto war_declaration_action = make_send_diplomatic_action(WarDeclarationDiplomaticMessage);
+    auto peace_proposal_action = make_send_diplomatic_action(PeaceProposalDiplomaticMessage);
+    auto peace_accept_action = make_send_diplomatic_action(AcceptPeaceDiplomaticMessage);
+    auto allies_proposal_action = make_send_diplomatic_action(AlliesProposalDiplomaticMessage);
+    auto allies_accept_action = make_send_diplomatic_action(AcceptAlliesDiplomaticMessage);
+    auto end_alliance_declaration_action = make_send_diplomatic_action(EndAllianceDiplomaticMessage);
+    auto proposal_cancel_action = make_send_diplomatic_action(CancelDiplomaticMessage);
+    auto proposal_reject_action = make_send_diplomatic_action(RejectProposalDiplomaticMessage);
+    auto pedia_lookup_action = [clicked_empire_id]() { ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id); };
+
+    CUIPopupMenu popup(pt.x, pt.y);
     if (app->GetClientType() == Networking::CLIENT_TYPE_HUMAN_PLAYER &&
         client_empire_id != ALL_EMPIRES &&
         clicked_empire_id != ALL_EMPIRES)
@@ -784,85 +802,30 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
 
 
         if (show_peace_propose)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL"),           2, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("PEACE_PROPOSAL"),           false, false, peace_proposal_action));
         if (show_peace_cancel)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_PROPOSAL_CANCEL"),    4, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("PEACE_PROPOSAL_CANCEL"),    false, false, proposal_cancel_action));
         if (show_peace_accept)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_ACCEPT"),             3, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("PEACE_ACCEPT"),             false, false, peace_accept_action));
         if (show_peace_reject)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("PEACE_REJECT"),             9, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("PEACE_REJECT"),             false, false, proposal_reject_action));
         if (show_allies_end)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), 8, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("END_ALLIANCE_DECLARATION"), false, false, end_alliance_declaration_action));
         if (show_allies_propose)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          6, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL"),          false, false, allies_proposal_action));
         if (show_allies_accept)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_ACCEPT"),            7, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("ALLIES_ACCEPT"),            false, false, allies_accept_action));
         if (show_allies_cancel)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_PROPOSAL_CANCEL"),   4, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("ALLIES_PROPOSAL_CANCEL"),   false, false, proposal_cancel_action));
         if (show_allies_reject)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("ALLIES_REJECT"),            9, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("ALLIES_REJECT"),            false, false, proposal_reject_action));
         if (show_declare_war)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("WAR_DECLARATION"),          1, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("WAR_DECLARATION"),          false, false, war_declaration_action));
     }
 
-    menu_contents.next_level.push_back(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), 5, false, false));
+    popup.AddMenuItem(GG::MenuItem(str(FlexibleFormat(UserString("ENC_LOOKUP")) % GetEmpire(clicked_empire_id)->Name()), false, false, pedia_lookup_action));
 
-    ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1: {   // WAR_DECLARATION
-            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             WarDeclarationDiplomaticMessage(client_empire_id, clicked_empire_id)));
-            break;
-        }
-        case 2: {   // PEACE_PROPOSAL
-            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             PeaceProposalDiplomaticMessage(client_empire_id, clicked_empire_id)));
-            break;
-        }
-        case 3: {   // PEACE_ACCEPT
-            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             AcceptPeaceDiplomaticMessage(client_empire_id, clicked_empire_id)));
-            break;
-        }
-
-        case 6: {   // ALLIES_PROPOSAL
-            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             AlliesProposalDiplomaticMessage(client_empire_id, clicked_empire_id)));
-            break;
-        }
-        case 7: {   // ALLIES_ACCEPT
-            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             AcceptAlliesDiplomaticMessage(client_empire_id, clicked_empire_id)));
-            break;
-        }
-        case 8: {   // END_ALLIANCE_DECLARATION
-            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             EndAllianceDiplomaticMessage(client_empire_id, clicked_empire_id)));
-            break;
-        }
-
-        case 4: {   // PROPOSAL_CANCEL
-            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             CancelDiplomaticMessage(client_empire_id, clicked_empire_id)));
-            break;
-        }
-        case 9: {   // PROPOSAL_REJECT
-            net.SendMessage(DiplomacyMessage(client_player_id, clicked_player_id,
-                                             RejectProposalDiplomaticMessage(client_empire_id, clicked_empire_id)));
-            break;
-        }
-
-        case 5: { // Pedia lookup
-            ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id);
-            break;
-        }
-        default:
-            break;
-        }
-    }
+    popup.Run();
 }
 
 int PlayerListWnd::PlayerInRow(GG::ListBox::iterator it) const {

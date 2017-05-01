@@ -299,11 +299,18 @@ public:
 protected:
     void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override {
         // mostly duplicated equivalent in QueueListBox, but with an extra command...
+        auto pedia_action = [&it, this, pt, modkeys]() {
+            ShowPediaSignal();
+            this->LeftClickedSignal(it, pt, modkeys);
+        };
+        auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
+        auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
 
-        GG::MenuItem menu_contents;
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   1, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), 2, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    3, false, false));
+        CUIPopupMenu popup(pt.x, pt.y);
+
+        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_UP_QUEUE_ITEM"),   false, false, MoveToTopAction(it)));
+        popup.AddMenuItem(GG::MenuItem(UserString("MOVE_DOWN_QUEUE_ITEM"), false, false, MoveToBottomAction(it)));
+        popup.AddMenuItem(GG::MenuItem(UserString("DELETE_QUEUE_ITEM"),    false, false, DeleteAction(it)));
 
         GG::ListBox::Row* row = *it;
         QueueRow* queue_row = row ? dynamic_cast<QueueRow*>(row) : nullptr;
@@ -312,9 +319,9 @@ protected:
 
         // pause / resume commands
         if (queue_row->elem.paused) {
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("RESUME"),           7, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("RESUME"),           false, false, resume_action));
         } else {
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("PAUSE"),            8, false, false));
+            popup.AddMenuItem(GG::MenuItem(UserString("PAUSE"),            false, false, pause_action));
         }
 
         // pedia lookup
@@ -328,46 +335,9 @@ protected:
             tech_name = UserString(queue_row->elem.name);
 
         std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % tech_name);
-        menu_contents.next_level.push_back(GG::MenuItem(popup_label, 4, false, false));
+        popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_action));
 
-        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-        if (popup.Run()) {
-            switch (popup.MenuID()) {
-            case 1: { // move item to top
-                if (GG::ListBox::Row* row = *it)
-                    this->QueueItemMovedSignal(row, 0);
-                break;
-            }
-            case 2: { // move item to bottom
-                if (GG::ListBox::Row* row = *it)
-                    this->QueueItemMovedSignal(row, NumRows());
-                break;
-            }
-            case 3: { // delete item
-                this->QueueItemDeletedSignal(it);
-                break;
-            }
-            case 4: { // pedia lookup
-                this->LeftClickedSignal(it, pt, modkeys);
-                ShowPediaSignal();
-                break;
-            }
-
-
-            case 7: { // resume
-                this->QueueItemPausedSignal(it, false);
-                break;
-            }
-            case 8: { // pause
-                this->QueueItemPausedSignal(it, true);
-                break;
-            }
-
-            default:
-                break;
-            }
-        }
+        popup.Run();
     }
 };
 

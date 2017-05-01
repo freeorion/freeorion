@@ -1835,50 +1835,44 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 
         DebugLogger() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
-        // create popup menu with a commands in it
-        GG::MenuItem menu_contents;
-        if (client_empire_id != ALL_EMPIRES)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_OBSOLETE"), 1, false, false));
 
-        if (design->DesignedByEmpire() == client_empire_id)
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_RENAME"), 2, false, false));
+        // Context menu actions
+        auto delete_design_action = [&client_empire_id, &design_id]() {
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
+        };
 
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_SAVE"),       3, false, false));
-
-        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-        if (popup.Run()) {
-            switch (popup.MenuID()) {
-
-            case 1: {   // delete design
+        auto rename_design_action = [&client_empire_id, &design_id, design, &design_row]() {
+            CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
+            edit_wnd.Run();
+            const std::string& result = edit_wnd.Result();
+            if (result != "" && result != design->Name()) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
-                break;
+                    OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
+                if (!design_row->empty())
+                    if (ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(design_row->at(0)))
+                        design_panel->Update();
             }
+        };
 
-            case 2: {   // rename design
-                CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
-                edit_wnd.Run();
-                const std::string& result = edit_wnd.Result();
-                if (result != "" && result != design->Name()) {
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
-                    if (!design_row->empty())
-                        if (ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(design_row->at(0)))
-                            design_panel->Update();
-                }
-                break;
-            }
+        auto save_design_action = [&design_id](){ShowSaveDesignDialog(design_id);};
 
-            case 3: {   // save design
-                ShowSaveDesignDialog(design_id);
-                break;
-            }
+        // create popup menu with a commands in it
+        CUIPopupMenu popup(pt.x, pt.y);
 
-            default:
-                break;
-            }
-        }
+        // delete design
+        if (client_empire_id != ALL_EMPIRES)
+            popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_OBSOLETE"), false, false, delete_design_action));
+
+        // rename design
+        if (design->DesignedByEmpire() == client_empire_id)
+            popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"), false, false, rename_design_action));
+
+        // save design
+        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), false, false, save_design_action));
+
+        popup.Run();
+
     } else if (SavedDesignListBoxRow* design_row = dynamic_cast<SavedDesignListBoxRow*>(*it)) {
         std::string design_name = design_row->DesignName();
         SavedDesignsManager& manager = GetSavedDesignsManager();
@@ -1895,35 +1889,26 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
 
         DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design_name;
 
+        // Context menu actions
+        // add design
+        auto add_design_action = [&design, empire_id]() {
+            DebugLogger() << "BasesListBox::BaseRightClicked Add Saved Design" << design->Name();
+            int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+        };
+
+        // add all saved designs
+        auto add_all_saved_designs_action = [&manager]() {
+            DebugLogger() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
+            manager.LoadAllSavedDesigns();
+        };
+
         // create popup menu with a commands in it
-        GG::MenuItem menu_contents;
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_ADD"),       1, false, false));
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   2, false, false));
-
-        CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-        if (popup.Run()) {
-            switch (popup.MenuID()) {
-
-            case 1: {   // add design
-                DebugLogger() << "BasesListBox::BaseRightClicked Add Saved Design" << design_name;
-                int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
-                break;
-            }
-
-            case 2: {   // add all saved designs
-                DebugLogger() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
-                manager.LoadAllSavedDesigns();
-                break;
-            }
-
-            default:
-                break;
-            }
-        }
-
+        CUIPopupMenu popup(pt.x, pt.y);
+        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
+        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   false, false, add_all_saved_designs_action));
+        popup.Run();
     }
 }
 

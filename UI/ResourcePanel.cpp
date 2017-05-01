@@ -131,25 +131,14 @@ bool ResourcePanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     if (meter_title.empty())
         return false;
 
-    GG::MenuItem menu_contents;
-
-    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
-    menu_contents.next_level.push_back(GG::MenuItem(popup_label, 2, false, false));
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
     bool retval = false;
+    auto pedia_zoom_to_article_action = [&meter_string, &retval]() {
+        retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string); };
 
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-            case 2: {
-                retval = ClientUI::GetClientUI()->ZoomToMeterTypeArticle(meter_string);
-                break;
-            }
-            default:
-                break;
-        }
-    }
+    CUIPopupMenu popup(pt.x, pt.y);
+    std::string popup_label = boost::io::str(FlexibleFormat(UserString("ENC_LOOKUP")) % meter_title);
+    popup.AddMenuItem(GG::MenuItem(popup_label, false, false, pedia_zoom_to_article_action));
+    popup.Run();
 
     return retval;
 }

@@ -803,33 +803,26 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
         if (!system)
             return;
 
-        GG::MenuItem menu_contents;
-        if (m_order_issuing_enabled && system->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
-            menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), 1, false, false));
-
-        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), menu_contents, ClientUI::TextColor(),
+        GG::PopupMenu popup(pt.x, pt.y, ClientUI::GetFont(), ClientUI::TextColor(),
                             ClientUI::WndOuterBorderColor(), ClientUI::WndColor(), ClientUI::EditHiliteColor());
 
-        if (popup.Run()) {
-            switch (popup.MenuID()) {
-            case 1: // rename system
-                {
-                    const std::string& old_name(system->Name());
-                    CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name);
-                    edit_wnd.Run();
-                    const std::string& new_name(edit_wnd.Result());
-                    if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
-                        HumanClientApp::GetApp()->Orders().IssueOrder(
-                            OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name)));
-                        if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent()))
-                            side_panel->Refresh();
-                    }
-                }
-                break;
-            default:
-                break;
+        auto rename_action = [this, system]() {
+            const std::string& old_name(system->Name());
+            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_SYSTEM_NAME"), old_name);
+            edit_wnd.Run();
+            const std::string& new_name(edit_wnd.Result());
+            if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name)));
+                if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent()))
+                    side_panel->Refresh();
             }
-        }
+        };
+
+        if (m_order_issuing_enabled && system->OwnedBy(HumanClientApp::GetApp()->EmpireID()))
+            popup.AddMenuItem(GG::MenuItem(UserString("SP_RENAME_SYSTEM"), false, false, rename_action));
+
+        popup.Run();
     }
 
     bool m_order_issuing_enabled;
@@ -2041,85 +2034,72 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         return;
     }
 
-    GG::MenuItem menu_contents;
+    CUIPopupMenu popup(pt.x, pt.y);
+
     if (planet->OwnedBy(HumanClientApp::GetApp()->EmpireID()) && m_order_issuing_enabled
         && m_planet_name->InClient(pt))
     {
-        menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_RENAME_PLANET"), 1, false, false));
+        auto rename_action = [this, planet]() { // rename planet
+            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), planet->Name());
+            edit_wnd.Run();
+            if (edit_wnd.Result() != ""
+                && edit_wnd.Result() != planet->Name()
+                && m_order_issuing_enabled)
+            {
+                HumanClientApp::GetApp()->Orders().IssueOrder(
+                    OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result())));
+                Refresh();
+            }
+
+        };
+        popup.AddMenuItem(GG::MenuItem(UserString("SP_RENAME_PLANET"), false, false, rename_action));
     }
 
-    menu_contents.next_level.push_back(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), 2, false, false));
+    auto pedia_to_planet_action = [this]() { ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id); };
+
+    popup.AddMenuItem(GG::MenuItem(UserString("SP_PLANET_SUITABILITY"), false, false, pedia_to_planet_action));
 
     if (planet->OwnedBy(client_empire_id)
         && !peaceful_empires_in_system.empty()
         && !ClientPlayerIsModerator())
     {
-        menu_contents.next_level.push_back(GG::MenuItem(true));
+        popup.AddMenuItem(GG::MenuItem(true));
 
         // submenus for each available recipient empire
-        GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), -1, false, false);
+        GG::MenuItem give_away_menu(UserString("ORDER_GIVE_PLANET_TO_EMPIRE"), false, false);
         for (std::map<int, Empire*>::value_type& entry : Empires()) {
-            int other_empire_id = entry.first;
-            if (peaceful_empires_in_system.find(other_empire_id) == peaceful_empires_in_system.end())
-                continue;
-            give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), 100 + other_empire_id, false, false));
-        }
-        menu_contents.next_level.push_back(give_away_menu);
-
-        if (planet->OrderedGivenToEmpire() != ALL_EMPIRES) {
-            GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_PLANET"), 12, false, false);
-            menu_contents.next_level.push_back(cancel_give_away_menu);
-        }
-    }
-
-
-    CUIPopupMenu popup(pt.x, pt.y, menu_contents);
-
-    if (popup.Run()) {
-        switch (popup.MenuID()) {
-        case 1:
-        { // rename planet
-            std::string plt_name = planet->Name();
-            CUIEditWnd edit_wnd(GG::X(350), UserString("SP_ENTER_NEW_PLANET_NAME"), plt_name);
-            edit_wnd.Run();
-            if (edit_wnd.Result() != "" && edit_wnd.Result() != planet->Name() && m_order_issuing_enabled)
-            {
-                HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result())));
-                Refresh();
-            }
-            break;
-        }
-        case 2:
-        {   // colonizable/suitability report
-            ClientUI::GetClientUI()->ZoomToPlanetPedia(m_planet_id);
-            break;
-        }
-
-        case 12: { // cancel give away order for this fleet
-            const OrderSet orders = HumanClientApp::GetApp()->Orders();
-            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
-                if (std::shared_ptr<GiveObjectToEmpireOrder> order =
-                    std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(entry.second))
-                {
-                    if (order->ObjectID() == planet->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
-                        // could break here, but won't to ensure there are no problems with doubled orders
-                    }
-                }
-            }
-            break;
-        }
-
-        default: { // check for menu item indicating give to other empire order
-            if (popup.MenuID() > 100) {
-                int recipient_empire_id = popup.MenuID() - 100;
+            int recipient_empire_id = entry.first;
+            auto gift_action = [recipient_empire_id, client_empire_id, planet]() {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
                     OrderPtr(new GiveObjectToEmpireOrder(client_empire_id, planet->ID(), recipient_empire_id)));
-            }
-            break;
+            };
+            if (peaceful_empires_in_system.find(recipient_empire_id) == peaceful_empires_in_system.end())
+                continue;
+            give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), false, false, gift_action));
         }
+        popup.AddMenuItem(std::move(give_away_menu));
+
+        if (planet->OrderedGivenToEmpire() != ALL_EMPIRES) {
+            auto ungift_action = [planet]() { // cancel give away order for this fleet
+                const OrderSet orders = HumanClientApp::GetApp()->Orders();
+                for (const std::map<int, OrderPtr>::value_type& entry : orders) {
+                    if (std::shared_ptr<GiveObjectToEmpireOrder> order =
+                        std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(entry.second))
+                    {
+                        if (order->ObjectID() == planet->ID()) {
+                            HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
+                            // could break here, but won't to ensure there are no problems with doubled orders
+                        }
+                    }
+                }
+
+            };
+            GG::MenuItem cancel_give_away_menu(UserString("ORDER_CANCEL_GIVE_PLANET"), false, false, ungift_action);
+            popup.AddMenuItem(std::move(cancel_give_away_menu));
         }
     }
+
+    popup.Run();
 }
 
 void SidePanel::PlanetPanel::MouseWheel(const GG::Pt& pt, int move, GG::Flags<GG::ModKey> mod_keys)
