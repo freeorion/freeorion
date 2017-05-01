@@ -157,6 +157,7 @@ find_package(Boost ${MINIMUM_BOOST_VERSION}
         iostreams
         locale
         log
+        log_setup
         regex
         serialization
         python
@@ -294,6 +295,7 @@ target_link_libraries(freeorioncommon
     ${Boost_FILESYSTEM_LIBRARY}
     ${Boost_IOSTREAMS_LIBRARY}
     ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${Boost_REGEX_LIBRARY}
     ${Boost_SERIALIZATION_LIBRARY}
     ${Boost_SIGNALS_LIBRARY}
@@ -404,6 +406,8 @@ target_link_libraries(freeoriond
     freeorionparse
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -445,6 +449,8 @@ target_link_libraries(freeorionca
     freeorionparse
     ${PYTHON_LIBRARIES}
     ${Boost_PYTHON_LIBRARY}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )
 
@@ -513,6 +519,8 @@ target_link_libraries(freeorion
     ${VORBIS_LIBRARIES}
     ${ZLIB_LIBRARIES}
     ${Boost_LOCALE_LIBRARY}
+    ${Boost_LOG_LIBRARY}
+    ${Boost_LOG_SETUP_LIBRARY}
     ${ICONV_LIBRARY}
     ${CMAKE_THREAD_LIBS_INIT}
 )

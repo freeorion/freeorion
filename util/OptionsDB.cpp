@@ -327,10 +327,10 @@ void OptionsDB::RemoveUnrecognized(const std::string& prefix) {
     }
 }
 
-void OptionsDB::FindOptions(std::set<std::string>& ret, const std::string& prefix) const {
+void OptionsDB::FindOptions(std::set<std::string>& ret, const std::string& prefix, bool allow_unrecognized) const {
     ret.clear();
     for (const std::map<std::string, Option>::value_type& option : m_options)
-        if (option.second.recognized && option.first.find(prefix) == 0)
+        if ((option.second.recognized || allow_unrecognized) && option.first.find(prefix) == 0)
             ret.insert(option.first);
 }
 

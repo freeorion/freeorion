@@ -21,6 +21,7 @@
 #include "../util/Directories.h"
 #include "../util/i18n.h"
 #include "../util/Logger.h"
+#include "../util/LoggerWithOptionsDB.h"
 #include "../util/MultiplayerCommon.h"
 #include "../util/OptionsDB.h"
 #include "../util/Order.h"
@@ -140,7 +141,13 @@ ServerApp::ServerApp() :
 {
     const std::string SERVER_LOG_FILENAME((GetUserDataDir() / "freeoriond.log").string());
 
+    // Force the log threshold if requested.
+    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
+    if (!force_log_level.empty())
+        OverrideLoggerThresholds(to_LogLevel(force_log_level));
+
     InitLoggingSystem(SERVER_LOG_FILENAME, "Server");
+    InitLoggingOptionsDBSystem();
 
     LogDependencyVersions();
 
@@ -227,8 +234,13 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
     args.push_back(max_aggr_str.str());
     args.push_back("--resource-dir");
     args.push_back("\"" + GetOptionsDB().Get<std::string>("resource-dir") + "\"");
-    args.push_back("--log-level");
-    args.push_back(GetOptionsDB().Get<std::string>("log-level"));
+
+    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
+    if (!force_log_level.empty()) {
+        args.push_back("--log-level");
+        args.push_back(GetOptionsDB().Get<std::string>("log-level"));
+    }
+
     args.push_back("--ai-path");
     args.push_back(GetOptionsDB().Get<std::string>("ai-path"));
     DebugLogger() << "starting AIs with " << AI_CLIENT_EXE ;

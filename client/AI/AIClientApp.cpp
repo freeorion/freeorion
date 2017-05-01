@@ -2,6 +2,7 @@
 
 #include "../../python/AI/AIFramework.h"
 #include "../../util/Logger.h"
+#include "../../util/LoggerWithOptionsDB.h"
 #include "../../util/MultiplayerCommon.h"
 #include "../../util/OptionsDB.h"
 #include "../../util/Directories.h"
@@ -87,7 +88,13 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
         m_max_aggression = boost::lexical_cast<int>(args.at(2));
     }
 
+    // Force the log threshold if requested.
+    auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
+    if (!force_log_level.empty())
+        OverrideLoggerThresholds(to_LogLevel(force_log_level));
+
     InitLoggingSystem(AICLIENT_LOG_FILENAME, "AI");
+    InitLoggingOptionsDBSystem();
     DebugLogger() << PlayerName() + " ai client initialized.";
 }
 
