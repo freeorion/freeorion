@@ -184,13 +184,20 @@ namespace {
 
             // Verify that every design in m_saved_designs is in m_ordering.
             if (m_ordering.size() != m_saved_designs.size()) {
+                // Add any missing designs in alphabetical order to the end of the list
                 std::unordered_set<boost::uuids::uuid> uuids_in_ordering{m_ordering.begin(), m_ordering.end()};
-                for (const auto& uuid_and_design: m_saved_designs) {
-                    if (!uuids_in_ordering.count(uuid_and_design.first)) {
-                        WarnLogger() << "Missing ship design " << uuid_and_design.second->Name()
-                                     << " added to the manifest.";
-                        m_ordering.push_back(uuid_and_design.first);
-                    }
+                std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
+                for (auto& uuid_and_design: m_saved_designs) {
+                    if (uuids_in_ordering.count(uuid_and_design.first))
+                        continue;
+                    missing_uuids_sorted_by_name.insert(
+                        std::make_pair(uuid_and_design.second->Name(), uuid_and_design.first));
+                }
+
+                for (auto& name_and_uuid: missing_uuids_sorted_by_name) {
+                    WarnLogger() << "Missing ship design " << name_and_uuid.first
+                                 << " added to the manifest.";
+                    m_ordering.push_back(name_and_uuid.second);
                 }
             }
         }
