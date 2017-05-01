@@ -304,7 +304,7 @@ void AIClientApp::HandleMessage(const Message& msg) {
 
     case Message::SAVE_GAME_DATA_REQUEST: {
         //DebugLogger() << "AIClientApp::HandleMessage Message::SAVE_GAME_DATA_REQUEST";
-        Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), m_AI->GetSaveStateString()));
+        Networking().SendMessage(ClientSaveDataMessage(Orders(), m_AI->GetSaveStateString()));
         //DebugLogger() << "AIClientApp::HandleMessage sent save data message";
         break;
     }

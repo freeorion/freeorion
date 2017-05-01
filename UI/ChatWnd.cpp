@@ -459,14 +459,13 @@ void MessageWnd::OpenForInput() {
 namespace {
     void SendChatMessage(const std::string& text, std::set<int> recipients) {
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-        int sender_id = HumanClientApp::GetApp()->PlayerID();
 
         if (recipients.empty()) {
-            net.SendMessage(PlayerChatMessage(sender_id, text));
+            net.SendMessage(PlayerChatMessage(text));
         } else {
-            recipients.insert(sender_id);   // ensure recipient sees own sent message
+            recipients.insert(HumanClientApp::GetApp()->PlayerID());   // ensure recipient sees own sent message
             for (int recipient_id : recipients)
-                net.SendMessage(PlayerChatMessage(sender_id, text, recipient_id));
+                net.SendMessage(PlayerChatMessage(text, recipient_id));
         }
     }
 

@@ -864,7 +864,7 @@ namespace AIInterface {
     }
 
     void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text) {
-        AIClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(PlayerID(), message_text, recipient_player_id));
+        AIClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(message_text, recipient_player_id));
     }
 
     void SendDiplomaticMessage(const DiplomaticMessage& diplo_message) {
@@ -875,7 +875,7 @@ namespace AIInterface {
         int recipient_empire_id = diplo_message.RecipientEmpireID();
         int recipient_player_id = app->EmpirePlayerID(recipient_empire_id);
         if (recipient_player_id == Networking::INVALID_PLAYER_ID) return;
-        app->Networking().SendMessage(DiplomacyMessage(sender_player_id, recipient_player_id, diplo_message));
+        app->Networking().SendMessage(DiplomacyMessage(diplo_message));
     }
 
     void DoneTurn() {

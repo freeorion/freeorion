@@ -230,58 +230,58 @@ FO_COMMON_API Message HostMPAckMessage(int player_id);
 FO_COMMON_API Message JoinAckMessage(int player_id);
 
 /** creates a TURN_ORDERS message. */
-FO_COMMON_API Message TurnOrdersMessage(int sender, const OrderSet& orders);
+FO_COMMON_API Message TurnOrdersMessage(const OrderSet& orders);
 
 /** creates a TURN_PROGRESS message. */
 FO_COMMON_API Message TurnProgressMessage(Message::TurnProgressPhase phase_id);
 
 /** creates a PLAYER_STATUS message. */
-FO_COMMON_API Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status);
+FO_COMMON_API Message PlayerStatusMessage(int about_player_id, Message::PlayerStatus player_status);
 
 /** creates a TURN_UPDATE message. */
-FO_COMMON_API Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
+FO_COMMON_API Message TurnUpdateMessage(int empire_id, int current_turn,
                                         const EmpireManager& empires, const Universe& universe,
                                         const SpeciesManager& species, CombatLogManager& combat_logs,
                                         const SupplyManager& supply,
                                         const std::map<int, PlayerInfo>& players, bool use_binary_serialization);
 
 /** create a TURN_PARTIAL_UPDATE message. */
-FO_COMMON_API Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe,
+FO_COMMON_API Message TurnPartialUpdateMessage(int empire_id, const Universe& universe,
                                                bool use_binary_serialization);
 
 /** creates a CLIENT_SAVE_DATA message, including UI data but without a state string. */
-FO_COMMON_API Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data);
+FO_COMMON_API Message ClientSaveDataMessage(const OrderSet& orders, const SaveGameUIData& ui_data);
 
 /** creates a CLIENT_SAVE_DATA message, without UI data but with a state string. */
-FO_COMMON_API Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string);
+FO_COMMON_API Message ClientSaveDataMessage(const OrderSet& orders, const std::string& save_state_string);
 
 /** creates a CLIENT_SAVE_DATA message, without UI data and without a state string. */
-Message ClientSaveDataMessage(int sender, const OrderSet& orders);
+FO_COMMON_API Message ClientSaveDataMessage(const OrderSet& orders);
 
 /** creates an REQUEST_NEW_OBJECT_ID message. This message is a synchronous
     message, when sent it will wait for a reply from the server */
-FO_COMMON_API Message RequestNewObjectIDMessage(int sender);
+FO_COMMON_API Message RequestNewObjectIDMessage();
 
 /** creates an DISPATCH_NEW_OBJECT_ID  message.  This message is sent to a
   * client who is waiting for a new object ID */
-FO_COMMON_API Message DispatchObjectIDMessage(int player_id, int new_id);
+FO_COMMON_API Message DispatchObjectIDMessage(int new_id);
 
 /** creates an REQUEST_NEW_DESIGN_ID message. This message is a synchronous
     message, when sent it will wait for a reply from the server */
-FO_COMMON_API Message RequestNewDesignIDMessage(int sender);
+FO_COMMON_API Message RequestNewDesignIDMessage();
 
 /** creates an DISPATCH_NEW_DESIGN_ID  message.  This message is sent to a
   * client who is waiting for a new design ID */
-FO_COMMON_API Message DispatchDesignIDMessage(int player_id, int new_id);
+FO_COMMON_API Message DispatchDesignIDMessage(int new_id);
 
 /** creates a SAVE_GAME_INITIATE request message.  This message should only be sent by
   * the host player.*/
-FO_COMMON_API Message HostSaveGameInitiateMessage(int sender, const std::string& filename);
+FO_COMMON_API Message HostSaveGameInitiateMessage(const std::string& filename);
 
 /** creates a SAVE_GAME_DATA_REQUEST data request message.  This message should
     only be sent by the server to get game data from a client, or to respond to
     the host player requesting a save be initiated. */
-FO_COMMON_API Message ServerSaveGameDataRequestMessage(int receiver, bool synchronous_response);
+FO_COMMON_API Message ServerSaveGameDataRequestMessage(bool synchronous_response);
 
 /** creates a SAVE_GAME_COMPLETE complete message.  This message should only be
     sent by the server to inform clients that the last initiated save has been
@@ -290,35 +290,35 @@ FO_COMMON_API Message ServerSaveGameCompleteMessage(const std::string& save_file
 
 /** creates a DIPLOMACY message, which is sent between players via the server to
   * declare, proposed, or accept / reject diplomatic arrangements or agreements. */
-FO_COMMON_API Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message);
+FO_COMMON_API Message DiplomacyMessage(const DiplomaticMessage& diplo_message);
 
 /** creates a DIPLOMATIC_STATUS message, which is sent to players by the server to
   * update them on diplomatic status changes between players. */
-FO_COMMON_API Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update);
+FO_COMMON_API Message DiplomaticStatusMessage(const DiplomaticStatusUpdateInfo& diplo_update);
 
 /** creates an END_GAME message used to terminate an active game. */
-FO_COMMON_API Message EndGameMessage(int receiver, Message::EndGameReason reason, const std::string& reason_player_name = "");
+FO_COMMON_API Message EndGameMessage(Message::EndGameReason reason, const std::string& reason_player_name = "");
 
 /** creates an AI_END_GAME_ACK message used to indicate that the AI has shutdown. */
 FO_COMMON_API Message AIEndGameAcknowledgeMessage();
 
 /** creates a MODERATOR_ACTION message used to implement moderator commands. */
-FO_COMMON_API Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& mod_action);
+FO_COMMON_API Message ModeratorActionMessage(const Moderator::ModeratorAction& mod_action);
 
 /** tells server to shut down. */
-FO_COMMON_API Message ShutdownServerMessage(int sender);
+FO_COMMON_API Message ShutdownServerMessage();
 
 /** requests previews of savefiles from server */
-FO_COMMON_API Message RequestSavePreviewsMessage(int sender, std::string directory);
+FO_COMMON_API Message RequestSavePreviewsMessage(std::string directory);
 
 /** returns the savegame previews to the client */
-FO_COMMON_API Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& preview);
+FO_COMMON_API Message DispatchSavePreviewsMessage(const PreviewInformation& preview);
 
 /** requests combat logs from server */
-FO_COMMON_API Message RequestCombatLogsMessage(int sender, const std::vector<int>& ids);
+FO_COMMON_API Message RequestCombatLogsMessage(const std::vector<int>& ids);
 
 /** returns combat logs to the client */
-FO_COMMON_API Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int, const CombatLog>>& logs);
+FO_COMMON_API Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatLog>>& logs);
 
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
@@ -327,22 +327,22 @@ FO_COMMON_API Message DispatchCombatLogsMessage(int receiver, const std::vector<
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the
     server, then to other users.  Clients must send all such updates to the server directly; the server
     will send updates to the other clients as needed.*/
-FO_COMMON_API Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data);
+FO_COMMON_API Message LobbyUpdateMessage(const MultiplayerLobbyData& lobby_data);
 
 /** creates an LOBBY_UPDATE message containing changes to the lobby settings that need to propogate to the users.
     This message should only be sent by the server.*/
-FO_COMMON_API Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data);
+FO_COMMON_API Message ServerLobbyUpdateMessage(const MultiplayerLobbyData& lobby_data);
 
 /** creates an PLAYER_CHAT message containing a chat string to be broadcast to player \a receiver, or all players if \a
     receiver is Networking::INVALID_PLAYER_ID. Note that the receiver of this message is always the server.*/
-FO_COMMON_API Message PlayerChatMessage(int sender, const std::string& text, int receiver = Networking::INVALID_PLAYER_ID);
+FO_COMMON_API Message PlayerChatMessage(const std::string& text, int receiver = Networking::INVALID_PLAYER_ID);
 
-/** creates an PLAYER_CHAT message containing a chat string from \a sender to be displayed in \a receiver's lobby dialog.
+/** creates an PLAYER_CHAT message containing a chat string from \a sender to be displayed in chat.
     This message should only be sent by the server.*/
-FO_COMMON_API Message ServerPlayerChatMessage(int sender, int receiver, const std::string& text);
+FO_COMMON_API Message ServerPlayerChatMessage(int sender, const std::string& text);
 
 /** creates a START_MP_GAME used to finalize the multiplayer lobby setup.*/
-FO_COMMON_API Message StartMPGameMessage(int player_id);
+FO_COMMON_API Message StartMPGameMessage();
 
 
 ////////////////////////////////////////////////

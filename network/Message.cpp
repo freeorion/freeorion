@@ -354,7 +354,7 @@ Message HostMPAckMessage(int player_id)
 Message JoinAckMessage(int player_id)
 { return Message(Message::JOIN_GAME, std::to_string(player_id)); }
 
-Message TurnOrdersMessage(int sender, const OrderSet& orders) {
+Message TurnOrdersMessage(const OrderSet& orders) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -372,7 +372,7 @@ Message TurnProgressMessage(Message::TurnProgressPhase phase_id) {
     return Message(Message::TURN_PROGRESS, os.str());
 }
 
-Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerStatus player_status) {
+Message PlayerStatusMessage(int about_player_id, Message::PlayerStatus player_status) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -382,7 +382,7 @@ Message PlayerStatusMessage(int player_id, int about_player_id, Message::PlayerS
     return Message(Message::PLAYER_STATUS, os.str());
 }
 
-Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
+Message TurnUpdateMessage(int empire_id, int current_turn,
                           const EmpireManager& empires, const Universe& universe,
                           const SpeciesManager& species, CombatLogManager& combat_logs,
                           const SupplyManager& supply,
@@ -416,7 +416,7 @@ Message TurnUpdateMessage(int player_id, int empire_id, int current_turn,
     return Message(Message::TURN_UPDATE, os.str());
 }
 
-Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& universe,
+Message TurnPartialUpdateMessage(int empire_id, const Universe& universe,
                                  bool use_binary_serialization) {
     std::ostringstream os;
     {
@@ -433,7 +433,7 @@ Message TurnPartialUpdateMessage(int player_id, int empire_id, const Universe& u
     return Message(Message::TURN_PARTIAL_UPDATE, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGameUIData& ui_data) {
+Message ClientSaveDataMessage(const OrderSet& orders, const SaveGameUIData& ui_data) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -447,7 +447,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const SaveGame
     return Message(Message::CLIENT_SAVE_DATA, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::string& save_state_string) {
+Message ClientSaveDataMessage(const OrderSet& orders, const std::string& save_state_string) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -461,7 +461,7 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders, const std::str
     return Message(Message::CLIENT_SAVE_DATA, os.str());
 }
 
-Message ClientSaveDataMessage(int sender, const OrderSet& orders) {
+Message ClientSaveDataMessage(const OrderSet& orders) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -474,26 +474,26 @@ Message ClientSaveDataMessage(int sender, const OrderSet& orders) {
     return Message(Message::CLIENT_SAVE_DATA, os.str());
 }
 
-Message RequestNewObjectIDMessage(int sender)
+Message RequestNewObjectIDMessage()
 { return Message(Message::REQUEST_NEW_OBJECT_ID, DUMMY_EMPTY_MESSAGE); }
 
-Message DispatchObjectIDMessage(int player_id, int new_id) {
+Message DispatchObjectIDMessage(int new_id) {
     return Message(Message::DISPATCH_NEW_OBJECT_ID,
                    std::to_string(new_id), true);
 }
 
-Message RequestNewDesignIDMessage(int sender)
+Message RequestNewDesignIDMessage()
 { return Message(Message::REQUEST_NEW_DESIGN_ID, DUMMY_EMPTY_MESSAGE, true); }
 
-Message DispatchDesignIDMessage(int player_id, int new_id) {
+Message DispatchDesignIDMessage(int new_id) {
     return Message(Message::DISPATCH_NEW_DESIGN_ID,
                    std::to_string(new_id), true);
 }
 
-Message HostSaveGameInitiateMessage(int sender, const std::string& filename)
+Message HostSaveGameInitiateMessage(const std::string& filename)
 { return Message(Message::SAVE_GAME_INITIATE, filename); }
 
-Message ServerSaveGameDataRequestMessage(int receiver, bool synchronous_response) {
+Message ServerSaveGameDataRequestMessage(bool synchronous_response) {
     return Message(Message::SAVE_GAME_DATA_REQUEST, DUMMY_EMPTY_MESSAGE, synchronous_response);
 }
 
@@ -507,7 +507,7 @@ Message ServerSaveGameCompleteMessage(const std::string& save_filename, int byte
     return Message(Message::SAVE_GAME_COMPLETE, os.str());
 }
 
-Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& diplo_message) {
+Message DiplomacyMessage(const DiplomaticMessage& diplo_message) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -516,7 +516,7 @@ Message DiplomacyMessage(int sender, int receiver, const DiplomaticMessage& dipl
     return Message(Message::DIPLOMACY, os.str());
 }
 
-Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& diplo_update) {
+Message DiplomaticStatusMessage(const DiplomaticStatusUpdateInfo& diplo_update) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -527,7 +527,7 @@ Message DiplomaticStatusMessage(int receiver, const DiplomaticStatusUpdateInfo& 
     return Message(Message::DIPLOMATIC_STATUS, os.str());
 }
 
-Message EndGameMessage(int receiver, Message::EndGameReason reason,
+Message EndGameMessage(Message::EndGameReason reason,
                        const std::string& reason_player_name/* = ""*/)
 {
     std::ostringstream os;
@@ -542,7 +542,7 @@ Message EndGameMessage(int receiver, Message::EndGameReason reason,
 Message AIEndGameAcknowledgeMessage()
 { return Message(Message::AI_END_GAME_ACK, DUMMY_EMPTY_MESSAGE); }
 
-Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& action) {
+Message ModeratorActionMessage(const Moderator::ModeratorAction& action) {
     std::ostringstream os;
     {
         const Moderator::ModeratorAction* mod_action = &action;
@@ -552,15 +552,15 @@ Message ModeratorActionMessage(int sender, const Moderator::ModeratorAction& act
     return Message(Message::MODERATOR_ACTION, os.str());
 }
 
-Message ShutdownServerMessage(int sender)
+Message ShutdownServerMessage()
 { return Message(Message::SHUT_DOWN_SERVER, DUMMY_EMPTY_MESSAGE); }
 
 /** requests previews of savefiles from server synchronously */
-Message RequestSavePreviewsMessage(int sender, std::string directory)
+Message RequestSavePreviewsMessage(std::string directory)
 { return Message(Message::REQUEST_SAVE_PREVIEWS, directory); }
 
 /** returns the savegame previews to the client */
-Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& previews) {
+Message DispatchSavePreviewsMessage(const PreviewInformation& previews) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -569,14 +569,14 @@ Message DispatchSavePreviewsMessage(int receiver, const PreviewInformation& prev
     return Message(Message::DISPATCH_SAVE_PREVIEWS, os.str(), true);
 }
 
-Message RequestCombatLogsMessage(int sender, const std::vector<int>& ids) {
+Message RequestCombatLogsMessage(const std::vector<int>& ids) {
     std::ostringstream os;
     freeorion_xml_oarchive oa(os);
     oa << BOOST_SERIALIZATION_NVP(ids);
     return Message(Message::REQUEST_COMBAT_LOGS, os.str());
 }
 
-Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int, const CombatLog>>& logs) {
+Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatLog>>& logs) {
     std::ostringstream os;
     freeorion_xml_oarchive oa(os);
     oa << BOOST_SERIALIZATION_NVP(logs);
@@ -586,7 +586,7 @@ Message DispatchCombatLogsMessage(int receiver, const std::vector<std::pair<int,
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
-Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data) {
+Message LobbyUpdateMessage(const MultiplayerLobbyData& lobby_data) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -595,7 +595,7 @@ Message LobbyUpdateMessage(int sender, const MultiplayerLobbyData& lobby_data) {
     return Message(Message::LOBBY_UPDATE, os.str());
 }
 
-Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby_data) {
+Message ServerLobbyUpdateMessage(const MultiplayerLobbyData& lobby_data) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -604,7 +604,7 @@ Message ServerLobbyUpdateMessage(int receiver, const MultiplayerLobbyData& lobby
     return Message(Message::LOBBY_UPDATE, os.str());
 }
 
-Message PlayerChatMessage(int sender, const std::string& data, int receiver) {
+Message PlayerChatMessage(const std::string& data, int receiver) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -614,7 +614,7 @@ Message PlayerChatMessage(int sender, const std::string& data, int receiver) {
     return Message(Message::PLAYER_CHAT, os.str());
 }
 
-Message ServerPlayerChatMessage(int sender, int receiver, const std::string& data) {
+Message ServerPlayerChatMessage(int sender, const std::string& data) {
     std::ostringstream os;
     {
         freeorion_xml_oarchive oa(os);
@@ -624,7 +624,7 @@ Message ServerPlayerChatMessage(int sender, int receiver, const std::string& dat
     return Message(Message::PLAYER_CHAT, os.str());
 }
 
-Message StartMPGameMessage(int player_id)
+Message StartMPGameMessage()
 { return Message(Message::START_MP_GAME, DUMMY_EMPTY_MESSAGE); }
 
 

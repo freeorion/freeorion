@@ -1950,7 +1950,7 @@ public:
                     std::map<int, std::set<int>>::iterator fs_it = fleet_ships.find(fleet_id);
 
                     if (!ObjectCollapsed(system_id)) {
-                        AddObjectRow(fleet_id, system_id, 
+                        AddObjectRow(fleet_id, system_id,
                                         fs_it != fleet_ships.end() ? fs_it->second : std::set<int>(),
                                         indent);
                         ++indent;
@@ -2521,10 +2521,10 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     // moderator actions...
     if (moderator) {
         auto destroy_object_action = [object_id, app, &net]() {
-            net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::DestroyUniverseObject(object_id)));
+            net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(object_id)));
         };
         auto set_owner_action = [object_id, app, &net]() {
-            net.SendMessage(ModeratorActionMessage(app->PlayerID(), Moderator::SetOwner(object_id, ALL_EMPIRES)));
+            net.SendMessage(ModeratorActionMessage(Moderator::SetOwner(object_id, ALL_EMPIRES)));
         };
         popup.AddMenuItem(GG::MenuItem(UserString("MOD_DESTROY"),      false, false, destroy_object_action));
         popup.AddMenuItem(GG::MenuItem(UserString("MOD_SET_OWNER"),    false, false, set_owner_action));

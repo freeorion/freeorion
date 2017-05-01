@@ -652,7 +652,7 @@ void MultiPlayerLobbyWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG
          GG::GUI::GetGUI()->FocusWnd() == m_chat_input_edit)
     {
         std::string text = m_chat_input_edit->Text();   // copy, so subsequent clearing doesn't affect typed message that is used later...
-        HumanClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(HumanClientApp::GetApp()->PlayerID(), text));
+        HumanClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(text));
         m_chat_input_edit->SetText("");
 
         // look up this client's player name by ID
@@ -951,9 +951,8 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
 }
 
 void MultiPlayerLobbyWnd::SendUpdate() {
-    int player_id = HumanClientApp::GetApp()->PlayerID();
-    if (player_id != Networking::INVALID_PLAYER_ID)
-        HumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(player_id, m_lobby_data));
+    if (HumanClientApp::GetApp()->PlayerID() != Networking::INVALID_PLAYER_ID)
+        HumanClientApp::GetApp()->Networking().SendMessage(LobbyUpdateMessage(m_lobby_data));
 }
 
 bool MultiPlayerLobbyWnd::PlayerDataAcceptable() const {

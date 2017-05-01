@@ -352,7 +352,7 @@ void ServerApp::CleanupAIs() {
     try {
         for (PlayerConnectionPtr player : m_networking) {
             if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
+                player->SendMessage(EndGameMessage(Message::PLAYER_DISCONNECT));
                 ai_connection_lingering = true;
             }
         }
@@ -878,7 +878,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     ListSaveSubdirectories( preview_information.subdirectories);
     LoadSaveGamePreviews(directory_name, m_single_player_game? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION, preview_information.previews);
     DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size() << " previews in response.";
-    player_connection->SendMessage(DispatchSavePreviewsMessage(player_connection->PlayerID(), preview_information));
+    player_connection->SendMessage(DispatchSavePreviewsMessage(preview_information));
     DebugLogger() << "ServerApp::UpdateSavePreviews: Previews sent.";
 }
 
@@ -900,7 +900,7 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     // Return them to the client
     DebugLogger() << "UpdateCombatLogs returning " << logs.size()
                   << " logs to player " << player_connection->PlayerID();
-    player_connection->SendMessage(DispatchCombatLogsMessage(player_connection->PlayerID(), logs));
+    player_connection->SendMessage(DispatchCombatLogsMessage(logs));
 }
 
 namespace {
@@ -2759,9 +2759,8 @@ void ServerApp::PreCombatProcessTurns() {
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
-        int player_id = player->PlayerID();
         bool use_binary_serialization = player->ClientVersionStringMatchesThisServer();
-        player->SendMessage(TurnPartialUpdateMessage(player_id, PlayerEmpireID(player_id),
+        player->SendMessage(TurnPartialUpdateMessage(PlayerEmpireID(player->PlayerID()),
                                                      m_universe, use_binary_serialization));
     }
 }
@@ -3096,13 +3095,12 @@ void ServerApp::PostCombatProcessTurns() {
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
-        int player_id = player->PlayerID();
         bool use_binary_serialization = player->ClientVersionStringMatchesThisServer();
-        player->SendMessage(TurnUpdateMessage(player_id,                PlayerEmpireID(player_id),
-                                              m_current_turn,           m_empires,
-                                              m_universe,               GetSpeciesManager(),
-                                              GetCombatLogManager(),    GetSupplyManager(),
-                                              players,                  use_binary_serialization));
+        player->SendMessage(TurnUpdateMessage(PlayerEmpireID(player->PlayerID()), m_current_turn,
+                                              m_empires,                          m_universe,
+                                              GetSpeciesManager(),                GetCombatLogManager(),
+                                              GetSupplyManager(),                 players,
+                                              use_binary_serialization));
     }
     DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }
@@ -3130,8 +3128,7 @@ void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
-        int player_id = player->PlayerID();
-        player->SendMessage(DiplomaticStatusMessage(player_id, update));
+        player->SendMessage(DiplomaticStatusMessage(update));
     }
 }
 
@@ -3145,8 +3142,8 @@ void ServerApp::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
 
     ServerNetworking::established_iterator player1_it = m_networking.GetPlayer(player1_id);
     if (player1_it != m_networking.established_end())
-        (*player1_it)->SendMessage(DiplomacyMessage(Networking::INVALID_PLAYER_ID, player1_id, message));
+        (*player1_it)->SendMessage(DiplomacyMessage(message));
     ServerNetworking::established_iterator player2_it = m_networking.GetPlayer(player2_id);
     if (player2_it != m_networking.established_end())
-        (*player2_it)->SendMessage(DiplomacyMessage(Networking::INVALID_PLAYER_ID, player2_id, message));
+        (*player2_it)->SendMessage(DiplomacyMessage(message));
 }

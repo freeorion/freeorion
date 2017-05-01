@@ -207,7 +207,7 @@ namespace {
             case Networking::CLIENT_TYPE_HUMAN_MODERATOR:   ModeratorIcon()->OrthoBlit(UpperLeft() + m_player_type_icon_ul, UpperLeft() + m_player_type_icon_ul + ICON_SIZE); break;
             default:    break;
             }
- 
+
             if (m_host)
                 HostIcon()->OrthoBlit(UpperLeft() + m_host_icon_ul, UpperLeft() + m_host_icon_ul + ICON_SIZE);
 
@@ -731,7 +731,7 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
     auto make_send_diplomatic_action = [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id](const std::function<DiplomaticMessage(int, int)>& message) {
         return [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id, &message]() {
             HumanClientApp::GetApp()->Networking().SendMessage(
-                DiplomacyMessage(client_player_id, clicked_player_id, message(client_empire_id, clicked_empire_id)));
+                DiplomacyMessage(message(client_empire_id, clicked_empire_id)));
         };
     };
 
