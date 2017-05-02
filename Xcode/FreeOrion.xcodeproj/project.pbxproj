@@ -973,7 +973,7 @@
 		825EA75E16DB9DB10002A797 /* ModeratorAction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ModeratorAction.cpp; sourceTree = "<group>"; };
 		825EA75F16DB9DB10002A797 /* ModeratorAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ModeratorAction.h; sourceTree = "<group>"; };
 		82714D761ADABE680071A329 /* libboost_log.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_log.a; sourceTree = "<group>"; };
-		82714D761ADABE680071A330 /* libboost_log_setup.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_log.a; sourceTree = "<group>"; };
+		82714D761ADABE680071A330 /* libboost_log_setup.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libboost_log_setup.a; sourceTree = "<group>"; };
 		8275F3DD1AD31381003568FF /* AccordionPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AccordionPanel.cpp; sourceTree = "<group>"; };
 		8275F3DE1AD31381003568FF /* AccordionPanel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AccordionPanel.h; sourceTree = "<group>"; };
 		8275F3DF1AD31381003568FF /* BuildingsPanel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BuildingsPanel.cpp; sourceTree = "<group>"; };
