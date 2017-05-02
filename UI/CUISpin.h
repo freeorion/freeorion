@@ -29,7 +29,7 @@ public:
         GG::Spin<T>(value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
                     ClientUI::TextColor())
     {
-        GG::Spin<T>::ValueChangedSignal.connect([](T vol){ detail::PlayValueChangedSound()(vol); }, boost::signals2::at_back);
+        GG::Spin<T>::ValueChangedSignal.connect(detail::PlayValueChangedSound());
         if (GG::Spin<T>::GetEdit())
             GG::Spin<T>::GetEdit()->SetHiliteColor(ClientUI::EditHiliteColor());
     }
