@@ -5,7 +5,6 @@
 #include "Sound.h"
 #include "../util/OptionsDB.h"
 
-#include <GG/SignalsAndSlots.h>
 #include <GG/Spin.h>
 
 
@@ -30,7 +29,7 @@ public:
         GG::Spin<T>(value, step, min, max, edits, ClientUI::GetFont(), ClientUI::CtrlBorderColor(),
                     ClientUI::TextColor())
     {
-        GG::Connect(GG::Spin<T>::ValueChangedSignal, detail::PlayValueChangedSound(), -1);
+        GG::Spin<T>::ValueChangedSignal.connect([](T vol){ detail::PlayValueChangedSound()(vol); }, boost::signals2::at_back);
         if (GG::Spin<T>::GetEdit())
             GG::Spin<T>::GetEdit()->SetHiliteColor(ClientUI::EditHiliteColor());
     }

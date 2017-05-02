@@ -30,12 +30,13 @@
 #include "../combat/CombatLogManager.h"
 #include "../client/human/HumanClientApp.h"
 
-#include <GG/GUI.h>
 #include <GG/Clr.h>
-#include <GG/DrawUtil.h>
-#include <GG/UnicodeCharsets.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
+#include <GG/DrawUtil.h>
+#include <GG/GUI.h>
 #include <GG/RichText/ImageBlock.h>
+#include <GG/SignalsAndSlots.h>
+#include <GG/UnicodeCharsets.h>
 
 // boost::spirit::classic pulls in windows.h which in turn defines the macros
 // MessageBox and PlaySound. Undefining those should avoid name collisions with

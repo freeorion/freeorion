@@ -37,6 +37,7 @@
 #include <GG/BrowseInfoWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/Cursor.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/utf8/checked.h>
 
 #include <boost/algorithm/string/trim.hpp>

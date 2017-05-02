@@ -26,6 +26,7 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
+#include <GG/SignalsAndSlots.h>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/locale.hpp>

@@ -19,7 +19,6 @@
 #define _Hotkey_h_
 
 #include <GG/GUI.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/Wnd.h>
 
 #include <boost/signals2/shared_connection_block.hpp>
@@ -211,7 +210,7 @@ public:
 
     /// Connects a named shortcut to the target slot in the target instance.
     void Connect(std::function<bool()> func, const std::string& name, std::function<bool()> cond = nullptr)
-    { AddConditionalConnection(name, GG::Connect(NamedSignal(name), func), cond); };
+    { AddConditionalConnection(name, NamedSignal(name).connect(func), cond); };
 
 
 private:

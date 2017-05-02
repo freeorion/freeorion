@@ -35,13 +35,14 @@
 #include "../util/ScopedTimer.h"
 #include "../client/human/HumanClientApp.h"
 
+#include <GG/dialogs/ThreeButtonDlg.h>
+#include <GG/DrawUtil.h>
+#include <GG/DynamicGraphic.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
-#include <GG/DrawUtil.h>
-#include <GG/StaticGraphic.h>
-#include <GG/DynamicGraphic.h>
 #include <GG/Scroll.h>
-#include <GG/dialogs/ThreeButtonDlg.h>
+#include <GG/SignalsAndSlots.h>
+#include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
 #include <boost/lexical_cast.hpp>

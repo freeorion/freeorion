@@ -198,7 +198,7 @@ Spin<T>::Spin(T value, T step, T min, T max, bool edits, const std::shared_ptr<F
     Init(font, color, text_color);
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(ValueChangedSignal, &ValueChangedEcho);
+        ValueChangedSignal.connect(&ValueChangedEcho);
 }
 
 template<class T>

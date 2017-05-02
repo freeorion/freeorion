@@ -57,10 +57,11 @@
 #include <boost/locale.hpp>
 
 #include <GG/DrawUtil.h>
-#include <GG/PtRect.h>
-#include <GG/MultiEdit.h>
-#include <GG/WndEvent.h>
 #include <GG/Layout.h>
+#include <GG/MultiEdit.h>
+#include <GG/PtRect.h>
+#include <GG/SignalsAndSlots.h>
+#include <GG/WndEvent.h>
 
 #include <deque>
 #include <unordered_set>

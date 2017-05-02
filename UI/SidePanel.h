@@ -9,7 +9,6 @@
 #include "../universe/System.h"
 
 #include <GG/DynamicGraphic.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/Texture.h>
 
 #include <vector>

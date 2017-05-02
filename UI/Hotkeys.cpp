@@ -18,6 +18,8 @@
 
 #include "Hotkeys.h"
 
+#include <GG/SignalsAndSlots.h>
+
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 

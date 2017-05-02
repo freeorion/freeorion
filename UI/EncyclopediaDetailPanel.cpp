@@ -38,10 +38,11 @@
 #include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>
-#include <GG/StaticGraphic.h>
 #include <GG/GUI.h>
 #include <GG/RichText/RichText.h>
 #include <GG/ScrollPanel.h>
+#include <GG/SignalsAndSlots.h>
+#include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
 
 #include <boost/algorithm/clamp.hpp>

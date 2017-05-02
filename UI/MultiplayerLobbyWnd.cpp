@@ -3,6 +3,7 @@
 #include <GG/Button.h>
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 #include "../util/i18n.h"

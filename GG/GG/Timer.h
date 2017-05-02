@@ -30,7 +30,8 @@
 #define _GG_Timer_h_
 
 #include <GG/Base.h>
-#include <GG/SignalsAndSlots.h>
+
+#include <boost/signals2/signal.hpp>
 
 #include <set>
 

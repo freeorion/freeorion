@@ -14,6 +14,7 @@
 
 #include <GG/GUI.h>
 #include <GG/Layout.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/TabWnd.h>
 
 //boost::spirit::classic pulls in windows.h which in turn defines the macros
