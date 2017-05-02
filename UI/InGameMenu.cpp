@@ -16,6 +16,7 @@
 #include <GG/Button.h>
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
+#include <GG/SignalsAndSlots.h>
 
 #include <boost/filesystem/operations.hpp>
 

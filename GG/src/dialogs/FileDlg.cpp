@@ -24,17 +24,17 @@
 
 #include <GG/dialogs/FileDlg.h>
 
-#include <GG/GUI.h>
 #include <GG/Button.h>
-#include <GG/Edit.h>
-#include <GG/DropDownList.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/DrawUtil.h>
+#include <GG/DropDownList.h>
+#include <GG/Edit.h>
+#include <GG/GUI.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
-#include <GG/WndEvent.h>
 #include <GG/utf8/checked.h>
-
-#include <GG/dialogs/ThreeButtonDlg.h>
+#include <GG/WndEvent.h>
 
 #include <boost/cast.hpp>
 #include <boost/format.hpp>

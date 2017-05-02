@@ -5,6 +5,9 @@
 
 #include <GG/Wnd.h>
 
+#include <boost/signals2/signal.hpp>
+
+
 class BarSizer;
 class SideBar;
 class OptionsBar;

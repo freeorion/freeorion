@@ -26,6 +26,7 @@
 #include <GG/Timer.h>
 
 #include <GG/GUI.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/Wnd.h>
 
 #include <map>

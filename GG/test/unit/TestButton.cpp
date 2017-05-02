@@ -3,6 +3,7 @@
 #include <boost/make_shared.hpp>
 #include <GG/Button.h>
 #include <GG/GUI.h>
+#include <GG/SignalsAndSlots.h>
 
 class MockGUI : public GG::GUI
 {

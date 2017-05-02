@@ -1,6 +1,7 @@
 #include "MilitaryPanel.h"
 
 #include <GG/Button.h>
+#include <GG/SignalsAndSlots.h>
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"

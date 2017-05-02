@@ -25,13 +25,14 @@
 
 #include "../GG/ScrollPanel.h"
 
+#include <GG/ClrConstants.h>
+#include <GG/Clr.h>
 #include <GG/DrawUtil.h>
 #include <GG/Flags.h>
 #include <GG/Scroll.h>
-#include <GG/Clr.h>
-#include <GG/ClrConstants.h>
-#include <GG/WndEvent.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
+#include <GG/WndEvent.h>
 
 #include <algorithm>
 

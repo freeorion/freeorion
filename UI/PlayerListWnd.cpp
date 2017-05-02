@@ -16,6 +16,7 @@
 #include "../universe/Enums.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/SignalsAndSlots.h>
 
 #include <algorithm>
 

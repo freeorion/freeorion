@@ -24,10 +24,11 @@
 
 #include <GG/DropDownList.h>
 
-#include <GG/GUI.h>
 #include <GG/DrawUtil.h>
-#include <GG/Scroll.h>
+#include <GG/GUI.h>
 #include <GG/Layout.h>
+#include <GG/Scroll.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 

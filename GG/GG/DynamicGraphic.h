@@ -34,6 +34,8 @@
 #include <GG/Control.h>
 #include <GG/StaticGraphic.h>
 
+#include <boost/signals2/signal.hpp>
+
 
 namespace GG {
 class Texture;

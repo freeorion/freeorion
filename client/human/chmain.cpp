@@ -9,6 +9,7 @@
 #include "../../util/i18n.h"
 #include "../../UI/Hotkeys.h"
 
+#include <GG/SignalsAndSlots.h>
 #include <GG/utf8/checked.h>
 
 #include <boost/format.hpp>

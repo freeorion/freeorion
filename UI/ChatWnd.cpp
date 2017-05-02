@@ -21,6 +21,7 @@
 #include "../util/MultiplayerCommon.h"
 
 #include <GG/GUI.h>
+#include <GG/SignalsAndSlots.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 

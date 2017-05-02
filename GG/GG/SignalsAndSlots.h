@@ -27,6 +27,7 @@
 #define _GG_SignalsAndSlots_h_
 
 #include <boost/bind.hpp>
+#include <boost/signals2/signal.hpp>
 #include <boost/preprocessor/cat.hpp>
 
 #include <GG/Signal0.h>

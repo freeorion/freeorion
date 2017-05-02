@@ -16,6 +16,7 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include <GG/DrawUtil.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 

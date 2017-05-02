@@ -25,6 +25,9 @@
 #include <GG/StyleFactory.h>
 
 #include <GG/Button.h>
+#include <GG/dialogs/ColorDlg.h>
+#include <GG/dialogs/FileDlg.h>
+#include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/DropDownList.h>
 #include <GG/DynamicGraphic.h>
 #include <GG/Edit.h>
@@ -33,15 +36,12 @@
 #include <GG/Menu.h>
 #include <GG/MultiEdit.h>
 #include <GG/Scroll.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/Slider.h>
 #include <GG/Spin.h>
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 #include <GG/TextControl.h>
-
-#include <GG/dialogs/ColorDlg.h>
-#include <GG/dialogs/FileDlg.h>
-#include <GG/dialogs/ThreeButtonDlg.h>
 
 #include "DefaultFont.h"
 

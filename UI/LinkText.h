@@ -3,6 +3,9 @@
 
 #include <GG/TextControl.h>
 
+#include <boost/signals2/signal.hpp>
+
+
 /// A class that can be subclassed to give types of links decorations in link text.
 /// "Decorations" here mean mostly wrapping the text in some styling tag or other,
 /// but a decorator is free to manipulate the decorated text in any way.

@@ -34,6 +34,8 @@
 #include <GG/Font.h>
 #include <GG/GLClientAndServerBuffer.h>
 
+#include <boost/function.hpp>
+
 
 namespace GG {
 

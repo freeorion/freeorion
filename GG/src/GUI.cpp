@@ -27,14 +27,15 @@
 #include <GG/BrowseInfoWnd.h>
 #include <GG/Config.h>
 #include <GG/Cursor.h>
+#include <GG/Edit.h>
 #include <GG/EventPump.h>
 #include <GG/Layout.h>
-#include <GG/StyleFactory.h>
-#include <GG/Edit.h>
 #include <GG/ListBox.h>
+#include <GG/SignalsAndSlots.h>
+#include <GG/StyleFactory.h>
 #include <GG/Timer.h>
-#include <GG/ZList.h>
 #include <GG/utf8/checked.h>
+#include <GG/ZList.h>
 
 #if GG_HAVE_LIBPNG
 # if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ > 7)

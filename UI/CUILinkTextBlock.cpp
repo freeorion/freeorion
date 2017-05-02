@@ -1,5 +1,7 @@
 #include "CUILinkTextBlock.h"
 
+#include <GG/SignalsAndSlots.h>
+
 #include "../util/VarText.h"
 #include "CUIControls.h"
 

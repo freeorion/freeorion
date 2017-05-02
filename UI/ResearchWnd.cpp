@@ -15,6 +15,7 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>

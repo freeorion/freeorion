@@ -12,10 +12,11 @@
 #include "../Empire/Empire.h"
 #include "TextBrowseWnd.h"
 
+#include <GG/dialogs/ColorDlg.h>
+#include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
-#include <GG/DrawUtil.h>
-#include <GG/dialogs/ColorDlg.h>
+#include <GG/SignalsAndSlots.h>
 
 #include <boost/format.hpp>
 #include <boost/regex.hpp>

@@ -24,14 +24,15 @@
 
 #include <GG/dialogs/ColorDlg.h>
 
-#include <GG/GUI.h>
 #include <GG/DrawUtil.h>
 #include <GG/Font.h>
+#include <GG/GLClientAndServerBuffer.h>
+#include <GG/GUI.h>
 #include <GG/Layout.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/Slider.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
-#include <GG/GLClientAndServerBuffer.h>
 
 
 using namespace GG;

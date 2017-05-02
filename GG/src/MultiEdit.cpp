@@ -27,9 +27,10 @@
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Scroll.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
-#include <GG/WndEvent.h>
 #include <GG/utf8/checked.h>
+#include <GG/WndEvent.h>
 
 
 using namespace GG;

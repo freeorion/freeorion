@@ -18,8 +18,10 @@
 #ifndef _Hotkey_h_
 #define _Hotkey_h_
 
-#include <GG/Wnd.h>
 #include <GG/GUI.h>
+#include <GG/SignalsAndSlots.h>
+#include <GG/Wnd.h>
+
 #include <boost/signals2/shared_connection_block.hpp>
 
 #include <functional>

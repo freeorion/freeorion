@@ -32,6 +32,8 @@
 #include <GG/Font.h>
 #include <GG/WndEvent.h>
 
+#include <boost/signals2/signal.hpp>
+
 #include <chrono>
 
 

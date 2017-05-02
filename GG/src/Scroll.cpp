@@ -26,6 +26,7 @@
 
 #include <GG/Button.h>
 #include <GG/DrawUtil.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 

@@ -5,6 +5,7 @@
 #include "Sound.h"
 #include "../util/OptionsDB.h"
 
+#include <GG/SignalsAndSlots.h>
 #include <GG/Spin.h>
 
 

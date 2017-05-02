@@ -31,6 +31,8 @@
 #include <GG/Control.h>
 #include <GG/GLClientAndServerBuffer.h>
 
+#include <boost/signals2/signal.hpp>
+
 
 namespace GG {
 

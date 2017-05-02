@@ -6,6 +6,9 @@
 #include <GG/GLClientAndServerBuffer.h>
 #include "GG/Control.h"
 
+#include <boost/signals2/signal.hpp>
+
+
 class AccordionPanel : public GG::Control {
 public:
     static const int EXPAND_BUTTON_SIZE = 16;

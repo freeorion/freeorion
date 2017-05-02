@@ -8,6 +8,7 @@
 #include "../util/i18n.h"
 
 #include <GG/GUI.h>
+#include <GG/SignalsAndSlots.h>
 
 #include <boost/filesystem/fstream.hpp>
 

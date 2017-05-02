@@ -24,6 +24,7 @@
 #include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 

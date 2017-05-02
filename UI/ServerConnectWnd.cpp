@@ -7,6 +7,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <GG/Button.h>
 #include <GG/Layout.h>
+#include <GG/SignalsAndSlots.h>
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"

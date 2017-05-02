@@ -4,6 +4,7 @@
 #include "../util/Logger.h"
 
 #include <GG/DrawUtil.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/WndEvent.h>
 
 #include <boost/cast.hpp>

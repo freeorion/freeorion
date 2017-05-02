@@ -34,14 +34,10 @@
 // GL headers
 #include <GL/glew.h>
 
-// include useful boost headers
-#include <boost/signals2/signal.hpp>
-
 // other headers
 #include <GG/Enum.h>
 #include <GG/Clr.h>
 #include <GG/PtRect.h>
-#include <GG/SignalsAndSlots.h>
 
 
 /** \namespace GG \brief The namespace that encloses all GG classes,

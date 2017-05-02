@@ -35,6 +35,8 @@
 #include <GG/TextControl.h>
 #include <GG/Enum.h>
 
+#include <boost/signals2/signal.hpp>
+
 
 namespace GG {
 

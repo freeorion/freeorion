@@ -24,10 +24,11 @@
 
 #include <GG/Edit.h>
 
-#include <GG/GUI.h>
 #include <GG/DrawUtil.h>
-#include <GG/WndEvent.h>
+#include <GG/GUI.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/utf8/checked.h>
+#include <GG/WndEvent.h>
 
 
 using namespace GG;

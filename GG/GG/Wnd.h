@@ -33,6 +33,8 @@
 #include <GG/Exception.h>
 #include <GG/Flags.h>
 
+#include <boost/signals2/trackable.hpp>
+
 #include <list>
 #include <set>
 

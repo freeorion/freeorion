@@ -10,9 +10,11 @@
 #include "GraphicalSummary.h"
 #include "CombatLogWnd.h"
 
-#include <GG/ScrollPanel.h>
-#include <GG/TabWnd.h>
 #include <GG/Layout.h>
+#include <GG/ScrollPanel.h>
+#include <GG/SignalsAndSlots.h>
+#include <GG/TabWnd.h>
+
 
 // The implementation class for CombatReportWnd
 class CombatReportWnd::Impl {

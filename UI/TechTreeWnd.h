@@ -2,6 +2,9 @@
 #define _TechTreeWnd_h_
 
 #include <GG/Wnd.h>
+
+#include <boost/signals2/signal.hpp>
+
 #include "../universe/EnumsFwd.h"
 
 class Tech;

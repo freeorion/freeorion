@@ -1,9 +1,10 @@
 #include "CombatLogWnd.h"
 
-#include <GG/GUI.h>
 #include <GG/DeferredLayout.h>
+#include <GG/GUI.h>
 #include <GG/Scroll.h>
 #include <GG/ScrollPanel.h>
+#include <GG/SignalsAndSlots.h>
 
 #include "../LinkText.h"
 

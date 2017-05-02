@@ -24,10 +24,11 @@
 
 #include <GG/dialogs/ThreeButtonDlg.h>
 
-#include <GG/GUI.h>
 #include <GG/Button.h>
 #include <GG/DrawUtil.h>
+#include <GG/GUI.h>
 #include <GG/Layout.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
 #include <GG/WndEvent.h>

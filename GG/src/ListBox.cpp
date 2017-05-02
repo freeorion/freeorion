@@ -24,10 +24,11 @@
 
 #include <GG/ListBox.h>
 
-#include <GG/GUI.h>
-#include <GG/DrawUtil.h>
 #include <GG/DeferredLayout.h>
+#include <GG/DrawUtil.h>
+#include <GG/GUI.h>
 #include <GG/Scroll.h>
+#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
 

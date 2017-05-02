@@ -9,7 +9,9 @@
 #include "../Empire/Empire.h"
 #include "../universe/Enums.h"
 #include "TextBrowseWnd.h"
+
 #include <GG/Button.h>
+#include <GG/SignalsAndSlots.h>
 
 #include <iterator>
 

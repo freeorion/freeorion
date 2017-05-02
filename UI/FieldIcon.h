@@ -4,6 +4,8 @@
 #include <GG/GGFwd.h>
 #include <GG/Control.h>
 
+#include <boost/signals2/signal.hpp>
+
 
 /** A control that allows interaction with a field. This class allows user
   * interaction with fields on the galaxy map.  It contains the graphic to

@@ -32,6 +32,8 @@
 #include <GG/ClrConstants.h>
 #include <GG/TextControl.h>
 
+#include <boost/signals2/signal.hpp>
+
 
 namespace GG {
 
