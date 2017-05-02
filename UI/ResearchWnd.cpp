@@ -636,16 +636,24 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
 
 void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
+        if (modkeys & GG::MOD_KEY_CTRL) {
+            DeleteQueueItem(it);
+        } else {
+            auto queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
+            if (!queue_row)
+                return;
+            ShowTech(queue_row->elem.name);
+        }
+    }
+}
+
+void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
+    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems()) {
         QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
         if (!queue_row)
             return;
         ShowTech(queue_row->elem.name);
     }
-}
-
-void ResearchWnd::QueueItemDoubleClickedSlot(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    if (m_queue_wnd->GetQueueListBox()->DisplayingValidQueueItems())
-        DeleteQueueItem(it);
 }
 
 void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
