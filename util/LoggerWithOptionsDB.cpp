@@ -107,8 +107,25 @@ void RegisterLoggerWithOptionsDB(const std::string& logger_name, const bool is_e
 }
 
 
-void UpdateLoggerThresholdsFromOptionsDB()
-{ SetLoggerThresholds(LoggerOptionsLabelsAndLevels(LoggerTypes::both)); }
+void ChangeLoggerThresholdInOptionsDB(const std::string& full_option, LogLevel option_value) {
+    // Determine the logger name by checing which prefix matches
+    std::smatch match;
+    std::regex_search(full_option, match, exec_name_regex);
+    if (match.empty())
+        std::regex_search(full_option, match, source_name_regex);
+
+    if (match.empty()) {
+        ErrorLogger(log) << "Trying to set logger threshold for " << full_option
+                         << ", but the prefix is not recognized.";
+        return;
+    }
+
+    const auto& option_name = match[1];
+
+    std::set<std::tuple<std::string, std::string, LogLevel>> one_value{
+        std::make_tuple(full_option, option_name, option_value)};
+    SetLoggerThresholds(one_value);
+}
 
 namespace {
     /** Returns the list of full option names, logger names and thresholds for loggers in
@@ -163,13 +180,7 @@ std::set<std::tuple<std::string, std::string, LogLevel>> LoggerOptionsLabelsAndL
 
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
 void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& fulloption_name_and_levels) {
-    const auto old_settings = LoggerOptionsLabelsAndLevels(LoggerTypes::both);
-
     for (const auto& fulloption_name_and_level : fulloption_name_and_levels) {
-
-        // Skip if the same.
-        if (old_settings.count(fulloption_name_and_level))
-            continue;
 
         const auto& full_option = std::get<0>(fulloption_name_and_level);
         const auto& name = std::get<1>(fulloption_name_and_level);

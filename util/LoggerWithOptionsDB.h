@@ -51,7 +51,7 @@ FO_COMMON_API void InitLoggingOptionsDBSystem();
 // Configure a logger and lookup and/or register the \p name logger in OptionsDB.  Set the initial threshold.
 FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger_name, const bool is_exec_logger = false);
 
-FO_COMMON_API void UpdateLoggerThresholdsFromOptionsDB();
+FO_COMMON_API void ChangeLoggerThresholdInOptionsDB(const std::string& option_name, LogLevel option_value);
 
 
 ///
@@ -65,6 +65,6 @@ FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>>
     LoggerOptionsLabelsAndLevels(const LoggerTypes types);
 
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
-FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>&);
+FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& full_option_name_and_level);
 
 #endif // _LoggerWithOptionsDB_h_

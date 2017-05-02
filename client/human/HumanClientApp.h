@@ -65,8 +65,8 @@ public:
      */
     void                UpdateCombatLogManager();
 
-    /** Update the logging system thresholds in the other processes if hosting. */
-    void                HandleLoggerUpdate();
+    /** Update the logger in OptionsDB and the other processes if hosting. */
+    void                ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value);
 
     void                ResetToIntro();
     void                ExitApp();

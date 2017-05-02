@@ -901,9 +901,9 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     }
 }
 
-void HumanClientApp::HandleLoggerUpdate() {
-    // Update the logger threshold from the OptionsDB
-    UpdateLoggerThresholdsFromOptionsDB();
+void HumanClientApp::ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value) {
+    // Update the logger threshold in OptionsDB
+    ChangeLoggerThresholdInOptionsDB(option_name, option_value);
 
     SendLoggingConfigToServer();
 }

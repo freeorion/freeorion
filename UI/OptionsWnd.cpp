@@ -429,11 +429,8 @@ namespace {
                 if (it == drop_list->end())
                     return;
                 const auto row = dynamic_cast<CUISimpleDropDownListRow* const>(*it);
-
                 const auto& option_value = row->Name();
-                GetOptionsDB().Set(option_name, option_value);
-
-                HumanClientApp::GetApp()->HandleLoggerUpdate();
+                HumanClientApp::GetApp()->ChangeLoggerThreshold(option_name, to_LogLevel(option_value));
             });
     }
 
