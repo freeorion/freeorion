@@ -233,6 +233,9 @@ public:
     void Render() override;
 
     void LDrag(const GG::Pt& pt, const GG::Pt& move, GG::Flags<GG::ModKey> mod_keys) override;
+
+    /** Set checked value of control for TechStatus @p status to @p state */
+    void SetTechStatus(TechStatus status, bool state);
     //@}
 
 private:
@@ -470,6 +473,16 @@ void TechTreeWnd::TechTreeControls::LDrag(const GG::Pt& pt, const GG::Pt& move, 
 
         GG::Wnd::LDrag(pt, final_move, mod_keys);
     }
+}
+
+void TechTreeWnd::TechTreeControls::SetTechStatus(TechStatus status, bool state) {
+    auto control_it = m_status_buttons.find(status);
+    if (control_it == m_status_buttons.end()) {
+        WarnLogger() << "No control for status " << status << " found";
+        return;
+    }
+
+    control_it->second->SetCheck(state);
 }
 
 
@@ -2201,6 +2214,8 @@ void TechTreeWnd::SetTechStatus(const TechStatus status, const bool state) {
         m_layout_panel->HideStatus(status);
         m_tech_list->HideStatus(status);
     }
+
+    m_tech_tree_controls->SetTechStatus(status, state);
 }
 
 void TechTreeWnd::ToggleViewType(bool show_list_view)
