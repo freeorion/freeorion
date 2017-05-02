@@ -30,7 +30,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/Flags.h>
 #include <GG/Scroll.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
@@ -91,7 +90,7 @@ namespace GG {
         AttachChild(m_vscroll);
         AttachChild(content);
 
-        Connect(m_vscroll->ScrolledSignal, &ScrollPanel::OnScrolled, this);
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ScrollPanel::OnScrolled, this, _1, _2, _3, _4));
 
         DoLayout();
     }
