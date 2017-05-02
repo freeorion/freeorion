@@ -2268,6 +2268,9 @@ void TechTreeWnd::TogglePedia() {
 bool TechTreeWnd::PediaVisible()
 { return m_enc_detail_panel->Visible(); }
 
+bool TechTreeWnd::TechIsVisible(const std::string& tech_name) const
+{ return TechVisible(tech_name, GetCategoriesShown(), GetTechStatusesShown()); }
+
 void TechTreeWnd::TechLeftClickedSlot(const std::string& tech_name,
                                   const GG::Flags<GG::ModKey>& modkeys)
 {

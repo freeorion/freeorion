@@ -37,6 +37,8 @@ public:
     std::set<std::string>   GetCategoriesShown() const;
     std::set<TechStatus>    GetTechStatusesShown() const;
     bool                    PediaVisible();
+    /** If tech @p tech_name is currently visible */
+    bool                    TechIsVisible(const std::string& tech_name) const;
     //@}
 
     //! \name Mutators //@{

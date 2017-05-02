@@ -490,10 +490,12 @@ void ResearchWnd::Update() {
 void ResearchWnd::CenterOnTech(const std::string& tech_name)
 { m_tech_tree_wnd->CenterOnTech(tech_name); }
 
-void ResearchWnd::ShowTech(const std::string& tech_name) {
-    m_tech_tree_wnd->CenterOnTech(tech_name);
+void ResearchWnd::ShowTech(const std::string& tech_name, bool force) {
     m_tech_tree_wnd->SetEncyclopediaTech(tech_name);
-    m_tech_tree_wnd->SelectTech(tech_name);
+    if (force || m_tech_tree_wnd->TechIsVisible(tech_name)) {
+        m_tech_tree_wnd->CenterOnTech(tech_name);
+        m_tech_tree_wnd->SelectTech(tech_name);
+    }
 }
 
 void ResearchWnd::ShowPedia()
@@ -642,7 +644,7 @@ void ResearchWnd::QueueItemClickedSlot(GG::ListBox::iterator it, const GG::Pt& p
             auto queue_row = boost::polymorphic_downcast<QueueRow*>(*it);
             if (!queue_row)
                 return;
-            ShowTech(queue_row->elem.name);
+            ShowTech(queue_row->elem.name, false);
         }
     }
 }
