@@ -199,7 +199,11 @@ void AIClientApp::HandleMessage(const Message& msg) {
         if (text.empty()) {
             ErrorLogger() << "AIClientApp::HandleMessage for HOST_ID : Got empty message text?!";
         } else {
-            host_id = boost::lexical_cast<int>(text);
+            try {
+                host_id = boost::lexical_cast<int>(text);
+            } catch(const boost::bad_lexical_cast& ex) {
+                ErrorLogger() << "AIClientApp::HandleMessage for HOST_ID : Couldn't parse message text \"" << text << "\": " << ex.what();
+            }
         }
         m_networking->SetHostPlayerID(host_id);
         break;
@@ -209,8 +213,12 @@ void AIClientApp::HandleMessage(const Message& msg) {
         if (PlayerID() == Networking::INVALID_PLAYER_ID) {
             DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
             const std::string& text = msg.Text();
-            int player_id = boost::lexical_cast<int>(text);
-            m_networking->SetPlayerID(player_id);
+            try {
+                int player_id = boost::lexical_cast<int>(text);
+                m_networking->SetPlayerID(player_id);
+            } catch(const boost::bad_lexical_cast& ex) {
+                ErrorLogger() << "AIClientApp::HandleMessage for JOIN_GAME : Couldn't parse message text \"" << text << "\": " << ex.what();
+            }
         } else {
             ErrorLogger() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";
         }
