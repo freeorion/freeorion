@@ -28,7 +28,6 @@
 #include <GG/GUI.h>
 #include <GG/Layout.h>
 #include <GG/Scroll.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
@@ -162,14 +161,16 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
     m_relative_to_wnd(relative_to_wnd),
     m_dropped(false)
 {
-    Connect(m_lb_wnd->SelChangedSignal,     &ModalListPicker::LBSelChangedSlot, this);
-    Connect(m_lb_wnd->LeftClickedSignal,    &ModalListPicker::LBLeftClickSlot,  this);
-    Connect(GUI::GetGUI()->WindowResizedSignal,
-            boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
+    m_lb_wnd->SelChangedSignal.connect(
+        boost::bind(&ModalListPicker::LBSelChangedSlot, this, _1));
+    m_lb_wnd->LeftClickedSignal.connect(
+        boost::bind(&ModalListPicker::LBLeftClickSlot, this, _1, _2, _3));
+    GUI::GetGUI()->WindowResizedSignal.connect(
+        boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));
     AttachChild(m_lb_wnd);
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(SelChangedSignal, ModalListPickerSelChangedEcho(*this));
+        SelChangedSignal.connect(ModalListPickerSelChangedEcho(*this));
 
     if (m_relative_to_wnd)
         m_lb_wnd->MoveTo(Pt(m_relative_to_wnd->Left(), m_relative_to_wnd->Bottom()));
@@ -506,11 +507,11 @@ DropDownList::DropDownList(size_t num_shown_elements, Clr color) :
 {
     SetStyle(LIST_SINGLESEL);
 
-    Connect(m_modal_picker->SelChangedSignal, SelChangedSignal);
-    Connect(m_modal_picker->SelChangedWhileDroppedSignal, SelChangedWhileDroppedSignal);
+    m_modal_picker->SelChangedSignal.connect(SelChangedSignal);
+    m_modal_picker->SelChangedWhileDroppedSignal.connect(SelChangedWhileDroppedSignal);
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(SelChangedSignal, DropDownListSelChangedEcho(*this));
+        SelChangedSignal.connect(DropDownListSelChangedEcho(*this));
 
     // InitBuffer here prevents a crash if DropDownList is constructed in
     // the prerender phase.
