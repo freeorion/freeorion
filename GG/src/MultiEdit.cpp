@@ -27,7 +27,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Scroll.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/utf8/checked.h>
 #include <GG/WndEvent.h>
@@ -1286,7 +1285,8 @@ void MultiEdit::AdjustScrolls()
         m_vscroll->SizeScroll(Value(vscroll_min), Value(vscroll_max),
                               line_size, std::max(line_size, page_size));
         AttachChild(m_vscroll);
-        Connect(m_vscroll->ScrolledSignal, &MultiEdit::VScrolled, this);
+        m_vscroll->ScrolledSignal.connect(
+            boost::bind(&MultiEdit::VScrolled, this, _1, _2, _3, _4));
     }
 
     if (m_hscroll) { // if scroll already exists...
@@ -1322,7 +1322,8 @@ void MultiEdit::AdjustScrolls()
         m_hscroll->SizeScroll(Value(hscroll_min), Value(hscroll_max),
                               line_size, std::max(line_size, page_size));
         AttachChild(m_hscroll);
-        Connect(m_hscroll->ScrolledSignal, &MultiEdit::HScrolled, this);
+        m_hscroll->ScrolledSignal.connect(
+            boost::bind(&MultiEdit::HScrolled, this, _1, _2, _3, _4));
     }
 
     // if the new client dimensions changed after adjusting the scrolls,
