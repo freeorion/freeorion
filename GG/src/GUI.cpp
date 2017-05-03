@@ -31,7 +31,6 @@
 #include <GG/EventPump.h>
 #include <GG/Layout.h>
 #include <GG/ListBox.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/Timer.h>
 #include <GG/utf8/checked.h>
@@ -1071,7 +1070,7 @@ GUI::AcceleratorSignalType& GUI::AcceleratorSignal(Key key, Flags<ModKey> mod_ke
     if (!sig_ptr)
         sig_ptr.reset(new AcceleratorSignalType());
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(*sig_ptr, AcceleratorEcho(key, mod_keys));
+        sig_ptr->connect(AcceleratorEcho(key, mod_keys));
     return *sig_ptr;
 }
 
