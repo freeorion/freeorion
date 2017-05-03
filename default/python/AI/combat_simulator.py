@@ -234,8 +234,8 @@ class CombatObject(object):
     def __init__(self):
         self.cost = 0
 
-        """Yield all shots of the object in the current combat round.
     def _shots(self):
+        """Yield all shots of the object in the current combat round.
 
         :return: shot damage
         :rtype: __generator[float]
@@ -252,8 +252,8 @@ class CombatObject(object):
         """
         raise NotImplementedError
 
-        """Return the remaining "health", e.g. structure for a ship.
     def _health(self):
+        """Return the remaining "health", e.g. structure for a ship.
 
         :return: health of the object
         :rtype: float
