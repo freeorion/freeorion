@@ -2,7 +2,6 @@
 
 #include <GG/Button.h>
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 #include "../util/i18n.h"
@@ -61,14 +60,16 @@ BuildingsPanel::BuildingsPanel(GG::X w, int columns, int planet_id) :
         m_columns = 1;
     }
 
-    GG::Connect(m_expand_button->LeftClickedSignal, &BuildingsPanel::ExpandCollapseButtonPressed, this);
+    m_expand_button->LeftClickedSignal.connect(
+        boost::bind(&BuildingsPanel::ExpandCollapseButtonPressed, this));
 
     // get owner, connect its production queue changed signal to update this panel
     std::shared_ptr<const UniverseObject> planet = GetUniverseObject(m_planet_id);
     if (planet) {
         if (const Empire* empire = GetEmpire(planet->Owner())) {
             const ProductionQueue& queue = empire->GetProductionQueue();
-            GG::Connect(queue.ProductionQueueChangedSignal, &BuildingsPanel::RequirePreRender, this);
+            queue.ProductionQueueChangedSignal.connect(
+                boost::bind(&BuildingsPanel::RequirePreRender, this));
         }
     }
 
@@ -132,7 +133,7 @@ void BuildingsPanel::Update() {
         BuildingIndicator* ind = new BuildingIndicator(GG::X(indicator_size), object_id);
         m_building_indicators.push_back(ind);
 
-        GG::Connect(ind->RightClickedSignal,    BuildingRightClickedSignal);
+        ind->RightClickedSignal.connect(BuildingRightClickedSignal);
     }
 
     // get in-progress buildings
@@ -267,7 +268,8 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     m_order_issuing_enabled(true)
 {
     if (std::shared_ptr<const Building> building = GetBuilding(m_building_id))
-        GG::Connect(building->StateChangedSignal,   &BuildingIndicator::RequirePreRender,     this);
+        building->StateChangedSignal.connect(
+            boost::bind(&BuildingIndicator::RequirePreRender, this));
     Refresh();
 }
 
