@@ -232,14 +232,24 @@ class Faction(object):
 
 class CombatObject(object):
 
+    ignore_shields = False
+
     def __init__(self):
         self.cost = 0
+
+    def shots(self):
+        raise NotImplementedError
+
+    def is_possible_target(self, obj):
+        raise NotImplementedError
 
     def health(self):
         raise NotImplementedError
 
     def shoot(self, enemy_objects):
-        raise NotImplementedError
+        possible_targets = [obj for obj in enemy_objects if self.is_possible_target(obj)]
+        for dmg in self.shots():
+            self._shoot_at_random_target(possible_targets, dmg)
 
     def do_damage(self, dmg, ignore_shields=False):
         raise NotImplementedError
@@ -253,18 +263,19 @@ class CombatObject(object):
     def is_alive(self):
         return self.health() > 0
 
-    @staticmethod
-    def _shoot_at_random_target(possible_targets, damage, ignore_shields=False):
+    def _shoot_at_random_target(self, possible_targets, damage):
         try:
             target = random.choice(possible_targets)
             print "Target: ", target
         except:
             print "No target found."
             return
-        target.do_damage(damage, ignore_shields)
+        target.do_damage(damage, self.ignore_shields)
 
 
 class Ship(CombatObject):
+
+    ignore_shields = False
 
     def __init__(self, attacks, structure, shields, fighter_capacity, fighter_rate, fighter_damage, cost):
         super(Ship, self).__init__()
@@ -279,14 +290,16 @@ class Ship(CombatObject):
         self.fighter_damage = fighter_damage
         self.cost = cost
 
-    def health(self):
-        return self.structure
-
-    def shoot(self, enemy_objects):
-        possible_targets = list(enemy_objects)  # ships may target all kind of combat objects
+    def shots(self):
         for dmg, n in self.attacks.iteritems():
             for i in xrange(int(n)):
-                self._shoot_at_random_target(possible_targets, dmg)
+                yield dmg
+
+    def is_possible_target(self, obj):
+        return True
+
+    def health(self):
+        return self.structure
 
     def do_damage(self, dmg, ignore_shields=False):
         if not ignore_shields:
@@ -306,15 +319,21 @@ class Ship(CombatObject):
 
 
 class Fighter(CombatObject):
+
+    ignore_shields = True
+
     def __init__(self, damage):
         super(Fighter, self).__init__()
         self.structure = 1
         self.damage = damage
 
-    def shoot(self, enemy_objects):
-        # may not target planets
-        possible_targets = [o for o in enemy_objects if not isinstance(o, Planet)]
-        self._shoot_at_random_target(possible_targets, self.damage, ignore_shields=True)
+    def shots(self):
+        yield self.damage
+
+    def is_possible_target(self, obj):
+        if isinstance(obj, Planet):
+            return False
+        return True
 
     def launch_fighters(self):
         return tuple()
@@ -331,16 +350,22 @@ class Fighter(CombatObject):
 
 
 class Planet(CombatObject):
+
+    ignore_shields = False
+
     def __init__(self, defense, shields):
         super(Planet, self).__init__()
         self.defense = defense
         self.shields = shields
         self.defense_after_turn = defense  # only update defense after turn
 
-    def shoot(self, enemy_objects):
-        # planets may only shoot at ships but not at fighters or other planets
-        possible_targets = [o for o in enemy_objects if isinstance(o, Ship)]
-        self._shoot_at_random_target(possible_targets, self.defense)
+    def shots(self):
+        yield self.defense
+
+    def is_possible_target(self, obj):
+        if isinstance(obj, Ship):
+            return True
+        return False
 
     def launch_fighters(self):
         return tuple()
