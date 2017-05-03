@@ -373,11 +373,12 @@ boost::statechart::result MPLobby::react(const Disconnection& d) {
 boost::statechart::result MPLobby::react(const HostID& msg) {
     const std::string& text = msg.m_message.Text();
     int host_id = Networking::INVALID_PLAYER_ID;
-    if (text.empty()) {
-        ErrorLogger() << "MPLobby::react(const HostID& msg) got empty message text?!";
-    } else {
+    try {
         host_id = boost::lexical_cast<int>(text);
+    } catch (const boost::bad_lexical_cast& ex) {
+        ErrorLogger() << "MPLobby::react(const HostID& msg) could not convert \"" << text << "\" to host id";
     }
+
     Client().Networking().SetHostPlayerID(host_id);
 
     Client().GetClientUI().GetMultiPlayerLobbyWnd()->Refresh();
@@ -487,11 +488,12 @@ boost::statechart::result PlayingGame::react(const HostID& msg) {
     const int initial_host_id = Client().Networking().HostPlayerID();
     const std::string& text = msg.m_message.Text();
     int host_id = Networking::INVALID_PLAYER_ID;
-    if (text.empty()) {
-        ErrorLogger() << "PlayingGame::react(const HostID& msg) got empty message text?!";
-    } else {
+    try {
         host_id = boost::lexical_cast<int>(text);
+    } catch (const boost::bad_lexical_cast& ex) {
+        ErrorLogger() << "PlayingGame::react(const HostID& msg) could not convert \"" << text << "\" to host id";
     }
+
     Client().Networking().SetHostPlayerID(host_id);
 
     if (initial_host_id != host_id)
