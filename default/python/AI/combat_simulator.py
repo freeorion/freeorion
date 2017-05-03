@@ -328,6 +328,9 @@ class Ship(CombatObject):
         self._orig_structure = structure
         self._orig_fighter_capacity = fighter_capacity
         self.attacks = attacks
+        self.shots = []
+        for dmg, n in self.attacks.iteritems():
+            self.shots.extend(int(n) * [dmg])
         self.structure = structure
         self.shields = shields
         self.fighter_capacity = fighter_capacity
@@ -340,9 +343,7 @@ class Ship(CombatObject):
         self.fighter_capacity = self._orig_fighter_capacity
 
     def _shots(self):
-        for dmg, n in self.attacks.iteritems():
-            for i in xrange(int(n)):
-                yield dmg
+        return self.shots
 
     def _is_possible_target(self, obj):
         return True
