@@ -29,7 +29,6 @@
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/Slider.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
@@ -693,20 +692,33 @@ void ColorDlg::Init(const std::shared_ptr<Font>& font)
 void ColorDlg::ConnectSignals()
 {
     for (std::size_t i = 0; i < m_color_buttons.size(); ++i) {
-        Connect(m_color_buttons[i]->LeftClickedSignal, [this, i](){ this->ColorButtonClicked(i); });
+        m_color_buttons[i]->LeftClickedSignal.connect(
+            [this, i](){ this->ColorButtonClicked(i); });
     }
-    Connect(m_sliders[R]->SlidSignal, &ColorDlg::RedSliderChanged, this);
-    Connect(m_sliders[G]->SlidSignal, &ColorDlg::GreenSliderChanged, this);
-    Connect(m_sliders[B]->SlidSignal, &ColorDlg::BlueSliderChanged, this);
-    Connect(m_sliders[A]->SlidSignal, &ColorDlg::AlphaSliderChanged, this);
-    Connect(m_sliders[H]->SlidSignal, &ColorDlg::HueSliderChanged, this);
-    Connect(m_sliders[S]->SlidSignal, &ColorDlg::SaturationSliderChanged, this);
-    Connect(m_sliders[V]->SlidSignal, &ColorDlg::ValueSliderChanged, this);
-    Connect(m_ok->LeftClickedSignal, &ColorDlg::OkClicked, this);
-    Connect(m_cancel->LeftClickedSignal, &ColorDlg::CancelClicked, this);
-    Connect(m_hue_saturation_picker->ChangedSignal, &ValuePicker::SetHueSaturation, m_value_picker);
-    Connect(m_hue_saturation_picker->ChangedSignal, &ColorDlg::HueSaturationPickerChanged, this);
-    Connect(m_value_picker->ChangedSignal, &ColorDlg::ValuePickerChanged, this);
+    m_sliders[R]->SlidSignal.connect(
+        boost::bind(&ColorDlg::RedSliderChanged, this, _1, _2, _3));
+    m_sliders[G]->SlidSignal.connect(
+        boost::bind(&ColorDlg::GreenSliderChanged, this, _1, _2, _3));
+    m_sliders[B]->SlidSignal.connect(
+        boost::bind(&ColorDlg::BlueSliderChanged, this, _1, _2, _3));
+    m_sliders[A]->SlidSignal.connect(
+        boost::bind(&ColorDlg::AlphaSliderChanged, this, _1, _2, _3));
+    m_sliders[H]->SlidSignal.connect(
+        boost::bind(&ColorDlg::HueSliderChanged, this, _1, _2, _3));
+    m_sliders[S]->SlidSignal.connect(
+        boost::bind(&ColorDlg::SaturationSliderChanged, this, _1, _2, _3));
+    m_sliders[V]->SlidSignal.connect(
+        boost::bind(&ColorDlg::ValueSliderChanged, this, _1, _2, _3));
+    m_ok->LeftClickedSignal.connect(
+        boost::bind(&ColorDlg::OkClicked, this));
+    m_cancel->LeftClickedSignal.connect(
+        boost::bind(&ColorDlg::CancelClicked, this));
+    m_hue_saturation_picker->ChangedSignal.connect(
+        boost::bind(&ValuePicker::SetHueSaturation, m_value_picker, _1, _2));
+    m_hue_saturation_picker->ChangedSignal.connect(
+        boost::bind(&ColorDlg::HueSaturationPickerChanged, this, _1, _2));
+    m_value_picker->ChangedSignal.connect(
+        boost::bind(&ColorDlg::ValuePickerChanged, this, _1));
 }
 
 void ColorDlg::ColorChanged(HSVClr color)
