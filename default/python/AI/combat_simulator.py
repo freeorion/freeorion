@@ -213,7 +213,7 @@ class Faction(object):
         return len([o for o in self.current_objects if isinstance(o, Planet)])
 
     def remaining_pp(self):
-        return sum([o.cost for o in self.current_objects])
+        return sum(o.cost for o in self.current_objects)
 
 
 class CombatObject(object):
