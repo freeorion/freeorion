@@ -26,7 +26,6 @@
 
 #include <GG/Button.h>
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
@@ -83,18 +82,18 @@ Scroll::Scroll(Orientation orientation, Clr color, Clr interior) :
     }
     if (m_decr) {
         AttachChild(m_decr);
-        Connect(m_decr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));
+        m_decr->LeftClickedSignal.connect(boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, -1));
     }
     if (m_incr) {
         AttachChild(m_incr);
-        Connect(m_incr->LeftClickedSignal, boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, 1));
+        m_incr->LeftClickedSignal.connect(boost::bind(&Scroll::ScrollLineIncrDecrImpl, this, true, 1));
     }
     AttachChild(m_tab);
     m_tab->InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS) {
-        Connect(ScrolledSignal, ScrolledEcho("Scroll::ScrolledSignal"));
-        Connect(ScrolledAndStoppedSignal, ScrolledEcho("Scroll::ScrolledAndStoppedSignal"));
+        ScrolledSignal.connect(ScrolledEcho("Scroll::ScrolledSignal"));
+        ScrolledAndStoppedSignal.connect(ScrolledEcho("Scroll::ScrolledAndStoppedSignal"));
     }
 
     DoLayout();
