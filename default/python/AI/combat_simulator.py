@@ -234,15 +234,15 @@ class CombatObject(object):
     def __init__(self):
         self.cost = 0
 
-    def shots(self):
         """Yield all shots of the object in the current combat round.
+    def _shots(self):
 
         :return: shot damage
         :rtype: __generator[float]
         """
         raise NotImplementedError
 
-    def is_possible_target(self, obj):
+    def _is_possible_target(self, obj):
         """Return true if passed object is a possible target.
 
         :param obj: object to be checked
@@ -252,8 +252,8 @@ class CombatObject(object):
         """
         raise NotImplementedError
 
-    def health(self):
         """Return the remaining "health", e.g. structure for a ship.
+    def _health(self):
 
         :return: health of the object
         :rtype: float
@@ -266,8 +266,8 @@ class CombatObject(object):
         :param enemy_objects: all enemy objects alive at the beginning of the turn
         :type enemy_objects: list[CombatObject]
         """
-        possible_targets = [obj for obj in enemy_objects if self.is_possible_target(obj)]
-        for dmg in self.shots():
+        possible_targets = [obj for obj in enemy_objects if self._is_possible_target(obj)]
+        for dmg in self._shots():
             self._shoot_at_random_target(possible_targets, dmg)
 
     def do_damage(self, dmg, ignore_shields=False):
@@ -298,7 +298,7 @@ class CombatObject(object):
         :return: True if object is still alive
         :rtype: bool
         """
-        return self.health() > 0
+        return self._health() > 0
 
     def _shoot_at_random_target(self, possible_targets, damage):
         """Select a random target from the list of possible targets and damage it.
@@ -334,15 +334,15 @@ class Ship(CombatObject):
         self.fighter_damage = fighter_damage
         self.cost = cost
 
-    def shots(self):
+    def _shots(self):
         for dmg, n in self.attacks.iteritems():
             for i in xrange(int(n)):
                 yield dmg
 
-    def is_possible_target(self, obj):
+    def _is_possible_target(self, obj):
         return True
 
-    def health(self):
+    def _health(self):
         return self.structure
 
     def do_damage(self, dmg, ignore_shields=False):
@@ -371,10 +371,10 @@ class Fighter(CombatObject):
         self.structure = 1
         self.damage = damage
 
-    def shots(self):
+    def _shots(self):
         yield self.damage
 
-    def is_possible_target(self, obj):
+    def _is_possible_target(self, obj):
         if isinstance(obj, Planet):
             return False
         return True
@@ -386,7 +386,7 @@ class Fighter(CombatObject):
         if dmg > 0:
             self.structure = 0
 
-    def health(self):
+    def _health(self):
         return self.structure
 
     def update(self):
@@ -403,10 +403,10 @@ class Planet(CombatObject):
         self.shields = shields
         self.defense_after_turn = defense  # only update defense after turn
 
-    def shots(self):
+    def _shots(self):
         yield self.defense
 
-    def is_possible_target(self, obj):
+    def _is_possible_target(self, obj):
         if isinstance(obj, Ship):
             return True
         return False
@@ -425,7 +425,7 @@ class Planet(CombatObject):
     def update(self):
         self.defense = max(self.defense_after_turn, 0)
 
-    def health(self):
+    def _health(self):
         return self.defense + self.shields
 
 
