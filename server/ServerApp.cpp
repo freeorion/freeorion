@@ -31,8 +31,6 @@
 #include "../util/ScopedTimer.h"
 #include "../util/Version.h"
 
-#include <GG/SignalsAndSlots.h>
-
 #include <boost/filesystem/exception.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -153,8 +151,10 @@ ServerApp::ServerApp() :
 
     m_fsm->initiate();
 
-    GG::Connect(Empires().DiplomaticStatusChangedSignal,  &ServerApp::HandleDiplomaticStatusChange, this);
-    GG::Connect(Empires().DiplomaticMessageChangedSignal, &ServerApp::HandleDiplomaticMessageChange,this);
+    Empires().DiplomaticStatusChangedSignal.connect(
+        boost::bind(&ServerApp::HandleDiplomaticStatusChange, this, _1, _2));
+    Empires().DiplomaticMessageChangedSignal.connect(
+        boost::bind(&ServerApp::HandleDiplomaticMessageChange,this, _1, _2));
 
     m_signals.async_wait(boost::bind(&ServerApp::SignalHandler, this, _1, _2));
 }
