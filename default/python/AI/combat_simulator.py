@@ -64,21 +64,21 @@ class CombatManager(object):
         self.parse_shiplist()
 
         results = []
-        lost_pp_A = []
-        lost_pp_B = []
+        lost_pp_a = []
+        lost_pp_b = []
 
         for i in xrange(iterations):
             self.faction_A.reset()
             self.faction_B.reset()
 
-            original_number_of_ships_A = self.faction_A.remaining_ships()
-            original_pp_A = self.faction_A.remaining_pp()
+            original_number_of_ships_a = self.faction_A.remaining_ships()
+            original_pp_a = self.faction_A.remaining_pp()
 
-            original_number_of_ships_B = self.faction_B.remaining_ships()
-            original_pp_B = self.faction_B.remaining_pp()
+            original_number_of_ships_b = self.faction_B.remaining_ships()
+            original_pp_b = self.faction_B.remaining_pp()
             if i == 0:
-                chat_human("Number of ships A: %d (cost: %.1f PP)" % (original_number_of_ships_A, original_pp_A))
-                chat_human("Number of ships B: %d (cost: %.1f PP)" % (original_number_of_ships_B, original_pp_B))
+                chat_human("Number of ships A: %d (cost: %.1f PP)" % (original_number_of_ships_a, original_pp_a))
+                chat_human("Number of ships B: %d (cost: %.1f PP)" % (original_number_of_ships_b, original_pp_b))
 
             for combat_round in xrange(3):
                 self.faction_A.shoot(self.faction_B.current_objects)
@@ -90,17 +90,17 @@ class CombatManager(object):
                 if not self.faction_A.is_alive() or not self.faction_B.is_alive():
                     break
 
-            remaining_pp_A = self.faction_A.remaining_pp()
-            lost_pp_A.append(original_pp_A - remaining_pp_A)
+            remaining_pp_a = self.faction_A.remaining_pp()
+            lost_pp_a.append(original_pp_a - remaining_pp_a)
 
-            remaining_pp_B = self.faction_B.remaining_pp()
-            lost_pp_B.append(original_pp_B - remaining_pp_B)
+            remaining_pp_b = self.faction_B.remaining_pp()
+            lost_pp_b.append(original_pp_b - remaining_pp_b)
 
-            if original_number_of_ships_A:
+            if original_number_of_ships_a:
                 win_a = self.faction_A.remaining_ships() > 0
             else:
                 win_a = self.faction_A.remaining_planets() > 0
-            if original_number_of_ships_B:
+            if original_number_of_ships_b:
                 win_b = self.faction_B.remaining_ships() > 0
             else:
                 win_b = self.faction_B.remaining_planets() > 0
@@ -114,10 +114,10 @@ class CombatManager(object):
             else:
                 results.append(DRAW)
 
-        mean_losses_A = mean(lost_pp_A)
-        std_losses_A = std(lost_pp_A)
-        mean_losses_B = mean(lost_pp_B)
-        std_losses_B = std(lost_pp_B)
+        mean_losses_a = mean(lost_pp_a)
+        std_losses_a = std(lost_pp_a)
+        mean_losses_b = mean(lost_pp_b)
+        std_losses_b = std(lost_pp_b)
 
         draws = len([r for r in results if r == DRAW])
         wins_a = len([r for r in results if r == WIN_A])
@@ -128,8 +128,8 @@ class CombatManager(object):
         chat_human("Wins A: %d (%.1f%%)" % (wins_a, 100*float(wins_a)/iterations))
         chat_human("Wins B: %d (%.1f%%)" % (wins_b, 100*float(wins_b)/iterations))
         chat_human("Draws: %d (%.1f%%)" % (draws, 100*float(draws)/iterations))
-        chat_human("Losses Player A: (%.1f +- %.1f) PP" % (mean_losses_A or 0, std_losses_A or 0))
-        chat_human("Losses Player B: (%.1f +- %.1f) PP" % (mean_losses_B or 0, std_losses_B or 0))
+        chat_human("Losses Player A: (%.1f +- %.1f) PP" % (mean_losses_a or 0, std_losses_a or 0))
+        chat_human("Losses Player B: (%.1f +- %.1f) PP" % (mean_losses_b or 0, std_losses_b or 0))
 
 
 def mean(values):
