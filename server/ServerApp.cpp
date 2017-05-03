@@ -202,7 +202,7 @@ void ServerApp::CreateAIClients(const std::vector<PlayerSetupData>& player_setup
         }
     }
     if (need_AIs)
-        m_networking.SendMessage(TurnProgressMessage(Message::STARTING_AIS));
+        m_networking.SendMessageAll(TurnProgressMessage(Message::STARTING_AIS));
 
 
     // disconnect any old AI clients
@@ -352,7 +352,7 @@ void ServerApp::CleanupAIs() {
     try {
         for (PlayerConnectionPtr player : m_networking) {
             if (player->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
-                player->SendMessage(EndGameMessage(player->PlayerID(), Message::PLAYER_DISCONNECT));
+                player->SendMessage(EndGameMessage(Message::PLAYER_DISCONNECT));
                 ai_connection_lingering = true;
             }
         }
@@ -397,12 +397,6 @@ void ServerApp::SetAIsProcessPriorityToLow(bool set_to_low) {
 }
 
 void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_connection) {
-    if (msg.SendingPlayer() != player_connection->PlayerID()) {
-        ErrorLogger() << "ServerApp::HandleMessage : Received an message with a sender ID ("
-                      << msg.SendingPlayer() << ") that differs from the sending player connection ID: "
-                      << player_connection->PlayerID() << ".  Ignoring.";
-        return;
-    }
 
     //DebugLogger() << "ServerApp::HandleMessage type " << boost::lexical_cast<std::string>(msg.Type());
 
@@ -410,7 +404,6 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
     case Message::HOST_SP_GAME:             m_fsm->process_event(HostSPGame(msg, player_connection));       break;
     case Message::START_MP_GAME:            m_fsm->process_event(StartMPGame(msg, player_connection));      break;
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg, player_connection));      break;
-    case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg, player_connection));        break;
     case Message::SAVE_GAME_INITIATE:       m_fsm->process_event(SaveGameRequest(msg, player_connection));  break;
     case Message::TURN_ORDERS:              m_fsm->process_event(TurnOrders(msg, player_connection));       break;
     case Message::CLIENT_SAVE_DATA:         m_fsm->process_event(ClientSaveData(msg, player_connection));   break;
@@ -499,7 +492,7 @@ void ServerApp::SelectNewHost() {
     if (new_host_id == Networking::INVALID_PLAYER_ID) {
         // couldn't find a host... abort
         DebugLogger() << "ServerApp::SelectNewHost : Host disconnected and couldn't find a replacement.";
-        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_UNABLE_TO_SELECT_HOST"), false));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_UNABLE_TO_SELECT_HOST"), false));
     }
 
     // set new host ID
@@ -628,7 +621,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     if (active_players_id_setup_data.empty()) {
         ErrorLogger() << "ServerApp::NewGameInitConcurrentWithJoiners found no active players!";
-        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
 
@@ -642,7 +635,7 @@ void ServerApp::NewGameInitConcurrentWithJoiners(
 
     // create universe and empires for players
     DebugLogger() << "ServerApp::NewGameInitConcurrentWithJoiners: Creating Universe";
-    m_networking.SendMessage(TurnProgressMessage(Message::GENERATING_UNIVERSE));
+    m_networking.SendMessageAll(TurnProgressMessage(Message::GENERATING_UNIVERSE));
 
 
     // m_current_turn set above so that every UniverseObject created before game
@@ -736,7 +729,7 @@ bool ServerApp::NewGameInitVerifyJoiners(
     // ensure some reasonable inputs
     if (player_id_setup_data.empty()) {
         ErrorLogger() << "ServerApp::NewGameInitVerifyJoiners passed empty player_id_setup_data.  Aborting";
-        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return false;
     }
 
@@ -811,12 +804,12 @@ void ServerApp::SendNewGameStartMessages() {
         int player_id = player_connection->PlayerID();
         int empire_id = PlayerEmpireID(player_id);
         bool use_binary_serialization = player_connection->ClientVersionStringMatchesThisServer();
-        player_connection->SendMessage(GameStartMessage(player_id,              m_single_player_game,
-                                                        empire_id,              m_current_turn,
-                                                        m_empires,              m_universe,
-                                                        GetSpeciesManager(),    GetCombatLogManager(),
-                                                        GetSupplyManager(),     player_info_map,
-                                                        m_galaxy_setup_data,    use_binary_serialization));
+        player_connection->SendMessage(GameStartMessage(m_single_player_game,    empire_id,
+                                                        m_current_turn,          m_empires,
+                                                        m_universe,              GetSpeciesManager(),
+                                                        GetCombatLogManager(),   GetSupplyManager(),
+                                                        player_info_map,         m_galaxy_setup_data,
+                                                        use_binary_serialization));
     }
 }
 
@@ -885,7 +878,7 @@ void ServerApp::UpdateSavePreviews(const Message& msg, PlayerConnectionPtr playe
     ListSaveSubdirectories( preview_information.subdirectories);
     LoadSaveGamePreviews(directory_name, m_single_player_game? SP_SAVE_FILE_EXTENSION : MP_SAVE_FILE_EXTENSION, preview_information.previews);
     DebugLogger() << "ServerApp::UpdateSavePreviews: Sending " << preview_information.previews.size() << " previews in response.";
-    player_connection->SendMessage(DispatchSavePreviewsMessage(player_connection->PlayerID(), preview_information));
+    player_connection->SendMessage(DispatchSavePreviewsMessage(preview_information));
     DebugLogger() << "ServerApp::UpdateSavePreviews: Previews sent.";
 }
 
@@ -907,7 +900,7 @@ void ServerApp::UpdateCombatLogs(const Message& msg, PlayerConnectionPtr player_
     // Return them to the client
     DebugLogger() << "UpdateCombatLogs returning " << logs.size()
                   << " logs to player " << player_connection->PlayerID();
-    player_connection->SendMessage(DispatchCombatLogsMessage(player_connection->PlayerID(), logs));
+    player_connection->SendMessage(DispatchCombatLogsMessage(logs));
 }
 
 namespace {
@@ -1090,7 +1083,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
     // ensure some reasonable inputs
     if (player_save_game_data.empty()) {
         ErrorLogger() << "ServerApp::LoadGameInit passed empty player save game data.  Aborting";
-        m_networking.SendMessage(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
+        m_networking.SendMessageAll(ErrorMessage(UserStringNop("SERVER_FOUND_NO_ACTIVE_PLAYERS"), true));
         return;
     }
 
@@ -1249,14 +1242,14 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
             if (!psgd.m_save_state_string.empty())
                 sss = &psgd.m_save_state_string;
 
-            player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
+            player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map, *orders, sss,
                                                             m_galaxy_setup_data, use_binary_serialization));
 
         } else if (client_type == Networking::CLIENT_TYPE_HUMAN_PLAYER) {
-            player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, empire_id,
+            player_connection->SendMessage(GameStartMessage(m_single_player_game, empire_id,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(),  player_info_map, *orders,
@@ -1267,7 +1260,7 @@ void ServerApp::LoadGameInit(const std::vector<PlayerSaveGameData>& player_save_
                    client_type == Networking::CLIENT_TYPE_HUMAN_MODERATOR)
         {
 
-            player_connection->SendMessage(GameStartMessage(player_id, m_single_player_game, ALL_EMPIRES,
+            player_connection->SendMessage(GameStartMessage(m_single_player_game, ALL_EMPIRES,
                                                             m_current_turn, m_empires, m_universe,
                                                             GetSpeciesManager(), GetCombatLogManager(),
                                                             GetSupplyManager(), player_info_map,
@@ -1331,7 +1324,7 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     }
 
     if (!success)
-        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_UNIVERSE_GENERATION_ERRORS"), false));
 
 
     DebugLogger() << "Applying first turn effects and updating meters";
@@ -1386,7 +1379,7 @@ void ServerApp::ExecuteScriptedTurnEvents() {
 
     if (!success) {
         ErrorLogger() << "Python scripted turn events failed.";
-        ServerApp::GetApp()->Networking().SendMessage(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
+        ServerApp::GetApp()->Networking().SendMessageAll(ErrorMessage(UserStringNop("SERVER_TURN_EVENTS_ERRORS"), false));
     }
 }
 
@@ -2672,7 +2665,7 @@ void ServerApp::PreCombatProcessTurns() {
     DebugLogger() << "ServerApp::ProcessTurns executing orders";
 
     // inform players of order execution
-    m_networking.SendMessage(TurnProgressMessage(Message::PROCESSING_ORDERS));
+    m_networking.SendMessageAll(TurnProgressMessage(Message::PROCESSING_ORDERS));
 
     // clear bombardment state before executing orders, so result after is only
     // determined by what orders set.
@@ -2706,7 +2699,7 @@ void ServerApp::PreCombatProcessTurns() {
     }
 
     // player notifications
-    m_networking.SendMessage(TurnProgressMessage(Message::COLONIZE_AND_SCRAP));
+    m_networking.SendMessageAll(TurnProgressMessage(Message::COLONIZE_AND_SCRAP));
 
     DebugLogger() << "ServerApp::ProcessTurns colonization";
     HandleColonization();
@@ -2725,7 +2718,7 @@ void ServerApp::PreCombatProcessTurns() {
     // process movement phase
 
     // player notifications
-    m_networking.SendMessage(TurnProgressMessage(Message::FLEET_MOVEMENT));
+    m_networking.SendMessageAll(TurnProgressMessage(Message::FLEET_MOVEMENT));
 
 
     // fleet movement
@@ -2759,16 +2752,15 @@ void ServerApp::PreCombatProcessTurns() {
     }
 
     // indicate that the clients are waiting for their new Universes
-    m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING));
+    m_networking.SendMessageAll(TurnProgressMessage(Message::DOWNLOADING));
 
     // send partial turn updates to all players after orders and movement
     for (ServerNetworking::const_established_iterator player_it = m_networking.established_begin();
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
-        int player_id = player->PlayerID();
         bool use_binary_serialization = player->ClientVersionStringMatchesThisServer();
-        player->SendMessage(TurnPartialUpdateMessage(player_id, PlayerEmpireID(player_id),
+        player->SendMessage(TurnPartialUpdateMessage(PlayerEmpireID(player->PlayerID()),
                                                      m_universe, use_binary_serialization));
     }
 }
@@ -2776,7 +2768,7 @@ void ServerApp::PreCombatProcessTurns() {
 void ServerApp::ProcessCombats() {
     ScopedTimer timer("ServerApp::ProcessCombats", true);
     DebugLogger() << "ServerApp::ProcessCombats";
-    m_networking.SendMessage(TurnProgressMessage(Message::COMBAT));
+    m_networking.SendMessageAll(TurnProgressMessage(Message::COMBAT));
 
     std::set<int> human_controlled_empire_ids = HumanControlledEmpires(this, m_networking);
     std::vector<CombatInfo> combats;   // map from system ID to CombatInfo for that system
@@ -2909,7 +2901,7 @@ void ServerApp::PostCombatProcessTurns() {
     // process production and growth phase
 
     // notify players that production and growth is being processed
-    m_networking.SendMessage(TurnProgressMessage(Message::EMPIRE_PRODUCTION));
+    m_networking.SendMessageAll(TurnProgressMessage(Message::EMPIRE_PRODUCTION));
     DebugLogger() << "ServerApp::PostCombatProcessTurns effects and meter updates";
 
 
@@ -3081,7 +3073,7 @@ void ServerApp::PostCombatProcessTurns() {
 
 
     // indicate that the clients are waiting for their new gamestate
-    m_networking.SendMessage(TurnProgressMessage(Message::DOWNLOADING));
+    m_networking.SendMessageAll(TurnProgressMessage(Message::DOWNLOADING));
 
 
     // compile map of PlayerInfo, indexed by player ID
@@ -3103,13 +3095,12 @@ void ServerApp::PostCombatProcessTurns() {
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
-        int player_id = player->PlayerID();
         bool use_binary_serialization = player->ClientVersionStringMatchesThisServer();
-        player->SendMessage(TurnUpdateMessage(player_id,                PlayerEmpireID(player_id),
-                                              m_current_turn,           m_empires,
-                                              m_universe,               GetSpeciesManager(),
-                                              GetCombatLogManager(),    GetSupplyManager(),
-                                              players,                  use_binary_serialization));
+        player->SendMessage(TurnUpdateMessage(PlayerEmpireID(player->PlayerID()), m_current_turn,
+                                              m_empires,                          m_universe,
+                                              GetSpeciesManager(),                GetCombatLogManager(),
+                                              GetSupplyManager(),                 players,
+                                              use_binary_serialization));
     }
     DebugLogger() << "ServerApp::PostCombatProcessTurns done";
 }
@@ -3137,8 +3128,7 @@ void ServerApp::HandleDiplomaticStatusChange(int empire1_id, int empire2_id) {
          player_it != m_networking.established_end(); ++player_it)
     {
         PlayerConnectionPtr player = *player_it;
-        int player_id = player->PlayerID();
-        player->SendMessage(DiplomaticStatusMessage(player_id, update));
+        player->SendMessage(DiplomaticStatusMessage(update));
     }
 }
 
@@ -3152,8 +3142,8 @@ void ServerApp::HandleDiplomaticMessageChange(int empire1_id, int empire2_id) {
 
     ServerNetworking::established_iterator player1_it = m_networking.GetPlayer(player1_id);
     if (player1_it != m_networking.established_end())
-        (*player1_it)->SendMessage(DiplomacyMessage(Networking::INVALID_PLAYER_ID, player1_id, message));
+        (*player1_it)->SendMessage(DiplomacyMessage(message));
     ServerNetworking::established_iterator player2_it = m_networking.GetPlayer(player2_id);
     if (player2_it != m_networking.established_end())
-        (*player2_it)->SendMessage(DiplomacyMessage(Networking::INVALID_PLAYER_ID, player2_id, message));
+        (*player2_it)->SendMessage(DiplomacyMessage(message));
 }

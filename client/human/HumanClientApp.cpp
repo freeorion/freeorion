@@ -598,7 +598,7 @@ void HumanClientApp::CancelMultiplayerGameFromLobby()
 void HumanClientApp::SaveGame(const std::string& filename) {
     m_save_game_in_progress = true;
     Message response_msg;
-    m_networking->SendMessage(HostSaveGameInitiateMessage(PlayerID(), filename));
+    m_networking->SendMessage(HostSaveGameInitiateMessage(filename));
     DebugLogger() << "HumanClientApp::SaveGame sent save initiate message to server...";
 }
 
@@ -696,7 +696,7 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
         }
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
-    const auto response = m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(PlayerID(), generic_directory));
+    const auto response = m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(generic_directory));
     if (response && response->Type() == Message::DISPATCH_SAVE_PREVIEWS) {
         ExtractDispatchSavePreviewsMessageData(*response, previews);
         DebugLogger() << "HumanClientApp::RequestSavePreviews Got " << previews.previews.size() << " previews.";
@@ -836,7 +836,6 @@ void HumanClientApp::HandleMessage(Message& msg) {
     case Message::JOIN_GAME:                m_fsm->process_event(JoinGame(msg));                break;
     case Message::HOST_ID:                  m_fsm->process_event(HostID(msg));                  break;
     case Message::LOBBY_UPDATE:             m_fsm->process_event(LobbyUpdate(msg));             break;
-    case Message::LOBBY_CHAT:               m_fsm->process_event(LobbyChat(msg));               break;
     case Message::SAVE_GAME_DATA_REQUEST:   m_fsm->process_event(SaveGameDataRequest(msg));     break;
     case Message::SAVE_GAME_COMPLETE:       m_fsm->process_event(SaveGameComplete(msg));        break;
 
@@ -861,7 +860,7 @@ void HumanClientApp::HandleSaveGameDataRequest() {
         std::cerr << "HumanClientApp::HandleSaveGameDataRequest(" << Message::SAVE_GAME_DATA_REQUEST << ")\n";
     SaveGameUIData ui_data;
     m_ui->GetSaveGameUIData(ui_data);
-    m_networking->SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), ui_data));
+    m_networking->SendMessage(ClientSaveDataMessage(Orders(), ui_data));
 }
 
 void HumanClientApp::UpdateCombatLogs(const Message& msg){
@@ -988,7 +987,7 @@ void HumanClientApp::HandleTurnUpdate()
 void HumanClientApp::UpdateCombatLogManager() {
     boost::optional<std::vector<int>> incomplete_ids = GetCombatLogManager().IncompleteLogIDs();
     if (incomplete_ids)
-        m_networking->SendMessage(RequestCombatLogsMessage(PlayerID(), *incomplete_ids));
+        m_networking->SendMessage(RequestCombatLogsMessage(*incomplete_ids));
 }
 
 namespace {

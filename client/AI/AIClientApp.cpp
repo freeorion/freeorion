@@ -181,7 +181,7 @@ void AIClientApp::HandlePythonAICrash() {
     err_msg << "AIClientApp failed due to error in python AI code for " << PlayerName() << ".  Exiting Soon.";
     ErrorLogger() << err_msg.str() << " id = " << PlayerID();
     Networking().SendMessage(
-        ErrorMessage(PlayerID(), str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
+        ErrorMessage(str(FlexibleFormat(UserString("ERROR_PYTHON_AI_CRASHED")) % PlayerName()) , true));
 }
 
 
@@ -201,8 +201,8 @@ void AIClientApp::HandleMessage(const Message& msg) {
         } else {
             try {
                 host_id = boost::lexical_cast<int>(text);
-            } catch (...) {
-                ErrorLogger() << "AIClientApp::HandleMessage for HOST_ID : Couldn't parese message text: " << text;
+            } catch(const boost::bad_lexical_cast& ex) {
+                ErrorLogger() << "AIClientApp::HandleMessage for HOST_ID : Couldn't parse message text \"" << text << "\": " << ex.what();
             }
         }
         m_networking->SetHostPlayerID(host_id);
@@ -210,108 +210,109 @@ void AIClientApp::HandleMessage(const Message& msg) {
     }
 
     case Message::JOIN_GAME: {
-        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
-            if (PlayerID() == Networking::INVALID_PLAYER_ID) {
-                DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
-                m_networking->SetPlayerID(msg.ReceivingPlayer());
-            } else {
-                ErrorLogger() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";
+        if (PlayerID() == Networking::INVALID_PLAYER_ID) {
+            DebugLogger() << "AIClientApp::HandleMessage : Received JOIN_GAME acknowledgement";
+            const std::string& text = msg.Text();
+            try {
+                int player_id = boost::lexical_cast<int>(text);
+                m_networking->SetPlayerID(player_id);
+            } catch(const boost::bad_lexical_cast& ex) {
+                ErrorLogger() << "AIClientApp::HandleMessage for JOIN_GAME : Couldn't parse message text \"" << text << "\": " << ex.what();
             }
+        } else {
+            ErrorLogger() << "AIClientApp::HandleMessage : Received erroneous JOIN_GAME acknowledgement when already in a game";
         }
         break;
     }
 
     case Message::GAME_START: {
-        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
-            DebugLogger() << "AIClientApp::HandleMessage : Received GAME_START message; starting AI turn...";
-            bool single_player_game;        // ignored
-            bool loaded_game_data;
-            bool ui_data_available;         // ignored
-            SaveGameUIData ui_data;         // ignored
-            bool state_string_available;    // ignored, as save_state_string is sent even if not set by ExtractMessageData
-            std::string save_state_string;
-            m_player_status.clear();
+        DebugLogger() << "AIClientApp::HandleMessage : Received GAME_START message; starting AI turn...";
+        bool single_player_game;        // ignored
+        bool loaded_game_data;
+        bool ui_data_available;         // ignored
+        SaveGameUIData ui_data;         // ignored
+        bool state_string_available;    // ignored, as save_state_string is sent even if not set by ExtractMessageData
+        std::string save_state_string;
+        m_player_status.clear();
 
-            ExtractGameStartMessageData(msg,                     single_player_game,     m_empire_id,
-                                        m_current_turn,          m_empires,              m_universe,
-                                        GetSpeciesManager(),     GetCombatLogManager(),  GetSupplyManager(),
-                                        m_player_info,           m_orders,               loaded_game_data,
-                                        ui_data_available,       ui_data,                state_string_available,
-                                        save_state_string,       m_galaxy_setup_data);
+        ExtractGameStartMessageData(msg,                     single_player_game,     m_empire_id,
+                                    m_current_turn,          m_empires,              m_universe,
+                                    GetSpeciesManager(),     GetCombatLogManager(),  GetSupplyManager(),
+                                    m_player_info,           m_orders,               loaded_game_data,
+                                    ui_data_available,       ui_data,                state_string_available,
+                                    save_state_string,       m_galaxy_setup_data);
 
-            DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
+        DebugLogger() << "Extracted GameStart message for turn: " << m_current_turn << " with empire: " << m_empire_id;
 
-            GetUniverse().InitializeSystemGraph(m_empire_id);
+        GetUniverse().InitializeSystemGraph(m_empire_id);
 
-            DebugLogger() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
-            if (loaded_game_data) {
-                if (GetOptionsDB().Get<bool>("verbose-logging"))
-                    DebugLogger() << "Message::GAME_START save_state_string: " << save_state_string;
-                m_AI->ResumeLoadedGame(save_state_string);
-                Orders().ApplyOrders();
-            } else {
-                DebugLogger() << "Message::GAME_START Starting New Game!";
-                // % Distribution of aggression levels
-                // Aggression   :  0   1   2   3   4   5   (0=Beginner, 5=Maniacal)
-                //                __  __  __  __  __  __
-                //Max 0         :100   0   0   0   0   0
-                //Max 1         : 25  75   0   0   0   0
-                //Max 2         :  0  25  75   0   0   0
-                //Max 3         :  0   0  25  75   0   0
-                //Max 4         :  0   0   0  25  75   0
-                //Max 5         :  0   0   0   0  25  75
-                
-                
-                // Optional aggression table, possibly for 0.4.4+?
-                // Aggression   :  0   1   2   3   4   5   (0=Beginner, 5=Maniacal)
-                //                __  __  __  __  __  __
-                //Max 0         :100   0   0   0   0   0
-                //Max 1         : 25  75   0   0   0   0
-                //Max 2         :  8  17  75   0   0   0
-                //Max 3         :  0   8  17  75   0   0
-                //Max 4         :  0   0   8  17  75   0
-                //Max 5         :  0   0   0   8  17  75
+        DebugLogger() << "Message::GAME_START loaded_game_data: " << loaded_game_data;
+        if (loaded_game_data) {
+            if (GetOptionsDB().Get<bool>("verbose-logging"))
+                DebugLogger() << "Message::GAME_START save_state_string: " << save_state_string;
+            m_AI->ResumeLoadedGame(save_state_string);
+            Orders().ApplyOrders();
+        } else {
+            DebugLogger() << "Message::GAME_START Starting New Game!";
+            // % Distribution of aggression levels
+            // Aggression   :  0   1   2   3   4   5   (0=Beginner, 5=Maniacal)
+            //                __  __  __  __  __  __
+            //Max 0         :100   0   0   0   0   0
+            //Max 1         : 25  75   0   0   0   0
+            //Max 2         :  0  25  75   0   0   0
+            //Max 3         :  0   0  25  75   0   0
+            //Max 4         :  0   0   0  25  75   0
+            //Max 5         :  0   0   0   0  25  75
 
-                const std::string g_seed = GetGalaxySetupData().m_seed;
-                const std::string emp_name = GetEmpire(m_empire_id)->Name();
-                unsigned int my_seed = 0;
+            // Optional aggression table, possibly for 0.4.4+?
+            // Aggression   :  0   1   2   3   4   5   (0=Beginner, 5=Maniacal)
+            //                __  __  __  __  __  __
+            //Max 0         :100   0   0   0   0   0
+            //Max 1         : 25  75   0   0   0   0
+            //Max 2         :  8  17  75   0   0   0
+            //Max 3         :  0   8  17  75   0   0
+            //Max 4         :  0   0   8  17  75   0
+            //Max 5         :  0   0   0   8  17  75
 
-                try {
-                    // generate consistent my_seed values from galaxy seed & empire name.
-                    boost::hash<std::string> string_hash;
-                    std::size_t h = string_hash(g_seed);
-                    my_seed = 3 * static_cast<unsigned int>(h) * static_cast<unsigned int>(string_hash(emp_name));
-                    DebugLogger() << "Message::GAME_START getting " << emp_name << " AI aggression, RNG Seed: " << my_seed;
-                } catch (...) {
-                    DebugLogger() << "Message::GAME_START getting " << emp_name << " AI aggression, could not initialise RNG.";
-                }
+            const std::string g_seed = GetGalaxySetupData().m_seed;
+            const std::string emp_name = GetEmpire(m_empire_id)->Name();
+            unsigned int my_seed = 0;
 
-                int rand_num = 0;
-                int this_aggr = m_max_aggression;
-
-                if (this_aggr > 0  && my_seed > 0) {
-                    Seed(my_seed);
-                    rand_num = RandSmallInt(0, 99);
-                    // if it's in the top 25% then decrease aggression.
-                    if (rand_num > 74) this_aggr--;
-                    // Leaving the following as commented out code for now. Possibly for 0.4.4+? 
-                    // in the top 8% ? decrease aggression again, unless it's already as low as it gets.
-                    // if (rand_num > 91 && this_aggr > 0) this_aggr--;
-                }
-
-                DebugLogger() << "Message::GAME_START setting AI aggression as " << this_aggr << " (from rnd " << rand_num << "; max aggression " << m_max_aggression << ")";
-
-                m_AI->SetAggression(this_aggr);
-                m_AI->StartNewGame();
+            try {
+                // generate consistent my_seed values from galaxy seed & empire name.
+                boost::hash<std::string> string_hash;
+                std::size_t h = string_hash(g_seed);
+                my_seed = 3 * static_cast<unsigned int>(h) * static_cast<unsigned int>(string_hash(emp_name));
+                DebugLogger() << "Message::GAME_START getting " << emp_name << " AI aggression, RNG Seed: " << my_seed;
+            } catch (...) {
+                DebugLogger() << "Message::GAME_START getting " << emp_name << " AI aggression, could not initialise RNG.";
             }
-            m_AI->GenerateOrders();
+
+            int rand_num = 0;
+            int this_aggr = m_max_aggression;
+
+            if (this_aggr > 0  && my_seed > 0) {
+                Seed(my_seed);
+                rand_num = RandSmallInt(0, 99);
+                // if it's in the top 25% then decrease aggression.
+                if (rand_num > 74) this_aggr--;
+                // Leaving the following as commented out code for now. Possibly for 0.4.4+?
+                // in the top 8% ? decrease aggression again, unless it's already as low as it gets.
+                // if (rand_num > 91 && this_aggr > 0) this_aggr--;
+            }
+
+            DebugLogger() << "Message::GAME_START setting AI aggression as " << this_aggr << " (from rnd " << rand_num << "; max aggression " << m_max_aggression << ")";
+
+            m_AI->SetAggression(this_aggr);
+            m_AI->StartNewGame();
         }
+        m_AI->GenerateOrders();
         break;
     }
 
     case Message::SAVE_GAME_DATA_REQUEST: {
         //DebugLogger() << "AIClientApp::HandleMessage Message::SAVE_GAME_DATA_REQUEST";
-        Networking().SendMessage(ClientSaveDataMessage(PlayerID(), Orders(), m_AI->GetSaveStateString()));
+        Networking().SendMessage(ClientSaveDataMessage(Orders(), m_AI->GetSaveStateString()));
         //DebugLogger() << "AIClientApp::HandleMessage sent save data message";
         break;
     }
@@ -320,22 +321,19 @@ void AIClientApp::HandleMessage(const Message& msg) {
         break;
 
     case Message::TURN_UPDATE: {
-        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID) {
-            //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
-            ExtractTurnUpdateMessageData(msg,                     m_empire_id,        m_current_turn,
-                                         m_empires,               m_universe,         GetSpeciesManager(),
-                                         GetCombatLogManager(),   GetSupplyManager(), m_player_info);
-            //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
-            GetUniverse().InitializeSystemGraph(m_empire_id);
-            m_AI->GenerateOrders();
-            //DebugLogger() << "AIClientApp::HandleMessage : done handling turn update message";
-        }
+        //DebugLogger() << "AIClientApp::HandleMessage : extracting turn update message data";
+        ExtractTurnUpdateMessageData(msg,                     m_empire_id,        m_current_turn,
+                                     m_empires,               m_universe,         GetSpeciesManager(),
+                                     GetCombatLogManager(),   GetSupplyManager(), m_player_info);
+        //DebugLogger() << "AIClientApp::HandleMessage : generating orders";
+        GetUniverse().InitializeSystemGraph(m_empire_id);
+        m_AI->GenerateOrders();
+        //DebugLogger() << "AIClientApp::HandleMessage : done handling turn update message";
         break;
     }
 
     case Message::TURN_PARTIAL_UPDATE:
-        if (msg.SendingPlayer() == Networking::INVALID_PLAYER_ID)
-            ExtractTurnPartialUpdateMessageData(msg, m_empire_id, m_universe);
+        ExtractTurnPartialUpdateMessageData(msg, m_empire_id, m_universe);
         break;
 
     case Message::TURN_PROGRESS:
@@ -345,14 +343,18 @@ void AIClientApp::HandleMessage(const Message& msg) {
     case Message::END_GAME: {
         DebugLogger() << "Message::END_GAME : Exiting";
         DebugLogger() << "Acknowledge server shutdown message.";
-        Networking().SendMessage(AIEndGameAcknowledgeMessage(Networking().PlayerID()));
+        Networking().SendMessage(AIEndGameAcknowledgeMessage());
         Exit(0);
         break;
     }
 
-    case Message::PLAYER_CHAT:
-        m_AI->HandleChatMessage(msg.SendingPlayer(), msg.Text());
+    case Message::PLAYER_CHAT: {
+        std::string data;
+        int player_id;
+        ExtractServerPlayerChatMessageData(msg, player_id, data);
+        m_AI->HandleChatMessage(player_id, data);
         break;
+    }
 
     case Message::DIPLOMACY: {
         DiplomaticMessage diplo_message;

@@ -579,7 +579,7 @@ public:
         // the zoom_factor changes, so that it's pixel length on the screen is kept to a reasonable distance.  We also add
         // additional stopping points for the map scale to augment the usefulness of the linked map scale circle (whose
         // radius is the same as the map scale length).  These additional stopping points include the speeds and detection
-        // ranges of any selected fleets, and the detection ranges of all planets in the currently selected system, 
+        // ranges of any selected fleets, and the detection ranges of all planets in the currently selected system,
         // provided such values are at least 20 uu.
 
         // get selected fleet speeds and detection ranges
@@ -2492,8 +2492,7 @@ void MapWnd::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
             ClientNetworking& net = HumanClientApp::GetApp()->Networking();
             std::pair<double, double> u_pos = this->UniversePositionFromScreenCoords(pt);
             StarType star_type = m_moderator_wnd->SelectedStarType();
-            net.SendMessage(ModeratorActionMessage(HumanClientApp::GetApp()->PlayerID(),
-                Moderator::CreateSystem(u_pos.first, u_pos.second, star_type)));
+            net.SendMessage(ModeratorActionMessage(Moderator::CreateSystem(u_pos.first, u_pos.second, star_type)));
             return;
         }
     }
@@ -3104,7 +3103,7 @@ namespace GetPathsThroughSupplyLanes {
         const std::unordered_set<int>& terminal_points,
         const SupplyLaneMMap& supply_lanes);
 
-    
+
     // PathInfo stores the \p ids of systems one hop back on a path
     // toward an \p o originating terminal system.
     struct PathInfo {
@@ -3281,7 +3280,7 @@ namespace {
 
 
     /* Takes X and Y coordinates of a pair of systems and moves these points inwards along the vector
-     * between them by the radius of a system on screen (at zoom 1.0) and return result */ 
+     * between them by the radius of a system on screen (at zoom 1.0) and return result */
     LaneEndpoints StarlaneEndPointsFromSystemPositions(double X1, double Y1, double X2, double Y2) {
         // get unit vector
         double deltaX = X2 - X1, deltaY = Y2 - Y1;
@@ -5090,11 +5089,9 @@ void MapWnd::FieldRightClicked(int field_id) {
     if (ClientPlayerIsModerator()) {
         ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-        int player_id = HumanClientApp::GetApp()->PlayerID();
 
         if (mas == MAS_Destroy) {
-            net.SendMessage(ModeratorActionMessage(player_id,
-                Moderator::DestroyUniverseObject(field_id)));
+            net.SendMessage(ModeratorActionMessage(Moderator::DestroyUniverseObject(field_id)));
         }
         return;
     }
@@ -5118,28 +5115,27 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys)
     if (ClientPlayerIsModerator()) {
         ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
         ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-        int player_id = HumanClientApp::GetApp()->PlayerID();
 
         if (mas == MAS_Destroy) {
-            net.SendMessage(ModeratorActionMessage(player_id,
+            net.SendMessage(ModeratorActionMessage(
                 Moderator::DestroyUniverseObject(system_id)));
 
         } else if (mas == MAS_CreatePlanet) {
-            net.SendMessage(ModeratorActionMessage(player_id,
+            net.SendMessage(ModeratorActionMessage(
                 Moderator::CreatePlanet(system_id, m_moderator_wnd->SelectedPlanetType(),
                                         m_moderator_wnd->SelectedPlanetSize())));
 
         } else if (mas == MAS_AddStarlane) {
             int selected_system_id = SidePanel::SystemID();
             if (GetSystem(selected_system_id)) {
-                net.SendMessage(ModeratorActionMessage(player_id,
+                net.SendMessage(ModeratorActionMessage(
                     Moderator::AddStarlane(system_id, selected_system_id)));
             }
 
         } else if (mas == MAS_RemoveStarlane) {
             int selected_system_id = SidePanel::SystemID();
             if (GetSystem(selected_system_id)) {
-                net.SendMessage(ModeratorActionMessage(player_id,
+                net.SendMessage(ModeratorActionMessage(
                     Moderator::RemoveStarlane(system_id, selected_system_id)));
             }
         } else if (mas == MAS_SetOwner) {
@@ -5151,7 +5147,7 @@ void MapWnd::SystemRightClicked(int system_id, GG::Flags< GG::ModKey > mod_keys)
             for (std::shared_ptr<const UniverseObject> obj : Objects().FindObjects<const UniverseObject>(system->ContainedObjectIDs())) {
                 UniverseObjectType obj_type = obj->ObjectType();
                 if (obj_type >= OBJ_BUILDING && obj_type < OBJ_SYSTEM) {
-                    net.SendMessage(ModeratorActionMessage(player_id,
+                    net.SendMessage(ModeratorActionMessage(
                     Moderator::SetOwner(obj->ID(), empire_id)));
                 }
             }
@@ -5207,14 +5203,13 @@ void MapWnd::PlanetRightClicked(int planet_id) {
 
     ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-    int player_id = HumanClientApp::GetApp()->PlayerID();
 
     if (mas == MAS_Destroy) {
-        net.SendMessage(ModeratorActionMessage(player_id,
+        net.SendMessage(ModeratorActionMessage(
             Moderator::DestroyUniverseObject(planet_id)));
     } else if (mas == MAS_SetOwner) {
         int empire_id = m_moderator_wnd->SelectedEmpire();
-        net.SendMessage(ModeratorActionMessage(player_id,
+        net.SendMessage(ModeratorActionMessage(
             Moderator::SetOwner(planet_id, empire_id)));
     }
 }
@@ -5227,14 +5222,13 @@ void MapWnd::BuildingRightClicked(int building_id) {
 
     ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-    int player_id = HumanClientApp::GetApp()->PlayerID();
 
     if (mas == MAS_Destroy) {
-        net.SendMessage(ModeratorActionMessage(player_id,
+        net.SendMessage(ModeratorActionMessage(
             Moderator::DestroyUniverseObject(building_id)));
     } else if (mas == MAS_SetOwner) {
         int empire_id = m_moderator_wnd->SelectedEmpire();
-        net.SendMessage(ModeratorActionMessage(player_id,
+        net.SendMessage(ModeratorActionMessage(
             Moderator::SetOwner(building_id, empire_id)));
     }
 }
@@ -5437,17 +5431,16 @@ void MapWnd::FleetsRightClicked(const std::vector<int>& fleet_ids) {
 
     ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-    int player_id = HumanClientApp::GetApp()->PlayerID();
 
     if (mas == MAS_Destroy) {
         for (int fleet_id : fleet_ids) {
-            net.SendMessage(ModeratorActionMessage(player_id,
+            net.SendMessage(ModeratorActionMessage(
                 Moderator::DestroyUniverseObject(fleet_id)));
         }
     } else if (mas == MAS_SetOwner) {
         int empire_id = m_moderator_wnd->SelectedEmpire();
         for (int fleet_id : fleet_ids) {
-            net.SendMessage(ModeratorActionMessage(player_id,
+            net.SendMessage(ModeratorActionMessage(
                 Moderator::SetOwner(fleet_id, empire_id)));
         }
     }
@@ -5469,17 +5462,16 @@ void MapWnd::ShipsRightClicked(const std::vector<int>& ship_ids) {
 
     ModeratorActionSetting mas = m_moderator_wnd->SelectedAction();
     ClientNetworking& net = HumanClientApp::GetApp()->Networking();
-    int player_id = HumanClientApp::GetApp()->PlayerID();
 
     if (mas == MAS_Destroy) {
         for (int ship_id : ship_ids) {
-            net.SendMessage(ModeratorActionMessage(player_id,
+            net.SendMessage(ModeratorActionMessage(
                 Moderator::DestroyUniverseObject(ship_id)));
         }
     } else if (mas == MAS_SetOwner) {
         int empire_id = m_moderator_wnd->SelectedEmpire();
         for (int ship_id : ship_ids) {
-            net.SendMessage(ModeratorActionMessage(player_id,
+            net.SendMessage(ModeratorActionMessage(
                 Moderator::SetOwner(ship_id, empire_id)));
         }
     }

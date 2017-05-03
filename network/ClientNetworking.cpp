@@ -521,8 +521,8 @@ void ClientNetworking::Impl::HandleMessageBodyRead(const std::shared_ptr<const C
     if (error)
         throw boost::system::system_error(error);
 
-    assert(static_cast<int>(bytes_transferred) <= m_incoming_header[4]);
-    if (static_cast<int>(bytes_transferred) == m_incoming_header[4]) {
+    assert(static_cast<int>(bytes_transferred) <= m_incoming_header[Message::Parts::SIZE]);
+    if (static_cast<int>(bytes_transferred) == m_incoming_header[Message::Parts::SIZE]) {
         m_incoming_messages.PushBack(m_incoming_message);
         AsyncReadMessage(keep_alive);
     }
@@ -538,7 +538,7 @@ void ClientNetworking::Impl::HandleMessageHeaderRead(const std::shared_ptr<const
         return;
 
     BufferToHeader(m_incoming_header, m_incoming_message);
-    m_incoming_message.Resize(m_incoming_header[4]);
+    m_incoming_message.Resize(m_incoming_header[Message::Parts::SIZE]);
     // Intentionally not checked for open.  We expect (header, body) pairs.
     boost::asio::async_read(
         m_socket,
@@ -568,8 +568,8 @@ void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error,
         return;
     }
 
-    assert(static_cast<int>(bytes_transferred) <= static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[4]);
-    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[4])
+    assert(static_cast<int>(bytes_transferred) <= static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[Message::Parts::SIZE]);
+    if (static_cast<int>(bytes_transferred) != static_cast<int>(Message::HeaderBufferSize) + m_outgoing_header[Message::Parts::SIZE])
         return;
 
     m_outgoing_messages.pop_front();

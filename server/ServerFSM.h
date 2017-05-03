@@ -62,7 +62,6 @@ struct MessageEventBase {
     (HostSPGame)                            \
     (StartMPGame)                           \
     (LobbyUpdate)                           \
-    (LobbyChat)                             \
     (JoinGame)                              \
     (LeaveGame)                             \
     (SaveGameRequest)                       \
@@ -157,7 +156,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
         sc::custom_reaction<Disconnection>,
         sc::custom_reaction<JoinGame>,
         sc::custom_reaction<LobbyUpdate>,
-        sc::custom_reaction<LobbyChat>,
+        sc::custom_reaction<PlayerChat>,
         sc::custom_reaction<StartMPGame>,
         sc::custom_reaction<HostMPGame>,
         sc::custom_reaction<HostSPGame>,
@@ -171,7 +170,7 @@ struct MPLobby : sc::state<MPLobby, ServerFSM> {
     sc::result react(const Disconnection& d);
     sc::result react(const JoinGame& msg);
     sc::result react(const LobbyUpdate& msg);
-    sc::result react(const LobbyChat& msg);
+    sc::result react(const PlayerChat& msg);
     sc::result react(const StartMPGame& msg);
     sc::result react(const HostMPGame& msg);
     sc::result react(const HostSPGame& msg);

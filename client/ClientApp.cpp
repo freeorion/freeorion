@@ -117,7 +117,7 @@ void ClientApp::SetPlayerStatus(int player_id, Message::PlayerStatus status) {
 }
 
 void ClientApp::StartTurn() {
-    m_networking->SendMessage(TurnOrdersMessage(m_networking->PlayerID(), m_orders));
+    m_networking->SendMessage(TurnOrdersMessage(m_orders));
     m_orders.Reset();
 }
 
@@ -141,14 +141,14 @@ std::string ClientApp::GetVisibleObjectName(std::shared_ptr<const UniverseObject
 }
 
 int ClientApp::GetNewObjectID() {
-    const auto msg = m_networking->SendSynchronousMessage(RequestNewObjectIDMessage(m_networking->PlayerID()));
+    const auto msg = m_networking->SendSynchronousMessage(RequestNewObjectIDMessage());
     if (!msg || msg->Text().empty())
         throw std::runtime_error("ClientApp::GetNewObjectID() didn't get a new object ID");
     return boost::lexical_cast<int>(msg->Text());
 }
 
 int ClientApp::GetNewDesignID() {
-    const auto msg = m_networking->SendSynchronousMessage(RequestNewDesignIDMessage(m_networking->PlayerID()));
+    const auto msg = m_networking->SendSynchronousMessage(RequestNewDesignIDMessage());
     if (!msg || msg->Text().empty())
         throw std::runtime_error("ClientApp::GetNewDesignID() didn't get a new design ID");
     return boost::lexical_cast<int>(msg->Text());

@@ -526,7 +526,7 @@ namespace AIInterface {
             ErrorLogger() << "IssueInvadeOrder : planet with passed planet_id " << planet_id
                           << " and species " << this_species << " is not invadable due to one or more of: owned by invader empire, "
                           << "not visible to invader empire, has shields above zero, or is already being invaded.";
-            if (!unowned) 
+            if (!unowned)
                 ErrorLogger() << "IssueInvadeOrder : planet (id " << planet_id << ") is not unowned";
             if (!visible)
                 ErrorLogger() << "IssueInvadeOrder : planet (id " << planet_id << ") is not visible";
@@ -864,10 +864,7 @@ namespace AIInterface {
     }
 
     void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text) {
-        if (recipient_player_id == -1)
-            AIClientApp::GetApp()->Networking().SendMessage(GlobalChatMessage(PlayerID(), message_text));
-        else
-            AIClientApp::GetApp()->Networking().SendMessage(SingleRecipientChatMessage(PlayerID(), recipient_player_id, message_text));
+        AIClientApp::GetApp()->Networking().SendMessage(PlayerChatMessage(message_text, recipient_player_id));
     }
 
     void SendDiplomaticMessage(const DiplomaticMessage& diplo_message) {
@@ -878,7 +875,7 @@ namespace AIInterface {
         int recipient_empire_id = diplo_message.RecipientEmpireID();
         int recipient_player_id = app->EmpirePlayerID(recipient_empire_id);
         if (recipient_player_id == Networking::INVALID_PLAYER_ID) return;
-        app->Networking().SendMessage(DiplomacyMessage(sender_player_id, recipient_player_id, diplo_message));
+        app->Networking().SendMessage(DiplomacyMessage(diplo_message));
     }
 
     void DoneTurn() {

@@ -206,7 +206,7 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
         boost::statechart::custom_reaction<Disconnection>,
         boost::statechart::custom_reaction<HostID>,
         boost::statechart::custom_reaction<LobbyUpdate>,
-        boost::statechart::custom_reaction<LobbyChat>,
+        boost::statechart::custom_reaction<PlayerChat>,
         boost::statechart::custom_reaction<CancelMPGameClicked>,
         boost::statechart::custom_reaction<StartMPGameClicked>,
         boost::statechart::custom_reaction<GameStart>,
@@ -220,7 +220,7 @@ struct MPLobby : boost::statechart::state<MPLobby, HumanClientFSM> {
     boost::statechart::result react(const Disconnection& d);
     boost::statechart::result react(const HostID& msg);
     boost::statechart::result react(const LobbyUpdate& msg);
-    boost::statechart::result react(const LobbyChat& msg);
+    boost::statechart::result react(const PlayerChat& msg);
     boost::statechart::result react(const CancelMPGameClicked& a);
     boost::statechart::result react(const StartMPGameClicked& a);
     boost::statechart::result react(const GameStart& msg);
