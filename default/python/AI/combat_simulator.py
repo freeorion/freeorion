@@ -163,7 +163,6 @@ def std(values):
 class Faction(object):
 
     def __init__(self, bonuses=None):
-        self.original_objects = []
         self.current_objects = []
         self.destroyed_objects = []
         self.bonuses = bonuses or {}
@@ -200,16 +199,19 @@ class Faction(object):
         design_stats = get_stats_from_design(design, self.bonuses)
         print design_stats
         if design_stats:
-            self.original_objects.append(Ship(*design_stats))
+            self.current_objects.append(Ship(*design_stats))
         else:
             chat_human('ERROR: Could not get design stats...')
 
     def add_planet(self, defense, shields):
-        self.original_objects.append(Planet(defense, shields))
+        self.current_objects.append(Planet(defense, shields))
 
     def reset(self):
-        self.current_objects = copy.deepcopy(self.original_objects)
+        self.current_objects = self.current_objects + self.destroyed_objects
+        self.current_objects = [obj for obj in self.current_objects if not isinstance(obj, Fighter)]
         self.destroyed_objects = []
+        for obj in self.current_objects:
+            obj.reset()
 
     def is_alive(self):
         return bool(self.current_objects)
@@ -230,6 +232,9 @@ class CombatObject(object):
 
     def __init__(self):
         self.cost = 0
+
+    def reset(self):
+        pass
 
     def _shots(self):
         """Yield all shots of the object in the current combat round.
@@ -320,9 +325,8 @@ class Ship(CombatObject):
 
     def __init__(self, attacks, structure, shields, fighter_capacity, fighter_rate, fighter_damage, cost):
         super(Ship, self).__init__()
-        print attacks
-        print structure
-        print shields
+        self._orig_structure = structure
+        self._orig_fighter_capacity = fighter_capacity
         self.attacks = attacks
         self.structure = structure
         self.shields = shields
@@ -330,6 +334,10 @@ class Ship(CombatObject):
         self.fighter_rate = fighter_rate
         self.fighter_damage = fighter_damage
         self.cost = cost
+
+    def reset(self):
+        self.structure = self._orig_structure
+        self.fighter_capacity = self._orig_fighter_capacity
 
     def _shots(self):
         for dmg, n in self.attacks.iteritems():
@@ -368,6 +376,9 @@ class Fighter(CombatObject):
         self.structure = 1
         self.damage = damage
 
+    def reset(self):
+        self.structure = 1
+
     def _shots(self):
         yield self.damage
 
@@ -396,9 +407,15 @@ class Planet(CombatObject):
 
     def __init__(self, defense, shields):
         super(Planet, self).__init__()
+        self._orig_defense = defense
+        self._orig_shields = shields
         self.defense = defense
         self.shields = shields
         self.defense_after_turn = defense  # only update defense after turn
+
+    def reset(self):
+        self.defense = self._orig_defense
+        self.shields = self._orig_shields
 
     def _shots(self):
         yield self.defense
