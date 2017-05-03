@@ -26,7 +26,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
@@ -61,7 +60,7 @@ Button::Button(const std::string& str, const std::shared_ptr<Font>& font, Clr co
     m_label->Hide();
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(LeftClickedSignal, &ClickedEcho);
+        LeftClickedSignal.connect(&ClickedEcho);
 }
 
 Pt Button::MinUsableSize() const
@@ -275,7 +274,7 @@ StateButton::StateButton(const std::string& str, const std::shared_ptr<Font>& fo
     m_label->Hide();
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(CheckedSignal, &CheckedEcho);
+        CheckedSignal.connect(&CheckedEcho);
 }
 
 Pt StateButton::MinUsableSize() const
@@ -563,7 +562,7 @@ RadioButtonGroup::RadioButtonGroup(Orientation orientation) :
     SetColor(CLR_YELLOW);
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(ButtonChangedSignal, &ButtonChangedEcho);
+        ButtonChangedSignal.connect(&ButtonChangedEcho);
 }
 
 Pt RadioButtonGroup::MinUsableSize() const
@@ -782,7 +781,7 @@ const std::vector<RadioButtonGroup::ButtonSlot>& RadioButtonGroup::ButtonSlots()
 void RadioButtonGroup::ConnectSignals()
 {
     for (std::size_t i = 0; i < m_button_slots.size(); ++i) {
-        m_button_slots[i].connection = Connect(m_button_slots[i].button->CheckedSignal, [this, i](bool checked) {
+        m_button_slots[i].connection = m_button_slots[i].button->CheckedSignal.connect([this, i](bool checked) {
             if (checked)
                 this->SetCheckImpl(i, true);
             else
