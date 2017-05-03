@@ -26,7 +26,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/WndEvent.h>
 
@@ -175,10 +174,11 @@ TabWnd::TabWnd(X x, Y y, X w, Y h, const std::shared_ptr<Font>& font, Clr color,
     layout->Add(m_tab_bar, 0, 0);
     layout->Add(m_overlay, 1, 0);
     SetLayout(layout);
-    Connect(m_tab_bar->TabChangedSignal, boost::bind(&TabWnd::TabChanged, this, _1, true));
+    m_tab_bar->TabChangedSignal.connect(
+        boost::bind(&TabWnd::TabChanged, this, _1, true));
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(TabChangedSignal, TabChangedEcho("TabWnd::TabChangedSignal"));
+        TabChangedSignal.connect(TabChangedEcho("TabWnd::TabChangedSignal"));
 }
 
 Pt TabWnd::MinUsableSize() const
@@ -304,12 +304,15 @@ TabBar::TabBar(const std::shared_ptr<Font>& font, Clr color, Clr text_color/* = 
     AttachChild(m_tabs);
     AttachChild(m_left_right_button_layout);
 
-    Connect(m_tabs->ButtonChangedSignal, boost::bind(&TabBar::TabChanged, this, _1, true));
-    Connect(m_left_button->LeftClickedSignal, &TabBar::LeftClicked, this);
-    Connect(m_right_button->LeftClickedSignal, &TabBar::RightClicked, this);
+    m_tabs->ButtonChangedSignal.connect(
+        boost::bind(&TabBar::TabChanged, this, _1, true));
+    m_left_button->LeftClickedSignal.connect(
+        boost::bind(&TabBar::LeftClicked, this));
+    m_right_button->LeftClickedSignal.connect(
+        boost::bind(&TabBar::RightClicked, this));
 
     if (INSTRUMENT_ALL_SIGNALS)
-        Connect(TabChangedSignal, TabChangedEcho("TabBar::TabChangedSignal"));
+        TabChangedSignal.connect(TabChangedEcho("TabBar::TabChangedSignal"));
 
     DoLayout();
 }
