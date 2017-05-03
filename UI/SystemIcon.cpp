@@ -21,7 +21,6 @@
 #include "../Empire/Empire.h"
 
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 #include <GG/utf8/checked.h>
 #include <GG/utf8/core.h>
@@ -642,7 +641,8 @@ void SystemIcon::Refresh() {
     std::shared_ptr<const System> system = GetSystem(m_system_id);
     if (system) {
         name = system->Name();
-        m_system_connection = GG::Connect(system->StateChangedSignal,   &SystemIcon::Refresh,   this,   boost::signals2::at_front);
+        m_system_connection = system->StateChangedSignal.connect(
+            boost::bind(&SystemIcon::Refresh, this), boost::signals2::at_front);
     }
 
     SetName(name);   // sets GG::Control name.  doesn't affect displayed system name
