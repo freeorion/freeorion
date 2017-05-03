@@ -37,7 +37,6 @@
 #include <GG/BrowseInfoWnd.h>
 #include <GG/dialogs/ThreeButtonDlg.h>
 #include <GG/Cursor.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/utf8/checked.h>
 
 #include <boost/algorithm/string/trim.hpp>
@@ -248,8 +247,10 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
 
     EnableFPS();
     UpdateFPSLimit();
-    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"),  &HumanClientApp::UpdateFPSLimit, this);
-    GG::Connect(GetOptionsDB().OptionChangedSignal("max-fps"),   &HumanClientApp::UpdateFPSLimit, this);
+    GetOptionsDB().OptionChangedSignal("show-fps").connect(
+        boost::bind(&HumanClientApp::UpdateFPSLimit, this));
+    GetOptionsDB().OptionChangedSignal("max-fps").connect(
+        boost::bind(&HumanClientApp::UpdateFPSLimit, this));
 
     std::shared_ptr<GG::BrowseInfoWnd> default_browse_info_wnd(
         new GG::TextBoxBrowseInfoWnd(GG::X(400), ClientUI::GetFont(),
@@ -267,11 +268,16 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
                                 GetOptionsDB().Get<int>("UI.mouse-click-repeat-interval"));
     EnableModalAcceleratorSignals(true);
 
-    GG::Connect(WindowResizedSignal,    &HumanClientApp::HandleWindowResize,    this);
-    GG::Connect(FocusChangedSignal,     &HumanClientApp::HandleFocusChange,     this);
-    GG::Connect(WindowMovedSignal,      &HumanClientApp::HandleWindowMove,      this);
-    GG::Connect(WindowClosingSignal,    &HumanClientApp::HandleAppQuitting,     this);
-    GG::Connect(AppQuittingSignal,      &HumanClientApp::HandleAppQuitting,     this);
+    WindowResizedSignal.connect(
+        boost::bind(&HumanClientApp::HandleWindowResize, this, _1, _2));
+    FocusChangedSignal.connect(
+        boost::bind(&HumanClientApp::HandleFocusChange, this, _1));
+    WindowMovedSignal.connect(
+        boost::bind(&HumanClientApp::HandleWindowMove, this, _1, _2));
+    WindowClosingSignal.connect(
+        boost::bind(&HumanClientApp::HandleAppQuitting, this));
+    AppQuittingSignal.connect(
+        boost::bind(&HumanClientApp::HandleAppQuitting, this));
 
     SetStringtableDependentOptionDefaults();
     SetGLVersionDependentOptionDefaults();
@@ -1146,7 +1152,10 @@ namespace {
                 ClientUI::WndColor(), ClientUI::WndOuterBorderColor(),
                 ClientUI::CtrlColor(), ClientUI::TextColor(), 1,
                 (reset ? UserString("ABORT_SAVE_AND_RESET") : UserString("ABORT_SAVE_AND_EXIT")))
-        { GG::Connect(save_completed_signal, &SaveGamePendingDialog::SaveCompletedHandler, this); }
+        {
+            save_completed_signal.connect(
+                boost::bind(&SaveGamePendingDialog::SaveCompletedHandler, this));
+        }
 
         void SaveCompletedHandler() {
             DebugLogger() << "SaveGamePendingDialog::SaveCompletedHandler save game completed handled.";
