@@ -312,9 +312,9 @@ class CombatObject(object):
         """
         try:
             target = random.choice(possible_targets)
-            print "Target: ", target
+            # print "Target: ", target
         except:
-            print "No target found."
+            # print "No target found."
             return
         target.do_damage(damage, self.ignore_shields)
 
@@ -355,7 +355,7 @@ class Ship(CombatObject):
             dmg -= self.shields
         dmg = max(dmg, 0)
         self.structure -= dmg
-        print "Remaining structure:", self.structure
+        # print "Remaining structure:", self.structure
 
     def launch_fighters(self):
         num_launched = min(self.fighter_capacity, self.fighter_rate)
