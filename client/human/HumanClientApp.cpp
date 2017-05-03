@@ -473,8 +473,6 @@ void HumanClientApp::NewSinglePlayerGame(bool quickstart) {
         return;
     }
 
-    SendLoggingConfigToServer();
-
     if (quickstart || ended_with_ok) {
 
         SinglePlayerSetupData setup_data;
@@ -598,8 +596,6 @@ void HumanClientApp::MultiPlayerGame() {
         return;
     }
 
-    SendLoggingConfigToServer();
-
     if (server_connect_wnd.Result().second == "HOST GAME SELECTED") {
         m_networking->SendMessage(HostMPGameMessage(server_connect_wnd.Result().first));
         m_fsm->process_event(HostMPGameRequested());
@@ -681,8 +677,6 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
         return;
     }
 
-    SendLoggingConfigToServer();
-
     m_networking->SetPlayerID(Networking::INVALID_PLAYER_ID);
     m_networking->SetHostPlayerID(Networking::INVALID_PLAYER_ID);
     SetEmpireID(ALL_EMPIRES);
@@ -716,6 +710,9 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             return;
         }
+
+        // This will only generate an error message and use the server's config.xml
+        // because there is no host client for this temporary server.
         SendLoggingConfigToServer();
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;

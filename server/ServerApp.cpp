@@ -444,11 +444,12 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
 void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr player_connection) {
     int player_id = player_connection->PlayerID();
     bool is_host = m_networking.PlayerIsHost(player_id);
-    if (!is_host) {
+    if (!is_host && m_networking.HostPlayerID() != Networking::INVALID_PLAYER_ID) {
         WarnLogger() << "ServerApp::HandleLoggerConfig rejecting message from non-host player id = " << player_id;
         return;
     }
 
+    DebugLogger() << "Handling logging config message from the host.";
     std::set<std::tuple<std::string, std::string, LogLevel>> options;
     ExtractLoggerConfigMessageData(msg, options);
 

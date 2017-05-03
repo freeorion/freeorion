@@ -103,6 +103,9 @@ public:
         OSX will not tolerate static initialization of SDL, to check screen size. */
     static void AddWindowSizeOptionsAfterMainStart(OptionsDB& db);
 
+    /** If hosting then send the logger state to the server. */
+    void            SendLoggingConfigToServer();
+
 protected:
     void Initialize() override;
 
@@ -126,9 +129,6 @@ private:
     void            UpdateFPSLimit();                   ///< polls options database to find if FPS should be limited, and if so, to what rate
 
     void            DisconnectedFromServer();           ///< called by ClientNetworking when the TCP connection to the server is lost
-
-    /** If hosting then send the logger state to the server. */
-    void            SendLoggingConfigToServer();
 
     void            ResetOrExitApp(bool reset);
 
