@@ -1,7 +1,6 @@
 #include "ResourcePanel.h"
 
 #include <GG/Button.h>
-#include <GG/SignalsAndSlots.h>
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -45,7 +44,8 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     if (!res)
         throw std::invalid_argument("Attempted to construct a ResourcePanel with an UniverseObject that is not a ResourceCenter");
 
-    GG::Connect(m_expand_button->LeftClickedSignal, &ResourcePanel::ExpandCollapseButtonPressed, this);
+    m_expand_button->LeftClickedSignal.connect(
+        boost::bind(&ResourcePanel::ExpandCollapseButtonPressed, this));
 
     const auto obj = GetUniverseObject(m_rescenter_id);
     if (!obj) {
