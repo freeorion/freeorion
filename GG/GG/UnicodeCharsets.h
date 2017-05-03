@@ -33,6 +33,7 @@
 #include <GG/Base.h>
 
 #include <set>
+#include <vector>
 
 
 namespace GG {

@@ -37,6 +37,7 @@
 
 #include <list>
 #include <set>
+#include <vector>
 
 
 namespace GG {

@@ -34,6 +34,7 @@
 #include <GG/Flags.h>
 
 #include <map>
+#include <vector>
 
 
 namespace GG {
