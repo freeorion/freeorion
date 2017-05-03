@@ -2,6 +2,7 @@
 
 #include <cassert>
 #include <cmath>
+#include <float.h>
 
 namespace CheckSums {
     void CheckSumCombine(...)
