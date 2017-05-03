@@ -13,6 +13,7 @@ import PlanetUtilsAI
 import ShipDesignAI
 from freeorion_tools import chat_human
 
+
 WIN_A = -1
 WIN_B = 1
 DRAW = 0
@@ -167,12 +168,8 @@ class Faction(object):
         self.bonuses = bonuses or {}
 
     def shoot(self, enemy_objects):
-
-        for cls in ALL_OBJECTS:
-            cls.current_possible_targets[:] = [obj for obj in enemy_objects if cls.is_possible_target(obj)]
-
         for o in self.current_objects:
-            o.shoot()
+            o.shoot(enemy_objects)
 
     def launch_fighters(self):
         for o in self.current_objects:
@@ -232,7 +229,6 @@ class Faction(object):
 class CombatObject(object):
 
     ignore_shields = False
-    current_possible_targets = []
 
     def __init__(self):
         self.cost = 0
@@ -248,8 +244,7 @@ class CombatObject(object):
         """
         raise NotImplementedError
 
-    @staticmethod
-    def is_possible_target(obj):
+    def _is_possible_target(self, obj):
         """Return true if passed object is a possible target.
 
         :param obj: object to be checked
@@ -267,14 +262,15 @@ class CombatObject(object):
         """
         raise NotImplementedError
 
-    def shoot(self):
+    def shoot(self, enemy_objects):
         """Fire all available shots at random but possible enemy targets, damaging them.
 
         :param enemy_objects: all enemy objects alive at the beginning of the turn
         :type enemy_objects: list[CombatObject]
         """
+        possible_targets = [obj for obj in enemy_objects if self._is_possible_target(obj)]
         for dmg in self._shots():
-            self._shoot_at_random_target(self.current_possible_targets, dmg)
+            self._shoot_at_random_target(possible_targets, dmg)
 
     def do_damage(self, dmg, ignore_shields=False):
         """Apply the damage dealt to this object.
@@ -349,8 +345,7 @@ class Ship(CombatObject):
     def _shots(self):
         return self.shots
 
-    @staticmethod
-    def is_possible_target(obj):
+    def _is_possible_target(self, obj):
         return True
 
     def _health(self):
@@ -388,8 +383,7 @@ class Fighter(CombatObject):
     def _shots(self):
         yield self.damage
 
-    @staticmethod
-    def is_possible_target(obj):
+    def _is_possible_target(self, obj):
         if isinstance(obj, Planet):
             return False
         return True
@@ -427,8 +421,7 @@ class Planet(CombatObject):
     def _shots(self):
         yield self.defense
 
-    @staticmethod
-    def is_possible_target(obj):
+    def _is_possible_target(self, obj):
         if isinstance(obj, Ship):
             return True
         return False
@@ -498,6 +491,3 @@ def get_stats_from_design(design, bonuses):
     print attacks
 
     return attacks, structure, shields, fighter_capacity, fighter_launchrate, fighter_damage, cost
-
-
-ALL_OBJECTS = (Planet, Ship, Fighter)
