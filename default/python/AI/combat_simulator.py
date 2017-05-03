@@ -14,6 +14,11 @@ import ShipDesignAI
 from freeorion_tools import chat_human
 
 
+WIN_A = -1
+WIN_B = 1
+DRAW = 0
+
+
 ships_A = []
 ships_B = []
 
@@ -57,10 +62,6 @@ class CombatManager(object):
     def run(self, iterations):
         self.__init__()
         self.parse_shiplist()
-
-        WIN_A = -1
-        WIN_B = 1
-        DRAW = 0
 
         results = []
         lost_pp_A = []
