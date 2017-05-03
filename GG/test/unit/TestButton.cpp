@@ -3,7 +3,7 @@
 #include <boost/make_shared.hpp>
 #include <GG/Button.h>
 #include <GG/GUI.h>
-#include <GG/SignalsAndSlots.h>
+
 
 class MockGUI : public GG::GUI
 {
@@ -217,7 +217,8 @@ BOOST_AUTO_TEST_CASE( click )
 
     BOOST_CHECK(catcher.count == 0);
 
-    GG::Connect(button.LeftClickedSignal, &MouseClickCatcher::CountClick, &catcher);
+    button.LeftClickedSignal.connect(
+        boost::bind(&MouseClickCatcher::CountClick, &catcher));
     BOOST_CHECK(button.LeftClickedSignal.num_slots() == 1);
 
     button.HandleEventE(mouseenter_ev);
