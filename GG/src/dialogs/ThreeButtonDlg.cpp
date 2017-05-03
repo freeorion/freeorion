@@ -28,7 +28,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
 #include <GG/WndEvent.h>
@@ -173,11 +172,14 @@ void ThreeButtonDlg::Init(const std::string& msg, const std::shared_ptr<Font>& f
 
 void ThreeButtonDlg::ConnectSignals()
 {
-    Connect(m_button_0->LeftClickedSignal, &ThreeButtonDlg::Button0Clicked, this);
+    m_button_0->LeftClickedSignal.connect(
+        boost::bind(&ThreeButtonDlg::Button0Clicked, this));
     if (m_button_1)
-        Connect(m_button_1->LeftClickedSignal, &ThreeButtonDlg::Button1Clicked, this);
+        m_button_1->LeftClickedSignal.connect(
+            boost::bind(&ThreeButtonDlg::Button1Clicked, this));
     if (m_button_2)
-        Connect(m_button_2->LeftClickedSignal, &ThreeButtonDlg::Button2Clicked, this);
+        m_button_2->LeftClickedSignal.connect(
+            boost::bind(&ThreeButtonDlg::Button2Clicked, this));
 }
 
 void ThreeButtonDlg::Button0Clicked()
