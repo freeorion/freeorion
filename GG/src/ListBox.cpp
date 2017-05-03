@@ -28,7 +28,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Scroll.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StyleFactory.h>
 #include <GG/TextControl.h>
 
@@ -569,18 +568,18 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS) {
-        Connect(ClearedSignal,          ListSignalEcho(*this, "ListBox::ClearedSignal"));
-        Connect(BeforeInsertSignal,     ListSignalEcho(*this, "ListBox::BeforeInsertSignal"));
-        Connect(AfterInsertSignal,      ListSignalEcho(*this, "ListBox::AfterinsertSignal"));
-        Connect(SelChangedSignal,       ListSignalEcho(*this, "ListBox::SelChangedSignal"));
-        Connect(DroppedSignal,          ListSignalEcho(*this, "ListBox::DroppedSignal"));
-        Connect(DropAcceptableSignal,   ListSignalEcho(*this, "ListBox::DropAcceptableSignal"));
-        Connect(LeftClickedSignal,      ListSignalEcho(*this, "ListBox::LeftClickedSignal"));
-        Connect(RightClickedSignal,     ListSignalEcho(*this, "ListBox::RightClickedSignal"));
-        Connect(DoubleClickedSignal,    ListSignalEcho(*this, "ListBox::DoubleClickedSignal"));
-        Connect(BeforeEraseSignal,      ListSignalEcho(*this, "ListBox::BeforeEraseSignal"));
-        Connect(AfterEraseSignal,       ListSignalEcho(*this, "ListBox::AfterEraseSignal"));
-        Connect(BrowsedSignal,          ListSignalEcho(*this, "ListBox::BrowsedSignal"));
+        ClearedSignal.connect(ListSignalEcho(*this, "ListBox::ClearedSignal"));
+        BeforeInsertSignal.connect(ListSignalEcho(*this, "ListBox::BeforeInsertSignal"));
+        AfterInsertSignal.connect(ListSignalEcho(*this, "ListBox::AfterinsertSignal"));
+        SelChangedSignal.connect(ListSignalEcho(*this, "ListBox::SelChangedSignal"));
+        DroppedSignal.connect(ListSignalEcho(*this, "ListBox::DroppedSignal"));
+        DropAcceptableSignal.connect(ListSignalEcho(*this, "ListBox::DropAcceptableSignal"));
+        LeftClickedSignal.connect(ListSignalEcho(*this, "ListBox::LeftClickedSignal"));
+        RightClickedSignal.connect(ListSignalEcho(*this, "ListBox::RightClickedSignal"));
+        DoubleClickedSignal.connect(ListSignalEcho(*this, "ListBox::DoubleClickedSignal"));
+        BeforeEraseSignal.connect(ListSignalEcho(*this, "ListBox::BeforeEraseSignal"));
+        AfterEraseSignal.connect(ListSignalEcho(*this, "ListBox::AfterEraseSignal"));
+        BrowsedSignal.connect(ListSignalEcho(*this, "ListBox::BrowsedSignal"));
     }
 }
 
@@ -1925,7 +1924,7 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
     if (signal)
         AfterInsertSignal(it);
 
-    Connect(row->RightClickedSignal, &ListBox::HandleRowRightClicked, this);
+    row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
 
     RequirePreRender();
     return retval;
@@ -2101,9 +2100,9 @@ ListBox::Row& ListBox::ColHeaders()
 void ListBox::ConnectSignals()
 {
     if (m_vscroll)
-        Connect(m_vscroll->ScrolledSignal, &ListBox::VScrolled, this);
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
     if (m_hscroll)
-        Connect(m_hscroll->ScrolledSignal, &ListBox::HScrolled, this);
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
 }
 
 void ListBox::ValidateStyle()
@@ -2225,7 +2224,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_vscroll->Resize(Pt(X(SCROLL_WIDTH), cl_sz.y - (horizontal_needed ? SCROLL_WIDTH : 0)));
 
         AttachChild(m_vscroll);
-        Connect(m_vscroll->ScrolledSignal, &ListBox::VScrolled, this);
+        m_vscroll->ScrolledSignal.connect(boost::bind(&ListBox::VScrolled, this, _1, _2, _3, _4));
     }
 
     if (vertical_needed) {
@@ -2273,7 +2272,7 @@ std::pair<bool, bool> ListBox::AddOrRemoveScrolls(
         m_hscroll->Resize(Pt(cl_sz.x - (vertical_needed ? SCROLL_WIDTH : 0), Y(SCROLL_WIDTH)));
 
         AttachChild(m_hscroll);
-        Connect(m_hscroll->ScrolledSignal, &ListBox::HScrolled, this);
+        m_hscroll->ScrolledSignal.connect(boost::bind(&ListBox::HScrolled, this, _1, _2, _3, _4));
     }
 
     if (horizontal_needed) {
