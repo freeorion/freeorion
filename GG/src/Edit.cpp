@@ -26,7 +26,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/utf8/checked.h>
 #include <GG/WndEvent.h>
 
@@ -76,8 +75,8 @@ Edit::Edit(const std::string& str, const std::shared_ptr<Font>& font, Clr color,
     SetColor(color);
 
     if (INSTRUMENT_ALL_SIGNALS) {
-        Connect(EditedSignal, EditedEcho("Edit::EditedSignal"));
-        Connect(FocusUpdateSignal, EditedEcho("Edit::FocusUpdateSignal"));
+        EditedSignal.connect(EditedEcho("Edit::EditedSignal"));
+        FocusUpdateSignal.connect(EditedEcho("Edit::FocusUpdateSignal"));
     }
 }
 
