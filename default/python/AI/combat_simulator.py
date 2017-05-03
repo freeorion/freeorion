@@ -60,6 +60,9 @@ class CombatManager(object):
                         self.faction_B.add_ship(design_name=this_line)
 
     def run(self, iterations):
+        import cProfile, pstats, StringIO
+        pr = cProfile.Profile()
+        pr.enable()
         self.__init__()
         self.parse_shiplist()
 
@@ -130,7 +133,12 @@ class CombatManager(object):
         chat_human("Draws: %d (%.1f%%)" % (draws, 100*float(draws)/iterations))
         chat_human("Losses Player A: (%.1f +- %.1f) PP" % (mean_losses_a or 0, std_losses_a or 0))
         chat_human("Losses Player B: (%.1f +- %.1f) PP" % (mean_losses_b or 0, std_losses_b or 0))
-
+        pr.disable()
+        s = StringIO.StringIO()
+        sortby = 'cumulative'
+        ps = pstats.Stats(pr, stream=s).sort_stats(sortby)
+        ps.print_stats()
+        print s.getvalue()
 
 def mean(values):
     if not values:
