@@ -36,7 +36,6 @@
 #include <GG/Menu.h>
 #include <GG/MultiEdit.h>
 #include <GG/Scroll.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/Slider.h>
 #include <GG/Spin.h>
 #include <GG/StaticGraphic.h>

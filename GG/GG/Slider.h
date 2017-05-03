@@ -177,8 +177,8 @@ Slider<T>::Slider(T min, T max, Orientation orientation,
     SizeMove(UpperLeft(), LowerRight());
 
     if (INSTRUMENT_ALL_SIGNALS) {
-        Connect(SlidSignal, SlidEcho("Slider<T>::SlidSignal"));
-        Connect(SlidAndStoppedSignal, SlidEcho("Slider<T>::SlidAndStoppedSignal"));
+        SlidSignal.connect(SlidEcho("Slider<T>::SlidSignal"));
+        SlidAndStoppedSignal.connect(SlidEcho("Slider<T>::SlidAndStoppedSignal"));
     }
 }
 
