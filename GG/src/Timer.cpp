@@ -26,7 +26,6 @@
 #include <GG/Timer.h>
 
 #include <GG/GUI.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/Wnd.h>
 
 #include <map>
@@ -49,7 +48,7 @@ Timer::Timer() :
 {
     GUI::GetGUI()->RegisterTimer(*this);
     if (INSTRUMENT_ALL_SIGNALS)
-        ::GG::Connect(FiredSignal, &FiredSignalEcho);
+        FiredSignal.connect(&FiredSignalEcho);
 }
 
 Timer::Timer(unsigned int interval, unsigned int start_time/* = 0*/) :
@@ -59,7 +58,7 @@ Timer::Timer(unsigned int interval, unsigned int start_time/* = 0*/) :
 {
     GUI::GetGUI()->RegisterTimer(*this);
     if (INSTRUMENT_ALL_SIGNALS)
-        ::GG::Connect(FiredSignal, &FiredSignalEcho);
+        FiredSignal.connect(&FiredSignalEcho);
 }
 
 Timer::~Timer()
@@ -80,7 +79,8 @@ void Timer::SetInterval(unsigned int interval)
 void Timer::Connect(Wnd* wnd)
 {
     Disconnect(wnd);
-    m_wnd_connections[wnd] = GG::Connect(FiredSignal, &Wnd::TimerFiring, wnd);
+    m_wnd_connections[wnd] = FiredSignal.connect(
+        boost::bind(&Wnd::TimerFiring, wnd, _1, _2));
 }
 
 void Timer::Disconnect(Wnd* wnd)
