@@ -4,12 +4,13 @@ This module
 
 """
 
-import freeOrionAIInterface as fo
 import random
 import copy
-import ShipDesignAI
-import PlanetUtilsAI
 import os
+
+import freeOrionAIInterface as fo
+import PlanetUtilsAI
+import ShipDesignAI
 from freeorion_tools import chat_human
 
 
@@ -17,12 +18,9 @@ ships_A = []
 ships_B = []
 
 
-
-
 # TODO: Tech boni etc for parts
 boni_A = {}
 boni_B = {}
-
 
 
 class CombatManager(object):
@@ -58,7 +56,6 @@ class CombatManager(object):
                         self.faction_A.add_ship(design_name=this_line)
                     elif use_b:
                         self.faction_B.add_ship(design_name=this_line)
-
 
     def add_ship_for_A(self, design_id=None, design_name=None):
         self.faction_A.add_ship(design_id, design_name)
