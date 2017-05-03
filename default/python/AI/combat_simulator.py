@@ -408,7 +408,7 @@ class Planet(CombatObject):
         dmg = max(dmg, 0)
         shield_dmg = min(dmg, self.shields)
         self.shields -= shield_dmg
-        defense_dmg = (dmg - shield_dmg, self.defense_after_turn)
+        defense_dmg = min(dmg - shield_dmg, self.defense_after_turn)
         self.defense_after_turn -= defense_dmg
 
     def update(self):
