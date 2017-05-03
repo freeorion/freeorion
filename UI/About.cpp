@@ -8,7 +8,6 @@
 #include "../util/i18n.h"
 
 #include <GG/GUI.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <boost/filesystem/fstream.hpp>
 
@@ -42,9 +41,12 @@ About::About():
     }
     fin.close();
 
-    GG::Connect(m_done_btn->LeftClickedSignal, boost::bind(&GG::Wnd::EndRun, this));
-    GG::Connect(m_license->LeftClickedSignal, &About::ShowLicense, this);
-    GG::Connect(m_vision->LeftClickedSignal, &About::ShowVision, this);
+    m_done_btn->LeftClickedSignal.connect(
+        boost::bind(&GG::Wnd::EndRun, this));
+    m_license->LeftClickedSignal.connect(
+        boost::bind(&About::ShowLicense, this));
+    m_vision->LeftClickedSignal.connect(
+        boost::bind(&About::ShowVision, this));
 }
 
 About::~About()
