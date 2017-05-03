@@ -15,7 +15,7 @@ from monsters import generate_monsters
 from specials import distribute_specials
 from util import int_hash, seed_rng, report_error, error_list
 from universe_tables import MAX_JUMPS_BETWEEN_SYSTEMS, MAX_STARLANE_LENGTH
-import statistics
+import universe_statistics
 
 
 class PyGalaxySetupData:
@@ -145,18 +145,18 @@ def create_universe(psd_map):
     print "############################################################"
     print "##             Universe generation statistics             ##"
     print "############################################################"
-    statistics.log_planet_count_dist(systems)
+    universe_statistics.log_planet_count_dist(systems)
     print "############################################################"
-    statistics.log_planet_type_summary(systems)
+    universe_statistics.log_planet_type_summary(systems)
     print "############################################################"
-    statistics.log_species_summary(gsd.native_frequency)
+    universe_statistics.log_species_summary(gsd.native_frequency)
     print "############################################################"
-    statistics.log_monsters_summary(gsd.monster_frequency)
+    universe_statistics.log_monsters_summary(gsd.monster_frequency)
     print "############################################################"
-    statistics.log_specials_summary()
+    universe_statistics.log_specials_summary()
     print "############################################################"
-    statistics.log_systems()
-    statistics.log_planets()
+    universe_statistics.log_systems()
+    universe_statistics.log_planets()
 
     if error_list:
         print "Python Universe Generator completed with errors"

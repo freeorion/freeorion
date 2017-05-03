@@ -11,7 +11,7 @@ from options import (HS_ACCEPTABLE_PLANET_TYPES, HS_MIN_PLANETS_IN_VICINITY_TOTA
                      HS_VICINITY_RANGE, HS_MIN_SYSTEMS_IN_VICINITY, HS_ACCEPTABLE_PLANET_SIZES)
 
 from util import report_error
-import statistics
+import universe_statistics
 
 
 def get_empire_name_generator():
@@ -463,7 +463,7 @@ def setup_empire(empire, empire_name, home_system, starting_species, player_name
         print "Picking random starting species for player", player_name
         starting_species = next(starting_species_pool)
     print "Starting species for player", player_name, "is", starting_species
-    statistics.empire_species[starting_species] += 1
+    universe_statistics.empire_species[starting_species] += 1
 
     # pick a planet from the specified home system as homeworld
     planet_list = fo.sys_get_planets(home_system)

@@ -4,7 +4,7 @@ import itertools
 import freeorion as fo
 
 import planets
-import statistics
+import universe_statistics
 import universe_tables
 
 natives_for_planet_type = {}
@@ -68,12 +68,12 @@ def generate_natives(native_freq, systems, empire_home_systems):
         if not natives_for_planet_type[planet_type]:
             # no, continue with next planet
             continue
-        statistics.potential_native_planet_summary[planet_type] += 1
+        universe_statistics.potential_native_planet_summary[planet_type] += 1
         # make a "roll" against the chance for natives to determine if we shall place natives on this planet
         if random.random() > native_chance:
             # no, continue with next planet
             continue
-        statistics.settled_native_planet_summary[planet_type] += 1
+        universe_statistics.settled_native_planet_summary[planet_type] += 1
 
         # randomly pick one of the native species available for this planet type
         natives = random.choice(natives_for_planet_type[planet_type])
@@ -96,4 +96,4 @@ def generate_natives(native_freq, systems, empire_home_systems):
         print "Added native", natives, "to planet", fo.get_name(candidate)
 
         # increase the statistics counter for this native species, so a species summary can be dumped to the log later
-        statistics.species_summary[natives] += 1
+        universe_statistics.species_summary[natives] += 1

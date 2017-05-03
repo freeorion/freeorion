@@ -2,7 +2,7 @@ import random
 from collections import defaultdict
 
 import freeorion as fo
-import statistics
+import universe_statistics
 import universe_tables
 
 # REPEAT_RATE along with calculate_number_of_specials_to_place determines if there are multiple
@@ -46,7 +46,7 @@ def place_special(specials, obj):
 
         fo.add_special(obj, special)
         print "Special", special, "added to", fo.get_name(obj)
-        statistics.specials_summary[special] += 1
+        universe_statistics.specials_summary[special] += 1
 
         return 1
     return 0
@@ -138,18 +138,18 @@ def distribute_specials(specials_freq, universe_objects):
 
             # check if the spawn limit for this special has already been reached (that is, if this special
             # has already been added the maximal allowed number of times)
-            specials = [s for s in specials if statistics.specials_summary[s] < fo.special_spawn_limit(s)]
+            specials = [s for s in specials if universe_statistics.specials_summary[s] < fo.special_spawn_limit(s)]
             if not specials:
                 break
 
             # Find which specials can be placed at this one location
             local_specials = [sp for sp in specials if obj in locations_cache[sp]]
             if not local_specials:
-                statistics.specials_repeat_dist[0] += 1
+                universe_statistics.specials_repeat_dist[0] += 1
                 continue
 
             # All prerequisites and the test have been met, now add this special to this universe object.
             track_num_placed[obj] += place_special(local_specials, obj)
 
     for num_placed in track_num_placed.values():
-        statistics.specials_repeat_dist[num_placed] += 1
+        universe_statistics.specials_repeat_dist[num_placed] += 1
