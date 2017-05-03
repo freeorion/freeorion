@@ -4,8 +4,6 @@
 #include "../util/OptionsDB.h"
 #include "../util/Version.h"
 
-#include <GG/SignalsAndSlots.h>
-
 #include <boost/iterator/filter_iterator.hpp>
 #include <boost/asio/high_resolution_timer.hpp>
 
@@ -543,7 +541,8 @@ void ServerNetworking::AcceptNextConnection() {
             m_nonplayer_message_callback,
             m_player_message_callback,
             boost::bind(&ServerNetworking::DisconnectImpl, this, _1));
-    GG::Connect(next_connection->EventSignal, &ServerNetworking::EnqueueEvent, this);
+    next_connection->EventSignal.connect(
+        boost::bind(&ServerNetworking::EnqueueEvent, this, _1));
     m_player_connection_acceptor.async_accept(
         next_connection->m_socket,
         boost::bind(&ServerNetworking::AcceptConnection,
