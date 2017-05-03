@@ -54,18 +54,6 @@ class CombatManager(object):
                     elif active_faction == 2:
                         self.faction_B.add_ship(design_name=this_line)
 
-    def add_ship_for_A(self, design_id=None, design_name=None):
-        self.faction_A.add_ship(design_id, design_name)
-
-    def add_planet_for_A(self, defense, shields):
-        self.faction_A.add_planet(defense, shields)
-
-    def add_ship_for_B(self, design_id=None, design_name=None):
-        self.faction_B.add_ship(design_id, design_name)
-
-    def add_planet_for_B(self, defense, shields):
-        self.faction_B.add_planet(defense, shields)
-
     def run(self, iterations):
         self.__init__()
         self.parse_shiplist()
