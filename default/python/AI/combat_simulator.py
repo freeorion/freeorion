@@ -32,8 +32,7 @@ class CombatManager(object):
     def parse_shiplist(self):
         del ships_A[:]
         del ships_B[:]
-        use_a = False
-        use_b = False
+        active_faction = 0
         print "parsing Textfile..."
         with open(os.path.dirname(os.path.abspath(__file__)) + "\\SimulationShiplist.txt", "r") as infile:
             while True:
@@ -44,17 +43,15 @@ class CombatManager(object):
                 this_line = this_line.replace('\n', '')
                 if "FACTION_A" == this_line:
                     chat_human("Adding Ships to Faction A now.")
-                    use_b = False
-                    use_a = True
+                    active_faction = 1
                 elif "FACTION_B" == this_line:
                     chat_human("Adding Ships to Faction B now.")
-                    use_a = False
-                    use_b = True
+                    active_faction = 2
                 elif this_line:
                     # may be empty now that \n is cleared
-                    if use_a:
+                    if active_faction == 1:
                         self.faction_A.add_ship(design_name=this_line)
-                    elif use_b:
+                    elif active_faction == 2:
                         self.faction_B.add_ship(design_name=this_line)
 
     def add_ship_for_A(self, design_id=None, design_name=None):
