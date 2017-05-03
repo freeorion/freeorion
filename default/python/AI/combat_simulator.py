@@ -238,32 +238,79 @@ class CombatObject(object):
         self.cost = 0
 
     def shots(self):
+        """Yield all shots of the object in the current combat round.
+
+        :return: shot damage
+        :rtype: __generator[float]
+        """
         raise NotImplementedError
 
     def is_possible_target(self, obj):
+        """Return true if passed object is a possible target.
+
+        :param obj: object to be checked
+        :type obj: CombatObject
+        :return: True if possible target
+        :rtype: bool
+        """
         raise NotImplementedError
 
     def health(self):
+        """Return the remaining "health", e.g. structure for a ship.
+
+        :return: health of the object
+        :rtype: float
+        """
         raise NotImplementedError
 
     def shoot(self, enemy_objects):
+        """Fire all available shots at random but possible enemy targets, damaging them.
+
+        :param enemy_objects: all enemy objects alive at the beginning of the turn
+        :type enemy_objects: list[CombatObject]
+        """
         possible_targets = [obj for obj in enemy_objects if self.is_possible_target(obj)]
         for dmg in self.shots():
             self._shoot_at_random_target(possible_targets, dmg)
 
     def do_damage(self, dmg, ignore_shields=False):
+        """Apply the damage dealt to this object.
+
+        :param dmg: Raw damage of the attack
+        :type dmg: float
+        :param ignore_shields: If true, the attack ignores the shields of this object.
+        :type ignore_shields: bool
+        """
         raise NotImplementedError
 
     def launch_fighters(self):
+        """Launch fighters in this turn.
+
+        :return: (number_of_launched_fighters, fighter_damage)
+        :rtype: tuple[int, float]
+        """
         raise NotImplementedError
 
     def update(self):
+        """Post-combat turn update this object."""
         raise NotImplementedError
 
     def is_alive(self):
+        """Check if this object is still alive (i.e. it was not destroyed yet)
+
+        :return: True if object is still alive
+        :rtype: bool
+        """
         return self.health() > 0
 
     def _shoot_at_random_target(self, possible_targets, damage):
+        """Select a random target from the list of possible targets and damage it.
+
+        :param possible_targets:
+        :type possible_targets: list[CombatObject]
+        :param damage: raw damage of the attack
+        :type damage: float
+        """
         try:
             target = random.choice(possible_targets)
             print "Target: ", target
