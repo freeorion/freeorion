@@ -151,15 +151,20 @@ namespace {
         }
     }
 
+    boost::filesystem::path GetDesignsDir() {
+        // ensure directory present
+        boost::filesystem::path designs_dir_path(SavedDesignsDir());
+        if (!exists(designs_dir_path))
+            boost::filesystem::create_directories(designs_dir_path);
+        return designs_dir_path;
+    }
+
     void SaveDesign(int design_id) {
         const ShipDesign* design = GetShipDesign(design_id);
         if (!design)
             return;
 
-        // ensure directory present
-        boost::filesystem::path designs_dir_path(SavedDesignsDir());
-        if (!exists(designs_dir_path))
-            boost::filesystem::create_directories(designs_dir_path);
+        boost::filesystem::path designs_dir_path = GetDesignsDir();
 
         // Since there is no easy way to guarantee that an arbitrary design name with possibly
         // embedded decorator code is a safe file name, use the UUID. The users will never interact
@@ -277,10 +282,7 @@ namespace {
         void SaveManifest() {
             const std::vector<boost::uuids::uuid>& uuids = m_ordering;
 
-            // ensure directory present
-            boost::filesystem::path designs_dir_path(SavedDesignsDir());
-            if (!exists(designs_dir_path))
-                boost::filesystem::create_directories(designs_dir_path);
+            boost::filesystem::path designs_dir_path = GetDesignsDir();
 
             std::string file_name = DESIGN_MANIFEST_PREFIX + DESIGN_FILENAME_EXTENSION;
 
