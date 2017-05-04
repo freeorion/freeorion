@@ -215,10 +215,12 @@ namespace {
 
             // Verify that all UUIDs in ordering exist
             m_ordering.clear();
+            bool ship_manifest_inconsistent = false;
             for (auto& uuid: ordering) {
                 if (!m_saved_designs.count(uuid)) {
                     WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
                                  << "a ship design that does not exist.";
+                    ship_manifest_inconsistent = true;
                     continue;
                 }
                 m_ordering.push_back(uuid);
@@ -232,6 +234,7 @@ namespace {
                 for (auto& uuid_to_design_and_filename: m_saved_designs) {
                     if (uuids_in_ordering.count(uuid_to_design_and_filename.first))
                         continue;
+                    ship_manifest_inconsistent = true;
                     missing_uuids_sorted_by_name.insert(
                         std::make_pair(uuid_to_design_and_filename.second.first->Name(),
                                        uuid_to_design_and_filename.first));
@@ -242,6 +245,14 @@ namespace {
                                  << " added to the manifest.";
                     m_ordering.push_back(name_and_uuid.second);
                 }
+            }
+
+            // Write the corrected ordering back to disk.
+            if (ship_manifest_inconsistent) {
+                DebugLogger() << "Writing corrected ship designs back to saved designs.";
+                SaveManifest();
+                for (auto& uuid: m_ordering)
+                    SaveDesign(uuid);
             }
         }
 
