@@ -1093,7 +1093,8 @@ namespace {
         ShipDesign* copy = new ShipDesign(design->Name(false), design->Description(false),
                                           design->DesignedOnTurn(), design->DesignedByEmpire(),
                                           design->Hull(), design->Parts(), design->Icon(),
-                                          design->Model(), design->LookupInStringtable(), monster);
+                                          design->Model(), design->LookupInStringtable(),
+                                          monster, design->UUID());
         if (!copy) {
             ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();
             return;
