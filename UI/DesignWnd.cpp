@@ -137,17 +137,24 @@ namespace {
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
     boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
-    void WriteDesignToFile(const ShipDesign& design, const boost::filesystem::path& file) {
+    void ReportFileError(const boost::filesystem::path& file) {
+        std::string msg = boost::io::str(FlexibleFormat(UserString("ERROR_UNABLE_TO_WRITE_FILE")) % file);
+        ErrorLogger() << msg;
+        ClientUI::MessageBox(msg, true);
+    }
+
+    void WriteToFile(const boost::filesystem::path& file, const std::string& ss) {
         try {
             boost::filesystem::ofstream ofs(file);
             if (!ofs)
-                throw std::runtime_error(UNABLE_TO_OPEN_FILE);
-            ofs << design.Dump();
-            TraceLogger() << "Wrote ship design to " << PathString(file);
+                return ReportFileError(file);
 
-        } catch (const std::exception& e) {
-            ErrorLogger() << "Error writing design file.  Exception: " << ": " << e.what();
-            ClientUI::MessageBox(e.what(), true);
+            ofs << ss;
+            TraceLogger() << "Wrote to " << PathString(file);
+
+        } catch (const boost::filesystem::filesystem_error& e) {
+            ErrorLogger() << "Error writing to file.  Exception: " << ": " << e.what();
+            ReportFileError(file);
         }
     }
 
@@ -284,24 +291,18 @@ namespace {
             boost::filesystem::path file =
                 boost::filesystem::absolute(PathString(designs_dir_path / file_name));
 
-            try {
-                boost::filesystem::ofstream ofs(file);
-                if (!ofs)
-                    throw std::runtime_error(UNABLE_TO_OPEN_FILE);
-                ofs << "ShipDesignManifest\n";
-                for (const auto uuid: uuids)
-                    ofs << "    uuid = \"" << uuid << "\"\n";
-            } catch (const std::exception& e) {
-                ErrorLogger() << "Error writing ship design manifest file.  Exception: " << ": " << e.what();
-                ClientUI::MessageBox(e.what(), true);
-            }
+            std::stringstream ss;
+            ss << "ShipDesignManifest\n";
+            for (const auto uuid: uuids)
+                ss << "    uuid = \"" << uuid << "\"\n";
+            WriteToFile(file, ss.str());
         }
 
         /** Save the design with the original filename or throw out_of_range..*/
         void SaveDesign(const boost::uuids::uuid &uuid) {
             const auto& design_and_filename = m_saved_designs.at(uuid);
 
-            WriteDesignToFile(*design_and_filename.first, design_and_filename.second);
+            WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
         }
 
         void SaveDesign(int design_id) {
@@ -318,7 +319,7 @@ namespace {
 
             const auto save_path = CreateSaveFileNameForDesign(*design);
 
-            WriteDesignToFile(*design, save_path);
+            WriteToFile(save_path, design->Dump());
         }
 
     private:

@@ -3877,6 +3877,9 @@ Choose an existing design to update.
 ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT
 Select a hull, add parts and then click "[[DESIGN_WND_ADD]]" to create an available design.
 
+# %1% File path of unwritable file
+ERROR_UNABLE_TO_WRITE_FILE
+Unable to write file:\n"%1%"
 
 ##
 ## Statistics
