@@ -15,7 +15,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
@@ -415,13 +414,20 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_queue_wnd = new ResearchQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
-    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal,   &ResearchWnd::QueueItemMoved,               this);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal, &ResearchWnd::DeleteQueueItem,              this);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->LeftClickedSignal,      &ResearchWnd::QueueItemClickedSlot,         this);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->DoubleClickedSignal,    &ResearchWnd::QueueItemDoubleClickedSlot,   this);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->ShowPediaSignal,        &ResearchWnd::ShowPedia,                    this);
-    GG::Connect(m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal,  &ResearchWnd::QueueItemPaused,              this);
-    GG::Connect(m_tech_tree_wnd->AddTechsToQueueSignal,                 &ResearchWnd::AddTechsToQueueSlot,          this);
+    m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal.connect(
+        boost::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));
+    m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
+        boost::bind(&ResearchWnd::DeleteQueueItem, this, _1));
+    m_queue_wnd->GetQueueListBox()->LeftClickedSignal.connect(
+        boost::bind(&ResearchWnd::QueueItemClickedSlot, this, _1, _2, _3));
+    m_queue_wnd->GetQueueListBox()->DoubleClickedSignal.connect(
+        boost::bind(&ResearchWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
+    m_queue_wnd->GetQueueListBox()->ShowPediaSignal.connect(
+        boost::bind(&ResearchWnd::ShowPedia, this));
+    m_queue_wnd->GetQueueListBox()->QueueItemPausedSignal.connect(
+        boost::bind(&ResearchWnd::QueueItemPaused, this, _1, _2));
+    m_tech_tree_wnd->AddTechsToQueueSignal.connect(
+        boost::bind(&ResearchWnd::AddTechsToQueueSlot, this, _1, _2));
 
     AttachChild(m_research_info_panel);
     AttachChild(m_queue_wnd);
@@ -463,8 +469,8 @@ void ResearchWnd::Refresh() {
     m_empire_connection.disconnect();
 
     if (Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID()))
-        m_empire_connection = GG::Connect(empire->GetResearchQueue().ResearchQueueChangedSignal,
-                                          &ResearchWnd::ResearchQueueChangedSlot, this);
+        m_empire_connection = empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
+                                boost::bind(&ResearchWnd::ResearchQueueChangedSlot, this));
     Update();
 }
 
