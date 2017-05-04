@@ -364,6 +364,8 @@ class Ship(CombatObject):
         # print "Remaining structure:", self.structure
 
     def launch_fighters(self):
+        if not self.fighter_capacity or self.fighter_rate:
+            return tuple()
         num_launched = min(self.fighter_capacity, self.fighter_rate)
         damage = self.fighter_damage
         self.fighter_capacity -= num_launched
