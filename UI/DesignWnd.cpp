@@ -308,9 +308,6 @@ namespace {
             RefreshDesigns();
         }
 
-        ~SavedDesignsManager()
-        { ClearDesigns(); }
-
         std::vector<boost::uuids::uuid> m_ordering;
         std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>  m_saved_designs;
         static SavedDesignsManager*         s_instance;
