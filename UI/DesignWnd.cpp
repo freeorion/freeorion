@@ -311,10 +311,9 @@ namespace {
                 return;
 
             // Save with the original filename if possible
-            try {
+            if (m_saved_designs.count(design->UUID())) {
                 SaveDesign(design->UUID());
-            } catch (const std::out_of_range&) {
-                ; // intentionally blank
+                return;
             }
 
             const auto save_path = CreateSaveFileNameForDesign(*design);
