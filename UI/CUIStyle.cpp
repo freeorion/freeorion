@@ -1,7 +1,5 @@
 #include "CUIStyle.h"
 
-#include <GG/SignalsAndSlots.h>
-
 #include "CUIControls.h"
 #include "CUISlider.h"
 #include "../util/i18n.h"

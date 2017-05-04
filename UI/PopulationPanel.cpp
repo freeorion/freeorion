@@ -1,7 +1,6 @@
 #include "PopulationPanel.h"
 
 #include <GG/Button.h>
-#include <GG/SignalsAndSlots.h>
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -40,7 +39,8 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     if (!pop)
         throw std::invalid_argument("Attempted to construct a PopulationPanel with an object id is not a PopCenter");
 
-    GG::Connect(m_expand_button->LeftClickedSignal, &PopulationPanel::ExpandCollapseButtonPressed, this);
+    m_expand_button->LeftClickedSignal.connect(
+        boost::bind(&PopulationPanel::ExpandCollapseButtonPressed, this));
 
     const auto obj = GetUniverseObject(m_popcenter_id);
     if (!obj) {
