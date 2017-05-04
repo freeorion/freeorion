@@ -209,7 +209,7 @@ namespace {
             m_saved_designs.clear();
             for (auto&& design_and_path : designs_and_paths) {
                 if (!m_saved_designs.count(design_and_path.first->UUID()))
-                    m_saved_designs[design_and_path.first->UUID()] = std::move(design_and_path.first);
+                    m_saved_designs[design_and_path.first->UUID()] = std::move(design_and_path);
                 else
                     WarnLogger() << "Duplicate ship design UUID " << design_and_path.first->UUID()
                                  << " found for ship design " << design_and_path.first->Name()
@@ -232,11 +232,12 @@ namespace {
                 // Add any missing designs in alphabetical order to the end of the list
                 std::unordered_set<boost::uuids::uuid> uuids_in_ordering{m_ordering.begin(), m_ordering.end()};
                 std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
-                for (auto& uuid_and_design: m_saved_designs) {
-                    if (uuids_in_ordering.count(uuid_and_design.first))
+                for (auto& uuid_to_design_and_filename: m_saved_designs) {
+                    if (uuids_in_ordering.count(uuid_to_design_and_filename.first))
                         continue;
                     missing_uuids_sorted_by_name.insert(
-                        std::make_pair(uuid_and_design.second->Name(), uuid_and_design.first));
+                        std::make_pair(uuid_to_design_and_filename.second.first->Name(),
+                                       uuid_to_design_and_filename.first));
                 }
 
                 for (auto& name_and_uuid: missing_uuids_sorted_by_name) {
@@ -251,7 +252,7 @@ namespace {
             const auto& it = m_saved_designs.find(uuid);
             if (it == m_saved_designs.end())
                 return nullptr;
-            return it->second.get();
+            return it->second.first.get();
         }
 
          /* Causes the human client Empire to add all saved designs. */
@@ -260,21 +261,22 @@ namespace {
             if (const Empire* empire = GetEmpire(empire_id)) {
                 DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
                 for (const auto& entry : m_saved_designs) {
+                    const auto& ship_design_on_disk = *(entry.second.first);
                     bool already_got = false;
                     for (int id : empire->OrderedShipDesigns()) {
                         const ShipDesign& ship_design = *GetShipDesign(id);
-                        if (ship_design == *(entry.second)) {
+                        if (ship_design == ship_design_on_disk) {
                             already_got = true;
                             break;
                         }
                     }
                     if (!already_got) {
-                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << entry.second->Name();
+                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << ship_design_on_disk.Name();
                         int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
                         HumanClientApp::GetApp()->Orders().IssueOrder(
-                            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, *(entry.second)));
+                            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, ship_design_on_disk));
                     } else {
-                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << entry.second->Name();
+                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << ship_design_on_disk.Name();
                     }
                 }
             } else {
@@ -314,7 +316,10 @@ namespace {
         }
 
         std::vector<boost::uuids::uuid> m_ordering;
-        std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>>  m_saved_designs;
+        /// Saved designs with filename
+        std::unordered_map<boost::uuids::uuid,
+                           std::pair<std::unique_ptr<ShipDesign>,
+                                     boost::filesystem::path>>  m_saved_designs;
         static SavedDesignsManager*         s_instance;
     };
     SavedDesignsManager* SavedDesignsManager::s_instance = nullptr;
