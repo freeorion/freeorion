@@ -24,7 +24,6 @@
 #include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 #include <GG/TabWnd.h>
 
@@ -472,8 +471,10 @@ void PartsListBox::PartsListBoxRow::ChildrenDraggedAway(const std::vector<GG::Wn
         part_control = new PartControl(part_type);
         const PartsListBox* parent = dynamic_cast<const PartsListBox*>(Parent());
         if (parent) {
-            GG::Connect(part_control->ClickedSignal,        parent->PartTypeClickedSignal);
-            GG::Connect(part_control->DoubleClickedSignal,  parent->PartTypeDoubleClickedSignal);
+            part_control->ClickedSignal.connect(
+                parent->PartTypeClickedSignal);
+            part_control->DoubleClickedSignal.connect(
+                parent->PartTypeDoubleClickedSignal);
         }
         SetCell(i, part_control);
     }
@@ -751,8 +752,10 @@ void PartsListBox::Populate() {
 
             // make new part control and add to row
             PartControl* control = new PartControl(part);
-            GG::Connect(control->ClickedSignal,         PartsListBox::PartTypeClickedSignal);
-            GG::Connect(control->DoubleClickedSignal,   PartsListBox::PartTypeDoubleClickedSignal);
+            control->ClickedSignal.connect(
+                PartsListBox::PartTypeClickedSignal);
+            control->DoubleClickedSignal.connect(
+                PartsListBox::PartTypeDoubleClickedSignal);
             cur_row->push_back(control);
         }
     }
@@ -900,8 +903,10 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
 
     m_parts_list = new PartsListBox();
     AttachChild(m_parts_list);
-    GG::Connect(m_parts_list->PartTypeClickedSignal,        PartTypeClickedSignal);
-    GG::Connect(m_parts_list->PartTypeDoubleClickedSignal,  PartTypeDoubleClickedSignal);
+    m_parts_list->PartTypeClickedSignal.connect(
+        PartTypeClickedSignal);
+    m_parts_list->PartTypeDoubleClickedSignal.connect(
+        PartTypeDoubleClickedSignal);
 
     const PartTypeManager& part_manager = GetPartTypeManager();
 
@@ -922,25 +927,25 @@ DesignWnd::PartPalette::PartPalette(const std::string& config_name) :
 
         m_class_buttons[part_class] = new CUIStateButton(UserString(boost::lexical_cast<std::string>(part_class)), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
         AttachChild(m_class_buttons[part_class]);
-        GG::Connect(m_class_buttons[part_class]->CheckedSignal,
-                    boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
+        m_class_buttons[part_class]->CheckedSignal.connect(
+            boost::bind(&DesignWnd::PartPalette::ToggleClass, this, part_class, true));
     }
 
     // availability buttons
     m_availability_buttons.first = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
-    GG::Connect(m_availability_buttons.first->CheckedSignal,
-                boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
+    m_availability_buttons.first->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, true, true));
     m_availability_buttons.second = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
-    GG::Connect(m_availability_buttons.second->CheckedSignal,
-                boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
+    m_availability_buttons.second->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleAvailability, this, false, true));
 
     // superfluous parts button
     m_superfluous_parts_button = new CUIStateButton(UserString("PRODUCTION_WND_REDUNDANT"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_superfluous_parts_button);
-    GG::Connect(m_superfluous_parts_button->CheckedSignal,
-                boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
+    m_superfluous_parts_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::PartPalette::ToggleSuperfluous, this, true));
 
     // default to showing nothing
     ShowAllClasses(false);
@@ -1459,9 +1464,12 @@ BasesListBox::BasesListBox(const std::string& drop_type) :
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
-    GG::Connect(DoubleClickedSignal,    &BasesListBox::BaseDoubleClicked,   this);
-    GG::Connect(LeftClickedSignal,      &BasesListBox::BaseLeftClicked,     this);
-    GG::Connect(QueueItemMovedSignal,   &BasesListBox::QueueItemMoved,      this);
+    DoubleClickedSignal.connect(
+        boost::bind(&BasesListBox::BaseDoubleClicked, this, _1, _2, _3));
+    LeftClickedSignal.connect(
+        boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
+    QueueItemMovedSignal.connect(
+        boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
 }
 
 const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const
@@ -1571,7 +1579,8 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
 
     // connect signal to update this list if the empire's designs change
     if (const Empire* empire = GetEmpire(m_empire_id_shown))
-        m_empire_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal, &BasesListBox::Populate,    this);
+        m_empire_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
+                                            boost::bind(&BasesListBox::Populate, this));
 
     if (refresh_list)
         Populate();
@@ -2072,45 +2081,54 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
 {
     m_availability_buttons.first = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.first);
-    GG::Connect(m_availability_buttons.first->CheckedSignal,
-                boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
+    m_availability_buttons.first->CheckedSignal.connect(
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
 
     m_availability_buttons.second = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_availability_buttons.second);
-    GG::Connect(m_availability_buttons.second->CheckedSignal,
-                boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
+    m_availability_buttons.second->CheckedSignal.connect(
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
 
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
-    GG::Connect(m_tabs->TabChangedSignal,                       &DesignWnd::BaseSelector::WndSelected,      this);
+    m_tabs->TabChangedSignal.connect(
+        boost::bind(&DesignWnd::BaseSelector::WndSelected, this, _1));
     AttachChild(m_tabs);
 
     m_hulls_list = new BasesListBox();
     m_hulls_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->ShowEmptyHulls(false);
-    GG::Connect(m_hulls_list->DesignComponentsSelectedSignal,   DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
-    GG::Connect(m_hulls_list->HullClickedSignal,                DesignWnd::BaseSelector::HullClickedSignal);
+    m_hulls_list->DesignComponentsSelectedSignal.connect(
+        DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
+    m_hulls_list->HullClickedSignal.connect(
+        DesignWnd::BaseSelector::HullClickedSignal);
 
     m_designs_list = new BasesListBox(COMPLETE_DESIGN_ROW_DROP_STRING);
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
-    GG::Connect(m_designs_list->DesignSelectedSignal,           DesignWnd::BaseSelector::DesignSelectedSignal);
-    GG::Connect(m_designs_list->DesignClickedSignal,            DesignWnd::BaseSelector::DesignClickedSignal);
+    m_designs_list->DesignSelectedSignal.connect(
+        DesignWnd::BaseSelector::DesignSelectedSignal);
+    m_designs_list->DesignClickedSignal.connect(
+        DesignWnd::BaseSelector::DesignClickedSignal);
 
     m_saved_designs_list = new BasesListBox();
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
     m_saved_designs_list->ShowSavedDesigns(true);
-    GG::Connect(m_saved_designs_list->SavedDesignSelectedSignal,&DesignWnd::BaseSelector::SavedDesignSelectedSlot,  this);
-    GG::Connect(m_saved_designs_list->DesignClickedSignal,      DesignWnd::BaseSelector::DesignClickedSignal);
+    m_saved_designs_list->SavedDesignSelectedSignal.connect(
+        boost::bind(&DesignWnd::BaseSelector::SavedDesignSelectedSlot, this, _1));
+    m_saved_designs_list->DesignClickedSignal.connect(
+        DesignWnd::BaseSelector::DesignClickedSignal);
 
     m_monsters_list = new BasesListBox();
     m_monsters_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_monsters_list, UserString("DESIGN_WND_MONSTERS"));
     m_monsters_list->ShowMonsters(false);
-    GG::Connect(m_monsters_list->DesignSelectedSignal,          DesignWnd::BaseSelector::DesignSelectedSignal);
-    GG::Connect(m_monsters_list->DesignClickedSignal,           DesignWnd::BaseSelector::DesignClickedSignal);
+    m_monsters_list->DesignSelectedSignal.connect(
+        DesignWnd::BaseSelector::DesignSelectedSignal);
+    m_monsters_list->DesignClickedSignal.connect(
+        DesignWnd::BaseSelector::DesignClickedSignal);
 
 
     DoLayout();
@@ -2515,11 +2533,12 @@ void SlotControl::SetPart(const PartType* part_type) {
         m_part_control->InstallEventFilter(this);
 
         // single click shows encyclopedia data
-        GG::Connect(m_part_control->ClickedSignal, PartTypeClickedSignal);
+        m_part_control->ClickedSignal.connect(
+            PartTypeClickedSignal);
 
         // double click clears slot
-        GG::Connect(m_part_control->DoubleClickedSignal,
-                    boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));
+        m_part_control->DoubleClickedSignal.connect(
+            boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
         // set part occupying slot's tool tip to say slot type
@@ -2745,11 +2764,16 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     AttachChild(m_confirm_button);
     AttachChild(m_clear_button);
 
-    GG::Connect(m_clear_button->LeftClickedSignal, &DesignWnd::MainPanel::ClearParts, this);
-    GG::Connect(m_design_name->EditedSignal, &DesignWnd::MainPanel::DesignNameEditedSlot, this);
-    GG::Connect(m_replace_button->LeftClickedSignal, DesignReplacedSignal);
-    GG::Connect(m_confirm_button->LeftClickedSignal, DesignConfirmedSignal);
-    GG::Connect(this->DesignChangedSignal, &DesignWnd::MainPanel::DesignChanged, this);
+    m_clear_button->LeftClickedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::ClearParts, this));
+    m_design_name->EditedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::DesignNameEditedSlot, this, _1));
+    m_replace_button->LeftClickedSignal.connect(
+        DesignReplacedSignal);
+    m_confirm_button->LeftClickedSignal.connect(
+        DesignConfirmedSignal);
+    this->DesignChangedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::DesignChanged, this));
 
     DesignChanged(); // Initialize components that rely on the current state of the design.
 
@@ -2857,7 +2881,10 @@ void DesignWnd::MainPanel::Sanitize() {
         if ((CurrentTurn() == 1) && GetOptionsDB().Get<bool>("auto-add-saved-designs")) { // otherwise can be manually triggered by right click context menu
             GetSavedDesignsManager().LoadAllSavedDesigns();
         }
-        m_empire_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal, &MainPanel::ReregisterDesigns,    this); // not apparent if this is working, but in typical use is unnecessary
+
+        // not apparent if this is working, but in typical use is unnecessary
+        m_empire_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
+                                            boost::bind(&MainPanel::ReregisterDesigns, this));
     }
     ReregisterDesigns();
 }
@@ -3093,10 +3120,10 @@ void DesignWnd::MainPanel::Populate(){
         SlotControl* slot_control = new SlotControl(slot.x, slot.y, slot.type);
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
-        boost::function<void (const PartType*)> set_part_func =
-            boost::bind(DesignWnd::MainPanel::s_set_part_func_ptr, this, _1, i, true);
-        GG::Connect(slot_control->SlotContentsAlteredSignal, set_part_func);
-        GG::Connect(slot_control->PartTypeClickedSignal, PartTypeClickedSignal);
+        slot_control->SlotContentsAlteredSignal.connect(
+            boost::bind(DesignWnd::MainPanel::s_set_part_func_ptr, this, _1, i, true));
+        slot_control->PartTypeClickedSignal.connect(
+            PartTypeClickedSignal);
     }
 }
 
@@ -3438,37 +3465,47 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_part_palette = new PartPalette(DES_PART_PALETTE_WND_NAME);
     m_base_selector = new BaseSelector(DES_BASE_SELECTOR_WND_NAME);
     InitializeWindows();
-    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, &DesignWnd::InitializeWindows, this);
+    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+        boost::bind(&DesignWnd::InitializeWindows, this));
 
     AttachChild(m_detail_panel);
 
     AttachChild(m_main_panel);
-    GG::Connect(m_main_panel->PartTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
-    GG::Connect(m_main_panel->HullTypeClickedSignal,            static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
-    GG::Connect(m_main_panel->DesignReplacedSignal,             &DesignWnd::ReplaceDesign,          this);
-    GG::Connect(m_main_panel->DesignConfirmedSignal,            &DesignWnd::AddDesign,              this);
-    GG::Connect(m_main_panel->DesignChangedSignal,              &DesignWnd::DesignChanged,          this);
-    GG::Connect(m_main_panel->DesignNameChangedSignal,          &DesignWnd::DesignNameChanged,      this);
-    GG::Connect(m_main_panel->CompleteDesignClickedSignal,      static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign),m_detail_panel);
+    m_main_panel->PartTypeClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_main_panel->HullTypeClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_main_panel->DesignReplacedSignal.connect(
+        boost::bind(&DesignWnd::ReplaceDesign, this));
+    m_main_panel->DesignConfirmedSignal.connect(
+        boost::bind(&DesignWnd::AddDesign, this));
+    m_main_panel->DesignChangedSignal.connect(
+        boost::bind(&DesignWnd::DesignChanged, this));
+    m_main_panel->DesignNameChangedSignal.connect(
+        boost::bind(&DesignWnd::DesignNameChanged, this));
+    m_main_panel->CompleteDesignClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(int)>(&EncyclopediaDetailPanel::SetDesign), m_detail_panel, _1));
     m_main_panel->Sanitize();
 
     AttachChild(m_part_palette);
-    GG::Connect(m_part_palette->PartTypeClickedSignal,          static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem),  m_detail_panel);
-    GG::Connect(m_part_palette->PartTypeDoubleClickedSignal,    &DesignWnd::MainPanel::AddPart,     m_main_panel);
+    m_part_palette->PartTypeClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const PartType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_part_palette->PartTypeDoubleClickedSignal.connect(
+        boost::bind(&DesignWnd::MainPanel::AddPart, m_main_panel, _1));
 
     AttachChild(m_base_selector);
 
-    GG::Connect(m_base_selector->DesignSelectedSignal,          static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign),
-                m_main_panel);
-    GG::Connect(m_base_selector->DesignComponentsSelectedSignal,&MainPanel::SetDesignComponents,
-                m_main_panel);
-    GG::Connect(m_base_selector->SavedDesignSelectedSignal,     &MainPanel::SetDesignComponents,
-                m_main_panel);
+    m_base_selector->DesignSelectedSignal.connect(
+        boost::bind(static_cast<void (MainPanel::*)(int)>(&MainPanel::SetDesign), m_main_panel, _1));
+    m_base_selector->DesignComponentsSelectedSignal.connect(
+        boost::bind(&MainPanel::SetDesignComponents, m_main_panel, _1, _2));
+    m_base_selector->SavedDesignSelectedSignal.connect(
+        boost::bind(&MainPanel::SetDesignComponents, m_main_panel, _1, _2));
 
-    GG::Connect(m_base_selector->DesignClickedSignal,           static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),
-                m_detail_panel);
-    GG::Connect(m_base_selector->HullClickedSignal,             static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem),
-                m_detail_panel);
+    m_base_selector->DesignClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
+    m_base_selector->HullClickedSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const HullType*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
 }
 
 void DesignWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
