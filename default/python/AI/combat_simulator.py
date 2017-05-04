@@ -273,6 +273,8 @@ class CombatObject(object):
         :param enemy_objects: all enemy objects alive at the beginning of the turn
         :type enemy_objects: list[CombatObject]
         """
+        if not self.current_possible_targets:
+            return
         for dmg in self._shots():
             self._shoot_at_random_target(self.current_possible_targets, dmg)
 
@@ -314,12 +316,7 @@ class CombatObject(object):
         :param damage: raw damage of the attack
         :type damage: float
         """
-        try:
-            target = random.choice(possible_targets)
-            # print "Target: ", target
-        except:
-            # print "No target found."
-            return
+        target = random.choice(possible_targets)
         target.do_damage(damage, self.ignore_shields)
 
 
