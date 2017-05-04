@@ -137,7 +137,7 @@ namespace {
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
     boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
-    void WriteDesignToFile(const ShipDesign& design, boost::filesystem::path& file) {
+    void WriteDesignToFile(const ShipDesign& design, const boost::filesystem::path& file) {
         try {
             boost::filesystem::ofstream ofs(file);
             if (!ofs)
@@ -159,21 +159,24 @@ namespace {
         return designs_dir_path;
     }
 
-    void SaveDesign(int design_id) {
-        const ShipDesign* design = GetShipDesign(design_id);
-        if (!design)
-            return;
-
+    boost::filesystem::path CreateSaveFileNameForDesign(const ShipDesign& design) {
         boost::filesystem::path designs_dir_path = GetDesignsDir();
 
         // Since there is no easy way to guarantee that an arbitrary design name with possibly
         // embedded decorator code is a safe file name, use the UUID. The users will never interact
         // with this filename.
         std::string file_name =
-            DESIGN_FILENAME_PREFIX + boost::uuids::to_string(design->UUID()) + DESIGN_FILENAME_EXTENSION;
+            DESIGN_FILENAME_PREFIX + boost::uuids::to_string(design.UUID()) + DESIGN_FILENAME_EXTENSION;
 
-        boost::filesystem::path save_path =
-            boost::filesystem::absolute(PathString(designs_dir_path / file_name));
+        return boost::filesystem::absolute(PathString(designs_dir_path / file_name));
+    }
+
+    void SaveDesign(int design_id) {
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design)
+            return;
+
+        const auto save_path = CreateSaveFileNameForDesign(*design);
 
         WriteDesignToFile(*design, save_path);
     }
