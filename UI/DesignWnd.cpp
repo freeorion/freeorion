@@ -171,16 +171,6 @@ namespace {
         return boost::filesystem::absolute(PathString(designs_dir_path / file_name));
     }
 
-    void SaveDesign(int design_id) {
-        const ShipDesign* design = GetShipDesign(design_id);
-        if (!design)
-            return;
-
-        const auto save_path = CreateSaveFileNameForDesign(*design);
-
-        WriteDesignToFile(*design, save_path);
-    }
-
     class SavedDesignsManager {
     public:
         const std::vector<boost::uuids::uuid>& GetOrderedDesignUUIDs() const
@@ -305,6 +295,30 @@ namespace {
                 ErrorLogger() << "Error writing ship design manifest file.  Exception: " << ": " << e.what();
                 ClientUI::MessageBox(e.what(), true);
             }
+        }
+
+        /** Save the design with the original filename or throw out_of_range..*/
+        void SaveDesign(const boost::uuids::uuid &uuid) {
+            const auto& design_and_filename = m_saved_designs.at(uuid);
+
+            WriteDesignToFile(*design_and_filename.first, design_and_filename.second);
+        }
+
+        void SaveDesign(int design_id) {
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design)
+                return;
+
+            // Save with the original filename if possible
+            try {
+                SaveDesign(design->UUID());
+            } catch (const std::out_of_range&) {
+                ; // intentionally blank
+            }
+
+            const auto save_path = CreateSaveFileNameForDesign(*design);
+
+            WriteDesignToFile(*design, save_path);
         }
 
     private:
@@ -1918,7 +1932,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
             }
         };
 
-        auto save_design_action = [&design_id](){ SaveDesign(design_id); };
+        auto save_design_action = [&design_id](){ GetSavedDesignsManager().SaveDesign(design_id); };
 
         // create popup menu with a commands in it
         CUIPopupMenu popup(pt.x, pt.y);
