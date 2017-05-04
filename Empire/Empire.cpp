@@ -29,6 +29,7 @@
 
 #include <algorithm>
 #include <iterator>
+#include <unordered_set>
 
 
 namespace {
@@ -166,6 +167,8 @@ namespace {
                 elem.allocated_rp = 0.0f;
             }
         }
+
+        DebugLogger() << "SetTechQueueElementSpending allocated: " << total_RPs_spent << " of " << RPs << " available";
     }
 
     /** Sets the allocated_pp value for each Element in the passed
@@ -310,6 +313,16 @@ namespace {
 ////////////////////////////////////////
 // ResearchQueue                      //
 ////////////////////////////////////////
+std::string ResearchQueue::Element::Dump() const {
+    std::stringstream retval;
+    retval << "ResearchQueue::Element: tech: " << name << "  empire id: " << empire_id;
+    retval << "  allocated: " << allocated_rp << "  turns left: " << turns_left;
+    if (paused)
+        retval << "  (paused)";
+    retval << "\n";
+    return retval.str();
+}
+
 bool ResearchQueue::InQueue(const std::string& tech_name) const
 { return find(tech_name) != end(); }
 
@@ -339,6 +352,18 @@ std::vector<std::string> ResearchQueue::AllEnqueuedProjects() const {
     return retval;
 }
 
+std::string ResearchQueue::Dump() const {
+    std::stringstream retval;
+    retval << "ResearchQueue:\n";
+    float spent_rp{0.0f};
+    for (const QueueType::value_type& entry : m_queue) {
+        retval << " ... " << entry.Dump();
+        spent_rp += entry.allocated_rp;
+    }
+    retval << "ResearchQueue Total Spent RP: " << spent_rp;
+    return retval.str();
+}
+
 bool ResearchQueue::empty() const
 { return !m_queue.size(); }
 
@@ -364,20 +389,6 @@ const ResearchQueue::Element& ResearchQueue::operator[](int i) const {
     return m_queue[i];
 }
 
-ResearchQueue::const_iterator ResearchQueue::UnderfundedProject() const {
-    for (const_iterator it = begin(); it != end(); ++it) {
-        if (const Tech* tech = GetTech(it->name)) {
-            if (it->allocated_rp &&
-                it->allocated_rp < tech->PerTurnCost(m_empire_id)
-                && 1 < it->turns_left)
-            {
-                return it;
-            }
-        }
-    }
-    return end();
-}
-
 void ResearchQueue::Update(float RPs, const std::map<std::string, float>& research_progress) {
     // status of all techs for this empire
     const Empire* empire = GetEmpire(m_empire_id);
@@ -386,7 +397,7 @@ void ResearchQueue::Update(float RPs, const std::map<std::string, float>& resear
 
     std::map<std::string, TechStatus> sim_tech_status_map;
     for (const Tech* tech : GetTechManager()) {
-        std::string tech_name = tech->Name();
+        const std::string& tech_name = tech->Name();
         sim_tech_status_map[tech_name] = empire->GetTechStatus(tech_name);
     }
 
@@ -569,21 +580,6 @@ ResearchQueue::iterator ResearchQueue::begin()
 
 ResearchQueue::iterator ResearchQueue::end()
 { return m_queue.end(); }
-
-ResearchQueue::iterator ResearchQueue::UnderfundedProject() {
-    for (iterator it = begin(); it != end(); ++it) {
-        if (const Tech* tech = GetTech(it->name)) {
-            if (it->allocated_rp &&
-                it->allocated_rp < tech->ResearchCost(m_empire_id)
-                && 1 < it->turns_left)
-            {
-                return it;
-            }
-            return end();
-        }
-    }
-    return end();
-}
 
 void ResearchQueue::clear() {
     m_queue.clear();
@@ -942,24 +938,6 @@ const ProductionQueue::Element& ProductionQueue::operator[](int i) const {
     return m_queue[i];
 }
 
-ProductionQueue::const_iterator ProductionQueue::UnderfundedProject() const {
-    const Empire* empire = GetEmpire(m_empire_id);
-    if (!empire)
-        return end();
-    for (const_iterator it = begin(); it != end(); ++it) {
-
-        float item_cost;
-        int build_turns;
-        std::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
-
-        item_cost *= it->blocksize;
-        float maxPerTurn = item_cost / std::max(build_turns, 1);
-        if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
-            return it;
-    }
-    return end();
-}
-
 void ProductionQueue::Update() {
     const Empire* empire = GetEmpire(m_empire_id);
     if (!empire) {
@@ -1289,25 +1267,6 @@ ProductionQueue::iterator ProductionQueue::find(int i)
 ProductionQueue::Element& ProductionQueue::operator[](int i) {
     assert(0 <= i && i < static_cast<int>(m_queue.size()));
     return m_queue[i];
-}
-
-ProductionQueue::iterator ProductionQueue::UnderfundedProject() {
-    const Empire* empire = GetEmpire(m_empire_id);
-    if (!empire)
-        return end();
-
-    for (iterator it = begin(); it != end(); ++it) {
-
-        float item_cost;
-        int build_turns;
-        std::tie(item_cost, build_turns) = empire->ProductionCostAndTime(*it);
-
-        item_cost *= it->blocksize;
-        float maxPerTurn = item_cost / std::max(build_turns,1);
-        if (it->allocated_pp && (it->allocated_pp < (maxPerTurn-EPSILON)) && (1 < it->turns_left_to_next_item) )
-            return it;
-    }
-    return end();
 }
 
 void ProductionQueue::clear() {
@@ -2866,6 +2825,10 @@ namespace {
 void Empire::CheckResearchProgress() {
     SanitizeResearchQueue(m_research_queue);
 
+    float spent_rp{0.0f};
+    float total_rp_available = m_resource_pools[RE_RESEARCH]->TotalAvailable();
+
+    // process items on queue
     std::vector<std::string> to_erase;
     for (ResearchQueue::Element& elem : m_research_queue) {
         const Tech* tech = GetTech(elem.name);
@@ -2876,6 +2839,7 @@ void Empire::CheckResearchProgress() {
         float& progress = m_research_progress[elem.name];
         float tech_cost = tech->ResearchCost(m_id);
         progress += elem.allocated_rp / std::max(EPSILON, tech_cost);
+        spent_rp += elem.allocated_rp;
         if (tech->ResearchCost(m_id) - EPSILON <= progress * tech_cost)
             AddTech(elem.name);
         if (GetTechStatus(elem.name) == TS_COMPLETE) {
@@ -2884,11 +2848,81 @@ void Empire::CheckResearchProgress() {
         }
     }
 
+    //DebugLogger() << m_research_queue.Dump();
+    float rp_left_to_spend = total_rp_available - spent_rp;
+    //DebugLogger() << "leftover RP: " << rp_left_to_spend;
+    // auto-allocate any excess RP left over after player-specified queued techs
+
+    // if there are left over RPs, any tech on the queue presumably can't
+    // have RP allocated to it
+    std::unordered_set<std::string> techs_not_suitable_for_auto_allocation;
+    for (ResearchQueue::Element& elem : m_research_queue)
+        techs_not_suitable_for_auto_allocation.insert(elem.name);
+
+    // for all available and suitable techs, store ordered by cost to complete
+    std::multimap<double, std::string> costs_to_complete_available_unpaused_techs;
+    for (const Tech* tech : GetTechManager()) {
+        const std::string& tech_name = tech->Name();
+        if (techs_not_suitable_for_auto_allocation.count(tech_name) > 0)
+            continue;
+        if (this->GetTechStatus(tech_name) != TS_RESEARCHABLE)
+            continue;
+        if (!tech->Researchable())
+            continue;
+        double progress = this->ResearchProgress(tech_name);
+        double total_cost = tech->ResearchCost(m_id);
+        if (progress >= total_cost)
+            continue;
+        costs_to_complete_available_unpaused_techs.emplace(total_cost - progress, tech_name);
+    }
+
+    // in order of minimum additional cost to complete, allocate RP to
+    // techs up to available RP and per-turn limits
+    for (auto const& cost_tech : costs_to_complete_available_unpaused_techs) {
+        if (rp_left_to_spend <= EPSILON)
+            break;
+
+        const Tech* tech = GetTech(cost_tech.second);
+        if (!tech)
+            continue;
+
+        //DebugLogger() << "extra tech: " << cost_tech.second << " needs: " << cost_tech.first << " more RP to finish";
+
+        float RPs_per_turn_limit = tech->PerTurnCost(m_id);
+        float tech_total_cost = tech->ResearchCost(m_id);
+        float progress_fraction = m_research_progress[cost_tech.second];
+
+        float progress_fraction_left = 1.0f - progress_fraction;
+        float max_progress_per_turn = RPs_per_turn_limit / tech_total_cost;
+        float progress_possible_with_available_rp = rp_left_to_spend / tech_total_cost;
+
+        //DebugLogger() << "... progress left: " << progress_fraction_left
+        //              << " max per turn: " << max_progress_per_turn
+        //              << " progress possible with available rp: " << progress_possible_with_available_rp;
+
+        float progress_increase = std::min(
+            progress_fraction_left,
+            std::min(max_progress_per_turn, progress_possible_with_available_rp));
+
+        float consumed_rp = progress_increase * tech_total_cost;
+
+        m_research_progress[cost_tech.second] += progress_increase;
+        rp_left_to_spend -= consumed_rp;
+
+        if (tech->ResearchCost(m_id) - EPSILON <= m_research_progress[cost_tech.second] * tech_total_cost)
+            AddTech(cost_tech.second);
+
+        //DebugLogger() << "... allocated: " << consumed_rp << " to increase progress by: " << progress_increase;
+    }
+
+    // remove completed items from queue (after consuming extra RP, as that
+    // determination uses the contents of the queue as input)
     for (const std::string& tech_name : to_erase) {
         ResearchQueue::iterator temp_it = m_research_queue.find(tech_name);
         if (temp_it != m_research_queue.end())
             m_research_queue.erase(temp_it);
     }
+
     // can uncomment following line when / if research stockpiling is enabled...
     // m_resource_pools[RE_RESEARCH]->SetStockpile(m_resource_pools[RE_RESEARCH]->TotalAvailable() - m_research_queue.TotalRPsSpent());
 }

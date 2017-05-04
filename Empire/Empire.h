@@ -57,6 +57,7 @@ struct FO_COMMON_API ResearchQueue {
             turns_left(turns_left_),
             paused(paused_)
         {}
+        std::string Dump() const;
         std::string name;
         int         empire_id;
         float       allocated_rp;
@@ -91,6 +92,7 @@ struct FO_COMMON_API ResearchQueue {
     float                       TotalRPsSpent() const;                      ///< Returns the number of RPs currently spent on the projects in this queue.
     int                         EmpireID() const { return m_empire_id; }
     std::vector<std::string>    AllEnqueuedProjects() const;
+    std::string                 Dump() const;
 
     // STL container-like interface
     bool            empty() const;
@@ -99,10 +101,6 @@ struct FO_COMMON_API ResearchQueue {
     const_iterator  end() const;
     const_iterator  find(const std::string& tech_name) const;
     const Element&  operator[](int i) const;
-
-    /** Returns an iterator to the underfunded research project, or end() if
-      * none exists. */
-    const_iterator  UnderfundedProject() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -124,10 +122,6 @@ struct FO_COMMON_API ResearchQueue {
     iterator        find(const std::string& tech_name);
 
     void            clear();
-
-    /** Returns an iterator to the underfunded research project, or end() if
-      * none exists. */
-    iterator        UnderfundedProject();
 
     mutable boost::signals2::signal<void ()> ResearchQueueChangedSignal;
     //@}
@@ -241,10 +235,6 @@ struct FO_COMMON_API ProductionQueue {
     const_iterator                  find(int i) const;
     const Element&                  operator[](int i) const;
 
-    /** Returns an iterator to the underfunded production project, or end() if none exists. */
-    const_iterator                  UnderfundedProject() const;
-    //@}
-
     /** \name Mutators */ //@{
     /** Recalculates the PPs spent on and number of turns left for each project in the queue.  Also
       * determines the number of projects in progress, and the industry consumed by projects
@@ -265,9 +255,6 @@ struct FO_COMMON_API ProductionQueue {
     Element&                        operator[](int i);
 
     void                            clear();
-
-    /** Returns an iterator to the underfunded production project, or end() if none exists. */
-    iterator                        UnderfundedProject();
 
     mutable boost::signals2::signal<void ()> ProductionQueueChangedSignal;
     //@}
