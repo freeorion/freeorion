@@ -4,7 +4,6 @@
 #include "../util/Logger.h"
 
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/WndEvent.h>
 
 #include <boost/cast.hpp>
@@ -54,10 +53,14 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     if (!drop_type_str.empty())
         AllowDropType(drop_type_str);
 
-    GG::Connect(BeforeInsertSignal,                 &QueueListBox::EnsurePromptHiddenSlot,      this);
-    GG::Connect(AfterEraseSignal,                   &QueueListBox::ShowPromptConditionallySlot, this);
-    GG::Connect(ClearedSignal,                      &QueueListBox::ShowPromptSlot,              this);
-    GG::Connect(GG::ListBox::RightClickedSignal,    &QueueListBox::ItemRightClicked,            this);
+    BeforeInsertSignal.connect(
+        boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, _1));
+    AfterEraseSignal.connect(
+        boost::bind(&QueueListBox::ShowPromptConditionallySlot, this, _1));
+    ClearedSignal.connect(
+        boost::bind(&QueueListBox::ShowPromptSlot, this));
+    GG::ListBox::RightClickedSignal.connect(
+        boost::bind(&QueueListBox::ItemRightClicked, this, _1, _2, _3));
 
     SetNumCols(1);
     ManuallyManageColProps();
