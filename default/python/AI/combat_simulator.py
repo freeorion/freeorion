@@ -275,8 +275,10 @@ class CombatObject(object):
         """
         if not self.current_possible_targets:
             return
+        
         for dmg in self._shots():
-            self._shoot_at_random_target(self.current_possible_targets, dmg)
+            target = random.choice(self.current_possible_targets)
+            target.do_damage(dmg, self.ignore_shields)
 
     def do_damage(self, dmg, ignore_shields=False):
         """Apply the damage dealt to this object.
@@ -307,17 +309,6 @@ class CombatObject(object):
         :rtype: bool
         """
         return self._health() > 0
-
-    def _shoot_at_random_target(self, possible_targets, damage):
-        """Select a random target from the list of possible targets and damage it.
-
-        :param possible_targets:
-        :type possible_targets: list[CombatObject]
-        :param damage: raw damage of the attack
-        :type damage: float
-        """
-        target = random.choice(possible_targets)
-        target.do_damage(damage, self.ignore_shields)
 
 
 class Ship(CombatObject):
