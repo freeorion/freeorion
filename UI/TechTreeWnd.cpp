@@ -25,7 +25,6 @@
 #include <GG/GLClientAndServerBuffer.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 #include <algorithm>
@@ -1087,14 +1086,22 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     AttachChild(m_zoom_in_button);
     AttachChild(m_zoom_out_button);
 
-    GG::Connect(m_layout_surface->DraggedSignal,        &TechTreeWnd::LayoutPanel::TreeDraggedSlot,     this);
-    GG::Connect(m_layout_surface->ButtonUpSignal,       &TechTreeWnd::LayoutPanel::TreeDragEnd,         this);
-    GG::Connect(m_layout_surface->ButtonDownSignal,     &TechTreeWnd::LayoutPanel::TreeDragBegin,       this);
-    GG::Connect(m_layout_surface->ZoomedSignal,         &TechTreeWnd::LayoutPanel::TreeZoomedSlot,      this);
-    GG::Connect(m_vscroll->ScrolledSignal,              &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
-    GG::Connect(m_hscroll->ScrolledSignal,              &TechTreeWnd::LayoutPanel::ScrolledSlot,        this);
-    GG::Connect(m_zoom_in_button->LeftClickedSignal,    &TechTreeWnd::LayoutPanel::TreeZoomInClicked,   this);
-    GG::Connect(m_zoom_out_button->LeftClickedSignal,   &TechTreeWnd::LayoutPanel::TreeZoomOutClicked,  this);
+    m_layout_surface->DraggedSignal.connect(
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeDraggedSlot, this, _1));
+    m_layout_surface->ButtonUpSignal.connect(
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeDragEnd, this, _1));
+    m_layout_surface->ButtonDownSignal.connect(
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeDragBegin, this, _1));
+    m_layout_surface->ZoomedSignal.connect(
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, _1));
+    m_vscroll->ScrolledSignal.connect(
+        boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
+    m_hscroll->ScrolledSignal.connect(
+        boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
+    m_zoom_in_button->LeftClickedSignal.connect(
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInClicked, this));
+    m_zoom_out_button->LeftClickedSignal.connect(
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutClicked, this));
 
     ConnectKeyboardAcceleratorSignals();
 
@@ -1389,9 +1396,12 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         TechPanel* tech_panel = m_techs[tech_name];
         tech_panel->MoveTo(GG::Pt(node->GetX(), node->GetY()));
         m_layout_surface->AttachChild(tech_panel);
-        GG::Connect(tech_panel->TechLeftClickedSignal,      &TechTreeWnd::LayoutPanel::TechLeftClickedSlot,     this);
-        GG::Connect(tech_panel->TechDoubleClickedSignal,    &TechTreeWnd::LayoutPanel::TechDoubleClickedSlot,   this);
-        GG::Connect(tech_panel->TechPediaDisplaySignal,     &TechTreeWnd::LayoutPanel::TechPediaDisplaySlot,    this);
+        tech_panel->TechLeftClickedSignal.connect(
+            boost::bind(&TechTreeWnd::LayoutPanel::TechLeftClickedSlot, this, _1, _2));
+        tech_panel->TechDoubleClickedSignal.connect(
+            boost::bind(&TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this, _1, _2));
+        tech_panel->TechPediaDisplaySignal.connect(
+            boost::bind(&TechTreeWnd::LayoutPanel::TechPediaDisplaySlot, this, _1));
 
         visible_techs.insert(tech_name);
     }
@@ -1693,9 +1703,12 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     CUIListBox()
 {
     Resize(GG::Pt(w, h));
-    GG::Connect(DoubleClickedSignal,    &TechListBox::TechDoubleClicked,    this);
-    GG::Connect(LeftClickedSignal,      &TechListBox::TechLeftClicked,      this);
-    GG::Connect(RightClickedSignal,     &TechListBox::TechRightClicked,     this);
+    DoubleClickedSignal.connect(
+        boost::bind(&TechListBox::TechDoubleClicked, this, _1, _2, _3));
+    LeftClickedSignal.connect(
+        boost::bind(&TechListBox::TechLeftClicked, this, _1, _2, _3));
+    RightClickedSignal.connect(
+        boost::bind(&TechListBox::TechRightClicked, this, _1, _2, _3));
 
     SetStyle(GG::LIST_NOSEL);
 
@@ -1962,20 +1975,27 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     Sound::TempUISoundDisabler sound_disabler;
 
     m_layout_panel = new LayoutPanel(w, h);
-    GG::Connect(m_layout_panel->TechLeftClickedSignal,  &TechTreeWnd::TechLeftClickedSlot,      this);
-    GG::Connect(m_layout_panel->TechDoubleClickedSignal,&TechTreeWnd::TechDoubleClickedSlot,    this);
-    GG::Connect(m_layout_panel->TechPediaDisplaySignal, &TechTreeWnd::TechPediaDisplaySlot,     this);
+    m_layout_panel->TechLeftClickedSignal.connect(
+        boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
+    m_layout_panel->TechDoubleClickedSignal.connect(
+        boost::bind(&TechTreeWnd::TechDoubleClickedSlot, this, _1, _2));
+    m_layout_panel->TechPediaDisplaySignal.connect(
+        boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
     AttachChild(m_layout_panel);
 
     m_tech_list = new TechListBox(w, h);
-    GG::Connect(m_tech_list->TechLeftClickedSignal,     &TechTreeWnd::TechLeftClickedSlot,      this);
-    GG::Connect(m_tech_list->TechDoubleClickedSignal,   &TechTreeWnd::TechDoubleClickedSlot,    this);
-    GG::Connect(m_tech_list->TechPediaDisplaySignal,    &TechTreeWnd::TechPediaDisplaySlot,     this);
+    m_tech_list->TechLeftClickedSignal.connect(
+        boost::bind(&TechTreeWnd::TechLeftClickedSlot, this, _1, _2));
+    m_tech_list->TechDoubleClickedSignal.connect(
+        boost::bind(&TechTreeWnd::TechDoubleClickedSlot, this, _1, _2));
+    m_tech_list->TechPediaDisplaySignal.connect(
+        boost::bind(&TechTreeWnd::TechPediaDisplaySlot, this, _1));
 
     m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, RES_PEDIA_WND_NAME);
     m_tech_tree_controls = new TechTreeControls(RES_CONTROLS_WND_NAME);
 
-    GG::Connect(m_enc_detail_panel->ClosingSignal, boost::bind(&TechTreeWnd::HidePedia, this));
+    m_enc_detail_panel->ClosingSignal.connect(
+        boost::bind(&TechTreeWnd::HidePedia, this));
 
     InitializeWindows();
     // Make sure the controls don't overlap the bottom scrollbar
@@ -1983,7 +2003,9 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         m_tech_tree_controls->MoveTo(GG::Pt(m_tech_tree_controls->Left(),
                                             m_layout_panel->Bottom() - ClientUI::ScrollWidth() - m_tech_tree_controls->Height()));
     }
-    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, &TechTreeWnd::InitializeWindows, this);
+
+    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+        boost::bind(&TechTreeWnd::InitializeWindows, this));
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_tech_tree_controls);
@@ -1992,33 +2014,37 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     for (std::map<std::string, GG::StateButton*>::value_type& cat_button : m_tech_tree_controls->m_cat_buttons)
     {
         const std::string& category_name = cat_button.first;
-        GG::Connect(cat_button.second->CheckedSignal, [this, category_name](bool checked) {
-            if(checked)
-                this->ShowCategory(category_name);
-            else
-                this->HideCategory(category_name);
-        });
+        cat_button.second->CheckedSignal.connect(
+            [this, category_name](bool checked) {
+                if(checked)
+                    this->ShowCategory(category_name);
+                else
+                    this->HideCategory(category_name);
+            }
+        );
     }
 
     // connect button for all categories to update display
-    GG::Connect(m_tech_tree_controls->m_all_cat_button->CheckedSignal, [this](bool checked) {
-        if(checked)
-            this->ShowAllCategories();
-        else
-            this->HideAllCategories();
-    });
+    m_tech_tree_controls->m_all_cat_button->CheckedSignal.connect(
+        [this](bool checked) {
+            if(checked)
+                this->ShowAllCategories();
+            else
+                this->HideAllCategories();
+        }
+    );
 
     // connect status and type button clicks to update display
     for (std::map<TechStatus, GG::StateButton*>::value_type& status_button : m_tech_tree_controls->m_status_buttons)
     {
         TechStatus tech_status = status_button.first;
-        GG::Connect(status_button.second->CheckedSignal, [this, tech_status](bool checked) {
-            this->SetTechStatus(tech_status, checked);
-        });
+        status_button.second->CheckedSignal.connect(
+            [this, tech_status](bool checked){ this->SetTechStatus(tech_status, checked); });
     }
 
     // connect view type selector
-    GG::Connect(m_tech_tree_controls->m_view_type_button->CheckedSignal, &TechTreeWnd::ToggleViewType, this);
+    m_tech_tree_controls->m_view_type_button->CheckedSignal.connect(
+        boost::bind(&TechTreeWnd::ToggleViewType, this, _1));
 
     //TechTreeWnd in typically constructed before the UI client has
     //accesss to the technologies so showing these categories takes a
