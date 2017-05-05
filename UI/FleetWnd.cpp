@@ -26,7 +26,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/Enum.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 #include <boost/cast.hpp>
@@ -485,10 +484,14 @@ FleetWnd* FleetUIManager::NewFleetWnd(const std::vector<int>& fleet_ids,
     FleetWnd* retval = new FleetWnd(fleet_ids, m_order_issuing_enabled, selected_fleet_id, flags, config_name);
 
     m_fleet_wnds.insert(retval);
-    GG::Connect(retval->ClosingSignal,              &FleetUIManager::FleetWndClosing,   this);
-    GG::Connect(retval->ClickedSignal,              &FleetUIManager::FleetWndClicked,   this);
-    GG::Connect(retval->FleetRightClickedSignal,    FleetRightClickedSignal);
-    GG::Connect(retval->ShipRightClickedSignal,     ShipRightClickedSignal);
+    retval->ClosingSignal.connect(
+        boost::bind(&FleetUIManager::FleetWndClosing, this, _1));
+    retval->ClickedSignal.connect(
+        boost::bind(&FleetUIManager::FleetWndClicked, this, _1));
+    retval->FleetRightClickedSignal.connect(
+        FleetRightClickedSignal);
+    retval->ShipRightClickedSignal.connect(
+        ShipRightClickedSignal);
 
     GG::GUI::GetGUI()->Register(retval);
 
@@ -522,8 +525,10 @@ void FleetUIManager::SetActiveFleetWnd(FleetWnd* fleet_wnd) {
     m_active_fleet_wnd = fleet_wnd;
 
     // connect new active FleetWnd selection changed signal
-    m_active_fleet_wnd_signals.push_back(GG::Connect(m_active_fleet_wnd->SelectedFleetsChangedSignal,   ActiveFleetWndSelectedFleetsChangedSignal));
-    m_active_fleet_wnd_signals.push_back(GG::Connect(m_active_fleet_wnd->SelectedShipsChangedSignal,    ActiveFleetWndSelectedShipsChangedSignal));
+    m_active_fleet_wnd_signals.push_back(m_active_fleet_wnd->SelectedFleetsChangedSignal.connect(
+        ActiveFleetWndSelectedFleetsChangedSignal));
+    m_active_fleet_wnd_signals.push_back(m_active_fleet_wnd->SelectedShipsChangedSignal.connect(
+        ActiveFleetWndSelectedShipsChangedSignal));
 
     ActiveFleetWndChangedSignal();
 }
@@ -1020,10 +1025,12 @@ void ShipDataPanel::Init() {
     }
 
     // bookkeeping
-    m_ship_connection = GG::Connect(ship->StateChangedSignal, &ShipDataPanel::Refresh, this);
+    m_ship_connection = ship->StateChangedSignal.connect(
+        boost::bind(&ShipDataPanel::Refresh, this));
 
     if (std::shared_ptr<Fleet> fleet = GetFleet(ship->FleetID()))
-        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &ShipDataPanel::Refresh, this);
+        m_fleet_connection = fleet->StateChangedSignal.connect(
+            boost::bind(&ShipDataPanel::Refresh, this));
 
     Refresh();
 }
@@ -1694,7 +1701,8 @@ void FleetDataPanel::Init() {
             GG::SubTexture(FleetPassiveIcon()),
             GG::SubTexture(FleetAggressiveMouseoverIcon()));
         AttachChild(m_aggression_toggle);
-        GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
+        m_aggression_toggle->LeftClickedSignal.connect(
+            boost::bind(&FleetDataPanel::AggressionToggleButtonPressed, this));
 
     } else if (std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
@@ -1723,7 +1731,8 @@ void FleetDataPanel::Init() {
             icon->SetBrowseModeTime(tooltip_delay);
         }
 
-        m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDataPanel::RequirePreRender, this);
+        m_fleet_connection = fleet->StateChangedSignal.connect(
+            boost::bind(&FleetDataPanel::RequirePreRender, this));
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (fleet->OwnedBy(client_empire_id) || fleet->GetVisibility(client_empire_id) >= VIS_FULL_VISIBILITY) {
@@ -1732,7 +1741,8 @@ void FleetDataPanel::Init() {
                 GG::SubTexture(FleetPassiveIcon()),
                 GG::SubTexture(FleetAggressiveMouseoverIcon()));
             AttachChild(m_aggression_toggle);
-            GG::Connect(m_aggression_toggle->LeftClickedSignal, &FleetDataPanel::AggressionToggleButtonPressed, this);
+            m_aggression_toggle->LeftClickedSignal.connect(
+                boost::bind(&FleetDataPanel::AggressionToggleButtonPressed, this));
         }
 
         ColorTextForSelect();
@@ -2395,10 +2405,14 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
         m_ships_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
     }
 
-    GG::Connect(m_ships_lb->SelChangedSignal,               &FleetDetailPanel::ShipSelectionChanged,    this);
-    GG::Connect(m_ships_lb->BrowsedSignal,                  &FleetDetailPanel::ShipBrowsed,             this);
-    GG::Connect(m_ships_lb->RightClickedSignal,             &FleetDetailPanel::ShipRightClicked,        this);
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal,   &FleetDetailPanel::UniverseObjectDeleted,   this);
+    m_ships_lb->SelChangedSignal.connect(
+        boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, _1));
+    m_ships_lb->BrowsedSignal.connect(
+        boost::bind(&FleetDetailPanel::ShipBrowsed, this, _1));
+    m_ships_lb->RightClickedSignal.connect(
+        boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
+    GetUniverse().UniverseObjectDeleteSignal.connect(
+        boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
 
     DoLayout();
 }
@@ -2426,7 +2440,8 @@ void FleetDetailPanel::SetFleet(int fleet_id) {
     if (m_fleet_id != old_fleet_id && m_fleet_id != INVALID_OBJECT_ID) {
         std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id);
         if (fleet && !fleet->Empty()) {
-            m_fleet_connection = GG::Connect(fleet->StateChangedSignal, &FleetDetailPanel::Refresh, this, boost::signals2::at_front);
+            m_fleet_connection = fleet->StateChangedSignal.connect(
+                boost::bind(&FleetDetailPanel::Refresh, this), boost::signals2::at_front);
         } else {
             DebugLogger() << "FleetDetailPanel::SetFleet ignoring set to missing or empty fleet id (" << fleet_id << ")";
         }
@@ -2756,10 +2771,14 @@ void FleetWnd::Init(int selected_fleet_id) {
     // create fleet list box
     m_fleets_lb = new FleetsListBox(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
-    GG::Connect(m_fleets_lb->SelChangedSignal,                      &FleetWnd::FleetSelectionChanged,   this);
-    GG::Connect(m_fleets_lb->LeftClickedSignal,                     &FleetWnd::FleetLeftClicked,        this);
-    GG::Connect(m_fleets_lb->RightClickedSignal,                    &FleetWnd::FleetRightClicked,       this);
-    GG::Connect(m_fleets_lb->DoubleClickedSignal,                   &FleetWnd::FleetDoubleClicked,      this);
+    m_fleets_lb->SelChangedSignal.connect(
+        boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
+    m_fleets_lb->LeftClickedSignal.connect(
+        boost::bind(&FleetWnd::FleetLeftClicked, this, _1, _2, _3));
+    m_fleets_lb->RightClickedSignal.connect(
+        boost::bind(&FleetWnd::FleetRightClicked, this, _1, _2, _3));
+    m_fleets_lb->DoubleClickedSignal.connect(
+        boost::bind(&FleetWnd::FleetDoubleClicked, this, _1, _2, _3));
     AttachChild(m_fleets_lb);
     m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES);
     m_fleets_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
@@ -2767,8 +2786,10 @@ void FleetWnd::Init(int selected_fleet_id) {
 
     // create fleet detail panel
     m_fleet_detail_panel = new FleetDetailPanel(GG::X1, GG::Y1, INVALID_OBJECT_ID, m_order_issuing_enabled);
-    GG::Connect(m_fleet_detail_panel->SelectedShipsChangedSignal,   &FleetWnd::ShipSelectionChanged,    this);
-    GG::Connect(m_fleet_detail_panel->ShipRightClickedSignal,       ShipRightClickedSignal);
+    m_fleet_detail_panel->SelectedShipsChangedSignal.connect(
+        boost::bind(&FleetWnd::ShipSelectionChanged, this, _1));
+    m_fleet_detail_panel->ShipRightClickedSignal.connect(
+        ShipRightClickedSignal);
     AttachChild(m_fleet_detail_panel);
 
     // determine fleets to show and populate list
@@ -2777,9 +2798,11 @@ void FleetWnd::Init(int selected_fleet_id) {
     // create drop target
     m_new_fleet_drop_target = new FleetDataPanel(GG::X1, ListRowHeight(), m_system_id, true);
     AttachChild(m_new_fleet_drop_target);
-    GG::Connect(m_new_fleet_drop_target->NewFleetFromShipsSignal,   &FleetWnd::CreateNewFleetFromDrops, this);
+    m_new_fleet_drop_target->NewFleetFromShipsSignal.connect(
+        boost::bind(&FleetWnd::CreateNewFleetFromDrops, this, _1));
 
-    GG::Connect(GetUniverse().UniverseObjectDeleteSignal,           &FleetWnd::UniverseObjectDeleted,   this);
+    GetUniverse().UniverseObjectDeleteSignal.connect(
+        boost::bind(&FleetWnd::UniverseObjectDeleted, this, _1));
 
     RefreshStateChangedSignals();
 
@@ -2867,7 +2890,8 @@ void FleetWnd::SetStatIconValues() {
 void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
     if (std::shared_ptr<const System> system = GetSystem(m_system_id))
-        m_system_connection = GG::Connect(system->StateChangedSignal, &FleetWnd::SystemChangedSlot, this, boost::signals2::at_front);
+        m_system_connection = system->StateChangedSignal.connect(
+            boost::bind(&FleetWnd::SystemChangedSlot, this), boost::signals2::at_front);
 }
 
 void FleetWnd::Refresh() {
