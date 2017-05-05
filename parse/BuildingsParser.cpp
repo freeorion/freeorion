@@ -15,15 +15,26 @@
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, BuildingType*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, BuildingType*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<BuildingType>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<BuildingType>>&) { return os; }
 }
 #endif
 
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    const boost::phoenix::function<parse::detail::insert> insert_;
+    struct insert_BuildingType {
+        typedef void result_type;
+
+        void operator()(std::map<std::string, std::unique_ptr<BuildingType>>& building_types,
+                        const std::string& name,
+                        BuildingType* building_type) const
+        {
+            std::unique_ptr<BuildingType> building_typep(building_type);
+            building_types.insert(std::make_pair(name, std::move(building_typep)));
+        }
+    };
+    const boost::phoenix::function<insert_BuildingType> insert_;
 
     struct rules {
         rules() {
@@ -73,7 +84,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (std::map<std::string, BuildingType*>&),
+            void (std::map<std::string, std::unique_ptr<BuildingType>>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -83,7 +94,7 @@ namespace {
         > building_type_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, BuildingType*>&)
+            void (std::map<std::string, std::unique_ptr<BuildingType>>&)
         > start_rule;
 
         building_type_rule          building_type;
@@ -92,11 +103,11 @@ namespace {
 }
 
 namespace parse {
-    bool buildings(std::map<std::string, BuildingType*>& building_types) {
+    bool buildings(std::map<std::string, std::unique_ptr<BuildingType>>& building_types) {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/buildings")) {
-            result &= detail::parse_file<rules, std::map<std::string, BuildingType*>>(file, building_types);
+            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<BuildingType>>>(file, building_types);
         }
 
         return result;

@@ -190,7 +190,7 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.insert(UserString(tech_name));
     }
     // add building type names
-    for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
+    for (const auto& entry : GetBuildingTypeManager()) {
         if (entry.second->Name() != "")
             m_game_words.insert(UserString(entry.second->Name()));
     }

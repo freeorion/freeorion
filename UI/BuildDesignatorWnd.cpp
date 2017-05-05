@@ -788,7 +788,7 @@ void BuildDesignatorWnd::BuildSelector::PopulateList() {
         // craete and insert rows...
         std::vector<GG::ListBox::Row*> rows;
         rows.reserve(std::distance(manager.begin(), manager.end()));
-        for (const std::map<std::string, BuildingType*>::value_type& entry : manager) {
+        for (const auto& entry : manager) {
             const std::string name = entry.first;
             if (!BuildableItemVisible(BT_BUILDING, name))
                 continue;

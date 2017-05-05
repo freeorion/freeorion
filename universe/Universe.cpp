@@ -1217,9 +1217,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     }
 
     // enforce building types effects order
-    for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
+    for (const auto& entry : GetBuildingTypeManager()) {
         const std::string&  building_type_name = entry.first;
-        const BuildingType* building_type      = entry.second;
+        const BuildingType* building_type      = entry.second.get();
         std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>>::iterator buildings_by_type_it =
             buildings_by_type.find(building_type_name);
 

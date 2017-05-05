@@ -338,15 +338,9 @@ BuildingTypeManager::BuildingTypeManager() {
     s_instance = this;
 }
 
-BuildingTypeManager::~BuildingTypeManager() {
-    for (std::map<std::string, BuildingType*>::value_type& entry : m_building_types) {
-        delete entry.second;
-    }
-}
-
 const BuildingType* BuildingTypeManager::GetBuildingType(const std::string& name) const {
-    std::map<std::string, BuildingType*>::const_iterator it = m_building_types.find(name);
-    return it != m_building_types.end() ? it->second : nullptr;
+    const auto& it = m_building_types.find(name);
+    return it != m_building_types.end() ? it->second.get() : nullptr;
 }
 
 BuildingTypeManager& BuildingTypeManager::GetBuildingTypeManager() {
