@@ -18,8 +18,6 @@
 
 #include "Hotkeys.h"
 
-#include <GG/SignalsAndSlots.h>
-
 #include "../util/OptionsDB.h"
 #include "../util/Logger.h"
 
@@ -395,8 +393,7 @@ void HotkeyManager::RebuildShortcuts() {
 
         gui->SetAccelerator(hk.m_key, hk.m_mod_keys);
 
-        m_internal_connections.insert(GG::Connect(
-            gui->AcceleratorSignal(hk.m_key, hk.m_mod_keys),
+        m_internal_connections.insert(gui->AcceleratorSignal(hk.m_key, hk.m_mod_keys).connect(
             boost::bind(&HotkeyManager::ProcessNamedShortcut, this, hk.m_name, hk.m_key, hk.m_mod_keys)));
     }
 }
