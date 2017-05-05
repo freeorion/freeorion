@@ -14,7 +14,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <limits>
 
@@ -45,7 +44,10 @@ namespace {
 CUI_MinRestoreButton::CUI_MinRestoreButton() :
     GG::Button("", nullptr, ClientUI::WndInnerBorderColor()),
     m_mode(MIN_BUTTON)
-{ GG::Connect(LeftClickedSignal, &CUI_MinRestoreButton::Toggle, this); }
+{
+    LeftClickedSignal.connect(
+        boost::bind(&CUI_MinRestoreButton::Toggle, this));
+}
 
 void CUI_MinRestoreButton::Render() {
     GG::Pt ul = UpperLeft();
@@ -81,7 +83,8 @@ void CUI_MinRestoreButton::Toggle() {
 CUI_PinButton::CUI_PinButton() :
     GG::Button("", nullptr, ClientUI::WndInnerBorderColor())
 {
-    GG::Connect(LeftClickedSignal, &PlayCloseSound, -1);
+    LeftClickedSignal.connect(
+        &PlayCloseSound);
     SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"   )));
     SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"  )));
     SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin_mouseover.png")));
@@ -184,7 +187,8 @@ void CUIWnd::Init(const std::string& wnd_name) {
 
     if (!m_config_name.empty()) {
         LoadOptions();
-        GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal, boost::bind(&CUIWnd::LoadOptions, this));
+        HumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
+            boost::bind(&CUIWnd::LoadOptions, this));
     }
 
     // User-dragable windows recalculate their position only when told to (e.g.
@@ -192,9 +196,11 @@ void CUIWnd::Init(const std::string& wnd_name) {
     // Non-user-dragable windows are given the chance to position themselves on
     // every resize event.
     if (Dragable() || m_resizable)
-        GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, &CUIWnd::ResetDefaultPosition, this);
+        HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+            boost::bind(&CUIWnd::ResetDefaultPosition, this));
     else
-        GG::Connect(HumanClientApp::GetApp()->WindowResizedSignal, boost::bind(&CUIWnd::ResetDefaultPosition, this));
+        HumanClientApp::GetApp()->WindowResizedSignal.connect(
+            boost::bind(&CUIWnd::ResetDefaultPosition, this));
 
     // call to CUIWnd::MinimizedWidth() because MinimizedWidth is virtual
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM + 50));
@@ -443,9 +449,11 @@ void CUIWnd::InitButtons() {
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_clicked.png")),
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_mouseover.png")));
         m_close_button->SetColor(ClientUI::WndInnerBorderColor());
-        GG::Connect(m_close_button->LeftClickedSignal, &PlayCloseSound, -1);
+        m_close_button->LeftClickedSignal.connect(
+            &PlayCloseSound);
         m_close_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
-        GG::Connect(m_close_button->LeftClickedSignal, &CUIWnd::CloseClicked, this);
+        m_close_button->LeftClickedSignal.connect(
+            boost::bind(&CUIWnd::CloseClicked, this));
         AttachChild(m_close_button);
         m_close_button->NonClientChild(true);
     }
@@ -454,7 +462,8 @@ void CUIWnd::InitButtons() {
     if (m_minimizable) {
         m_minimize_button = new CUI_MinRestoreButton();
         m_minimize_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
-        GG::Connect(m_minimize_button->LeftClickedSignal, &CUIWnd::MinimizeClicked, this);
+        m_minimize_button->LeftClickedSignal.connect(
+            boost::bind(&CUIWnd::MinimizeClicked, this));
         AttachChild(m_minimize_button);
         m_minimize_button->NonClientChild(true);
     }
@@ -463,7 +472,8 @@ void CUIWnd::InitButtons() {
     if (m_pinable) {
         m_pin_button = new CUI_PinButton();
         m_pin_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
-        GG::Connect(m_pin_button->LeftClickedSignal, &CUIWnd::PinClicked, this);
+        m_pin_button->LeftClickedSignal.connect(
+            boost::bind(&CUIWnd::PinClicked, this));
         AttachChild(m_pin_button);
         m_pin_button->NonClientChild(true);
     }
@@ -880,8 +890,10 @@ CUIEditWnd::CUIEditWnd(GG::X w, const std::string& prompt_text, const std::strin
     AttachChild(m_ok_bn);
     AttachChild(m_cancel_bn);
 
-    GG::Connect(m_ok_bn->LeftClickedSignal,     &CUIEditWnd::OkClicked, this);
-    GG::Connect(m_cancel_bn->LeftClickedSignal, &CUIWnd::CloseClicked, static_cast<CUIWnd*>(this));
+    m_ok_bn->LeftClickedSignal.connect(
+        boost::bind(&CUIEditWnd::OkClicked, this));
+    m_cancel_bn->LeftClickedSignal.connect(
+        boost::bind(&CUIWnd::CloseClicked, static_cast<CUIWnd*>(this)));
 
     m_edit->SelectAll();
 }
