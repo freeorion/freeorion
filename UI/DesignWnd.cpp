@@ -35,6 +35,7 @@
 #include <boost/filesystem/fstream.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <boost/uuid/random_generator.hpp>
 
 #include <algorithm>
 #include <iterator>
@@ -205,18 +206,35 @@ namespace {
 
             m_saved_designs.clear();
             for (auto&& design_and_path : designs_and_paths) {
-                if (!m_saved_designs.count(design_and_path.first->UUID()))
-                    m_saved_designs[design_and_path.first->UUID()] = std::move(design_and_path);
-                else
-                    WarnLogger() << "Duplicate ship design UUID " << design_and_path.first->UUID()
-                                 << " found for ship design " << design_and_path.first->Name()
+                auto& design = design_and_path.first;
+
+                // If the UUID is nil this is a legacy design that needs a new UUID
+                if(design->UUID() == boost::uuids::uuid{{0}}) {
+                    design->SetUUID(boost::uuids::random_generator()());
+                    DebugLogger() << "Converted legacy ship design file by adding  UUID " << design->UUID()
+                                  << " for name " << design->Name();
+
+                }
+
+                if (!m_saved_designs.count(design->UUID())) {
+                    TraceLogger() << "Added saved design UUID " << design->UUID()
+                                  << " with name " << design->Name();
+                    m_saved_designs[design->UUID()] = std::move(design_and_path);
+                } else {
+                    WarnLogger() << "Duplicate ship design UUID " << design->UUID()
+                                 << " found for ship design " << design->Name()
                                  << " in " << saved_designs_dir;
+                }
             }
 
             // Verify that all UUIDs in ordering exist
             m_ordered_uuids.clear();
             bool ship_manifest_inconsistent = false;
             for (auto& uuid: ordering) {
+                // Skip the nil UUID.
+                if(uuid == boost::uuids::uuid{{0}})
+                    continue;
+
                 if (!m_saved_designs.count(uuid)) {
                     WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
                                  << "a ship design that does not exist.";
@@ -241,7 +259,8 @@ namespace {
                 }
 
                 for (auto& name_and_uuid: missing_uuids_sorted_by_name) {
-                    WarnLogger() << "Missing ship design " << name_and_uuid.first
+                    WarnLogger() << "Missing ship design " << name_and_uuid.second
+                                 << " called " << name_and_uuid.first
                                  << " added to the manifest.";
                     m_ordered_uuids.push_back(name_and_uuid.second);
                 }
