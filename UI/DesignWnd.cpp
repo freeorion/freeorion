@@ -33,6 +33,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/uuid/random_generator.hpp>
 
 #include <algorithm>
 #include <iterator>
@@ -3313,10 +3314,12 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 
     const std::string& icon = m_hull ? m_hull->Icon() : EMPTY_STRING;
 
+    const auto uuid = boost::uuids::random_generator()();
+
     // update stored design
     try {
         m_incomplete_design.reset(new ShipDesign(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                                                 hull, parts, icon, ""));
+                                                 hull, parts, icon, "", false, false, uuid));
     } catch (const std::exception& e) {
         // had a weird crash in the above call a few times, but I can't seem to
         // replicate it now.  hopefully catching any exception here will
@@ -3542,9 +3545,11 @@ int DesignWnd::AddDesign() {
     if (const HullType* hull = GetHullType(hull_name))
         icon = hull->Icon();
 
+    const auto uuid = boost::uuids::random_generator()();
+
     // create design from stuff chosen in UI
     ShipDesign design(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                      hull_name, parts, icon, "some model");
+                      hull_name, parts, icon, "some model", false, false, uuid);
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
     HumanClientApp::GetApp()->Orders().IssueOrder(
