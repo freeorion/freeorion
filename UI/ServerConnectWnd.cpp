@@ -7,7 +7,6 @@
 #include <boost/filesystem/fstream.hpp>
 #include <GG/Button.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -126,13 +125,20 @@ const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
 { return m_result; }
 
 void ServerConnectWnd::Init() {
-    Connect(m_host_or_join_radio_group->ButtonChangedSignal,    &ServerConnectWnd::HostOrJoinClicked,   this);
-    Connect(m_servers_lb->SelChangedSignal,                     &ServerConnectWnd::ServerSelected,      this);
-    Connect(m_find_LAN_servers_bn->LeftClickedSignal,           &ServerConnectWnd::RefreshServerList,   this);
-    Connect(m_IP_address_edit->EditedSignal,                    &ServerConnectWnd::IPAddressEdited,     this);
-    Connect(m_player_name_edit->EditedSignal,                   &ServerConnectWnd::NameEdited,          this);
-    Connect(m_ok_bn->LeftClickedSignal,                         &ServerConnectWnd::OkClicked,           this);
-    Connect(m_cancel_bn->LeftClickedSignal,                     &ServerConnectWnd::CancelClicked,       this);
+    m_host_or_join_radio_group->ButtonChangedSignal.connect(
+        boost::bind(&ServerConnectWnd::HostOrJoinClicked, this, _1));
+    m_servers_lb->SelChangedSignal.connect(
+        boost::bind(&ServerConnectWnd::ServerSelected, this, _1));
+    m_find_LAN_servers_bn->LeftClickedSignal.connect(
+        boost::bind(&ServerConnectWnd::RefreshServerList, this));
+    m_IP_address_edit->EditedSignal.connect(
+        boost::bind(&ServerConnectWnd::IPAddressEdited, this, _1));
+    m_player_name_edit->EditedSignal.connect(
+        boost::bind(&ServerConnectWnd::NameEdited, this, _1));
+    m_ok_bn->LeftClickedSignal.connect(
+        boost::bind(&ServerConnectWnd::OkClicked, this));
+    m_cancel_bn->LeftClickedSignal.connect(
+        boost::bind(&ServerConnectWnd::CancelClicked, this));
 
     m_host_or_join_radio_group->SetCheck(0);
     PopulateServerList();
