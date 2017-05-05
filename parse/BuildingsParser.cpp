@@ -23,25 +23,27 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    struct insert_BuildingType {
-        typedef void result_type;
+    void insert_building(std::map<std::string, std::unique_ptr<BuildingType>>& building_types,
+                         const std::string& name,
+                         const std::string& description,
+                         const CommonParams& common_params,
+                         CaptureResult& capture_result,
+                         const std::string& icon)
+    {
+        // TODO use make_unique when converting to C++14
+        auto building_type = std::unique_ptr<BuildingType>(
+            new BuildingType(name, description, common_params, capture_result, icon));
 
-        void operator()(std::map<std::string, std::unique_ptr<BuildingType>>& building_types,
-                        const std::string& name,
-                        BuildingType* building_type) const
-        {
-            std::unique_ptr<BuildingType> building_typep(building_type);
-            building_types.insert(std::make_pair(name, std::move(building_typep)));
-        }
-    };
-    const boost::phoenix::function<insert_BuildingType> insert_;
+        building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
+    }
+
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 6)
 
     struct rules {
         rules() {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
-
-            using phoenix::new_;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -67,7 +69,7 @@ namespace {
                     )
                 >   parse::detail::common_params_parser() [ _c = _1 ]
                 >   parse::detail::label(Icon_token)      > tok.string
-                [ insert_(_r1, _a, new_<BuildingType>(_a, _b, _c, _d, _1)) ]
+                [ insert_building_(_r1, _a, _b, _c, _d, _1) ]
                 ;
 
             start
