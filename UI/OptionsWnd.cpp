@@ -14,7 +14,6 @@
 
 #include <GG/GUI.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/TabWnd.h>
 
 //boost::spirit::classic pulls in windows.h which in turn defines the macros
@@ -263,7 +262,8 @@ namespace {
             m_hscroll = new CUIScroll(GG::HORIZONTAL);
             AttachChild(m_hscroll);
 
-            GG::Connect(m_hscroll->ScrolledSignal, &FontTextureWnd::ScrolledSlot, this);
+            m_hscroll->ScrolledSignal.connect(
+                boost::bind(&FontTextureWnd::ScrolledSlot, this, _1, _2, _3, _4));
             DoLayout();
         }
 
@@ -462,7 +462,8 @@ OptionsWnd::OptionsWnd():
     GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, window_reset_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                                                window_reset_button, 0);
     current_page->Insert(row);
-    GG::Connect(window_reset_button->LeftClickedSignal, HumanClientApp::GetApp()->RepositionWindowsSignal);
+    window_reset_button->LeftClickedSignal.connect(
+        HumanClientApp::GetApp()->RepositionWindowsSignal);
 
     FileOption(current_page, 0, "stringtable-filename",          UserString("OPTIONS_LANGUAGE"),
                GetRootDataDir() / "default" / "stringtables",
@@ -474,7 +475,8 @@ OptionsWnd::OptionsWnd():
     GG::Button* flush_button = new CUIButton(UserString("OPTIONS_FLUSH_STRINGTABLE"));
     row = new OptionsListRow(ROW_WIDTH, flush_button->MinUsableSize().y + LAYOUT_MARGIN + 6, flush_button, 0);
     current_page->Insert(row);
-    GG::Connect(flush_button->LeftClickedSignal, &FlushLoadedStringTables);
+    flush_button->LeftClickedSignal.connect(
+        &FlushLoadedStringTables);
 
     IntOption(current_page, 0, "UI.tooltip-delay",               UserString("OPTIONS_TOOLTIP_DELAY"));
     IntOption(current_page, 0, "UI.keypress-repeat-delay",       UserString("OPTIONS_KEYPRESS_REPEAT_DELAY"));
@@ -490,7 +492,8 @@ OptionsWnd::OptionsWnd():
     GG::Button* show_font_texture_button = new CUIButton(UserString("SHOW_FONT_TEXTURES"));
     row = new OptionsListRow(ROW_WIDTH, show_font_texture_button ->MinUsableSize().y + LAYOUT_MARGIN + 6, show_font_texture_button , 0);
     current_page->Insert(row);
-    GG::Connect(show_font_texture_button->LeftClickedSignal, &ShowFontTextureWnd);
+    show_font_texture_button->LeftClickedSignal.connect(
+        &ShowFontTextureWnd);
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_FONT_SIZES"));
     IntOption(current_page,    0, "UI.font-size",                          UserString("OPTIONS_FONT_TEXT"));
@@ -652,7 +655,8 @@ OptionsWnd::OptionsWnd():
     DoLayout();
 
     // Connect the done and cancel button
-    GG::Connect(m_done_button->LeftClickedSignal, &OptionsWnd::DoneClicked, this);
+    m_done_button->LeftClickedSignal.connect(
+        boost::bind(&OptionsWnd::DoneClicked, this));
 }
 
 void OptionsWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -706,7 +710,8 @@ GG::StateButton* OptionsWnd::BoolOption(GG::ListBox* page, int indentation_level
     button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     button->SetCheck(GetOptionsDB().Get<bool>(option_name));
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(button->CheckedSignal, [option_name](const bool& value){ GetOptionsDB().Set(option_name, value); });
+    button->CheckedSignal.connect(
+        [option_name](const bool& value){ GetOptionsDB().Set(option_name, value); });
     return button;
 }
 
@@ -763,8 +768,10 @@ void OptionsWnd::HotkeyOption(GG::ListBox* page, int indentation_level, const st
     GG::ListBox::Row* row = new OptionsListRow(ROW_WIDTH, std::max(button->MinUsableSize().y, text_control->MinUsableSize().y) + 6,
                                                layout, indentation_level);
 
-    GG::Connect(button->LeftClickedSignal, boost::bind(HandleSetHotkeyOption, hotkey_name, button));
-    GG::Connect(button->RightClickedSignal, boost::bind(HandleResetHotkeyOption, hotkey_name, button));
+    button->LeftClickedSignal.connect(
+        boost::bind(HandleSetHotkeyOption, hotkey_name, button));
+    button->RightClickedSignal.connect(
+        boost::bind(HandleResetHotkeyOption, hotkey_name, button));
 
     page->Insert(row);
 }
@@ -801,7 +808,8 @@ GG::Spin<int>* OptionsWnd::IntOption(GG::ListBox* page, int indentation_level, c
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(spin->ValueChangedSignal, [option_name](const int& value){ GetOptionsDB().Set(option_name, value); });
+    spin->ValueChangedSignal.connect(
+        [option_name](const int& value){ GetOptionsDB().Set(option_name, value); });
     return spin;
 }
 
@@ -837,7 +845,8 @@ GG::Spin<double>* OptionsWnd::DoubleOption(GG::ListBox* page, int indentation_le
     spin->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(spin->ValueChangedSignal, [option_name](const double& value){ GetOptionsDB().Set(option_name, value); });
+    spin->ValueChangedSignal.connect(
+        [option_name](const double& value){ GetOptionsDB().Set(option_name, value); });
     return spin;
 }
 
@@ -861,8 +870,10 @@ void OptionsWnd::MusicVolumeOption(GG::ListBox* page, int indentation_level, Sou
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription("UI.sound.music-volume")));
     fb.SetMusicButton(button);
-    GG::Connect(button->CheckedSignal, &OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb);
-    GG::Connect(slider->SlidSignal, &OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb);
+    button->CheckedSignal.connect(
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicClicked, &fb, _1));
+    slider->SlidSignal.connect(
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::MusicVolumeSlid, &fb, _1, _2, _3));
 }
 
 void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const std::string& toggle_option_name,
@@ -888,8 +899,10 @@ void OptionsWnd::VolumeOption(GG::ListBox* page, int indentation_level, const st
     slider->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     slider->SetBrowseText(UserString(GetOptionsDB().GetDescription(volume_option_name)));
     fb.SetEffectsButton(button);
-    GG::Connect(button->CheckedSignal,        &OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb);
-    GG::Connect(slider->SlidAndStoppedSignal, &OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb);
+    button->CheckedSignal.connect(
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::SoundEffectsEnableClicked, &fb, _1));
+    slider->SlidAndStoppedSignal.connect(
+        boost::bind(&OptionsWnd::SoundOptionsFeedback::UISoundsVolumeSlid, &fb, _1, _2, _3));
 }
 
 void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text, const fs::path& path,
@@ -923,15 +936,18 @@ void OptionsWnd::FileOptionImpl(GG::ListBox* page, int indentation_level, const 
     button->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(edit->EditedSignal, [option_name, edit, string_validator](const std::string& str) {
-        if (string_validator && !string_validator(str)) {
-            edit->SetTextColor(GG::CLR_RED);
-        } else {
-            edit->SetTextColor(ClientUI::TextColor());
-            GetOptionsDB().Set<std::string>(option_name, str);
+    edit->EditedSignal.connect(
+        [option_name, edit, string_validator](const std::string& str) {
+            if (string_validator && !string_validator(str)) {
+                edit->SetTextColor(GG::CLR_RED);
+            } else {
+                edit->SetTextColor(ClientUI::TextColor());
+                GetOptionsDB().Set<std::string>(option_name, str);
+            }
         }
-    });
-    GG::Connect(button->LeftClickedSignal, BrowseForPathButtonFunctor(path, filters, edit, directory, relative_path));
+    );
+    button->LeftClickedSignal.connect(
+        BrowseForPathButtonFunctor(path, filters, edit, directory, relative_path));
     if (string_validator && !string_validator(edit->Text()))
         edit->SetTextColor(GG::CLR_RED);
 }
@@ -979,9 +995,8 @@ void OptionsWnd::ColorOption(GG::ListBox* page, int indentation_level, const std
     color_selector->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
     text_control->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     text_control->SetBrowseText(UserString(GetOptionsDB().GetDescription(option_name)));
-    GG::Connect(color_selector->ColorChangedSignal, [option_name](const GG::Clr& clr) {
-        GetOptionsDB().Set<GG::Clr>(option_name, clr);
-    });
+    color_selector->ColorChangedSignal.connect(
+        [option_name](const GG::Clr& clr) { GetOptionsDB().Set<GG::Clr>(option_name, clr); });
 }
 
 void OptionsWnd::FontOption(GG::ListBox* page, int indentation_level, const std::string& option_name, const std::string& text) {
@@ -1093,7 +1108,7 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     //GG::StateButton* limit_FPS_button = BoolOption(page, indentation_level, "limit-fps", UserString("OPTIONS_LIMIT_FPS"));
     //GG::Spin<double>* max_fps_spin = 
     DoubleOption(page, indentation_level,  "max-fps",          UserString("OPTIONS_MAX_FPS"));
-    //GG::Connect(limit_FPS_button->CheckedSignal, [max_fps_spin](bool checked) { max_fps_spin->Disable(!checked); });
+    //limit_FPS_button->CheckedSignal, [max_fps_spin](bool checked) { max_fps_spin->Disable(!checked); });
     //limit_FPS_button->SetCheck(GetOptionsDB().Get<bool>("limit-fps"));
     //limit_FPS_button->CheckedSignal(limit_FPS_button->Checked());
 
@@ -1108,21 +1123,24 @@ void OptionsWnd::ResolutionOption(GG::ListBox* page, int indentation_level) {
     row = new OptionsListRow(ROW_WIDTH, apply_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
                              apply_button, indentation_level);
     page->Insert(row);
-    GG::Connect(apply_button->LeftClickedSignal, &HumanClientApp::Reinitialize, HumanClientApp::GetApp());
+    apply_button->LeftClickedSignal.connect(
+        boost::bind(&HumanClientApp::Reinitialize, HumanClientApp::GetApp()));
 
-    GG::Connect(drop_list->SelChangedSignal, [drop_list](GG::ListBox::iterator it) {
-        if (it == drop_list->end())
-            return;
-        const GG::ListBox::Row* row = *it;
-        if (!row)
-            return;
-        int w, h;
-        using namespace boost::spirit::classic;
-        rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)];
-        parse(row->Name().c_str(), resolution_p);
-        GetOptionsDB().Set<int>("app-width", w);
-        GetOptionsDB().Set<int>("app-height", h);
-    });
+    drop_list->SelChangedSignal.connect(
+        [drop_list](GG::ListBox::iterator it) {
+            if (it == drop_list->end())
+                return;
+            const GG::ListBox::Row* row = *it;
+            if (!row)
+                return;
+            int w, h;
+            using namespace boost::spirit::classic;
+            rule<> resolution_p = int_p[assign_a(w)] >> str_p(" x ") >> int_p[assign_a(h)];
+            parse(row->Name().c_str(), resolution_p);
+            GetOptionsDB().Set<int>("app-width", w);
+            GetOptionsDB().Set<int>("app-height", h);
+        }
+    );
 }
 
 void OptionsWnd::HotkeysPage()
