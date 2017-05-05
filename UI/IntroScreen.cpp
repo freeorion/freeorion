@@ -18,7 +18,6 @@
 
 #include <GG/GUI.h>
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 #include <GG/Texture.h>
 
@@ -96,8 +95,8 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &cre
 {
     m_font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
 
-    Connect(GG::GUI::GetGUI()->WindowResizedSignal,
-            boost::bind(&CreditsWnd::WindowResizedSlot, this, _1, _2));
+    GG::GUI::GetGUI()->WindowResizedSignal.connect(
+        boost::bind(&CreditsWnd::WindowResizedSlot, this, _1, _2));
 }
 
 CreditsWnd::~CreditsWnd() {
@@ -287,16 +286,26 @@ IntroScreen::IntroScreen() :
     m_menu->AttachChild(m_exit_game);
 
     //connect signals and slots
-    GG::Connect(m_single_player->LeftClickedSignal, &IntroScreen::OnSinglePlayer,   this);
-    GG::Connect(m_quick_start->LeftClickedSignal,   &IntroScreen::OnQuickStart,     this);
-    GG::Connect(m_multi_player->LeftClickedSignal,  &IntroScreen::OnMultiPlayer,    this);
-    GG::Connect(m_load_game->LeftClickedSignal,     &IntroScreen::OnLoadGame,       this);
-    GG::Connect(m_options->LeftClickedSignal,       &IntroScreen::OnOptions,        this);
-    GG::Connect(m_pedia->LeftClickedSignal,         &IntroScreen::OnPedia,          this);
-    GG::Connect(m_about->LeftClickedSignal,         &IntroScreen::OnAbout,          this);
-    GG::Connect(m_website->LeftClickedSignal,       &IntroScreen::OnWebsite,        this);
-    GG::Connect(m_credits->LeftClickedSignal,       &IntroScreen::OnCredits,        this);
-    GG::Connect(m_exit_game->LeftClickedSignal,     &IntroScreen::OnExitGame,       this);
+    m_single_player->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnSinglePlayer, this));
+    m_quick_start->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnQuickStart, this));
+    m_multi_player->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnMultiPlayer, this));
+    m_load_game->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnLoadGame, this));
+    m_options->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnOptions, this));
+    m_pedia->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnPedia, this));
+    m_about->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnAbout, this));
+    m_website->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnWebsite, this));
+    m_credits->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnCredits, this));
+    m_exit_game->LeftClickedSignal.connect(
+        boost::bind(&IntroScreen::OnExitGame, this));
 
     DoLayout();
 }
@@ -336,7 +345,8 @@ void IntroScreen::OnPedia() {
     enc_panel.SetIndex();
     enc_panel.ValidatePosition();
 
-    GG::Connect(enc_panel.ClosingSignal, &EncyclopediaDetailPanel::EndRun, &enc_panel);
+    enc_panel.ClosingSignal.connect(
+        boost::bind(&EncyclopediaDetailPanel::EndRun, &enc_panel));
 
     enc_panel.Run();
 }
