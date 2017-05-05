@@ -21,7 +21,6 @@
 #include "../util/MultiplayerCommon.h"
 
 #include <GG/GUI.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <boost/algorithm/string/predicate.hpp>
 
@@ -331,11 +330,16 @@ MessageWnd::MessageWnd(const std::string& config_name) :
     m_edit = new MessageWndEdit();
     AttachChild(m_edit);
 
-    GG::Connect(m_edit->TextEnteredSignal,  &MessageWnd::MessageEntered,                this);
-    GG::Connect(m_edit->UpPressedSignal,    &MessageWnd::MessageHistoryUpRequested,     this);
-    GG::Connect(m_edit->DownPressedSignal,  &MessageWnd::MessageHistoryDownRequested,   this);
-    GG::Connect(m_edit->GainingFocusSignal, TypingSignal);
-    GG::Connect(m_edit->LosingFocusSignal,  DoneTypingSignal);
+    m_edit->TextEnteredSignal.connect(
+        boost::bind(&MessageWnd::MessageEntered, this));
+    m_edit->UpPressedSignal.connect(
+        boost::bind(&MessageWnd::MessageHistoryUpRequested, this));
+    m_edit->DownPressedSignal.connect(
+        boost::bind(&MessageWnd::MessageHistoryDownRequested, this));
+    m_edit->GainingFocusSignal.connect(
+        TypingSignal);
+    m_edit->LosingFocusSignal.connect(
+        DoneTypingSignal);
 
     m_history.push_front("");
 
