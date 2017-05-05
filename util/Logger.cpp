@@ -47,8 +47,8 @@ namespace {
     }
 
 
-    // Compile time constant pointers to constant char arrays.
-    constexpr const char* const log_level_names[] = {"trace", "debug", "info", "warn", "error"};
+    // Constant pointers to constant char arrays.
+    const char* const log_level_names[] = {"trace", "debug", "info", "warn", "error"};
 }
 
 
