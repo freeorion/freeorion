@@ -16,7 +16,6 @@
 #include <GG/Button.h>
 #include <GG/Clr.h>
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <boost/filesystem/operations.hpp>
 
@@ -41,11 +40,16 @@ InGameMenu::InGameMenu():
     AttachChild(m_exit_btn);
     AttachChild(m_done_btn);
 
-    GG::Connect(m_save_btn->LeftClickedSignal,      &InGameMenu::Save,      this);
-    GG::Connect(m_load_btn->LeftClickedSignal,      &InGameMenu::Load,      this);
-    GG::Connect(m_options_btn->LeftClickedSignal,   &InGameMenu::Options,   this);
-    GG::Connect(m_exit_btn->LeftClickedSignal,      &InGameMenu::Exit,      this);
-    GG::Connect(m_done_btn->LeftClickedSignal,      &InGameMenu::Done,      this);
+    m_save_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Save, this));
+    m_load_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Load, this));
+    m_options_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Options, this));
+    m_exit_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Exit, this));
+    m_done_btn->LeftClickedSignal.connect(
+        boost::bind(&InGameMenu::Done, this));
 
     if (!HumanClientApp::GetApp()->SinglePlayerGame()) {
         // need lobby to load a multiplayer game; menu load of a file is insufficient
