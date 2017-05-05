@@ -20,6 +20,8 @@
 #include <cfloat>
 #include <unordered_set>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/uuid/nil_generator.hpp>
+#include <boost/uuid/random_generator.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -1261,6 +1263,18 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
         else
             m_monster_designs[design->Name()] = std::move(design);
 
+    // Check for nil UUID
+    const auto check_uuid = [](ShipDesign& design) {
+        if (design.UUID() == boost::uuids::uuid{{0}}) {
+            WarnLogger() << "ShipDesign " << design.Name() << " has a nil UUID.  It should be fixed on disk.";
+            design.SetUUID(boost::uuids::random_generator()());
+        }
+    };
+
+    for (auto& design : m_ship_designs)
+        check_uuid(*design.second);
+    for (auto& design : m_monster_designs)
+        check_uuid(*design.second);
 
     TraceLogger() << "Predefined Ship Designs:";
     for (const auto& entry : m_ship_designs)
