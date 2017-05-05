@@ -24,7 +24,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 #include <iterator>
@@ -544,12 +543,12 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
 
     // selectable list of buildable items
     AttachChild(m_buildable_items);
-    GG::Connect(m_buildable_items->LeftClickedSignal,
-                &BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this);
-    GG::Connect(m_buildable_items->DoubleClickedSignal,
-                &BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this);
-    GG::Connect(m_buildable_items->RightClickedSignal,
-                &BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this);
+    m_buildable_items->LeftClickedSignal.connect(
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
+    m_buildable_items->DoubleClickedSignal.connect(
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this, _1, _2, _3));
+    m_buildable_items->RightClickedSignal.connect(
+        boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
     //GG::ListBox::Row* header = new GG::ListBox::Row();
     //std::shared_ptr<GG::Font> font = ClientUI::GetFont();
@@ -631,10 +630,9 @@ void BuildDesignatorWnd::BuildSelector::SetEmpireID(int empire_id/* = ALL_EMPIRE
         // repopulating the list, as would be dine in Refresh()
         m_empire_ship_designs_changed_signal.disconnect();
         if (const Empire* empire = GetEmpire(m_empire_id))
-            m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
-                                                               &BuildDesignatorWnd::BuildSelector::Refresh,
-                                                               this,
-                                                               boost::signals2::at_front);
+            m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
+                                                    boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+                                                    boost::signals2::at_front);
     }
 }
 
@@ -647,10 +645,9 @@ void BuildDesignatorWnd::BuildSelector::Refresh() {
 
     m_empire_ship_designs_changed_signal.disconnect();
     if (const Empire* empire = GetEmpire(m_empire_id))
-        m_empire_ship_designs_changed_signal = GG::Connect(empire->ShipDesignsChangedSignal,
-                                                           &BuildDesignatorWnd::BuildSelector::Refresh,
-                                                           this,
-                                                           boost::signals2::at_front);
+        m_empire_ship_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
+                                                boost::bind(&BuildDesignatorWnd::BuildSelector::Refresh, this),
+                                                boost::signals2::at_front);
     PopulateList();
 }
 
@@ -956,31 +953,44 @@ BuildDesignatorWnd::BuildDesignatorWnd(GG::X w, GG::Y h) :
     m_side_panel(nullptr)
 {
     m_enc_detail_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, PROD_PEDIA_WND_NAME);
-    GG::Connect(m_enc_detail_panel->ClosingSignal, boost::bind(&BuildDesignatorWnd::HidePedia, this));     // Wnd is manually closed by user
+    // Wnd is manually closed by user
+    m_enc_detail_panel->ClosingSignal.connect(
+        boost::bind(&BuildDesignatorWnd::HidePedia, this));
 
     m_side_panel = new SidePanel(PROD_SIDEPANEL_WND_NAME);
     m_build_selector = new BuildSelector(PROD_SELECTOR_WND_NAME);
     InitializeWindows();
-    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal, &BuildDesignatorWnd::InitializeWindows, this);
+    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+        boost::bind(&BuildDesignatorWnd::InitializeWindows, this));
 
     m_side_panel->EnableSelection();
 
-    GG::Connect(m_build_selector->DisplayBuildingTypeSignal,    static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),  m_enc_detail_panel);
-    GG::Connect(m_build_selector->DisplayShipDesignSignal,      static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem),    m_enc_detail_panel);
+    m_build_selector->DisplayBuildingTypeSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const BuildingType*)>(&EncyclopediaDetailPanel::SetItem),  m_enc_detail_panel, _1));
+    m_build_selector->DisplayShipDesignSignal.connect(
+        boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem), m_enc_detail_panel, _1));
 
-    GG::Connect(m_build_selector->ShowPediaSignal,        &BuildDesignatorWnd::ShowPedia,          this);
-    GG::Connect(m_build_selector->RequestBuildItemSignal, &BuildDesignatorWnd::BuildItemRequested, this);
+    m_build_selector->ShowPediaSignal.connect(
+        boost::bind(&BuildDesignatorWnd::ShowPedia, this));
+    m_build_selector->RequestBuildItemSignal.connect(
+        boost::bind(&BuildDesignatorWnd::BuildItemRequested, this, _1, _2, _3));
 
-    GG::Connect(SidePanel::PlanetSelectedSignal, PlanetSelectedSignal);
-    GG::Connect(SidePanel::SystemSelectedSignal, SystemSelectedSignal);
+    SidePanel::PlanetSelectedSignal.connect(PlanetSelectedSignal);
+    SidePanel::SystemSelectedSignal.connect(SystemSelectedSignal);
 
     // connect build type button clicks to update display
-    GG::Connect(m_build_selector->m_build_type_buttons[BT_BUILDING]->CheckedSignal, boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_BUILDING, true));
-    GG::Connect(m_build_selector->m_build_type_buttons[BT_SHIP]->CheckedSignal,     boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_SHIP, true));
+    m_build_selector->m_build_type_buttons[BT_BUILDING]->CheckedSignal.connect(
+        boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_BUILDING, true));
+    m_build_selector->m_build_type_buttons[BT_SHIP]->CheckedSignal.connect(
+        boost::bind(&BuildDesignatorWnd::ToggleType, this, BT_SHIP, true));
 
     // connect availability button clicks to update display
-    GG::Connect(m_build_selector->m_availability_buttons.at(0)->CheckedSignal, boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, true, true));    // available items
-    GG::Connect(m_build_selector->m_availability_buttons.at(1)->CheckedSignal, boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, false, true));   // UNavailable items
+    // available items
+    m_build_selector->m_availability_buttons.at(0)->CheckedSignal.connect(
+        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, true, true));
+    // UNavailable items
+    m_build_selector->m_availability_buttons.at(1)->CheckedSignal.connect(
+        boost::bind(&BuildDesignatorWnd::ToggleAvailabilitly, this, false, true));
 
     AttachChild(m_enc_detail_panel);
     AttachChild(m_build_selector);
