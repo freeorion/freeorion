@@ -423,9 +423,12 @@ bool Spin<T>::EventFilter(Wnd* w, const WndEvent& event)
 template<class T>
 void Spin<T>::ConnectSignals()
 {
-    Connect(m_edit->FocusUpdateSignal, &Spin::ValueUpdated, this);
-    Connect(m_up_button->LeftClickedSignal, boost::bind(&Spin::IncrImpl, this, true));
-    Connect(m_down_button->LeftClickedSignal, boost::bind(&Spin::DecrImpl, this, true));
+    m_edit->FocusUpdateSignal.connect(
+        boost::bind(&Spin::ValueUpdated, this, _1));
+    m_up_button->LeftClickedSignal.connect(
+        boost::bind(&Spin::IncrImpl, this, true));
+    m_down_button->LeftClickedSignal.connect(
+        boost::bind(&Spin::DecrImpl, this, true));
 }
 
 template<class T>
