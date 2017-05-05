@@ -13,7 +13,6 @@
 
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <boost/lexical_cast.hpp>
 
@@ -301,10 +300,14 @@ namespace {
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
             AttachChild(m_link_text);
 
-            GG::Connect(m_link_text->LinkClickedSignal,       &HandleLinkClick);
-            GG::Connect(m_link_text->LinkDoubleClickedSignal, &HandleLinkClick);
-            GG::Connect(m_link_text->LinkRightClickedSignal,  &HandleLinkClick);
-            GG::Connect(m_link_text->RightClickedSignal,      &SitRepDataPanel::RClick,     this);
+            m_link_text->LinkClickedSignal.connect(
+                &HandleLinkClick);
+            m_link_text->LinkDoubleClickedSignal.connect(
+                &HandleLinkClick);
+            m_link_text->LinkRightClickedSignal.connect(
+                &HandleLinkClick);
+            m_link_text->RightClickedSignal.connect(
+                boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
         }
 
         bool                m_initialized;
@@ -356,7 +359,8 @@ namespace {
                                           ClientWidth() - GG::X(2 * GetLayout()->BorderMargin()),
                                           ClientHeight() - GG::Y(2 * GetLayout()->BorderMargin()), m_sitrep);
             push_back(m_panel);
-            GG::Connect(m_panel->RightClickedSignal, &SitRepRow::RClick, this);
+            m_panel->RightClickedSignal.connect(
+                boost::bind(&SitRepRow::RClick, this, _1, _2));
         }
 
         const SitRepEntry&  GetSitRepEntry() const { return m_panel->GetSitRepEntry(); }
@@ -398,12 +402,18 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
     m_filter_button = new CUIButton(UserString("FILTERS"));
     AttachChild(m_filter_button);
 
-    GG::Connect(m_prev_turn_button->LeftClickedSignal,  &SitRepPanel::PrevClicked,          this);
-    GG::Connect(m_next_turn_button->LeftClickedSignal,  &SitRepPanel::NextClicked,          this);
-    GG::Connect(m_last_turn_button->LeftClickedSignal,  &SitRepPanel::LastClicked,          this);
-    GG::Connect(m_filter_button->LeftClickedSignal,     &SitRepPanel::FilterClicked,        this);
-    GG::Connect(m_sitreps_lb->DoubleClickedSignal,      &SitRepPanel::IgnoreSitRep,         this);
-    GG::Connect(m_sitreps_lb->RightClickedSignal,       &SitRepPanel::DismissalMenu,        this);
+    m_prev_turn_button->LeftClickedSignal.connect(
+        boost::bind(&SitRepPanel::PrevClicked, this));
+    m_next_turn_button->LeftClickedSignal.connect(
+        boost::bind(&SitRepPanel::NextClicked, this));
+    m_last_turn_button->LeftClickedSignal.connect(
+        boost::bind(&SitRepPanel::LastClicked, this));
+    m_filter_button->LeftClickedSignal.connect(
+        boost::bind(&SitRepPanel::FilterClicked, this));
+    m_sitreps_lb->DoubleClickedSignal.connect(
+        boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
+    m_sitreps_lb->RightClickedSignal.connect(
+        boost::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
 
     DoLayout();
 }
