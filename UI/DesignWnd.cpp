@@ -1980,7 +1980,6 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
             return;
 
         DesignRightClickedSignal(design);
-        // TODO: Subsequent code assumes we have a design, so we may want to do something about that...
 
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
