@@ -5,7 +5,8 @@
 
 #include "Serialize.ipp"
 #include <boost/serialization/version.hpp>
-
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/nil_generator.hpp>
 
 
 ////////////////////////////////////////////////////////////
@@ -143,6 +144,23 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order);
     ar  & BOOST_SERIALIZATION_NVP(m_design_id);
+
+    // UUID serialization as a primitive doesn't work as expected from the documentation
+    // ar & BOOST_SERIALIZATION_NVP(m_uuid);
+    // This workaround instead serializes a string representation.
+    if (Archive::is_saving::value) {
+        auto string_uuid = boost::uuids::to_string(m_uuid);
+        ar & BOOST_SERIALIZATION_NVP(string_uuid);
+    } else {
+        std::string string_uuid;
+        ar & BOOST_SERIALIZATION_NVP(string_uuid);
+        try {
+            m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+        } catch (const boost::bad_lexical_cast&) {
+            m_uuid = boost::uuids::nil_generator()();
+        }
+    }
+
     ar  & BOOST_SERIALIZATION_NVP(m_delete_design_from_empire);
     ar  & BOOST_SERIALIZATION_NVP(m_create_new_design);
     ar  & BOOST_SERIALIZATION_NVP(m_move_design);

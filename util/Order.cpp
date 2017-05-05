@@ -17,6 +17,8 @@
 #include "../Empire/EmpireManager.h"
 #include "../Empire/Empire.h"
 
+#include <boost/uuid/nil_generator.hpp>
+
 #include <fstream>
 #include <vector>
 
@@ -952,23 +954,27 @@ void ProductionQueueOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ShipDesignOrder
 ////////////////////////////////////////////////
-ShipDesignOrder::ShipDesignOrder()
+ShipDesignOrder::ShipDesignOrder() :
+    m_uuid(boost::uuids::nil_generator()())
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember) :
     Order(empire),
-    m_design_id(existing_design_id_to_remember)
+    m_design_id(existing_design_id_to_remember),
+    m_uuid(boost::uuids::nil_generator()())
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy) :
     Order(empire),
     m_design_id(design_id_to_erase),
+    m_uuid(boost::uuids::nil_generator()()),
     m_delete_design_from_empire(true)
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
     Order(empire),
     m_design_id(new_design_id),
+    m_uuid(ship_design.UUID()),
     m_create_new_design(true),
     m_name(ship_design.Name()),
     m_description(ship_design.Description()),
@@ -984,6 +990,7 @@ ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name/* = ""*/, const std::string& new_description/* = ""*/) :
     Order(empire),
     m_design_id(existing_design_id),
+    m_uuid(boost::uuids::nil_generator()()),
     m_update_name_or_description(true),
     m_name(new_name),
     m_description(new_description)
@@ -992,6 +999,7 @@ ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::
 ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_move, int design_id_after) :
     Order(empire),
     m_design_id(design_id_to_move),
+    m_uuid(boost::uuids::nil_generator()()),
     m_move_design(true),
     m_design_id_after(design_id_after)
 {}
@@ -1019,7 +1027,7 @@ void ShipDesignOrder::ExecuteImpl() const {
         ShipDesign* new_ship_design = new ShipDesign(m_name, m_description,
                                                      m_designed_on_turn, EmpireID(), m_hull, m_parts,
                                                      m_icon, m_3D_model, m_name_desc_in_stringtable,
-                                                     m_is_monster);
+                                                     m_is_monster, m_uuid);
 
         universe.InsertShipDesignID(new_ship_design, m_design_id);
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());

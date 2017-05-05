@@ -7,6 +7,7 @@
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/uuid/uuid.hpp>
 
 #include <string>
 #include <vector>
@@ -613,6 +614,7 @@ private:
     void ExecuteImpl() const override;
 
     int m_design_id = INVALID_OBJECT_ID;
+    boost::uuids::uuid m_uuid;
     bool m_update_name_or_description = false;
     bool m_delete_design_from_empire = false;
     bool m_create_new_design = false;
