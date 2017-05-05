@@ -23,6 +23,7 @@
 
 #include <boost/timer.hpp>
 #include <boost/python/str.hpp>
+#include <boost/uuid/random_generator.hpp>
 
 
 #include <map>
@@ -847,9 +848,11 @@ namespace AIInterface {
         int empire_id = AIClientApp::GetApp()->EmpireID();
         int current_turn = CurrentTurn();
 
+        const auto uuid = boost::uuids::random_generator()();
+
         // create design from stuff chosen in UI
         ShipDesign* design = new ShipDesign(name, description, current_turn, ClientApp::GetApp()->EmpireID(),
-                                            hull, parts, icon, model, nameDescInStringTable);
+                                            hull, parts, icon, model, nameDescInStringTable, false, uuid);
 
         if (!design) {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
