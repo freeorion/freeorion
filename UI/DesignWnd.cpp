@@ -326,32 +326,14 @@ namespace {
             WriteToFile(file, ss.str());
         }
 
-        /** Save the design with the original filename or throw out_of_range..*/
-        void SaveDesign(const boost::uuids::uuid &uuid) {
-            const auto& design_and_filename = m_saved_designs.at(uuid);
-
-            WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
-        }
-
-        void SaveDesign(int design_id) {
-            const ShipDesign* design = GetShipDesign(design_id);
-            if (!design)
-                return;
-
-            // Save with the original filename if possible
-            if (m_saved_designs.count(design->UUID())) {
-                SaveDesign(design->UUID());
-                return;
+        std::list<boost::uuids::uuid>::const_iterator InsertBefore(
+            std::list<boost::uuids::uuid>::const_iterator next, const ShipDesign& design)
+        {
+            if(design.UUID() == boost::uuids::uuid{{0}}) {
+                ErrorLogger() << "Ship design has a nil UUID for " << design.Name() << ". Not saving.";
+                return next;
             }
 
-            const auto save_path = CreateSaveFileNameForDesign(*design);
-
-            WriteToFile(save_path, design->Dump());
-        }
-
-        std::list<boost::uuids::uuid>::iterator InsertBefore(
-            std::list<boost::uuids::uuid>::iterator next, const ShipDesign& design)
-        {
             if (m_saved_designs.count(design.UUID())) {
                 // UUID already exists so this is a move.  Remove the old UUID location
                 const auto existing_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), design.UUID());
@@ -380,7 +362,7 @@ namespace {
             return retval;
         }
 
-        std::list<boost::uuids::uuid>::iterator Erase(std::list<boost::uuids::uuid>::iterator erasee)
+        std::list<boost::uuids::uuid>::const_iterator Erase(std::list<boost::uuids::uuid>::const_iterator erasee)
         {
             if (erasee == m_ordered_uuids.end())
                 return erasee;
@@ -401,6 +383,29 @@ namespace {
                 throw std::runtime_error("Attempted to create more than one SavedDesignsManager.");
             s_instance = this;
             RefreshDesigns();
+        }
+
+        /** Save the design with the original filename or throw out_of_range..*/
+        void SaveDesign(const boost::uuids::uuid &uuid) {
+            const auto& design_and_filename = m_saved_designs.at(uuid);
+
+            WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
+        }
+
+        void SaveDesign(int design_id) {
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design)
+                return;
+
+            // Save with the original filename if possible
+            if (m_saved_designs.count(design->UUID())) {
+                SaveDesign(design->UUID());
+                return;
+            }
+
+            const auto save_path = CreateSaveFileNameForDesign(*design);
+
+            WriteToFile(save_path, design->Dump());
         }
 
         std::list<boost::uuids::uuid> m_ordered_uuids;
@@ -2005,7 +2010,9 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
             }
         };
 
-        auto save_design_action = [&design_id](){ GetSavedDesignsManager().SaveDesign(design_id); };
+        auto save_design_action = [&design]() {
+            GetSavedDesignsManager().InsertBefore(GetSavedDesignsManager().GetOrderedDesignUUIDs().end(), *design);
+        };
 
         // create popup menu with a commands in it
         CUIPopupMenu popup(pt.x, pt.y);
