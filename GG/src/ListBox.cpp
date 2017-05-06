@@ -727,8 +727,8 @@ Alignment ListBox::RowAlignment(iterator it) const
 double ListBox::ColStretch(std::size_t n) const
 { return m_col_stretches[n]; }
 
-const std::set<std::string>& ListBox::AllowedDropTypes() const
-{ return m_allowed_drop_types; }
+bool ListBox::AllowedDropType(const std::string& type) const
+{ return m_allowed_drop_types.count("") || m_allowed_drop_types.count(type); }
 
 bool ListBox::AutoScrollDuringDragDrops() const
 { return m_auto_scroll_during_drag_drops; }

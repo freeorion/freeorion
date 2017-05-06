@@ -99,8 +99,8 @@ void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIte
     }
 
     for (DropsAcceptableIter it = first; it != last; ++it) {
-        it->second = m_order_issuing_enabled &&
-            AllowedDropTypes().find(it->first->DragDropDataType()) != AllowedDropTypes().end();
+        it->second = (m_order_issuing_enabled &&
+                      AllowedDropType(it->first->DragDropDataType()));
     }
 }
 
@@ -116,7 +116,7 @@ void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
     GG::Wnd* wnd = *wnds.begin();
     const std::string& drop_type = wnd->DragDropDataType();
     GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(wnd);
-    if (AllowedDropTypes().find(drop_type) == AllowedDropTypes().end() ||
+    if (!AllowedDropType(drop_type) ||
         !row ||
         std::find(begin(), end(), row) == end())
     {
@@ -163,8 +163,7 @@ void QueueListBox::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>
     CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 
     if (drop_wnds_acceptable.size() == 1 &&
-        AllowedDropTypes().find(drop_wnds_acceptable.begin()->first->DragDropDataType()) !=
-        AllowedDropTypes().end())
+        AllowedDropType(drop_wnds_acceptable.begin()->first->DragDropDataType()))
     {
         m_drop_point = RowUnderPt(pt);
         m_show_drop_point = true;

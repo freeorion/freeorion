@@ -300,10 +300,9 @@ public:
     double          ColStretch(std::size_t n) const;   ///< Return the stretch factor of column \a n.
     Alignment       RowAlignment(iterator it) const;   ///< returns the alignment of row \a it; must be ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM; not range-checked
 
-    /** Returns the set of data types allowed to be dropped over this ListBox
-        when drag-and-drop is enabled. \note If this set contains "", all drop
-        types are allowed. */
-    const std::set<std::string>& AllowedDropTypes() const;
+    /** Returns true iff \p type is allowed to be dropped over this ListBox
+        when drag-and-drop is enabled. */
+    bool AllowedDropType(const std::string& type) const;
 
     /** Whether the list should autoscroll when the user is attempting to drop
         an item into a location that is not currently visible. */
