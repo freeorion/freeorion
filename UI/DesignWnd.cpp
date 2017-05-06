@@ -2156,7 +2156,7 @@ void BasesListBox::ShowSavedDesigns(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = true;
     m_showing_monsters = false;
-    EnableOrderIssuing(false);
+    EnableOrderIssuing(m_enabled);
     if (refresh_list)
         Populate();
 }
@@ -2205,7 +2205,7 @@ void BasesListBox::HideAvailability(bool available, bool refresh_list) {
 
 void BasesListBox::EnableOrderIssuing(bool enable/* = true*/) {
     m_enabled = enable;
-    QueueListBox::EnableOrderIssuing(m_enabled && m_showing_completed_designs);
+    QueueListBox::EnableOrderIssuing(m_enabled && (m_showing_completed_designs || m_showing_saved_designs));
 }
 
 
@@ -2294,7 +2294,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_designs_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
-    m_saved_designs_list = new BasesListBox();
+    m_saved_designs_list = new BasesListBox(SAVED_DESIGN_ROW_DROP_STRING);
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
     m_saved_designs_list->ShowSavedDesigns(true);
