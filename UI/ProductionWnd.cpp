@@ -770,7 +770,7 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
         boost::bind(&ProductionWnd::ChangeBuildQuantitySlot, this, _1, _2));
     m_build_designator_wnd->SystemSelectedSignal.connect(
         SystemSelectedSignal);
-    m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->MovedSignal.connect(
         boost::bind(&ProductionWnd::QueueItemMoved, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
         boost::bind(&ProductionWnd::DeleteQueueItem, this, _1));
@@ -921,7 +921,7 @@ void ProductionWnd::SelectSystem(int system_id) {
     }
 }
 
-void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
+void ProductionWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) {
     if (!m_order_issuing_enabled)
         return;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
@@ -929,10 +929,16 @@ void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) 
     if (!empire)
         return;
 
+    // This precorrects the position for a factor in Empire::MoveProductionWithinQueue
+    auto position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
+    auto original_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), original_position_it);
+    auto direction = original_position < position;
+    auto corrected_position = position + (direction ? 1 : 0);
+
     HumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ProductionQueueOrder>(client_empire_id,
-                                               boost::polymorphic_downcast<QueueRow*>(row)->queue_index,
-                                               position));
+                                               original_position,
+                                               corrected_position));
 
     empire->UpdateProductionQueue();
 }
