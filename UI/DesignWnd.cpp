@@ -1741,6 +1741,26 @@ void BasesListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
         control->Resize(ListRowSize());
         HumanClientApp::GetApp()->Orders()
             .IssueOrder(std::make_shared<ShipDesignOrder>(m_empire_id_shown, design_id, insert_before_id));
+        return;
+    }
+
+    if (BasesListBox::SavedDesignListBoxRow* control =
+        dynamic_cast<BasesListBox::SavedDesignListBoxRow*>(*row_it))
+    {
+        const auto& uuid = control->DesignUUID();
+
+        iterator insert_before_row = std::next(row_it);
+
+        const BasesListBox::SavedDesignListBoxRow* insert_before_control = (insert_before_row == end()) ? nullptr :
+            boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(*insert_before_row);
+        const auto& next_uuid = insert_before_control
+            ? insert_before_control->DesignUUID() : boost::uuids::uuid{{0}};
+
+        if (uuid == next_uuid)
+            return;
+
+        if (GetSavedDesignsManager().MoveBefore(uuid, next_uuid))
+            control->Resize(ListRowSize());
     }
 }
 
