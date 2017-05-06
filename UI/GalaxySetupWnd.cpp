@@ -194,25 +194,25 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
     m_random->LeftClickedSignal.connect(
         boost::bind(&GalaxySetupPanel::RandomClicked, this));
     m_seed_edit->FocusUpdateSignal.connect(
-        boost::bind(&GalaxySetupPanel::SeedChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_stars_spin->ValueChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged_, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_galaxy_shapes_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_galaxy_ages_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_starlane_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_planet_density_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_specials_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_monster_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_native_freq_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_ai_aggression_list->SelChangedSignal.connect(
-        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+        boost::bind(&GalaxySetupPanel::SettingChanged, this));
     m_galaxy_shapes_list->SelChangedSignal.connect(
         boost::bind(&GalaxySetupPanel::ShapeChanged, this, _1));
 
@@ -312,7 +312,7 @@ void GalaxySetupPanel::RandomClicked() {
         s += alphanum[ RandSmallInt(0, (sizeof(alphanum) - 2))];
     m_seed_edit->SetText(s);
     //std::cout << "GalaxySetupPanel::RandomClicked() new seed: " << s << std::endl;
-    SettingChanged_(0);
+    SettingChanged();
 }
 
 const std::string& GalaxySetupPanel::GetSeed() const
@@ -477,16 +477,10 @@ void GalaxySetupPanel::GetSetupData(GalaxySetupData& setup_data) const {
     setup_data.m_ai_aggr =          GetAIAggression();
 }
 
-void GalaxySetupPanel::SettingChanged_(int) {
+void GalaxySetupPanel::SettingChanged() {
     Sound::TempUISoundDisabler sound_disabler;
     SettingsChangedSignal();
 }
-
-void GalaxySetupPanel::SettingChanged(GG::DropDownList::iterator)
-{ SettingChanged_(0); }
-
-void GalaxySetupPanel::SeedChanged(const std::string& newseed)
-{ SettingChanged_(0); }
 
 void GalaxySetupPanel::ShapeChanged(GG::DropDownList::iterator it)
 { ImageChangedSignal(m_textures[m_galaxy_shapes_list->IteratorToIndex(it)]); }

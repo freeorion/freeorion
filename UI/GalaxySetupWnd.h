@@ -58,9 +58,7 @@ public:
 private:
     void DoLayout();
     void RandomClicked();
-    void SettingChanged_(int);
-    void SettingChanged(GG::ListBox::iterator);
-    void SeedChanged(const std::string& newseed);
+    void SettingChanged();
     void ShapeChanged(GG::ListBox::iterator it);
 
     GG::Label*          m_seed_label;
