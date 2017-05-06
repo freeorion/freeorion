@@ -4,7 +4,6 @@
 #include <GG/GUI.h>
 #include <GG/Scroll.h>
 #include <GG/ScrollPanel.h>
-#include <GG/SignalsAndSlots.h>
 
 #include "../LinkText.h"
 
@@ -139,8 +138,10 @@ namespace {
     {
         AccordionPanel::SetInteriorColor(ClientUI::CtrlColor());
 
-        GG::Connect(m_expand_button->LeftClickedSignal, &CombatLogAccordionPanel::ToggleExpansion, this);
-        GG::Connect(this->ExpandCollapseSignal, &CombatLogWnd::Impl::HandleWndChanged, &log);
+        m_expand_button->LeftClickedSignal.connect(
+            boost::bind(&CombatLogAccordionPanel::ToggleExpansion, this));
+        this->ExpandCollapseSignal.connect(
+            boost::bind(&CombatLogWnd::Impl::HandleWndChanged, &log));
 
         SetBorderMargin(BORDER_MARGIN);
 
@@ -238,14 +239,14 @@ namespace {
             // Register for signals that might bring the text into view
 
             if (CombatLogWnd const* log = FindParentOfType<CombatLogWnd>(&parent)) {
-                m_signals.push_back(
-                    GG::Connect(log->WndChangedSignal, &LazyScrollerLinkText::HandleMaybeVisible, this));
+                m_signals.push_back(log->WndChangedSignal.connect(
+                    boost::bind(&LazyScrollerLinkText::HandleMaybeVisible, this)));
             }
 
             if (GG::ScrollPanel const * scroll_panel = FindParentOfType<GG::ScrollPanel>(&parent)) {
                 GG::Scroll const* scroll = scroll_panel->GetScroll();
-                m_signals.push_back(
-                    GG::Connect(scroll->ScrolledAndStoppedSignal, &LazyScrollerLinkText::HandleScrolledAndStopped, this));
+                m_signals.push_back(scroll->ScrolledAndStoppedSignal.connect(
+                    boost::bind(&LazyScrollerLinkText::HandleScrolledAndStopped, this, _1, _2, _3, _4)));
 
             }
 
@@ -313,7 +314,8 @@ LinkText * CombatLogWnd::Impl::DecorateLinkText(std::string const & text) {
     links->LinkClickedSignal.connect(m_wnd.LinkClickedSignal);
     links->LinkDoubleClickedSignal.connect(m_wnd.LinkDoubleClickedSignal);
     links->LinkRightClickedSignal.connect(m_wnd.LinkRightClickedSignal);
-    GG::Connect(links->ChangedSignal, &CombatLogWnd::Impl::HandleWndChanged, this);
+    links->ChangedSignal.connect(
+        boost::bind(&CombatLogWnd::Impl::HandleWndChanged, this));
 
     return links;
 }
