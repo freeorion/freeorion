@@ -362,6 +362,33 @@ namespace {
             return retval;
         }
 
+        bool MoveBefore(const boost::uuids::uuid& moved_uuid, const boost::uuids::uuid& next_uuid) {
+            if (!m_saved_designs.count(moved_uuid)) {
+                ErrorLogger() << "Unable to move saved design because moved design is missing.";
+                return false;
+            }
+
+            if (next_uuid != boost::uuids::uuid{{0}} && !m_saved_designs.count(next_uuid)) {
+                ErrorLogger() << "Unable to move saved design because target design is missing.";
+                return false;
+            }
+
+            const auto moved_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), moved_uuid);
+            if (moved_it == m_ordered_uuids.end()) {
+                ErrorLogger() << "Unable to move saved design because moved design is missing.";
+                return false;
+            }
+
+            m_ordered_uuids.erase(moved_it);
+
+            const auto next_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), next_uuid);
+
+            // Insert in the list.
+            m_ordered_uuids.insert(next_it, moved_uuid);
+            SaveManifest();
+            return true;
+        }
+
         std::list<boost::uuids::uuid>::const_iterator Erase(std::list<boost::uuids::uuid>::const_iterator erasee)
         {
             if (erasee == m_ordered_uuids.end())
