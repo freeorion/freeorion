@@ -23,6 +23,8 @@ public:
 
     GG::X           RowWidth() const;
 
+    virtual void    KeyPress(GG::Key key, boost::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys);
+
     virtual void    EnableOrderIssuing(bool enable = true);
     bool            OrderIssuingEnabled() const { return m_order_issuing_enabled; }
     bool            DisplayingValidQueueItems(); ///< whether or not this QueueListBox is displaying valid queue items, as opposed to, for example, a prompt for the user to enter an item
