@@ -16,7 +16,6 @@
 #include "../universe/Enums.h"
 
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <algorithm>
 
@@ -543,14 +542,18 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
     m_player_list = new PlayerListBox();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
-    GG::Connect(m_player_list->SelChangedSignal,            &PlayerListWnd::PlayerSelectionChanged, this);
-    GG::Connect(m_player_list->DoubleClickedSignal,         &PlayerListWnd::PlayerDoubleClicked,    this);
-    GG::Connect(m_player_list->RightClickedSignal,          &PlayerListWnd::PlayerRightClicked,     this);
+    m_player_list->SelChangedSignal.connect(
+        boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, _1));
+    m_player_list->DoubleClickedSignal.connect(
+        boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, _1, _2, _3));
+    m_player_list->RightClickedSignal.connect(
+        boost::bind(&PlayerListWnd::PlayerRightClicked, this, _1, _2, _3));
     AttachChild(m_player_list);
 
-    boost::function<void(int, int)> update_this = boost::bind(&PlayerListWnd::Update, this);
-    GG::Connect(Empires().DiplomaticStatusChangedSignal,    update_this);
-    GG::Connect(Empires().DiplomaticMessageChangedSignal,   update_this);
+    Empires().DiplomaticStatusChangedSignal.connect(
+        boost::bind(&PlayerListWnd::Update, this));
+    Empires().DiplomaticMessageChangedSignal.connect(
+        boost::bind(&PlayerListWnd::Update, this));
     DoLayout();
 
     Refresh();
