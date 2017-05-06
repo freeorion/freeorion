@@ -1379,7 +1379,7 @@ MapWnd::MapWnd() :
     GG::GUI::GetGUI()->Register(m_zoom_slider);
     m_zoom_slider->Hide();
     m_zoom_slider->SlidSignal.connect(
-        boost::bind(&MapWnd::ZoomSlid, this, _1, _2, _3));
+        boost::bind(&MapWnd::SetZoom, this, _1, false));
     GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider").connect(
         boost::bind(&MapWnd::RefreshSliders, this));
 
@@ -5110,9 +5110,6 @@ void MapWnd::SetZoom(double steps_in, bool update_slide, const GG::Pt& position)
 
     ZoomedSignal(ZoomFactor());
 }
-
-void MapWnd::ZoomSlid(double pos, double low, double high)
-{ SetZoom(pos, false); }
 
 void MapWnd::CorrectMapPosition(GG::Pt& move_to_pt) {
     GG::X contents_width(static_cast<int>(ZoomFactor() * GetUniverse().UniverseWidth()));
