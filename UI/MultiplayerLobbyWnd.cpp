@@ -3,7 +3,6 @@
 #include <GG/Button.h>
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 #include "../util/i18n.h"
@@ -183,7 +182,8 @@ namespace {
                 }
             }
 
-            GG::Connect(SelChangedSignal, &TypeSelector::SelectionChanged, this);
+            SelChangedSignal.connect(
+                boost::bind(&TypeSelector::SelectionChanged, this, _1));
         }
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -223,7 +223,8 @@ namespace {
             if (disabled)
                 type_drop->Disable();
             else
-                GG::Connect(type_drop->TypeChangedSignal,           &NewGamePlayerRow::PlayerTypeChanged,   this);
+                type_drop->TypeChangedSignal.connect(
+                    boost::bind(&NewGamePlayerRow::PlayerTypeChanged, this, _1));
 
             // player name text
             push_back(new CUILabel(player_data.m_player_name));
@@ -261,7 +262,8 @@ namespace {
             if (disabled)
                 edit->Disable();
             else
-                GG::Connect(edit->FocusUpdateSignal,                &NewGamePlayerRow::EmpireNameChanged,   this);
+                edit->FocusUpdateSignal.connect(
+                    boost::bind(&NewGamePlayerRow::EmpireNameChanged, this, _1));
 
             // empire colour selector
             EmpireColorSelector* color_selector = new EmpireColorSelector(PlayerFontHeight() + PlayerRowMargin());
@@ -270,7 +272,8 @@ namespace {
             if (disabled)
                 color_selector->Disable();
             else
-                GG::Connect(color_selector->ColorChangedSignal,     &NewGamePlayerRow::ColorChanged,        this);
+                color_selector->ColorChangedSignal.connect(
+                    boost::bind(&NewGamePlayerRow::ColorChanged, this, _1));
 
             // species selector
             SpeciesSelector* species_selector = new SpeciesSelector(EMPIRE_NAME_WIDTH, PlayerRowHeight());
@@ -279,7 +282,8 @@ namespace {
             if (disabled)
                 species_selector->Disable();
             else
-                GG::Connect(species_selector->SpeciesChangedSignal, &NewGamePlayerRow::SpeciesChanged,      this);
+                species_selector->SpeciesChangedSignal.connect(
+                    boost::bind(&NewGamePlayerRow::SpeciesChanged, this, _1));
 
             // ready state
             if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -338,7 +342,8 @@ namespace {
             if (disabled)
                 type_drop->Disable();
             else
-                GG::Connect(type_drop->TypeChangedSignal, &LoadGamePlayerRow::PlayerTypeChanged, this);
+                type_drop->TypeChangedSignal.connect(
+                    boost::bind(&LoadGamePlayerRow::PlayerTypeChanged, this, _1));
 
             // player name text
             push_back(new CUILabel(player_data.m_player_name));
@@ -385,7 +390,8 @@ namespace {
             if (disabled)
                 m_empire_list->Disable();
             else
-                Connect(m_empire_list->SelChangedSignal, &LoadGamePlayerRow::EmpireChanged, this);
+                m_empire_list->SelChangedSignal.connect(
+                    boost::bind(&LoadGamePlayerRow::EmpireChanged, this, _1));
 
             // ready state
             if (player_data.m_client_type == Networking::CLIENT_TYPE_AI_PLAYER) {
@@ -447,7 +453,8 @@ namespace {
         {
             TypeSelector* type_drop = new TypeSelector(GG::X(90), PlayerRowHeight(), Networking::INVALID_CLIENT_TYPE, false);
             push_back(type_drop);
-            GG::Connect(type_drop->TypeChangedSignal,       &EmptyPlayerRow::PlayerTypeChanged,   this);
+            type_drop->TypeChangedSignal.connect(
+                boost::bind(&EmptyPlayerRow::PlayerTypeChanged, this, _1));
             // extra entries to make layout consistent
             push_back(new CUILabel(""));
             push_back(new CUILabel(""));
@@ -567,12 +574,18 @@ MultiPlayerLobbyWnd::MultiPlayerLobbyWnd() :
     m_save_file_text->Disable();
     m_browse_saves_btn->Disable();
 
-    GG::Connect(m_new_load_game_buttons->ButtonChangedSignal,   &MultiPlayerLobbyWnd::NewLoadClicked,           this);
-    GG::Connect(m_galaxy_setup_panel->SettingsChangedSignal,    &MultiPlayerLobbyWnd::GalaxySetupPanelChanged,  this);
-    GG::Connect(m_browse_saves_btn->LeftClickedSignal,          &MultiPlayerLobbyWnd::SaveGameBrowse,           this);
-    GG::Connect(m_ready_bn->LeftClickedSignal,                  &MultiPlayerLobbyWnd::ReadyClicked,             this);
-    GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,       &MultiPlayerLobbyWnd::PreviewImageChanged,      this);
-    GG::Connect(m_cancel_bn->LeftClickedSignal,                 &MultiPlayerLobbyWnd::CancelClicked,            this);
+    m_new_load_game_buttons->ButtonChangedSignal.connect(
+        boost::bind(&MultiPlayerLobbyWnd::NewLoadClicked, this, _1));
+    m_galaxy_setup_panel->SettingsChangedSignal.connect(
+        boost::bind(&MultiPlayerLobbyWnd::GalaxySetupPanelChanged, this));
+    m_browse_saves_btn->LeftClickedSignal.connect(
+        boost::bind(&MultiPlayerLobbyWnd::SaveGameBrowse, this));
+    m_ready_bn->LeftClickedSignal.connect(
+        boost::bind(&MultiPlayerLobbyWnd::ReadyClicked, this));
+    m_galaxy_setup_panel->ImageChangedSignal.connect(
+        boost::bind(&MultiPlayerLobbyWnd::PreviewImageChanged, this, _1));
+    m_cancel_bn->LeftClickedSignal.connect(
+        boost::bind(&MultiPlayerLobbyWnd::CancelClicked, this));
 
     Refresh();
 }
@@ -881,13 +894,15 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
             bool immutable_row = !ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID());   // host can modify any player's row.  non-hosts can only modify their own row.  As of SVN 4026 this is not enforced on the server, but should be.
             NewGamePlayerRow* row = new NewGamePlayerRow(psd, data_player_id, immutable_row);
             m_players_lb->Insert(row);
-            Connect(row->DataChangedSignal, &MultiPlayerLobbyWnd::PlayerDataChangedLocally, this);
+            row->DataChangedSignal.connect(
+                boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
         } else {
             bool immutable_row = (!ThisClientIsHost() && (data_player_id != HumanClientApp::GetApp()->PlayerID())) || m_lobby_data.m_save_game_empire_data.empty();
             LoadGamePlayerRow* row = new LoadGamePlayerRow(psd, data_player_id, m_lobby_data.m_save_game_empire_data, immutable_row);
             m_players_lb->Insert(row);
-            Connect(row->DataChangedSignal, &MultiPlayerLobbyWnd::PlayerDataChangedLocally, this);
+            row->DataChangedSignal.connect(
+                boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
 
             // if the player setup data in the row is different from the player
             // setup data in this lobby wnd's lobby data (which may have
@@ -915,7 +930,8 @@ bool MultiPlayerLobbyWnd::PopulatePlayerList() {
     if (ThisClientIsHost()) {
         EmptyPlayerRow* row = new EmptyPlayerRow();
         m_players_lb->Insert(row);
-        Connect(row->DataChangedSignal, &MultiPlayerLobbyWnd::PlayerDataChangedLocally, this);
+        row->DataChangedSignal.connect(
+            boost::bind(&MultiPlayerLobbyWnd::PlayerDataChangedLocally, this));
     }
 
     if (m_lobby_data.m_new_game) {
