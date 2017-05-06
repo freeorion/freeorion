@@ -35,6 +35,8 @@
 #include <GG/Control.h>
 #include <GG/Timer.h>
 
+#include <boost/optional/optional.hpp>
+
 #include <memory>
 #include <set>
 #include <unordered_set>
@@ -456,6 +458,10 @@ public:
 
     /** Allow drops if \p allow is true.*/
     void            AllowDrops(bool allow);
+
+    /** Allow all drop types if \p allow is true.*/
+    void            AllowAllDropTypes(bool allow);
+
     /** Allows Rows with data type \a str to be dropped over this ListBox when
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
     void            AllowDropType(const std::string& str);
@@ -626,10 +632,13 @@ private:
     std::size_t     m_sort_col;         ///< the index of the column data used to sort the list
     boost::function<bool (const Row&, const Row&, std::size_t)>
                     m_sort_cmp;         ///< the predicate used to sort the values in the m_sort_col column of two rows
-    std::set<std::string>
-                    m_allowed_drop_types;///< the line item types allowed for use in this listbox
 
     bool            m_allow_drops;      ///< are we accepting drops
+
+    /** Set to boost::none to allow all types.  Otherwise each string is an
+        allowed type.*/
+    boost::optional<std::unordered_set<std::string>>
+                    m_allowed_drop_types;
 
     bool            m_auto_scroll_during_drag_drops;
     unsigned int    m_auto_scroll_margin;

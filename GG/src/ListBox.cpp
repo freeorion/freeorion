@@ -549,6 +549,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_sort_col(0),
     m_sort_cmp(DefaultRowCmp<Row>()),
     m_allow_drops(false),
+    m_allowed_drop_types(boost::none),
     m_auto_scroll_during_drag_drops(true),
     m_auto_scroll_margin(8),
     m_auto_scrolling_up(false),
@@ -591,18 +592,28 @@ void ListBox::AllowDrops(bool allow)
 
 bool ListBox::AllowingDrops()
 { return m_allow_drops; }
+
+void ListBox::AllowAllDropTypes(bool allow) {
+    // If all types are allow use boost::none as a sentinel
+    if (allow)
+        m_allowed_drop_types = boost::none;
+
+    // Otherwise hold each allowed type in a set.
+    else if (!m_allowed_drop_types)
+        m_allowed_drop_types = std::unordered_set<std::string>();
+}
+
 void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                               const Pt& pt, Flags<ModKey> mod_keys) const
 {
-    for (std::map<const Wnd*, bool>::iterator it = first; it != last; ++it) {
-        it->second = false;
+    for (auto& it = first; it != last; ++it) {
         const Row* row = dynamic_cast<const Row*>(it->first);
-        if (row &&
-            (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-             m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end()))
-        {
-            it->second = true;
-        }
+
+        bool allowed = (m_allow_drops
+                        && row
+                        && AllowedDropType(row->DragDropDataType()));
+
+        it->second = allowed;
     }
 }
 
@@ -734,7 +745,10 @@ double ListBox::ColStretch(std::size_t n) const
 { return m_col_stretches[n]; }
 
 bool ListBox::AllowedDropType(const std::string& type) const
-{ return m_allowed_drop_types.count("") || m_allowed_drop_types.count(type); }
+{
+    return (!m_allowed_drop_types                 // all types allowed
+            || m_allowed_drop_types->count(type)); //this type allowed;
+}
 
 bool ListBox::AutoScrollDuringDragDrops() const
 { return m_auto_scroll_during_drag_drops; }
@@ -1442,10 +1456,20 @@ void ListBox::AddPaddingAtEnd(bool enable)
 { m_add_padding_at_end = enable; }
 
 void ListBox::AllowDropType(const std::string& str)
-{ m_allowed_drop_types.insert(str); }
+{
+    // Create the set if necessary
+    if (!m_allowed_drop_types)
+        m_allowed_drop_types = std::unordered_set<std::string>();
+    m_allowed_drop_types->insert(str);
+}
 
 void ListBox::DisallowDropType(const std::string& str)
-{ m_allowed_drop_types.erase(str); }
+{
+    // Create the set if necessary
+    if (!m_allowed_drop_types)
+        m_allowed_drop_types = std::unordered_set<std::string>();
+    m_allowed_drop_types->erase(str);
+}
 
 void ListBox::AutoScrollDuringDragDrops(bool auto_scroll)
 { m_auto_scroll_during_drag_drops = auto_scroll; }
@@ -1637,8 +1661,7 @@ void ListBox::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_a
     if (m_auto_scrolling_up || m_auto_scrolling_down || m_auto_scrolling_left || m_auto_scrolling_right) {
         bool acceptable_drop = false;
         for (std::map<const Wnd*, bool>::value_type& acceptable_wnd : drop_wnds_acceptable) {
-            if (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-                m_allowed_drop_types.find(acceptable_wnd.first->DragDropDataType()) != m_allowed_drop_types.end()) {
+            if (AllowedDropType(acceptable_wnd.first->DragDropDataType())) {
                 acceptable_drop = true;
                 break;
             }
