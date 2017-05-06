@@ -604,7 +604,6 @@
 		471023500CEF3AAB00A7DF2B /* Exception.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Exception.h; sourceTree = "<group>"; };
 		471023510CEF3AAB00A7DF2B /* Flags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Flags.h; sourceTree = "<group>"; };
 		471023520CEF3AAB00A7DF2B /* Font.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Font.h; sourceTree = "<group>"; };
-		471023530CEF3AAB00A7DF2B /* gen_signals.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = gen_signals.py; sourceTree = "<group>"; };
 		471023550CEF3AAB00A7DF2B /* GUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GUI.h; sourceTree = "<group>"; };
 		471023560CEF3AAB00A7DF2B /* Layout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Layout.h; sourceTree = "<group>"; };
 		471023570CEF3AAB00A7DF2B /* ListBox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ListBox.h; sourceTree = "<group>"; };
@@ -613,17 +612,6 @@
 		4710235D0CEF3AAB00A7DF2B /* PtRect.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PtRect.h; sourceTree = "<group>"; };
 		4710235E0CEF3AAB00A7DF2B /* Scroll.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Scroll.h; sourceTree = "<group>"; };
 		471023600CEF3AAB00A7DF2B /* SDLGUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDLGUI.h; sourceTree = "<group>"; };
-		471023610CEF3AAB00A7DF2B /* Signal0.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal0.h; sourceTree = "<group>"; };
-		471023620CEF3AAB00A7DF2B /* Signal1.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal1.h; sourceTree = "<group>"; };
-		471023630CEF3AAB00A7DF2B /* Signal2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal2.h; sourceTree = "<group>"; };
-		471023640CEF3AAB00A7DF2B /* Signal3.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal3.h; sourceTree = "<group>"; };
-		471023650CEF3AAB00A7DF2B /* Signal4.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal4.h; sourceTree = "<group>"; };
-		471023660CEF3AAB00A7DF2B /* Signal5.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal5.h; sourceTree = "<group>"; };
-		471023670CEF3AAB00A7DF2B /* Signal6.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal6.h; sourceTree = "<group>"; };
-		471023680CEF3AAB00A7DF2B /* Signal7.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal7.h; sourceTree = "<group>"; };
-		471023690CEF3AAB00A7DF2B /* Signal8.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Signal8.h; sourceTree = "<group>"; };
-		4710236A0CEF3AAB00A7DF2B /* SignalsAndSlots.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalsAndSlots.h; sourceTree = "<group>"; };
-		4710236B0CEF3AAB00A7DF2B /* SignalTemplate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SignalTemplate.h; sourceTree = "<group>"; };
 		4710236C0CEF3AAB00A7DF2B /* Slider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Slider.h; sourceTree = "<group>"; };
 		4710236D0CEF3AAB00A7DF2B /* Spin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Spin.h; sourceTree = "<group>"; };
 		4710236E0CEF3AAB00A7DF2B /* StaticGraphic.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StaticGraphic.h; sourceTree = "<group>"; };
@@ -1342,7 +1330,6 @@
 				471023510CEF3AAB00A7DF2B /* Flags.h */,
 				471023520CEF3AAB00A7DF2B /* Font.h */,
 				34BAB0C20FC5CDC400EF792E /* FontFwd.h */,
-				471023530CEF3AAB00A7DF2B /* gen_signals.py */,
 				CE6183961BB80D1300952BEA /* GGFwd.h */,
 				8257A8D91A90BA8C0006777D /* GLClientAndServerBuffer.h */,
 				2F60966C12EEAF2C00F58913 /* GroupBox.h */,
@@ -1357,17 +1344,6 @@
 				4710235E0CEF3AAB00A7DF2B /* Scroll.h */,
 				CE61839B1BB80D1300952BEA /* ScrollPanel.h */,
 				4710235F0CEF3AAB00A7DF2B /* SDL */,
-				471023610CEF3AAB00A7DF2B /* Signal0.h */,
-				471023620CEF3AAB00A7DF2B /* Signal1.h */,
-				471023630CEF3AAB00A7DF2B /* Signal2.h */,
-				471023640CEF3AAB00A7DF2B /* Signal3.h */,
-				471023650CEF3AAB00A7DF2B /* Signal4.h */,
-				471023660CEF3AAB00A7DF2B /* Signal5.h */,
-				471023670CEF3AAB00A7DF2B /* Signal6.h */,
-				471023680CEF3AAB00A7DF2B /* Signal7.h */,
-				471023690CEF3AAB00A7DF2B /* Signal8.h */,
-				4710236A0CEF3AAB00A7DF2B /* SignalsAndSlots.h */,
-				4710236B0CEF3AAB00A7DF2B /* SignalTemplate.h */,
 				4710236C0CEF3AAB00A7DF2B /* Slider.h */,
 				4710236D0CEF3AAB00A7DF2B /* Spin.h */,
 				4710236E0CEF3AAB00A7DF2B /* StaticGraphic.h */,

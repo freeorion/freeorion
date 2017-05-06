@@ -84,7 +84,7 @@
     \subsection arch_UI_element_conns UI Element Connections
 
     GG UI elements are connected using signals and slots, using the
-    Boost.Signals library.  This allows arbitrary connections between one
+    Boost.Signals2 library.  This allows arbitrary connections between one
     control and another, and between a control and any other code; there is no
     hierarchy of passed messages as there is in some other GUIs, and no
     type-unsafe callbacks are used.  Refer to the \ref sigs_n_slots
@@ -164,19 +164,7 @@
     There are two types of connections between signals and slots.  The first
     type of connection is between a signal and a slot, which may be a functor
     (which in turn may be a boost::bind object), a free function or a static
-    member function or function object.  Just call Connect(sig, slot).  The
-    second type is between a signal and a non-static member function.  In this
-    case, the call to Connect() requires a third parameter: a pointer to the
-    object whose member function is to be called.  For instance, if I have a
-    class Foo and an object foo1 of class Foo, I cannot call foo1.bar() by
-    simply knowing the address of bar().  I need to call Connect(sig,
-    &Foo::bar, &foo1) so that the signal knows which object's bar() to call.
-    Both versions of Connect() return a connection object.  By keeping this
-    connection object, you can later disconnect() the connection you made.  In
-    addition, signal-signal connections are possible.  Calling Connect(sig1,
-    sig2) forwards all sig1's signal emissions to sig2.  This is provided as a
-    convenience to avoid having to write dummy forwarding functions that do
-    this.
+    member function or function object.
 
     \subsection sigs_n_slots_emitting Emitting Signals
 
@@ -185,7 +173,7 @@
 
     \subsection disconnecting Disconnecting Signals and Slots
 
-    If you kept the connection object returned by Connect(), a
+    If you kept the connection object returned by sig.connect(), a
     connection_obj.disconnect() call will disconnect the associated signal and
     slot.  Also, consider this: what happens if a signal A is connected to a
     slot consisting of a member function of object B, B is deleted, and then

@@ -65,17 +65,6 @@ target_sources(GiGi
         ${CMAKE_CURRENT_LIST_DIR}/PtRect.h
         ${CMAKE_CURRENT_LIST_DIR}/Scroll.h
         ${CMAKE_CURRENT_LIST_DIR}/ScrollPanel.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal0.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal1.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal2.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal3.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal4.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal5.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal6.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal7.h
-        ${CMAKE_CURRENT_LIST_DIR}/Signal8.h
-        ${CMAKE_CURRENT_LIST_DIR}/SignalsAndSlots.h
-        ${CMAKE_CURRENT_LIST_DIR}/SignalTemplate.h
         ${CMAKE_CURRENT_LIST_DIR}/Slider.h
         ${CMAKE_CURRENT_LIST_DIR}/Spin.h
         ${CMAKE_CURRENT_LIST_DIR}/StaticGraphic.h

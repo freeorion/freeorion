@@ -52,17 +52,6 @@
     <ClInclude Include="..\..\GG\GG\RichText\RichText.h" />
     <ClInclude Include="..\..\GG\GG\Scroll.h" />
     <ClInclude Include="..\..\GG\GG\ScrollPanel.h" />
-    <ClInclude Include="..\..\GG\GG\Signal0.h" />
-    <ClInclude Include="..\..\GG\GG\Signal1.h" />
-    <ClInclude Include="..\..\GG\GG\Signal2.h" />
-    <ClInclude Include="..\..\GG\GG\Signal3.h" />
-    <ClInclude Include="..\..\GG\GG\Signal4.h" />
-    <ClInclude Include="..\..\GG\GG\Signal5.h" />
-    <ClInclude Include="..\..\GG\GG\Signal6.h" />
-    <ClInclude Include="..\..\GG\GG\Signal7.h" />
-    <ClInclude Include="..\..\GG\GG\Signal8.h" />
-    <ClInclude Include="..\..\GG\GG\SignalsAndSlots.h" />
-    <ClInclude Include="..\..\GG\GG\SignalTemplate.h" />
     <ClInclude Include="..\..\GG\GG\Slider.h" />
     <ClInclude Include="..\..\GG\GG\Spin.h" />
     <ClInclude Include="..\..\GG\GG\StaticGraphic.h" />

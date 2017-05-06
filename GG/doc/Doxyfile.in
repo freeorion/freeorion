@@ -540,18 +540,7 @@ EXCLUDE                = @CMAKE_CURRENT_SOURCE_DIR@/config.h \
                          @CMAKE_CURRENT_SOURCE_DIR@/tutorial \
                          @CMAKE_CURRENT_SOURCE_DIR@/build_config.py \
                          @CMAKE_CURRENT_SOURCE_DIR@/build_support.py \
-                         @CMAKE_CURRENT_SOURCE_DIR@/src/gilext \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/gen_signals.py \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/SignalTemplate.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal0.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal1.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal2.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal3.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal4.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal5.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal6.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal7.h \
-                         @CMAKE_CURRENT_SOURCE_DIR@/GG/Signal8.h
+                         @CMAKE_CURRENT_SOURCE_DIR@/src/gilext
 
 # The EXCLUDE_SYMLINKS tag can be used select whether or not files or 
 # directories that are symbolic links (a Unix filesystem feature) are excluded 

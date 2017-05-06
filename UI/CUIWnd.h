@@ -72,7 +72,7 @@ extern GG::WndFlag PINABLE;        ///< allows the window to be pinned
       is called before the window's memory is deallocated after the user clicks the close button.
       OnMinimize() is called before the window becomes minimized after clicking the Minimize button.
       OnResize() is called as part of a response to the resize signal emitted via GG::Wnd.  Users
-      are advised to use this function instead of making a slot connection with GG::Connect to respond
+      are advised to use this function instead of making a slot connection with boost::signals to respond
       to the resize signal.
 */
 class CUIWnd : public GG::Wnd {
