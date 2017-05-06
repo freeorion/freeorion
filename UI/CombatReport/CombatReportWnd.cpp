@@ -12,7 +12,6 @@
 
 #include <GG/Layout.h>
 #include <GG/ScrollPanel.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/TabWnd.h>
 
 
@@ -35,18 +34,24 @@ public:
         m_tabs->AddWnd(m_log_scroller, UserString("COMBAT_LOG"));
         m_wnd.AttachChild(m_tabs);
 
-        GG::Connect(m_log->LinkClickedSignal,       &Impl::HandleLinkClick,          this);
-        GG::Connect(m_log->LinkDoubleClickedSignal, &Impl::HandleLinkDoubleClick,    this);
-        GG::Connect(m_log->LinkRightClickedSignal,  &Impl::HandleLinkDoubleClick,    this);
-        GG::Connect(m_log->WndChangedSignal,        &Impl::HandleWindowChanged,      this);
+        m_log->LinkClickedSignal.connect(
+            boost::bind(&Impl::HandleLinkClick, this, _1, _2));
+        m_log->LinkDoubleClickedSignal.connect(
+            boost::bind(&Impl::HandleLinkDoubleClick, this, _1, _2));
+        m_log->LinkRightClickedSignal.connect(
+            boost::bind(&Impl::HandleLinkDoubleClick, this, _1, _2));
+        m_log->WndChangedSignal.connect(
+            boost::bind(&Impl::HandleWindowChanged, this));
 
         // Catch the window-changed signal from the tab bar so that layout
         // updates can be performed for the newly-selected window.
-        GG::Connect(m_tabs->TabChangedSignal, &Impl::HandleTabChanged, this);
+        m_tabs->TabChangedSignal.connect(
+            boost::bind(&Impl::HandleTabChanged, this, _1));
 
         // This can be called whether m_graphical is the selected window or
         // not, but it will still only use the min size of the selected window.
-        GG::Connect(m_graphical->MinSizeChangedSignal, &Impl::UpdateMinSize, this);
+        m_graphical->MinSizeChangedSignal.connect(
+            boost::bind(&Impl::UpdateMinSize, this));
     }
 
     void SetLog(int log_id) {
