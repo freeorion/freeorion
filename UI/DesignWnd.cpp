@@ -161,7 +161,7 @@ namespace {
                     std::map<std::string, std::unique_ptr<ShipDesign>> file_designs;
                     parse::ship_designs(design_path, file_designs);
 
-                    for (auto& design_entry : file_designs) {
+                    for (auto&& design_entry : file_designs) {
                         if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {
                             m_saved_designs[design_entry.first] = std::move(design_entry.second);
                         }
