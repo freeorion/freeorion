@@ -232,6 +232,8 @@ public:
     typedef boost::signals2::signal<void (const_iterator)>                                  ConstRowSignalType;
     /** the signature of row-click-notification signals */
     typedef boost::signals2::signal<void(iterator, const Pt&,const GG::Flags<GG::ModKey>&)> RowClickSignalType;
+    /** the signature of row-move-notification signals */
+    typedef boost::signals2::signal<void (iterator, iterator)>                              RowMovedSignalType;
 
     typedef RowSignalType      BeforeInsertSignalType;   ///< emitted before a row is inserted into the list box
     typedef RowSignalType      AfterInsertSignalType;    ///< emitted after a row is inserted into the list box
@@ -328,6 +330,7 @@ public:
     mutable SelChangedSignalType     SelChangedSignal;      ///< the selection change signal object for this ListBox
     mutable DroppedSignalType        DroppedSignal;         ///< the dropped signal object for this ListBox
     mutable DropAcceptableSignalType DropAcceptableSignal;  ///< the drop-acceptability signal object for this ListBox
+    mutable RowMovedSignalType       MovedSignal;           ///< the moved signal object for this ListBox
     mutable LeftClickedSignalType    LeftClickedSignal;     ///< the left click signal object for this ListBox
     mutable RightClickedSignalType   RightClickedSignal;    ///< the right click signal object for this ListBox
     mutable DoubleClickedSignalType  DoubleClickedSignal;   ///< the double click signal object for this ListBox

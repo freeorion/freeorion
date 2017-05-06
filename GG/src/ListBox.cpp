@@ -1907,6 +1907,9 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
     if (dropped)
         original_dropped_position = std::find(m_rows.begin(), m_rows.end(), row);
 
+    bool moved = (original_dropped_position != m_rows.end());
+    std::size_t original_dropped_offset = moved ? std::distance(begin(), original_dropped_position) :0;
+
     iterator retval = it;
 
     row->InstallEventFilter(this);
@@ -1933,22 +1936,26 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
     if (m_first_row_shown == m_rows.end())
         m_first_row_shown = m_rows.begin();
 
-    if (dropped) {
-        // TODO: Can these be inverted without breaking anything?  It would be
-        // semantically clearer if they were.
-        DroppedSignal(retval);
-        if (original_dropped_position != m_rows.end())
-            Erase(original_dropped_position, true, false);
+    if (dropped && moved) {
+        Erase(original_dropped_position, true, false);
+        // keep pointing at the same offset as original location after the erase
+        original_dropped_position = begin();
+        std::advance(original_dropped_position, original_dropped_offset);
     }
 
     row->Hide();
 
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
 
-    if (signal)
-        AfterInsertSignal(it);
-
     row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
+
+    if (signal) {
+        AfterInsertSignal(it);
+        if (dropped)
+            DroppedSignal(retval);
+        if (moved)
+            MovedSignal(retval, original_dropped_position);
+    }
 
     RequirePreRender();
     return retval;
