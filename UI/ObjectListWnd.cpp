@@ -1568,7 +1568,7 @@ public:
             m_controls.push_back(controls[i]);
             AttachChild(controls[i]);
             controls[i]->LeftClickedSignal.connect(
-                boost::bind(boost::bind(&ObjectHeaderPanel::ButtonLeftClicked, this, i-1)));
+                [this, i](){ this->ColumnButtonLeftClickSignal(i - 1); });
             if (i > 0)
                 controls[i]->RightClickedSignal.connect(
                     boost::bind(&ObjectHeaderPanel::ButtonRightClicked, this, i-1));
@@ -1599,9 +1599,6 @@ private:
             left = right + PAD;
         }
     }
-
-    void                        ButtonLeftClicked(int column_id)
-    { ColumnButtonLeftClickSignal(column_id); }
 
     void                        ButtonRightClicked(int column_id) {
         if (column_id < 0 || column_id >= static_cast<int>(m_controls.size()))
