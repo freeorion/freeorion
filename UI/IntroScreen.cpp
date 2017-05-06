@@ -63,9 +63,6 @@ public:
             OnExit();
     }
 
-    /** Handle app resizing by closing the credits window. */
-    void WindowResizedSlot(GG::X x, GG::Y y);
-
 private:
     void            DrawCredits(GG::X x1, GG::Y y1, GG::X x2, GG::Y y2, int transparency);
     void            OnExit();
@@ -95,8 +92,9 @@ CreditsWnd::CreditsWnd(GG::X x, GG::Y y, GG::X w, GG::Y h, const XMLElement &cre
 {
     m_font = ClientUI::GetFont(static_cast<int>(ClientUI::Pts()*1.3));
 
+    /** Handle app resizing by closing the credits window. */
     GG::GUI::GetGUI()->WindowResizedSignal.connect(
-        boost::bind(&CreditsWnd::WindowResizedSlot, this, _1, _2));
+        boost::bind(&CreditsWnd::OnExit, this));
 }
 
 CreditsWnd::~CreditsWnd() {
@@ -223,8 +221,6 @@ void CreditsWnd::Render() {
         OnExit();
 }
 
-void CreditsWnd::WindowResizedSlot(GG::X x, GG::Y y)
-{ OnExit(); }
 
 /////////////////////////////////
 // IntroScreen
