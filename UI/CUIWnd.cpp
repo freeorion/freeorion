@@ -83,7 +83,7 @@ void CUI_MinRestoreButton::Toggle() {
 CUI_PinButton::CUI_PinButton() :
     GG::Button("", nullptr, ClientUI::WndInnerBorderColor())
 {
-    LeftClickedSignal.connect(
+    LeftClickedSignal.connect(-1,
         &PlayCloseSound);
     SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"   )));
     SetPressedGraphic  (GG::SubTexture(ClientUI::GetTexture( ClientUI::ArtDir() / "icons" / "buttons" / "pin.png"  )));
@@ -449,7 +449,7 @@ void CUIWnd::InitButtons() {
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_clicked.png")),
             GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "close_mouseover.png")));
         m_close_button->SetColor(ClientUI::WndInnerBorderColor());
-        m_close_button->LeftClickedSignal.connect(
+        m_close_button->LeftClickedSignal.connect(-1,
             &PlayCloseSound);
         m_close_button->Resize(GG::Pt(GG::X(ClientUI::TitlePts()), GG::Y(ClientUI::TitlePts())));
         m_close_button->LeftClickedSignal.connect(
