@@ -162,7 +162,6 @@ private:
 
     void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
 
-    void            SystemChangedSlot();                    ///< responds to StateChangedSignal emitted by the system this FleetWnd is showing the contents of
     void            SetStatIconValues();          ///< sets values for multi-fleet aggregate stat icons at top of FleetWnd
     mutable boost::signals2::signal<void (FleetWnd*)> ClosingSignal;
 

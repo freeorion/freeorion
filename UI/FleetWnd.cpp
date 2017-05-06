@@ -2891,7 +2891,7 @@ void FleetWnd::RefreshStateChangedSignals() {
     m_system_connection.disconnect();
     if (std::shared_ptr<const System> system = GetSystem(m_system_id))
         m_system_connection = system->StateChangedSignal.connect(
-            boost::bind(&FleetWnd::SystemChangedSlot, this), boost::signals2::at_front);
+            boost::bind(&FleetWnd::RequirePreRender, this), boost::signals2::at_front);
 }
 
 void FleetWnd::Refresh() {
@@ -3712,16 +3712,6 @@ void FleetWnd::UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj) 
             break;
         }
     }
-}
-
-void FleetWnd::SystemChangedSlot() {
-    std::shared_ptr<const System> system = GetSystem(m_system_id);
-    if (!system) {
-        ErrorLogger() << "FleetWnd::SystemChangedSlot called but couldn't get System with id " << m_system_id;
-        return;
-    }
-
-    RequirePreRender();
 }
 
 void FleetWnd::EnableOrderIssuing(bool enable/* = true*/) {
