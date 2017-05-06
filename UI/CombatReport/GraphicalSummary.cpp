@@ -13,7 +13,6 @@
 #include <GG/ClrConstants.h>
 #include <GG/DrawUtil.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <boost/format.hpp>
 
@@ -644,7 +643,8 @@ private:
         {
             button = new CUIButton("-");
             parent->AttachChild(button);
-            GG::Connect(button->LeftClickedSignal, &ToggleData::Toggle, this);
+            button->LeftClickedSignal.connect(
+                boost::bind(&ToggleData::Toggle, this));
             SetValue(GetValue());
         }
     };
@@ -778,9 +778,8 @@ void GraphicalSummaryWnd::GenerateGraph() {
     }
     m_options_bar = new OptionsBar(m_sizer);
     AttachChild(m_options_bar);
-    GG::Connect(m_options_bar->ChangedSignal,
-                &GraphicalSummaryWnd::HandleButtonChanged,
-                this);
+    m_options_bar->ChangedSignal.connect(
+        boost::bind(&GraphicalSummaryWnd::HandleButtonChanged, this));
 
     MinSizeChangedSignal();
     DoLayout();
