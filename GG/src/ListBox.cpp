@@ -804,10 +804,9 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 
 void ListBox::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys)
 {
-    // TODO: Pull the call to RowUnderPt() out and reuse the value in each loop iteration.
+    iterator insertion_it = RowUnderPt(pt);
     for (Wnd* wnd : wnds) {
         Row* row = boost::polymorphic_downcast<Row*>(wnd);
-        iterator insertion_it = RowUnderPt(pt);
         Insert(row, insertion_it, true, true);
     }
 }
