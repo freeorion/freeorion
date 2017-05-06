@@ -11,7 +11,6 @@
 #include "TextBrowseWnd.h"
 
 #include <GG/Button.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <iterator>
 
@@ -59,7 +58,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_no_action_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MOD_NONE"), UserString("MOD_NONE")));
     AttachChild(m_no_action_button);
-    GG::Connect(m_no_action_button->LeftClickedSignal,  &ModeratorActionsWnd::NoActionClicked,      this);
+    m_no_action_button->LeftClickedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::NoActionClicked, this));
 
     // button for create system and droplist to select system type to create
     m_create_system_button = new CUIButton(
@@ -72,7 +72,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         UserString("MOD_CREATE_SYSTEM"), UserString("MOD_CREATE_SYSTEM")));
     AttachChild(m_create_system_button);
 
-    GG::Connect(m_create_system_button->LeftClickedSignal,  &ModeratorActionsWnd::CreateSystemClicked,  this);
+    m_create_system_button->LeftClickedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::CreateSystemClicked, this));
     m_star_type_drop = new CUIDropDownList(6);
     m_star_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
     for (StarType star_type = STAR_BLUE; star_type != NUM_STAR_TYPES; star_type = StarType(star_type + 1)) {
@@ -85,7 +86,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         m_star_type_drop->Insert(row);
     }
     m_star_type_drop->Select(m_star_type_drop->begin());        // default select first type
-    GG::Connect(m_star_type_drop->SelChangedSignal,     &ModeratorActionsWnd::StarTypeSelected,     this);
+    m_star_type_drop->SelChangedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::StarTypeSelected, this, _1));
 
     // button for create planet and droplists to select planet type and size
     m_create_planet_button = new CUIButton(
@@ -97,7 +99,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_create_planet_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MOD_CREATE_PLANET"), UserString("MOD_CREATE_PLANET")));
     AttachChild(m_create_planet_button);
-    GG::Connect(m_create_planet_button->LeftClickedSignal,  &ModeratorActionsWnd::CreatePlanetClicked,  this);
+    m_create_planet_button->LeftClickedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::CreatePlanetClicked, this));
 
     m_planet_type_drop = new CUIDropDownList(6);
     m_planet_type_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
@@ -110,7 +113,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         m_planet_type_drop->Insert(row);
     }
     m_planet_type_drop->Select(m_planet_type_drop->begin());    // default select first type
-    GG::Connect(m_planet_type_drop->SelChangedSignal,   &ModeratorActionsWnd::PlanetTypeSelected,   this);
+    m_planet_type_drop->SelChangedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::PlanetTypeSelected, this, _1));
 
     m_planet_size_drop = new CUIDropDownList(6);
     m_planet_size_drop->Resize(GG::Pt(DROP_WIDTH, CONTROL_HEIGHT));
@@ -125,7 +129,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     GG::DropDownList::iterator it = m_planet_size_drop->begin();
     std::advance(it, 2);
     m_planet_size_drop->Select(it); // default select 3rd size (should be medium?)
-    GG::Connect(m_planet_size_drop->SelChangedSignal,   &ModeratorActionsWnd::PlanetSizeSelected,   this);
+    m_planet_size_drop->SelChangedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::PlanetSizeSelected, this, _1));
 
     // button for destroying object
     m_delete_object_button = new CUIButton(
@@ -137,7 +142,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_delete_object_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MOD_DESTROY"), UserString("MOD_DESTROY")));
     AttachChild(m_delete_object_button);
-    GG::Connect(m_delete_object_button->LeftClickedSignal,  &ModeratorActionsWnd::DeleteObjectClicked,  this);
+    m_delete_object_button->LeftClickedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::DeleteObjectClicked, this));
 
     // button for setting owner
     m_set_owner_button = new CUIButton(
@@ -150,11 +156,13 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
         UserString("MOD_SET_OWNER"), UserString("MOD_SET_OWNER")));
     AttachChild(m_set_owner_button);
 
-    GG::Connect(m_set_owner_button->LeftClickedSignal,      &ModeratorActionsWnd::SetOwnerClicked,      this);
+    m_set_owner_button->LeftClickedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::SetOwnerClicked, this));
     m_empire_drop = new CUIDropDownList(6);
     m_empire_drop->SetStyle(GG::LIST_NOSORT);
     // empires added later when gamestate info available
-    GG::Connect(m_empire_drop->SelChangedSignal,        &ModeratorActionsWnd::EmpireSelected,       this);
+    m_empire_drop->SelChangedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::EmpireSelected, this, _1));
 
     // button for creating starlane
     m_add_starlane_button = new CUIButton(
@@ -166,7 +174,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_add_starlane_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MOD_ADD_STARLANE"), UserString("MOD_ADD_STARLANE")));
     AttachChild(m_add_starlane_button);
-    GG::Connect(m_add_starlane_button->LeftClickedSignal,&ModeratorActionsWnd::AddStarlane,         this);
+    m_add_starlane_button->LeftClickedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::AddStarlane, this));
 
     // button for removing starlane
     m_remove_starlane_button = new CUIButton(
@@ -178,7 +187,8 @@ ModeratorActionsWnd::ModeratorActionsWnd(const std::string& config_name) :
     m_remove_starlane_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MOD_REMOVE_STARLANE"), UserString("MOD_REMOVE_STARLANE")));
     AttachChild(m_remove_starlane_button);
-    GG::Connect(m_remove_starlane_button->LeftClickedSignal,&ModeratorActionsWnd::RemoveStarlane,   this);
+    m_remove_starlane_button->LeftClickedSignal.connect(
+        boost::bind(&ModeratorActionsWnd::RemoveStarlane, this));
 
     DoLayout();
 }
