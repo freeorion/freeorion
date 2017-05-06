@@ -132,6 +132,10 @@ void PopCenter::PopCenterPopGrowthProductionResearchPhase() {
 
     //if (cur_pop > 0.0)
     //    DebugLogger() << "Planet Pop: " << cur_pop << " growth: " << pop_growth;
+	if (SpeciesName().empty()) {
+		// don't do anything for outposts
+		return;
+	}
 
     if (new_pop >= MINIMUM_POP_CENTER_POPULATION) {
         GetMeter(METER_POPULATION)->SetCurrent(new_pop);
