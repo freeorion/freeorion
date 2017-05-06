@@ -31,7 +31,6 @@ public:
 
     void            Clear();
 
-    boost::signals2::signal<void (GG::ListBox::Row*, std::size_t)>  QueueItemMovedSignal;
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
 
 protected:

@@ -89,8 +89,6 @@ void QueueListBox::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags
 }
 
 void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
-    if (wnds.empty())
-        return;
     if (wnds.size() > 1) {
         // delete any extra wnds that won't be processed below
         for (std::vector<GG::Wnd*>::const_iterator it = ++wnds.begin(); it != wnds.end(); ++it)
@@ -108,8 +106,6 @@ void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
         return;
     }
     ListBox::AcceptDrops(pt, std::vector<GG::Wnd*>{wnd}, mod_keys);
-    iterator it = RowUnderPt(pt);
-    QueueItemMovedSignal(row, std::distance(begin(), it));
 }
 
 void QueueListBox::Render() {
