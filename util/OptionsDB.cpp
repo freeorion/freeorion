@@ -15,6 +15,7 @@
 #include <boost/algorithm/string/erase.hpp>
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/filesystem/operations.hpp>
 #include <boost/range/algorithm_ext/erase.hpp>
 #include <boost/tokenizer.hpp>
 
@@ -169,6 +170,35 @@ void OptionsDB::Commit() {
     }
 }
 
+bool OptionsDB::CommitPersistent() {
+    bool retval = false;
+    auto config_file = GetPersistentConfigPath();
+    XMLDoc doc;
+    GetOptionsDB().GetXML(doc, true);
+    try {
+        // Remove any previously existing file
+        boost::filesystem::remove(config_file);
+
+        boost::filesystem::ofstream ofs(GetPersistentConfigPath());
+        if (ofs) {
+            doc.WriteDoc(ofs);
+            retval = true;
+        } else {
+            std::string err_msg = UserString("UNABLE_TO_WRITE_PERSISTENT_CONFIG_XML") + " : " + config_file.string();
+            ErrorLogger() << err_msg;
+            std::cerr << err_msg << std::endl;
+        }
+    } catch (const boost::filesystem::filesystem_error& ec) {
+        ErrorLogger() << "Error during file operations when creating persistent config : " << ec.what();
+    } catch (...) {
+        std::string err_msg = "Unknown exception during persistent config creation";
+        ErrorLogger() << err_msg;
+        std::cerr << err_msg << std::endl;
+    }
+
+    return retval;
+}
+
 void OptionsDB::Validate(const std::string& name, const std::string& value) const {
     auto it = m_options.find(name);
     if (!OptionExists(it))
@@ -265,7 +295,7 @@ void OptionsDB::GetUsage(std::ostream& os, const std::string& command_line/* = "
     }
 }
 
-void OptionsDB::GetXML(XMLDoc& doc) const {
+void OptionsDB::GetXML(XMLDoc& doc, bool non_default_only) const {
     doc = XMLDoc();
 
     std::vector<XMLElement*> elem_stack;
@@ -274,9 +304,31 @@ void OptionsDB::GetXML(XMLDoc& doc) const {
     for (const auto& option : m_options) {
         if (!option.second.storable)
             continue;
+
         std::string::size_type last_dot = option.first.find_last_of('.');
         std::string section_name = last_dot == std::string::npos ? "" : option.first.substr(0, last_dot);
         std::string name = option.first.substr(last_dot == std::string::npos ? 0 : last_dot + 1);
+
+        if (non_default_only) {
+            bool is_default_nonflag = !option.second.flag;
+            if (is_default_nonflag)
+                is_default_nonflag = IsDefaultValue(m_options.find(option.first));
+
+            // Skip unwanted config options
+            // Storing "version-string" in persistent config would render all config options invalid after a new build
+            // "checked-gl-version" is automatically set to true after other logic is performed
+            // BUG Some windows may be shown as a child of an other window, but not initially visible.
+            //   The OptionDB default of "*.visible" in these cases may be false, but setting the option to false
+            //   in a config file may prevent such windows from showing when requested.
+            if (option.first == "version-string" || option.first == "checked-gl-version" || name == "visible" ||
+                !option.second.recognized || (is_default_nonflag))
+            { continue; }
+
+            // Default value of flag options will throw bad_any_cast, fortunately they always default to false
+            if (option.second.flag && !boost::any_cast<bool>(option.second.value))
+                continue;
+        }
+
         while (1 < elem_stack.size()) {
             std::string prev_section = PreviousSectionName(elem_stack);
             if (prev_section == section_name) {

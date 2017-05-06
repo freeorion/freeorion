@@ -922,6 +922,9 @@ Error when reading config.xml file. Using default options.
 UNABLE_TO_READ_PERSISTENT_CONFIG_XML
 Error when attempting to read the optional persistent_config.xml file (this is expected if it does not exist).
 
+UNABLE_TO_WRITE_PERSISTENT_CONFIG_XML
+Error when writing persistent_config.xml file.
+
 UNABLE_TO_WRITE_SAVE_FILE
 Error when writing save file.
 

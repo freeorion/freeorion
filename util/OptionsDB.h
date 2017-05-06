@@ -118,6 +118,12 @@ public:
         if it has changed since it was last saved. */
     void        Commit();
 
+    /** Write any options that are not at default value to persistent config, replacing any existing file
+     *
+     *  @returns bool If file was successfully written
+     */
+    bool        CommitPersistent();
+
     /** validates a value for an option. throws std::runtime_error if no option
       * \a name exists.  throws bad_lexical_cast if \a value cannot be
       * converted to the type of the option \a name. */
@@ -176,8 +182,10 @@ public:
      *
      * @param[in,out] doc  The document this OptionsDB should be written to.
      *      This resets the given @p doc.
+     * @param[in] non_default_only Do not include options which are set to their
+     *      default value, is unrecognized, or is "version-string"
      */
-    void        GetXML(XMLDoc& doc) const;
+    void        GetXML(XMLDoc& doc, bool non_default_only = false) const;
 
     /** find all registered Options that begin with \a prefix and store them in
       * \a ret. If \p allow_unrecognized then include unrecognized options. */
