@@ -1780,10 +1780,6 @@ void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
 }
 
 void BasesListBox::Populate() {
-    //// abort of not visible to see results
-    //if (!Empty() && !Visible())
-    //    return;
-
     DebugLogger() << "BasesListBox::Populate";
 
     // make note of first visible row to preserve state
@@ -1791,29 +1787,22 @@ void BasesListBox::Populate() {
     std::size_t init_first_row_offset = std::distance(begin(), init_first_row_shown);
 
     // populate list as appropriate for types of bases shown
-    if (m_showing_empty_hulls) {
+    if (m_showing_empty_hulls)
         PopulateWithEmptyHulls();
 
-        if (Empty() || init_first_row_shown == FirstRowShown() || init_first_row_offset < NumRows())
-            return;
-
-        SetFirstRowShown(begin());
-        BringRowIntoView(--end());
-    }
-
-    if (m_showing_completed_designs) {
+    else if (m_showing_completed_designs)
         PopulateWithCompletedDesigns();
-        if (!Empty())
-            BringRowIntoView(--end());
-        if (init_first_row_offset < NumRows())
-            BringRowIntoView(std::next(begin(), init_first_row_offset));
-    }
 
-    if (m_showing_saved_designs)
+    else if (m_showing_saved_designs)
         PopulateWithSavedDesigns();
 
-    if (m_showing_monsters)
+    else if (m_showing_monsters)
         PopulateWithMonsters();
+
+    if (!Empty())
+        BringRowIntoView(--end());
+    if (init_first_row_offset < NumRows())
+        BringRowIntoView(std::next(begin(), init_first_row_offset));
 }
 
 GG::Pt BasesListBox::ListRowSize()
