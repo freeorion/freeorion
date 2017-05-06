@@ -738,6 +738,22 @@ void OptionsWnd::CompleteConstruction() {
     BoolOption(current_page, 0, "xml-zlib-serialization",   UserString("OPTIONS_USE_XML_ZLIB_SERIALIZATION"));
     BoolOption(current_page, 0, "verbose-sitrep",           UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page, 0, "effect-accounting",        UserString("OPTIONS_EFFECT_ACCOUNTING"));
+
+    // Create persistent config button
+    auto persistent_config_button = GG::Wnd::Create<CUIButton>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG"));
+    persistent_config_button->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
+    persistent_config_button->SetBrowseInfoWnd(
+        GG::Wnd::Create<TextBrowseWnd>(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE"),
+                                       UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC"), ROW_WIDTH));
+    persistent_config_button->LeftClickedSignal.connect([]() {
+        if (GetOptionsDB().CommitPersistent())
+            ClientUI::MessageBox(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS"));
+        else
+            ClientUI::MessageBox(UserString("OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE"));
+    });
+    current_page->Insert(GG::Wnd::Create<OptionsListRow>(ROW_WIDTH,
+                                                         persistent_config_button->MinUsableSize().y + LAYOUT_MARGIN + 6,
+                                                         persistent_config_button, 0));
     m_tabs->SetCurrentWnd(0);
 
     DoLayout();

@@ -2773,6 +2773,30 @@ Create Binary Save Files
 OPTIONS_USE_XML_ZLIB_SERIALIZATION
 Use Compression for XML Save Files 
 
+OPTIONS_CREATE_PERSISTENT_CONFIG
+Write Persistent Config File
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_TITLE
+Create Persistent Config (Advanced Feature)
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_TOOLTIP_DESC
+'''Saves the current config settings as persistent default settings.
+Such settings take priority over any settings in config.xml, but not the command line.
+Only stores settings that have been modified from default values.
+Any existing persistent config file is overwritten.
+
+Settings may not always be valid across versions.
+The settings from a previously stored window may not be retained if is has not been open this game session.
+
+See pedia article [[CONFIG_GUIDE_TITLE]] for more info.'''
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_SUCCESS
+Successfully (re)created persistent_config.xml
+
+OPTIONS_CREATE_PERSISTENT_CONFIG_FAILURE
+Unable to create persistent_config.xml, check log file for details.
+
+
 
 ##
 ## Main map window
