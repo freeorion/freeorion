@@ -555,16 +555,11 @@ private:
 
     void TechLeftClickedSlot(const std::string& tech_name,
                              const GG::Flags<GG::ModKey>& modkeys);
-    void TechDoubleClickedSlot(const std::string& tech_name,
-                               const GG::Flags<GG::ModKey>& modkeys);
-    void TechPediaDisplaySlot(const std::string& tech_name);
 
     void TreeDraggedSlot(const GG::Pt& move);
     void TreeDragBegin(const GG::Pt& move);
     void TreeDragEnd(const GG::Pt& move);
     void TreeZoomedSlot(int move);
-    void TreeZoomInClicked();
-    void TreeZoomOutClicked();
     bool TreeZoomInKeyboard();
     bool TreeZoomOutKeyboard();
     void ConnectKeyboardAcceleratorSignals();
@@ -1099,9 +1094,9 @@ TechTreeWnd::LayoutPanel::LayoutPanel(GG::X w, GG::Y h) :
     m_hscroll->ScrolledSignal.connect(
         boost::bind(&TechTreeWnd::LayoutPanel::ScrolledSlot, this, _1, _2, _3, _4));
     m_zoom_in_button->LeftClickedSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomInClicked, this));
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, 1));
     m_zoom_out_button->LeftClickedSignal.connect(
-        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomOutClicked, this));
+        boost::bind(&TechTreeWnd::LayoutPanel::TreeZoomedSlot, this, -1));
 
     ConnectKeyboardAcceleratorSignals();
 
@@ -1399,9 +1394,9 @@ void TechTreeWnd::LayoutPanel::Layout(bool keep_position) {
         tech_panel->TechLeftClickedSignal.connect(
             boost::bind(&TechTreeWnd::LayoutPanel::TechLeftClickedSlot, this, _1, _2));
         tech_panel->TechDoubleClickedSignal.connect(
-            boost::bind(&TechTreeWnd::LayoutPanel::TechDoubleClickedSlot, this, _1, _2));
+            TechDoubleClickedSignal);
         tech_panel->TechPediaDisplaySignal.connect(
-            boost::bind(&TechTreeWnd::LayoutPanel::TechPediaDisplaySlot, this, _1));
+            TechPediaDisplaySignal);
 
         visible_techs.insert(tech_name);
     }
@@ -1465,14 +1460,6 @@ void TechTreeWnd::LayoutPanel::TechLeftClickedSlot(const std::string& tech_name,
     TechLeftClickedSignal(tech_name, modkeys);
 }
 
-void TechTreeWnd::LayoutPanel::TechDoubleClickedSlot(const std::string& tech_name,
-                                                     const GG::Flags<GG::ModKey>& modkeys)
-{ TechDoubleClickedSignal(tech_name, modkeys); }
-
-void TechTreeWnd::LayoutPanel::TechPediaDisplaySlot(const std::string& tech_name)
-{ TechPediaDisplaySignal(tech_name); }
-
-
 void TechTreeWnd::LayoutPanel::TreeDraggedSlot(const GG::Pt& move) {
     m_hscroll->ScrollTo(m_drag_scroll_position_x - Value(move.x / m_scale));
     m_vscroll->ScrollTo(m_drag_scroll_position_y - Value(move.y / m_scale));
@@ -1497,12 +1484,6 @@ void TechTreeWnd::LayoutPanel::TreeZoomedSlot(int move) {
         SetScale(m_scale / ZOOM_STEP_SIZE);
     //std::cout << m_scale << std::endl;
 }
-
-void TechTreeWnd::LayoutPanel::TreeZoomInClicked()
-{ TreeZoomedSlot(1); }
-
-void TechTreeWnd::LayoutPanel::TreeZoomOutClicked()
-{ TreeZoomedSlot(-1); }
 
 // The bool return value is to re-use the MapWnd::KeyboardZoomIn hotkey
 bool TechTreeWnd::LayoutPanel::TreeZoomInKeyboard() {
