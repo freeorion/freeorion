@@ -22,10 +22,6 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 
 /** The data that represent the galaxy setup for a new game. */
 struct FO_COMMON_API GalaxySetupData {
-    /** \name Structors */ //@{
-    GalaxySetupData();
-    //@}
-
     /** \name Accessors */ //@{
     const std::string&  GetSeed() const;
     int                 GetSize() const;
@@ -39,16 +35,16 @@ struct FO_COMMON_API GalaxySetupData {
     Aggression          GetAggression() const;
     //@}
 
-    std::string         m_seed;
-    int                 m_size;
-    Shape               m_shape;
-    GalaxySetupOption   m_age;
-    GalaxySetupOption   m_starlane_freq;
-    GalaxySetupOption   m_planet_density;
-    GalaxySetupOption   m_specials_freq;
-    GalaxySetupOption   m_monster_freq;
-    GalaxySetupOption   m_native_freq;
-    Aggression          m_ai_aggr;
+    std::string         m_seed = "";
+    int                 m_size = 100;
+    Shape               m_shape = SPIRAL_2;
+    GalaxySetupOption   m_age = GALAXY_SETUP_MEDIUM;
+    GalaxySetupOption   m_starlane_freq = GALAXY_SETUP_MEDIUM;
+    GalaxySetupOption   m_planet_density = GALAXY_SETUP_MEDIUM;
+    GalaxySetupOption   m_specials_freq = GALAXY_SETUP_MEDIUM;
+    GalaxySetupOption   m_monster_freq = GALAXY_SETUP_MEDIUM;
+    GalaxySetupOption   m_native_freq = GALAXY_SETUP_MEDIUM;
+    Aggression          m_ai_aggr = MANIACAL;
 
 private:
     friend class boost::serialization::access;

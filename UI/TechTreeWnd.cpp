@@ -2000,8 +2000,7 @@ TechTreeWnd::TechTreeWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
         });
     }
 
-    // connect button for all categories to update display
-    GG::Connect(m_tech_tree_controls->m_all_cat_button->CheckedSignal, [this](bool checked) {
+    m_tech_tree_controls->m_all_cat_button->CheckedSignal.connect([this](bool checked) {
         if(checked)
             this->ShowAllCategories();
         else
