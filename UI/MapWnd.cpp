@@ -60,7 +60,6 @@
 #include <GG/Layout.h>
 #include <GG/MultiEdit.h>
 #include <GG/PtRect.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/WndEvent.h>
 
 #include <deque>
@@ -522,7 +521,8 @@ public:
         AttachChild(m_label);
         std::set<int> dummy = std::set<int>();
         Update(1.0, dummy, INVALID_OBJECT_ID);
-        GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-scale"), &MapScaleLine::UpdateEnabled, this);
+        GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-scale").connect(
+            boost::bind(&MapScaleLine::UpdateEnabled, this));
         UpdateEnabled();
     }
 
@@ -941,7 +941,8 @@ MapWnd::MapWnd() :
 {
     SetName("MapWnd");
 
-    Connect(GetUniverse().UniverseObjectDeleteSignal, &MapWnd::UniverseObjectDeleted, this);
+    GetUniverse().UniverseObjectDeleteSignal.connect(
+        boost::bind(&MapWnd::UniverseObjectDeleted, this, _1));
 
     // toolbar
     m_toolbar = new CUIToolBar();
@@ -964,8 +965,10 @@ MapWnd::MapWnd() :
     std::string turn_button_longest_reasonable_text =  boost::io::str(FlexibleFormat(UserString("MAP_BTN_TURN_UPDATE")) % "99999"); // it is unlikely a game will go over 100000 turns
     m_btn_turn = new CUIButton(turn_button_longest_reasonable_text);
     m_btn_turn->Resize(m_btn_turn->MinUsableSize());
-    GG::Connect(m_btn_turn->LeftClickedSignal, boost::bind(&MapWnd::EndTurn, this));
-    GG::Connect(m_btn_turn->LeftClickedSignal, &PlayTurnButtonClickSound);
+    m_btn_turn->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::EndTurn, this));
+    m_btn_turn->LeftClickedSignal.connect(
+        &PlayTurnButtonClickSound);
 
     boost::filesystem::path button_texture_dir = ClientUI::ArtDir() / "icons" / "buttons";
 
@@ -975,7 +978,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "auto_turn.png")),
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "manual_turn_mouseover.png")));
 
-    GG::Connect(m_btn_auto_turn->LeftClickedSignal, &MapWnd::ToggleAutoEndTurn, this);
+    m_btn_auto_turn->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleAutoEndTurn, this));
     m_btn_auto_turn->Resize(GG::Pt(GG::X(24), GG::Y(24)));
     m_btn_auto_turn->SetMinSize(GG::Pt(GG::X(24), GG::Y(24)));
     ToggleAutoEndTurn();    // toggle twice to set textures without changing default setting state
@@ -999,7 +1003,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "menu_mouseover.png")),
         in_window_func);
     m_btn_menu->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_menu->LeftClickedSignal, boost::bind(&MapWnd::ShowMenu, this));
+    m_btn_menu->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ShowMenu, this));
     m_btn_menu->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_menu->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_MENU"), UserString("MAP_BTN_MENU_DESC")));
@@ -1015,7 +1020,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "pedia_mouseover.png")),
         in_window_func);
     m_btn_pedia->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_pedia->LeftClickedSignal, boost::bind(&MapWnd::TogglePedia, this));
+    m_btn_pedia->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::TogglePedia, this));
     m_btn_pedia->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_pedia->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_PEDIA"), UserString("MAP_BTN_PEDIA_DESC")));
@@ -1031,7 +1037,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "charts_mouseover.png")),
         in_window_func);
     m_btn_graphs->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_graphs->LeftClickedSignal, boost::bind(&MapWnd::ShowGraphs, this));
+    m_btn_graphs->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ShowGraphs, this));
     m_btn_graphs->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_graphs->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_GRAPH"), UserString("MAP_BTN_GRAPH_DESC")));
@@ -1047,7 +1054,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "design_mouseover.png")),
         in_window_func);
     m_btn_design->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_design->LeftClickedSignal, boost::bind(&MapWnd::ToggleDesign, this));
+    m_btn_design->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleDesign, this));
     m_btn_design->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_design->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_DESIGN"), UserString("MAP_BTN_DESIGN_DESC")));
@@ -1063,7 +1071,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "production_mouseover.png")),
         in_window_func);
     m_btn_production->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_production->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
+    m_btn_production->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleProduction, this));
     m_btn_production->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_production->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_PRODUCTION"), UserString("MAP_BTN_PRODUCTION_DESC")));
@@ -1079,7 +1088,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "research_mouseover.png")),
         in_window_func);
     m_btn_research->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_research->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch, this));
+    m_btn_research->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleResearch, this));
     m_btn_research->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_research->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_RESEARCH"), UserString("MAP_BTN_RESEARCH_DESC")));
@@ -1095,7 +1105,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "objects_mouseover.png")),
         in_window_func);
     m_btn_objects->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_objects->LeftClickedSignal, boost::bind(&MapWnd::ToggleObjects, this));
+    m_btn_objects->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleObjects, this));
     m_btn_objects->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_objects->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_OBJECTS"), UserString("MAP_BTN_OBJECTS_DESC")));
@@ -1111,7 +1122,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "empires_mouseover.png")),
         in_window_func);
     m_btn_empires->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_empires->LeftClickedSignal, boost::bind(&MapWnd::ToggleEmpires, this));
+    m_btn_empires->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleEmpires, this));
     m_btn_empires->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_empires->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_EMPIRES"), UserString("MAP_BTN_EMPIRES_DESC")));
@@ -1127,7 +1139,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "sitrep_mouseover.png")),
         in_window_func);
     m_btn_siterep->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_siterep->LeftClickedSignal, boost::bind(&MapWnd::ToggleSitRep, this));
+    m_btn_siterep->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleSitRep, this));
     m_btn_siterep->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_siterep->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_SITREP"), UserString("MAP_BTN_SITREP_DESC")));
@@ -1143,7 +1156,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "messages_mouseover.png")),
         in_window_func);
     m_btn_messages->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_messages->LeftClickedSignal, boost::bind(&MapWnd::ToggleMessages, this));
+    m_btn_messages->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleMessages, this));
     m_btn_messages->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_messages->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_MESSAGES"), UserString("MAP_BTN_MESSAGES_DESC")));
@@ -1159,7 +1173,8 @@ MapWnd::MapWnd() :
         GG::SubTexture(ClientUI::GetTexture(button_texture_dir / "moderator_mouseover.png")),
         in_window_func);
     m_btn_moderator->SetMinSize(GG::Pt(GG::X(32), GG::Y(32)));
-    GG::Connect(m_btn_moderator->LeftClickedSignal, boost::bind(&MapWnd::ToggleModeratorActions, this));
+    m_btn_moderator->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleModeratorActions, this));
     m_btn_moderator->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_btn_moderator->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
         UserString("MAP_BTN_MODERATOR"), UserString("MAP_BTN_MODERATOR_DESC")));
@@ -1175,12 +1190,14 @@ MapWnd::MapWnd() :
     m_industry = new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
                                    GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
-    GG::Connect(m_industry->LeftClickedSignal, boost::bind(&MapWnd::ToggleProduction, this));
+    m_industry->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleProduction, this));
 
     m_research = new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
                                    GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
-    GG::Connect(m_research->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch, this));
+    m_research->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleResearch, this));
 
     m_trade = new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
                                 GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
@@ -1220,8 +1237,10 @@ MapWnd::MapWnd() :
     m_industry_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
     m_research_wasted->SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
-    GG::Connect(m_industry_wasted->LeftClickedSignal, boost::bind(&MapWnd::ZoomToSystemWithWastedPP,  this));
-    GG::Connect(m_research_wasted->LeftClickedSignal, boost::bind(&MapWnd::ToggleResearch,            this));
+    m_industry_wasted->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ZoomToSystemWithWastedPP, this));
+    m_research_wasted->LeftClickedSignal.connect(
+        boost::bind(&MapWnd::ToggleResearch, this));
 
     //Set the correct tooltips
     RefreshIndustryResourceIndicator();
@@ -1359,8 +1378,10 @@ MapWnd::MapWnd() :
     m_zoom_slider->SlideTo(m_zoom_steps_in);
     GG::GUI::GetGUI()->Register(m_zoom_slider);
     m_zoom_slider->Hide();
-    GG::Connect(m_zoom_slider->SlidSignal,              &MapWnd::ZoomSlid,      this);
-    GG::Connect(GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider"),   &MapWnd::RefreshSliders, this);
+    m_zoom_slider->SlidSignal.connect(
+        boost::bind(&MapWnd::ZoomSlid, this, _1, _2, _3));
+    GetOptionsDB().OptionChangedSignal("UI.show-galaxy-map-zoom-slider").connect(
+        boost::bind(&MapWnd::RefreshSliders, this));
 
     ///////////////////
     // Map sub-windows
@@ -1370,11 +1391,16 @@ MapWnd::MapWnd() :
     m_side_panel = new SidePanel(MAP_SIDEPANEL_WND_NAME);
     GG::GUI::GetGUI()->Register(m_side_panel);
 
-    GG::Connect(SidePanel::SystemSelectedSignal,            &MapWnd::SelectSystem,          this);
-    GG::Connect(SidePanel::PlanetSelectedSignal,            &MapWnd::SelectPlanet,          this);
-    GG::Connect(SidePanel::PlanetDoubleClickedSignal,       &MapWnd::PlanetDoubleClicked,   this);
-    GG::Connect(SidePanel::PlanetRightClickedSignal,        &MapWnd::PlanetRightClicked,    this);
-    GG::Connect(SidePanel::BuildingRightClickedSignal,      &MapWnd::BuildingRightClicked,  this);
+    SidePanel::SystemSelectedSignal.connect(
+        boost::bind(&MapWnd::SelectSystem, this, _1));
+    SidePanel::PlanetSelectedSignal.connect(
+        boost::bind(&MapWnd::SelectPlanet, this, _1));
+    SidePanel::PlanetDoubleClickedSignal.connect(
+        boost::bind(&MapWnd::PlanetDoubleClicked, this, _1));
+    SidePanel::PlanetRightClickedSignal.connect(
+        boost::bind(&MapWnd::PlanetRightClicked, this, _1));
+    SidePanel::BuildingRightClickedSignal.connect(
+        boost::bind(&MapWnd::BuildingRightClicked, this, _1));
 
     // not strictly necessary, as in principle whenever any ResourceCenter
     // changes, all meter estimates and resource pools should / could be
@@ -1383,11 +1409,14 @@ MapWnd::MapWnd() :
     // useful since most ResourceCenter changes will be due to focus
     // changes on the sidepanel, and most differences in meter estimates
     // and resource pools due to this will be in the same system
-    GG::Connect(SidePanel::ResourceCenterChangedSignal,     &MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this);
+    SidePanel::ResourceCenterChangedSignal.connect(
+        boost::bind(&MapWnd::UpdateSidePanelSystemObjectMetersAndResourcePools, this));
 
     // situation report window
     m_sitrep_panel = new SitRepPanel(SITREP_WND_NAME);
-    GG::Connect(m_sitrep_panel->ClosingSignal, boost::bind(&MapWnd::HideSitRep, this));   // Wnd is manually closed by user
+    // Wnd is manually closed by user
+    m_sitrep_panel->ClosingSignal.connect(
+        boost::bind(&MapWnd::HideSitRep, this));
     if (m_sitrep_panel->Visible()) {
         m_btn_siterep->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep_mouseover.png")));
         m_btn_siterep->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "sitrep.png")));
@@ -1395,7 +1424,9 @@ MapWnd::MapWnd() :
 
     // encyclopedia panel
     m_pedia_panel = new EncyclopediaDetailPanel(GG::ONTOP | GG::INTERACTIVE | GG::DRAGABLE | GG::RESIZABLE | CLOSABLE | PINABLE, MAP_PEDIA_WND_NAME);
-    GG::Connect(m_pedia_panel->ClosingSignal, boost::bind(&MapWnd::HidePedia, this));     // Wnd is manually closed by user
+    // Wnd is manually closed by user
+    m_pedia_panel->ClosingSignal.connect(
+        boost::bind(&MapWnd::HidePedia, this));
     if (m_pedia_panel->Visible()) {
         m_btn_pedia->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia_mouseover.png")));
         m_btn_pedia->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "pedia.png")));
@@ -1403,8 +1434,8 @@ MapWnd::MapWnd() :
 
     // objects list
     m_object_list_wnd = new ObjectListWnd(OBJECT_WND_NAME);
-    GG::Connect(m_object_list_wnd->ClosingSignal,       boost::bind(&MapWnd::HideObjects, this));   // Wnd is manually closed by user
-    GG::Connect(m_object_list_wnd->ObjectDumpSignal,    &ClientUI::DumpObject,              ClientUI::GetClientUI());
+    m_object_list_wnd->ObjectDumpSignal.connect(
+        boost::bind(&ClientUI::DumpObject, ClientUI::GetClientUI(), _1));
     if (m_object_list_wnd->Visible()) {
         m_btn_objects->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects_mouseover.png")));
         m_btn_objects->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "objects.png")));
@@ -1412,7 +1443,8 @@ MapWnd::MapWnd() :
 
     // moderator actions
     m_moderator_wnd = new ModeratorActionsWnd(MODERATOR_WND_NAME);
-    GG::Connect(m_moderator_wnd->ClosingSignal,         boost::bind(&MapWnd::HideModeratorActions,    this));
+    m_moderator_wnd->ClosingSignal.connect(
+        boost::bind(&MapWnd::HideModeratorActions, this));
     if (m_moderator_wnd->Visible()) {
         m_btn_moderator->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator_mouseover.png")));
         m_btn_moderator->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "moderator.png")));
@@ -1427,14 +1459,18 @@ MapWnd::MapWnd() :
     // messages and empires windows
     if (ClientUI* cui = ClientUI::GetClientUI()) {
         if (MessageWnd* msg_wnd = cui->GetMessageWnd()) {
-            GG::Connect(msg_wnd->ClosingSignal, boost::bind(&MapWnd::HideMessages, this));    // Wnd is manually closed by user
+            // Wnd is manually closed by user
+            msg_wnd->ClosingSignal.connect(
+                boost::bind(&MapWnd::HideMessages, this));
             if (msg_wnd->Visible()) {
                     m_btn_messages->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages_mouseover.png")));
                     m_btn_messages->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "messages.png")));
             }
         }
         if (PlayerListWnd* plr_wnd = cui->GetPlayerListWnd()) {
-            GG::Connect(plr_wnd->ClosingSignal, boost::bind(&MapWnd::HideEmpires, this));     // Wnd is manually closed by user
+            // Wnd is manually closed by user
+            plr_wnd->ClosingSignal.connect(
+                boost::bind(&MapWnd::HideEmpires, this));
             if (plr_wnd->Visible()) {
                 m_btn_empires->SetUnpressedGraphic(GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires_mouseover.png")));
                 m_btn_empires->SetRolloverGraphic (GG::SubTexture(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "buttons" / "empires.png")));
@@ -1442,8 +1478,8 @@ MapWnd::MapWnd() :
         }
     }
 
-    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
-                &MapWnd::InitializeWindows, this);
+    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+        boost::bind(&MapWnd::InitializeWindows, this));
 
     // research window
     m_research_wnd = new ResearchWnd(AppWidth(), AppHeight() - m_toolbar->Height());
@@ -1456,8 +1492,10 @@ MapWnd::MapWnd() :
     m_production_wnd->MoveTo(GG::Pt(GG::X0, m_toolbar->Height()));
     GG::GUI::GetGUI()->Register(m_production_wnd);
     m_production_wnd->Hide();
-    GG::Connect(m_production_wnd->SystemSelectedSignal,     &MapWnd::SelectSystem, this);
-    GG::Connect(m_production_wnd->PlanetSelectedSignal,     &MapWnd::SelectPlanet, this);
+    m_production_wnd->SystemSelectedSignal.connect(
+        boost::bind(&MapWnd::SelectSystem, this, _1));
+    m_production_wnd->PlanetSelectedSignal.connect(
+        boost::bind(&MapWnd::SelectPlanet, this, _1));
 
     // design window
     m_design_wnd = new DesignWnd(AppWidth(), AppHeight() - m_toolbar->Height());
@@ -1471,11 +1509,16 @@ MapWnd::MapWnd() :
     // General Gamestate response signals
     //////////////////
     FleetUIManager& fm = FleetUIManager::GetFleetUIManager();
-    Connect(fm.ActiveFleetWndChangedSignal,                 &MapWnd::SelectedFleetsChanged,     this);
-    Connect(fm.ActiveFleetWndSelectedFleetsChangedSignal,   &MapWnd::SelectedFleetsChanged,     this);
-    Connect(fm.ActiveFleetWndSelectedShipsChangedSignal,    &MapWnd::SelectedShipsChanged,      this);
-    Connect(fm.FleetRightClickedSignal,                     &MapWnd::FleetRightClicked,         this);
-    Connect(fm.ShipRightClickedSignal,                      &MapWnd::ShipRightClicked,          this);
+    fm.ActiveFleetWndChangedSignal.connect(
+        boost::bind(&MapWnd::SelectedFleetsChanged, this));
+    fm.ActiveFleetWndSelectedFleetsChangedSignal.connect(
+        boost::bind(&MapWnd::SelectedFleetsChanged, this));
+    fm.ActiveFleetWndSelectedShipsChangedSignal.connect(
+        boost::bind(&MapWnd::SelectedShipsChanged, this));
+    fm.FleetRightClickedSignal.connect(
+        boost::bind(&MapWnd::FleetRightClicked, this, _1));
+    fm.ShipRightClickedSignal.connect(
+        boost::bind(&MapWnd::ShipRightClicked, this, _1));
 
     DoLayout();
 
@@ -2618,10 +2661,10 @@ void MapWnd::InitTurn() {
     timer.EnterSection("fleet signals");
     // connect system fleet add and remove signals
     for (std::shared_ptr<const System> system : objects.FindObjects<System>()) {
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsInsertedSignal,
-                                                                     &MapWnd::FleetsInsertedSignalHandler, this));
-        m_system_fleet_insert_remove_signals[system->ID()].push_back(GG::Connect(system->FleetsRemovedSignal,
-                                                                     &MapWnd::FleetsRemovedSignalHandler, this));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsInsertedSignal.connect(
+            boost::bind(&MapWnd::FleetsInsertedSignalHandler, this, _1)));
+        m_system_fleet_insert_remove_signals[system->ID()].push_back(system->FleetsRemovedSignal.connect(
+            boost::bind(&MapWnd::FleetsRemovedSignalHandler, this, _1)));
     }
 
     RefreshFleetSignals();
@@ -2672,13 +2715,21 @@ void MapWnd::InitTurn() {
     // (unlike connections to signals from the sidepanel)
     Empire* this_client_empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
     if (this_client_empire) {
-        GG::Connect(this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal,           &MapWnd::RefreshTradeResourceIndicator,     this);
-        GG::Connect(this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal,        &MapWnd::RefreshResearchResourceIndicator,  this);
-        GG::Connect(this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal,        &MapWnd::RefreshIndustryResourceIndicator,  this);
-        GG::Connect(this_client_empire->GetPopulationPool().ChangedSignal,                  &MapWnd::RefreshPopulationIndicator,        this);
-        GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &MapWnd::RefreshIndustryResourceIndicator,  this);
-        GG::Connect(this_client_empire->GetProductionQueue().ProductionQueueChangedSignal,  &MapWnd::InitStarlaneRenderingBuffers,      this);  // so lane colouring to indicate wasted PP is updated
-        GG::Connect(this_client_empire->GetResearchQueue().ResearchQueueChangedSignal,      &MapWnd::RefreshResearchResourceIndicator,  this);
+        this_client_empire->GetResourcePool(RE_TRADE)->ChangedSignal.connect(
+            boost::bind(&MapWnd::RefreshTradeResourceIndicator, this));
+        this_client_empire->GetResourcePool(RE_RESEARCH)->ChangedSignal.connect(
+            boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
+        this_client_empire->GetResourcePool(RE_INDUSTRY)->ChangedSignal.connect(
+            boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
+        this_client_empire->GetPopulationPool().ChangedSignal.connect(
+            boost::bind(&MapWnd::RefreshPopulationIndicator, this));
+        this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
+            boost::bind(&MapWnd::RefreshIndustryResourceIndicator, this));
+        // so lane colouring to indicate wasted PP is updated
+        this_client_empire->GetProductionQueue().ProductionQueueChangedSignal.connect(
+            boost::bind(&MapWnd::InitStarlaneRenderingBuffers, this));
+        this_client_empire->GetResearchQueue().ResearchQueueChangedSignal.connect(
+            boost::bind(&MapWnd::RefreshResearchResourceIndicator, this));
     }
 
     m_toolbar->Show();
@@ -2813,11 +2864,16 @@ void MapWnd::InitTurnRendering() {
         AttachChild(icon);
 
         // connect UI response signals.  TODO: Make these configurable in GUI?
-        GG::Connect(icon->LeftClickedSignal,        &MapWnd::SystemLeftClicked,         this);
-        GG::Connect(icon->RightClickedSignal,       &MapWnd::SystemRightClicked,        this);
-        GG::Connect(icon->LeftDoubleClickedSignal,  &MapWnd::SystemDoubleClicked,       this);
-        GG::Connect(icon->MouseEnteringSignal,      &MapWnd::MouseEnteringSystem,       this);
-        GG::Connect(icon->MouseLeavingSignal,       &MapWnd::MouseLeavingSystem,        this);
+        icon->LeftClickedSignal.connect(
+            boost::bind(&MapWnd::SystemLeftClicked, this, _1));
+        icon->RightClickedSignal.connect(
+            boost::bind(&MapWnd::SystemRightClicked, this, _1, _2));
+        icon->LeftDoubleClickedSignal.connect(
+            boost::bind(&MapWnd::SystemDoubleClicked, this, _1));
+        icon->MouseEnteringSignal.connect(
+            boost::bind(&MapWnd::MouseEnteringSystem, this, _1, _2));
+        icon->MouseLeavingSignal.connect(
+            boost::bind(&MapWnd::MouseLeavingSystem, this, _1));
     }
 
     // temp: reset starfield each turn
@@ -2858,7 +2914,8 @@ void MapWnd::InitTurnRendering() {
 
         AttachChild(icon);
 
-        GG::Connect(icon->RightClickedSignal,   &MapWnd::FieldRightClicked, this);
+        icon->RightClickedSignal.connect(
+            boost::bind(&MapWnd::FieldRightClicked, this, _1));
     }
 
     // position field icons
@@ -4833,8 +4890,10 @@ void MapWnd::CreateFleetButtonsOfType (
             m_fleet_buttons[fleet_id] = fb;
 
         AttachChild(fb);
-        GG::Connect(fb->LeftClickedSignal,  boost::bind(&MapWnd::FleetButtonLeftClicked,    this, fb));
-        GG::Connect(fb->RightClickedSignal, boost::bind(&MapWnd::FleetButtonRightClicked,   this, fb));
+        fb->LeftClickedSignal.connect(
+            boost::bind(&MapWnd::FleetButtonLeftClicked, this, fb));
+        fb->RightClickedSignal.connect(
+            boost::bind(&MapWnd::FleetButtonRightClicked, this, fb));
     }
 }
 
@@ -4875,8 +4934,8 @@ void MapWnd::RemoveFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fl
 void MapWnd::AddFleetsStateChangedSignal(const std::vector<std::shared_ptr<Fleet>>& fleets) {
     ScopedTimer timer("AddFleetsStateChangedSignal()", true);
     for (std::shared_ptr<Fleet> fleet : fleets) {
-        m_fleet_state_change_signals[fleet->ID()] =
-            GG::Connect(fleet->StateChangedSignal, &MapWnd::RefreshFleetButtons, this);
+        m_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
+            boost::bind( &MapWnd::RefreshFleetButtons, this));
     }
 }
 
