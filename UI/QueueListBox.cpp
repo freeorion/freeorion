@@ -88,22 +88,6 @@ void QueueListBox::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags
     }
 }
 
-void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                   const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
-{
-    for (DropsAcceptableIter it = first; it != last; ++it)
-        it->second = false;
-
-    if (std::distance(first, last) != 1) {
-        ErrorLogger() << "QueueListBox::DropsAcceptable unexpected passed more than one Wnd to test";
-    }
-
-    for (DropsAcceptableIter it = first; it != last; ++it) {
-        it->second = (m_order_issuing_enabled &&
-                      AllowedDropType(it->first->DragDropDataType()));
-    }
-}
-
 void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
     if (wnds.empty())
         return;
@@ -180,6 +164,7 @@ void QueueListBox::DragDropLeave() {
 
 void QueueListBox::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
+    AllowDrops(enable);
     for (GG::ListBox::Row* row : *this)
         row->Disable(!enable);
 }
