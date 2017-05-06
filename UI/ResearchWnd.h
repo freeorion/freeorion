@@ -38,7 +38,7 @@ public:
      *  Selects and centers tech @p tech_name if tech is initially visible
      *  or if @p force is true(default). */
     void    ShowTech(const std::string& tech_name, bool force = true);
-    void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
+    void    QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it);
     void    Sanitize();
 
     void    ShowPedia();
