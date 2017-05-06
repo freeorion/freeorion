@@ -1,7 +1,6 @@
 #include "MilitaryPanel.h"
 
 #include <GG/Button.h>
-#include <GG/SignalsAndSlots.h>
 
 #include "../util/i18n.h"
 #include "../util/Logger.h"
@@ -40,7 +39,8 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     if (!planet)
         throw std::invalid_argument("Attempted to construct a MilitaryPanel with an object id is not a Planet");
 
-    GG::Connect(m_expand_button->LeftClickedSignal, &MilitaryPanel::ExpandCollapseButtonPressed, this);
+    m_expand_button->LeftClickedSignal.connect(
+        boost::bind(&MilitaryPanel::ExpandCollapseButtonPressed, this));
 
     const auto obj = GetUniverseObject(m_planet_id);
     if (!obj) {
