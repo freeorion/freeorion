@@ -2058,7 +2058,6 @@ public:
 
 private:
     void            DoLayout();
-    void            WndSelected(std::size_t index);
     void            SavedDesignSelectedSlot(const std::string& design_name);
 
     GG::TabWnd*     m_tabs;
@@ -2091,7 +2090,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
 
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     m_tabs->TabChangedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::WndSelected, this, _1));
+        boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
 
     m_hulls_list = new BasesListBox();
@@ -2233,9 +2232,6 @@ void DesignWnd::BaseSelector::DoLayout() {
     m_tabs->SizeMove(GG::Pt(left, top), ClientSize() - GG::Pt(LEFT_PAD, TOP_PAD));
 }
 
-void DesignWnd::BaseSelector::WndSelected(std::size_t index)
-{ Reset(); }
-
 void DesignWnd::BaseSelector::SavedDesignSelectedSlot(const std::string& design_name) {
     if (design_name.empty())
         return;
@@ -2308,11 +2304,6 @@ protected:
                          const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
-    /** emits SlotContentsAlteredSignal with PartType* = 0.  needed because
-      * boost::signals2::signal is noncopyable, so boost::bind can't be used
-      * to bind the parameter 0 to SlotContentsAlteredSignal::operator() */
-    void            EmitNullSlotContentsAlteredSignal();
-
     bool                m_highlighted;
     ShipSlotType        m_slot_type;
     double              m_x_position_fraction, m_y_position_fraction;   //!< position on hull image where slot should be shown, as a fraction of that image's size
@@ -2538,7 +2529,7 @@ void SlotControl::SetPart(const PartType* part_type) {
 
         // double click clears slot
         m_part_control->DoubleClickedSignal.connect(
-            boost::bind(&SlotControl::EmitNullSlotContentsAlteredSignal, this));
+            [this](const PartType*){ this->SlotContentsAlteredSignal(nullptr); });
         SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 
         // set part occupying slot's tool tip to say slot type
@@ -2557,10 +2548,6 @@ void SlotControl::SetPart(const PartType* part_type) {
         ));
     }
 }
-
-void SlotControl::EmitNullSlotContentsAlteredSignal()
-{ SlotContentsAlteredSignal(nullptr); }
-
 
 /** PartsListBox accepts parts that are being removed from a SlotControl.*/
 void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
@@ -2677,10 +2664,6 @@ protected:
                          const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
-    // disambiguate overloaded SetPart function, because otherwise boost::bind wouldn't be able to tell them apart
-    typedef void (DesignWnd::MainPanel::*SetPartFuncPtrType)(const PartType* part, unsigned int slot, bool emit_signal);
-    static SetPartFuncPtrType const s_set_part_func_ptr;
-
     void            Populate();                         //!< creates and places SlotControls for current hull
     void            DoLayout();                         //!< positions buttons, text entry boxes and SlotControls
     void            DesignChanged();                    //!< responds to the design being changed
@@ -2719,8 +2702,6 @@ private:
     boost::signals2::connection             m_empire_designs_changed_signal;
 };
 
-// static
-DesignWnd::MainPanel::SetPartFuncPtrType const DesignWnd::MainPanel::s_set_part_func_ptr = &DesignWnd::MainPanel::SetPart;
 
 DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     CUIWnd(UserString("DESIGN_WND_MAIN_PANEL_TITLE"),
@@ -3121,7 +3102,7 @@ void DesignWnd::MainPanel::Populate(){
         m_slots.push_back(slot_control);
         AttachChild(slot_control);
         slot_control->SlotContentsAlteredSignal.connect(
-            boost::bind(DesignWnd::MainPanel::s_set_part_func_ptr, this, _1, i, true));
+            boost::bind(static_cast<void (DesignWnd::MainPanel::*)(const PartType*, unsigned int, bool)>(&DesignWnd::MainPanel::SetPart), this, _1, i, true));
         slot_control->PartTypeClickedSignal.connect(
             PartTypeClickedSignal);
     }
@@ -3563,10 +3544,7 @@ void DesignWnd::ShowHullTypeInEncyclopedia(const std::string& hull_type)
 void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_detail_panel->SetDesign(design_id); }
 
-void DesignWnd::AddDesign()
-{ AddDesignCore(); }
-
-int DesignWnd::AddDesignCore() {
+int DesignWnd::AddDesign() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);
     if (!empire) return ShipDesign::INVALID_DESIGN_ID;
@@ -3603,7 +3581,7 @@ int DesignWnd::AddDesignCore() {
 }
 
 void DesignWnd::ReplaceDesign() {
-    int new_design_id = AddDesignCore();
+    int new_design_id = AddDesign();
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     int replaced_id = m_main_panel->GetReplacedDesignID();
 
