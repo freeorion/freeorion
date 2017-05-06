@@ -316,6 +316,10 @@ public:
         auto-scrolling. */
     unsigned int    AutoScrollInterval() const;
 
+    /** Return true if drops are allowed.*/
+    bool AllowingDrops();
+
+
     mutable ClearedSignalType        ClearedSignal;         /// the cleared signal object for this ListBox
     mutable BeforeInsertSignalType   BeforeInsertSignal;    ///< the before insert signal object for this ListBox
     mutable AfterInsertSignalType    AfterInsertSignal;     ///< the after insert signal object for this ListBox
@@ -450,6 +454,8 @@ public:
      *  the top (true), or only use as much space as it needs. */
     void            AddPaddingAtEnd(bool enable = true);
 
+    /** Allow drops if \p allow is true.*/
+    void            AllowDrops(bool allow);
     /** Allows Rows with data type \a str to be dropped over this ListBox when
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
     void            AllowDropType(const std::string& str);
@@ -622,6 +628,8 @@ private:
                     m_sort_cmp;         ///< the predicate used to sort the values in the m_sort_col column of two rows
     std::set<std::string>
                     m_allowed_drop_types;///< the line item types allowed for use in this listbox
+
+    bool            m_allow_drops;      ///< are we accepting drops
 
     bool            m_auto_scroll_during_drag_drops;
     unsigned int    m_auto_scroll_margin;

@@ -548,6 +548,7 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_clip_cells(false),
     m_sort_col(0),
     m_sort_cmp(DefaultRowCmp<Row>()),
+    m_allow_drops(false),
     m_auto_scroll_during_drag_drops(true),
     m_auto_scroll_margin(8),
     m_auto_scrolling_up(false),
@@ -585,6 +586,11 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
 ListBox::~ListBox()
 { delete m_header_row; }
 
+void ListBox::AllowDrops(bool allow)
+{ m_allow_drops = allow; }
+
+bool ListBox::AllowingDrops()
+{ return m_allow_drops; }
 void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                               const Pt& pt, Flags<ModKey> mod_keys) const
 {
