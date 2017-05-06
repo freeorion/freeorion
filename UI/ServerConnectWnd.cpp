@@ -126,15 +126,15 @@ const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
 
 void ServerConnectWnd::Init() {
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
-        boost::bind(&ServerConnectWnd::HostOrJoinClicked, this, _1));
+        boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_servers_lb->SelChangedSignal.connect(
         boost::bind(&ServerConnectWnd::ServerSelected, this, _1));
     m_find_LAN_servers_bn->LeftClickedSignal.connect(
-        boost::bind(&ServerConnectWnd::RefreshServerList, this));
+        boost::bind(&ServerConnectWnd::PopulateServerList, this));
     m_IP_address_edit->EditedSignal.connect(
         boost::bind(&ServerConnectWnd::IPAddressEdited, this, _1));
     m_player_name_edit->EditedSignal.connect(
-        boost::bind(&ServerConnectWnd::NameEdited, this, _1));
+        boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_ok_bn->LeftClickedSignal.connect(
         boost::bind(&ServerConnectWnd::OkClicked, this));
     m_cancel_bn->LeftClickedSignal.connect(
@@ -147,7 +147,7 @@ void ServerConnectWnd::Init() {
         m_servers_lb->SelectRow(m_servers_lb->begin());
         ServerSelected(m_servers_lb->Selections());
     }
-    HostOrJoinClicked(m_host_or_join_radio_group->CheckedButton());
+    EnableDisableControls();
 }
 
 void ServerConnectWnd::PopulateServerList()
@@ -159,16 +159,6 @@ void ServerConnectWnd::PopulateServerList()
         row->push_back(new CUILabel(server));
         m_servers_lb->Insert(row);
     }
-}
-
-void ServerConnectWnd::RefreshServerList()
-{
-    PopulateServerList();
-}
-
-void ServerConnectWnd::HostOrJoinClicked(std::size_t idx)
-{
-    EnableDisableControls();
 }
 
 void ServerConnectWnd::ServerSelected(const GG::ListBox::SelectionSet& selections)
@@ -184,11 +174,6 @@ void ServerConnectWnd::IPAddressEdited(const std::string& str)
         m_servers_lb->DeselectAll();
         ServerSelected(m_servers_lb->Selections());
     }
-    EnableDisableControls();
-}
-
-void ServerConnectWnd::NameEdited(const std::string& str)
-{
     EnableDisableControls();
 }
 
