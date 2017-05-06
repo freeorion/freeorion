@@ -177,17 +177,15 @@ void QueueListBox::Clear() {
     DragDropLeave();
 }
 
-std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) const {
+std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) {
     return [it, this]() {
-        if (GG::ListBox::Row* row = *it)
-            QueueItemMovedSignal(row, 0);
+        ListBox::Insert(*it, begin(), true, true);
     };
 }
 
-std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) const {
+std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) {
     return [it, this]() {
-        if (GG::ListBox::Row* row = *it)
-            QueueItemMovedSignal(row, NumRows());
+        ListBox::Insert(*it, end(), true, true);
     };
 }
 
