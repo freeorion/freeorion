@@ -16,7 +16,6 @@
 #include <boost/filesystem/fstream.hpp>
 
 #include <GG/DrawUtil.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/StaticGraphic.h>
 
 
@@ -192,18 +191,30 @@ GalaxySetupPanel::GalaxySetupPanel(GG::X w, GG::Y h) :
 
     DoLayout();
 
-    GG::Connect(m_random->LeftClickedSignal,                &GalaxySetupPanel::RandomClicked,   this);
-    GG::Connect(m_seed_edit->FocusUpdateSignal,             &GalaxySetupPanel::SeedChanged,     this);
-    GG::Connect(m_stars_spin->ValueChangedSignal,           &GalaxySetupPanel::SettingChanged_, this);
-    GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_galaxy_ages_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_starlane_freq_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_planet_density_list->SelChangedSignal,    &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_specials_freq_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_monster_freq_list->SelChangedSignal,      &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_native_freq_list->SelChangedSignal,       &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_ai_aggression_list->SelChangedSignal,     &GalaxySetupPanel::SettingChanged,  this);
-    GG::Connect(m_galaxy_shapes_list->SelChangedSignal,     &GalaxySetupPanel::ShapeChanged,    this);
+    m_random->LeftClickedSignal.connect(
+        boost::bind(&GalaxySetupPanel::RandomClicked, this));
+    m_seed_edit->FocusUpdateSignal.connect(
+        boost::bind(&GalaxySetupPanel::SeedChanged, this, _1));
+    m_stars_spin->ValueChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged_, this, _1));
+    m_galaxy_shapes_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+    m_galaxy_ages_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+    m_starlane_freq_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+    m_planet_density_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+    m_specials_freq_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+    m_monster_freq_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+    m_native_freq_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+    m_ai_aggression_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::SettingChanged, this, _1));
+    m_galaxy_shapes_list->SelChangedSignal.connect(
+        boost::bind(&GalaxySetupPanel::ShapeChanged, this, _1));
 
     // create and load textures
     m_textures.clear();
@@ -589,11 +600,16 @@ GalaxySetupWnd::GalaxySetupWnd() :
     ResetDefaultPosition();
     DoLayout();
 
-    GG::Connect(m_galaxy_setup_panel->ImageChangedSignal,   &GalaxySetupWnd::PreviewImageChanged, this);
-    GG::Connect(m_player_name_edit->EditedSignal,           &GalaxySetupWnd::PlayerNameChanged, this);
-    GG::Connect(m_empire_name_edit->EditedSignal,           &GalaxySetupWnd::EmpireNameChanged, this);
-    GG::Connect(m_ok->LeftClickedSignal,                    &GalaxySetupWnd::OkClicked, this);
-    GG::Connect(m_cancel->LeftClickedSignal,                &GalaxySetupWnd::CancelClicked, this);
+    m_galaxy_setup_panel->ImageChangedSignal.connect(
+        boost::bind(&GalaxySetupWnd::PreviewImageChanged, this, _1));
+    m_player_name_edit->EditedSignal.connect(
+        boost::bind(&GalaxySetupWnd::PlayerNameChanged, this, _1));
+    m_empire_name_edit->EditedSignal.connect(
+        boost::bind(&GalaxySetupWnd::EmpireNameChanged, this, _1));
+    m_ok->LeftClickedSignal.connect(
+        boost::bind(&GalaxySetupWnd::OkClicked, this));
+    m_cancel->LeftClickedSignal.connect(
+        boost::bind(&GalaxySetupWnd::CancelClicked, this));
 
     PreviewImageChanged(m_galaxy_setup_panel->PreviewImage());
 }
