@@ -327,7 +327,8 @@ namespace {
         }
 
         std::list<boost::uuids::uuid>::const_iterator InsertBefore(
-            std::list<boost::uuids::uuid>::const_iterator next, const ShipDesign& design)
+            const ShipDesign& design,
+            std::list<boost::uuids::uuid>::const_iterator next)
         {
             if(design.UUID() == boost::uuids::uuid{{0}}) {
                 ErrorLogger() << "Ship design has a nil UUID for " << design.Name() << ". Not saving.";
@@ -2049,7 +2050,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
         auto save_design_action = [&design]() {
             auto saved_design = *design;
             saved_design.SetUUID(boost::uuids::random_generator()());
-            GetSavedDesignsManager().InsertBefore(GetSavedDesignsManager().GetOrderedDesignUUIDs().end(), saved_design);
+            GetSavedDesignsManager().InsertBefore(saved_design, GetSavedDesignsManager().GetOrderedDesignUUIDs().begin());
         };
 
         // create popup menu with a commands in it
