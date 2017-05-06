@@ -289,7 +289,7 @@ namespace {
 //////////////////////////////////////////////////
 class ResearchQueueListBox : public QueueListBox {
 public:
-    ResearchQueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
+    ResearchQueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str) :
         QueueListBox(drop_type_str, prompt_str)
     {}
 
@@ -352,7 +352,7 @@ public:
                "research.ResearchQueueWnd"),
         m_queue_lb(nullptr)
     {
-        m_queue_lb = new ResearchQueueListBox("RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
+        m_queue_lb = new ResearchQueueListBox(std::string("RESEARCH_QUEUE_ROW"), UserString("RESEARCH_QUEUE_PROMPT"));
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ResearchQueue ListBox");
 

@@ -1,6 +1,8 @@
 #ifndef _QueueListBox_h_
 #define _QueueListBox_h_
 
+#include <boost/optional/optional.hpp>
+
 #include "CUIControls.h"
 
 /** A list box type for representing queues (eg the research and production queues). */
@@ -8,7 +10,7 @@ class QueueListBox :
     public CUIListBox
 {
 public:
-    QueueListBox(const std::string& drop_type_str, const std::string& prompt_str);
+    QueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str);
 
     void Render() override;
 

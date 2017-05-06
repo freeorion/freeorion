@@ -42,7 +42,7 @@ private:
 ////////////////////////////////////////////////////////////
 // QueueListBox
 ////////////////////////////////////////////////////////////
-QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
+QueueListBox::QueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str) :
     CUIListBox(),
     m_drop_point(end()),
     m_show_drop_point(false),
@@ -50,8 +50,8 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     m_showing_prompt(false),
     m_prompt_str(prompt_str)
 {
-    if (!drop_type_str.empty())
-        AllowDropType(drop_type_str);
+    if (drop_type_str)
+        AllowDropType(*drop_type_str);
 
     BeforeInsertSignal.connect(
         boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, _1));

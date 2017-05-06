@@ -1183,7 +1183,7 @@ public:
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
     /** \name Structors */ //@{
-    BasesListBox(const std::string& drop_type = "");
+    BasesListBox(const boost::optional<std::string>& drop_type = boost::none);
     //@}
 
     /** \name Accessors */ //@{
@@ -1448,7 +1448,7 @@ bool BasesListBox::SavedDesignListBoxRow::LookupInStringtable() const {
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
-BasesListBox::BasesListBox(const std::string& drop_type) :
+BasesListBox::BasesListBox(const boost::optional<std::string>& drop_type) :
     QueueListBox(drop_type,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_shown{false, false},
