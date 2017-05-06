@@ -16,7 +16,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/Layout.h>
-#include <GG/SignalsAndSlots.h>
 
 #include <boost/format.hpp>
 #include <boost/regex.hpp>
@@ -86,7 +85,10 @@ namespace {
 
 CUIButton::CUIButton(const std::string& str) :
     Button(str, ClientUI::GetFont(), ClientUI::CtrlColor(), ClientUI::TextColor(), GG::INTERACTIVE)
-{ GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
+{
+    LeftClickedSignal.connect(-1,
+        &PlayButtonClickSound);
+}
 
 CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pressed,
                      const GG::SubTexture& rollover) :
@@ -96,7 +98,8 @@ CUIButton::CUIButton(const GG::SubTexture& unpressed, const GG::SubTexture& pres
     SetUnpressedGraphic(unpressed);
     SetPressedGraphic  (pressed);
     SetRolloverGraphic (rollover);
-    GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1);
+    LeftClickedSignal.connect(-1,
+        &PlayButtonClickSound);
 }
 
 bool CUIButton::InWindow(const GG::Pt& pt) const {
@@ -212,7 +215,10 @@ CUIArrowButton::CUIArrowButton(ShapeOrientation orientation, bool fill_backgroun
     Button("", nullptr, ClientUI::DropDownListArrowColor(), GG::CLR_ZERO, flags),
     m_orientation(orientation),
     m_fill_background_with_wnd_color(fill_background)
-{ GG::Connect(LeftClickedSignal, &PlayButtonClickSound, -1); }
+{
+    LeftClickedSignal.connect(-1,
+        &PlayButtonClickSound);
+}
 
 bool CUIArrowButton::InWindow(const GG::Pt& pt) const {
     if (m_fill_background_with_wnd_color) {
@@ -708,8 +714,10 @@ void CUIScroll::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
 CUIListBox::CUIListBox(void):
     ListBox(ClientUI::CtrlBorderColor(), ClientUI::CtrlColor())
 {
-    GG::Connect(SelChangedSignal,   &PlayListSelectSound,   -1);
-    GG::Connect(DroppedSignal,      &PlayItemDropSound,     -1);
+    SelChangedSignal.connect(-1,
+        &PlayListSelectSound);
+    DroppedSignal.connect(-1,
+        &PlayItemDropSound);
 }
 
 void CUIListBox::Render() {
@@ -853,7 +861,8 @@ void CUIDropDownList::EnableDropArrow()
 CUIEdit::CUIEdit(const std::string& str) :
     Edit(str, ClientUI::GetFont(), ClientUI::CtrlBorderColor(), ClientUI::TextColor(), ClientUI::CtrlColor())
 {
-    GG::Connect(EditedSignal, &PlayTextTypingSound, -1);
+    EditedSignal.connect(-1,
+        &PlayTextTypingSound);
     SetHiliteColor(ClientUI::EditHiliteColor());
 }
 
@@ -1405,7 +1414,8 @@ SpeciesSelector::SpeciesSelector(GG::X w, GG::Y h) :
                               ClientUI::GetTexture(ClientUI::ArtDir() / "icons/unknown.png")));
         Select(this->begin());
     }
-    GG::Connect(SelChangedSignal, &SpeciesSelector::SelectionChanged, this);
+    SelChangedSignal.connect(
+        boost::bind(&SpeciesSelector::SelectionChanged, this, _1));
 }
 
 const std::string& SpeciesSelector::CurrentSpeciesName() const {
@@ -1494,7 +1504,8 @@ EmpireColorSelector::EmpireColorSelector(GG::Y h) :
     for (const GG::Clr& color : EmpireColors()) {
         Insert(new ColorRow(color, h - 4));
     }
-    GG::Connect(SelChangedSignal, &EmpireColorSelector::SelectionChanged, this);
+    SelChangedSignal.connect(
+        boost::bind(&EmpireColorSelector::SelectionChanged, this, _1));
 }
 
 GG::Clr EmpireColorSelector::CurrentColor() const
@@ -1976,7 +1987,8 @@ FPSIndicator::FPSIndicator(void) :
     m_enabled(false),
     m_displayed_FPS(0)
 {
-    GG::Connect(GetOptionsDB().OptionChangedSignal("show-fps"), &FPSIndicator::UpdateEnabled, this);
+    GetOptionsDB().OptionChangedSignal("show-fps").connect(
+        boost::bind(&FPSIndicator::UpdateEnabled, this));
     UpdateEnabled();
     RequirePreRender();
 }
