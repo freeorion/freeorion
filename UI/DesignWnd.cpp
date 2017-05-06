@@ -1197,7 +1197,7 @@ public:
 
     void EnableOrderIssuing(bool enable = true) override;
 
-    void                            QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
+    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it);
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
 
@@ -1465,7 +1465,7 @@ BasesListBox::BasesListBox(const boost::optional<std::string>& drop_type) :
         boost::bind(&BasesListBox::BaseDoubleClicked, this, _1, _2, _3));
     LeftClickedSignal.connect(
         boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
-    QueueItemMovedSignal.connect(
+    MovedSignal.connect(
         boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
 }
 
@@ -1544,27 +1544,26 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     DetachChild(wnds.front());
 }
 
-void BasesListBox::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
-    BasesListBox::CompletedDesignListBoxRow* control =
-        boost::polymorphic_downcast<BasesListBox::CompletedDesignListBoxRow*>(row);
-    Empire* empire = GetEmpire(m_empire_id_shown);
-    if (control && empire && position <= NumRows()) {
+void BasesListBox::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) {
+    if (BasesListBox::CompletedDesignListBoxRow* control =
+        dynamic_cast<BasesListBox::CompletedDesignListBoxRow*>(*row_it))
+    {
+        if(!GetEmpire(m_empire_id_shown))
+           return;
+
         int design_id = control->DesignID();
 
-        iterator insert_before_row = begin();
-        std::advance(insert_before_row, position);
+        iterator insert_before_row = std::next(row_it);
 
         const BasesListBox::CompletedDesignListBoxRow* insert_before_control = (insert_before_row == end()) ? nullptr :
             boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
         int insert_before_id = insert_before_control
             ? insert_before_control->DesignID() : INVALID_DESIGN_ID;
 
-        if (design_id != insert_before_id)
-            //insert_before_row may be end() to insert as last item
-            Insert(control, insert_before_row);
         control->Resize(ListRowSize());
         HumanClientApp::GetApp()->Orders()
             .IssueOrder(std::make_shared<ShipDesignOrder>(m_empire_id_shown, design_id, insert_before_id));
+        return;
     }
 }
 
