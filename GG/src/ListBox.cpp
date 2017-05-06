@@ -573,7 +573,6 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
         AfterInsertSignal.connect(ListSignalEcho(*this, "ListBox::AfterinsertSignal"));
         SelChangedSignal.connect(ListSignalEcho(*this, "ListBox::SelChangedSignal"));
         DroppedSignal.connect(ListSignalEcho(*this, "ListBox::DroppedSignal"));
-        DropAcceptableSignal.connect(ListSignalEcho(*this, "ListBox::DropAcceptableSignal"));
         LeftClickedSignal.connect(ListSignalEcho(*this, "ListBox::LeftClickedSignal"));
         RightClickedSignal.connect(ListSignalEcho(*this, "ListBox::RightClickedSignal"));
         DoubleClickedSignal.connect(ListSignalEcho(*this, "ListBox::DoubleClickedSignal"));
@@ -596,11 +595,7 @@ void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter las
             (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
              m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end()))
         {
-            iterator insertion_it = RowUnderPt(pt);
-            try {
-                DropAcceptableSignal(insertion_it);
-                it->second = true;
-            } catch (const DontAcceptDrop&) {}
+            it->second = true;
         }
     }
 }

@@ -97,13 +97,7 @@ extern GG_API const ListBoxStyle LIST_BROWSEUPDATES;  ///< Causes a signal to be
     <br>Note that drag-and-drop support is a key part of ListBox's
     functionality.  As such, special effort has been made to make its use as
     natural and flexible as possible.  This includes allowing arbitrary
-    reordering of ListBox rows when the LIST_NOSORT is in effect, and includes
-    the use of the DontAcceptDrop exception.  The DontAcceptDrop exception can
-    be thrown by any client of the ListBox in response to its
-    DropAcceptableSignal.  Such a throw will cause the drop to be refused.
-    Note that a DropAcceptableSignal is emitted for each row dropped into the
-    ListBox, so individual rows may be accepted or rejected from a single
-    multi-row drop. */
+    reordering of ListBox rows when the LIST_NOSORT is in effect.*/
 class GG_API ListBox : public Control
 {
 public:
@@ -495,13 +489,6 @@ public:
     };
 
     /** \name Exceptions */ ///@{
-    /** The base class for ListBox exceptions. */
-    GG_ABSTRACT_EXCEPTION(Exception);
-
-    /** Thrown by a ListBox that does not wish to accept a potential drop, for
-        whatever reason. This may be throw by anyone -- even in client code
-        activated by a DropAcceptableSignal. */
-    GG_CONCRETE_EXCEPTION(DontAcceptDrop, GG::ListBox, Exception);
     //@}
 
 protected:
