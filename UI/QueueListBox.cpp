@@ -123,6 +123,7 @@ void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
         delete wnd;
         return;
     }
+    ListBox::AcceptDrops(pt, std::vector<GG::Wnd*>{wnd}, mod_keys);
     iterator it = RowUnderPt(pt);
     QueueItemMovedSignal(row, std::distance(begin(), it));
 }
