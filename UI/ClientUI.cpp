@@ -35,7 +35,6 @@
 #include <GG/DrawUtil.h>
 #include <GG/GUI.h>
 #include <GG/RichText/ImageBlock.h>
-#include <GG/SignalsAndSlots.h>
 #include <GG/UnicodeCharsets.h>
 
 // boost::spirit::classic pulls in windows.h which in turn defines the macros
@@ -589,9 +588,9 @@ namespace {
                                   OptionType ref_val,
                                   PredicateType pred)
     {
-        GG::Connect(GetOptionsDB().OptionChangedSignal(option_name),
-                    boost::bind(&ConditionalForward<OptionType, PredicateType>,
-                                option_name, slot, ref_val, pred));
+        GetOptionsDB().OptionChangedSignal(option_name).connect(
+            boost::bind(&ConditionalForward<OptionType, PredicateType>,
+                        option_name, slot, ref_val, pred));
     }
 }
 
@@ -620,25 +619,25 @@ ClientUI::ClientUI() :
     m_intro_screen =            new IntroScreen();
     m_multiplayer_lobby_wnd =   new MultiPlayerLobbyWnd();
 
-    GG::Connect(GetOptionsDB().OptionChangedSignal("app-width"),
-                boost::bind(&ClientUI::HandleSizeChange, this, true));
-    GG::Connect(GetOptionsDB().OptionChangedSignal("app-height"),
-                boost::bind(&ClientUI::HandleSizeChange, this, true));
-    GG::Connect(GetOptionsDB().OptionChangedSignal("app-width-windowed"),
-                boost::bind(&ClientUI::HandleSizeChange, this, false));
-    GG::Connect(GetOptionsDB().OptionChangedSignal("app-height-windowed"),
-                boost::bind(&ClientUI::HandleSizeChange, this, false));
-    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
-                &ClientUI::InitializeWindows, this);
-    GG::Connect(HumanClientApp::GetApp()->RepositionWindowsSignal,
-                &CUIWnd::InvalidateUnusedOptions,
-                boost::signals2::at_front);
+    GetOptionsDB().OptionChangedSignal("app-width").connect(
+        boost::bind(&ClientUI::HandleSizeChange, this, true));
+    GetOptionsDB().OptionChangedSignal("app-height").connect(
+        boost::bind(&ClientUI::HandleSizeChange, this, true));
+    GetOptionsDB().OptionChangedSignal("app-width-windowed").connect(
+        boost::bind(&ClientUI::HandleSizeChange, this, false));
+    GetOptionsDB().OptionChangedSignal("app-height-windowed").connect(
+        boost::bind(&ClientUI::HandleSizeChange, this, false));
+    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+        boost::bind(&ClientUI::InitializeWindows, this));
+    HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
+        &CUIWnd::InvalidateUnusedOptions,
+        boost::signals2::at_front);
 
     // Connected at front to make sure CUIWnd::LoadOptions() doesn't overwrite
     // the values we're checking here...
-    GG::Connect(HumanClientApp::GetApp()->FullscreenSwitchSignal,
-                boost::bind(&ClientUI::HandleFullscreenSwitch, this),
-                boost::signals2::at_front);
+    HumanClientApp::GetApp()->FullscreenSwitchSignal.connect(
+        boost::bind(&ClientUI::HandleFullscreenSwitch, this),
+        boost::signals2::at_front);
 
     ConditionalConnectOption("UI.auto-reposition-windows",
                              HumanClientApp::GetApp()->RepositionWindowsSignal,
