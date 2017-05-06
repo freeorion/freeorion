@@ -137,8 +137,6 @@ private:
         colonize buttons. */
     static void FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets);
 
-    static void         FleetStateChanged();            ///< responds to fleet state changes during a turn, which may include issueing or cancelling move orders.  may update colonize buttons
-
     class SystemNameDropDownList;
     SystemNameDropDownList*     m_system_name;
     GG::TextControl*            m_star_type_text;

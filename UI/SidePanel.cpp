@@ -3059,7 +3059,7 @@ void SidePanel::RefreshInPreRender() {
 
     for (std::shared_ptr<Fleet> fleet : Objects().FindObjects<Fleet>(system->FleetIDs())) {
         s_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-                                                        boost::bind(&SidePanel::FleetStateChanged));
+                                                        &SidePanel::Update);
     }
 
     //s_system_connections.insert(s_system->StateChangedSignal.connect(&SidePanel::Update));
@@ -3337,7 +3337,7 @@ void SidePanel::FleetsInserted(const std::vector<std::shared_ptr<Fleet>>& fleets
     for (std::shared_ptr<Fleet> fleet : fleets) {
         s_fleet_state_change_signals[fleet->ID()].disconnect();  // in case already present
         s_fleet_state_change_signals[fleet->ID()] = fleet->StateChangedSignal.connect(
-                                                        &SidePanel::FleetStateChanged);
+                                                        &SidePanel::Update);
     }
     SidePanel::Update();
 }
@@ -3352,9 +3352,6 @@ void SidePanel::FleetsRemoved(const std::vector<std::shared_ptr<Fleet>>& fleets)
     }
     SidePanel::Update();
 }
-
-void SidePanel::FleetStateChanged()
-{ SidePanel::Update(); }
 
 int SidePanel::SystemID()
 { return s_system_id; }
