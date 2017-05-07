@@ -82,6 +82,9 @@ public:
 
     void                            SetTopLevelContent(const std::string& content_name);
 
+    virtual unsigned int            GetCheckSum() const
+    { return 0; }
+
 protected:
     Condition::ConditionBase*   m_scope;
     Condition::ConditionBase*   m_activation;

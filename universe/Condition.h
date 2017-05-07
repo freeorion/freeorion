@@ -6,6 +6,7 @@
 #include "ValueRefFwd.h"
 
 #include "../util/Export.h"
+#include "../util/CheckSums.h"
 
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
@@ -146,6 +147,9 @@ struct FO_COMMON_API ConditionBase {
     virtual std::string Dump() const = 0;
 
     virtual void SetTopLevelContent(const std::string& content_name) = 0;
+
+    virtual unsigned int GetCheckSum() const
+    { return 0; }
 
 protected:
     mutable Invariance m_root_candidate_invariant;

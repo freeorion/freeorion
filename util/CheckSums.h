@@ -42,9 +42,6 @@ namespace CheckSums {
             CheckSumCombine(sum, *p);
     }
 
-    // fallback do nothing for unsupported types (without GetCheckSum functions)
-    FO_COMMON_API void CheckSumCombine(...);
-
     // applies to pairs (including map value types)
     template <class C, class D>
     void CheckSumCombine(unsigned int& sum, const std::pair<C, D>& p)

@@ -5,9 +5,6 @@
 #include <float.h>
 
 namespace CheckSums {
-    void CheckSumCombine(...)
-    { std::cout << "CheckSumCombine(...)" << std::endl << std::endl; }
-
     void CheckSumCombine(unsigned int& sum, const double& t) {
         std::cout << "CheckSumCombine(double): " << typeid(t).name() << std::endl << std::endl;
         assert(DBL_MAX_10_EXP < 400);
