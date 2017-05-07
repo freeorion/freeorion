@@ -1682,14 +1682,8 @@ void Universe::SetEmpireObjectVisibility(int empire_id, int object_id, Visibilit
 
     // if object is a ship, empire also gets knowledge of its design
     if (vis >= VIS_PARTIAL_VISIBILITY) {
-        if (std::shared_ptr<const Ship> ship = GetShip(object_id)) {
-            int design_id = ship->DesignID();
-            if (design_id == ShipDesign::INVALID_DESIGN_ID) {
-                ErrorLogger() << "SetEmpireObjectVisibility got invalid design id for ship with id " << object_id;
-            } else {
-                m_empire_known_ship_design_ids[empire_id].insert(design_id);
-            }
-        }
+        if (std::shared_ptr<const Ship> ship = GetShip(object_id))
+            SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
     }
 }
 
@@ -2267,6 +2261,7 @@ namespace {
         // empire id)
         Universe::EmpireObjectVisibilityMap input_eov_copy = empire_object_visibility;
         Universe::EmpireObjectSpecialsMap input_eovs_copy = empire_object_visible_specials;
+        Universe& universe = GetUniverse();
 
         for (std::map<int, Empire*>::value_type& empire_entry : Empires()) {
             int empire_id = empire_entry.first;
@@ -2291,8 +2286,13 @@ namespace {
                     int obj_id = allied_obj_id_vis_pair.first;
                     Visibility allied_vis = allied_obj_id_vis_pair.second;
                     std::map<int, Visibility>::iterator it = obj_vis_map.find(obj_id);
-                    if (it == obj_vis_map.end() || it->second < allied_vis)
+                    if (it == obj_vis_map.end() || it->second < allied_vis) {
                         obj_vis_map[obj_id] = allied_vis;
+                        if (allied_vis < VIS_PARTIAL_VISIBILITY)
+                            continue;
+                        if (std::shared_ptr<const Ship> ship = GetShip(obj_id))
+                            universe.SetEmpireKnowledgeOfShipDesign(ship->DesignID(), empire_id);
+                    }
                 }
             }
         }
