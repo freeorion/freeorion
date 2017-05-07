@@ -1339,6 +1339,25 @@ void DesignWnd::PartPalette::Reset()
   * scripts or saved (on disk) designs from previous games. */
 class BasesListBox : public QueueListBox {
 public:
+
+    /** A class to allow the storage of availabilty in a common location to all
+        the various BasesListBoxes. */
+    class AvailabilityManager {
+        private:
+        // A tuple of bools for the state of the 3 availability filters:
+        // Obsolete, Available and Unavailable
+        std::tuple<bool, bool, bool> m_availabilities;
+
+        public:
+        enum Availability {Obsolete, Available, Unavailable};
+
+        AvailabilityManager(bool obsolete, bool available, bool unavailable);
+
+        bool GetAvailability(const Availability type) const;
+        void SetAvailability(const Availability type, const bool state);
+        void ToggleAvailability(const Availability type);
+    };
+
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
     /** \name Structors */ //@{
@@ -2169,6 +2188,40 @@ void BasesListBox::ShowMonsters(bool refresh_list) {
     EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
+}
+
+BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
+    m_availabilities{obsolete, available, unavailable}
+{}
+
+bool BasesListBox::AvailabilityManager::GetAvailability(const Availability type) const {
+    switch(type) {
+    case Obsolete:
+        return std::get<Obsolete>(m_availabilities);
+    case Available:
+        return std::get<Available>(m_availabilities);
+    case Unavailable:
+        return std::get<Unavailable>(m_availabilities);
+    }
+    return std::get<Unavailable>(m_availabilities);
+}
+
+void BasesListBox::AvailabilityManager::SetAvailability(const Availability type, const bool state) {
+    switch(type) {
+    case Obsolete:
+        std::get<Obsolete>(m_availabilities) = state;
+        break;
+    case Available:
+        std::get<Available>(m_availabilities) = state;
+        break;
+    case Unavailable:
+        std::get<Unavailable>(m_availabilities) = state;
+        break;
+    }
+}
+
+void BasesListBox::AvailabilityManager::ToggleAvailability(const Availability type) {
+    SetAvailability(type, !GetAvailability(type));
 }
 
 void BasesListBox::ShowAvailability(bool available, bool refresh_list) {
