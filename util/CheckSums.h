@@ -64,6 +64,8 @@ namespace CheckSums {
         sum %= CHECKSUM_MODULUS;
     }
 
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const char* s);
+
     // applies to classes that have GetCheckSum methods
     template <class C>
     void CheckSumCombine(unsigned int& sum, C& c,

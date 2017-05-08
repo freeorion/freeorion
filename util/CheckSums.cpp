@@ -5,6 +5,11 @@
 #include <float.h>
 
 namespace CheckSums {
+    void CheckSumCombine(unsigned int& sum, const char* s) {
+        std::cout << "CheckSumCombine(char* s): " << typeid(s).name() << std::endl << std::endl;
+        CheckSumCombine(sum, std::string(s));
+    }
+
     void CheckSumCombine(unsigned int& sum, const double& t) {
         std::cout << "CheckSumCombine(double): " << typeid(t).name() << std::endl << std::endl;
         assert(DBL_MAX_10_EXP < 400);
@@ -25,7 +30,7 @@ namespace CheckSums {
             return;
         // biggest and smallest possible float should be ~10^(+/-38)
         // taking log gives a number in the range +/- 39
-        // adding 400 ives numbers in the range ~0 to 80
+        // adding 400 gives numbers in the range ~0 to 80
         // multiplying by 100'000 gives numbers in the range ~0 to 8'000'000
         sum += static_cast<unsigned int>((std::log10(std::abs(t)) + 40.0f) * 100000.0f);
         sum %= CHECKSUM_MODULUS;
