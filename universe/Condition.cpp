@@ -473,6 +473,19 @@ void Number::SetTopLevelContent(const std::string& content_name) {
         m_condition->SetTopLevelContent(content_name);
 }
 
+unsigned int Number::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Number");
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger() << "GetCheckSum(Number<T>): " << typeid(*this).name()
+                  << " retval: " << retval << std::endl << std::endl;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Turn                                                  //
 ///////////////////////////////////////////////////////////

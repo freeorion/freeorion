@@ -197,6 +197,8 @@ struct FO_COMMON_API Number : public ConditionBase {
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
