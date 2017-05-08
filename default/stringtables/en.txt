@@ -1357,15 +1357,15 @@ OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE
 Per source
 
 OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP
-'''Each log output file (freeorion.log, freeoriond.log and AI_x.log) collects log records from sources(sections of code). 
+'''Each log output file (freeorion.log, freeoriond.log, and AI_x.log) collects log records from sources (sections of code). 
 Setting the threshold for a source will enable logs records of that level or higher for that source. 
-Each process client, server and ai has a default source and may have additional detailed sources.'''
+Each process client, server, and ai has a default source and may have additional detailed sources (eg. combat resolution logs).'''
 
 OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS_TOOLTIP
-'''Setting the threshold for a process will produce only log records of that level or higher for the default source.'''
+'''Setting the threshold for a process will produce only log records of that level or higher for the default source, but not affect other sources.'''
 
 OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE_TOOLTIP
-'''Setting the threshold for a source will produce logs of that level or higher for that source.'''
+'''Setting the threshold for a source will produce logs of that level or higher for that source in all processes.'''
 
 OPTIONS_DB_KEYPRESS_REPEAT_DELAY
 Sets delay between holding a key and repeat keypresses being generated

@@ -50,12 +50,12 @@ namespace {
     // Compile time constant pointers to constant char arrays.
     constexpr const char* const log_level_names[] = {"trace", "debug", "info", "warn", "error"};
 
-    std::stringstream ValidLogLevelWarning(const std::string& text){
+    std::stringstream InvalidLogLevelWarning(const std::string& text) {
         std::stringstream ss;
         ss << "\"" << text <<"\" is not a valid log level. "
            << "Valid levels are ";
 
-        for(int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
+        for (int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
             auto log_level = static_cast<LogLevel>(ii);
             auto name = to_string(log_level);
 
@@ -90,14 +90,14 @@ LogLevel to_LogLevel(const std::string& text) {
     if (it != string_to_log_level.end())
         return it->second;
 
-    WarnLogger(log) << ValidLogLevelWarning(text).str();
+    WarnLogger(log) << InvalidLogLevelWarning(text).str();
     return LogLevel::debug;
 }
 
 std::unordered_map<std::string, LogLevel> ValidNameToLogLevel() {
     std::unordered_map<std::string, LogLevel> retval{};
 
-    for(int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
+    for (int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
         auto log_level = static_cast<LogLevel>(ii);
 
         //Insert the number
@@ -147,9 +147,8 @@ namespace {
         return unnamed_logger_identifier;
     }
 
-    const std::string& DisplayName(const std::string& channel_name) {
-        return (channel_name.empty() ? LocalUnnamedLoggerIdentifier() : channel_name);
-    }
+    const std::string& DisplayName(const std::string& channel_name)
+    { return (channel_name.empty() ? LocalUnnamedLoggerIdentifier() : channel_name); }
 
     boost::optional<LogLevel>& ForcedThreshold() {
         // Create forced threshold as a static function variable to avoid static initialization fiasco
