@@ -1481,7 +1481,13 @@ OPTIONS_DB_RESOURCE_DIR
 L'adresse du répertoire où sont localisées les ressources du jeu (fichiers exécutables et fichiers de données).
 
 OPTIONS_DB_LOG_LEVEL
-Fixe le niveau d'importance à partir duquel les messages du journal seront affichés (niveaux par ordre croissant de verbosité: FATAL, ERROR, WARN, INFO, DEBUG, TRACE).
+Fixe tous les seuils d'enregistrement à ce niveau, à partir duquel les messages du journal seront affichés (niveaux par ordre croissant de gravité: trace, debug, info, warn, and error).
+
+OPTIONS_DB_LOGGER_FILE_SINK_LEVEL
+Fixe le seuil à partir duquel les messages du journal seront générés pour la source par défaut d'un processus (niveaux par ordre croissant de gravité: trace, debug, info, warn, and error).
+
+OPTIONS_DB_LOGGER_SOURCE_LEVEL
+Fixe le seuil à partir duquel les messages du journal seront générés pour cette source (niveaux par ordre croissant de gravité: trace, debug, info, warn, and error).
 
 OPTIONS_DB_STRINGTABLE_FILENAME
 L'adresse du fichier contenant la langue choisie pour l'interface utilisateur. Une fois le fichier sélectionné, cliquez sur 'Réinitialiser le fichier langue en mémoire' puis validez.
@@ -1572,6 +1578,9 @@ Quitter automatiquement une fois au tour spécifié par --auto-advance-n-turns (
 
 OPTIONS_DB_BINARY_SERIALIZATION
 Utilise la sérialisation binaire pour les fichiers de sauvegarde. La sérialisation binaire est plus rapide lors de la sauvegarde et du chargement, mais peut rencontrer des problèmes de compatibilité si le fichier de sauvegarde est utilisé sur un système d'exploitation différent.
+
+OPTIONS_DB_XML_ZLIB_SERIALIZATION
+Lors d'une sauvegarde utilisant la sérialisation XML, compresser une grande partie du code XML avant de créer le fichier. La compression réduit substantiellement la taille du fichier de sauvegarde, mais peut rendre impossible le chargement dudit fichier en raison de la quantité de mémoire nécessaire pour décompresser les données de sauvegarde.
 
 OPTIONS_DB_UI_WINDOWS_EXISTS
 Vrai si une fenêtre avec ce nom spécifique existe, faux si une fenêtre a été créée puis effacée, n'existe pas si une fenêtre n'a pas encore été créée avec ce nom.
@@ -2597,6 +2606,9 @@ Ajouter tous les modèles d'astronef sauvegardés au démarrage d'une partie
 
 OPTIONS_USE_BINARY_SERIALIZATION
 Utiliser des fichiers de sauvegarde binaire
+
+OPTIONS_USE_XML_ZLIB_SERIALIZATION
+Compresser les fichiers de sauvegarde XML
 
 
 ##
@@ -12152,7 +12164,7 @@ SH_ROBOTIC_INTERFACE_SHIELDS
 Boucliers à Interface Robotique
 
 SH_ROBOTIC_INTERFACE_SHIELDS_DESC
-'''Les Boucliers à Interface Robotique ont approximativement une solidité de 1 multipliée par le nombre des autres astronefs situés au même emplacement et équipés du même bouclier. Cette valeur tend à diminuer lorsqu'un grand nombre d'astronefs est atteint et l'effet ne s'applique qu'aux astronefs dont l'équipage est une espèce à [[encyclopedia ROBOTIC_SPECIES_TITLE]]. La solidité du bouclier ne peut dépasser 20 et ce dernier ne peut équiper que les coques suivantes: la [[shiphull SH_ROBOTIC]], la [[shiphull SH_SELF_GRAVITATING]], la [[shiphull SH_NANOROBOTIC]], la [[shiphull SH_LOGISTICS_FACILITATOR]], et la [[shiphull SH_TITANIC]].
+'''Les Boucliers à Interface Robotique ont approximativement une solidité de 1 multipliée par le nombre des autres astronefs situés au même emplacement et équipés du même bouclier, bien que cette valeur tende à diminuer lorsqu'un grand nombre d'astronefs est concerné. La solidité du bouclier ne peut dépasser 20, l'effet ne s'applique qu'aux astronefs de [[encyclopedia HULL_LINE_ROBOTIC]] et dont l'équipage est une espèce à [[encyclopedia ROBOTIC_SPECIES_TITLE]].
 
 Les Espèces Robotiques ont la capacité intrinsèque de fonctionner en réseau et augmentent ainsi considérablement leur puissance de calcul pure. Les Boucliers à Interface Robotique utilisent ce réseau afin de calculer la trajectoire du feu ennemi et concentrer la solidité du bouclier au point d'impact.
 '''
@@ -12291,13 +12303,13 @@ SP_SOLAR_CONCENTRATOR
 Concentrateur Solaire
 
 SP_SOLAR_CONCENTRATOR_DESC
-Le Concentrateur Solaire utilise la capacité phototropique des coques de type [[tech SHP_ORG_HULL]] afin d'augmenter la puissance des [[tech SHP_WEAPON_2_1]]. Son efficacité dépend de la luminosité de l'étoile locale, pour un gain de puissance estimé entre 1.5 et 4.5. La recherche de la [[tech SHP_SOLAR_CONNECTION]] permet d'accroître la surface collectrice du Concentrateur Solaire afin d'en maximiser l'effet.
+Le Concentrateur Solaire utilise la capacité phototropique des astronefs de [[encyclopedia HULL_LINE_ORGANIC]] afin d'augmenter la puissance des [[tech SHP_WEAPON_2_1]]. Son efficacité dépend de la luminosité de l'étoile locale, pour un gain de puissance estimé entre 1.5 et 4.5. La recherche de la [[tech SHP_SOLAR_CONNECTION]] permet d'accroître la surface collectrice du Concentrateur Solaire afin d'en maximiser l'effet.
 
 SHP_SOLAR_CONNECTION
 Toile Solaire
 
 SHP_SOLAR_CONNECTION_DESC
-Cette amélioration du [[shippart SP_SOLAR_CONCENTRATOR]] est contrôlée par l'équipage des astronefs. Elle permet à chaque astronef d'établir un réseau énergétique avec l'ensemble des astronefs de l'empire se trouvant dans le même système stellaire. La [[SHP_SOLAR_CONNECTION]] fournit une surface additionnelle permettant de collecter des photons, ces derniers étant alors uniformément répartis entre chaque coque de type [[tech SHP_ORG_HULL]]. En théorie et dans des conditions optimales, les toiles gigantesques peuvent accroître la puissance des [[tech SHP_WEAPON_2_1]] de 130%. Une approche plus pragmatique démontre qu'une augmentation de 80% nécessite 100 concentrateurs, tandis que 20 concentrateurs fournissent une amplification de 50%. La [[SHP_SOLAR_CONNECTION]] finement tissée se brise lorsqu'un astronef du réseau entre sur une voie spatiale, tandis que ses effets d'augmentation de puissance disparaissent peu après.
+Cette amélioration du [[shippart SP_SOLAR_CONCENTRATOR]] est contrôlée par l'équipage des astronefs. Elle permet à chaque astronef d'établir un réseau énergétique avec l'ensemble des astronefs de l'empire se trouvant dans le même système stellaire. La [[SHP_SOLAR_CONNECTION]] fournit une surface additionnelle permettant de collecter des photons, ces derniers étant alors uniformément répartis entre les astronefs de [[encyclopedia HULL_LINE_ORGANIC]]. En théorie et dans des conditions optimales, les toiles gigantesques peuvent accroître la puissance des [[tech SHP_WEAPON_2_1]] de 130%. Une approche plus pragmatique démontre qu'une augmentation de 80% nécessite 100 concentrateurs, tandis que 20 concentrateurs fournissent une amplification de 50%. La [[SHP_SOLAR_CONNECTION]] finement tissée se brise lorsqu'un astronef du réseau entre sur une voie spatiale, tandis que ses effets d'augmentation de puissance disparaissent peu après.
 
 SHP_SOLAR_CONNECTION_SHORT_DESC
 Établit un réseau [[SP_SOLAR_CONCENTRATOR]]
@@ -12306,7 +12318,7 @@ SHP_ORGANIC_WAR_ADAPTION
 Guerre Organique Adaptive
 
 SHP_ORGANIC_WAR_ADAPTION_DESC
-Il semble que les coques de type [[tech SHP_ORG_HULL]] soient capables de collecter l'énergie photonique, laquelle peut être redirigée afin d'augmenter la puissance de certains équipements d'astronef.
+Il semble que les astronefs de [[encyclopedia HULL_LINE_ORGANIC]] soient capables de collecter l'énergie photonique, laquelle peut être redirigée afin d'augmenter la puissance de certains équipements d'astronef.
 
 SHP_ORGANIC_WAR_ADAPTION_SHORT_DESC
 Augmente la puissance du [[SR_WEAPON_2_1]] selon l'étoile environnante.
