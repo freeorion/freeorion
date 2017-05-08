@@ -272,6 +272,8 @@ struct FO_COMMON_API Statistic : public Variable<T>
     const ValueRefBase<T>* GetValueRef() const
     { return m_value_ref; }
 
+    unsigned int GetCheckSum() const override;
+
 protected:
     /** Gets the set of objects in the Universe that match the sampling condition. */
     void    GetConditionMatches(const ScriptingContext& context,
@@ -285,8 +287,6 @@ protected:
 
     /** Computes the statistic from the specified set of property values. */
     T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
-
-    unsigned int GetCheckSum() const override;
 
 private:
     StatisticType               m_stat_type;
