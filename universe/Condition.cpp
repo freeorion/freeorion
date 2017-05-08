@@ -220,7 +220,6 @@ std::string ConditionDescription(const std::vector<ConditionBase*>& conditions,
     return retval;
 }
 
-
 #define CHECK_COND_VREF_MEMBER(m_ptr) { if (m_ptr == rhs_.m_ptr) {              \
                                             /* check next member */             \
                                         } else if (!m_ptr || !rhs_.m_ptr) {     \
@@ -481,8 +480,7 @@ unsigned int Number::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_high);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(Number<T>): " << typeid(*this).name()
-                  << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Number): retval: " << retval << std::endl << std::endl;
     return retval;
 }
 
@@ -570,33 +568,30 @@ std::string Turn::Description(bool negated/* = false*/) const {
                     std::to_string(m_high->Eval()) :
                     m_high->Description());
     std::string description_str;
-    if (m_low && m_high)
-    {
+
+    if (m_low && m_high) {
         description_str = (!negated)
             ? UserString("DESC_TURN")
             : UserString("DESC_TURN_NOT");
         return str(FlexibleFormat(description_str)
                    % low_str
                    % high_str);
-    }
-    else if (m_low)
-    {
+
+    } else if (m_low) {
         description_str = (!negated)
             ? UserString("DESC_TURN_MIN_ONLY")
             : UserString("DESC_TURN_MIN_ONLY_NOT");
         return str(FlexibleFormat(description_str)
                    % low_str);
-    }
-    else if (m_high)
-    {
+
+    } else if (m_high) {
         description_str = (!negated)
             ? UserString("DESC_TURN_MAX_ONLY")
             : UserString("DESC_TURN_MAX_ONLY_NOT");
         return str(FlexibleFormat(description_str)
                    % high_str);
-    }
-    else
-    {
+
+    } else {
         return (!negated)
             ? UserString("DESC_TURN_ANY")
             : UserString("DESC_TURN_ANY_NOT");
@@ -625,6 +620,17 @@ void Turn::SetTopLevelContent(const std::string& content_name) {
         m_low->SetTopLevelContent(content_name);
     if (m_high)
         m_high->SetTopLevelContent(content_name);
+}
+
+unsigned int Turn::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Turn");
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+
+    TraceLogger() << "GetCheckSum(Turn): retval: " << retval << std::endl << std::endl;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -1018,6 +1024,18 @@ void SortedNumberOf::SetTopLevelContent(const std::string& content_name) {
         m_condition->SetTopLevelContent(content_name);
 }
 
+unsigned int SortedNumberOf::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::SortedNumberOf");
+    CheckSums::CheckSumCombine(retval, m_number);
+    CheckSums::CheckSumCombine(retval, m_sort_key);
+    CheckSums::CheckSumCombine(retval, m_sorting_method);
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger() << "GetCheckSum(SortedNumberOf): retval: " << retval << std::endl << std::endl;
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // All                                                   //
@@ -1047,6 +1065,15 @@ std::string All::Description(bool negated/* = false*/) const {
 std::string All::Dump() const
 { return DumpIndent() + "All\n"; }
 
+unsigned int All::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::All");
+
+    TraceLogger() << "GetCheckSum(All): retval: " << retval << std::endl << std::endl;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // None                                                   //
 ///////////////////////////////////////////////////////////
@@ -1073,6 +1100,15 @@ std::string None::Description(bool negated/* = false*/) const {
 
 std::string None::Dump() const
 { return DumpIndent() + "None\n"; }
+
+unsigned int None::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::None");
+
+    TraceLogger() << "GetCheckSum(None): retval: " << retval << std::endl << std::endl;
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // EmpireAffiliation                                     //
@@ -1287,6 +1323,17 @@ void EmpireAffiliation::SetTopLevelContent(const std::string& content_name) {
         m_empire_id->SetTopLevelContent(content_name);
 }
 
+unsigned int EmpireAffiliation::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::EmpireAffiliation");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+    CheckSums::CheckSumCombine(retval, m_affiliation);
+
+    TraceLogger() << "GetCheckSum(EmpireAffiliation): retval: " << retval << std::endl << std::endl;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Source                                                //
 ///////////////////////////////////////////////////////////
@@ -1316,6 +1363,15 @@ void Source::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_co
     //DebugLogger() << "ConditionBase::Eval will check at most one source object rather than " << Objects().NumObjects() << " total objects";
 }
 
+unsigned int Source::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Source");
+
+    TraceLogger() << "GetCheckSum(Source): retval: " << retval << std::endl << std::endl;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // RootCandidate                                         //
 ///////////////////////////////////////////////////////////
@@ -1335,6 +1391,15 @@ bool RootCandidate::Match(const ScriptingContext& local_context) const {
     if (!local_context.condition_root_candidate)
         return false;
     return local_context.condition_root_candidate == local_context.condition_local_candidate;
+}
+
+unsigned int RootCandidate::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::RootCandidate");
+
+    TraceLogger() << "GetCheckSum(RootCandidate): retval: " << retval << std::endl << std::endl;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -1363,6 +1428,15 @@ void Target::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_co
 {
     if (parent_context.effect_target)
         condition_non_targets.push_back(parent_context.effect_target);
+}
+
+unsigned int Target::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Target");
+
+    TraceLogger() << "GetCheckSum(Target): retval: " << retval << std::endl << std::endl;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -1579,6 +1653,16 @@ void Homeworld::SetTopLevelContent(const std::string& content_name) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
+}
+
+unsigned int Homeworld::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Homeworld");
+    CheckSums::CheckSumCombine(retval, m_names);
+
+    TraceLogger() << "GetCheckSum(Homeworld): retval: " << retval << std::endl << std::endl;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
