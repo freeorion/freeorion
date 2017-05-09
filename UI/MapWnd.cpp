@@ -1434,6 +1434,9 @@ MapWnd::MapWnd() :
 
     // objects list
     m_object_list_wnd = new ObjectListWnd(OBJECT_WND_NAME);
+    // Wnd is manually closed by user
+    m_object_list_wnd->ClosingSignal.connect(
+        boost::bind(&MapWnd::HideObjects, this));
     m_object_list_wnd->ObjectDumpSignal.connect(
         boost::bind(&ClientUI::DumpObject, ClientUI::GetClientUI(), _1));
     if (m_object_list_wnd->Visible()) {
