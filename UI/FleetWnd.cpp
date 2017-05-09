@@ -2706,6 +2706,8 @@ void FleetWnd::CompleteConstruction() {
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
                                                  ListRowHeight() + 2*GG::Y(PAD)));
     DoLayout();
+    SaveDefaultedOptions();
+    SaveOptions();
 }
 
 FleetWnd::~FleetWnd() {
