@@ -91,7 +91,7 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty())
-        OverrideLoggerThresholds(to_LogLevel(force_log_level));
+        OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
 
     InitLoggingSystem(AICLIENT_LOG_FILENAME, "AI");
     InitLoggingOptionsDBSystem();
@@ -368,6 +368,14 @@ void AIClientApp::HandleMessage(const Message& msg) {
         ExtractDiplomaticStatusMessageData(msg, diplo_update);
         m_AI->HandleDiplomaticStatusUpdate(diplo_update);
         break;
+    }
+
+    case Message::LOGGER_CONFIG: {
+         std::set<std::tuple<std::string, std::string, LogLevel>> options;
+         ExtractLoggerConfigMessageData(msg, options);
+
+         SetLoggerThresholds(options);
+         break;
     }
 
     default: {

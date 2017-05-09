@@ -31,9 +31,6 @@
         <combat>debug</combat>
         <combat-log>info</combat-log>
         <network>warn</network>
-
-        ...
-
         <ai>debug</ai>
       </sources>
     </logging>
@@ -52,23 +49,22 @@ DiscreteValidator<std::string> LogLevelValidator();
 FO_COMMON_API void InitLoggingOptionsDBSystem();
 
 // Configure a logger and lookup and/or register the \p name logger in OptionsDB.  Set the initial threshold.
-FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string logger);
+FO_COMMON_API void RegisterLoggerWithOptionsDB(const std::string& logger_name, const bool is_exec_logger = false);
 
-FO_COMMON_API void UpdateLoggerThresholdsFromOptionsDB();
+FO_COMMON_API void ChangeLoggerThresholdInOptionsDB(const std::string& option_name, LogLevel option_value);
 
-/** Return the option names, labels and levels for all executables from OptionsDB. */
-FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerExecutableOptionsLabelsAndLevels();
 
-/** Return the option names, labels and levels for all sources/channels from OptionsDB. */
-FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>> LoggerSourceOptionsLabelsAndLevels();
+///
+enum class LoggerTypes {
+    exec = 1,  ///< the unnamed logger for a particular executable
+    named = 2, ///< a normal named source
+    both = exec | named};
+
+/** Return the option names, labels and levels for logger oy \p type from OptionsDB. */
+FO_COMMON_API std::set<std::tuple<std::string, std::string, LogLevel>>
+    LoggerOptionsLabelsAndLevels(const LoggerTypes types);
 
 /** Sets the logger thresholds from a list of options, labels and thresholds. */
-FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>&);
-
-extern int g_indent;
-
-/** A function that returns the correct amount of spacing for the current
-  * indentation level during a dump. */
-std::string DumpIndent();
+FO_COMMON_API void SetLoggerThresholds(const std::set<std::tuple<std::string, std::string, LogLevel>>& full_option_name_and_level);
 
 #endif // _LoggerWithOptionsDB_h_

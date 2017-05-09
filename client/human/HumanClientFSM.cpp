@@ -158,6 +158,9 @@ boost::statechart::result WaitingForSPHostAck::react(const HostSPGame& msg) {
         Client().Networking().SetPlayerID(host_id);
         Client().Networking().SetHostPlayerID(host_id);
 
+        // Logging configuration can only be sent after receiving host id.
+        Client().SendLoggingConfigToServer();
+
         Client().GetClientUI().GetMapWnd()->Sanitize();
 
         return transit<PlayingGame>();
@@ -227,6 +230,9 @@ boost::statechart::result WaitingForMPHostAck::react(const HostMPGame& msg) {
 
         Client().Networking().SetPlayerID(host_id);
         Client().Networking().SetHostPlayerID(host_id);
+
+        // Logging configuration can only be sent after receiving host id.
+        Client().SendLoggingConfigToServer();
 
         return transit<MPLobby>();
     } catch (const boost::bad_lexical_cast& ex) {
@@ -381,6 +387,9 @@ boost::statechart::result MPLobby::react(const HostID& msg) {
 
     Client().Networking().SetHostPlayerID(host_id);
 
+    // Logging configuration can only be sent after receiving host id.
+    Client().SendLoggingConfigToServer();
+
     Client().GetClientUI().GetMultiPlayerLobbyWnd()->Refresh();
 
     return discard_event();
@@ -495,6 +504,9 @@ boost::statechart::result PlayingGame::react(const HostID& msg) {
     }
 
     Client().Networking().SetHostPlayerID(host_id);
+
+    // Logging configuration can only be sent after receiving host id.
+    Client().SendLoggingConfigToServer();
 
     if (initial_host_id != host_id)
         DebugLogger() << "PlayingGame::react(const HostID& msg) New Host ID: " << host_id;

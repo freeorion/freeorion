@@ -142,7 +142,7 @@ ServerApp::ServerApp() :
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty())
-        OverrideLoggerThresholds(to_LogLevel(force_log_level));
+        OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
 
     InitLoggingSystem(SERVER_LOG_FILENAME, "Server");
     InitLoggingOptionsDBSystem();
@@ -421,6 +421,7 @@ void ServerApp::HandleMessage(const Message& msg, PlayerConnectionPtr player_con
 
     case Message::REQUEST_SAVE_PREVIEWS:    UpdateSavePreviews(msg, player_connection); break;
     case Message::REQUEST_COMBAT_LOGS:      m_fsm->process_event(RequestCombatLogs(msg, player_connection));break;
+    case Message::LOGGER_CONFIG:            HandleLoggerConfig(msg, player_connection); break;
 
     default:
         ErrorLogger() << "ServerApp::HandleMessage : Received an unknown message type \"" << msg.Type() << "\".  Terminating connection.";
@@ -439,6 +440,33 @@ void ServerApp::HandleShutdownMessage(const Message& msg, PlayerConnectionPtr pl
     DebugLogger() << "ServerApp::HandleShutdownMessage shutting down";
     m_fsm->process_event(ShutdownServer());
 }
+
+void ServerApp::HandleLoggerConfig(const Message& msg, PlayerConnectionPtr player_connection) {
+    int player_id = player_connection->PlayerID();
+    bool is_host = m_networking.PlayerIsHost(player_id);
+    if (!is_host && m_networking.HostPlayerID() != Networking::INVALID_PLAYER_ID) {
+        WarnLogger() << "ServerApp::HandleLoggerConfig rejecting message from non-host player id = " << player_id;
+        return;
+    }
+
+    DebugLogger() << "Handling logging config message from the host.";
+    std::set<std::tuple<std::string, std::string, LogLevel>> options;
+    ExtractLoggerConfigMessageData(msg, options);
+
+    SetLoggerThresholds(options);
+
+    // Forward the message to all the AIs
+    const auto relay_options_message = LoggerConfigMessage(Networking::INVALID_PLAYER_ID, options);
+    for (ServerNetworking::established_iterator players_it = m_networking.established_begin();
+         players_it != m_networking.established_end(); ++players_it)
+    {
+        if ((*players_it)->GetClientType() == Networking::CLIENT_TYPE_AI_PLAYER) {
+            DebugLogger() << "Forwarding logging thresholds to AI " << (*players_it)->PlayerID();
+            (*players_it)->SendMessage(relay_options_message);
+        }
+    }
+}
+
 
 void ServerApp::HandleNonPlayerMessage(const Message& msg, PlayerConnectionPtr player_connection) {
     switch (msg.Type()) {

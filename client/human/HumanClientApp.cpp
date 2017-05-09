@@ -212,10 +212,20 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     // Force the log threshold if requested.
     auto force_log_level = GetOptionsDB().Get<std::string>("log-level");
     if (!force_log_level.empty())
-        OverrideLoggerThresholds(to_LogLevel(force_log_level));
+        OverrideAllLoggersThresholds(to_LogLevel(force_log_level));
 
     InitLoggingSystem(HUMAN_CLIENT_LOG_FILENAME, "Client");
     InitLoggingOptionsDBSystem();
+
+    // Force loggers to always appear in the config.xml and OptionsWnd even before their
+    // initialization on first use.
+    // This is not needed for the loggers to work correctly.
+    // this is not needed for the loggers to automatically be added to the config.xml on
+    // first use.
+    // This only needs to be done in one of the executables connected to the same config.xml
+    RegisterLoggerWithOptionsDB("ai", true);
+    RegisterLoggerWithOptionsDB("client", true);
+    RegisterLoggerWithOptionsDB("server", true);
 
     try {
         InfoLogger() << "GL Version String: " << GetGLVersionString();
@@ -700,6 +710,10 @@ void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewIn
             ClientUI::MessageBox(UserString("ERR_CONNECT_TIMED_OUT"), true);
             return;
         }
+
+        // This will only generate an error message and use the server's config.xml
+        // because there is no host client for this temporary server.
+        SendLoggingConfigToServer();
     }
     DebugLogger() << "HumanClientApp::RequestSavePreviews Requesting previews for " << generic_directory;
     const auto response = m_networking->SendSynchronousMessage(RequestSavePreviewsMessage(generic_directory));
@@ -882,6 +896,24 @@ void HumanClientApp::UpdateCombatLogs(const Message& msg){
     {
         GetCombatLogManager().CompleteLog(it->first, it->second);
     }
+}
+
+void HumanClientApp::ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value) {
+    // Update the logger threshold in OptionsDB
+    ChangeLoggerThresholdInOptionsDB(option_name, option_value);
+
+    SendLoggingConfigToServer();
+}
+
+void HumanClientApp::SendLoggingConfigToServer() {
+    // If not host then done.
+    if (!m_networking->PlayerIsHost(Networking().PlayerID()))
+        return;
+
+    // Host updates the server
+    const auto sources = LoggerOptionsLabelsAndLevels(LoggerTypes::both);
+
+    m_networking->SendMessage(LoggerConfigMessage(PlayerID(), sources));
 }
 
 void HumanClientApp::HandleWindowMove(GG::X w, GG::Y h) {

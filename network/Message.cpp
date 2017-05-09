@@ -582,6 +582,23 @@ Message DispatchCombatLogsMessage(const std::vector<std::pair<int, const CombatL
     return Message(Message::DISPATCH_COMBAT_LOGS, os.str(), true);
 }
 
+ Message LoggerConfigMessage(int sender, const std::set<std::tuple<std::string, std::string, LogLevel>>& options) {
+    std::ostringstream os;
+    freeorion_xml_oarchive oa(os);
+    std::size_t size = options.size();
+    oa << BOOST_SERIALIZATION_NVP(size);
+    for (const auto& option_tuple : options) {
+        auto option = std::get<0>(option_tuple);
+        auto name = std::get<1>(option_tuple);
+        auto value = std::get<2>(option_tuple);
+        oa << BOOST_SERIALIZATION_NVP(option);
+        oa << BOOST_SERIALIZATION_NVP(name);
+        oa << BOOST_SERIALIZATION_NVP(value);
+    }
+    return Message(Message::LOGGER_CONFIG, os.str(), true);
+}
+
+
 ////////////////////////////////////////////////
 // Multiplayer Lobby Message named ctors
 ////////////////////////////////////////////////
@@ -1087,6 +1104,32 @@ FO_COMMON_API void ExtractDispatchCombatLogsMessageData(
         ia >> BOOST_SERIALIZATION_NVP(logs);
     } catch(const std::exception& err) {
         ErrorLogger() << "ExtractDispatchCombatLogMessageData(const Message& msg, std::vector<std::pair<int, const CombatLog&>>& logs) failed!  Message:\n"
+                      << msg.Text() << "\n"
+                      << "Error: " << err.what();
+        throw err;
+    }
+
+}
+
+FO_COMMON_API void ExtractLoggerConfigMessageData(
+    const Message& msg, std::set<std::tuple<std::string, std::string, LogLevel>>& options)
+{
+    try {
+        std::istringstream is(msg.Text());
+        freeorion_xml_iarchive ia(is);
+        std::size_t size;
+        ia >> BOOST_SERIALIZATION_NVP(size);
+        for (size_t ii = 0; ii < size; ++ii) {
+            std::string option;
+            std::string name;
+            LogLevel level;
+            ia >> BOOST_SERIALIZATION_NVP(option);
+            ia >> BOOST_SERIALIZATION_NVP(name);
+            ia >> BOOST_SERIALIZATION_NVP(level);
+            options.insert(std::make_tuple(option, name, level));
+        }
+    } catch (const std::exception& err) {
+        ErrorLogger() << "ExtractDispatchCombatLogMessageData(const Message& msg, std::vector<std::pair<int, const CombatLog&> >& logs) failed!  Message:\n"
                       << msg.Text() << "\n"
                       << "Error: " << err.what();
         throw err;

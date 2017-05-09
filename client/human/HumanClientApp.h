@@ -65,6 +65,9 @@ public:
      */
     void                UpdateCombatLogManager();
 
+    /** Update the logger in OptionsDB and the other processes if hosting. */
+    void                ChangeLoggerThreshold(const std::string& option_name, LogLevel option_value);
+
     void                ResetToIntro();
     void                ExitApp();
     void                ResetClientData();
@@ -99,6 +102,9 @@ public:
     /** Adds window dimension options to OptionsDB after the start of main, but before HumanClientApp constructor.
         OSX will not tolerate static initialization of SDL, to check screen size. */
     static void AddWindowSizeOptionsAfterMainStart(OptionsDB& db);
+
+    /** If hosting then send the logger state to the server. */
+    void            SendLoggingConfigToServer();
 
 protected:
     void Initialize() override;

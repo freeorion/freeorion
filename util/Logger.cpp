@@ -49,35 +49,70 @@ namespace {
 
     // Compile time constant pointers to constant char arrays.
     constexpr const char* const log_level_names[] = {"trace", "debug", "info", "warn", "error"};
+
+    std::stringstream InvalidLogLevelWarning(const std::string& text) {
+        std::stringstream ss;
+        ss << "\"" << text <<"\" is not a valid log level. "
+           << "Valid levels are ";
+
+        for (int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
+            auto log_level = static_cast<LogLevel>(ii);
+            auto name = to_string(log_level);
+
+            // Add commas between names
+            if (ii != static_cast<int>(LogLevel::min) && ii != static_cast<int>(LogLevel::max))
+                ss << ", ";
+
+            // Except before the last name
+            if (ii != static_cast<int>(LogLevel::min) && ii == static_cast<int>(LogLevel::max))
+                ss << " and ";
+
+            ss << name;
+        }
+
+        ss << ".";
+        return ss;
+    }
 }
 
 
 std::string to_string(const LogLevel level)
 { return log_level_names[static_cast<std::size_t>(level)]; }
 
+
 LogLevel to_LogLevel(const std::string& text) {
-    if (text == "error")    return LogLevel::error;
-    if (text == "warn")     return LogLevel::warn;
-    if (text == "info")     return LogLevel::info;
-    if (text == "debug")    return LogLevel::debug;
-    if (text == "trace")    return LogLevel::trace;
 
-    if (text == "ERROR")    return LogLevel::error;
-    if (text == "WARN")     return LogLevel::warn;
-    if (text == "INFO")     return LogLevel::info;
-    if (text == "DEBUG")    return LogLevel::debug;
-    if (text == "TRACE")    return LogLevel::trace;
+    // Use a static local variable so that during static initialization it
+    // is initialized on first use in any compilation unit.
+    static std::unordered_map<std::string, LogLevel> string_to_log_level = ValidNameToLogLevel();
 
-    if (text == "4")    return LogLevel::error;
-    if (text == "3")    return LogLevel::warn;
-    if (text == "2")    return LogLevel::info;
-    if (text == "1")    return LogLevel::debug;
-    if (text == "0")    return LogLevel::trace;
+    auto it = string_to_log_level.find(text);
+    if (it != string_to_log_level.end())
+        return it->second;
 
-    WarnLogger(log) << "\"" << text <<"\" is not a valid log level. "
-                    << "Valid levels are error, warn, info, debug and trace";
-
+    WarnLogger(log) << InvalidLogLevelWarning(text).str();
     return LogLevel::debug;
+}
+
+std::unordered_map<std::string, LogLevel> ValidNameToLogLevel() {
+    std::unordered_map<std::string, LogLevel> retval{};
+
+    for (int ii = static_cast<int>(LogLevel::min); ii <= static_cast<int>(LogLevel::max); ++ii) {
+        auto log_level = static_cast<LogLevel>(ii);
+
+        //Insert the number
+        retval.emplace(std::to_string(ii), log_level);
+
+        // Insert the lower case
+        auto name = to_string(log_level);
+        retval.emplace(name, log_level);
+
+        // Insert the upper case
+        std::transform(name.begin(), name.end(), name.begin(),
+                       [](const char c) { return std::toupper(c); });
+        retval.emplace(name, log_level);
+    }
+    return retval;
 }
 
 // Provide a LogLevel stream out formatter for streaming logs
@@ -106,11 +141,14 @@ std::string DumpIndent()
 { return std::string(g_indent * 4, ' '); }
 
 namespace {
-    std::string& LocalDefaultExecLoggerName() {
+    std::string& LocalUnnamedLoggerIdentifier() {
         // Create default logger name as a static function variable to avoid static initialization fiasco
-        static std::string default_exec_logger_name;
-        return default_exec_logger_name;
+        static std::string unnamed_logger_identifier;
+        return unnamed_logger_identifier;
     }
+
+    const std::string& DisplayName(const std::string& channel_name)
+    { return (channel_name.empty() ? LocalUnnamedLoggerIdentifier() : channel_name); }
 
     boost::optional<LogLevel>& ForcedThreshold() {
         // Create forced threshold as a static function variable to avoid static initialization fiasco
@@ -166,7 +204,7 @@ namespace {
 
             logging::core::get()->add_sink(front_end);
 
-            InfoLogger(log) << "Added logger named \"" << channel_name << "\"";
+            InfoLogger(log) << "Added logger named \"" << DisplayName(channel_name) << "\"";
         }
 
         std::vector<std::string> LoggersNames() {
@@ -176,6 +214,13 @@ namespace {
             for (const auto& name_and_frontend : m_names_to_front_ends)
                 retval.push_back(name_and_frontend.first);
             return retval;
+        }
+
+        void ShutdownFileSinks() {
+            std::lock_guard<std::mutex> lock(m_mutex);
+
+            for (const auto& name_and_frontend : m_names_to_front_ends)
+                logging::core::get()->remove_sink(name_and_frontend.second);
         }
 
     };
@@ -197,13 +242,12 @@ namespace {
         boost::shared_ptr<TextFileSinkFrontend> sink_frontend
             = boost::make_shared<TextFileSinkFrontend>(file_sink_backend);
 
-        auto display_name = channel_name.empty() ? LocalDefaultExecLoggerName() : channel_name;
         // Create the format
         sink_frontend->set_formatter(
             expr::stream
             << expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S.%f")
             << " [" << log_severity << "] "
-            << display_name
+            << DisplayName(channel_name)
             << " : " << log_src_filename << ":" << log_src_linenum << " : "
             << expr::message
         );
@@ -217,7 +261,7 @@ namespace {
 }
 
 const std::string& DefaultExecLoggerName()
-{ return LocalDefaultExecLoggerName(); }
+{ return LocalUnnamedLoggerIdentifier(); }
 
 std::vector<std::string> CreatedLoggersNames()
 { return GetLoggersToSinkFrontEnds().LoggersNames(); }
@@ -233,8 +277,7 @@ namespace {
         f_min_channel_severity[source] = used_threshold;
         logging::core::get()->set_filter(f_min_channel_severity);
 
-        auto& logger_name = (source.empty() ? LocalDefaultExecLoggerName() : source);
-        return {logger_name, used_threshold};
+        return {DisplayName(source), used_threshold};
     }
 }
 
@@ -245,10 +288,10 @@ void SetLoggerThreshold(const std::string& source, LogLevel threshold) {
                     << "\" logger threshold to \"" << name_and_threshold.second << "\".";
 }
 
-void InitLoggingSystem(const std::string& logFile, const std::string& _default_exec_logger_name) {
-    auto& default_exec_logger_name = LocalDefaultExecLoggerName();
-    default_exec_logger_name = _default_exec_logger_name;
-    std::transform(default_exec_logger_name.begin(), default_exec_logger_name.end(), default_exec_logger_name.begin(),
+void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_logger_identifier) {
+    auto& unnamed_logger_identifier = LocalUnnamedLoggerIdentifier();
+    unnamed_logger_identifier = _unnamed_logger_identifier;
+    std::transform(unnamed_logger_identifier.begin(), unnamed_logger_identifier.end(), unnamed_logger_identifier.begin(),
                    [](const char c) { return std::tolower(c); });
 
     // Register LogLevel so that the formatters will be found.
@@ -258,7 +301,7 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     // Create a sink backend that logs to a file
     auto& file_sink_backend = GetSinkBackend();
     file_sink_backend = boost::make_shared<TextFileSinkBackend>(
-        keywords::file_name = logFile.c_str(),
+        keywords::file_name = log_file.c_str(),
         keywords::auto_flush = true
     );
 
@@ -268,9 +311,9 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     // Add global attributes to all records
     logging::core::get()->add_global_attribute("TimeStamp", attr::local_clock());
 
-    SetLoggerThresholdCore("", default_LogLevel);
+    SetLoggerThresholdCore("", default_log_level_threshold);
 
-    // Initialize the internal logger
+    // Initialize the logging system's logger
     ConfigureLogger(FO_GLOBAL_LOGGER_NAME(log)::get(), "log");
 
     // Create sink front ends for all previously created loggers.
@@ -283,9 +326,34 @@ void InitLoggingSystem(const std::string& logFile, const std::string& _default_e
     InfoLogger() << FreeOrionVersionString();
 }
 
-void OverrideLoggerThresholds(const LogLevel threshold) {
-    InfoLogger(log) << "Forcing all logger threshold to be " << to_string(threshold);
+void ShutdownLoggingSystemFileSink() {
+    // The file sink may not be safe to use during static deinitialization, because of the
+    // following bug:
+
+    // http://www.boost.org/doc/libs/1_64_0/libs/log/doc/html/log/rationale/why_crash_on_term.html
+    // https://svn.boost.org/trac/boost/ticket/8642
+    // https://svn.boost.org/trac/boost/ticket/9119
+
+    // When either ticket is fixed the ShutdownLoggingSystem() function can be removed.
+
+    GetLoggersToSinkFrontEnds().ShutdownFileSinks();
+}
+
+void OverrideAllLoggersThresholds(const boost::optional<LogLevel>& threshold) {
+    if (threshold)
+        InfoLogger(log) << "Overriding the thresholds of all loggers to be " << to_string(*threshold);
+    else
+        InfoLogger(log) << "Removing override of loggers' thresholds.  Thresholds may now be changed to any value.";
+
     ForcedThreshold() = threshold;
+
+    if (!threshold)
+        return;
+
+    SetLoggerThresholdCore("", *threshold);
+
+    for (const auto& name : GetLoggersToSinkFrontEnds().LoggersNames())
+        SetLoggerThresholdCore(name, *threshold);
 }
 
 LoggerCreatedSignalType LoggerCreatedSignal;
@@ -294,7 +362,7 @@ void ConfigureLogger(NamedThreadedLogger& logger, const std::string& name) {
     // Note: Do not log in this function.  If a logger is used during
     // static initialization it will cause boost::log to recursively call
     // its internal global_locker_storage mutex and lock up.
-    SetLoggerThresholdCore(name, default_LogLevel);
+    SetLoggerThresholdCore(name, default_log_level_threshold);
 
     if (name.empty())
         return;
