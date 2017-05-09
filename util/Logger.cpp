@@ -1,7 +1,5 @@
 #include "Logger.h"
 
-#include "Version.h"
-
 #include <boost/log/core.hpp>
 #include <boost/log/trivial.hpp>
 #include <boost/log/expressions.hpp>
@@ -323,7 +321,6 @@ void InitLoggingSystem(const std::string& log_file, const std::string& _unnamed_
     // Print setup message.
     auto date_time = std::time(nullptr);
     InfoLogger(log) << "Logger initialized at " << std::ctime(&date_time);
-    InfoLogger() << FreeOrionVersionString();
 }
 
 void ShutdownLoggingSystemFileSink() {

@@ -227,6 +227,8 @@ HumanClientApp::HumanClientApp(int width, int height, bool calculate_fps, const 
     RegisterLoggerWithOptionsDB("client", true);
     RegisterLoggerWithOptionsDB("server", true);
 
+    InfoLogger() << FreeOrionVersionString();
+
     try {
         InfoLogger() << "GL Version String: " << GetGLVersionString();
     } catch (...) {

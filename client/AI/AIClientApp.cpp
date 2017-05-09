@@ -12,6 +12,8 @@
 #include "../../network/Message.h"
 #include "../../network/ClientNetworking.h"
 #include "../util/Random.h"
+#include "../util/Version.h"
+
 
 #include "../../universe/System.h"
 #include "../../universe/Species.h"
@@ -95,6 +97,8 @@ AIClientApp::AIClientApp(const std::vector<std::string>& args) :
 
     InitLoggingSystem(AICLIENT_LOG_FILENAME, "AI");
     InitLoggingOptionsDBSystem();
+
+    InfoLogger() << FreeOrionVersionString();
     DebugLogger() << PlayerName() + " ai client initialized.";
 }
 
