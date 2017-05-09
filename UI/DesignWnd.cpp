@@ -1361,11 +1361,11 @@ public:
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
     /** \name Structors */ //@{
-    explicit BasesListBox(const boost::optional<std::string>& drop_type = boost::none);
+    BasesListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+                 const boost::optional<std::string>& drop_type = boost::none);
     //@}
 
     /** \name Accessors */ //@{
-    const std::pair<bool, bool>&    GetAvailabilitiesShown() const;
     //@}
 
     /** \name Mutators */ //@{
@@ -1385,9 +1385,6 @@ public:
     void                            ShowCompletedDesigns(bool refresh_list = true);
     void                            ShowSavedDesigns(bool refresh_list = true);
     void                            ShowMonsters(bool refresh_list = true);
-
-    void                            ShowAvailability(bool available, bool refresh_list = true);
-    void                            HideAvailability(bool available, bool refresh_list = true);
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -1485,7 +1482,8 @@ private:
     void    PopulateWithMonsters();
 
     int                         m_empire_id_shown;
-    std::pair<bool, bool>       m_availabilities_shown; // .first indicates whether available parts should be shown.  .second indicates whether unavailable parts should be shown
+    const BasesListBox::AvailabilityManager& m_availabilities_state;
+
     bool                        m_showing_empty_hulls;
     bool                        m_showing_completed_designs;
     bool                        m_showing_saved_designs;
@@ -1645,10 +1643,11 @@ bool BasesListBox::SavedDesignListBoxRow::LookupInStringtable() const {
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
-BasesListBox::BasesListBox(const boost::optional<std::string>& drop_type) :
+BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+                           const boost::optional<std::string>& drop_type) :
     QueueListBox(drop_type,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
-    m_availabilities_shown{false, false},
+    m_availabilities_state(availabilities_state),
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false),
     m_showing_saved_designs(false),
@@ -1665,9 +1664,6 @@ BasesListBox::BasesListBox(const boost::optional<std::string>& drop_type) :
     MovedRowSignal.connect(
         boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
 }
-
-const std::pair<bool, bool>& BasesListBox::GetAvailabilitiesShown() const
-{ return m_availabilities_shown; }
 
 void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     const GG::Pt old_size = Size();
@@ -1837,9 +1833,8 @@ void BasesListBox::InitRowSizes() {
 
 void BasesListBox::PopulateWithEmptyHulls() {
     ScopedTimer scoped_timer("BasesListBox::PopulateWithEmptyHulls");
-
-    const bool showing_available = m_availabilities_shown.first;
-    const bool showing_unavailable = m_availabilities_shown.second;
+    const bool showing_available = m_availabilities_state.GetAvailability(AvailabilityManager::Available);
+    const bool showing_unavailable = m_availabilities_state.GetAvailability(AvailabilityManager::Unavailable);
     DebugLogger() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
     const Empire* empire = GetEmpire(m_empire_id_shown); // may return 0
     DebugLogger() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
@@ -1914,8 +1909,8 @@ void BasesListBox::PopulateWithEmptyHulls() {
 void BasesListBox::PopulateWithCompletedDesigns() {
     ScopedTimer scoped_timer("BasesListBox::PopulateWithCompletedDesigns");
 
-    const bool showing_available = m_availabilities_shown.first;
-    const bool showing_unavailable = m_availabilities_shown.second;
+    const bool showing_available = m_availabilities_state.GetAvailability(AvailabilityManager::Available);
+    const bool showing_unavailable = m_availabilities_state.GetAvailability(AvailabilityManager::Unavailable);
     const Empire* empire = GetEmpire(m_empire_id_shown); // may return 0
     const Universe& universe = GetUniverse();
 
@@ -2190,6 +2185,11 @@ void BasesListBox::ShowMonsters(bool refresh_list) {
         Populate();
 }
 
+void BasesListBox::EnableOrderIssuing(bool enable/* = true*/) {
+    m_enabled = enable;
+    QueueListBox::EnableOrderIssuing(m_enabled && (m_showing_completed_designs || m_showing_saved_designs));
+}
+
 BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
     m_availabilities{obsolete, available, unavailable}
 {}
@@ -2224,43 +2224,6 @@ void BasesListBox::AvailabilityManager::ToggleAvailability(const Availability ty
     SetAvailability(type, !GetAvailability(type));
 }
 
-void BasesListBox::ShowAvailability(bool available, bool refresh_list) {
-    if (available) {
-        if (!m_availabilities_shown.first) {
-            m_availabilities_shown.first = true;
-            if (refresh_list)
-                Populate();
-        }
-    } else {
-        if (!m_availabilities_shown.second) {
-            m_availabilities_shown.second = true;
-            if (refresh_list)
-                Populate();
-        }
-    }
-}
-
-void BasesListBox::HideAvailability(bool available, bool refresh_list) {
-    if (available) {
-        if (m_availabilities_shown.first) {
-            m_availabilities_shown.first = false;
-            if (refresh_list)
-                Populate();
-        }
-    } else {
-        if (m_availabilities_shown.second) {
-            m_availabilities_shown.second = false;
-            if (refresh_list)
-                Populate();
-        }
-    }
-}
-
-void BasesListBox::EnableOrderIssuing(bool enable/* = true*/) {
-    m_enabled = enable;
-    QueueListBox::EnableOrderIssuing(m_enabled && (m_showing_completed_designs || m_showing_saved_designs));
-}
-
 
 //////////////////////////////////////////////////
 // DesignWnd::BaseSelector                      //
@@ -2275,7 +2238,7 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            Reset();
-    void            ToggleAvailability(bool available, bool refresh_list);
+    void            ToggleAvailability(const BasesListBox::AvailabilityManager::Availability type);
     void            SetEmpireShown(int empire_id, bool refresh_list);
     void            ShowAvailability(bool available, bool refresh_list);
     void            HideAvailability(bool available, bool refresh_list);
@@ -2301,7 +2264,10 @@ private:
     BasesListBox*   m_designs_list;         // designs this empire has created or learned how to make
     BasesListBox*   m_saved_designs_list;   // designs saved to files
     BasesListBox*   m_monsters_list;        // monster designs
-    std::pair<CUIStateButton*, CUIStateButton*>   m_availability_buttons;
+
+    // Holds the state of the availabilities filter.
+    BasesListBox::AvailabilityManager m_availabilities_state;
+    std::tuple<CUIStateButton*, CUIStateButton*, CUIStateButton*> m_availabilities_buttons;
 };
 
 DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
@@ -2312,24 +2278,30 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_hulls_list(nullptr),
     m_designs_list(nullptr),
     m_saved_designs_list(nullptr),
-    m_monsters_list(nullptr)
+    m_monsters_list(nullptr),
+    m_availabilities_state{false, true, false}
 {
-    m_availability_buttons.first = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_availability_buttons.first);
-    m_availability_buttons.first->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, true, true));
 
-    m_availability_buttons.second = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
-    AttachChild(m_availability_buttons.second);
-    m_availability_buttons.second->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, false, true));
+    auto& m_available_button = std::get<BasesListBox::AvailabilityManager::Available>(m_availabilities_buttons);
+    m_available_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_available_button);
+    m_available_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, BasesListBox::AvailabilityManager::Available));
+    m_available_button->SetCheck(m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Available));
+
+    auto& m_unavailable_button = std::get<BasesListBox::AvailabilityManager::Unavailable>(m_availabilities_buttons);
+    m_unavailable_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_unavailable_button);
+    m_unavailable_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, BasesListBox::AvailabilityManager::Unavailable));
+    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Unavailable));
 
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     m_tabs->TabChangedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
 
-    m_hulls_list = new BasesListBox();
+    m_hulls_list = new BasesListBox(m_availabilities_state);
     m_hulls_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->ShowEmptyHulls(false);
@@ -2338,7 +2310,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_hulls_list->HullClickedSignal.connect(
         DesignWnd::BaseSelector::HullClickedSignal);
 
-    m_designs_list = new BasesListBox(COMPLETE_DESIGN_ROW_DROP_STRING);
+    m_designs_list = new BasesListBox(m_availabilities_state, COMPLETE_DESIGN_ROW_DROP_STRING);
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
@@ -2347,7 +2319,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_designs_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
-    m_saved_designs_list = new BasesListBox(SAVED_DESIGN_ROW_DROP_STRING);
+    m_saved_designs_list = new BasesListBox(m_availabilities_state, SAVED_DESIGN_ROW_DROP_STRING);
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
     m_saved_designs_list->ShowSavedDesigns(true);
@@ -2356,7 +2328,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
-    m_monsters_list = new BasesListBox();
+    m_monsters_list = new BasesListBox(m_availabilities_state);
     m_monsters_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_monsters_list, UserString("DESIGN_WND_MONSTERS"));
     m_monsters_list->ShowMonsters(false);
@@ -2365,9 +2337,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_monsters_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
-
     DoLayout();
-    ShowAvailability(true, false);   // default to showing available unavailable bases.
 }
 
 void DesignWnd::BaseSelector::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -2399,41 +2369,33 @@ void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
         m_designs_list->SetEmpireShown(empire_id, refresh_list);
 }
 
-void DesignWnd::BaseSelector::ShowAvailability(bool available, bool refresh_list) {
-    if (m_hulls_list)
-        m_hulls_list->ShowAvailability(available, refresh_list);
-    if (m_designs_list)
-        m_designs_list->ShowAvailability(available, refresh_list);
-    if (available)
-        m_availability_buttons.first->SetCheck();
-    else
-        m_availability_buttons.second->SetCheck();
-}
-
-void DesignWnd::BaseSelector::HideAvailability(bool available, bool refresh_list) {
-    if (m_hulls_list)
-        m_hulls_list->HideAvailability(available, refresh_list);
-    if (m_designs_list)
-        m_designs_list->HideAvailability(available, refresh_list);
-    if (available)
-        m_availability_buttons.first->SetCheck(false);
-    else
-        m_availability_buttons.second->SetCheck(false);
-}
-
-void DesignWnd::BaseSelector::ToggleAvailability(bool available, bool refresh_list) {
-    const std::pair<bool, bool>& avail_shown = m_hulls_list->GetAvailabilitiesShown();
-    if (available) {
-        if (avail_shown.first)
-            HideAvailability(true, refresh_list);
-        else
-            ShowAvailability(true, refresh_list);
-    } else {
-        if (avail_shown.second)
-            HideAvailability(false, refresh_list);
-        else
-            ShowAvailability(false, refresh_list);
+void DesignWnd::BaseSelector::ToggleAvailability(BasesListBox::AvailabilityManager::Availability type) {
+    CUIStateButton* button;
+    bool state;
+    switch(type) {
+    case BasesListBox::AvailabilityManager::Obsolete:
+        m_availabilities_state.ToggleAvailability(BasesListBox::AvailabilityManager::Obsolete);
+        state = m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Obsolete);
+        button = std::get<BasesListBox::AvailabilityManager::Obsolete>(m_availabilities_buttons);
+        break;
+    case BasesListBox::AvailabilityManager::Available:
+        m_availabilities_state.ToggleAvailability(BasesListBox::AvailabilityManager::Available);
+        state = m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Available);
+        button = std::get<BasesListBox::AvailabilityManager::Available>(m_availabilities_buttons);
+        break;
+    case BasesListBox::AvailabilityManager::Unavailable:
+        m_availabilities_state.ToggleAvailability(BasesListBox::AvailabilityManager::Unavailable);
+        state = m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Unavailable);
+        button = std::get<BasesListBox::AvailabilityManager::Unavailable>(m_availabilities_buttons);
+        break;
     }
+
+    button->SetCheck(state);
+
+    if (m_hulls_list)
+        m_hulls_list->Populate();
+    if (m_designs_list)
+        m_designs_list->Populate();
 }
 
 void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
@@ -2459,9 +2421,12 @@ void DesignWnd::BaseSelector::DoLayout() {
     GG::Y top(TOP_PAD);
     GG::X left(LEFT_PAD);
 
-    m_availability_buttons.first->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
+    auto& m_available_button = std::get<BasesListBox::AvailabilityManager::Available>(m_availabilities_buttons);
+    auto& m_unavailable_button = std::get<BasesListBox::AvailabilityManager::Unavailable>(m_availabilities_buttons);
+
+    m_available_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
     left = left + BUTTON_WIDTH + BUTTON_SEPARATION;
-    m_availability_buttons.second->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
+    m_unavailable_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
     left = LEFT_PAD;
     top = top + BUTTON_HEIGHT + BUTTON_SEPARATION;
 
