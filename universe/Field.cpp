@@ -236,9 +236,8 @@ FieldTypeManager::FieldTypeManager() {
     }
 
     TraceLogger() << "Field Types:";
-    for (const std::map<std::string, FieldType*>::value_type& entry : *this) {
+    for (const auto& entry : *this)
         TraceLogger() << " ... " << entry.first;
-    }
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;

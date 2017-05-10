@@ -22,7 +22,7 @@ Encyclopedia::Encyclopedia() :
     }
 
     TraceLogger() << "(Category) Encyclopedia Articles:";
-    for (std::map<std::string, std::vector<EncyclopediaArticle>>::value_type& entry : articles) {
+    for (const auto& entry : articles) {
         const std::string& category = entry.first;
         for (const EncyclopediaArticle& article : entry.second)
         { TraceLogger() << "(" << category << ") : " << article.name; }

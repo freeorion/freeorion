@@ -123,7 +123,7 @@ PartTypeManager::PartTypeManager() {
     }
 
     TraceLogger() << "Part Types:";
-    for (const std::map<std::string, PartType*>::value_type& entry : m_parts) {
+    for (const auto& entry : m_parts) {
         const PartType* p = entry.second;
         TraceLogger() << " ... " << p->Name() << " class: " << p->Class();
     }
@@ -482,7 +482,7 @@ HullTypeManager::HullTypeManager() {
     }
 
     TraceLogger() << "Hull Types:";
-    for (const std::map<std::string, HullType*>::value_type& entry : m_hulls) {
+    for (const auto& entry : m_hulls) {
         const HullType* h = entry.second;
         TraceLogger() << " ... " << h->Name();
     }
@@ -1072,12 +1072,12 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     }
 
     TraceLogger() << "Predefined Ship Designs:";
-    for (const std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs) {
+    for (const auto& entry : m_ship_designs) {
         const ShipDesign* d = entry.second;
         TraceLogger() << " ... " << d->Name();
     }
     TraceLogger() << "Monster Ship Designs:";
-    for (const std::map<std::string, ShipDesign*>::value_type& entry : m_monster_designs) {
+    for (const auto& entry : m_monster_designs) {
         const ShipDesign* d = entry.second;
         TraceLogger() << " ... " << d->Name();
     }

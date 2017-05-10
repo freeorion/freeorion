@@ -330,7 +330,7 @@ BuildingTypeManager::BuildingTypeManager() {
     }
 
     TraceLogger() << "Building Types:";
-    for (const std::map<const std::string, BuildingType*>::value_type& entry : m_building_types) {
+    for (const auto& entry : m_building_types) {
         TraceLogger() << " ... " << entry.first;
     }
 

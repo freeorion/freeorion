@@ -1335,13 +1335,11 @@ namespace {
         }
 
         TraceLogger() << "Alignments:";
-        for (const Alignment& p : m_alignments) {
+        for (const auto& p : m_alignments)
             TraceLogger() << " ... " << p.Name();
-        }
         TraceLogger() << "Alignment Effects:";
-        for (std::shared_ptr<Effect::EffectsGroup> p : m_effects_groups) {
+        for (const auto& p : m_effects_groups)
             TraceLogger() << " ... " /*<< p.Dump()*/;
-        }
     }
 
     /** returns the singleton alignment manager */

@@ -951,9 +951,8 @@ namespace {
            << m_effects_group->AccountingLabel()
            << "  specific_cause: " << m_specific_cause_name
            << "  sources: ";
-        for (std::shared_ptr<const UniverseObject> obj : *m_sources) {
+        for (const auto& obj : *m_sources)
             ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
-        }
         ss << ")";
         return ss.str();
     }

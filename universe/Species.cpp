@@ -330,7 +330,7 @@ SpeciesManager::SpeciesManager() {
     }
 
     TraceLogger() << "Species:";
-    for (const std::map<std::string, Species*>::value_type& entry : m_species) {
+    for (const auto& entry : m_species) {
         const Species* s = entry.second;
         TraceLogger() << " ... " << s->Name() << "  \t" <<
             (s->Playable() ?        "Playable " : "         ") <<

@@ -24,9 +24,8 @@ namespace {
             }
 
             TraceLogger() << "Specials:";
-            for (const std::map<std::string, Special*>::value_type& entry : m_specials) {
+            for (const auto& entry : m_specials)
                 TraceLogger() << " ... " << entry.first;
-            }
         }
         ~SpecialManager() {
             for (std::map<std::string, Special*>::value_type& entry : m_specials) {
