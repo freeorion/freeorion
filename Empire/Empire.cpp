@@ -2687,7 +2687,7 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
 
             ShipDesignsChangedSignal();
 
-            TraceLogger() << "AddShipDesign::  " << ship_design->Name() << " ("<<ship_design_id
+            TraceLogger() << "AddShipDesign::  " << ship_design->Name() << " (" << ship_design_id
                           << ") to empire #" << EmpireID()
                           << (is_at_end_of_list ? " at end of list." : " in front of id ")
                           << next_design_id;
