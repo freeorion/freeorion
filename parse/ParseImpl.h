@@ -33,9 +33,8 @@ namespace parse { namespace detail {
         typedef void result_type;
 
         template <typename Map, typename Value>
-        result_type operator() (Map& map, const std::string& key, Value* value) const {
-            map.insert(std::make_pair(key, value));
-        }
+        result_type operator() (Map& map, const std::string& key, Value* value) const
+        { map.insert(std::make_pair(key, value)); }
     };
 
     template <
