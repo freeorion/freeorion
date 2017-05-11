@@ -23,38 +23,50 @@ namespace std {
 #endif
 
 namespace {
+    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
+
     std::set<std::string>* g_categories_seen = nullptr;
     std::map<std::string, TechCategory*>* g_categories = nullptr;
 
-    struct insert_tech_ {
-        typedef void result_type;
+    /// Check if the tech will be unique.
+    struct check_tech {
+        typedef bool result_type;
 
-        void operator()(TechManager::TechContainer& techs, Tech* tech) const {
-            g_categories_seen->insert(tech->Category());
+        result_type operator()(TechManager::TechContainer& techs, Tech* tech) const {
+            auto retval = true;
             if (techs.get<TechManager::NameIndex>().find(tech->Name()) != techs.get<TechManager::NameIndex>().end()) {
-                std::string error_str = "ERROR: More than one tech has the name " + tech->Name();
-                throw std::runtime_error(error_str.c_str());
+                ErrorLogger() <<  "More than one tech has the name " << tech->Name();
+                retval = false;
             }
             if (tech->Prerequisites().find(tech->Name()) != tech->Prerequisites().end()) {
-                std::string error_str = "ERROR: Tech " + tech->Name() + " depends on itself!";
-                throw std::runtime_error(error_str.c_str());
+                ErrorLogger() << "Tech " << tech->Name() << " depends on itself!";
+                retval = false;
             }
+            return retval;
+        }
+    };
+
+    struct insert_tech {
+        typedef void result_type;
+
+        result_type operator()(TechManager::TechContainer& techs, Tech* tech) const {
+            g_categories_seen->insert(tech->Category());
             techs.insert(tech);
         }
     };
-    const boost::phoenix::function<insert_tech_> insert_tech;
 
-    struct insert_category_ {
+    const boost::phoenix::function<check_tech> check_tech_;
+    const boost::phoenix::function<insert_tech> insert_tech_;
+
+    struct insert_category {
         typedef void result_type;
 
         void operator()(std::map<std::string, TechCategory*>& categories, TechCategory* category) const {
-            if (!categories.insert(std::make_pair(category->name, category)).second) {
-                std::string error_str = "ERROR: More than one tech category has the name " + category->name;
-                throw std::runtime_error(error_str.c_str());
-            }
+            categories.insert(std::make_pair(category->name, category));
         }
     };
-    const boost::phoenix::function<insert_category_> insert_category;
+    const boost::phoenix::function<insert_category> insert_category_;
+
 
     struct rules {
         rules() {
@@ -78,6 +90,7 @@ namespace {
             qi::_f_type _f;
             qi::_g_type _g;
             qi::_h_type _h;
+            qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_r3_type _r3;
@@ -127,14 +140,14 @@ namespace {
                 > -(parse::detail::label(EffectsGroups_token) > parse::detail::effects_group_parser() [ _d = _1 ])
                 > -(parse::detail::label(Graphic_token) > tok.string [ _e = _1 ])
                    )
-                [ insert_tech(_r1, new_<Tech>(_a, _d, _b, _c, _e)) ]
+                [ _f = new_<Tech>(_a, _d, _b, _c, _e), _pass = check_tech_(_r1, _f), insert_tech_(_r1, _f) ]
                 ;
 
             category
                 =   tok.Category_
-                >   parse::detail::label(Name_token)    > tok.string [ _a = _1 ]
+                >   parse::detail::label(Name_token)    > tok.string [ _pass = is_unique_(_r1, "Tech Category", _1), _a = _1 ]
                 >   parse::detail::label(Graphic_token) > tok.string [ _b = _1 ]
-                >   parse::detail::label(Colour_token)  > parse::detail::color_parser() [ insert_category(_r1, new_<TechCategory>(_a, _b, _1)) ]
+                >   parse::detail::label(Colour_token)  > parse::detail::color_parser() [ insert_category_(_r1, new_<TechCategory>(_a, _b, _1)) ]
                 ;
 
             start
@@ -196,7 +209,8 @@ namespace {
                 std::set<std::string>,
                 std::vector<ItemSpec>,
                 std::vector<std::shared_ptr<Effect::EffectsGroup>>,
-                std::string
+                std::string,
+                Tech*
             >
         > tech_rule;
 
