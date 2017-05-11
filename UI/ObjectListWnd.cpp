@@ -1119,6 +1119,8 @@ void FilterDialog::CompleteConstruction() {
     button_lr = button_lr - GG::Pt(m_cancel_button->Width() + GG::X(3), GG::Y0);
     m_apply_button->Resize(GG::Pt(button_width, m_apply_button->MinUsableSize().y));
     m_apply_button->MoveTo(button_lr - m_apply_button->Size());
+    SaveDefaultedOptions();
+    SaveOptions();
 }
 
 bool FilterDialog::ChangesAccepted()
