@@ -372,6 +372,8 @@ public:
         CUIWnd::CompleteConstruction();
 
         DoLayout();
+        SaveDefaultedOptions();
+        SaveOptions();
     }
     //@}
 
@@ -448,7 +450,7 @@ void ResearchWnd::CompleteConstruction() {
 
     SetChildClippingMode(ClipToClient);
 
-    DoLayout();
+    DoLayout(true);
 }
 
 ResearchWnd::~ResearchWnd()
@@ -461,14 +463,25 @@ void ResearchWnd::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         DoLayout();
 }
 
-void ResearchWnd::DoLayout() {
+void ResearchWnd::DoLayout(bool init) {
     m_research_info_panel->MoveTo(GG::Pt(GG::X0, GG::Y0));
-    m_research_info_panel->Resize(GG::Pt(GG::X(GetOptionsDB().Get<int>("UI.queue-width")),
-                                         m_research_info_panel->MinUsableSize().y));
+    GG::X queue_width = GG::X(init ? GetOptionsDB().GetDefault<int>("UI.queue-width") :
+                                     GetOptionsDB().Get<int>("UI.queue-width"));
+    if (init) {
+        GG::Pt info_ul = m_research_info_panel->UpperLeft();
+        GG::Pt info_lr(info_ul.x + queue_width, info_ul.y + m_research_info_panel->MinUsableSize().y);
+        m_research_info_panel->InitSizeMove(info_ul, info_lr);
+    } else {
+        m_research_info_panel->Resize(GG::Pt(queue_width, m_research_info_panel->MinUsableSize().y));
+    }
+
     GG::Pt queue_ul = GG::Pt(GG::X(2), m_research_info_panel->Height());
     GG::Pt queue_size = GG::Pt(m_research_info_panel->Width() - 4,
                                ClientSize().y - 4 - m_research_info_panel->Height());
-    m_queue_wnd->SizeMove(queue_ul, queue_ul + queue_size);
+    if (init)
+        m_queue_wnd->InitSizeMove(queue_ul, queue_ul + queue_size);
+    else
+        m_queue_wnd->SizeMove(queue_ul, queue_ul + queue_size);
 
     GG::Pt tech_tree_wnd_size = ClientSize() - GG::Pt(m_research_info_panel->Width(), GG::Y0);
     GG::Pt tech_tree_wnd_ul = GG::Pt(m_research_info_panel->Width(), GG::Y0);
