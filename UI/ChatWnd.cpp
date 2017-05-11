@@ -348,6 +348,7 @@ void MessageWnd::CompleteConstruction() {
     m_history.push_front("");
 
     DoLayout();
+    SaveDefaultedOptions();
 }
 
 void MessageWnd::DoLayout() {
