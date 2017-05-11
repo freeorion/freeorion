@@ -433,8 +433,6 @@ private:
 
     void            ConnectKeyboardAcceleratorSignals();        //!< connects signals from keyboard accelerators to various GUI responses
 
-    void            ChatMessageSentSlot();
-
     void            CloseAllPopups();
     void            HideAllPopups();
     void            ShowAllPopups();
