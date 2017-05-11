@@ -1075,17 +1075,17 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
         throw;
     }
 
-    if (true || GetOptionsDB().Get<bool>("verbose-logging")) {
+    if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "Predefined Ship Designs:";
         for (const std::map<std::string, ShipDesign*>::value_type& entry : m_ship_designs) {
             const ShipDesign* d = entry.second;
             DebugLogger() << " ... " << d->Name();
         }
-        // DebugLogger() << "Monster Ship Designs:";
-        // for (const std::map<std::string, ShipDesign*>::value_type& entry : m_monster_designs) {
-        //     const ShipDesign* d = entry.second;
-        //     DebugLogger() << " ... " << d->Name();
-        // }
+        DebugLogger() << "Monster Ship Designs:";
+        for (const std::map<std::string, ShipDesign*>::value_type& entry : m_monster_designs) {
+            const ShipDesign* d = entry.second;
+            DebugLogger() << " ... " << d->Name();
+        }
     }
 
     // Only update the global pointer on sucessful construction.
