@@ -1015,24 +1015,25 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
     GG::X button_width = GG::X(ClientUI::Pts()*8);
     GG::Button* label = nullptr;
 
-    label = new CUIButton(UserString("VISIBLE"));
-    label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
-    m_filters_layout->SetMinimumRowHeight(0, label->MinUsableSize().y);
-    m_filters_layout->Add(label, 1, 0, GG::ALIGN_CENTER);
-    label->LeftClickedSignal.connect(
-        boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_VISIBLE));
+    int row = 1;
 
-    label = new CUIButton(UserString("PREVIOUSLY_VISIBLE"));
-    label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
-    m_filters_layout->Add(label, 2, 0, GG::ALIGN_CENTER);
-    label->LeftClickedSignal.connect(
-        boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_PREVIOUSLY_VISIBLE));
+    for (const auto entry : {
+            std::make_tuple(SHOW_VISIBLE, UserStringNop("VISIBLE")),
+            std::make_tuple(SHOW_PREVIOUSLY_VISIBLE, UserStringNop("PREVIOUSLY_VISIBLE")),
+            std::make_tuple(SHOW_DESTROYED, UserStringNop("DESTROYED"))
+        })
+    {
+        const auto visibility = std::get<0>(entry);
+        const auto label_key = std::get<1>(entry);
 
-    label = new CUIButton(UserString("DESTROYED"));
-    label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
-    m_filters_layout->Add(label, 3, 0, GG::ALIGN_CENTER);
-    label->LeftClickedSignal.connect(
-        boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, SHOW_DESTROYED));
+        label = new CUIButton(UserString(label_key));
+        label->Resize(GG::Pt(button_width, label->MinUsableSize().y));
+        m_filters_layout->Add(label, row, 0, GG::ALIGN_CENTER);
+        label->LeftClickedSignal.connect(
+            boost::bind(&FilterDialog::UpdateVisFilterFromVisibilityButton, this, visibility));
+
+        ++row;
+    }
 
     m_filters_layout->SetMinimumRowHeight(0, label->MinUsableSize().y);
     m_filters_layout->SetMinimumRowHeight(1, label->MinUsableSize().y);
@@ -1052,26 +1053,18 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
         label->LeftClickedSignal.connect(
             boost::bind(&FilterDialog::UpdateVisFiltersFromObjectTypeButton, this, uot));
 
-        GG::StateButton* button = new CUIStateButton(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
-        button->SetCheck(vis_display.find(SHOW_VISIBLE) != vis_display.end());
-        m_filters_layout->Add(button, 1, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-        button->CheckedSignal.connect(
-            boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, _1));
-        m_filter_buttons[uot][SHOW_VISIBLE] = button;
+        int row = 1;
 
-        button = new CUIStateButton(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
-        button->SetCheck(vis_display.find(SHOW_PREVIOUSLY_VISIBLE) != vis_display.end());
-        m_filters_layout->Add(button, 2, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-        button->CheckedSignal.connect(
-            boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, _1));
-        m_filter_buttons[uot][SHOW_PREVIOUSLY_VISIBLE] = button;
+        for (auto visibility : {SHOW_VISIBLE, SHOW_PREVIOUSLY_VISIBLE, SHOW_DESTROYED}) {
+            GG::StateButton* button = new CUIStateButton(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
+            button->SetCheck(vis_display.count(visibility));
+            m_filters_layout->Add(button, row, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
+            button->CheckedSignal.connect(
+                boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, _1));
+            m_filter_buttons[uot][visibility] = button;
 
-        button = new CUIStateButton(" ", GG::FORMAT_CENTER, std::make_shared<CUICheckBoxRepresenter>());
-        button->SetCheck(vis_display.find(SHOW_DESTROYED) != vis_display.end());
-        m_filters_layout->Add(button, 3, col, GG::ALIGN_CENTER | GG::ALIGN_VCENTER);
-        button->CheckedSignal.connect(
-            boost::bind(&FilterDialog::UpdateVisFiltersFromStateButtons, this, _1));
-        m_filter_buttons[uot][SHOW_DESTROYED] = button;
+            ++row;
+        }
 
         ++col;
     }
