@@ -759,6 +759,7 @@ public:
         CUIWnd::CompleteConstruction();
 
         DoLayout();
+        SaveDefaultedOptions();
     }
     //@}
 
