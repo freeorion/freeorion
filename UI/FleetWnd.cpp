@@ -2372,7 +2372,6 @@ private:
     void            DoLayout();
     void UniverseObjectDeleted(std::shared_ptr<const UniverseObject> obj);
     void            ShipSelectionChanged(const GG::ListBox::SelectionSet& rows);
-    void            ShipBrowsed(GG::ListBox::iterator it);
     void            ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     int             ShipInRow(GG::ListBox::iterator it) const;
 
@@ -2407,8 +2406,6 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
 
     m_ships_lb->SelChangedSignal.connect(
         boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, _1));
-    m_ships_lb->BrowsedSignal.connect(
-        boost::bind(&FleetDetailPanel::ShipBrowsed, this, _1));
     m_ships_lb->RightClickedSignal.connect(
         boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
     GetUniverse().UniverseObjectDeleteSignal.connect(
@@ -2546,9 +2543,6 @@ void FleetDetailPanel::ShipSelectionChanged(const GG::ListBox::SelectionSet& row
 
     SelectedShipsChangedSignal(rows);
 }
-
-void FleetDetailPanel::ShipBrowsed(GG::ListBox::iterator it)
-{}
 
 void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // get ship that was clicked, aborting if problems arise doing so
