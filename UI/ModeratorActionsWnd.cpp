@@ -196,6 +196,7 @@ void ModeratorActionsWnd::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     DoLayout();
+    SaveDefaultedOptions();
 }
 
 ModeratorActionsWnd::~ModeratorActionsWnd()
