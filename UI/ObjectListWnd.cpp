@@ -1040,7 +1040,8 @@ FilterDialog::FilterDialog(const std::map<UniverseObjectType, std::set<VIS_DISPL
     m_filters_layout->SetMinimumRowHeight(3, label->MinUsableSize().y);
 
     int col = 1;
-    for (std::map<UniverseObjectType, std::set<VIS_DISPLAY>>::value_type& entry : m_vis_filters) {
+
+    for (const auto& entry : m_vis_filters) {
         const UniverseObjectType& uot = entry.first;
         const std::set<VIS_DISPLAY>& vis_display = entry.second;
 
@@ -1124,15 +1125,13 @@ void FilterDialog::CancelClicked() {
 
 void FilterDialog::UpdateStateButtonsFromVisFilters() {
     // set state button checks to match current visibility filter settings
-    for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*>>::value_type& entry : m_filter_buttons) {
-        UniverseObjectType uot = entry.first;
-
+    for (auto& entry : m_filter_buttons) {
         // find visibilities for this object type
-        std::map<UniverseObjectType, std::set<VIS_DISPLAY>>::iterator uot_it = m_vis_filters.find(uot);
+        auto uot_it = m_vis_filters.find(entry.first);
         const std::set<VIS_DISPLAY>& shown_vis = (uot_it != m_vis_filters.end() ? uot_it->second : std::set<VIS_DISPLAY>());
 
         // set all button checks depending on whether that buttons visibility is to be shown
-        for (std::map<VIS_DISPLAY, GG::StateButton*>::value_type& button : entry.second) {
+        for (auto& button : entry.second) {
             if (!button.second)
                 continue;
             button.second->SetCheck(shown_vis.find(button.first) != shown_vis.end());
@@ -1143,14 +1142,12 @@ void FilterDialog::UpdateStateButtonsFromVisFilters() {
 void FilterDialog::UpdateVisFiltersFromStateButtons(bool button_checked) {
     m_vis_filters.clear();
     // set all filters based on state button settings
-    for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*>>::value_type& entry : m_filter_buttons) {
-        UniverseObjectType uot = entry.first;
-
-        for (std::map<VIS_DISPLAY, GG::StateButton*>::value_type& button : entry.second) {
+    for (const auto& entry : m_filter_buttons) {
+        for (const auto& button : entry.second) {
             if (!button.second)
                 continue;
             if (button.second->Checked())
-                m_vis_filters[uot].insert(button.first);
+                m_vis_filters[entry.first].insert(button.first);
         }
     }
 }
@@ -1175,7 +1172,7 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
 
     // determine if all types are already on for requested visibility
     bool all_on = true;
-    for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*>>::value_type& entry : m_filter_buttons) {
+    for (const auto& entry : m_filter_buttons) {
         std::set<VIS_DISPLAY>& type_vis = m_vis_filters[entry.first];
         if (type_vis.find(vis) == type_vis.end()) {
             all_on = false;
@@ -1183,7 +1180,7 @@ void FilterDialog::UpdateVisFilterFromVisibilityButton(VIS_DISPLAY vis) {
         }
     }
     // if all on, turn all off. otherwise, turn all on
-    for (std::map<UniverseObjectType, std::map<VIS_DISPLAY, GG::StateButton*>>::value_type& entry : m_filter_buttons) {
+    for (const auto& entry : m_filter_buttons) {
         std::set<VIS_DISPLAY>& type_vis = m_vis_filters[entry.first];
         if (!all_on)
             type_vis.insert(vis);
