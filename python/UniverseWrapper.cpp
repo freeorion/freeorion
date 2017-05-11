@@ -119,6 +119,11 @@ namespace {
     }
     boost::function<std::vector<int>(const Universe&, int, int, int)> ShortestPathFunc =        &ShortestPath;
 
+    double                  ShortestPathDistance(const Universe& universe, int object1_id, int object2_id) {
+        return universe.GetPathfinder()->ShortestPathDistance(object1_id, object2_id);
+    }
+    boost::function<double(const Universe&, int, int)> ShortestPathDistanceFunc =               &ShortestPathDistance;
+
     std::vector<int>        LeastJumpsPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
         std::pair<std::list<int>, int> path = universe.GetPathfinder()->LeastJumpsPath(start_sys, end_sys, empire_id);
@@ -337,6 +342,12 @@ namespace FreeOrionPython {
                                                     ShortestPathFunc,
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<std::vector<int>, const Universe&, int, int, int>()
+                                                ))
+
+            .def("shortestPathDistance",        make_function(
+                                                    ShortestPathDistanceFunc,
+                                                    return_value_policy<return_by_value>(),
+                                                    boost::mpl::vector<double, const Universe&, int, int>()
                                                 ))
 
             .def("leastJumpsPath",              make_function(
