@@ -19,17 +19,9 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_ {
-        typedef void result_type;
+    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-        void operator()(std::map<std::string, FieldType*>& fields, FieldType* field_type) const {
-            if (!fields.insert(std::make_pair(field_type->Name(), field_type)).second) {
-                std::string error_str = "ERROR: More than one field type has the name " + field_type->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-        }
-    };
-    const boost::phoenix::function<insert_> insert;
+    const boost::phoenix::function<parse::detail::insert> insert_;
 
     struct rules {
         rules() {
@@ -47,19 +39,21 @@ namespace {
             qi::_c_type _c;
             qi::_d_type _d;
             qi::_e_type _e;
+            qi::_pass_type _pass;
             qi::_r1_type _r1;
 
             const parse::lexer& tok = parse::lexer::instance();
 
             field
                 =   tok.FieldType_
-                >   parse::detail::label(Name_token)                > tok.string [ _a = _1 ]
+                >   parse::detail::label(Name_token)
+                >   tok.string        [ _pass = is_unique_(_r1, "FieldType", _1), _a = _1 ]
                 >   parse::detail::label(Description_token)         > tok.string [ _b = _1 ]
                 >   parse::detail::label(Stealth_token)             > parse::detail::double_ [ _c = _1]
                 >   parse::detail::tags_parser()(_d)
                 > -(parse::detail::label(EffectsGroups_token)       > parse::detail::effects_group_parser() [ _e = _1 ])
                 >   parse::detail::label(Graphic_token)             > tok.string
-                [ insert(_r1, new_<FieldType>(_a, _b, _c, _d, _e, _1)) ]
+                [ insert_(_r1, _a, new_<FieldType>(_a, _b, _c, _d, _e, _1)) ]
                 ;
 
             start

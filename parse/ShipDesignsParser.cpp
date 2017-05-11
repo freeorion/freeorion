@@ -20,17 +20,9 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_ {
-        typedef void result_type;
+    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-        void operator()(std::map<std::string, ShipDesign*>& designs, ShipDesign* design) const {
-            if (!designs.insert(std::make_pair(design->Name(false), design)).second) {
-                std::string error_str = "ERROR: More than one predefined ship design has the name " + design->Name(false);
-                throw std::runtime_error(error_str.c_str());
-            }
-        }
-    };
-    const boost::phoenix::function<insert_> insert;
+    const boost::phoenix::function<parse::detail::insert> insert_;
 
     struct rules {
         rules() {
@@ -50,17 +42,20 @@ namespace {
             qi::_d_type _d;
             qi::_e_type _e;
             qi::_f_type _f;
+            qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
             qi::_r3_type _r3;
             qi::_r4_type _r4;
+            qi::_r5_type _r5;
             qi::eps_type eps;
 
             const parse::lexer& tok = parse::lexer::instance();
 
             design_prefix
                 =    tok.ShipDesign_
-                >    parse::detail::label(Name_token)        > tok.string [ _r1 = _1 ]
+                >    parse::detail::label(Name_token)
+                >   tok.string        [ _pass = is_unique_(_r5, "ShipDesign", _1), _r1 = _1 ]
                 >    parse::detail::label(Description_token) > tok.string [ _r2 = _1 ]
                 > (
                      tok.NoStringtableLookup_ [ _r4 = false ]
@@ -70,7 +65,7 @@ namespace {
                 ;
 
             design
-                =    design_prefix(_a, _b, _c, _f)
+                =    design_prefix(_a, _b, _c, _f, _r1)
                 >    parse::detail::label(Parts_token)
                 >    (
                             ('[' > +tok.string [ push_back(_d, _1) ] > ']')
@@ -80,7 +75,7 @@ namespace {
                         parse::detail::label(Icon_token)     > tok.string [ _e = _1 ]
                      )
                 >    parse::detail::label(Model_token)       > tok.string
-                [ insert(_r1, new_<ShipDesign>(_a, _b, 0, ALL_EMPIRES, _c, _d, _e, _1, _f)) ]
+                [ insert_(_r1, _a, new_<ShipDesign>(_a, _b, 0, ALL_EMPIRES, _c, _d, _e, _1, _f)) ]
                 ;
 
             start
@@ -99,7 +94,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (std::string&, std::string&, std::string&, bool&)
+            void (std::string&, std::string&, std::string&, bool&, const std::map<std::string, ShipDesign*>&)
         > design_prefix_rule;
 
         typedef parse::detail::rule<

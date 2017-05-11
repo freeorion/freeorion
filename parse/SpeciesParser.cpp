@@ -26,17 +26,9 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_species_ {
-        typedef void result_type;
+    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-        void operator()(std::map<std::string, Species*>& species, Species* specie) const {
-            if (!species.insert(std::make_pair(specie->Name(), specie)).second) {
-                std::string error_str = "ERROR: More than one species has the name " + specie->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-        }
-    };
-    const boost::phoenix::function<insert_species_> insert_species;
+    const boost::phoenix::function<parse::detail::insert> insert_;
 
     struct rules {
         rules() {
@@ -59,6 +51,7 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_g_type _g;
+            qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::_val_type _val;
             qi::eps_type eps;
@@ -110,7 +103,8 @@ namespace {
                 ;
 
             species_strings
-                =    parse::detail::label(Name_token)                   > tok.string [ _a = _1 ]
+                =    parse::detail::label(Name_token)                   > tok.string
+                     [ _pass = is_unique_(_r1, "Species", _1), _a = _1 ]
                 >    parse::detail::label(Description_token)            > tok.string [ _b = _1 ]
                 >    parse::detail::label(Gameplay_Description_token)   > tok.string [ _c = _1 ]
                     [ _val = construct<SpeciesStrings>(_a, _b, _c) ]
@@ -118,7 +112,7 @@ namespace {
 
             species
                 =    tok.Species_
-                >    species_strings [ _a = _1 ]
+                >    species_strings(_r1) [ _a = _1 ]
                 >    species_params [ _b = _1]
                 >    parse::detail::tags_parser()(_c)
                 >   -foci(_d)
@@ -126,7 +120,8 @@ namespace {
                 >   -effects(_e)
                 >   -environments(_f)
                 >    parse::detail::label(Graphic_token) > tok.string
-                     [ insert_species(_r1, new_<Species>(_a, _d, _g, _f, _e, _b, _c, _1)) ]
+                [ insert_(_r1, phoenix::bind(&SpeciesStrings::name, _a),
+                          new_<Species>(_a, _d, _g, _f, _e, _b, _c, _1)) ]
                 ;
 
             start
@@ -201,7 +196,7 @@ namespace {
         > species_params_rule;
 
         typedef parse::detail::rule<
-            SpeciesStrings (),
+            SpeciesStrings (const std::map<std::string, Species*>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
