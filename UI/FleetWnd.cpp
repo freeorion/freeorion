@@ -3137,9 +3137,6 @@ void FleetWnd::AddFleet(int fleet_id) {
     row->Resize(row_size);
 }
 
-void FleetWnd::RemoveFleet(int fleet_id)
-{}
-
 void FleetWnd::SelectFleet(int fleet_id) {
     if (fleet_id == INVALID_OBJECT_ID || !(GetFleet(fleet_id))) {
         m_fleets_lb->DeselectAll();

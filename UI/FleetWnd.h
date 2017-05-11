@@ -147,7 +147,6 @@ private:
     void            RefreshStateChangedSignals();
 
     void            AddFleet(int fleet_id);     ///< adds a new fleet row to this FleetWnd's ListBox of FleetRows and updates internal fleets bookkeeping
-    void            RemoveFleet(int fleet_id);  ///< removes fleet row and updates internal bookkeeping
 
     void            FleetSelectionChanged(const GG::ListBox::SelectionSet& rows);
     void            FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
