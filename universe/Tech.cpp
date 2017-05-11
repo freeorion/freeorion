@@ -303,8 +303,6 @@ TechManager::TechManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one TechManager.");
 
-    s_instance = this;
-
     std::set<std::string> categories_seen_in_techs;
 
     try {
@@ -377,6 +375,9 @@ TechManager::TechManager() {
                   << tech->Graphic() << std::endl;
     }
 #endif
+
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
 }
 
 TechManager::~TechManager() {

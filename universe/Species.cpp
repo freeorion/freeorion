@@ -321,7 +321,6 @@ bool SpeciesManager::NativeSpecies::operator()(
 SpeciesManager::SpeciesManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one SpeciesManager.");
-    s_instance = this;
 
     try {
         parse::species(m_species);
@@ -341,6 +340,9 @@ SpeciesManager::SpeciesManager() {
                 (s->CanColonize() ?     "CanColonize " : "            ");
         }
     }
+
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
 }
 
 SpeciesManager::~SpeciesManager() {

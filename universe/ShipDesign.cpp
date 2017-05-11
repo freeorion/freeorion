@@ -115,8 +115,6 @@ PartTypeManager::PartTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PartTypeManager.");
 
-    s_instance = this;
-
     try {
         parse::ship_parts(m_parts);
     } catch (const std::exception& e) {
@@ -131,6 +129,9 @@ PartTypeManager::PartTypeManager() {
             DebugLogger() << " ... " << p->Name() << " class: " << p->Class();
         }
     }
+
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
 }
 
 PartTypeManager::~PartTypeManager() {
@@ -475,8 +476,6 @@ HullTypeManager::HullTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one HullTypeManager.");
 
-    s_instance = this;
-
     try {
         parse::ship_hulls(m_hulls);
     } catch (const std::exception& e) {
@@ -491,6 +490,9 @@ HullTypeManager::HullTypeManager() {
             DebugLogger() << " ... " << h->Name();
         }
     }
+
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
 }
 
 HullTypeManager::~HullTypeManager() {
@@ -1057,8 +1059,6 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PredefinedShipDesignManager.");
 
-    s_instance = this;
-
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
     try {
@@ -1087,6 +1087,9 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
             DebugLogger() << " ... " << d->Name();
         }
     }
+
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
 }
 
 PredefinedShipDesignManager::~PredefinedShipDesignManager() {

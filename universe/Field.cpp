@@ -228,8 +228,6 @@ FieldTypeManager::FieldTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one FieldTypeManager.");
 
-    s_instance = this;
-
     try {
         parse::fields(m_field_types);
     } catch (const std::exception& e) {
@@ -243,6 +241,9 @@ FieldTypeManager::FieldTypeManager() {
             DebugLogger() << " ... " << entry.first;
         }
     }
+
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
 }
 
 FieldTypeManager::~FieldTypeManager() {

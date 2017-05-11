@@ -320,8 +320,6 @@ BuildingTypeManager::BuildingTypeManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one BuildingTypeManager.");
 
-    s_instance = this;
-
     if (GetOptionsDB().Get<bool>("verbose-logging")) {
         DebugLogger() << "BuildingTypeManager::BuildingTypeManager() about to parse buildings.";
     }
@@ -339,6 +337,9 @@ BuildingTypeManager::BuildingTypeManager() {
             DebugLogger() << " ... " << entry.first;
         }
     }
+
+    // Only update the global pointer on sucessful construction.
+    s_instance = this;
 }
 
 BuildingTypeManager::~BuildingTypeManager() {
