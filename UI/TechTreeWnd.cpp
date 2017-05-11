@@ -345,6 +345,8 @@ void TechTreeWnd::TechTreeControls::CompleteConstruction() {
     CUIWnd::CompleteConstruction();
 
     DoButtonLayout();
+    SaveDefaultedOptions();
+    SaveOptions();
 }
 
 void TechTreeWnd::TechTreeControls::DoButtonLayout() {
@@ -2086,6 +2088,7 @@ void TechTreeWnd::CompleteConstruction() {
     if (m_tech_tree_controls->Bottom() > m_layout_panel->Bottom() - ClientUI::ScrollWidth()) {
         m_tech_tree_controls->MoveTo(GG::Pt(m_tech_tree_controls->Left(),
                                             m_layout_panel->Bottom() - ClientUI::ScrollWidth() - m_tech_tree_controls->Height()));
+        m_tech_tree_controls->SaveDefaultedOptions();
     }
 
     HumanClientApp::GetApp()->RepositionWindowsSignal.connect(
