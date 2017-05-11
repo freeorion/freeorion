@@ -1082,7 +1082,7 @@ protected:
                          const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
 
 private:
-    void                AggressionToggleButtonPressed();
+    void                ToggleAggression();
 
     void                Refresh();
     void                SetStatIconValues();
@@ -1380,7 +1380,7 @@ bool FleetDataPanel::EventFilter(GG::Wnd* w, const GG::WndEvent& event) {
     }
 }
 
-void FleetDataPanel::AggressionToggleButtonPressed() {
+void FleetDataPanel::ToggleAggression() {
     if (!m_aggression_toggle)
         return;
     std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id);
@@ -1702,7 +1702,7 @@ void FleetDataPanel::Init() {
             GG::SubTexture(FleetAggressiveMouseoverIcon()));
         AttachChild(m_aggression_toggle);
         m_aggression_toggle->LeftClickedSignal.connect(
-            boost::bind(&FleetDataPanel::AggressionToggleButtonPressed, this));
+            boost::bind(&FleetDataPanel::ToggleAggression, this));
 
     } else if (std::shared_ptr<const Fleet> fleet = GetFleet(m_fleet_id)) {
         int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
@@ -1742,7 +1742,7 @@ void FleetDataPanel::Init() {
                 GG::SubTexture(FleetAggressiveMouseoverIcon()));
             AttachChild(m_aggression_toggle);
             m_aggression_toggle->LeftClickedSignal.connect(
-                boost::bind(&FleetDataPanel::AggressionToggleButtonPressed, this));
+                boost::bind(&FleetDataPanel::ToggleAggression, this));
         }
 
         ColorTextForSelect();
