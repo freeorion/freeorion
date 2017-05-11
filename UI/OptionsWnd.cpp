@@ -741,6 +741,8 @@ void OptionsWnd::CompleteConstruction() {
     m_tabs->SetCurrentWnd(0);
 
     DoLayout();
+    SaveDefaultedOptions();
+    SaveOptions();
 
     // Connect the done and cancel button
     m_done_button->LeftClickedSignal.connect(
