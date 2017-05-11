@@ -13,6 +13,31 @@
 
 
 namespace parse { namespace detail {
+
+    /// A functor to determine if \p key will be unique in \p map of \p type, and log an error otherwise.
+    struct is_unique {
+        typedef bool result_type;
+
+        template <typename Map>
+        result_type operator() (const Map& map, const std::string& type, const std::string& key) const {
+            // Will this key be unique?
+            auto will_be_unique = (map.count(key) == 0);
+            if (!will_be_unique)
+                ErrorLogger() << "More than one " <<  type << " has the same name, " << key << ".";
+            return will_be_unique;
+        }
+    };
+
+    /// A functor to insert a \p value with key \p key into \p map.
+    struct insert {
+        typedef void result_type;
+
+        template <typename Map, typename Value>
+        result_type operator() (Map& map, const std::string& key, Value* value) const {
+            map.insert(std::make_pair(key, value));
+        }
+    };
+
     template <
         typename signature = boost::spirit::qi::unused_type,
         typename locals = boost::spirit::qi::unused_type
