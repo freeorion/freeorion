@@ -221,13 +221,40 @@ namespace {
     public:
         SitRepDataPanel(GG::X left, GG::Y top, GG::X w, GG::Y h, const SitRepEntry& sitrep) :
             Control(left, top, w, h, GG::NO_WND_FLAGS),
-            m_initialized(false),
             m_sitrep_entry(sitrep),
             m_icon(nullptr),
             m_link_text(nullptr)
         {
             SetChildClippingMode(ClipToClient);
-            Init();
+
+            int icon_dim = GetIconSize();
+            std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
+                "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
+            std::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
+                ClientUI::ArtDir() / icon_texture, true);
+            m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+            AttachChild(m_icon);
+            m_icon->Resize(GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
+
+            GG::Pt spacer = GG::Pt(GG::X(sitrep_edge_to_content_spacing), GG::Y(sitrep_edge_to_content_spacing));
+            GG::X icon_left(spacer.x);
+            GG::X text_left(icon_left + GG::X(icon_dim) + sitrep_spacing);
+            GG::X text_width(ClientWidth() - text_left - spacer.x);
+            m_link_text = new SitRepLinkText(GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ",
+                                             ClientUI::GetFont(),
+                                             GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
+            m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
+            AttachChild(m_link_text);
+
+            m_link_text->LinkClickedSignal.connect(
+                &HandleLinkClick);
+            m_link_text->LinkDoubleClickedSignal.connect(
+                &HandleLinkClick);
+            m_link_text->LinkRightClickedSignal.connect(
+                &HandleLinkClick);
+            m_link_text->RightClickedSignal.connect(
+                boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
+
             DoLayout(GG::Pt(left, top), w);
         }
 
@@ -277,40 +304,6 @@ namespace {
             GG::Pt new_size = GG::Pt(width, panel_height);
             GG::Control::SizeMove(ul, ul + new_size);
         }
-
-        void            Init() {
-            m_initialized = true;
-
-            int icon_dim = GetIconSize();
-            std::string icon_texture = (m_sitrep_entry.GetIcon().empty() ?
-                "/icons/sitrep/generic.png" : m_sitrep_entry.GetIcon());
-            std::shared_ptr<GG::Texture> icon = ClientUI::GetTexture(
-                ClientUI::ArtDir() / icon_texture, true);
-            m_icon = new GG::StaticGraphic(icon, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
-            AttachChild(m_icon);
-            m_icon->Resize(GG::Pt(GG::X(icon_dim), GG::Y(icon_dim)));
-
-            GG::Pt spacer = GG::Pt(GG::X(sitrep_edge_to_content_spacing), GG::Y(sitrep_edge_to_content_spacing));
-            GG::X icon_left(spacer.x);
-            GG::X text_left(icon_left + GG::X(icon_dim) + sitrep_spacing);
-            GG::X text_width(ClientWidth() - text_left - spacer.x);
-            m_link_text = new SitRepLinkText(GG::X0, GG::Y0, text_width, m_sitrep_entry.GetText() + " ",
-                                             ClientUI::GetFont(),
-                                             GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
-            m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
-            AttachChild(m_link_text);
-
-            m_link_text->LinkClickedSignal.connect(
-                &HandleLinkClick);
-            m_link_text->LinkDoubleClickedSignal.connect(
-                &HandleLinkClick);
-            m_link_text->LinkRightClickedSignal.connect(
-                &HandleLinkClick);
-            m_link_text->RightClickedSignal.connect(
-                boost::bind(&SitRepDataPanel::RClick, this, _1, _2));
-        }
-
-        bool                m_initialized;
 
         const SitRepEntry&  m_sitrep_entry;
         GG::StaticGraphic*  m_icon;
