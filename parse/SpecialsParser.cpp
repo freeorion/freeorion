@@ -54,7 +54,7 @@ namespace {
             special_prefix
                 =    tok.Special_
                 >    parse::detail::label(Name_token)
-                >    tok.string        [ _pass = is_unique_(_r1, "Special", _1), _r2 = _1 ]
+                >    tok.string        [ _pass = is_unique_(_r1, Special_token, _1), _r2 = _1 ]
                 >    parse::detail::label(Description_token)        > tok.string [ _r3 = _1 ]
                 ;
 

@@ -104,7 +104,7 @@ namespace {
 
             species_strings
                 =    parse::detail::label(Name_token)                   > tok.string
-                     [ _pass = is_unique_(_r1, "Species", _1), _a = _1 ]
+                     [ _pass = is_unique_(_r1, Species_token, _1), _a = _1 ]
                 >    parse::detail::label(Description_token)            > tok.string [ _b = _1 ]
                 >    parse::detail::label(Gameplay_Description_token)   > tok.string [ _c = _1 ]
                     [ _val = construct<SpeciesStrings>(_a, _b, _c) ]

@@ -55,7 +55,7 @@ namespace {
             design_prefix
                 =    tok.ShipDesign_
                 >    parse::detail::label(Name_token)
-                >   tok.string        [ _pass = is_unique_(_r5, "ShipDesign", _1), _r1 = _1 ]
+                >   tok.string        [ _pass = is_unique_(_r5, ShipDesign_token, _1), _r1 = _1 ]
                 >    parse::detail::label(Description_token) > tok.string [ _r2 = _1 ]
                 > (
                      tok.NoStringtableLookup_ [ _r4 = false ]

@@ -90,7 +90,7 @@ namespace {
             hull
                 =   tok.Hull_
                 >   parse::detail::more_common_params_parser()
-                    [_pass = is_unique_(_r1, "HullType", phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
+                    [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
                 >   hull_stats                                  [ _c = _1 ]
                 >  -slots(_e)
                 >   parse::detail::common_params_parser()       [ _d = _1 ]

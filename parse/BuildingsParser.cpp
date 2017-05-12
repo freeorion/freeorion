@@ -49,7 +49,7 @@ namespace {
             building_type
                 =   tok.BuildingType_
                 >   parse::detail::label(Name_token)
-                >   tok.string        [ _pass = is_unique_(_r1, "BuildingType", _1), _a = _1 ]
+                >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1), _a = _1 ]
                 >   parse::detail::label(Description_token)         > tok.string        [ _b = _1 ]
                 >   (   parse::detail::label(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
                     |   eps [ _d = CR_CAPTURE ]

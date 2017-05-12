@@ -145,7 +145,7 @@ namespace {
 
             category
                 =   tok.Category_
-                >   parse::detail::label(Name_token)    > tok.string [ _pass = is_unique_(_r1, "Tech Category", _1), _a = _1 ]
+                >   parse::detail::label(Name_token)    > tok.string [ _pass = is_unique_(_r1, Category_token, _1), _a = _1 ]
                 >   parse::detail::label(Graphic_token) > tok.string [ _b = _1 ]
                 >   parse::detail::label(Colour_token)  > parse::detail::color_parser() [ insert_category_(_r1, new_<TechCategory>(_a, _b, _1)) ]
                 ;

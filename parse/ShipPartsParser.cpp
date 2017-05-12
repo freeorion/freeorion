@@ -71,7 +71,7 @@ namespace {
             part_type
                 = ( tok.Part_
                 >   parse::detail::more_common_params_parser()
-                    [_pass = is_unique_(_r1, "PartType", phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
+                    [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
                 >   parse::detail::label(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
                 > (  (parse::detail::label(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
                    | (parse::detail::label(Damage_token)    > parse::detail::double_ [ _d = _1 ])

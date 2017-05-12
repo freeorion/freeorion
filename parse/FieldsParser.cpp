@@ -47,7 +47,7 @@ namespace {
             field
                 =   tok.FieldType_
                 >   parse::detail::label(Name_token)
-                >   tok.string        [ _pass = is_unique_(_r1, "FieldType", _1), _a = _1 ]
+                >   tok.string        [ _pass = is_unique_(_r1, FieldType_token, _1), _a = _1 ]
                 >   parse::detail::label(Description_token)         > tok.string [ _b = _1 ]
                 >   parse::detail::label(Stealth_token)             > parse::detail::double_ [ _c = _1]
                 >   parse::detail::tags_parser()(_d)
