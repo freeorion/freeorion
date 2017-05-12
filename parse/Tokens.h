@@ -513,7 +513,7 @@
     (Y)                                         \
     (Yellow)
 
-#define DECLARE_TOKEN(r, _, elem) extern const char* BOOST_PP_CAT(elem, _token);
+#define DECLARE_TOKEN(r, _, elem) extern const char* const BOOST_PP_CAT(elem, _token);
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_1)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_2)
 BOOST_PP_SEQ_FOR_EACH(DECLARE_TOKEN, _, TOKEN_SEQ_3)
