@@ -1479,10 +1479,11 @@ protected:
 
     virtual void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
+    virtual void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+    {}
 
 
 private:
-    void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     void    InitRowSizes();
@@ -1784,42 +1785,6 @@ void BasesListBox::InitRowSizes() {
     NormalizeRowsOnInsert(false);
 }
 
-void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    // determine type of row that was clicked, and emit appropriate signal
-
-    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
-    if (design_row) {
-        int id = design_row->DesignID();
-        const ShipDesign* design = GetShipDesign(id);
-        if (!design)
-            return;
-        if (modkeys & GG::MOD_KEY_CTRL)
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(HumanClientApp::GetApp()->EmpireID(), id, true));
-        else
-            DesignClickedSignal(design);
-        return;
-    }
-
-    SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
-    if (saved_design_row) {
-        const auto design_uuid = saved_design_row->DesignUUID();
-        const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_uuid);
-        if (design)
-            DesignClickedSignal(design);
-        return;
-    }
-
-    HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
-    if (hull_parts_row) {
-        const std::string& hull_name = hull_parts_row->Hull();
-        const HullType* hull_type = GetHullType(hull_name);
-        const std::vector<std::string>& parts = hull_parts_row->Parts();
-        if (hull_type && parts.empty())
-            HullClickedSignal(hull_type);
-    }
-}
-
 void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
 { BaseRightClicked(it, pt, modkeys); }
 
@@ -1971,6 +1936,7 @@ class EmptyHullsListBox : public BasesListBox {
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 
     private:
     std::set<std::string>       m_hulls_in_list;
@@ -1988,6 +1954,7 @@ class CompletedDesignsListBox : public BasesListBox {
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -2002,6 +1969,7 @@ class SavedDesignsListBox : public BasesListBox {
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class MonstersListBox : public BasesListBox {
@@ -2256,6 +2224,47 @@ void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::
         return;
     SavedDesignSelectedSignal(sd_row->DesignUUID());
 }
+
+
+void EmptyHullsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+{
+    HullAndPartsListBoxRow* hull_parts_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
+    if (!hull_parts_row)
+        return;
+    const std::string& hull_name = hull_parts_row->Hull();
+    const HullType* hull_type = GetHullType(hull_name);
+    const std::vector<std::string>& parts = hull_parts_row->Parts();
+    if (hull_type && parts.empty())
+        HullClickedSignal(hull_type);
+}
+
+void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+{
+    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
+    if (!design_row)
+        return;
+    int id = design_row->DesignID();
+    const ShipDesign* design = GetShipDesign(id);
+    if (!design)
+        return;
+    if (modkeys & GG::MOD_KEY_CTRL)
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ShipDesignOrder>(HumanClientApp::GetApp()->EmpireID(), id, true));
+    else
+        DesignClickedSignal(design);
+}
+
+void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+{
+    SavedDesignListBoxRow* saved_design_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
+    if (!saved_design_row)
+        return;
+    const auto design_uuid = saved_design_row->DesignUUID();
+    const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_uuid);
+    if (design)
+        DesignClickedSignal(design);
+}
+
 
 
 
