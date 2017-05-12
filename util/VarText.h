@@ -84,7 +84,7 @@ protected:
     bool                m_stringtable_lookup_flag;  ///< should the template string be looked up in the stringtable prior to substitution for variables?
     std::map<std::string, std::string> m_variables; ///< the data about variables to be substitued into the template string to render the VarText
     mutable std::string m_text;                     ///< the user-readable rendered text with substitutions made
-    mutable bool        m_validated;                ///< did vartext generation succeed without problems?
+    mutable bool        m_validated = false;        ///< did vartext generation succeed without problems?
 
 private:
     friend class boost::serialization::access;

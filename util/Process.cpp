@@ -37,14 +37,12 @@ private:
 };
 
 Process::Process() :
-    m_empty(true),
-    m_low_priority(false)
+    m_empty(true)
 {}
 
 Process::Process(const std::string& cmd, const std::vector<std::string>& argv) :
     m_impl(new Impl(cmd, argv)),
-    m_empty(false),
-    m_low_priority(false)
+    m_empty(false)
 {}
 
 bool Process::SetLowPriority(bool low) {
