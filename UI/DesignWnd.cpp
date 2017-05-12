@@ -1477,9 +1477,11 @@ protected:
     GG::Pt  ListRowSize();
     //@}
 
+    virtual void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+    {}
+
 
 private:
-    void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
@@ -1917,29 +1919,6 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
     }
 }
 
-void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    // determine type of row that was clicked, and emit appropriate signal
-
-    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
-    if (cd_row) {
-        if (cd_row->DesignID() != INVALID_DESIGN_ID)
-            DesignSelectedSignal(cd_row->DesignID());
-        return;
-    }
-
-    if (SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(*it)) {
-        SavedDesignSelectedSignal(sd_row->DesignUUID());
-        return;
-    }
-
-    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
-    if (hp_row) {
-        if (!hp_row->Hull().empty() || !hp_row->Parts().empty())
-            DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
-        return;
-    }
-}
-
 BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
     m_availabilities{obsolete, available, unavailable}
 {}
@@ -1991,6 +1970,8 @@ class EmptyHullsListBox : public BasesListBox {
     void PopulateCore() override;
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 
+    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+
     private:
     std::set<std::string>       m_hulls_in_list;
 };
@@ -2005,6 +1986,8 @@ class CompletedDesignsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
+
+    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -2017,6 +2000,8 @@ class SavedDesignsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
+
+    void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class MonstersListBox : public BasesListBox {
@@ -2239,6 +2224,38 @@ void EmptyHullsListBox::EnableOrderIssuing(bool enable/* = true*/)
 
 void MonstersListBox::EnableOrderIssuing(bool)
 { QueueListBox::EnableOrderIssuing(false); }
+
+
+void EmptyHullsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                          const GG::Flags<GG::ModKey>& modkeys)
+{
+    HullAndPartsListBoxRow* hp_row = dynamic_cast<HullAndPartsListBoxRow*>(*it);
+    if (!hp_row)
+        return;
+
+    if (!hp_row->Hull().empty() || !hp_row->Parts().empty())
+        DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
+}
+
+void CompletedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                                const GG::Flags<GG::ModKey>& modkeys)
+{
+    CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
+    if (!cd_row || cd_row->DesignID() == INVALID_DESIGN_ID)
+        return;
+
+    DesignSelectedSignal(cd_row->DesignID());
+}
+
+void SavedDesignsListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                            const GG::Flags<GG::ModKey>& modkeys)
+{
+    SavedDesignListBoxRow* sd_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
+
+    if (!sd_row)
+        return;
+    SavedDesignSelectedSignal(sd_row->DesignUUID());
+}
 
 
 
