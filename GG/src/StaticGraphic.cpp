@@ -71,15 +71,18 @@ namespace {
 ////////////////////////////////////////////////
 StaticGraphic::StaticGraphic(const std::shared_ptr<Texture>& texture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
                              Flags<WndFlag> flags/* = 0*/) :
-    Control(X0, Y0, X1, Y1, flags),
-    m_style(style)
-{ Init(SubTexture(texture, X0, Y0, texture->DefaultWidth(), texture->DefaultHeight())); }
+    StaticGraphic(SubTexture(texture, X0, Y0, texture->DefaultWidth(), texture->DefaultHeight()), style)
+{}
 
 StaticGraphic::StaticGraphic(const SubTexture& subtexture, Flags<GraphicStyle> style/* = GRAPHIC_NONE*/,
                              Flags<WndFlag> flags/* = 0*/) :
     Control(X0, Y0, X1, Y1, flags),
+    m_graphic(subtexture),
     m_style(style)
-{ Init(subtexture); }
+{
+    ValidateStyle();  // correct any disagreements in the style flags
+    SetColor(CLR_WHITE);
+}
 
 Flags<GraphicStyle> StaticGraphic::Style() const
 { return m_style; }
@@ -168,13 +171,6 @@ void StaticGraphic::SetTexture(const std::shared_ptr<Texture>& texture)
 
 void StaticGraphic::SetTexture(const SubTexture& subtexture)
 { m_graphic = subtexture; }
-
-void StaticGraphic::Init(const SubTexture& subtexture)
-{
-    ValidateStyle();  // correct any disagreements in the style flags
-    SetColor(CLR_WHITE);
-    m_graphic = subtexture;
-}
 
 void StaticGraphic::ValidateStyle()
 {
