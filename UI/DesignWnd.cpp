@@ -1468,18 +1468,25 @@ public:
 protected:
     void ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 
+    /** An implementation of BasesListBox provides a PopulateCore to fill itself.*/
+    virtual void PopulateCore() = 0;
+
+    /** \name Accessors for derived classes. */ //@{
+    int EmpireID() const { return m_empire_id_shown; }
+
+    const BasesListBox::AvailabilityManager& AvailabilityState() const
+    { return m_availabilities_state; }
+
+    GG::Pt  ListRowSize();
+    //@}
+
+
 private:
     void    BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
     void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
-    GG::Pt  ListRowSize();
     void    InitRowSizes();
-
-    void    PopulateWithEmptyHulls();
-    void    PopulateWithCompletedDesigns();
-    void    PopulateWithSavedDesigns();
-    void    PopulateWithMonsters();
 
     int                         m_empire_id_shown;
     const BasesListBox::AvailabilityManager& m_availabilities_state;
@@ -1490,7 +1497,6 @@ private:
     bool                        m_showing_monsters;
     bool                        m_enabled;          ///<active player (true) or observer (false)
 
-    std::set<std::string>       m_hulls_in_list;
     std::set<std::string>       m_saved_desgins_in_list;
 
     boost::signals2::connection m_empire_designs_changed_signal;
@@ -1802,18 +1808,7 @@ void BasesListBox::Populate() {
     auto init_first_row_shown = FirstRowShown();
     std::size_t init_first_row_offset = std::distance(begin(), init_first_row_shown);
 
-    // populate list as appropriate for types of bases shown
-    if (m_showing_empty_hulls)
-        PopulateWithEmptyHulls();
-
-    else if (m_showing_completed_designs)
-        PopulateWithCompletedDesigns();
-
-    else if (m_showing_saved_designs)
-        PopulateWithSavedDesigns();
-
-    else if (m_showing_monsters)
-        PopulateWithMonsters();
+    this->PopulateCore();
 
     if (!Empty())
         BringRowIntoView(--end());
@@ -1829,162 +1824,6 @@ void BasesListBox::InitRowSizes() {
     // ListBox::Insert does on default is not suitable for this case
     ManuallyManageColProps();
     NormalizeRowsOnInsert(false);
-}
-
-void BasesListBox::PopulateWithEmptyHulls() {
-    ScopedTimer scoped_timer("BasesListBox::PopulateWithEmptyHulls");
-    const bool showing_available = m_availabilities_state.GetAvailability(AvailabilityManager::Available);
-    const bool showing_unavailable = m_availabilities_state.GetAvailability(AvailabilityManager::Unavailable);
-    DebugLogger() << "BasesListBox::PopulateWithEmptyHulls showing available (t, f):  " << showing_available << ", " << showing_unavailable;
-    const Empire* empire = GetEmpire(m_empire_id_shown); // may return 0
-    DebugLogger() << "BasesListBox::PopulateWithEmptyHulls m_empire_id_shown: " << m_empire_id_shown;
-
-    //DebugLogger() << "... hulls in list: ";
-    //for (const std::string& hull : m_hulls_in_list)
-    //    DebugLogger() << "... ... hull: " << hull;
-
-    // loop through all hulls, determining if they need to be added to list
-    std::set<std::string> hulls_to_add;
-    std::set<std::string> hulls_to_remove;
-
-    const HullTypeManager& manager = GetHullTypeManager();
-    for (const std::map<std::string, HullType*>::value_type& entry : manager) {
-        const std::string& hull_name = entry.first;
-
-        const HullType* hull_type = manager.GetHullType(hull_name);
-        if (!hull_type || !hull_type->Producible())
-            continue;
-
-        // add or retain in list 1) all hulls if no empire is specified, or
-        //                       2) hulls of appropriate availablility for set empire
-        if (!empire ||
-            (showing_available && empire->ShipHullAvailable(hull_name)) ||
-            (showing_unavailable && !empire->ShipHullAvailable(hull_name)))
-        {
-            // add or retain hull in list
-            if (m_hulls_in_list.find(hull_name) == m_hulls_in_list.end())
-                hulls_to_add.insert(hull_name);
-        } else {
-            // remove or don't add hull to list
-            if (m_hulls_in_list.find(hull_name) != m_hulls_in_list.end())
-                hulls_to_remove.insert(hull_name);
-        }
-    }
-
-    //DebugLogger() << "... hulls to remove from list: ";
-    //for (const std::string& hull_name : hulls_to_remove)
-    //    DebugLogger() << "... ... hull: " << hull_name;
-    //DebugLogger() << "... hulls to add to list: ";
-    //for (const std::string& hull_name : hulls_to_add)
-    //    DebugLogger() << "... ... hull: " << hull_name;
-
-
-    // loop through list, removing rows as appropriate
-    for (iterator it = begin(); it != end(); ) {
-        iterator temp_it = it++;
-        //DebugLogger() << " row index: " << i;
-        if (const HullAndPartsListBoxRow* row = dynamic_cast<const HullAndPartsListBoxRow*>(*temp_it)) {
-            const std::string& current_row_hull = row->Hull();
-            //DebugLogger() << " current row hull: " << current_row_hull;
-            if (hulls_to_remove.find(current_row_hull) != hulls_to_remove.end()) {
-                //DebugLogger() << " ... removing";
-                m_hulls_in_list.erase(current_row_hull);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
-                delete Erase(temp_it);
-            }
-        }
-    }
-
-    // loop through hulls to add, adding to list
-    std::vector<std::string> empty_parts_vec;
-    const GG::Pt row_size = ListRowSize();
-    for (const std::string& hull_name : hulls_to_add) {
-        HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
-        Insert(row);
-        row->Resize(row_size);
-
-        m_hulls_in_list.insert(hull_name);
-    }
-}
-
-void BasesListBox::PopulateWithCompletedDesigns() {
-    ScopedTimer scoped_timer("BasesListBox::PopulateWithCompletedDesigns");
-
-    const bool showing_available = m_availabilities_state.GetAvailability(AvailabilityManager::Available);
-    const bool showing_unavailable = m_availabilities_state.GetAvailability(AvailabilityManager::Unavailable);
-    const Empire* empire = GetEmpire(m_empire_id_shown); // may return 0
-    const Universe& universe = GetUniverse();
-
-    DebugLogger() << "BasesListBox::PopulateWithCompletedDesigns for empire " << m_empire_id_shown;
-
-    // remove preexisting rows
-    Clear();
-    const GG::Pt row_size = ListRowSize();
-
-    if (empire) {
-        // add rows for designs this empire is keeping
-        for (int design_id : empire->OrderedShipDesigns()) {
-            bool available = empire->ShipDesignAvailable(design_id);
-            const ShipDesign* design = GetShipDesign(design_id);
-            if (!design || !design->Producible())
-                continue;
-            if ((available && showing_available) || (!available && showing_unavailable)) {
-                CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-                Insert(row);
-                row->Resize(row_size);
-            }
-        }
-    } else if (showing_available) {
-        // add all known / existing designs
-        for (Universe::ship_design_iterator it = universe.beginShipDesigns();
-             it != universe.endShipDesigns(); ++it)
-        {
-            int design_id = it->first;
-            const ShipDesign* design = it->second;
-            if (!design->Producible())
-                continue;
-            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-            Insert(row);
-            row->Resize(row_size);
-        }
-    }
-}
-
-void BasesListBox::PopulateWithSavedDesigns() {
-    ScopedTimer scoped_timer("BasesListBox::PopulateWithSavedDesigns");
-
-    DebugLogger() << "BasesListBox::PopulateWithSavedDesigns";
-
-    // remove preexisting rows
-    Clear();
-    const GG::Pt row_size = ListRowSize();
-
-    for (const auto& entry : GetSavedDesignsManager().GetOrderedDesignUUIDs()) {
-        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, entry);
-        Insert(row);
-        row->Resize(row_size);
-    }
-}
-
-void BasesListBox::PopulateWithMonsters() {
-    ScopedTimer scoped_timer("BasesListBox::PopulateWithMonsters");
-
-    const Universe& universe = GetUniverse();
-
-    // remove preexisting rows
-    Clear();
-    const GG::Pt row_size = ListRowSize();
-
-    for (Universe::ship_design_iterator it = universe.beginShipDesigns();
-            it != universe.endShipDesigns(); ++it)
-    {
-        int design_id = it->first;
-        const ShipDesign* design = it->second;
-        if (!design->IsMonster())
-            continue;
-        CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-        Insert(row);
-        row->Resize(row_size);
-    }
 }
 
 void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
@@ -2235,6 +2074,10 @@ class EmptyHullsListBox : public BasesListBox {
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
+    protected:
+    void PopulateCore() override;
+    private:
+    std::set<std::string>       m_hulls_in_list;
 };
 
 class CompletedDesignsListBox : public BasesListBox {
@@ -2244,6 +2087,8 @@ class CompletedDesignsListBox : public BasesListBox {
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
+    protected:
+    void PopulateCore() override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -2253,6 +2098,8 @@ class SavedDesignsListBox : public BasesListBox {
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
+    protected:
+    void PopulateCore() override;
 };
 
 class MonstersListBox : public BasesListBox {
@@ -2262,7 +2109,168 @@ class MonstersListBox : public BasesListBox {
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
+    protected:
+    void PopulateCore() override;
 };
+
+
+void EmptyHullsListBox::PopulateCore() {
+    ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
+    const bool showing_available = AvailabilityState().GetAvailability(AvailabilityManager::Available);
+    const bool showing_unavailable = AvailabilityState().GetAvailability(AvailabilityManager::Unavailable);
+    DebugLogger() << "EmptyHulls::PopulateCore showing available (t, f):  " << showing_available << ", " << showing_unavailable;
+    const Empire* empire = GetEmpire(EmpireID()); // may return 0
+    DebugLogger() << "EmptyHulls::PopulateCore EmpireID(): " << EmpireID();
+
+    //DebugLogger() << "... hulls in list: ";
+    //for (const std::string& hull : m_hulls_in_list)
+    //    DebugLogger() << "... ... hull: " << hull;
+
+    // loop through all hulls, determining if they need to be added to list
+    std::set<std::string> hulls_to_add;
+    std::set<std::string> hulls_to_remove;
+
+    const HullTypeManager& manager = GetHullTypeManager();
+    for (const std::map<std::string, HullType*>::value_type& entry : manager) {
+        const std::string& hull_name = entry.first;
+
+        const HullType* hull_type = manager.GetHullType(hull_name);
+        if (!hull_type || !hull_type->Producible())
+            continue;
+
+        // add or retain in list 1) all hulls if no empire is specified, or
+        //                       2) hulls of appropriate availablility for set empire
+        if (!empire ||
+            (showing_available && empire->ShipHullAvailable(hull_name)) ||
+            (showing_unavailable && !empire->ShipHullAvailable(hull_name)))
+        {
+            // add or retain hull in list
+            if (m_hulls_in_list.find(hull_name) == m_hulls_in_list.end())
+                hulls_to_add.insert(hull_name);
+        } else {
+            // remove or don't add hull to list
+            if (m_hulls_in_list.find(hull_name) != m_hulls_in_list.end())
+                hulls_to_remove.insert(hull_name);
+        }
+    }
+
+    //DebugLogger() << "... hulls to remove from list: ";
+    //for (const std::string& hull_name : hulls_to_remove)
+    //    DebugLogger() << "... ... hull: " << hull_name;
+    //DebugLogger() << "... hulls to add to list: ";
+    //for (const std::string& hull_name : hulls_to_add)
+    //    DebugLogger() << "... ... hull: " << hull_name;
+
+
+    // loop through list, removing rows as appropriate
+    for (iterator it = begin(); it != end(); ) {
+        iterator temp_it = it++;
+        //DebugLogger() << " row index: " << i;
+        if (const HullAndPartsListBoxRow* row = dynamic_cast<const HullAndPartsListBoxRow*>(*temp_it)) {
+            const std::string& current_row_hull = row->Hull();
+            //DebugLogger() << " current row hull: " << current_row_hull;
+            if (hulls_to_remove.find(current_row_hull) != hulls_to_remove.end()) {
+                //DebugLogger() << " ... removing";
+                m_hulls_in_list.erase(current_row_hull);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
+                delete Erase(temp_it);
+            }
+        }
+    }
+
+    // loop through hulls to add, adding to list
+    std::vector<std::string> empty_parts_vec;
+    const GG::Pt row_size = ListRowSize();
+    for (const std::string& hull_name : hulls_to_add) {
+        HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
+        Insert(row);
+        row->Resize(row_size);
+
+        m_hulls_in_list.insert(hull_name);
+    }
+}
+
+void CompletedDesignsListBox::PopulateCore() {
+    ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
+
+    const bool showing_available = AvailabilityState().GetAvailability(AvailabilityManager::Available);
+    const bool showing_unavailable = AvailabilityState().GetAvailability(AvailabilityManager::Unavailable);
+    const Empire* empire = GetEmpire(EmpireID()); // may return 0
+    const Universe& universe = GetUniverse();
+
+    DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << EmpireID();
+
+    // remove preexisting rows
+    Clear();
+    const GG::Pt row_size = ListRowSize();
+
+    if (empire) {
+        // add rows for designs this empire is keeping
+        for (int design_id : empire->OrderedShipDesigns()) {
+            bool available = empire->ShipDesignAvailable(design_id);
+            const ShipDesign* design = GetShipDesign(design_id);
+            if (!design || !design->Producible())
+                continue;
+            if ((available && showing_available) || (!available && showing_unavailable)) {
+                CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+                Insert(row);
+                row->Resize(row_size);
+            }
+        }
+    } else if (showing_available) {
+        // add all known / existing designs
+        for (Universe::ship_design_iterator it = universe.beginShipDesigns();
+             it != universe.endShipDesigns(); ++it)
+        {
+            int design_id = it->first;
+            const ShipDesign* design = it->second;
+            if (!design->Producible())
+                continue;
+            CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+            Insert(row);
+            row->Resize(row_size);
+        }
+    }
+}
+
+void SavedDesignsListBox::PopulateCore() {
+    ScopedTimer scoped_timer("CompletedDesigns::PopulateCore");
+
+    DebugLogger() << "CompletedDesigns::PopulateCore";
+
+    // remove preexisting rows
+    Clear();
+    const GG::Pt row_size = ListRowSize();
+
+    for (const auto& entry : GetSavedDesignsManager().GetOrderedDesignUUIDs()) {
+        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, entry);
+        Insert(row);
+        row->Resize(row_size);
+    }
+}
+
+void MonstersListBox::PopulateCore() {
+    ScopedTimer scoped_timer("Monsters::PopulateCore");
+
+    const Universe& universe = GetUniverse();
+
+    // remove preexisting rows
+    Clear();
+    const GG::Pt row_size = ListRowSize();
+
+    for (Universe::ship_design_iterator it = universe.beginShipDesigns();
+            it != universe.endShipDesigns(); ++it)
+    {
+        int design_id = it->first;
+        const ShipDesign* design = it->second;
+        if (!design->IsMonster())
+            continue;
+        CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+        Insert(row);
+        row->Resize(row_size);
+    }
+}
+
+
 
 //////////////////////////////////////////////////
 // DesignWnd::BaseSelector                      //
