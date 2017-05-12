@@ -385,7 +385,7 @@ class PlanetDefenseAllocator(Allocator):
             super(PlanetDefenseAllocator, self).allocate()
             return
         if self._minimum_allocation(self._calculate_threat()):
-            pass  # raise ReleaseMilitaryException TODO
+            pass
 
     def _minimum_allocation(self, threat):
         super_call = super(PlanetDefenseAllocator, self)._minimum_allocation(threat)
@@ -513,6 +513,23 @@ class BorderSecurityAllocator(LocalThreatAllocator):
 
     def _maximum_allocation(self, threat):
         return self._max_alloc_factor * self.safety_factor * max(self._local_threat(), self._neighbor_threat())
+
+
+class AttackEnemyFleetsAllocator(Allocator):
+    _allocation_group = 'enemyFleets'
+    _min_alloc_factor = 4  # make sure we only attack enemy fleets if we expect low losses
+    _max_alloc_factor = 6
+    _potential_threat_factor = 0
+
+    def _calculate_threat(self):
+        if not self._enemy_ship_count():
+            return 0.
+        retval = self._enemy_ship_count()*5 + CombatRatingsAI.combine_ratings(
+                self._local_threat(), self._neighbor_threat())
+        return retval
+
+    def _take_any(self):
+        return False
 
 
 class ReleaseMilitaryException(Exception):
@@ -671,6 +688,12 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
         for sys_id in other_targeted_system_ids:
             TargetAllocator(sys_id, allocation_helper).allocate()
 
+        # enemy fleets
+        enemy_fleet_locations = [sys_id for sys_id in foAI.foAIstate.systemStatus if
+                                 foAI.foAIstate.systemStatus.get(sys_id, {}).get('enemy_ship_count', 0)]
+        for sys_id in enemy_fleet_locations:
+            AttackEnemyFleetsAllocator(sys_id, allocation_helper).allocate()
+
         # colony / outpost targets
         other_targeted_system_ids = [sys_id for sys_id in
                                      list(set(AIstate.colonyTargetedSystemIDs + AIstate.outpostTargetedSystemIDs)) if
@@ -720,13 +743,13 @@ def get_military_fleets(mil_fleets_ids=None, try_reset=True, thisround="Main"):
 
     base_allocs = set()
     # for lower priority categories, first assign base_alloc around to all, then top up as available
-    for cat in ['otherTargets', 'accessibleTargets', 'exploreTargets']:
+    for cat in ['enemyFleets', 'otherTargets', 'accessibleTargets', 'exploreTargets']:
         for sid, alloc, rvp, take_any, max_alloc in allocation_helper.allocation_by_groups.get(cat, []):
             if remaining_mil_rating <= 0:
                 break
             base_allocs.add(sid)
             remaining_mil_rating -= alloc
-    for cat in ['otherTargets', 'accessibleTargets', 'exploreTargets']:
+    for cat in ['enemyFleets', 'otherTargets', 'accessibleTargets', 'exploreTargets']:
         for sid, alloc, rvp, take_any, max_alloc in allocation_helper.allocation_by_groups.get(cat, []):
             if sid not in base_allocs:
                 break
