@@ -1481,10 +1481,10 @@ protected:
     {}
     virtual void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
     {}
-
+    virtual void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
+    {}
 
 private:
-    void    BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     void    InitRowSizes();
 
@@ -1786,103 +1786,7 @@ void BasesListBox::InitRowSizes() {
 }
 
 void BasesListBox::ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys)
-{ BaseRightClicked(it, pt, modkeys); }
-
-void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
-    // determine type of row that was clicked, and emit appropriate signal
-
-    if (CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it)) {
-        int design_id = design_row->DesignID();
-        const ShipDesign* design = GetShipDesign(design_id);
-        if (!design)
-            return;
-
-        DesignRightClickedSignal(design);
-
-        int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-
-        DebugLogger() << "BasesListBox::BaseRightClicked on design id : " << design_id;
-
-
-        // Context menu actions
-        auto delete_design_action = [&client_empire_id, &design_id]() {
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(client_empire_id, design_id, true));
-        };
-
-        auto rename_design_action = [&client_empire_id, &design_id, design, &design_row]() {
-            CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
-            edit_wnd.Run();
-            const std::string& result = edit_wnd.Result();
-            if (result != "" && result != design->Name()) {
-                HumanClientApp::GetApp()->Orders().IssueOrder(
-                    std::make_shared<ShipDesignOrder>(client_empire_id, design_id, result));
-                if (!design_row->empty())
-                    if (ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(design_row->at(0)))
-                        design_panel->Update();
-            }
-        };
-
-        auto save_design_action = [&design]() {
-            auto saved_design = *design;
-            saved_design.SetUUID(boost::uuids::random_generator()());
-            GetSavedDesignsManager().InsertBefore(saved_design, GetSavedDesignsManager().GetOrderedDesignUUIDs().begin());
-        };
-
-        // create popup menu with a commands in it
-        CUIPopupMenu popup(pt.x, pt.y);
-
-        // delete design
-        if (client_empire_id != ALL_EMPIRES)
-            popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_OBSOLETE"), false, false, delete_design_action));
-
-        // rename design
-        if (design->DesignedByEmpire() == client_empire_id)
-            popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"), false, false, rename_design_action));
-
-        // save design
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), false, false, save_design_action));
-
-        popup.Run();
-
-    } else if (SavedDesignListBoxRow* design_row = dynamic_cast<SavedDesignListBoxRow*>(*it)) {
-        const auto design_uuid = design_row->DesignUUID();
-        SavedDesignsManager& manager = GetSavedDesignsManager();
-        const ShipDesign* design = manager.GetDesign(design_uuid);
-        if (!design)
-            return;
-
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire)
-            return;
-
-        DesignRightClickedSignal(design);
-
-        DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design->Name();;
-
-        // Context menu actions
-        // add design
-        auto add_design_action = [&design, empire_id]() {
-            DebugLogger() << "BasesListBox::BaseRightClicked Add Saved Design" << design->Name();
-            int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, new_design_id, *design));
-        };
-
-        // add all saved designs
-        auto add_all_saved_designs_action = [&manager]() {
-            DebugLogger() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
-            manager.LoadAllSavedDesigns();
-        };
-
-        // create popup menu with a commands in it
-        CUIPopupMenu popup(pt.x, pt.y);
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
-        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   false, false, add_all_saved_designs_action));
-        popup.Run();
-    }
-}
+{ this->BaseRightClicked(it, pt, modkeys); }
 
 BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
     m_availabilities{obsolete, available, unavailable}
@@ -1955,6 +1859,7 @@ class CompletedDesignsListBox : public BasesListBox {
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -1970,6 +1875,7 @@ class SavedDesignsListBox : public BasesListBox {
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
+    void  BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 };
 
 class MonstersListBox : public BasesListBox {
@@ -2265,6 +2171,113 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
         DesignClickedSignal(design);
 }
 
+
+void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                               const GG::Flags<GG::ModKey>& modkeys)
+{
+    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
+    if (!design_row)
+        return;
+
+    int design_id = design_row->DesignID();
+    const ShipDesign* design = GetShipDesign(design_id);
+    if (!design)
+        return;
+
+    DesignRightClickedSignal(design);
+
+    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+
+    DebugLogger() << "BasesListBox::BaseRightClicked on design id : " << design_id;
+
+    if (design->UUID() == boost::uuids::uuid{{0}})
+        ErrorLogger() << "Already nil";
+
+    // Context menu actions
+    auto delete_design_action = [&client_empire_id, &design_id]() {
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ShipDesignOrder>(client_empire_id, design_id, true));
+    };
+
+    auto rename_design_action = [&client_empire_id, &design_id, design, &design_row]() {
+        CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
+        edit_wnd.Run();
+        const std::string& result = edit_wnd.Result();
+        if (result != "" && result != design->Name()) {
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(client_empire_id, design_id, result));
+            if (!design_row->empty())
+                if (ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(design_row->at(0)))
+                    design_panel->Update();
+        }
+    };
+
+    auto save_design_action = [&design]() {
+        auto saved_design = *design;
+        saved_design.SetUUID(boost::uuids::random_generator()());
+        GetSavedDesignsManager().InsertBefore(saved_design, GetSavedDesignsManager().GetOrderedDesignUUIDs().begin());
+    };
+
+    // create popup menu with a commands in it
+    CUIPopupMenu popup(pt.x, pt.y);
+
+    // delete design
+    if (client_empire_id != ALL_EMPIRES)
+        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_OBSOLETE"), false, false, delete_design_action));
+
+    // rename design
+    if (design->DesignedByEmpire() == client_empire_id)
+        popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"), false, false, rename_design_action));
+
+    // save design
+    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), false, false, save_design_action));
+
+    popup.Run();
+}
+
+void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
+                                           const GG::Flags<GG::ModKey>& modkeys)
+{
+    SavedDesignListBoxRow* design_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
+    if (!design_row)
+        return;
+    const auto design_uuid = design_row->DesignUUID();
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(design_uuid);
+    if (!design)
+        return;
+
+    int empire_id = HumanClientApp::GetApp()->EmpireID();
+    const Empire* empire = GetEmpire(empire_id);
+    if (!empire)
+        return;
+
+    DesignRightClickedSignal(design);
+
+    DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design->Name();;
+
+    // Context menu actions
+    // add design
+    auto add_design_action = [&design, empire_id]() {
+        DebugLogger() << "BasesListBox::BaseRightClicked Add Saved Design" << design->Name();
+        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, *design));
+    };
+
+    // add all saved designs
+    auto add_all_saved_designs_action = [&manager]() {
+        DebugLogger() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
+        manager.LoadAllSavedDesigns();
+    };
+
+    // create popup menu with a commands in it
+    CUIPopupMenu popup(pt.x, pt.y);
+    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   false, false, add_all_saved_designs_action));
+    popup.Run();
+
+}
 
 
 
