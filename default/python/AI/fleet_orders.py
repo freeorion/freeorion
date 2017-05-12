@@ -5,6 +5,7 @@ import AIstate
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
+import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
 import CombatRatingsAI
@@ -33,18 +34,30 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
     invasion_system = invasion_target.get_system()
     supplied_systems = fo.getEmpire().fleetSupplyableSystemIDs
     # if about to leave supply lines
-    if (order.target.id not in supplied_systems and system_id in supplied_systems):
-        if (invasion_planet.currentMeterValue(fo.meterType.maxShield) and
-                    invasion_system.id not in AIstate.militarySystemIDs):
-            if verbose:
-                print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
-                       "because target (%s) has nonzero max shields and there is not yet a military fleet "
-                       "assigned to secure the target system.") % (order.fleet.id, invasion_planet)
-            return False
+    if order.target.id not in supplied_systems and system_id in supplied_systems:
+        if invasion_planet.currentMeterValue(fo.meterType.maxShield):
+            military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(invasion_system.id)
+            if not military_support_fleets:
+                if verbose:
+                    print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
+                           "because target (%s) has nonzero max shields and there is not yet a military fleet "
+                           "assigned to secure the target system.") % (order.fleet.id, invasion_planet)
+                return False
+
+            eta_this_fleet = FleetUtilsAI.calculate_estimated_time_of_arrival(order.fleet.id, invasion_system.id)
+            if all((eta_this_fleet - 1) < FleetUtilsAI.calculate_estimated_time_of_arrival(fid, invasion_system.id)
+                    for fid in military_support_fleets):
+                if verbose:
+                    print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
+                           "because target (%s) has nonzero max shields and no assigned military fleet would arrive"
+                           "at least 1 turn earlier than the invasion fleet") % (order.fleet.id, invasion_planet)
+                return False
+
         if verbose:
             print ("trooper_move_reqs_met() allowing Invasion fleet %d to leave supply "
                    "because target (%s) has zero max shields or there is a military fleet assigned to secure "
-                   "the target system.") % (order.fleet.id, invasion_planet)
+                   "the target system which will arrive at least 1 turn before the invasion fleet.") % (order.fleet.id,
+                                                                                                        invasion_planet)
     # if on final leg of journey
     if (order.target.id == invasion_system.id) and invasion_planet.currentMeterValue(fo.meterType.shield):
         if verbose:
