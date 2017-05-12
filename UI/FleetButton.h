@@ -57,7 +57,6 @@ protected:
     //@}
 
 private:
-    void                    Init(const std::vector<int>& fleet_IDs, SizeType size_type);
     void                    LayoutIcons();
 
     std::vector<int>                m_fleets;   ///< the fleets represented by this button

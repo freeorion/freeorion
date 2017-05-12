@@ -67,6 +67,10 @@ namespace {
 ///////////////////////////
 // FleetButton           //
 ///////////////////////////
+FleetButton::FleetButton(int fleet_id, SizeType size_type) :
+    FleetButton(std::vector<int>(1, fleet_id), size_type)
+{}
+
 FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) :
     GG::Button("", nullptr, GG::CLR_ZERO),
     m_fleets(),
@@ -74,35 +78,7 @@ FleetButton::FleetButton(const std::vector<int>& fleet_IDs, SizeType size_type) 
     m_selection_indicator(nullptr),
     m_scanline_control(nullptr),
     m_selected(false)
-{ Init(fleet_IDs, size_type); }
-
-FleetButton::FleetButton(int fleet_id, SizeType size_type) :
-    GG::Button("", nullptr, GG::CLR_ZERO),
-    m_fleets(),
-    m_icons(),
-    m_selection_indicator(nullptr),
-    m_scanline_control(nullptr),
-    m_selected(false)
 {
-    std::vector<int> fleet_IDs;
-    fleet_IDs.push_back(fleet_id);
-    Init(fleet_IDs, size_type);
-}
-
-FleetButton::~FleetButton() {
-    DetachChild(m_selection_indicator);
-    delete m_selection_indicator;
-
-    if (m_scanline_control) {
-        DetachChild(m_scanline_control);
-        delete m_scanline_control;
-    }
-}
-
-void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
-    //std::cout << "FleetButton::Init" << std::endl;
-
-    // get fleets
     std::vector<std::shared_ptr<const Fleet>> fleets;
     for (int fleet_id : fleet_IDs) {
         std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
@@ -249,6 +225,16 @@ void FleetButton::Init(const std::vector<int>& fleet_IDs, SizeType size_type) {
 
     if (!at_least_one_fleet_visible)
         AttachChild(m_scanline_control);
+}
+
+FleetButton::~FleetButton() {
+    DetachChild(m_selection_indicator);
+    delete m_selection_indicator;
+
+    if (m_scanline_control) {
+        DetachChild(m_scanline_control);
+        delete m_scanline_control;
+    }
 }
 
 bool FleetButton::InWindow(const GG::Pt& pt) const {
