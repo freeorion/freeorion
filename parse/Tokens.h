@@ -166,6 +166,7 @@
     (HullSpeed)                                 \
     (HullStealth)                               \
     (HullStructure)                             \
+    (HullType)                                  \
     (Human)                                     \
     (Icon)                                      \
     (ID)                                        \
@@ -281,6 +282,7 @@
     (Parts)                                     \
     (PartOfClassInShipDesign)                   \
     (PartsInShipDesign)                         \
+    (PartType)                                  \
     (Passive)                                   \
     (Planet)                                    \
     (Planetbound)                               \
