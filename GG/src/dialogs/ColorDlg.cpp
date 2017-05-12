@@ -578,68 +578,35 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(0, X(15));
     m_sliders_ok_cancel_layout->SetMinimumColumnWidth(1, X(30));
     m_sliders_ok_cancel_layout->SetColumnStretch(2, 1);
-    m_slider_labels.push_back(style->NewTextControl(style->Translate("R:"), font, m_text_color, FORMAT_RIGHT));
-    m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), 0, 0);
-    m_slider_values.push_back(style->NewTextControl(std::to_string(color.r),
-                                                    font, m_text_color, FORMAT_LEFT));
-    m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 0, 1);
-    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, m_color, 10));
-    m_sliders.back()->SlideTo(color.r);
-    m_sliders_ok_cancel_layout->Add(m_sliders.back(), 0, 2);
 
-    m_slider_labels.push_back(style->NewTextControl(style->Translate("G:"), font, m_text_color, FORMAT_RIGHT));
-    m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), 1, 0);
-    m_slider_values.push_back(style->NewTextControl(std::to_string(color.g),
-                                                    font, m_text_color, FORMAT_LEFT));
-    m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 1, 1);
-    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, m_color, 10));
-    m_sliders.back()->SlideTo(color.g);
-    m_sliders_ok_cancel_layout->Add(m_sliders.back(), 1, 2);
+    int row = 0;
 
-    m_slider_labels.push_back(style->NewTextControl(style->Translate("B:"), font, m_text_color, FORMAT_RIGHT));
-    m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), 2, 0);
-    m_slider_values.push_back(style->NewTextControl(std::to_string(color.b),
-                                                    font, m_text_color, FORMAT_LEFT));
-    m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 2, 1);
-    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, m_color, 10));
-    m_sliders.back()->SlideTo(color.b);
-    m_sliders_ok_cancel_layout->Add(m_sliders.back(), 2, 2);
+    for(auto entry : {
+            std::make_tuple(static_cast<int>(color.r), 0, 255, "R:"),
+            std::make_tuple(static_cast<int>(color.g), 0, 255, "G:"),
+            std::make_tuple(static_cast<int>(color.b), 0, 255, "B:"),
+            std::make_tuple(static_cast<int>(color.a), 0, 255, "A:"),
+            std::make_tuple(static_cast<int>(m_current_color.h * 359), 0, 359, "H:"),
+            std::make_tuple(static_cast<int>(m_current_color.s * 255), 0, 255, "S:"),
+            std::make_tuple(static_cast<int>(m_current_color.v * 255), 0, 255, "V:")
+        })
+    {
+        auto color_value = std::get<0>(entry);
+        auto color_min   = std::get<1>(entry);
+        auto color_max   = std::get<2>(entry);
+        auto color_label = std::get<3>(entry);
 
-    m_slider_labels.push_back(style->NewTextControl(style->Translate("A:"), font, m_text_color, FORMAT_RIGHT));
-    m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), 3, 0);
-    m_slider_values.push_back(style->NewTextControl(std::to_string(color.a),
-                                                    font, m_text_color, FORMAT_LEFT));
-    m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 3, 1);
-    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, m_color, 10));
-    m_sliders.back()->SlideTo(color.a);
-    m_sliders_ok_cancel_layout->Add(m_sliders.back(), 3, 2);
+        m_slider_labels.push_back(style->NewTextControl(style->Translate(color_label), font, m_text_color, FORMAT_RIGHT));
+        m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), row, 0);
+        m_slider_values.push_back(style->NewTextControl(std::to_string(color_value),
+                                                        font, m_text_color, FORMAT_LEFT));
+        m_sliders_ok_cancel_layout->Add(m_slider_values.back(), row, 1);
+        m_sliders.push_back(style->NewIntSlider(color_min, color_max, HORIZONTAL, m_color, 10));
+        m_sliders.back()->SlideTo(color_value);
+        m_sliders_ok_cancel_layout->Add(m_sliders.back(), row, 2);
 
-    m_slider_labels.push_back(style->NewTextControl(style->Translate("H:"), font, m_text_color, FORMAT_RIGHT));
-    m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), 4, 0);
-    m_slider_values.push_back(style->NewTextControl(std::to_string(static_cast<int>(m_current_color.h * 359)),
-                                                    font, m_text_color, FORMAT_LEFT));
-    m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 4, 1);
-    m_sliders.push_back(style->NewIntSlider(0, 359, HORIZONTAL, m_color, 10));
-    m_sliders.back()->SlideTo(static_cast<int>(m_current_color.h * 359));
-    m_sliders_ok_cancel_layout->Add(m_sliders.back(), 4, 2);
-
-    m_slider_labels.push_back(style->NewTextControl(style->Translate("S:"), font, m_text_color, FORMAT_RIGHT));
-    m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), 5, 0);
-    m_slider_values.push_back(style->NewTextControl(std::to_string(static_cast<int>(m_current_color.s * 255)),
-                                                    font, m_text_color, FORMAT_LEFT));
-    m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 5, 1);
-    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, m_color, 10));
-    m_sliders.back()->SlideTo(static_cast<int>(m_current_color.s * 255));
-    m_sliders_ok_cancel_layout->Add(m_sliders.back(), 5, 2);
-
-    m_slider_labels.push_back(style->NewTextControl(style->Translate("V:"), font, m_text_color, FORMAT_RIGHT));
-    m_sliders_ok_cancel_layout->Add(m_slider_labels.back(), 6, 0);
-    m_slider_values.push_back(style->NewTextControl(std::to_string(static_cast<int>(m_current_color.v * 255)),
-                                                    font, m_text_color, FORMAT_LEFT));
-    m_sliders_ok_cancel_layout->Add(m_slider_values.back(), 6, 1);
-    m_sliders.push_back(style->NewIntSlider(0, 255, HORIZONTAL, m_color, 10));
-    m_sliders.back()->SlideTo(static_cast<int>(m_current_color.v * 255));
-    m_sliders_ok_cancel_layout->Add(m_sliders.back(), 6, 2);
+        ++row;
+    }
 
     m_ok = style->NewButton(style->Translate("Ok"), font, m_color, m_text_color);
     m_sliders_ok_cancel_layout->Add(m_ok, 7, 0, 1, 3);
