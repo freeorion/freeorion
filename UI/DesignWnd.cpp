@@ -1373,8 +1373,6 @@ public:
 
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
 
-    void EnableOrderIssuing(bool enable = true) override;
-
     void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it);
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
@@ -1498,7 +1496,6 @@ private:
     bool                        m_showing_completed_designs;
     bool                        m_showing_saved_designs;
     bool                        m_showing_monsters;
-    bool                        m_enabled;          ///<active player (true) or observer (false)
 
     std::set<std::string>       m_saved_desgins_in_list;
 
@@ -1660,8 +1657,7 @@ BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabiliti
     m_showing_empty_hulls(false),
     m_showing_completed_designs(false),
     m_showing_saved_designs(false),
-    m_showing_monsters(false),
-    m_enabled(false)
+    m_showing_monsters(false)
 {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
@@ -1672,6 +1668,8 @@ BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabiliti
         boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
     MovedRowSignal.connect(
         boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
+
+    EnableOrderIssuing(false);
 }
 
 void BasesListBox::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1960,7 +1958,7 @@ void BasesListBox::ShowEmptyHulls(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = false;
     m_showing_monsters = false;
-    EnableOrderIssuing(false);
+    this->EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
 }
@@ -1970,7 +1968,6 @@ void BasesListBox::ShowCompletedDesigns(bool refresh_list) {
     m_showing_completed_designs = true;
     m_showing_saved_designs = false;
     m_showing_monsters = false;
-    EnableOrderIssuing(m_enabled);
     if (refresh_list)
         Populate();
 }
@@ -1980,7 +1977,6 @@ void BasesListBox::ShowSavedDesigns(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = true;
     m_showing_monsters = false;
-    EnableOrderIssuing(m_enabled);
     if (refresh_list)
         Populate();
 }
@@ -1990,14 +1986,9 @@ void BasesListBox::ShowMonsters(bool refresh_list) {
     m_showing_completed_designs = false;
     m_showing_saved_designs = false;
     m_showing_monsters = true;
-    EnableOrderIssuing(false);
+    this->EnableOrderIssuing(false);
     if (refresh_list)
         Populate();
-}
-
-void BasesListBox::EnableOrderIssuing(bool enable/* = true*/) {
-    m_enabled = enable;
-    QueueListBox::EnableOrderIssuing(m_enabled && (m_showing_completed_designs || m_showing_saved_designs));
 }
 
 BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
@@ -2045,6 +2036,8 @@ class EmptyHullsListBox : public BasesListBox {
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
+    void EnableOrderIssuing(bool enable = true) override;
+
     protected:
     void PopulateCore() override;
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
@@ -2083,6 +2076,8 @@ class MonstersListBox : public BasesListBox {
                     const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
+
+    void EnableOrderIssuing(bool enable = true) override;
 
     protected:
     void PopulateCore() override;
@@ -2288,6 +2283,13 @@ BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* c
 
 BasesListBox::Row* MonstersListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd)
 { return nullptr; }
+
+
+void EmptyHullsListBox::EnableOrderIssuing(bool enable/* = true*/)
+{ QueueListBox::EnableOrderIssuing(false); }
+
+void MonstersListBox::EnableOrderIssuing(bool)
+{ QueueListBox::EnableOrderIssuing(false); }
 
 
 
