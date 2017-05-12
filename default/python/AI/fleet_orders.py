@@ -28,13 +28,12 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
     # is already a military fleet assigned to secure the target, and don't take final jump unless the planet is
     # (to the AI's knowledge) down to zero shields.  Additional checks will also be done by the later
     # generic movement code
-    system_id = order.fleet.get_system().id
     invasion_target = main_fleet_mission.target
     invasion_planet = invasion_target.get_object()
     invasion_system = invasion_target.get_system()
     supplied_systems = fo.getEmpire().fleetSupplyableSystemIDs
     # if about to leave supply lines
-    if order.target.id not in supplied_systems and system_id in supplied_systems:
+    if order.target.id not in supplied_systems:
         if invasion_planet.currentMeterValue(fo.meterType.maxShield):
             military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(invasion_system.id)
             if not military_support_fleets:
