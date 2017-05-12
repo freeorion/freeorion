@@ -135,12 +135,9 @@ protected:
     static const Y DEFAULT_HEIGHT; ///< default height for the dialog
 
 private:
-    void CreateChildren(bool multi);
     void DoLayout();
     void AttachSignalChildren();
     void DetachSignalChildren();
-    void Init(const std::string& directory);
-    void ConnectSignals();
     void OkClicked();
     void OkHandler(bool double_click);
     void CancelClicked();
