@@ -1471,6 +1471,9 @@ protected:
     /** An implementation of BasesListBox provides a PopulateCore to fill itself.*/
     virtual void PopulateCore() = 0;
 
+    /** If \p wnd is a valid dragged child return a replacement row.  Otherwise return nullptr. */
+    virtual Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) = 0;
+
     /** \name Accessors for derived classes. */ //@{
     int EmpireID() const { return m_empire_id_shown; }
 
@@ -1699,42 +1702,10 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
         ++insertion_point;
 
     // replace dragged-away control with new copy
-    const GG::Pt row_size = ListRowSize();
-    std::vector<std::string> empty_parts_vec;
-
-    if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
-        // find design that was dragged away, and replace
-
-        const BasesListBox::CompletedDesignListBoxRow* design_row =
-            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
-
-        int design_id = design_row->DesignID();
-
-        CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y,
-                                                                       design_id);
+    auto row = ChildrenDraggedAwayCore(wnd);
+    if (row) {
         Insert(row, insertion_point);
-        row->Resize(row_size);
-
-    } else if (wnd->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
-        // find type of hull that was dragged away, and replace
-        const BasesListBox::HullAndPartsListBoxRow* design_row =
-            boost::polymorphic_downcast<const BasesListBox::HullAndPartsListBoxRow*>(wnd);
-
-        const std::string& hull_name = design_row->Hull();
-        HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(row_size.x, row_size.y,
-                                                                 hull_name, empty_parts_vec);
-        Insert(row, insertion_point);
-        row->Resize(row_size);
-
-    } else if (wnd->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
-        // find name of design that was dragged away, and replace
-        const BasesListBox::SavedDesignListBoxRow* design_row =
-            boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
-
-        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y,
-                                                               design_row->DesignUUID());
-        Insert(row, insertion_point);
-        row->Resize(row_size);
+        row->Resize(ListRowSize());
     }
 
     // remove dragged-away row from this ListBox
@@ -2076,6 +2047,8 @@ class EmptyHullsListBox : public BasesListBox {
 
     protected:
     void PopulateCore() override;
+    Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
+
     private:
     std::set<std::string>       m_hulls_in_list;
 };
@@ -2089,6 +2062,7 @@ class CompletedDesignsListBox : public BasesListBox {
 
     protected:
     void PopulateCore() override;
+    Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 };
 
 class SavedDesignsListBox : public BasesListBox {
@@ -2100,6 +2074,7 @@ class SavedDesignsListBox : public BasesListBox {
 
     protected:
     void PopulateCore() override;
+    Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 };
 
 class MonstersListBox : public BasesListBox {
@@ -2111,6 +2086,7 @@ class MonstersListBox : public BasesListBox {
 
     protected:
     void PopulateCore() override;
+    Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
 };
 
 
@@ -2269,6 +2245,49 @@ void MonstersListBox::PopulateCore() {
         row->Resize(row_size);
     }
 }
+
+
+BasesListBox::Row* EmptyHullsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
+    if (wnd->DragDropDataType() != HULL_PARTS_ROW_DROP_TYPE_STRING)
+        return nullptr;
+
+    // find type of hull that was dragged away, and replace
+    const BasesListBox::HullAndPartsListBoxRow* design_row =
+        boost::polymorphic_downcast<const BasesListBox::HullAndPartsListBoxRow*>(wnd);
+
+    const std::string& hull_name = design_row->Hull();
+    const auto row_size = ListRowSize();
+    std::vector<std::string> empty_parts_vec;
+    return new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
+}
+
+BasesListBox::Row* CompletedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
+    if (wnd->DragDropDataType() != COMPLETE_DESIGN_ROW_DROP_STRING)
+        return nullptr;
+    // find design that was dragged away, and replace
+
+    const BasesListBox::CompletedDesignListBoxRow* design_row =
+        boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
+
+    int design_id = design_row->DesignID();
+
+    const auto row_size = ListRowSize();
+    return new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+}
+
+BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
+    if (wnd->DragDropDataType() != SAVED_DESIGN_ROW_DROP_STRING)
+        return nullptr;
+    // find name of design that was dragged away, and replace
+    const BasesListBox::SavedDesignListBoxRow* design_row =
+        boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
+
+    const auto row_size = ListRowSize();
+    return new SavedDesignListBoxRow(row_size.x, row_size.y, design_row->DesignUUID());
+}
+
+BasesListBox::Row* MonstersListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd)
+{ return nullptr; }
 
 
 
