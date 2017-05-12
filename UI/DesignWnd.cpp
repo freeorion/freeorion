@@ -2224,6 +2224,45 @@ void BasesListBox::AvailabilityManager::ToggleAvailability(const Availability ty
     SetAvailability(type, !GetAvailability(type));
 }
 
+//////////////////////////////////////////////////
+// BasesListBox derived classes                 //
+//////////////////////////////////////////////////
+
+class EmptyHullsListBox : public BasesListBox {
+    public:
+    EmptyHullsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+                      const boost::optional<std::string>& drop_type = boost::none) :
+        BasesListBox::BasesListBox(availabilities_state, drop_type)
+    {};
+
+};
+
+class CompletedDesignsListBox : public BasesListBox {
+    public:
+    CompletedDesignsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+                            const boost::optional<std::string>& drop_type = boost::none) :
+        BasesListBox::BasesListBox(availabilities_state, drop_type)
+    {};
+
+};
+
+class SavedDesignsListBox : public BasesListBox {
+    public:
+    SavedDesignsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+                        const boost::optional<std::string>& drop_type = boost::none) :
+        BasesListBox::BasesListBox(availabilities_state, drop_type)
+    {};
+
+};
+
+class MonstersListBox : public BasesListBox {
+    public:
+    MonstersListBox(const BasesListBox::AvailabilityManager& availabilities_state,
+                    const boost::optional<std::string>& drop_type = boost::none) :
+        BasesListBox::BasesListBox(availabilities_state, drop_type)
+    {};
+
+};
 
 //////////////////////////////////////////////////
 // DesignWnd::BaseSelector                      //
@@ -2259,11 +2298,11 @@ private:
     void            DoLayout();
     void            SavedDesignSelectedSlot(const boost::uuids::uuid& design_name);
 
-    GG::TabWnd*     m_tabs;
-    BasesListBox*   m_hulls_list;           // empty hulls on which a new design can be based
-    BasesListBox*   m_designs_list;         // designs this empire has created or learned how to make
-    BasesListBox*   m_saved_designs_list;   // designs saved to files
-    BasesListBox*   m_monsters_list;        // monster designs
+    GG::TabWnd*                m_tabs;
+    EmptyHullsListBox*         m_hulls_list;           // empty hulls on which a new design can be based
+    CompletedDesignsListBox*   m_designs_list;         // designs this empire has created or learned how to make
+    SavedDesignsListBox*       m_saved_designs_list;   // designs saved to files
+    MonstersListBox*           m_monsters_list;        // monster designs
 
     // Holds the state of the availabilities filter.
     BasesListBox::AvailabilityManager m_availabilities_state;
@@ -2301,7 +2340,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
         boost::bind(&DesignWnd::BaseSelector::Reset, this));
     AttachChild(m_tabs);
 
-    m_hulls_list = new BasesListBox(m_availabilities_state);
+    m_hulls_list = new EmptyHullsListBox(m_availabilities_state);
     m_hulls_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
     m_hulls_list->ShowEmptyHulls(false);
@@ -2310,7 +2349,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_hulls_list->HullClickedSignal.connect(
         DesignWnd::BaseSelector::HullClickedSignal);
 
-    m_designs_list = new BasesListBox(m_availabilities_state, COMPLETE_DESIGN_ROW_DROP_STRING);
+    m_designs_list = new CompletedDesignsListBox(m_availabilities_state, COMPLETE_DESIGN_ROW_DROP_STRING);
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
     m_designs_list->ShowCompletedDesigns(false);
@@ -2319,7 +2358,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_designs_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
-    m_saved_designs_list = new BasesListBox(m_availabilities_state, SAVED_DESIGN_ROW_DROP_STRING);
+    m_saved_designs_list = new SavedDesignsListBox(m_availabilities_state, SAVED_DESIGN_ROW_DROP_STRING);
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
     m_saved_designs_list->ShowSavedDesigns(true);
@@ -2328,7 +2367,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
-    m_monsters_list = new BasesListBox(m_availabilities_state);
+    m_monsters_list = new MonstersListBox(m_availabilities_state);
     m_monsters_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_monsters_list, UserString("DESIGN_WND_MONSTERS"));
     m_monsters_list->ShowMonsters(false);
