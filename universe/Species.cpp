@@ -329,16 +329,14 @@ SpeciesManager::SpeciesManager() {
         throw e;
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "Species:";
-        for (const std::map<std::string, Species*>::value_type& entry : m_species) {
-            const Species* s = entry.second;
-            DebugLogger() << " ... " << s->Name() << "  \t" <<
-                (s->Playable() ?        "Playable " : "         ") <<
-                (s->Native() ?          "Native " : "       ") <<
-                (s->CanProduceShips() ? "CanProduceShips " : "                ") <<
-                (s->CanColonize() ?     "CanColonize " : "            ");
-        }
+    TraceLogger() << "Species:";
+    for (const auto& entry : m_species) {
+        const Species* s = entry.second;
+        TraceLogger() << " ... " << s->Name() << "  \t" <<
+            (s->Playable() ?        "Playable " : "         ") <<
+            (s->Native() ?          "Native " : "       ") <<
+            (s->CanProduceShips() ? "CanProduceShips " : "                ") <<
+            (s->CanColonize() ?     "CanColonize " : "            ");
     }
 
     // Only update the global pointer on sucessful construction.

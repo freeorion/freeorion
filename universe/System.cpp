@@ -479,8 +479,7 @@ void System::AddStarlane(int id) {
     if (!HasStarlaneTo(id) && id != this->ID()) {
         m_starlanes_wormholes[id] = false;
         StateChangedSignal();
-        if (GetOptionsDB().Get<bool>("verbose-logging"))
-            DebugLogger() << "Added starlane from system " << this->Name() << " (" << this->ID() << ") system " << id;
+        TraceLogger() << "Added starlane from system " << this->Name() << " (" << this->ID() << ") system " << id;
     }
 }
 

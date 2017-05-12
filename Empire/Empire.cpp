@@ -1334,16 +1334,12 @@ namespace {
             throw e;
         }
 
-        if (GetOptionsDB().Get<bool>("verbose-logging")) {
-            DebugLogger() << "Alignments:";
-            for (const Alignment& p : m_alignments) {
-                DebugLogger() << " ... " << p.Name();
-            }
-            DebugLogger() << "Alignment Effects:";
-            for (std::shared_ptr<Effect::EffectsGroup> p : m_effects_groups) {
-                DebugLogger() << " ... " /*<< p.Dump()*/;
-            }
-        }
+        TraceLogger() << "Alignments:";
+        for (const auto& p : m_alignments)
+            TraceLogger() << " ... " << p.Name();
+        TraceLogger() << "Alignment Effects:";
+        for (const auto& p : m_effects_groups)
+            TraceLogger() << " ... " /*<< p.Dump()*/;
     }
 
     /** returns the singleton alignment manager */
@@ -2691,11 +2687,10 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
 
             ShipDesignsChangedSignal();
 
-            if (GetOptionsDB().Get<bool>("verbose-logging"))
-                DebugLogger() << "AddShipDesign::  " << ship_design->Name() << " ("<<ship_design_id
-                              << ") to empire #" << EmpireID()
-                              << (is_at_end_of_list ? " at end of list." : " in front of id ")
-                              << next_design_id;
+            TraceLogger() << "AddShipDesign::  " << ship_design->Name() << " (" << ship_design_id
+                          << ") to empire #" << EmpireID()
+                          << (is_at_end_of_list ? " at end of list." : " in front of id ")
+                          << next_design_id;
         }
     } else {
         // design in not valid

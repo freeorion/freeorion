@@ -568,7 +568,6 @@ OptionsWnd::OptionsWnd():
 
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DESCRIPTIONS"));
     BoolOption(current_page,   0, "UI.dump-effects-descriptions",          UserString("OPTIONS_DUMP_EFFECTS_GROUPS_DESC"));
-    BoolOption(current_page,   0, "verbose-logging",                       UserString("OPTIONS_VERBOSE_LOGGING_DESC"));
     BoolOption(current_page,   0, "verbose-sitrep",                        UserString("OPTIONS_VERBOSE_SITREP_DESC"));
     BoolOption(current_page,   0, "UI.show-id-after-names",                UserString("OPTIONS_SHOW_IDS_AFTER_NAMES"));
 
@@ -700,18 +699,14 @@ OptionsWnd::OptionsWnd():
     current_page = CreatePage(UserString("OPTIONS_PAGE_LOGS"));
     CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLDS"),
                         UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP"));
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS"),
-                        UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_PROCESS_TOOLTIP"));
 
     const auto log_file_sinks = LoggerOptionsLabelsAndLevels(LoggerTypes::exec);
     for (const auto& sink : log_file_sinks) {
         const auto& option = std::get<0>(sink);
         const auto& option_label = std::get<1>(sink);
-        LoggerLevelOption(*current_page, true, option_label, option);
+        const auto&& full_label = str(FlexibleFormat(UserString("OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL")) % option_label);
+        LoggerLevelOption(*current_page, true, full_label, option);
     }
-
-    CreateSectionHeader(current_page, 0, UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE"),
-                        UserString("OPTIONS_DB_UI_LOGGER_THRESHOLD_PER_SOURCE_TOOLTIP"));
 
     const auto log_file_sources = LoggerOptionsLabelsAndLevels(LoggerTypes::named);
     for (const auto& source : log_file_sources) {

@@ -235,12 +235,9 @@ FieldTypeManager::FieldTypeManager() {
         throw e;
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "Field Types:";
-        for (const std::map<std::string, FieldType*>::value_type& entry : *this) {
-            DebugLogger() << " ... " << entry.first;
-        }
-    }
+    TraceLogger() << "Field Types:";
+    for (const auto& entry : *this)
+        TraceLogger() << " ... " << entry.first;
 
     // Only update the global pointer on sucessful construction.
     s_instance = this;

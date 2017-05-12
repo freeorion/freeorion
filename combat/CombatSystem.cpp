@@ -22,7 +22,11 @@
 #include "../network/Message.h"
 
 #include <iterator>
+#include <sstream>
 
+namespace {
+    DeclareThreadSafeLogger(combat);
+}
 
 ////////////////////////////////////////////////
 // CombatInfo
@@ -41,8 +45,6 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
         ErrorLogger() << "CombatInfo constructed with invalid system id: " << system_id;
         return;
     }
-    bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
-
     // add system to full / complete objects in combat - NOTE: changed from copy of system
     objects.Insert(system);
 
@@ -101,8 +103,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
                 empire_known_objects[empire_id].Insert(GetEmpireKnownShip(ship->ID(), empire_id));}
                 ship_known += std::to_string(empire_id) + ", ";
         }
-        if (verbose_logging)
-            DebugLogger() << ship_known;
+        DebugLogger(combat) << ship_known;
     }
 
     // planets
@@ -119,8 +120,7 @@ CombatInfo::CombatInfo(int system_id_, int turn_) :
                 planet_known += std::to_string(empire_id) + ", ";
             }
         }
-        if (verbose_logging)
-            DebugLogger() << planet_known;
+        DebugLogger(combat) << planet_known;
     }
 
     // after battle is simulated, any changes to latest known or actual objects
@@ -306,7 +306,6 @@ namespace {
             ErrorLogger() << "couldn't get target structure or shield meter";
             return;
         }
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
         Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         float shield = (target_shield ? target_shield->Current() : 0.0f);
@@ -321,8 +320,7 @@ namespace {
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
-            if (verbose_logging)
-                DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
         }
 
         combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name, power, shield, damage);
@@ -339,7 +337,6 @@ namespace {
         float power = weapon.part_attack;
         if (power <= 0.0f)
             return;
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
         std::set<int>& damaged_object_ids = combat_info.damaged_object_ids;
 
@@ -363,11 +360,9 @@ namespace {
             return;
         }
 
-        if (verbose_logging) {
-            DebugLogger() << "AttackShipPlanet: attacker: " << attacker->Name() << " power: " << power
-                          << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
-                          << " defense: " << target_defense->Current() << " infra: " << target_construction->Current();
-        }
+        DebugLogger(combat) << "AttackShipPlanet: attacker: " << attacker->Name() << " power: " << power
+                            << "\ntarget: " << target->Name() << " shield: " << target_shield->Current()
+                            << " defense: " << target_defense->Current() << " infra: " << target_construction->Current();
 
         // damage shields, limited by shield current value and damage amount.
         // remaining damage, if any, above shield current value goes to defense.
@@ -386,18 +381,21 @@ namespace {
 
         if (shield_damage >= 0) {
             target_shield->AddToCurrent(-shield_damage);
-            if (verbose_logging)
-                DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << shield_damage << " shield damage to Planet " << target->Name() << " (" << target->ID() << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does "
+                                << shield_damage << " shield damage to Planet " << target->Name() << " ("
+                                << target->ID() << ")";
         }
         if (defense_damage >= 0) {
             target_defense->AddToCurrent(-defense_damage);
-            if (verbose_logging)
-                DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << defense_damage << " defense damage to Planet " << target->Name() << " (" << target->ID() << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does "
+                                << defense_damage << " defense damage to Planet " << target->Name() << " ("
+                                << target->ID() << ")";
         }
         if (construction_damage >= 0) {
             target_construction->AddToCurrent(-construction_damage);
-            if (verbose_logging)
-                DebugLogger() << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does " << construction_damage << " instrastructure damage to Planet " << target->Name() << " (" << target->ID() << ")";
+            DebugLogger(combat) << "COMBAT: Ship " << attacker->Name() << " (" << attacker->ID() << ") does "
+                                << construction_damage << " instrastructure damage to Planet " << target->Name()
+                                << " (" << target->ID() << ")";
         }
 
         //TODO report the planet damage details more clearly
@@ -428,7 +426,6 @@ namespace {
                           WeaponsPlatformEvent::WeaponsPlatformEventPtr& combat_event)
     {
         if (!attacker || !target) return;
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
         float power = 0.0f;
         const Meter* attacker_damage = attacker->UniverseObject::GetMeter(METER_DEFENSE);
@@ -446,19 +443,18 @@ namespace {
         Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         float shield = (target_shield ? target_shield->Current() : 0.0f);
 
-        if (verbose_logging) {
-            DebugLogger() << "AttackPlanetShip: attacker: " << attacker->Name() << " power: " << power
-                          << "  target: " << target->Name() << " shield: " << target_shield->Current()
-                          << " structure: " << target_structure->Current();
-        }
+        DebugLogger(combat) << "AttackPlanetShip: attacker: " << attacker->Name() << " power: " << power
+                            << "  target: " << target->Name() << " shield: " << target_shield->Current()
+                            << " structure: " << target_structure->Current();
 
         float damage = std::max(0.0f, power - shield);
 
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
-            if (verbose_logging)
-                DebugLogger() << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
+            DebugLogger(combat) << "COMBAT: Planet " << attacker->Name() << " (" << attacker->ID()
+                                << ") does " << damage << " damage to Ship " << target->Name() << " ("
+                                << target->ID() << ")";
         }
 
         combat_event->AddEvent(round, target->ID(), target->Owner(), weapon.part_type_name, power, shield, damage);
@@ -491,7 +487,6 @@ namespace {
                            AttacksEventPtr &attacks_event)
     {
         if (!attacker || !target) return;
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
         float power = attacker->Damage();
 
@@ -506,19 +501,18 @@ namespace {
         //Meter* target_shield = target->UniverseObject::GetMeter(METER_SHIELD);
         float shield = 0.0f; //(target_shield ? target_shield->Current() : 0.0f);
 
-        if (verbose_logging) {
-            DebugLogger() << "AttackFighterShip: Fighter of empire " << attacker->Owner() << " power: " << power
-                          << "  target: " << target->Name() //<< " shield: " << target_shield->Current()
-                          << " structure: " << target_structure->Current();
-        }
+        DebugLogger() << "AttackFighterShip: Fighter of empire " << attacker->Owner() << " power: " << power
+                      << "  target: " << target->Name() //<< " shield: " << target_shield->Current()
+                      << " structure: " << target_structure->Current();
 
         float damage = std::max(0.0f, power - shield);
 
         if (damage > 0.0f) {
             target_structure->AddToCurrent(-damage);
             damaged_object_ids.insert(target->ID());
-            if (verbose_logging)
-                DebugLogger() << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID() << ") does " << damage << " damage to Ship " << target->Name() << " (" << target->ID() << ")";
+            DebugLogger(combat) << "COMBAT: Fighter of empire " << attacker->Owner() << " (" << attacker->ID()
+                                << ") does " << damage << " damage to Ship " << target->Name() << " ("
+                                << target->ID() << ")";
         }
 
         float pierced_shield_value(-1.0);
@@ -619,10 +613,7 @@ namespace {
         if (obj->ObjectType() != OBJ_FIGHTER &&
             GetUniverse().GetObjectVisibilityByEmpire(obj->ID(), empire_id) <= VIS_BASIC_VISIBILITY)
         {
-            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                                   GetOptionsDB().Get<bool>("verbose-combat-logging");
-            if (verbose_logging)
-                DebugLogger() << obj->Name() << " not sufficiently visible to empire " << empire_id;
+            DebugLogger(combat) << obj->Name() << " not sufficiently visible to empire " << empire_id;
             return false;
         }
 
@@ -908,8 +899,6 @@ namespace {
         /// Checks if target is destroyed and if it is, update lists of living objects.
         /// Return true if is incapacitated
         bool CheckDestruction(const std::shared_ptr<const UniverseObject>& target) {
-            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                                   GetOptionsDB().Get<bool>("verbose-combat-logging");
             int target_id = target->ID();
             // check for destruction of target object
 
@@ -932,16 +921,14 @@ namespace {
 
             } else if (target->ObjectType() == OBJ_SHIP) {
                 if (target->CurrentMeterValue(METER_STRUCTURE) <= 0.0f) {
-                    if (verbose_logging)
-                        DebugLogger() << "!! Target Ship " << target_id << " is destroyed!";
+                    DebugLogger(combat) << "!! Target Ship " << target_id << " is destroyed!";
                     // object id destroyed
                     combat_info.destroyed_object_ids.insert(target_id);
                     // all empires in battle know object was destroyed
                     for (int empire_id : combat_info.empire_ids) {
                         if (empire_id != ALL_EMPIRES) {
-                            if (verbose_logging)
-                                DebugLogger() << "Giving knowledge of destroyed object " << target_id
-                                              << " to empire " << empire_id;
+                            DebugLogger(combat) << "Giving knowledge of destroyed object " << target_id
+                                          << " to empire " << empire_id;
                             combat_info.destroyed_object_knowers[empire_id].insert(target_id);
                         }
                     }
@@ -963,8 +950,7 @@ namespace {
                 if (!ObjectCanAttack(target) &&
                     valid_attacker_object_ids.find(target_id) != valid_attacker_object_ids.end())
                 {
-                    if (verbose_logging)
-                        DebugLogger() << "!! Target Planet " << target_id << " knocked out, can no longer attack";
+                    DebugLogger(combat) << "!! Target Planet " << target_id << " knocked out, can no longer attack";
                     // remove disabled planet's ID from lists of valid attackers
                     valid_attacker_object_ids.erase(target_id);
                 }
@@ -978,15 +964,11 @@ namespace {
                     // on the next turn, so check that it has been attacked
                     // before excluding it from any remaining battle
                     if (combat_info.damaged_object_ids.find(target_id) == combat_info.damaged_object_ids.end()) {
-                        if (verbose_logging) {
-                            DebugLogger() << "!! Planet " << target_id << "has not yet been attacked, "
-                                          << "so will not yet be removed from battle, despite being essentially incapacitated";
-                        }
+                        DebugLogger(combat) << "!! Planet " << target_id << "has not yet been attacked, "
+                                            << "so will not yet be removed from battle, despite being essentially incapacitated";
                         return false;
                     }
-                    if (verbose_logging) {
-                        DebugLogger() << "!! Target Planet " << target_id << " is entirely knocked out of battle";
-                    }
+                    DebugLogger(combat) << "!! Target Planet " << target_id << " is entirely knocked out of battle";
 
                     // remove disabled planet's ID from lists of valid targets
                     valid_target_object_ids.erase(target_id);   // probably not necessary as this set isn't used in this loop
@@ -1008,8 +990,6 @@ namespace {
         /// check if any empire has no remaining target or attacker objects.
         /// If so, remove that empire's entry
         void CleanEmpires() {
-            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                                   GetOptionsDB().Get<bool>("verbose-combat-logging");
             std::map<int, EmpireCombatInfo> temp = empire_infos;
             for (std::map<int, EmpireCombatInfo>::value_type& empire : empire_infos) {
                 if (!empire.second.HasTargets() &&
@@ -1017,8 +997,7 @@ namespace {
                     !empire.second.HasUnlauchedArmedFighters(combat_info))
                 {
                     temp.erase(empire.first);
-                    if (verbose_logging)
-                        DebugLogger() << "No valid attacking objects left for empire with id: " << empire.first;
+                    DebugLogger(combat) << "No valid attacking objects left for empire with id: " << empire.first;
                 }
             }
             empire_infos = temp;
@@ -1038,9 +1017,7 @@ namespace {
 
         /**Report for each empire the stealth objects in the combat. */
         InitialStealthEvent::StealthInvisbleMap ReportInvisibleObjects(const CombatInfo& combat_info) const {
-            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                                   GetOptionsDB().Get<bool>("verbose-combat-logging");
-            if (verbose_logging) DebugLogger() << "Reporting Invisible Objects";
+            DebugLogger(combat) << "Reporting Invisible Objects";
             InitialStealthEvent::StealthInvisbleMap report;
             for (int object_id : valid_target_object_ids) {
                 std::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
@@ -1048,7 +1025,7 @@ namespace {
                 // for all empires, can they attack this object?
                 for (int attacking_empire_id : combat_info.empire_ids) {
                     Visibility visibility = VIS_NO_VISIBILITY;
-                    if (verbose_logging) DebugLogger() << "Target " << obj->Name() << " by empire = "<< attacking_empire_id;
+                    DebugLogger(combat) << "Target " << obj->Name() << " by empire = "<< attacking_empire_id;
                     std::map<int, std::map<int, Visibility>>::const_iterator target_visible_it
                         = combat_info.empire_object_visibility.find(obj->Owner());
                     if (target_visible_it != combat_info.empire_object_visibility.end()) {
@@ -1063,7 +1040,7 @@ namespace {
                         if (ObjectUnTargettableByMonsters(obj, monster_detection)) {
                             // Note: This does put information about invisible and basic visible objects and
                             // trusts that the combat logger only informs player/ai of what they should know
-                            if (verbose_logging) DebugLogger() << " Monster "  << obj->Name() << " " << visibility << " to empire " << attacking_empire_id;
+                            DebugLogger(combat) << " Monster "  << obj->Name() << " " << visibility << " to empire " << attacking_empire_id;
                             report[attacking_empire_id][obj->Owner()]
                                 .insert(std::make_pair(obj->ID(), visibility));
                         }
@@ -1072,7 +1049,7 @@ namespace {
                         if (ObjectUnTargettableByEmpire(obj, attacking_empire_id)) {
                             // Note: This does put information about invisible and basic visible objects and
                             // trusts that the combat logger only informs player/ai of what they should know
-                            if (verbose_logging) DebugLogger() << " Ship " << obj->Name() << " " << visibility << " to empire " << attacking_empire_id;
+                            DebugLogger(combat) << " Ship " << obj->Name() << " " << visibility << " to empire " << attacking_empire_id;
                             report[attacking_empire_id][obj->Owner()]
                                 .insert(std::make_pair(obj->ID(), visibility));
                         }
@@ -1087,69 +1064,99 @@ namespace {
 
         // Populate lists of things that can attack and be attacked. List attackers also by empire.
         void PopulateAttackersAndTargets(const CombatInfo& combat_info) {
-            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                                   GetOptionsDB().Get<bool>("verbose-combat-logging");
             for (ObjectMap::const_iterator<> it = combat_info.objects.const_begin();
                  it != combat_info.objects.const_end(); ++it)
             {
                 std::shared_ptr<const UniverseObject> obj = *it;
-                std::string obj_status = "Considerting object " + obj->Name() + " owned by " + std::to_string(obj->Owner());
-                if (ObjectCanAttack(obj)) {
-                    if (verbose_logging)
-                        obj_status += "... can attack";
+                bool can_attack{ObjectCanAttack(obj)};
+                if (can_attack) {
                     valid_attacker_object_ids.insert(it->ID());
                     empire_infos[obj->Owner()].attacker_ids.insert(it->ID());
                 }
-                if (ObjectTypeCanBeAttacked(obj)) {
-                    obj_status += "... can be attacked";
+
+                bool can_be_attacked{ObjectTypeCanBeAttacked(obj)};
+                if (can_be_attacked) {
                     valid_target_object_ids.insert(it->ID());
                 }
-                if (verbose_logging)
-                    DebugLogger() << obj_status;
+                DebugLogger(combat) << "Considerting object " + obj->Name() + " owned by " + std::to_string(obj->Owner())
+                                    << (can_attack ? "... can attack" : "")
+                                    << (can_be_attacked ? "... can be attacked": "");
             }
         }
 
         // Get a map from empire to set of IDs of objects that empire's objects
         // could potentially target.
         void PopulateEmpireTargets(const CombatInfo& combat_info) {
-            bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                                   GetOptionsDB().Get<bool>("verbose-combat-logging");
             for (int object_id : valid_target_object_ids) {
                 std::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
-                if (verbose_logging)
-                    DebugLogger() << "Considering attackability of object " << obj->Name() 
-                                  << " owned by " << std::to_string(obj->Owner());
-
-                std::string obj_status = "object: " + obj->Name() + " attackable by ";
-                std:: string empire_list;
-                std:: string empire_list_all;
-                // for all empires, can they attack this object?
                 for (int attacking_empire_id : combat_info.empire_ids) {
-                    if (attacking_empire_id == ALL_EMPIRES) {
-                        if (ObjectAttackableByMonsters(obj, monster_detection)) {
-                            obj_status += "monsters and ";
-                            empire_infos[ALL_EMPIRES].target_ids.insert(object_id);
-                        }
-
-                    } else {
-                        empire_list_all += std::to_string(attacking_empire_id) + ", ";
-                        if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
-                            empire_list += std::to_string(attacking_empire_id) + ", ";
-                            empire_infos[attacking_empire_id].target_ids.insert(object_id);
-                        }
+                    if (attacking_empire_id == ALL_EMPIRES
+                        && ObjectAttackableByMonsters(obj, monster_detection))
+                    {
+                        empire_infos[ALL_EMPIRES].target_ids.insert(object_id);
+                    } else if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
+                        empire_infos[attacking_empire_id].target_ids.insert(object_id);
                     }
                 }
-                if (verbose_logging) {
-                    if (empire_list.empty())
-                        obj_status += "NONE of the empires present (" + empire_list_all + ")";
-                    else
-                        obj_status += "empires " + empire_list;
-                    DebugLogger() << obj_status;
+
+                DebugLogger(combat) << ReportAttackabilityOfTarget(combat_info, obj);
+            }
+        }
+
+        // Return a log report of attackability of \p obj
+        std::string ReportAttackabilityOfTarget(const CombatInfo& combat_info,
+                                                const std::shared_ptr<const UniverseObject>& obj)
+        {
+            std::stringstream ss;
+            ss << "Considering attackability of object " << obj->Name()
+               << " owned by " << std::to_string(obj->Owner())
+               << " attackable by ";
+
+            bool no_one{true};
+            for (int attacking_empire_id : combat_info.empire_ids) {
+                if (attacking_empire_id == ALL_EMPIRES
+                    && ObjectAttackableByMonsters(obj, monster_detection))
+                {
+                    ss << "monsters and ";
+                    no_one = false;
+                } else if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
+                    if (!no_one)
+                        ss << ", ";
+                    ss << std::to_string(attacking_empire_id);
+                    no_one = false;
                 }
             }
+            if (no_one)
+                ss << "none of the empires present";
+            return ss.str();
         }
     };
 
+
+    // Return a report of invalid targets
+    std::string ReportInvalidTargets(const std::shared_ptr<UniverseObject>& attacker,
+                                     const std::set<int>& potential_target_ids,
+                                     const AutoresolveInfo& combat_state)
+    {
+        std::stringstream ss;
+        ss << "Attacker " << attacker->ID() << " can't attack potential targets: ";
+
+        for (int target_id : potential_target_ids) {
+            std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
+            if (!target)
+                continue;
+
+            // planets can only attack ships (not other planets or fighters)
+            if (attacker->ObjectType() == OBJ_PLANET && target->ObjectType() != OBJ_SHIP)
+                ss << std::to_string(target_id) << " ";
+
+            // fighters can't attack planets
+            else if (attacker->ObjectType() == OBJ_FIGHTER && target->ObjectType() == OBJ_PLANET)
+                ss << std::to_string(target_id) << " ";
+        }
+
+        return ss.str();
+    }
 
     const std::set<int> ValidTargetsForAttackerType(std::shared_ptr<UniverseObject>& attacker,
                                                     AutoresolveInfo& combat_state,
@@ -1158,11 +1165,8 @@ namespace {
         if (attacker->ObjectType() == OBJ_SHIP)
             return potential_target_ids;    // ships can attack anything!
 
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                               GetOptionsDB().Get<bool>("verbose-combat-logging");
-
         std::set<int> valid_target_ids;
-        std::string invalid_target_ids;
+        bool any_invalid_targets{false};
 
         for (int target_id : potential_target_ids) {
             std::shared_ptr<UniverseObject> target = combat_state.combat_info.objects.Object(target_id);
@@ -1175,21 +1179,21 @@ namespace {
                 // planets can only attack ships (not other planets or fighters)
                 if (target->ObjectType() == OBJ_SHIP) {
                     valid_target_ids.insert(target_id);
-                } else if (verbose_logging) {
-                    invalid_target_ids += std::to_string(target_id) + " ";
+                } else {
+                    any_invalid_targets = true;
                 }
             } else if (attacker->ObjectType() == OBJ_FIGHTER) {
                 // fighters can't attack planets
                 if (target->ObjectType() != OBJ_PLANET) {
                     valid_target_ids.insert(target_id);
-                } else if (verbose_logging) {
-                    invalid_target_ids += std::to_string(target_id) + " ";
+                } else {
+                    any_invalid_targets = true;
                 }
             }
         }
 
-        if (verbose_logging && !invalid_target_ids.empty())
-            DebugLogger() << "Attacker " << attacker->ID() << " can't attack potential targets: " << invalid_target_ids;
+        if (any_invalid_targets)
+            DebugLogger(combat) << ReportInvalidTargets(attacker, potential_target_ids, combat_state);
 
         return valid_target_ids;
     }
@@ -1200,11 +1204,8 @@ namespace {
                          WeaponsPlatformEvent::WeaponsPlatformEventPtr &platform_event,
                          std::shared_ptr<FightersAttackFightersEvent>& fighter_on_fighter_event)
     {
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                               GetOptionsDB().Get<bool>("verbose-combat-logging");
         if (weapons.empty()) {
-            if (verbose_logging)
-                DebugLogger() << "no weapons' can't attack";
+            DebugLogger(combat) << "no weapons' can't attack";
             return;   // no ability to attack!
         }
 
@@ -1215,8 +1216,7 @@ namespace {
                 continue;
 
             // select object from valid targets for this object's owner   TODO: with this weapon...
-            if (verbose_logging)
-                DebugLogger() << "Attacking with weapon " << weapon.part_type_name << " with power " << weapon.part_attack;
+            DebugLogger(combat) << "Attacking with weapon " << weapon.part_type_name << " with power " << weapon.part_attack;
 
             // get valid targets set for attacker owner.  need to do this for
             // each weapon that is attacking, as the previous shot might have
@@ -1225,28 +1225,28 @@ namespace {
 
             std::map<int, EmpireCombatInfo >::iterator target_vec_it = combat_state.empire_infos.find(attacker_owner_id);
             if (target_vec_it == combat_state.empire_infos.end() || !target_vec_it->second.HasTargets()) {
-                if (verbose_logging)
-                    DebugLogger() << "No targets for empire: " << attacker_owner_id;
+                DebugLogger(combat) << "No targets for empire: " << attacker_owner_id;
                 break;
             }
 
             const std::set<int> valid_target_ids = ValidTargetsForAttackerType(attacker, combat_state, target_vec_it->second.target_ids);
             if (valid_target_ids.empty()) {
-                if (verbose_logging)
-                    DebugLogger() << "No valid targets for attacker " << attacker->ID();
+                DebugLogger(combat) << "No valid targets for attacker " << attacker->ID();
                 break;
             }
             //const std::set<int>& valid_target_ids = target_vec_it->second.target_ids;
 
-            if (verbose_logging) { 
-                std::string id_list;
+            DebugLogger(combat) << [&valid_target_ids, &attacker, &attacker_owner_id]() {
+                std::stringstream ss;
+                ss << "Valid targets for attacker with id: " << attacker->ID()
+                   << " owned by empire: " << attacker_owner_id
+                   << " :  ";
                 for (int target_id : valid_target_ids)
-                { id_list += std::to_string(target_id) + " "; }
+                { ss << std::to_string(target_id) + " "; }
+                return ss.str();
+            }();
 
-                DebugLogger() << "Valid targets for attacker with id: " << attacker->ID()
-                << " owned by empire: " << attacker_owner_id
-                << " :  " << id_list;
-            }
+
             // END DEBUG
 
             // select target object
@@ -1258,8 +1258,7 @@ namespace {
                 ErrorLogger() << "AutoResolveCombat couldn't get target object with id " << target_id;
                 continue;
             }
-            if (verbose_logging)
-                DebugLogger() << "Target: " << target->Name();
+            DebugLogger(combat) << "Target: " << target->Name();
 
             // do actual attacks
             Attack(attacker, weapon, target, combat_state.combat_info, bout, round, attacks_event,
@@ -1312,11 +1311,8 @@ namespace {
                         AutoresolveInfo& combat_state, int bout, int round,
                         FighterLaunchesEventPtr &launches_event)
     {
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                               GetOptionsDB().Get<bool>("verbose-combat-logging");
         if (weapons.empty()) {
-            if (verbose_logging)
-                DebugLogger() << "no weapons' can't launch figters!";
+            DebugLogger(combat) << "no weapons' can't launch figters!";
             return;   // no ability to attack!
         }
 
@@ -1332,11 +1328,10 @@ namespace {
 
             int attacker_owner_id = attacker->Owner();
 
-            if (verbose_logging)
-                DebugLogger() << "Launching " << weapon.fighters_launched
-                              << " with damage " << weapon.fighter_damage
-                              << " for empire id: " << attacker_owner_id
-                              << " from ship id: " << attacker->ID();
+            DebugLogger(combat) << "Launching " << weapon.fighters_launched
+                                << " with damage " << weapon.fighter_damage
+                                << " for empire id: " << attacker_owner_id
+                                << " from ship id: " << attacker->ID();
 
             std::vector<int> new_fighter_ids =
                 combat_state.AddFighters(weapon.fighters_launched, weapon.fighter_damage,
@@ -1433,8 +1428,6 @@ namespace {
     std::vector<PartAttackInfo> GetWeapons(std::shared_ptr<UniverseObject>& attacker) {
         // loop over weapons of attacking object.  each gets a shot at a
         // randomly selected target object
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                               GetOptionsDB().Get<bool>("verbose-combat-logging");
         std::vector<PartAttackInfo> weapons;
 
         std::shared_ptr<Ship> attack_ship = std::dynamic_pointer_cast<Ship>(attacker);
@@ -1444,14 +1437,12 @@ namespace {
         if (attack_ship) {
             weapons = ShipWeaponsStrengths(attack_ship);    // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons with PC_DIRECT_WEAPON part class
             for (PartAttackInfo& part : weapons) {
-                if (verbose_logging) {
-                    if (part.part_class == PC_DIRECT_WEAPON) {
-                        DebugLogger() << "Attacker Ship direct weapon: " << part.part_type_name
-                                      << " attack: " << part.part_attack;
-                    } else if (part.part_class == PC_FIGHTER_BAY) {
-                        DebugLogger() << "Attacker Ship fighter launch: " << part.fighters_launched
-                                      << " damage: " << part.fighter_damage;
-                    }
+                if (part.part_class == PC_DIRECT_WEAPON) {
+                    DebugLogger(combat) << "Attacker Ship direct weapon: " << part.part_type_name
+                                        << " attack: " << part.part_attack;
+                } else if (part.part_class == PC_FIGHTER_BAY) {
+                    DebugLogger(combat) << "Attacker Ship fighter launch: " << part.fighters_launched
+                                        << " damage: " << part.fighter_damage;
                 }
             }
 
@@ -1467,22 +1458,21 @@ namespace {
     void CombatRound(int bout, CombatInfo& combat_info, AutoresolveInfo& combat_state) {
         BoutEvent::BoutEventPtr bout_event = std::make_shared<BoutEvent>(bout);
         combat_info.combat_events.push_back(bout_event);
-        bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") ||
-                               GetOptionsDB().Get<bool>("verbose-combat-logging");
         if (combat_state.valid_attacker_object_ids.empty()) {
-            if (verbose_logging)
-                DebugLogger() << "Combat bout " << bout << " aborted due to no remaining attackers.";
+            DebugLogger(combat) << "Combat bout " << bout << " aborted due to no remaining attackers.";
             return;
         }
 
         std::vector<int> shuffled_attackers;
         combat_state.GetShuffledValidAttackerIDs(shuffled_attackers);
 
-        if (verbose_logging) {
-            DebugLogger() << "Attacker IDs:";
+        DebugLogger() << [&shuffled_attackers](){
+            std::stringstream ss;
+            ss << "Attacker IDs:";
             for (int attacker : shuffled_attackers)
-            { DebugLogger() << attacker; }
-        }
+            { ss << attacker; }
+            return ss.str();
+        }();
 
         AttacksEventPtr attacks_event = std::make_shared<AttacksEvent>();
         bout_event->AddEvent(attacks_event);
@@ -1509,8 +1499,7 @@ namespace {
                 DebugLogger() << "Planet " << attacker->Name() << " could not attack.";
                 continue;
             }
-            if (verbose_logging)
-                DebugLogger() << "Planet: " << attacker->Name();
+            DebugLogger(combat) << "Planet: " << attacker->Name();
 
             std::vector<PartAttackInfo> weapons = GetWeapons(attacker); // includes info about fighter launches with PC_FIGHTER_BAY part class, and direct fire weapons (ships, planets, or fighters) with PC_DIRECT_WEAPON part class
             WeaponsPlatformEvent::WeaponsPlatformEventPtr platform_event
@@ -1534,8 +1523,7 @@ namespace {
                 DebugLogger() << "Attacker " << attacker->Name() << " could not attack.";
                 continue;
             }
-            if (verbose_logging)
-                DebugLogger() << "Attacker: " << attacker->Name();
+            DebugLogger(combat) << "Attacker: " << attacker->Name();
 
             // loop over weapons of the attacking object.  each gets a shot at a
             // randomly selected target object
@@ -1570,8 +1558,7 @@ namespace {
 
                 LaunchFighters(attacker, weapons, combat_state, bout, round++, launches_event);
 
-                if (verbose_logging)
-                    DebugLogger() << "Attacker: " << attacker->Name();
+                DebugLogger(combat) << "Attacker: " << attacker->Name();
             }
 
             if (!launches_event->AreSubEventsEmpty(ALL_EMPIRES))
@@ -1625,7 +1612,6 @@ namespace {
 void AutoResolveCombat(CombatInfo& combat_info) {
     if (combat_info.objects.Empty())
         return;
-    bool verbose_logging = GetOptionsDB().Get<bool>("verbose-logging") || GetOptionsDB().Get<bool>("verbose-combat-logging");
 
     std::shared_ptr<const System> system = combat_info.objects.Object<System>(combat_info.system_id);
     if (!system)
@@ -1633,10 +1619,8 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     else
         DebugLogger() << "AutoResolveCombat at " << system->Name();
 
-    if (verbose_logging) {
-        DebugLogger() << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
-        DebugLogger() << "AutoResolveCombat objects before resolution: " << combat_info.objects.Dump();
-    }
+    DebugLogger(combat) << "%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%";
+    DebugLogger(combat) << "AutoResolveCombat objects before resolution: " << combat_info.objects.Dump();
 
     // reasonably unpredictable but reproducible random seeding
     int base_seed = 0;
@@ -1663,13 +1647,11 @@ void AutoResolveCombat(CombatInfo& combat_info) {
         // empires may have valid targets, but nothing to attack with.  If all
         // empires have no attackers or no valid targers, combat is over
         if (!combat_state.CanSomeoneAttackSomething()) {
-            if (verbose_logging)
-                DebugLogger() << "No empire has valid targets and something to attack with; combat over.";
+            DebugLogger(combat) << "No empire has valid targets and something to attack with; combat over.";
             break;
         }
 
-        if (verbose_logging)
-            DebugLogger() << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Bout " << bout;
+        DebugLogger(combat) << "Combat at " << system->Name() << " (" << combat_info.system_id << ") Bout " << bout;
 
         CombatRound(bout, combat_info, combat_state);
         last_bout = bout;
@@ -1688,12 +1670,10 @@ void AutoResolveCombat(CombatInfo& combat_info) {
     for (std::map<int, ObjectMap>::value_type& entry : combat_info.empire_known_objects)
     { entry.second.Copy(combat_info.objects); }
 
-    if (verbose_logging) {
-        DebugLogger() << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
+    DebugLogger(combat) << "AutoResolveCombat objects after resolution: " << combat_info.objects.Dump();
 
-        DebugLogger() << "combat event log start:";
-        for (CombatEventPtr event : combat_info.combat_events)
-        { DebugLogger() << event->DebugString(); }
-        DebugLogger() << "combat event log end:";
-    }
+    DebugLogger(combat) << "combat event log start:";
+    for (CombatEventPtr event : combat_info.combat_events)
+    { DebugLogger(combat) << event->DebugString(); }
+    DebugLogger(combat) << "combat event log end:";
 }

@@ -21,12 +21,10 @@ Encyclopedia::Encyclopedia() :
         throw e;
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "(Category) Encyclopedia Articles:";
-        for (std::map<std::string, std::vector<EncyclopediaArticle>>::value_type& entry : articles) {
-            const std::string& category = entry.first;
-            for (const EncyclopediaArticle& article : entry.second)
-            { DebugLogger() << "(" << category << ") : " << article.name; }
-        }
+    TraceLogger() << "(Category) Encyclopedia Articles:";
+    for (const auto& entry : articles) {
+        const std::string& category = entry.first;
+        for (const EncyclopediaArticle& article : entry.second)
+        { TraceLogger() << "(" << category << ") : " << article.name; }
     }
 }

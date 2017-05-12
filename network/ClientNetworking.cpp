@@ -35,7 +35,7 @@ using boost::asio::ip::tcp;
 using namespace Networking;
 
 namespace {
-    const bool TRACE_EXECUTION = false;
+    DeclareThreadSafeLogger(network);
 
     /** A simple client that broadcasts UDP datagrams on the local network for
         FreeOrion servers, and reports any it finds. */
@@ -314,11 +314,11 @@ bool ClientNetworking::Impl::ConnectToServer(
 
     tcp::resolver::iterator end_it;
 
-    DebugLogger() << "Attempt to connect to server at one of these addresses:";
+    DebugLogger(network) << "Attempt to connect to server at one of these addresses:";
     for (tcp::resolver::iterator it = resolver.resolve(query); it != end_it; ++it) {
-        DebugLogger() << "  tcp::resolver::iterator host_name: " << it->host_name()
-                      << "  address: " << it->endpoint().address()
-                      << "  port: " << it->endpoint().port();
+        DebugLogger(network) << "  tcp::resolver::iterator host_name: " << it->host_name()
+                             << "  address: " << it->endpoint().address()
+                             << "  port: " << it->endpoint().port();
     }
 
     try {
@@ -335,13 +335,13 @@ bool ClientNetworking::Impl::ConnectToServer(
                 auto connection_time = Clock::now() - start_time;
 
                 if (IsConnected()) {
-                    DebugLogger() << "Connected to server at host_name: " << it->host_name()
-                                  << "  address: " << it->endpoint().address()
-                                  << "  port: " << it->endpoint().port();
+                    DebugLogger(network) << "Connected to server at host_name: " << it->host_name()
+                                         << "  address: " << it->endpoint().address()
+                                         << "  port: " << it->endpoint().port();
 
-                    //DebugLogger() << "ConnectToServer() : Client using "
-                    //              << ((GetOptionsDB().Get<bool>("binary-serialization")) ? "binary": "xml")
-                    //              << " serialization.";
+                    //DebugLogger(network) << "ConnectToServer() : Client using "
+                    //                     << ((GetOptionsDB().Get<bool>("binary-serialization")) ? "binary": "xml")
+                    //                     << " serialization.";
 
                     // Prepare the socket
 
@@ -359,31 +359,30 @@ bool ClientNetworking::Impl::ConnectToServer(
                     // then deliver an OS dependent error when/if the other side of the connection
                     // times out or closes.
                     m_socket.set_option(boost::asio::socket_base::keep_alive(true));
-                    DebugLogger() << "Connecting to server took "
-                                  << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
+                    DebugLogger(network) << "Connecting to server took "
+                                         << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms.";
 
-                    DebugLogger() << "ConnectToServer() : starting networking thread";
+                    DebugLogger(network) << "ConnectToServer() : starting networking thread";
                     boost::thread(boost::bind(&ClientNetworking::Impl::NetworkingThread, this, self->shared_from_this()));
                     break;
                 } else {
-                    if (TRACE_EXECUTION)
-                        DebugLogger() << "Failed to connect to host_name: " << it->host_name()
-                                      << "  address: " << it->endpoint().address()
-                                      << "  port: " << it->endpoint().port();
+                    TraceLogger(network) << "Failed to connect to host_name: " << it->host_name()
+                                         << "  address: " << it->endpoint().address()
+                                         << "  port: " << it->endpoint().port();
                     if (timeout < connection_time) {
-                        ErrorLogger() << "Timed out ("
-                                      << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms."
-                                      << ") attempting to connect to server.";
+                        ErrorLogger(network) << "Timed out ("
+                                             << std::chrono::duration_cast<std::chrono::milliseconds>(connection_time).count() << " ms."
+                                             << ") attempting to connect to server.";
                     }
                 }
             }
         }
         if (!IsConnected())
-            DebugLogger() << "ConnectToServer() : failed to connect to server.";
+            DebugLogger(network) << "ConnectToServer() : failed to connect to server.";
 
     } catch (const std::exception& e) {
-        ErrorLogger() << "ConnectToServer() : unable to connect to server at "
-                      << ip_address << " due to exception: " << e.what();
+        ErrorLogger(network) << "ConnectToServer() : unable to connect to server at "
+                             << ip_address << " due to exception: " << e.what();
     }
     return IsConnected();
 }
@@ -419,7 +418,7 @@ void ClientNetworking::Impl::DisconnectFromServer() {
 }
 
 void ClientNetworking::Impl::SetPlayerID(int player_id) {
-    DebugLogger() << "ClientNetworking::SetPlayerID: player id set to: " << player_id;
+    DebugLogger(network) << "ClientNetworking::SetPlayerID: player id set to: " << player_id;
     m_player_id = player_id;
 }
 
@@ -428,33 +427,31 @@ void ClientNetworking::Impl::SetHostPlayerID(int host_player_id)
 
 void ClientNetworking::Impl::SendMessage(const Message& message) {
     if (!IsTxConnected()) {
-        ErrorLogger() << "ClientNetworking::SendMessage can't send message when not transmit connected";
+        ErrorLogger(network) << "ClientNetworking::SendMessage can't send message when not transmit connected";
         return;
     }
-    if (TRACE_EXECUTION)
-        DebugLogger() << "ClientNetworking::SendMessage() : sending message " << message;
+    TraceLogger(network) << "ClientNetworking::SendMessage() : sending message " << message;
     m_io_service.post(boost::bind(&ClientNetworking::Impl::SendMessageImpl, this, message));
 }
 
 boost::optional<Message> ClientNetworking::Impl::GetMessage() {
     const auto message = m_incoming_messages.PopFront();
-    if (message && TRACE_EXECUTION)
-        DebugLogger() << "ClientNetworking::GetMessage() : received message "
-                      << *message;
+    if (message)
+        TraceLogger(network) << "ClientNetworking::GetMessage() : received message "
+                             << *message;
     return message;
 }
 
 boost::optional<Message> ClientNetworking::Impl::SendSynchronousMessage(const Message& message) {
-    if (TRACE_EXECUTION)
-        DebugLogger() << "ClientNetworking::SendSynchronousMessage : sending message "
-                      << message;
+    TraceLogger(network) << "ClientNetworking::SendSynchronousMessage : sending message "
+                         << message;
     SendMessage(message);
     // note that this is a blocking operation
     auto response_message = m_incoming_messages.GetFirstSynchronousMessage();
 
-    if (response_message && TRACE_EXECUTION)
-        DebugLogger() << "ClientNetworking::SendSynchronousMessage : received "
-                      << "response message " << *response_message;
+    if (response_message)
+        TraceLogger(network) << "ClientNetworking::SendSynchronousMessage : received "
+                             << "response message " << *response_message;
 
     return response_message;
 }
@@ -463,13 +460,11 @@ void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
                                               const boost::system::error_code& error)
 {
     if (error) {
-        if (TRACE_EXECUTION)
-            DebugLogger() << "ClientNetworking::HandleConnection : connection "
-                          << "error #"<<error.value()<<" \"" << error.message() << "\""
-                          << "... retrying";
+        TraceLogger(network) << "ClientNetworking::HandleConnection : connection "
+                             << "error #"<<error.value()<<" \"" << error.message() << "\""
+                             << "... retrying";
     } else {
-        if (TRACE_EXECUTION)
-            DebugLogger() << "ClientNetworking::HandleConnection : connected";
+        TraceLogger(network) << "ClientNetworking::HandleConnection : connected";
 
         boost::mutex::scoped_lock lock(m_mutex);
         m_rx_connected = true;
@@ -479,17 +474,17 @@ void ClientNetworking::Impl::HandleConnection(tcp::resolver::iterator* it,
 
 void ClientNetworking::Impl::HandleException(const boost::system::system_error& error) {
     if (error.code() == boost::asio::error::eof) {
-        DebugLogger() << "Client connection disconnected by EOF from server.";
+        DebugLogger(network) << "Client connection disconnected by EOF from server.";
         m_socket.close();
     }
     else if (error.code() == boost::asio::error::connection_reset)
-        DebugLogger() << "Client connection disconnected, due to connection reset from server.";
+        DebugLogger(network) << "Client connection disconnected, due to connection reset from server.";
     else if (error.code() == boost::asio::error::operation_aborted)
-        DebugLogger() << "Client connection closed by client.";
+        DebugLogger(network) << "Client connection closed by client.";
     else {
-        ErrorLogger() << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
-                      << "due to unhandled exception error #" << error.code().value() << " \""
-                      << error.code().message() << "\"";
+        ErrorLogger(network) << "ClientNetworking::NetworkingThread() : Networking thread will be terminated "
+                             << "due to unhandled exception error #" << error.code().value() << " \""
+                             << error.code().message() << "\"";
     }
 }
 
@@ -511,8 +506,7 @@ void ClientNetworking::Impl::NetworkingThread(const std::shared_ptr<const Client
         m_rx_connected = false;
         m_tx_connected = false;
     }
-    if (TRACE_EXECUTION)
-        DebugLogger() << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
+    TraceLogger(network) << "ClientNetworking::NetworkingThread() : Networking thread terminated.";
 }
 
 void ClientNetworking::Impl::HandleMessageBodyRead(const std::shared_ptr<const ClientNetworking>& keep_alive,
@@ -591,7 +585,7 @@ void ClientNetworking::Impl::HandleMessageWrite(boost::system::error_code error,
 
 void ClientNetworking::Impl::AsyncWriteMessage() {
     if (!m_socket.is_open()) {
-        ErrorLogger() << "Socket is closed. Dropping message.";
+        ErrorLogger(network) << "Socket is closed. Dropping message.";
         return;
     }
 

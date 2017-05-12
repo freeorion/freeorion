@@ -1378,10 +1378,8 @@ void ServerApp::GenerateUniverse(std::map<int, PlayerSetupData>& player_setup_da
     universe.BackPropagateObjectMeters();
     Empires().BackPropagateMeters();
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
-        DebugLogger() << universe.Objects().Dump();
-    }
+    TraceLogger() << "!!!!!!!!!!!!!!!!!!! After setting active meters to targets";
+    TraceLogger() << universe.Objects().Dump();
 
     universe.UpdateEmpireObjectVisibilities();
 }
@@ -2933,11 +2931,8 @@ void ServerApp::PostCombatProcessTurns() {
     m_networking.SendMessageAll(TurnProgressMessage(Message::EMPIRE_PRODUCTION));
     DebugLogger() << "ServerApp::PostCombatProcessTurns effects and meter updates";
 
-
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
-        DebugLogger() << objects.Dump();
-    }
+    TraceLogger() << "!!!!!!! BEFORE TURN PROCESSING EFFECTS APPLICATION";
+    TraceLogger() << objects.Dump();
 
     // execute all effects and update meters prior to production, research, etc.
     if (GetOptionsDB().Get<bool>("reseed-prng-server")) {
@@ -2950,11 +2945,8 @@ void ServerApp::PostCombatProcessTurns() {
     // have added or removed starlanes.
     m_universe.InitializeSystemGraph();
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
-        DebugLogger() << objects.Dump();
-    }
-
+    TraceLogger() << "!!!!!!! AFTER TURN PROCESSING EFFECTS APPLICATION";
+    TraceLogger() << objects.Dump();
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns empire resources updates";
 
@@ -2991,10 +2983,8 @@ void ServerApp::PostCombatProcessTurns() {
         }
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
-        DebugLogger() << objects.Dump();
-    }
+    TraceLogger() << "!!!!!!! AFTER UPDATING RESOURCE POOLS AND SUPPLY STUFF";
+    TraceLogger() << objects.Dump();
 
     DebugLogger() << "ServerApp::PostCombatProcessTurns queue progress checking";
 
@@ -3011,11 +3001,8 @@ void ServerApp::PostCombatProcessTurns() {
         empire->CheckTradeSocialProgress();
     }
 
-
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
-        DebugLogger() << objects.Dump();
-    }
+    TraceLogger() << "!!!!!!! AFTER CHECKING QUEUE AND RESOURCE PROGRESS";
+    TraceLogger() << objects.Dump();
 
     // execute turn events implemented as Python scripts
     ExecuteScriptedTurnEvents();
@@ -3026,10 +3013,8 @@ void ServerApp::PostCombatProcessTurns() {
     // they are created.
     m_universe.ApplyMeterEffectsAndUpdateMeters(false);
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
-        DebugLogger() << objects.Dump();
-    }
+    TraceLogger() << "!!!!!!! AFTER UPDATING METERS OF ALL OBJECTS";
+    TraceLogger() << objects.Dump();
 
     // Population growth or loss, resource current meter growth, etc.
     for (std::shared_ptr<UniverseObject> obj : objects) {
@@ -3037,11 +3022,8 @@ void ServerApp::PostCombatProcessTurns() {
         obj->ClampMeters();  // ensures growth doesn't leave meters over MAX.  should otherwise be redundant with ClampMeters() in Universe::ApplyMeterEffectsAndUpdateMeters()
     }
 
-
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
-        DebugLogger() << objects.Dump();
-    }
+    TraceLogger() << "!!!!!!!!!!!!!!!!!!!!!!AFTER GROWTH AND CLAMPING";
+    TraceLogger() << objects.Dump();
 
     // store initial values of meters for this turn.
     m_universe.BackPropagateObjectMeters();
@@ -3075,10 +3057,8 @@ void ServerApp::PostCombatProcessTurns() {
     // update empire-visibility filtered graphs after visiblity update
     m_universe.UpdateEmpireVisibilityFilteredSystemGraphs();
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
-        DebugLogger() << objects.Dump();
-    }
+    TraceLogger() << "!!!!!!!!!!!!!!!!!!!!!!AFTER TURN PROCESSING POP GROWTH PRODCUTION RESEARCH";
+    TraceLogger() << objects.Dump();
 
     // this has to be here for the sitreps it creates to be in the right turn
     CheckForEmpireElimination();

@@ -12,10 +12,6 @@
 
 #include <chrono>
 
-/** This function returns true iff the FSM's state instrumentation should be
-  * output to the logger's debug stream. */
-bool TraceHumanClientFSMExecution();
-
 // Human client-specific events not already defined in ClientFSMEvents.h
 
 /** Indicates that the "Start Game" button was clicked in the MP Lobby UI, in

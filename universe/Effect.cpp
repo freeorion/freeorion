@@ -29,6 +29,9 @@
 #include <cctype>
 #include <iterator>
 
+namespace {
+    DeclareThreadSafeLogger(effects);
+}
 
 using boost::io::str;
 
@@ -351,8 +354,6 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
                        bool only_meter_effects, bool only_appearance_effects,
                        bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
-    bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
-
     if (only_appearance_effects || only_generate_sitrep_effects)
         return;
 
@@ -365,15 +366,14 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
         const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
 
-        if (log_verbose) {
-            DebugLogger() << "\n\nExecute SetMeter effect: \n" << Dump();
-            DebugLogger() << "SetMeter execute targets before: ";
-            for (std::shared_ptr<UniverseObject> target : targets)
-                DebugLogger() << " ... " << target->Dump();
-        }
 
-        if (!accounting_map && !log_verbose) {
-            // without accounting and without verbose logging, can do default batch execute
+        TraceLogger(effects) << "\n\nExecute SetMeter effect: \n" << Dump();
+        TraceLogger(effects) << "SetMeter execute targets before: ";
+        for (std::shared_ptr<UniverseObject> target : targets)
+            TraceLogger(effects) << " ... " << target->Dump();
+
+        if (!accounting_map) {
+            // without accounting, can do default batch execute
             Execute(source_context, targets);
 
         } else if (!accounting_map) {
@@ -416,12 +416,9 @@ void SetMeter::Execute(const TargetsCauses& targets_causes, AccountingMap* accou
             }
         }
 
-        if (log_verbose) {
-            DebugLogger() << "SetMeter execute targets after: ";
-            for (std::shared_ptr<UniverseObject> target : targets) {
-                DebugLogger() << " ... " << target->Dump();
-            }
-        }
+        TraceLogger(effects) << "SetMeter execute targets after: ";
+        for (std::shared_ptr<UniverseObject> target : targets)
+            TraceLogger(effects) << " ... " << target->Dump();
     }
 }
 
@@ -573,8 +570,6 @@ void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMa
                                bool only_meter_effects, bool only_appearance_effects,
                                bool include_empire_meter_effects, bool only_generate_sitrep_effects) const
 {
-    bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
-
     if (only_appearance_effects || only_generate_sitrep_effects)
         return;
 
@@ -587,20 +582,16 @@ void SetShipPartMeter::Execute(const TargetsCauses& targets_causes, AccountingMa
         const TargetsAndCause&              targets_and_cause     = targets_entry.second;
         TargetSet                           targets               = targets_and_cause.target_set;
 
-        if (log_verbose) {
-            DebugLogger() << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
-            DebugLogger() << "SetShipPartMeter execute targets before: ";
-            for (std::shared_ptr<UniverseObject> target : targets)
-                DebugLogger() << " ... " << target->Dump();
-        }
+        TraceLogger(effects) << "\n\nExecute SetShipPartMeter effect: \n" << Dump();
+        TraceLogger(effects) << "SetShipPartMeter execute targets before: ";
+        for (std::shared_ptr<UniverseObject> target : targets)
+            TraceLogger(effects) << " ... " << target->Dump();
 
         Execute(source_context, targets);
 
-        if (log_verbose) {
-            DebugLogger() << "SetShipPartMeter execute targets after: ";
-            for (std::shared_ptr<UniverseObject> target : targets)
-                DebugLogger() << " ... " << target->Dump();
-        }
+        TraceLogger(effects) << "SetShipPartMeter execute targets after: ";
+        for (std::shared_ptr<UniverseObject> target : targets)
+            TraceLogger(effects) << " ... " << target->Dump();
     }
 }
 

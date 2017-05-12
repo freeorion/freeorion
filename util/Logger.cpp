@@ -32,6 +32,7 @@ namespace attr = boost::log::attributes;
 namespace keywords = boost::log::keywords;
 namespace sinks = boost::log::sinks;
 
+// TODO consider adding thread and process id as options
 
 namespace {
     // Create the log logger for logging of logger and logging related events.

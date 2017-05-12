@@ -29,6 +29,9 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/timer.hpp>
 
+namespace {
+    DeclareThreadSafeLogger(effects);
+}
 
 #if defined(_MSC_VER)
 #  if (_MSC_VER == 1900)
@@ -42,8 +45,6 @@ namespace {
     const bool ENABLE_VISIBILITY_EMPIRE_MEMORY = true;      // toggles using memory with visibility, so that empires retain knowledge of objects viewed on previous turns
 
     void AddOptions(OptionsDB& db) {
-        db.Add("verbose-logging",           UserStringNop("OPTIONS_DB_VERBOSE_LOGGING_DESC"),           false,  Validator<bool>());
-        db.Add("verbose-combat-logging",    UserStringNop("OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC"),    false,  Validator<bool>());
         db.Add("effects-threads-ui",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_UI_DESC"),        8,      RangedValidator<int>(1, 32));
         db.Add("effects-threads-ai",        UserStringNop("OPTIONS_DB_EFFECTS_THREADS_AI_DESC"),        2,      RangedValidator<int>(1, 32));
         db.Add("effects-threads-server",    UserStringNop("OPTIONS_DB_EFFECTS_THREADS_SERVER_DESC"),    8,      RangedValidator<int>(1, 32));
@@ -688,12 +689,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
         }
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "UpdateMeterEstimatesImpl after resetting meters objects:";
-        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
-            DebugLogger() << obj->Dump();
-        }
-    }
+    TraceLogger(effects) << "UpdateMeterEstimatesImpl after resetting meters objects:";
+    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+            TraceLogger(effects) << obj->Dump();
 
     // cache all activation and scoping condition results before applying Effects, since the application of
     // these Effects may affect the activation and scoping evaluations
@@ -703,12 +701,9 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
     // Apply and record effect meter adjustments
     ExecuteEffects(targets_causes, do_accounting, true, false, false, false);
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "UpdateMeterEstimatesImpl after executing effects objects:";
-        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
-            DebugLogger() << obj->Dump();
-        }
-    }
+    TraceLogger(effects) << "UpdateMeterEstimatesImpl after executing effects objects:";
+    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+        TraceLogger(effects) << obj->Dump();
 
     // Apply known discrepancies between expected and calculated meter maxes at start of turn.  This
     // accounts for the unknown effects on the meter, and brings the estimate in line with the actual
@@ -732,9 +727,8 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
                 Meter* meter = obj->GetMeter(type);
 
                 if (meter) {
-                    if (GetOptionsDB().Get<bool>("verbose-logging"))
-                        DebugLogger() << "object " << obj_id << " has meter " << type
-                                      << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
+                    TraceLogger(effects) << "object " << obj_id << " has meter " << type
+                                         << ": discrepancy: " << discrepancy << " and : " << meter->Dump();
 
                     meter->AddToCurrent(discrepancy);
 
@@ -757,12 +751,10 @@ void Universe::UpdateMeterEstimatesImpl(const std::vector<int>& objects_vec) {
         obj->ClampMeters();
     }
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
-        for (std::shared_ptr<UniverseObject> obj : object_ptrs) {
-            DebugLogger() << obj->Dump();
-        }
-    }
+    TraceLogger(effects) << "UpdateMeterEstimatesImpl after discrepancies and clamping objects:";
+    for (std::shared_ptr<UniverseObject> obj : object_ptrs)
+        TraceLogger(effects) << obj->Dump();
+
 }
 
 void Universe::BackPropagateObjectMeters(const std::vector<int>& object_ids) {
@@ -807,6 +799,9 @@ namespace {
             boost::shared_mutex&                                    the_global_mutex
         );
         void operator ()();
+
+        /** Return a report of that state of this work item. */
+        std::string GenerateReport() const;
     private:
         // WARNING: do NOT copy the shared_pointers! Use raw pointers, shared_ptr may not be thread-safe. 
         std::shared_ptr<Effect::EffectsGroup> m_effects_group;
@@ -949,20 +944,24 @@ namespace {
         return *target_set; 
     }
 
+    std::string StoreTargetsAndCausesOfEffectsGroupsWorkItem::GenerateReport() const {
+        boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
+        std::stringstream ss;
+        ss << "StoreTargetsAndCausesOfEffectsGroups: effects_group: "
+           << m_effects_group->AccountingLabel()
+           << "  specific_cause: " << m_specific_cause_name
+           << "  sources: ";
+        for (const auto& obj : *m_sources)
+            ss << obj->Name() << " (" << std::to_string(obj->ID()) << ")  ";
+        ss << ")";
+        return ss.str();
+    }
+
     void StoreTargetsAndCausesOfEffectsGroupsWorkItem::operator()()
     {
         ScopedTimer timer("StoreTargetsAndCausesOfEffectsGroups");
 
-        if (GetOptionsDB().Get<bool>("verbose-logging")) {
-            boost::unique_lock<boost::shared_mutex> guard(*m_global_mutex);
-            std::string sources_ids;
-            for (std::shared_ptr<const UniverseObject> obj : *m_sources) {
-                sources_ids += obj->Name() + " (" + std::to_string(obj->ID()) + ")  ";
-            }
-            DebugLogger() << "StoreTargetsAndCausesOfEffectsGroups: effects_group: " << m_effects_group->AccountingLabel()
-                          << "  specific_cause: " << m_specific_cause_name
-                          << "  sources: " << sources_ids << ")";
-        }
+        TraceLogger(effects) << GenerateReport();
 
         // get objects matched by scope
         const Condition::ConditionBase* scope = m_effects_group->Scope();
@@ -1040,13 +1039,9 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     // transfer target objects from input vector to a set
     Effect::TargetSet all_potential_targets = m_objects.FindObjects(target_objects);
 
-    if (GetOptionsDB().Get<bool>("verbose-logging")) {
-        DebugLogger() << "target objects:";
-        for (std::shared_ptr<UniverseObject> obj : all_potential_targets) {
-            DebugLogger() << obj->Dump();
-        }
-    }
-
+    TraceLogger(effects) << "target objects:";
+    for (std::shared_ptr<UniverseObject> obj : all_potential_targets)
+        TraceLogger(effects) << obj->Dump();
 
     // caching space for each source object's results of finding matches for
     // scope conditions. Index INVALID_OBJECT_ID stores results for
@@ -1075,8 +1070,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     eval_timer.restart();
 
     // 1) EffectsGroups from Species
-    if (GetOptionsDB().Get<bool>("verbose-logging"))
-        DebugLogger() << "Universe::GetEffectsAndTargets for SPECIES";
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIES";
     type_timer.restart();
 
     // find each species planets in single pass, maintaining object map order per-species
@@ -1136,8 +1130,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     }
 
     // 2) EffectsGroups from Specials
-    if (GetOptionsDB().Get<bool>("verbose-logging"))
-        DebugLogger() << "Universe::GetEffectsAndTargets for SPECIALS";
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for SPECIALS";
     type_timer.restart();
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> specials_objects;
     // determine objects with specials in a single pass
@@ -1176,8 +1169,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     double special_time = type_timer.elapsed();
 
     // 3) EffectsGroups from Techs
-    if (GetOptionsDB().Get<bool>("verbose-logging"))
-        DebugLogger() << "Universe::GetEffectsAndTargets for TECHS";
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for TECHS";
     type_timer.restart();
     std::list<std::vector<std::shared_ptr<const UniverseObject>>> tech_sources;
     for (std::map<int, Empire*>::value_type& entry : Empires()) {
@@ -1205,8 +1197,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     double tech_time = type_timer.elapsed();
 
     // 4) EffectsGroups from Buildings
-    if (GetOptionsDB().Get<bool>("verbose-logging"))
-        DebugLogger() << "Universe::GetEffectsAndTargets for BUILDINGS";
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for BUILDINGS";
     type_timer.restart();
 
     // determine buildings of each type in a single pass
@@ -1247,8 +1238,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     double building_time = type_timer.elapsed();
 
     // 5) EffectsGroups from Ship Hull and Ship Parts
-    if (GetOptionsDB().Get<bool>("verbose-logging"))
-        DebugLogger() << "Universe::GetEffectsAndTargets for SHIPS hulls and parts";
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for SHIPS hulls and parts";
     type_timer.restart();
     // determine ship hulls and parts of each type in a single pass
     // the same ship might be added multiple times if it contains the part multiple times
@@ -1324,8 +1314,7 @@ void Universe::GetEffectsAndTargets(Effect::TargetsCauses& targets_causes,
     double ships_time = type_timer.elapsed();
 
     // 6) EffectsGroups from Fields
-    if (GetOptionsDB().Get<bool>("verbose-logging"))
-        DebugLogger() << "Universe::GetEffectsAndTargets for FIELDS";
+    TraceLogger(effects) << "Universe::GetEffectsAndTargets for FIELDS";
     type_timer.restart();
     // determine fields of each type in a single pass
     std::map<std::string, std::vector<std::shared_ptr<const UniverseObject>>> fields_by_type;
@@ -1399,7 +1388,6 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
 
     m_marked_destroyed.clear();
     std::map< std::string, std::set<int>> executed_nonstacking_effects;
-    bool log_verbose = GetOptionsDB().Get<bool>("verbose-logging");
 
     // grouping targets causes by effects group
     // sorting by effects group has already been done in GetEffectsAndTargets()
@@ -1483,8 +1471,7 @@ void Universe::ExecuteEffects(const Effect::TargetsCauses& targets_causes,
             if (group_targets_causes.empty())
                 continue;
 
-            if (log_verbose)
-                DebugLogger() << "\n\n * * * * * * * * * * * (new effects group log entry)";
+            TraceLogger(effects) << "\n\n * * * * * * * * * * * (new effects group log entry)";
 
             // execute Effects in the EffectsGroup
             effects_group->Execute(group_targets_causes,
