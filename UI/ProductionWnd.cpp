@@ -327,9 +327,7 @@ namespace {
             panel(nullptr),
             queue_index(queue_index_),
             elem(elem)
-        { RequirePreRender(); }
-
-        void Init() {
+        {
             const Empire* empire = GetEmpire(HumanClientApp::GetApp()->EmpireID());
             float total_cost(1.0f);
             int minimum_turns(1);
@@ -346,10 +344,6 @@ namespace {
                                                  pp_accumulated);
             push_back(panel);
 
-            // Since this is only called during PreRender force panel to PreRender()
-            GG::GUI::PreRenderWindow(panel);
-            GetLayout()->PreRender();
-
             SetDragDropDataType(BuildDesignatorWnd::PRODUCTION_ITEM_DROP_TYPE);
 
             SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
@@ -358,13 +352,14 @@ namespace {
             panel->PanelUpdateQuantSignal.connect(
                 boost::bind(&QueueRow::RowQuantChanged, this, _1, _2));
 
+            RequirePreRender();
         }
 
         void PreRender() override {
             GG::ListBox::Row::PreRender();
 
-            if (!panel)
-                Init();
+            GG::GUI::PreRenderWindow(panel);
+            GetLayout()->PreRender();
         }
 
         void Disable(bool b) override {
