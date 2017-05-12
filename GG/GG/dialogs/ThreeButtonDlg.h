@@ -84,8 +84,6 @@ public:
 
 private:
     std::size_t NumButtons() const;
-    void Init(const std::string& msg, const std::shared_ptr<Font>& font, std::size_t buttons,
-              const std::string& zero = "", const std::string& one = "", const std::string& two = "");
     void ConnectSignals();
     void Button0Clicked();
     void Button1Clicked();

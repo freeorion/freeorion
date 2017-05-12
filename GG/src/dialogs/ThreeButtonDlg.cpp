@@ -51,7 +51,55 @@ ThreeButtonDlg::ThreeButtonDlg(X w, Y h, const std::string& msg, const std::shar
     m_button_0(nullptr),
     m_button_1(nullptr),
     m_button_2(nullptr)
-{ Init(msg, font, buttons, zero, one, two); }
+{
+    if (buttons < 1)
+        buttons = 1;
+    else if (3 < buttons)
+        buttons = 3;
+
+    const int SPACING = 10;
+    const Y BUTTON_HEIGHT = font->Height() + 10;
+
+    Layout* layout = new Layout(X0, Y0, X1, Y1, 2, 1, 10);
+    Layout* button_layout = new Layout(X0, Y0, X1, Y1, 1, buttons, 0, 10);
+
+    std::shared_ptr<StyleFactory> style = GetStyleFactory();
+
+    TextControl* message_text = style->NewTextControl(msg, font, m_text_color,
+                                                      FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);
+    message_text->Resize(Pt(ClientWidth() - 2 * SPACING, Height()));
+    message_text->SetResetMinSize(true);
+    layout->Add(message_text, 0, 0);
+    layout->SetRowStretch(0, 1);
+    layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);
+
+    m_button_0 = style->NewButton((zero == "" ? (buttons < 3 ? "Ok" : "Yes") : zero),
+                                  font, m_button_color, m_text_color);
+    button_layout->Add(m_button_0, 0, 0);
+
+    if (2 <= buttons) {
+        m_button_1 = style->NewButton((one == "" ? (buttons < 3 ? "Cancel" : "No") : one),
+                                      font, m_button_color, m_text_color);
+        button_layout->Add(m_button_1, 0, 1);
+    }
+    if (3 <= buttons) {
+        m_button_2 = style->NewButton((two == "" ? "Cancel" : two),
+                                      font, m_button_color, m_text_color);
+        button_layout->Add(m_button_2, 0, 2);
+    }
+    layout->Add(button_layout, 1, 0);
+
+    SetLayout(layout);
+
+    m_button_0->LeftClickedSignal.connect(
+        boost::bind(&ThreeButtonDlg::Button0Clicked, this));
+    if (m_button_1)
+        m_button_1->LeftClickedSignal.connect(
+            boost::bind(&ThreeButtonDlg::Button1Clicked, this));
+    if (m_button_2)
+        m_button_2->LeftClickedSignal.connect(
+            boost::bind(&ThreeButtonDlg::Button2Clicked, this));
+}
 
 Clr ThreeButtonDlg::ButtonColor() const
 { return m_button_color; }
@@ -122,64 +170,6 @@ std::size_t ThreeButtonDlg::NumButtons() const
     else if (m_button_1)
         retval = 2;
     return retval;
-}
-
-void ThreeButtonDlg::Init(const std::string& msg, const std::shared_ptr<Font>& font, std::size_t buttons,
-                          const std::string& zero/* = ""*/, const std::string& one/* = ""*/,
-                          const std::string& two/* = ""*/)
-{
-    if (buttons < 1)
-        buttons = 1;
-    else if (3 < buttons)
-        buttons = 3;
-
-    const int SPACING = 10;
-    const Y BUTTON_HEIGHT = font->Height() + 10;
-
-    Layout* layout = new Layout(X0, Y0, X1, Y1, 2, 1, 10);
-    Layout* button_layout = new Layout(X0, Y0, X1, Y1, 1, buttons, 0, 10);
-
-    std::shared_ptr<StyleFactory> style = GetStyleFactory();
-
-    TextControl* message_text = style->NewTextControl(msg, font, m_text_color,
-                                                      FORMAT_CENTER | FORMAT_VCENTER | FORMAT_WORDBREAK);
-    message_text->Resize(Pt(ClientWidth() - 2 * SPACING, Height()));
-    message_text->SetResetMinSize(true);
-    layout->Add(message_text, 0, 0);
-    layout->SetRowStretch(0, 1);
-    layout->SetMinimumRowHeight(1, BUTTON_HEIGHT);
-
-    m_button_0 = style->NewButton((zero == "" ? (buttons < 3 ? "Ok" : "Yes") : zero),
-                                  font, m_button_color, m_text_color);
-    button_layout->Add(m_button_0, 0, 0);
-
-    if (2 <= buttons) {
-        m_button_1 = style->NewButton((one == "" ? (buttons < 3 ? "Cancel" : "No") : one),
-                                      font, m_button_color, m_text_color);
-        button_layout->Add(m_button_1, 0, 1);
-    }
-    if (3 <= buttons) {
-        m_button_2 = style->NewButton((two == "" ? "Cancel" : two),
-                                      font, m_button_color, m_text_color);
-        button_layout->Add(m_button_2, 0, 2);
-    }
-    layout->Add(button_layout, 1, 0);
-
-    SetLayout(layout);
-
-    ConnectSignals();
-}
-
-void ThreeButtonDlg::ConnectSignals()
-{
-    m_button_0->LeftClickedSignal.connect(
-        boost::bind(&ThreeButtonDlg::Button0Clicked, this));
-    if (m_button_1)
-        m_button_1->LeftClickedSignal.connect(
-            boost::bind(&ThreeButtonDlg::Button1Clicked, this));
-    if (m_button_2)
-        m_button_2->LeftClickedSignal.connect(
-            boost::bind(&ThreeButtonDlg::Button2Clicked, this));
 }
 
 void ThreeButtonDlg::Button0Clicked()
