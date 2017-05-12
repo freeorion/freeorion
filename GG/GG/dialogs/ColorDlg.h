@@ -210,8 +210,6 @@ public:
 private:
     enum {R, G, B, A, H, S, V};
 
-    void Init(const std::shared_ptr<Font>& font);
-    void ConnectSignals();
     void ColorChanged(HSVClr color);
     void HueSaturationPickerChanged(double hue, double saturation);
     void ValuePickerChanged(double value);

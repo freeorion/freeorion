@@ -514,34 +514,6 @@ ColorDlg::ColorDlg(X x, Y y, Clr original_color, const std::shared_ptr<Font>& fo
     m_color(dialog_color),
     m_border_color(border_color),
     m_text_color(text_color)
-{ Init(font); }
-
-bool ColorDlg::ColorWasSelected() const
-{ return m_color_was_picked; }
-
-Clr ColorDlg::Result() const
-{ return Convert(m_current_color); }
-
-void ColorDlg::Render()
-{
-    Pt ul = UpperLeft(), lr = LowerRight();
-    FlatRectangle(ul, lr, m_color, m_border_color, 1);
-    if (m_current_color_button != INVALID_COLOR_BUTTON) {
-        Pt button_ul = m_color_buttons[m_current_color_button]->UpperLeft() - Pt(X(2), Y(2));
-        Pt button_lr = m_color_buttons[m_current_color_button]->LowerRight() + Pt(X(2), Y(2));
-        FlatRectangle(button_ul, button_lr, CLR_ZERO, m_text_color, 2);
-    }
-}
-
-void ColorDlg::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
-{
-    if (key == GGK_RETURN || key == GGK_KP_ENTER)
-        OkClicked();
-    else if (key == GGK_ESCAPE)
-        CancelClicked();
-}
-
-void ColorDlg::Init(const std::shared_ptr<Font>& font)
 {
     m_current_color = m_original_color_specified ? Convert(m_original_color) : Convert(CLR_BLACK);
     Clr color = Convert(m_current_color);
@@ -686,11 +658,6 @@ void ColorDlg::Init(const std::shared_ptr<Font>& font)
     master_layout->Add(m_sliders_ok_cancel_layout, 0, 1, 3, 1);
     SetLayout(master_layout);
 
-    ConnectSignals();
-}
-
-void ColorDlg::ConnectSignals()
-{
     for (std::size_t i = 0; i < m_color_buttons.size(); ++i) {
         m_color_buttons[i]->LeftClickedSignal.connect(
             [this, i](){ this->ColorButtonClicked(i); });
@@ -719,6 +686,31 @@ void ColorDlg::ConnectSignals()
         boost::bind(&ColorDlg::HueSaturationPickerChanged, this, _1, _2));
     m_value_picker->ChangedSignal.connect(
         boost::bind(&ColorDlg::ValuePickerChanged, this, _1));
+}
+
+bool ColorDlg::ColorWasSelected() const
+{ return m_color_was_picked; }
+
+Clr ColorDlg::Result() const
+{ return Convert(m_current_color); }
+
+void ColorDlg::Render()
+{
+    Pt ul = UpperLeft(), lr = LowerRight();
+    FlatRectangle(ul, lr, m_color, m_border_color, 1);
+    if (m_current_color_button != INVALID_COLOR_BUTTON) {
+        Pt button_ul = m_color_buttons[m_current_color_button]->UpperLeft() - Pt(X(2), Y(2));
+        Pt button_lr = m_color_buttons[m_current_color_button]->LowerRight() + Pt(X(2), Y(2));
+        FlatRectangle(button_ul, button_lr, CLR_ZERO, m_text_color, 2);
+    }
+}
+
+void ColorDlg::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_keys)
+{
+    if (key == GGK_RETURN || key == GGK_KP_ENTER)
+        OkClicked();
+    else if (key == GGK_ESCAPE)
+        CancelClicked();
 }
 
 void ColorDlg::ColorChanged(HSVClr color)
