@@ -142,7 +142,6 @@ private:
              const std::string& config_name = "");
     //@}
 
-    void            Init(int selected_fleet_id);
     void            Refresh();                          ///< regenerates contents
     void            RefreshStateChangedSignals();
 

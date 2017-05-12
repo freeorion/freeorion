@@ -2692,15 +2692,7 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
 
     for (int fleet_id : fleet_ids)
         m_fleet_ids.insert(fleet_id);
-    Init(selected_fleet_id);
-}
 
-FleetWnd::~FleetWnd() {
-    ClientUI::GetClientUI()->GetMapWnd()->ClearProjectedFleetMovementLines();
-    ClosingSignal(this);
-}
-
-void FleetWnd::Init(int selected_fleet_id) {
     Sound::TempUISoundDisabler sound_disabler;
 
     // add fleet aggregate stat icons
@@ -2804,7 +2796,7 @@ void FleetWnd::Init(int selected_fleet_id) {
     if (selected_fleet_id != INVALID_OBJECT_ID &&
         m_fleet_ids.find(selected_fleet_id) == m_fleet_ids.end())
     {
-        ErrorLogger() << "FleetWnd::Init couldn't find requested selected fleet with id " << selected_fleet_id;
+        ErrorLogger() << "FleetWnd::FleetWnd couldn't find requested selected fleet with id " << selected_fleet_id;
         selected_fleet_id = INVALID_OBJECT_ID;
     }
 
@@ -2812,6 +2804,11 @@ void FleetWnd::Init(int selected_fleet_id) {
     SetMinSize(GG::Pt(CUIWnd::MinimizedSize().x, TopBorder() + INNER_BORDER_ANGLE_OFFSET + BORDER_BOTTOM +
                                                  ListRowHeight() + 2*GG::Y(PAD)));
     DoLayout();
+}
+
+FleetWnd::~FleetWnd() {
+    ClientUI::GetClientUI()->GetMapWnd()->ClearProjectedFleetMovementLines();
+    ClosingSignal(this);
 }
 
 void FleetWnd::PreRender() {
