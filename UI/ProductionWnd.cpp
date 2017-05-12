@@ -211,7 +211,6 @@ namespace {
     private:
         void            Draw(GG::Clr clr, bool fill);
         void            DoLayout();
-        void            Init();
 
         const ProductionQueue::Element  elem;
         GG::Label*                      m_name_text;
@@ -228,7 +227,6 @@ namespace {
         double                          m_total_cost;
         double                          m_completed_progress;
         bool                            m_order_issuing_enabled;
-        bool                            m_initialized;
     };
 
     /////////////////////////////
@@ -403,21 +401,9 @@ namespace {
         m_total_turns(turns),
         m_turn_spending(turn_spending),
         m_total_cost(total_cost),
-        m_completed_progress(completed_progress),
-        m_initialized(false)
+        m_completed_progress(completed_progress)
     {
         SetChildClippingMode(ClipToClient);
-        RequirePreRender();
-    }
-
-    GG::Y QueueProductionItemPanel::DefaultHeight() {
-        const int FONT_PTS = ClientUI::Pts();
-        const GG::Y HEIGHT = Y_MARGIN + FONT_PTS + Y_MARGIN + FONT_PTS + Y_MARGIN + FONT_PTS + Y_MARGIN + 6;
-        return HEIGHT;
-    }
-
-    void QueueProductionItemPanel::Init() {
-        m_initialized = true;
 
         GG::Clr clr = m_in_progress
             ? GG::LightColor(ClientUI::ResearchableTechTextAndBorderColor())
@@ -530,14 +516,18 @@ namespace {
             m_block_size_selector->QuantChangedSignal.connect(
                 boost::bind(&QueueProductionItemPanel::ItemBlocksizeChanged, this, _1, _2));
 
-        // Since this is only called during PreRender force quantity indicators to PreRender()
-        GG::GUI::PreRenderWindow(m_quantity_selector);
-        GG::GUI::PreRenderWindow(m_block_size_selector);
+        RequirePreRender();
+    }
+
+    GG::Y QueueProductionItemPanel::DefaultHeight() {
+        const int FONT_PTS = ClientUI::Pts();
+        const GG::Y HEIGHT = Y_MARGIN + FONT_PTS + Y_MARGIN + FONT_PTS + Y_MARGIN + FONT_PTS + Y_MARGIN + 6;
+        return HEIGHT;
     }
 
     void QueueProductionItemPanel::PreRender() {
-        if (!m_initialized)
-            Init();
+        GG::GUI::PreRenderWindow(m_quantity_selector);
+        GG::GUI::PreRenderWindow(m_block_size_selector);
 
         GG::Wnd::PreRender();
         DoLayout();
