@@ -716,7 +716,14 @@ public:
                "production.ProductionQueueWnd"),
         m_queue_lb(nullptr)
     {
-        Init(HumanClientApp::GetApp()->EmpireID());
+        m_queue_lb = new ProdQueueListBox();
+        m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
+        m_queue_lb->SetName("ProductionQueue ListBox");
+
+        SetEmpire(HumanClientApp::GetApp()->EmpireID());
+
+        AttachChild(m_queue_lb);
+        DoLayout();
     }
     //@}
 
@@ -742,17 +749,6 @@ private:
     void DoLayout() {
         m_queue_lb->SizeMove(GG::Pt(GG::X0, GG::Y0),
                              GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
-    }
-
-    void Init(int empire_id) {
-        m_queue_lb = new ProdQueueListBox();
-        m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
-        m_queue_lb->SetName("ProductionQueue ListBox");
-
-        SetEmpire(empire_id);
-
-        AttachChild(m_queue_lb);
-        DoLayout();
     }
 
     ProdQueueListBox*   m_queue_lb;
