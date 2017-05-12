@@ -352,7 +352,14 @@ public:
                "research.ResearchQueueWnd"),
         m_queue_lb(nullptr)
     {
-        Init(HumanClientApp::GetApp()->EmpireID());
+        m_queue_lb = new ResearchQueueListBox("RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
+        m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
+        m_queue_lb->SetName("ResearchQueue ListBox");
+
+        SetEmpire(HumanClientApp::GetApp()->EmpireID());
+
+        AttachChild(m_queue_lb);
+        DoLayout();
     }
     //@}
 
@@ -378,17 +385,6 @@ private:
     void DoLayout() {
         m_queue_lb->SizeMove(GG::Pt(GG::X0, GG::Y0),
                                 GG::Pt(ClientWidth(), ClientHeight() - GG::Y(CUIWnd::INNER_BORDER_ANGLE_OFFSET)));
-    }
-
-    void Init(int empire_id) {
-        m_queue_lb = new ResearchQueueListBox("RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
-        m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
-        m_queue_lb->SetName("ResearchQueue ListBox");
-
-        SetEmpire(empire_id);
-
-        AttachChild(m_queue_lb);
-        DoLayout();
     }
 
     ResearchQueueListBox*   m_queue_lb;
