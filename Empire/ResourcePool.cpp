@@ -12,14 +12,10 @@
 // ResourcePool
 //////////////////////////////////////////////////
 ResourcePool::ResourcePool() :
-    m_stockpile_object_id(INVALID_OBJECT_ID),
-    m_stockpile(0.0),
     m_type(INVALID_RESOURCE_TYPE)
 {}
 
 ResourcePool::ResourcePool(ResourceType type) :
-    m_stockpile_object_id(INVALID_OBJECT_ID),
-    m_stockpile(0.0),
     m_type(type)
 {}
 

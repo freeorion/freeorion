@@ -591,20 +591,16 @@ void ResearchQueue::clear() {
 // ProductionQueue::ProductionItem //
 /////////////////////////////////////
 ProductionQueue::ProductionItem::ProductionItem() :
-    build_type(INVALID_BUILD_TYPE),
-    name(),
-    design_id(INVALID_DESIGN_ID)
+    build_type(INVALID_BUILD_TYPE)
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
     build_type(build_type_),
-    name(name_),
-    design_id(INVALID_DESIGN_ID)
+    name(name_)
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int design_id_) :
     build_type(build_type_),
-    name(),
     design_id(design_id_)
 {
     if (build_type == BT_SHIP) {
@@ -777,16 +773,8 @@ std::string ProductionQueue::ProductionItem::Dump() const {
 ProductionQueue::Element::Element() :
     empire_id(ALL_EMPIRES),
     ordered(0),
-    blocksize(1),
     remaining(0),
     location(INVALID_OBJECT_ID),
-    allocated_pp(0.0f),
-    progress(0.0f),
-    progress_memory(0.0f),
-    blocksize_memory(1),
-    turns_left_to_next_item(-1),
-    turns_left_to_completion(-1),
-    rally_point_id(INVALID_OBJECT_ID),
     paused(false)
 {}
 
@@ -795,16 +783,8 @@ ProductionQueue::Element::Element(ProductionItem item_, int empire_id_, int orde
     item(item_),
     empire_id(empire_id_),
     ordered(ordered_),
-    blocksize(1),
     remaining(remaining_),
     location(location_),
-    allocated_pp(0.0f),
-    progress(0.0f),
-    progress_memory(0.0f),
-    blocksize_memory(1),
-    turns_left_to_next_item(-1),
-    turns_left_to_completion(-1),
-    rally_point_id(INVALID_OBJECT_ID),
     paused(paused_)
 {}
 
@@ -813,16 +793,8 @@ ProductionQueue::Element::Element(BuildType build_type, std::string name, int em
     item(build_type, name),
     empire_id(empire_id_),
     ordered(ordered_),
-    blocksize(1),
     remaining(remaining_),
     location(location_),
-    allocated_pp(0.0f),
-    progress(0.0f),
-    progress_memory(0.0f),
-    blocksize_memory(1),
-    turns_left_to_next_item(-1),
-    turns_left_to_completion(-1),
-    rally_point_id(INVALID_OBJECT_ID),
     paused(paused_)
 {}
 
@@ -831,16 +803,8 @@ ProductionQueue::Element::Element(BuildType build_type, int design_id, int empir
     item(build_type, design_id),
     empire_id(empire_id_),
     ordered(ordered_),
-    blocksize(1),
     remaining(remaining_),
     location(location_),
-    allocated_pp(0.0f),
-    progress(0.0f),
-    progress_memory(0.0f),
-    blocksize_memory(1),
-    turns_left_to_next_item(-1),
-    turns_left_to_completion(-1),
-    rally_point_id(INVALID_OBJECT_ID),
     paused(paused_)
 {}
 
@@ -1353,8 +1317,6 @@ namespace {
 ////////////
 Empire::Empire() :
     m_id(ALL_EMPIRES),
-    m_capital_id(INVALID_OBJECT_ID),
-    m_source_id(INVALID_OBJECT_ID),
     m_research_queue(m_id),
     m_production_queue(m_id)
 { Init(); }
@@ -1365,8 +1327,6 @@ Empire::Empire(const std::string& name, const std::string& player_name,
     m_name(name),
     m_player_name(player_name),
     m_color(color),
-    m_capital_id(INVALID_OBJECT_ID),
-    m_source_id(INVALID_OBJECT_ID),
     m_research_queue(m_id),
     m_production_queue(m_id)
 {
