@@ -1373,7 +1373,8 @@ public:
 
     void ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const GG::Wnd* destination) override;
 
-    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it);
+    virtual void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it)
+    {}
 
     void                            SetEmpireShown(int empire_id, bool refresh_list = true);
 
@@ -1701,50 +1702,6 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     DetachChild(wnds.front());
 }
 
-void BasesListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
-                                  const GG::ListBox::iterator& original_position_it)
-{
-    if (BasesListBox::CompletedDesignListBoxRow* control =
-        dynamic_cast<BasesListBox::CompletedDesignListBoxRow*>(*row_it))
-    {
-        if (!GetEmpire(m_empire_id_shown))
-           return;
-
-        int design_id = control->DesignID();
-
-        iterator insert_before_row = std::next(row_it);
-
-        const BasesListBox::CompletedDesignListBoxRow* insert_before_control = (insert_before_row == end()) ? nullptr :
-            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
-        int insert_before_id = insert_before_control
-            ? insert_before_control->DesignID() : INVALID_DESIGN_ID;
-
-        control->Resize(ListRowSize());
-        HumanClientApp::GetApp()->Orders()
-            .IssueOrder(std::make_shared<ShipDesignOrder>(m_empire_id_shown, design_id, insert_before_id));
-        return;
-    }
-
-    if (BasesListBox::SavedDesignListBoxRow* control =
-        dynamic_cast<BasesListBox::SavedDesignListBoxRow*>(*row_it))
-    {
-        const auto& uuid = control->DesignUUID();
-
-        iterator insert_before_row = std::next(row_it);
-
-        const BasesListBox::SavedDesignListBoxRow* insert_before_control = (insert_before_row == end()) ? nullptr :
-            boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(*insert_before_row);
-        const auto& next_uuid = insert_before_control
-            ? insert_before_control->DesignUUID() : boost::uuids::uuid{{0}};
-
-        if (uuid == next_uuid)
-            return;
-
-        if (GetSavedDesignsManager().MoveBefore(uuid, next_uuid))
-            control->Resize(ListRowSize());
-    }
-}
-
 void BasesListBox::SetEmpireShown(int empire_id, bool refresh_list) {
     m_empire_id_shown = empire_id;
 
@@ -1856,6 +1813,7 @@ class CompletedDesignsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
+    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
@@ -1872,6 +1830,7 @@ class SavedDesignsListBox : public BasesListBox {
     protected:
     void PopulateCore() override;
     Row* ChildrenDraggedAwayCore(const GG::Wnd* const wnd) override;
+    void QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) override;
 
     void  BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
     void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
@@ -2279,6 +2238,46 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
 
 }
 
+void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
+                                             const GG::ListBox::iterator& original_position_it)
+{
+    const auto control = dynamic_cast<BasesListBox::CompletedDesignListBoxRow*>(*row_it);
+    if (!control || !GetEmpire(EmpireID()))
+        return;
+
+    int design_id = control->DesignID();
+
+    iterator insert_before_row = std::next(row_it);
+
+    const auto insert_before_control = (insert_before_row == end()) ? nullptr :
+        boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
+    int insert_before_id = insert_before_control
+        ? insert_before_control->DesignID() : INVALID_DESIGN_ID;
+
+    control->Resize(ListRowSize());
+    HumanClientApp::GetApp()->Orders()
+        .IssueOrder(std::make_shared<ShipDesignOrder>(EmpireID(), design_id, insert_before_id));
+}
+
+void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
+                                         const GG::ListBox::iterator& original_position_it)
+{
+    const auto control = dynamic_cast<BasesListBox::SavedDesignListBoxRow*>(*row_it);
+    if (!control)
+        return;
+
+    const auto& uuid = control->DesignUUID();
+
+    iterator insert_before_row = std::next(row_it);
+
+    const auto insert_before_control = (insert_before_row == end()) ? nullptr :
+        boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(*insert_before_row);
+    const auto& next_uuid = insert_before_control
+        ? insert_before_control->DesignUUID() : boost::uuids::uuid{{0}};
+
+    if (GetSavedDesignsManager().MoveBefore(uuid, next_uuid))
+        control->Resize(ListRowSize());
+}
 
 
 //////////////////////////////////////////////////
