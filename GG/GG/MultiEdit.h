@@ -224,7 +224,6 @@ protected:
     static const unsigned int SCROLL_WIDTH;
 
 private:
-    void    Init();
     void    ValidateStyle();
     void    ClearSelected();   ///< Clears (deletes) selected characters, as when a del, backspace, or character is entered
     void    AdjustView();      ///< Makes sure the caret ends up in view after an arbitrary move or SetText()
