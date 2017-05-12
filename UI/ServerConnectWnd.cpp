@@ -100,31 +100,6 @@ ServerConnectWnd::ServerConnectWnd() :
 
     ResetDefaultPosition();
 
-    Init();
-}
-
-void ServerConnectWnd::ModalInit()
-{ GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit); }
-
-GG::Rect ServerConnectWnd::CalculatePosition() const {
-    GG::Pt new_ul((GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2,
-                  (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGHT) / 2);
-    GG::Pt new_sz(WINDOW_WIDTH, WINDOW_HEIGHT);
-    return GG::Rect(new_ul, new_ul + new_sz);
-}
-
-void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
-    if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
-        OkClicked();
-    } else if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
-        CancelClicked();
-    }
-}
-
-const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
-{ return m_result; }
-
-void ServerConnectWnd::Init() {
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
         boost::bind(&ServerConnectWnd::EnableDisableControls, this));
     m_servers_lb->SelChangedSignal.connect(
@@ -149,6 +124,27 @@ void ServerConnectWnd::Init() {
     }
     EnableDisableControls();
 }
+
+void ServerConnectWnd::ModalInit()
+{ GG::GUI::GetGUI()->SetFocusWnd(m_player_name_edit); }
+
+GG::Rect ServerConnectWnd::CalculatePosition() const {
+    GG::Pt new_ul((GG::GUI::GetGUI()->AppWidth() - WINDOW_WIDTH) / 2,
+                  (GG::GUI::GetGUI()->AppHeight() - WINDOW_HEIGHT) / 2);
+    GG::Pt new_sz(WINDOW_WIDTH, WINDOW_HEIGHT);
+    return GG::Rect(new_ul, new_ul + new_sz);
+}
+
+void ServerConnectWnd::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) {
+    if (!m_ok_bn->Disabled() && (key == GG::GGK_RETURN || key == GG::GGK_KP_ENTER)) { // Same behaviour as if "OK" was pressed
+        OkClicked();
+    } else if (key == GG::GGK_ESCAPE) { // Same behaviour as if "Cancel" was pressed
+        CancelClicked();
+    }
+}
+
+const std::pair<std::string, std::string>& ServerConnectWnd::Result() const
+{ return m_result; }
 
 void ServerConnectWnd::PopulateServerList()
 {

@@ -32,7 +32,6 @@ protected:
     GG::Rect CalculatePosition() const override;
 
 private:
-    void Init();
     void PopulateServerList();
     void ServerSelected(const GG::ListBox::SelectionSet& selections);
     void IPAddressEdited(const std::string& str);
