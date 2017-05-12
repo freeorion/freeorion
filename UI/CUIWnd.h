@@ -194,21 +194,21 @@ protected:
     bool                    m_resizable;            //!< true if the window is able to be resized
     bool                    m_closable;             //!< true if the window is able to be closed with a button press
     bool                    m_minimizable;          //!< true if the window is able to be minimized
-    bool                    m_minimized;            //!< true if the window is currently minimized
+    bool                    m_minimized = false;    //!< true if the window is currently minimized
     bool                    m_pinable;              //!< true if the window is able to be pinned
-    bool                    m_pinned;               //!< true if the window is currently pinned
+    bool                    m_pinned = false;       //!< true if the window is currently pinned
 
     GG::Pt                  m_drag_offset;          //!< offset from the lower-right corner of the point being used to drag-resize
     GG::Pt                  m_original_size;        //!< keeps track of the size of the window before resizing
 
-    bool                    m_mouse_in_resize_tab;
+    bool                    m_mouse_in_resize_tab = false;
 
-    bool                    m_config_save;          //!< true if SaveOptions() is currently allowed to write to the OptionsDB
+    bool                    m_config_save = true;   //!< true if SaveOptions() is currently allowed to write to the OptionsDB
     const std::string       m_config_name;          //!< the name that this window will use to save its properties to the OptionsDB, the default empty string means "do not save"
 
-    GG::Button*             m_close_button;         //!< the close button
-    CUI_MinRestoreButton*   m_minimize_button;      //!< the minimize/restore button
-    CUI_PinButton*          m_pin_button;           //!< the pin button
+    GG::Button*             m_close_button = nullptr;     //!< the close button
+    CUI_MinRestoreButton*   m_minimize_button = nullptr;  //!< the minimize/restore button
+    CUI_PinButton*          m_pin_button = nullptr;       //!< the pin button
 
     GG::GL2DVertexBuffer                                m_vertex_buffer;
     std::vector<std::pair<std::size_t, std::size_t>>    m_buffer_indices;

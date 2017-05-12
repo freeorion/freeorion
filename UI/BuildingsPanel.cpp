@@ -261,11 +261,7 @@ ScanlineRenderer BuildingIndicator::s_scanline_shader;
 
 BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_graphic(nullptr),
-    m_scrap_indicator(nullptr),
-    m_progress_bar(nullptr),
-    m_building_id(building_id),
-    m_order_issuing_enabled(true)
+    m_building_id(building_id)
 {
     if (std::shared_ptr<const Building> building = GetBuilding(m_building_id))
         building->StateChangedSignal.connect(
@@ -276,11 +272,7 @@ BuildingIndicator::BuildingIndicator(GG::X w, int building_id) :
 BuildingIndicator::BuildingIndicator(GG::X w, const std::string& building_type,
                                      double turns_completed, double total_turns, double total_cost, double turn_spending) :
     GG::Wnd(GG::X0, GG::Y0, w, GG::Y(Value(w)), GG::INTERACTIVE),
-    m_graphic(nullptr),
-    m_scrap_indicator(nullptr),
-    m_progress_bar(nullptr),
-    m_building_id(INVALID_OBJECT_ID),
-    m_order_issuing_enabled(true)
+    m_building_id(INVALID_OBJECT_ID)
 {
     std::shared_ptr<GG::Texture> texture = ClientUI::BuildingIcon(building_type);
 
