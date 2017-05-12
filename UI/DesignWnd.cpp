@@ -1379,10 +1379,6 @@ public:
 
     virtual void                    Populate();
 
-    void                            ShowEmptyHulls(bool refresh_list = true);
-    void                            ShowCompletedDesigns(bool refresh_list = true);
-    void                            ShowSavedDesigns(bool refresh_list = true);
-    void                            ShowMonsters(bool refresh_list = true);
     //@}
 
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
@@ -1491,11 +1487,6 @@ private:
 
     int                         m_empire_id_shown;
     const BasesListBox::AvailabilityManager& m_availabilities_state;
-
-    bool                        m_showing_empty_hulls;
-    bool                        m_showing_completed_designs;
-    bool                        m_showing_saved_designs;
-    bool                        m_showing_monsters;
 
     std::set<std::string>       m_saved_desgins_in_list;
 
@@ -1653,11 +1644,7 @@ BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabiliti
                            const boost::optional<std::string>& drop_type) :
     QueueListBox(drop_type,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
-    m_availabilities_state(availabilities_state),
-    m_showing_empty_hulls(false),
-    m_showing_completed_designs(false),
-    m_showing_saved_designs(false),
-    m_showing_monsters(false)
+    m_availabilities_state(availabilities_state)
 {
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
@@ -1951,44 +1938,6 @@ void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
             DesignComponentsSelectedSignal(hp_row->Hull(), hp_row->Parts());
         return;
     }
-}
-
-void BasesListBox::ShowEmptyHulls(bool refresh_list) {
-    m_showing_empty_hulls = true;
-    m_showing_completed_designs = false;
-    m_showing_saved_designs = false;
-    m_showing_monsters = false;
-    this->EnableOrderIssuing(false);
-    if (refresh_list)
-        Populate();
-}
-
-void BasesListBox::ShowCompletedDesigns(bool refresh_list) {
-    m_showing_empty_hulls = false;
-    m_showing_completed_designs = true;
-    m_showing_saved_designs = false;
-    m_showing_monsters = false;
-    if (refresh_list)
-        Populate();
-}
-
-void BasesListBox::ShowSavedDesigns(bool refresh_list) {
-    m_showing_empty_hulls = false;
-    m_showing_completed_designs = false;
-    m_showing_saved_designs = true;
-    m_showing_monsters = false;
-    if (refresh_list)
-        Populate();
-}
-
-void BasesListBox::ShowMonsters(bool refresh_list) {
-    m_showing_empty_hulls = false;
-    m_showing_completed_designs = false;
-    m_showing_saved_designs = false;
-    m_showing_monsters = true;
-    this->EnableOrderIssuing(false);
-    if (refresh_list)
-        Populate();
 }
 
 BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool available, bool unavailable) :
@@ -2372,7 +2321,6 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_hulls_list = new EmptyHullsListBox(m_availabilities_state);
     m_hulls_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_hulls_list, UserString("DESIGN_WND_HULLS"));
-    m_hulls_list->ShowEmptyHulls(false);
     m_hulls_list->DesignComponentsSelectedSignal.connect(
         DesignWnd::BaseSelector::DesignComponentsSelectedSignal);
     m_hulls_list->HullClickedSignal.connect(
@@ -2381,7 +2329,6 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_designs_list = new CompletedDesignsListBox(m_availabilities_state, COMPLETE_DESIGN_ROW_DROP_STRING);
     m_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_designs_list, UserString("DESIGN_WND_FINISHED_DESIGNS"));
-    m_designs_list->ShowCompletedDesigns(false);
     m_designs_list->DesignSelectedSignal.connect(
         DesignWnd::BaseSelector::DesignSelectedSignal);
     m_designs_list->DesignClickedSignal.connect(
@@ -2390,7 +2337,6 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list = new SavedDesignsListBox(m_availabilities_state, SAVED_DESIGN_ROW_DROP_STRING);
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
-    m_saved_designs_list->ShowSavedDesigns(true);
     m_saved_designs_list->SavedDesignSelectedSignal.connect(
         boost::bind(&DesignWnd::BaseSelector::SavedDesignSelectedSlot, this, _1));
     m_saved_designs_list->DesignClickedSignal.connect(
@@ -2399,7 +2345,6 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_monsters_list = new MonstersListBox(m_availabilities_state);
     m_monsters_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_monsters_list, UserString("DESIGN_WND_MONSTERS"));
-    m_monsters_list->ShowMonsters(false);
     m_monsters_list->DesignSelectedSignal.connect(
         DesignWnd::BaseSelector::DesignSelectedSignal);
     m_monsters_list->DesignClickedSignal.connect(
