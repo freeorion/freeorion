@@ -20,6 +20,7 @@ class System;
 class SitRepEntry;
 struct UniverseObjectVisitor;
 FO_COMMON_API extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int INVALID_GAME_TURN;
 
 // The ID number assigned to a UniverseObject upon construction;
 // It is assigned an ID later when it is placed in the universe
@@ -225,14 +226,14 @@ protected:
 private:
     std::map<MeterType, Meter>  CensoredMeters(Visibility vis) const;   ///< returns set of meters of this object that are censored based on the specified Visibility \a vis
 
-    int                                             m_id;
+    int                                             m_id = INVALID_OBJECT_ID;
     double                                          m_x;
     double                                          m_y;
-    int                                             m_owner_empire_id;
-    int                                             m_system_id;
+    int                                             m_owner_empire_id = ALL_EMPIRES;
+    int                                             m_system_id = INVALID_OBJECT_ID;
     std::map<std::string, std::pair<int, float>>    m_specials; // map from special name to pair of (turn added, capacity)
     std::map<MeterType, Meter>                      m_meters;
-    int                                             m_created_on_turn;
+    int                                             m_created_on_turn = INVALID_GAME_TURN;
 
     friend class boost::serialization::access;
     template <class Archive>

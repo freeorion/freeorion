@@ -5,18 +5,12 @@
 #include "../util/Logger.h"
 
 
-Fighter::Fighter() :
-    UniverseObject(),
-    m_damage(0.0f),
-    m_destroyed(false),
-    m_launched_from_id(INVALID_OBJECT_ID),
-    m_species_name()
+Fighter::Fighter()
 {}
 
 Fighter::Fighter(int empire_id, int launched_from_id, const std::string& species_name, float damage) :
     UniverseObject(),
     m_damage(damage),
-    m_destroyed(false),
     m_launched_from_id(launched_from_id),
     m_species_name(species_name)
 {

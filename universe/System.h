@@ -8,6 +8,11 @@
 
 #include <map>
 
+
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
+namespace {
+    const int SYSTEM_ORBITS = 7;
+}
 struct UniverseObjectVisitor;
 
 /** contains UniverseObjects and connections to other systems (starlanes and
@@ -154,7 +159,7 @@ protected:
 
 private:
     StarType            m_star;
-    std::vector<int>    m_orbits;                   ///< indexed by orbit number, indicates the id of the planet in that orbit
+    std::vector<int>    m_orbits = std::vector<int>(SYSTEM_ORBITS, INVALID_OBJECT_ID);  ///< indexed by orbit number, indicates the id of the planet in that orbit
     std::set<int>       m_objects;
     std::set<int>       m_planets;
     std::set<int>       m_buildings;
@@ -162,10 +167,10 @@ private:
     std::set<int>       m_ships;
     std::set<int>       m_fields;
     std::map<int, bool> m_starlanes_wormholes;      ///< the ints represent the IDs of other connected systems; the bools indicate whether the connection is a wormhole (true) or a starlane (false)
-    int                 m_last_turn_battle_here;    ///< the turn on which there was last a battle in this system
+    int                 m_last_turn_battle_here = INVALID_GAME_TURN;  ///< the turn on which there was last a battle in this system
 
     std::string         m_overlay_texture;          // intentionally not serialized; set by local effects
-    double              m_overlay_size;
+    double              m_overlay_size = 1.0;
 
     friend class boost::serialization::access;
     template <class Archive>

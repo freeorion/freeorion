@@ -520,7 +520,6 @@ HullTypeManager::iterator HullTypeManager::end() const
 // ShipDesign
 ////////////////////////////////////////////////
 ShipDesign::ShipDesign() :
-    m_id(INVALID_OBJECT_ID),
     m_name(),
     m_description(),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
@@ -530,23 +529,7 @@ ShipDesign::ShipDesign() :
     m_is_monster(false),
     m_icon(),
     m_3D_model(),
-    m_name_desc_in_stringtable(false),
-    m_is_armed(false),
-    m_has_fighters(false),
-    m_can_bombard(false),
-    m_detection(0.0),
-    m_colony_capacity(0.0),
-    m_troop_capacity(0.0),
-    m_stealth(0.0),
-    m_fuel(0.0),
-    m_shields(0.0),
-    m_structure(0.0),
-    m_speed(0.0),
-    m_research_generation(0.0),
-    m_industry_generation(0.0),
-    m_trade_generation(0.0),
-    m_is_production_location(false),
-    m_producible(false)
+    m_name_desc_in_stringtable(false)
 {}
 
 ShipDesign::ShipDesign(const std::string& name, const std::string& description,
@@ -554,7 +537,6 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
                        const std::vector<std::string>& parts,
                        const std::string& icon, const std::string& model,
                        bool name_desc_in_stringtable, bool monster) :
-    m_id(INVALID_OBJECT_ID),
     m_name(name),
     m_description(description),
     m_designed_on_turn(designed_on_turn),
@@ -564,23 +546,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     m_is_monster(monster),
     m_icon(icon),
     m_3D_model(model),
-    m_name_desc_in_stringtable(name_desc_in_stringtable),
-    m_is_armed(false),
-    m_has_fighters(false),
-    m_can_bombard(false),
-    m_detection(0.0),
-    m_colony_capacity(0.0),
-    m_troop_capacity(0.0),
-    m_stealth(0.0),
-    m_fuel(0.0),
-    m_shields(0.0),
-    m_structure(0.0),
-    m_speed(0.0),
-    m_research_generation(0.0),
-    m_industry_generation(0.0),
-    m_trade_generation(0.0),
-    m_is_production_location(false),
-    m_producible(false)
+    m_name_desc_in_stringtable(name_desc_in_stringtable)
 {
     // expand parts list to have empty values if fewer parts are given than hull has slots
     if (const HullType* hull_type = GetHullType(m_hull)) {

@@ -3,18 +3,14 @@
 #include <algorithm>
 #include <sstream>
 
-const float Meter::DEFAULT_VALUE = 0.0f;
 const float Meter::LARGE_VALUE = static_cast<float>(2 << 15);
 const float Meter::INVALID_VALUE = -LARGE_VALUE;
 
-Meter::Meter() :
-    m_current_value(DEFAULT_VALUE),
-    m_initial_value(DEFAULT_VALUE)
+Meter::Meter()
 {}
 
 Meter::Meter(float current_value) :
-    m_current_value(current_value),
-    m_initial_value(DEFAULT_VALUE)
+    m_current_value(current_value)
 {}
 
 Meter::Meter(float current_value, float initial_value) :

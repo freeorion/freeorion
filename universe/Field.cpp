@@ -37,9 +37,7 @@ namespace {
 /////////////////////////////////////////////////
 // Field                                       //
 /////////////////////////////////////////////////
-Field::Field() :
-    UniverseObject(),
-    m_type_name("")
+Field::Field()
 {}
 
 Field::~Field()

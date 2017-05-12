@@ -19,7 +19,7 @@
 
 #include "../util/Export.h"
 
-
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
 namespace Condition {
     struct ConditionBase;
 }
@@ -515,7 +515,7 @@ public:
 private:
     void BuildStatCaches();
 
-    int                         m_id;
+    int                         m_id = INVALID_OBJECT_ID;
 
     std::string                 m_name;
     std::string                 m_description;
@@ -534,25 +534,25 @@ private:
 
     // Note that these are fine to compute on demand and cache here -- it is
     // not necessary to serialize them.
-    bool    m_is_armed;
-    bool    m_has_fighters;
-    bool    m_can_bombard;
-    float   m_detection;
-    float   m_colony_capacity;
-    float   m_troop_capacity;
-    float   m_stealth;
-    float   m_fuel;
-    float   m_shields;
-    float   m_structure;
-    float   m_speed;
-    float   m_research_generation;
-    float   m_industry_generation;
-    float   m_trade_generation;
-    bool    m_is_production_location;
+    bool    m_is_armed = false;
+    bool    m_has_fighters = false;
+    bool    m_can_bombard = false;
+    float   m_detection = 0.0;
+    float   m_colony_capacity = 0.0;
+    float   m_troop_capacity = 0.0;
+    float   m_stealth = 0.0;
+    float   m_fuel = 0.0;
+    float   m_shields = 0.0;
+    float   m_structure = 0.0;
+    float   m_speed = 0.0;
+    float   m_research_generation = 0.0;
+    float   m_industry_generation = 0.0;
+    float   m_trade_generation = 0.0;
+    bool    m_is_production_location = false;
     std::map<std::string, int>      m_num_part_types;
     std::map<ShipPartClass, int>    m_num_part_classes;
 
-    bool    m_producible;
+    bool    m_producible = false;
 
     friend class boost::serialization::access;
     template <class Archive>

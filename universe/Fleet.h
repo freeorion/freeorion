@@ -140,17 +140,7 @@ protected:
     friend class ObjectMap;
 
     /** \name Structors */ //@{
-    Fleet() :
-        UniverseObject(),
-        m_prev_system(INVALID_OBJECT_ID),
-        m_next_system(INVALID_OBJECT_ID),
-        m_aggressive(true),
-        m_ordered_given_to_empire_id(ALL_EMPIRES),
-        m_travel_route(),
-        m_travel_distance(0.0),
-        m_arrived_this_turn(false),
-        m_arrival_starlane(INVALID_OBJECT_ID)
-    {}
+    Fleet() {}
     Fleet(const std::string& name, double x, double y, int owner);      ///< general ctor taking name, position and owner id
 
     template <typename T> friend void UniverseObjectDeleter(T*);
@@ -171,12 +161,12 @@ private:
     std::set<int>               m_ships;
 
     // these two uniquely describe the starlane graph edge the fleet is on, if it it's on one
-    int                         m_prev_system;  ///< the previous system in the route, if any
-    int                         m_next_system;  ///< the next system in the route, if any
+    int                         m_prev_system = INVALID_OBJECT_ID;  ///< the previous system in the route, if any
+    int                         m_next_system = INVALID_OBJECT_ID;  ///< the next system in the route, if any
 
-    bool                        m_aggressive;    ///< should this fleet attack enemies in the same system?
+    bool                        m_aggressive = true;    ///< should this fleet attack enemies in the same system?
 
-    int                         m_ordered_given_to_empire_id;
+    int                         m_ordered_given_to_empire_id = ALL_EMPIRES;
 
     /** list of systems on travel route of fleet from current position to
       * destination.  If the fleet is currently in a system, that will be the
@@ -186,10 +176,10 @@ private:
       * unknown.  The list may also be empty, which indicates that the fleet
       * is not planning to move. */
     std::list<int>              m_travel_route;
-    mutable double              m_travel_distance;
+    mutable double              m_travel_distance = 0.0;
 
-    bool                        m_arrived_this_turn;
-    int                         m_arrival_starlane; // see comment for ArrivalStarlane()
+    bool                        m_arrived_this_turn = false;
+    int                         m_arrival_starlane = INVALID_OBJECT_ID; // see comment for ArrivalStarlane()
 
     friend class boost::serialization::access;
     template <class Archive>
