@@ -51,19 +51,19 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
     // small meter indicators - for use when panel is collapsed
     m_meter_stats.push_back({METER_SHIELD, new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD),
                                                              obj->InitialMeterValue(METER_SHIELD), 3, false,
-                                                             GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
+                                                             MeterIconSize().x, MeterIconSize().y)});
     m_meter_stats.push_back({METER_DEFENSE, new StatisticIcon(ClientUI::MeterIcon(METER_DEFENSE),
                                                               obj->InitialMeterValue(METER_DEFENSE), 3, false,
-                                                              GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
+                                                              MeterIconSize().x, MeterIconSize().y)});
     m_meter_stats.push_back({METER_TROOPS, new StatisticIcon(ClientUI::MeterIcon(METER_TROOPS),
                                                              obj->InitialMeterValue(METER_TROOPS), 3, false,
-                                                             GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
+                                                             MeterIconSize().x, MeterIconSize().y)});
     m_meter_stats.push_back({METER_DETECTION, new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION),
                                                                 obj->InitialMeterValue(METER_DETECTION), 3, false,
-                                                                GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
+                                                                MeterIconSize().x, MeterIconSize().y)});
     m_meter_stats.push_back({METER_STEALTH, new StatisticIcon(ClientUI::MeterIcon(METER_STEALTH),
                                                               obj->InitialMeterValue(METER_STEALTH), 3, false,
-                                                              GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)});
+                                                              MeterIconSize().x, MeterIconSize().y)});
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;

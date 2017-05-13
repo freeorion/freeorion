@@ -409,18 +409,15 @@ class StatisticIcon : public GG::Control {
 public:
     /** \name Structors */ //@{
     StatisticIcon(const std::shared_ptr<GG::Texture> texture,
-                  GG::X x = GG::X0, GG::Y y = GG::Y0,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initialized with no value (just an icon)
 
     StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   double value, int digits, bool showsign,
-                  GG::X x = GG::X0, GG::Y y = GG::Y0,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with one value
 
     StatisticIcon(const std::shared_ptr<GG::Texture> texture,
                   double value0, double value1, int digits0, int digits1,
                   bool showsign0, bool showsign1,
-                  GG::X x = GG::X0, GG::Y y = GG::Y0,
                   GG::X w = GG::X1, GG::Y h = GG::Y1); ///< initializes with two values
     //@}
 

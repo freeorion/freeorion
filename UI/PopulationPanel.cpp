@@ -52,15 +52,15 @@ PopulationPanel::PopulationPanel(GG::X w, int object_id) :
     m_meter_stats.push_back(
         std::make_pair(METER_POPULATION, new StatisticIcon(ClientUI::SpeciesIcon(pop->SpeciesName()),
                                                            obj->InitialMeterValue(METER_POPULATION), 3, false,
-                                                           GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+                                                           MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
         std::make_pair(METER_HAPPINESS, new StatisticIcon(ClientUI::MeterIcon(METER_HAPPINESS),
                                                           obj->InitialMeterValue(METER_HAPPINESS), 3, false,
-                                                          GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+                                                          MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
         std::make_pair(METER_CONSTRUCTION, new StatisticIcon(ClientUI::MeterIcon(METER_CONSTRUCTION),
                                                              obj->InitialMeterValue(METER_CONSTRUCTION), 3, false,
-                                                             GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+                                                             MeterIconSize().x, MeterIconSize().y)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;

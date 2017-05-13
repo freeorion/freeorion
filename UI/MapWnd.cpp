@@ -1184,32 +1184,32 @@ MapWnd::MapWnd() :
     const GG::X ICON_DUAL_WIDTH(100);
     const GG::X ICON_WIDTH(24);
     m_population = new StatisticIcon(ClientUI::MeterIcon(METER_POPULATION), 0, 3, false,
-                                     GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                     ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_population->SetName("Population StatisticIcon");
 
     m_industry = new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY), 0, 3, false,
-                                   GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                   ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_industry->SetName("Industry StatisticIcon");
     m_industry->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleProduction, this));
 
     m_research = new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH), 0, 3, false,
-                                   GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                   ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_research->SetName("Research StatisticIcon");
     m_research->LeftClickedSignal.connect(
         boost::bind(&MapWnd::ToggleResearch, this));
 
     m_trade = new StatisticIcon(ClientUI::MeterIcon(METER_TRADE), 0, 3, false,
-                                GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_trade->SetName("Trade StatisticIcon");
 
     m_fleet = new StatisticIcon(ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "sitrep" / "fleet_arrived.png"),
                                 0, 3, false,
-                                GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_fleet->SetName("Fleet StatisticIcon");
 
     m_detection = new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION), 0, 3, false,
-                                    GG::X0, GG::Y0, ICON_DUAL_WIDTH, m_btn_turn->Height());
+                                    ICON_DUAL_WIDTH, m_btn_turn->Height());
     m_detection->SetName("Detection StatisticIcon");
 
     GG::SubTexture wasted_ressource_subtexture = GG::SubTexture(ClientUI::GetTexture(button_texture_dir /

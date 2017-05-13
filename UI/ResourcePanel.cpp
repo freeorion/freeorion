@@ -57,19 +57,19 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
     m_meter_stats.push_back(
         std::make_pair(METER_INDUSTRY, new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY),
                                                          obj->InitialMeterValue(METER_INDUSTRY), 3, false,
-                                                         GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+                                                         MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
         std::make_pair(METER_RESEARCH, new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH),
                                                          obj->InitialMeterValue(METER_RESEARCH), 3, false,
-                                                         GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+                                                         MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
         std::make_pair(METER_TRADE, new StatisticIcon(ClientUI::MeterIcon(METER_TRADE),
                                                       obj->InitialMeterValue(METER_TRADE), 3, false,
-                                                      GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+                                                      MeterIconSize().x, MeterIconSize().y)));
     m_meter_stats.push_back(
         std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY),
                                                        obj->InitialMeterValue(METER_SUPPLY), 3, false,
-                                                       GG::X0, GG::Y0, MeterIconSize().x, MeterIconSize().y)));
+                                                       MeterIconSize().x, MeterIconSize().y)));
 
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
