@@ -2698,61 +2698,22 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     // add fleet aggregate stat icons
     int tooltip_delay = GetOptionsDB().Get<int>("UI.tooltip-delay");
 
-    // stat icon for fleet count
-    StatisticIcon* icon = new StatisticIcon(FleetCountIcon(), 0, 0, false,
-                                            GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back({METER_SIZE, icon});
-    icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(UserString("FW_FLEET_COUNT_SUMMARY"));
-    AttachChild(icon);
-
-    // stat icon for fleet damage
-    icon = new StatisticIcon(DamageIcon(), 0, 0, false,
-                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back({METER_CAPACITY, icon});
-    icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(UserString("FW_FLEET_DAMAGE_SUMMARY"));
-    AttachChild(icon);
-
-    // stat icon for fleet flighters
-    icon = new StatisticIcon(FightersIcon(), 0, 0, false,
-                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back({METER_SECONDARY_STAT, icon});
-    icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(UserString("FW_FLEET_FIGHTER_SUMMARY"));
-    AttachChild(icon);
-
-    // stat icon for fleet structure
-    icon = new StatisticIcon(ClientUI::MeterIcon(METER_STRUCTURE), 0, 0, false,
-                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back({METER_STRUCTURE, icon});
-    icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(UserString("FW_FLEET_STRUCTURE_SUMMARY"));
-    AttachChild(icon);
-
-    // stat icon for fleet shields
-    icon = new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD), 0, 0, false,
-                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back({METER_SHIELD, icon});
-    icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(UserString("FW_FLEET_SHIELD_SUMMARY"));
-    AttachChild(icon);
-
-    // stat icon for fleet troops
-    icon = new StatisticIcon(TroopIcon(), 0, 0, false,
-                             GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back({METER_TROOPS, icon});
-    icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(UserString("FW_FLEET_TROOP_SUMMARY"));
-    AttachChild(icon);
-
-    // stat icon for colonist capacity
-    icon = new StatisticIcon(ColonyIcon(), 0, 0, false,
-                                GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
-    m_stat_icons.push_back({METER_POPULATION, icon});
-    icon->SetBrowseModeTime(tooltip_delay);
-    icon->SetBrowseText(UserString("FW_FLEET_COLONY_SUMMARY"));
-    AttachChild(icon);
+    for (auto entry : {
+            std::make_tuple(METER_SIZE, FleetCountIcon(), UserStringNop("FW_FLEET_COUNT_SUMMARY")),
+            std::make_tuple(METER_CAPACITY, DamageIcon(), UserStringNop("FW_FLEET_DAMAGE_SUMMARY")),
+            std::make_tuple(METER_SECONDARY_STAT, FightersIcon(), UserStringNop("FW_FLEET_FIGHTER_SUMMARY")),
+            std::make_tuple(METER_STRUCTURE, ClientUI::MeterIcon(METER_STRUCTURE), UserStringNop("FW_FLEET_STRUCTURE_SUMMARY")),
+            std::make_tuple(METER_SHIELD, ClientUI::MeterIcon(METER_SHIELD), UserStringNop("FW_FLEET_SHIELD_SUMMARY")),
+            std::make_tuple(METER_TROOPS, TroopIcon(), UserStringNop("FW_FLEET_TROOP_SUMMARY")),
+            std::make_tuple(METER_POPULATION, ColonyIcon(), UserStringNop("FW_FLEET_COLONY_SUMMARY")),
+        })
+    {
+        StatisticIcon* icon = new StatisticIcon(std::get<1>(entry), 0, 0, false, GG::X0, GG::Y0, StatIconSize().x, StatIconSize().y);
+        m_stat_icons.push_back({std::get<0>(entry), icon});
+        icon->SetBrowseModeTime(tooltip_delay);
+        icon->SetBrowseText(UserString(std::get<2>(entry)));
+        AttachChild(icon);
+    }
 
     // create fleet list box
     m_fleets_lb = new FleetsListBox(m_order_issuing_enabled);
