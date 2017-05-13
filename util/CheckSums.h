@@ -27,10 +27,16 @@ namespace CheckSums {
 
     // pointer types
     template <class T>
-    void CheckSumCombine(unsigned int& sum, T p,
-                         decltype(*std::declval<T>())* val = nullptr)
+    void CheckSumCombine(unsigned int& sum, const T* p)
     {
         TraceLogger() << "CheckSumCombine(T*): " << typeid(p).name();
+        if (p)
+            CheckSumCombine(sum, *p);
+    }
+    template <class T>
+    void CheckSumCombine(unsigned int& sum, const typename std::shared_ptr<T>& p)
+    {
+        TraceLogger() << "CheckSumCombine(shared_ptr<T>): " << typeid(p).name();
         if (p)
             CheckSumCombine(sum, *p);
     }
