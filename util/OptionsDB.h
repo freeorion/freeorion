@@ -309,6 +309,17 @@ public:
         m_dirty |= it->second.SetFromValue(value);
     }
 
+    /** Set the default value of option @p name to @p value */
+    template <class T>
+    void        SetDefault(const std::string& name, const T& value) {
+        std::map<std::string, Option>::iterator it = m_options.find(name);
+        if (!OptionExists(it))
+            throw std::runtime_error("Attempted to set default value of nonexistent option \"" + name + "\".");
+        if (it->second.default_value.type() != typeid(T))
+            throw boost::bad_any_cast();
+        it->second.default_value = value;
+    }
+
     /** if an xml file exists at \a file_path and has the same version tag as \a version, fill the
       * DB options contained in that file (read the file using XMLDoc, then fill the DB using SetFromXML)
       * if the \a version string is empty, bypass that check */
