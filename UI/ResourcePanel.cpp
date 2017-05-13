@@ -53,31 +53,17 @@ ResourcePanel::ResourcePanel(GG::X w, int object_id) :
         return;
     }
 
-    // small meter indicators - for use when panel is collapsed
-    m_meter_stats.push_back(
-        std::make_pair(METER_INDUSTRY, new StatisticIcon(ClientUI::MeterIcon(METER_INDUSTRY),
-                                                         obj->InitialMeterValue(METER_INDUSTRY), 3, false,
-                                                         MeterIconSize().x, MeterIconSize().y)));
-    m_meter_stats.push_back(
-        std::make_pair(METER_RESEARCH, new StatisticIcon(ClientUI::MeterIcon(METER_RESEARCH),
-                                                         obj->InitialMeterValue(METER_RESEARCH), 3, false,
-                                                         MeterIconSize().x, MeterIconSize().y)));
-    m_meter_stats.push_back(
-        std::make_pair(METER_TRADE, new StatisticIcon(ClientUI::MeterIcon(METER_TRADE),
-                                                      obj->InitialMeterValue(METER_TRADE), 3, false,
-                                                      MeterIconSize().x, MeterIconSize().y)));
-    m_meter_stats.push_back(
-        std::make_pair(METER_SUPPLY, new StatisticIcon(ClientUI::MeterIcon(METER_SUPPLY),
-                                                       obj->InitialMeterValue(METER_SUPPLY), 3, false,
-                                                       MeterIconSize().x, MeterIconSize().y)));
-
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
 
-    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
-        meter_stat.second->InstallEventFilter(this);
-        AttachChild(meter_stat.second);
-        meters.push_back(std::make_pair(meter_stat.first, AssociatedMeterType(meter_stat.first)));
+    // small meter indicators - for use when panel is collapsed
+    for (MeterType meter : {METER_INDUSTRY, METER_RESEARCH, METER_TRADE, METER_SUPPLY})
+    {
+        StatisticIcon* stat = new StatisticIcon(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
+        stat->InstallEventFilter(this);
+        AttachChild(stat);
+        m_meter_stats.push_back({meter, stat});
+        meters.push_back({meter, AssociatedMeterType(meter)});
     }
 
     // attach and show meter bars and large resource indicators
