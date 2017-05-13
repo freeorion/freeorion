@@ -10,7 +10,7 @@ namespace CheckSums {
         CheckSumCombine(sum, std::string(s));
     }
 
-    void CheckSumCombine(unsigned int& sum, const double& t) {
+    void CheckSumCombine(unsigned int& sum, double t) {
         TraceLogger() << "CheckSumCombine(double): " << typeid(t).name();
         assert(DBL_MAX_10_EXP < 400);
         if (t == 0.0)
@@ -23,7 +23,7 @@ namespace CheckSums {
         sum %= CHECKSUM_MODULUS;
     }
 
-    void CheckSumCombine(unsigned int& sum, const float& t) {
+    void CheckSumCombine(unsigned int& sum, float t) {
         TraceLogger() << "CheckSumCombine(float): " << typeid(t).name();
         assert(FLT_MAX_10_EXP < 40);
         if (t == 0.0f)

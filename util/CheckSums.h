@@ -12,7 +12,7 @@ namespace CheckSums {
 
     // unsigned types (eg. bool, unsigned int, unsigned long int, unsigned char)
     template <class T, typename std::enable_if<std::is_unsigned<T>::value, T>::type* = nullptr>
-    void CheckSumCombine(unsigned int& sum, const T& t) {
+    void CheckSumCombine(unsigned int& sum, T t) {
         TraceLogger() << "CheckSumCombine(unsigned T): " << typeid(t).name();
         sum += static_cast<unsigned int>(t);
         sum %= CHECKSUM_MODULUS;
@@ -20,7 +20,7 @@ namespace CheckSums {
 
     // signed types (eg. int, char) but not float or double which are covered by specialized functions
     template <class T, typename std::enable_if<std::is_signed<T>::value, T>::type* = nullptr>
-    void CheckSumCombine(unsigned int& sum, const T& t) {
+    void CheckSumCombine(unsigned int& sum, T t) {
         //TraceLogger() << "CheckSumCombine(signed T): " << typeid(t).name();
         sum += static_cast<unsigned int>(std::abs(t));
         sum %= CHECKSUM_MODULUS;
@@ -69,7 +69,7 @@ namespace CheckSums {
 
     // applies to classes that have GetCheckSum methods
     template <class C>
-    void CheckSumCombine(unsigned int& sum, C& c,
+    void CheckSumCombine(unsigned int& sum, const C& c,
                          decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)
     {
         TraceLogger() << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name();
@@ -77,8 +77,8 @@ namespace CheckSums {
         sum %= CHECKSUM_MODULUS;
     }
 
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const double& t);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const float& t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, double t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, float t);
 }
 
 #endif // _CheckSums_h_
