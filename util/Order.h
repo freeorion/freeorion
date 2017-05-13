@@ -28,7 +28,8 @@ class ShipDesign;
 class FO_COMMON_API Order {
 public:
     /** \name Structors */ //@{
-    Order() {}
+    Order()
+    {}
 
     /** ctor taking the ID of the Empire issuing the order. */
     Order(int empire) :

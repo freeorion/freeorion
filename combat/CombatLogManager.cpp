@@ -64,8 +64,7 @@ namespace {
     };
 }
 
-CombatParticipantState::CombatParticipantState()
-{}
+CombatParticipantState::CombatParticipantState() {}
 
 CombatParticipantState::CombatParticipantState(const UniverseObject& object) {
     FillState(*this, object);

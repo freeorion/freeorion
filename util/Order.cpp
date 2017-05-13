@@ -106,10 +106,10 @@ NewFleetOrder::NewFleetOrder() :
 NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
                              int system_id, const std::vector<int>& ship_ids,
                              bool aggressive) :
-    NewFleetOrder(empire, std::vector<std::string>(1,fleet_name),
-                  std::vector<int>(1,fleet_id),
-                  system_id, std::vector<std::vector<int>>(1,ship_ids),
-                  std::vector<bool>(1,aggressive) )
+    NewFleetOrder(empire, std::vector<std::string>(1, fleet_name),
+                  std::vector<int>(1, fleet_id),
+                  system_id, std::vector<std::vector<int>>(1, ship_ids),
+                  std::vector<bool>(1, aggressive) )
 {}
 
 NewFleetOrder::NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,

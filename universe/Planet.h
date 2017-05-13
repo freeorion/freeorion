@@ -1,7 +1,6 @@
 #ifndef _Planet_h_
 #define _Planet_h_
 
-#include "Enums.h"
 #include "UniverseObject.h"
 #include "PopCenter.h"
 #include "ResourceCenter.h"
@@ -161,9 +160,9 @@ private:
 
     void ClampMeters() override;
 
-    PlanetType      m_type = PT_TERRAN;
-    PlanetType      m_original_type = PT_TERRAN;
-    PlanetSize      m_size = SZ_MEDIUM;
+    PlanetType      m_type;
+    PlanetType      m_original_type;
+    PlanetSize      m_size;
     float           m_orbital_period = 1.0f;
     float           m_initial_orbital_position = 0.0f;
     float           m_rotational_period = 1.0f;

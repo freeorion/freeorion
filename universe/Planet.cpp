@@ -9,6 +9,7 @@
 #include "Condition.h"
 #include "Universe.h"
 #include "ValueRef.h"
+#include "Enums.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/Random.h"
@@ -44,7 +45,10 @@ namespace {
 ////////////////////////////////////////////////////////////
 // Planet
 ////////////////////////////////////////////////////////////
-Planet::Planet()
+Planet::Planet() :
+    m_type(PT_TERRAN),
+    m_original_type(PT_TERRAN),
+    m_size(SZ_MEDIUM)
 {
     //DebugLogger() << "Planet::Planet()";
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created

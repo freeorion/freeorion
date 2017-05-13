@@ -167,7 +167,7 @@ public:
      * @param[in] tag  The tag name of this XML element.
      * @param[in] text  The text assigned to this XML element.
      */
-    XMLElement(const std::string& tag, const std::string& text = "") :
+    explicit XMLElement(const std::string& tag, const std::string& text = "") :
         m_tag(tag),
         m_text(text)
     {}

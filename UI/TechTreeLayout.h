@@ -137,8 +137,8 @@ private:
     int                 m_depth = -1;   // depth 1 available at beginning 2 one requisite etc
     int                 m_row = -1;     // layout row, every node is organized in a straight tabelle system
     std::string         m_tech;         // name
-    double              m_x = 0;        // left border
-    double              m_y = 0;        // top border
+    double              m_x = 0.0;      // left border
+    double              m_y = 0.0;      // top border
     double              m_width;        // width
     double              m_height;       // height
     bool                m_place_holder; // is place holder
