@@ -592,7 +592,7 @@ void CUIWnd::InitBuffers() {
 
     m_vertex_buffer.createServerBuffer();
 
-    //std::cout << "CUIWnd vertex buffer final size: " << previous_buffer_size << std::endl;
+    //TraceLogger() << "CUIWnd vertex buffer final size: " << previous_buffer_size << std::endl;
 }
 
 void CUIWnd::Hide(bool children) {

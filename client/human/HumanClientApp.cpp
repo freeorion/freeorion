@@ -698,7 +698,7 @@ void HumanClientApp::LoadSinglePlayerGame(std::string filename/* = ""*/) {
 }
 
 void HumanClientApp::RequestSavePreviews(const std::string& directory, PreviewInformation& previews) {
-    //std::cout << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end()) << std::endl;
+    //TraceLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end()) << std::endl;
     DebugLogger() << "HumanClientApp::RequestSavePreviews directory: " << directory << " valid UTF-8: " << utf8::is_valid(directory.begin(), directory.end());
 
     std::string  generic_directory = directory;//PathString(fs::path(directory));

@@ -89,7 +89,9 @@ namespace {
         // have an ID yet) is the same as one that has already been added
         // (which does have an ID)
     }
+}
 
+namespace CheckSums {
     void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot) {
         TraceLogger() << "CheckSumCombine(Slot): " << typeid(slot).name();
         CheckSumCombine(sum, slot.x);
@@ -224,7 +226,7 @@ PartType::PartType(ShipPartClass part_class, double capacity, double stat2,
     m_icon(icon),
     m_add_standard_capacity_effect(add_standard_capacity_effect)
 {
-    //std::cout << "part type: " << m_name << " producible: " << m_producible << std::endl;
+    //TraceLogger() << "part type: " << m_name << " producible: " << m_producible << std::endl;
     Init(common_params.effects);
     for (const std::string& tag : common_params.tags)
         m_tags.insert(boost::to_upper_copy<std::string>(tag));

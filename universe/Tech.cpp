@@ -72,13 +72,13 @@ namespace {
 
 namespace CheckSums {
     void CheckSumCombine(unsigned int& sum, const ItemSpec& item) {
-        //std::cout << "CheckSumCombine(Slot): " << typeid(slot).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(Slot): " << typeid(item).name();
         CheckSumCombine(sum, item.type);
         CheckSumCombine(sum, item.name);
     }
 
     void CheckSumCombine(unsigned int& sum, const TechCategory& cat) {
-        //std::cout << "CheckSumCombine(Slot): " << typeid(slot).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(Slot): " << typeid(cat).name();
         CheckSumCombine(sum, cat.name);
         CheckSumCombine(sum, cat.graphic);
         CheckSumCombine(sum, cat.colour.r);

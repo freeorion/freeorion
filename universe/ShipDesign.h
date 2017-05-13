@@ -314,7 +314,7 @@ public:
         m_graphic(graphic),
         m_icon(icon)
     {
-        //std::cout << "hull type: " << m_name << " producible: " << m_producible << std::endl;
+        //TraceLogger() << "hull type: " << m_name << " producible: " << m_producible << std::endl;
         Init(common_params.effects);
         for (const std::string& tag : common_params.tags)
             m_tags.insert(boost::to_upper_copy<std::string>(tag));

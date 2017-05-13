@@ -661,7 +661,7 @@ unsigned int Constant<T>::GetCheckSum() const
 
     CheckSums::CheckSumCombine(retval, "ValueRef::Constant");
     CheckSums::CheckSumCombine(retval, m_value);
-    std::cout << "GetCheckSum(Constant<T>): " << typeid(*this).name() << " value: " << m_value << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Constant<T>): " << typeid(*this).name() << " value: " << m_value << " retval: " << retval;
     return retval;
 }
 
@@ -782,7 +782,7 @@ unsigned int Variable<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, "ValueRef::Variable");
     CheckSums::CheckSumCombine(retval, m_property_name);
     CheckSums::CheckSumCombine(retval, m_ref_type);
-    std::cout << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Variable<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -1021,7 +1021,7 @@ unsigned int Statistic<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, m_stat_type);
     CheckSums::CheckSumCombine(retval, m_sampling_condition);
     CheckSums::CheckSumCombine(retval, m_value_ref);
-    std::cout << "GetCheckSum(Statisic<T>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Statisic<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -1230,11 +1230,7 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
     m_int_ref3(int_ref3),
     m_string_ref1(string_ref1),
     m_string_ref2(string_ref2)
-{
-    //std::cout << "ComplexVariable: " << variable_name << ", "
-    //          << int_ref1 << ", " << int_ref2 << ", "
-    //          << string_ref1 << ", " << string_ref2 << std::endl;
-}
+{}
 
 template <class T>
 ComplexVariable<T>::~ComplexVariable()
@@ -1426,7 +1422,7 @@ unsigned int ComplexVariable<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, m_int_ref3);
     CheckSums::CheckSumCombine(retval, m_string_ref1);
     CheckSums::CheckSumCombine(retval, m_string_ref2);
-    std::cout << "GetCheckSum(ComplexVariable<T>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(ComplexVariable<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -1549,7 +1545,7 @@ unsigned int StaticCast<FromType, ToType>::GetCheckSum() const
 
     CheckSums::CheckSumCombine(retval, "ValueRef::StaticCast");
     CheckSums::CheckSumCombine(retval, m_value_ref);
-    std::cout << "GetCheckSum(StaticCast<FromType, ToType>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(StaticCast<FromType, ToType>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -1622,7 +1618,7 @@ unsigned int StringCast<FromType>::GetCheckSum() const
 
     CheckSums::CheckSumCombine(retval, "ValueRef::StringCast");
     CheckSums::CheckSumCombine(retval, m_value_ref);
-    std::cout << "GetCheckSum(StringCast<FromType>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(StringCast<FromType>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -1782,7 +1778,7 @@ unsigned int UserStringLookup<FromType>::GetCheckSum() const
 
     CheckSums::CheckSumCombine(retval, "ValueRef::UserStringLookup");
     CheckSums::CheckSumCombine(retval, m_value_ref);
-    std::cout << "GetCheckSum(UserStringLookup<FromType>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(UserStringLookup<FromType>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 
@@ -1993,7 +1989,7 @@ unsigned int Operation<T>::GetCheckSum() const
     CheckSums::CheckSumCombine(retval, m_operands);
     CheckSums::CheckSumCombine(retval, m_constant_expr);
     CheckSums::CheckSumCombine(retval, m_cached_const_value);
-    std::cout << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Operation<T>): " << typeid(*this).name() << " retval: " << retval;
     return retval;
 }
 

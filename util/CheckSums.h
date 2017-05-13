@@ -2,6 +2,7 @@
 #define _CheckSums_h_
 
 #include "Export.h"
+#include "Logger.h"
 
 #include <iostream>
 #include <typeinfo>
@@ -12,7 +13,7 @@ namespace CheckSums {
     // unsigned types (eg. bool, unsigned int, unsigned long int, unsigned char)
     template <class T, typename std::enable_if<std::is_unsigned<T>::value, T>::type* = nullptr>
     void CheckSumCombine(unsigned int& sum, const T& t) {
-        std::cout << "CheckSumCombine(unsigned T): " << typeid(t).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(unsigned T): " << typeid(t).name();
         sum += static_cast<unsigned int>(t);
         sum %= CHECKSUM_MODULUS;
     }
@@ -20,7 +21,7 @@ namespace CheckSums {
     // signed types (eg. int, char) but not float or double which are covered by specialized functions
     template <class T, typename std::enable_if<std::is_signed<T>::value, T>::type* = nullptr>
     void CheckSumCombine(unsigned int& sum, const T& t) {
-        //std::cout << "CheckSumCombine(signed T): " << typeid(t).name() << std::endl << std::endl;
+        //TraceLogger() << "CheckSumCombine(signed T): " << typeid(t).name();
         sum += static_cast<unsigned int>(std::abs(t));
         sum %= CHECKSUM_MODULUS;
     }
@@ -28,7 +29,7 @@ namespace CheckSums {
     // enums
     template <class T>
     void CheckSumCombine(unsigned int& sum, T t, typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr) {
-        std::cout << "CheckSumCombine(enum): " << typeid(t).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(enum): " << typeid(t).name();
         CheckSumCombine(sum, static_cast<int>(t) + 10);
     }
 
@@ -37,7 +38,7 @@ namespace CheckSums {
     void CheckSumCombine(unsigned int& sum, T p,
                          decltype(*std::declval<T>())* val = nullptr)
     {
-        std::cout << "CheckSumCombine(T*): " << typeid(p).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(T*): " << typeid(p).name();
         if (p)
             CheckSumCombine(sum, *p);
     }
@@ -46,7 +47,7 @@ namespace CheckSums {
     template <class C, class D>
     void CheckSumCombine(unsigned int& sum, const std::pair<C, D>& p)
     {
-        std::cout << "CheckSumCombine(pair): " << typeid(p).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(pair): " << typeid(p).name();
         CheckSumCombine(sum, p.first);
         CheckSumCombine(sum, p.second);
     }
@@ -57,7 +58,7 @@ namespace CheckSums {
                          const typename C::const_iterator* it = nullptr,
                          const typename C::value_type* val = nullptr)
     {
-        std::cout << "CheckSumCombine(C container): " << typeid(c).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(C container): " << typeid(c).name();
         for (const typename C::value_type& t : c)
             CheckSumCombine(sum, t);
         sum += c.size();
@@ -71,7 +72,7 @@ namespace CheckSums {
     void CheckSumCombine(unsigned int& sum, C& c,
                          decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)
     {
-        std::cout << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name();
         sum += c.GetCheckSum();
         sum %= CHECKSUM_MODULUS;
     }

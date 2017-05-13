@@ -6,12 +6,12 @@
 
 namespace CheckSums {
     void CheckSumCombine(unsigned int& sum, const char* s) {
-        std::cout << "CheckSumCombine(char* s): " << typeid(s).name() << std::endl << std::endl;
+        //TraceLogger() << "CheckSumCombine(char* s): " << typeid(s).name();
         CheckSumCombine(sum, std::string(s));
     }
 
     void CheckSumCombine(unsigned int& sum, const double& t) {
-        std::cout << "CheckSumCombine(double): " << typeid(t).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(double): " << typeid(t).name();
         assert(DBL_MAX_10_EXP < 400);
         if (t == 0.0)
             return;
@@ -24,7 +24,7 @@ namespace CheckSums {
     }
 
     void CheckSumCombine(unsigned int& sum, const float& t) {
-        std::cout << "CheckSumCombine(float): " << typeid(t).name() << std::endl << std::endl;
+        TraceLogger() << "CheckSumCombine(float): " << typeid(t).name();
         assert(FLT_MAX_10_EXP < 40);
         if (t == 0.0f)
             return;
