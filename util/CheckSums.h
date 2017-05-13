@@ -10,21 +10,13 @@
 namespace CheckSums {
     const unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
 
-    // unsigned types (eg. bool, unsigned int, unsigned long int, unsigned char)
-    template <class T, typename std::enable_if<std::is_unsigned<T>::value, T>::type* = nullptr>
-    void CheckSumCombine(unsigned int& sum, T t) {
-        TraceLogger() << "CheckSumCombine(unsigned T): " << typeid(t).name();
-        sum += static_cast<unsigned int>(t);
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    // signed types (eg. int, char) but not float or double which are covered by specialized functions
-    template <class T, typename std::enable_if<std::is_signed<T>::value, T>::type* = nullptr>
-    void CheckSumCombine(unsigned int& sum, T t) {
-        //TraceLogger() << "CheckSumCombine(signed T): " << typeid(t).name();
-        sum += static_cast<unsigned int>(std::abs(t));
-        sum %= CHECKSUM_MODULUS;
-    }
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, bool t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, unsigned char t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, unsigned int t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, unsigned long int t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, char t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, int t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, long int t);
 
     // enums
     template <class T>
@@ -43,7 +35,7 @@ namespace CheckSums {
             CheckSumCombine(sum, *p);
     }
 
-    // applies to pairs (including map value types)
+    // pairs (including map value types)
     template <class C, class D>
     void CheckSumCombine(unsigned int& sum, const std::pair<C, D>& p)
     {
@@ -52,7 +44,7 @@ namespace CheckSums {
         CheckSumCombine(sum, p.second);
     }
 
-    // should apply to vectors, maps, and strings
+    // vectors, maps, and strings
     template <class C>
     void CheckSumCombine(unsigned int& sum, const C& c,
                          const typename C::const_iterator* it = nullptr,
@@ -67,7 +59,7 @@ namespace CheckSums {
 
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, const char* s);
 
-    // applies to classes that have GetCheckSum methods
+    // classes that have GetCheckSum methods
     template <class C>
     void CheckSumCombine(unsigned int& sum, const C& c,
                          decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)

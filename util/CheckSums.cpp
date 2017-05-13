@@ -5,13 +5,45 @@
 #include <float.h>
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, const char* s) {
-        //TraceLogger() << "CheckSumCombine(char* s): " << typeid(s).name();
-        CheckSumCombine(sum, std::string(s));
+    void CheckSumCombine(unsigned int& sum, bool t) {
+        sum += static_cast<unsigned int>(t);
+        sum %= CHECKSUM_MODULUS;
     }
 
+    void CheckSumCombine(unsigned int& sum, unsigned char t) {
+        sum += static_cast<unsigned int>(t);
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    void CheckSumCombine(unsigned int& sum, unsigned int t) {
+        sum += static_cast<unsigned int>(t);
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    void CheckSumCombine(unsigned int& sum, unsigned long int t) {
+        sum += static_cast<unsigned int>(t);
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    void CheckSumCombine(unsigned int& sum, char t) {
+        sum += static_cast<unsigned int>(std::abs(t));
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    void CheckSumCombine(unsigned int& sum, int t) {
+        sum += static_cast<unsigned int>(std::abs(t));
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    void CheckSumCombine(unsigned int& sum, long int t) {
+        sum += static_cast<unsigned int>(std::abs(t));
+        sum %= CHECKSUM_MODULUS;
+    }
+
+    void CheckSumCombine(unsigned int& sum, const char* s)
+    { CheckSumCombine(sum, std::string(s)); }
+
     void CheckSumCombine(unsigned int& sum, double t) {
-        TraceLogger() << "CheckSumCombine(double): " << typeid(t).name();
         assert(DBL_MAX_10_EXP < 400);
         if (t == 0.0)
             return;
@@ -24,7 +56,6 @@ namespace CheckSums {
     }
 
     void CheckSumCombine(unsigned int& sum, float t) {
-        TraceLogger() << "CheckSumCombine(float): " << typeid(t).name();
         assert(FLT_MAX_10_EXP < 40);
         if (t == 0.0f)
             return;
