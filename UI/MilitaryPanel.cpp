@@ -48,30 +48,17 @@ MilitaryPanel::MilitaryPanel(GG::X w, int planet_id) :
         return;
     }
 
-    // small meter indicators - for use when panel is collapsed
-    m_meter_stats.push_back({METER_SHIELD, new StatisticIcon(ClientUI::MeterIcon(METER_SHIELD),
-                                                             obj->InitialMeterValue(METER_SHIELD), 3, false,
-                                                             MeterIconSize().x, MeterIconSize().y)});
-    m_meter_stats.push_back({METER_DEFENSE, new StatisticIcon(ClientUI::MeterIcon(METER_DEFENSE),
-                                                              obj->InitialMeterValue(METER_DEFENSE), 3, false,
-                                                              MeterIconSize().x, MeterIconSize().y)});
-    m_meter_stats.push_back({METER_TROOPS, new StatisticIcon(ClientUI::MeterIcon(METER_TROOPS),
-                                                             obj->InitialMeterValue(METER_TROOPS), 3, false,
-                                                             MeterIconSize().x, MeterIconSize().y)});
-    m_meter_stats.push_back({METER_DETECTION, new StatisticIcon(ClientUI::MeterIcon(METER_DETECTION),
-                                                                obj->InitialMeterValue(METER_DETECTION), 3, false,
-                                                                MeterIconSize().x, MeterIconSize().y)});
-    m_meter_stats.push_back({METER_STEALTH, new StatisticIcon(ClientUI::MeterIcon(METER_STEALTH),
-                                                              obj->InitialMeterValue(METER_STEALTH), 3, false,
-                                                              MeterIconSize().x, MeterIconSize().y)});
-
     // meter and production indicators
     std::vector<std::pair<MeterType, MeterType>> meters;
 
-    for (std::pair<MeterType, StatisticIcon*>& meter_stat : m_meter_stats) {
-        meter_stat.second->InstallEventFilter(this);
-        AttachChild(meter_stat.second);
-        meters.push_back({meter_stat.first, AssociatedMeterType(meter_stat.first)});
+    // small meter indicators - for use when panel is collapsed
+    for (MeterType meter : {METER_SHIELD, METER_DEFENSE, METER_TROOPS, METER_DETECTION, METER_STEALTH})
+    {
+        StatisticIcon* stat = new StatisticIcon(ClientUI::MeterIcon(meter), obj->InitialMeterValue(meter), 3, false, MeterIconSize().x, MeterIconSize().y);
+        stat->InstallEventFilter(this);
+        AttachChild(stat);
+        m_meter_stats.push_back({meter, stat});
+        meters.push_back({meter, AssociatedMeterType(meter)});
     }
 
     // attach and show meter bars and large resource indicators
