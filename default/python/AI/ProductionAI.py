@@ -53,7 +53,7 @@ def find_best_designs_this_turn():
     for timer_name, priority_type, designer in designers:
         design_timer.start(timer_name)
         _design_cache[priority_type] = designer().optimize_design()
-    best_military_stats = ShipDesignAI.MilitaryShipDesigner().optimize_design()
+    best_military_stats = ShipDesignAI.WarShipDesigner().optimize_design()
     best_carrier_stats = ShipDesignAI.CarrierShipDesigner().optimize_design()
     best_stats = best_military_stats + best_carrier_stats if random.random() < .8 else best_military_stats
     best_stats.sort(reverse=True)

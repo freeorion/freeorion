@@ -83,7 +83,7 @@ def conditional_priority(func_if_true, func_if_false, cond_func):
 
 def get_main_ship_designer_list():
     if not MAIN_SHIP_DESIGNER_LIST:
-        MAIN_SHIP_DESIGNER_LIST.extend([ShipDesignAI.MilitaryShipDesigner(), ShipDesignAI.StandardTroopShipDesigner(),
+        MAIN_SHIP_DESIGNER_LIST.extend([ShipDesignAI.WarShipDesigner(), ShipDesignAI.StandardTroopShipDesigner(),
                                         ShipDesignAI.StandardColonisationShipDesigner()])
     return MAIN_SHIP_DESIGNER_LIST
 
@@ -267,7 +267,7 @@ def get_hull_priority(tech_name):
         energy = 0
 
     useful = max(
-        get_ship_tech_usefulness(tech_name, ShipDesignAI.MilitaryShipDesigner()),
+        get_ship_tech_usefulness(tech_name, ShipDesignAI.WarShipDesigner()),
         get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardTroopShipDesigner()),
         get_ship_tech_usefulness(tech_name, ShipDesignAI.StandardColonisationShipDesigner()))
 
@@ -1071,8 +1071,8 @@ def generate_classic_research_orders():
         if not (unlocked_parts or unlocked_hulls):
             print "No new ship parts/hulls unlocked by tech %s" % tech
             continue
-        old_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(consider_fleet_count=False)
-        new_designs = ShipDesignAI.MilitaryShipDesigner().optimize_design(additional_hulls=unlocked_hulls,
+        old_designs = ShipDesignAI.WarShipDesigner().optimize_design(consider_fleet_count=False)
+        new_designs = ShipDesignAI.WarShipDesigner().optimize_design(additional_hulls=unlocked_hulls,
                                                                           additional_parts=unlocked_parts,
                                                                           consider_fleet_count=False)
         if not (old_designs and new_designs):
