@@ -17,6 +17,20 @@ namespace CheckSums {
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, char t);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, int t);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, long int t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, double t);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, float t);
+
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const char* s);
+
+    // classes that have GetCheckSum methods
+    template <class C>
+    void CheckSumCombine(unsigned int& sum, const C& c,
+                         decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)
+    {
+        TraceLogger() << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name();
+        sum += c.GetCheckSum();
+        sum %= CHECKSUM_MODULUS;
+    }
 
     // enums
     template <class T>
@@ -62,21 +76,6 @@ namespace CheckSums {
         sum += c.size();
         sum %= CHECKSUM_MODULUS;
     }
-
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const char* s);
-
-    // classes that have GetCheckSum methods
-    template <class C>
-    void CheckSumCombine(unsigned int& sum, const C& c,
-                         decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)
-    {
-        TraceLogger() << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name();
-        sum += c.GetCheckSum();
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, double t);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, float t);
 }
 
 #endif // _CheckSums_h_
