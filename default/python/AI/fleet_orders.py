@@ -43,13 +43,19 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
                            "assigned to secure the target system.") % (order.fleet.id, invasion_planet)
                 return False
 
-            eta_this_fleet = FleetUtilsAI.calculate_estimated_time_of_arrival(order.fleet.id, invasion_system.id)
-            if all((eta_this_fleet - 1) < FleetUtilsAI.calculate_estimated_time_of_arrival(fid, invasion_system.id)
-                    for fid in military_support_fleets):
+            # if there is a threat in the enemy system, do give military ships at least 1 turn to clear it
+            delay_to_move_troops = 1 if MilitaryAI.get_system_local_threat(order.target.id) else 0
+
+            def eta(fleet_id):
+                return FleetUtilsAI.calculate_estimated_time_of_arrival(fleet_id, invasion_system.id)
+
+            eta_this_fleet = eta(order.fleet.id)
+            if all(((eta_this_fleet - delay_to_move_troops) <= eta(fid) and eta(fid)) for fid in military_support_fleets):
                 if verbose:
                     print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
                            "because target (%s) has nonzero max shields and no assigned military fleet would arrive"
-                           "at least 1 turn earlier than the invasion fleet") % (order.fleet.id, invasion_planet)
+                           "at least %d turn earlier than the invasion fleet") % (
+                                order.fleet.id, invasion_planet, delay_to_move_troops)
                 return False
 
         if verbose:
@@ -57,12 +63,6 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
                    "because target (%s) has zero max shields or there is a military fleet assigned to secure "
                    "the target system which will arrive at least 1 turn before the invasion fleet.") % (order.fleet.id,
                                                                                                         invasion_planet)
-    # if on final leg of journey
-    if (order.target.id == invasion_system.id) and invasion_planet.currentMeterValue(fo.meterType.shield):
-        if verbose:
-            print ("trooper_move_reqs_met() holding Invasion fleet %d before final leg to target system because "
-                   "target (%s) has nonzero shields") % (order.fleet.id, invasion_planet)
-        return False
     return True
 
 
