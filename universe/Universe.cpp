@@ -13,7 +13,6 @@
 #include "Fleet.h"
 #include "Planet.h"
 #include "Ship.h"
-#include "ShipDesign.h"
 #include "System.h"
 #include "Field.h"
 #include "UniverseObject.h"
@@ -28,6 +27,8 @@
 
 #include <boost/property_map/property_map.hpp>
 #include <boost/timer.hpp>
+
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 namespace {
     DeclareThreadSafeLogger(effects);
@@ -94,7 +95,7 @@ namespace EmpireStatistics {
 Universe::Universe() :
     m_pathfinder(new Pathfinder),
     m_last_allocated_object_id(-1), // this is conicidentally equal to INVALID_OBJECT_ID as of this writing, but the reason for this to be -1 is so that the first object has id 0, and all object ids are non-negative
-    m_last_allocated_design_id(-1), // same, but for ShipDesign::INVALID_DESIGN_ID
+    m_last_allocated_design_id(-1), // same, but for INVALID_DESIGN_ID
     m_universe_width(1000.0),
     m_inhibit_universe_object_signals(false),
     m_encoding_empire(ALL_EMPIRES),
@@ -209,7 +210,7 @@ const std::set<int>& Universe::EmpireStaleKnowledgeObjectIDs(int empire_id) cons
 }
 
 const ShipDesign* Universe::GetShipDesign(int ship_design_id) const {
-    if (ship_design_id == ShipDesign::INVALID_DESIGN_ID)
+    if (ship_design_id == INVALID_DESIGN_ID)
         return nullptr;
     ship_design_iterator it = m_ship_designs.find(ship_design_id);
     return (it != m_ship_designs.end() ? it->second : nullptr);
@@ -351,7 +352,7 @@ std::shared_ptr<T> Universe::InsertID(T* obj, int id) {
 }
 
 int Universe::InsertShipDesign(ShipDesign* ship_design) {
-    int retval = ShipDesign::INVALID_DESIGN_ID;
+    int retval = INVALID_DESIGN_ID;
     if (ship_design) {
         if (m_last_allocated_design_id + 1 < MAX_ID) {
             m_ship_designs[++m_last_allocated_design_id] = ship_design;
@@ -359,7 +360,7 @@ int Universe::InsertShipDesign(ShipDesign* ship_design) {
             retval = m_last_allocated_design_id;
         } else { // we'll probably never execute this branch, considering how many IDs are available
             // find a hole in the assigned IDs in which to place the object
-            int last_id_seen = ShipDesign::INVALID_DESIGN_ID;
+            int last_id_seen = INVALID_DESIGN_ID;
             for (ShipDesignMap::value_type& entry : m_ship_designs) {
                 if (1 < entry.first - last_id_seen) {
                     m_ship_designs[last_id_seen + 1] = ship_design;
@@ -376,7 +377,7 @@ int Universe::InsertShipDesign(ShipDesign* ship_design) {
 bool Universe::InsertShipDesignID(ShipDesign* ship_design, int id) {
     bool retval = false;
 
-    if (ship_design  &&  id != ShipDesign::INVALID_DESIGN_ID  &&  id < ShipDesign::MAX_ID) {
+    if (ship_design  &&  id != INVALID_DESIGN_ID  &&  id < MAX_ID) {
         ship_design->SetID(id);
         m_ship_designs[id] = ship_design;
         retval = true;
@@ -1543,7 +1544,7 @@ namespace {
 
     int GetDesignIDFromObject(std::shared_ptr<const UniverseObject> obj) {
         if (obj->ObjectType() != OBJ_SHIP)
-            return ShipDesign::INVALID_DESIGN_ID;
+            return INVALID_DESIGN_ID;
         std::shared_ptr<const Ship> shp = std::static_pointer_cast<const Ship>(obj);
         return shp->DesignID();
     }
@@ -1567,7 +1568,7 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
     if (Empire* source_empire = GetEmpire(empire_for_source_id)) {
         source_empire->EmpireShipsDestroyed()[empire_for_obj_id]++;
 
-        if (design_for_obj_id != ShipDesign::INVALID_DESIGN_ID)
+        if (design_for_obj_id != INVALID_DESIGN_ID)
             source_empire->ShipDesignsDestroyed()[design_for_obj_id]++;
 
         if (species_for_obj.empty())
@@ -1578,7 +1579,7 @@ void Universe::CountDestructionInStats(int object_id, int source_object_id) {
         if (!species_for_obj.empty())
             obj_empire->SpeciesShipsLost()[species_for_obj]++;
 
-        if (design_for_obj_id != ShipDesign::INVALID_DESIGN_ID)
+        if (design_for_obj_id != INVALID_DESIGN_ID)
             obj_empire->ShipDesignsLost()[design_for_obj_id]++;
     }
 }
@@ -2558,7 +2559,7 @@ void Universe::SetEmpireKnowledgeOfDestroyedObject(int object_id, int empire_id)
 }
 
 void Universe::SetEmpireKnowledgeOfShipDesign(int ship_design_id, int empire_id) {
-    if (ship_design_id == ShipDesign::INVALID_DESIGN_ID) {
+    if (ship_design_id == INVALID_DESIGN_ID) {
         ErrorLogger() << "SetEmpireKnowledgeOfShipDesign called with INVALID_DESIGN_ID";
         return;
     }

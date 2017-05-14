@@ -13,7 +13,6 @@
 #include "../universe/Ship.h"
 #include "../universe/Predicates.h"
 #include "../universe/Planet.h"
-#include "../universe/ShipDesign.h"
 #include "../universe/System.h"
 #include "../universe/Universe.h"
 #include "../universe/Enums.h"
@@ -594,13 +593,13 @@ void ResearchQueue::clear() {
 ProductionQueue::ProductionItem::ProductionItem() :
     build_type(INVALID_BUILD_TYPE),
     name(),
-    design_id(ShipDesign::INVALID_DESIGN_ID)
+    design_id(INVALID_DESIGN_ID)
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, std::string name_) :
     build_type(build_type_),
     name(name_),
-    design_id(ShipDesign::INVALID_DESIGN_ID)
+    design_id(INVALID_DESIGN_ID)
 {}
 
 ProductionQueue::ProductionItem::ProductionItem(BuildType build_type_, int design_id_) :
@@ -766,7 +765,7 @@ std::string ProductionQueue::ProductionItem::Dump() const {
     std::string retval = "ProductionItem: " + boost::lexical_cast<std::string>(build_type) + " ";
     if (!name.empty())
         retval += "name: " + name;
-    if (design_id != ShipDesign::INVALID_DESIGN_ID)
+    if (design_id != INVALID_DESIGN_ID)
         retval += "id: " + std::to_string(design_id);
     return retval;
 }
@@ -2678,7 +2677,7 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
             std::vector<int>::iterator point = m_ship_designs_ordered.end();
-            bool is_at_end_of_list = (next_design_id == ShipDesign::INVALID_DESIGN_ID);
+            bool is_at_end_of_list = (next_design_id == INVALID_DESIGN_ID);
             if (!is_at_end_of_list)
                 point = std::find(m_ship_designs_ordered.begin(), m_ship_designs_ordered.end(), next_design_id);
 
@@ -2715,7 +2714,7 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
     // design is apparently new, so add it to the universe and put its new id in the empire's set of designs
     int new_design_id = GetNewDesignID();   // on the sever, this just generates a new design id.  on clients, it polls the sever for a new id
 
-    if (new_design_id == ShipDesign::INVALID_DESIGN_ID) {
+    if (new_design_id == INVALID_DESIGN_ID) {
         ErrorLogger() << "Empire::AddShipDesign Unable to get new design id";
         return new_design_id;
     }

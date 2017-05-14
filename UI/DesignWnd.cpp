@@ -37,6 +37,8 @@
 #include <algorithm>
 #include <iterator>
 
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
+
 namespace {
     const std::string   PART_CONTROL_DROP_TYPE_STRING = "Part Control";
     const std::string   HULL_PARTS_ROW_DROP_TYPE_STRING = "Hull and Parts Row";
@@ -1560,7 +1562,7 @@ void BasesListBox::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
         const BasesListBox::CompletedDesignListBoxRow* insert_before_control = (insert_before_row == end()) ? nullptr :
             boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(*insert_before_row);
         int insert_before_id = insert_before_control
-            ? insert_before_control->DesignID() : ShipDesign::INVALID_DESIGN_ID;
+            ? insert_before_control->DesignID() : INVALID_DESIGN_ID;
 
         if (design_id != insert_before_id)
             //insert_before_row may be end() to insert as last item
@@ -1927,7 +1929,7 @@ void BasesListBox::BaseDoubleClicked(GG::ListBox::iterator it, const GG::Pt& pt,
 
     CompletedDesignListBoxRow* cd_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
     if (cd_row) {
-        if (cd_row->DesignID() != ShipDesign::INVALID_DESIGN_ID)
+        if (cd_row->DesignID() != INVALID_DESIGN_ID)
             DesignSelectedSignal(cd_row->DesignID());
         return;
     }
@@ -2588,7 +2590,7 @@ public:
     /** Returns a pointer to the design currently being modified (if any).  May
         return an empty pointer if not currently modifying a design. */
     std::shared_ptr<const ShipDesign> GetIncompleteDesign() const;
-    int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns ShipDesign::INVALID_DESIGN_ID if not showing a complete design
+    int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns INVALID_DESIGN_ID if not showing a complete design
     int                                 GetReplacedDesignID() const;//!< returns ID of completed design selected to be replaced.
 
     bool                                CurrentDesignIsRegistered(std::string& design_name);//!< returns true iff a design with the same hull and parts is already registered with thsi empire; if so, also populates design_name with the name of that design
@@ -2709,8 +2711,8 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
            config_name),
     m_hull(nullptr),
     m_slots(),
-    m_complete_design_id(ShipDesign::INVALID_DESIGN_ID),
-    m_replaced_design_id(ShipDesign::INVALID_DESIGN_ID),
+    m_complete_design_id(INVALID_DESIGN_ID),
+    m_replaced_design_id(INVALID_DESIGN_ID),
     m_incomplete_design(),
     m_completed_design_dump_strings(),
     m_background_image(nullptr),
@@ -3041,7 +3043,7 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     }
 
     m_complete_design_id = ship_design->ID();
-    m_replaced_design_id = ship_design->IsMonster() ? ShipDesign::INVALID_DESIGN_ID : ship_design->ID();
+    m_replaced_design_id = ship_design->IsMonster() ? INVALID_DESIGN_ID : ship_design->ID();
 
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
@@ -3061,7 +3063,7 @@ void DesignWnd::MainPanel::SetDesign(int design_id)
 void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
                                                const std::vector<std::string>& parts)
 {
-    m_replaced_design_id = ShipDesign::INVALID_DESIGN_ID;
+    m_replaced_design_id = INVALID_DESIGN_ID;
     SetHull(hull);
     SetParts(parts);
 }
@@ -3177,7 +3179,7 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_replace_button->ClearBrowseInfoWnd();
     m_confirm_button->ClearBrowseInfoWnd();
 
-    m_complete_design_id = ShipDesign::INVALID_DESIGN_ID;
+    m_complete_design_id = INVALID_DESIGN_ID;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     std::string design_name;
     m_disabled_by_name = false;
@@ -3273,7 +3275,7 @@ void DesignWnd::MainPanel::DesignChanged() {
         std::string new_design_name = ValidatedDesignName();
         const ShipDesign* replaced_ship_design = GetShipDesign(m_replaced_design_id);
 
-        if (m_replaced_design_id != ShipDesign::INVALID_DESIGN_ID && replaced_ship_design) {
+        if (m_replaced_design_id != INVALID_DESIGN_ID && replaced_ship_design) {
             m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
                 UserString("DESIGN_WND_UPDATE"),
                 boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL"))
@@ -3398,7 +3400,7 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::W
             boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
         if (control) {
             int design_id = control->DesignID();
-            if (design_id != ShipDesign::INVALID_DESIGN_ID)
+            if (design_id != INVALID_DESIGN_ID)
                 SetDesign(design_id);
         }
     }
@@ -3547,14 +3549,14 @@ void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 int DesignWnd::AddDesign() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     const Empire* empire = GetEmpire(empire_id);
-    if (!empire) return ShipDesign::INVALID_DESIGN_ID;
+    if (!empire) return INVALID_DESIGN_ID;
 
     std::vector<std::string> parts = m_main_panel->Parts();
     const std::string& hull_name = m_main_panel->Hull();
 
     if (!ShipDesign::ValidDesign(hull_name, parts)) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
-        return ShipDesign::INVALID_DESIGN_ID;
+        return INVALID_DESIGN_ID;
     }
 
     std::string name = m_main_panel->ValidatedDesignName();
@@ -3585,7 +3587,7 @@ void DesignWnd::ReplaceDesign() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     int replaced_id = m_main_panel->GetReplacedDesignID();
 
-    if (new_design_id == ShipDesign::INVALID_DESIGN_ID) return;
+    if (new_design_id == INVALID_DESIGN_ID) return;
 
     //move it to before the replaced design
     HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, replaced_id )));

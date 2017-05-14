@@ -10,7 +10,6 @@
 #include "Fleet.h"
 #include "Ship.h"
 #include "ObjectMap.h"
-#include "ShipDesign.h"
 #include "Planet.h"
 #include "System.h"
 #include "Species.h"
@@ -30,6 +29,7 @@
 using boost::io::str;
 
 extern int g_indent;
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 bool UserStringExists(const std::string& str);
 
@@ -3971,7 +3971,7 @@ bool Enqueued::operator==(const ConditionBase& rhs) const {
 
 namespace {
     int NumberOnQueue(const ProductionQueue& queue, BuildType build_type, const int location_id,
-                      const std::string& name = "", int design_id = ShipDesign::INVALID_DESIGN_ID)
+                      const std::string& name = "", int design_id = INVALID_DESIGN_ID)
     {
         int retval = 0;
         for (const ProductionQueue::Element& element : queue) {
@@ -3985,7 +3985,7 @@ namespace {
                 if (!name.empty() && element.item.name != name)
                     continue;
             } else if (build_type == BT_SHIP) {
-                if (design_id != ShipDesign::INVALID_DESIGN_ID) {
+                if (design_id != INVALID_DESIGN_ID) {
                     // if looking for ships, accept design by id number...
                     if (design_id != element.item.design_id)
                         continue;
@@ -4061,7 +4061,7 @@ void Enqueued::Eval(const ScriptingContext& parent_context,
     if (simple_eval_safe) {
         // evaluate valuerefs once, and use to check all candidate objects
         std::string name =  (m_name ?       m_name->Eval(parent_context) :      "");
-        int design_id =     (m_design_id ?  m_design_id->Eval(parent_context) : ShipDesign::INVALID_DESIGN_ID);
+        int design_id =     (m_design_id ?  m_design_id->Eval(parent_context) : INVALID_DESIGN_ID);
         int empire_id =     (m_empire_id ?  m_empire_id->Eval(parent_context) : ALL_EMPIRES);
         int low =           (m_low ?        m_low->Eval(parent_context) :       0);
         int high =          (m_high ?       m_high->Eval(parent_context) :      INT_MAX);
@@ -4199,7 +4199,7 @@ bool Enqueued::Match(const ScriptingContext& local_context) const {
     }
     std::string name =  (m_name ?       m_name->Eval(local_context) :       "");
     int empire_id =     (m_empire_id ?  m_empire_id->Eval(local_context) :  ALL_EMPIRES);
-    int design_id =     (m_design_id ?  m_design_id->Eval(local_context) :  ShipDesign::INVALID_DESIGN_ID);
+    int design_id =     (m_design_id ?  m_design_id->Eval(local_context) :  INVALID_DESIGN_ID);
     int low =           (m_low ?        m_low->Eval(local_context) :        0);
     int high =          (m_high ?       m_high->Eval(local_context) :       INT_MAX);
     return EnqueuedSimpleMatch(m_build_type, name, design_id, empire_id, low, high)(candidate);
@@ -5146,7 +5146,7 @@ namespace {
         bool operator()(std::shared_ptr<const UniverseObject> candidate) const {
             if (!candidate)
                 return false;
-            if (m_design_id == ShipDesign::INVALID_DESIGN_ID)
+            if (m_design_id == INVALID_DESIGN_ID)
                 return false;
             if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(candidate))
                 if (ship->DesignID() == m_design_id)
@@ -6297,7 +6297,7 @@ void OwnerHasShipDesignAvailable::Eval(const ScriptingContext& parent_context,
         // evaluate number limits once, use to match all candidates
         std::shared_ptr<const UniverseObject> no_object;
         ScriptingContext local_context(parent_context, no_object);
-        int id = m_id ? m_id->Eval(local_context) : ShipDesign::INVALID_DESIGN_ID;
+        int id = m_id ? m_id->Eval(local_context) : INVALID_DESIGN_ID;
         EvalImpl(matches, non_matches, search_domain, OwnerHasShipDesignAvailableSimpleMatch(id));
     } else {
         // re-evaluate allowed turn range for each candidate object
@@ -6337,7 +6337,7 @@ bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) c
         return false;
     }
 
-    int id = m_id ? m_id->Eval(local_context) : ShipDesign::INVALID_DESIGN_ID;
+    int id = m_id ? m_id->Eval(local_context) : INVALID_DESIGN_ID;
     return OwnerHasShipDesignAvailableSimpleMatch(id)(candidate);
 }
 

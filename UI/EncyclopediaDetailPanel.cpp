@@ -12,7 +12,6 @@
 #include "../universe/Encyclopedia.h"
 #include "../universe/Universe.h"
 #include "../universe/Tech.h"
-#include "../universe/ShipDesign.h"
 #include "../universe/Building.h"
 #include "../universe/Planet.h"
 #include "../universe/System.h"
@@ -48,6 +47,8 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string/replace.hpp>
 #include <unordered_map>
+
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 using boost::io::str;
 
@@ -2908,7 +2909,7 @@ void EncyclopediaDetailPanel::SetEmpire(const std::string& empire_id) {
 }
 
 void EncyclopediaDetailPanel::SetDesign(int design_id) {
-    int current_item_id = ShipDesign::INVALID_DESIGN_ID;
+    int current_item_id = INVALID_DESIGN_ID;
     if (m_items_it != m_items.end()) {
         try {
             current_item_id = boost::lexical_cast<int>(m_items_it->second);
@@ -2974,7 +2975,7 @@ void EncyclopediaDetailPanel::SetItem(const Empire* empire)
 { SetEmpire(empire ? empire->EmpireID() : ALL_EMPIRES); }
 
 void EncyclopediaDetailPanel::SetItem(const ShipDesign* design)
-{ SetDesign(design ? design->ID() : ShipDesign::INVALID_DESIGN_ID); }
+{ SetDesign(design ? design->ID() : INVALID_DESIGN_ID); }
 
 void EncyclopediaDetailPanel::SetItem(const MeterType& meter_type)
 { SetMeterType(boost::lexical_cast<std::string>(meter_type)); }
