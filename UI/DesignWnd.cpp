@@ -1405,20 +1405,6 @@ public:
         GG::Label*                      m_name;
     };
 
-    class SavedDesignPanel : public GG::Control {
-    public:
-        SavedDesignPanel(GG::X w, GG::Y h, const boost::uuids::uuid& saved_design_uuid);
-
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
-        void Render() override
-        {}
-
-    private:
-        GG::StaticGraphic*              m_graphic;
-        GG::Label*                      m_name;
-    };
-
     class BasesListBoxRow : public CUIListBox::Row {
     public:
         BasesListBoxRow(GG::X w, GG::Y h);
@@ -1446,18 +1432,6 @@ public:
         int                             DesignID() const { return m_design_id; }
     private:
         int                             m_design_id;
-    };
-
-    class SavedDesignListBoxRow : public HullAndPartsListBoxRow {
-    public:
-        SavedDesignListBoxRow(GG::X w, GG::Y h, const boost::uuids::uuid& design_uuid);
-        const boost::uuids::uuid        DesignUUID() const;
-        const std::string&              DesignName() const;
-        const std::string&              Description() const;
-        bool                            LookupInStringtable() const;
-
-    private:
-        boost::uuids::uuid              m_design_uuid;
     };
 
 protected:
@@ -1539,32 +1513,6 @@ void BasesListBox::HullPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
         m_name->Resize(Size());
 }
 
-BasesListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const boost::uuids::uuid& saved_design_uuid) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-    m_graphic(nullptr),
-    m_name(nullptr)
-{
-    SetChildClippingMode(ClipToClient);
-    const ShipDesign* design = GetSavedDesignsManager().GetDesign(saved_design_uuid);
-    if (design) {
-        m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(design->Hull()),
-                                          GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-        m_graphic->Resize(GG::Pt(w, h));
-        AttachChild(m_graphic);
-
-        m_name = new CUILabel(design->Name(), GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
-        AttachChild(m_name);
-    }
-}
-
-void BasesListBox::SavedDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Control::SizeMove(ul, lr);
-    if (m_graphic)
-        m_graphic->Resize(Size());
-    if (m_name)
-        m_name->Resize(Size());
-}
-
 BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h) :
     BasesListBoxRow(w, h)
 {}
@@ -1594,52 +1542,6 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
 {
     push_back(new ShipDesignPanel(w, h, design_id));
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
-}
-
-BasesListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(GG::X w, GG::Y h,
-                                                           const boost::uuids::uuid& design_uuid) :
-    HullAndPartsListBoxRow(w, h),
-    m_design_uuid(design_uuid)
-{
-    push_back(new SavedDesignPanel(w, h, m_design_uuid));
-    SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
-
-    SavedDesignsManager& manager = GetSavedDesignsManager();
-    const ShipDesign* design = manager.GetDesign(m_design_uuid);
-    if (!design)
-        WarnLogger() << "Design added to SavedDesignListBoxRow is not a valid saved design, uuid = " << design_uuid;
-}
-
-const boost::uuids::uuid BasesListBox::SavedDesignListBoxRow::DesignUUID() const {
-    SavedDesignsManager& manager = GetSavedDesignsManager();
-    const ShipDesign* design = manager.GetDesign(m_design_uuid);
-    if (!design)
-        return boost::uuids::uuid{};
-    return design->UUID();
-}
-
-const std::string& BasesListBox::SavedDesignListBoxRow::DesignName() const {
-    SavedDesignsManager& manager = GetSavedDesignsManager();
-    const ShipDesign* design = manager.GetDesign(m_design_uuid);
-    if (!design)
-        return EMPTY_STRING;
-    return design->Name();
-}
-
-const std::string& BasesListBox::SavedDesignListBoxRow::Description() const {
-    SavedDesignsManager& manager = GetSavedDesignsManager();
-    const ShipDesign* design = manager.GetDesign(m_design_uuid);
-    if (!design)
-        return EMPTY_STRING;
-    return design->Description();
-}
-
-bool BasesListBox::SavedDesignListBoxRow::LookupInStringtable() const {
-    SavedDesignsManager& manager = GetSavedDesignsManager();
-    const ShipDesign* design = manager.GetDesign(m_design_uuid);
-    if (!design)
-        return false;
-    return design->LookupInStringtable();
 }
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
@@ -1826,6 +1728,32 @@ class SavedDesignsListBox : public BasesListBox {
                         const boost::optional<std::string>& drop_type = boost::none) :
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
+
+    class SavedDesignPanel : public GG::Control {
+        public:
+        SavedDesignPanel(GG::X w, GG::Y h, const boost::uuids::uuid& saved_design_uuid);
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+        void Render() override
+        {}
+
+        private:
+        GG::StaticGraphic*              m_graphic;
+        GG::Label*                      m_name;
+    };
+
+    class SavedDesignListBoxRow : public HullAndPartsListBoxRow {
+        public:
+        SavedDesignListBoxRow(GG::X w, GG::Y h, const boost::uuids::uuid& design_uuid);
+        const boost::uuids::uuid        DesignUUID() const;
+        const std::string&              DesignName() const;
+        const std::string&              Description() const;
+        bool                            LookupInStringtable() const;
+
+        private:
+        boost::uuids::uuid              m_design_uuid;
+    };
 
     protected:
     void PopulateCore() override;
@@ -2041,8 +1969,8 @@ BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* c
     if (wnd->DragDropDataType() != SAVED_DESIGN_ROW_DROP_STRING)
         return nullptr;
     // find name of design that was dragged away, and replace
-    const BasesListBox::SavedDesignListBoxRow* design_row =
-        boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
+    const SavedDesignsListBox::SavedDesignListBoxRow* design_row =
+        boost::polymorphic_downcast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd);
 
     const auto row_size = ListRowSize();
     return new SavedDesignListBoxRow(row_size.x, row_size.y, design_row->DesignUUID());
@@ -2262,7 +2190,7 @@ void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it
 void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
                                          const GG::ListBox::iterator& original_position_it)
 {
-    const auto control = dynamic_cast<BasesListBox::SavedDesignListBoxRow*>(*row_it);
+    const auto control = dynamic_cast<SavedDesignsListBox::SavedDesignListBoxRow*>(*row_it);
     if (!control)
         return;
 
@@ -2271,13 +2199,91 @@ void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
     iterator insert_before_row = std::next(row_it);
 
     const auto insert_before_control = (insert_before_row == end()) ? nullptr :
-        boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(*insert_before_row);
+        boost::polymorphic_downcast<const SavedDesignsListBox::SavedDesignListBoxRow*>(*insert_before_row);
     const auto& next_uuid = insert_before_control
         ? insert_before_control->DesignUUID() : boost::uuids::uuid{{0}};
 
     if (GetSavedDesignsManager().MoveBefore(uuid, next_uuid))
         control->Resize(ListRowSize());
 }
+
+
+//////////////////////////////////////////////////
+// BasesListBox derived class rows              //
+//////////////////////////////////////////////////
+
+SavedDesignsListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const boost::uuids::uuid& saved_design_uuid) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+    m_graphic(nullptr),
+    m_name(nullptr)
+{
+    SetChildClippingMode(ClipToClient);
+    const ShipDesign* design = GetSavedDesignsManager().GetDesign(saved_design_uuid);
+    if (design) {
+        m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(design->Hull()),
+                                          GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+        m_graphic->Resize(GG::Pt(w, h));
+        AttachChild(m_graphic);
+
+        m_name = new CUILabel(design->Name(), GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
+        AttachChild(m_name);
+    }
+}
+
+void SavedDesignsListBox::SavedDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Control::SizeMove(ul, lr);
+    if (m_graphic)
+        m_graphic->Resize(Size());
+    if (m_name)
+        m_name->Resize(Size());
+}
+
+SavedDesignsListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(GG::X w, GG::Y h,
+                                                           const boost::uuids::uuid& design_uuid) :
+    HullAndPartsListBoxRow(w, h),
+    m_design_uuid(design_uuid)
+{
+    push_back(new SavedDesignPanel(w, h, m_design_uuid));
+    SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
+
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
+    if (!design)
+        WarnLogger() << "Design added to SavedDesignListBoxRow is not a valid saved design, uuid = " << design_uuid;
+}
+
+const boost::uuids::uuid SavedDesignsListBox::SavedDesignListBoxRow::DesignUUID() const {
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
+    if (!design)
+        return boost::uuids::uuid{};
+    return design->UUID();
+}
+
+const std::string& SavedDesignsListBox::SavedDesignListBoxRow::DesignName() const {
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
+    if (!design)
+        return EMPTY_STRING;
+    return design->Name();
+}
+
+const std::string& SavedDesignsListBox::SavedDesignListBoxRow::Description() const {
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
+    if (!design)
+        return EMPTY_STRING;
+    return design->Description();
+}
+
+bool SavedDesignsListBox::SavedDesignListBoxRow::LookupInStringtable() const {
+    SavedDesignsManager& manager = GetSavedDesignsManager();
+    const ShipDesign* design = manager.GetDesign(m_design_uuid);
+    if (!design)
+        return false;
+    return design->LookupInStringtable();
+}
+
 
 
 //////////////////////////////////////////////////
@@ -3663,8 +3669,8 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::W
         }
     }
     else if (wnd->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
-        const BasesListBox::SavedDesignListBoxRow* control =
-            boost::polymorphic_downcast<const BasesListBox::SavedDesignListBoxRow*>(wnd);
+        const SavedDesignsListBox::SavedDesignListBoxRow* control =
+            boost::polymorphic_downcast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd);
         if (control) {
             const auto& uuid = control->DesignUUID();
             const ShipDesign* design = GetSavedDesignsManager().GetDesign(uuid);
