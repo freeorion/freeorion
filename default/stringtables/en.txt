@@ -1380,7 +1380,10 @@ OPTIONS_DB_UI_AUTO_REPOSITION_WINDOWS
 Toggles whether to automatically reposition windows when the application size changes.
 
 OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS
-Automatically add all user-saved ship designs to the player-empire known designs, if and only if the ShipDesign screen is visited on turn 1.
+Automatically add all user-saved ship designs to the player-empire known designs.
+
+OPTIONS_DB_ADD_DEFAULT_DESIGNS
+Automatically add game default ship designs to the player-empire known designs.
 
 OPTIONS_DB_DESIGN_PEDIA_DYNAMIC
 In the Design Window, dynamically update the pedia detail page while the design name is being edited.
@@ -2615,6 +2618,9 @@ Effects processing threads (server)
 OPTIONS_ADD_SAVED_DESIGNS
 Add All Saved Ship Designs at Game Start
 
+OPTIONS_ADD_DEFAULT_DESIGNS
+Add All Default Ship Designs at Game Start
+
 OPTIONS_USE_BINARY_SERIALIZATION
 Create Binary Save Files
 
@@ -3533,6 +3539,9 @@ Buildings
 
 PRODUCTION_WND_CATEGORY_BT_SHIP
 Ships
+
+PRODUCTION_WND_AVAILABILITY_OBSOLETE
+Obsolete
 
 PRODUCTION_WND_AVAILABILITY_AVAILABLE
 Available

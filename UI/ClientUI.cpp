@@ -561,6 +561,7 @@ namespace {
 
         // Other
         db.Add("auto-add-saved-designs",        UserStringNop("OPTIONS_DB_AUTO_ADD_SAVED_DESIGNS"),        true);
+        db.Add("auto-add-default-designs",      UserStringNop("OPTIONS_DB_ADD_DEFAULT_DESIGNS"),           true);
 
     }
     bool temp_bool = RegisterOptions(&AddOptions);
