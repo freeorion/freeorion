@@ -16,6 +16,15 @@
 #include <map>
 #include <set>
 
+namespace CheckSums {
+    template <typename T>
+    void CheckSumCombine(unsigned int& sum, const typename ValueRef::ValueRefBase<T>& c)
+    {
+        TraceLogger() << "CheckSumCombine(ValueRef::ValueRefBase<T>): " << typeid(c).name();
+        sum += c.GetCheckSum();
+        sum %= CHECKSUM_MODULUS;
+    }
+}
 
 class UniverseObject;
 

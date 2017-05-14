@@ -6,6 +6,9 @@
 
 #include <iostream>
 #include <typeinfo>
+#include <set>
+#include <map>
+#include <vector>
 
 namespace CheckSums {
     const unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
@@ -19,13 +22,13 @@ namespace CheckSums {
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, long int t);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, double t);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, float t);
-
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, const char* s);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const std::string& c);
 
     // classes that have GetCheckSum methods
     template <class C>
     void CheckSumCombine(unsigned int& sum, const C& c,
-                         decltype(((C*)nullptr)->GetCheckSum())* val = nullptr)
+                         decltype(std::declval<C>().GetCheckSum())* = nullptr)
     {
         TraceLogger() << "CheckSumCombine(C with GetCheckSum): " << typeid(c).name();
         sum += c.GetCheckSum();
@@ -34,7 +37,9 @@ namespace CheckSums {
 
     // enums
     template <class T>
-    void CheckSumCombine(unsigned int& sum, T t, typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr) {
+    void CheckSumCombine(unsigned int& sum, T t,
+                         typename std::enable_if<std::is_enum<T>::value, T>::type* = nullptr)
+    {
         TraceLogger() << "CheckSumCombine(enum): " << typeid(t).name();
         CheckSumCombine(sum, static_cast<int>(t) + 10);
     }
@@ -64,16 +69,32 @@ namespace CheckSums {
         CheckSumCombine(sum, p.second);
     }
 
-    // vectors, maps, and strings
+    // vectors, sets, maps
     template <class C>
-    void CheckSumCombine(unsigned int& sum, const C& c,
-                         const typename C::const_iterator* it = nullptr,
-                         const typename C::value_type* val = nullptr)
+    void CheckSumCombine(unsigned int& sum, const typename std::vector<C>& v)
     {
-        TraceLogger() << "CheckSumCombine(C container): " << typeid(c).name();
-        for (const typename C::value_type& t : c)
+        TraceLogger() << "CheckSumCombine(vector<C>): " << typeid(v).name();
+        for (const auto& t : v)
             CheckSumCombine(sum, t);
-        sum += c.size();
+        sum += v.size();
+        sum %= CHECKSUM_MODULUS;
+    }
+    template <class C>
+    void CheckSumCombine(unsigned int& sum, const typename std::set<C>& s)
+    {
+        TraceLogger() << "CheckSumCombine(set<C>): " << typeid(s).name();
+        for (const auto& t : s)
+            CheckSumCombine(sum, t);
+        sum += s.size();
+        sum %= CHECKSUM_MODULUS;
+    }
+    template <class C, class D>
+    void CheckSumCombine(unsigned int& sum, const typename std::map<C, D>& m)
+    {
+        TraceLogger() << "CheckSumCombine(map<C, D>): " << typeid(m).name();
+        for (const auto& t : m)
+            CheckSumCombine(sum, t);
+        sum += m.size();
         sum %= CHECKSUM_MODULUS;
     }
 }

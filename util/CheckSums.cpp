@@ -43,6 +43,14 @@ namespace CheckSums {
     void CheckSumCombine(unsigned int& sum, const char* s)
     { CheckSumCombine(sum, std::string(s)); }
 
+    void CheckSumCombine(unsigned int& sum, const std::string& c) {
+        TraceLogger() << "CheckSumCombine(std::string): " << c;
+        for (auto& t : c)
+            CheckSumCombine(sum, t);
+        sum += c.size();
+        sum %= CHECKSUM_MODULUS;
+    }
+
     void CheckSumCombine(unsigned int& sum, double t) {
         assert(DBL_MAX_10_EXP < 400);
         if (t == 0.0)

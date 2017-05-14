@@ -201,6 +201,10 @@ struct FO_COMMON_API TechCategory {
     GG::Clr     colour;     ///< colour associatied with category
 };
 
+namespace CheckSums {
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const ItemSpec& item);
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const TechCategory& cat);
+}
 
 /** holds all FreeOrion techs.  Techs may be looked up by name and by category, and the next researchable techs can be querried,
     given a set of currently-known techs. */

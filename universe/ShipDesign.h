@@ -403,6 +403,10 @@ private:
     void serialize(Archive& ar, const unsigned int version);
 };
 
+namespace CheckSums {
+    FO_COMMON_API void CheckSumCombine(unsigned int& sum, const HullType::Slot& slot);
+}
+
 /** Holds FreeOrion hull types */
 class FO_COMMON_API HullTypeManager {
 public:
