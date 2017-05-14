@@ -189,252 +189,30 @@ namespace {
             return manager;
         }
 
-        void ClearDesigns()
-        { m_saved_designs.clear(); }
+        void RefreshDesigns();
 
-        void RefreshDesigns() {
-            using namespace boost::filesystem;
-            ClearDesigns();
-
-            path saved_designs_dir = SavedDesignsDir();
-            if (!exists(saved_designs_dir))
-                return;
-
-            std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
-            std::vector<boost::uuids::uuid> ordering;
-            parse::ship_designs(saved_designs_dir, designs_and_paths, ordering);
-
-            m_saved_designs.clear();
-            for (auto&& design_and_path : designs_and_paths) {
-                auto& design = design_and_path.first;
-
-                // If the UUID is nil this is a legacy design that needs a new UUID
-                if(design->UUID() == boost::uuids::uuid{{0}}) {
-                    design->SetUUID(boost::uuids::random_generator()());
-                    DebugLogger() << "Converted legacy ship design file by adding  UUID " << design->UUID()
-                                  << " for name " << design->Name();
-
-                }
-
-                if (!m_saved_designs.count(design->UUID())) {
-                    TraceLogger() << "Added saved design UUID " << design->UUID()
-                                  << " with name " << design->Name();
-                    m_saved_designs[design->UUID()] = std::move(design_and_path);
-                } else {
-                    WarnLogger() << "Duplicate ship design UUID " << design->UUID()
-                                 << " found for ship design " << design->Name()
-                                 << " in " << saved_designs_dir;
-                }
-            }
-
-            // Verify that all UUIDs in ordering exist
-            m_ordered_uuids.clear();
-            bool ship_manifest_inconsistent = false;
-            for (auto& uuid: ordering) {
-                // Skip the nil UUID.
-                if(uuid == boost::uuids::uuid{{0}})
-                    continue;
-
-                if (!m_saved_designs.count(uuid)) {
-                    WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
-                                 << "a ship design that does not exist.";
-                    ship_manifest_inconsistent = true;
-                    continue;
-                }
-                m_ordered_uuids.push_back(uuid);
-            }
-
-            // Verify that every design in m_saved_designs is in m_ordered_uuids.
-            if (m_ordered_uuids.size() != m_saved_designs.size()) {
-                // Add any missing designs in alphabetical order to the end of the list
-                std::unordered_set<boost::uuids::uuid> uuids_in_ordering{m_ordered_uuids.begin(), m_ordered_uuids.end()};
-                std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
-                for (auto& uuid_to_design_and_filename: m_saved_designs) {
-                    if (uuids_in_ordering.count(uuid_to_design_and_filename.first))
-                        continue;
-                    ship_manifest_inconsistent = true;
-                    missing_uuids_sorted_by_name.insert(
-                        std::make_pair(uuid_to_design_and_filename.second.first->Name(),
-                                       uuid_to_design_and_filename.first));
-                }
-
-                for (auto& name_and_uuid: missing_uuids_sorted_by_name) {
-                    WarnLogger() << "Missing ship design " << name_and_uuid.second
-                                 << " called " << name_and_uuid.first
-                                 << " added to the manifest.";
-                    m_ordered_uuids.push_back(name_and_uuid.second);
-                }
-            }
-
-            // Write the corrected ordering back to disk.
-            if (ship_manifest_inconsistent) {
-                DebugLogger() << "Writing corrected ship designs back to saved designs.";
-                SaveManifest();
-                for (auto& uuid: m_ordered_uuids)
-                    SaveDesign(uuid);
-            }
-        }
-
-        const ShipDesign* GetDesign(const boost::uuids::uuid& uuid) {
-            const auto& it = m_saved_designs.find(uuid);
-            if (it == m_saved_designs.end())
-                return nullptr;
-            return it->second.first.get();
-        }
+        const ShipDesign* GetDesign(const boost::uuids::uuid& uuid) const;
 
          /* Causes the human client Empire to add all saved designs. */
-        void LoadAllSavedDesigns() {
-            int empire_id = HumanClientApp::GetApp()->EmpireID();
-            if (const Empire* empire = GetEmpire(empire_id)) {
-                DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
-                for (const auto& entry : m_saved_designs) {
-                    const auto& ship_design_on_disk = *(entry.second.first);
-                    bool already_got = false;
-                    for (int id : empire->OrderedShipDesigns()) {
-                        const ShipDesign& ship_design = *GetShipDesign(id);
-                        if (ship_design == ship_design_on_disk) {
-                            already_got = true;
-                            break;
-                        }
-                    }
-                    if (!already_got) {
-                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << ship_design_on_disk.Name();
-                        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-                        HumanClientApp::GetApp()->Orders().IssueOrder(
-                            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, ship_design_on_disk));
-                    } else {
-                        DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << ship_design_on_disk.Name();
-                    }
-                }
-            } else {
-                DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns HumanClient Does Not Control an Empire";
-            }
-        }
+        void LoadAllSavedDesigns();
 
-        void SaveManifest() {
-            boost::filesystem::path designs_dir_path = GetDesignsDir();
+        void SaveManifest();
 
-            std::string file_name = DESIGN_MANIFEST_PREFIX + DESIGN_FILENAME_EXTENSION;
+        std::list<boost::uuids::uuid>::const_iterator
+        InsertBefore(const ShipDesign& design, std::list<boost::uuids::uuid>::const_iterator next);
 
-            boost::filesystem::path file =
-                boost::filesystem::absolute(PathString(designs_dir_path / file_name));
+        bool MoveBefore(const boost::uuids::uuid& moved_uuid, const boost::uuids::uuid& next_uuid);
 
-            std::stringstream ss;
-            ss << "ShipDesignManifest\n";
-            for (const auto uuid: m_ordered_uuids)
-                ss << "    uuid = \"" << uuid << "\"\n";
-            WriteToFile(file, ss.str());
-        }
-
-        std::list<boost::uuids::uuid>::const_iterator InsertBefore(
-            const ShipDesign& design,
-            std::list<boost::uuids::uuid>::const_iterator next)
-        {
-            if(design.UUID() == boost::uuids::uuid{{0}}) {
-                ErrorLogger() << "Ship design has a nil UUID for " << design.Name() << ". Not saving.";
-                return next;
-            }
-
-            if (m_saved_designs.count(design.UUID())) {
-                // UUID already exists so this is a move.  Remove the old UUID location
-                const auto existing_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), design.UUID());
-                if (existing_it != m_ordered_uuids.end())
-                    m_ordered_uuids.erase(existing_it);
-
-            } else {
-                // Add the new saved design.
-                // TODO:: Use std::make_unique when switching to C++14
-                std::unique_ptr<ShipDesign> design_copy{
-                    new ShipDesign(design.Name(false), design.Description(false),
-                                   design.Hull(), design.Parts(), design.Icon(),
-                                   design.Model(), design.LookupInStringtable(),
-                                   design.IsMonster(), design.UUID())};
-
-                const auto save_path = CreateSaveFileNameForDesign(design);
-
-                m_saved_designs.insert(
-                    std::make_pair(design.UUID(), std::make_pair(std::move(design_copy), save_path)));
-                SaveDesign(design.UUID());
-            }
-
-            // Insert in the list.
-            const auto retval = m_ordered_uuids.insert(next, design.UUID());
-            SaveManifest();
-            return retval;
-        }
-
-        bool MoveBefore(const boost::uuids::uuid& moved_uuid, const boost::uuids::uuid& next_uuid) {
-            if (!m_saved_designs.count(moved_uuid)) {
-                ErrorLogger() << "Unable to move saved design because moved design is missing.";
-                return false;
-            }
-
-            if (next_uuid != boost::uuids::uuid{{0}} && !m_saved_designs.count(next_uuid)) {
-                ErrorLogger() << "Unable to move saved design because target design is missing.";
-                return false;
-            }
-
-            const auto moved_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), moved_uuid);
-            if (moved_it == m_ordered_uuids.end()) {
-                ErrorLogger() << "Unable to move saved design because moved design is missing.";
-                return false;
-            }
-
-            m_ordered_uuids.erase(moved_it);
-
-            const auto next_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), next_uuid);
-
-            // Insert in the list.
-            m_ordered_uuids.insert(next_it, moved_uuid);
-            SaveManifest();
-            return true;
-        }
-
-        std::list<boost::uuids::uuid>::const_iterator Erase(std::list<boost::uuids::uuid>::const_iterator erasee)
-        {
-            if (erasee == m_ordered_uuids.end())
-                return erasee;
-
-            const auto& saved_design_it = m_saved_designs.find(*erasee);
-            if (saved_design_it != m_saved_designs.end()) {
-                const auto& file = saved_design_it->second.second;
-                boost::filesystem::remove(file);
-                m_saved_designs.erase(*erasee);
-            }
-
-            return m_ordered_uuids.erase(erasee);
-        }
+        std::list<boost::uuids::uuid>::const_iterator
+        Erase(std::list<boost::uuids::uuid>::const_iterator erasee);
 
     private:
-        SavedDesignsManager() {
-            if (s_instance)
-                throw std::runtime_error("Attempted to create more than one SavedDesignsManager.");
-            s_instance = this;
-            RefreshDesigns();
-        }
+        SavedDesignsManager();
 
         /** Save the design with the original filename or throw out_of_range..*/
-        void SaveDesign(const boost::uuids::uuid &uuid) {
-            const auto& design_and_filename = m_saved_designs.at(uuid);
+        void SaveDesign(const boost::uuids::uuid &uuid);
 
-            WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
-        }
-
-        void SaveDesign(int design_id) {
-            const ShipDesign* design = GetShipDesign(design_id);
-            if (!design)
-                return;
-
-            // Save with the original filename if possible
-            if (m_saved_designs.count(design->UUID())) {
-                SaveDesign(design->UUID());
-                return;
-            }
-
-            const auto save_path = CreateSaveFileNameForDesign(*design);
-
-            WriteToFile(save_path, design->Dump());
-        }
+        void SaveDesign(int design_id);
 
         std::list<boost::uuids::uuid> m_ordered_uuids;
         /// Saved designs with filename
@@ -443,6 +221,254 @@ namespace {
                                      boost::filesystem::path>>  m_saved_designs;
         static SavedDesignsManager*         s_instance;
     };
+
+    void SavedDesignsManager::RefreshDesigns() {
+        using namespace boost::filesystem;
+        m_saved_designs.clear();
+
+        path saved_designs_dir = SavedDesignsDir();
+        if (!exists(saved_designs_dir))
+            return;
+
+        std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
+        std::vector<boost::uuids::uuid> ordering;
+        parse::ship_designs(saved_designs_dir, designs_and_paths, ordering);
+
+        m_saved_designs.clear();
+        for (auto&& design_and_path : designs_and_paths) {
+            auto& design = design_and_path.first;
+
+            // If the UUID is nil this is a legacy design that needs a new UUID
+            if(design->UUID() == boost::uuids::uuid{{0}}) {
+                design->SetUUID(boost::uuids::random_generator()());
+                DebugLogger() << "Converted legacy ship design file by adding  UUID " << design->UUID()
+                              << " for name " << design->Name();
+
+            }
+
+            if (!m_saved_designs.count(design->UUID())) {
+                TraceLogger() << "Added saved design UUID " << design->UUID()
+                              << " with name " << design->Name();
+                m_saved_designs[design->UUID()] = std::move(design_and_path);
+            } else {
+                WarnLogger() << "Duplicate ship design UUID " << design->UUID()
+                             << " found for ship design " << design->Name()
+                             << " in " << saved_designs_dir;
+            }
+        }
+
+        // Verify that all UUIDs in ordering exist
+        m_ordered_uuids.clear();
+        bool ship_manifest_inconsistent = false;
+        for (auto& uuid: ordering) {
+            // Skip the nil UUID.
+            if(uuid == boost::uuids::uuid{{0}})
+                continue;
+
+            if (!m_saved_designs.count(uuid)) {
+                WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
+                             << "a ship design that does not exist.";
+                ship_manifest_inconsistent = true;
+                continue;
+            }
+            m_ordered_uuids.push_back(uuid);
+        }
+
+        // Verify that every design in m_saved_designs is in m_ordered_uuids.
+        if (m_ordered_uuids.size() != m_saved_designs.size()) {
+            // Add any missing designs in alphabetical order to the end of the list
+            std::unordered_set<boost::uuids::uuid> uuids_in_ordering{m_ordered_uuids.begin(), m_ordered_uuids.end()};
+            std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
+            for (auto& uuid_to_design_and_filename: m_saved_designs) {
+                if (uuids_in_ordering.count(uuid_to_design_and_filename.first))
+                    continue;
+                ship_manifest_inconsistent = true;
+                missing_uuids_sorted_by_name.insert(
+                    std::make_pair(uuid_to_design_and_filename.second.first->Name(),
+                                   uuid_to_design_and_filename.first));
+            }
+
+            for (auto& name_and_uuid: missing_uuids_sorted_by_name) {
+                WarnLogger() << "Missing ship design " << name_and_uuid.second
+                             << " called " << name_and_uuid.first
+                             << " added to the manifest.";
+                m_ordered_uuids.push_back(name_and_uuid.second);
+            }
+        }
+
+        // Write the corrected ordering back to disk.
+        if (ship_manifest_inconsistent) {
+            DebugLogger() << "Writing corrected ship designs back to saved designs.";
+            SaveManifest();
+            for (auto& uuid: m_ordered_uuids)
+                SaveDesign(uuid);
+        }
+    }
+
+    const ShipDesign* SavedDesignsManager::GetDesign(const boost::uuids::uuid& uuid) const {
+        const auto& it = m_saved_designs.find(uuid);
+        if (it == m_saved_designs.end())
+            return nullptr;
+        return it->second.first.get();
+    }
+
+    /* Causes the human client Empire to add all saved designs. */
+    void SavedDesignsManager::LoadAllSavedDesigns() {
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        if (const Empire* empire = GetEmpire(empire_id)) {
+            DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
+            for (const auto& entry : m_saved_designs) {
+                const auto& ship_design_on_disk = *(entry.second.first);
+                bool already_got = false;
+                for (int id : empire->OrderedShipDesigns()) {
+                    const ShipDesign& ship_design = *GetShipDesign(id);
+                    if (ship_design == ship_design_on_disk) {
+                        already_got = true;
+                        break;
+                    }
+                }
+                if (!already_got) {
+                    DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << ship_design_on_disk.Name();
+                    int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+                    HumanClientApp::GetApp()->Orders().IssueOrder(
+                        std::make_shared<ShipDesignOrder>(empire_id, new_design_id, ship_design_on_disk));
+                } else {
+                    DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << ship_design_on_disk.Name();
+                }
+            }
+        } else {
+            DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns HumanClient Does Not Control an Empire";
+        }
+    }
+
+    void SavedDesignsManager::SaveManifest() {
+        boost::filesystem::path designs_dir_path = GetDesignsDir();
+
+        std::string file_name = DESIGN_MANIFEST_PREFIX + DESIGN_FILENAME_EXTENSION;
+
+        boost::filesystem::path file =
+            boost::filesystem::absolute(PathString(designs_dir_path / file_name));
+
+        std::stringstream ss;
+        ss << "ShipDesignManifest\n";
+        for (const auto uuid: m_ordered_uuids)
+            ss << "    uuid = \"" << uuid << "\"\n";
+        WriteToFile(file, ss.str());
+    }
+
+    std::list<boost::uuids::uuid>::const_iterator SavedDesignsManager::InsertBefore(
+        const ShipDesign& design,
+        std::list<boost::uuids::uuid>::const_iterator next)
+    {
+        if(design.UUID() == boost::uuids::uuid{{0}}) {
+            ErrorLogger() << "Ship design has a nil UUID for " << design.Name() << ". Not saving.";
+            return next;
+        }
+
+        if (m_saved_designs.count(design.UUID())) {
+            // UUID already exists so this is a move.  Remove the old UUID location
+            const auto existing_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), design.UUID());
+            if (existing_it != m_ordered_uuids.end())
+                m_ordered_uuids.erase(existing_it);
+
+        } else {
+            // Add the new saved design.
+            // TODO:: Use std::make_unique when switching to C++14
+            std::unique_ptr<ShipDesign> design_copy{
+                new ShipDesign(design.Name(false), design.Description(false),
+                               design.Hull(), design.Parts(), design.Icon(),
+                               design.Model(), design.LookupInStringtable(),
+                               design.IsMonster(), design.UUID())};
+
+            const auto save_path = CreateSaveFileNameForDesign(design);
+
+            m_saved_designs.insert(
+                std::make_pair(design.UUID(), std::make_pair(std::move(design_copy), save_path)));
+            SaveDesign(design.UUID());
+        }
+
+        // Insert in the list.
+        const auto retval = m_ordered_uuids.insert(next, design.UUID());
+        SaveManifest();
+        return retval;
+    }
+
+    bool SavedDesignsManager::MoveBefore(const boost::uuids::uuid& moved_uuid, const boost::uuids::uuid& next_uuid) {
+        if (moved_uuid == next_uuid)
+            return false;
+
+        if (!m_saved_designs.count(moved_uuid)) {
+            ErrorLogger() << "Unable to move saved design because moved design is missing.";
+            return false;
+        }
+
+        if (next_uuid != boost::uuids::uuid{{0}} && !m_saved_designs.count(next_uuid)) {
+            ErrorLogger() << "Unable to move saved design because target design is missing.";
+            return false;
+        }
+
+        const auto moved_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), moved_uuid);
+        if (moved_it == m_ordered_uuids.end()) {
+            ErrorLogger() << "Unable to move saved design because moved design is missing.";
+            return false;
+        }
+
+        m_ordered_uuids.erase(moved_it);
+
+        const auto next_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), next_uuid);
+
+        // Insert in the list.
+        m_ordered_uuids.insert(next_it, moved_uuid);
+        SaveManifest();
+        return true;
+    }
+
+    std::list<boost::uuids::uuid>::const_iterator SavedDesignsManager::Erase(
+        std::list<boost::uuids::uuid>::const_iterator erasee)
+    {
+        if (erasee == m_ordered_uuids.end())
+            return erasee;
+
+        const auto& saved_design_it = m_saved_designs.find(*erasee);
+        if (saved_design_it != m_saved_designs.end()) {
+            const auto& file = saved_design_it->second.second;
+            boost::filesystem::remove(file);
+            m_saved_designs.erase(*erasee);
+        }
+
+        return m_ordered_uuids.erase(erasee);
+    }
+
+    SavedDesignsManager::SavedDesignsManager() {
+        if (s_instance)
+            throw std::runtime_error("Attempted to create more than one SavedDesignsManager.");
+        s_instance = this;
+        RefreshDesigns();
+    }
+
+    /** Save the design with the original filename or throw out_of_range..*/
+    void SavedDesignsManager::SaveDesign(const boost::uuids::uuid &uuid) {
+        const auto& design_and_filename = m_saved_designs.at(uuid);
+
+        WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
+    }
+
+    void SavedDesignsManager::SaveDesign(int design_id) {
+        const ShipDesign* design = GetShipDesign(design_id);
+        if (!design)
+            return;
+
+        // Save with the original filename if possible
+        if (m_saved_designs.count(design->UUID())) {
+            SaveDesign(design->UUID());
+            return;
+        }
+
+        const auto save_path = CreateSaveFileNameForDesign(*design);
+
+        WriteToFile(save_path, design->Dump());
+    }
+
     SavedDesignsManager* SavedDesignsManager::s_instance = nullptr;
 
     SavedDesignsManager& GetSavedDesignsManager()
