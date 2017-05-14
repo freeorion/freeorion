@@ -1466,8 +1466,6 @@ private:
     int                         m_empire_id_shown;
     const BasesListBox::AvailabilityManager& m_availabilities_state;
 
-    std::set<std::string>       m_saved_desgins_in_list;
-
     boost::signals2::connection m_empire_designs_changed_signal;
 };
 
