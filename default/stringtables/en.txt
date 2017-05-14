@@ -5500,6 +5500,50 @@ Repairs are delayed for one turn for ships just entering the system. Ships need 
 
 Any combat in the system will disrupt repairs for that turn.'''
 
+CONFIG_GUIDE_TITLE
+Configuration Guide
+
+CONFIG_GUIDE_TEXT
+'''Most configuration options for the game are stored and read from a single XML formatted file named config.xml.
+If this file does not exist (or is for a different build or version) it will be (re)created when the client starts. 
+The configuration file is typically updated after a stored option is changed, but may be deferred until a later action (such as clicking Done or Apply).
+Some of these options can be changed from the [[OPTIONS_TITLE]] menu, under the Main Menu.
+
+An option set in the persistent config file (if one exists) will override the value from config.xml.
+An option set from a command line argument will override the value from both files.
+config.xml will be changed to reflect any overridden values.
+
+
+Persistent Config File:
+
+A persistent configuration file is an optional XML file named persistent_config.xml.
+If this file exists, any settings it contains will override those from the main configuration file.
+This may be useful when a different build of the game is launched, such as after updating to a new version. To help retain compatibility, it is preferred to keep as few options in this file as needed.
+
+A persistent configuration file can be created or updated on the [[OPTIONS_TITLE]] menu [[OPTIONS_PAGE_MISC]] tab by clicking the [[OPTIONS_CREATE_PERSISTENT_CONFIG]] button.
+When using this button, there are a couple of known issues:
+Some options may be included even though they were not changed by the user, as they were adjusted after their default value. After updating to a new version, it may be required to manually remove these options from the file to update their default setting.
+Windows that have not been open in the current session may not have previously changed settings retained.  It is advised to have a game running and open all desired windows at least once to initialize the settings before using this button.
+
+The persistent configuration file may be manually created if desired, but should never contain the "version-string" option.
+
+
+Location of Config Files:
+
+Location in the filesystem is dependant on the OS definition of an environment variable.
+On Windows platforms the variable is denoted by wrapping in % - ( %var% ).
+On MacOSX and Linux platforms the variable is denoted by starting with ${ and ending with } - ( ${var} ).
+
+Windows: %APPDATA%\Roaming\FreeOrion
+    (e.g. C:\Users\username\AppData\Roaming\FreeOrion)
+
+MacOSX: ${HOME}/Library/Application Support/FreeOrion
+    (e.g. /Users/username/Library/Application Support/FreeOrion)
+
+Linux: ${XDG_CONFIG_HOME}/freeorion or if $XDG_CONFIG_HOME is not set: ${HOME}/.config/freeorion
+    (e.g. /home/username/.config/freeorion)
+'''
+
 
 ##
 ## Turn progress
