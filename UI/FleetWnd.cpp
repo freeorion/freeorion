@@ -35,6 +35,8 @@
 #include <unordered_set>
 
 
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
+
 namespace {
     const GG::Pt        DataPanelIconSpace()
     { return GG::Pt(GG::X(ClientUI::Pts()*3), GG::Y(ClientUI::Pts()*2.5)); }
@@ -294,7 +296,7 @@ namespace {
     {
         DebugLogger() << "CreateNewFleetFromShipsWithDesign with " << ship_ids.size()
                                << " ship ids and design id: " << design_id;
-        if (ship_ids.empty() || design_id == ShipDesign::INVALID_DESIGN_ID)
+        if (ship_ids.empty() || design_id == INVALID_DESIGN_ID)
             return;
         int client_empire_id = HumanClientApp::GetApp()->EmpireID();
         if (client_empire_id == ALL_EMPIRES && !ClientPlayerIsModerator())

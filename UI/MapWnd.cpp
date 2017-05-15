@@ -39,6 +39,7 @@
 #include "../universe/Planet.h"
 #include "../universe/Predicates.h"
 #include "../universe/Ship.h"
+#include "../universe/ShipDesign.h"
 #include "../universe/Species.h"
 #include "../universe/System.h"
 #include "../universe/Field.h"

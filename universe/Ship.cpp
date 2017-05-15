@@ -15,12 +15,13 @@
 
 #include <boost/lexical_cast.hpp>
 
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 class Species;
 const Species* GetSpecies(const std::string& name);
 
 Ship::Ship() :
     UniverseObject(),
-    m_design_id(ShipDesign::INVALID_DESIGN_ID),
+    m_design_id(INVALID_DESIGN_ID),
     m_fleet_id(INVALID_OBJECT_ID),
     m_ordered_scrapped(false),
     m_ordered_colonize_planet_id(INVALID_OBJECT_ID),

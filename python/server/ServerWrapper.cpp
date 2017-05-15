@@ -6,7 +6,6 @@
 #include "../../universe/System.h"
 #include "../../universe/Planet.h"
 #include "../../universe/Building.h"
-#include "../../universe/ShipDesign.h"
 #include "../../universe/Fleet.h"
 #include "../../universe/Ship.h"
 #include "../../universe/Field.h"
@@ -70,6 +69,8 @@ using boost::python::make_tuple;
 using boost::python::extract;
 using boost::python::len;
 
+
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 // Helper stuff (classes, functions etc.) exposed to the
 // server side Python scripts
@@ -400,7 +401,7 @@ namespace {
             ErrorLogger() << "CreateShipDesign: couldn't create ship design";
             return false;
         }
-        if (universe.InsertShipDesign(design) == ShipDesign::INVALID_DESIGN_ID) {
+        if (universe.InsertShipDesign(design) == INVALID_DESIGN_ID) {
             ErrorLogger() << "CreateShipDesign: couldn't insert ship design into universe";
             delete design;
             return false;

@@ -4,7 +4,6 @@
 #include "ResourcePool.h"
 #include "../util/Export.h"
 #include "../universe/Meter.h"
-#include "../universe/ShipDesign.h"
 #include "../universe/UniverseObject.h"
 
 #include <GG/Clr.h>
@@ -15,6 +14,7 @@
 struct ItemSpec;
 class ShipDesign;
 class SitRepEntry;
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 FO_COMMON_API extern const int ALL_EMPIRES;
@@ -466,7 +466,7 @@ public:
     void        AddExploredSystem(int ID);                  ///< Inserts the given ID into the Empire's list of explored systems.
 
     /** inserts given design id into the empire's set of designs in front of next design */
-    void        AddShipDesign(int ship_design_id, int next_design_id = ShipDesign::INVALID_DESIGN_ID);
+    void        AddShipDesign(int ship_design_id, int next_design_id = INVALID_DESIGN_ID);
     int         AddShipDesign(ShipDesign* ship_design);     ///< inserts given ShipDesign into the Universe, adds the design's id to the Empire's set of ids, and returns the new design's id, which is INVALID_OBJECT_ID on failure.  If successful, universe takes ownership of passed ShipDesign.
 
     std::string NewShipName();                              ///< generates a random ship name, appending II, III, etc., to it if it has been used before by this empire

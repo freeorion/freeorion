@@ -512,9 +512,6 @@ public:
     static bool                     ValidDesign(const ShipDesign& design)
     { return ValidDesign(design.m_hull, design.m_parts); }
 
-    static const int                INVALID_DESIGN_ID;
-    static const int                MAX_ID;
-
 private:
     void BuildStatCaches();
 

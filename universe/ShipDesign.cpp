@@ -19,6 +19,8 @@
 #include <cfloat>
 #include <boost/filesystem/fstream.hpp>
 
+extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
+
 using boost::io::str;
 
 namespace {
@@ -517,10 +519,6 @@ HullTypeManager::iterator HullTypeManager::end() const
 ////////////////////////////////////////////////
 // ShipDesign
 ////////////////////////////////////////////////
-// static(s)
-const int       ShipDesign::INVALID_DESIGN_ID = -1;
-const int       ShipDesign::MAX_ID            = 2000000000;
-
 ShipDesign::ShipDesign() :
     m_id(INVALID_OBJECT_ID),
     m_name(),
@@ -1117,7 +1115,7 @@ void PredefinedShipDesignManager::AddShipDesignsToEmpire(Empire* empire,
 
         int design_id = this->GetDesignID(design_name);
 
-        if (design_id == ShipDesign::INVALID_DESIGN_ID) {
+        if (design_id == INVALID_DESIGN_ID) {
             ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToEmpire couldn't add a design to an empire";
             continue;
         } else {
@@ -1155,7 +1153,7 @@ namespace {
 
         // generate id for new design
         int new_design_id = GetNewDesignID();
-        if (new_design_id == ShipDesign::INVALID_DESIGN_ID) {
+        if (new_design_id == INVALID_DESIGN_ID) {
             ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse Unable to get new design id";
             return;
         }
@@ -1224,7 +1222,7 @@ PredefinedShipDesignManager::generic_iterator PredefinedShipDesignManager::end_g
 int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
     std::map<std::string, int>::const_iterator it = m_design_generic_ids.find(name);
     if (it == m_design_generic_ids.end())
-        return ShipDesign::INVALID_DESIGN_ID;
+        return INVALID_DESIGN_ID;
     return it->second;
 }
 

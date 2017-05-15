@@ -3,7 +3,6 @@
 #include "Building.h"
 #include "Fleet.h"
 #include "Ship.h"
-#include "ShipDesign.h"
 #include "Planet.h"
 #include "Predicates.h"
 #include "Species.h"
@@ -32,6 +31,8 @@
 
 std::string DoubleToString(double val, int digits, bool always_show_sign);
 bool UserStringExists(const std::string& str);
+
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 namespace {
     std::shared_ptr<const UniverseObject> FollowReference(std::vector<std::string>::const_iterator first,
@@ -818,7 +819,7 @@ int Variable<int>::Eval(const ScriptingContext& context) const
         if (std::shared_ptr<const Ship> ship = std::dynamic_pointer_cast<const Ship>(object))
             return ship->DesignID();
         else
-            return ShipDesign::INVALID_DESIGN_ID;
+            return INVALID_DESIGN_ID;
 
     } else if (property_name == "SpeciesID") {
         if (std::shared_ptr<const Planet> planet = std::dynamic_pointer_cast<const Planet>(object))
@@ -1616,10 +1617,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
 
     // non-empire properties
     if (variable_name == "PartsInShipDesign") {
-        int design_id = ShipDesign::INVALID_DESIGN_ID;
+        int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
-            if (design_id == ShipDesign::INVALID_DESIGN_ID)
+            if (design_id == INVALID_DESIGN_ID)
                 return 0;
         } else {
             return 0;
@@ -1644,10 +1645,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return count;
 
     } else if (variable_name == "PartOfClassInShipDesign") {
-        int design_id = ShipDesign::INVALID_DESIGN_ID;
+        int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
-            if (design_id == ShipDesign::INVALID_DESIGN_ID)
+            if (design_id == INVALID_DESIGN_ID)
                 return 0;
         } else {
             return 0;
@@ -1731,10 +1732,10 @@ int ComplexVariable<int>::Eval(const ScriptingContext& context) const
         return hull_type->Slots().size();
 
     } else if (variable_name == "SlotsInShipDesign") {
-        int design_id = ShipDesign::INVALID_DESIGN_ID;
+        int design_id = INVALID_DESIGN_ID;
         if (m_int_ref1) {
             design_id = m_int_ref1->Eval(context);
-            if (design_id == ShipDesign::INVALID_DESIGN_ID)
+            if (design_id == INVALID_DESIGN_ID)
                 return 0;
         } else {
             return 0;

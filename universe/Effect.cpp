@@ -19,7 +19,6 @@
 #include "Field.h"
 #include "Fleet.h"
 #include "Ship.h"
-#include "ShipDesign.h"
 #include "Tech.h"
 #include "Species.h"
 #include "Enums.h"
@@ -36,6 +35,7 @@ namespace {
 using boost::io::str;
 
 extern int g_indent;
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
 namespace {
     /** creates a new fleet at a specified \a x and \a y location within the
@@ -1393,7 +1393,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
         return;
     }
 
-    int design_id = ShipDesign::INVALID_DESIGN_ID;
+    int design_id = INVALID_DESIGN_ID;
     if (m_design_id) {
         design_id = m_design_id->Eval(context);
         if (!GetShipDesign(design_id)) {
@@ -1409,7 +1409,7 @@ void CreateShip::Execute(const ScriptingContext& context) const {
         }
         design_id = ship_design->ID();
     }
-    if (design_id == ShipDesign::INVALID_DESIGN_ID) {
+    if (design_id == INVALID_DESIGN_ID) {
         ErrorLogger() << "CreateShip::Execute got invalid ship design id: -1";
         return;
     }

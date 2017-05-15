@@ -15,6 +15,8 @@
 
 #include <map>
 
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
+
 // Forward declarations
 class Tech;
 class BuildingType;
@@ -83,7 +85,7 @@ namespace {
 
     /// Returns substitution string for a ship design tag
     std::string ShipDesignString(const std::string& data, const std::string& tag, bool& valid) {
-        int design_id = ShipDesign::INVALID_DESIGN_ID;
+        int design_id = INVALID_DESIGN_ID;
         try {
             design_id = boost::lexical_cast<int>(data);
         } catch (const std::exception&) {
