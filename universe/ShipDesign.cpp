@@ -1277,9 +1277,14 @@ int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
 
 unsigned int PredefinedShipDesignManager::GetCheckSum() const {
     unsigned int retval{0};
+
     for (auto const& name_design_pair : m_ship_designs)
         CheckSums::CheckSumCombine(retval, name_design_pair);
     CheckSums::CheckSumCombine(retval, m_ship_designs.size());
+
+    for (auto const& name_design_pair : m_monster_designs)
+        CheckSums::CheckSumCombine(retval, name_design_pair);
+    CheckSums::CheckSumCombine(retval, m_monster_designs.size());
 
     return retval;
 }
