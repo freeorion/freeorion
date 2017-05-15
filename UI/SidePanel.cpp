@@ -406,10 +406,11 @@ namespace {
 
     /** Adds options related to sidepanel to Options DB. */
     void        AddOptions(OptionsDB& db) {
-        db.Add("UI.sidepanel-planet-max-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),  128,    RangedValidator<int>(16, 512));
-        db.Add("UI.sidepanel-planet-min-diameter",   UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),  24,     RangedValidator<int>(8,  128));
-        db.Add("UI.sidepanel-planet-shown",          UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),         true,   Validator<bool>());
-        db.Add("UI.sidepanel-planet-fog-of-war-clr", UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),                 GG::Clr(0, 0, 0, 128),  Validator<GG::Clr>());
+        db.Add("UI.sidepanel-planet-max-diameter",        UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MAX_DIAMETER"),  128,    RangedValidator<int>(16, 512));
+        db.Add("UI.sidepanel-planet-min-diameter",        UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_MIN_DIAMETER"),  24,     RangedValidator<int>(8,  128));
+        db.Add("UI.sidepanel-planet-shown",               UserStringNop("OPTIONS_DB_UI_SIDEPANEL_PLANET_SHOWN"),         true,   Validator<bool>());
+        db.Add("UI.sidepanel-planet-fog-of-war-clr",      UserStringNop("OPTIONS_DB_UI_PLANET_FOG_CLR"),                 GG::Clr(0, 0, 0, 128),  Validator<GG::Clr>());
+        db.Add("UI.sidepanel-planet-blockaded-icon-size", UserStringNop("OPTIONS_DB_UI_PLANET_BLOCKADED_ICON_SIZE"),     48,     RangedValidator<int>(8, 128));
     }
     bool temp_bool = RegisterOptions(&AddOptions);
 
@@ -460,6 +461,43 @@ namespace {
 
     bool ClientPlayerIsModerator()
     { return HumanClientApp::GetApp()->GetClientType() == Networking::CLIENT_TYPE_HUMAN_MODERATOR; }
+
+    bool PlanetBlockaded(int planet_id) {
+        std::shared_ptr<const Planet> planet = GetPlanet(planet_id);
+        std::shared_ptr<const System> system = GetSystem(planet->SystemID());
+        const std::set<int> fleet_ids_at_system = system->FleetIDs();
+
+        for (int fleet_id : fleet_ids_at_system) {
+            std::shared_ptr<const Fleet> fleet = GetFleet(fleet_id);
+            if (!fleet){
+                ErrorLogger() << "PlanetBlockaded(): Couldn't load fleet with id " << fleet_id;
+                break;
+            }
+
+            if ((fleet->Owner() == planet->Owner()) || planet->OwnedBy(ALL_EMPIRES))
+                continue;  // skip fleets that belong to the same empire as the planet, and empty planets
+
+            if (Empires().GetDiplomaticStatus(planet->Owner(), fleet->Owner()) != DIPLO_WAR)
+                continue;  // skip fleets that are not at war with the planet's owner
+
+            // look if fleet is armed
+            bool armed_enemy_fleet_present = ((fleet->HasArmedShips() || fleet->HasFighterShips()) && fleet->Aggressive());
+
+            // look if the planet is visible to the enemy
+            bool planet_visible_to_enemy = false;
+
+            Empire* enemy_empire = GetEmpire(fleet->Owner());
+            if (enemy_empire)
+                planet_visible_to_enemy = (planet->CurrentMeterValue(METER_STEALTH) < enemy_empire->GetMeter("METER_DETECTION_STRENGTH")->Current());
+            else // monsters don't own empires
+                planet_visible_to_enemy = true; //  (planet->CurrentMeterValue(METER_STEALTH) < ...) how to retrieve monster's detection?
+
+            if (armed_enemy_fleet_present && planet_visible_to_enemy)
+                return true;
+        }
+
+        return false;
+    }
 }
 
 
@@ -546,6 +584,7 @@ private:
     GG::Button*             m_invade_button;            ///< btn which can be pressed to invade this planet
     GG::Button*             m_bombard_button;           ///< btn which can be pressed to bombard this planet
     GG::DynamicGraphic*     m_planet_graphic;           ///< image of the planet (can be a frameset); this is now used only for asteroids
+    GG::StaticGraphic*      m_planet_blockaded_graphic; ///< image that is shown when a planet is blockaded by an enemy fleet
     RotatingPlanetControl*  m_rotating_planet_graphic;  ///< a realtime-rendered planet that rotates, with a textured surface mapped onto it
     bool                    m_selected;                 ///< is this planet panel selected
     bool                    m_order_issuing_enabled;    ///< can orders be issues via this planet panel?
@@ -885,6 +924,7 @@ SidePanel::PlanetPanel::PlanetPanel(GG::X w, int planet_id, StarType star_type) 
     m_invade_button(nullptr),
     m_bombard_button(nullptr),
     m_planet_graphic(nullptr),
+    m_planet_blockaded_graphic(nullptr),
     m_rotating_planet_graphic(nullptr),
     m_selected(false),
     m_order_issuing_enabled(true),
@@ -1105,6 +1145,7 @@ void SidePanel::PlanetPanel::DoLayout() {
 }
 
 void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
+    GG::Y planet_graphic_height;
     std::shared_ptr<const Planet> planet = GetPlanet(m_planet_id);
     if (!planet || !GetOptionsDB().Get<bool>("UI.sidepanel-planet-shown"))
         return;
@@ -1117,6 +1158,10 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         delete m_rotating_planet_graphic;
         m_rotating_planet_graphic = nullptr;
     }
+    if (m_planet_blockaded_graphic) {
+        delete m_planet_blockaded_graphic;
+        m_planet_blockaded_graphic = nullptr;
+    }
 
     if (planet->Type() == PT_ASTEROIDS) {
         const std::vector<std::shared_ptr<GG::Texture>>& textures = GetAsteroidTextures();
@@ -1124,6 +1169,7 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
             return;
         GG::X texture_width = textures[0]->DefaultWidth();
         GG::Y texture_height = textures[0]->DefaultHeight();
+        planet_graphic_height = texture_height;
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - texture_width / 2 + 3), GG::Y0);
 
         m_planet_graphic = new GG::DynamicGraphic(planet_image_pos.x, planet_image_pos.y,
@@ -1136,12 +1182,25 @@ void SidePanel::PlanetPanel::RefreshPlanetGraphic() {
         m_planet_graphic->Play();
     } else if (planet->Type() < NUM_PLANET_TYPES) {
         int planet_image_sz = PlanetDiameter(planet->Size());
+        planet_graphic_height = GG::Y(MaxPlanetDiameter());
         GG::Pt planet_image_pos(GG::X(MaxPlanetDiameter() / 2 - planet_image_sz / 2 + 3),
                                 GG::Y(MaxPlanetDiameter() / 2 - planet_image_sz / 2));
         m_rotating_planet_graphic = new RotatingPlanetControl(planet_image_pos.x, planet_image_pos.y,
                                                               m_planet_id, m_star_type);
         AttachChild(m_rotating_planet_graphic);
     }
+
+    if (PlanetBlockaded(m_planet_id)) {
+        const std::shared_ptr<GG::Texture>& blockaded_texture = ClientUI::GetTexture(ClientUI::ArtDir() / "icons" / "combat.png", true);
+        int texture_size = GetOptionsDB().Get<int>("UI.sidepanel-planet-blockaded-icon-size");
+
+        m_planet_blockaded_graphic = new GG::StaticGraphic(blockaded_texture, GG::GRAPHIC_FITGRAPHIC | GG::GRAPHIC_PROPSCALE);
+        m_planet_blockaded_graphic->Resize(GG::Pt(GG::X(texture_size), GG::Y(texture_size)));
+        m_planet_blockaded_graphic->MoveTo(GG::Pt(GG::X(MaxPlanetDiameter() / 2 - texture_size / 2 + 3),
+                                           GG::Y(planet_graphic_height / 2 - texture_size / 2)));
+        AttachChild(m_planet_blockaded_graphic);
+    }
+
 }
 
 namespace {
@@ -1870,9 +1929,14 @@ void SidePanel::PlanetPanel::Refresh() {
     if (m_specials_panel)
         m_specials_panel->Update();
 
-    // set stealth browse text
     ClearBrowseInfoWnd();
 
+    // set planetpanel blockade browse text
+    if (PlanetBlockaded(m_planet_id))
+        SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(UserString("PL_BLOCKADED"),
+                                                         boost::io::str(FlexibleFormat(UserString("PL_BLOCKADED_TOOLTIP")) % planet->Name())));
+
+    // set planetpanel stealth browse text
     if (client_empire_id != ALL_EMPIRES) {
         Empire* client_empire = GetEmpire(client_empire_id);
         Visibility visibility = GetUniverse().GetObjectVisibilityByEmpire(m_planet_id, client_empire_id);
