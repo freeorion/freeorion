@@ -69,32 +69,16 @@ namespace CheckSums {
         CheckSumCombine(sum, p.second);
     }
 
-    // vectors, sets, maps
+    // iterable containers
     template <class C>
-    void CheckSumCombine(unsigned int& sum, const typename std::vector<C>& v)
+    void CheckSumCombine(unsigned int& sum, const C& c,
+                         decltype(std::declval<C>().begin())* = nullptr,
+                         decltype(std::declval<C>().end())* = nullptr)
     {
-        TraceLogger() << "CheckSumCombine(vector<C>): " << typeid(v).name();
-        for (const auto& t : v)
+        TraceLogger() << "CheckSumCombine(Container C): " << typeid(c).name();
+        for (const auto& t : c)
             CheckSumCombine(sum, t);
-        sum += v.size();
-        sum %= CHECKSUM_MODULUS;
-    }
-    template <class C>
-    void CheckSumCombine(unsigned int& sum, const typename std::set<C>& s)
-    {
-        TraceLogger() << "CheckSumCombine(set<C>): " << typeid(s).name();
-        for (const auto& t : s)
-            CheckSumCombine(sum, t);
-        sum += s.size();
-        sum %= CHECKSUM_MODULUS;
-    }
-    template <class C, class D>
-    void CheckSumCombine(unsigned int& sum, const typename std::map<C, D>& m)
-    {
-        TraceLogger() << "CheckSumCombine(map<C, D>): " << typeid(m).name();
-        for (const auto& t : m)
-            CheckSumCombine(sum, t);
-        sum += m.size();
+        sum += c.size();
         sum %= CHECKSUM_MODULUS;
     }
 }
