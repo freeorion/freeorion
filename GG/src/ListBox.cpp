@@ -1517,7 +1517,7 @@ void ListBox::KeyPress(Key key, std::uint32_t key_code_point, Flags<ModKey> mod_
                     if (m_caret != m_rows.end())
                         delete Erase(m_caret, false, true);
                 } else {
-                    std::vector<iterator> prev_selections;
+                    std::vector<iterator> prev_selections(m_selections.size());
                     std::copy(m_selections.begin(), m_selections.end(), prev_selections.begin());
                     m_selections.clear();
                     for (iterator it : prev_selections) {
