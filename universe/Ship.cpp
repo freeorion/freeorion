@@ -6,6 +6,7 @@
 #include "../util/AppInterface.h"
 #include "Fleet.h"
 #include "Predicates.h"
+#include "ShipDesign.h"
 #include "Species.h"
 #include "Universe.h"
 #include "Enums.h"
@@ -14,7 +15,6 @@
 
 #include <boost/lexical_cast.hpp>
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
 class Species;
 const Species* GetSpecies(const std::string& name);
 

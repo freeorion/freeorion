@@ -1,13 +1,13 @@
 #ifndef _Ship_h_
 #define _Ship_h_
 
-#include "ShipDesign.h"
 #include "UniverseObject.h"
 #include "Meter.h"
 
 #include "../util/Export.h"
 
 FO_COMMON_API extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
 FO_COMMON_API extern const int INVALID_GAME_TURN;
 FO_COMMON_API extern const int INVALID_OBJECT_ID;
 class ShipDesign;
@@ -136,7 +136,7 @@ public:
     //@}
 
 private:
-    int             m_design_id = ShipDesign::INVALID_DESIGN_ID;
+    int             m_design_id = INVALID_DESIGN_ID;
     int             m_fleet_id = INVALID_OBJECT_ID;
     bool            m_ordered_scrapped = false;
     int             m_ordered_colonize_planet_id = INVALID_OBJECT_ID;

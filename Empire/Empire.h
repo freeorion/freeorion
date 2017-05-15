@@ -153,7 +153,7 @@ struct FO_COMMON_API ProductionQueue {
         BuildType   build_type;
         // only one of these may be valid, depending on BuildType
         std::string name;
-        int         design_id = ShipDesign::INVALID_DESIGN_ID;
+        int         design_id = INVALID_DESIGN_ID;
 
     private:
         friend class boost::serialization::access;
