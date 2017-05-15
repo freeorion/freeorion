@@ -1344,6 +1344,20 @@ Fixe le délai d'apparition dans l'interface utilisateur des bulles d'informatio
 OPTIONS_DB_UI_ENC_SEARCH_ARTICLE
 Lors d'une recherche dans l'Encyclopédie, vérifier les correspondances dans le contenu des articles.
 
+# Section title for options window logging
+OPTIONS_DB_UI_LOGGER_THRESHOLDS
+Seuils de journalisation
+
+OPTIONS_DB_UI_LOGGER_THRESHOLD_TOOLTIP
+'''Chaque fichier journal (freeorion.log, freeoriond.log, and AI_x.log) collecte les événements à partir de différentes sources (sections de code). 
+Régler le seuil pour une source rendra possible l'enregistrement des événements pour ce niveau et au-delà quant à la source en question. 
+Chaque processus client, serveur, et IA dispose d'une source générale et peut avoir des sources détaillées additionnelles (eg. log de résolution de combat).'''
+
+# This is a label to designate the logger as the general or default logger for a process
+# %1% is the name of a process logger, client, server or ai
+OPTIONS_DB_UI_LOGGER_PER_PROCESS_GENERAL
+Général %1%
+
 OPTIONS_DB_KEYPRESS_REPEAT_DELAY
 Fixe le délai entre le maintien d'une touche et l'activation de la répétition de la même touche.
 
@@ -1481,13 +1495,13 @@ OPTIONS_DB_RESOURCE_DIR
 L'adresse du répertoire où sont localisées les ressources du jeu (fichiers exécutables et fichiers de données).
 
 OPTIONS_DB_LOG_LEVEL
-Fixe tous les seuils d'enregistrement à ce niveau, à partir duquel les messages du journal seront affichés (niveaux par ordre croissant de gravité: trace, debug, info, warn, and error).
+Outrepasse tous les seuils d'enregistrement à ce niveau ou au-delà, à partir duquel les messages du journal seront créés.
 
 OPTIONS_DB_LOGGER_FILE_SINK_LEVEL
-Fixe le seuil à partir duquel les messages du journal seront générés pour la source par défaut d'un processus (niveaux par ordre croissant de gravité: trace, debug, info, warn, and error).
+Fixe le seuil à partir duquel les messages du journal seront générés pour la source par défaut de ce processus.
 
 OPTIONS_DB_LOGGER_SOURCE_LEVEL
-Fixe le seuil à partir duquel les messages du journal seront générés pour cette source (niveaux par ordre croissant de gravité: trace, debug, info, warn, and error).
+Fixe le seuil à partir duquel les messages du journal seront générés pour cette source.
 
 OPTIONS_DB_STRINGTABLE_FILENAME
 L'adresse du fichier contenant la langue choisie pour l'interface utilisateur. Une fois le fichier sélectionné, cliquez sur 'Réinitialiser le fichier langue en mémoire' puis validez.
@@ -1542,12 +1556,6 @@ Enregistre ou réinitialise la résolution en plein écran. Si non, la valeur en
 
 OPTIONS_DB_DUMP_EFFECTS_GROUPS_DESC
 Active/Désactive l'affichage des effets groupés dans les descriptions des technologies, des structures ou des équipements d'astronef.
-
-OPTIONS_DB_VERBOSE_LOGGING_DESC
-Active/Désactive les journaux détaillés des éléments de l'univers et l'évaluation des effets (pour développeurs).
-
-OPTIONS_DB_VERBOSE_COMBAT_LOGGING_DESC
-Active/Désactive les journaux détaillés de l'information des résolutions de combat.
 
 OPTIONS_DB_VERBOSE_SITREP_DESC
 Active/Désactive l'affichage des rapports d'erreurs (pour développeurs).
@@ -2531,6 +2539,9 @@ Couleurs
 
 OPTIONS_PAGE_DIRECTORIES
 Répertoires
+
+OPTIONS_PAGE_LOGS
+Journaux
 
 OPTIONS_PAGE_MISC
 Autres
