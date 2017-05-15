@@ -331,7 +331,13 @@ namespace FreeOrionPython {
                                                     JumpDistanceFunc,
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<int, const Universe&, int, int>()
-                                                ))
+                                                ),
+                                                "If two system ids are passed or both objects are within a system, "
+                                                "return the jump distance between the two systems. If one object "
+                                                "(e.g. a fleet) is on a starlane, then calculate the jump distance "
+                                                "from both ends of the starlane to the target system and "
+                                                "return the smaller one."
+                                                )
 
             .def("shortestPath",                make_function(
                                                     ShortestPathFunc,
