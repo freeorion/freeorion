@@ -1582,6 +1582,9 @@ Sets the color of the scan-line shading over field icons.
 OPTIONS_DB_UI_PLANET_FOG_CLR
 Sets the color of the scan-line shading over planet graphics on the sidepanel.
 
+OPTIONS_DB_UI_PLANET_BLOCKADED_ICON_SIZE
+Sets the size of the icon shown when a planet is blockaded.
+
 OPTIONS_DB_UI_SYSTEM_CIRCLES
 Toggles whether to draw circles around systems.
 
@@ -3373,6 +3376,12 @@ PL_TYPE_SIZE
 # %3% suitability of the planet for a concrete species (adequate, hostile, ...).
 PL_TYPE_SIZE_ENV
 %1% %2% (%3%)
+
+PL_BLOCKADED
+Under blockade
+
+PL_BLOCKADED_TOOLTIP
+%1% is currently being blockaded. Its industry is disconnected from the empire and ground troops cannot be regenerated.
 
 PL_NO_VISIBILITY
 Planet is not currently visible.
