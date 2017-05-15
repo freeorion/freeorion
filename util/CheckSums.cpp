@@ -5,41 +5,6 @@
 #include <float.h>
 
 namespace CheckSums {
-    void CheckSumCombine(unsigned int& sum, bool t) {
-        sum += static_cast<unsigned int>(t);
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    void CheckSumCombine(unsigned int& sum, unsigned char t) {
-        sum += static_cast<unsigned int>(t);
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    void CheckSumCombine(unsigned int& sum, unsigned int t) {
-        sum += static_cast<unsigned int>(t);
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    void CheckSumCombine(unsigned int& sum, unsigned long int t) {
-        sum += static_cast<unsigned int>(t);
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    void CheckSumCombine(unsigned int& sum, char t) {
-        sum += static_cast<unsigned int>(std::abs(t));
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    void CheckSumCombine(unsigned int& sum, int t) {
-        sum += static_cast<unsigned int>(std::abs(t));
-        sum %= CHECKSUM_MODULUS;
-    }
-
-    void CheckSumCombine(unsigned int& sum, long int t) {
-        sum += static_cast<unsigned int>(std::abs(t));
-        sum %= CHECKSUM_MODULUS;
-    }
-
     void CheckSumCombine(unsigned int& sum, const char* s)
     { CheckSumCombine(sum, std::string(s)); }
 

@@ -13,17 +13,26 @@
 namespace CheckSums {
     const unsigned int CHECKSUM_MODULUS = 10000000U;    // reasonably big number that should be well below UINT_MAX, which is ~4.29x10^9 for 32 bit unsigned int
 
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, bool t);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, unsigned char t);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, unsigned int t);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, unsigned long int t);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, char t);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, int t);
-    FO_COMMON_API void CheckSumCombine(unsigned int& sum, long int t);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, double t);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, float t);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, const char* s);
     FO_COMMON_API void CheckSumCombine(unsigned int& sum, const std::string& c);
+
+    // integeral types
+    template <class T>
+    void CheckSumCombine(unsigned int& sum, T t,
+                         typename std::enable_if<std::is_signed<T>::value, T>::type* = nullptr)
+    {
+        sum += static_cast<unsigned int>(std::abs(t));
+        sum %= CHECKSUM_MODULUS;
+    }
+    template <class T>
+    void CheckSumCombine(unsigned int& sum, T t,
+                         typename std::enable_if<std::is_unsigned<T>::value, T>::type* = nullptr)
+    {
+        sum += static_cast<unsigned int>(t);
+        sum %= CHECKSUM_MODULUS;
+    }
 
     // classes that have GetCheckSum methods
     template <class C>
