@@ -21,17 +21,9 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_ {
-        typedef void result_type;
+    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-        void operator()(std::map<std::string, BuildingType*>& building_types, BuildingType* building_type) const {
-            if (!building_types.insert(std::make_pair(building_type->Name(), building_type)).second) {
-                std::string error_str = "ERROR: More than one building type has the name " + building_type->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-        }
-    };
-    const boost::phoenix::function<insert_> insert;
+    const boost::phoenix::function<parse::detail::insert> insert_;
 
     struct rules {
         rules() {
@@ -48,6 +40,7 @@ namespace {
             qi::_b_type _b;
             qi::_c_type _c;
             qi::_d_type _d;
+            qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::eps_type eps;
 
@@ -55,14 +48,15 @@ namespace {
 
             building_type
                 =   tok.BuildingType_
-                >   parse::detail::label(Name_token)                > tok.string        [ _a = _1 ]
+                >   parse::detail::label(Name_token)
+                >   tok.string        [ _pass = is_unique_(_r1, BuildingType_token, _1), _a = _1 ]
                 >   parse::detail::label(Description_token)         > tok.string        [ _b = _1 ]
                 >   (   parse::detail::label(CaptureResult_token)   >> parse::capture_result_enum() [ _d = _1 ]
                     |   eps [ _d = CR_CAPTURE ]
                     )
                 >   parse::detail::common_params_parser() [ _c = _1 ]
                 >   parse::detail::label(Icon_token)      > tok.string
-                [ insert(_r1, new_<BuildingType>(_a, _b, _c, _d, _1)) ]
+                [ insert_(_r1, _a, new_<BuildingType>(_a, _b, _c, _d, _1)) ]
                 ;
 
             start

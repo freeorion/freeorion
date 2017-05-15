@@ -29,17 +29,9 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_hull_ {
-        typedef void result_type;
+    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-        void operator()(std::map<std::string, HullType*>& hulls, HullType* hull) const {
-            if (!hulls.insert(std::make_pair(hull->Name(), hull)).second) {
-                std::string error_str = "ERROR: More than one ship hull has the name " + hull->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-        }
-    };
-    const boost::phoenix::function<insert_hull_> insert_hull;
+    const boost::phoenix::function<parse::detail::insert> insert_;
 
     struct rules {
         rules() {
@@ -62,6 +54,7 @@ namespace {
             qi::_e_type _e;
             qi::_f_type _f;
             qi::_r1_type _r1;
+            qi::_pass_type _pass;
             qi::_val_type _val;
             qi::eps_type eps;
             qi::lit_type lit;
@@ -96,13 +89,15 @@ namespace {
 
             hull
                 =   tok.Hull_
-                >   parse::detail::more_common_params_parser()  [ _a = _1 ]
+                >   parse::detail::more_common_params_parser()
+                    [_pass = is_unique_(_r1, HullType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
                 >   hull_stats                                  [ _c = _1 ]
                 >  -slots(_e)
                 >   parse::detail::common_params_parser()       [ _d = _1 ]
                 >   parse::detail::label(Icon_token)    > tok.string    [ _f = _1 ]
                 >   parse::detail::label(Graphic_token) > tok.string
-                    [ insert_hull(_r1, new_<HullType>(_c, _d, _a, _e, _f, _1)) ]
+                [ insert_(_r1, phoenix::bind(&MoreCommonParams::name, _a),
+                          new_<HullType>(_c, _d, _a, _e, _f, _1)) ]
                 ;
 
             start

@@ -20,17 +20,9 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_ {
-        typedef void result_type;
+    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-        void operator()(std::map<std::string, Special*>& specials, Special* special) const {
-            if (!specials.insert(std::make_pair(special->Name(), special)).second) {
-                std::string error_str = "ERROR: More than one special has the name " + special->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-        }
-    };
-    const boost::phoenix::function<insert_> insert;
+    const boost::phoenix::function<parse::detail::insert> insert_;
 
     struct rules {
         rules() {
@@ -51,16 +43,19 @@ namespace {
             qi::_f_type _f;
             qi::_g_type _g;
             qi::_h_type _h;
+            qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::_r2_type _r2;
+            qi::_r3_type _r3;
             qi::eps_type eps;
 
             const parse::lexer& tok = parse::lexer::instance();
 
             special_prefix
                 =    tok.Special_
-                >    parse::detail::label(Name_token)               > tok.string [ _r1 = _1 ]
-                >    parse::detail::label(Description_token)        > tok.string [ _r2 = _1 ]
+                >    parse::detail::label(Name_token)
+                >    tok.string        [ _pass = is_unique_(_r1, Special_token, _1), _r2 = _1 ]
+                >    parse::detail::label(Description_token)        > tok.string [ _r3 = _1 ]
                 ;
 
             spawn
@@ -73,14 +68,14 @@ namespace {
                 ;
 
             special
-                =    special_prefix(_a, _b)
+                =    special_prefix(_r1, _a, _b)
                 >  -(parse::detail::label(Stealth_token)            > parse::double_value_ref() [ _g = _1 ])
                 >    spawn(_c, _d)
                 >  -(parse::detail::label(Capacity_token)           > parse::double_value_ref() [ _h = _1 ])
                 >  -(parse::detail::label(Location_token)           > parse::detail::condition_parser [ _e = _1 ])
                 >  -(parse::detail::label(EffectsGroups_token)      > parse::detail::effects_group_parser() [ _f = _1 ])
                 >    parse::detail::label(Graphic_token)            > tok.string
-                [ insert(_r1, new_<Special>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
+                [ insert_(_r1, _a, new_<Special>(_a, _b, _g, _f, _c, _d, _h, _e, _1)) ]
                 ;
 
             start
@@ -101,7 +96,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (std::string&, std::string&)
+            void (const std::map<std::string, Special*>&, std::string&, std::string&)
         > special_prefix_rule;
 
         typedef parse::detail::rule<

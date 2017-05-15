@@ -27,18 +27,9 @@ namespace std {
 #endif
 
 namespace {
-    struct insert_part_type_ {
-        typedef void result_type;
+    const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-        void operator()(std::map<std::string, PartType*>& part_types, PartType* part_type) const {
-            if (!part_types.insert(std::make_pair(part_type->Name(), part_type)).second) {
-                std::string error_str = "ERROR: More than one ship part has the name " + part_type->Name();
-                throw std::runtime_error(error_str.c_str());
-            }
-        }
-    };
-    const boost::phoenix::function<insert_part_type_> insert_part_type;
-
+    const boost::phoenix::function<parse::detail::insert> insert_;
 
     struct rules {
         rules() {
@@ -61,6 +52,7 @@ namespace {
             qi::_f_type _f;
             qi::_g_type _g;
             qi::_h_type _h;
+            qi::_pass_type _pass;
             qi::_r1_type _r1;
             qi::eps_type eps;
 
@@ -78,7 +70,8 @@ namespace {
 
             part_type
                 = ( tok.Part_
-                >   parse::detail::more_common_params_parser()       [ _a = _1 ]
+                >   parse::detail::more_common_params_parser()
+                    [_pass = is_unique_(_r1, PartType_token, phoenix::bind(&MoreCommonParams::name, _1)), _a = _1 ]
                 >   parse::detail::label(Class_token)       > parse::ship_part_class_enum() [ _c = _1 ]
                 > (  (parse::detail::label(Capacity_token)  > parse::detail::double_ [ _d = _1 ])
                    | (parse::detail::label(Damage_token)    > parse::detail::double_ [ _d = _1 ])
@@ -94,7 +87,8 @@ namespace {
                 >   slots(_f)
                 >   parse::detail::common_params_parser()           [ _e = _1 ]
                 >   parse::detail::label(Icon_token)        > tok.string    [ _b = _1 ]
-                  ) [ insert_part_type(_r1, new_<PartType>(_c, _d, _h, _e, _a, _f, _b, _g)) ]
+                  ) [ insert_(_r1, phoenix::bind(&MoreCommonParams::name, _a),
+                              new_<PartType>(_c, _d, _h, _e, _a, _f, _b, _g)) ]
                 ;
 
             start
