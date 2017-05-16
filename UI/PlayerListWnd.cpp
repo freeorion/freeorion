@@ -700,6 +700,18 @@ void PlayerListWnd::PlayerDoubleClicked(GG::ListBox::iterator it, const GG::Pt& 
         PlayerDoubleClickedSignal(player_id);
 }
 
+namespace {
+    std::function<void()> MakeSendDiplomaticAction(
+        const int client_empire_id, const int clicked_empire_id,
+        const std::function<DiplomaticMessage(int, int)>& message)
+    {
+        auto premade_message = DiplomacyMessage(message(client_empire_id, clicked_empire_id));
+        auto &networking = HumanClientApp::GetApp()->Networking();
+        return std::bind(&ClientNetworking::SendMessage, &networking, premade_message);
+    }
+
+}
+
 void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) {
     // check that a valid player was clicked and that it wasn't this client's own player
     int clicked_player_id = PlayerInRow(it);
@@ -732,22 +744,23 @@ void PlayerListWnd::PlayerRightClicked(GG::ListBox::iterator it, const GG::Pt& p
         return;
     }
 
-    auto make_send_diplomatic_action = [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id](const std::function<DiplomaticMessage(int, int)>& message) {
-        return [client_player_id, clicked_player_id, client_empire_id, clicked_empire_id, &message]() {
-            HumanClientApp::GetApp()->Networking().SendMessage(
-                DiplomacyMessage(message(client_empire_id, clicked_empire_id)));
-        };
-    };
-
     // Actions
-    auto war_declaration_action = make_send_diplomatic_action(WarDeclarationDiplomaticMessage);
-    auto peace_proposal_action = make_send_diplomatic_action(PeaceProposalDiplomaticMessage);
-    auto peace_accept_action = make_send_diplomatic_action(AcceptPeaceDiplomaticMessage);
-    auto allies_proposal_action = make_send_diplomatic_action(AlliesProposalDiplomaticMessage);
-    auto allies_accept_action = make_send_diplomatic_action(AcceptAlliesDiplomaticMessage);
-    auto end_alliance_declaration_action = make_send_diplomatic_action(EndAllianceDiplomaticMessage);
-    auto proposal_cancel_action = make_send_diplomatic_action(CancelDiplomaticMessage);
-    auto proposal_reject_action = make_send_diplomatic_action(RejectProposalDiplomaticMessage);
+    auto war_declaration_action = MakeSendDiplomaticAction(
+        client_empire_id, clicked_empire_id, WarDeclarationDiplomaticMessage);
+    auto peace_proposal_action = MakeSendDiplomaticAction(
+        client_empire_id, clicked_empire_id, PeaceProposalDiplomaticMessage);
+    auto peace_accept_action = MakeSendDiplomaticAction(
+        client_empire_id, clicked_empire_id, AcceptPeaceDiplomaticMessage);
+    auto allies_proposal_action = MakeSendDiplomaticAction(
+        client_empire_id, clicked_empire_id, AlliesProposalDiplomaticMessage);
+    auto allies_accept_action = MakeSendDiplomaticAction(
+        client_empire_id, clicked_empire_id, AcceptAlliesDiplomaticMessage);
+    auto end_alliance_declaration_action = MakeSendDiplomaticAction(
+        client_empire_id, clicked_empire_id, EndAllianceDiplomaticMessage);
+    auto proposal_cancel_action = MakeSendDiplomaticAction(
+        client_empire_id, clicked_empire_id, CancelDiplomaticMessage);
+    auto proposal_reject_action = MakeSendDiplomaticAction(
+        client_empire_id, clicked_empire_id, RejectProposalDiplomaticMessage);
     auto pedia_lookup_action = [clicked_empire_id]() { ClientUI::GetClientUI()->ZoomToEmpire(clicked_empire_id); };
 
     CUIPopupMenu popup(pt.x, pt.y);
