@@ -174,7 +174,7 @@ struct FO_COMMON_API ProductionQueue {
         ProductionItem  item;
         int             empire_id;
         int             ordered;                    ///< how many of item (blocks) to produce
-        int             blocksize;                  ///< size of block to produce (default=1)
+        int             blocksize = 1;              ///< size of block to produce (default=1)
         int             remaining;                  ///< how many left to produce
         int             location;                   ///< the ID of the UniverseObject at which this item is being produced
         float           allocated_pp = 0.0f;        ///< PP allocated to this ProductionQueue Element by Empire production update
