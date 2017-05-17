@@ -53,8 +53,9 @@ public:
 
     /** \name Mutators */ //@{
     /** executes a given Order, then stores it in the OrderSet. Returns an index that can be used to reference the
-        order.*/
+        order. */
     int            IssueOrder(const OrderPtr& order);
+    int            IssueOrder(OrderPtr&& order);
 
     /** Applies all Orders in the OrderSet.  As of this writing, this is needed only after deserializing an OrderSet
         client-side during game loading. */

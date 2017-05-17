@@ -15,11 +15,14 @@ const OrderPtr OrderSet::ExamineOrder(int order) const {
     return retval;
 }
 
-int OrderSet::IssueOrder(const OrderPtr& order) {
-    int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
-    m_orders[retval] = order;
+int OrderSet::IssueOrder(const OrderPtr& order)
+{ return IssueOrder(OrderPtr(order)); }
 
-    order->Execute();
+int OrderSet::IssueOrder(OrderPtr&& order) {
+    int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
+    auto inserted = m_orders.insert(std::make_pair(retval, std::forward<OrderPtr>(order)));
+
+    inserted.first->second->Execute();
 
     return retval;
 }
