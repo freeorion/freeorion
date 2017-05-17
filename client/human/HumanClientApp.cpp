@@ -7,6 +7,7 @@
 #include "../../UI/CUIControls.h"
 #include "../../UI/CUIStyle.h"
 #include "../../UI/MapWnd.h"
+#include "../../UI/DesignWnd.h"
 #include "../../UI/Hotkeys.h"
 #include "../../UI/IntroScreen.h"
 #include "../../UI/GalaxySetupWnd.h"
@@ -1021,6 +1022,8 @@ void HumanClientApp::StartGame() {
 
     if (MapWnd* map_wnd = ClientUI::GetClientUI()->GetMapWnd())
         map_wnd->ResetEmpireShown();
+
+    ClientUI::GetClientUI()->GetShipDesignManager()->StartGame(EmpireID());
 
     UpdateCombatLogManager();
 }
