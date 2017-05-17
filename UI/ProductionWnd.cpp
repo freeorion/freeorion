@@ -1127,7 +1127,7 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
         std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                          rally_point_id, false, false));
+                                               rally_point_id, false, false));
 
     empire->UpdateProductionQueue();
 }
