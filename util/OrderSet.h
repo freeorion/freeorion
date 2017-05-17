@@ -40,7 +40,7 @@ public:
     {
         OrderVec retval;
         for (const OrderMap::value_type& order : m_orders) {
-            OrderPtr o = order.second;
+            auto &o = order.second;
             if (pred(o))
                 retval.push_back(o);
         }
@@ -54,7 +54,7 @@ public:
     /** \name Mutators */ //@{
     /** executes a given Order, then stores it in the OrderSet. Returns an index that can be used to reference the
         order.*/
-    int            IssueOrder(OrderPtr order);
+    int            IssueOrder(const OrderPtr& order);
 
     /** Applies all Orders in the OrderSet.  As of this writing, this is needed only after deserializing an OrderSet
         client-side during game loading. */
