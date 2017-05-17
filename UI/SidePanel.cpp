@@ -813,7 +813,7 @@ class SidePanel::SystemNameDropDownList : public CUIDropDownList {
             const std::string& new_name(edit_wnd.Result());
             if (m_order_issuing_enabled && !new_name.empty() && new_name != old_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name)));
+                    std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), system->ID(), new_name));
                 if (SidePanel* side_panel = dynamic_cast<SidePanel*>(Parent()))
                     side_panel->Refresh();
             }
@@ -1964,8 +1964,8 @@ void SidePanel::PlanetPanel::SetFocus(const std::string& focus) {
         return;
     colony_projections.clear();// in case new or old focus was Growth (important that be cleared BEFORE Order is issued)
     species_colony_projections.clear();
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-        new ChangeFocusOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        std::make_shared<ChangeFocusOrder>(HumanClientApp::GetApp()->EmpireID(), planet->ID(), focus));
 }
 
 bool SidePanel::PlanetPanel::InWindow(const GG::Pt& pt) const {
@@ -2059,7 +2059,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
                 && m_order_issuing_enabled)
             {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new RenameOrder(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result())));
+                    std::make_shared<RenameOrder>(HumanClientApp::GetApp()->EmpireID(), planet->ID(), edit_wnd.Result()));
                 Refresh();
             }
 
@@ -2083,7 +2083,7 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
             int recipient_empire_id = entry.first;
             auto gift_action = [recipient_empire_id, client_empire_id, planet]() {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new GiveObjectToEmpireOrder(client_empire_id, planet->ID(), recipient_empire_id)));
+                    std::make_shared<GiveObjectToEmpireOrder>(client_empire_id, planet->ID(), recipient_empire_id));
             };
             if (peaceful_empires_in_system.find(recipient_empire_id) == peaceful_empires_in_system.end())
                 continue;
@@ -2302,8 +2302,8 @@ void SidePanel::PlanetPanel::ClickColonize() {
 
         CancelColonizeInvadeBombardScrapShipOrders(ship);
 
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ColonizeOrder(empire_id, ship->ID(), m_planet_id)));
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ColonizeOrder>(empire_id, ship->ID(), m_planet_id));
     }
     OrderButtonChangedSignal(m_planet_id);
 }
@@ -2346,8 +2346,8 @@ void SidePanel::PlanetPanel::ClickInvade() {
 
             CancelColonizeInvadeBombardScrapShipOrders(ship);
 
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                new InvadeOrder(empire_id, ship->ID(), m_planet_id)));
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<InvadeOrder>(empire_id, ship->ID(), m_planet_id));
         }
     }
     OrderButtonChangedSignal(m_planet_id);
@@ -2391,8 +2391,8 @@ void SidePanel::PlanetPanel::ClickBombard() {
 
             CancelColonizeInvadeBombardScrapShipOrders(ship);
 
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-                new BombardOrder(empire_id, ship->ID(), m_planet_id)));
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<BombardOrder>(empire_id, ship->ID(), m_planet_id));
         }
     }
     OrderButtonChangedSignal(m_planet_id);

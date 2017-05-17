@@ -930,9 +930,9 @@ void ProductionWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) 
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ProductionQueueOrder(client_empire_id,
-                                          boost::polymorphic_downcast<QueueRow*>(row)->queue_index,
-                                          position)));
+        std::make_shared<ProductionQueueOrder>(client_empire_id,
+                                               boost::polymorphic_downcast<QueueRow*>(row)->queue_index,
+                                               position));
 
     empire->UpdateProductionQueue();
 }
@@ -1045,8 +1045,8 @@ void ProductionWnd::AddBuildToQueueSlot(const ProductionQueue::ProductionItem& i
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-        new ProductionQueueOrder(client_empire_id, item, number, location, pos)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        std::make_shared<ProductionQueueOrder>(client_empire_id, item, number, location, pos));
 
     empire->UpdateProductionQueue();
     m_build_designator_wnd->CenterOnBuild(pos >= 0 ? pos : m_queue_wnd->GetQueueListBox()->NumRows() - 1);
@@ -1060,8 +1060,8 @@ void ProductionWnd::ChangeBuildQuantitySlot(int queue_idx, int quantity) {
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-        new ProductionQueueOrder(client_empire_id, queue_idx, quantity, true)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        std::make_shared<ProductionQueueOrder>(client_empire_id, queue_idx, quantity, true));
 
     empire->UpdateProductionQueue();
 }
@@ -1074,8 +1074,8 @@ void ProductionWnd::ChangeBuildQuantityBlockSlot(int queue_idx, int quantity, in
     if (!empire)
         return;
 
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-        new ProductionQueueOrder(client_empire_id, queue_idx, quantity, blocksize)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(
+        std::make_shared<ProductionQueueOrder>(client_empire_id, queue_idx, quantity, blocksize));
 
     empire->UpdateProductionQueue();
 }
@@ -1089,7 +1089,7 @@ void ProductionWnd::DeleteQueueItem(GG::ListBox::iterator it) {
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it))));
+        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it)));
 
     empire->UpdateProductionQueue();
 }
@@ -1126,8 +1126,8 @@ void ProductionWnd::QueueItemRallied(GG::ListBox::iterator it, int object_id) {
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                          rally_point_id, false, false)));
+        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                          rally_point_id, false, false));
 
     empire->UpdateProductionQueue();
 }
@@ -1141,8 +1141,8 @@ void ProductionWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
         return;
 
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ProductionQueueOrder(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
-                                          pause, -1.0f)));
+        std::make_shared<ProductionQueueOrder>(client_empire_id, std::distance(m_queue_wnd->GetQueueListBox()->begin(), it),
+                                          pause, -1.0f));
 
     empire->UpdateProductionQueue();
 }

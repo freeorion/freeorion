@@ -275,9 +275,9 @@ namespace {
 
         // create new fleet with ships
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new NewFleetOrder(client_empire_id, order_fleet_names, order_fleet_ids,
+            std::make_shared<NewFleetOrder>(client_empire_id, order_fleet_names, order_fleet_ids,
                                        *systems_containing_new_fleets.begin(),
-                                       order_ship_id_groups, order_ship_aggressives)));
+                                       order_ship_id_groups, order_ship_aggressives));
     }
 
     void CreateNewFleetFromShips(const std::vector<int>& ship_ids,
@@ -381,7 +381,7 @@ namespace {
 
         // order ships moved into target fleet
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new FleetTransferOrder(client_empire_id, target_fleet->ID(), empire_system_ship_ids)));
+            std::make_shared<FleetTransferOrder>(client_empire_id, target_fleet->ID(), empire_system_ship_ids));
     }
 
    /** Returns map from object ID to issued colonize orders affecting it. */
@@ -1397,7 +1397,7 @@ void FleetDataPanel::ToggleAggression() {
 
         // toggle fleet aggression status
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new AggressiveOrder(client_empire_id, m_fleet_id, new_aggression_state)));
+            std::make_shared<AggressiveOrder>(client_empire_id, m_fleet_id, new_aggression_state));
     } else if (m_is_new_fleet_drop_target) {
         // cycle new fleet aggression
         if (m_new_fleet_aggression == INVALID_FLEET_AGGRESSION)
@@ -1908,7 +1908,7 @@ public:
 
                 // order the transfer
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
+                    std::make_shared<FleetTransferOrder>(empire_id, target_fleet_id, ship_ids_vec));
             }
 
         } else if (!dropped_ships.empty()) {
@@ -1933,7 +1933,7 @@ public:
 
             // order the transfer
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new FleetTransferOrder(empire_id, target_fleet_id, ship_ids_vec)));
+                std::make_shared<FleetTransferOrder>(empire_id, target_fleet_id, ship_ids_vec));
         }
         //DebugLogger() << "FleetsListBox::AcceptDrops finished";
     }
@@ -2321,7 +2321,7 @@ public:
             return; // todo: handle moderator actions for this...
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new FleetTransferOrder(empire_id, m_fleet_id, ship_ids)));
+            std::make_shared<FleetTransferOrder>(empire_id, m_fleet_id, ship_ids));
     }
 
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override {
@@ -2587,7 +2587,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
             if (!ClientPlayerIsModerator()) {
                 if (new_name != "" && new_name != ship_name) {
                     HumanClientApp::GetApp()->Orders().IssueOrder(
-                        OrderPtr(new RenameOrder(client_empire_id, ship->ID(), new_name)));
+                        std::make_shared<RenameOrder>(client_empire_id, ship->ID(), new_name));
                 }
             } else {
                 // TODO: Moderator action for renaming ships
@@ -2604,7 +2604,7 @@ void FleetDetailPanel::ShipRightClicked(GG::ListBox::iterator it, const GG::Pt& 
         // create popup menu with "Scrap" option
         auto scrap_action = [ship, client_empire_id]() {
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ScrapOrder(client_empire_id, ship->ID())));
+                std::make_shared<ScrapOrder>(client_empire_id, ship->ID()));
         };
         popup.AddMenuItem(GG::MenuItem(UserString("ORDER_SHIP_SCRAP"), false, false, scrap_action));
     } else if (!ClientPlayerIsModerator()
@@ -3427,7 +3427,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
             if (!new_name.empty() && new_name != fleet_name) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new RenameOrder(client_empire_id, fleet->ID(), new_name)));
+                    std::make_shared<RenameOrder>(client_empire_id, fleet->ID(), new_name));
             }
         };
         popup.AddMenuItem(GG::MenuItem(UserString("RENAME"),                       false, false, rename_action));
@@ -3446,8 +3446,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             std::set<int> ship_ids_set = fleet->ShipIDs();
             for (int ship_id : ship_ids_set) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ScrapOrder(client_empire_id, ship_id))
-                );
+                    std::make_shared<ScrapOrder>(client_empire_id, ship_id));
             }
         };
 
@@ -3493,7 +3492,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
                 continue;
             auto gift_action = [recipient_empire_id, fleet, client_empire_id]() {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new GiveObjectToEmpireOrder(client_empire_id, fleet->ID(), recipient_empire_id)));
+                    std::make_shared<GiveObjectToEmpireOrder>(client_empire_id, fleet->ID(), recipient_empire_id));
             };
             give_away_menu.next_level.push_back(GG::MenuItem(entry.second->Name(), false, false, gift_action));
         }
@@ -3528,7 +3527,7 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
             // in future so that the server doesn't keep resending this
             // fleet information.
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ForgetOrder(client_empire_id, fleet->ID()))
+                std::make_shared<ForgetOrder>(client_empire_id, fleet->ID())
             );
             // Client changes for immediate effect
             // Force the client to change immediately.

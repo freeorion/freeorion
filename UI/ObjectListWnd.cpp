@@ -2465,7 +2465,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
 
                     one_planet->SetFocus(focus);
-                    app->Orders().IssueOrder(OrderPtr(new ChangeFocusOrder(app->EmpireID(), one_planet->ID(), focus)));
+                    app->Orders().IssueOrder(std::make_shared<ChangeFocusOrder>(app->EmpireID(), one_planet->ID(), focus));
                 }
 
                 focus_ship_building_common_action();
@@ -2495,7 +2495,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                     if (!one_planet || !one_planet->OwnedBy(app->EmpireID()) || !cur_empire->ProducibleItem(BT_SHIP, ship_design, row->ObjectID()))
                         continue;
                     ProductionQueue::ProductionItem ship_item(BT_SHIP, ship_design);
-                    app->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(app->EmpireID(), ship_item, 1, row->ObjectID())));
+                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(app->EmpireID(), ship_item, 1, row->ObjectID()));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)
@@ -2531,7 +2531,7 @@ void ObjectListWnd::ObjectRightClicked(GG::ListBox::iterator it, const GG::Pt& p
                         continue;
                     }
                     ProductionQueue::ProductionItem bld_item(BT_BUILDING, bld);
-                    app->Orders().IssueOrder(OrderPtr(new ProductionQueueOrder(app->EmpireID(), bld_item, 1, row->ObjectID())));
+                    app->Orders().IssueOrder(std::make_shared<ProductionQueueOrder>(app->EmpireID(), bld_item, 1, row->ObjectID()));
                     needs_queue_update = true;
                 }
                 if (needs_queue_update)

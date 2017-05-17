@@ -508,7 +508,7 @@ void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row)) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ResearchQueueOrder(empire_id, queue_row->elem.name, static_cast<int>(position))));
+            std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name, static_cast<int>(position)));
         if (Empire* empire = GetEmpire(empire_id))
             empire->UpdateResearchQueue();
     }
@@ -606,10 +606,10 @@ void ResearchWnd::AddTechsToQueueSlot(const std::vector<std::string>& tech_vec, 
         // or that we skipped because it happened to already be in the right spot.
         if (pos == -1) {
             if (!queue.InQueue(tech_name)) {
-                orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, pos)));
+                orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, tech_name, pos));
             }
         } else if (!queue.InQueue(tech_name) || ((queue.find(tech_name) - queue.begin()) > pos)) {
-            orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name, pos)));
+            orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, tech_name, pos));
             pos += 1;
         } else {
             if ((queue.find(tech_name) - queue.begin()) == pos)
@@ -625,7 +625,7 @@ void ResearchWnd::DeleteQueueItem(GG::ListBox::iterator it) {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
     OrderSet& orders = HumanClientApp::GetApp()->Orders();
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
-        orders.IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, queue_row->elem.name)));
+        orders.IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name));
     if (Empire* empire = GetEmpire(empire_id))
         empire->UpdateResearchQueue();
 }
@@ -656,7 +656,7 @@ void ResearchWnd::QueueItemPaused(GG::ListBox::iterator it, bool pause) {
 
     if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*it))
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            OrderPtr(new ResearchQueueOrder(client_empire_id, queue_row->elem.name, pause, -1.0f)));
+            std::make_shared<ResearchQueueOrder>(client_empire_id, queue_row->elem.name, pause, -1.0f));
 
     empire->UpdateResearchQueue();
 }

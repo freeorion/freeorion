@@ -206,7 +206,7 @@ namespace {
                         DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << entry.second->Name();
                         int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
                         HumanClientApp::GetApp()->Orders().IssueOrder(
-                            OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *(entry.second))));
+                            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, *(entry.second)));
                     } else {
                         DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << entry.second->Name();
                     }
@@ -1569,7 +1569,7 @@ void BasesListBox::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
             Insert(control, insert_before_row);
         control->Resize(ListRowSize());
         HumanClientApp::GetApp()->Orders()
-            .IssueOrder(OrderPtr(new ShipDesignOrder(m_empire_id_shown, design_id, insert_before_id)));
+            .IssueOrder(std::make_shared<ShipDesignOrder>(m_empire_id_shown, design_id, insert_before_id));
     }
 }
 
@@ -1803,7 +1803,7 @@ void BasesListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, c
             return;
         if (modkeys & GG::MOD_KEY_CTRL)
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ShipDesignOrder(HumanClientApp::GetApp()->EmpireID(), id, true)));
+                std::make_shared<ShipDesignOrder>(HumanClientApp::GetApp()->EmpireID(), id, true));
         else
             DesignClickedSignal(design);
         return;
@@ -1851,7 +1851,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
         // Context menu actions
         auto delete_design_action = [&client_empire_id, &design_id]() {
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ShipDesignOrder(client_empire_id, design_id, true)));
+                std::make_shared<ShipDesignOrder>(client_empire_id, design_id, true));
         };
 
         auto rename_design_action = [&client_empire_id, &design_id, design, &design_row]() {
@@ -1860,7 +1860,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
             const std::string& result = edit_wnd.Result();
             if (result != "" && result != design->Name()) {
                 HumanClientApp::GetApp()->Orders().IssueOrder(
-                    OrderPtr(new ShipDesignOrder(client_empire_id, design_id, result)));
+                    std::make_shared<ShipDesignOrder>(client_empire_id, design_id, result));
                 if (!design_row->empty())
                     if (ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(design_row->at(0)))
                         design_panel->Update();
@@ -1907,7 +1907,7 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
             DebugLogger() << "BasesListBox::BaseRightClicked Add Saved Design" << design->Name();
             int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+                std::make_shared<ShipDesignOrder>(empire_id, new_design_id, *design));
         };
 
         // add all saved designs
@@ -3573,7 +3573,7 @@ int DesignWnd::AddDesign() {
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
     HumanClientApp::GetApp()->Orders().IssueOrder(
-        OrderPtr(new ShipDesignOrder(empire_id, new_design_id, design)));
+        std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
     m_main_panel->ReregisterDesigns();
     m_main_panel->DesignChangedSignal();
 
@@ -3590,9 +3590,9 @@ void DesignWnd::ReplaceDesign() {
     if (new_design_id == INVALID_DESIGN_ID) return;
 
     //move it to before the replaced design
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, replaced_id )));
+    HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, new_design_id, replaced_id ));
     //remove old design
-    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, replaced_id, true)));
+    HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
     DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
 }
 
