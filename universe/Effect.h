@@ -26,6 +26,7 @@ namespace ValueRef {
 namespace Effect {
 class EffectBase;
 
+
 /** Contains one or more Effects, a Condition which indicates the objects in
   * the scope of the Effect(s), and a Condition which indicates whether or not
   * the Effect(s) will be executed on the objects in scope during the current
@@ -82,8 +83,7 @@ public:
 
     void                            SetTopLevelContent(const std::string& content_name);
 
-    virtual unsigned int            GetCheckSum() const
-    { return 0; }
+    virtual unsigned int            GetCheckSum() const;
 
 protected:
     Condition::ConditionBase*   m_scope;
@@ -141,6 +141,8 @@ public:
     { return false; }
 
     virtual void SetTopLevelContent(const std::string& content_name) = 0;
+
+    virtual unsigned int GetCheckSum() const;
 
 private:
     friend class boost::serialization::access;

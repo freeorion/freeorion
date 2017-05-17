@@ -260,6 +260,22 @@ void EffectsGroup::SetTopLevelContent(const std::string& content_name) {
     }
 }
 
+unsigned int EffectsGroup::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "EffectsGroup");
+    CheckSums::CheckSumCombine(retval, m_scope);
+    CheckSums::CheckSumCombine(retval, m_activation);
+    CheckSums::CheckSumCombine(retval, m_stacking_group);
+    CheckSums::CheckSumCombine(retval, m_effects);
+    CheckSums::CheckSumCombine(retval, m_accounting_label);
+    CheckSums::CheckSumCombine(retval, m_priority);
+    CheckSums::CheckSumCombine(retval, m_description);
+
+    TraceLogger() << "GetCheckSum(EffectsGroup): retval: " << retval;
+    return retval;
+}
+
 
 ///////////////////////////////////////////////////////////
 // Dump function                                         //
@@ -309,6 +325,14 @@ void EffectBase::Execute(const ScriptingContext& context, const TargetSet& targe
     }
 }
 
+unsigned int EffectBase::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "EffectBase");
+
+    TraceLogger() << "GetCheckSum(EffectsGroup): retval: " << retval;
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // NoOp                                                  //
