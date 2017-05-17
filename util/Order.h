@@ -65,9 +65,9 @@ public:
 
 protected:
     /** \name Mutators */ //@{
-    /** Verifies that the empire ID in this order is that of an existing empire.
-     *  Throws an std::runtime_error if not. */
-    void ValidateEmpireID() const;
+    /** Verifies that the empire ID in this order is valid and return the Empire pointer.
+     *  Throws an std::runtime_error if not valid. */
+    Empire* GetValidatedEmpire() const;
 
     /** Returns true iff this order has been executed (a second execution
      *  indicates server-side execution). */
