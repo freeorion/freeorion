@@ -298,9 +298,7 @@ bool ConditionBase::Eval(std::shared_ptr<const UniverseObject> candidate) const 
 
 void ConditionBase::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_context,
                                                       ObjectSet& condition_non_targets) const
-{
-    AddAllObjectsSet(condition_non_targets);
-}
+{ AddAllObjectsSet(condition_non_targets); }
 
 std::string ConditionBase::Description(bool negated/* = false*/) const
 { return ""; }
@@ -314,8 +312,7 @@ bool ConditionBase::Match(const ScriptingContext& local_context) const
 ///////////////////////////////////////////////////////////
 // Number                                                //
 ///////////////////////////////////////////////////////////
-Number::~Number()
-{
+Number::~Number() {
     delete m_low;
     delete m_high;
     delete m_condition;
@@ -480,7 +477,7 @@ unsigned int Number::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_high);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(Number): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Number): retval: " << retval;
     return retval;
 }
 
@@ -629,7 +626,7 @@ unsigned int Turn::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_low);
     CheckSums::CheckSumCombine(retval, m_high);
 
-    TraceLogger() << "GetCheckSum(Turn): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Turn): retval: " << retval;
     return retval;
 }
 
@@ -1033,7 +1030,7 @@ unsigned int SortedNumberOf::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_sorting_method);
     CheckSums::CheckSumCombine(retval, m_condition);
 
-    TraceLogger() << "GetCheckSum(SortedNumberOf): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(SortedNumberOf): retval: " << retval;
     return retval;
 }
 
@@ -1070,7 +1067,7 @@ unsigned int All::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::All");
 
-    TraceLogger() << "GetCheckSum(All): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(All): retval: " << retval;
     return retval;
 }
 
@@ -1106,7 +1103,7 @@ unsigned int None::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::None");
 
-    TraceLogger() << "GetCheckSum(None): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(None): retval: " << retval;
     return retval;
 }
 
@@ -1330,7 +1327,7 @@ unsigned int EmpireAffiliation::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_affiliation);
 
-    TraceLogger() << "GetCheckSum(EmpireAffiliation): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(EmpireAffiliation): retval: " << retval;
     return retval;
 }
 
@@ -1368,7 +1365,7 @@ unsigned int Source::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::Source");
 
-    TraceLogger() << "GetCheckSum(Source): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Source): retval: " << retval;
     return retval;
 }
 
@@ -1398,7 +1395,7 @@ unsigned int RootCandidate::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::RootCandidate");
 
-    TraceLogger() << "GetCheckSum(RootCandidate): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(RootCandidate): retval: " << retval;
     return retval;
 }
 
@@ -1435,7 +1432,7 @@ unsigned int Target::GetCheckSum() const {
 
     CheckSums::CheckSumCombine(retval, "Condition::Target");
 
-    TraceLogger() << "GetCheckSum(Target): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Target): retval: " << retval;
     return retval;
 }
 
@@ -1661,7 +1658,7 @@ unsigned int Homeworld::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, "Condition::Homeworld");
     CheckSums::CheckSumCombine(retval, m_names);
 
-    TraceLogger() << "GetCheckSum(Homeworld): retval: " << retval << std::endl << std::endl;
+    TraceLogger() << "GetCheckSum(Homeworld): retval: " << retval;
     return retval;
 }
 
@@ -1700,6 +1697,15 @@ void Capital::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
                                                 ObjectSet& condition_non_targets) const
 { AddPlanetSet(condition_non_targets); }
 
+unsigned int Capital::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Capital");
+
+    TraceLogger() << "GetCheckSum(Capital): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Monster                                               //
 ///////////////////////////////////////////////////////////
@@ -1733,6 +1739,15 @@ void Monster::GetDefaultInitialCandidateObjects(const ScriptingContext& parent_c
                                                 ObjectSet& condition_non_targets) const
 { AddShipSet(condition_non_targets); }
 
+unsigned int Monster::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Monster");
+
+    TraceLogger() << "GetCheckSum(Monster): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Armed                                                 //
 ///////////////////////////////////////////////////////////
@@ -1760,6 +1775,15 @@ bool Armed::Match(const ScriptingContext& local_context) const {
             return true;
 
     return false;
+}
+
+unsigned int Armed::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Armed");
+
+    TraceLogger() << "GetCheckSum(Armed): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -1935,6 +1959,16 @@ void Type::SetTopLevelContent(const std::string& content_name) {
         m_type->SetTopLevelContent(content_name);
 }
 
+unsigned int Type::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Type");
+    CheckSums::CheckSumCombine(retval, m_type);
+
+    TraceLogger() << "GetCheckSum(Type): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Building                                              //
 ///////////////////////////////////////////////////////////
@@ -2107,6 +2141,16 @@ void Building::SetTopLevelContent(const std::string& content_name) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
+}
+
+unsigned int Building::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Building");
+    CheckSums::CheckSumCombine(retval, m_names);
+
+    TraceLogger() << "GetCheckSum(Building): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -2326,6 +2370,20 @@ void HasSpecial::SetTopLevelContent(const std::string& content_name) {
         m_since_turn_high->SetTopLevelContent(content_name);
 }
 
+unsigned int HasSpecial::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::HasSpecial");
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_capacity_low);
+    CheckSums::CheckSumCombine(retval, m_capacity_high);
+    CheckSums::CheckSumCombine(retval, m_since_turn_low);
+    CheckSums::CheckSumCombine(retval, m_since_turn_high);
+
+    TraceLogger() << "GetCheckSum(HasSpecial): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // HasTag                                                //
 ///////////////////////////////////////////////////////////
@@ -2448,6 +2506,15 @@ void HasTag::SetTopLevelContent(const std::string& content_name) {
         m_name->SetTopLevelContent(content_name);
 }
 
+unsigned int HasTag::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::HasTag");
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(HasTag): retval: " << retval;
+    return retval;
+}
 
 ///////////////////////////////////////////////////////////
 // CreatedOnTurn                                         //
@@ -2560,6 +2627,17 @@ void CreatedOnTurn::SetTopLevelContent(const std::string& content_name) {
         m_low->SetTopLevelContent(content_name);
     if (m_high)
         m_high->SetTopLevelContent(content_name);
+}
+
+unsigned int CreatedOnTurn::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::CreatedOnTurn");
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+
+    TraceLogger() << "GetCheckSum(CreatedOnTurn): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -2755,6 +2833,16 @@ bool Contains::Match(const ScriptingContext& local_context) const {
 void Contains::SetTopLevelContent(const std::string& content_name) {
     if (m_condition)
         m_condition->SetTopLevelContent(content_name);
+}
+
+unsigned int Contains::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Contains");
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger() << "GetCheckSum(Contains): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -2971,6 +3059,16 @@ void ContainedBy::SetTopLevelContent(const std::string& content_name) {
         m_condition->SetTopLevelContent(content_name);
 }
 
+unsigned int ContainedBy::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::ContainedBy");
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger() << "GetCheckSum(ContainedBy): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // InSystem                                              //
 ///////////////////////////////////////////////////////////
@@ -3118,6 +3216,16 @@ void InSystem::SetTopLevelContent(const std::string& content_name) {
         m_system_id->SetTopLevelContent(content_name);
 }
 
+unsigned int InSystem::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::InSystem");
+    CheckSums::CheckSumCombine(retval, m_system_id);
+
+    TraceLogger() << "GetCheckSum(InSystem): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // ObjectID                                              //
 ///////////////////////////////////////////////////////////
@@ -3240,6 +3348,16 @@ bool ObjectID::Match(const ScriptingContext& local_context) const {
 void ObjectID::SetTopLevelContent(const std::string& content_name) {
     if (m_object_id)
         m_object_id->SetTopLevelContent(content_name);
+}
+
+unsigned int ObjectID::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::ObjectID");
+    CheckSums::CheckSumCombine(retval, m_object_id);
+
+    TraceLogger() << "GetCheckSum(ObjectID): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -3415,6 +3533,16 @@ void PlanetType::SetTopLevelContent(const std::string& content_name) {
         if (type)
             type->SetTopLevelContent(content_name);
     }
+}
+
+unsigned int PlanetType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::PlanetType");
+    CheckSums::CheckSumCombine(retval, m_types);
+
+    TraceLogger() << "GetCheckSum(PlanetType): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -3593,6 +3721,16 @@ void PlanetSize::SetTopLevelContent(const std::string& content_name) {
         if (size)
             size->SetTopLevelContent(content_name);
     }
+}
+
+unsigned int PlanetSize::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::PlanetSize");
+    CheckSums::CheckSumCombine(retval, m_sizes);
+
+    TraceLogger() << "GetCheckSum(PlanetSize): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -3810,6 +3948,17 @@ void PlanetEnvironment::SetTopLevelContent(const std::string& content_name) {
     }
 }
 
+unsigned int PlanetEnvironment::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::PlanetEnvironment");
+    CheckSums::CheckSumCombine(retval, m_environments);
+    CheckSums::CheckSumCombine(retval, m_species_name);
+
+    TraceLogger() << "GetCheckSum(PlanetEnvironment): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Species                                              //
 ///////////////////////////////////////////////////////////
@@ -4015,6 +4164,16 @@ void Species::SetTopLevelContent(const std::string& content_name) {
         if (name)
             name->SetTopLevelContent(content_name);
     }
+}
+
+unsigned int Species::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Species");
+    CheckSums::CheckSumCombine(retval, m_names);
+
+    TraceLogger() << "GetCheckSum(Species): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -4323,6 +4482,20 @@ void Enqueued::SetTopLevelContent(const std::string& content_name) {
         m_high->SetTopLevelContent(content_name);
 }
 
+unsigned int Enqueued::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Enqueued");
+    CheckSums::CheckSumCombine(retval, m_name);
+    CheckSums::CheckSumCombine(retval, m_design_id);
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+
+    TraceLogger() << "GetCheckSum(Enqueued): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // FocusType                                             //
 ///////////////////////////////////////////////////////////
@@ -4501,6 +4674,16 @@ void FocusType::SetTopLevelContent(const std::string& content_name) {
     }
 }
 
+unsigned int FocusType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::FocusType");
+    CheckSums::CheckSumCombine(retval, m_names);
+
+    TraceLogger() << "GetCheckSum(FocusType): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // StarType                                              //
 ///////////////////////////////////////////////////////////
@@ -4658,6 +4841,16 @@ void StarType::SetTopLevelContent(const std::string& content_name) {
     }
 }
 
+unsigned int StarType::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::StarType");
+    CheckSums::CheckSumCombine(retval, m_types);
+
+    TraceLogger() << "GetCheckSum(StarType): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // DesignHasHull                                         //
 ///////////////////////////////////////////////////////////
@@ -4772,6 +4965,16 @@ void DesignHasHull::GetDefaultInitialCandidateObjects(const ScriptingContext& pa
 void DesignHasHull::SetTopLevelContent(const std::string& content_name) {
     if (m_name)
         m_name->SetTopLevelContent(content_name);
+}
+
+unsigned int DesignHasHull::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::DesignHasHull");
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(DesignHasHull): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -4940,6 +5143,18 @@ void DesignHasPart::SetTopLevelContent(const std::string& content_name) {
         m_name->SetTopLevelContent(content_name);
 }
 
+unsigned int DesignHasPart::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::DesignHasPart");
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(DesignHasPart): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // DesignHasPartClass                                    //
 ///////////////////////////////////////////////////////////
@@ -5090,6 +5305,18 @@ void DesignHasPartClass::SetTopLevelContent(const std::string& content_name) {
         m_high->SetTopLevelContent(content_name);
 }
 
+unsigned int DesignHasPartClass::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::DesignHasPartClass");
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+    CheckSums::CheckSumCombine(retval, m_class);
+
+    TraceLogger() << "GetCheckSum(DesignHasPartClass): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // PredefinedShipDesign                                  //
 ///////////////////////////////////////////////////////////
@@ -5217,6 +5444,16 @@ void PredefinedShipDesign::SetTopLevelContent(const std::string& content_name) {
         m_name->SetTopLevelContent(content_name);
 }
 
+unsigned int PredefinedShipDesign::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::PredefinedShipDesign");
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(PredefinedShipDesign): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // NumberedShipDesign                                    //
 ///////////////////////////////////////////////////////////
@@ -5310,6 +5547,16 @@ bool NumberedShipDesign::Match(const ScriptingContext& local_context) const {
 void NumberedShipDesign::SetTopLevelContent(const std::string& content_name) {
     if (m_design_id)
         m_design_id->SetTopLevelContent(content_name);
+}
+
+unsigned int NumberedShipDesign::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::NumberedShipDesign");
+    CheckSums::CheckSumCombine(retval, m_design_id);
+
+    TraceLogger() << "GetCheckSum(NumberedShipDesign): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -5415,6 +5662,16 @@ void ProducedByEmpire::SetTopLevelContent(const std::string& content_name) {
         m_empire_id->SetTopLevelContent(content_name);
 }
 
+unsigned int ProducedByEmpire::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::ProducedByEmpire");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+
+    TraceLogger() << "GetCheckSum(ProducedByEmpire): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Chance                                                //
 ///////////////////////////////////////////////////////////
@@ -5500,6 +5757,16 @@ bool Chance::Match(const ScriptingContext& local_context) const {
 void Chance::SetTopLevelContent(const std::string& content_name) {
     if (m_chance)
         m_chance->SetTopLevelContent(content_name);
+}
+
+unsigned int Chance::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Chance");
+    CheckSums::CheckSumCombine(retval, m_chance);
+
+    TraceLogger() << "GetCheckSum(Chance): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -5673,6 +5940,18 @@ void MeterValue::SetTopLevelContent(const std::string& content_name) {
         m_high->SetTopLevelContent(content_name);
 }
 
+unsigned int MeterValue::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::MeterValue");
+    CheckSums::CheckSumCombine(retval, m_meter);
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+
+    TraceLogger() << "GetCheckSum(MeterValue): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // ShipPartMeterValue                                    //
 ///////////////////////////////////////////////////////////
@@ -5831,6 +6110,19 @@ void ShipPartMeterValue::SetTopLevelContent(const std::string& content_name) {
         m_low->SetTopLevelContent(content_name);
     if (m_high)
         m_high->SetTopLevelContent(content_name);
+}
+
+unsigned int ShipPartMeterValue::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::ShipPartMeterValue");
+    CheckSums::CheckSumCombine(retval, m_part_name);
+    CheckSums::CheckSumCombine(retval, m_meter);
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+
+    TraceLogger() << "GetCheckSum(ShipPartMeterValue): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -5995,6 +6287,19 @@ void EmpireMeterValue::SetTopLevelContent(const std::string& content_name) {
         m_high->SetTopLevelContent(content_name);
 }
 
+unsigned int EmpireMeterValue::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::EmpireMeterValue");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+    CheckSums::CheckSumCombine(retval, m_meter);
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+
+    TraceLogger() << "GetCheckSum(EmpireMeterValue): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // EmpireStockpileValue                                  //
 ///////////////////////////////////////////////////////////
@@ -6127,6 +6432,18 @@ void EmpireStockpileValue::SetTopLevelContent(const std::string& content_name) {
         m_high->SetTopLevelContent(content_name);
 }
 
+unsigned int EmpireStockpileValue::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::EmpireStockpileValue");
+    CheckSums::CheckSumCombine(retval, m_stockpile);
+    CheckSums::CheckSumCombine(retval, m_low);
+    CheckSums::CheckSumCombine(retval, m_high);
+
+    TraceLogger() << "GetCheckSum(EmpireStockpileValue): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // OwnerHasTech                                          //
 ///////////////////////////////////////////////////////////
@@ -6231,6 +6548,16 @@ bool OwnerHasTech::Match(const ScriptingContext& local_context) const {
 void OwnerHasTech::SetTopLevelContent(const std::string& content_name) {
     if (m_name)
         m_name->SetTopLevelContent(content_name);
+}
+
+unsigned int OwnerHasTech::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OwnerHasTech");
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(OwnerHasTech): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -6339,6 +6666,16 @@ void OwnerHasBuildingTypeAvailable::SetTopLevelContent(const std::string& conten
         m_name->SetTopLevelContent(content_name);
 }
 
+unsigned int OwnerHasBuildingTypeAvailable::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OwnerHasBuildingTypeAvailable");
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(OwnerHasBuildingTypeAvailable): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // OwnerHasShipDesignAvailable                           //
 ///////////////////////////////////////////////////////////
@@ -6443,6 +6780,16 @@ bool OwnerHasShipDesignAvailable::Match(const ScriptingContext& local_context) c
 void OwnerHasShipDesignAvailable::SetTopLevelContent(const std::string& content_name) {
     if (m_id)
         m_id->SetTopLevelContent(content_name);
+}
+
+unsigned int OwnerHasShipDesignAvailable::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OwnerHasShipDesignAvailable");
+    CheckSums::CheckSumCombine(retval, m_id);
+
+    TraceLogger() << "GetCheckSum(OwnerHasShipDesignAvailable): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -6553,6 +6900,16 @@ void OwnerHasShipPartAvailable::SetTopLevelContent(const std::string& content_na
         m_name->SetTopLevelContent(content_name);
 }
 
+unsigned int OwnerHasShipPartAvailable::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OwnerHasShipPartAvailable");
+    CheckSums::CheckSumCombine(retval, m_name);
+
+    TraceLogger() << "GetCheckSum(OwnerHasShipPartAvailable): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // VisibleToEmpire                                       //
 ///////////////////////////////////////////////////////////
@@ -6649,6 +7006,16 @@ bool VisibleToEmpire::Match(const ScriptingContext& local_context) const {
 void VisibleToEmpire::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
+}
+
+unsigned int VisibleToEmpire::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::VisibleToEmpire");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+
+    TraceLogger() << "GetCheckSum(VisibleToEmpire): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -6776,6 +7143,17 @@ void WithinDistance::SetTopLevelContent(const std::string& content_name) {
         m_condition->SetTopLevelContent(content_name);
 }
 
+unsigned int WithinDistance::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::WithinDistance");
+    CheckSums::CheckSumCombine(retval, m_distance);
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger() << "GetCheckSum(WithinDistance): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // WithinStarlaneJumps                                   //
 ///////////////////////////////////////////////////////////
@@ -6881,6 +7259,17 @@ void WithinStarlaneJumps::SetTopLevelContent(const std::string& content_name) {
         m_jumps->SetTopLevelContent(content_name);
     if (m_condition)
         m_condition->SetTopLevelContent(content_name);
+}
+
+unsigned int WithinStarlaneJumps::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::WithinStarlaneJumps");
+    CheckSums::CheckSumCombine(retval, m_jumps);
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger() << "GetCheckSum(WithinStarlaneJumps): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -7319,6 +7708,16 @@ void CanAddStarlaneConnection::SetTopLevelContent(const std::string& content_nam
         m_condition->SetTopLevelContent(content_name);
 }
 
+unsigned int CanAddStarlaneConnection::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::CanAddStarlaneConnection");
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger() << "GetCheckSum(CanAddStarlaneConnection): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // ExploredByEmpire                                      //
 ///////////////////////////////////////////////////////////
@@ -7421,6 +7820,16 @@ void ExploredByEmpire::SetTopLevelContent(const std::string& content_name) {
         m_empire_id->SetTopLevelContent(content_name);
 }
 
+unsigned int ExploredByEmpire::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::ExploredByEmpire");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+
+    TraceLogger() << "GetCheckSum(ExploredByEmpire): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Stationary                                            //
 ///////////////////////////////////////////////////////////
@@ -7465,6 +7874,15 @@ bool Stationary::Match(const ScriptingContext& local_context) const {
     return true;
 }
 
+unsigned int Stationary::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Stationary");
+
+    TraceLogger() << "GetCheckSum(Stationary): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Aggressive                                            //
 ///////////////////////////////////////////////////////////
@@ -7504,6 +7922,16 @@ bool Aggressive::Match(const ScriptingContext& local_context) const {
         return false;
 
     return m_aggressive == fleet->Aggressive();
+}
+
+unsigned int Aggressive::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Aggressive");
+    CheckSums::CheckSumCombine(retval, m_aggressive);
+
+    TraceLogger() << "GetCheckSum(Aggressive): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -7614,6 +8042,16 @@ bool FleetSupplyableByEmpire::Match(const ScriptingContext& local_context) const
 void FleetSupplyableByEmpire::SetTopLevelContent(const std::string& content_name) {
     if (m_empire_id)
         m_empire_id->SetTopLevelContent(content_name);
+}
+
+unsigned int FleetSupplyableByEmpire::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::FleetSupplyableByEmpire");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+
+    TraceLogger() << "GetCheckSum(FleetSupplyableByEmpire): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -7762,6 +8200,17 @@ void ResourceSupplyConnectedByEmpire::SetTopLevelContent(const std::string& cont
         m_condition->SetTopLevelContent(content_name);
 }
 
+unsigned int ResourceSupplyConnectedByEmpire::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::ResourceSupplyConnectedByEmpire");
+    CheckSums::CheckSumCombine(retval, m_empire_id);
+    CheckSums::CheckSumCombine(retval, m_condition);
+
+    TraceLogger() << "GetCheckSum(ResourceSupplyConnectedByEmpire): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // CanColonize                                           //
 ///////////////////////////////////////////////////////////
@@ -7826,6 +8275,15 @@ bool CanColonize::Match(const ScriptingContext& local_context) const {
     return species->CanColonize();
 }
 
+unsigned int CanColonize::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::CanColonize");
+
+    TraceLogger() << "GetCheckSum(CanColonize): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // CanProduceShips                                       //
 ///////////////////////////////////////////////////////////
@@ -7888,6 +8346,15 @@ bool CanProduceShips::Match(const ScriptingContext& local_context) const {
         return false;
     }
     return species->CanProduceShips();
+}
+
+unsigned int CanProduceShips::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::CanProduceShips");
+
+    TraceLogger() << "GetCheckSum(CanProduceShips): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -8003,6 +8470,16 @@ bool OrderedBombarded::Match(const ScriptingContext& local_context) const {
 void OrderedBombarded::SetTopLevelContent(const std::string& content_name) {
     if (m_by_object_condition)
         m_by_object_condition->SetTopLevelContent(content_name);
+}
+
+unsigned int OrderedBombarded::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::OrderedBombarded");
+    CheckSums::CheckSumCombine(retval, m_by_object_condition);
+
+    TraceLogger() << "GetCheckSum(OrderedBombarded): retval: " << retval;
+    return retval;
 }
 
 ///////////////////////////////////////////////////////////
@@ -8318,6 +8795,20 @@ void ValueTest::SetTopLevelContent(const std::string& content_name) {
     if (m_string_value_ref3)
         m_string_value_ref3->SetTopLevelContent(content_name);}
 
+unsigned int ValueTest::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::ValueTest");
+    CheckSums::CheckSumCombine(retval, m_value_ref1);
+    CheckSums::CheckSumCombine(retval, m_value_ref2);
+    CheckSums::CheckSumCombine(retval, m_value_ref3);
+    CheckSums::CheckSumCombine(retval, m_compare_type1);
+    CheckSums::CheckSumCombine(retval, m_compare_type2);
+
+    TraceLogger() << "GetCheckSum(ValueTest): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Location                                              //
 ///////////////////////////////////////////////////////////
@@ -8513,6 +9004,18 @@ void Location::SetTopLevelContent(const std::string& content_name) {
         m_name2->SetTopLevelContent(content_name);
 }
 
+unsigned int Location::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Location");
+    CheckSums::CheckSumCombine(retval, m_name1);
+    CheckSums::CheckSumCombine(retval, m_name2);
+    CheckSums::CheckSumCombine(retval, m_content_type);
+
+    TraceLogger() << "GetCheckSum(Location): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // And                                                   //
 ///////////////////////////////////////////////////////////
@@ -8672,6 +9175,16 @@ void And::SetTopLevelContent(const std::string& content_name) {
     }
 }
 
+unsigned int And::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::And");
+    CheckSums::CheckSumCombine(retval, m_operands);
+
+    TraceLogger() << "GetCheckSum(And): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Or                                                    //
 ///////////////////////////////////////////////////////////
@@ -8825,6 +9338,16 @@ void Or::SetTopLevelContent(const std::string& content_name) {
     }
 }
 
+unsigned int Or::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Or");
+    CheckSums::CheckSumCombine(retval, m_operands);
+
+    TraceLogger() << "GetCheckSum(Or): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Not                                                   //
 ///////////////////////////////////////////////////////////
@@ -8903,6 +9426,16 @@ void Not::SetTopLevelContent(const std::string& content_name) {
         m_operand->SetTopLevelContent(content_name);
 }
 
+unsigned int Not::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Not");
+    CheckSums::CheckSumCombine(retval, m_operand);
+
+    TraceLogger() << "GetCheckSum(Not): retval: " << retval;
+    return retval;
+}
+
 ///////////////////////////////////////////////////////////
 // Described                                             //
 ///////////////////////////////////////////////////////////
@@ -8959,5 +9492,16 @@ bool Described::SourceInvariant() const
 void Described::SetTopLevelContent(const std::string& content_name) {
     if (m_condition)
         m_condition->SetTopLevelContent(content_name);
+}
+
+unsigned int Described::GetCheckSum() const {
+    unsigned int retval{0};
+
+    CheckSums::CheckSumCombine(retval, "Condition::Described");
+    CheckSums::CheckSumCombine(retval, m_condition);
+    CheckSums::CheckSumCombine(retval, m_desc_stringtable_key);
+
+    TraceLogger() << "GetCheckSum(Described): retval: " << retval;
+    return retval;
 }
 } // namespace Condition
