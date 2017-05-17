@@ -4,6 +4,32 @@
 #include <GG/Wnd.h>
 
 class EncyclopediaDetailPanel;
+class SaveGameUIData;
+
+
+/** ShipDesignManager tracks information known to the client about ShipDesigns.  This includes
+    the order of designs in the UI. The information is currently used in the DesignWnd and the
+    BuildDesignator. */
+class ShipDesignManager {
+public:
+
+    /** Designs provides ordered lists of designs for display in the UI. */
+    class Designs {
+    public:
+        virtual std::vector<int> OrderedIDs() const = 0;
+    };
+
+    ShipDesignManager();
+
+    void StartGame(int empire_id);
+    void Save(SaveGameUIData& data) const;
+    void Load(const SaveGameUIData& data);
+
+    Designs* CurrentDesigns();
+
+private:
+    std::unique_ptr<Designs>    m_current_designs;
+};
 
 /** Lets the player design ships */
 class DesignWnd : public GG::Wnd {

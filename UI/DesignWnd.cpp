@@ -179,6 +179,32 @@ namespace {
         return boost::filesystem::absolute(PathString(designs_dir_path / file_name));
     }
 
+
+    /** CurrentShipDesignManager allows for the storage and manipulation of an ordered list of design
+        ids that are used to order the display of ShipDesigns in the DesignWnd and the ProductionWnd. */
+    class CurrentShipDesignManager : public ShipDesignManager::Designs {
+        public:
+        CurrentShipDesignManager(int empire_id) :
+            m_empire_id(empire_id),
+            m_ordered_ids()
+        {}
+
+        std::vector<int> OrderedIDs() const override
+        { return std::vector<int>(m_ordered_ids.begin(), m_ordered_ids.end()); }
+
+        template <typename T>
+        void SetOrderedIDs(const T& new_order);
+
+        void InsertBefore(const int id, const int next_id);
+        bool MoveBefore(const int moved_id, const int next_id);
+        std::list<int>::const_iterator Erase(const int id);
+
+        private:
+        int m_empire_id;
+        std::list<int> m_ordered_ids;
+
+    };
+
     class SavedDesignsManager {
     public:
         const std::list<boost::uuids::uuid>& GetOrderedDesignUUIDs() const
@@ -473,7 +499,104 @@ namespace {
 
     SavedDesignsManager& GetSavedDesignsManager()
     { return SavedDesignsManager::GetSavedDesignsManager(); }
+
+
+
+    template <typename T>
+    void CurrentShipDesignManager::SetOrderedIDs(const T& new_order) {
+        m_ordered_ids.clear();
+        m_ordered_ids.insert(m_ordered_ids.begin(), new_order.begin(), new_order.end());
+    }
+
+    void CurrentShipDesignManager::InsertBefore(const int id, const int next_id) {
+        if (id == INVALID_DESIGN_ID) {
+            ErrorLogger() << "Ship design is is invalid";
+            return ;
+        }
+
+        const auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id);
+        if (existing_it != m_ordered_ids.end()) {
+            // id already exists so this is a move.  Remove the old location
+            m_ordered_ids.erase(existing_it);
+        }
+
+        auto next_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), next_id);
+
+        // Insert in the list.
+        m_ordered_ids.insert(next_it, id);
+
+    }
+
+    bool CurrentShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
+        auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), moved_id);
+        if (existing_it == m_ordered_ids.end()) {
+            ErrorLogger() << "Unable to move design because moved design is missing.";
+            return false;
+        }
+
+        m_ordered_ids.erase(existing_it);
+
+        auto next_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), next_id);
+
+        // Insert in the list.
+        m_ordered_ids.insert(next_it, moved_id);
+        return true;
+    }
+
+    std::list<int>::const_iterator CurrentShipDesignManager::Erase(const int id) {
+        auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id);
+        auto retval = m_ordered_ids.erase(existing_it);
+        return retval;
+    }
+
 }
+
+//////////////////////////////////////////////////
+// ShipDesignManager                            //
+//////////////////////////////////////////////////
+ShipDesignManager::ShipDesignManager() :
+    m_current_designs(new CurrentShipDesignManager(INVALID_OBJECT_ID))
+{}
+
+void ShipDesignManager::StartGame(int empire_id) {
+    DebugLogger() << "ShipDesignManager initialized.";
+    m_current_designs.reset(new CurrentShipDesignManager(empire_id));
+
+    auto empire = GetEmpire(empire_id);
+    if (!empire) {
+        ErrorLogger() << "Unable to initialize ShipDesignManager because empire " << empire_id << " is missing";
+        return;
+    }
+
+    // This initialization of the current designs assumes that on new game start the
+    // server assigns the ids in some predetermined order.
+    auto ids = empire->OrderedShipDesigns();
+    std::set<int> ordered_ids(ids.begin(), ids.end());
+
+    auto current_designs = dynamic_cast<CurrentShipDesignManager*>(m_current_designs.get());
+    current_designs->SetOrderedIDs(ordered_ids);
+
+}
+
+void ShipDesignManager::Save(SaveGameUIData& data) const {
+    data.ordered_current_ship_design_ids = m_current_designs->OrderedIDs();
+}
+
+void ShipDesignManager::Load(const SaveGameUIData& data) {
+    dynamic_cast<CurrentShipDesignManager*>(m_current_designs.get())
+        ->SetOrderedIDs(data.ordered_current_ship_design_ids);
+}
+
+ShipDesignManager::Designs* ShipDesignManager::CurrentDesigns() {
+    auto retval = m_current_designs.get();
+    if (retval == nullptr) {
+        ErrorLogger() << "ShipDesignManager was not correctly initialized with ShipDesignManager::GameStart().";
+        m_current_designs.reset(new CurrentShipDesignManager(INVALID_OBJECT_ID));
+        return m_current_designs.get();
+    }
+    return retval;
+}
+
 
 //////////////////////////////////////////////////
 // PartControl                                  //
