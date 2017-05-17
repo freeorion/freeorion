@@ -390,9 +390,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
-            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
-                retval[order->ObjectID()] = entry.first;
+        for (const auto& id_and_order : app->Orders()) {
+            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
+                retval[order->ObjectID()] = id_and_order.first;
             }
         }
         return retval;
@@ -3462,10 +3462,10 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
         auto unscrap_action = [fleet]() {
             const OrderSet orders = HumanClientApp::GetApp()->Orders();
             for (int ship_id : fleet->ShipIDs()) {
-                for (const std::map<int, OrderPtr>::value_type& entry : orders) {
-                    if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
+                for (const auto& id_and_order : orders) {
+                    if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
                         if (order->ObjectID() == ship_id) {
-                            HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
+                            HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
@@ -3500,12 +3500,12 @@ void FleetWnd::FleetRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, con
 
         if (fleet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [fleet]() {
-            for (const std::map<int, OrderPtr>::value_type& entry : HumanClientApp::GetApp()->Orders()) {
+            for (const auto& id_and_order : HumanClientApp::GetApp()->Orders()) {
                 if (std::shared_ptr<GiveObjectToEmpireOrder> order =
-                    std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(entry.second))
+                    std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(id_and_order.second))
                 {
                     if (order->ObjectID() == fleet->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }

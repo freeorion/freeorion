@@ -2705,8 +2705,8 @@ void ServerApp::PreCombatProcessTurns() {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;
         }
-        for (const std::map<int, OrderPtr>::value_type& order : *order_set)
-            order.second->Execute();
+        for (const auto& id_and_order : *order_set)
+            id_and_order.second->Execute();
     }
 
     // clean up orders, which are no longer needed

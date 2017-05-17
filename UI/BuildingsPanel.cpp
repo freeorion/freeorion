@@ -35,9 +35,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
-            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
-                retval[order->ObjectID()] = entry.first;
+        for (const auto& id_and_order : app->Orders()) {
+            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
+                retval[order->ObjectID()] = id_and_order.first;
             }
         }
         return retval;

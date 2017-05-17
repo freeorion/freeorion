@@ -420,9 +420,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
-            if (std::shared_ptr<ColonizeOrder> order = std::dynamic_pointer_cast<ColonizeOrder>(entry.second)) {
-                retval[order->PlanetID()] = entry.first;
+        for (const auto& id_and_order : app->Orders()) {
+            if (std::shared_ptr<ColonizeOrder> order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
+                retval[order->PlanetID()] = id_and_order.first;
             }
         }
         return retval;
@@ -435,9 +435,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
-            if (std::shared_ptr<InvadeOrder> order = std::dynamic_pointer_cast<InvadeOrder>(entry.second)) {
-                retval[order->PlanetID()].insert(entry.first);
+        for (const auto& id_and_order : app->Orders()) {
+            if (std::shared_ptr<InvadeOrder> order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
+                retval[order->PlanetID()].insert(id_and_order.first);
             }
         }
         return retval;
@@ -450,9 +450,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
-            if (std::shared_ptr<BombardOrder> order = std::dynamic_pointer_cast<BombardOrder>(entry.second)) {
-                retval[order->PlanetID()].insert(entry.first);
+        for (const auto& id_and_order : app->Orders()) {
+            if (std::shared_ptr<BombardOrder> order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
+                retval[order->PlanetID()].insert(id_and_order.first);
             }
         }
         return retval;
@@ -2094,12 +2094,12 @@ void SidePanel::PlanetPanel::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_
         if (planet->OrderedGivenToEmpire() != ALL_EMPIRES) {
             auto ungift_action = [planet]() { // cancel give away order for this fleet
                 const OrderSet orders = HumanClientApp::GetApp()->Orders();
-                for (const std::map<int, OrderPtr>::value_type& entry : orders) {
+                for (const auto& id_and_order : orders) {
                     if (std::shared_ptr<GiveObjectToEmpireOrder> order =
-                        std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(entry.second))
+                        std::dynamic_pointer_cast<GiveObjectToEmpireOrder>(id_and_order.second))
                     {
                         if (order->ObjectID() == planet->ID()) {
-                            HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
+                            HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                             // could break here, but won't to ensure there are no problems with doubled orders
                         }
                     }
@@ -2218,10 +2218,10 @@ namespace {
 
         // is selected ship already ordered to colonize?  If so, recind that order.
         if (ship->OrderedColonizePlanet() != INVALID_OBJECT_ID) {
-            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
-                if (std::shared_ptr<ColonizeOrder> order = std::dynamic_pointer_cast<ColonizeOrder>(entry.second)) {
+            for (const auto& id_and_order : orders) {
+                if (std::shared_ptr<ColonizeOrder> order = std::dynamic_pointer_cast<ColonizeOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2230,10 +2230,10 @@ namespace {
 
         // is selected ship ordered to invade?  If so, recind that order
         if (ship->OrderedInvadePlanet() != INVALID_OBJECT_ID) {
-            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
-               if (std::shared_ptr<InvadeOrder> order = std::dynamic_pointer_cast<InvadeOrder>(entry.second)) {
+            for (const auto& id_and_order : orders) {
+               if (std::shared_ptr<InvadeOrder> order = std::dynamic_pointer_cast<InvadeOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2242,10 +2242,10 @@ namespace {
 
         // is selected ship ordered scrapped?  If so, recind that order
         if (ship->OrderedScrapped()) {
-            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
-                if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
+            for (const auto& id_and_order : orders) {
+                if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
                     if (order->ObjectID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
@@ -2254,10 +2254,10 @@ namespace {
 
         // is selected ship order to bombard?  If so, recind that order
         if (ship->OrderedBombardPlanet() != INVALID_OBJECT_ID) {
-            for (const std::map<int, OrderPtr>::value_type& entry : orders) {
-               if (std::shared_ptr<BombardOrder> order = std::dynamic_pointer_cast<BombardOrder>(entry.second)) {
+            for (const auto& id_and_order : orders) {
+               if (std::shared_ptr<BombardOrder> order = std::dynamic_pointer_cast<BombardOrder>(id_and_order.second)) {
                     if (order->ShipID() == ship->ID()) {
-                        HumanClientApp::GetApp()->Orders().RescindOrder(entry.first);
+                        HumanClientApp::GetApp()->Orders().RescindOrder(id_and_order.first);
                         // could break here, but won't to ensure there are no problems with doubled orders
                     }
                 }
