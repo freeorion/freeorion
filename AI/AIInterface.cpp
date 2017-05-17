@@ -264,7 +264,7 @@ namespace AIInterface {
         if (destination_id != INVALID_OBJECT_ID && destination_id == start_id)
             DebugLogger() << "AIInterface::IssueFleetMoveOrder : pass destination system id (" << destination_id << ") that fleet is already in";
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_id, destination_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(empire_id, fleet_id, start_id, destination_id));
 
         return 1;
     }
@@ -287,7 +287,7 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new RenameOrder(empire_id, object_id, new_name)));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<RenameOrder>(empire_id, object_id, new_name));
 
         return 1;
     }
@@ -314,7 +314,7 @@ namespace AIInterface {
                     return 0;
                 }
 
-                AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ScrapOrder(empire_id, object_id)));
+                AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, object_id));
             }
 
             return 1;
@@ -371,7 +371,7 @@ namespace AIInterface {
 
         int new_fleet_id = ClientApp::GetApp()->GetNewObjectID();
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new NewFleetOrder(empire_id, fleet_name, new_fleet_id, system_id, ship_ids)));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<NewFleetOrder>(empire_id, fleet_name, new_fleet_id, system_id, ship_ids));
 
         return new_fleet_id;
     }
@@ -422,7 +422,7 @@ namespace AIInterface {
 
         std::vector<int> ship_ids;
         ship_ids.push_back(ship_id);
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetTransferOrder(empire_id, new_fleet_id, ship_ids)));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetTransferOrder>(empire_id, new_fleet_id, ship_ids));
 
         return 1;
     }
@@ -475,7 +475,7 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ColonizeOrder(empire_id, ship_id, planet_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ColonizeOrder>(empire_id, ship_id, planet_id));
 
         return 1;
     }
@@ -545,7 +545,7 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new InvadeOrder(empire_id, ship_id, planet_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<InvadeOrder>(empire_id, ship_id, planet_id));
 
         return 1;
     }
@@ -600,7 +600,7 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new BombardOrder(empire_id, ship_id, planet_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<BombardOrder>(empire_id, ship_id, planet_id));
 
         return 1;
     }
@@ -618,8 +618,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new AggressiveOrder(empire_id, object_id, aggressive)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<AggressiveOrder>(empire_id, object_id, aggressive));
 
         return 1;
     }
@@ -674,8 +674,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new GiveObjectToEmpireOrder(empire_id, object_id, recipient_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<GiveObjectToEmpireOrder>(empire_id, object_id, recipient_id));
 
         return 1;
     }
@@ -697,8 +697,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ChangeFocusOrder(empire_id, planet_id, focus)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ChangeFocusOrder>(empire_id, planet_id, focus));
 
         return 1;
     }
@@ -712,8 +712,8 @@ namespace AIInterface {
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ResearchQueueOrder(empire_id, tech_name, position)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ResearchQueueOrder>(empire_id, tech_name, position));
 
         return 1;
     }
@@ -727,7 +727,7 @@ namespace AIInterface {
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ResearchQueueOrder(empire_id, tech_name)));
+        AIClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ResearchQueueOrder>(empire_id, tech_name));
 
         return 1;
     }
@@ -741,8 +741,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ProductionQueueOrder(empire_id, ProductionQueue::ProductionItem(BT_BUILDING, item_name), 1, location_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(empire_id, ProductionQueue::ProductionItem(BT_BUILDING, item_name), 1, location_id));
 
         return 1;
     }
@@ -756,8 +756,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ProductionQueueOrder(empire_id, ProductionQueue::ProductionItem(BT_SHIP, design_id), 1, location_id)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(empire_id, ProductionQueue::ProductionItem(BT_SHIP, design_id), 1, location_id));
 
         return 1;
     }
@@ -776,8 +776,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ProductionQueueOrder(empire_id, queue_index, new_quantity, new_blocksize)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(empire_id, queue_index, new_quantity, new_blocksize));
 
         return 1;
     }
@@ -809,8 +809,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ProductionQueueOrder(empire_id, old_queue_index, new_queue_index)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(empire_id, old_queue_index, new_queue_index));
 
         return 1;
     }
@@ -825,8 +825,8 @@ namespace AIInterface {
             return 0;
         }
 
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(
-            new ProductionQueueOrder(empire_id, queue_index)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ProductionQueueOrder>(empire_id, queue_index));
 
         return 1;
     }
@@ -857,7 +857,8 @@ namespace AIInterface {
         }
 
         int new_design_id = AIClientApp::GetApp()->GetNewDesignID();
-        AIClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ShipDesignOrder(empire_id, new_design_id, *design)));
+        AIClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, *design));
         delete design;
 
         return 1;

@@ -5367,7 +5367,7 @@ void MapWnd::PlotFleetMovement(int system_id, bool execute_move, bool append) {
 
         // if actually ordering fleet movement, not just prospectively previewing, ... do so
         if (execute_move && !route.empty()){
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet_id, start_system, system_id, append)));
+            HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(empire_id, fleet_id, start_system, system_id, append));
             StopFleetExploring(fleet_id);
         }
 
@@ -7022,12 +7022,12 @@ void MapWnd::DispatchFleetsExploring() {
                     //we have full fuel and no unknown planet in range. We can go to a far system, but we will have to wait for resupply
                     DebugLogger() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << fleet->ID() << " is " << far_system_id << ". Not enough fuel for the round trip";
                     systems_order_sent.insert(far_system_id);
-                    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), far_system_id)));
+                    HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(empire_id, fleet->ID(), fleet->SystemID(), far_system_id));
                 } else {
                     //no unknown planet in range. Let's try to get home to resupply
                     std::pair<int, int> pair = GetNearestSupplyPoint(empire, fleet->SystemID());
                     DebugLogger() << "MapWnd::DispatchFleetsExploring : Fleet " << fleet->ID() << " going to resupply at " << pair.first;
-                    HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, fleet->ID(), fleet->SystemID(), pair.first)));
+                    HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(empire_id, fleet->ID(), fleet->SystemID(), pair.first));
                 }
                 i = nbr_fleet_to_send; //stop the loop since every fleet will have order
             }
@@ -7038,7 +7038,7 @@ void MapWnd::DispatchFleetsExploring() {
             DebugLogger() << "MapWnd::DispatchFleetsExploring : Next system for fleet " << better_fleet_id << " is " << end_system_id;
             systems_order_sent.insert(end_system_id);
             fleet_idle.erase(better_fleet_id);
-            HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new FleetMoveOrder(empire_id, better_fleet_id, start_system_id, end_system_id)));
+            HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<FleetMoveOrder>(empire_id, better_fleet_id, start_system_id, end_system_id));
         } else {
             remaining_system_to_explore = false; //from now on, each ship will be sent to a supply depot or a far system
         }

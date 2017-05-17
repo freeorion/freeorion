@@ -15,7 +15,7 @@ const OrderPtr OrderSet::ExamineOrder(int order) const {
     return retval;
 }
 
-int OrderSet::IssueOrder(OrderPtr order) {
+int OrderSet::IssueOrder(const OrderPtr& order) {
     int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
     m_orders[retval] = order;
 

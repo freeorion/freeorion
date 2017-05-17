@@ -1559,8 +1559,8 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
             return discard_event();
         }
 
-        for (const std::map<int, OrderPtr>::value_type& entry : *order_set) {
-            OrderPtr order = entry.second;
+        for (const auto& id_and_order : *order_set) {
+            auto& order = id_and_order.second;
             if (!order) {
                 ErrorLogger(FSM) << "WaitingForTurnEnd::react(TurnOrders&) couldn't get order from order set!";
                 continue;

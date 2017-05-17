@@ -35,9 +35,9 @@ namespace {
         const ClientApp* app = ClientApp::GetApp();
         if (!app)
             return retval;
-        for (const std::map<int, OrderPtr>::value_type& entry : app->Orders()) {
-            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(entry.second)) {
-                retval[order->ObjectID()] = entry.first;
+        for (const auto& id_and_order : app->Orders()) {
+            if (std::shared_ptr<ScrapOrder> order = std::dynamic_pointer_cast<ScrapOrder>(id_and_order.second)) {
+                retval[order->ObjectID()] = id_and_order.first;
             }
         }
         return retval;
@@ -422,7 +422,7 @@ void BuildingIndicator::RClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys)
     }
 
     auto scrap_building_action = [this, empire_id]() {
-        HumanClientApp::GetApp()->Orders().IssueOrder(OrderPtr(new ScrapOrder(empire_id, m_building_id)));};
+        HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ScrapOrder>(empire_id, m_building_id));};
     auto un_scrap_building_action = [building]() {
         // find order to scrap this building, and recind it
         std::map<int, int> pending_scrap_orders = PendingScrapOrders();
