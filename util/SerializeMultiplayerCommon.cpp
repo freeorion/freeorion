@@ -46,7 +46,8 @@ void SaveGameUIData::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(map_top)
         & BOOST_SERIALIZATION_NVP(map_left)
         & BOOST_SERIALIZATION_NVP(map_zoom_steps_in)
-        & BOOST_SERIALIZATION_NVP(fleets_exploring);
+        & BOOST_SERIALIZATION_NVP(fleets_exploring)
+        & BOOST_SERIALIZATION_NVP(ordered_current_ship_design_ids);
 }
 
 template void SaveGameUIData::serialize<freeorion_bin_oarchive>(freeorion_bin_oarchive&, const unsigned int);

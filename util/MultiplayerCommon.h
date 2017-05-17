@@ -69,6 +69,8 @@ struct FO_COMMON_API SaveGameUIData {
     double  map_zoom_steps_in;
     std::set<int> fleets_exploring;
 
+    std::vector<int> ordered_current_ship_design_ids;
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
