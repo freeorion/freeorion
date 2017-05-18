@@ -1690,15 +1690,12 @@ const std::set<int>& Empire::ShipDesigns() const
 std::set<int> Empire::AvailableShipDesigns() const {
     // create new map containing all ship designs that are available
     std::set<int> retval;
-    for (int design_id : m_ship_designs_ordered) {
+    for (int design_id : m_ship_designs) {
         if (ShipDesignAvailable(design_id))
             retval.insert(design_id);
     }
     return retval;
 }
-
-const std::vector<int>& Empire::OrderedShipDesigns() const
-{ return m_ship_designs_ordered; }
 
 bool Empire::ShipDesignAvailable(int ship_design_id) const {
     const ShipDesign* design = GetShipDesign(ship_design_id);
@@ -2700,20 +2697,12 @@ void Empire::AddShipDesign(int ship_design_id, int next_design_id) {
     if (ship_design) {  // don't check if design is producible; adding a ship design is useful for more than just producing it
         // design is valid, so just add the id to empire's set of ids that it knows about
         if (m_ship_designs.find(ship_design_id) == m_ship_designs.end()) {
-            std::vector<int>::iterator point = m_ship_designs_ordered.end();
-            bool is_at_end_of_list = (next_design_id == INVALID_DESIGN_ID);
-            if (!is_at_end_of_list)
-                point = std::find(m_ship_designs_ordered.begin(), m_ship_designs_ordered.end(), next_design_id);
-
-            m_ship_designs_ordered.insert(point, ship_design_id);
             m_ship_designs.insert(ship_design_id);
 
             ShipDesignsChangedSignal();
 
             TraceLogger() << "AddShipDesign::  " << ship_design->Name() << " (" << ship_design_id
-                          << ") to empire #" << EmpireID()
-                          << (is_at_end_of_list ? " at end of list." : " in front of id ")
-                          << next_design_id;
+                          << ") to empire #" << EmpireID();
         }
     } else {
         // design in not valid
@@ -2758,8 +2747,6 @@ int Empire::AddShipDesign(ShipDesign* ship_design) {
 void Empire::RemoveShipDesign(int ship_design_id) {
     if (m_ship_designs.find(ship_design_id) != m_ship_designs.end()) {
         m_ship_designs.erase(ship_design_id);
-        m_ship_designs_ordered.erase(
-            std::remove(m_ship_designs_ordered.begin(), m_ship_designs_ordered.end(), ship_design_id), m_ship_designs_ordered.end());
         ShipDesignsChangedSignal();
     } else {
         DebugLogger() << "Empire::RemoveShipDesign: this empire did not have design with id " << ship_design_id;

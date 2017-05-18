@@ -382,7 +382,7 @@ namespace {
             }            
             const auto& ship_design_on_disk = *(found_it->second.first);
             bool already_got = false;
-            for (int id : empire->OrderedShipDesigns()) {
+            for (int id : empire->ShipDesigns()) {
                 const ShipDesign& ship_design = *GetShipDesign(id);
                 if (ship_design == ship_design_on_disk) {
                     already_got = true;
@@ -610,7 +610,7 @@ void ShipDesignManager::StartGame(int empire_id) {
 
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
-        auto ids = empire->OrderedShipDesigns();
+        auto ids = empire->ShipDesigns();
         std::set<int> ordered_ids(ids.begin(), ids.end());
 
         current_designs->SetOrderedIDs(ordered_ids);
@@ -2087,7 +2087,7 @@ void CompletedDesignsListBox::PopulateCore() {
 
     if (empire) {
         // add rows for designs this empire is keeping
-        for (int design_id : empire->OrderedShipDesigns()) {
+        for (int design_id : GetCurrentDesignsManager().OrderedIDs()) {
             bool available = empire->ShipDesignAvailable(design_id);
             const ShipDesign* design = GetShipDesign(design_id);
             if (!design || !design->Producible())
@@ -3292,7 +3292,7 @@ bool DesignWnd::MainPanel::CurrentDesignIsRegistered(std::string& design_name) {
     }
 
     if (std::shared_ptr<const ShipDesign> cur_design = GetIncompleteDesign()) {
-        for (int design_id : empire->OrderedShipDesigns()) {
+        for (int design_id : empire->ShipDesigns()) {
             const ShipDesign& ship_design = *GetShipDesign(design_id);
             if (ship_design == *cur_design.get()) {
                 design_name = ship_design.Name();
