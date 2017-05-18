@@ -618,8 +618,10 @@ void ShipDesignManager::StartGame(int empire_id) {
 
     saved_designs->LoadDesignsFromFileSystem();
 
-    // If expected copy all of the saved designs to the client empire.
-    if(GetOptionsDB().Get<bool>("auto-add-default-designs")) {
+    // If expected on the first turn copy all of the saved designs to the client empire.
+    if (HumanClientApp::GetApp()->CurrentTurn() == 1
+       && GetOptionsDB().Get<bool>("auto-add-saved-designs"))
+    {
         saved_designs->AddSavedDesignsToCurrentDesigns();
     }
 
