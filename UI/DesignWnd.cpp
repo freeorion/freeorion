@@ -3320,14 +3320,6 @@ void DesignWnd::MainPanel::Sanitize() {
     m_design_description->SetText(UserString("DESIGN_DESCRIPTION_DEFAULT"));
     // disconnect old empire design signal
     m_empire_designs_changed_signal.disconnect();
-    // connect signal to update this list if the empire's designs change
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    if (const Empire* empire = GetEmpire(empire_id)) {
-        DebugLogger() << "DesignWnd::MainPanel::Sanitize";
-        if ((CurrentTurn() == 1) && GetOptionsDB().Get<bool>("auto-add-saved-designs")) { // otherwise can be manually triggered by right click context menu
-            GetSavedDesignsManager().AddSavedDesignsToCurrentDesigns();
-        }
-    }
 }
 
 void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
