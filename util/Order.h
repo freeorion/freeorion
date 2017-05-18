@@ -581,7 +581,6 @@ private:
   * universe's catalog of shipdesigns with the passed new design id, and adds
   * this design to the \a empire's set of remembered designs.  The new design
   * must be marked as designed by this \a empire.
-  * The 3-arg ctor (int,int,int) moves a design_id_to_move to before design_id_after
   */
 class FO_COMMON_API ShipDesignOrder : public Order {
 public:
@@ -595,8 +594,6 @@ public:
     ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
 
     ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name = "", const std::string& new_description = "");
-
-    ShipDesignOrder(int empire, int design_id_to_move, int design_id_after);
     //@}
 
 private:
@@ -625,7 +622,6 @@ private:
     bool m_update_name_or_description = false;
     bool m_delete_design_from_empire = false;
     bool m_create_new_design = false;
-    bool m_move_design = false;
 
     // details of design to create
     std::string m_name;
@@ -637,8 +633,6 @@ private:
     std::string m_icon;
     std::string m_3D_model;
     bool m_name_desc_in_stringtable = false;
-    /** Location after the inserted design. */
-    int m_design_id_after = INVALID_OBJECT_ID;
     // end details of design to create
 
     friend class boost::serialization::access;

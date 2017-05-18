@@ -1016,14 +1016,6 @@ ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::
     m_description(new_description)
 {}
 
-ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_move, int design_id_after) :
-    Order(empire),
-    m_design_id(design_id_to_move),
-    m_uuid(boost::uuids::nil_generator()()),
-    m_move_design(true),
-    m_design_id_after(design_id_after)
-{}
-
 void ShipDesignOrder::ExecuteImpl() const {
     auto empire = GetValidatedEmpire();
 
@@ -1080,18 +1072,6 @@ void ShipDesignOrder::ExecuteImpl() const {
         }
         GetUniverse().RenameShipDesign(m_design_id, m_name, m_description);
 
-    } else if (m_move_design) {
-        //Move an existing design from its current location to just before the after_design
-        if (!empire->ShipDesignKept(m_design_id)) {
-            ErrorLogger() << "Tried to move a ShipDesign that the empire wasn't remembering";
-            return;
-        }
-        if (m_design_id == m_design_id_after)
-            return;
-
-        empire->RemoveShipDesign(m_design_id);
-        empire->AddShipDesign(m_design_id, m_design_id_after);
-        DebugLogger() << "Move Ship Design " << m_design_id << " to before " << m_design_id_after;
     } else {
         // player is ordering empire to retain a particular design, so that is can
         // be used to construct ships by that empire.
