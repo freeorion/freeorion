@@ -3104,8 +3104,6 @@ public:
                                         const std::string& desc);
 
     void            HighlightSlotType(std::vector<ShipSlotType>& slot_types);   //!< renders slots of the indicated types differently, perhaps to indicate that that those slots can be drop targets for a particular part?
-    void            RegisterCompletedDesignDump(std::string design_dump);
-    void            ReregisterDesigns();                                        //!< resets m_completed_designs and reregisters all current empire designs. is used w/r/t m_confirm_button status
     //@}
 
     /** emitted when the design is changed (by adding or removing parts, not
@@ -3160,7 +3158,6 @@ private:
     int                                     m_complete_design_id;
     int                                     m_replaced_design_id;
     mutable std::shared_ptr<ShipDesign> m_incomplete_design;
-    std::set<std::string>                   m_completed_design_dump_strings;
 
     GG::StaticGraphic*  m_background_image;
     GG::Label*          m_design_name_label;
@@ -3186,7 +3183,6 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_complete_design_id(INVALID_DESIGN_ID),
     m_replaced_design_id(INVALID_DESIGN_ID),
     m_incomplete_design(),
-    m_completed_design_dump_strings(),
     m_background_image(nullptr),
     m_design_name_label(nullptr),
     m_design_name(nullptr),
@@ -3308,21 +3304,6 @@ void DesignWnd::MainPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     DoLayout();
 }
 
-void DesignWnd::MainPanel::ReregisterDesigns() {
-    DebugLogger() << "DesignWnd::MainPanel::ReregisterDesigns";
-    m_completed_design_dump_strings.clear();
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id); // may return 0
-    if (empire) {
-        for (int design_id : empire->OrderedShipDesigns()) {
-            if (const ShipDesign* design = GetShipDesign(design_id)) {
-                std::string dump_str = GetCleanDesignDump(design);
-                m_completed_design_dump_strings.insert(dump_str); //no need to validate
-            }
-        }
-    }
-}
-
 void DesignWnd::MainPanel::Sanitize() {
     SetHull(nullptr);
     m_design_name->SetText(UserString("DESIGN_NAME_DEFAULT"));
@@ -3336,12 +3317,7 @@ void DesignWnd::MainPanel::Sanitize() {
         if ((CurrentTurn() == 1) && GetOptionsDB().Get<bool>("auto-add-saved-designs")) { // otherwise can be manually triggered by right click context menu
             GetSavedDesignsManager().AddSavedDesignsToCurrentDesigns();
         }
-
-        // not apparent if this is working, but in typical use is unnecessary
-        m_empire_designs_changed_signal = empire->ShipDesignsChangedSignal.connect(
-                                            boost::bind(&MainPanel::ReregisterDesigns, this));
     }
-    ReregisterDesigns();
 }
 
 void DesignWnd::MainPanel::SetPart(const std::string& part_name, unsigned int slot)
@@ -4053,7 +4029,6 @@ int DesignWnd::AddDesign() {
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
 
-        m_main_panel->ReregisterDesigns();
         m_main_panel->DesignChangedSignal();
 
         DebugLogger() << "Added new design: " << design.Name();
