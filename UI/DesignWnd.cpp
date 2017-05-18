@@ -234,12 +234,11 @@ namespace {
             return manager;
         }
 
-        void RefreshDesigns();
+        void LoadDesignsFromFileSystem();
 
         const ShipDesign* GetDesign(const boost::uuids::uuid& uuid) const;
 
-         /* Causes the human client Empire to add all saved designs. */
-        void LoadAllSavedDesigns();
+        void AddSavedDesignsToCurrentDesigns();
 
         void SaveManifest();
 
@@ -267,7 +266,7 @@ namespace {
         static SavedDesignsManager*         s_instance;
     };
 
-    void SavedDesignsManager::RefreshDesigns() {
+    void SavedDesignsManager::LoadDesignsFromFileSystem() {
         using namespace boost::filesystem;
         m_saved_designs.clear();
 
@@ -358,10 +357,10 @@ namespace {
     }
 
     /* Causes the human client Empire to add all saved designs. */
-    void SavedDesignsManager::LoadAllSavedDesigns() {
+    void SavedDesignsManager::AddSavedDesignsToCurrentDesigns() {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         if (const Empire* empire = GetEmpire(empire_id)) {
-            DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns";
+            DebugLogger() << "SavedDesignsManager::AddSavedDesignsToCurrentDesigns";
             for (const auto& entry : m_saved_designs) {
                 const auto& ship_design_on_disk = *(entry.second.first);
                 bool already_got = false;
@@ -373,18 +372,18 @@ namespace {
                     }
                 }
                 if (!already_got) {
-                    DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns adding saved design: " << ship_design_on_disk.Name();
+                    DebugLogger() << "SavedDesignsManager::AddSavedDesignsToCurrentDesigns adding saved design: " << ship_design_on_disk.Name();
                     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
                     CurrentDesignsInsertBefore(new_design_id, INVALID_OBJECT_ID);
                     HumanClientApp::GetApp()->Orders().IssueOrder(
                         std::make_shared<ShipDesignOrder>(empire_id, new_design_id, ship_design_on_disk));
 
                 } else {
-                    DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns saved design already present: " << ship_design_on_disk.Name();
+                    DebugLogger() << "SavedDesignsManager::AddSavedDesignsToCurrentDesigns saved design already present: " << ship_design_on_disk.Name();
                 }
             }
         } else {
-            DebugLogger() << "SavedDesignsManager::LoadAllSavedDesigns HumanClient Does Not Control an Empire";
+            DebugLogger() << "SavedDesignsManager::AddSavedDesignsToCurrentDesigns HumanClient Does Not Control an Empire";
         }
     }
 
@@ -486,7 +485,7 @@ namespace {
         if (s_instance)
             throw std::runtime_error("Attempted to create more than one SavedDesignsManager.");
         s_instance = this;
-        RefreshDesigns();
+        LoadDesignsFromFileSystem();
     }
 
     /** Save the design with the original filename or throw out_of_range..*/
@@ -2328,8 +2327,8 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
 
     // add all saved designs
     auto add_all_saved_designs_action = [&manager]() {
-        DebugLogger() << "BasesListBox::BaseRightClicked LoadAllSavedDesigns";
-        manager.LoadAllSavedDesigns();
+        DebugLogger() << "BasesListBox::BaseRightClicked AddSavedDesignsToCurrentDesigns";
+        manager.AddSavedDesignsToCurrentDesigns();
     };
 
     // create popup menu with a commands in it
@@ -3292,7 +3291,7 @@ void DesignWnd::MainPanel::Sanitize() {
     if (const Empire* empire = GetEmpire(empire_id)) {
         DebugLogger() << "DesignWnd::MainPanel::Sanitize";
         if ((CurrentTurn() == 1) && GetOptionsDB().Get<bool>("auto-add-saved-designs")) { // otherwise can be manually triggered by right click context menu
-            GetSavedDesignsManager().LoadAllSavedDesigns();
+            GetSavedDesignsManager().AddSavedDesignsToCurrentDesigns();
         }
 
         // not apparent if this is working, but in typical use is unnecessary
