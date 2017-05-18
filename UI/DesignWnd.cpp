@@ -224,15 +224,16 @@ namespace {
         current_designs->Erase(id);
     }
 
-    class SavedDesignsManager {
+    class SavedDesignsManager : public ShipDesignManager::Designs {
     public:
+        SavedDesignsManager(const int empire_id) :
+            m_empire_id(empire_id)
+        {}
+
         const std::list<boost::uuids::uuid>& GetOrderedDesignUUIDs() const
         { return m_ordered_uuids; }
 
-        static SavedDesignsManager& GetSavedDesignsManager() {
-            static SavedDesignsManager manager;
-            return manager;
-        }
+        std::vector<int> OrderedIDs() const override;
 
         void LoadDesignsFromFileSystem();
 
@@ -251,20 +252,29 @@ namespace {
         Erase(std::list<boost::uuids::uuid>::const_iterator erasee);
 
     private:
-        SavedDesignsManager();
-
-        /** Save the design with the original filename or throw out_of_range..*/
+        /** Save the design with the original filename or throw out_of_range. */
         void SaveDesign(const boost::uuids::uuid &uuid);
 
         void SaveDesign(int design_id);
 
+        int m_empire_id;
         std::list<boost::uuids::uuid> m_ordered_uuids;
         /// Saved designs with filename
         std::unordered_map<boost::uuids::uuid,
                            std::pair<std::unique_ptr<ShipDesign>,
                                      boost::filesystem::path>>  m_saved_designs;
-        static SavedDesignsManager*         s_instance;
     };
+
+    std::vector<int> SavedDesignsManager::OrderedIDs() const {
+        std::vector<int> retval;
+        for (const auto uuid: m_ordered_uuids) {
+            const auto& it = m_saved_designs.find(uuid);
+            if (it == m_saved_designs.end())
+                continue;
+            retval.push_back(it->second.first->ID());
+        }
+        return retval;
+    }
 
     void SavedDesignsManager::LoadDesignsFromFileSystem() {
         using namespace boost::filesystem;
@@ -481,13 +491,6 @@ namespace {
         return m_ordered_uuids.erase(erasee);
     }
 
-    SavedDesignsManager::SavedDesignsManager() {
-        if (s_instance)
-            throw std::runtime_error("Attempted to create more than one SavedDesignsManager.");
-        s_instance = this;
-        LoadDesignsFromFileSystem();
-    }
-
     /** Save the design with the original filename or throw out_of_range..*/
     void SavedDesignsManager::SaveDesign(const boost::uuids::uuid &uuid) {
         const auto& design_and_filename = m_saved_designs.at(uuid);
@@ -510,12 +513,6 @@ namespace {
 
         WriteToFile(save_path, design->Dump());
     }
-
-    SavedDesignsManager* SavedDesignsManager::s_instance = nullptr;
-
-    SavedDesignsManager& GetSavedDesignsManager()
-    { return SavedDesignsManager::GetSavedDesignsManager(); }
-
 
 
     template <typename T>
@@ -570,27 +567,61 @@ namespace {
 //////////////////////////////////////////////////
 // ShipDesignManager                            //
 //////////////////////////////////////////////////
+
+CurrentShipDesignManager& GetCurrentDesignsManager() {
+    auto designs = dynamic_cast<CurrentShipDesignManager*>(
+        ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns());
+    return *designs;
+}
+
+SavedDesignsManager& GetSavedDesignsManager() {
+    auto designs = dynamic_cast<SavedDesignsManager*>(
+        ClientUI::GetClientUI()->GetShipDesignManager()->SavedDesigns());
+    return *designs;
+}
+
 ShipDesignManager::ShipDesignManager() :
-    m_current_designs(new CurrentShipDesignManager(INVALID_OBJECT_ID))
+    m_current_designs(new CurrentShipDesignManager(INVALID_OBJECT_ID)),
+    m_saved_designs(new SavedDesignsManager(INVALID_OBJECT_ID))
 {}
 
 void ShipDesignManager::StartGame(int empire_id) {
-    DebugLogger() << "ShipDesignManager initialized.";
-    m_current_designs.reset(new CurrentShipDesignManager(empire_id));
-
     auto empire = GetEmpire(empire_id);
     if (!empire) {
-        ErrorLogger() << "Unable to initialize ShipDesignManager because empire " << empire_id << " is missing";
+        ErrorLogger() << "Unable to initialize ShipDesignManager because empire id, " << empire_id << ", is invalid";
         return;
     }
 
-    // This initialization of the current designs assumes that on new game start the
-    // server assigns the ids in some predetermined order.
-    auto ids = empire->OrderedShipDesigns();
-    std::set<int> ordered_ids(ids.begin(), ids.end());
+    DebugLogger() << "ShipDesignManager initializing.";
 
+    m_current_designs.reset(new CurrentShipDesignManager(empire_id));
     auto current_designs = dynamic_cast<CurrentShipDesignManager*>(m_current_designs.get());
-    current_designs->SetOrderedIDs(ordered_ids);
+
+    // If expected initialize the current designs to all designs known by the empire
+    if( GetOptionsDB().Get<bool>("auto-add-default-designs")) {
+
+        // Assume that on new game start the server assigns the ids in an order
+        // that makes sense for the UI.
+        auto ids = empire->OrderedShipDesigns();
+        std::set<int> ordered_ids(ids.begin(), ids.end());
+
+        current_designs->SetOrderedIDs(ordered_ids);
+    }
+
+    // Remove the default designs from the empire's current designs.
+    else {
+        // TODO;
+    }
+
+    m_saved_designs.reset(new SavedDesignsManager(empire_id));
+    auto saved_designs = dynamic_cast<SavedDesignsManager*>(m_saved_designs.get());
+
+    saved_designs->LoadDesignsFromFileSystem();
+
+    // If expected copy all of the saved designs to the client empire.
+    if(GetOptionsDB().Get<bool>("auto-add-default-designs")) {
+        saved_designs->AddSavedDesignsToCurrentDesigns();
+    }
 
 }
 
@@ -606,7 +637,19 @@ void ShipDesignManager::Load(const SaveGameUIData& data) {
 ShipDesignManager::Designs* ShipDesignManager::CurrentDesigns() {
     auto retval = m_current_designs.get();
     if (retval == nullptr) {
-        ErrorLogger() << "ShipDesignManager was not correctly initialized with ShipDesignManager::GameStart().";
+        ErrorLogger() << "ShipDesignManager m_current_designs was not correctly initialized "
+                      << "with ShipDesignManager::GameStart().";
+        m_current_designs.reset(new CurrentShipDesignManager(INVALID_OBJECT_ID));
+        return m_current_designs.get();
+    }
+    return retval;
+}
+
+ShipDesignManager::Designs* ShipDesignManager::SavedDesigns() {
+    auto retval = m_saved_designs.get();
+    if (retval == nullptr) {
+        ErrorLogger() << "ShipDesignManager m_saved_designs was not correctly initialized "
+                      << "with ShipDesignManager::GameStart().";
         m_current_designs.reset(new CurrentShipDesignManager(INVALID_OBJECT_ID));
         return m_current_designs.get();
     }

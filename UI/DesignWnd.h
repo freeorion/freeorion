@@ -26,9 +26,11 @@ public:
     void Load(const SaveGameUIData& data);
 
     Designs* CurrentDesigns();
+    Designs* SavedDesigns();
 
 private:
     std::unique_ptr<Designs>    m_current_designs;
+    std::unique_ptr<Designs>    m_saved_designs;
 };
 
 /** Lets the player design ships */
