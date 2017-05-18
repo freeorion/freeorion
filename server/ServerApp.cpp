@@ -1498,27 +1498,26 @@ int ServerApp::EffectsProcessingThreads() const
 { return GetOptionsDB().Get<int>("effects-threads-server"); }
 
 void ServerApp::AddEmpireTurn(int empire_id)
-{ m_turn_sequence[empire_id] = nullptr; }
+{ m_turn_sequence[empire_id].reset(nullptr); }
 
 void ServerApp::RemoveEmpireTurn(int empire_id)
 { m_turn_sequence.erase(empire_id); }
 
-void ServerApp::SetEmpireTurnOrders(int empire_id, OrderSet* order_set)
-{ m_turn_sequence[empire_id] = order_set; }
-
 void ServerApp::ClearEmpireTurnOrders() {
-    for (std::map<int, OrderSet*>::value_type& order : m_turn_sequence) {
+    for (auto& order : m_turn_sequence) {
         if (order.second) {
-            delete order.second;
-            order.second = nullptr;
+            order.second.reset(nullptr);
         }
     }
 }
 
+void ServerApp::SetEmpireTurnOrders(int empire_id, std::unique_ptr<OrderSet>&& order_set)
+{ m_turn_sequence[empire_id] = std::move(order_set); }
+
 bool ServerApp::AllOrdersReceived() {
     // debug output
     DebugLogger() << "ServerApp::AllOrdersReceived for turn: " << m_current_turn;
-    for (const std::map<int, OrderSet*>::value_type& empire_orders : m_turn_sequence) {
+    for (const auto& empire_orders : m_turn_sequence) {
         if (!empire_orders.second)
             DebugLogger() << " ... no orders from empire id: " << empire_orders.first;
         else
@@ -1526,7 +1525,7 @@ bool ServerApp::AllOrdersReceived() {
     }
 
     // Loop through to find empire ID and check for valid orders pointer
-    for (const std::map<int, OrderSet*>::value_type& empire_orders : m_turn_sequence) {
+    for (const auto& empire_orders : m_turn_sequence) {
         if (!empire_orders.second)
             return false;
     }
@@ -2699,8 +2698,8 @@ void ServerApp::PreCombatProcessTurns() {
     CleanUpBombardmentStateInfo();
 
     // execute orders
-    for (const std::map<int, OrderSet*>::value_type& empire_orders : m_turn_sequence) {
-        OrderSet* order_set = empire_orders.second;
+    for (const auto& empire_orders : m_turn_sequence) {
+        auto& order_set = empire_orders.second;
         if (!order_set) {
             DebugLogger() << "No OrderSet for empire " << empire_orders.first;
             continue;

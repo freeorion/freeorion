@@ -1517,7 +1517,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
     const Message& message = msg.m_message;
     const PlayerConnectionPtr& sender = msg.m_player_connection;
 
-    OrderSet* order_set = new OrderSet;
+    auto order_set = std::unique_ptr<OrderSet>(new OrderSet);
     ExtractTurnOrdersMessageData(message, *order_set);
 
     int player_id = sender->PlayerID();
@@ -1576,7 +1576,7 @@ sc::result WaitingForTurnEnd::react(const TurnOrders& msg) {
 
         TraceLogger(FSM) << "WaitingForTurnEnd.TurnOrders : Received orders from player " << player_id;
 
-        server.SetEmpireTurnOrders(empire->EmpireID(), order_set);
+        server.SetEmpireTurnOrders(empire->EmpireID(), std::move(order_set));
     }
 
 
@@ -1724,7 +1724,7 @@ sc::result WaitingForSaveData::react(const ClientSaveData& msg) {
     // received orders are ignored if there are already existing orders?
     std::shared_ptr<OrderSet> order_set;
     if (const Empire* empire = GetEmpire(server.PlayerEmpireID(player_id))) {
-        OrderSet* existing_orders = server.m_turn_sequence[empire->EmpireID()];
+        const auto& existing_orders = server.m_turn_sequence[empire->EmpireID()];
         if (existing_orders)
             order_set.reset(new OrderSet(*existing_orders));
         else
