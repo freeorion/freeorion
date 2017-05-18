@@ -368,32 +368,40 @@ namespace {
 
     /* Causes the human client Empire to add all saved designs. */
     void SavedDesignsManager::AddSavedDesignsToCurrentDesigns() {
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        if (const Empire* empire = GetEmpire(empire_id)) {
-            DebugLogger() << "SavedDesignsManager::AddSavedDesignsToCurrentDesigns";
-            for (const auto& entry : m_saved_designs) {
-                const auto& ship_design_on_disk = *(entry.second.first);
-                bool already_got = false;
-                for (int id : empire->OrderedShipDesigns()) {
-                    const ShipDesign& ship_design = *GetShipDesign(id);
-                    if (ship_design == ship_design_on_disk) {
-                        already_got = true;
-                        break;
-                    }
-                }
-                if (!already_got) {
-                    DebugLogger() << "SavedDesignsManager::AddSavedDesignsToCurrentDesigns adding saved design: " << ship_design_on_disk.Name();
-                    int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-                    CurrentDesignsInsertBefore(new_design_id, INVALID_OBJECT_ID);
-                    HumanClientApp::GetApp()->Orders().IssueOrder(
-                        std::make_shared<ShipDesignOrder>(empire_id, new_design_id, ship_design_on_disk));
-
-                } else {
-                    DebugLogger() << "SavedDesignsManager::AddSavedDesignsToCurrentDesigns saved design already present: " << ship_design_on_disk.Name();
+        const auto empire = GetEmpire(m_empire_id);
+        if (!empire) {
+            DebugLogger() << "AddSavedDesignsToCurrentDesigns HumanClient Does Not Control an Empire";
+            return;
+        }
+        
+        DebugLogger() << "AddSavedDesignsToCurrentDesigns";
+        for (const auto uuid: m_ordered_uuids) {            
+            const auto found_it = m_saved_designs.find(uuid);
+            if (found_it == m_saved_designs.end()) {
+                ErrorLogger() << "AddSavedDesignsToCurrentDesigns missing expected uuid " << uuid;
+            }            
+            const auto& ship_design_on_disk = *(found_it->second.first);
+            bool already_got = false;
+            for (int id : empire->OrderedShipDesigns()) {
+                const ShipDesign& ship_design = *GetShipDesign(id);
+                if (ship_design == ship_design_on_disk) {
+                    already_got = true;
+                    break;
                 }
             }
-        } else {
-            DebugLogger() << "SavedDesignsManager::AddSavedDesignsToCurrentDesigns HumanClient Does Not Control an Empire";
+            
+            if (already_got) {
+                DebugLogger() << "SavedDesignsToCurrentDesigns saved design already present: "
+                              << ship_design_on_disk.Name();
+                continue;
+            }
+
+            DebugLogger() << "SavedDesignsToCurrentDesigns adding saved design: "
+                          << ship_design_on_disk.Name();
+            int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+            CurrentDesignsInsertBefore(new_design_id, INVALID_OBJECT_ID);
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(m_empire_id, new_design_id, ship_design_on_disk));
         }
     }
 
