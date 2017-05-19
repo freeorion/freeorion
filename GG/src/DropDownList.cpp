@@ -93,6 +93,9 @@ public:
     boost::optional<DropDownList::iterator> MouseWheelCommon(
         const Pt& pt, int move, Flags<ModKey> mod_keys);
 
+    /** Set the drop down list to only mouse scroll if it is dropped. */
+    void SetOnlyMouseScrollWhenDropped(bool enable);
+
 protected:
     /** ModalListPicker needs to process its own key press events because modal
         windows in GG can't have parents. */
@@ -118,6 +121,9 @@ private:
     const size_t        m_num_shown_rows;
     const DropDownList* m_relative_to_wnd;
     bool                m_dropped; ///< Is the drop down list open.
+
+    /** Should the list wnd scroll when dropped? */
+    bool                m_only_mouse_scroll_when_dropped;
 };
 
 namespace {
@@ -159,7 +165,8 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
     m_lb_wnd(GetStyleFactory()->NewDropDownListListBox(color, color)),
     m_num_shown_rows(std::max<std::size_t>(1, num_rows)),
     m_relative_to_wnd(relative_to_wnd),
-    m_dropped(false)
+    m_dropped(false),
+    m_only_mouse_scroll_when_dropped(false)
 {
     m_lb_wnd->SelChangedSignal.connect(
         boost::bind(&ModalListPicker::LBSelChangedSlot, this, _1));
@@ -445,9 +452,15 @@ boost::optional<DropDownList::iterator> ModalListPicker::KeyPressCommon(
     return boost::none;
 }
 
+void ModalListPicker::SetOnlyMouseScrollWhenDropped(bool enable)
+{ m_only_mouse_scroll_when_dropped = enable; }
+
 boost::optional<DropDownList::iterator> ModalListPicker::MouseWheelCommon(
     const Pt& pt, int move, Flags<ModKey> mod_keys)
 {
+    if (m_only_mouse_scroll_when_dropped && !Dropped())
+        return boost::none;
+
     DropDownList::iterator cur_it = CurrentItem();
     if (cur_it == LB()->end())
         return boost::none;
@@ -882,6 +895,9 @@ void DropDownList::MouseWheel(const Pt& pt, int move, Flags<ModKey> mod_keys)
         Control::MouseWheel(pt, move, mod_keys);
     }
 }
+
+void DropDownList::SetOnlyMouseScrollWhenDropped(bool enable)
+{ m_modal_picker->SetOnlyMouseScrollWhenDropped(enable); }
 
 ListBox* DropDownList::LB()
 { return m_modal_picker->LB(); }

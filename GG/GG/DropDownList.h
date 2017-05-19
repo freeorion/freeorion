@@ -218,6 +218,9 @@ public:
     /** Sets whether to normalize rows when inserted (true) or leave them as
       * they are. */
     void            NormalizeRowsOnInsert(bool enable = true);
+
+    /** Set the drop down list to only mouse scroll if it is dropped. */
+    void            SetOnlyMouseScrollWhenDropped(bool enable);
     //@}
 
 protected:
