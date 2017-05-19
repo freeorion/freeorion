@@ -1980,21 +1980,25 @@ class SavedDesignsListBox : public BasesListBox {
         void Render() override
         {}
 
+        void                            SetAvailability(const Availability::Enum type);
+
         private:
         GG::StaticGraphic*              m_graphic;
         GG::Label*                      m_name;
     };
 
-    class SavedDesignListBoxRow : public HullAndPartsListBoxRow {
+    class SavedDesignListBoxRow : public BasesListBoxRow {
         public:
         SavedDesignListBoxRow(GG::X w, GG::Y h, const boost::uuids::uuid& design_uuid);
         const boost::uuids::uuid        DesignUUID() const;
         const std::string&              DesignName() const;
         const std::string&              Description() const;
         bool                            LookupInStringtable() const;
+        void                            SetAvailability(const Availability::Enum type) override;
 
         private:
         boost::uuids::uuid              m_design_uuid;
+        SavedDesignPanel*               m_panel;
     };
 
     protected:
@@ -2103,17 +2107,30 @@ void CompletedDesignsListBox::PopulateCore() {
 
 void SavedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesigns::PopulateCore");
-
     DebugLogger() << "CompletedDesigns::PopulateCore";
+
+    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
+    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
 
     // remove preexisting rows
     Clear();
     const GG::Pt row_size = ListRowSize();
+    const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+    const auto empire = GetEmpire(empire_id);
 
-    for (const auto& entry : GetSavedDesignsManager().GetOrderedDesignUUIDs()) {
-        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, entry);
+    for (const auto& uuid : GetSavedDesignsManager().GetOrderedDesignUUIDs()) {
+        const auto design = GetSavedDesignsManager().GetDesign(uuid);
+        auto available = (empire && design) ? empire->ShipDesignAvailable(*design) : true;
+
+        if (!((available && showing_available) || (!available && showing_unavailable)))
+            continue;
+
+        SavedDesignListBoxRow* row = new SavedDesignListBoxRow(row_size.x, row_size.y, uuid);
         Insert(row);
         row->Resize(row_size);
+
+        if (!available)
+            row->SetAvailability(Availability::Future);
     }
 }
 
@@ -2190,7 +2207,19 @@ BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* c
         boost::polymorphic_downcast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd);
 
     const auto row_size = ListRowSize();
-    return new SavedDesignListBoxRow(row_size.x, row_size.y, design_row->DesignUUID());
+    auto row = new SavedDesignListBoxRow(row_size.x, row_size.y, design_row->DesignUUID());
+
+    const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+    const auto empire = GetEmpire(empire_id);
+    const auto design = GetSavedDesignsManager().GetDesign(design_row->DesignUUID());
+
+    if (empire && design) {
+        auto available = empire->ShipDesignAvailable(*design);
+        if (!available)
+            row->SetAvailability(Availability::Future);
+    }
+
+    return row;
 }
 
 BasesListBox::Row* MonstersListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd)
@@ -2461,24 +2490,35 @@ SavedDesignsListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const 
 
 void SavedDesignsListBox::SavedDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Control::SizeMove(ul, lr);
-    if (m_graphic)
-        m_graphic->Resize(Size());
-    if (m_name)
-        m_name->Resize(Size());
+    m_graphic->Resize(Size());
+    m_name->Resize(Size());
+}
+
+void SavedDesignsListBox::SavedDesignPanel::SetAvailability(const Availability::Enum type) {
+    auto disabled = type != Availability::Available;
+    Disable(disabled);
+    m_graphic->Disable(disabled);
+    m_name->Disable(disabled);
 }
 
 SavedDesignsListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(GG::X w, GG::Y h,
                                                            const boost::uuids::uuid& design_uuid) :
-    HullAndPartsListBoxRow(w, h),
+    BasesListBoxRow(w, h),
     m_design_uuid(design_uuid)
 {
-    push_back(new SavedDesignPanel(w, h, m_design_uuid));
+    m_panel = new SavedDesignPanel(w, h, m_design_uuid);
+    push_back(m_panel);
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
 
     SavedDesignsManager& manager = GetSavedDesignsManager();
     const ShipDesign* design = manager.GetDesign(m_design_uuid);
     if (!design)
         WarnLogger() << "Design added to SavedDesignListBoxRow is not a valid saved design, uuid = " << design_uuid;
+}
+
+void SavedDesignsListBox::SavedDesignListBoxRow::SetAvailability(const Availability::Enum type) {
+    m_panel->SetAvailability(type);
+    BasesListBox::BasesListBoxRow::SetAvailability(type);
 }
 
 const boost::uuids::uuid SavedDesignsListBox::SavedDesignListBoxRow::DesignUUID() const {
@@ -2653,6 +2693,7 @@ void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
         m_hulls_list->SetEmpireShown(empire_id, refresh_list);
     if (m_designs_list)
         m_designs_list->SetEmpireShown(empire_id, refresh_list);
+    m_saved_designs_list->SetEmpireShown(empire_id, refresh_list);
 }
 
 void DesignWnd::BaseSelector::ToggleAvailability(Availability::Enum type) {
@@ -2682,6 +2723,7 @@ void DesignWnd::BaseSelector::ToggleAvailability(Availability::Enum type) {
         m_hulls_list->Populate();
     if (m_designs_list)
         m_designs_list->Populate();
+    m_saved_designs_list->Populate();
 }
 
 void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
