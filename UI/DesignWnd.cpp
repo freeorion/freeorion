@@ -1638,10 +1638,12 @@ public:
         HullAndPartsListBoxRow(GG::X w, GG::Y h);
         HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
                                const std::vector<std::string>& parts);
-        const std::string&              Hull() const    { return m_hull; }
+        const std::string&              Hull() const    { return m_hull_name; }
         const std::vector<std::string>& Parts() const   { return m_parts; }
+        void                            SetAvailability(const Availability::Enum type) override;
     protected:
-        std::string                     m_hull;
+        HullPanel*                      m_hull;
+        std::string                     m_hull_name;
         std::vector<std::string>        m_parts;
     };
 
@@ -1747,19 +1749,27 @@ BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h) :
 BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
                                                              const std::vector<std::string>& parts) :
     BasesListBoxRow(w, h),
-    m_hull(hull),
+    m_hull(nullptr),
+    m_hull_name(hull),
     m_parts(parts)
 {
-    if (m_parts.empty() && !m_hull.empty()) {
+    if (m_parts.empty() && !m_hull_name.empty()) {
         // contents are just a hull
-        push_back(new HullPanel(w, h, m_hull));
-    } else if (!m_parts.empty() && !m_hull.empty()) {
+        m_hull = new HullPanel(w, h, m_hull_name);
+        push_back(m_hull);
+    } else if (!m_parts.empty() && !m_hull_name.empty()) {
         // contents are a hull and parts  TODO: make a HullAndPartsPanel
         GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
         icon->Resize(GG::Pt(w, h));
         push_back(icon);
     }
     SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
+}
+
+void BasesListBox::HullAndPartsListBoxRow::SetAvailability(const Availability::Enum type) {
+    if (m_hull)
+        m_hull->SetAvailability(type);
+    BasesListBox::BasesListBoxRow::SetAvailability(type);
 }
 
 BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::Y h,
