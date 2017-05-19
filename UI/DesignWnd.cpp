@@ -2173,7 +2173,13 @@ BasesListBox::Row* CompletedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wn
     int design_id = design_row->DesignID();
 
     const auto row_size = ListRowSize();
-    return new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+    auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+    if (const Empire* empire = GetEmpire(EmpireID())) {
+        bool available = empire->ShipDesignAvailable(design_id);
+        if (!available)
+            row->SetAvailability(Availability::Future);
+    }
+    return row;
 }
 
 BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
