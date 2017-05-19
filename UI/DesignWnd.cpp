@@ -1628,6 +1628,8 @@ public:
         void Render() override;
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+        virtual void SetAvailability(const Availability::Enum type);
     };
 
     class HullAndPartsListBoxRow : public BasesListBoxRow {
@@ -1695,7 +1697,8 @@ void BasesListBox::BasesListBoxRow::Render() {
     GG::Pt ul_adjusted_for_drop_indicator = GG::Pt(ul.x, ul.y + GG::Y(1));
     GG::Pt lr_adjusted_for_drop_indicator = GG::Pt(lr.x, lr.y - GG::Y(2));
     GG::FlatRectangle(ul_adjusted_for_drop_indicator, lr_adjusted_for_drop_indicator,
-                      ClientUI::WndColor(), GG::CLR_WHITE, 1);
+                      ClientUI::WndColor(),
+                      (Disabled() ? DisabledColor(GG::CLR_WHITE) : GG::CLR_WHITE), 1);
 }
 
 void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
@@ -1704,6 +1707,9 @@ void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
     if (!empty() && old_size != Size())
         at(0)->Resize(Size());
 }
+
+void BasesListBox::BasesListBoxRow::SetAvailability(const Availability::Enum type)
+{ Disable(type != Availability::Available); }
 
 BasesListBox::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
