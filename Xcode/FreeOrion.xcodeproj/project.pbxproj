@@ -318,6 +318,9 @@
 		82F55DE818B0FF0A00FA9E11 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
 		9E632AEC13AD24D1003D1874 /* libboost_python.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7413ACB91A0085B1A0 /* libboost_python.a */; };
 		9E632AED13AD24D1003D1874 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
+		B7A7D5371ECF2D5000E086C2 /* libboost_date_time.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 82483B7A15F4F24100D27614 /* libboost_date_time.a */; };
+		B7A7D5381ECF2D6E00E086C2 /* libboost_regex.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9EEEEA7513ACB91A0085B1A0 /* libboost_regex.a */; };
+		B7A7D5391ECF2D9D00E086C2 /* libz.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 822E325B19BEED6C00A7B707 /* libz.a */; };
 		CE0ED5F91BCFE16E00375001 /* AIWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE0ED5F71BCFE16E00375001 /* AIWrapper.cpp */; };
 		CE13B48F1C8CB0CF0085A4DC /* CommonParamsParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE13B48E1C8CB0CF0085A4DC /* CommonParamsParser.cpp */; };
 		CE2BAD8F1E3E43E40085A4DC /* Pathfinder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CE2BAD8D1E3E43E40085A4DC /* Pathfinder.cpp */; };
@@ -1131,14 +1134,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				82E5239F192FEAA6001E2374 /* CoreFoundation.framework in Frameworks */,
+				B7A7D5371ECF2D5000E086C2 /* libboost_date_time.a in Frameworks */,
 				3ABEAB3F1749C27700E34912 /* libboost_filesystem.a in Frameworks */,
+				8280AC5D19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */,
+				82714D771ADABE680071A329 /* libboost_log.a in Frameworks */,
+				CED22D541EB8F2B50085A4DC /* libboost_log_setup.a in Frameworks */,
+				B7A7D5381ECF2D6E00E086C2 /* libboost_regex.a in Frameworks */,
 				3ABEAB3C1749C21B00E34912 /* libboost_serialization.a in Frameworks */,
 				3ABEAB711749C2F400E34912 /* libboost_signals.a in Frameworks */,
 				3ABEAB741749C36200E34912 /* libboost_system.a in Frameworks */,
 				3ABEAB801749C51B00E34912 /* libboost_thread.a in Frameworks */,
-				8280AC5D19C0741B00ADDB65 /* libboost_iostreams.a in Frameworks */,
-				82714D771ADABE680071A329 /* libboost_log.a in Frameworks */,
-				CED22D541EB8F2B50085A4DC /* libboost_log_setup.a in Frameworks */,
+				B7A7D5391ECF2D9D00E086C2 /* libz.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2850,10 +2856,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
-				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -2873,7 +2875,6 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					FREEORION_BUILD_PARSE,
 					FREEORION_MACOSX,
 					__MACOSX__,
 					BOOST_DATE_TIME_NO_LOCALE,
@@ -2899,6 +2900,7 @@
 					"-std=c++11",
 					"-stdlib=libc++",
 					"-ftemplate-depth=1024",
+					"-fvisibility=hidden",
 				);
 				OTHER_LDFLAGS = "-stdlib=libc++";
 				SEPARATE_STRIP = NO;
@@ -2923,6 +2925,10 @@
 		47103BE40CF04DC700A7DF2B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					FREEORION_BUILD_COMMON,
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2930,7 +2936,6 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -2958,10 +2963,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
-				);
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -2977,10 +2978,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
@@ -3008,7 +3005,6 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					FREEORION_BUILD_PARSE,
 					FREEORION_MACOSX,
 					__MACOSX__,
 					BOOST_DATE_TIME_NO_LOCALE,
@@ -3033,6 +3029,7 @@
 					"-std=c++11",
 					"-stdlib=libc++",
 					"-ftemplate-depth=1024",
+					"-fvisibility=hidden",
 				);
 				OTHER_LDFLAGS = "-stdlib=libc++";
 				SEPARATE_STRIP = NO;
@@ -3053,12 +3050,11 @@
 		8218682D14A9F82D009441B8 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_CPLUSPLUSFLAGS = (
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=hidden",
+					FREEORION_BUILD_PARSE,
 				);
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-undefined",
@@ -3072,6 +3068,10 @@
 		8218682E14A9F82D009441B8 /* Test */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					FREEORION_BUILD_COMMON,
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3079,7 +3079,6 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -3107,10 +3106,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
-				);
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -3127,10 +3122,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
-				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -3146,10 +3137,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
@@ -3181,7 +3168,6 @@
 				GCC_MODEL_TUNING = "";
 				GCC_OPTIMIZATION_LEVEL = s;
 				GCC_PREPROCESSOR_DEFINITIONS = (
-					FREEORION_BUILD_PARSE,
 					FREEORION_MACOSX,
 					__MACOSX__,
 					BOOST_DATE_TIME_NO_LOCALE,
@@ -3207,6 +3193,7 @@
 					"-std=c++11",
 					"-stdlib=libc++",
 					"-ftemplate-depth=1024",
+					"-fvisibility=hidden",
 				);
 				OTHER_LDFLAGS = "-stdlib=libc++";
 				SEPARATE_STRIP = NO;
@@ -3227,12 +3214,11 @@
 		8221B242160F2211007D86B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_CPLUSPLUSFLAGS = (
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=hidden",
+					FREEORION_BUILD_PARSE,
 				);
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-undefined",
@@ -3246,6 +3232,10 @@
 		8221B251160F2211007D86B9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					FREEORION_BUILD_COMMON,
+				);
 				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -3253,7 +3243,6 @@
 				);
 				OTHER_LDFLAGS = (
 					"$(inherited)",
-					"-fvisibility=hidden",
 					"-undefined",
 					dynamic_lookup,
 				);
@@ -3281,10 +3270,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
-				);
 				PRODUCT_NAME = freeoriond;
 				ZERO_LINK = NO;
 			};
@@ -3301,10 +3286,6 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
 				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
-				);
 				PRODUCT_NAME = FreeOrion;
 				ZERO_LINK = NO;
 			};
@@ -3320,10 +3301,6 @@
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/dep/lib",
-				);
-				OTHER_LDFLAGS = (
-					"$(inherited)",
-					"-fvisibility=hidden",
 				);
 				PRODUCT_NAME = freeorionca;
 				ZERO_LINK = NO;
@@ -3369,12 +3346,11 @@
 		82C07435149DE46200E76876 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
-				OTHER_CPLUSPLUSFLAGS = (
+				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
-					"$(OTHER_CFLAGS)",
-					"-fvisibility=hidden",
+					FREEORION_BUILD_PARSE,
 				);
+				LD_DYLIB_INSTALL_NAME = "@executable_path/../SharedSupport/$(EXECUTABLE_PATH)";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-undefined",
