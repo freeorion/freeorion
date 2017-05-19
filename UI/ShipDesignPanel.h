@@ -4,6 +4,7 @@
 #include <GG/GGFwd.h>
 #include <GG/Control.h>
 
+#include "DesignWnd.h"
 
 /** Represents a ShipDesign */
 class ShipDesignPanel : public GG::Control {
@@ -22,6 +23,8 @@ public:
     void Render() override;
 
     void                    Update();
+    void                    SetAvailability(const Availability::Enum type);
+
     //@}
 
 private:

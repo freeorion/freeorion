@@ -40,3 +40,10 @@ void ShipDesignPanel::Update() {
         m_name->Resize(GG::Pt(Width(), m_name->Height()));
     }
 }
+
+void ShipDesignPanel::SetAvailability(const Availability::Enum type) {
+    auto disabled = type != Availability::Available;
+    Disable(disabled);
+    m_graphic->Disable(disabled);
+    m_name->Disable(disabled);
+}

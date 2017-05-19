@@ -1648,8 +1648,10 @@ public:
     public:
         CompletedDesignListBoxRow(GG::X w, GG::Y h, int design_id);
         int                             DesignID() const { return m_design_id; }
+        void                            SetAvailability(const Availability::Enum type) override;
     private:
         int                             m_design_id;
+        ShipDesignPanel*                m_panel;
     };
 
 protected:
@@ -1760,8 +1762,14 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::
     BasesListBoxRow(w, h),
     m_design_id(design_id)
 {
-    push_back(new ShipDesignPanel(w, h, design_id));
+    m_panel = new ShipDesignPanel(w, h, design_id);
+    push_back(m_panel);
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
+}
+
+void BasesListBox::CompletedDesignListBoxRow::SetAvailability(const Availability::Enum type) {
+    m_panel->SetAvailability(type);
+    BasesListBox::BasesListBoxRow::SetAvailability(type);
 }
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
@@ -2080,7 +2088,7 @@ void CompletedDesignsListBox::PopulateCore() {
 
     const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
     const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
-    const Empire* empire = GetEmpire(EmpireID()); // may return 0
+
     const Universe& universe = GetUniverse();
 
     DebugLogger() << "CompletedDesignsListBox::PopulateCore for empire " << EmpireID();
@@ -2089,15 +2097,17 @@ void CompletedDesignsListBox::PopulateCore() {
     Clear();
     const GG::Pt row_size = ListRowSize();
 
-    if (empire) {
+    if (const auto empire = GetEmpire(EmpireID())) {
         // add rows for designs this empire is keeping
         for (int design_id : GetCurrentDesignsManager().OrderedIDs()) {
-            bool available = empire->ShipDesignAvailable(design_id);
             const ShipDesign* design = GetShipDesign(design_id);
             if (!design || !design->Producible())
                 continue;
+            bool available = empire->ShipDesignAvailable(design_id);
             if ((available && showing_available) || (!available && showing_unavailable)) {
                 CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
+                if (!available)
+                    row->SetAvailability(Availability::Future);
                 Insert(row);
                 row->Resize(row_size);
             }
