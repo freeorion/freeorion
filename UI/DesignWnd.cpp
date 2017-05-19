@@ -1567,13 +1567,11 @@ public:
         std::tuple<bool, bool, bool> m_availabilities;
 
         public:
-        enum Availability {Obsolete, Available, Unavailable};
-
         AvailabilityManager(bool obsolete, bool available, bool unavailable);
 
-        bool GetAvailability(const Availability type) const;
-        void SetAvailability(const Availability type, const bool state);
-        void ToggleAvailability(const Availability type);
+        bool GetAvailability(const Availability::Enum type) const;
+        void SetAvailability(const Availability::Enum type, const bool state);
+        void ToggleAvailability(const Availability::Enum type);
     };
 
     static const std::string BASES_LIST_BOX_DROP_TYPE;
@@ -1867,33 +1865,33 @@ BasesListBox::AvailabilityManager::AvailabilityManager(bool obsolete, bool avail
     m_availabilities{obsolete, available, unavailable}
 {}
 
-bool BasesListBox::AvailabilityManager::GetAvailability(const Availability type) const {
+bool BasesListBox::AvailabilityManager::GetAvailability(const Availability::Enum type) const {
     switch(type) {
-    case Obsolete:
-        return std::get<Obsolete>(m_availabilities);
-    case Available:
-        return std::get<Available>(m_availabilities);
-    case Unavailable:
-        return std::get<Unavailable>(m_availabilities);
+    case Availability::Obsolete:
+        return std::get<Availability::Obsolete>(m_availabilities);
+    case Availability::Available:
+        return std::get<Availability::Available>(m_availabilities);
+    case Availability::Future:
+        return std::get<Availability::Future>(m_availabilities);
     }
-    return std::get<Unavailable>(m_availabilities);
+    return std::get<Availability::Future>(m_availabilities);
 }
 
-void BasesListBox::AvailabilityManager::SetAvailability(const Availability type, const bool state) {
+void BasesListBox::AvailabilityManager::SetAvailability(const Availability::Enum type, const bool state) {
     switch(type) {
-    case Obsolete:
-        std::get<Obsolete>(m_availabilities) = state;
+    case Availability::Obsolete:
+        std::get<Availability::Obsolete>(m_availabilities) = state;
         break;
-    case Available:
-        std::get<Available>(m_availabilities) = state;
+    case Availability::Available:
+        std::get<Availability::Available>(m_availabilities) = state;
         break;
-    case Unavailable:
-        std::get<Unavailable>(m_availabilities) = state;
+    case Availability::Future:
+        std::get<Availability::Future>(m_availabilities) = state;
         break;
     }
 }
 
-void BasesListBox::AvailabilityManager::ToggleAvailability(const Availability type) {
+void BasesListBox::AvailabilityManager::ToggleAvailability(const Availability::Enum type) {
     SetAvailability(type, !GetAvailability(type));
 }
 
@@ -1998,8 +1996,8 @@ class MonstersListBox : public BasesListBox {
 
 void EmptyHullsListBox::PopulateCore() {
     ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
-    const bool showing_available = AvailabilityState().GetAvailability(AvailabilityManager::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(AvailabilityManager::Unavailable);
+    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
+    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
     DebugLogger() << "EmptyHulls::PopulateCore showing available (t, f):  " << showing_available << ", " << showing_unavailable;
     const Empire* empire = GetEmpire(EmpireID()); // may return 0
     DebugLogger() << "EmptyHulls::PopulateCore EmpireID(): " << EmpireID();
@@ -2074,8 +2072,8 @@ void EmptyHullsListBox::PopulateCore() {
 void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
 
-    const bool showing_available = AvailabilityState().GetAvailability(AvailabilityManager::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(AvailabilityManager::Unavailable);
+    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
+    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
     const Empire* empire = GetEmpire(EmpireID()); // may return 0
     const Universe& universe = GetUniverse();
 
@@ -2527,7 +2525,7 @@ public:
     void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
     void            Reset();
-    void            ToggleAvailability(const BasesListBox::AvailabilityManager::Availability type);
+    void            ToggleAvailability(const Availability::Enum type);
     void            SetEmpireShown(int empire_id, bool refresh_list);
     void            ShowAvailability(bool available, bool refresh_list);
     void            HideAvailability(bool available, bool refresh_list);
@@ -2571,19 +2569,19 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_availabilities_state{false, true, false}
 {
 
-    auto& m_available_button = std::get<BasesListBox::AvailabilityManager::Available>(m_availabilities_buttons);
+    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     m_available_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_available_button);
     m_available_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, BasesListBox::AvailabilityManager::Available));
-    m_available_button->SetCheck(m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Available));
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Available));
+    m_available_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Available));
 
-    auto& m_unavailable_button = std::get<BasesListBox::AvailabilityManager::Unavailable>(m_availabilities_buttons);
+    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
     m_unavailable_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
     AttachChild(m_unavailable_button);
     m_unavailable_button->CheckedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, BasesListBox::AvailabilityManager::Unavailable));
-    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Unavailable));
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Future));
+    m_unavailable_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Future));
 
     m_tabs = new GG::TabWnd(GG::X(5), GG::Y(2), GG::X(10), GG::Y(10), ClientUI::GetFont(), ClientUI::WndColor(), ClientUI::TextColor());
     m_tabs->TabChangedSignal.connect(
@@ -2654,24 +2652,24 @@ void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
         m_designs_list->SetEmpireShown(empire_id, refresh_list);
 }
 
-void DesignWnd::BaseSelector::ToggleAvailability(BasesListBox::AvailabilityManager::Availability type) {
+void DesignWnd::BaseSelector::ToggleAvailability(Availability::Enum type) {
     CUIStateButton* button;
     bool state;
     switch(type) {
-    case BasesListBox::AvailabilityManager::Obsolete:
-        m_availabilities_state.ToggleAvailability(BasesListBox::AvailabilityManager::Obsolete);
-        state = m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Obsolete);
-        button = std::get<BasesListBox::AvailabilityManager::Obsolete>(m_availabilities_buttons);
+    case Availability::Obsolete:
+        m_availabilities_state.ToggleAvailability(Availability::Obsolete);
+        state = m_availabilities_state.GetAvailability(Availability::Obsolete);
+        button = std::get<Availability::Obsolete>(m_availabilities_buttons);
         break;
-    case BasesListBox::AvailabilityManager::Available:
-        m_availabilities_state.ToggleAvailability(BasesListBox::AvailabilityManager::Available);
-        state = m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Available);
-        button = std::get<BasesListBox::AvailabilityManager::Available>(m_availabilities_buttons);
+    case Availability::Available:
+        m_availabilities_state.ToggleAvailability(Availability::Available);
+        state = m_availabilities_state.GetAvailability(Availability::Available);
+        button = std::get<Availability::Available>(m_availabilities_buttons);
         break;
-    case BasesListBox::AvailabilityManager::Unavailable:
-        m_availabilities_state.ToggleAvailability(BasesListBox::AvailabilityManager::Unavailable);
-        state = m_availabilities_state.GetAvailability(BasesListBox::AvailabilityManager::Unavailable);
-        button = std::get<BasesListBox::AvailabilityManager::Unavailable>(m_availabilities_buttons);
+    case Availability::Future:
+        m_availabilities_state.ToggleAvailability(Availability::Future);
+        state = m_availabilities_state.GetAvailability(Availability::Future);
+        button = std::get<Availability::Future>(m_availabilities_buttons);
         break;
     }
 
@@ -2706,8 +2704,8 @@ void DesignWnd::BaseSelector::DoLayout() {
     GG::Y top(TOP_PAD);
     GG::X left(LEFT_PAD);
 
-    auto& m_available_button = std::get<BasesListBox::AvailabilityManager::Available>(m_availabilities_buttons);
-    auto& m_unavailable_button = std::get<BasesListBox::AvailabilityManager::Unavailable>(m_availabilities_buttons);
+    auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
+    auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
 
     m_available_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
     left = left + BUTTON_WIDTH + BUTTON_SEPARATION;
