@@ -2048,6 +2048,8 @@ void EmptyHullsListBox::PopulateCore() {
             || (showing_unavailable && !hull_available))
         {
             auto row = new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
+            if (!hull_available)
+                row->SetAvailability(Availability::Future);
             Insert(row);
             row->Resize(row_size);
         }
@@ -2149,7 +2151,15 @@ BasesListBox::Row* EmptyHullsListBox::ChildrenDraggedAwayCore(const GG::Wnd* con
     const std::string& hull_name = design_row->Hull();
     const auto row_size = ListRowSize();
     std::vector<std::string> empty_parts_vec;
-    return new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
+    auto row =  new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
+
+    if (const Empire* empire = GetEmpire(EmpireID())) {
+        auto hull_available = empire->ShipHullAvailable(hull_name);
+        if (!hull_available)
+            row->SetAvailability(Availability::Future);
+    }
+
+    return row;
 }
 
 BasesListBox::Row* CompletedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
