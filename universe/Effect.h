@@ -163,6 +163,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override
     {}
 
+    unsigned int GetCheckSum() const override;
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -204,6 +206,8 @@ public:
 
     const std::string&  AccountingLabel() const
     { return m_accounting_label; }
+
+    unsigned int GetCheckSum() const override;
 
 private:
     MeterType m_meter;
@@ -255,6 +259,8 @@ public:
     MeterType GetMeterType() const
     { return m_meter; }
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<std::string>* m_part_name;
     MeterType m_meter;
@@ -296,6 +302,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<int>* m_empire_id;
     std::string m_meter;
@@ -325,6 +333,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<int>* m_empire_id;
     ResourceType m_stockpile;
@@ -352,6 +362,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<int>* m_empire_id;
 
@@ -375,6 +387,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<PlanetType>* m_type;
@@ -401,6 +415,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<PlanetSize>* m_size;
 
@@ -423,6 +439,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<std::string>* m_species_name;
 
@@ -444,6 +462,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<int>* m_empire_id;
@@ -468,6 +488,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<std::string>* m_species_name;
@@ -494,6 +516,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<std::string>* m_opinionated_species_name;
@@ -522,6 +546,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<PlanetType>* m_type;
     ValueRef::ValueRefBase<PlanetSize>* m_size;
@@ -547,6 +573,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<std::string>* m_building_type_name;
@@ -582,6 +610,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<std::string>* m_design_name;
@@ -620,6 +650,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<std::string>* m_field_type_name;
     ValueRef::ValueRefBase<double>* m_x;
@@ -656,6 +688,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase< ::StarType>* m_type;
     ValueRef::ValueRefBase<double>* m_x;
@@ -684,6 +718,8 @@ public:
     void SetTopLevelContent(const std::string& content_name) override
     {}
 
+    unsigned int GetCheckSum() const override;
+
 private:
     friend class boost::serialization::access;
     template <class Archive>
@@ -708,6 +744,8 @@ public:
 
     const ValueRef::ValueRefBase<std::string>*  GetSpecialName() const
     { return m_name; }
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<std::string>* m_name;
@@ -734,6 +772,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<std::string>* m_name;
 
@@ -755,6 +795,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     Condition::ConditionBase* m_other_lane_endpoint_condition;
@@ -778,6 +820,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     Condition::ConditionBase* m_other_lane_endpoint_condition;
 
@@ -799,6 +843,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<StarType>* m_type;
@@ -823,6 +869,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     Condition::ConditionBase* m_location_condition;
@@ -851,6 +899,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<double>* m_speed;
@@ -882,6 +932,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<double>* m_speed;
     Condition::ConditionBase* m_dest_condition;
@@ -909,6 +961,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     Condition::ConditionBase* m_location_condition;
 
@@ -928,6 +982,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
+
+    unsigned int GetCheckSum() const override;
 
 private:
     bool m_aggressive;
@@ -949,6 +1005,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
+
+    unsigned int GetCheckSum() const override;
 
 private:
     std::string m_reason_string;
@@ -977,6 +1035,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     ValueRef::ValueRefBase<std::string>* m_tech_name;
     ValueRef::ValueRefBase<double>* m_research_progress;
@@ -999,6 +1059,8 @@ public:
     std::string Dump() const override;
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 private:
     ValueRef::ValueRefBase<std::string>* m_tech_name;
@@ -1061,8 +1123,7 @@ public:
     const std::string& Icon() const
     { return m_icon; }
 
-    const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>&
-        MessageParameters() const
+    const auto& MessageParameters() const
     { return m_message_parameters; }
 
     ValueRef::ValueRefBase<int>* RecipientID() const
@@ -1073,6 +1134,8 @@ public:
 
     EmpireAffiliationType Affiliation() const
     { return m_affiliation; }
+
+    unsigned int GetCheckSum() const override;
 
 private:
     std::string m_message_string;
@@ -1112,6 +1175,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override;
 
+    unsigned int GetCheckSum() const override;
+
 private:
     std::string m_texture;
     ValueRef::ValueRefBase<double>* m_size;
@@ -1142,6 +1207,8 @@ public:
 
     void SetTopLevelContent(const std::string& content_name) override
     {}
+
+    unsigned int GetCheckSum() const override;
 
 private:
     std::string m_texture;
@@ -1178,6 +1245,8 @@ public:
 
     Condition::ConditionBase* OfObjectsCondition() const
     { return m_condition; }
+
+    unsigned int GetCheckSum() const override;
 
 private:
     Visibility m_vis;
@@ -1223,6 +1292,8 @@ public:
     { return true; }
 
     void SetTopLevelContent(const std::string& content_name) override;
+
+    unsigned int GetCheckSum() const override;
 
 protected:
     void Execute(const ScriptingContext& context, const TargetSet& targets,
