@@ -1930,7 +1930,6 @@ class EmptyHullsListBox : public BasesListBox {
     void  BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys) override;
 
     private:
-    std::set<std::string>       m_hulls_in_list;
 };
 
 class CompletedDesignsListBox : public BasesListBox {
@@ -2010,76 +2009,33 @@ class MonstersListBox : public BasesListBox {
 
 void EmptyHullsListBox::PopulateCore() {
     ScopedTimer scoped_timer("EmptyHulls::PopulateCore");
-    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
-    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
-    DebugLogger() << "EmptyHulls::PopulateCore showing available (t, f):  " << showing_available << ", " << showing_unavailable;
-    const Empire* empire = GetEmpire(EmpireID()); // may return 0
     DebugLogger() << "EmptyHulls::PopulateCore EmpireID(): " << EmpireID();
 
-    //DebugLogger() << "... hulls in list: ";
-    //for (const std::string& hull : m_hulls_in_list)
-    //    DebugLogger() << "... ... hull: " << hull;
+    const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
+    const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
 
-    // loop through all hulls, determining if they need to be added to list
-    std::set<std::string> hulls_to_add;
-    std::set<std::string> hulls_to_remove;
+    const Empire* empire = GetEmpire(EmpireID()); // may return 0
+    const GG::Pt row_size = ListRowSize();
 
-    const HullTypeManager& manager = GetHullTypeManager();
-    for (const std::map<std::string, HullType*>::value_type& entry : manager) {
-        const std::string& hull_name = entry.first;
+    Clear();
 
-        const HullType* hull_type = manager.GetHullType(hull_name);
+    for (const auto& name_and_type : GetHullTypeManager()) {
+        const auto& hull_name = name_and_type.first;
+        const auto& hull_type =  name_and_type.second;
+
         if (!hull_type || !hull_type->Producible())
             continue;
 
-        // add or retain in list 1) all hulls if no empire is specified, or
-        //                       2) hulls of appropriate availablility for set empire
-        if (!empire ||
-            (showing_available && empire->ShipHullAvailable(hull_name)) ||
-            (showing_unavailable && !empire->ShipHullAvailable(hull_name)))
+        auto hull_available = empire ? empire->ShipHullAvailable(hull_name) : true;
+
+        const std::vector<std::string> empty_parts_vec;
+        if ((showing_available && hull_available)
+            || (showing_unavailable && !hull_available))
         {
-            // add or retain hull in list
-            if (m_hulls_in_list.find(hull_name) == m_hulls_in_list.end())
-                hulls_to_add.insert(hull_name);
-        } else {
-            // remove or don't add hull to list
-            if (m_hulls_in_list.find(hull_name) != m_hulls_in_list.end())
-                hulls_to_remove.insert(hull_name);
+            auto row = new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
+            Insert(row);
+            row->Resize(row_size);
         }
-    }
-
-    //DebugLogger() << "... hulls to remove from list: ";
-    //for (const std::string& hull_name : hulls_to_remove)
-    //    DebugLogger() << "... ... hull: " << hull_name;
-    //DebugLogger() << "... hulls to add to list: ";
-    //for (const std::string& hull_name : hulls_to_add)
-    //    DebugLogger() << "... ... hull: " << hull_name;
-
-
-    // loop through list, removing rows as appropriate
-    for (iterator it = begin(); it != end(); ) {
-        iterator temp_it = it++;
-        //DebugLogger() << " row index: " << i;
-        if (const HullAndPartsListBoxRow* row = dynamic_cast<const HullAndPartsListBoxRow*>(*temp_it)) {
-            const std::string& current_row_hull = row->Hull();
-            //DebugLogger() << " current row hull: " << current_row_hull;
-            if (hulls_to_remove.find(current_row_hull) != hulls_to_remove.end()) {
-                //DebugLogger() << " ... removing";
-                m_hulls_in_list.erase(current_row_hull);    // erase from set before deleting row, so as to not invalidate current_row_hull reference to deleted row's member string
-                delete Erase(temp_it);
-            }
-        }
-    }
-
-    // loop through hulls to add, adding to list
-    std::vector<std::string> empty_parts_vec;
-    const GG::Pt row_size = ListRowSize();
-    for (const std::string& hull_name : hulls_to_add) {
-        HullAndPartsListBoxRow* row = new HullAndPartsListBoxRow(row_size.x, row_size.y, hull_name, empty_parts_vec);
-        Insert(row);
-        row->Resize(row_size);
-
-        m_hulls_in_list.insert(hull_name);
     }
 }
 
