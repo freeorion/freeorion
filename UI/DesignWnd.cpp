@@ -1730,10 +1730,8 @@ BasesListBox::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
 
 void BasesListBox::HullPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
     GG::Control::SizeMove(ul, lr);
-    if (m_graphic)
-        m_graphic->Resize(Size());
-    if (m_name)
-        m_name->Resize(Size());
+    m_graphic->Resize(Size());
+    m_name->Resize(Size());
 }
 
 void BasesListBox::HullPanel::SetAvailability(const Availability::Enum type) {
