@@ -15,14 +15,15 @@ const OrderPtr OrderSet::ExamineOrder(int order) const {
     return retval;
 }
 
-int OrderSet::IssueOrder(const OrderPtr& order)
-{ return IssueOrder(OrderPtr(order)); }
+int OrderSet::IssueOrder(const OrderPtr& order, bool suppress_immediate_execution /*= false*/)
+{ return IssueOrder(OrderPtr(order), suppress_immediate_execution); }
 
-int OrderSet::IssueOrder(OrderPtr&& order) {
+int OrderSet::IssueOrder(OrderPtr&& order, bool suppress_immediate_execution /*= false*/) {
     int retval = ((m_orders.rbegin() != m_orders.rend()) ? m_orders.rbegin()->first + 1 : 0);
     auto inserted = m_orders.insert(std::make_pair(retval, std::forward<OrderPtr>(order)));
 
-    inserted.first->second->Execute();
+    if (!suppress_immediate_execution)
+        inserted.first->second->Execute();
 
     return retval;
 }
