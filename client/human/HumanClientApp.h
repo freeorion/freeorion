@@ -99,6 +99,8 @@ public:
     void                HandleSaveGamePreviews(const Message& msg);
 
     void                OpenURL(const std::string& url);
+    /** Opens the users preferred application for file manager at the specified path @p browse_path */
+    void                BrowsePath(const boost::filesystem::path& browse_path);
     //@}
 
     mutable FullscreenSwitchSignalType  FullscreenSwitchSignal;

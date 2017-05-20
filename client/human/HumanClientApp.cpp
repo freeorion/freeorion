@@ -1479,3 +1479,90 @@ void HumanClientApp::OpenURL(const std::string& url) {
     // execute open command
     system(command.c_str());
 }
+
+void HumanClientApp::BrowsePath(const boost::filesystem::path& browse_path) {
+    if (browse_path.empty() || browse_path == "/") {
+        ErrorLogger() << "Invalid path: " << PathToString(browse_path);
+        return;
+    }
+
+    boost::filesystem::path full_path(browse_path);
+
+    try {
+        boost::filesystem::file_status status = boost::filesystem::status(full_path);
+        if (!boost::filesystem::exists(status)) {
+            std::string exists_debug_msg("Non-existant path: " + PathToString(full_path));
+            if (full_path.has_parent_path()) {
+                DebugLogger() << exists_debug_msg << ", trying parent directory";
+                BrowsePath(full_path.parent_path());
+            } else {
+                DebugLogger() << exists_debug_msg << ", aborting";
+            }
+            return;
+        }
+
+        // Validate as a canonical path
+        if (boost::filesystem::is_directory(status)) {
+            full_path = boost::filesystem::canonical(full_path);
+        } else {
+            // If given a file, use the files containing directory
+            DebugLogger() << "Non-directory target: " << PathToString(full_path) << ", using parent directory";
+            full_path = boost::filesystem::canonical(full_path.parent_path());
+        }
+
+        // Verify not a regular file
+        if (boost::filesystem::is_regular_file(full_path)) {
+            ErrorLogger() << "Target directory " << PathToString(full_path) << " is a regular file, given path argument: "
+                          << PathToString(browse_path);
+            return;
+        }
+
+    } catch (const boost::filesystem::filesystem_error& ec) {
+        ErrorLogger() << "Filesystem error when attempting to browse directory " << PathToString(full_path)
+                      << ": " << ec.what();
+        return;
+    }
+
+    if (full_path.empty()) {
+        ErrorLogger() << "Unable to determine directory for path " << PathToString(full_path);
+        return;
+    }
+
+    full_path.make_preferred();
+    // Trailing slash post-fixed to prevent executing a file with same name(minus extension) as folder
+    full_path += boost::filesystem::path::preferred_separator;
+    auto target(full_path.native());
+    decltype(target) command;
+
+    // Double quotes around target to support paths containing spaces
+    // Non-Windows platforms: Post-fix ampersand to prevent blocking until process exits
+    // On Windows: the trailing path separator may be interpreted as escaping a double quote.
+    //    The trailing separator should not be removed, as that poses the risk of executing a file.
+    //    The trailing separator is escaped by 2 additional back-slashes (total 3).
+    //    see http://www.windowsinspired.com/how-a-windows-programs-splits-its-command-line-into-individual-arguments/
+    //
+    //    Contrary to official documentation for start, the first argument (title) is not always optional.
+    //    The argument for window title is left as an empty string.
+    //    see https://ss64.com/nt/start.html
+#ifdef _WIN32
+    command = L"start \"\" \"" + target + L"\\\\\"";
+#elif __APPLE__
+    command = "open \"" + target + "\" &";
+#else
+    command = "xdg-open \"" + target + "\" &";
+#endif
+
+#ifdef _WIN32
+    std::string u8_command;
+    utf8::utf16to8(command.begin(), command.end(), std::back_inserter(u8_command));
+    InfoLogger() << "Sending OS request to browse directory: " << u8_command;
+    // Flush all streams prior to _wsystem call per https://msdn.microsoft.com/en-us/library/277bwbdz.aspx
+    std::fflush(NULL);
+    if (auto sys_retval = _wsystem(command.c_str()))
+        WarnLogger() << "System call " << u8_command << " returned non-zero value " << sys_retval;
+#else
+    InfoLogger() << "Sending OS request to browse directory: " << command;
+    if (auto sys_retval = std::system(command.c_str()))
+        WarnLogger() << "System call " << command << " returned non-zero value " << sys_retval;
+#endif
+}
