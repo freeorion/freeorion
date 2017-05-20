@@ -1020,8 +1020,10 @@ void ShipDesignOrder::ExecuteImpl() const {
 
     } else if (m_create_new_design) {
         // check if a design with this ID already exists
-        if (universe.GetShipDesign(m_design_id)) {
-            ErrorLogger() << "Tried to create a new ShipDesign with an id of an already-existing ShipDesign";
+        if (const auto existing = universe.GetShipDesign(m_design_id)) {
+            ErrorLogger() << "Tried to create a new ShipDesign with an id, " << m_design_id
+                          << "of an already-existing ShipDesign " << existing->Name();
+
             return;
         }
         ShipDesign* new_ship_design = new ShipDesign(m_name, m_description,
