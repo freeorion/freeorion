@@ -647,7 +647,7 @@ void ShipDesignManager::StartGame(int empire_id) {
 
         // Assume that on new game start the server assigns the ids in an order
         // that makes sense for the UI.
-        auto ids = empire->ShipDesigns();
+        const auto& ids = empire->ShipDesigns();
         std::set<int> ordered_ids(ids.begin(), ids.end());
 
         current_designs->InsertOrderedIDs(ordered_ids);
@@ -655,7 +655,11 @@ void ShipDesignManager::StartGame(int empire_id) {
 
     // Remove the default designs from the empire's current designs.
     else {
-        // TODO;
+        const auto ids = empire->ShipDesigns();
+        for (const auto design_id : ids) {
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+        }
     }
 
     m_saved_designs.reset(new SavedDesignsManager(empire_id));
