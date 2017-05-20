@@ -1694,21 +1694,6 @@ public:
         GG::Label*                      m_name;
     };
 
-    class HullPanel : public GG::Control {
-    public:
-        HullPanel(GG::X w, GG::Y h, const std::string& hull);
-
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
-        void Render() override
-        {}
-
-        void SetAvailability(const Availability::Enum type);
-    private:
-        GG::StaticGraphic*              m_graphic;
-        GG::Label*                      m_name;
-    };
-
     class BasesListBoxRow : public CUIListBox::Row {
     public:
         BasesListBoxRow(GG::X w, GG::Y h);
@@ -1729,7 +1714,7 @@ public:
         const std::vector<std::string>& Parts() const   { return m_parts; }
         void                            SetAvailability(const Availability::Enum type) override;
     protected:
-        HullPanel*                      m_hull;
+        HullAndNamePanel*               m_hull_panel;
         std::string                     m_hull_name;
         std::vector<std::string>        m_parts;
     };
@@ -1834,32 +1819,6 @@ void BasesListBox::HullAndNamePanel::SetDisplayName(const std::string& name) {
     m_name->Resize(GG::Pt(Width(), m_name->Height()));
 }
 
-BasesListBox::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-    m_graphic(nullptr),
-    m_name(nullptr)
-{
-    SetChildClippingMode(ClipToClient);
-    m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(hull),
-                                      GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-    m_graphic->Resize(GG::Pt(w, h));
-    AttachChild(m_graphic);
-    m_name = new CUILabel(UserString(hull), GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
-    AttachChild(m_name);
-}
-
-void BasesListBox::HullPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Control::SizeMove(ul, lr);
-    m_graphic->Resize(Size());
-    m_name->Resize(Size());
-}
-
-void BasesListBox::HullPanel::SetAvailability(const Availability::Enum type) {
-    auto disabled = type != Availability::Available;
-    m_graphic->Disable(disabled);
-    m_name->Disable(disabled);
-}
-
 BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h) :
     BasesListBoxRow(w, h)
 {}
@@ -1867,26 +1826,23 @@ BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h) :
 BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
                                                              const std::vector<std::string>& parts) :
     BasesListBoxRow(w, h),
-    m_hull(nullptr),
+    m_hull_panel(nullptr),
     m_hull_name(hull),
     m_parts(parts)
 {
-    if (m_parts.empty() && !m_hull_name.empty()) {
-        // contents are just a hull
-        m_hull = new HullPanel(w, h, m_hull_name);
-        push_back(m_hull);
-    } else if (!m_parts.empty() && !m_hull_name.empty()) {
-        // contents are a hull and parts  TODO: make a HullAndPartsPanel
-        GG::StaticGraphic* icon = new GG::StaticGraphic(ClientUI::HullTexture(hull), GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-        icon->Resize(GG::Pt(w, h));
-        push_back(icon);
+    if (m_hull_name.empty()) {
+        ErrorLogger() << "No hull name provided for incomplete ship row display.";
+        return;
     }
+
+    m_hull_panel = new HullAndNamePanel(w, h, m_hull_name, UserString(m_hull_name));
+    push_back(m_hull_panel);
     SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
 
 void BasesListBox::HullAndPartsListBoxRow::SetAvailability(const Availability::Enum type) {
-    if (m_hull)
-        m_hull->SetAvailability(type);
+    if (m_hull_panel)
+        m_hull_panel->SetAvailability(type);
     BasesListBox::BasesListBoxRow::SetAvailability(type);
 }
 
