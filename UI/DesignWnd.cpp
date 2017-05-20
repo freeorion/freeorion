@@ -2057,22 +2057,6 @@ class SavedDesignsListBox : public BasesListBox {
         BasesListBox::BasesListBox(availabilities_state, drop_type)
     {};
 
-    class SavedDesignPanel : public GG::Control {
-        public:
-        SavedDesignPanel(GG::X w, GG::Y h, const boost::uuids::uuid& saved_design_uuid);
-
-        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
-
-        void Render() override
-        {}
-
-        void                            SetAvailability(const Availability::Enum type);
-
-        private:
-        GG::StaticGraphic*              m_graphic;
-        GG::Label*                      m_name;
-    };
-
     class SavedDesignListBoxRow : public BasesListBoxRow {
         public:
         SavedDesignListBoxRow(GG::X w, GG::Y h, const boost::uuids::uuid& design_uuid);
@@ -2081,10 +2065,11 @@ class SavedDesignsListBox : public BasesListBox {
         const std::string&              Description() const;
         bool                            LookupInStringtable() const;
         void                            SetAvailability(const Availability::Enum type) override;
+        void                            SetDisplayName(const std::string& name);
 
         private:
         boost::uuids::uuid              m_design_uuid;
-        SavedDesignPanel*               m_panel;
+        HullAndNamePanel*               m_panel;
     };
 
     protected:
@@ -2562,55 +2547,32 @@ void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
 // BasesListBox derived class rows              //
 //////////////////////////////////////////////////
 
-SavedDesignsListBox::SavedDesignPanel::SavedDesignPanel(GG::X w, GG::Y h, const boost::uuids::uuid& saved_design_uuid) :
-    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
-    m_graphic(nullptr),
-    m_name(nullptr)
-{
-    SetChildClippingMode(ClipToClient);
-    const ShipDesign* design = GetSavedDesignsManager().GetDesign(saved_design_uuid);
-    if (design) {
-        m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(design->Hull()),
-                                          GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
-        m_graphic->Resize(GG::Pt(w, h));
-        AttachChild(m_graphic);
-
-        m_name = new CUILabel(design->Name(), GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
-        AttachChild(m_name);
-    }
-}
-
-void SavedDesignsListBox::SavedDesignPanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    GG::Control::SizeMove(ul, lr);
-    m_graphic->Resize(Size());
-    m_name->Resize(Size());
-}
-
-void SavedDesignsListBox::SavedDesignPanel::SetAvailability(const Availability::Enum type) {
-    auto disabled = type != Availability::Available;
-    Disable(disabled);
-    m_graphic->Disable(disabled);
-    m_name->Disable(disabled);
-}
-
 SavedDesignsListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(GG::X w, GG::Y h,
                                                            const boost::uuids::uuid& design_uuid) :
     BasesListBoxRow(w, h),
-    m_design_uuid(design_uuid)
+    m_design_uuid(design_uuid),
+    m_panel(nullptr)
 {
-    m_panel = new SavedDesignPanel(w, h, m_design_uuid);
-    push_back(m_panel);
-    SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
-
     SavedDesignsManager& manager = GetSavedDesignsManager();
     const ShipDesign* design = manager.GetDesign(m_design_uuid);
-    if (!design)
-        WarnLogger() << "Design added to SavedDesignListBoxRow is not a valid saved design, uuid = " << design_uuid;
+    if (!design) {
+        ErrorLogger() << "Design added to SavedDesignListBoxRow is not a valid saved design, uuid = " << design_uuid;
+        return;
+    }
+
+    m_panel = new HullAndNamePanel(w, h, design->Hull(), design->Name());
+    push_back(m_panel);
+    SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
 }
 
 void SavedDesignsListBox::SavedDesignListBoxRow::SetAvailability(const Availability::Enum type) {
     m_panel->SetAvailability(type);
     BasesListBox::BasesListBoxRow::SetAvailability(type);
+}
+
+void SavedDesignsListBox::SavedDesignListBoxRow::SetDisplayName(const std::string& name) {
+    if (m_panel)
+        m_panel->SetDisplayName(name);
 }
 
 const boost::uuids::uuid SavedDesignsListBox::SavedDesignListBoxRow::DesignUUID() const {
