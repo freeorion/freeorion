@@ -258,7 +258,7 @@ def _calculate_colonisation_priority():
 
     colony_ship_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.COLONISATION)
     num_colony_ships = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(colony_ship_ids))
-    colonisation_priority = 60 * (1 + num_colonisable_planet_ids - num_colony_ships) / (num_colonisable_planet_ids + 1)
+    colonisation_priority = 60 * (1.0 + num_colonisable_planet_ids - num_colony_ships) / (num_colonisable_planet_ids + 1)
 
     # print
     # print "Number of Colony Ships : " + str(num_colony_ships)
@@ -306,7 +306,7 @@ def _calculate_outpost_priority():
 
     outpost_ship_ids = FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.OUTPOST)
     num_outpost_ships = len(FleetUtilsAI.extract_fleet_ids_without_mission_types(outpost_ship_ids))
-    outpost_priority = 50 * (num_outpost_targets - num_outpost_ships) / num_outpost_targets
+    outpost_priority = (50.0 * (num_outpost_targets - num_outpost_ships)) / num_outpost_targets
 
     # print
     # print "Number of Outpost Ships : " + str(num_outpost_ships)
