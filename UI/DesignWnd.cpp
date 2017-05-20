@@ -2133,6 +2133,7 @@ void EmptyHullsListBox::PopulateCore() {
 void CompletedDesignsListBox::PopulateCore() {
     ScopedTimer scoped_timer("CompletedDesignsListBox::PopulateCore");
 
+    const bool showing_obsolete = AvailabilityState().GetAvailability(Availability::Obsolete);
     const bool showing_available = AvailabilityState().GetAvailability(Availability::Available);
     const bool showing_unavailable = AvailabilityState().GetAvailability(Availability::Future);
 
@@ -2146,14 +2147,20 @@ void CompletedDesignsListBox::PopulateCore() {
 
     if (const auto empire = GetEmpire(EmpireID())) {
         // add rows for designs this empire is keeping
-        for (int design_id : GetCurrentDesignsManager().OrderedIDs()) {
+        for (int design_id : GetCurrentDesignsManager().AllOrderedIDs()) {
             const ShipDesign* design = GetShipDesign(design_id);
             if (!design || !design->Producible())
                 continue;
             bool available = empire->ShipDesignAvailable(design_id);
-            if ((available && showing_available) || (!available && showing_unavailable)) {
+            bool obsolete = GetCurrentDesignsManager().IsObsolete(design_id);
+            if ((obsolete && showing_obsolete)
+                || (available && !obsolete && showing_available)
+                || (!available && showing_unavailable))
+            {
                 CompletedDesignListBoxRow* row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
-                if (!available)
+                if (obsolete)
+                    row->SetAvailability(Availability::Obsolete);
+                else if (!available)
                     row->SetAvailability(Availability::Future);
                 Insert(row);
                 row->Resize(row_size);
@@ -2262,9 +2269,10 @@ BasesListBox::Row* CompletedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wn
     const auto row_size = ListRowSize();
     auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, design_id);
     if (const Empire* empire = GetEmpire(EmpireID())) {
-        bool available = empire->ShipDesignAvailable(design_id);
-        if (!available)
+        if (!empire->ShipDesignAvailable(design_id))
             row->SetAvailability(Availability::Future);
+        else if(GetCurrentDesignsManager().IsObsolete(design_id))
+            row->SetAvailability(Availability::Obsolete);
     }
     return row;
 }
