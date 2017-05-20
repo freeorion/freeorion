@@ -6,6 +6,7 @@
 #include "../client/human/HumanClientApp.h"
 #include "../Empire/Empire.h"
 #include "../util/i18n.h"
+#include "../util/Directories.h"
 #include "../util/Logger.h"
 #include "../util/OptionsDB.h"
 #include "../util/SitRepEntry.h"
@@ -86,6 +87,8 @@ namespace {
                 ClientUI::GetClientUI()->ZoomToMeterTypeArticle(data);
             } else if (link_type == TextLinker::ENCYCLOPEDIA_TAG) {
                 ClientUI::GetClientUI()->ZoomToEncyclopediaEntry(data);
+            } else if (link_type == TextLinker::BROWSE_PATH_TAG) {
+                HumanClientApp::GetApp()->BrowsePath(FilenameToPath(data));
             }
         } catch (const boost::bad_lexical_cast&) {
             ErrorLogger() << "SitrepPanel.cpp HandleLinkClick caught lexical cast exception for link type: " << link_type << " and data: " << data;
@@ -248,6 +251,7 @@ namespace {
                                              ClientUI::GetFont(),
                                              GG::FORMAT_LEFT | GG::FORMAT_VCENTER | GG::FORMAT_WORDBREAK, ClientUI::TextColor());
             m_link_text->SetDecorator(VarText::EMPIRE_ID_TAG, new ColorEmpire());
+            m_link_text->SetDecorator(TextLinker::BROWSE_PATH_TAG, new PathTypeDecorator());
             AttachChild(m_link_text);
 
             m_link_text->LinkClickedSignal.connect(

@@ -62,7 +62,7 @@ namespace {
         xpr::smatch match;
 
         while (true) {
-            if (!xpr::regex_search(text_it, retval.end(), match, BROWSEPATH_SEARCH, xpr::regex_constants::match_any))
+            if (!xpr::regex_search(text_it, retval.end(), match, BROWSEPATH_SEARCH, xpr::regex_constants::match_default))
                 break;
 
             auto link_arg = ResolveNestedPathTypes(match[1]);
@@ -71,10 +71,6 @@ namespace {
                 link_label = link_arg;
             else
                 link_label = ResolveNestedPathTypes(link_label);
-
-            // Only support argument containing at least one valid PathType
-            if (link_arg == match[1].str() || boost::contains(link_arg, PathTypeToString(PATH_INVALID)))
-                link_label = UserString("ERROR") + ": " + link_label;
 
             auto resolved_link = BROWSEPATH_TAG_OPEN_PRE + " " + link_arg + ">" + link_label + BROWSEPATH_TAG_CLOSE;
 
@@ -395,12 +391,6 @@ void TextLinker::FindLinks() {
                         if (!tag->params.empty()) {
                             if (tag->tag_name == TextLinker::BROWSE_PATH_TAG) {
                                 link.data = ResolveNestedPathTypes(AllParamsAsString(tag->params));
-                                // BROWSE_PATH_TAG requires a PathType within param
-                                if (link.data == std::string(tag->params[0])) {
-                                    ErrorLogger() << "Invalid param \"" << link.data << "\" for tag "
-                                                  << TextLinker::BROWSE_PATH_TAG;
-                                    link.data = PathTypeToString(PATH_INVALID);
-                                }
                             } else {
                                 link.data = tag->params[0];
                             }
