@@ -6,7 +6,6 @@
 #include "QueueListBox.h"
 #include "EncyclopediaDetailPanel.h"
 #include "IconTextBrowseWnd.h"
-#include "ShipDesignPanel.h"
 #include "Sound.h"
 #include "TextBrowseWnd.h"
 #include "../util/i18n.h"
@@ -1724,9 +1723,10 @@ public:
         CompletedDesignListBoxRow(GG::X w, GG::Y h, int design_id);
         int                             DesignID() const { return m_design_id; }
         void                            SetAvailability(const Availability::Enum type) override;
+        void SetDisplayName(const std::string& name);
     private:
         int                             m_design_id;
-        ShipDesignPanel*                m_panel;
+        HullAndNamePanel*                m_panel;
     };
 
 protected:
@@ -1849,16 +1849,28 @@ void BasesListBox::HullAndPartsListBoxRow::SetAvailability(const Availability::E
 BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(GG::X w, GG::Y h,
                                                                    int design_id) :
     BasesListBoxRow(w, h),
-    m_design_id(design_id)
+    m_design_id(design_id),
+    m_panel(nullptr)
 {
-    m_panel = new ShipDesignPanel(w, h, design_id);
+    const ShipDesign* design = GetShipDesign(m_design_id);
+    if (!design) {
+        ErrorLogger() << "No ShipDesign in CompletedDesignListBoxRow.";
+    }
+
+    m_panel = new HullAndNamePanel(w, h, design->Hull(), design->Name());
     push_back(m_panel);
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
 }
 
 void BasesListBox::CompletedDesignListBoxRow::SetAvailability(const Availability::Enum type) {
-    m_panel->SetAvailability(type);
+    if (m_panel)
+        m_panel->SetAvailability(type);
     BasesListBox::BasesListBoxRow::SetAvailability(type);
+}
+
+void BasesListBox::CompletedDesignListBoxRow::SetDisplayName(const std::string& name) {
+    if (m_panel)
+        m_panel->SetDisplayName(name);
 }
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
@@ -2426,9 +2438,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
         if (result != "" && result != design->Name()) {
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(client_empire_id, design_id, result));
-            if (!design_row->empty())
-                if (ShipDesignPanel* design_panel = dynamic_cast<ShipDesignPanel*>(design_row->at(0)))
-                    design_panel->Update();
+            design_row->SetDisplayName(design->Name());
         }
     };
 
