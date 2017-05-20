@@ -1677,6 +1677,23 @@ public:
     mutable boost::signals2::signal<void (const HullType*)>     HullClickedSignal;
     mutable boost::signals2::signal<void (const ShipDesign*)>   DesignRightClickedSignal;
 
+    class HullAndNamePanel : public GG::Control {
+    public:
+        HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, const std::string& name);
+
+        void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
+
+        void Render() override
+        {}
+
+        void SetAvailability(const Availability::Enum type);
+        void SetDisplayName(const std::string& name);
+
+    private:
+        GG::StaticGraphic*              m_graphic;
+        GG::Label*                      m_name;
+    };
+
     class HullPanel : public GG::Control {
     public:
         HullPanel(GG::X w, GG::Y h, const std::string& hull);
@@ -1785,6 +1802,37 @@ void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 
 void BasesListBox::BasesListBoxRow::SetAvailability(const Availability::Enum type)
 { Disable(type != Availability::Available); }
+
+BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, const std::string& name) :
+    GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
+    m_graphic(nullptr),
+    m_name(nullptr)
+{
+    SetChildClippingMode(ClipToClient);
+    m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(hull),
+                                      GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
+    m_graphic->Resize(GG::Pt(w, h));
+    AttachChild(m_graphic);
+    m_name = new CUILabel(name, GG::FORMAT_WORDBREAK | GG::FORMAT_CENTER | GG::FORMAT_TOP);
+    AttachChild(m_name);
+}
+
+void BasesListBox::HullAndNamePanel::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    GG::Control::SizeMove(ul, lr);
+    m_graphic->Resize(Size());
+    m_name->Resize(Size());
+}
+
+void BasesListBox::HullAndNamePanel::SetAvailability(const Availability::Enum type) {
+    auto disabled = type != Availability::Available;
+    m_graphic->Disable(disabled);
+    m_name->Disable(disabled);
+}
+
+void BasesListBox::HullAndNamePanel::SetDisplayName(const std::string& name) {
+    m_name->SetText(name);
+    m_name->Resize(GG::Pt(Width(), m_name->Height()));
+}
 
 BasesListBox::HullPanel::HullPanel(GG::X w, GG::Y h, const std::string& hull) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
