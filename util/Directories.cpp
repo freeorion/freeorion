@@ -3,6 +3,7 @@
 #include "OptionsDB.h"
 
 #include <GG/utf8/checked.h>
+#include "../universe/Enums.h"
 
 #include <boost/filesystem/convenience.hpp>
 #include <boost/filesystem/operations.hpp>
@@ -580,4 +581,57 @@ bool IsInDir(const fs::path& dir, const fs::path& test_dir) {
     // Check that the whole dir path matches the test path
     // Extra portions of path are contained in dir
     return std::equal(canon_dir.begin(), canon_dir.end(), canon_path.begin());
+}
+
+fs::path GetPath(PathType path_type) {
+    switch (path_type) {
+    case PATH_BINARY:
+        return GetBinDir();
+    case PATH_RESOURCE:
+        return GetResourceDir();
+    case PATH_DATA_ROOT:
+        return GetRootDataDir();
+    case PATH_DATA_USER:
+        return GetUserDataDir();
+    case PATH_CONFIG:
+        return GetUserConfigDir();
+    case PATH_SAVE:
+        return GetSaveDir();
+    case PATH_TEMP:
+        return fs::temp_directory_path();
+    case PATH_PYTHON:
+#if defined(FREEORION_MACOSX) || defined(FREEORION_WIN32)
+        return GetPythonHome();
+#endif
+    case PATH_INVALID:
+    default:
+        ErrorLogger() << "Invalid path type " << path_type;
+        return fs::temp_directory_path();
+    }
+}
+
+fs::path GetPath(const std::string& path_string) {
+    if (path_string.empty()) {
+        ErrorLogger() << "GetPath called with empty argument";
+        return fs::temp_directory_path();
+    }
+
+    PathType path_type;
+    try {
+        path_type = boost::lexical_cast<PathType>(path_string);
+    } catch (const boost::bad_lexical_cast& ec) {
+        // try partial match
+        std::string retval = path_string;
+        for (const auto& path_type : PathTypeStrings()) {
+            std::string path_type_string = PathToString(GetPath(path_type));
+            boost::replace_all(retval, path_type, path_type_string);
+        }
+        if (path_string != retval) {
+            return FilenameToPath(retval);
+        } else {
+            ErrorLogger() << "Invalid cast for PathType from string " << path_string;
+            return fs::temp_directory_path();
+        }
+    }
+    return GetPath(path_type);
 }
