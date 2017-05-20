@@ -146,11 +146,7 @@
 // The logging levels.
 enum class LogLevel {trace, debug, info, warn, error, min = trace, max = error};
 
-#ifdef NDEBUG
-constexpr LogLevel default_log_level_threshold = LogLevel::info;
-#else
 constexpr LogLevel default_log_level_threshold = LogLevel::debug;
-#endif
 
 FO_COMMON_API std::string to_string(const LogLevel level);
 FO_COMMON_API LogLevel to_LogLevel(const std::string& name);
