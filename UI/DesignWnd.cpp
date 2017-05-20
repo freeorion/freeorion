@@ -3597,12 +3597,9 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
 
-    const HullType* hull_type = ship_design->GetHull();
-    SetHull(hull_type);
+    SetHull(ship_design->GetHull());
 
-    const std::vector<std::string>& parts_vec = ship_design->Parts();
-    for (unsigned int i = 0; i < parts_vec.size() && i < m_slots.size(); ++i)
-        m_slots[i]->SetPart(GetPartType(parts_vec[i]));
+    SetParts(ship_design->Parts());
     DesignChangedSignal();
 }
 
