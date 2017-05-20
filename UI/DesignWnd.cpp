@@ -246,7 +246,7 @@ namespace {
 
         const ShipDesign* GetDesign(const boost::uuids::uuid& uuid) const;
 
-        void AddSavedDesignsToCurrentDesigns();
+        void AddSavedDesignsToCurrentDesigns(bool suppress_immediate_execution = false);
 
         void SaveManifest();
 
@@ -374,7 +374,7 @@ namespace {
     }
 
     /* Causes the human client Empire to add all saved designs. */
-    void SavedDesignsManager::AddSavedDesignsToCurrentDesigns() {
+    void SavedDesignsManager::AddSavedDesignsToCurrentDesigns(bool suppress_immediate_execution /*= false*/) {
         const auto empire = GetEmpire(m_empire_id);
         if (!empire) {
             DebugLogger() << "AddSavedDesignsToCurrentDesigns HumanClient Does Not Control an Empire";
@@ -413,7 +413,8 @@ namespace {
             ship_design_on_disk.SetUUID(boost::uuids::random_generator()());
 
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(m_empire_id, new_design_id, ship_design_on_disk));
+                std::make_shared<ShipDesignOrder>(m_empire_id, new_design_id, ship_design_on_disk),
+                suppress_immediate_execution);
 
             ship_design_on_disk.SetUUID(disk_uuid);
         }
@@ -649,6 +650,9 @@ void ShipDesignManager::StartGame(int empire_id) {
     m_current_designs.reset(new CurrentShipDesignManager(empire_id));
     auto current_designs = dynamic_cast<CurrentShipDesignManager*>(m_current_designs.get());
 
+    // Prevent orders issued here from being executed twice, once here and again in MapWnd::InitTurn()
+    bool suppress_immediate_execution = true;
+
     // If expected initialize the current designs to all designs known by the empire
     if( GetOptionsDB().Get<bool>("auto-add-default-designs")) {
 
@@ -662,10 +666,12 @@ void ShipDesignManager::StartGame(int empire_id) {
 
     // Remove the default designs from the empire's current designs.
     else {
+        DebugLogger() << "Remove default designs from empire.";
         const auto ids = empire->ShipDesigns();
         for (const auto design_id : ids) {
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true),
+            suppress_immediate_execution);
         }
     }
 
@@ -678,7 +684,8 @@ void ShipDesignManager::StartGame(int empire_id) {
     if (HumanClientApp::GetApp()->CurrentTurn() == 1
        && GetOptionsDB().Get<bool>("auto-add-saved-designs"))
     {
-        saved_designs->AddSavedDesignsToCurrentDesigns();
+        DebugLogger() << "Adding saved designs to empire.";
+        saved_designs->AddSavedDesignsToCurrentDesigns(suppress_immediate_execution);
     }
 
 }
