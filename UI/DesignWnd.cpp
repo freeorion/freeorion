@@ -387,7 +387,7 @@ namespace {
             if (found_it == m_saved_designs.end()) {
                 ErrorLogger() << "AddSavedDesignsToCurrentDesigns missing expected uuid " << uuid;
             }            
-            const auto& ship_design_on_disk = *(found_it->second.first);
+            auto& ship_design_on_disk = *(found_it->second.first);
             bool already_got = false;
             for (int id : empire->ShipDesigns()) {
                 const ShipDesign& ship_design = *GetShipDesign(id);
@@ -407,8 +407,15 @@ namespace {
                           << ship_design_on_disk.Name();
             int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
             CurrentDesignsInsertBefore(new_design_id, INVALID_OBJECT_ID);
+
+            // Give it a new UUID so that the empire design is distinct.
+            const auto disk_uuid = ship_design_on_disk.UUID();
+            ship_design_on_disk.SetUUID(boost::uuids::random_generator()());
+
             HumanClientApp::GetApp()->Orders().IssueOrder(
                 std::make_shared<ShipDesignOrder>(m_empire_id, new_design_id, ship_design_on_disk));
+
+            ship_design_on_disk.SetUUID(disk_uuid);
         }
     }
 
