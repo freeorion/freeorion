@@ -189,19 +189,26 @@ namespace {
             m_ordered_ids()
         {}
 
-        std::vector<int> OrderedIDs() const override
-        { return std::vector<int>(m_ordered_ids.begin(), m_ordered_ids.end()); }
+        /** Return non-obsolete available ordered ids. */
+        std::vector<int> OrderedIDs() const override;
+
+        /** Return all ids including obsoleted designs. */
+        std::vector<int> AllOrderedIDs() const;
 
         template <typename T>
-        void SetOrderedIDs(const T& new_order);
+        void InsertOrderedIDs(const T& new_order);
 
         void InsertBefore(const int id, const int next_id);
         bool MoveBefore(const int moved_id, const int next_id);
-        std::list<int>::const_iterator Erase(const int id);
+        std::list<int>::const_iterator Obsolete(const int id);
+
+        bool IsObsolete(const int id) const;
+        void SetObsolete(const int id, const bool obsolete);
 
         private:
         int m_empire_id;
         std::list<int> m_ordered_ids;
+        std::unordered_map<int, bool> m_id_to_obsolete;
 
     };
 
@@ -218,10 +225,10 @@ namespace {
         current_designs->MoveBefore(moved_id, next_id);
     }
 
-    void CurrentDesignsErase(const int id) {
+    void CurrentDesignsObsolete(const int id) {
         auto current_designs = dynamic_cast<CurrentShipDesignManager*>(
             ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns());
-        current_designs->Erase(id);
+        current_designs->Obsolete(id);
     }
 
     class SavedDesignsManager : public ShipDesignManager::Designs {
@@ -523,10 +530,27 @@ namespace {
     }
 
 
+    std::vector<int> CurrentShipDesignManager::OrderedIDs() const {
+        std::vector<int> retval;
+        // Remove all obsolete ids from the list
+        std::copy_if(m_ordered_ids.begin(), m_ordered_ids.end(), std::back_inserter(retval),
+                     [this](const int id){
+                         const auto it = m_id_to_obsolete.find(id);
+                         return (it == m_id_to_obsolete.end()) ? false : !it->second;
+                     });
+        return retval;
+    }
+
+    std::vector<int> CurrentShipDesignManager::AllOrderedIDs() const
+    { return std::vector<int>(m_ordered_ids.begin(), m_ordered_ids.end()); }
+
     template <typename T>
-    void CurrentShipDesignManager::SetOrderedIDs(const T& new_order) {
+    void CurrentShipDesignManager::InsertOrderedIDs(const T& new_order) {
         m_ordered_ids.clear();
         m_ordered_ids.insert(m_ordered_ids.begin(), new_order.begin(), new_order.end());
+        m_id_to_obsolete.clear();
+        for (const auto& id : new_order)
+            m_id_to_obsolete.insert(std::make_pair(id, false));
     }
 
     void CurrentShipDesignManager::InsertBefore(const int id, const int next_id) {
@@ -546,6 +570,7 @@ namespace {
         // Insert in the list.
         m_ordered_ids.insert(next_it, id);
 
+        m_id_to_obsolete[id] = false;;
     }
 
     bool CurrentShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
@@ -564,12 +589,24 @@ namespace {
         return true;
     }
 
-    std::list<int>::const_iterator CurrentShipDesignManager::Erase(const int id) {
-        auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id);
-        auto retval = m_ordered_ids.erase(existing_it);
+    std::list<int>::const_iterator CurrentShipDesignManager::Obsolete(const int id) {
+        const auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id);
+        if (existing_it == m_ordered_ids.end())
+            return existing_it;
+
+        const auto retval = std::next(existing_it);
+        m_id_to_obsolete[id] = true;
         return retval;
     }
 
+    bool CurrentShipDesignManager::IsObsolete(const int id) const {
+        const auto it = m_id_to_obsolete.find(id);
+        return (it == m_id_to_obsolete.end()) ? false : it->second;
+    }
+
+    void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
+        m_id_to_obsolete[id] = obsolete;
+    }
 }
 
 //////////////////////////////////////////////////
@@ -613,7 +650,7 @@ void ShipDesignManager::StartGame(int empire_id) {
         auto ids = empire->ShipDesigns();
         std::set<int> ordered_ids(ids.begin(), ids.end());
 
-        current_designs->SetOrderedIDs(ordered_ids);
+        current_designs->InsertOrderedIDs(ordered_ids);
     }
 
     // Remove the default designs from the empire's current designs.
@@ -636,12 +673,27 @@ void ShipDesignManager::StartGame(int empire_id) {
 }
 
 void ShipDesignManager::Save(SaveGameUIData& data) const {
-    data.ordered_current_ship_design_ids = m_current_designs->OrderedIDs();
+
+    // Package each ship id with its obsolescence state for the save file.
+    data.ordered_ship_design_ids_and_obsolete.clear();
+    const auto& manager = GetCurrentDesignsManager();
+    for (const auto id : manager.AllOrderedIDs()) {
+        const auto obsolete = manager.IsObsolete(id);
+        data.ordered_ship_design_ids_and_obsolete.push_back(
+            std::make_pair(id, obsolete));
+    }
 }
 
 void ShipDesignManager::Load(const SaveGameUIData& data) {
-    dynamic_cast<CurrentShipDesignManager*>(m_current_designs.get())
-        ->SetOrderedIDs(data.ordered_current_ship_design_ids);
+    // Unpack each ship id and its obolesence state.
+    auto& manager = GetCurrentDesignsManager();
+
+    std::vector<int> ordered_ids;
+    for (const auto id_and_obsolete :data.ordered_ship_design_ids_and_obsolete) {
+        manager.SetObsolete(id_and_obsolete.first, id_and_obsolete.second);
+        ordered_ids.push_back(id_and_obsolete.first);
+    }
+    manager.InsertOrderedIDs(ordered_ids);
 }
 
 ShipDesignManager::Designs* ShipDesignManager::CurrentDesigns() {
@@ -2287,7 +2339,7 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
     if (!design)
         return;
     if (modkeys & GG::MOD_KEY_CTRL) {
-        CurrentDesignsErase(id);
+        CurrentDesignsObsolete(id);
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ShipDesignOrder>(HumanClientApp::GetApp()->EmpireID(), id, true));
@@ -2331,7 +2383,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
 
     // Context menu actions
     auto delete_design_action = [&client_empire_id, &design_id]() {
-        CurrentDesignsErase(design_id);
+        CurrentDesignsObsolete(design_id);
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ShipDesignOrder>(client_empire_id, design_id, true));
@@ -4093,7 +4145,7 @@ void DesignWnd::ReplaceDesign() {
     if (new_design_id == INVALID_DESIGN_ID) return;
 
     CurrentDesignsMoveBefore(new_design_id, replaced_id);
-    CurrentDesignsErase(replaced_id);
+    CurrentDesignsObsolete(replaced_id);
 
     //move it to before the replaced design
     HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, new_design_id, replaced_id ));
