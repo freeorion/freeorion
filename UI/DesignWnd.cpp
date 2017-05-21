@@ -3156,7 +3156,7 @@ public:
         return an empty pointer if not currently modifying a design. */
     std::shared_ptr<const ShipDesign> GetIncompleteDesign() const;
     int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns INVALID_DESIGN_ID if not showing a complete design
-    int                                 GetReplacedDesignID() const;//!< returns ID of completed design selected to be replaced.
+    boost::optional<int>                GetReplacedDesignID() const;//!< returns ID of completed design selected to be replaced.
 
     /** If a design with the same hull and parts is registered with the empire then return the
         design name, otherwise return boost::none. */
@@ -3251,7 +3251,12 @@ private:
     const HullType*                         m_hull;
     std::vector<SlotControl*>               m_slots;
     int                                     m_complete_design_id;
-    int                                     m_replaced_design_id;
+
+    // The design id if this design is replacable
+    boost::optional<int>                    m_replaced_design_id;
+    // The design uuid if this design is replacable
+    boost::optional<boost::uuids::uuid>     m_replaced_design_uuid;
+
     mutable std::shared_ptr<ShipDesign> m_incomplete_design;
 
     GG::StaticGraphic*  m_background_image;
@@ -3276,7 +3281,8 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     m_hull(nullptr),
     m_slots(),
     m_complete_design_id(INVALID_DESIGN_ID),
-    m_replaced_design_id(INVALID_DESIGN_ID),
+    m_replaced_design_id(boost::none),
+    m_replaced_design_uuid(boost::none),
     m_incomplete_design(),
     m_background_image(nullptr),
     m_design_name_label(nullptr),
@@ -3365,7 +3371,7 @@ std::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() co
 int DesignWnd::MainPanel::GetCompleteDesignID() const
 { return m_complete_design_id; }
 
-int DesignWnd::MainPanel::GetReplacedDesignID() const
+boost::optional<int> DesignWnd::MainPanel::GetReplacedDesignID() const
 { return m_replaced_design_id; }
 
 boost::optional<std::string> DesignWnd::MainPanel::CurrentDesignIsRegistered() {
@@ -3576,7 +3582,8 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
     }
 
     m_complete_design_id = ship_design->ID();
-    m_replaced_design_id = ship_design->IsMonster() ? INVALID_DESIGN_ID : ship_design->ID();
+    m_replaced_design_id = ship_design->IsMonster() ? boost::optional<int>() : ship_design->ID();
+    m_replaced_design_uuid = ship_design->IsMonster() ? boost::optional<boost::uuids::uuid>() : ship_design->UUID();
 
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
@@ -3593,7 +3600,7 @@ void DesignWnd::MainPanel::SetDesign(int design_id)
 void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
                                                const std::vector<std::string>& parts)
 {
-    m_replaced_design_id = INVALID_DESIGN_ID;
+    m_replaced_design_id = boost::none;
     SetHull(hull);
     SetParts(parts);
 }
@@ -3722,22 +3729,28 @@ void DesignWnd::MainPanel::DesignChanged() {
             UserString("DESIGN_INVALID"), UserString("DESIGN_UPDATE_INVALID_NO_CANDIDATE")));
         m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_HULL")));
+        return;
     }
-    else if (client_empire_id == ALL_EMPIRES) {
+
+    if (client_empire_id == ALL_EMPIRES) {
         m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR")));
         m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_MODERATOR")));
+        return;
     }
-    else if (!IsDesignNameValid()) {
+
+    if (!IsDesignNameValid()) {
         m_disabled_by_name = true;
 
         m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME")));
         m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
             UserString("DESIGN_INVALID"), UserString("DESIGN_INV_NO_NAME")));
+        return;
     }
-    else if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
+
+    if (!ShipDesign::ValidDesign(m_hull->Name(), Parts())) {
         // if a design has exclusion violations between parts and hull, highlight these and indicate it on the button
 
         std::pair<std::string, std::string> problematic_components;
@@ -3789,8 +3802,40 @@ void DesignWnd::MainPanel::DesignChanged() {
 
             // todo: mark conflicting parts somehow
         }
+        return;
     }
-    else if (const auto existing_design_name = CurrentDesignIsRegistered()) {
+
+    // Monster can't be replace or updated and require no browse window.
+    if (!m_replaced_design_id && !m_replaced_design_uuid)
+        return;
+
+    const auto new_design_name = ValidatedDesignName();
+
+    if (m_replaced_design_uuid) {
+        // Saved design can always be replaced
+        if (const auto saved_design = GetSavedDesignsManager().GetDesign(*m_replaced_design_uuid)) {
+
+            m_replace_button->SetBrowseInfoWnd(
+                std::make_shared<TextBrowseWnd>(
+                    UserString("DESIGN_WND_UPDATE"),
+                    boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL"))
+                                   % saved_design->Name()
+                                   % new_design_name)));
+            m_replace_button->Disable(false);
+
+            m_confirm_button->SetBrowseInfoWnd(
+                std::make_shared<TextBrowseWnd>(
+                    UserString("DESIGN_WND_ADD"),
+                    boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL"))
+                                   % new_design_name)));
+            m_confirm_button->Disable(false);
+            return;
+        }
+
+        // UUID is currently unused as a lookup method for current designs
+    }
+
+    if (const auto existing_design_name = CurrentDesignIsRegistered()) {
         m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
             UserString("DESIGN_KNOWN"),
             boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
@@ -3799,25 +3844,27 @@ void DesignWnd::MainPanel::DesignChanged() {
             UserString("DESIGN_KNOWN"),
             boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
                            % *existing_design_name)));
+        return;
     }
-    else {
-        std::string new_design_name = ValidatedDesignName();
-        const ShipDesign* replaced_ship_design = GetShipDesign(m_replaced_design_id);
 
-        if (m_replaced_design_id != INVALID_DESIGN_ID && replaced_ship_design) {
-            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-                UserString("DESIGN_WND_UPDATE"),
-                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL"))
-                                              % replaced_ship_design->Name()
-                                              % new_design_name)));
-            m_replace_button->Disable(false);
-        }
-        m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-                UserString("DESIGN_WND_ADD"),
-                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL"))
-                                              % new_design_name)));
-        m_confirm_button->Disable(false);
+    if (!m_replaced_design_id)
+        return;
+
+    const ShipDesign* replaced_ship_design = GetShipDesign(*m_replaced_design_id);
+
+    if (*m_replaced_design_id != INVALID_DESIGN_ID && replaced_ship_design) {
+        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            UserString("DESIGN_WND_UPDATE"),
+            boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL"))
+                           % replaced_ship_design->Name()
+                           % new_design_name)));
+        m_replace_button->Disable(false);
     }
+    m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+        UserString("DESIGN_WND_ADD"),
+        boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL"))
+                       % new_design_name)));
+    m_confirm_button->Disable(false);
 }
 
 void DesignWnd::MainPanel::DesignNameChanged() {
@@ -4096,7 +4143,7 @@ int DesignWnd::AddDesign() {
 void DesignWnd::ReplaceDesign() {
     int new_design_id = AddDesign();
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    int replaced_id = m_main_panel->GetReplacedDesignID();
+    int replaced_id = m_main_panel->GetReplacedDesignID() ? *m_main_panel->GetReplacedDesignID() : INVALID_DESIGN_ID;
 
     if (new_design_id == INVALID_DESIGN_ID) return;
 
