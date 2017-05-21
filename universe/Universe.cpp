@@ -84,7 +84,7 @@ namespace EmpireStatistics {
 
                 unsigned int checksum{0};
                 CheckSums::CheckSumCombine(checksum, s_stats);
-                DebugLogger() << "Empire Statistics Checksum: " << checksum;
+                DebugLogger() << "Empire Statistics checksum: " << checksum;
 
             } catch (const std::exception& e) {
                 ErrorLogger() << "Failed parsing empire statistics: error: " << e.what();
