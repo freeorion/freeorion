@@ -303,7 +303,14 @@ namespace {
                 design->SetUUID(boost::uuids::random_generator()());
                 DebugLogger() << "Converted legacy ship design file by adding  UUID " << design->UUID()
                               << " for name " << design->Name();
+            }
 
+            // Make sure the design is an out of universe object
+            // This should not be needed.
+            if(design->ID() != INVALID_OBJECT_ID) {
+                design->SetID(INVALID_OBJECT_ID);
+                WarnLogger() << "Saved ships Converted legacy ship design file by adding  UUID " << design->UUID()
+                             << " for name " << design->Name();
             }
 
             if (!m_saved_designs.count(design->UUID())) {
