@@ -3158,7 +3158,9 @@ public:
     int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns INVALID_DESIGN_ID if not showing a complete design
     int                                 GetReplacedDesignID() const;//!< returns ID of completed design selected to be replaced.
 
-    bool                                CurrentDesignIsRegistered(std::string& design_name);//!< returns true iff a design with the same hull and parts is already registered with thsi empire; if so, also populates design_name with the name of that design
+    /** If a design with the same hull and parts is registered with the empire then return the
+        design name, otherwise return boost::none. */
+    boost::optional<std::string>        CurrentDesignIsRegistered();
     //@}
 
     /** \name Mutators */ //@{
@@ -3366,24 +3368,22 @@ int DesignWnd::MainPanel::GetCompleteDesignID() const
 int DesignWnd::MainPanel::GetReplacedDesignID() const
 { return m_replaced_design_id; }
 
-bool DesignWnd::MainPanel::CurrentDesignIsRegistered(std::string& design_name) {
+boost::optional<std::string> DesignWnd::MainPanel::CurrentDesignIsRegistered() {
     int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id); // Had better not return 0 if we're designing a ship.
+    const auto empire = GetEmpire(empire_id);
     if (!empire) {
         ErrorLogger() << "DesignWnd::MainPanel::CurrentDesignIsRegistered couldn't get the current empire.";
-        return false;
+        return boost::none;
     }
 
-    if (std::shared_ptr<const ShipDesign> cur_design = GetIncompleteDesign()) {
-        for (int design_id : empire->ShipDesigns()) {
-            const ShipDesign& ship_design = *GetShipDesign(design_id);
-            if (ship_design == *cur_design.get()) {
-                design_name = ship_design.Name();
-                return true;
-            }
+    if (const auto& cur_design = GetIncompleteDesign()) {
+        for (const auto design_id : empire->ShipDesigns()) {
+            const auto& ship_design = *GetShipDesign(design_id);
+            if (ship_design == *cur_design.get())
+                return ship_design.Name();
         }
     }
-    return false;
+    return boost::none;
 }
 
 void DesignWnd::MainPanel::LClick(const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) {
@@ -3711,7 +3711,6 @@ void DesignWnd::MainPanel::DesignChanged() {
 
     m_complete_design_id = INVALID_DESIGN_ID;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
-    std::string design_name;
     m_disabled_by_name = false;
     m_disabled_by_part_conflict = false;
 
@@ -3791,15 +3790,15 @@ void DesignWnd::MainPanel::DesignChanged() {
             // todo: mark conflicting parts somehow
         }
     }
-    else if (CurrentDesignIsRegistered(design_name)) {
+    else if (const auto existing_design_name = CurrentDesignIsRegistered()) {
         m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
             UserString("DESIGN_KNOWN"),
             boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
-                           % design_name)));
+                           % *existing_design_name)));
         m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
             UserString("DESIGN_KNOWN"),
             boost::io::str(FlexibleFormat(UserString("DESIGN_KNOWN_DETAIL"))
-                           % design_name)));
+                           % *existing_design_name)));
     }
     else {
         std::string new_design_name = ValidatedDesignName();
