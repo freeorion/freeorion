@@ -29,7 +29,7 @@ namespace {
             using phoenix::construct;
             using phoenix::push_back;
 
-            const parse::lexer& tok =                                                   parse::lexer::instance();
+            const parse::lexer& tok = parse::lexer::instance();
 
             set_empire_meter_1
                 =    tok.SetEmpireMeter_
