@@ -2210,12 +2210,10 @@ void MonstersListBox::PopulateCore() {
 
 
 BasesListBox::Row* EmptyHullsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
-    if (wnd->DragDropDataType() != HULL_PARTS_ROW_DROP_TYPE_STRING)
-        return nullptr;
-
     // find type of hull that was dragged away, and replace
-    const BasesListBox::HullAndPartsListBoxRow* design_row =
-        boost::polymorphic_downcast<const BasesListBox::HullAndPartsListBoxRow*>(wnd);
+    const auto design_row = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd);
+    if (!design_row)
+        return nullptr;
 
     const std::string& hull_name = design_row->Hull();
     const auto row_size = ListRowSize();
@@ -2232,12 +2230,11 @@ BasesListBox::Row* EmptyHullsListBox::ChildrenDraggedAwayCore(const GG::Wnd* con
 }
 
 BasesListBox::Row* CompletedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
-    if (wnd->DragDropDataType() != COMPLETE_DESIGN_ROW_DROP_STRING)
-        return nullptr;
     // find design that was dragged away, and replace
 
-    const BasesListBox::CompletedDesignListBoxRow* design_row =
-        boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
+    const auto design_row = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
+    if (!design_row)
+        return nullptr;
 
     int design_id = design_row->DesignID();
     const ShipDesign* design = GetShipDesign(design_id);
@@ -2258,11 +2255,10 @@ BasesListBox::Row* CompletedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wn
 }
 
 BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
-    if (wnd->DragDropDataType() != SAVED_DESIGN_ROW_DROP_STRING)
-        return nullptr;
     // find name of design that was dragged away, and replace
-    const SavedDesignsListBox::SavedDesignListBoxRow* design_row =
-        boost::polymorphic_downcast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd);
+    const auto design_row = dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd);
+    if (!design_row)
+        return nullptr;
 
     SavedDesignsManager& manager = GetSavedDesignsManager();
     const auto design = manager.GetDesign(design_row->DesignUUID());
@@ -3873,24 +3869,8 @@ void DesignWnd::MainPanel::DropsAcceptable(DropsAcceptableIter first, DropsAccep
     if (std::distance(first, last) != 1)
         return;
 
-    bool accepted_something = false;
-    for (DropsAcceptableIter it = first; it != last; ++it) {
-        if (!accepted_something && it->first->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
-            accepted_something = true;
-            it->second = true;
-
-        } else if (!accepted_something && it->first->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
-            accepted_something = true;
-            it->second = true;
-
-        } else if (!accepted_something && it->first->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
-            accepted_something = true;
-            it->second = true;
-
-        } else {
-            it->second = false;
-        }
-    }
+    if (dynamic_cast<const BasesListBox::BasesListBoxRow*>(first->first))
+        first->second = true;
 }
 
 void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
@@ -3907,35 +3887,23 @@ void DesignWnd::MainPanel::AcceptDrops(const GG::Pt& pt, const std::vector<GG::W
     if (!wnd)
         return;
 
-    if (wnd->DragDropDataType() == COMPLETE_DESIGN_ROW_DROP_STRING) {
-        const BasesListBox::CompletedDesignListBoxRow* control =
-            boost::polymorphic_downcast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
-        if (control) {
-            int design_id = control->DesignID();
-            if (design_id != INVALID_DESIGN_ID)
-                SetDesign(design_id);
-        }
+    if (const auto control = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd)) {
+        int design_id = control->DesignID();
+        if (design_id != INVALID_DESIGN_ID)
+            SetDesign(design_id);
     }
-    else if (wnd->DragDropDataType() == HULL_PARTS_ROW_DROP_TYPE_STRING) {
-        const BasesListBox::HullAndPartsListBoxRow* control =
-            boost::polymorphic_downcast<const BasesListBox::HullAndPartsListBoxRow*>(wnd);
-        if (control) {
-            const std::string& hull = control->Hull();
-            const std::vector<std::string>& parts = control->Parts();
+    else if (const auto control = dynamic_cast<const BasesListBox::HullAndPartsListBoxRow*>(wnd)) {
+        const std::string& hull = control->Hull();
+        const std::vector<std::string>& parts = control->Parts();
 
-            SetDesignComponents(hull, parts);
-        }
+        SetDesignComponents(hull, parts);
     }
-    else if (wnd->DragDropDataType() == SAVED_DESIGN_ROW_DROP_STRING) {
-        const SavedDesignsListBox::SavedDesignListBoxRow* control =
-            boost::polymorphic_downcast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd);
-        if (control) {
-            const auto& uuid = control->DesignUUID();
-            const ShipDesign* design = GetSavedDesignsManager().GetDesign(uuid);
-            if (design) {
-                SetDesignComponents(design->Hull(), design->Parts(),
-                                    design->Name(), design->Description());
-            }
+    else if (const auto* control = dynamic_cast<const SavedDesignsListBox::SavedDesignListBoxRow*>(wnd)) {
+        const auto& uuid = control->DesignUUID();
+        const ShipDesign* design = GetSavedDesignsManager().GetDesign(uuid);
+        if (design) {
+            SetDesignComponents(design->Hull(), design->Parts(),
+                                design->Name(), design->Description());
         }
     }
     delete wnd;
