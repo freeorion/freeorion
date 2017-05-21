@@ -3154,8 +3154,7 @@ public:
 
     /** Returns a pointer to the design currently being modified (if any).  May
         return an empty pointer if not currently modifying a design. */
-    std::shared_ptr<const ShipDesign> GetIncompleteDesign() const;
-    int                                 GetCompleteDesignID() const;//!< returns ID of complete design currently being shown in this panel.  returns INVALID_DESIGN_ID if not showing a complete design
+    std::shared_ptr<const ShipDesign>   GetIncompleteDesign() const;
     boost::optional<int>                GetReplacedDesignID() const;//!< returns ID of completed design selected to be replaced.
 
     /** If a design with the same hull and parts is registered with the empire then return the
@@ -3250,7 +3249,6 @@ private:
                                                                                                         //!< This function will indicate that it could not add the part, even though adding the part is possible
     const HullType*                         m_hull;
     std::vector<SlotControl*>               m_slots;
-    int                                     m_complete_design_id;
 
     // The design id if this design is replacable
     boost::optional<int>                    m_replaced_design_id;
@@ -3280,7 +3278,6 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
            config_name),
     m_hull(nullptr),
     m_slots(),
-    m_complete_design_id(INVALID_DESIGN_ID),
     m_replaced_design_id(boost::none),
     m_replaced_design_uuid(boost::none),
     m_incomplete_design(),
@@ -3367,9 +3364,6 @@ std::shared_ptr<const ShipDesign> DesignWnd::MainPanel::GetIncompleteDesign() co
     RefreshIncompleteDesign();
     return m_incomplete_design;
 }
-
-int DesignWnd::MainPanel::GetCompleteDesignID() const
-{ return m_complete_design_id; }
 
 boost::optional<int> DesignWnd::MainPanel::GetReplacedDesignID() const
 { return m_replaced_design_id; }
@@ -3581,7 +3575,6 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
         return;
     }
 
-    m_complete_design_id = ship_design->ID();
     m_replaced_design_id = ship_design->IsMonster() ? boost::optional<int>() : ship_design->ID();
     m_replaced_design_uuid = ship_design->IsMonster() ? boost::optional<boost::uuids::uuid>() : ship_design->UUID();
 
@@ -3716,7 +3709,6 @@ void DesignWnd::MainPanel::DesignChanged() {
     m_replace_button->ClearBrowseInfoWnd();
     m_confirm_button->ClearBrowseInfoWnd();
 
-    m_complete_design_id = INVALID_DESIGN_ID;
     int client_empire_id = HumanClientApp::GetApp()->EmpireID();
     m_disabled_by_name = false;
     m_disabled_by_part_conflict = false;
