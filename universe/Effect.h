@@ -1123,7 +1123,7 @@ public:
     const std::string& Icon() const
     { return m_icon; }
 
-    const auto& MessageParameters() const
+    auto MessageParameters() -> const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>&
     { return m_message_parameters; }
 
     ValueRef::ValueRefBase<int>* RecipientID() const
