@@ -3231,7 +3231,7 @@ unsigned int GiveEmpireTech::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
+                                             const MessageParams& message_parameters,
                                              ValueRef::ValueRefBase<int>* recipient_empire_id,
                                              EmpireAffiliationType affiliation,
                                              const std::string label,
@@ -3248,7 +3248,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
                                              const std::string& icon,
-                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
+                                             const MessageParams& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              Condition::ConditionBase* condition,
                                              const std::string label,
@@ -3264,7 +3264,7 @@ GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string,
 {}
 
 GenerateSitRepMessage::GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                                             const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
+                                             const MessageParams& message_parameters,
                                              EmpireAffiliationType affiliation,
                                              const std::string& label,
                                              bool stringtable_lookup):

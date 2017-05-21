@@ -1079,22 +1079,24 @@ private:
   * are ignored, and missing parameters are left as blank text. */
 class FO_COMMON_API GenerateSitRepMessage : public EffectBase {
 public:
+    typedef std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>> MessageParams;
+
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
+                          const MessageParams& message_parameters,
                           ValueRef::ValueRefBase<int>* recipient_empire_id,
                           EmpireAffiliationType affiliation,
                           const std::string label = "",
                           bool stringtable_lookup = true);
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
+                          const MessageParams& message_parameters,
                           EmpireAffiliationType affiliation,
                           Condition::ConditionBase* condition = nullptr,
                           const std::string label = "",
                           bool stringtable_lookup = true);
 
     GenerateSitRepMessage(const std::string& message_string, const std::string& icon,
-                          const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>& message_parameters,
+                          const MessageParams& message_parameters,
                           EmpireAffiliationType affiliation,
                           const std::string& label = "",
                           bool stringtable_lookup = true);
@@ -1123,7 +1125,7 @@ public:
     const std::string& Icon() const
     { return m_icon; }
 
-    auto MessageParameters() -> const std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>>&
+    MessageParams MessageParameters()
     { return m_message_parameters; }
 
     ValueRef::ValueRefBase<int>* RecipientID() const
@@ -1140,7 +1142,7 @@ public:
 private:
     std::string m_message_string;
     std::string m_icon;
-    std::vector<std::pair<std::string, ValueRef::ValueRefBase<std::string>*>> m_message_parameters;
+    MessageParams m_message_parameters;
     ValueRef::ValueRefBase<int>* m_recipient_empire_id;
     Condition::ConditionBase* m_condition;
     EmpireAffiliationType m_affiliation;
