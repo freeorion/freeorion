@@ -3869,16 +3869,40 @@ DESIGN_WND_ADD_DETAIL
 to finished designs.'''
 
 DESIGN_WND_UPDATE
+Update Design
+
+DESIGN_WND_UPDATE_OLD
 Update Old Design
 
 # %1% old name of the existing design.
 # %2% new name of the existing design.
-DESIGN_WND_UPDATE_DETAIL
+DESIGN_WND_UPDATE_OLD_DETAIL
 '''Replace old design
 "%1%"
 with new design
 "%2%"
 in finished designs.'''
+
+DESIGN_WND_ADD_SAVED
+Add Saved Design
+
+# %1% name of the new ship design.
+DESIGN_WND_ADD_DETAIL_SAVED
+'''Add a design called
+"%1%"
+to saved designs.'''
+
+DESIGN_WND_UPDATE_SAVED
+Update Saved Design
+
+# %1% old name of the saved design.
+# %2% new name of the saved design.
+DESIGN_WND_UPDATE_DETAIL_SAVED
+'''Replace saved design
+"%1%"
+with new design
+"%2%"
+in saved designs.'''
 
 DESIGN_UPDATE_INVALID_NO_CANDIDATE
 Choose an existing design to update.
