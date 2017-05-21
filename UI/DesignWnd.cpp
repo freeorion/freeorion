@@ -1694,26 +1694,27 @@ public:
     };
 
     class BasesListBoxRow : public CUIListBox::Row {
-    public:
-        BasesListBoxRow(GG::X w, GG::Y h);
+        public:
+        BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name);
 
         void Render() override;
 
         void SizeMove(const GG::Pt& ul, const GG::Pt& lr) override;
 
         virtual void SetAvailability(const Availability::Enum type);
+        virtual void SetDisplayName(const std::string& name);
+
+        private:
+        HullAndNamePanel*               m_hull_panel;
     };
 
     class HullAndPartsListBoxRow : public BasesListBoxRow {
     public:
-        HullAndPartsListBoxRow(GG::X w, GG::Y h);
         HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
                                const std::vector<std::string>& parts);
         const std::string&              Hull() const    { return m_hull_name; }
         const std::vector<std::string>& Parts() const   { return m_parts; }
-        void                            SetAvailability(const Availability::Enum type) override;
     protected:
-        HullAndNamePanel*               m_hull_panel;
         std::string                     m_hull_name;
         std::vector<std::string>        m_parts;
     };
@@ -1722,11 +1723,8 @@ public:
     public:
         CompletedDesignListBoxRow(GG::X w, GG::Y h, const ShipDesign& design);
         int                             DesignID() const { return m_design_id; }
-        void                            SetAvailability(const Availability::Enum type) override;
-        void SetDisplayName(const std::string& name);
     private:
         int                             m_design_id;
-        HullAndNamePanel*               m_panel;
     };
 
 protected:
@@ -1764,30 +1762,6 @@ private:
     boost::signals2::connection m_empire_designs_changed_signal;
 };
 
-BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h) :
-    CUIListBox::Row(w, h, BASES_LIST_BOX_DROP_TYPE)
-{}
-
-void BasesListBox::BasesListBoxRow::Render() {
-    GG::Pt ul = UpperLeft();
-    GG::Pt lr = LowerRight();
-    GG::Pt ul_adjusted_for_drop_indicator = GG::Pt(ul.x, ul.y + GG::Y(1));
-    GG::Pt lr_adjusted_for_drop_indicator = GG::Pt(lr.x, lr.y - GG::Y(2));
-    GG::FlatRectangle(ul_adjusted_for_drop_indicator, lr_adjusted_for_drop_indicator,
-                      ClientUI::WndColor(),
-                      (Disabled() ? DisabledColor(GG::CLR_WHITE) : GG::CLR_WHITE), 1);
-}
-
-void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
-    const GG::Pt old_size = Size();
-    CUIListBox::Row::SizeMove(ul, lr);
-    if (!empty() && old_size != Size())
-        at(0)->Resize(Size());
-}
-
-void BasesListBox::BasesListBoxRow::SetAvailability(const Availability::Enum type)
-{ Disable(type != Availability::Available); }
-
 BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::string& hull, const std::string& name) :
     GG::Control(GG::X0, GG::Y0, w, h, GG::NO_WND_FLAGS),
     m_graphic(nullptr),
@@ -1819,53 +1793,62 @@ void BasesListBox::HullAndNamePanel::SetDisplayName(const std::string& name) {
     m_name->Resize(GG::Pt(Width(), m_name->Height()));
 }
 
-BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h) :
-    BasesListBoxRow(w, h)
-{}
-
-BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
-                                                             const std::vector<std::string>& parts) :
-    BasesListBoxRow(w, h),
-    m_hull_panel(nullptr),
-    m_hull_name(hull),
-    m_parts(parts)
+BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::string& hull, const std::string& name) :
+    CUIListBox::Row(w, h, BASES_LIST_BOX_DROP_TYPE),
+    m_hull_panel(nullptr)
 {
-    if (m_hull_name.empty()) {
-        ErrorLogger() << "No hull name provided for incomplete ship row display.";
+    if (hull.empty()) {
+        ErrorLogger() << "No hull name provided for ship row display.";
         return;
     }
 
-    m_hull_panel = new HullAndNamePanel(w, h, m_hull_name, UserString(m_hull_name));
+    m_hull_panel = new HullAndNamePanel(w, h, hull, name);
     push_back(m_hull_panel);
-    SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
 
-void BasesListBox::HullAndPartsListBoxRow::SetAvailability(const Availability::Enum type) {
+void BasesListBox::BasesListBoxRow::Render() {
+    GG::Pt ul = UpperLeft();
+    GG::Pt lr = LowerRight();
+    GG::Pt ul_adjusted_for_drop_indicator = GG::Pt(ul.x, ul.y + GG::Y(1));
+    GG::Pt lr_adjusted_for_drop_indicator = GG::Pt(lr.x, lr.y - GG::Y(2));
+    GG::FlatRectangle(ul_adjusted_for_drop_indicator, lr_adjusted_for_drop_indicator,
+                      ClientUI::WndColor(),
+                      (Disabled() ? DisabledColor(GG::CLR_WHITE) : GG::CLR_WHITE), 1);
+}
+
+void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr) {
+    const GG::Pt old_size = Size();
+    CUIListBox::Row::SizeMove(ul, lr);
+    if (!empty() && old_size != Size())
+        at(0)->Resize(Size());
+}
+
+void BasesListBox::BasesListBoxRow::SetAvailability(const Availability::Enum type) {
+    Disable(type != Availability::Available);
     if (m_hull_panel)
         m_hull_panel->SetAvailability(type);
-    BasesListBox::BasesListBoxRow::SetAvailability(type);
+}
+
+void BasesListBox::BasesListBoxRow::SetDisplayName(const std::string& name) {
+    if (m_hull_panel)
+        m_hull_panel->SetDisplayName(name);
+}
+
+BasesListBox::HullAndPartsListBoxRow::HullAndPartsListBoxRow(GG::X w, GG::Y h, const std::string& hull,
+                                                             const std::vector<std::string>& parts) :
+    BasesListBoxRow(w, h, hull, UserString(hull)),
+    m_hull_name(hull),
+    m_parts(parts)
+{
+    SetDragDropDataType(HULL_PARTS_ROW_DROP_TYPE_STRING);
 }
 
 BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(
     GG::X w, GG::Y h, const ShipDesign &design) :
-    BasesListBoxRow(w, h),
-    m_design_id(design.ID()),
-    m_panel(nullptr)
+    BasesListBoxRow(w, h, design.Hull(), design.Name()),
+    m_design_id(design.ID())
 {
-    m_panel = new HullAndNamePanel(w, h, design.Hull(), design.Name());
-    push_back(m_panel);
     SetDragDropDataType(COMPLETE_DESIGN_ROW_DROP_STRING);
-}
-
-void BasesListBox::CompletedDesignListBoxRow::SetAvailability(const Availability::Enum type) {
-    if (m_panel)
-        m_panel->SetAvailability(type);
-    BasesListBox::BasesListBoxRow::SetAvailability(type);
-}
-
-void BasesListBox::CompletedDesignListBoxRow::SetDisplayName(const std::string& name) {
-    if (m_panel)
-        m_panel->SetDisplayName(name);
 }
 
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
@@ -2059,8 +2042,6 @@ class SavedDesignsListBox : public BasesListBox {
         const std::string&              DesignName() const;
         const std::string&              Description() const;
         bool                            LookupInStringtable() const;
-        void                            SetAvailability(const Availability::Enum type) override;
-        void                            SetDisplayName(const std::string& name);
 
         private:
         boost::uuids::uuid              m_design_uuid;
@@ -2553,30 +2534,20 @@ void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
 
 SavedDesignsListBox::SavedDesignListBoxRow::SavedDesignListBoxRow(
     GG::X w, GG::Y h, const ShipDesign& design) :
-    BasesListBoxRow(w, h),
+    BasesListBoxRow(w, h, design.Hull(), design.Name()),
     m_design_uuid(design.UUID()),
     m_panel(nullptr)
 {
-    m_panel = new HullAndNamePanel(w, h, design.Hull(), design.Name());
-    push_back(m_panel);
     SetDragDropDataType(SAVED_DESIGN_ROW_DROP_STRING);
-}
-
-void SavedDesignsListBox::SavedDesignListBoxRow::SetAvailability(const Availability::Enum type) {
-    m_panel->SetAvailability(type);
-    BasesListBox::BasesListBoxRow::SetAvailability(type);
-}
-
-void SavedDesignsListBox::SavedDesignListBoxRow::SetDisplayName(const std::string& name) {
-    if (m_panel)
-        m_panel->SetDisplayName(name);
 }
 
 const boost::uuids::uuid SavedDesignsListBox::SavedDesignListBoxRow::DesignUUID() const {
     SavedDesignsManager& manager = GetSavedDesignsManager();
     const ShipDesign* design = manager.GetDesign(m_design_uuid);
-    if (!design)
+    if (!design) {
+        ErrorLogger() << "Saved ship design missing with uuid " << m_design_uuid;
         return boost::uuids::uuid{};
+    }
     return design->UUID();
 }
 
