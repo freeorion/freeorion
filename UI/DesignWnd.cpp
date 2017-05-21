@@ -1775,6 +1775,7 @@ BasesListBox::HullAndNamePanel::HullAndNamePanel(GG::X w, GG::Y h, const std::st
     m_name(nullptr)
 {
     SetChildClippingMode(ClipToClient);
+
     m_graphic = new GG::StaticGraphic(ClientUI::HullIcon(hull),
                                       GG::GRAPHIC_PROPSCALE | GG::GRAPHIC_FITGRAPHIC);
     m_graphic->Resize(GG::Pt(w, h));
@@ -1811,6 +1812,8 @@ BasesListBox::BasesListBoxRow::BasesListBoxRow(GG::X w, GG::Y h, const std::stri
 
     m_hull_panel = new HullAndNamePanel(w, h, hull, name);
     push_back(m_hull_panel);
+
+    SetBrowseModeTime(GetOptionsDB().Get<int>("UI.tooltip-delay"));
 }
 
 void BasesListBox::BasesListBoxRow::Render() {
@@ -1831,6 +1834,18 @@ void BasesListBox::BasesListBoxRow::SizeMove(const GG::Pt& ul, const GG::Pt& lr)
 }
 
 void BasesListBox::BasesListBoxRow::SetAvailability(const Availability::Enum type) {
+    switch (type) {
+    case Availability::Obsolete:
+        SetBrowseText(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"));
+        break;
+    case Availability::Available:
+        ClearBrowseInfoWnd();
+        break;
+    case Availability::Future:
+        SetBrowseText(UserString("PRODUCTION_WND_AVAILABILITY_UNAVAILABLE"));
+        break;
+    }
+
     Disable(type != Availability::Available);
     if (m_hull_panel)
         m_hull_panel->SetAvailability(type);
