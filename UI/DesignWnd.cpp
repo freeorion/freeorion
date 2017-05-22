@@ -254,8 +254,7 @@ namespace {
 
         bool MoveBefore(const boost::uuids::uuid& moved_uuid, const boost::uuids::uuid& next_uuid);
 
-        std::list<boost::uuids::uuid>::const_iterator
-        Erase(std::list<boost::uuids::uuid>::const_iterator erasee);
+        void Erase(const boost::uuids::uuid& erased_uuid);
 
     private:
         /** Save the design with the original filename or throw out_of_range. */
@@ -504,20 +503,16 @@ namespace {
         return true;
     }
 
-    std::list<boost::uuids::uuid>::const_iterator SavedDesignsManager::Erase(
-        std::list<boost::uuids::uuid>::const_iterator erasee)
-    {
-        if (erasee == m_ordered_uuids.end())
-            return erasee;
-
-        const auto& saved_design_it = m_saved_designs.find(*erasee);
+    void SavedDesignsManager::Erase(const boost::uuids::uuid& erased_uuid) {
+        const auto& saved_design_it = m_saved_designs.find(erased_uuid);
         if (saved_design_it != m_saved_designs.end()) {
             const auto& file = saved_design_it->second.second;
             boost::filesystem::remove(file);
-            m_saved_designs.erase(*erasee);
+            m_saved_designs.erase(erased_uuid);
         }
 
-        return m_ordered_uuids.erase(erasee);
+        const auto& uuid_it = std::find(m_ordered_uuids.begin(), m_ordered_uuids.end(), erased_uuid);
+        m_ordered_uuids.erase(uuid_it);
     }
 
     /** Save the design with the original filename or throw out_of_range..*/
