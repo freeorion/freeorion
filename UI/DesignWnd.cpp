@@ -4200,13 +4200,18 @@ void DesignWnd::ReplaceDesign() {
         HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
         DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
     }
+    m_main_panel->DesignChangedSignal();
 }
 
-void DesignWnd::DesignChanged()
-{ m_detail_panel->SetIncompleteDesign(m_main_panel->GetIncompleteDesign()); }
+void DesignWnd::DesignChanged() {
+    m_detail_panel->SetIncompleteDesign(m_main_panel->GetIncompleteDesign());
+    m_base_selector->Reset();
+}
 
-void DesignWnd::DesignNameChanged()
-{ m_detail_panel->SetIncompleteDesign(m_main_panel->GetIncompleteDesign()); }
+void DesignWnd::DesignNameChanged() {
+    m_detail_panel->SetIncompleteDesign(m_main_panel->GetIncompleteDesign());
+    m_base_selector->Reset();
+}
 
 void DesignWnd::EnableOrderIssuing(bool enable/* = true*/)
 { m_base_selector->EnableOrderIssuing(enable); }
