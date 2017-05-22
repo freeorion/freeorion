@@ -2498,7 +2498,13 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ShipDesignOrder>(empire_id, new_design_id, *design));
-
+    };
+    
+    // delete design from saved designs 
+    auto delete_saved_design_action = [&design, this]() {
+        DebugLogger() << "BasesListBox::BaseRightClicked Delete Saved Design" << design->Name();
+        GetSavedDesignsManager().Erase(design->UUID());
+        Populate();
     };
 
     // add all saved designs
@@ -2510,6 +2516,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     // create popup menu with a commands in it
     CUIPopupMenu popup(pt.x, pt.y);
     popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"), false, false, delete_saved_design_action));
     popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   false, false, add_all_saved_designs_action));
     popup.Run();
 

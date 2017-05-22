@@ -3784,6 +3784,9 @@ Save Design File
 DESIGN_ADD
 Add Design to Empire Designs
 
+DESIGN_WND_DELETE_SAVED
+Delete Saved Design
+
 DESIGN_ADD_ALL
 Add All Saved Designs to Empire
 
