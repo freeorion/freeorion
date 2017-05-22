@@ -3851,33 +3851,28 @@ void DesignWnd::MainPanel::DesignChanged() {
 
     const auto new_design_name = ValidatedDesignName();
 
-    if (m_replaced_design_uuid) {
-        if (const auto saved_design = GetSavedDesignsManager().GetDesign(*m_replaced_design_uuid)) {
-
-            // A changed saved design can be replaced
-            if (cur_design && !(*cur_design == *saved_design)) {
-                m_replace_button->SetText(UserString("DESIGN_WND_UPDATE_SAVED"));
-                m_replace_button->SetBrowseInfoWnd(
-                    std::make_shared<TextBrowseWnd>(
-                        UserString("DESIGN_WND_UPDATE_SAVED"),
-                        boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL_SAVED"))
-                                       % saved_design->Name()
-                                       % new_design_name)));
-                m_replace_button->Disable(false);
-            }
-
-            // A new saved design can always be created
-            m_confirm_button->SetText(UserString("DESIGN_WND_ADD_SAVED"));
-            m_confirm_button->SetBrowseInfoWnd(
+    if (const auto& saved_design = EditingSavedDesign()) {
+        // A changed saved design can be replaced
+        if (cur_design && !(*cur_design == **saved_design)) {
+            m_replace_button->SetText(UserString("DESIGN_WND_UPDATE_SAVED"));
+            m_replace_button->SetBrowseInfoWnd(
                 std::make_shared<TextBrowseWnd>(
-                    UserString("DESIGN_WND_ADD_SAVED"),
-                    boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL_SAVED"))
+                    UserString("DESIGN_WND_UPDATE_SAVED"),
+                    boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL_SAVED"))
+                                   % (*saved_design)->Name()
                                    % new_design_name)));
-            m_confirm_button->Disable(false);
-            return;
+            m_replace_button->Disable(false);
         }
 
-        // UUID is currently unused as a lookup method for current designs
+        // A new saved design can always be created
+        m_confirm_button->SetText(UserString("DESIGN_WND_ADD_SAVED"));
+        m_confirm_button->SetBrowseInfoWnd(
+            std::make_shared<TextBrowseWnd>(
+                UserString("DESIGN_WND_ADD_SAVED"),
+                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_ADD_DETAIL_SAVED"))
+                               % new_design_name)));
+        m_confirm_button->Disable(false);
+        return;
     }
 
     if (const auto existing_design_name = CurrentDesignIsRegistered()) {
@@ -3892,15 +3887,13 @@ void DesignWnd::MainPanel::DesignChanged() {
         return;
     }
 
-    if (m_replaced_design_id) {
-        if (const auto& replaced_ship_design = GetShipDesign(*m_replaced_design_id)) {
-            m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
-                UserString("DESIGN_WND_UPDATE"),
-                boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_DETAIL"))
-                               % replaced_ship_design->Name()
-                               % new_design_name)));
-            m_replace_button->Disable(false);
-        }
+    if (const auto& replaced_ship_design = EditingCurrentDesign()) {
+        m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
+            UserString("DESIGN_WND_UPDATE_OLD"),
+            boost::io::str(FlexibleFormat(UserString("DESIGN_WND_UPDATE_OLD_DETAIL"))
+                           % (*replaced_ship_design)->Name()
+                           % new_design_name)));
+        m_replace_button->Disable(false);
     }
 
     m_confirm_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
