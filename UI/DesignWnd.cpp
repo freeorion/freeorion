@@ -3357,7 +3357,7 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingSavedDesign() co
 
 boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() const {
     // Is there a valid replaced_uuid that indexes a saved design?
-    if (!m_replaced_design_id || !GetCurrentDesignsManager().IsKnown(*m_replaced_design_id))
+    if (!m_replaced_design_id /*|| !GetCurrentDesignsManager().IsKnown(*m_replaced_design_id)*/)
         return boost::none;
 
     const auto maybe_design = GetShipDesign(*m_replaced_design_id);
@@ -4119,18 +4119,14 @@ void DesignWnd::ShowHullTypeInEncyclopedia(const std::string& hull_type)
 void DesignWnd::ShowShipDesignInEncyclopedia(int design_id)
 { m_detail_panel->SetDesign(design_id); }
 
-int DesignWnd::AddDesign() {
+std::pair<int, boost::uuids::uuid> DesignWnd::AddDesign() {
     try {
-        int empire_id = HumanClientApp::GetApp()->EmpireID();
-        const Empire* empire = GetEmpire(empire_id);
-        if (!empire) return INVALID_DESIGN_ID;
-
         std::vector<std::string> parts = m_main_panel->Parts();
         const std::string& hull_name = m_main_panel->Hull();
 
         if (!ShipDesign::ValidDesign(hull_name, parts)) {
             ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
-            return INVALID_DESIGN_ID;
+            return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
         }
 
         std::string name = m_main_panel->ValidatedDesignName();
@@ -4141,45 +4137,69 @@ int DesignWnd::AddDesign() {
         if (const HullType* hull = GetHullType(hull_name))
             icon = hull->Icon();
 
-        const auto uuid = boost::uuids::random_generator()();
+        auto new_uuid = boost::uuids::random_generator()();
 
         // create design from stuff chosen in UI
         ShipDesign design(std::invalid_argument(""), name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                          hull_name, parts, icon, "some model", false, false, uuid);
+                          hull_name, parts, icon, "some model", false, false, new_uuid);
 
         int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
 
-        CurrentDesignsInsertBefore(new_design_id, INVALID_OBJECT_ID);
+        // If editing a saved design insert into saved designs
+        if (m_main_panel->EditingSavedDesign()) {
+            auto& manager = GetSavedDesignsManager();
+            manager.InsertBefore(design, manager.GetOrderedDesignUUIDs().begin());
+            new_uuid = *manager.GetOrderedDesignUUIDs().begin();
 
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
+            // Otherwise insert into current empire designs
+        } else {
+            int empire_id = HumanClientApp::GetApp()->EmpireID();
+            const Empire* empire = GetEmpire(empire_id);
+            if (!empire) return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
+
+            auto& manager = GetCurrentDesignsManager();
+            const auto& all_ids = manager.AllOrderedIDs();
+            manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_OBJECT_ID : *all_ids.begin());
+
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, new_design_id, design));
+        }
 
         m_main_panel->DesignChangedSignal();
 
         DebugLogger() << "Added new design: " << design.Name();
 
-        return new_design_id;
+        return std::make_pair(new_design_id, new_uuid);
     } catch (std::invalid_argument&) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
-        return INVALID_DESIGN_ID;
+        return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
     }
 }
 
 void DesignWnd::ReplaceDesign() {
-    int new_design_id = AddDesign();
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    int replaced_id = m_main_panel->GetReplacedDesignID() ? *m_main_panel->GetReplacedDesignID() : INVALID_DESIGN_ID;
+    // If replacing a saved design
+    if (const auto replaced_design = m_main_panel->EditingSavedDesign()) {
+        const auto& new_uuid = AddDesign().second;
+        auto& manager = GetSavedDesignsManager();
 
-    if (new_design_id == INVALID_DESIGN_ID) return;
+        manager.MoveBefore(new_uuid, (*replaced_design)->UUID());
+        manager.Erase((*replaced_design)->UUID());
 
-    CurrentDesignsMoveBefore(new_design_id, replaced_id);
-    CurrentDesignsObsolete(replaced_id);
+    } else if (const auto replaced_design = m_main_panel->EditingCurrentDesign()) {
+        int new_design_id = AddDesign().first;
+        int empire_id = HumanClientApp::GetApp()->EmpireID();
+        int replaced_id = (*replaced_design)->ID();
 
-    //move it to before the replaced design
-    HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, new_design_id, replaced_id ));
-    //remove old design
-    HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
-    DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
+        if (new_design_id == INVALID_DESIGN_ID) return;
+
+        auto& manager = GetCurrentDesignsManager();
+        manager.MoveBefore(new_design_id, replaced_id);
+        manager.Obsolete(replaced_id);
+
+        // Remove the old id.
+        HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
+        DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
+    }
 }
 
 void DesignWnd::DesignChanged()
