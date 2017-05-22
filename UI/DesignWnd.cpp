@@ -2631,8 +2631,7 @@ public:
     mutable boost::signals2::signal<void (int)>                 DesignSelectedSignal;
     mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&)>
                                                                 DesignComponentsSelectedSignal;
-    mutable boost::signals2::signal<void (const std::string&, const std::vector<std::string>&,
-                                          const std::string&, const std::string&)>
+    mutable boost::signals2::signal<void (const boost::uuids::uuid&)>
                                                                 SavedDesignSelectedSignal;
 
     mutable boost::signals2::signal<void (const ShipDesign*)>   DesignClickedSignal;
@@ -2640,7 +2639,6 @@ public:
 
 private:
     void            DoLayout();
-    void            SavedDesignSelectedSlot(const boost::uuids::uuid& design_name);
 
     GG::TabWnd*                m_tabs;
     EmptyHullsListBox*         m_hulls_list;           // empty hulls on which a new design can be based
@@ -2704,7 +2702,7 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_saved_designs_list->Resize(GG::Pt(GG::X(10), GG::Y(10)));
     m_tabs->AddWnd(m_saved_designs_list, UserString("DESIGN_WND_SAVED_DESIGNS"));
     m_saved_designs_list->SavedDesignSelectedSignal.connect(
-        boost::bind(&DesignWnd::BaseSelector::SavedDesignSelectedSlot, this, _1));
+        DesignWnd::BaseSelector::SavedDesignSelectedSignal);
     m_saved_designs_list->DesignClickedSignal.connect(
         DesignWnd::BaseSelector::DesignClickedSignal);
 
@@ -2812,19 +2810,6 @@ void DesignWnd::BaseSelector::DoLayout() {
     top = top + BUTTON_HEIGHT + BUTTON_SEPARATION;
 
     m_tabs->SizeMove(GG::Pt(left, top), ClientSize() - GG::Pt(LEFT_PAD, TOP_PAD));
-}
-
-void DesignWnd::BaseSelector::SavedDesignSelectedSlot(const boost::uuids::uuid& design_uuid) {
-    const ShipDesign* design = GetSavedDesignsManager().GetDesign(design_uuid);
-    if (!design)
-        return;
-
-    const std::string& name = design->Name();       // should automatically look up name and description in stringtable if design->LookupInStringtable() is true
-    const std::string& desc = design->Description();
-    const std::string& hull = design->Hull();
-    const std::vector<std::string>& parts = design->Parts();
-
-    SavedDesignSelectedSignal(hull, parts, name, desc);
 }
 
 
@@ -3206,6 +3191,8 @@ public:
     void            SetHull(const HullType* hull);
     void            SetDesign(const ShipDesign* ship_design);                   //!< sets the displayed design by setting the appropriate hull and parts
     void            SetDesign(int design_id);                                   //!< sets the displayed design by setting the appropriate hull and parts
+    /** SetDesign to the design with \p uuid from the SavedDesignManager. */
+    void            SetDesign(const boost::uuids::uuid& uuid);
 
     /** sets design hull and parts to those specified */
     void            SetDesignComponents(const std::string& hull,
@@ -3629,6 +3616,9 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
 
 void DesignWnd::MainPanel::SetDesign(int design_id)
 { SetDesign(GetShipDesign(design_id)); }
+
+void DesignWnd::MainPanel::SetDesign(const boost::uuids::uuid& uuid)
+{ SetDesign(GetSavedDesignsManager().GetDesign(uuid)); }
 
 void DesignWnd::MainPanel::SetDesignComponents(const std::string& hull,
                                                const std::vector<std::string>& parts)
@@ -4059,7 +4049,7 @@ DesignWnd::DesignWnd(GG::X w, GG::Y h) :
     m_base_selector->DesignComponentsSelectedSignal.connect(
         boost::bind(&MainPanel::SetDesignComponents, m_main_panel, _1, _2));
     m_base_selector->SavedDesignSelectedSignal.connect(
-        boost::bind(&MainPanel::SetDesignComponents, m_main_panel, _1, _2));
+        boost::bind(static_cast<void (MainPanel::*)(const boost::uuids::uuid&)>(&MainPanel::SetDesign), m_main_panel, _1));
 
     m_base_selector->DesignClickedSignal.connect(
         boost::bind(static_cast<void (EncyclopediaDetailPanel::*)(const ShipDesign*)>(&EncyclopediaDetailPanel::SetItem), m_detail_panel, _1));
