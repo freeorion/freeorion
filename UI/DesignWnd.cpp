@@ -2513,11 +2513,22 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
         manager.AddSavedDesignsToCurrentDesigns();
     };
 
+    // toggle the option to add all saved designs at game start.
+    const auto add_all = GetOptionsDB().Get<bool>("auto-add-saved-designs");
+    auto toggle_add_all_saved_game_start_action = [add_all]() {
+        GetOptionsDB().Set<bool>("auto-add-saved-designs", !add_all);
+    };
+
+    
     // create popup menu with a commands in it
     CUIPopupMenu popup(pt.x, pt.y);
     popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD"),       false, false, add_design_action));
     popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_SAVED"), false, false, delete_saved_design_action));
-    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_ADD_ALL"),   false, false, add_all_saved_designs_action));
+    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_NOW"),   false, false, add_all_saved_designs_action));
+    popup.AddMenuItem(GG::MenuItem(true)); // separator
+    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_SAVED_START"), false, add_all,
+                                   toggle_add_all_saved_game_start_action));
+
     popup.Run();
 
 }

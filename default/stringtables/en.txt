@@ -3787,8 +3787,11 @@ Add Design to Empire Designs
 DESIGN_WND_DELETE_SAVED
 Delete Saved Design
 
-DESIGN_ADD_ALL
-Add All Saved Designs to Empire
+DESIGN_WND_ADD_ALL_SAVED_NOW
+Add All Saved Designs to Empire now
+
+DESIGN_WND_ADD_ALL_SAVED_START
+Add All Saved Designs at Game Start
 
 DESIGN_NAME_DEFAULT
 Custom Ship Design
