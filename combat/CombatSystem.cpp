@@ -1090,10 +1090,9 @@ namespace {
             for (int object_id : valid_target_object_ids) {
                 std::shared_ptr<const UniverseObject> obj = combat_info.objects.Object(object_id);
                 for (int attacking_empire_id : combat_info.empire_ids) {
-                    if (attacking_empire_id == ALL_EMPIRES
-                        && ObjectAttackableByMonsters(obj, monster_detection))
-                    {
-                        empire_infos[ALL_EMPIRES].target_ids.insert(object_id);
+                    if (attacking_empire_id == ALL_EMPIRES) {
+                        if (ObjectAttackableByMonsters(obj, monster_detection))
+                            empire_infos[ALL_EMPIRES].target_ids.insert(object_id);
                     } else if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
                         empire_infos[attacking_empire_id].target_ids.insert(object_id);
                     }
@@ -1114,11 +1113,11 @@ namespace {
 
             bool no_one{true};
             for (int attacking_empire_id : combat_info.empire_ids) {
-                if (attacking_empire_id == ALL_EMPIRES
-                    && ObjectAttackableByMonsters(obj, monster_detection))
-                {
-                    ss << "monsters and ";
-                    no_one = false;
+                if (attacking_empire_id == ALL_EMPIRES) {
+                    if (ObjectAttackableByMonsters(obj, monster_detection)) {
+                        ss << "monsters and ";
+                        no_one = false;
+                    }
                 } else if (ObjectAttackableByEmpire(obj, attacking_empire_id)) {
                     if (!no_one)
                         ss << ", ";
