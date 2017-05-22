@@ -4180,16 +4180,21 @@ std::pair<int, boost::uuids::uuid> DesignWnd::AddDesign() {
 }
 
 void DesignWnd::ReplaceDesign() {
+    const auto new_id_and_uuid = AddDesign();
+    const auto& new_uuid = new_id_and_uuid.second;
+    const auto new_design_id = new_id_and_uuid.first;
+    
     // If replacing a saved design
     if (const auto replaced_design = m_main_panel->EditingSavedDesign()) {
-        const auto& new_uuid = AddDesign().second;
         auto& manager = GetSavedDesignsManager();
 
         manager.MoveBefore(new_uuid, (*replaced_design)->UUID());
         manager.Erase((*replaced_design)->UUID());
 
+        // Update the replaced design on the bench
+        m_main_panel->SetDesign(manager.GetDesign(new_uuid));
+
     } else if (const auto replaced_design = m_main_panel->EditingCurrentDesign()) {
-        int new_design_id = AddDesign().first;
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         int replaced_id = (*replaced_design)->ID();
 
@@ -4201,8 +4206,13 @@ void DesignWnd::ReplaceDesign() {
 
         // Remove the old id.
         HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
+
+        // Update the replaced design on the bench
+        m_main_panel->SetDesign(new_design_id);
+
         DebugLogger() << "Replaced design #" << replaced_id << " with #" << new_design_id ;
     }
+    
     m_main_panel->DesignChangedSignal();
 }
 
