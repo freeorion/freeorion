@@ -3161,6 +3161,11 @@ public:
     //@}
 
     /** \name Accessors */ //@{
+    /** If editing a current design return a ShipDesign* otherwise boost::none. */
+    boost::optional<const ShipDesign*> EditingCurrentDesign() const;
+    /** If editing a saved design return a ShipDesign* otherwise boost::none. */
+    boost::optional<const ShipDesign*> EditingSavedDesign() const;
+
     const std::vector<std::string>      Parts() const;              //!< returns vector of names of parts in slots of current shown design.  empty slots are represented with empty stri
     const std::string&                  Hull() const;               //!< returns name of hull of current shown design
     bool                                IsDesignNameValid() const;  //!< checks design name validity
@@ -3342,6 +3347,28 @@ DesignWnd::MainPanel::MainPanel(const std::string& config_name) :
     DesignChanged(); // Initialize components that rely on the current state of the design.
 
     DoLayout();
+}
+
+boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingSavedDesign() const {
+    // Is there a valid replaced_uuid that indexes a saved design?
+    if (!m_replaced_design_uuid)
+        return boost::none;
+
+    const auto maybe_design = GetSavedDesignsManager().GetDesign(*m_replaced_design_uuid);
+    if (!maybe_design)
+        return boost::none;
+    return maybe_design;
+}
+
+boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() const {
+    // Is there a valid replaced_uuid that indexes a saved design?
+    if (!m_replaced_design_id || !GetCurrentDesignsManager().IsKnown(*m_replaced_design_id))
+        return boost::none;
+
+    const auto maybe_design = GetShipDesign(*m_replaced_design_id);
+    if (!maybe_design)
+        return boost::none;
+    return maybe_design;
 }
 
 const std::vector<std::string> DesignWnd::MainPanel::Parts() const {
