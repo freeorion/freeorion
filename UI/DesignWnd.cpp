@@ -2304,8 +2304,23 @@ BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* c
     return row;
 }
 
-BasesListBox::Row* MonstersListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd)
-{ return nullptr; }
+BasesListBox::Row* MonstersListBox::ChildrenDraggedAwayCore(const GG::Wnd* const wnd) {
+    // Replace the design that was dragged away
+    const auto design_row = dynamic_cast<const BasesListBox::CompletedDesignListBoxRow*>(wnd);
+    if (!design_row)
+        return nullptr;
+
+    int design_id = design_row->DesignID();
+    const ShipDesign* design = GetShipDesign(design_id);
+    if (!design) {
+        ErrorLogger() << "Missing design with id " << design_id;
+        return nullptr;
+    }
+
+    const auto row_size = ListRowSize();
+    auto row = new CompletedDesignListBoxRow(row_size.x, row_size.y, *design);
+    return row;
+}
 
 
 void EmptyHullsListBox::EnableOrderIssuing(bool enable/* = true*/)
