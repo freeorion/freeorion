@@ -1649,7 +1649,8 @@ public:
 
     /** \name Structors */ //@{
     BasesListBox(const BasesListBox::AvailabilityManager& availabilities_state,
-                 const boost::optional<std::string>& drop_type = boost::none);
+                 const boost::optional<std::string>& drop_type = boost::none,
+                 const boost::optional<std::string>& empty_prompt = boost::none);
     //@}
 
     /** \name Accessors */ //@{
@@ -1871,8 +1872,10 @@ BasesListBox::CompletedDesignListBoxRow::CompletedDesignListBoxRow(
 const std::string BasesListBox::BASES_LIST_BOX_DROP_TYPE = "BasesListBoxRow";
 
 BasesListBox::BasesListBox(const BasesListBox::AvailabilityManager& availabilities_state,
-                           const boost::optional<std::string>& drop_type) :
-    QueueListBox(drop_type,  UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
+                           const boost::optional<std::string>& drop_type,
+                           const boost::optional<std::string>& empty_prompt /*= boost::none*/) :
+    QueueListBox(drop_type,
+                 empty_prompt ? *empty_prompt : UserString("ADD_FIRST_DESIGN_DESIGN_QUEUE_PROMPT")),
     m_empire_id_shown(ALL_EMPIRES),
     m_availabilities_state(availabilities_state)
 {
@@ -2013,7 +2016,7 @@ class EmptyHullsListBox : public BasesListBox {
     public:
     EmptyHullsListBox(const BasesListBox::AvailabilityManager& availabilities_state,
                       const boost::optional<std::string>& drop_type = boost::none) :
-        BasesListBox::BasesListBox(availabilities_state, drop_type)
+        BasesListBox::BasesListBox(availabilities_state, drop_type, UserString("ADD_FIRST_DESIGN_HULL_QUEUE_PROMPT"))
     {};
 
     void EnableOrderIssuing(bool enable = true) override;
