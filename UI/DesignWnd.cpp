@@ -3394,8 +3394,7 @@ const std::string& DesignWnd::MainPanel::Hull() const {
 }
 
 bool DesignWnd::MainPanel::IsDesignNameValid() const {
-    // Whitespace probably shouldn't be OK either.
-    // make sure name isn't blank.  TODO: prevent duplicate names?
+    // All whitespace probably shouldn't be OK either.
     return !m_design_name->Text().empty();
 }
 
