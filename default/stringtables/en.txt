@@ -5145,19 +5145,21 @@ Design Window
 DESIGN_WINDOW_ARTICLE_TEXT
 '''The [[DESIGN_WINDOW_ARTICLE_TITLE]] is for viewing or altering the designs of monsters or ships.
 
+Designs and ship parts can be [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]], [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] or [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]].  [[PRODUCTION_WND_AVAILABILITY_AVAILABLE]] designs and parts are unrestricted for use by the empire.  [[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]] designs and parts are restricted in some way. Some unavailable designs and parts may be unlocked by researching associated [[encyclopedia ENC_TECH]]. [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] designs are obsoleted/unobsoleted at will by the empire.  [[PRODUCTION_WND_AVAILABILITY_OBSOLETE]] designs will not appear in the Production Window and only appear in [[DESIGN_WINDOW_ARTICLE_TITLE]] when the "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" filter is toggled to display them.  Ship parts can not be obsoleted.
+
 There are four sub windows:  [[DESIGN_WND_STARTS]], [[DESIGN_WND_PART_PALETTE_TITLE]], [[DESIGN_WND_MAIN_PANEL_TITLE]] and the [[MAP_BTN_PEDIA]].
 
 
-[[DESIGN_WND_STARTS]] has four tabs: empty [[DESIGN_WND_HULLS]], [[DESIGN_WND_FINISHED_DESIGNS]] designs, [[DESIGN_WND_SAVED_DESIGNS]] designs from previous games and [[DESIGN_WND_MONSTERS]] designs for inspection.  Drag or double click hulls, designs or monsters to edit/examine them on the workbench.
+[[DESIGN_WND_STARTS]] has four tabs: empty [[DESIGN_WND_HULLS]], [[DESIGN_WND_FINISHED_DESIGNS]] designs, [[DESIGN_WND_SAVED_DESIGNS]] designs from previous games and [[DESIGN_WND_MONSTERS]] designs for inspection.  Drag or double click hulls, designs or monsters to edit/examine them on the workbench.  Designs can be drag-and-dropped within the list to change their order.  
 
-[[DESIGN_WND_FINISHED_DESIGNS]] designs appear in the same order as on the Production Window.  Designs can be drag-and-dropped within the list to change their order.  Delete designs with "[[DESIGN_OBSOLETE]]" from the context menu.  Ships already queued for production will continue to be built with the old design.  Save designs to disk for future games with "[[DESIGN_SAVE]]" from the context menu.
+[[DESIGN_WND_FINISHED_DESIGNS]] designs appear in the same order as on the Production Window.  The right click context menu provides several options.  Obsolete/unobsolete designs with "[[DESIGN_WND_OBSOLETE_DESIGN]]".  Ctrl click also obsoletes/unobsoletes designs.  Delete designs with "[[DESIGN_WND_DELETE_DESIGN]]".  Deleted designs can't be recovered. Ships already queued for production will continue to be built with the old obsolete/deleted design.  Rename designs with "[[DESIGN_RENAME]]".  Save designs to disk for future games with "[[DESIGN_SAVE]]".  Toggle the "[[DESIGN_WND_ADD_ALL_DEFAULT_START]]" option to use/not use the default designs in new games.
 
-Right click [[DESIGN_WND_SAVED_DESIGNS]] designs and copy a single or all saved designs to the empire's known designs. If "[[OPTIONS_ADD_SAVED_DESIGNS]]" is activated in the game settings, all the [[DESIGN_WND_SAVED_DESIGNS]] designs will be automatically imported at the beginning of a whole new game.
+Use the [[DESIGN_WND_SAVED_DESIGNS]] designs right click context menu to copy a single or all saved designs to the [[DESIGN_WND_FINISHED_DESIGNS]] designs. Ctrl click also copies a single design to the [[DESIGN_WND_FINISHED_DESIGNS]] designs.  Permanently remove a saved design with "[[DESIGN_WND_DELETE_SAVED]]".  Check "[[OPTIONS_ADD_SAVED_DESIGNS]]" to automaitcally import all the [[DESIGN_WND_SAVED_DESIGNS]] designs at the start of a new game.
 
 
 [[DESIGN_WND_PART_PALETTE_TITLE]] displays parts. Parts whose associated technology has been researched may be used in current designs.  Other parts can not be used because either the associated technology has not been researched or the part is only available to monsters.
 
-The "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]" and "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" filters on [[DESIGN_WND_STARTS]] and [[DESIGN_WND_PART_PALETTE_TITLE]] toggle the display of parts that the empire can currently use or that are restricted.  Some unavailable parts may be unlocked by researching associated [[encyclopedia ENC_TECH]].
+The "[[PRODUCTION_WND_AVAILABILITY_AVAILABLE]]", "[[PRODUCTION_WND_AVAILABILITY_UNAVAILABLE]]" and "[[PRODUCTION_WND_AVAILABILITY_OBSOLETE]]" filters on [[DESIGN_WND_STARTS]] and [[DESIGN_WND_PART_PALETTE_TITLE]] toggle the display of parts that the empire can currently use, that are restricted or that the empire has chosen to hide.
 
 The [[DESIGN_WND_PART_PALETTE_TITLE]] window has filters to display/hide entire categories of parts.
 
@@ -5168,9 +5170,9 @@ The current design may have internal, external and/or core [[encyclopedia SLOT_T
 
 Add a name and optionally a description to the design.
 
-Click "[[DESIGN_WND_ADD]]" to add the design to the end of the list of [[DESIGN_WND_FINISHED_DESIGNS]] designs.
+Click "[[DESIGN_WND_ADD]]" or "[[DESIGN_WND_ADD_SAVED]]" to add the design to the beginning of the list of designs.
 
-Click "[[DESIGN_WND_UPDATE]]" to replace the most recently selected [[DESIGN_WND_FINISHED_DESIGNS]] design with a new design.  "[[DESIGN_WND_UPDATE]]" is only active if this design was started from a design in the [[DESIGN_WND_FINISHED_DESIGNS]] list.  "[[DESIGN_WND_UPDATE]]" only changes the design, any ships already queued for production or already produced will continue to use the old design.
+Click "[[DESIGN_WND_UPDATE]]" or "[[DESIGN_WND_UPDATE_SAVED]]" to replace the most recently selected [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] design with a new design.  "[[DESIGN_WND_UPDATE]]" or "[[DESIGN_WND_UPDATE_SAVED]]" is only active if this design was started from a design in the [[DESIGN_WND_FINISHED_DESIGNS]] or [[DESIGN_WND_SAVED_DESIGNS]] list respectively.  "[[DESIGN_WND_UPDATE]]" only changes the design, any ships already queued for production or already produced will continue to use the old design.
 '''
 
 FLEET_MOVEMENT_ARTICLE_TITLE
