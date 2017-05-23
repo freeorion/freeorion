@@ -3793,6 +3793,18 @@ Add All Saved Designs to Empire now
 DESIGN_WND_ADD_ALL_SAVED_START
 Add All Saved Designs at Game Start
 
+DESIGN_WND_ADD_ALL_DEFAULT_START
+Add All Default Designs at Game Start
+
+DESIGN_WND_OBSOLETE_DESIGN
+Obsolete Design
+
+DESIGN_WND_UNOBSOLETE_DESIGN
+Un-Obsolete Design
+
+DESIGN_WND_DELETE_DESIGN
+Delete Design
+
 DESIGN_NAME_DEFAULT
 Custom Ship Design
 
