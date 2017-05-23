@@ -2797,9 +2797,6 @@ void DesignWnd::BaseSelector::Reset() {
     const int empire_id = HumanClientApp::GetApp()->EmpireID();
     SetEmpireShown(empire_id, false);
 
-    if (!m_tabs)
-        return;
-
     if (GG::Wnd* wnd = m_tabs->CurrentWnd()) {
         if (BasesListBox* base_box = dynamic_cast<BasesListBox*>(wnd))
             base_box->Populate();
@@ -2807,10 +2804,8 @@ void DesignWnd::BaseSelector::Reset() {
 }
 
 void DesignWnd::BaseSelector::SetEmpireShown(int empire_id, bool refresh_list) {
-    if (m_hulls_list)
-        m_hulls_list->SetEmpireShown(empire_id, refresh_list);
-    if (m_designs_list)
-        m_designs_list->SetEmpireShown(empire_id, refresh_list);
+    m_hulls_list->SetEmpireShown(empire_id, refresh_list);
+    m_designs_list->SetEmpireShown(empire_id, refresh_list);
     m_saved_designs_list->SetEmpireShown(empire_id, refresh_list);
 }
 
@@ -2837,22 +2832,16 @@ void DesignWnd::BaseSelector::ToggleAvailability(Availability::Enum type) {
 
     button->SetCheck(state);
 
-    if (m_hulls_list)
-        m_hulls_list->Populate();
-    if (m_designs_list)
-        m_designs_list->Populate();
+    m_hulls_list->Populate();
+    m_designs_list->Populate();
     m_saved_designs_list->Populate();
 }
 
 void DesignWnd::BaseSelector::EnableOrderIssuing(bool enable/* = true*/) {
-    if (m_hulls_list)
-        m_hulls_list->EnableOrderIssuing(enable);
-    if (m_designs_list)
-        m_designs_list->EnableOrderIssuing(enable);
-    if (m_saved_designs_list)
-        m_saved_designs_list->EnableOrderIssuing(enable);
-    if (m_monsters_list)
-        m_monsters_list->EnableOrderIssuing(enable);
+    m_hulls_list->EnableOrderIssuing(enable);
+    m_designs_list->EnableOrderIssuing(enable);
+    m_saved_designs_list->EnableOrderIssuing(enable);
+    m_monsters_list->EnableOrderIssuing(enable);
 }
 
 void DesignWnd::BaseSelector::DoLayout() {
