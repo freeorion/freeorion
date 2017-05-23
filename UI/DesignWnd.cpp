@@ -245,8 +245,6 @@ namespace {
 
         const ShipDesign* GetDesign(const boost::uuids::uuid& uuid) const;
 
-        void AddSavedDesignsToCurrentDesigns(bool suppress_immediate_execution = false);
-
         void SaveManifest();
 
         std::list<boost::uuids::uuid>::const_iterator
@@ -285,7 +283,51 @@ namespace {
         auto designs = dynamic_cast<SavedDesignsManager*>(
             ClientUI::GetClientUI()->GetShipDesignManager()->SavedDesigns());
         return *designs;
-    }    
+    }
+
+    /** Add \p design to the front of \p empire_id's list of current designs. */
+    void AddSavedDesignToCurrentDesigns(
+        const boost::uuids::uuid& uuid, const int empire_id, bool suppress_immediate_execution = false)
+    {
+        const auto empire = GetEmpire(empire_id);
+        if (!empire) {
+            ErrorLogger() << "AddSavedDesignsToCurrentDesigns HumanClient Does Not Control an Empire";
+            return;
+        }
+
+        const auto design = GetSavedDesignsManager().GetDesign(uuid);
+        if (!design) {
+            ErrorLogger() << "AddSavedDesignsToCurrentDesigns missing expected uuid " << uuid;
+            return;
+        }
+
+        // Is it the same as an existing design
+        const auto& empire_designs = empire->ShipDesigns();
+        const auto is_same_design = [&design](const int id) { return *GetShipDesign(id) == *design; };
+        bool already_got = std::any_of(empire_designs.begin(), empire_designs.end(), is_same_design);
+        if (already_got) {
+            ErrorLogger() << "SavedDesignsToCurrentDesigns saved design already present: "
+                          << design->Name();
+            return;
+        }
+
+        DebugLogger() << "Add saved design " << design->Name() << " to current designs.";
+
+        // Give it a new UUID so that the empire design is distinct.
+        auto new_current_design = *design;
+        new_current_design.SetUUID(boost::uuids::random_generator()());
+
+        auto& current_manager = GetCurrentDesignsManager();
+        const auto& all_ids = current_manager.AllOrderedIDs();
+        int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
+        current_manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_OBJECT_ID : *all_ids.begin());
+
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ShipDesignOrder>(empire_id, new_design_id, new_current_design),
+            suppress_immediate_execution);
+    }
+
+
 
     //////////////////////////////////////////////////
     // SavedDesignsManager implementations          
@@ -397,53 +439,6 @@ namespace {
         if (it == m_saved_designs.end())
             return nullptr;
         return it->second.first.get();
-    }
-
-    /* Causes the human client Empire to add all saved designs. */
-    void SavedDesignsManager::AddSavedDesignsToCurrentDesigns(bool suppress_immediate_execution /*= false*/) {
-        const auto empire = GetEmpire(m_empire_id);
-        if (!empire) {
-            DebugLogger() << "AddSavedDesignsToCurrentDesigns HumanClient Does Not Control an Empire";
-            return;
-        }
-        
-        DebugLogger() << "AddSavedDesignsToCurrentDesigns";
-        for (const auto uuid: m_ordered_uuids) {            
-            const auto found_it = m_saved_designs.find(uuid);
-            if (found_it == m_saved_designs.end()) {
-                ErrorLogger() << "AddSavedDesignsToCurrentDesigns missing expected uuid " << uuid;
-            }            
-            auto& ship_design_on_disk = *(found_it->second.first);
-            bool already_got = false;
-            for (int id : empire->ShipDesigns()) {
-                const ShipDesign& ship_design = *GetShipDesign(id);
-                if (ship_design == ship_design_on_disk) {
-                    already_got = true;
-                    break;
-                }
-            }
-            
-            if (already_got) {
-                DebugLogger() << "SavedDesignsToCurrentDesigns saved design already present: "
-                              << ship_design_on_disk.Name();
-                continue;
-            }
-
-            DebugLogger() << "SavedDesignsToCurrentDesigns adding saved design: "
-                          << ship_design_on_disk.Name();
-            int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-            CurrentDesignsInsertBefore(new_design_id, INVALID_OBJECT_ID);
-
-            // Give it a new UUID so that the empire design is distinct.
-            const auto disk_uuid = ship_design_on_disk.UUID();
-            ship_design_on_disk.SetUUID(boost::uuids::random_generator()());
-
-            HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(m_empire_id, new_design_id, ship_design_on_disk),
-                suppress_immediate_execution);
-
-            ship_design_on_disk.SetUUID(disk_uuid);
-        }
     }
 
     void SavedDesignsManager::SaveManifest() {
@@ -695,7 +690,8 @@ void ShipDesignManager::StartGame(int empire_id) {
        && GetOptionsDB().Get<bool>("auto-add-saved-designs"))
     {
         DebugLogger() << "Adding saved designs to empire.";
-        saved_designs->AddSavedDesignsToCurrentDesigns(suppress_immediate_execution);
+        for (const auto& uuid : saved_designs->GetOrderedDesignUUIDs())
+            AddSavedDesignToCurrentDesigns(uuid, empire_id, suppress_immediate_execution);
     }
 
 }
@@ -2517,9 +2513,10 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     };
 
     // add all saved designs
-    auto add_all_saved_designs_action = [&manager]() {
-        DebugLogger() << "BasesListBox::BaseRightClicked AddSavedDesignsToCurrentDesigns";
-        manager.AddSavedDesignsToCurrentDesigns();
+    auto add_all_saved_designs_action = [&manager, &empire_id]() {
+        DebugLogger() << "BasesListBox::BaseRightClicked AddAllSavedDesignsToCurrentDesigns";
+        for (const auto& uuid : manager.GetOrderedDesignUUIDs())
+            AddSavedDesignToCurrentDesigns(uuid, empire_id);
     };
 
     // toggle the option to add all saved designs at game start.
