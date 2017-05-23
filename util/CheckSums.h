@@ -68,6 +68,13 @@ namespace CheckSums {
         if (p)
             CheckSumCombine(sum, *p);
     }
+    template <class T>
+    void CheckSumCombine(unsigned int& sum, const typename std::unique_ptr<T>& p)
+    {
+        TraceLogger() << "CheckSumCombine(unique_ptr<T>): " << typeid(p).name();
+        if (p)
+            CheckSumCombine(sum, *p);
+    }
 
     // pairs (including map value types)
     template <class C, class D>
