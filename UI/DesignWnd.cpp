@@ -200,7 +200,9 @@ namespace {
         void InsertBefore(const int id, const int next_id);
         bool MoveBefore(const int moved_id, const int next_id);
         std::list<int>::const_iterator Obsolete(const int id);
+        void Remove(const int id);
 
+        bool IsKnown(const int id) const;
         bool IsObsolete(const int id) const;
         void SetObsolete(const int id, const bool obsolete);
 
@@ -519,6 +521,16 @@ namespace {
         return true;
     }
 
+    std::list<int>::const_iterator CurrentShipDesignManager::Obsolete(const int id) {
+        const auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id);
+        if (existing_it == m_ordered_ids.end())
+            return existing_it;
+
+        const auto retval = std::next(existing_it);
+        m_id_to_obsolete[id] = true;
+        return retval;
+    }
+
     void SavedDesignsManager::Erase(const boost::uuids::uuid& erased_uuid) {
         const auto& saved_design_it = m_saved_designs.find(erased_uuid);
         if (saved_design_it != m_saved_designs.end()) {
@@ -614,19 +626,21 @@ namespace {
         return true;
     }
 
-    std::list<int>::const_iterator CurrentShipDesignManager::Obsolete(const int id) {
-        const auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id);
-        if (existing_it == m_ordered_ids.end())
-            return existing_it;
-
-        const auto retval = std::next(existing_it);
-        m_id_to_obsolete[id] = true;
-        return retval;
+    void CurrentShipDesignManager::Remove(const int id) {
+        m_ordered_ids.erase(std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id));
+        m_id_to_obsolete.erase(id);
     }
 
+    bool CurrentShipDesignManager::IsKnown(const int id) const
+    { return m_id_to_obsolete.count(id); }
+    
     bool CurrentShipDesignManager::IsObsolete(const int id) const {
         const auto it = m_id_to_obsolete.find(id);
-        return (it == m_id_to_obsolete.end()) ? false : it->second;
+        bool is_unknown = (it == m_id_to_obsolete.end());
+        if (is_unknown)
+            WarnLogger() << "CurrentShipDesignManager::IsObsolete queried about unknown id " << id;
+        
+        return is_unknown ? false : it->second;
     }
 
     void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
@@ -3365,7 +3379,7 @@ boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingSavedDesign() co
 
 boost::optional<const ShipDesign*> DesignWnd::MainPanel::EditingCurrentDesign() const {
     // Is there a valid replaced_uuid that indexes a saved design?
-    if (!m_replaced_design_id /*|| !GetCurrentDesignsManager().IsKnown(*m_replaced_design_id)*/)
+    if (!m_replaced_design_id || !GetCurrentDesignsManager().IsKnown(*m_replaced_design_id))
         return boost::none;
 
     const auto maybe_design = GetShipDesign(*m_replaced_design_id);
