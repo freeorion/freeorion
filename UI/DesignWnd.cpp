@@ -270,6 +270,27 @@ namespace {
                                      boost::filesystem::path>>  m_saved_designs;
     };
 
+
+    //////////////////////////////////////////////////
+    // Common Reused Actions                        //
+    //////////////////////////////////////////////////
+
+    CurrentShipDesignManager& GetCurrentDesignsManager() {
+        auto designs = dynamic_cast<CurrentShipDesignManager*>(
+            ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns());
+        return *designs;
+    }
+
+    SavedDesignsManager& GetSavedDesignsManager() {
+        auto designs = dynamic_cast<SavedDesignsManager*>(
+            ClientUI::GetClientUI()->GetShipDesignManager()->SavedDesigns());
+        return *designs;
+    }    
+
+    //////////////////////////////////////////////////
+    // SavedDesignsManager implementations          
+    //////////////////////////////////////////////////
+
     std::vector<int> SavedDesignsManager::OrderedIDs() const {
         std::vector<int> retval;
         for (const auto uuid: m_ordered_uuids) {
@@ -621,18 +642,6 @@ namespace {
 //////////////////////////////////////////////////
 // ShipDesignManager                            //
 //////////////////////////////////////////////////
-
-CurrentShipDesignManager& GetCurrentDesignsManager() {
-    auto designs = dynamic_cast<CurrentShipDesignManager*>(
-        ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns());
-    return *designs;
-}
-
-SavedDesignsManager& GetSavedDesignsManager() {
-    auto designs = dynamic_cast<SavedDesignsManager*>(
-        ClientUI::GetClientUI()->GetShipDesignManager()->SavedDesigns());
-    return *designs;
-}
 
 ShipDesignManager::ShipDesignManager() :
     m_current_designs(new CurrentShipDesignManager(INVALID_OBJECT_ID)),
