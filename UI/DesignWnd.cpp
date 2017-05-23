@@ -2472,18 +2472,18 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
 void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                                const GG::Flags<GG::ModKey>& modkeys)
 {
-    CompletedDesignListBoxRow* design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
+    const auto design_row = dynamic_cast<CompletedDesignListBoxRow*>(*it);
     if (!design_row)
         return;
 
-    int design_id = design_row->DesignID();
-    const ShipDesign* design = GetShipDesign(design_id);
+    const auto design_id = design_row->DesignID();
+    const auto design = GetShipDesign(design_id);
     if (!design)
         return;
 
     DesignRightClickedSignal(design);
 
-    int client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const auto client_empire_id = HumanClientApp::GetApp()->EmpireID();
 
     DebugLogger() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
