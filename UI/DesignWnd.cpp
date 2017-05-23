@@ -199,7 +199,6 @@ namespace {
 
         void InsertBefore(const int id, const int next_id);
         bool MoveBefore(const int moved_id, const int next_id);
-        std::list<int>::const_iterator Obsolete(const int id);
         void Remove(const int id);
 
         bool IsKnown(const int id) const;
@@ -212,25 +211,6 @@ namespace {
         std::unordered_map<int, bool> m_id_to_obsolete;
 
     };
-
-    // Some utility functions to hide the casting
-    void CurrentDesignsInsertBefore(const int id, const int next_id) {
-        auto current_designs = dynamic_cast<CurrentShipDesignManager*>(
-            ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns());
-        current_designs->InsertBefore(id, next_id);
-    }
-
-    void CurrentDesignsMoveBefore(const int moved_id, const int next_id) {
-        auto current_designs = dynamic_cast<CurrentShipDesignManager*>(
-            ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns());
-        current_designs->MoveBefore(moved_id, next_id);
-    }
-
-    void CurrentDesignsObsolete(const int id) {
-        auto current_designs = dynamic_cast<CurrentShipDesignManager*>(
-            ClientUI::GetClientUI()->GetShipDesignManager()->CurrentDesigns());
-        current_designs->Obsolete(id);
-    }
 
     class SavedDesignsManager : public ShipDesignManager::Designs {
     public:
@@ -564,16 +544,6 @@ namespace {
         return true;
     }
 
-    std::list<int>::const_iterator CurrentShipDesignManager::Obsolete(const int id) {
-        const auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id);
-        if (existing_it == m_ordered_ids.end())
-            return existing_it;
-
-        const auto retval = std::next(existing_it);
-        m_id_to_obsolete[id] = true;
-        return retval;
-    }
-
     void SavedDesignsManager::Erase(const boost::uuids::uuid& erased_uuid) {
         const auto& saved_design_it = m_saved_designs.find(erased_uuid);
         if (saved_design_it != m_saved_designs.end()) {
@@ -592,23 +562,6 @@ namespace {
 
         WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
     }
-
-    void SavedDesignsManager::SaveDesign(int design_id) {
-        const ShipDesign* design = GetShipDesign(design_id);
-        if (!design)
-            return;
-
-        // Save with the original filename if possible
-        if (m_saved_designs.count(design->UUID())) {
-            SaveDesign(design->UUID());
-            return;
-        }
-
-        const auto save_path = CreateSaveFileNameForDesign(*design);
-
-        WriteToFile(save_path, design->Dump());
-    }
-
 
     std::vector<int> CurrentShipDesignManager::OrderedIDs() const {
         std::vector<int> retval;
@@ -2629,7 +2582,7 @@ void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it
 
     control->Resize(ListRowSize());
 
-    CurrentDesignsMoveBefore(design_id, insert_before_id);
+    GetCurrentDesignsManager().MoveBefore(design_id, insert_before_id);
     HumanClientApp::GetApp()->Orders()
         .IssueOrder(std::make_shared<ShipDesignOrder>(EmpireID(), design_id, insert_before_id));
 }

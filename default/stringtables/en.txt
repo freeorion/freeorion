@@ -3874,9 +3874,6 @@ Conflicting Design
 DESIGN_COMPONENT_CONFLICT_DETAIL
 A shipdesign cannot contain both %1% and %2%.
 
-DESIGN_OBSOLETE
-Obsolete Design
-
 DESIGN_WND_ADD
 Add New Design
 
