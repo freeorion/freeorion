@@ -231,6 +231,10 @@ def generateOrders():  # pylint: disable=invalid-name
         try:
             # early abort if no empire. no need to do meter calculations
             # on last-seen gamestate if nothing can be ordered anyway...
+            #
+            # note that doneTurn() is issued on behalf of the client network
+            # id, not the empire id, so not having a correct empire id does
+            # not invalidate doneTurn()            
             fo.doneTurn()
         except Exception as e:
             print_error(e)
