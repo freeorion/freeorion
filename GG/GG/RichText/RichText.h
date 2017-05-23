@@ -59,7 +59,7 @@ public:
     };
 
     //! The type of the object where we store control factories of tags.
-    typedef std::map<std::string, IBlockControlFactory*> BLOCK_FACTORY_MAP;
+    typedef std::map<std::string, std::shared_ptr<IBlockControlFactory>> BLOCK_FACTORY_MAP;
 
     //! The special tag that is used to represent plaintext.
     // Allows you to register a custom control for displaying plaintext.
@@ -92,7 +92,7 @@ public:
     void SetBlockFactoryMap(const std::shared_ptr<BLOCK_FACTORY_MAP>& block_factory_map);
 
     //! Registers a factory in the default block factory map.
-    static int RegisterDefaultBlock(const std::string& tag, IBlockControlFactory* factory);
+    static int RegisterDefaultBlock(const std::string& tag, std::shared_ptr<IBlockControlFactory>&& factory);
 
     //! Access the default block factory map.
     static std::shared_ptr<RichText::BLOCK_FACTORY_MAP>& DefaultBlockFactoryMap();

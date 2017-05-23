@@ -153,7 +153,7 @@ namespace GG {
     };
 
     // Register image block as the image tag handler.
-    static int dummy = RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG, new ImageBlockFactory());
+    static int dummy = RichText::RegisterDefaultBlock(ImageBlock::IMAGE_TAG, std::make_shared<ImageBlockFactory>());
 
     //! Set the root path from which to look for images with the factory.
     bool ImageBlock::SetImagePath(RichText::IBlockControlFactory* factory, const fs::path& path)
@@ -176,7 +176,7 @@ namespace GG {
         // Find the image block factory from the default map and give it the path.
         RichText::BLOCK_FACTORY_MAP::const_iterator factory_it = RichText::DefaultBlockFactoryMap()->find(IMAGE_TAG);
         if (factory_it != RichText::DefaultBlockFactoryMap()->end()) {
-            if (ImageBlockFactory* factory = dynamic_cast<ImageBlockFactory*>(factory_it->second)) {
+            if (ImageBlockFactory* factory = dynamic_cast<ImageBlockFactory*>(factory_it->second.get())) {
                 return SetImagePath(factory, path);
             }
         }

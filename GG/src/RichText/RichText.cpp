@@ -313,10 +313,10 @@ namespace GG {
         return tag_map;
     }
 
-    int RichText::RegisterDefaultBlock(const std::string& tag, IBlockControlFactory* factory)
+    int RichText::RegisterDefaultBlock(const std::string& tag, std::shared_ptr<IBlockControlFactory>&& factory)
     {
         Font::RegisterKnownTag(tag);
-        (*DefaultBlockFactoryMap()) [tag] = factory;
+        (*DefaultBlockFactoryMap()) [tag] = std::move(factory);
 
         // Return a dummy to enable static registration.
         return 0;

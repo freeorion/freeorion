@@ -70,5 +70,5 @@ namespace GG {
 
     // Register text block as the default plaintext handler.
     static int dummy =
-        RichText::RegisterDefaultBlock(RichText::PLAINTEXT_TAG, new TextBlockFactory());
+        RichText::RegisterDefaultBlock(RichText::PLAINTEXT_TAG, std::make_shared<TextBlockFactory>());
 }
