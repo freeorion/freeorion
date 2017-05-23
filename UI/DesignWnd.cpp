@@ -2758,6 +2758,12 @@ DesignWnd::BaseSelector::BaseSelector(const std::string& config_name) :
     m_monsters_list(nullptr),
     m_availabilities_state{false, true, false}
 {
+    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
+    m_obsolete_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_OBSOLETE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
+    AttachChild(m_obsolete_button);
+    m_obsolete_button->CheckedSignal.connect(
+        boost::bind(&DesignWnd::BaseSelector::ToggleAvailability, this, Availability::Obsolete));
+    m_obsolete_button->SetCheck(m_availabilities_state.GetAvailability(Availability::Obsolete));
 
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     m_available_button = new CUIStateButton(UserString("PRODUCTION_WND_AVAILABILITY_AVAILABLE"), GG::FORMAT_CENTER, std::make_shared<CUILabelButtonRepresenter>());
@@ -2889,16 +2895,19 @@ void DesignWnd::BaseSelector::DoLayout() {
     const GG::Y TOP_PAD(2);
     const GG::X AVAILABLE_WIDTH = ClientWidth() - 2*LEFT_PAD;
     const int BUTTON_SEPARATION = 3;
-    const GG::X BUTTON_WIDTH = (AVAILABLE_WIDTH - BUTTON_SEPARATION) / 2;
+    const GG::X BUTTON_WIDTH = (AVAILABLE_WIDTH - 2*BUTTON_SEPARATION) / 3;
     const int PTS = ClientUI::Pts();
     const GG::Y BUTTON_HEIGHT(PTS * 2);
 
     GG::Y top(TOP_PAD);
     GG::X left(LEFT_PAD);
 
+    auto& m_obsolete_button = std::get<Availability::Obsolete>(m_availabilities_buttons);
     auto& m_available_button = std::get<Availability::Available>(m_availabilities_buttons);
     auto& m_unavailable_button = std::get<Availability::Future>(m_availabilities_buttons);
 
+    m_obsolete_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
+    left = left + BUTTON_WIDTH + BUTTON_SEPARATION;
     m_available_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
     left = left + BUTTON_WIDTH + BUTTON_SEPARATION;
     m_unavailable_button->SizeMove(GG::Pt(left, top), GG::Pt(left + BUTTON_WIDTH, top + BUTTON_HEIGHT));
