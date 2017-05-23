@@ -2407,7 +2407,7 @@ void SavedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG::Pt
     if (!design)
         return;
     if (modkeys & GG::MOD_KEY_CTRL)
-        manager.AddSavedDesignToCurrentDesigns(design->UUID());
+        AddSavedDesignToCurrentDesigns(design->UUID(), EmpireID());
     else 
         DesignClickedSignal(design);
 }
@@ -2479,34 +2479,30 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
 void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt,
                                            const GG::Flags<GG::ModKey>& modkeys)
 {
-    SavedDesignListBoxRow* design_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
+    const auto design_row = dynamic_cast<SavedDesignListBoxRow*>(*it);
     if (!design_row)
         return;
     const auto design_uuid = design_row->DesignUUID();
-    SavedDesignsManager& manager = GetSavedDesignsManager();
-    const ShipDesign* design = manager.GetDesign(design_uuid);
+    auto& manager = GetSavedDesignsManager();
+    const auto design = manager.GetDesign(design_uuid);
     if (!design)
         return;
-
-    int empire_id = HumanClientApp::GetApp()->EmpireID();
-    const Empire* empire = GetEmpire(empire_id);
-    if (!empire)
-        return;
+    const auto empire_id = EmpireID();
 
     DesignRightClickedSignal(design);
 
-    DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design->Name();;
+    DebugLogger() << "BasesListBox::BaseRightClicked on design name : " << design->Name();
 
     // Context menu actions
     // add design to empire
-    auto add_design_action = [&manager, &design]() {
-        manager.AddSavedDesignToCurrentDesigns(design->UUID());
+    auto add_design_action = [&manager, &design, &empire_id]() {
+        AddSavedDesignToCurrentDesigns(design->UUID(), empire_id);
     };
     
     // delete design from saved designs 
-    auto delete_saved_design_action = [&design, this]() {
+    auto delete_saved_design_action = [&manager, &design, this]() {
         DebugLogger() << "BasesListBox::BaseRightClicked Delete Saved Design" << design->Name();
-        GetSavedDesignsManager().Erase(design->UUID());
+        manager.Erase(design->UUID());
         Populate();
     };
 
