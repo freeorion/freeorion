@@ -2519,6 +2519,12 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
         GetSavedDesignsManager().InsertBefore(saved_design, GetSavedDesignsManager().GetOrderedDesignUUIDs().begin());
     };
 
+    // toggle the option to add all saved designs at game start.
+    const auto add_defaults = GetOptionsDB().Get<bool>("auto-add-default-designs");
+    auto toggle_add_default_designs_at_game_start_action = [add_defaults]() {
+        GetOptionsDB().Set<bool>("auto-add-default-designs", !add_defaults);
+    };
+
     // create popup menu with a commands in it
     CUIPopupMenu popup(pt.x, pt.y);
 
@@ -2540,6 +2546,10 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
 
     // save design
     popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_SAVE"), false, false, save_design_action));
+
+    popup.AddMenuItem(GG::MenuItem(true)); // separator
+    popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_ADD_ALL_DEFAULT_START"), false, add_defaults,
+                                   toggle_add_default_designs_at_game_start_action));
 
     popup.Run();
 }
