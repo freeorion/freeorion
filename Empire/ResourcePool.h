@@ -10,6 +10,7 @@
 #include <vector>
 #include <set>
 
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
 class ResourceCenter;
 class PopCenter;
 class UniverseObject;
@@ -69,8 +70,8 @@ private:
     std::set<std::set<int>>                 m_connected_system_groups;                          ///< sets of systems between and in which objects can share this pool's resource
     std::map<std::set<int>, float>          m_connected_object_groups_resource_output;          ///< cached map from connected group of objects that can share resources, to how much resource is output by ResourceCenters in the group.  regenerated during update from other state information.
     std::map<std::set<int>, float>          m_connected_object_groups_resource_target_output;   ///< cached map from connected group of objects that can share resources, to how much resource would, if all meters equaled their target meters, be output by ResourceCenters in the group.  regenerated during update from other state information.
-    int                                     m_stockpile_object_id;                              ///< object id where stockpile for this pool is located
-    float                                   m_stockpile;                                        ///< current stockpiled amount of resource
+    int                                     m_stockpile_object_id = INVALID_OBJECT_ID;          ///< object id where stockpile for this pool is located
+    float                                   m_stockpile = 0.0f;                                 ///< current stockpiled amount of resource
     ResourceType                            m_type;                                             ///< what kind of resource does this pool hold?
 
     friend class boost::serialization::access;

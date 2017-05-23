@@ -15,33 +15,15 @@
 
 #include <boost/lexical_cast.hpp>
 
-FO_COMMON_API extern const int INVALID_DESIGN_ID;
 class Species;
 const Species* GetSpecies(const std::string& name);
 
-Ship::Ship() :
-    UniverseObject(),
-    m_design_id(INVALID_DESIGN_ID),
-    m_fleet_id(INVALID_OBJECT_ID),
-    m_ordered_scrapped(false),
-    m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
-    m_ordered_invade_planet_id(INVALID_OBJECT_ID),
-    m_ordered_bombard_planet_id(INVALID_OBJECT_ID),
-    m_last_turn_active_in_combat(INVALID_GAME_TURN),
-    m_produced_by_empire_id(ALL_EMPIRES),
-    m_arrived_on_turn(INVALID_GAME_TURN)
+Ship::Ship()
 {}
 
 Ship::Ship(int empire_id, int design_id, const std::string& species_name,
            int produced_by_empire_id/* = ALL_EMPIRES*/) :
-    UniverseObject(),
     m_design_id(design_id),
-    m_fleet_id(INVALID_OBJECT_ID),
-    m_ordered_scrapped(false),
-    m_ordered_colonize_planet_id(INVALID_OBJECT_ID),
-    m_ordered_invade_planet_id(INVALID_OBJECT_ID),
-    m_ordered_bombard_planet_id(INVALID_OBJECT_ID),
-    m_last_turn_active_in_combat(INVALID_GAME_TURN),
     m_species_name(species_name),
     m_produced_by_empire_id(produced_by_empire_id),
     m_arrived_on_turn(CurrentTurn())

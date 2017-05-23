@@ -140,18 +140,9 @@ CUIWnd::CUIWnd(const std::string& wnd_name,
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
     m_minimizable(flags & MINIMIZABLE),
-    m_minimized(false),
     m_pinable(flags & PINABLE),
-    m_pinned(false),
     m_drag_offset(-GG::X1, -GG::Y1),
-    m_mouse_in_resize_tab(false),
-    m_config_save(true),
-    m_config_name(AddWindowOptions(config_name, x, y, w, h, visible, false, false)),
-    m_close_button(nullptr),
-    m_minimize_button(nullptr),
-    m_pin_button(nullptr),
-    m_vertex_buffer(),
-    m_buffer_indices()
+    m_config_name(AddWindowOptions(config_name, x, y, w, h, visible, false, false))
 {
     Init(wnd_name);
     if (!m_config_name.empty()) {
@@ -166,18 +157,9 @@ CUIWnd::CUIWnd(const std::string& wnd_name, GG::Flags<GG::WndFlag> flags, const 
     m_resizable(flags & GG::RESIZABLE),
     m_closable(flags & CLOSABLE),
     m_minimizable(flags & MINIMIZABLE),
-    m_minimized(false),
     m_pinable(flags & PINABLE),
-    m_pinned(false),
     m_drag_offset(-GG::X1, -GG::Y1),
-    m_mouse_in_resize_tab(false),
-    m_config_save(true),
-    m_config_name(AddWindowOptions(config_name, INVALID_POS, INVALID_POS, 1, 1, visible, false, false)),
-    m_close_button(nullptr),
-    m_minimize_button(nullptr),
-    m_pin_button(nullptr),
-    m_vertex_buffer(),
-    m_buffer_indices()
+    m_config_name(AddWindowOptions(config_name, INVALID_POS, INVALID_POS, 1, 1, visible, false, false))
 { Init(wnd_name); }
 
 void CUIWnd::Init(const std::string& wnd_name) {

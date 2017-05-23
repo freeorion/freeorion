@@ -163,19 +163,19 @@ private:
     PlanetType      m_type;
     PlanetType      m_original_type;
     PlanetSize      m_size;
-    float           m_orbital_period;
-    float           m_initial_orbital_position;
-    float           m_rotational_period;
-    float           m_axial_tilt;
+    float           m_orbital_period = 1.0f;
+    float           m_initial_orbital_position = 0.0f;
+    float           m_rotational_period = 1.0f;
+    float           m_axial_tilt = 23.0f;
 
     std::set<int>   m_buildings;
 
-    bool            m_just_conquered;
-    bool            m_is_about_to_be_colonized;
-    bool            m_is_about_to_be_invaded;
-    bool            m_is_about_to_be_bombarded;
-    int             m_ordered_given_to_empire_id;
-    int             m_last_turn_attacked_by_ship;
+    bool            m_just_conquered = false;
+    bool            m_is_about_to_be_colonized = false;
+    bool            m_is_about_to_be_invaded = false;
+    bool            m_is_about_to_be_bombarded = false;
+    int             m_ordered_given_to_empire_id = ALL_EMPIRES;
+    int             m_last_turn_attacked_by_ship = -1;
 
     std::string     m_surface_texture;  // intentionally not serialized; set by local effects
 

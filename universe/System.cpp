@@ -18,29 +18,14 @@
 #include <boost/lexical_cast.hpp>
 #include <stdexcept>
 
-namespace {
-    const int SYSTEM_ORBITS = 7;
-}
-
 System::System() :
-    UniverseObject(),
-    m_star(INVALID_STAR_TYPE),
-    m_last_turn_battle_here(INVALID_GAME_TURN),
-    m_overlay_texture(),
-    m_overlay_size(1.0)
-{
-    m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
-}
+    m_star(INVALID_STAR_TYPE)
+{}
 
 System::System(StarType star, const std::string& name, double x, double y) :
     UniverseObject(name, x, y),
-    m_star(star),
-    m_last_turn_battle_here(INVALID_GAME_TURN),
-    m_overlay_texture(),
-    m_overlay_size(1.0)
+    m_star(star)
 {
-    m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
-
     //DebugLogger() << "System::System(" << star << ", " << orbits << ", " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
         throw std::invalid_argument("System::System : Attempted to create a system \"" +
@@ -55,13 +40,8 @@ System::System(StarType star, const std::map<int, bool>& lanes_and_holes,
                const std::string& name, double x, double y) :
     UniverseObject(name, x, y),
     m_star(star),
-    m_starlanes_wormholes(lanes_and_holes),
-    m_last_turn_battle_here(INVALID_GAME_TURN),
-    m_overlay_texture(),
-    m_overlay_size(1.0)
+    m_starlanes_wormholes(lanes_and_holes)
 {
-    m_orbits.assign(SYSTEM_ORBITS, INVALID_OBJECT_ID);
-
     //DebugLogger() << "System::System(" << star << ", " << orbits << ", (StarlaneMap), " << name << ", " << x << ", " << y << ")";
     if (m_star < INVALID_STAR_TYPE || NUM_STAR_TYPES < m_star)
         throw std::invalid_argument("System::System : Attempted to create a system \"" +

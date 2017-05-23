@@ -61,13 +61,7 @@ public:
 protected:
     friend class Universe;
     /** \name Structors */ //@{
-    Building() :
-        UniverseObject(),
-        m_building_type(),
-        m_planet_id(INVALID_OBJECT_ID),
-        m_ordered_scrapped(false),
-        m_produced_by_empire_id(ALL_EMPIRES)
-    {}
+    Building() {}
 
     Building(int empire_id, const std::string& building_type,
              int produced_by_empire_id = ALL_EMPIRES);
@@ -85,9 +79,9 @@ protected:
 
 private:
     std::string m_building_type;
-    int         m_planet_id;
-    bool        m_ordered_scrapped;
-    int         m_produced_by_empire_id;
+    int         m_planet_id = INVALID_OBJECT_ID;
+    bool        m_ordered_scrapped = false;
+    int         m_produced_by_empire_id = ALL_EMPIRES;
 
     friend class boost::serialization::access;
     template <class Archive>

@@ -292,19 +292,12 @@ const std::string VarText::METER_TYPE_TAG = "metertype";
 
 
 VarText::VarText() :
-    m_template_string(""),
-    m_stringtable_lookup_flag(false),
-    m_variables(),
-    m_text(),
-    m_validated(false)
+    m_stringtable_lookup_flag(false)
 {}
 
 VarText::VarText(const std::string& template_string, bool stringtable_lookup_template/* = true*/) :
     m_template_string(template_string),
-    m_stringtable_lookup_flag(stringtable_lookup_template),
-    m_variables(),
-    m_text(),
-    m_validated(false)
+    m_stringtable_lookup_flag(stringtable_lookup_template)
 {}
 
 const std::string& VarText::GetText() const {

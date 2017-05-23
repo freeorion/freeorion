@@ -49,13 +49,13 @@ public:
     void        BackPropagate();                    ///< sets previous equal to initial, then sets initial equal to current
     //@}
 
-    static const float DEFAULT_VALUE;               ///< value assigned to current or initial when resetting or when no value is specified in a constructor
+    static constexpr float DEFAULT_VALUE = 0.0f;    ///< value assigned to current or initial when resetting or when no value is specified in a constructor
     static const float LARGE_VALUE;                 ///< a very large number, which is useful to set current to when it will be later clamped, to ensure that the result is the max value in the clamp range
     static const float INVALID_VALUE;               ///< sentinel value to indicate no valid value for this meter
 
 private:
-    float  m_current_value;
-    float  m_initial_value;
+    float  m_current_value = DEFAULT_VALUE;
+    float  m_initial_value = DEFAULT_VALUE;
 
     friend class boost::serialization::access;
     template <class Archive>

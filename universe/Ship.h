@@ -6,6 +6,10 @@
 
 #include "../util/Export.h"
 
+FO_COMMON_API extern const int ALL_EMPIRES;
+FO_COMMON_API extern const int INVALID_DESIGN_ID;
+FO_COMMON_API extern const int INVALID_GAME_TURN;
+FO_COMMON_API extern const int INVALID_OBJECT_ID;
 class ShipDesign;
 
 /** a class representing a single FreeOrion ship */
@@ -132,17 +136,17 @@ public:
     //@}
 
 private:
-    int             m_design_id;
-    int             m_fleet_id;
-    bool            m_ordered_scrapped;
-    int             m_ordered_colonize_planet_id;
-    int             m_ordered_invade_planet_id;
-    int             m_ordered_bombard_planet_id;
-    int             m_last_turn_active_in_combat;
+    int             m_design_id = INVALID_DESIGN_ID;
+    int             m_fleet_id = INVALID_OBJECT_ID;
+    bool            m_ordered_scrapped = false;
+    int             m_ordered_colonize_planet_id = INVALID_OBJECT_ID;
+    int             m_ordered_invade_planet_id = INVALID_OBJECT_ID;
+    int             m_ordered_bombard_planet_id = INVALID_OBJECT_ID;
+    int             m_last_turn_active_in_combat = INVALID_GAME_TURN;
     PartMeterMap    m_part_meters;
     std::string     m_species_name;
-    int             m_produced_by_empire_id;
-    int             m_arrived_on_turn;
+    int             m_produced_by_empire_id = ALL_EMPIRES;
+    int             m_arrived_on_turn = INVALID_GAME_TURN;
 
     friend class boost::serialization::access;
     template <class Archive>

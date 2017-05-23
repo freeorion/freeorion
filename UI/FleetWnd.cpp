@@ -1100,17 +1100,17 @@ private:
 
     boost::signals2::connection  m_fleet_connection;
 
-    GG::Control*        m_fleet_icon;
-    GG::Label*          m_fleet_name_text;
-    GG::Label*          m_fleet_destination_text;
-    GG::Button*         m_aggression_toggle;
-    GG::StaticGraphic*  m_gift_indicator;
-    ScanlineControl*    m_scanline_control;
+    GG::Control*        m_fleet_icon = nullptr;
+    GG::Label*          m_fleet_name_text = nullptr;
+    GG::Label*          m_fleet_destination_text = nullptr;
+    GG::Button*         m_aggression_toggle = nullptr;
+    GG::StaticGraphic*  m_gift_indicator = nullptr;
+    ScanlineControl*    m_scanline_control = nullptr;
 
     std::vector<std::pair<MeterType, StatisticIcon*>>   m_stat_icons;   // statistic icons and associated meter types
 
-    bool                m_selected;
-    bool                m_initialized;
+    bool                m_selected = false;
+    bool                m_initialized = false;
 };
 
 FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
@@ -1118,16 +1118,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int fleet_id) :
     m_fleet_id(fleet_id),
     m_system_id(INVALID_OBJECT_ID),
     m_is_new_fleet_drop_target(false),
-    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
-    m_fleet_icon(nullptr),
-    m_fleet_name_text(nullptr),
-    m_fleet_destination_text(nullptr),
-    m_aggression_toggle(nullptr),
-    m_gift_indicator(nullptr),
-    m_scanline_control(nullptr),
-    m_stat_icons(),
-    m_selected(false),
-    m_initialized(false)
+    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting())
 {
     RequirePreRender();
     SetChildClippingMode(ClipToClient);
@@ -1138,16 +1129,7 @@ FleetDataPanel::FleetDataPanel(GG::X w, GG::Y h, int system_id, bool new_fleet_d
     m_fleet_id(INVALID_OBJECT_ID),
     m_system_id(system_id),
     m_is_new_fleet_drop_target(new_fleet_drop_target),
-    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting()),
-    m_fleet_icon(nullptr),
-    m_fleet_name_text(nullptr),
-    m_fleet_destination_text(nullptr),
-    m_aggression_toggle(nullptr),
-    m_gift_indicator(nullptr),
-    m_scanline_control(nullptr),
-    m_stat_icons(),
-    m_selected(false),
-    m_initialized(false)
+    m_new_fleet_aggression(NewFleetsAggressiveOptionSetting())
 {
     RequirePreRender();
     SetChildClippingMode(ClipToClient);

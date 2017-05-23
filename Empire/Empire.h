@@ -26,10 +26,7 @@ public:
         m_description(description),
         m_graphic(graphic)
     {}
-    Alignment() :
-        m_name(),
-        m_description(),
-        m_graphic()
+    Alignment()
     {}
     const std::string&  Name() const;
     const std::string&  Description() const;
@@ -44,7 +41,6 @@ struct FO_COMMON_API ResearchQueue {
     /** The type of a single element in the research queue. */
     struct Element {
         Element() :
-            name(),
             empire_id(ALL_EMPIRES),
             allocated_rp(0.0f),
             turns_left(0),
@@ -157,7 +153,7 @@ struct FO_COMMON_API ProductionQueue {
         BuildType   build_type;
         // only one of these may be valid, depending on BuildType
         std::string name;
-        int         design_id;
+        int         design_id = INVALID_DESIGN_ID;
 
     private:
         friend class boost::serialization::access;
@@ -178,16 +174,16 @@ struct FO_COMMON_API ProductionQueue {
         ProductionItem  item;
         int             empire_id;
         int             ordered;                    ///< how many of item (blocks) to produce
-        int             blocksize;                  ///< size of block to produce (default=1)
+        int             blocksize = 1;              ///< size of block to produce (default=1)
         int             remaining;                  ///< how many left to produce
         int             location;                   ///< the ID of the UniverseObject at which this item is being produced
-        float           allocated_pp;               ///< PP allocated to this ProductionQueue Element by Empire production update
-        float           progress;                   ///< fraction of this item that is complete.
-        float           progress_memory;            ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
-        int             blocksize_memory;           ///< used along with progress_memory
-        int             turns_left_to_next_item;
-        int             turns_left_to_completion;
-        int             rally_point_id;
+        float           allocated_pp = 0.0f;        ///< PP allocated to this ProductionQueue Element by Empire production update
+        float           progress = 0.0f;            ///< fraction of this item that is complete.
+        float           progress_memory = 0.0f;     ///< updated by server turn processing; aides in allowing blocksize changes to be undone in same turn w/o progress loss
+        int             blocksize_memory = 1;       ///< used along with progress_memory
+        int             turns_left_to_next_item = -1;
+        int             turns_left_to_completion = -1;
+        int             rally_point_id = INVALID_OBJECT_ID;
         bool            paused;
 
         std::string Dump() const;
@@ -618,11 +614,11 @@ private:
     std::string                     m_name;                     ///< Empire's name
     std::string                     m_player_name;              ///< Empire's Player's name
     GG::Clr                         m_color;                    ///< Empire's color
-    int                             m_capital_id;               ///< the ID of the empire's capital planet
+    int                             m_capital_id = INVALID_OBJECT_ID;  ///< the ID of the empire's capital planet
 
     /** The source id is the id of any object owned by the empire.  It is
         mutable so that Source() can be const and still cache its result. */
-    mutable int                     m_source_id;
+    mutable int                     m_source_id = INVALID_OBJECT_ID;
 
     bool                            m_eliminated;               ///< Whether the empire has lost
     std::set<std::string>           m_victories;                ///< The ways that the empire has won, if any

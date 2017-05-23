@@ -90,11 +90,6 @@ namespace {
 ////////////////////////////////////////////////
 // XMLElement
 ////////////////////////////////////////////////
-XMLElement::XMLElement(const std::string& tag, bool root) :
-    m_tag(tag),
-    m_root(root)
-{}
-
 const std::string& XMLElement::Tag() const
 { return m_tag; }
 

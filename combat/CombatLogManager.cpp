@@ -64,20 +64,10 @@ namespace {
     };
 }
 
-CombatParticipantState::CombatParticipantState():
-current_health(0.0f),
-max_health(0.0f)
-{
+CombatParticipantState::CombatParticipantState() {}
 
-}
-
-
-CombatParticipantState::CombatParticipantState(const UniverseObject& object):
-current_health(0.0f),
-max_health(0.0f)
-{
-    FillState(*this, object);
-}
+CombatParticipantState::CombatParticipantState(const UniverseObject& object)
+{ FillState(*this, object); }
 
 ////////////////////////////////////////////////
 // CombatLog

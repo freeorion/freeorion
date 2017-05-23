@@ -25,10 +25,7 @@ namespace {
 /////////////////////////////////////////////////
 Building::Building(int empire_id, const std::string& building_type,
                    int produced_by_empire_id/* = ALL_EMPIRES*/) :
-    UniverseObject(),
     m_building_type(building_type),
-    m_planet_id(INVALID_OBJECT_ID),
-    m_ordered_scrapped(false),
     m_produced_by_empire_id(produced_by_empire_id)
 {
     UniverseObject::SetOwner(empire_id);

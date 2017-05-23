@@ -134,18 +134,18 @@ private:
     void    CalculateCoordinate(double column_width, double row_height);
     void    CreateEdges(double x_margin, double column_width, double row_height);
 
-    int                 m_depth;        // depth 1 available at beginning 2 one requisite etc
-    int                 m_row;          // layout row, every node is organized in a straight tabelle system
+    int                 m_depth = -1;   // depth 1 available at beginning 2 one requisite etc
+    int                 m_row = -1;     // layout row, every node is organized in a straight tabelle system
     std::string         m_tech;         // name
-    double              m_x;            // left border
-    double              m_y;            // top border
+    double              m_x = 0.0;      // left border
+    double              m_y = 0.0;      // top border
     double              m_width;        // width
     double              m_height;       // height
     bool                m_place_holder; // is place holder
-    int                 m_children_rows;// height in cells for layouting
+    int                 m_children_rows = 0; // height in cells for layouting
     std::vector<Node*>  m_parents;      // parents
     std::vector<Node*>  m_children;     // children
-    Node*               m_primary_child;// primary child for layout
+    Node*               m_primary_child = nullptr; // primary child for layout
     std::vector<Edge*>  m_out_edges;    // outgoing edges
     const int           m_weight;       // height in rows
 

@@ -46,23 +46,9 @@ namespace {
 // Planet
 ////////////////////////////////////////////////////////////
 Planet::Planet() :
-    UniverseObject(),
-    PopCenter(),
-    ResourceCenter(),
     m_type(PT_TERRAN),
     m_original_type(PT_TERRAN),
-    m_size(SZ_MEDIUM),
-    m_orbital_period(1.0f),
-    m_initial_orbital_position(0.0f),
-    m_rotational_period(1.0f),
-    m_axial_tilt(23.0f),
-    m_just_conquered(false),
-    m_is_about_to_be_colonized(false),
-    m_is_about_to_be_invaded(false),
-    m_is_about_to_be_bombarded(false),
-    m_ordered_given_to_empire_id(ALL_EMPIRES),
-    m_last_turn_attacked_by_ship(-1),
-    m_surface_texture()
+    m_size(SZ_MEDIUM)
 {
     //DebugLogger() << "Planet::Planet()";
     // assumes PopCenter and ResourceCenter don't need to be initialized, due to having been re-created
@@ -70,23 +56,11 @@ Planet::Planet() :
 }
 
 Planet::Planet(PlanetType type, PlanetSize size) :
-    UniverseObject(),
-    PopCenter(),
-    ResourceCenter(),
     m_type(type),
     m_original_type(type),
     m_size(size),
-    m_orbital_period(1.0f),
     m_initial_orbital_position(RandZeroToOne() * 2 * 3.14159f),
-    m_rotational_period(1.0f),
-    m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERESHOLD),
-    m_just_conquered(false),
-    m_is_about_to_be_colonized(false),
-    m_is_about_to_be_invaded(false),
-    m_is_about_to_be_bombarded(false),
-    m_ordered_given_to_empire_id(ALL_EMPIRES),
-    m_last_turn_attacked_by_ship(-1),
-    m_surface_texture()
+    m_axial_tilt(RandZeroToOne() * HIGH_TILT_THERESHOLD)
 {
     //DebugLogger() << "Planet::Planet(" << type << ", " << size <<")";
     UniverseObject::Init();

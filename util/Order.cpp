@@ -24,11 +24,6 @@
 /////////////////////////////////////////////////////
 // Order
 /////////////////////////////////////////////////////
-Order::Order() :
-    m_empire(ALL_EMPIRES),
-    m_executed(false)
-{}
-
 void Order::ValidateEmpireID() const {
     if (!(GetEmpire(EmpireID())))
         throw std::runtime_error("Invalid empire ID specified for order.");
@@ -52,7 +47,6 @@ bool Order::UndoImpl() const
 // RenameOrder
 ////////////////////////////////////////////////
 RenameOrder::RenameOrder() :
-    Order(),
     m_object(INVALID_OBJECT_ID)
 {}
 
@@ -106,27 +100,17 @@ void RenameOrder::ExecuteImpl() const {
 // CreateFleetOrder
 ////////////////////////////////////////////////
 NewFleetOrder::NewFleetOrder() :
-    Order(),
-    m_fleet_names(),
     m_system_id(INVALID_OBJECT_ID)
 {}
 
 NewFleetOrder::NewFleetOrder(int empire, const std::string& fleet_name, int fleet_id,
                              int system_id, const std::vector<int>& ship_ids,
                              bool aggressive) :
-    Order(empire),
-    m_fleet_names(),
-    m_system_id(system_id),
-    m_fleet_ids(),
-    m_ship_id_groups(),
-    m_aggressives()
-{
-    m_fleet_names.push_back(fleet_name);
-    m_fleet_ids.push_back(fleet_id);
-    m_ship_id_groups.push_back(ship_ids);
-    m_aggressives.push_back(aggressive);
-}
-
+    NewFleetOrder(empire, std::vector<std::string>(1, fleet_name),
+                  std::vector<int>(1, fleet_id),
+                  system_id, std::vector<std::vector<int>>(1, ship_ids),
+                  std::vector<bool>(1, aggressive) )
+{}
 
 NewFleetOrder::NewFleetOrder(int empire, const std::vector<std::string>& fleet_names,
                              const std::vector<int>& fleet_ids, int system_id,
@@ -396,7 +380,6 @@ void FleetMoveOrder::ExecuteImpl() const {
 // FleetTransferOrder
 ////////////////////////////////////////////////
 FleetTransferOrder::FleetTransferOrder() :
-    Order(),
     m_dest_fleet(INVALID_OBJECT_ID)
 {}
 
@@ -483,7 +466,6 @@ void FleetTransferOrder::ExecuteImpl() const {
 // ColonizeOrder
 ////////////////////////////////////////////////
 ColonizeOrder::ColonizeOrder() :
-    Order(),
     m_ship(INVALID_OBJECT_ID),
     m_planet(INVALID_OBJECT_ID)
 {}
@@ -596,7 +578,6 @@ bool ColonizeOrder::UndoImpl() const {
 // InvadeOrder
 ////////////////////////////////////////////////
 InvadeOrder::InvadeOrder() :
-    Order(),
     m_ship(INVALID_OBJECT_ID),
     m_planet(INVALID_OBJECT_ID)
 {}
@@ -702,7 +683,6 @@ bool InvadeOrder::UndoImpl() const {
 // BombardOrder
 ////////////////////////////////////////////////
 BombardOrder::BombardOrder() :
-    Order(),
     m_ship(INVALID_OBJECT_ID),
     m_planet(INVALID_OBJECT_ID)
 {}
@@ -800,9 +780,7 @@ bool BombardOrder::UndoImpl() const {
 // ChangeFocusOrder
 ////////////////////////////////////////////////
 ChangeFocusOrder::ChangeFocusOrder() :
-    Order(),
-    m_planet(INVALID_OBJECT_ID),
-    m_focus()
+    m_planet(INVALID_OBJECT_ID)
 {}
 
 ChangeFocusOrder::ChangeFocusOrder(int empire, int planet, const std::string& focus) :
@@ -832,34 +810,24 @@ void ChangeFocusOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ResearchQueueOrder
 ////////////////////////////////////////////////
-ResearchQueueOrder::ResearchQueueOrder() :
-    Order(),
-    m_position(INVALID_INDEX),
-    m_remove(false),
-    m_pause(INVALID_PAUSE_RESUME)
+ResearchQueueOrder::ResearchQueueOrder()
 {}
 
 ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name) :
     Order(empire),
     m_tech_name(tech_name),
-    m_position(INVALID_INDEX),
-    m_remove(true),
-    m_pause(INVALID_PAUSE_RESUME)
+    m_remove(true)
 {}
 
 ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, int position) :
     Order(empire),
     m_tech_name(tech_name),
-    m_position(position),
-    m_remove(false),
-    m_pause(INVALID_PAUSE_RESUME)
+    m_position(position)
 {}
 
 ResearchQueueOrder::ResearchQueueOrder(int empire, const std::string& tech_name, bool pause, float dummy) :
     Order(empire),
     m_tech_name(tech_name),
-    m_position(INVALID_INDEX),
-    m_remove(false),
     m_pause(pause ? PAUSE : RESUME)
 {}
 
@@ -888,17 +856,7 @@ void ResearchQueueOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ProductionQueueOrder
 ////////////////////////////////////////////////
-ProductionQueueOrder::ProductionQueueOrder() :
-    Order(),
-    m_item(),
-    m_number(0),
-    m_location(INVALID_OBJECT_ID),
-    m_index(INVALID_INDEX),
-    m_new_quantity(INVALID_QUANTITY),
-    m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID),
-    m_pause(INVALID_PAUSE_RESUME)
+ProductionQueueOrder::ProductionQueueOrder()
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::ProductionItem& item,
@@ -907,89 +865,42 @@ ProductionQueueOrder::ProductionQueueOrder(int empire, const ProductionQueue::Pr
     m_item(item),
     m_number(number),
     m_location(location),
-    m_index(INVALID_INDEX),
-    m_new_quantity(INVALID_QUANTITY),
-    m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(pos),
-    m_rally_point_id(INVALID_OBJECT_ID),
-    m_pause(INVALID_PAUSE_RESUME)
+    m_new_index(pos)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, int new_blocksize) :
     Order(empire),
-    m_item(),
-    m_number(0),
-    m_location(INVALID_OBJECT_ID),
     m_index(index),
     m_new_quantity(new_quantity),
-    m_new_blocksize(new_blocksize),
-    m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID),
-    m_pause(INVALID_PAUSE_RESUME)
+    m_new_blocksize(new_blocksize)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_quantity, bool dummy) :
     Order(empire),
-    m_item(),
-    m_number(0),
-    m_location(INVALID_OBJECT_ID),
     m_index(index),
-    m_new_quantity(new_quantity),
-    m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID),
-    m_pause(INVALID_PAUSE_RESUME)
+    m_new_quantity(new_quantity)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int rally_point_id, bool dummy1, bool dummy2) :
     Order(empire),
-    m_item(),
-    m_number(0),
-    m_location(INVALID_OBJECT_ID),
     m_index(index),
-    m_new_quantity(INVALID_QUANTITY),
-    m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(INVALID_INDEX),
-    m_rally_point_id(rally_point_id),
-    m_pause(INVALID_PAUSE_RESUME)
+    m_rally_point_id(rally_point_id)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, int new_index) :
     Order(empire),
-    m_item(),
-    m_number(0),
-    m_location(INVALID_OBJECT_ID),
     m_index(index),
-    m_new_quantity(INVALID_QUANTITY),
-    m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(new_index),
-    m_rally_point_id(INVALID_OBJECT_ID),
-    m_pause(INVALID_PAUSE_RESUME)
+    m_new_index(new_index)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index) :
     Order(empire),
-    m_item(),
-    m_number(0),
-    m_location(INVALID_OBJECT_ID),
-    m_index(index),
-    m_new_quantity(INVALID_QUANTITY),
-    m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID),
-    m_pause(INVALID_PAUSE_RESUME)
+    m_index(index)
 {}
 
 ProductionQueueOrder::ProductionQueueOrder(int empire, int index, bool pause, float dummy) :
     Order(empire),
-    m_item(),
-    m_number(0),
-    m_location(INVALID_OBJECT_ID),
     m_index(index),
-    m_new_quantity(INVALID_QUANTITY),
-    m_new_blocksize(INVALID_QUANTITY),
-    m_new_index(INVALID_INDEX),
-    m_rally_point_id(INVALID_OBJECT_ID),
     m_pause(pause ? PAUSE : RESUME)
 {}
 
@@ -1041,52 +952,24 @@ void ProductionQueueOrder::ExecuteImpl() const {
 ////////////////////////////////////////////////
 // ShipDesignOrder
 ////////////////////////////////////////////////
-ShipDesignOrder::ShipDesignOrder() :
-    Order(),
-    m_design_id(INVALID_OBJECT_ID),
-    m_update_name_or_description(false),
-    m_delete_design_from_empire(false),
-    m_create_new_design(false),
-    m_move_design(false),
-    m_designed_on_turn(0),
-    m_is_monster(false),
-    m_name_desc_in_stringtable(false),
-    m_design_id_after(INVALID_OBJECT_ID)
+ShipDesignOrder::ShipDesignOrder()
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id_to_remember) :
     Order(empire),
-    m_design_id(existing_design_id_to_remember),
-    m_update_name_or_description(false),
-    m_delete_design_from_empire(false),
-    m_create_new_design(false),
-    m_move_design(false),
-    m_designed_on_turn(0),
-    m_is_monster(false),
-    m_name_desc_in_stringtable(false),
-    m_design_id_after(INVALID_OBJECT_ID)
+    m_design_id(existing_design_id_to_remember)
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_erase, bool dummy) :
     Order(empire),
     m_design_id(design_id_to_erase),
-    m_update_name_or_description(false),
-    m_delete_design_from_empire(true),
-    m_create_new_design(false),
-    m_move_design(false),
-    m_designed_on_turn(0),
-    m_is_monster(false),
-    m_name_desc_in_stringtable(false),
-    m_design_id_after(INVALID_OBJECT_ID)
+    m_delete_design_from_empire(true)
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design) :
     Order(empire),
     m_design_id(new_design_id),
-    m_update_name_or_description(false),
-    m_delete_design_from_empire(false),
     m_create_new_design(true),
-    m_move_design(false),
     m_name(ship_design.Name()),
     m_description(ship_design.Description()),
     m_designed_on_turn(ship_design.DesignedOnTurn()),
@@ -1095,35 +978,21 @@ ShipDesignOrder::ShipDesignOrder(int empire, int new_design_id, const ShipDesign
     m_is_monster(ship_design.IsMonster()),
     m_icon(ship_design.Icon()),
     m_3D_model(ship_design.Model()),
-    m_name_desc_in_stringtable(ship_design.LookupInStringtable()),
-    m_design_id_after(INVALID_OBJECT_ID)
+    m_name_desc_in_stringtable(ship_design.LookupInStringtable())
 {}
 
 ShipDesignOrder::ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name/* = ""*/, const std::string& new_description/* = ""*/) :
     Order(empire),
     m_design_id(existing_design_id),
     m_update_name_or_description(true),
-    m_delete_design_from_empire(false),
-    m_create_new_design(false),
-    m_move_design(false),
     m_name(new_name),
-    m_description(new_description),
-    m_designed_on_turn(0),
-    m_is_monster(false),
-    m_name_desc_in_stringtable(false),
-    m_design_id_after(INVALID_OBJECT_ID)
+    m_description(new_description)
 {}
 
-ShipDesignOrder::ShipDesignOrder(int empire, int design_id, int design_id_after) :
+ShipDesignOrder::ShipDesignOrder(int empire, int design_id_to_move, int design_id_after) :
     Order(empire),
-    m_design_id(design_id),
-    m_update_name_or_description(false),
-    m_delete_design_from_empire(false),
-    m_create_new_design(false),
+    m_design_id(design_id_to_move),
     m_move_design(true),
-    m_designed_on_turn(0),
-    m_is_monster(false),
-    m_name_desc_in_stringtable(false),
     m_design_id_after(design_id_after)
 {}
 
@@ -1217,7 +1086,6 @@ void ShipDesignOrder::ExecuteImpl() const {
 // ScrapOrder
 ////////////////////////////////////////////////
 ScrapOrder::ScrapOrder() :
-    Order(),
     m_object_id(INVALID_OBJECT_ID)
 {}
 
@@ -1266,7 +1134,6 @@ bool ScrapOrder::UndoImpl() const {
 // AggressiveOrder
 ////////////////////////////////////////////////
 AggressiveOrder::AggressiveOrder() :
-    Order(),
     m_object_id(INVALID_OBJECT_ID),
     m_aggression(false)
 {}
@@ -1290,7 +1157,6 @@ void AggressiveOrder::ExecuteImpl() const {
 // GiveObjectToEmpireOrder
 /////////////////////////////////////////////////////
 GiveObjectToEmpireOrder::GiveObjectToEmpireOrder() :
-    Order(),
     m_object_id(INVALID_OBJECT_ID),
     m_recipient_empire_id(ALL_EMPIRES)
 {}
@@ -1337,7 +1203,6 @@ bool GiveObjectToEmpireOrder::UndoImpl() const {
 // ForgetOrder
 ////////////////////////////////////////////////
 ForgetOrder::ForgetOrder() :
-    Order(),
     m_object_id(INVALID_OBJECT_ID)
 {}
 

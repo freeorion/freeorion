@@ -94,11 +94,11 @@ private:
 
     static ScanlineRenderer s_scanline_shader;
 
-    GG::StaticGraphic*          m_graphic;
-    GG::StaticGraphic*          m_scrap_indicator;  ///< shown to indicate building was ordered scrapped
-    MultiTurnProgressBar*       m_progress_bar;
+    GG::StaticGraphic*          m_graphic = nullptr;
+    GG::StaticGraphic*          m_scrap_indicator = nullptr; ///< shown to indicate building was ordered scrapped
+    MultiTurnProgressBar*       m_progress_bar = nullptr;
     int                         m_building_id;
-    bool                        m_order_issuing_enabled;
+    bool                        m_order_issuing_enabled = true;
 };
 
 #endif

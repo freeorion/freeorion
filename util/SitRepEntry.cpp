@@ -13,8 +13,7 @@
 SitRepEntry::SitRepEntry() :
     VarText(),
     m_turn(INVALID_GAME_TURN),
-    m_icon("/icons/sitrep/generic.png"),
-    m_label()
+    m_icon("/icons/sitrep/generic.png")
 {}
 
 SitRepEntry::SitRepEntry(const std::string& template_string, int turn, const std::string& icon, const std::string label, bool stringtable_lookup) :

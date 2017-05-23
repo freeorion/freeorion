@@ -86,14 +86,7 @@ const int Fleet::ETA_OUT_OF_RANGE = (1 << 30) - 1;
 const int Fleet::ETA_NEVER =        (1 << 30) - 2;
 
 Fleet::Fleet(const std::string& name, double x, double y, int owner) :
-    UniverseObject(name, x, y),
-    m_prev_system(INVALID_OBJECT_ID),
-    m_next_system(INVALID_OBJECT_ID),
-    m_aggressive(true),
-    m_ordered_given_to_empire_id(ALL_EMPIRES),
-    m_travel_distance(0.0),
-    m_arrived_this_turn(false),
-    m_arrival_starlane(INVALID_OBJECT_ID)
+    UniverseObject(name, x, y)
 {
     UniverseObject::Init();
     SetOwner(owner);

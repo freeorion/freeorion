@@ -28,12 +28,12 @@ class ShipDesign;
 class FO_COMMON_API Order {
 public:
     /** \name Structors */ //@{
-    Order();
+    Order()
+    {}
 
     /** ctor taking the ID of the Empire issuing the order. */
     Order(int empire) :
-        m_empire(empire),
-        m_executed(false)
+        m_empire(empire)
     {}
 
     virtual ~Order()
@@ -78,10 +78,10 @@ private:
 
     virtual bool UndoImpl() const;
 
-    int m_empire;
+    int m_empire = ALL_EMPIRES;
 
     /** Indicates that Execute() has occured, and so an undo is legal. */
-    mutable bool m_executed;
+    mutable bool m_executed = false;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -492,9 +492,9 @@ private:
     void ExecuteImpl() const override;
 
     std::string m_tech_name;
-    int m_position;
-    bool m_remove;
-    int m_pause;
+    int m_position = INVALID_INDEX;
+    bool m_remove = false;
+    int m_pause = INVALID_PAUSE_RESUME;
 
     static const int INVALID_INDEX = -500;
     static const int PAUSE = 1;
@@ -539,14 +539,14 @@ private:
     void ExecuteImpl() const override;
 
     ProductionQueue::ProductionItem m_item;
-    int m_number;
-    int m_location;
-    int m_index;
-    int m_new_quantity;
-    int m_new_blocksize;
-    int m_new_index;
-    int m_rally_point_id;
-    int m_pause;
+    int m_number = 0;
+    int m_location = INVALID_OBJECT_ID;
+    int m_index = INVALID_INDEX;
+    int m_new_quantity = INVALID_QUANTITY;
+    int m_new_blocksize = INVALID_QUANTITY;
+    int m_new_index = INVALID_INDEX;
+    int m_rally_point_id = INVALID_OBJECT_ID;
+    int m_pause = INVALID_PAUSE_RESUME;
 
     static const int INVALID_INDEX = -500;
     static const int INVALID_QUANTITY = -1000;
@@ -612,24 +612,24 @@ private:
      */
     void ExecuteImpl() const override;
 
-    int m_design_id;
-    bool m_update_name_or_description;
-    bool m_delete_design_from_empire;
-    bool m_create_new_design;
-    bool m_move_design;
+    int m_design_id = INVALID_OBJECT_ID;
+    bool m_update_name_or_description = false;
+    bool m_delete_design_from_empire = false;
+    bool m_create_new_design = false;
+    bool m_move_design = false;
 
     // details of design to create
     std::string m_name;
     std::string m_description;
-    int m_designed_on_turn;
+    int m_designed_on_turn = 0;
     std::string m_hull;
     std::vector<std::string> m_parts;
-    bool m_is_monster;
+    bool m_is_monster  = false;
     std::string m_icon;
     std::string m_3D_model;
-    bool m_name_desc_in_stringtable;
+    bool m_name_desc_in_stringtable = false;
     /** Location after the inserted design. */
-    int m_design_id_after;
+    int m_design_id_after = INVALID_OBJECT_ID;
     // end details of design to create
 
     friend class boost::serialization::access;

@@ -153,23 +153,9 @@ public:
      * Create a new XMLElement with no tag-name, text, attribute or child nodes
      * set.  Also the new instance isn't marked as root node.
      */
-    XMLElement() : m_root(false)
+    XMLElement()
     {}
 
-
-    /** @brief  Creates a new XMLElement with the given @p tag tag-name.
-     *
-     * Create a new XMLElement with the given @p tag tag-name but no text,
-     * attribute or child nodes set.  Also the new instance isn't marked as root
-     * node.
-     *
-     * @param[in] tag  The tag name of this XML element.
-     */
-    XMLElement(const std::string& tag) :
-        m_tag(tag),
-        m_text(""),
-        m_root(false)
-    {}
 
     /** @brief  Creates a new XMLElement with the given @p tag tag-name and
      *      @p text content.
@@ -181,10 +167,9 @@ public:
      * @param[in] tag  The tag name of this XML element.
      * @param[in] text  The text assigned to this XML element.
      */
-    XMLElement(const std::string& tag, const std::string& text) :
+    explicit XMLElement(const std::string& tag, const std::string& text = "") :
         m_tag(tag),
-        m_text(text),
-        m_root(false)
+        m_text(text)
     {}
     //@}
 
@@ -287,7 +272,10 @@ private:
      *
      * @note Called by friend XMLDoc.
      */
-    XMLElement(const std::string& tag, bool root);
+    XMLElement(const std::string& tag, bool root) :
+        m_tag(tag),
+        m_root(root)
+    {}
     //@}
 
     /** @brief  Stores the tag-name associated to this XMLElement.
@@ -303,7 +291,7 @@ private:
     /** @brief  Set to true if this XMLElement is the root element of an XMLDoc
      *      document.
      */
-    bool m_root;
+    bool m_root = false;
 
     friend class XMLDoc;
 };
