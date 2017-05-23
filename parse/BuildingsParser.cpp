@@ -15,22 +15,35 @@
 #if DEBUG_PARSERS
 namespace std {
     inline ostream& operator<<(ostream& os, const std::vector<std::shared_ptr<Effect::EffectsGroup>>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::map<std::string, BuildingType*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, BuildingType*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<BuildingType>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<BuildingType>>&) { return os; }
 }
 #endif
 
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    const boost::phoenix::function<parse::detail::insert> insert_;
+    void insert_building(std::map<std::string, std::unique_ptr<BuildingType>>& building_types,
+                         const std::string& name,
+                         const std::string& description,
+                         const CommonParams& common_params,
+                         CaptureResult& capture_result,
+                         const std::string& icon)
+    {
+        // TODO use make_unique when converting to C++14
+        auto building_type = std::unique_ptr<BuildingType>(
+            new BuildingType(name, description, common_params, capture_result, icon));
+
+        building_types.insert(std::make_pair(building_type->Name(), std::move(building_type)));
+    }
+
+
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_building_, insert_building, 6)
 
     struct rules {
         rules() {
             namespace phoenix = boost::phoenix;
             namespace qi = boost::spirit::qi;
-
-            using phoenix::new_;
 
             qi::_1_type _1;
             qi::_2_type _2;
@@ -56,7 +69,7 @@ namespace {
                     )
                 >   parse::detail::common_params_parser() [ _c = _1 ]
                 >   parse::detail::label(Icon_token)      > tok.string
-                [ insert_(_r1, _a, new_<BuildingType>(_a, _b, _c, _d, _1)) ]
+                [ insert_building_(_r1, _a, _b, _c, _d, _1) ]
                 ;
 
             start
@@ -73,7 +86,7 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (std::map<std::string, BuildingType*>&),
+            void (std::map<std::string, std::unique_ptr<BuildingType>>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -83,7 +96,7 @@ namespace {
         > building_type_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, BuildingType*>&)
+            void (std::map<std::string, std::unique_ptr<BuildingType>>&)
         > start_rule;
 
         building_type_rule          building_type;
@@ -92,11 +105,11 @@ namespace {
 }
 
 namespace parse {
-    bool buildings(std::map<std::string, BuildingType*>& building_types) {
+    bool buildings(std::map<std::string, std::unique_ptr<BuildingType>>& building_types) {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/buildings")) {
-            result &= detail::parse_file<rules, std::map<std::string, BuildingType*>>(file, building_types);
+            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<BuildingType>>>(file, building_types);
         }
 
         return result;

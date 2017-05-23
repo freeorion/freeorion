@@ -194,7 +194,7 @@ private:
 /** Holds all FreeOrion building types.  Types may be looked up by name. */
 class BuildingTypeManager {
 public:
-    typedef std::map<std::string, BuildingType*>::const_iterator iterator;
+    typedef std::map<std::string, std::unique_ptr<BuildingType>>::const_iterator iterator;
 
     /** \name Accessors */ //@{
     /** returns the building type with the name \a name; you should use the
@@ -214,9 +214,8 @@ public:
 
 private:
     BuildingTypeManager();
-    ~BuildingTypeManager();
 
-    std::map<std::string, BuildingType*> m_building_types;
+    std::map<std::string, std::unique_ptr<BuildingType>> m_building_types;
 
     static BuildingTypeManager* s_instance;
 };

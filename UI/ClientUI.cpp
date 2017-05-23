@@ -795,7 +795,7 @@ bool ClientUI::ZoomToContent(const std::string& name, bool reverse_lookup/* = fa
                 return ZoomToTech(tech->Name());
         }
 
-        for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager())
+        for (const auto& entry : GetBuildingTypeManager())
             if (boost::iequals(name, UserString(entry.first)))
                 return ZoomToBuildingType(entry.first);
 

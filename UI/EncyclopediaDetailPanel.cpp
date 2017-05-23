@@ -242,7 +242,7 @@ namespace {
             }
 
         } else if (dir_name == "ENC_BUILDING_TYPE") {
-            for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager()) {
+            for (const auto& entry : GetBuildingTypeManager()) {
                 std::string custom_category = DetermineCustomCategory(entry.second->Tags());
                 if (custom_category.empty()) {
                     sorted_entries_list.insert({UserString(entry.first),
@@ -470,7 +470,7 @@ namespace {
                     dir_entries[UserString(tech_name)] = std::make_pair(VarText::TECH_TAG, tech_name);
 
             // building types
-            for (const std::map<std::string, BuildingType*>::value_type& entry : GetBuildingTypeManager())
+            for (const auto& entry : GetBuildingTypeManager())
                 if (DetermineCustomCategory(entry.second->Tags()) == dir_name)
                     dir_entries[UserString(entry.first)] = std::make_pair(VarText::BUILDING_TYPE_TAG, entry.first);
 
