@@ -5384,7 +5384,6 @@ Greetings Esteemed Entity, and Welcome to the FreeOrion Universe!
 GREETINGS_GUIDE_REFERENCE
 Newcomers to this universe may particularly wish to consult the [[encyclopedia QUICK_START_GUIDE_TITLE]].
 
-
 GREETINGS_GUIDE_TEXT
 '''[[GREETINGS_INTRO]]
 
@@ -8458,6 +8457,38 @@ Partial
 # Visibility levels
 VIS_FULL_VISIBILITY
 Full
+
+# Path types
+PATH_BINARY
+''''''
+
+# Path types
+PATH_RESOURCE
+''''''
+
+# Path types
+PATH_PYTHON
+''''''
+
+# Path types
+PATH_DATA_ROOT
+''''''
+
+# Path types
+PATH_DATA_USER
+''''''
+
+# Path types
+PATH_CONFIG
+''''''
+
+# Path types
+PATH_SAVE
+''''''
+
+# Path types
+PATH_TEMP
+''''''
 
 # Ship hull categories
 
