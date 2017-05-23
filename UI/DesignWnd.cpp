@@ -363,6 +363,16 @@ namespace {
         }
     }
 
+    /** Remove all knowledge of design from CurrentDesigns and the server. */
+    void DeleteFromCurrentDesigns(const int design_id) {
+        auto& manager = GetCurrentDesignsManager();
+        manager.Remove(design_id);
+            
+        const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+        HumanClientApp::GetApp()->Orders().IssueOrder(
+            std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+    }
+
 
     //////////////////////////////////////////////////
     // SavedDesignsManager implementations          
