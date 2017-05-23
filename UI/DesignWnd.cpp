@@ -4287,7 +4287,7 @@ void DesignWnd::ReplaceDesign() {
 
         auto& manager = GetCurrentDesignsManager();
         manager.MoveBefore(new_design_id, replaced_id);
-        manager.Obsolete(replaced_id);
+        manager.Remove(replaced_id);
 
         // Remove the old id.
         HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
