@@ -329,6 +329,39 @@ namespace {
             suppress_immediate_execution);
     }
 
+    /** Set whether a currently known design is obsolete or not. Not obsolete means that it is
+        known to the empire (on the server) and will appear in the production list.  Obsolete
+        means that it will only appear in the list of obsolete designs. */
+    void SetObsoleteInCurrentDesigns(const int design_id, bool obsolete) {
+        auto& manager = GetCurrentDesignsManager();
+
+        if (!manager.IsKnown(design_id)) {
+            WarnLogger() << "Attempted to toggle obsolete state of design id "
+                         << design_id << " which is unknown to the empire";
+            return;
+        }
+
+        const auto empire_id = HumanClientApp::GetApp()->EmpireID();
+
+        manager.SetObsolete(design_id, obsolete);
+
+        if (obsolete) {
+            // make empire forget on the server
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+        } else {
+            const auto design = GetShipDesign(design_id);
+            if (!design) {
+                ErrorLogger() << "Attempted to toggle obsolete state of design id "
+                              << design_id << " which is unknown to the server";
+                return;
+            }
+
+            //make known to empire on server
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, design_id));
+        }
+    }
 
 
     //////////////////////////////////////////////////
