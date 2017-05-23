@@ -238,7 +238,7 @@ namespace {
             m_empire_id(empire_id)
         {}
 
-        const std::list<boost::uuids::uuid>& GetOrderedDesignUUIDs() const
+        const std::list<boost::uuids::uuid>& OrderedDesignUUIDs() const
         { return m_ordered_uuids; }
 
         std::vector<int> OrderedIDs() const override;
@@ -747,7 +747,7 @@ void ShipDesignManager::StartGame(int empire_id) {
        && GetOptionsDB().Get<bool>("auto-add-saved-designs"))
     {
         DebugLogger() << "Adding saved designs to empire.";
-        for (const auto& uuid : saved_designs->GetOrderedDesignUUIDs())
+        for (const auto& uuid : saved_designs->OrderedDesignUUIDs())
             AddSavedDesignToCurrentDesigns(uuid, empire_id, suppress_immediate_execution);
     }
 
@@ -2253,7 +2253,7 @@ void SavedDesignsListBox::PopulateCore() {
     const auto empire_id = HumanClientApp::GetApp()->EmpireID();
     const auto empire = GetEmpire(empire_id);
 
-    for (const auto& uuid : GetSavedDesignsManager().GetOrderedDesignUUIDs()) {
+    for (const auto& uuid : GetSavedDesignsManager().OrderedDesignUUIDs()) {
         const auto design = GetSavedDesignsManager().GetDesign(uuid);
         auto available = (empire && design) ? empire->ShipDesignAvailable(*design) : true;
 
@@ -2516,7 +2516,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     auto save_design_action = [&design]() {
         auto saved_design = *design;
         saved_design.SetUUID(boost::uuids::random_generator()());
-        GetSavedDesignsManager().InsertBefore(saved_design, GetSavedDesignsManager().GetOrderedDesignUUIDs().begin());
+        GetSavedDesignsManager().InsertBefore(saved_design, GetSavedDesignsManager().OrderedDesignUUIDs().begin());
     };
 
     // toggle the option to add all saved designs at game start.
@@ -2587,7 +2587,7 @@ void SavedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::P
     // add all saved designs
     auto add_all_saved_designs_action = [&manager, &empire_id]() {
         DebugLogger() << "BasesListBox::BaseRightClicked AddAllSavedDesignsToCurrentDesigns";
-        for (const auto& uuid : manager.GetOrderedDesignUUIDs())
+        for (const auto& uuid : manager.OrderedDesignUUIDs())
             AddSavedDesignToCurrentDesigns(uuid, empire_id);
     };
 
@@ -4236,8 +4236,8 @@ std::pair<int, boost::uuids::uuid> DesignWnd::AddDesign() {
         // If editing a saved design insert into saved designs
         if (m_main_panel->EditingSavedDesign()) {
             auto& manager = GetSavedDesignsManager();
-            manager.InsertBefore(design, manager.GetOrderedDesignUUIDs().begin());
-            new_uuid = *manager.GetOrderedDesignUUIDs().begin();
+            manager.InsertBefore(design, manager.OrderedDesignUUIDs().begin());
+            new_uuid = *manager.OrderedDesignUUIDs().begin();
 
             // Otherwise insert into current empire designs
         } else {
