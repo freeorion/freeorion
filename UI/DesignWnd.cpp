@@ -2444,10 +2444,9 @@ void CompletedDesignsListBox::BaseLeftClicked(GG::ListBox::iterator it, const GG
     if (!design)
         return;
     if (modkeys & GG::MOD_KEY_CTRL) {
-        CurrentDesignsObsolete(id);
-
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ShipDesignOrder>(HumanClientApp::GetApp()->EmpireID(), id, true));
+        bool is_obsolete = GetCurrentDesignsManager().IsObsolete(id);
+        SetObsoleteInCurrentDesigns(id, !is_obsolete);
+        Populate();
     }
     else
         DesignClickedSignal(design);
@@ -2499,6 +2498,12 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
             std::make_shared<ShipDesignOrder>(client_empire_id, design_id, true));
     };
 
+    bool is_obsolete = GetCurrentDesignsManager().IsObsolete(design_id);
+    auto toggle_obsolete_design_action = [&design_id, is_obsolete, this]() {
+        SetObsoleteInCurrentDesigns(design_id, !is_obsolete);
+        Populate();
+    };
+
     auto rename_design_action = [&client_empire_id, &design_id, design, &design_row]() {
         CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
         edit_wnd.Run();
@@ -2519,6 +2524,13 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     // create popup menu with a commands in it
     CUIPopupMenu popup(pt.x, pt.y);
 
+    // obsolete design
+    if (client_empire_id != ALL_EMPIRES)
+        popup.AddMenuItem(GG::MenuItem(
+                              (is_obsolete
+                               ? UserString("DESIGN_WND_UNOBSOLETE_DESIGN")
+                               : UserString("DESIGN_WND_OBSOLETE_DESIGN")),
+                              false, false, toggle_obsolete_design_action));
     // delete design
     if (client_empire_id != ALL_EMPIRES)
         popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_OBSOLETE"), false, false, delete_design_action));
