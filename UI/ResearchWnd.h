@@ -34,7 +34,10 @@ public:
     void    Update();
 
     void    CenterOnTech(const std::string& tech_name);
-    void    ShowTech(const std::string& tech_name);
+    /** Set encyclopedia entry to tech article for @p tech_name
+     *  Selects and centers tech @p tech_name if tech is initially visible
+     *  or if @p force is true(default). */
+    void    ShowTech(const std::string& tech_name, bool force = true);
     void    QueueItemMoved(GG::ListBox::Row* row, std::size_t position);
     void    Sanitize();
 
