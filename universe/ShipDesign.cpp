@@ -1112,10 +1112,6 @@ namespace {
                                           design->Hull(), design->Parts(), design->Icon(),
                                           design->Model(), design->LookupInStringtable(),
                                           monster, design->UUID());
-        if (!copy) {
-            ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();
-            return;
-        }
 
         bool success = universe.InsertShipDesignID(copy, new_design_id);
         if (!success) {
