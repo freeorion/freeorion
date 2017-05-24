@@ -694,9 +694,8 @@ public:
     //@}
 
     /** Adds designs in this manager to the universe with the design creator
-      * left as no empire.  Returns a map from ship design name to design id in
-      * the universe. */
-    const std::map<std::string, int>&   AddShipDesignsToUniverse() const;
+      * left as no empire. */
+    void AddShipDesignsToUniverse() const;
 
     /** Returns the predefined ShipDesign with the name \a name.  If no such
       * ship design exists, 0 is returned instead. */

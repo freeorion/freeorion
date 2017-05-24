@@ -1338,7 +1338,7 @@ namespace {
     };
 }
 
-const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
+void PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
     m_design_generic_ids.clear();   // std::map<std::string, int>
 
     for (const auto& entry : m_ship_designs)
@@ -1346,8 +1346,6 @@ const std::map<std::string, int>& PredefinedShipDesignManager::AddShipDesignsToU
 
     for (const auto& entry : m_monster_designs)
         AddDesignToUniverse(m_design_generic_ids, entry.second, true);
-
-    return m_design_generic_ids;
 }
 
 PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesignManager() {
