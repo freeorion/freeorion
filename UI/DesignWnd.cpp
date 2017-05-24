@@ -569,6 +569,11 @@ namespace {
         WriteToFile(design_and_filename.second, design_and_filename.first->Dump());
     }
 
+
+    //////////////////////////////////////////////////
+    // CurrentShipDesignsManager implementations
+    //////////////////////////////////////////////////
+
     std::vector<int> CurrentShipDesignManager::OrderedIDs() const {
         std::vector<int> retval;
         // Remove all obsolete ids from the list
