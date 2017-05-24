@@ -14,7 +14,7 @@ from EnumsAI import MissionType, ShipRoleType
 import CombatRatingsAI
 import MilitaryAI
 import PlanetUtilsAI
-from freeorion_tools import dict_from_map
+from freeorion_tools import dict_from_map, print_error
 from universe_object import System
 from AIDependencies import INVALID_ID
 from character.character_module import create_character
@@ -43,9 +43,58 @@ outpostIDs = []
 outpostSystemIDs = []
 
 
-# AIstate class
+class ConversionError(Exception):
+    """Exception to be raised if the conversion of a savegame state fails.
+
+    Automatically logs and chats to the host if raised.
+    """
+    def __init__(self, msg=""):
+        print_error(msg)
+
+
+def convert_to_version(state, version):
+    """Convert a savegame AIstate to the next version.
+
+    :param state: savegame state, modified in function
+    :type state: dict
+    :param version: Version to convert to
+    :type version: int
+    """
+    print "Trying to convert savegame state to version %d..." % version
+    current_version = state.get("version", -1)
+    print "  Current version: %d" % current_version
+    if current_version == version:
+        raise ConversionError("Can't convert AI Savegame to the same version.")
+
+    if current_version > version:
+        raise ConversionError("Can't convert to an older version.")
+
+    if version != current_version + 1:
+        raise ConversionError("Can't skip a version.")
+
+    if version == 0:
+        pass  # only version number added
+    # elif version == 1:
+    #   state["some_new_member"] = some_default_value
+    #   del state["some_removed_member"]
+    #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
+
+    print "  All updates set. Setting new version number."
+    state["version"] = version
+
+
 class AIstate(object):
-    """Stores AI game state."""
+    """Stores AI game state.
+
+    IMPORTANT:
+    If class members are redefined, added or deleted, then the
+    version number must be increased by 1 and the convert_to_version()
+    function must be updated so a saved state from the previous version
+    is playable with this AIstate version, i.e. new members must be added
+    and outdated members must be modified and / or deleted.
+    """
+    version = 0
+
     def __init__(self, aggression):
         # Debug info
         # unique id for game
@@ -94,6 +143,14 @@ class AIstate(object):
         self.__empire_standard_enemy = CombatRatingsAI.default_ship_stats().get_stats(hashable=True)  # TODO: track on a per-empire basis
         self.empire_standard_enemy_rating = 0  # TODO: track on a per-empire basis
         self.character = create_character(aggression, self.empireID)
+
+    def __setstate__(self, state):
+        try:
+            for v in range(state.get("version", -1), AIstate.version):
+                convert_to_version(state, v+1)
+            self.__dict__ = state
+        except ConversionError:
+            self.__init__(aggression=fo.aggression.typical)
 
     def generate_uid(self, first=False):
         """
