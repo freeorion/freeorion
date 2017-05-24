@@ -8802,6 +8802,9 @@ unsigned int ValueTest::GetCheckSum() const {
     CheckSums::CheckSumCombine(retval, m_value_ref1);
     CheckSums::CheckSumCombine(retval, m_value_ref2);
     CheckSums::CheckSumCombine(retval, m_value_ref3);
+    CheckSums::CheckSumCombine(retval, m_string_value_ref1);
+    CheckSums::CheckSumCombine(retval, m_string_value_ref2);
+    CheckSums::CheckSumCombine(retval, m_string_value_ref3);
     CheckSums::CheckSumCombine(retval, m_compare_type1);
     CheckSums::CheckSumCombine(retval, m_compare_type2);
 
