@@ -205,7 +205,7 @@ namespace {
 
         /** Return true is \p id is obsolete or throw std::out_of_range if \p is not in the manager. */
         bool IsObsolete(const int id) const;
-        /** Set \p id's obsolescence to \p obsolete or throw std::out_of_range if \p is not in the manager. */
+        /** If \id is in manager, set \p id's obsolescence to \p obsolete. */
         void SetObsolete(const int id, const bool obsolete);
 
         void Load(const std::vector<std::pair<int, bool>>& ids_and_obsoletes);
@@ -214,7 +214,9 @@ namespace {
         private:
         int m_empire_id;
         std::list<int> m_ordered_ids;
-        std::unordered_map<int, bool> m_id_to_obsolete;
+
+        // An index from the id to the obsolescence state and the location in the m_ordered_ids list.
+        std::unordered_map<int, std::pair<bool,  std::list<int>::const_iterator>> m_id_to_obsolete_and_loc;
 
     };
 
@@ -579,8 +581,8 @@ namespace {
         // Remove all obsolete ids from the list
         std::copy_if(m_ordered_ids.begin(), m_ordered_ids.end(), std::back_inserter(retval),
                      [this](const int id){
-                         const auto it = m_id_to_obsolete.find(id);
-                         return (it == m_id_to_obsolete.end()) ? false : !it->second;
+                         const auto it = m_id_to_obsolete_and_loc.find(id);
+                         return (it == m_id_to_obsolete_and_loc.end()) ? false : !it->second.first;
                      });
         return retval;
     }
@@ -590,11 +592,8 @@ namespace {
 
     template <typename T>
     void CurrentShipDesignManager::InsertOrderedIDs(const T& new_order) {
-        m_ordered_ids.clear();
-        m_ordered_ids.insert(m_ordered_ids.begin(), new_order.begin(), new_order.end());
-        m_id_to_obsolete.clear();
-        for (const auto& id : new_order)
-            m_id_to_obsolete.insert(std::make_pair(id, false));
+        for (const auto id : new_order)
+            InsertBefore(id, INVALID_DESIGN_ID);
     }
 
     void CurrentShipDesignManager::InsertBefore(const int id, const int next_id) {
@@ -603,62 +602,84 @@ namespace {
             return ;
         }
 
-        const auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id);
-        if (existing_it != m_ordered_ids.end()) {
-            // id already exists so this is a move.  Remove the old location
-            m_ordered_ids.erase(existing_it);
+        if (id == next_id) {
+            ErrorLogger() << "Ship design " << id << " is the same as next_id";
+            return ;
         }
 
-        auto next_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), next_id);
+        // if id already exists so this is a move.  Remove the old location
+        if (IsKnown(id)) {
+            WarnLogger() << "CurrentShipDesignManager::InsertBefore id = " << id
+                         << " already inserted.  Removing and reinserting as new location";
+            Remove(id);
+        }
 
-        // Insert in the list.
-        m_ordered_ids.insert(next_it, id);
+        // Insert in the list, either before next_id or at the end of the list.
+        const auto next_it = m_id_to_obsolete_and_loc.find(next_id);
+        bool is_valid_next_id = (next_id != INVALID_DESIGN_ID
+                                 && next_it != m_id_to_obsolete_and_loc.end());
+        const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_ids.end());
+        const auto inserted_it = m_ordered_ids.insert(insert_before_it, id);
 
-        m_id_to_obsolete[id] = false;;
+        m_id_to_obsolete_and_loc[id] = std::make_pair(false, inserted_it);
     }
 
     bool CurrentShipDesignManager::MoveBefore(const int moved_id, const int next_id) {
-        auto existing_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), moved_id);
-        if (existing_it == m_ordered_ids.end()) {
+        if (moved_id == next_id)
+            return false;
+
+        auto existing_it = m_id_to_obsolete_and_loc.find(moved_id);
+        if (existing_it == m_id_to_obsolete_and_loc.end()) {
             ErrorLogger() << "Unable to move design because moved design is missing.";
             return false;
         }
 
-        m_ordered_ids.erase(existing_it);
+        m_ordered_ids.erase(existing_it->second.second);
 
-        auto next_it = std::find(m_ordered_ids.begin(), m_ordered_ids.end(), next_id);
+        const auto next_it = m_id_to_obsolete_and_loc.find(next_id);
+        bool is_valid_next_id = (next_id != INVALID_DESIGN_ID
+                                 && next_it != m_id_to_obsolete_and_loc.end());
+        const auto insert_before_it = (is_valid_next_id ? next_it->second.second :m_ordered_ids.end());
+        const auto inserted_it = m_ordered_ids.insert(insert_before_it, moved_id);
 
-        // Insert in the list.
-        m_ordered_ids.insert(next_it, moved_id);
+        existing_it->second.second = inserted_it;
         return true;
     }
 
     void CurrentShipDesignManager::Remove(const int id) {
-        m_ordered_ids.erase(std::find(m_ordered_ids.begin(), m_ordered_ids.end(), id));
-        m_id_to_obsolete.erase(id);
+        auto it = m_id_to_obsolete_and_loc.find(id);
+        if (it == m_id_to_obsolete_and_loc.end())
+            return;
+
+        m_ordered_ids.erase(it->second.second);
+        m_id_to_obsolete_and_loc.erase(it);
     }
 
     bool CurrentShipDesignManager::IsKnown(const int id) const
-    { return m_id_to_obsolete.count(id); }
+    { return m_id_to_obsolete_and_loc.count(id); }
     
     bool CurrentShipDesignManager::IsObsolete(const int id) const
-    { return m_id_to_obsolete.at(id); }
+    { return m_id_to_obsolete_and_loc.at(id).first; }
 
-    void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete)
-    { m_id_to_obsolete.at(id) = obsolete; }
+    void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
+        auto it = m_id_to_obsolete_and_loc.find(id);
+        if (it == m_id_to_obsolete_and_loc.end())
+            return;
+        it->second.first = obsolete;
+    }
 
     void CurrentShipDesignManager::Load(const std::vector<std::pair<int, bool>>& ids_and_obsoletes) {
-        m_id_to_obsolete.clear();
+        m_id_to_obsolete_and_loc.clear();
         m_ordered_ids.clear();
         for (const auto& id_and_obsolete : ids_and_obsoletes) {
             const auto id = id_and_obsolete.first;
             const auto obsolete = id_and_obsolete.second;
-            if (m_id_to_obsolete.count(id)) {
+            if (m_id_to_obsolete_and_loc.count(id)) {
                 ErrorLogger() << "CurrentShipDesignManager::Load duplicate id = " << id;
                 continue;
             }
-            m_id_to_obsolete[id] = obsolete;
             m_ordered_ids.push_back(id);
+            m_id_to_obsolete_and_loc[id] = std::make_pair(obsolete, --m_ordered_ids.end());;
         }
     }
 
@@ -666,7 +687,7 @@ namespace {
         std::vector<std::pair<int, bool>> retval;
         for (const auto id : m_ordered_ids) {
             try {
-                retval.push_back(std::make_pair(id, m_id_to_obsolete.at(id)));
+                retval.push_back(std::make_pair(id, m_id_to_obsolete_and_loc.at(id).first));
             } catch (const std::out_of_range&) {
                 ErrorLogger() << "CurrentShipDesignManager::Save missing id = " << id;
                 continue;
