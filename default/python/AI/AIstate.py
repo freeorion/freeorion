@@ -96,6 +96,9 @@ class AIstate(object):
     version = 0
 
     def __init__(self, aggression):
+        # Do not allow to create AIstate instances with an invalid version number.
+        assert(hasattr(AIstate, 'version') and isinstance(AIstate.version, int) and AIstate.version >= 0)
+
         # Debug info
         # unique id for game
         self.uid = self.generate_uid(first=True)
