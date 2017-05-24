@@ -66,6 +66,10 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
     """Called by client when a new game is started (but not when a game is loaded).
     Should clear any pre-existing state and set up whatever is needed for AI to generate orders."""
     empire = fo.getEmpire()
+    if empire is None:
+        print "This client has no empire. Ignoring new game start message."
+        return
+    
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring new game start message."
         return
@@ -100,6 +104,10 @@ def startNewGame(aggression_input=fo.aggression.aggressive):  # pylint: disable=
 @chat_on_error
 def resumeLoadedGame(saved_state_string):  # pylint: disable=invalid-name
     """Called by client to when resume a loaded game."""
+    if fo.getEmpire() is None:
+        print "This client has no empire. Doing nothing to resume loaded game."
+        return    
+    
     if fo.getEmpire().eliminated:
         print "This empire has been eliminated. Ignoring resume loaded game."
         return
@@ -137,6 +145,10 @@ def prepareForSave():  # pylint: disable=invalid-name
     information, such as plans or knowledge about the game from previous turns,
     in the state string so that they can be restored if the game is loaded."""
     empire = fo.getEmpire()
+    if empire is None:
+        print "This client has no empire. Doing nothing to prepare for save."
+        return     
+    
     if empire.eliminated:
         print "This empire has been eliminated. Save info request"
         return
@@ -157,6 +169,10 @@ def handleChatMessage(sender_id, message_text):  # pylint: disable=invalid-name
     """Called when this player receives a chat message. sender_id is the player who sent the message, and
     message_text is the text of the sent message."""
     empire = fo.getEmpire()
+    if empire is None:
+        print "This client has no empire. Doing nothing to handle chat message."
+        return
+    
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring chat message"
         return
@@ -176,6 +192,10 @@ def handleDiplomaticMessage(message):  # pylint: disable=invalid-name
     """Called when this player receives a diplomatic message update from the server,
     such as if another player declares war, accepts peace, or cancels a proposed peace treaty."""
     empire = fo.getEmpire()
+    if empire is None:
+        print "This client has no empire. Doing nothing to handle diplomatic message."
+        return
+    
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring diplomatic message"
         return
@@ -188,6 +208,10 @@ def handleDiplomaticStatusUpdate(status_update):  # pylint: disable=invalid-name
     """Called when this player receives an update about the diplomatic status between players, which may
     or may not include this player."""
     empire = fo.getEmpire()
+    if empire is None:
+        print "This client has no empire. Doing nothing to handle diplomatic status message."
+        return
+    
     if empire.eliminated:
         print "This empire has been eliminated. Ignoring diplomatic status update"
         return
@@ -202,6 +226,20 @@ def generateOrders():  # pylint: disable=invalid-name
     at end of this function, fo.doneTurn() should be called to indicate to the client that orders are finished
     and can be sent to the server for processing."""
     empire = fo.getEmpire()
+    if empire is None:
+        print "This client has no empire. Doing nothing to generate orders."
+        try:
+            # early abort if no empire. no need to do meter calculations
+            # on last-seen gamestate if nothing can be ordered anyway...
+            #
+            # note that doneTurn() is issued on behalf of the client network
+            # id, not the empire id, so not having a correct empire id does
+            # not invalidate doneTurn()            
+            fo.doneTurn()
+        except Exception as e:
+            print_error(e)
+        return
+    
     if empire.eliminated:
         print "This empire has been eliminated. Aborting order generation"
         try:
