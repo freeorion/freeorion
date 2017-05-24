@@ -20,7 +20,6 @@
 #include "../universe/UniverseObject.h"
 #include "../universe/ShipDesign.h"
 #include "../universe/Enums.h"
-#include "../parse/Parse.h"
 
 #include <GG/DrawUtil.h>
 #include <GG/StaticGraphic.h>
@@ -41,14 +40,6 @@
 #include <unordered_set>
 #include <unordered_map>
 #include <functional>
-
-// Provide a hash function for boost::UUID
-namespace std {
-    template <> struct hash<boost::uuids::uuid> {
-        std::size_t operator()(const boost::uuids::uuid& x) const
-        { return boost::hash<boost::uuids::uuid>{}(x); }
-    };
-}
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
@@ -255,7 +246,8 @@ namespace {
         /// Saved designs with filename
         std::unordered_map<boost::uuids::uuid,
                            std::pair<std::unique_ptr<ShipDesign>,
-                                     boost::filesystem::path>>  m_saved_designs;
+                                     boost::filesystem::path>,
+                           boost::hash<boost::uuids::uuid>>  m_saved_designs;
     };
 
 
@@ -378,88 +370,20 @@ namespace {
     }
 
     void SavedDesignsManager::LoadDesignsFromFileSystem() {
-        using namespace boost::filesystem;
-        m_saved_designs.clear();
-
-        path saved_designs_dir = SavedDesignsDir();
+        auto saved_designs_dir = SavedDesignsDir();
         if (!exists(saved_designs_dir))
             return;
 
-        std::vector<std::pair<std::unique_ptr<ShipDesign>, boost::filesystem::path>> designs_and_paths;
+        bool inconsistent;
         std::vector<boost::uuids::uuid> ordering;
-        parse::ship_designs(saved_designs_dir, designs_and_paths, ordering);
 
-        m_saved_designs.clear();
-        for (auto&& design_and_path : designs_and_paths) {
-            auto& design = design_and_path.first;
+        std::tie(inconsistent, m_saved_designs, ordering) =
+            LoadShipDesignsAndManifestOrderFromFileSystem(saved_designs_dir);
 
-            // If the UUID is nil this is a legacy design that needs a new UUID
-            if(design->UUID() == boost::uuids::uuid{{0}}) {
-                design->SetUUID(boost::uuids::random_generator()());
-                DebugLogger() << "Converted legacy ship design file by adding  UUID " << design->UUID()
-                              << " for name " << design->Name();
-            }
+        m_ordered_uuids = std::list<boost::uuids::uuid>(ordering.begin(), ordering.end());
 
-            // Make sure the design is an out of universe object
-            // This should not be needed.
-            if(design->ID() != INVALID_OBJECT_ID) {
-                design->SetID(INVALID_OBJECT_ID);
-                WarnLogger() << "Saved ships Converted legacy ship design file by adding  UUID " << design->UUID()
-                             << " for name " << design->Name();
-            }
-
-            if (!m_saved_designs.count(design->UUID())) {
-                TraceLogger() << "Added saved design UUID " << design->UUID()
-                              << " with name " << design->Name();
-                m_saved_designs[design->UUID()] = std::move(design_and_path);
-            } else {
-                WarnLogger() << "Duplicate ship design UUID " << design->UUID()
-                             << " found for ship design " << design->Name()
-                             << " in " << saved_designs_dir;
-            }
-        }
-
-        // Verify that all UUIDs in ordering exist
-        m_ordered_uuids.clear();
-        bool ship_manifest_inconsistent = false;
-        for (auto& uuid: ordering) {
-            // Skip the nil UUID.
-            if(uuid == boost::uuids::uuid{{0}})
-                continue;
-
-            if (!m_saved_designs.count(uuid)) {
-                WarnLogger() << "UUID " << uuid << " is in ship design manifest for "
-                             << "a ship design that does not exist.";
-                ship_manifest_inconsistent = true;
-                continue;
-            }
-            m_ordered_uuids.push_back(uuid);
-        }
-
-        // Verify that every design in m_saved_designs is in m_ordered_uuids.
-        if (m_ordered_uuids.size() != m_saved_designs.size()) {
-            // Add any missing designs in alphabetical order to the end of the list
-            std::unordered_set<boost::uuids::uuid> uuids_in_ordering{m_ordered_uuids.begin(), m_ordered_uuids.end()};
-            std::map<std::string, boost::uuids::uuid> missing_uuids_sorted_by_name;
-            for (auto& uuid_to_design_and_filename: m_saved_designs) {
-                if (uuids_in_ordering.count(uuid_to_design_and_filename.first))
-                    continue;
-                ship_manifest_inconsistent = true;
-                missing_uuids_sorted_by_name.insert(
-                    std::make_pair(uuid_to_design_and_filename.second.first->Name(),
-                                   uuid_to_design_and_filename.first));
-            }
-
-            for (auto& name_and_uuid: missing_uuids_sorted_by_name) {
-                WarnLogger() << "Missing ship design " << name_and_uuid.second
-                             << " called " << name_and_uuid.first
-                             << " added to the manifest.";
-                m_ordered_uuids.push_back(name_and_uuid.second);
-            }
-        }
-
-        // Write the corrected ordering back to disk.
-        if (ship_manifest_inconsistent) {
+        // Write any corrected ordering back to disk.
+        if (inconsistent) {
             DebugLogger() << "Writing corrected ship designs back to saved designs.";
             SaveManifest();
             for (auto& uuid: m_ordered_uuids)
