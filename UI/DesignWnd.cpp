@@ -205,6 +205,9 @@ namespace {
         bool IsObsolete(const int id) const;
         void SetObsolete(const int id, const bool obsolete);
 
+        void Load(const std::vector<std::pair<int, bool>>& ids_and_obsoletes);
+        std::vector<std::pair<int, bool>> Save() const;
+
         private:
         int m_empire_id;
         std::list<int> m_ordered_ids;
@@ -642,6 +645,34 @@ namespace {
     void CurrentShipDesignManager::SetObsolete(const int id, const bool obsolete) {
         m_id_to_obsolete[id] = obsolete;
     }
+
+    void CurrentShipDesignManager::Load(const std::vector<std::pair<int, bool>>& ids_and_obsoletes) {
+        m_id_to_obsolete.clear();
+        m_ordered_ids.clear();
+        for (const auto& id_and_obsolete : ids_and_obsoletes) {
+            const auto id = id_and_obsolete.first;
+            const auto obsolete = id_and_obsolete.second;
+            if (m_id_to_obsolete.count(id)) {
+                ErrorLogger() << "CurrentShipDesignManager::Load duplicate id = " << id;
+                continue;
+            }
+            m_id_to_obsolete[id] = obsolete;
+            m_ordered_ids.push_back(id);
+        }
+    }
+
+    std::vector<std::pair<int, bool>> CurrentShipDesignManager::Save() const {
+        std::vector<std::pair<int, bool>> retval;
+        for (const auto id : m_ordered_ids) {
+            try {
+                retval.push_back(std::make_pair(id, m_id_to_obsolete.at(id)));
+            } catch (const std::out_of_range&) {
+                ErrorLogger() << "CurrentShipDesignManager::Save missing id = " << id;
+                continue;
+            }
+        }
+        return retval;
+    }
 }
 
 //////////////////////////////////////////////////
@@ -707,28 +738,12 @@ void ShipDesignManager::StartGame(int empire_id) {
 }
 
 void ShipDesignManager::Save(SaveGameUIData& data) const {
-
-    // Package each ship id with its obsolescence state for the save file.
-    data.ordered_ship_design_ids_and_obsolete.clear();
-    const auto& manager = GetCurrentDesignsManager();
-    for (const auto id : manager.AllOrderedIDs()) {
-        const auto obsolete = manager.IsObsolete(id);
-        data.ordered_ship_design_ids_and_obsolete.push_back(
-            std::make_pair(id, obsolete));
-    }
+   data.ordered_ship_design_ids_and_obsolete =
+       GetCurrentDesignsManager().Save();
 }
 
-void ShipDesignManager::Load(const SaveGameUIData& data) {
-    // Unpack each ship id and its obolesence state.
-    auto& manager = GetCurrentDesignsManager();
-
-    std::vector<int> ordered_ids;
-    for (const auto id_and_obsolete :data.ordered_ship_design_ids_and_obsolete) {
-        manager.SetObsolete(id_and_obsolete.first, id_and_obsolete.second);
-        ordered_ids.push_back(id_and_obsolete.first);
-    }
-    manager.InsertOrderedIDs(ordered_ids);
-}
+void ShipDesignManager::Load(const SaveGameUIData& data)
+{ GetCurrentDesignsManager().Load(data.ordered_ship_design_ids_and_obsolete); }
 
 ShipDesignManager::Designs* ShipDesignManager::CurrentDesigns() {
     auto retval = m_current_designs.get();
