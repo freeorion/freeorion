@@ -5,13 +5,13 @@ implement the rating function and some additional information for the optimizing
 
 Example usage of this module:
 import ShipDesignAI
-myDesign = ShipDesignAI.MilitaryShipDesigner()
+myDesign = ShipDesignAI.WarShipDesigner()
 myDesign.additional_specifications.enemy_mine_dmg = 10
 best_military_designs = myDesign.optimize_design()  # best designs per planet: (rating,planetID,design_id,cost) tuples
 
 
 Available ship classes:
-- MilitaryShipDesigner: basic military ship
+- WarShipDesigner: basic military ship
 - CarrierShipDesigner: military ship that includes fighter-related parts such as hangars and launch bays
 - OrbitalTroopShipDesigner: Troop ships for invasion in the same system
 - StandardTroopShipDesigner: Troop ships for invasion of other systems
@@ -25,7 +25,7 @@ Internal use only:
 Classes:
 - ShipDesignCache: caches information used in this module. Only use the defined instance (variable name "Cache")
 - ShipDesigner: base class for all designs. Provides basic and general functionalities
-- WarShipDesigner: base class for all military-related ships.
+- MilitaryShipDesigner: base class for all military-related ships.
 - ColonisationShipDesignerBaseClass: base class for all colonisation ships which provides common functionalities
 - OutpostShipDesignerBaseClass: same but for outpost ships
 - TroopShipDesignerBaseClass: same but for troop ships
@@ -1581,18 +1581,18 @@ class ShipDesigner(object):
         return combat_stats.get_rating(enemy_stats=self.additional_specifications.enemy)
 
 
-class WarShipDesigner(ShipDesigner):
-    basename = "Warship (do not build me)"
+class MilitaryShipDesignerBaseClass(ShipDesigner):
+    basename = "Military Ship (do not build me)"
     description = "Military Ship"
 
     def __init__(self):
-        super(WarShipDesigner, self).__init__()
+        super(MilitaryShipDesignerBaseClass, self).__init__()
 
     def _adjusted_production_cost(self):
         # as military ships are grouped up in fleets, their power rating scales quadratic in numbers.
         # To account for this, we need to maximize rating/cost_squared not rating/cost as usual.
         exponent = foAI.foAIstate.character.warship_adjusted_production_cost_exponent()
-        return super(WarShipDesigner, self)._adjusted_production_cost()**exponent
+        return super(MilitaryShipDesignerBaseClass, self)._adjusted_production_cost()**exponent
 
     def _effective_structure(self):
         effective_structure = self.design_stats.structure + self._expected_organic_growth() + self._remaining_growth() / 5
@@ -1606,7 +1606,7 @@ class WarShipDesigner(ShipDesigner):
         return 1 + 0.03 * (self._effective_fuel() - self._minimum_fuel()) ** 0.5
 
 
-class MilitaryShipDesigner(WarShipDesigner):
+class WarShipDesigner(MilitaryShipDesignerBaseClass):
     """Class that implements military designs.
 
     Extends __init__()
@@ -1709,7 +1709,7 @@ class MilitaryShipDesigner(WarShipDesigner):
         return self.design_stats.structure*self._total_dmg()*(1+self.design_stats.shields/10)
 
 
-class CarrierShipDesigner(WarShipDesigner):
+class CarrierShipDesigner(MilitaryShipDesignerBaseClass):
     """Class that implements military designs with fighter parts.
 
     Extends __init__()
