@@ -1239,51 +1239,57 @@ bool operator ==(const ShipDesign& first, const ShipDesign& second) {
 // static(s)
 PredefinedShipDesignManager* PredefinedShipDesignManager::s_instance = nullptr;
 
+namespace {
+    template <typename Map1, typename Map2, typename Ordering>
+    void FillDesignsOrderingAndNameTables(const boost::filesystem::path& path,
+                                          Map1& designs, Ordering& ordering, Map2& name_to_uuid)
+    {
+        name_to_uuid.clear();
+
+        auto inconsistent_and_map_and_order_ships =
+            LoadShipDesignsAndManifestOrderFromFileSystem(path);
+
+        ordering = std::get<2>(inconsistent_and_map_and_order_ships);
+
+        auto& disk_designs = std::get<1>(inconsistent_and_map_and_order_ships);
+
+        for (auto& uuid_and_design : disk_designs) {
+            auto& design = uuid_and_design.second.first;
+
+            if (designs.count(design->UUID())) {
+                ErrorLogger() << design->Name() << " ship design does not have a unique UUID for "
+                              << "its type monster or pre-defined. "
+                              << designs[design->UUID()]->Name() << " has the same UUID.";
+                continue;
+            }
+
+            if (name_to_uuid.count(design->Name())) {
+                ErrorLogger() << design->Name() << " ship design does not have a unique name for "
+                              << "its type monster or pre-defined.";
+                continue;
+            }
+
+            name_to_uuid.insert(std::make_pair(design->Name(), design->UUID()));
+            designs[design->UUID()] = std::move(design);
+        }
+    }
+}
+
 PredefinedShipDesignManager::PredefinedShipDesignManager() {
     if (s_instance)
         throw std::runtime_error("Attempted to create more than one PredefinedShipDesignManager.");
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
-    std::vector<std::unique_ptr<ShipDesign>> designs;
-    std::vector<boost::uuids::uuid> ordering;
-    parse::ship_designs(designs, ordering);
+    m_designs.clear();
 
-    for (auto& design : designs)
-        if (m_ship_designs.count(design->Name()))
-            ErrorLogger() << design->Name() << " ship design does not have a unique name.";
-        else
-            m_ship_designs[design->Name()] = std::move(design);
-
-    designs.clear();
-    ordering.clear();
-    parse::monster_designs(designs, ordering);
-
-    for (auto& design : designs)
-        if (m_monster_designs.count(design->Name()))
-            ErrorLogger() << design->Name() << " ship design does not have a unique name.";
-        else
-            m_monster_designs[design->Name()] = std::move(design);
-
-    // Check for nil UUID
-    const auto check_uuid = [](ShipDesign& design) {
-        if (design.UUID() == boost::uuids::uuid{{0}}) {
-            WarnLogger() << "ShipDesign " << design.Name() << " has a nil UUID.  It should be fixed on disk.";
-            design.SetUUID(boost::uuids::random_generator()());
-        }
-    };
-
-    for (auto& design : m_ship_designs)
-        check_uuid(*design.second);
-    for (auto& design : m_monster_designs)
-        check_uuid(*design.second);
+    FillDesignsOrderingAndNameTables(
+        "scripting/ship_designs", m_designs, m_ship_ordering, m_name_to_ship_design);
+    FillDesignsOrderingAndNameTables(
+        "scripting/monster_designs", m_designs, m_monster_ordering, m_name_to_monster_design);
 
     TraceLogger() << "Predefined Ship Designs:";
-    for (const auto& entry : m_ship_designs)
-        TraceLogger() << " ... " << entry.second->Name();
-
-    TraceLogger() << "Monster Ship Designs:";
-    for (const auto& entry : m_monster_designs)
+    for (const auto& entry : m_designs)
         TraceLogger() << " ... " << entry.second->Name();
 
     // Only update the global pointer on sucessful construction.
@@ -1293,7 +1299,7 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 }
 
 namespace {
-    void AddDesignToUniverse(std::map<std::string, int>& design_generic_ids,
+    void AddDesignToUniverse(std::unordered_map<std::string, int>& design_generic_ids,
                              const std::unique_ptr<ShipDesign>& design, bool monster)
     {
         if (!design)
@@ -1343,11 +1349,11 @@ namespace {
 void PredefinedShipDesignManager::AddShipDesignsToUniverse() const {
     m_design_generic_ids.clear();   // std::map<std::string, int>
 
-    for (const auto& entry : m_ship_designs)
-        AddDesignToUniverse(m_design_generic_ids, entry.second, false);
+    for (const auto& uuid : m_ship_ordering)
+        AddDesignToUniverse(m_design_generic_ids, m_designs.at(uuid), false);
 
-    for (const auto& entry : m_monster_designs)
-        AddDesignToUniverse(m_design_generic_ids, entry.second, true);
+    for (const auto& uuid : m_monster_ordering)
+        AddDesignToUniverse(m_design_generic_ids, m_designs.at(uuid), true);
 }
 
 PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesignManager() {
@@ -1358,20 +1364,20 @@ PredefinedShipDesignManager& PredefinedShipDesignManager::GetPredefinedShipDesig
 
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedShipDesigns() const {
     std::vector<const ShipDesign*> retval;
-    for (const auto& name_and_ptr : m_ship_designs)
-        retval.push_back(name_and_ptr.second.get());
+    for (const auto& uuid : m_ship_ordering)
+        retval.push_back(m_designs.at(uuid).get());
     return retval;
 }
 
 std::vector<const ShipDesign*> PredefinedShipDesignManager::GetOrderedMonsterDesigns() const {
     std::vector<const ShipDesign*> retval;
-    for (const auto& name_and_ptr : m_monster_designs)
-        retval.push_back(name_and_ptr.second.get());
+    for (const auto& uuid : m_monster_ordering)
+        retval.push_back(m_designs.at(uuid).get());
     return retval;
 }
 
 int PredefinedShipDesignManager::GetDesignID(const std::string& name) const {
-    std::map<std::string, int>::const_iterator it = m_design_generic_ids.find(name);
+    const auto& it = m_design_generic_ids.find(name);
     if (it == m_design_generic_ids.end())
         return INVALID_DESIGN_ID;
     return it->second;

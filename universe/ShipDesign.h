@@ -672,8 +672,6 @@ FO_COMMON_API const ShipDesign* GetShipDesign(int ship_design_id);
 
 class FO_COMMON_API PredefinedShipDesignManager {
 public:
-    typedef std::map<std::string, int>::const_iterator generic_iterator;
-
     /** Return pointers the ShipDesigns in order.*/
     std::vector<const ShipDesign*> GetOrderedShipDesigns() const;
 
@@ -705,9 +703,14 @@ public:
 private:
     PredefinedShipDesignManager();
 
-    std::map<std::string, std::unique_ptr<ShipDesign>>  m_ship_designs;
-    std::map<std::string, std::unique_ptr<ShipDesign>>  m_monster_designs;
-    mutable std::map<std::string, int>  m_design_generic_ids;   // ids of designs from this manager that have been added to the universe with no empire as the creator
+    std::unordered_map<boost::uuids::uuid, std::unique_ptr<ShipDesign>, boost::hash<boost::uuids::uuid>>  m_designs;
+
+    std::unordered_map<std::string, boost::uuids::uuid>  m_name_to_ship_design;
+    std::unordered_map<std::string, boost::uuids::uuid>  m_name_to_monster_design;
+    mutable std::unordered_map<std::string, int>  m_design_generic_ids;   // ids of designs from this manager that have been added to the universe with no empire as the creator
+
+    std::vector<boost::uuids::uuid> m_ship_ordering;
+    std::vector<boost::uuids::uuid> m_monster_ordering;
 
     static PredefinedShipDesignManager* s_instance;
 };
