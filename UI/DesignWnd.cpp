@@ -3625,8 +3625,15 @@ void DesignWnd::MainPanel::SetDesign(const ShipDesign* ship_design) {
         return;
     }
 
-    m_replaced_design_id = ship_design->IsMonster() ? boost::optional<int>() : ship_design->ID();
-    m_replaced_design_uuid = ship_design->IsMonster() ? boost::optional<boost::uuids::uuid>() : ship_design->UUID();
+    if (!ship_design->IsMonster()) {
+        m_replaced_design_id = ship_design->ID();
+        m_replaced_design_uuid = ship_design->UUID();
+    } else {
+        // Allow editing of monsters if the design is a saved design
+        const auto is_saved_monster = GetSavedDesignsManager().GetDesign(ship_design->UUID());
+        m_replaced_design_id = is_saved_monster ? ship_design->ID() : boost::optional<int>();
+        m_replaced_design_uuid = is_saved_monster ? ship_design->UUID() : boost::optional<boost::uuids::uuid>();
+    }
 
     m_design_name->SetText(ship_design->Name());
     m_design_description->SetText(ship_design->Description());
@@ -3856,8 +3863,7 @@ void DesignWnd::MainPanel::DesignChanged() {
 
     const auto& cur_design = GetIncompleteDesign();
 
-    // Monster ships can't edited.
-    if (!cur_design || !cur_design->Producible())
+    if (!cur_design)
         return;
 
     const auto new_design_name = ValidatedDesignName();
@@ -3885,6 +3891,10 @@ void DesignWnd::MainPanel::DesignChanged() {
         m_confirm_button->Disable(false);
         return;
     }
+
+    // Monster ships can only be edited as saved designs.
+    if(!cur_design->Producible())
+        return;
 
     if (const auto existing_design_name = CurrentDesignIsRegistered()) {
         m_replace_button->SetBrowseInfoWnd(std::make_shared<TextBrowseWnd>(
@@ -3949,7 +3959,8 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     const std::string& hull =           this->Hull();
     std::vector<std::string> parts =    this->Parts();
 
-    if (!ShipDesign::ValidDesign(hull, parts)) {
+    // Allow editing invalid saved designs to allow scripters to edit monsters.
+    if (!ShipDesign::ValidDesign(hull, parts) && !EditingSavedDesign()) {
         ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign attempting to create an invalid design.";
         m_incomplete_design.reset();
         return;
