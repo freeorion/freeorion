@@ -332,13 +332,12 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
         if (attack_empire.first == viewing_empire_id)
             continue;
 
-        std::map<int, std::set<std::pair<int, Visibility>>>::const_iterator target_empire
-            = attack_empire.second.find(viewing_empire_id);
-        if (target_empire != attack_empire.second.end()
-            && !target_empire->second.empty()) {
-
+        auto target_empire = attack_empire.second.find(viewing_empire_id);
+        if (target_empire != attack_empire.second.end() &&
+            !target_empire->second.empty())
+        {
             std::vector<std::string> cloaked_attackers;
-            for (const std::set<std::pair<int, Visibility>>::value_type& attacker : target_empire->second) {
+            for (auto& attacker : target_empire->second) {
                  std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
                 // It doesn't matter if targets of viewing empire have no_visibility or basic_visibility
                  cloaked_attackers.push_back(attacker_link);
@@ -347,36 +346,36 @@ std::string InitialStealthEvent::CombatLogDescription(int viewing_empire_id) con
             if (!cloaked_attackers.empty()) {
                 desc += "\n"; //< Add \n at start of the report and between each empire
                 std::vector<std::string> attacker_empire_link(1, EmpireLink(attack_empire.first));
-                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers
-                                           , UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
+                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers,
+                                           UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
             }
         }
     }
 
     //Viewing empire defending
-    StealthInvisbleMap::const_iterator attack_empire
-        = target_empire_id_to_invisble_obj_id.find(viewing_empire_id);
-    if (attack_empire != target_empire_id_to_invisble_obj_id.end()
-        && !attack_empire->second.empty()) {
-        for (const std::map<int, std::set<std::pair<int, Visibility>>>::value_type& target_empire : attack_empire->second) {
+    StealthInvisbleMap::const_iterator attack_empire =
+        target_empire_id_to_invisble_obj_id.find(viewing_empire_id);
+    if (attack_empire != target_empire_id_to_invisble_obj_id.end() &&
+        !attack_empire->second.empty())
+    {
+        for (auto& target_empire : attack_empire->second) {
             if (target_empire.first == viewing_empire_id)
                 continue;
 
             std::vector<std::string> cloaked_attackers;
-            for (const std::pair<int, Visibility>& attacker : target_empire.second) {
-                 std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
+            for (const auto& attacker : target_empire.second) {
+                std::string attacker_link = FighterOrPublicNameLink(viewing_empire_id, attacker.first, viewing_empire_id);
                 // Don't even report on targets with no_visibility it is supposed to be a surprise
-                if (attacker.second >= VIS_BASIC_VISIBILITY ) {
+                if (attacker.second >= VIS_BASIC_VISIBILITY )
                     cloaked_attackers.push_back(attacker_link);
-                }
             }
 
             if (!cloaked_attackers.empty()) {
                 if (!desc.empty())
                     desc += "\n";
                 std::vector<std::string> attacker_empire_link(1, EmpireLink(attack_empire->first));
-                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers
-                                           , UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
+                desc += FlexibleFormatList(attacker_empire_link, cloaked_attackers,
+                                           UserString("ENC_COMBAT_INITIAL_STEALTH_LIST")).str();
             }
         }
     }
