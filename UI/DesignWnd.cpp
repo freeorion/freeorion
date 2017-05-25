@@ -267,9 +267,11 @@ namespace {
         return *designs;
     }
 
-    /** Add \p design to the front of \p empire_id's list of current designs. */
+    /** Add \p design to the \p is_front of \p empire_id's list of current designs. */
     void AddSavedDesignToCurrentDesigns(
-        const boost::uuids::uuid& uuid, const int empire_id, bool suppress_immediate_execution = false)
+        const boost::uuids::uuid& uuid, const int empire_id,
+        const bool is_front = true,
+        const bool suppress_immediate_execution = false)
     {
         const auto empire = GetEmpire(empire_id);
         if (!empire) {
@@ -302,7 +304,9 @@ namespace {
         auto& current_manager = GetCurrentDesignsManager();
         const auto& all_ids = current_manager.AllOrderedIDs();
         int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
-        current_manager.InsertBefore(new_design_id, all_ids.empty() ? INVALID_OBJECT_ID : *all_ids.begin());
+        const int before_id = (all_ids.empty() ? INVALID_OBJECT_ID :
+                               (is_front ? *all_ids.begin() : *(--all_ids.end())));
+        current_manager.InsertBefore(new_design_id, before_id);
 
         HumanClientApp::GetApp()->Orders().IssueOrder(
             std::make_shared<ShipDesignOrder>(empire_id, new_design_id, new_current_design),
@@ -678,7 +682,7 @@ void ShipDesignManager::StartGame(int empire_id) {
     {
         DebugLogger() << "Adding saved designs to empire.";
         for (const auto& uuid : saved_designs->OrderedDesignUUIDs())
-            AddSavedDesignToCurrentDesigns(uuid, empire_id, suppress_immediate_execution);
+            AddSavedDesignToCurrentDesigns(uuid, empire_id, false, suppress_immediate_execution);
     }
 
 }
