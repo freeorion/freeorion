@@ -2011,7 +2011,9 @@ void BasesListBox::BaseRightClicked(GG::ListBox::iterator it, const GG::Pt& pt, 
         };
 
         auto save_design_action = [&design]() {
-            GetSavedDesignsManager().InsertBefore(GetSavedDesignsManager().GetOrderedDesignUUIDs().end(), *design);
+            auto saved_design = *design;
+            saved_design.SetUUID(boost::uuids::random_generator()());
+            GetSavedDesignsManager().InsertBefore(GetSavedDesignsManager().GetOrderedDesignUUIDs().end(), saved_design);
         };
 
         // create popup menu with a commands in it
