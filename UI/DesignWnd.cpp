@@ -2170,8 +2170,7 @@ void SavedDesignsListBox::PopulateCore() {
     // remove preexisting rows
     Clear();
     const GG::Pt row_size = ListRowSize();
-    const auto empire_id = HumanClientApp::GetApp()->EmpireID();
-    const auto empire = GetEmpire(empire_id);
+    const auto empire = GetEmpire(EmpireID());
 
     for (const auto& uuid : GetSavedDesignsManager().OrderedDesignUUIDs()) {
         const auto design = GetSavedDesignsManager().GetDesign(uuid);
@@ -2272,8 +2271,7 @@ BasesListBox::Row* SavedDesignsListBox::ChildrenDraggedAwayCore(const GG::Wnd* c
     const auto row_size = ListRowSize();
     auto row = new SavedDesignListBoxRow(row_size.x, row_size.y, *design);
 
-    const auto empire_id = HumanClientApp::GetApp()->EmpireID();
-    const auto empire = GetEmpire(empire_id);
+    const auto empire = GetEmpire(EmpireID());
 
     if (empire) {
         auto available = empire->ShipDesignAvailable(*design);
@@ -2413,7 +2411,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
 
     DesignRightClickedSignal(design);
 
-    const auto client_empire_id = HumanClientApp::GetApp()->EmpireID();
+    const auto empire_id = EmpireID();
 
     DebugLogger() << "BasesListBox::BaseRightClicked on design id : " << design_id;
 
@@ -2432,13 +2430,13 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
         Populate();
     };
     
-    auto rename_design_action = [&client_empire_id, &design_id, design, &design_row]() {
+    auto rename_design_action = [&empire_id, &design_id, design, &design_row]() {
         CUIEditWnd edit_wnd(GG::X(350), UserString("DESIGN_ENTER_NEW_DESIGN_NAME"), design->Name());
         edit_wnd.Run();
         const std::string& result = edit_wnd.Result();
         if (result != "" && result != design->Name()) {
             HumanClientApp::GetApp()->Orders().IssueOrder(
-                std::make_shared<ShipDesignOrder>(client_empire_id, design_id, result));
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, result));
             design_row->SetDisplayName(design->Name());
         }
     };
@@ -2459,7 +2457,7 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
     CUIPopupMenu popup(pt.x, pt.y);
 
     // obsolete design
-    if (client_empire_id != ALL_EMPIRES)
+    if (empire_id != ALL_EMPIRES)
         popup.AddMenuItem(GG::MenuItem(
                               (is_obsolete
                                ? UserString("DESIGN_WND_UNOBSOLETE_DESIGN")
@@ -2467,11 +2465,11 @@ void CompletedDesignsListBox::BaseRightClicked(GG::ListBox::iterator it, const G
                               false, false, toggle_obsolete_design_action));
 
     // delete design
-    if (client_empire_id != ALL_EMPIRES)
+    if (empire_id != ALL_EMPIRES)
         popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_WND_DELETE_DESIGN"), false, false, delete_design_action));
 
     // rename design
-    if (design->DesignedByEmpire() == client_empire_id)
+    if (design->DesignedByEmpire() == empire_id)
         popup.AddMenuItem(GG::MenuItem(UserString("DESIGN_RENAME"), false, false, rename_design_action));
 
     // save design
