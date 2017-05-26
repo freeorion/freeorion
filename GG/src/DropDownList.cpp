@@ -122,7 +122,7 @@ private:
     const DropDownList* m_relative_to_wnd;
     bool                m_dropped; ///< Is the drop down list open.
 
-    /** Should the list wnd scroll when dropped? */
+    /** Should the list wnd scroll only when dropped? */
     bool                m_only_mouse_scroll_when_dropped;
 };
 
