@@ -805,10 +805,15 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 void ListBox::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys)
 {
     iterator insertion_it = RowUnderPt(pt);
+    bool inserting_at_first_row = insertion_it == m_first_row_shown;
     for (Wnd* wnd : wnds) {
         Row* row = boost::polymorphic_downcast<Row*>(wnd);
         Insert(row, insertion_it, true, true);
     }
+
+    // Adjust to show rows inserted before the first row.
+    if (inserting_at_first_row)
+        SetFirstRowShown(std::prev(m_first_row_shown, wnds.size()));
 }
 
 void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination)
