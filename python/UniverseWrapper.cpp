@@ -106,10 +106,10 @@ namespace {
     }
     boost::function<double(const Universe&, int, int)> LinearDistanceFunc =                     &LinearDistance;
 
-    int                     JumpDistanceBetweenSystems(const Universe& universe, int system1_id, int system2_id) {
-        return universe.GetPathfinder()->JumpDistanceBetweenSystems(system1_id, system2_id);
+    int                     JumpDistanceBetweenObjects(const Universe& universe, int object1_id, int object2_id) {
+        return universe.GetPathfinder()->JumpDistanceBetweenObjects(object1_id, object2_id);
     }
-    boost::function<int(const Universe&, int, int)> JumpDistanceFunc =                          &JumpDistanceBetweenSystems;
+    boost::function<int(const Universe&, int, int)> JumpDistanceFunc =                          &JumpDistanceBetweenObjects;
 
     std::vector<int>        ShortestPath(const Universe& universe, int start_sys, int end_sys, int empire_id) {
         std::vector<int> retval;
@@ -331,7 +331,13 @@ namespace FreeOrionPython {
                                                     JumpDistanceFunc,
                                                     return_value_policy<return_by_value>(),
                                                     boost::mpl::vector<int, const Universe&, int, int>()
-                                                ))
+                                                ),
+                                                "If two system ids are passed or both objects are within a system, "
+                                                "return the jump distance between the two systems. If one object "
+                                                "(e.g. a fleet) is on a starlane, then calculate the jump distance "
+                                                "from both ends of the starlane to the target system and "
+                                                "return the smaller one."
+                                                )
 
             .def("shortestPath",                make_function(
                                                     ShortestPathFunc,
