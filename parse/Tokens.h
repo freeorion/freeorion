@@ -504,6 +504,7 @@
     (Unresearchable)                            \
     (UpgradeVisibility)                         \
     (UserString)                                \
+    (UUID)                                      \
     (Value)                                     \
     (Victory)                                   \
     (VisibleToEmpire)                           \

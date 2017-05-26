@@ -56,6 +56,8 @@ namespace {
                 =    tok.ShipDesign_
                 >    parse::detail::label(Name_token)
                 >   tok.string        [ _pass = is_unique_(_r5, ShipDesign_token, _1), _r1 = _1 ]
+                >    (parse::detail::label(UUID_token)        > tok.string [ _pass = true ]
+                      | eps [ _pass = true ])
                 >    parse::detail::label(Description_token) > tok.string [ _r2 = _1 ]
                 > (
                      tok.NoStringtableLookup_ [ _r4 = false ]
@@ -120,8 +122,14 @@ namespace {
 }
 
 namespace parse {
-    bool ship_designs(const boost::filesystem::path& path, std::map<std::string, ShipDesign*>& designs)
-    { return detail::parse_file<rules, std::map<std::string, ShipDesign*>>(path, designs); }
+    bool ship_designs(const boost::filesystem::path& path, std::map<std::string, ShipDesign*>& designs) {
+        // Ignore the ship design manifest.
+        if (path.filename() == "ShipDesignManifest.focs.txt" ) {
+            return true;;
+        }
+
+        return detail::parse_file<rules, std::map<std::string, ShipDesign*>>(path, designs);
+    }
 
     bool ship_designs(std::map<std::string, ShipDesign*>& designs) {
         bool result = true;
