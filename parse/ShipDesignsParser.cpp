@@ -122,8 +122,14 @@ namespace {
 }
 
 namespace parse {
-    bool ship_designs(const boost::filesystem::path& path, std::map<std::string, ShipDesign*>& designs)
-    { return detail::parse_file<rules, std::map<std::string, ShipDesign*>>(path, designs); }
+    bool ship_designs(const boost::filesystem::path& path, std::map<std::string, ShipDesign*>& designs) {
+        // Ignore the ship design manifest.
+        if (path.filename() == "ShipDesignManifest.focs.txt" ) {
+            return true;;
+        }
+
+        return detail::parse_file<rules, std::map<std::string, ShipDesign*>>(path, designs);
+    }
 
     bool ship_designs(std::map<std::string, ShipDesign*>& designs) {
         bool result = true;
