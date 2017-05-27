@@ -170,7 +170,7 @@ void MessageWndEdit::FindGameWords() {
     }
      // add ship design names
 
-    for (const std::map<std::string, ShipDesign*>::value_type& entry : GetPredefinedShipDesignManager()) {
+    for (const auto& entry : GetPredefinedShipDesignManager()) {
         if (entry.second->Name() != "")
             m_game_words.insert(UserString(entry.second->Name()));
     }
@@ -195,12 +195,12 @@ void MessageWndEdit::FindGameWords() {
             m_game_words.insert(UserString(entry.second->Name()));
     }
     // add ship hulls
-    for (const std::map<std::string, ShipDesign*>::value_type& entry : GetPredefinedShipDesignManager()) {
+    for (const auto& entry : GetPredefinedShipDesignManager()) {
         if (entry.second->Hull() != "")
             m_game_words.insert(UserString(entry.second->Hull()));
     }
     // add ship parts
-    for (const std::map<std::string, ShipDesign*>::value_type& entry : GetPredefinedShipDesignManager()) {
+    for (const auto& entry : GetPredefinedShipDesignManager()) {
         for (const std::string& part_name : entry.second->Parts()) {
             if (part_name != "")
                 m_game_words.insert(UserString(part_name));

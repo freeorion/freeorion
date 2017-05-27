@@ -412,7 +412,7 @@ namespace {
 
     list ShipDesignGetPremadeList() {
         list py_ship_designs;
-        for (const std::map<std::string, ShipDesign*>::value_type& entry : GetPredefinedShipDesignManager()) {
+        for (const auto& entry : GetPredefinedShipDesignManager()) {
             py_ship_designs.append(object(entry.first));
         }
         return list(py_ship_designs);

@@ -5,6 +5,7 @@
 #include "../universe/ShipDesign.h"
 
 #include <boost/spirit/include/phoenix.hpp>
+#include <boost/phoenix/function/adapt_function.hpp>
 
 
 FO_COMMON_API extern const int ALL_EMPIRES;
@@ -13,8 +14,8 @@ FO_COMMON_API extern const int ALL_EMPIRES;
 
 #if DEBUG_PARSERS
 namespace std {
-    inline ostream& operator<<(ostream& os, const std::map<std::string, ShipDesign*>&) { return os; }
-    inline ostream& operator<<(ostream& os, const std::pair<const std::string, ShipDesign*>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::map<std::string, std::unique_ptr<ShipDesign>>&) { return os; }
+    inline ostream& operator<<(ostream& os, const std::pair<const std::string, std::unique_ptr<ShipDesign>>&) { return os; }
     inline ostream& operator<<(ostream& os, const std::vector<std::string>&) { return os; }
 }
 #endif
@@ -22,7 +23,19 @@ namespace std {
 namespace {
     const boost::phoenix::function<parse::detail::is_unique> is_unique_;
 
-    const boost::phoenix::function<parse::detail::insert> insert_;
+    void insert_ship_design(std::map<std::string, std::unique_ptr<ShipDesign>>& designs,
+                            const std::string& name, const std::string& description,
+                            const std::string& hull, const std::vector<std::string>& parts,
+                            const std::string& icon, const std::string& model,
+                            bool name_desc_in_stringtable)
+    {
+        // TODO use make_unique when converting to C++14
+        auto design = std::unique_ptr<ShipDesign>(
+            new ShipDesign(name, description, 0, ALL_EMPIRES, hull, parts, icon, model, name_desc_in_stringtable, false));
+
+        auto inserted_design = designs.insert(std::make_pair(design->Name(false), std::move(design)));
+    };
+    BOOST_PHOENIX_ADAPT_FUNCTION(void, insert_ship_design_, insert_ship_design, 8)
 
     struct rules {
         rules() {
@@ -75,7 +88,7 @@ namespace {
                         parse::detail::label(Icon_token)     > tok.string [ _e = _1 ]
                      )
                 >    parse::detail::label(Model_token)       > tok.string
-                [ insert_(_r1, _a, new_<ShipDesign>(_a, _b, 0, ALL_EMPIRES, _c, _d, _e, _1, _f)) ]
+                [ insert_ship_design_(_r1, _a, _b, _c, _d, _e, _1, _f) ]
                 ;
 
             start
@@ -94,11 +107,11 @@ namespace {
         }
 
         typedef parse::detail::rule<
-            void (std::string&, std::string&, std::string&, bool&, const std::map<std::string, ShipDesign*>&)
+            void (std::string&, std::string&, std::string&, bool&, const std::map<std::string, std::unique_ptr<ShipDesign>>&)
         > design_prefix_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, ShipDesign*>&),
+            void (std::map<std::string, std::unique_ptr<ShipDesign>>&),
             boost::spirit::qi::locals<
                 std::string,
                 std::string,
@@ -110,7 +123,7 @@ namespace {
         > design_rule;
 
         typedef parse::detail::rule<
-            void (std::map<std::string, ShipDesign*>&)
+            void (std::map<std::string, std::unique_ptr<ShipDesign>>&)
         > start_rule;
 
         design_prefix_rule design_prefix;
@@ -120,24 +133,24 @@ namespace {
 }
 
 namespace parse {
-    bool ship_designs(const boost::filesystem::path& path, std::map<std::string, ShipDesign*>& designs)
-    { return detail::parse_file<rules, std::map<std::string, ShipDesign*>>(path, designs); }
+    bool ship_designs(const boost::filesystem::path& path, std::map<std::string, std::unique_ptr<ShipDesign>>& designs)
+    { return detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(path, designs); }
 
-    bool ship_designs(std::map<std::string, ShipDesign*>& designs) {
+    bool ship_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs) {
         bool result = true;
 
         for(const boost::filesystem::path& file : ListScripts("scripting/ship_designs")) {
-            result &= detail::parse_file<rules, std::map<std::string, ShipDesign*>>(file, designs);
+            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(file, designs);
         }
 
         return result;
     }
 
-    bool monster_designs(std::map<std::string, ShipDesign*>& designs) {
+    bool monster_designs(std::map<std::string, std::unique_ptr<ShipDesign>>& designs) {
         bool result = true;
 
         for (const boost::filesystem::path& file : ListScripts("scripting/monster_designs")) {
-            result &= detail::parse_file<rules, std::map<std::string, ShipDesign*>>(file, designs);
+            result &= detail::parse_file<rules, std::map<std::string, std::unique_ptr<ShipDesign>>>(file, designs);
         }
 
         return result;
