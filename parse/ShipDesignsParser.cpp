@@ -59,7 +59,7 @@ namespace {
         } catch (boost::bad_lexical_cast&) {
             // This should never happen because the previous is_valid should short circuit.
             ErrorLogger() << uuid_string << " is not a valid UUID.  A valid UUID looks like 01234567-89ab-cdef-0123-456789abcdef";
-            return boost::uuids::uuid{{0}};
+            return boost::uuids::nil_generator()();
         }
     };
     // A lazy UUID parser

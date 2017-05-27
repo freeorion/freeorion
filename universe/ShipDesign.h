@@ -15,6 +15,7 @@
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
 #include <boost/uuid/uuid.hpp>
+#include <boost/uuid/nil_generator.hpp>
 
 #include "EnumsFwd.h"
 
@@ -112,7 +113,6 @@ public:
     /** \name Accessors */ //@{
     const std::string&      Name() const            { return m_name; };             ///< returns name of part
     const std::string&      Description() const     { return m_description; }       ///< returns description string, generally a UserString key.
-
     ShipPartClass           Class() const           { return m_class; }             ///< returns that class of part that this is.
     float                   Capacity() const;
     std::string             CapacityDescription() const;                            ///< returns a translated description of the part capacity, with numeric value
@@ -423,14 +423,14 @@ public:
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false,
-               const boost::uuids::uuid uuid = boost::uuids::uuid{{0}}
+               const boost::uuids::uuid uuid = boost::uuids::nil_uuid()
               );
     ShipDesign(const std::string& name, const std::string& description,
                const std::string& hull,
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
                bool name_desc_in_stringtable = false, bool monster = false,
-               const boost::uuids::uuid uuid = boost::uuids::uuid{{0}}
+               const boost::uuids::uuid uuid = boost::uuids::nil_uuid()
               );
     //@}
 
@@ -445,8 +445,6 @@ public:
 
     /** Return the UUID. */
     boost::uuids::uuid              UUID() const { return m_uuid; }
-    /** Set the UUID. */
-    void                            SetUUID(const boost::uuids::uuid& uuid);
 
     /** returns description of design.  if \a stringtable_lookup is true and
       * the design was constructed specifying name_desc_in_stringtable true,
@@ -517,6 +515,8 @@ public:
 
     /** \name Mutators */ //@{
     void                            SetID(int id);                          ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
+    /** Set the UUID. */
+    void                            SetUUID(const boost::uuids::uuid& uuid);
     void                            Rename(const std::string& name) { m_name = name; }  ///< renames this design to \a name
     //@}
 
