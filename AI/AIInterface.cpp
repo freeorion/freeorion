@@ -834,7 +834,7 @@ namespace AIInterface {
 
     int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
                                    const std::string& hull, const std::vector<std::string> parts,
-                                   const std::string& icon, const std::string& model, bool nameDescInStringTable)
+                                   const std::string& icon, const std::string& model, bool name_desc_in_stringtable)
     {
         if (name.empty() || description.empty() || hull.empty()) {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
@@ -852,7 +852,7 @@ namespace AIInterface {
 
         // create design from stuff chosen in UI
         ShipDesign* design = new ShipDesign(name, description, current_turn, ClientApp::GetApp()->EmpireID(),
-                                            hull, parts, icon, model, nameDescInStringTable, false, uuid);
+                                            hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
 
         if (!design) {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
