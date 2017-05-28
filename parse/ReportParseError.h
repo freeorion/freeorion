@@ -36,6 +36,8 @@ namespace parse {
 
         void default_send_error_string(const std::string& str);
 
+        // WARNING: These static global values assume that only one file is parsed at a time.
+        // That assumption is incorrect, and these values will be unreliable.
         extern const char*      s_filename;
         extern text_iterator*   s_text_it;
         extern text_iterator    s_begin;

@@ -644,6 +644,8 @@ namespace parse {
             first = parse::text_iterator(file_contents.begin());
             parse::text_iterator last(file_contents.end());
 
+            // WARNING: These static global values assume that only one file is parsed at a time.
+            // That assumption is incorrect, and these values will be unreliable.
             parse::detail::s_text_it = &first;
             parse::detail::s_begin = first;
             parse::detail::s_end = last;
