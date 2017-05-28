@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_AST_1"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca22"
     description = "SD_AST_1_DESC"
     hull = "SH_ASTEROID"
     parts = [

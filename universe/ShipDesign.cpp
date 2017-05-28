@@ -18,6 +18,8 @@
 
 #include <cfloat>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/uuid/uuid_io.hpp>
+#include <boost/lexical_cast.hpp>
 
 extern FO_COMMON_API const int INVALID_DESIGN_ID = -1;
 
@@ -522,6 +524,7 @@ HullTypeManager::iterator HullTypeManager::end() const
 ShipDesign::ShipDesign() :
     m_name(),
     m_description(),
+    m_uuid(boost::uuids::nil_generator()()),
     m_designed_on_turn(UniverseObject::INVALID_OBJECT_AGE),
     m_designed_by_empire(ALL_EMPIRES),
     m_hull(),
@@ -536,9 +539,11 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
                        int designed_on_turn, int designed_by_empire, const std::string& hull,
                        const std::vector<std::string>& parts,
                        const std::string& icon, const std::string& model,
-                       bool name_desc_in_stringtable, bool monster) :
+                       bool name_desc_in_stringtable, bool monster,
+                       const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/) :
     m_name(name),
     m_description(description),
+    m_uuid(uuid),
     m_designed_on_turn(designed_on_turn),
     m_designed_by_empire(designed_by_empire),
     m_hull(hull),
@@ -561,6 +566,15 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     BuildStatCaches();
 }
 
+ShipDesign::ShipDesign(const std::string& name, const std::string& description,
+                       const std::string& hull,
+                       const std::vector<std::string>& parts,
+                       const std::string& icon, const std::string& model,
+                       bool name_desc_in_stringtable, bool monster,
+                       const boost::uuids::uuid& uuid /*= boost::uuids::nil_uuid()*/) :
+    ShipDesign(name, description, 0, ALL_EMPIRES, hull, parts, icon, model, name_desc_in_stringtable, monster, uuid)
+{}
+
 const std::string& ShipDesign::Name(bool stringtable_lookup /* = true */) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
         return UserString(m_name);
@@ -573,6 +587,9 @@ void ShipDesign::SetName(const std::string& name) {
         m_name = name;
     }
 }
+
+void ShipDesign::SetUUID(const boost::uuids::uuid& uuid)
+{ m_uuid = uuid; }
 
 const std::string& ShipDesign::Description(bool stringtable_lookup /* = true */) const {
     if (m_name_desc_in_stringtable && stringtable_lookup)
@@ -966,6 +983,7 @@ std::string ShipDesign::Dump() const {
     std::string retval = DumpIndent() + "ShipDesign\n";
     ++g_indent;
     retval += DumpIndent() + "name = \"" + m_name + "\"\n";
+    retval += DumpIndent() + "uuid = \"" + boost::uuids::to_string(m_uuid) + "\"\n";
     retval += DumpIndent() + "description = \"" + m_description + "\"\n";
 
     if (!m_name_desc_in_stringtable)
@@ -1021,19 +1039,8 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
 
     DebugLogger() << "Initializing PredefinedShipDesignManager";
 
-    try {
-        parse::ship_designs(m_ship_designs);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing ship designs: error: " << e.what();
-        throw;
-    }
-
-    try {
-        parse::monster_designs(m_monster_designs);
-    } catch (const std::exception& e) {
-        ErrorLogger() << "Failed parsing monster designs: error: " << e.what();
-        throw;
-    }
+    parse::ship_designs(m_ship_designs);
+    parse::monster_designs(m_monster_designs);
 
     TraceLogger() << "Predefined Ship Designs:";
     for (const auto& entry : m_ship_designs)
@@ -1085,7 +1092,8 @@ namespace {
         ShipDesign* copy = new ShipDesign(design->Name(false), design->Description(false),
                                           design->DesignedOnTurn(), design->DesignedByEmpire(),
                                           design->Hull(), design->Parts(), design->Icon(),
-                                          design->Model(), design->LookupInStringtable(), monster);
+                                          design->Model(), design->LookupInStringtable(),
+                                          monster, design->UUID());
         if (!copy) {
             ErrorLogger() << "PredefinedShipDesignManager::AddShipDesignsToUniverse() couldn't duplicate the design with name " << design->Name();
             return;

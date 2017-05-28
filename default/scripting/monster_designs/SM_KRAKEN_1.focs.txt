@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_KRAKEN_1"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca05"
     description = "SM_KRAKEN_1_DESC"
     hull = "SH_KRAKEN_1_BODY"
     parts = [

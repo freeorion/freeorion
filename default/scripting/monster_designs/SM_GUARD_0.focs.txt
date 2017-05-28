@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_GUARD_0"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca18"
     description = "SM_GUARD_0_DESC"
     hull = "SH_GUARD_0_BODY"
     parts = [

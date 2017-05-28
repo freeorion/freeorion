@@ -14,6 +14,8 @@
 #include <boost/variant.hpp>
 #include <boost/serialization/access.hpp>
 #include <boost/serialization/nvp.hpp>
+#include <boost/uuid/uuid.hpp>
+#include <boost/uuid/nil_generator.hpp>
 
 #include "EnumsFwd.h"
 
@@ -420,7 +422,16 @@ public:
                int designed_on_turn, int designed_by_empire, const std::string& hull,
                const std::vector<std::string>& parts,
                const std::string& icon, const std::string& model,
-               bool name_desc_in_stringtable = false, bool monster = false);
+               bool name_desc_in_stringtable = false, bool monster = false,
+               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid()
+              );
+    ShipDesign(const std::string& name, const std::string& description,
+               const std::string& hull,
+               const std::vector<std::string>& parts,
+               const std::string& icon, const std::string& model,
+               bool name_desc_in_stringtable = false, bool monster = false,
+               const boost::uuids::uuid& uuid = boost::uuids::nil_uuid()
+              );
     //@}
 
     /** \name Accessors */ //@{
@@ -431,6 +442,9 @@ public:
       * otherwise, the raw name string is returned. */
     const std::string&              Name(bool stringtable_lookup = true) const;
     void                            SetName(const std::string& name);
+
+    /** Return the UUID. */
+    boost::uuids::uuid              UUID() const { return m_uuid; }
 
     /** returns description of design.  if \a stringtable_lookup is true and
       * the design was constructed specifying name_desc_in_stringtable true,
@@ -501,6 +515,8 @@ public:
 
     /** \name Mutators */ //@{
     void                            SetID(int id);                          ///< sets the ID number of the design to \a id .  Should only be used by Universe class when inserting new design into Universe.
+    /** Set the UUID. */
+    void                            SetUUID(const boost::uuids::uuid& uuid);
     void                            Rename(const std::string& name) { m_name = name; }  ///< renames this design to \a name
     //@}
 
@@ -519,6 +535,7 @@ private:
 
     std::string                 m_name;
     std::string                 m_description;
+    boost::uuids::uuid          m_uuid;
 
     int                         m_designed_on_turn;
     int                         m_designed_by_empire;

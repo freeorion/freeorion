@@ -348,7 +348,7 @@ namespace AIInterface {
 
     int IssueCreateShipDesignOrder(const std::string& name, const std::string& description,
                                    const std::string& hull, const std::vector<std::string> parts,
-                                   const std::string& graphic, const std::string& model, bool nameDescInStringTable);
+                                   const std::string& graphic, const std::string& model, bool name_desc_in_stringtable);
 
     void SendPlayerChatMessage(int recipient_player_id, const std::string& message_text);
     void SendDiplomaticMessage(const DiplomaticMessage& diplo_message);

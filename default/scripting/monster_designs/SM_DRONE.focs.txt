@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_DRONE"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca29"
     description = "SM_DRONE_DESC"
     hull = "SH_DRONE_BODY"
     parts = [

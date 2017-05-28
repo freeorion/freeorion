@@ -33,6 +33,7 @@
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/filesystem/operations.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/uuid/random_generator.hpp>
 
 #include <algorithm>
 #include <iterator>
@@ -120,7 +121,7 @@ namespace {
 
     const std::string DESIGN_FILENAME_EXTENSION = ".txt";
     const std::string UNABLE_TO_OPEN_FILE = "Unable to open file";
-    boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns"; }
+    boost::filesystem::path SavedDesignsDir() { return GetUserDataDir() / "shipdesigns/"; }
 
     class SavedDesignsManager {
     public:
@@ -143,32 +144,12 @@ namespace {
             if (!exists(saved_designs_dir))
                 return;
 
-            // scan files, parse for designs, add to this manager's designs
-            std::vector<path> design_files;
-            for (directory_iterator dir_it(saved_designs_dir);
-                 dir_it != directory_iterator(); ++dir_it)
-            {
-                const path& file_path = dir_it->path();
-                if (!is_regular_file(file_path))
-                    continue;
-                if (file_path.extension() != DESIGN_FILENAME_EXTENSION)
-                { continue; }
-                design_files.push_back(file_path);
-            }
+            std::map<std::string, std::unique_ptr<ShipDesign>> file_designs;
+            parse::ship_designs(saved_designs_dir, file_designs);
 
-            for (const path& design_path : design_files) {
-                try {
-                    std::map<std::string, std::unique_ptr<ShipDesign>> file_designs;
-                    parse::ship_designs(design_path, file_designs);
-
-                    for (auto&& design_entry : file_designs) {
-                        if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {
-                            m_saved_designs[design_entry.first] = std::move(design_entry.second);
-                        }
-                    }
-                } catch (...) {
-                    ErrorLogger() << "Failed to parse designs in " << PathString(design_path);
-                    continue;
+            for (auto& design_entry : file_designs) {
+                if (m_saved_designs.find(design_entry.first) == m_saved_designs.end()) {
+                    m_saved_designs[design_entry.first] = std::move(design_entry.second);
                 }
             }
         }
@@ -3333,10 +3314,12 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
 
     const std::string& icon = m_hull ? m_hull->Icon() : EMPTY_STRING;
 
+    const auto uuid = boost::uuids::random_generator()();
+
     // update stored design
     try {
         m_incomplete_design.reset(new ShipDesign(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                                                 hull, parts, icon, ""));
+                                                 hull, parts, icon, "", false, false, uuid));
     } catch (const std::exception& e) {
         // had a weird crash in the above call a few times, but I can't seem to
         // replicate it now.  hopefully catching any exception here will
@@ -3562,9 +3545,11 @@ int DesignWnd::AddDesign() {
     if (const HullType* hull = GetHullType(hull_name))
         icon = hull->Icon();
 
+    const auto uuid = boost::uuids::random_generator()();
+
     // create design from stuff chosen in UI
     ShipDesign design(name, description, CurrentTurn(), ClientApp::GetApp()->EmpireID(),
-                      hull_name, parts, icon, "some model");
+                      hull_name, parts, icon, "some model", false, false, uuid);
 
     int new_design_id = HumanClientApp::GetApp()->GetNewDesignID();
     HumanClientApp::GetApp()->Orders().IssueOrder(

@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_GRAVITATING2"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca20"
     description = "SD_GRAVITATING2_DESC"
     hull = "SH_SELF_GRAVITATING"
     parts = [

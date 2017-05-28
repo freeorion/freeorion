@@ -1,5 +1,6 @@
 ShipDesign
     name = "SM_ACIREMA_GUARD"
+    uuid = "08a58b08-0929-496d-84fc-fba91424ca16"
     description = "SM_ACIREMA_GUARD_DESC"
     hull = "SH_GUARD_MONSTER_BODY"
     parts = [

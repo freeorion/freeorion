@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_DRAGON_TOOTH"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca12"
     description = "SD_DRAGON_TOOTH_DESC"
     hull = "SH_XENTRONIUM"
     parts = [

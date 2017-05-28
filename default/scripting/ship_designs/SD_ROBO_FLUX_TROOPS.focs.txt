@@ -1,5 +1,6 @@
 ShipDesign
     name = "SD_ROBO_FLUX_TROOPS"
+    uuid = "08a58b08-0929-496d-84fc-faa91424ca35"
     description = "SD_ROBO_FLUX_TROOPS_DESC"
     hull = "SH_SPATIAL_FLUX"
     parts = [

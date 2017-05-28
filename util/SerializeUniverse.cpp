@@ -13,6 +13,9 @@
 #include "../universe/Field.h"
 #include "../universe/Universe.h"
 
+#include <boost/lexical_cast.hpp>
+#include <boost/uuid/nil_generator.hpp>
+
 BOOST_CLASS_EXPORT(System)
 BOOST_CLASS_EXPORT(Field)
 BOOST_CLASS_EXPORT(Planet)
@@ -247,8 +250,24 @@ template <class Archive>
 void ShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
-        & BOOST_SERIALIZATION_NVP(m_name)
-        & BOOST_SERIALIZATION_NVP(m_description)
+        & BOOST_SERIALIZATION_NVP(m_name);
+    // UUID serialization as a primitive doesn't work as expected from the documentation
+    // ar & BOOST_SERIALIZATION_NVP(m_uuid);
+    // This workaround instead serializes a string representation.
+    if (Archive::is_saving::value) {
+        auto string_uuid = boost::uuids::to_string(m_uuid);
+        ar & BOOST_SERIALIZATION_NVP(string_uuid);
+    } else {
+        std::string string_uuid;
+        ar & BOOST_SERIALIZATION_NVP(string_uuid);
+        try {
+            m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+        } catch (const boost::bad_lexical_cast&) {
+            m_uuid = boost::uuids::nil_generator()();
+        }
+    }
+
+    ar & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
         & BOOST_SERIALIZATION_NVP(m_hull)
         & BOOST_SERIALIZATION_NVP(m_parts)
