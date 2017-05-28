@@ -1183,7 +1183,7 @@ public:
     static const std::string BASES_LIST_BOX_DROP_TYPE;
 
     /** \name Structors */ //@{
-    BasesListBox(const boost::optional<std::string>& drop_type = boost::none);
+    explicit BasesListBox(const boost::optional<std::string>& drop_type = boost::none);
     //@}
 
     /** \name Accessors */ //@{
