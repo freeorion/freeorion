@@ -30,9 +30,7 @@
 
 FO_COMMON_API extern const int INVALID_DESIGN_ID;
 
-namespace {
-    DeclareThreadSafeLogger(effects);
-}
+DeclareThreadSafeLogger(effects);
 
 #if defined(_MSC_VER)
 #  if (_MSC_VER == 1900)

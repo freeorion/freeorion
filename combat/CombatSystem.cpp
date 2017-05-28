@@ -24,9 +24,7 @@
 #include <iterator>
 #include <sstream>
 
-namespace {
-    DeclareThreadSafeLogger(combat);
-}
+DeclareThreadSafeLogger(combat);
 
 ////////////////////////////////////////////////
 // CombatInfo

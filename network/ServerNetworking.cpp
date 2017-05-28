@@ -13,9 +13,7 @@ using boost::asio::ip::tcp;
 using boost::asio::ip::udp;
 using namespace Networking;
 
-namespace {
-    DeclareThreadSafeLogger(network);
-}
+DeclareThreadSafeLogger(network);
 
 /** A simple server that listens for FreeOrion-server-discovery UDP datagrams
     on the local network and sends out responses to them. */

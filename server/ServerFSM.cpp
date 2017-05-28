@@ -28,9 +28,9 @@
 class CombatLogManager;
 CombatLogManager&   GetCombatLogManager();
 
-namespace {
-    DeclareThreadSafeLogger(FSM);
+DeclareThreadSafeLogger(FSM);
 
+namespace {
     void SendMessageToAllPlayers(const Message& message) {
         ServerApp* server = ServerApp::GetApp();
         if (!server) {

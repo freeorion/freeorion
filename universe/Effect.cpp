@@ -28,9 +28,7 @@
 #include <cctype>
 #include <iterator>
 
-namespace {
-    DeclareThreadSafeLogger(effects);
-}
+DeclareThreadSafeLogger(effects);
 
 using boost::io::str;
 
