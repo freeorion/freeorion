@@ -3165,6 +3165,33 @@ void PartsListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIte
 //////////////////////////////////////////////////
 class DesignWnd::MainPanel : public CUIWnd {
 public:
+
+    /** I18nString stores a string that might be in the stringtable. */
+    class I18nString {
+        public:
+        I18nString (bool is_in_stringtable, const std::string& text) :
+            m_is_in_stringtable(is_in_stringtable), m_text(text)
+        {}
+        I18nString (bool is_in_stringtable, std::string&& text) :
+            m_is_in_stringtable(is_in_stringtable), m_text(std::move(text))
+        {}
+
+        /** Return the text a displayed. */
+        std::string DisplayText() const
+        { return m_is_in_stringtable ? UserString(m_text) : m_text; }
+
+        /** Return the text as stored. */
+        std::string StoredString() const
+        { return m_text; }
+
+        bool IsInStringtable() const
+        { return m_is_in_stringtable; }
+
+        private:
+        const bool m_is_in_stringtable;
+        const std::string m_text;
+    };
+
     /** \name Structors */ //@{
     MainPanel(const std::string& config_name);
     //@}
