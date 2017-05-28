@@ -1544,11 +1544,13 @@ void BasesListBox::ChildrenDraggedAway(const std::vector<GG::Wnd*>& wnds, const 
     DetachChild(wnds.front());
 }
 
-void BasesListBox::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) {
+void BasesListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
+                                  const GG::ListBox::iterator& original_position_it)
+{
     if (BasesListBox::CompletedDesignListBoxRow* control =
         dynamic_cast<BasesListBox::CompletedDesignListBoxRow*>(*row_it))
     {
-        if(!GetEmpire(m_empire_id_shown))
+        if (!GetEmpire(m_empire_id_shown))
            return;
 
         int design_id = control->DesignID();
@@ -1563,7 +1565,6 @@ void BasesListBox::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG:
         control->Resize(ListRowSize());
         HumanClientApp::GetApp()->Orders()
             .IssueOrder(std::make_shared<ShipDesignOrder>(m_empire_id_shown, design_id, insert_before_id));
-        return;
     }
 }
 
