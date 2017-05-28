@@ -469,12 +469,6 @@ public:
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
     void            AllowDropType(const std::string& str);
 
-    /** Disallows Rows with data type \a str to be dropped over this ListBox
-        when drag-and-drop is enabled. \note If "" is still an allowed drop
-        type, drops of type \a str will still be allowed, even after disallowed
-        with a call to this function. */
-    void            DisallowDropType(const std::string& str);
-
     /** Set this to determine whether the list should autoscroll when the user
         is attempting to drop an item into a location that is not currently
         visible. */

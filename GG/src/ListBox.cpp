@@ -1467,14 +1467,6 @@ void ListBox::AllowDropType(const std::string& str)
     m_allowed_drop_types->insert(str);
 }
 
-void ListBox::DisallowDropType(const std::string& str)
-{
-    // Create the set if necessary
-    if (!m_allowed_drop_types)
-        m_allowed_drop_types = std::unordered_set<std::string>();
-    m_allowed_drop_types->erase(str);
-}
-
 void ListBox::AutoScrollDuringDragDrops(bool auto_scroll)
 { m_auto_scroll_during_drag_drops = auto_scroll; }
 
