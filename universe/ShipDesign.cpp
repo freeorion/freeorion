@@ -1444,8 +1444,8 @@ LoadShipDesignsAndManifestOrderFromFileSystem(const boost::filesystem::path& dir
         // This should not be needed.
         if(design->ID() != INVALID_OBJECT_ID) {
             design->SetID(INVALID_OBJECT_ID);
-            WarnLogger() << "Saved ships Converted legacy ship design file by adding  UUID " << design->UUID()
-                         << " for name " << design->Name();
+            ErrorLogger() << "Loaded ship design has an id implying it is in an ObjectMap for UUID "
+                          << design->UUID() << " for name " << design->Name();
         }
 
         if (!saved_designs.count(design->UUID())) {
