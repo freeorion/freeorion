@@ -64,13 +64,13 @@ def convert_to_version(state, version):
     current_version = state.get("version", -1)
     print "  Current version: %d" % current_version
     if current_version == version:
-        raise ConversionError("Can't convert AI Savegame to the same version.")
+        raise ConversionError("Can't convert AI savegame to the same compatibility version.")
 
     if current_version > version:
-        raise ConversionError("Can't convert to an older version.")
+        raise ConversionError("Can't convert AI savegame to an older compatibility version.")
 
     if version != current_version + 1:
-        raise ConversionError("Can't skip a version.")
+        raise ConversionError("Can't skip a compatibility version when converting AI savegame.")
 
     if version == 0:
         pass  # only version number added
