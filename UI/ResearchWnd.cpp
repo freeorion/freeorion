@@ -301,7 +301,7 @@ protected:
         // mostly duplicated equivalent in QueueListBox, but with an extra command...
         auto pedia_action = [&it, this, pt, modkeys]() {
             ShowPediaSignal();
-            this->LeftClickedSignal(it, pt, modkeys);
+            this->LeftClickedRowSignal(it, pt, modkeys);
         };
         auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
         auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
@@ -410,13 +410,13 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_queue_wnd = new ResearchQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
-    m_queue_wnd->GetQueueListBox()->MovedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
         boost::bind(&ResearchWnd::DeleteQueueItem, this, _1));
-    m_queue_wnd->GetQueueListBox()->LeftClickedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->LeftClickedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemClickedSlot, this, _1, _2, _3));
-    m_queue_wnd->GetQueueListBox()->DoubleClickedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->DoubleClickedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->ShowPediaSignal.connect(
         boost::bind(&ResearchWnd::ShowPedia, this));

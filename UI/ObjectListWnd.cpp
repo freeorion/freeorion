@@ -2257,11 +2257,11 @@ ObjectListWnd::ObjectListWnd(const std::string& config_name) :
     m_list_box->SetHiliteColor(GG::CLR_ZERO);
     m_list_box->SetStyle(GG::LIST_NOSORT);
 
-    m_list_box->SelChangedSignal.connect(
+    m_list_box->SelRowsChangedSignal.connect(
         boost::bind(&ObjectListWnd::ObjectSelectionChanged, this, _1));
-    m_list_box->DoubleClickedSignal.connect(
+    m_list_box->DoubleClickedRowSignal.connect(
         boost::bind(&ObjectListWnd::ObjectDoubleClicked, this, _1, _2, _3));
-    m_list_box->RightClickedSignal.connect(
+    m_list_box->RightClickedRowSignal.connect(
         boost::bind(&ObjectListWnd::ObjectRightClicked, this, _1, _2, _3));
     m_list_box->ExpandCollapseSignal.connect(
         boost::bind(&ObjectListWnd::DoLayout, this));

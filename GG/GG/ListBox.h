@@ -223,9 +223,9 @@ public:
 
     /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */
-    typedef boost::signals2::signal<void ()>                                                ClearedSignalType;
+    typedef boost::signals2::signal<void ()>                                                ClearedRowsSignalType;
     /** emitted when one or more rows are selected or deselected */
-    typedef boost::signals2::signal<void (const SelectionSet&)>                             SelChangedSignalType;
+    typedef boost::signals2::signal<void (const SelectionSet&)>                             SelRowsChangedSignalType;
     /** the signature of row-change-notification signals */
     typedef boost::signals2::signal<void (iterator)>                                        RowSignalType;
     /** the signature of const row-change-notification signals */
@@ -233,18 +233,18 @@ public:
     /** the signature of row-click-notification signals */
     typedef boost::signals2::signal<void(iterator, const Pt&,const GG::Flags<GG::ModKey>&)> RowClickSignalType;
     /** the signature of row-move-notification signals */
-    typedef boost::signals2::signal<void (iterator, iterator)>                              RowMovedSignalType;
+    typedef boost::signals2::signal<void (iterator, iterator)>                              MovedRowSignalType;
 
-    typedef RowSignalType      BeforeInsertSignalType;   ///< emitted before a row is inserted into the list box
-    typedef RowSignalType      AfterInsertSignalType;    ///< emitted after a row is inserted into the list box
-    typedef RowSignalType      DroppedSignalType;        ///< emitted when a row is inserted into the list box via drag-and-drop
-    typedef ConstRowSignalType DropAcceptableSignalType; ///< emitted when a row may be inserted into the list box via drag-and-drop
-    typedef RowClickSignalType LeftClickedSignalType;    ///< emitted when a row in the listbox is left-clicked; provides the row left-clicked and the clicked point
-    typedef RowClickSignalType RightClickedSignalType;   ///< emitted when a row in the listbox is right-clicked; provides the row right-clicked and the clicked point
-    typedef RowClickSignalType DoubleClickedSignalType;  ///< emitted when a row in the listbox is left-double-clicked
-    typedef RowSignalType      BeforeEraseSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
-    typedef RowSignalType      AfterEraseSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
-    typedef RowSignalType      BrowsedSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
+    typedef RowSignalType      BeforeInsertRowSignalType;   ///< emitted before a row is inserted into the list box
+    typedef RowSignalType      AfterInsertRowSignalType;    ///< emitted after a row is inserted into the list box
+    typedef RowSignalType      DroppedRowSignalType;        ///< emitted when a row is inserted into the list box via drag-and-drop
+    typedef ConstRowSignalType DropRowAcceptableSignalType; ///< emitted when a row may be inserted into the list box via drag-and-drop
+    typedef RowClickSignalType LeftClickedRowSignalType;    ///< emitted when a row in the listbox is left-clicked; provides the row left-clicked and the clicked point
+    typedef RowClickSignalType RightClickedRowSignalType;   ///< emitted when a row in the listbox is right-clicked; provides the row right-clicked and the clicked point
+    typedef RowClickSignalType DoubleClickedRowSignalType;  ///< emitted when a row in the listbox is left-double-clicked
+    typedef RowSignalType      BeforeEraseRowSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
+    typedef RowSignalType      AfterEraseRowSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
+    typedef RowSignalType      BrowsedRowSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
     //@}
 
     /** \name Constants */ ///@{
@@ -324,19 +324,19 @@ public:
     bool AllowingDrops();
 
 
-    mutable ClearedSignalType        ClearedSignal;         /// the cleared signal object for this ListBox
-    mutable BeforeInsertSignalType   BeforeInsertSignal;    ///< the before insert signal object for this ListBox
-    mutable AfterInsertSignalType    AfterInsertSignal;     ///< the after insert signal object for this ListBox
-    mutable SelChangedSignalType     SelChangedSignal;      ///< the selection change signal object for this ListBox
-    mutable DroppedSignalType        DroppedSignal;         ///< the dropped signal object for this ListBox
-    mutable DropAcceptableSignalType DropAcceptableSignal;  ///< the drop-acceptability signal object for this ListBox
-    mutable RowMovedSignalType       MovedSignal;           ///< the moved signal object for this ListBox
-    mutable LeftClickedSignalType    LeftClickedSignal;     ///< the left click signal object for this ListBox
-    mutable RightClickedSignalType   RightClickedSignal;    ///< the right click signal object for this ListBox
-    mutable DoubleClickedSignalType  DoubleClickedSignal;   ///< the double click signal object for this ListBox
-    mutable BeforeEraseSignalType    BeforeEraseSignal;     ///< the before erase signal object for this ListBox
-    mutable AfterEraseSignalType     AfterEraseSignal;      ///< the after erase signal object for this ListBox
-    mutable BrowsedSignalType        BrowsedSignal;         ///< the browsed signal object for this ListBox
+    mutable ClearedRowsSignalType        ClearedRowsSignal;        /// the cleared signal object for this ListBox
+    mutable BeforeInsertRowSignalType    BeforeInsertRowSignal;    ///< the before insert signal object for this ListBox
+    mutable AfterInsertRowSignalType     AfterInsertRowSignal;     ///< the after insert signal object for this ListBox
+    mutable SelRowsChangedSignalType     SelRowsChangedSignal;     ///< the selection change signal object for this ListBox
+    mutable DroppedRowSignalType         DroppedRowSignal;         ///< the dropped signal object for this ListBox
+    mutable DropRowAcceptableSignalType  DropRowAcceptableSignal;  ///< the drop-acceptability signal object for this ListBox
+    mutable MovedRowSignalType           MovedRowSignal;           ///< the moved signal object for this ListBox
+    mutable LeftClickedRowSignalType     LeftClickedRowSignal;     ///< the left click signal object for this ListBox
+    mutable RightClickedRowSignalType    RightClickedRowSignal;    ///< the right click signal object for this ListBox
+    mutable DoubleClickedRowSignalType   DoubleClickedRowSignal;   ///< the double click signal object for this ListBox
+    mutable BeforeEraseRowSignalType     BeforeEraseRowSignal;     ///< the before erase signal object for this ListBox
+    mutable AfterEraseRowSignalType      AfterEraseRowSignal;      ///< the after erase signal object for this ListBox
+    mutable BrowsedRowSignalType         BrowsedRowSignal;         ///< the browsed signal object for this ListBox
     //@}
 
     /** \name Mutators */ ///@{

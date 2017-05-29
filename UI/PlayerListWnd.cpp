@@ -542,11 +542,11 @@ PlayerListWnd::PlayerListWnd(const std::string& config_name) :
     m_player_list = new PlayerListBox();
     m_player_list->SetHiliteColor(GG::CLR_ZERO);
     m_player_list->SetStyle(GG::LIST_NOSORT);
-    m_player_list->SelChangedSignal.connect(
+    m_player_list->SelRowsChangedSignal.connect(
         boost::bind(&PlayerListWnd::PlayerSelectionChanged, this, _1));
-    m_player_list->DoubleClickedSignal.connect(
+    m_player_list->DoubleClickedRowSignal.connect(
         boost::bind(&PlayerListWnd::PlayerDoubleClicked, this, _1, _2, _3));
-    m_player_list->RightClickedSignal.connect(
+    m_player_list->RightClickedRowSignal.connect(
         boost::bind(&PlayerListWnd::PlayerRightClicked, this, _1, _2, _3));
     AttachChild(m_player_list);
 

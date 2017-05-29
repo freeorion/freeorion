@@ -1461,11 +1461,11 @@ BasesListBox::BasesListBox(const boost::optional<std::string>& drop_type) :
     InitRowSizes();
     SetStyle(GG::LIST_NOSEL | GG::LIST_NOSORT);
 
-    DoubleClickedSignal.connect(
+    DoubleClickedRowSignal.connect(
         boost::bind(&BasesListBox::BaseDoubleClicked, this, _1, _2, _3));
-    LeftClickedSignal.connect(
+    LeftClickedRowSignal.connect(
         boost::bind(&BasesListBox::BaseLeftClicked, this, _1, _2, _3));
-    MovedSignal.connect(
+    MovedRowSignal.connect(
         boost::bind(&BasesListBox::QueueItemMoved, this, _1, _2));
 }
 

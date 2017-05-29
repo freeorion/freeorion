@@ -161,9 +161,9 @@ ModalListPicker::ModalListPicker(Clr color, const DropDownList* relative_to_wnd,
     m_relative_to_wnd(relative_to_wnd),
     m_dropped(false)
 {
-    m_lb_wnd->SelChangedSignal.connect(
+    m_lb_wnd->SelRowsChangedSignal.connect(
         boost::bind(&ModalListPicker::LBSelChangedSlot, this, _1));
-    m_lb_wnd->LeftClickedSignal.connect(
+    m_lb_wnd->LeftClickedRowSignal.connect(
         boost::bind(&ModalListPicker::LBLeftClickSlot, this, _1, _2, _3));
     GUI::GetGUI()->WindowResizedSignal.connect(
         boost::bind(&ModalListPicker::WindowResizedSlot, this, _1, _2));

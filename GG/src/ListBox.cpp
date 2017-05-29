@@ -570,17 +570,17 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS) {
-        ClearedSignal.connect(ListSignalEcho(*this, "ListBox::ClearedSignal"));
-        BeforeInsertSignal.connect(ListSignalEcho(*this, "ListBox::BeforeInsertSignal"));
-        AfterInsertSignal.connect(ListSignalEcho(*this, "ListBox::AfterinsertSignal"));
-        SelChangedSignal.connect(ListSignalEcho(*this, "ListBox::SelChangedSignal"));
-        DroppedSignal.connect(ListSignalEcho(*this, "ListBox::DroppedSignal"));
-        LeftClickedSignal.connect(ListSignalEcho(*this, "ListBox::LeftClickedSignal"));
-        RightClickedSignal.connect(ListSignalEcho(*this, "ListBox::RightClickedSignal"));
-        DoubleClickedSignal.connect(ListSignalEcho(*this, "ListBox::DoubleClickedSignal"));
-        BeforeEraseSignal.connect(ListSignalEcho(*this, "ListBox::BeforeEraseSignal"));
-        AfterEraseSignal.connect(ListSignalEcho(*this, "ListBox::AfterEraseSignal"));
-        BrowsedSignal.connect(ListSignalEcho(*this, "ListBox::BrowsedSignal"));
+        ClearedRowsSignal.connect(ListSignalEcho(*this, "ListBox::ClearedRowsSignal"));
+        BeforeInsertRowSignal.connect(ListSignalEcho(*this, "ListBox::BeforeInsertRowSignal"));
+        AfterInsertRowSignal.connect(ListSignalEcho(*this, "ListBox::AfterinsertRowSignal"));
+        SelRowsChangedSignal.connect(ListSignalEcho(*this, "ListBox::SelRowsChangedSignal"));
+        DroppedRowSignal.connect(ListSignalEcho(*this, "ListBox::DroppedRowSignal"));
+        LeftClickedRowSignal.connect(ListSignalEcho(*this, "ListBox::LeftClickedRowSignal"));
+        RightClickedRowSignal.connect(ListSignalEcho(*this, "ListBox::RightClickedRowSignal"));
+        DoubleClickedRowSignal.connect(ListSignalEcho(*this, "ListBox::DoubleClickedRowSignal"));
+        BeforeEraseRowSignal.connect(ListSignalEcho(*this, "ListBox::BeforeEraseRowSignal"));
+        AfterEraseRowSignal.connect(ListSignalEcho(*this, "ListBox::AfterEraseRowSignal"));
+        BrowsedRowSignal.connect(ListSignalEcho(*this, "ListBox::BrowsedRowSignal"));
     }
 }
 
@@ -621,7 +621,7 @@ void ListBox::HandleRowRightClicked(const Pt& pt, GG::Flags<GG::ModKey> mod) {
     iterator row_it = RowUnderPt(pt);
     if (row_it != m_rows.end()) {
         m_rclick_row = row_it;
-        RightClickedSignal(row_it, pt, mod);
+        RightClickedRowSignal(row_it, pt, mod);
     }
 }
 
@@ -852,7 +852,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
         m_selections = new_selections;
 
         if (m_selections.size() != initially_selected_rows.size()) {
-            SelChangedSignal(m_selections);
+            SelRowsChangedSignal(m_selections);
         }
     }
 }
@@ -1106,7 +1106,7 @@ void ListBox::Clear()
     m_hscroll = nullptr;
 
     RequirePreRender();
-    ClearedSignal();
+    ClearedRowsSignal();
 }
 
 void ListBox::SelectRow(iterator it, bool signal/* = false*/)
@@ -1126,7 +1126,7 @@ void ListBox::SelectRow(iterator it, bool signal/* = false*/)
     m_selections.insert(it);
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
@@ -1139,7 +1139,7 @@ void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
         m_selections.erase(it);
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::SelectAll(bool signal/* = false*/)
@@ -1162,7 +1162,7 @@ void ListBox::SelectAll(bool signal/* = false*/)
     }
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::DeselectAll(bool signal/* = false*/)
@@ -1175,7 +1175,7 @@ void ListBox::DeselectAll(bool signal/* = false*/)
     }
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 ListBox::iterator ListBox::begin()
@@ -1200,7 +1200,7 @@ void ListBox::SetSelections(const SelectionSet& s, bool signal/* = false*/)
     m_selections = s;
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::SetCaret(iterator it)
@@ -1758,7 +1758,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
                 else
                     ClickAtRow(sel_row, mod_keys);
                 m_lclick_row = sel_row;
-                LeftClickedSignal(sel_row, pt, mod_keys);
+                LeftClickedRowSignal(sel_row, pt, mod_keys);
             }
         }
         break;
@@ -1767,7 +1767,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::LDoubleClick: {
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_lclick_row && InClient(pt)) {
-            DoubleClickedSignal(row, pt, mod_keys);
+            DoubleClickedRowSignal(row, pt, mod_keys);
             m_old_sel_row = m_rows.end();
         } else {
             LClick(pt, mod_keys);
@@ -1788,7 +1788,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_old_rdown_row && InClient(pt)) {
             m_rclick_row = row;
-            RightClickedSignal(row, pt, mod_keys);
+            RightClickedRowSignal(row, pt, mod_keys);
         }
         m_old_rdown_row = m_rows.end();
         break;
@@ -1798,7 +1798,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         if (m_style & LIST_BROWSEUPDATES) {
             iterator sel_row = RowUnderPt(pt);
             if (m_last_row_browsed != sel_row)
-                BrowsedSignal(m_last_row_browsed = sel_row);
+                BrowsedRowSignal(m_last_row_browsed = sel_row);
         }
         break;
     }
@@ -1809,7 +1809,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::MouseLeave: {
         if (m_style & LIST_BROWSEUPDATES) {
             if (m_last_row_browsed != m_rows.end())
-                BrowsedSignal(m_last_row_browsed = m_rows.end());
+                BrowsedRowSignal(m_last_row_browsed = m_rows.end());
         }
         break;
     }
@@ -1911,7 +1911,7 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
     row->InstallEventFilter(this);
 
     if (signal)
-        BeforeInsertSignal(it);
+        BeforeInsertRowSignal(it);
 
     if (m_rows.empty()) {
         m_rows.push_back(row);
@@ -1946,11 +1946,11 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
     row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
 
     if (signal) {
-        AfterInsertSignal(it);
+        AfterInsertRowSignal(it);
         if (dropped)
-            DroppedSignal(retval);
+            DroppedRowSignal(retval);
         if (moved)
-            MovedSignal(retval, original_dropped_position);
+            MovedRowSignal(retval, original_dropped_position);
     }
 
     RequirePreRender();
@@ -2483,7 +2483,7 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
     }
 
     if (previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::NormalizeRow(Row* row)

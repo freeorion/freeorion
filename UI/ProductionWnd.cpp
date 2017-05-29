@@ -640,7 +640,7 @@ namespace {
 
             auto pedia_action = [&it, this, pt, modkeys]() {
                 ShowPediaSignal();
-                this->LeftClickedSignal(it, pt, modkeys);
+                this->LeftClickedRowSignal(it, pt, modkeys);
             };
             auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
             auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
@@ -770,13 +770,13 @@ ProductionWnd::ProductionWnd(GG::X w, GG::Y h) :
         boost::bind(&ProductionWnd::ChangeBuildQuantitySlot, this, _1, _2));
     m_build_designator_wnd->SystemSelectedSignal.connect(
         SystemSelectedSignal);
-    m_queue_wnd->GetQueueListBox()->MovedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
         boost::bind(&ProductionWnd::QueueItemMoved, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
         boost::bind(&ProductionWnd::DeleteQueueItem, this, _1));
-    m_queue_wnd->GetQueueListBox()->LeftClickedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->LeftClickedRowSignal.connect(
         boost::bind(&ProductionWnd::QueueItemClickedSlot, this, _1, _2, _3));
-    m_queue_wnd->GetQueueListBox()->DoubleClickedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->DoubleClickedRowSignal.connect(
         boost::bind(&ProductionWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->QueueItemRalliedToSignal.connect(
         boost::bind(&ProductionWnd::QueueItemRallied, this, _1, _2));

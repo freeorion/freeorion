@@ -53,13 +53,13 @@ QueueListBox::QueueListBox(const boost::optional<std::string>& drop_type_str, co
     if (drop_type_str)
         AllowDropType(*drop_type_str);
 
-    BeforeInsertSignal.connect(
+    BeforeInsertRowSignal.connect(
         boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, _1));
-    AfterEraseSignal.connect(
+    AfterEraseRowSignal.connect(
         boost::bind(&QueueListBox::ShowPromptConditionallySlot, this, _1));
-    ClearedSignal.connect(
+    ClearedRowsSignal.connect(
         boost::bind(&QueueListBox::ShowPromptSlot, this));
-    GG::ListBox::RightClickedSignal.connect(
+    GG::ListBox::RightClickedRowSignal.connect(
         boost::bind(&QueueListBox::ItemRightClicked, this, _1, _2, _3));
 
     SetNumCols(1);

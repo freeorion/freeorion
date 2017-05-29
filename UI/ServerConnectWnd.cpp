@@ -102,7 +102,7 @@ ServerConnectWnd::ServerConnectWnd() :
 
     m_host_or_join_radio_group->ButtonChangedSignal.connect(
         boost::bind(&ServerConnectWnd::EnableDisableControls, this));
-    m_servers_lb->SelChangedSignal.connect(
+    m_servers_lb->SelRowsChangedSignal.connect(
         boost::bind(&ServerConnectWnd::ServerSelected, this, _1));
     m_find_LAN_servers_bn->LeftClickedSignal.connect(
         boost::bind(&ServerConnectWnd::PopulateServerList, this));

@@ -222,9 +222,9 @@ FileDlg::FileDlg(const std::string& directory, const std::string& filename, bool
         boost::bind(&FileDlg::OkClicked, this));
     m_cancel_button->LeftClickedSignal.connect(
         boost::bind(&FileDlg::CancelClicked, this));
-    m_files_list->SelChangedSignal.connect(
+    m_files_list->SelRowsChangedSignal.connect(
         boost::bind(&FileDlg::FileSetChanged, this, _1));
-    m_files_list->DoubleClickedSignal.connect(
+    m_files_list->DoubleClickedRowSignal.connect(
         boost::bind(&FileDlg::FileDoubleClicked, this, _1, _2, _3));
     m_files_edit->EditedSignal.connect(
         boost::bind(&FileDlg::FilesEditChanged, this, _1));
