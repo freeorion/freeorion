@@ -840,10 +840,6 @@ namespace AIInterface {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder : passed an empty name, description, or hull.";
             return 0;
         }
-        if (!ShipDesign::ValidDesign(hull, parts)) {
-            ErrorLogger() << "IssueCreateShipDesignOrderOrder : pass a hull and parts that do not make a valid ShipDesign";
-            return 0;
-        }
 
         int empire_id = AIClientApp::GetApp()->EmpireID();
         int current_turn = CurrentTurn();
