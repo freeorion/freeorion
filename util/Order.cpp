@@ -1024,10 +1024,17 @@ void ShipDesignOrder::ExecuteImpl() const {
 
             return;
         }
-        ShipDesign* new_ship_design = new ShipDesign(m_name, m_description,
-                                                     m_designed_on_turn, EmpireID(), m_hull, m_parts,
-                                                     m_icon, m_3D_model, m_name_desc_in_stringtable,
-                                                     m_is_monster, m_uuid);
+
+        ShipDesign* new_ship_design;
+        try {
+            new_ship_design = new ShipDesign(m_name, m_description,
+                                             m_designed_on_turn, EmpireID(), m_hull, m_parts,
+                                             m_icon, m_3D_model, m_name_desc_in_stringtable,
+                                             m_is_monster, m_uuid);
+        } catch (const std::runtime_error&) {
+            ErrorLogger() << "Couldn't create ship design.";
+            return;
+        }
 
         universe.InsertShipDesignID(new_ship_design, m_design_id);
         universe.SetEmpireKnowledgeOfShipDesign(m_design_id, EmpireID());

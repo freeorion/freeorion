@@ -396,11 +396,14 @@ namespace {
         }
 
         // Create the design and add it to the universe
-        ShipDesign* design = new ShipDesign(name, description, BEFORE_FIRST_TURN, ALL_EMPIRES, hull, parts, icon, model, true, monster);
-        if (!design) {
+        ShipDesign* design;
+        try {
+            design = new ShipDesign(name, description, BEFORE_FIRST_TURN, ALL_EMPIRES, hull, parts, icon, model, true, monster);
+        } catch (const std::runtime_error&) {
             ErrorLogger() << "CreateShipDesign: couldn't create ship design";
             return false;
         }
+
         if (universe.InsertShipDesign(design) == INVALID_DESIGN_ID) {
             ErrorLogger() << "CreateShipDesign: couldn't insert ship design into universe";
             delete design;

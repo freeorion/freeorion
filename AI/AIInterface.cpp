@@ -851,10 +851,12 @@ namespace AIInterface {
         const auto uuid = boost::uuids::random_generator()();
 
         // create design from stuff chosen in UI
-        ShipDesign* design = new ShipDesign(name, description, current_turn, ClientApp::GetApp()->EmpireID(),
-                                            hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
+        ShipDesign* design;
+        try {
+            design = new ShipDesign(name, description, current_turn, ClientApp::GetApp()->EmpireID(),
+                                    hull, parts, icon, model, name_desc_in_stringtable, false, uuid);
 
-        if (!design) {
+        } catch (const std::runtime_error&) {
             ErrorLogger() << "IssueCreateShipDesignOrderOrder failed to create a new ShipDesign object";
             return 0;
         }
