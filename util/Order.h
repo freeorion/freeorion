@@ -593,7 +593,7 @@ public:
 
     ShipDesignOrder(int empire, int new_design_id, const ShipDesign& ship_design);
 
-    ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name = "", const std::string& new_description = "");
+    ShipDesignOrder(int empire, int existing_design_id, const std::string& new_name, const std::string& new_description = "");
     //@}
 
 private:
