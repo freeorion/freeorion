@@ -42,7 +42,7 @@ private:
 ////////////////////////////////////////////////////////////
 // QueueListBox
 ////////////////////////////////////////////////////////////
-QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
+QueueListBox::QueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str) :
     CUIListBox(),
     m_drop_point(end()),
     m_show_drop_point(false),
@@ -50,16 +50,16 @@ QueueListBox::QueueListBox(const std::string& drop_type_str, const std::string& 
     m_showing_prompt(false),
     m_prompt_str(prompt_str)
 {
-    if (!drop_type_str.empty())
-        AllowDropType(drop_type_str);
+    if (drop_type_str)
+        AllowDropType(*drop_type_str);
 
-    BeforeInsertSignal.connect(
+    BeforeInsertRowSignal.connect(
         boost::bind(&QueueListBox::EnsurePromptHiddenSlot, this, _1));
-    AfterEraseSignal.connect(
+    AfterEraseRowSignal.connect(
         boost::bind(&QueueListBox::ShowPromptConditionallySlot, this, _1));
-    ClearedSignal.connect(
+    ClearedRowsSignal.connect(
         boost::bind(&QueueListBox::ShowPromptSlot, this));
-    GG::ListBox::RightClickedSignal.connect(
+    GG::ListBox::RightClickedRowSignal.connect(
         boost::bind(&QueueListBox::ItemRightClicked, this, _1, _2, _3));
 
     SetNumCols(1);
@@ -88,25 +88,7 @@ void QueueListBox::KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags
     }
 }
 
-void QueueListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                                   const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const
-{
-    for (DropsAcceptableIter it = first; it != last; ++it)
-        it->second = false;
-
-    if (std::distance(first, last) != 1) {
-        ErrorLogger() << "QueueListBox::DropsAcceptable unexpected passed more than one Wnd to test";
-    }
-
-    for (DropsAcceptableIter it = first; it != last; ++it) {
-        it->second = m_order_issuing_enabled &&
-            AllowedDropTypes().find(it->first->DragDropDataType()) != AllowedDropTypes().end();
-    }
-}
-
 void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wnds, GG::Flags<GG::ModKey> mod_keys) {
-    if (wnds.empty())
-        return;
     if (wnds.size() > 1) {
         // delete any extra wnds that won't be processed below
         for (std::vector<GG::Wnd*>::const_iterator it = ++wnds.begin(); it != wnds.end(); ++it)
@@ -116,15 +98,14 @@ void QueueListBox::AcceptDrops(const GG::Pt& pt, const std::vector<GG::Wnd*>& wn
     GG::Wnd* wnd = *wnds.begin();
     const std::string& drop_type = wnd->DragDropDataType();
     GG::ListBox::Row* row = boost::polymorphic_downcast<GG::ListBox::Row*>(wnd);
-    if (AllowedDropTypes().find(drop_type) == AllowedDropTypes().end() ||
+    if (!AllowedDropType(drop_type) ||
         !row ||
         std::find(begin(), end(), row) == end())
     {
         delete wnd;
         return;
     }
-    iterator it = RowUnderPt(pt);
-    QueueItemMovedSignal(row, std::distance(begin(), it));
+    ListBox::AcceptDrops(pt, std::vector<GG::Wnd*>{wnd}, mod_keys);
 }
 
 void QueueListBox::Render() {
@@ -162,8 +143,7 @@ void QueueListBox::DragDropHere(const GG::Pt& pt, std::map<const GG::Wnd*, bool>
     CUIListBox::DragDropHere(pt, drop_wnds_acceptable, mod_keys);
 
     if (drop_wnds_acceptable.size() == 1 &&
-        AllowedDropTypes().find(drop_wnds_acceptable.begin()->first->DragDropDataType()) !=
-        AllowedDropTypes().end())
+        AllowedDropType(drop_wnds_acceptable.begin()->first->DragDropDataType()))
     {
         m_drop_point = RowUnderPt(pt);
         m_show_drop_point = true;
@@ -180,6 +160,7 @@ void QueueListBox::DragDropLeave() {
 
 void QueueListBox::EnableOrderIssuing(bool enable/* = true*/) {
     m_order_issuing_enabled = enable;
+    AllowDrops(enable);
     for (GG::ListBox::Row* row : *this)
         row->Disable(!enable);
 }
@@ -192,17 +173,15 @@ void QueueListBox::Clear() {
     DragDropLeave();
 }
 
-std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) const {
+std::function<void()> QueueListBox::MoveToTopAction(GG::ListBox::iterator it) {
     return [it, this]() {
-        if (GG::ListBox::Row* row = *it)
-            QueueItemMovedSignal(row, 0);
+        ListBox::Insert(*it, begin(), true, true);
     };
 }
 
-std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) const {
+std::function<void()> QueueListBox::MoveToBottomAction(GG::ListBox::iterator it) {
     return [it, this]() {
-        if (GG::ListBox::Row* row = *it)
-            QueueItemMovedSignal(row, NumRows());
+        ListBox::Insert(*it, end(), true, true);
     };
 }
 

@@ -289,7 +289,7 @@ namespace {
 //////////////////////////////////////////////////
 class ResearchQueueListBox : public QueueListBox {
 public:
-    ResearchQueueListBox(const std::string& drop_type_str, const std::string& prompt_str) :
+    ResearchQueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str) :
         QueueListBox(drop_type_str, prompt_str)
     {}
 
@@ -301,7 +301,7 @@ protected:
         // mostly duplicated equivalent in QueueListBox, but with an extra command...
         auto pedia_action = [&it, this, pt, modkeys]() {
             ShowPediaSignal();
-            this->LeftClickedSignal(it, pt, modkeys);
+            this->LeftClickedRowSignal(it, pt, modkeys);
         };
         auto resume_action = [&it, this]() { this->QueueItemPausedSignal(it, false); };
         auto pause_action = [&it, this]() { this->QueueItemPausedSignal(it, true); };
@@ -352,7 +352,7 @@ public:
                "research.ResearchQueueWnd"),
         m_queue_lb(nullptr)
     {
-        m_queue_lb = new ResearchQueueListBox("RESEARCH_QUEUE_ROW", UserString("RESEARCH_QUEUE_PROMPT"));
+        m_queue_lb = new ResearchQueueListBox(std::string("RESEARCH_QUEUE_ROW"), UserString("RESEARCH_QUEUE_PROMPT"));
         m_queue_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_NOSEL | GG::LIST_USERDELETE);
         m_queue_lb->SetName("ResearchQueue ListBox");
 
@@ -410,13 +410,13 @@ ResearchWnd::ResearchWnd(GG::X w, GG::Y h, bool initially_hidden /*= true*/) :
     m_queue_wnd = new ResearchQueueWnd(GG::X0, GG::Y(100), queue_width, GG::Y(ClientSize().y - 100));
     m_tech_tree_wnd = new TechTreeWnd(tech_tree_wnd_size.x, tech_tree_wnd_size.y, initially_hidden);
 
-    m_queue_wnd->GetQueueListBox()->QueueItemMovedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->MovedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemMoved, this, _1, _2));
     m_queue_wnd->GetQueueListBox()->QueueItemDeletedSignal.connect(
         boost::bind(&ResearchWnd::DeleteQueueItem, this, _1));
-    m_queue_wnd->GetQueueListBox()->LeftClickedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->LeftClickedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemClickedSlot, this, _1, _2, _3));
-    m_queue_wnd->GetQueueListBox()->DoubleClickedSignal.connect(
+    m_queue_wnd->GetQueueListBox()->DoubleClickedRowSignal.connect(
         boost::bind(&ResearchWnd::QueueItemDoubleClickedSlot, this, _1, _2, _3));
     m_queue_wnd->GetQueueListBox()->ShowPediaSignal.connect(
         boost::bind(&ResearchWnd::ShowPedia, this));
@@ -506,11 +506,18 @@ void ResearchWnd::TogglePedia()
 bool ResearchWnd::PediaVisible()
 { return m_tech_tree_wnd->PediaVisible(); }
 
-void ResearchWnd::QueueItemMoved(GG::ListBox::Row* row, std::size_t position) {
-    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(row)) {
+void ResearchWnd::QueueItemMoved(const GG::ListBox::iterator& row_it, const GG::ListBox::iterator& original_position_it) {
+    if (QueueRow* queue_row = boost::polymorphic_downcast<QueueRow*>(*row_it)) {
         int empire_id = HumanClientApp::GetApp()->EmpireID();
+
+        // This precorrects the position for a factor in Empire::PlaceTechInQueue
+        auto position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), row_it);
+        auto original_position = std::distance(m_queue_wnd->GetQueueListBox()->begin(), original_position_it);
+        auto orginal_greater = original_position > position;
+        auto corrected_position = position + (orginal_greater ? 0 : 1);
+
         HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name, static_cast<int>(position)));
+            std::make_shared<ResearchQueueOrder>(empire_id, queue_row->elem.name, static_cast<int>(corrected_position)));
         if (Empire* empire = GetEmpire(empire_id))
             empire->UpdateResearchQueue();
     }

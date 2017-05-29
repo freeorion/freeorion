@@ -1697,11 +1697,11 @@ TechTreeWnd::TechListBox::TechListBox(GG::X w, GG::Y h) :
     CUIListBox()
 {
     Resize(GG::Pt(w, h));
-    DoubleClickedSignal.connect(
+    DoubleClickedRowSignal.connect(
         boost::bind(&TechListBox::TechDoubleClicked, this, _1, _2, _3));
-    LeftClickedSignal.connect(
+    LeftClickedRowSignal.connect(
         boost::bind(&TechListBox::TechLeftClicked, this, _1, _2, _3));
-    RightClickedSignal.connect(
+    RightClickedRowSignal.connect(
         boost::bind(&TechListBox::TechRightClicked, this, _1, _2, _3));
 
     SetStyle(GG::LIST_NOSEL);

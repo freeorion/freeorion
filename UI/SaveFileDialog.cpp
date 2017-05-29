@@ -740,9 +740,9 @@ void SaveFileDialog::Init() {
         boost::bind(&SaveFileDialog::Confirm, this));
     cancel_btn->LeftClickedSignal.connect(
         boost::bind(&SaveFileDialog::Cancel, this));
-    m_file_list->SelChangedSignal.connect(
+    m_file_list->SelRowsChangedSignal.connect(
         boost::bind(&SaveFileDialog::SelectionChanged, this, _1));
-    m_file_list->DoubleClickedSignal.connect(
+    m_file_list->DoubleClickedRowSignal.connect(
         boost::bind(&SaveFileDialog::DoubleClickRow, this, _1, _2, _3));
     m_name_edit->EditedSignal.connect(
         boost::bind(&SaveFileDialog::FileNameEdited, this, _1));

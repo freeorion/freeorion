@@ -548,6 +548,8 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     m_clip_cells(false),
     m_sort_col(0),
     m_sort_cmp(DefaultRowCmp<Row>()),
+    m_allow_drops(false),
+    m_allowed_drop_types(boost::none),
     m_auto_scroll_during_drag_drops(true),
     m_auto_scroll_margin(8),
     m_auto_scrolling_up(false),
@@ -568,40 +570,50 @@ ListBox::ListBox(Clr color, Clr interior/* = CLR_ZERO*/) :
     InstallEventFilter(this);
 
     if (INSTRUMENT_ALL_SIGNALS) {
-        ClearedSignal.connect(ListSignalEcho(*this, "ListBox::ClearedSignal"));
-        BeforeInsertSignal.connect(ListSignalEcho(*this, "ListBox::BeforeInsertSignal"));
-        AfterInsertSignal.connect(ListSignalEcho(*this, "ListBox::AfterinsertSignal"));
-        SelChangedSignal.connect(ListSignalEcho(*this, "ListBox::SelChangedSignal"));
-        DroppedSignal.connect(ListSignalEcho(*this, "ListBox::DroppedSignal"));
-        DropAcceptableSignal.connect(ListSignalEcho(*this, "ListBox::DropAcceptableSignal"));
-        LeftClickedSignal.connect(ListSignalEcho(*this, "ListBox::LeftClickedSignal"));
-        RightClickedSignal.connect(ListSignalEcho(*this, "ListBox::RightClickedSignal"));
-        DoubleClickedSignal.connect(ListSignalEcho(*this, "ListBox::DoubleClickedSignal"));
-        BeforeEraseSignal.connect(ListSignalEcho(*this, "ListBox::BeforeEraseSignal"));
-        AfterEraseSignal.connect(ListSignalEcho(*this, "ListBox::AfterEraseSignal"));
-        BrowsedSignal.connect(ListSignalEcho(*this, "ListBox::BrowsedSignal"));
+        ClearedRowsSignal.connect(ListSignalEcho(*this, "ListBox::ClearedRowsSignal"));
+        BeforeInsertRowSignal.connect(ListSignalEcho(*this, "ListBox::BeforeInsertRowSignal"));
+        AfterInsertRowSignal.connect(ListSignalEcho(*this, "ListBox::AfterinsertRowSignal"));
+        SelRowsChangedSignal.connect(ListSignalEcho(*this, "ListBox::SelRowsChangedSignal"));
+        DroppedRowSignal.connect(ListSignalEcho(*this, "ListBox::DroppedRowSignal"));
+        LeftClickedRowSignal.connect(ListSignalEcho(*this, "ListBox::LeftClickedRowSignal"));
+        RightClickedRowSignal.connect(ListSignalEcho(*this, "ListBox::RightClickedRowSignal"));
+        DoubleClickedRowSignal.connect(ListSignalEcho(*this, "ListBox::DoubleClickedRowSignal"));
+        BeforeEraseRowSignal.connect(ListSignalEcho(*this, "ListBox::BeforeEraseRowSignal"));
+        AfterEraseRowSignal.connect(ListSignalEcho(*this, "ListBox::AfterEraseRowSignal"));
+        BrowsedRowSignal.connect(ListSignalEcho(*this, "ListBox::BrowsedRowSignal"));
     }
 }
 
 ListBox::~ListBox()
 { delete m_header_row; }
 
+void ListBox::AllowDrops(bool allow)
+{ m_allow_drops = allow; }
+
+bool ListBox::AllowingDrops()
+{ return m_allow_drops; }
+
+void ListBox::AllowAllDropTypes(bool allow) {
+    // If all types are allow use boost::none as a sentinel
+    if (allow)
+        m_allowed_drop_types = boost::none;
+
+    // Otherwise hold each allowed type in a set.
+    else if (!m_allowed_drop_types)
+        m_allowed_drop_types = std::unordered_set<std::string>();
+}
+
 void ListBox::DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
                               const Pt& pt, Flags<ModKey> mod_keys) const
 {
-    for (std::map<const Wnd*, bool>::iterator it = first; it != last; ++it) {
-        it->second = false;
+    for (auto& it = first; it != last; ++it) {
         const Row* row = dynamic_cast<const Row*>(it->first);
-        if (row &&
-            (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-             m_allowed_drop_types.find(row->DragDropDataType()) != m_allowed_drop_types.end()))
-        {
-            iterator insertion_it = RowUnderPt(pt);
-            try {
-                DropAcceptableSignal(insertion_it);
-                it->second = true;
-            } catch (const DontAcceptDrop&) {}
-        }
+
+        bool allowed = (m_allow_drops
+                        && row
+                        && AllowedDropType(row->DragDropDataType()));
+
+        it->second = allowed;
     }
 }
 
@@ -609,7 +621,7 @@ void ListBox::HandleRowRightClicked(const Pt& pt, GG::Flags<GG::ModKey> mod) {
     iterator row_it = RowUnderPt(pt);
     if (row_it != m_rows.end()) {
         m_rclick_row = row_it;
-        RightClickedSignal(row_it, pt, mod);
+        RightClickedRowSignal(row_it, pt, mod);
     }
 }
 
@@ -732,8 +744,11 @@ Alignment ListBox::RowAlignment(iterator it) const
 double ListBox::ColStretch(std::size_t n) const
 { return m_col_stretches[n]; }
 
-const std::set<std::string>& ListBox::AllowedDropTypes() const
-{ return m_allowed_drop_types; }
+bool ListBox::AllowedDropType(const std::string& type) const
+{
+    return (!m_allowed_drop_types                 // all types allowed
+            || m_allowed_drop_types->count(type)); //this type allowed;
+}
 
 bool ListBox::AutoScrollDuringDragDrops() const
 { return m_auto_scroll_during_drag_drops; }
@@ -789,12 +804,16 @@ void ListBox::StartingChildDragDrop(const Wnd* wnd, const Pt& offset)
 
 void ListBox::AcceptDrops(const Pt& pt, const std::vector<Wnd*>& wnds, Flags<ModKey> mod_keys)
 {
-    // TODO: Pull the call to RowUnderPt() out and reuse the value in each loop iteration.
+    iterator insertion_it = RowUnderPt(pt);
+    bool inserting_at_first_row = insertion_it == m_first_row_shown;
     for (Wnd* wnd : wnds) {
         Row* row = boost::polymorphic_downcast<Row*>(wnd);
-        iterator insertion_it = RowUnderPt(pt);
         Insert(row, insertion_it, true, true);
     }
+
+    // Adjust to show rows inserted before the first row.
+    if (inserting_at_first_row)
+        SetFirstRowShown(std::prev(m_first_row_shown, wnds.size()));
 }
 
 void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* destination)
@@ -833,7 +852,7 @@ void ListBox::ChildrenDraggedAway(const std::vector<Wnd*>& wnds, const Wnd* dest
         m_selections = new_selections;
 
         if (m_selections.size() != initially_selected_rows.size()) {
-            SelChangedSignal(m_selections);
+            SelRowsChangedSignal(m_selections);
         }
     }
 }
@@ -1087,7 +1106,7 @@ void ListBox::Clear()
     m_hscroll = nullptr;
 
     RequirePreRender();
-    ClearedSignal();
+    ClearedRowsSignal();
 }
 
 void ListBox::SelectRow(iterator it, bool signal/* = false*/)
@@ -1107,7 +1126,7 @@ void ListBox::SelectRow(iterator it, bool signal/* = false*/)
     m_selections.insert(it);
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
@@ -1120,7 +1139,7 @@ void ListBox::DeselectRow(iterator it, bool signal/* = false*/)
         m_selections.erase(it);
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::SelectAll(bool signal/* = false*/)
@@ -1143,7 +1162,7 @@ void ListBox::SelectAll(bool signal/* = false*/)
     }
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::DeselectAll(bool signal/* = false*/)
@@ -1156,7 +1175,7 @@ void ListBox::DeselectAll(bool signal/* = false*/)
     }
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 ListBox::iterator ListBox::begin()
@@ -1181,7 +1200,7 @@ void ListBox::SetSelections(const SelectionSet& s, bool signal/* = false*/)
     m_selections = s;
 
     if (signal && previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::SetCaret(iterator it)
@@ -1441,10 +1460,12 @@ void ListBox::AddPaddingAtEnd(bool enable)
 { m_add_padding_at_end = enable; }
 
 void ListBox::AllowDropType(const std::string& str)
-{ m_allowed_drop_types.insert(str); }
-
-void ListBox::DisallowDropType(const std::string& str)
-{ m_allowed_drop_types.erase(str); }
+{
+    // Create the set if necessary
+    if (!m_allowed_drop_types)
+        m_allowed_drop_types = std::unordered_set<std::string>();
+    m_allowed_drop_types->insert(str);
+}
 
 void ListBox::AutoScrollDuringDragDrops(bool auto_scroll)
 { m_auto_scroll_during_drag_drops = auto_scroll; }
@@ -1636,8 +1657,7 @@ void ListBox::DragDropHere(const Pt& pt, std::map<const Wnd*, bool>& drop_wnds_a
     if (m_auto_scrolling_up || m_auto_scrolling_down || m_auto_scrolling_left || m_auto_scrolling_right) {
         bool acceptable_drop = false;
         for (std::map<const Wnd*, bool>::value_type& acceptable_wnd : drop_wnds_acceptable) {
-            if (m_allowed_drop_types.find("") != m_allowed_drop_types.end() ||
-                m_allowed_drop_types.find(acceptable_wnd.first->DragDropDataType()) != m_allowed_drop_types.end()) {
+            if (AllowedDropType(acceptable_wnd.first->DragDropDataType())) {
                 acceptable_drop = true;
                 break;
             }
@@ -1738,7 +1758,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
                 else
                     ClickAtRow(sel_row, mod_keys);
                 m_lclick_row = sel_row;
-                LeftClickedSignal(sel_row, pt, mod_keys);
+                LeftClickedRowSignal(sel_row, pt, mod_keys);
             }
         }
         break;
@@ -1747,7 +1767,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::LDoubleClick: {
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_lclick_row && InClient(pt)) {
-            DoubleClickedSignal(row, pt, mod_keys);
+            DoubleClickedRowSignal(row, pt, mod_keys);
             m_old_sel_row = m_rows.end();
         } else {
             LClick(pt, mod_keys);
@@ -1768,7 +1788,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         iterator row = RowUnderPt(pt);
         if (row != m_rows.end() && row == m_old_rdown_row && InClient(pt)) {
             m_rclick_row = row;
-            RightClickedSignal(row, pt, mod_keys);
+            RightClickedRowSignal(row, pt, mod_keys);
         }
         m_old_rdown_row = m_rows.end();
         break;
@@ -1778,7 +1798,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
         if (m_style & LIST_BROWSEUPDATES) {
             iterator sel_row = RowUnderPt(pt);
             if (m_last_row_browsed != sel_row)
-                BrowsedSignal(m_last_row_browsed = sel_row);
+                BrowsedRowSignal(m_last_row_browsed = sel_row);
         }
         break;
     }
@@ -1789,7 +1809,7 @@ bool ListBox::EventFilter(Wnd* w, const WndEvent& event)
     case WndEvent::MouseLeave: {
         if (m_style & LIST_BROWSEUPDATES) {
             if (m_last_row_browsed != m_rows.end())
-                BrowsedSignal(m_last_row_browsed = m_rows.end());
+                BrowsedRowSignal(m_last_row_browsed = m_rows.end());
         }
         break;
     }
@@ -1883,12 +1903,15 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
     if (dropped)
         original_dropped_position = std::find(m_rows.begin(), m_rows.end(), row);
 
+    bool moved = (original_dropped_position != m_rows.end());
+    std::size_t original_dropped_offset = moved ? std::distance(begin(), original_dropped_position) :0;
+
     iterator retval = it;
 
     row->InstallEventFilter(this);
 
     if (signal)
-        BeforeInsertSignal(it);
+        BeforeInsertRowSignal(it);
 
     if (m_rows.empty()) {
         m_rows.push_back(row);
@@ -1909,22 +1932,26 @@ ListBox::iterator ListBox::Insert(Row* row, iterator it, bool dropped, bool sign
     if (m_first_row_shown == m_rows.end())
         m_first_row_shown = m_rows.begin();
 
-    if (dropped) {
-        // TODO: Can these be inverted without breaking anything?  It would be
-        // semantically clearer if they were.
-        DroppedSignal(retval);
-        if (original_dropped_position != m_rows.end())
-            Erase(original_dropped_position, true, false);
+    if (dropped && moved) {
+        Erase(original_dropped_position, true, false);
+        // keep pointing at the same offset as original location after the erase
+        original_dropped_position = begin();
+        std::advance(original_dropped_position, original_dropped_offset);
     }
 
     row->Hide();
 
     row->Resize(Pt(std::max(ClientWidth(), X(1)), row->Height()));
 
-    if (signal)
-        AfterInsertSignal(it);
-
     row->RightClickedSignal.connect(boost::bind(&ListBox::HandleRowRightClicked, this, _1, _2));
+
+    if (signal) {
+        AfterInsertRowSignal(it);
+        if (dropped)
+            DroppedRowSignal(retval);
+        if (moved)
+            MovedRowSignal(retval, original_dropped_position);
+    }
 
     RequirePreRender();
     return retval;
@@ -2456,7 +2483,7 @@ void ListBox::ClickAtRow(iterator it, Flags<ModKey> mod_keys)
     }
 
     if (previous_selections != m_selections)
-        SelChangedSignal(m_selections);
+        SelRowsChangedSignal(m_selections);
 }
 
 void ListBox::NormalizeRow(Row* row)

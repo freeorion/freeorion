@@ -2231,7 +2231,7 @@ public:
         for (GG::ListBox::Row* row : rows)
         { row->Resize(row_size); }
 
-        SelChangedSignal(this->Selections());
+        SelRowsChangedSignal(this->Selections());
     }
 
     void            SetFleet(int fleet_id) {
@@ -2388,9 +2388,9 @@ FleetDetailPanel::FleetDetailPanel(GG::X w, GG::Y h, int fleet_id, bool order_is
         m_ships_lb->AllowDropType(SHIP_DROP_TYPE_STRING);
     }
 
-    m_ships_lb->SelChangedSignal.connect(
+    m_ships_lb->SelRowsChangedSignal.connect(
         boost::bind(&FleetDetailPanel::ShipSelectionChanged, this, _1));
-    m_ships_lb->RightClickedSignal.connect(
+    m_ships_lb->RightClickedRowSignal.connect(
         boost::bind(&FleetDetailPanel::ShipRightClicked, this, _1, _2, _3));
     GetUniverse().UniverseObjectDeleteSignal.connect(
         boost::bind(&FleetDetailPanel::UniverseObjectDeleted, this, _1));
@@ -2702,13 +2702,13 @@ FleetWnd::FleetWnd(const std::vector<int>& fleet_ids, bool order_issuing_enabled
     // create fleet list box
     m_fleets_lb = new FleetsListBox(m_order_issuing_enabled);
     m_fleets_lb->SetHiliteColor(GG::CLR_ZERO);
-    m_fleets_lb->SelChangedSignal.connect(
+    m_fleets_lb->SelRowsChangedSignal.connect(
         boost::bind(&FleetWnd::FleetSelectionChanged, this, _1));
-    m_fleets_lb->LeftClickedSignal.connect(
+    m_fleets_lb->LeftClickedRowSignal.connect(
         boost::bind(&FleetWnd::FleetLeftClicked, this, _1, _2, _3));
-    m_fleets_lb->RightClickedSignal.connect(
+    m_fleets_lb->RightClickedRowSignal.connect(
         boost::bind(&FleetWnd::FleetRightClicked, this, _1, _2, _3));
-    m_fleets_lb->DoubleClickedSignal.connect(
+    m_fleets_lb->DoubleClickedRowSignal.connect(
         boost::bind(&FleetWnd::FleetDoubleClicked, this, _1, _2, _3));
     AttachChild(m_fleets_lb);
     m_fleets_lb->SetStyle(GG::LIST_NOSORT | GG::LIST_BROWSEUPDATES);

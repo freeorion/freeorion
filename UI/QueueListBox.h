@@ -1,6 +1,8 @@
 #ifndef _QueueListBox_h_
 #define _QueueListBox_h_
 
+#include <boost/optional/optional.hpp>
+
 #include "CUIControls.h"
 
 /** A list box type for representing queues (eg the research and production queues). */
@@ -8,7 +10,7 @@ class QueueListBox :
     public CUIListBox
 {
 public:
-    QueueListBox(const std::string& drop_type_str, const std::string& prompt_str);
+    QueueListBox(const boost::optional<std::string>& drop_type_str, const std::string& prompt_str);
 
     void Render() override;
 
@@ -29,22 +31,18 @@ public:
 
     void            Clear();
 
-    boost::signals2::signal<void (GG::ListBox::Row*, std::size_t)>  QueueItemMovedSignal;
     boost::signals2::signal<void (GG::ListBox::iterator)>           QueueItemDeletedSignal;
 
 protected:
     void KeyPress(GG::Key key, std::uint32_t key_code_point, GG::Flags<GG::ModKey> mod_keys) override;
 
-    void DropsAcceptable(DropsAcceptableIter first, DropsAcceptableIter last,
-                         const GG::Pt& pt, GG::Flags<GG::ModKey> mod_keys) const override;
-
     virtual void    ItemRightClickedImpl(GG::ListBox::iterator it, const GG::Pt& pt, const GG::Flags<GG::ModKey>& modkeys);
 
     /** Return a functor that will signal that \p it should be moved to the top of the list.*/
-    virtual std::function<void()> MoveToTopAction(GG::ListBox::iterator it) const;
+    virtual std::function<void()> MoveToTopAction(GG::ListBox::iterator it);
 
     /** Return a functor that will signal that \p it should be moved to the bottom of the list.*/
-    virtual std::function<void()> MoveToBottomAction(GG::ListBox::iterator it) const;
+    virtual std::function<void()> MoveToBottomAction(GG::ListBox::iterator it);
 
     /** Return a functor that will signal that \p it should be deleted.*/
     virtual std::function<void()> DeleteAction(GG::ListBox::iterator it) const;

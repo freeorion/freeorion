@@ -543,11 +543,11 @@ BuildDesignatorWnd::BuildSelector::BuildSelector(const std::string& config_name)
 
     // selectable list of buildable items
     AttachChild(m_buildable_items);
-    m_buildable_items->LeftClickedSignal.connect(
+    m_buildable_items->LeftClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemLeftClicked, this, _1, _2, _3));
-    m_buildable_items->DoubleClickedSignal.connect(
+    m_buildable_items->DoubleClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemDoubleClicked, this, _1, _2, _3));
-    m_buildable_items->RightClickedSignal.connect(
+    m_buildable_items->RightClickedRowSignal.connect(
         boost::bind(&BuildDesignatorWnd::BuildSelector::BuildItemRightClicked, this, _1, _2, _3));
 
     //GG::ListBox::Row* header = new GG::ListBox::Row();

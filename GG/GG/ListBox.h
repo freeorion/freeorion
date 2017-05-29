@@ -35,6 +35,8 @@
 #include <GG/Control.h>
 #include <GG/Timer.h>
 
+#include <boost/optional/optional.hpp>
+
 #include <memory>
 #include <set>
 #include <unordered_set>
@@ -97,13 +99,7 @@ extern GG_API const ListBoxStyle LIST_BROWSEUPDATES;  ///< Causes a signal to be
     <br>Note that drag-and-drop support is a key part of ListBox's
     functionality.  As such, special effort has been made to make its use as
     natural and flexible as possible.  This includes allowing arbitrary
-    reordering of ListBox rows when the LIST_NOSORT is in effect, and includes
-    the use of the DontAcceptDrop exception.  The DontAcceptDrop exception can
-    be thrown by any client of the ListBox in response to its
-    DropAcceptableSignal.  Such a throw will cause the drop to be refused.
-    Note that a DropAcceptableSignal is emitted for each row dropped into the
-    ListBox, so individual rows may be accepted or rejected from a single
-    multi-row drop. */
+    reordering of ListBox rows when the LIST_NOSORT is in effect.*/
 class GG_API ListBox : public Control
 {
 public:
@@ -227,26 +223,28 @@ public:
 
     /** \name Signal Types */ ///@{
     /** emitted when the list box is cleared */
-    typedef boost::signals2::signal<void ()>                                                ClearedSignalType;
+    typedef boost::signals2::signal<void ()>                                                ClearedRowsSignalType;
     /** emitted when one or more rows are selected or deselected */
-    typedef boost::signals2::signal<void (const SelectionSet&)>                             SelChangedSignalType;
+    typedef boost::signals2::signal<void (const SelectionSet&)>                             SelRowsChangedSignalType;
     /** the signature of row-change-notification signals */
     typedef boost::signals2::signal<void (iterator)>                                        RowSignalType;
     /** the signature of const row-change-notification signals */
     typedef boost::signals2::signal<void (const_iterator)>                                  ConstRowSignalType;
     /** the signature of row-click-notification signals */
     typedef boost::signals2::signal<void(iterator, const Pt&,const GG::Flags<GG::ModKey>&)> RowClickSignalType;
+    /** the signature of row-move-notification signals */
+    typedef boost::signals2::signal<void (iterator, iterator)>                              MovedRowSignalType;
 
-    typedef RowSignalType      BeforeInsertSignalType;   ///< emitted before a row is inserted into the list box
-    typedef RowSignalType      AfterInsertSignalType;    ///< emitted after a row is inserted into the list box
-    typedef RowSignalType      DroppedSignalType;        ///< emitted when a row is inserted into the list box via drag-and-drop
-    typedef ConstRowSignalType DropAcceptableSignalType; ///< emitted when a row may be inserted into the list box via drag-and-drop
-    typedef RowClickSignalType LeftClickedSignalType;    ///< emitted when a row in the listbox is left-clicked; provides the row left-clicked and the clicked point
-    typedef RowClickSignalType RightClickedSignalType;   ///< emitted when a row in the listbox is right-clicked; provides the row right-clicked and the clicked point
-    typedef RowClickSignalType DoubleClickedSignalType;  ///< emitted when a row in the listbox is left-double-clicked
-    typedef RowSignalType      BeforeEraseSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
-    typedef RowSignalType      AfterEraseSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
-    typedef RowSignalType      BrowsedSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
+    typedef RowSignalType      BeforeInsertRowSignalType;   ///< emitted before a row is inserted into the list box
+    typedef RowSignalType      AfterInsertRowSignalType;    ///< emitted after a row is inserted into the list box
+    typedef RowSignalType      DroppedRowSignalType;        ///< emitted when a row is inserted into the list box via drag-and-drop
+    typedef ConstRowSignalType DropRowAcceptableSignalType; ///< emitted when a row may be inserted into the list box via drag-and-drop
+    typedef RowClickSignalType LeftClickedRowSignalType;    ///< emitted when a row in the listbox is left-clicked; provides the row left-clicked and the clicked point
+    typedef RowClickSignalType RightClickedRowSignalType;   ///< emitted when a row in the listbox is right-clicked; provides the row right-clicked and the clicked point
+    typedef RowClickSignalType DoubleClickedRowSignalType;  ///< emitted when a row in the listbox is left-double-clicked
+    typedef RowSignalType      BeforeEraseRowSignalType;    ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted before the row is removed
+    typedef RowSignalType      AfterEraseRowSignalType;     ///< emitted when a row in the listbox is erased; provides the deleted Row, and is emitted after the row is removed
+    typedef RowSignalType      BrowsedRowSignalType;        ///< emitted when a row in the listbox is "browsed" (rolled over) by the cursor; provides the browsed row
     //@}
 
     /** \name Constants */ ///@{
@@ -306,10 +304,9 @@ public:
     double          ColStretch(std::size_t n) const;   ///< Return the stretch factor of column \a n.
     Alignment       RowAlignment(iterator it) const;   ///< returns the alignment of row \a it; must be ALIGN_TOP, ALIGN_VCENTER, or ALIGN_BOTTOM; not range-checked
 
-    /** Returns the set of data types allowed to be dropped over this ListBox
-        when drag-and-drop is enabled. \note If this set contains "", all drop
-        types are allowed. */
-    const std::set<std::string>& AllowedDropTypes() const;
+    /** Returns true iff \p type is allowed to be dropped over this ListBox
+        when drag-and-drop is enabled. */
+    bool AllowedDropType(const std::string& type) const;
 
     /** Whether the list should autoscroll when the user is attempting to drop
         an item into a location that is not currently visible. */
@@ -323,18 +320,23 @@ public:
         auto-scrolling. */
     unsigned int    AutoScrollInterval() const;
 
-    mutable ClearedSignalType        ClearedSignal;         /// the cleared signal object for this ListBox
-    mutable BeforeInsertSignalType   BeforeInsertSignal;    ///< the before insert signal object for this ListBox
-    mutable AfterInsertSignalType    AfterInsertSignal;     ///< the after insert signal object for this ListBox
-    mutable SelChangedSignalType     SelChangedSignal;      ///< the selection change signal object for this ListBox
-    mutable DroppedSignalType        DroppedSignal;         ///< the dropped signal object for this ListBox
-    mutable DropAcceptableSignalType DropAcceptableSignal;  ///< the drop-acceptability signal object for this ListBox
-    mutable LeftClickedSignalType    LeftClickedSignal;     ///< the left click signal object for this ListBox
-    mutable RightClickedSignalType   RightClickedSignal;    ///< the right click signal object for this ListBox
-    mutable DoubleClickedSignalType  DoubleClickedSignal;   ///< the double click signal object for this ListBox
-    mutable BeforeEraseSignalType    BeforeEraseSignal;     ///< the before erase signal object for this ListBox
-    mutable AfterEraseSignalType     AfterEraseSignal;      ///< the after erase signal object for this ListBox
-    mutable BrowsedSignalType        BrowsedSignal;         ///< the browsed signal object for this ListBox
+    /** Return true if drops are allowed.*/
+    bool AllowingDrops();
+
+
+    mutable ClearedRowsSignalType        ClearedRowsSignal;        /// the cleared signal object for this ListBox
+    mutable BeforeInsertRowSignalType    BeforeInsertRowSignal;    ///< the before insert signal object for this ListBox
+    mutable AfterInsertRowSignalType     AfterInsertRowSignal;     ///< the after insert signal object for this ListBox
+    mutable SelRowsChangedSignalType     SelRowsChangedSignal;     ///< the selection change signal object for this ListBox
+    mutable DroppedRowSignalType         DroppedRowSignal;         ///< the dropped signal object for this ListBox
+    mutable DropRowAcceptableSignalType  DropRowAcceptableSignal;  ///< the drop-acceptability signal object for this ListBox
+    mutable MovedRowSignalType           MovedRowSignal;           ///< the moved signal object for this ListBox
+    mutable LeftClickedRowSignalType     LeftClickedRowSignal;     ///< the left click signal object for this ListBox
+    mutable RightClickedRowSignalType    RightClickedRowSignal;    ///< the right click signal object for this ListBox
+    mutable DoubleClickedRowSignalType   DoubleClickedRowSignal;   ///< the double click signal object for this ListBox
+    mutable BeforeEraseRowSignalType     BeforeEraseRowSignal;     ///< the before erase signal object for this ListBox
+    mutable AfterEraseRowSignalType      AfterEraseRowSignal;      ///< the after erase signal object for this ListBox
+    mutable BrowsedRowSignalType         BrowsedRowSignal;         ///< the browsed signal object for this ListBox
     //@}
 
     /** \name Mutators */ ///@{
@@ -457,15 +459,15 @@ public:
      *  the top (true), or only use as much space as it needs. */
     void            AddPaddingAtEnd(bool enable = true);
 
+    /** Allow drops if \p allow is true.*/
+    void            AllowDrops(bool allow);
+
+    /** Allow all drop types if \p allow is true.*/
+    void            AllowAllDropTypes(bool allow);
+
     /** Allows Rows with data type \a str to be dropped over this ListBox when
         drag-and-drop is enabled. \note Passing "" enables all drop types. */
     void            AllowDropType(const std::string& str);
-
-    /** Disallows Rows with data type \a str to be dropped over this ListBox
-        when drag-and-drop is enabled. \note If "" is still an allowed drop
-        type, drops of type \a str will still be allowed, even after disallowed
-        with a call to this function. */
-    void            DisallowDropType(const std::string& str);
 
     /** Set this to determine whether the list should autoscroll when the user
         is attempting to drop an item into a location that is not currently
@@ -495,13 +497,6 @@ public:
     };
 
     /** \name Exceptions */ ///@{
-    /** The base class for ListBox exceptions. */
-    GG_ABSTRACT_EXCEPTION(Exception);
-
-    /** Thrown by a ListBox that does not wish to accept a potential drop, for
-        whatever reason. This may be throw by anyone -- even in client code
-        activated by a DropAcceptableSignal. */
-    GG_CONCRETE_EXCEPTION(DontAcceptDrop, GG::ListBox, Exception);
     //@}
 
 protected:
@@ -634,8 +629,13 @@ private:
     std::size_t     m_sort_col;         ///< the index of the column data used to sort the list
     boost::function<bool (const Row&, const Row&, std::size_t)>
                     m_sort_cmp;         ///< the predicate used to sort the values in the m_sort_col column of two rows
-    std::set<std::string>
-                    m_allowed_drop_types;///< the line item types allowed for use in this listbox
+
+    bool            m_allow_drops;      ///< are we accepting drops
+
+    /** Set to boost::none to allow all types.  Otherwise each string is an
+        allowed type.*/
+    boost::optional<std::unordered_set<std::string>>
+                    m_allowed_drop_types;
 
     bool            m_auto_scroll_during_drag_drops;
     unsigned int    m_auto_scroll_margin;

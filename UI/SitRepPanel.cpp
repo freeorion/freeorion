@@ -403,9 +403,9 @@ SitRepPanel::SitRepPanel(const std::string& config_name) :
         boost::bind(&SitRepPanel::LastClicked, this));
     m_filter_button->LeftClickedSignal.connect(
         boost::bind(&SitRepPanel::FilterClicked, this));
-    m_sitreps_lb->DoubleClickedSignal.connect(
+    m_sitreps_lb->DoubleClickedRowSignal.connect(
         boost::bind(&SitRepPanel::IgnoreSitRep, this, _1, _2, _3));
-    m_sitreps_lb->RightClickedSignal.connect(
+    m_sitreps_lb->RightClickedRowSignal.connect(
         boost::bind(&SitRepPanel::DismissalMenu, this, _1, _2, _3));
 
     DoLayout();
