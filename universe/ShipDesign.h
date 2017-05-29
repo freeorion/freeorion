@@ -418,10 +418,13 @@ class FO_COMMON_API ShipDesign {
 public:
     /** \name Structors */ //@{
 private:
-    /** The ShipDesign constructor constructs invalid designs and is only used by boost
+    /** The ShipDesign() constructor constructs invalid designs and is only used by boost
         serialization. */
     ShipDesign();
 public:
+    /** The public ShipDesign constructor will only construct valid ship designs.  If the passed
+        in parameters (\p hull and \p parts) would result in an invalid design it throws
+        std::runtime_error. */
     ShipDesign(const std::string& name, const std::string& description,
                int designed_on_turn, int designed_by_empire, const std::string& hull,
                const std::vector<std::string>& parts,
@@ -429,6 +432,9 @@ public:
                bool name_desc_in_stringtable = false, bool monster = false,
                const boost::uuids::uuid& uuid = boost::uuids::nil_uuid()
               );
+    /** The public ShipDesign constructor will only construct valid ship designs.  If the passed
+        in parameters (\p hull and \p parts) would result in an invalid design it throws
+        std::runtime_error. */
     ShipDesign(const std::string& name, const std::string& description,
                const std::string& hull,
                const std::vector<std::string>& parts,
