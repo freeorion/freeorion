@@ -2562,8 +2562,6 @@ void CompletedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it
     control->Resize(ListRowSize());
 
     GetCurrentDesignsManager().MoveBefore(design_id, insert_before_id);
-    HumanClientApp::GetApp()->Orders()
-        .IssueOrder(std::make_shared<ShipDesignOrder>(EmpireID(), design_id, insert_before_id));
 }
 
 void SavedDesignsListBox::QueueItemMoved(const GG::ListBox::iterator& row_it,
