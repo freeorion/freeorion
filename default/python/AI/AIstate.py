@@ -17,7 +17,7 @@ import PlanetUtilsAI
 from freeorion_tools import dict_from_map, print_error
 from universe_object import System
 from AIDependencies import INVALID_ID
-from character.character_module import create_character
+from character.character_module import create_character, Aggression
 
 
 # moving ALL or NEARLY ALL 'global' variables into AIState object rather than module
@@ -158,7 +158,13 @@ class AIstate(object):
                 convert_to_version(state, v+1)
             self.__dict__ = state
         except ConversionError:
-            self.__init__(aggression=fo.aggression.typical)
+            try:
+                aggression = state['character'].get_trait(Aggression).key
+            except Exception as e:
+                print >> sys.stderr, "Could not find the aggression level of the AI, defaulting to typical."
+                print >> sys.stderr, e
+                aggression = fo.aggression.typical
+            self.__init__(aggression)
 
     def generate_uid(self, first=False):
         """
