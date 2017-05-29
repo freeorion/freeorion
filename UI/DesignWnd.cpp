@@ -4025,13 +4025,6 @@ void DesignWnd::MainPanel::RefreshIncompleteDesign() const {
     const std::string& hull =           Hull();
     std::vector<std::string> parts =    Parts();
 
-    // Allow editing invalid saved designs to allow scripters to edit monsters.
-    if (!ShipDesign::ValidDesign(hull, parts) && !EditingSavedDesign()) {
-        ErrorLogger() << "DesignWnd::MainPanel::RefreshIncompleteDesign attempting to create an invalid design.";
-        m_incomplete_design.reset();
-        return;
-    }
-
     const std::string& icon = m_hull ? m_hull->Icon() : EMPTY_STRING;
 
     const auto uuid = boost::uuids::random_generator()();
@@ -4215,11 +4208,6 @@ std::pair<int, boost::uuids::uuid> DesignWnd::AddDesign() {
         std::vector<std::string> parts = m_main_panel->Parts();
         const std::string& hull_name = m_main_panel->Hull();
 
-        if (!ShipDesign::ValidDesign(hull_name, parts)) {
-            ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
-            return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
-        }
-
         const auto name = m_main_panel->ValidatedDesignName();
 
         const auto description = m_main_panel->DesignDescription();
@@ -4263,6 +4251,7 @@ std::pair<int, boost::uuids::uuid> DesignWnd::AddDesign() {
         DebugLogger() << "Added new design: " << design.Name();
 
         return std::make_pair(new_design_id, new_uuid);
+
     } catch (std::invalid_argument&) {
         ErrorLogger() << "DesignWnd::AddDesign tried to add an invalid ShipDesign";
         return {INVALID_DESIGN_ID, boost::uuids::uuid{0}};
