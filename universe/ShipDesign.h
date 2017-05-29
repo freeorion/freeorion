@@ -593,6 +593,7 @@ public:
     /** Set the UUID. */
     void                            SetUUID(const boost::uuids::uuid& uuid);
     void                            Rename(const std::string& name) { m_name = name; }  ///< renames this design to \a name
+    void                            SetMonster(const bool is_monster) {m_is_monster = is_monster; }
     //@}
 
     /** Return true if \p hull and \p parts would make a valid design. */
