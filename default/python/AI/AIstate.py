@@ -97,7 +97,12 @@ class AIstate(object):
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
-        assert(hasattr(AIstate, 'version') and isinstance(AIstate.version, int) and AIstate.version >= 0)
+        if not hasattr(AIstate, 'version'):
+            raise ConversionError("AIstate must have an integer version attribute for savegame compatibility")
+        if not isinstance(AIstate.version, int):
+            raise ConversionError("Version attribute of AIstate must be an integer!")
+        if AIstate.version < 0:
+            raise ConversionError("AIstate savegame compatibility version must be a positive integer!")
 
         # Debug info
         # unique id for game
