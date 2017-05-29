@@ -527,11 +527,6 @@ public:
     ///< returns true if the \a hull and parts vectors passed make a valid ShipDesign
     static bool                     ValidDesign(const std::string& hull, const std::vector<std::string>& parts);
 
-    /** returns true if the \a design passed is a valid ShipDesign in terms of
-      * (its hull and parts.  does not check any other member variables */
-    static bool                     ValidDesign(const ShipDesign& design)
-    { return ValidDesign(design.m_hull, design.m_parts); }
-
 private:
     void BuildStatCaches();
 
