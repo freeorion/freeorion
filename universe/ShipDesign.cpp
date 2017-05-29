@@ -562,6 +562,7 @@ ShipDesign::ShipDesign(const std::string& name, const std::string& description,
     if (!ValidDesign(m_hull, m_parts)) {
         ErrorLogger() << "constructing an invalid ShipDesign!";
         ErrorLogger() << Dump();
+        throw std::runtime_error("invalid ShipDesign");
     }
     BuildStatCaches();
 }
