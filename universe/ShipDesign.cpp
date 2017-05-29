@@ -1288,6 +1288,10 @@ PredefinedShipDesignManager::PredefinedShipDesignManager() {
     FillDesignsOrderingAndNameTables(
         "scripting/monster_designs", m_designs, m_monster_ordering, m_name_to_monster_design);
 
+    // Make the monsters monstrous
+    for (const auto& uuid : m_monster_ordering)
+        m_designs[uuid]->SetMonster(true);
+
     TraceLogger() << "Predefined Ship Designs:";
     for (const auto& entry : m_designs)
         TraceLogger() << " ... " << entry.second->Name();
