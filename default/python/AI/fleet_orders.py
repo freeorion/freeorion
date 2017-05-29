@@ -5,6 +5,7 @@ import AIstate
 import FleetUtilsAI
 import freeOrionAIInterface as fo  # pylint: disable=import-error
 import FreeOrionAI as foAI
+import MilitaryAI
 import MoveUtilsAI
 import PlanetUtilsAI
 import CombatRatingsAI
@@ -27,30 +28,41 @@ def trooper_move_reqs_met(main_fleet_mission, order, verbose):
     # is already a military fleet assigned to secure the target, and don't take final jump unless the planet is
     # (to the AI's knowledge) down to zero shields.  Additional checks will also be done by the later
     # generic movement code
-    system_id = order.fleet.get_system().id
     invasion_target = main_fleet_mission.target
     invasion_planet = invasion_target.get_object()
     invasion_system = invasion_target.get_system()
     supplied_systems = fo.getEmpire().fleetSupplyableSystemIDs
     # if about to leave supply lines
-    if (order.target.id not in supplied_systems and system_id in supplied_systems):
-        if (invasion_planet.currentMeterValue(fo.meterType.maxShield) and
-                    invasion_system.id not in AIstate.militarySystemIDs):
-            if verbose:
-                print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
-                       "because target (%s) has nonzero max shields and there is not yet a military fleet "
-                       "assigned to secure the target system.") % (order.fleet.id, invasion_planet)
-            return False
+    if order.target.id not in supplied_systems or fo.getUniverse().jumpDistance(order.fleet.id, invasion_system.id) < 5:
+        if invasion_planet.currentMeterValue(fo.meterType.maxShield):
+            military_support_fleets = MilitaryAI.get_military_fleets_with_target_system(invasion_system.id)
+            if not military_support_fleets:
+                if verbose:
+                    print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
+                           "because target (%s) has nonzero max shields and there is not yet a military fleet "
+                           "assigned to secure the target system.") % (order.fleet.id, invasion_planet)
+                return False
+
+            # if there is a threat in the enemy system, do give military ships at least 1 turn to clear it
+            delay_to_move_troops = 1 if MilitaryAI.get_system_local_threat(order.target.id) else 0
+
+            def eta(fleet_id):
+                return FleetUtilsAI.calculate_estimated_time_of_arrival(fleet_id, invasion_system.id)
+
+            eta_this_fleet = eta(order.fleet.id)
+            if all(((eta_this_fleet - delay_to_move_troops) <= eta(fid) and eta(fid)) for fid in military_support_fleets):
+                if verbose:
+                    print ("trooper_move_reqs_met() holding Invasion fleet %d before leaving supply "
+                           "because target (%s) has nonzero max shields and no assigned military fleet would arrive"
+                           "at least %d turn earlier than the invasion fleet") % (
+                                order.fleet.id, invasion_planet, delay_to_move_troops)
+                return False
+
         if verbose:
             print ("trooper_move_reqs_met() allowing Invasion fleet %d to leave supply "
                    "because target (%s) has zero max shields or there is a military fleet assigned to secure "
-                   "the target system.") % (order.fleet.id, invasion_planet)
-    # if on final leg of journey
-    if (order.target.id == invasion_system.id) and invasion_planet.currentMeterValue(fo.meterType.shield):
-        if verbose:
-            print ("trooper_move_reqs_met() holding Invasion fleet %d before final leg to target system because "
-                   "target (%s) has nonzero shields") % (order.fleet.id, invasion_planet)
-        return False
+                   "the target system which will arrive at least 1 turn before the invasion fleet.") % (order.fleet.id,
+                                                                                                        invasion_planet)
     return True
 
 

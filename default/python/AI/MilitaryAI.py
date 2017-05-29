@@ -860,3 +860,12 @@ def get_tot_mil_rating():
 def get_num_military_ships():
     return sum(foAI.foAIstate.fleetStatus.get(fid, {}).get('nships', 0)
                for fid in FleetUtilsAI.get_empire_fleet_ids_by_role(MissionType.MILITARY))
+
+
+def get_military_fleets_with_target_system(target_system_id):
+    military_mission_types = [MissionType.MILITARY,  MissionType.SECURE]
+    found_fleets = []
+    for fleet_mission in foAI.foAIstate.get_fleet_missions_with_any_mission_types(military_mission_types):
+        if fleet_mission.target and fleet_mission.target.id == target_system_id:
+            found_fleets.append(fleet_mission.fleet.id)
+    return found_fleets

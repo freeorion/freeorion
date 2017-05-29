@@ -1,3 +1,4 @@
+import math
 import sys
 
 import freeOrionAIInterface as fo  # pylint: disable=import-error
@@ -598,3 +599,12 @@ def get_max_fuel(fleet_id):
 def get_fleet_upkeep():
     # TODO: Use new upkeep calculation
     return 1 + AIDependencies.SHIP_UPKEEP * foAI.foAIstate.shipCount
+
+
+def calculate_estimated_time_of_arrival(fleet_id, target_system_id):
+    universe = fo.getUniverse()
+    fleet = universe.getFleet(fleet_id)
+    if not fleet or not fleet.speed:
+        return 99999
+    distance = universe.shortestPathDistance(fleet_id, target_system_id)
+    return math.ceil(float(distance) / fleet.speed)
