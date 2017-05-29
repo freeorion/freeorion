@@ -74,7 +74,12 @@ def convert_to_version(state, version):
 
     if version == 0:
         pass  # only version number added
-    # elif version == 1:
+    elif version == 1:
+        try:
+            state['_aggression'] = state['character'].get_trait(Aggression).key
+        except Exception as e:
+            raise ConversionError("Error when converting to compatibility version 1: "
+                                   "Can't find aggression in character module. Exception thrown was: " + e.message)
     #   state["some_new_member"] = some_default_value
     #   del state["some_removed_member"]
     #   state["list_changed_to_set"] = set(state["list_changed_to_set"])
@@ -93,7 +98,7 @@ class AIstate(object):
     is playable with this AIstate version, i.e. new members must be added
     and outdated members must be modified and / or deleted.
     """
-    version = 0
+    version = 1
 
     def __init__(self, aggression):
         # Do not allow to create AIstate instances with an invalid version number.
@@ -109,6 +114,8 @@ class AIstate(object):
         self.uid = self.generate_uid(first=True)
         # unique ids for turns.  {turn: uid}
         self.turn_uids = {}
+
+        self._aggression = aggression
 
         # 'global' (?) variables
         self.colonisablePlanetIDs = odict()
@@ -158,12 +165,15 @@ class AIstate(object):
                 convert_to_version(state, v+1)
             self.__dict__ = state
         except ConversionError:
-            try:
-                aggression = state['character'].get_trait(Aggression).key
-            except Exception as e:
-                print >> sys.stderr, "Could not find the aggression level of the AI, defaulting to typical."
-                print >> sys.stderr, e
-                aggression = fo.aggression.typical
+            if '_aggression' in state:
+                aggression = state['_aggression']
+            else:
+                try:
+                    aggression = state['character'].get_trait(Aggression).key
+                except Exception as e:
+                    print >> sys.stderr, "Could not find the aggression level of the AI, defaulting to typical."
+                    print >> sys.stderr, e
+                    aggression = fo.aggression.typical
             self.__init__(aggression)
 
     def generate_uid(self, first=False):
