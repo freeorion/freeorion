@@ -1107,11 +1107,7 @@ namespace {
 
 
         // duplicate design to add to Universe
-        ShipDesign* copy = new ShipDesign(design->Name(false), design->Description(false),
-                                          design->DesignedOnTurn(), design->DesignedByEmpire(),
-                                          design->Hull(), design->Parts(), design->Icon(),
-                                          design->Model(), design->LookupInStringtable(),
-                                          monster, design->UUID());
+        ShipDesign* copy = new ShipDesign(*design);
 
         bool success = universe.InsertShipDesignID(copy, new_design_id);
         if (!success) {
