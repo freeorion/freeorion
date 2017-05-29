@@ -417,7 +417,11 @@ FO_COMMON_API const HullType* GetHullType(const std::string& name);
 class FO_COMMON_API ShipDesign {
 public:
     /** \name Structors */ //@{
+private:
+    /** The ShipDesign constructor constructs invalid designs and is only used by boost
+        serialization. */
     ShipDesign();
+public:
     ShipDesign(const std::string& name, const std::string& description,
                int designed_on_turn, int designed_by_empire, const std::string& hull,
                const std::vector<std::string>& parts,
