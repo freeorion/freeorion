@@ -353,8 +353,9 @@ namespace {
         manager.Remove(design_id);
             
         const auto empire_id = HumanClientApp::GetApp()->EmpireID();
-        HumanClientApp::GetApp()->Orders().IssueOrder(
-            std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
+        if (!manager.IsObsolete(design_id))
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, design_id, true));
     }
 
 
@@ -4284,17 +4285,20 @@ void DesignWnd::ReplaceDesign() {
         m_main_panel->SetDesign(manager.GetDesign(new_uuid));
 
     } else if (const auto replaced_design = m_main_panel->EditingCurrentDesign()) {
+        auto& manager = GetCurrentDesignsManager();
         int empire_id = HumanClientApp::GetApp()->EmpireID();
         int replaced_id = (*replaced_design)->ID();
 
         if (new_design_id == INVALID_DESIGN_ID) return;
 
-        auto& manager = GetCurrentDesignsManager();
+        // Remove the old id from the Empire.
+        if (!manager.IsObsolete(replaced_id))
+            HumanClientApp::GetApp()->Orders().IssueOrder(
+                std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
+
+        // Replace the old id in the manager.
         manager.MoveBefore(new_design_id, replaced_id);
         manager.Remove(replaced_id);
-
-        // Remove the old id.
-        HumanClientApp::GetApp()->Orders().IssueOrder(std::make_shared<ShipDesignOrder>(empire_id, replaced_id, true));
 
         // Update the replaced design on the bench
         m_main_panel->SetDesign(new_design_id);
