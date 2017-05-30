@@ -23,8 +23,8 @@ BOOST_CLASS_EXPORT(Building)
 BOOST_CLASS_EXPORT(Fleet)
 BOOST_CLASS_EXPORT(Ship)
 BOOST_CLASS_VERSION(Ship, 1)
-//BOOST_CLASS_EXPORT(ShipDesign)
-//BOOST_CLASS_VERSION(ShipDesign, 1)
+BOOST_CLASS_EXPORT(ShipDesign)
+BOOST_CLASS_VERSION(ShipDesign, 1)
 
 template <class Archive>
 void ObjectMap::serialize(Archive& ar, const unsigned int version)
@@ -251,23 +251,30 @@ void ShipDesign::serialize(Archive& ar, const unsigned int version)
 {
     ar  & BOOST_SERIALIZATION_NVP(m_id)
         & BOOST_SERIALIZATION_NVP(m_name);
-    // UUID serialization as a primitive doesn't work as expected from the documentation
-    // ar & BOOST_SERIALIZATION_NVP(m_uuid);
-    // This workaround instead serializes a string representation.
-    if (Archive::is_saving::value) {
-        auto string_uuid = boost::uuids::to_string(m_uuid);
-        ar & BOOST_SERIALIZATION_NVP(string_uuid);
-    } else {
-        std::string string_uuid;
-        ar & BOOST_SERIALIZATION_NVP(string_uuid);
-        try {
-            m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
-        } catch (const boost::bad_lexical_cast&) {
-            m_uuid = boost::uuids::nil_generator()();
+
+    TraceLogger() << "ship design serialize version: " << version << " : " << (Archive::is_saving::value ? "saving" : "loading");
+
+    if (version >= 1) {
+        // UUID serialization as a primitive doesn't work as expected from the documentation
+        // ar & BOOST_SERIALIZATION_NVP(m_uuid);
+        // This workaround instead serializes a string representation.
+        if (Archive::is_saving::value) {
+            auto string_uuid = boost::uuids::to_string(m_uuid);
+            ar & BOOST_SERIALIZATION_NVP(string_uuid);
+        } else {
+            std::string string_uuid;
+            ar & BOOST_SERIALIZATION_NVP(string_uuid);
+            try {
+                m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+            } catch (const boost::bad_lexical_cast&) {
+                m_uuid = boost::uuids::nil_generator()();
+            }
         }
+    } else if (Archive::is_loading::value) {
+        m_uuid = boost::uuids::nil_generator()();
     }
 
-    ar & BOOST_SERIALIZATION_NVP(m_description)
+    ar  & BOOST_SERIALIZATION_NVP(m_description)
         & BOOST_SERIALIZATION_NVP(m_designed_on_turn)
         & BOOST_SERIALIZATION_NVP(m_hull)
         & BOOST_SERIALIZATION_NVP(m_parts)

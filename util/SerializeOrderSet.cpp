@@ -65,9 +65,9 @@ void FleetMoveOrder::serialize(Archive& ar, const unsigned int version)
         & BOOST_SERIALIZATION_NVP(m_start_system)
         & BOOST_SERIALIZATION_NVP(m_dest_system)
         & BOOST_SERIALIZATION_NVP(m_route);
-    if(version > 0) {
+    if (version > 0) {
         ar & BOOST_SERIALIZATION_NVP(m_append);
-    }else{
+    } else {
         m_append = false;
     }
 }
@@ -145,20 +145,24 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_BASE_OBJECT_NVP(Order);
     ar  & BOOST_SERIALIZATION_NVP(m_design_id);
 
-    // UUID serialization as a primitive doesn't work as expected from the documentation
-    // ar & BOOST_SERIALIZATION_NVP(m_uuid);
-    // This workaround instead serializes a string representation.
-    if (Archive::is_saving::value) {
-        auto string_uuid = boost::uuids::to_string(m_uuid);
-        ar & BOOST_SERIALIZATION_NVP(string_uuid);
-    } else {
-        std::string string_uuid;
-        ar & BOOST_SERIALIZATION_NVP(string_uuid);
-        try {
-            m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
-        } catch (const boost::bad_lexical_cast&) {
-            m_uuid = boost::uuids::nil_generator()();
+    if (version >= 1) {
+        // UUID serialization as a primitive doesn't work as expected from the documentation
+        // ar & BOOST_SERIALIZATION_NVP(m_uuid);
+        // This workaround instead serializes a string representation.
+        if (Archive::is_saving::value) {
+            auto string_uuid = boost::uuids::to_string(m_uuid);
+            ar & BOOST_SERIALIZATION_NVP(string_uuid);
+        } else {
+            std::string string_uuid;
+            ar & BOOST_SERIALIZATION_NVP(string_uuid);
+            try {
+                m_uuid = boost::lexical_cast<boost::uuids::uuid>(string_uuid);
+            } catch (const boost::bad_lexical_cast&) {
+                m_uuid = boost::uuids::nil_generator()();
+            }
         }
+    } else if (Archive::is_loading::value) {
+        m_uuid = boost::uuids::nil_generator()();
     }
 
     ar  & BOOST_SERIALIZATION_NVP(m_delete_design_from_empire);
@@ -176,6 +180,8 @@ void ShipDesignOrder::serialize(Archive& ar, const unsigned int version)
     ar  & BOOST_SERIALIZATION_NVP(m_name_desc_in_stringtable);
     ar  & BOOST_SERIALIZATION_NVP(m_design_id_after);
 }
+
+BOOST_CLASS_VERSION(ShipDesignOrder, 1)
 
 template <class Archive>
 void ScrapOrder::serialize(Archive& ar, const unsigned int version)
