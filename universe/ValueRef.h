@@ -276,10 +276,10 @@ struct FO_COMMON_API Statistic : public Variable<T>
     { return m_stat_type; }
 
     const Condition::ConditionBase* GetSamplingCondition() const
-    { return m_sampling_condition; }
+    { return m_sampling_condition.get(); }
 
     const ValueRefBase<T>* GetValueRef() const
-    { return m_value_ref; }
+    { return m_value_ref.get(); }
 
     unsigned int GetCheckSum() const override;
 
@@ -298,9 +298,9 @@ protected:
     T ReduceData(const std::map<std::shared_ptr<const UniverseObject>, T>& object_property_values) const;
 
 private:
-    StatisticType               m_stat_type;
-    Condition::ConditionBase*   m_sampling_condition;
-    ValueRefBase<T>*            m_value_ref;
+    StatisticType                             m_stat_type;
+    std::unique_ptr<Condition::ConditionBase> m_sampling_condition;
+    std::unique_ptr<ValueRefBase<T>>          m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -352,11 +352,11 @@ struct FO_COMMON_API ComplexVariable : public Variable<T>
     unsigned int GetCheckSum() const override;
 
 protected:
-    ValueRefBase<int>* m_int_ref1;
-    ValueRefBase<int>* m_int_ref2;
-    ValueRefBase<int>* m_int_ref3;
-    ValueRefBase<std::string>*m_string_ref1;
-    ValueRefBase<std::string>*m_string_ref2;
+    std::unique_ptr<ValueRefBase<int>> m_int_ref1;
+    std::unique_ptr<ValueRefBase<int>> m_int_ref2;
+    std::unique_ptr<ValueRefBase<int>> m_int_ref3;
+    std::unique_ptr<ValueRefBase<std::string>> m_string_ref1;
+    std::unique_ptr<ValueRefBase<std::string>> m_string_ref2;
 
 private:
     friend class boost::serialization::access;
@@ -400,7 +400,7 @@ struct FO_COMMON_API StaticCast : public Variable<ToType>
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRefBase<FromType>* m_value_ref;
+    std::unique_ptr<ValueRefBase<FromType>> m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -441,7 +441,7 @@ struct FO_COMMON_API StringCast : public Variable<std::string>
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRefBase<FromType>* m_value_ref;
+    std::unique_ptr<ValueRefBase<FromType>> m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -480,7 +480,7 @@ struct FO_COMMON_API UserStringLookup : public Variable<std::string> {
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRefBase<FromType>* m_value_ref;
+    std::unique_ptr<ValueRefBase<FromType>> m_value_ref;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -518,7 +518,7 @@ struct FO_COMMON_API NameLookup : public Variable<std::string> {
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRefBase<int>* GetValueRef() const
-    { return m_value_ref; }
+    { return m_value_ref.get(); }
 
     LookupType GetLookupType() const
     { return m_lookup_type; }
@@ -526,7 +526,7 @@ struct FO_COMMON_API NameLookup : public Variable<std::string> {
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRefBase<int>* m_value_ref;
+    std::unique_ptr<ValueRefBase<int>> m_value_ref;
     LookupType m_lookup_type;
 
     friend class boost::serialization::access;
@@ -851,10 +851,7 @@ Statistic<T>::Statistic(ValueRefBase<T>* value_ref, StatisticType stat_type,
 
 template <class T>
 Statistic<T>::~Statistic()
-{
-    delete m_sampling_condition;
-    delete m_value_ref;
-}
+{}
 
 template <class T>
 bool Statistic<T>::operator==(const ValueRefBase<T>& rhs) const
@@ -993,7 +990,7 @@ T Statistic<T>::Eval(const ScriptingContext& context) const
         throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type.");
 
     Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition);
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     if (condition_matches.empty())
         return T(-1);   // should be INVALID_T of enum types
@@ -1249,13 +1246,7 @@ ComplexVariable<T>::ComplexVariable(const std::string& variable_name,
 
 template <class T>
 ComplexVariable<T>::~ComplexVariable()
-{
-    delete m_int_ref1;
-    delete m_int_ref2;
-    delete m_int_ref3;
-    delete m_string_ref1;
-    delete m_string_ref2;
-}
+{}
 
 template <class T>
 bool ComplexVariable<T>::operator==(const ValueRefBase<T>& rhs) const
@@ -1509,7 +1500,7 @@ StaticCast<FromType, ToType>::StaticCast(ValueRefBase<FromType>* value_ref) :
 
 template <class FromType, class ToType>
 StaticCast<FromType, ToType>::~StaticCast()
-{ delete m_value_ref; }
+{}
 
 template <class FromType, class ToType>
 bool StaticCast<FromType, ToType>::operator==(const ValueRefBase<ToType>& rhs) const
@@ -1604,7 +1595,7 @@ StringCast<FromType>::StringCast(ValueRefBase<FromType>* value_ref) :
 
 template <class FromType>
 StringCast<FromType>::~StringCast()
-{ delete m_value_ref; }
+{}
 
 template <class FromType>
 bool StringCast<FromType>::operator==(const ValueRefBase<std::string>& rhs) const
@@ -1716,9 +1707,7 @@ UserStringLookup<FromType>::UserStringLookup(ValueRefBase<FromType>* value_ref) 
 
 template <class FromType>
 UserStringLookup<FromType>::~UserStringLookup()
-{
-    delete m_value_ref;
-}
+{}
 
 template <class FromType>
 bool UserStringLookup<FromType>::operator==(const ValueRefBase<std::string>& rhs) const {

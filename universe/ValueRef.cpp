@@ -1172,7 +1172,7 @@ template <>
 double Statistic<double>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition);
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     // these two statistic types don't depend on the object property values,
     // so can be evaluated without getting those values.
@@ -1192,7 +1192,7 @@ template <>
 int Statistic<int>::Eval(const ScriptingContext& context) const
 {
     Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition);
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     // these two statistic types don't depend on the object property values,
     // so can be evaluated without getting those values.
@@ -1217,7 +1217,7 @@ std::string Statistic<std::string>::Eval(const ScriptingContext& context) const
         throw std::runtime_error("ValueRef evaluated with an invalid StatisticType for the return type (string).");
 
     Condition::ObjectSet condition_matches;
-    GetConditionMatches(context, condition_matches, m_sampling_condition);
+    GetConditionMatches(context, condition_matches, m_sampling_condition.get());
 
     if (condition_matches.empty())
         return "";
@@ -2592,7 +2592,7 @@ std::string StringCast<double>::Eval(const ScriptingContext& context) const
     double temp = m_value_ref->Eval(context);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (Variable<double>* int_var = dynamic_cast<Variable<double>*>(m_value_ref)) {
+    if (Variable<double>* int_var = dynamic_cast<Variable<double>*>(m_value_ref.get())) {
         if (int_var->PropertyName().back() == "X" || int_var->PropertyName().back() == "Y") {
             if (temp == UniverseObject::INVALID_POSITION)
                 return UserString("INVALID_POSITION");
@@ -2614,7 +2614,7 @@ std::string StringCast<int>::Eval(const ScriptingContext& context) const
     int temp = m_value_ref->Eval(context);
 
     // special case for a few sub-value-refs to help with UI representation
-    if (Variable<int>* int_var = dynamic_cast<Variable<int>*>(m_value_ref)) {
+    if (Variable<int>* int_var = dynamic_cast<Variable<int>*>(m_value_ref.get())) {
         if (int_var->PropertyName().back() == "ETA") {
             if (temp == Fleet::ETA_UNKNOWN) {
                 return UserString("FW_FLEET_ETA_UNKNOWN");
@@ -2682,7 +2682,7 @@ NameLookup::NameLookup(ValueRefBase<int>* value_ref, LookupType lookup_type) :
 {}
 
 NameLookup::~NameLookup()
-{ delete m_value_ref; }
+{}
 
 bool NameLookup::operator==(const ValueRefBase<std::string>& rhs) const {
     if (&rhs == this)
