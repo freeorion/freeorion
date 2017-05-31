@@ -2780,7 +2780,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
     } else if (m_op_type == MINIMUM || m_op_type == MAXIMUM) {
         // evaluate all operands, return sorted first/last
         std::set<std::string> vals;
-        for (ValueRefBase<std::string>* vr : m_operands) {
+        for (auto& vr : m_operands) {
             if (vr)
                 vals.insert(vr->Eval(context));
         }
@@ -2794,7 +2794,7 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         if (m_operands.empty())
             return "";
         unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-        ValueRefBase<std::string>* vr = *std::next(m_operands.begin(), idx);
+        auto& vr = *std::next(m_operands.begin(), idx);
         if (!vr)
             return "";
         return vr->Eval(context);
@@ -2803,14 +2803,14 @@ std::string Operation<std::string>::EvalImpl(const ScriptingContext& context) co
         // insert string into other string in place of %1% or similar placeholder
         if (m_operands.empty())
             return "";
-        ValueRefBase<std::string>* template_op = *(m_operands.begin());
+        auto& template_op = *(m_operands.begin());
         if (!template_op)
             return "";
         std::string template_str = template_op->Eval(context);
 
         boost::format formatter = FlexibleFormat(template_str);
 
-        for (ValueRefBase<std::string>* op : m_operands) {
+        for (auto& op : m_operands) {
             if (!op) {
                 formatter % "";
                 continue;
@@ -2903,7 +2903,7 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
         case MINIMUM:
         case MAXIMUM: {
             std::set<double> vals;
-            for (ValueRefBase<double>* vr : m_operands) {
+            for (auto& vr : m_operands) {
                 if (vr)
                     vals.insert(vr->Eval(context));
             }
@@ -2928,7 +2928,7 @@ double      Operation<double>::EvalImpl(const ScriptingContext& context) const
             if (m_operands.empty())
                 return 0.0;
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            ValueRefBase<double>* vr = *std::next(m_operands.begin(), idx);
+            auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0.0;
             return vr->Eval(context);
@@ -3034,7 +3034,7 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
         case MINIMUM:
         case MAXIMUM: {
             std::set<int> vals;
-            for (ValueRefBase<int>* vr : m_operands) {
+            for (auto& vr : m_operands) {
                 if (vr)
                     vals.insert(vr->Eval(context));
             }
@@ -3059,7 +3059,7 @@ int         Operation<int>::EvalImpl(const ScriptingContext& context) const
             if (m_operands.empty())
                 return 0;
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            ValueRefBase<int>* vr = *std::next(m_operands.begin(), idx);
+            auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return 0;
             return vr->Eval(context);

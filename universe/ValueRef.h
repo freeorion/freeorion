@@ -584,7 +584,7 @@ struct FO_COMMON_API Operation : public ValueRefBase<T>
     const ValueRefBase<T>* RHS() const;
 
     /** all operands */
-    const std::vector<ValueRefBase<T>*>& Operands() const;
+    const std::vector<ValueRefBase<T>*> Operands() const;
 
     unsigned int GetCheckSum() const override;
 
@@ -594,7 +594,7 @@ private:
     T       EvalImpl(const ScriptingContext& context) const;
 
     OpType                          m_op_type;
-    std::vector<ValueRefBase<T>*>   m_operands;
+    std::vector<std::unique_ptr<ValueRefBase<T>>>   m_operands;
     bool                            m_constant_expr = false;
     T                               m_cached_const_value;
 
@@ -1830,9 +1830,9 @@ Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand1, ValueRefBase<
     m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
 {
     if (operand1)
-        m_operands.push_back(operand1);
+        m_operands.push_back(std::unique_ptr<ValueRefBase<T>>(operand1));
     if (operand2)
-        m_operands.push_back(operand2);
+        m_operands.push_back(std::unique_ptr<ValueRefBase<T>>(operand2));
     DetermineIfConstantExpr();
     CacheConstValue();
 }
@@ -1844,7 +1844,7 @@ Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand) :
     m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
 {
     if (operand)
-        m_operands.push_back(operand);
+        m_operands.push_back(std::unique_ptr<ValueRefBase<T>>(operand));
     DetermineIfConstantExpr();
     CacheConstValue();
 }
@@ -1852,9 +1852,11 @@ Operation<T>::Operation(OpType op_type, ValueRefBase<T>* operand) :
 template <class T>
 Operation<T>::Operation(OpType op_type, const std::vector<ValueRefBase<T>*>& operands) :
     m_op_type(op_type),
-    m_operands(operands),
+    m_operands(),
     m_cached_const_value(T())  // overritten below if operation is constant, not used if operation is not constant
 {
+    for (auto& op: operands)
+        m_operands.push_back(std::unique_ptr<ValueRefBase<T>>(op));
     DetermineIfConstantExpr();
     CacheConstValue();
 }
@@ -1869,7 +1871,7 @@ void Operation<T>::DetermineIfConstantExpr()
 
     m_constant_expr = true; // may be overridden...
 
-    for (ValueRefBase<T>* operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (operand && !operand->ConstantExpr()) {
             m_constant_expr = false;
             return;
@@ -1888,12 +1890,7 @@ void Operation<T>::CacheConstValue()
 
 template <class T>
 Operation<T>::~Operation()
-{
-    for (ValueRefBase<T>* operand : m_operands) {
-        delete operand;
-    }
-    m_operands.clear();
-}
+{}
 
 template <class T>
 bool Operation<T>::operator==(const ValueRefBase<T>& rhs) const
@@ -1933,7 +1930,7 @@ const ValueRefBase<T>* Operation<T>::LHS() const
 {
     if (m_operands.empty())
         return nullptr;
-    return m_operands[0];
+    return m_operands[0].get();
 }
 
 template <class T>
@@ -1941,12 +1938,17 @@ const ValueRefBase<T>* Operation<T>::RHS() const
 {
     if (m_operands.size() < 2)
         return nullptr;
-    return m_operands[1];
+    return m_operands[1].get();
 }
 
 template <class T>
-const std::vector<ValueRefBase<T>*>& Operation<T>::Operands() const
-{ return m_operands; }
+const std::vector<ValueRefBase<T>*> Operation<T>::Operands() const
+{
+    std::vector<ValueRefBase<T>*> retval(m_operands.size());
+    std::transform(m_operands.begin(), m_operands.end(), retval.begin(),
+                   [](const std::unique_ptr<ValueRefBase<T>>& p) { return *p; });
+    return retval;
+}
 
 template <class T>
 T Operation<T>::Eval(const ScriptingContext& context) const
@@ -1964,7 +1966,7 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
         case MINIMUM: {
             // evaluate all operands, return smallest
             std::set<T> vals;
-            for (ValueRefBase<T>* vr : m_operands) {
+            for (auto& vr : m_operands) {
                 if (vr)
                     vals.insert(vr->Eval(context));
             }
@@ -1980,7 +1982,7 @@ T Operation<T>::EvalImpl(const ScriptingContext& context) const
             if (m_operands.empty())
                 return T(-1);   // should be INVALID_T of enum types
             unsigned int idx = RandSmallInt(0, m_operands.size() - 1);
-            ValueRefBase<T>* vr = *std::next(m_operands.begin(), idx);
+            auto& vr = *std::next(m_operands.begin(), idx);
             if (!vr)
                 return T(-1);   // should be INVALID_T of enum types
             return vr->Eval(context);
@@ -2056,7 +2058,7 @@ bool Operation<T>::RootCandidateInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (ValueRefBase<T>* operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (operand && !operand->RootCandidateInvariant())
             return false;
     }
@@ -2068,7 +2070,7 @@ bool Operation<T>::LocalCandidateInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (ValueRefBase<T>* operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (operand && !operand->LocalCandidateInvariant())
             return false;
     }
@@ -2080,7 +2082,7 @@ bool Operation<T>::TargetInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (ValueRefBase<T>* operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (operand && !operand->TargetInvariant())
             return false;
     }
@@ -2092,7 +2094,7 @@ bool Operation<T>::SourceInvariant() const
 {
     if (m_op_type == RANDOM_UNIFORM || m_op_type == RANDOM_PICK)
         return false;
-    for (ValueRefBase<T>* operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (operand && !operand->SourceInvariant())
             return false;
     }
@@ -2108,7 +2110,7 @@ bool Operation<T>::SimpleIncrement() const
         return false;
     if (!(m_operands[1]->ConstantExpr()))
         return false;
-    auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0]);
+    const auto lhs = dynamic_cast<const Variable<T>*>(m_operands[0].get());
     if (!lhs)
         return false;
     return lhs->GetReferenceType() == EFFECT_TARGET_VALUE_REFERENCE;
@@ -2335,7 +2337,7 @@ std::string Operation<T>::Dump() const
 
 template <class T>
 void Operation<T>::SetTopLevelContent(const std::string& content_name) {
-    for (ValueRefBase<T>* operand : m_operands) {
+    for (auto& operand : m_operands) {
         if (operand)
             operand->SetTopLevelContent(content_name);
     }
