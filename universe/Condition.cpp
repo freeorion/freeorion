@@ -320,7 +320,7 @@ Number::Number(ValueRef::ValueRefBase<int>* low, ValueRef::ValueRefBase<int>* hi
 {}
 
 Number::~Number()
-{ delete m_condition; }
+{}
 
 bool Number::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -657,9 +657,8 @@ SortedNumberOf::SortedNumberOf(ValueRef::ValueRefBase<int>* number,
     m_condition(condition)
 {}
 
-SortedNumberOf::~SortedNumberOf() {
-    delete m_condition;
-}
+SortedNumberOf::~SortedNumberOf()
+{}
 
 bool SortedNumberOf::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2712,7 +2711,7 @@ unsigned int CreatedOnTurn::GetCheckSum() const {
 // Contains                                              //
 ///////////////////////////////////////////////////////////
 Contains::~Contains()
-{ delete m_condition; }
+{}
 
 bool Contains::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -2917,7 +2916,7 @@ unsigned int Contains::GetCheckSum() const {
 // ContainedBy                                           //
 ///////////////////////////////////////////////////////////
 ContainedBy::~ContainedBy()
-{ delete m_condition; }
+{}
 
 bool ContainedBy::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7215,9 +7214,7 @@ WithinDistance::WithinDistance(ValueRef::ValueRefBase<double>* distance, Conditi
     m_condition(condition)
 {}
 
-WithinDistance::~WithinDistance() {
-    delete m_condition;
-}
+WithinDistance::~WithinDistance() {}
 
 bool WithinDistance::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7356,9 +7353,7 @@ WithinStarlaneJumps::WithinStarlaneJumps(ValueRef::ValueRefBase<int>* jumps, Con
     m_condition(condition)
 {}
 
-WithinStarlaneJumps::~WithinStarlaneJumps() {
-    delete m_condition;
-}
+WithinStarlaneJumps::~WithinStarlaneJumps() {}
 
 bool WithinStarlaneJumps::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -7474,7 +7469,7 @@ unsigned int WithinStarlaneJumps::GetCheckSum() const {
 // CanAddStarlaneConnection                              //
 ///////////////////////////////////////////////////////////
 CanAddStarlaneConnection::~CanAddStarlaneConnection()
-{ delete m_condition; }
+{}
 
 bool CanAddStarlaneConnection::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8272,9 +8267,7 @@ ResourceSupplyConnectedByEmpire::ResourceSupplyConnectedByEmpire(
     m_condition(condition)
 {}
 
-ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {
-    delete m_condition;
-}
+ResourceSupplyConnectedByEmpire::~ResourceSupplyConnectedByEmpire() {}
 
 bool ResourceSupplyConnectedByEmpire::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -8574,8 +8567,13 @@ unsigned int CanProduceShips::GetCheckSum() const {
 ///////////////////////////////////////////////////////////
 // OrderedBombarded                                      //
 ///////////////////////////////////////////////////////////
+OrderedBombarded::OrderedBombarded(ConditionBase* by_object_condition) :
+    ConditionBase(),
+    m_by_object_condition(by_object_condition)
+{}
+
 OrderedBombarded::~OrderedBombarded()
-{ delete m_by_object_condition; }
+{}
 
 bool OrderedBombarded::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)
@@ -9733,7 +9731,7 @@ unsigned int Not::GetCheckSum() const {
 // Described                                             //
 ///////////////////////////////////////////////////////////
 Described::~Described()
-{ delete m_condition; }
+{}
 
 bool Described::operator==(const ConditionBase& rhs) const {
     if (this == &rhs)

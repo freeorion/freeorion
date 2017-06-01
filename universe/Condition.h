@@ -199,7 +199,7 @@ private:
 
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_low;
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_high;
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -290,7 +290,7 @@ private:
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_number;
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_sort_key;
     SortingMethod m_sorting_method;
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -902,7 +902,7 @@ struct FO_COMMON_API Contains : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -945,7 +945,7 @@ struct FO_COMMON_API ContainedBy : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1973,7 +1973,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRefBase<double>> m_distance;
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2012,7 +2012,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_jumps;
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2055,7 +2055,7 @@ struct FO_COMMON_API CanAddStarlaneConnection :  ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2243,7 +2243,7 @@ private:
     bool Match(const ScriptingContext& local_context) const override;
 
     std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2317,10 +2317,7 @@ private:
 /** Matches the objects that have been targeted for bombardment by at least one
   * object that matches \a m_by_object_condition. */
 struct FO_COMMON_API OrderedBombarded : public ConditionBase {
-    OrderedBombarded(ConditionBase* by_object_condition) :
-        ConditionBase(),
-        m_by_object_condition(by_object_condition)
-    {}
+    OrderedBombarded(ConditionBase* by_object_condition);
 
     virtual ~OrderedBombarded();
 
@@ -2346,7 +2343,7 @@ struct FO_COMMON_API OrderedBombarded : public ConditionBase {
 private:
     bool Match(const ScriptingContext& local_context) const override;
 
-    ConditionBase* m_by_object_condition;
+    std::unique_ptr<ConditionBase> m_by_object_condition;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -2602,7 +2599,7 @@ struct FO_COMMON_API Described : public ConditionBase {
     unsigned int GetCheckSum() const override;
 
 private:
-    ConditionBase* m_condition;
+    std::unique_ptr<ConditionBase> m_condition;
     std::string m_desc_stringtable_key;
 
     friend class boost::serialization::access;
