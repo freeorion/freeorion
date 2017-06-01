@@ -408,7 +408,7 @@ SetMeter::SetMeter(MeterType meter, ValueRef::ValueRefBase<double>* value, const
 {}
 
 SetMeter::~SetMeter()
-{ delete m_value; }
+{}
 
 void SetMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) return;
@@ -501,7 +501,7 @@ void SetMeter::Execute(const ScriptingContext& context, const TargetSet& targets
     } else if (m_value->SimpleIncrement()) {
         // meter value is a consistent constant increment for each target, so handle with
         // deep inspection single ValueRef evaluation
-        ValueRef::Operation<double>* op = dynamic_cast<ValueRef::Operation<double>*>(m_value);
+        ValueRef::Operation<double>* op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger() << "SetMeter::Execute couldn't cast simple increment ValueRef to an Operation. Reverting to standard execute.";
             EffectBase::Execute(context, targets);
@@ -608,10 +608,7 @@ SetShipPartMeter::SetShipPartMeter(MeterType meter,
     m_value(value)
 {}
 
-SetShipPartMeter::~SetShipPartMeter() {
-    delete m_value;
-    delete m_part_name;
-}
+SetShipPartMeter::~SetShipPartMeter() {}
 
 void SetShipPartMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -703,7 +700,7 @@ void SetShipPartMeter::Execute(const ScriptingContext& context, const TargetSet&
     } else if (m_value->SimpleIncrement()) {
         // meter value is a consistent constant increment for each target, so handle with
         // deep inspection single ValueRef evaluation
-        auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value);
+        auto op = dynamic_cast<ValueRef::Operation<double>*>(m_value.get());
         if (!op) {
             ErrorLogger() << "SetShipPartMeter::Execute couldn't cast simple increment ValueRef to an Operation...";
             return;
@@ -793,10 +790,8 @@ SetEmpireMeter::SetEmpireMeter(ValueRef::ValueRefBase<int>* empire_id, const std
     m_value(value)
 {}
 
-SetEmpireMeter::~SetEmpireMeter() {
-    delete m_empire_id;
-    delete m_value;
-}
+SetEmpireMeter::~SetEmpireMeter()
+{}
 
 void SetEmpireMeter::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -905,10 +900,8 @@ SetEmpireStockpile::SetEmpireStockpile(ValueRef::ValueRefBase<int>* empire_id,
     m_value(value)
 {}
 
-SetEmpireStockpile::~SetEmpireStockpile() {
-    delete m_empire_id;
-    delete m_value;
-}
+SetEmpireStockpile::~SetEmpireStockpile()
+{}
 
 void SetEmpireStockpile::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
@@ -965,7 +958,7 @@ SetEmpireCapital::SetEmpireCapital(ValueRef::ValueRefBase<int>* empire_id) :
 {}
 
 SetEmpireCapital::~SetEmpireCapital()
-{ delete m_empire_id; }
+{}
 
 void SetEmpireCapital::Execute(const ScriptingContext& context) const {
     int empire_id = m_empire_id->Eval(context);
@@ -1008,7 +1001,7 @@ SetPlanetType::SetPlanetType(ValueRef::ValueRefBase<PlanetType>* type) :
 {}
 
 SetPlanetType::~SetPlanetType()
-{ delete m_type; }
+{}
 
 void SetPlanetType::Execute(const ScriptingContext& context) const {
     if (auto p = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
@@ -1052,7 +1045,7 @@ SetPlanetSize::SetPlanetSize(ValueRef::ValueRefBase<PlanetSize>* size) :
 {}
 
 SetPlanetSize::~SetPlanetSize()
-{ delete m_size; }
+{}
 
 void SetPlanetSize::Execute(const ScriptingContext& context) const {
     if (auto p = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
@@ -1094,7 +1087,7 @@ SetSpecies::SetSpecies(ValueRef::ValueRefBase<std::string>* species) :
 {}
 
 SetSpecies::~SetSpecies()
-{ delete m_species_name; }
+{}
 
 void SetSpecies::Execute(const ScriptingContext& context) const {
     if (auto planet = std::dynamic_pointer_cast<Planet>(context.effect_target)) {
@@ -1170,7 +1163,7 @@ SetOwner::SetOwner(ValueRef::ValueRefBase<int>* empire_id) :
 {}
 
 SetOwner::~SetOwner()
-{ delete m_empire_id; }
+{}
 
 void SetOwner::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
@@ -1239,11 +1232,8 @@ SetSpeciesEmpireOpinion::SetSpeciesEmpireOpinion(ValueRef::ValueRefBase<std::str
     m_opinion(opinion)
 {}
 
-SetSpeciesEmpireOpinion::~SetSpeciesEmpireOpinion() {
-    delete m_species_name;
-    delete m_empire_id;
-    delete m_opinion;
-}
+SetSpeciesEmpireOpinion::~SetSpeciesEmpireOpinion()
+{}
 
 void SetSpeciesEmpireOpinion::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
@@ -1301,11 +1291,8 @@ SetSpeciesSpeciesOpinion::SetSpeciesSpeciesOpinion(ValueRef::ValueRefBase<std::s
     m_opinion(opinion)
 {}
 
-SetSpeciesSpeciesOpinion::~SetSpeciesSpeciesOpinion() {
-    delete m_opinionated_species_name;
-    delete m_rated_species_name;
-    delete m_opinion;
-}
+SetSpeciesSpeciesOpinion::~SetSpeciesSpeciesOpinion()
+{}
 
 void SetSpeciesSpeciesOpinion::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
@@ -1366,9 +1353,6 @@ CreatePlanet::CreatePlanet(ValueRef::ValueRefBase<PlanetType>* type,
 {}
 
 CreatePlanet::~CreatePlanet() {
-    delete m_type;
-    delete m_size;
-    delete m_name;
     for (EffectBase* effect : m_effects_to_apply_after) {
         delete effect;
     }
@@ -1486,8 +1470,6 @@ CreateBuilding::CreateBuilding(ValueRef::ValueRefBase<std::string>* building_typ
 {}
 
 CreateBuilding::~CreateBuilding() {
-    delete m_building_type_name;
-    delete m_name;
     for (EffectBase* effect : m_effects_to_apply_after) {
         delete effect;
     }
@@ -1616,11 +1598,6 @@ CreateShip::CreateShip(ValueRef::ValueRefBase<int>* ship_design_id,
 {}
 
 CreateShip::~CreateShip() {
-    delete m_design_name;
-    delete m_design_id;
-    delete m_empire_id;
-    delete m_species_name;
-    delete m_name;
     for (EffectBase* effect : m_effects_to_apply_after) {
         delete effect;
     }
@@ -1808,11 +1785,6 @@ CreateField::CreateField(ValueRef::ValueRefBase<std::string>* field_type_name,
 {}
 
 CreateField::~CreateField() {
-    delete m_field_type_name;
-    delete m_x;
-    delete m_y;
-    delete m_size;
-    delete m_name;
     for (EffectBase* effect : m_effects_to_apply_after) {
         delete effect;
     }
@@ -1967,10 +1939,6 @@ CreateSystem::CreateSystem(ValueRef::ValueRefBase<double>* x,
 {}
 
 CreateSystem::~CreateSystem() {
-    delete m_type;
-    delete m_x;
-    delete m_y;
-    delete m_name;
     for (EffectBase* effect : m_effects_to_apply_after) {
         delete effect;
     }
@@ -2113,7 +2081,7 @@ AddSpecial::AddSpecial(ValueRef::ValueRefBase<std::string>* name,
 {}
 
 AddSpecial::~AddSpecial()
-{ delete m_name; }
+{}
 
 void AddSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -2165,7 +2133,7 @@ RemoveSpecial::RemoveSpecial(ValueRef::ValueRefBase<std::string>* name) :
 {}
 
 RemoveSpecial::~RemoveSpecial()
-{ delete m_name; }
+{}
 
 void RemoveSpecial::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -2345,7 +2313,7 @@ SetStarType::SetStarType(ValueRef::ValueRefBase<StarType>* type) :
 {}
 
 SetStarType::~SetStarType()
-{ delete m_type; }
+{}
 
 void SetStarType::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -2691,11 +2659,8 @@ MoveInOrbit::MoveInOrbit(ValueRef::ValueRefBase<double>* speed,
     m_focus_y(focus_y)
 {}
 
-MoveInOrbit::~MoveInOrbit() {
-    delete m_speed;
-    delete m_focus_x;
-    delete m_focus_y;
-}
+MoveInOrbit::~MoveInOrbit()
+{}
 
 void MoveInOrbit::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -2844,11 +2809,8 @@ MoveTowards::MoveTowards(ValueRef::ValueRefBase<double>* speed,
     m_dest_y(dest_y)
 {}
 
-MoveTowards::~MoveTowards() {
-    delete m_speed;
-    delete m_dest_x;
-    delete m_dest_y;
-}
+MoveTowards::~MoveTowards()
+{}
 
 void MoveTowards::Execute(const ScriptingContext& context) const {
     if (!context.effect_target) {
@@ -3159,11 +3121,8 @@ SetEmpireTechProgress::SetEmpireTechProgress(ValueRef::ValueRefBase<std::string>
     m_empire_id(empire_id)
 {}
 
-SetEmpireTechProgress::~SetEmpireTechProgress() {
-    delete m_tech_name;
-    delete m_research_progress;
-    delete m_empire_id;
-}
+SetEmpireTechProgress::~SetEmpireTechProgress()
+{}
 
 void SetEmpireTechProgress::Execute(const ScriptingContext& context) const {
     if (!m_empire_id) return;
@@ -3231,13 +3190,11 @@ GiveEmpireTech::GiveEmpireTech(ValueRef::ValueRefBase<std::string>* tech_name,
     m_empire_id(empire_id)
 {
     if (!m_empire_id)
-        m_empire_id = new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner"));
+        m_empire_id.reset(new ValueRef::Variable<int>(ValueRef::EFFECT_TARGET_REFERENCE, std::vector<std::string>(1, "Owner")));
 }
 
-GiveEmpireTech::~GiveEmpireTech() {
-    delete m_empire_id;
-    delete m_tech_name;
-}
+GiveEmpireTech::~GiveEmpireTech()
+{}
 
 void GiveEmpireTech::Execute(const ScriptingContext& context) const {
     if (!m_empire_id) return;
@@ -3346,7 +3303,6 @@ GenerateSitRepMessage::~GenerateSitRepMessage() {
     for (auto& entry : m_message_parameters) {
         delete entry.second;
     }
-    delete m_recipient_empire_id;
 }
 
 void GenerateSitRepMessage::Execute(const ScriptingContext& context) const {
@@ -3540,7 +3496,7 @@ SetOverlayTexture::SetOverlayTexture(const std::string& texture,
 {}
 
 SetOverlayTexture::~SetOverlayTexture()
-{ delete m_size; }
+{}
 
 void SetOverlayTexture::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
@@ -3619,10 +3575,8 @@ SetVisibility::SetVisibility(ValueRef::ValueRefBase<Visibility>* vis,
     m_condition(of_objects)
 {}
 
-SetVisibility::~SetVisibility() {
-    delete m_vis;
-    delete m_empire_id;
-}
+SetVisibility::~SetVisibility()
+{}
 
 void SetVisibility::Execute(const ScriptingContext& context) const {
     if (!context.effect_target)
@@ -3712,7 +3666,7 @@ void SetVisibility::Execute(const ScriptingContext& context) const {
         for (int obj_id : object_ids) {
             // store source object id and ValueRef to evaluate to determine
             // what visibility level to set at time of application
-            GetUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis);
+            GetUniverse().SetEffectDerivedVisibility(emp_id, obj_id, source_id, m_vis.get());
         }
     }
 }
@@ -3757,7 +3711,7 @@ unsigned int SetVisibility::GetCheckSum() const {
     unsigned int retval{0};
 
     CheckSums::CheckSumCombine(retval, "SetVisibility");
-    CheckSums::CheckSumCombine(retval, m_vis);
+    CheckSums::CheckSumCombine(retval, m_vis.get());
     CheckSums::CheckSumCombine(retval, m_empire_id);
     CheckSums::CheckSumCombine(retval, m_affiliation);
     CheckSums::CheckSumCombine(retval, m_condition);

@@ -206,7 +206,7 @@ public:
 
 private:
     MeterType m_meter;
-    ValueRef::ValueRefBase<double>* m_value;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
     std::string m_accounting_label;
 
     friend class boost::serialization::access;
@@ -251,7 +251,7 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRef::ValueRefBase<std::string>* GetPartName() const
-    { return m_part_name; }
+    { return m_part_name.get(); }
 
     MeterType GetMeterType() const
     { return m_meter; }
@@ -259,9 +259,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_part_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_part_name;
     MeterType m_meter;
-    ValueRef::ValueRefBase<double>* m_value;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -306,9 +306,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
     std::string m_meter;
-    ValueRef::ValueRefBase<double>* m_value;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -337,9 +337,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
     ResourceType m_stockpile;
-    ValueRef::ValueRefBase<double>* m_value;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_value;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -366,7 +366,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -392,7 +392,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<PlanetType>* m_type;
+    std::unique_ptr<ValueRef::ValueRefBase<PlanetType>> m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -419,7 +419,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<PlanetSize>* m_size;
+    std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>> m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -443,7 +443,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -467,7 +467,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -493,9 +493,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_species_name;
-    ValueRef::ValueRefBase<int>* m_empire_id;
-    ValueRef::ValueRefBase<double>* m_opinion;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -521,9 +521,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_opinionated_species_name;
-    ValueRef::ValueRefBase<std::string>* m_rated_species_name;
-    ValueRef::ValueRefBase<double>* m_opinion;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_opinionated_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_rated_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_opinion;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -550,9 +550,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<PlanetType>* m_type;
-    ValueRef::ValueRefBase<PlanetSize>* m_size;
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<PlanetType>> m_type;
+    std::unique_ptr<ValueRef::ValueRefBase<PlanetSize>> m_size;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
     std::vector<EffectBase*> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -578,8 +578,8 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_building_type_name;
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_building_type_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
     std::vector<EffectBase*> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -615,11 +615,11 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_design_name;
-    ValueRef::ValueRefBase<int>* m_design_id;
-    ValueRef::ValueRefBase<int>* m_empire_id;
-    ValueRef::ValueRefBase<std::string>* m_species_name;
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_design_name;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_design_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_species_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
     std::vector<EffectBase*> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -654,11 +654,11 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_field_type_name;
-    ValueRef::ValueRefBase<double>* m_x;
-    ValueRef::ValueRefBase<double>* m_y;
-    ValueRef::ValueRefBase<double>* m_size;
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_field_type_name;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_x;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_y;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_size;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
     std::vector<EffectBase*> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -692,10 +692,10 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase< ::StarType>* m_type;
-    ValueRef::ValueRefBase<double>* m_x;
-    ValueRef::ValueRefBase<double>* m_y;
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase< ::StarType>> m_type;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_x;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_y;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
     std::vector<EffectBase*> m_effects_to_apply_after;
 
     friend class boost::serialization::access;
@@ -744,13 +744,13 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
 
     const ValueRef::ValueRefBase<std::string>*  GetSpecialName() const
-    { return m_name; }
+    { return m_name.get(); }
 
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_name;
-    ValueRef::ValueRefBase<double>* m_capacity;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_capacity;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -776,7 +776,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_name;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_name;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -848,7 +848,7 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<StarType>* m_type;
+    std::unique_ptr<ValueRef::ValueRefBase<StarType>> m_type;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -904,10 +904,10 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<double>* m_speed;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_speed;
     std::unique_ptr<Condition::ConditionBase> m_focal_point_condition;
-    ValueRef::ValueRefBase<double>* m_focus_x;
-    ValueRef::ValueRefBase<double>* m_focus_y;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_focus_x;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_focus_y;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -936,10 +936,10 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<double>* m_speed;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_speed;
     std::unique_ptr<Condition::ConditionBase> m_dest_condition;
-    ValueRef::ValueRefBase<double>* m_dest_x;
-    ValueRef::ValueRefBase<double>* m_dest_y;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_dest_x;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_dest_y;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1039,9 +1039,9 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_tech_name;
-    ValueRef::ValueRefBase<double>* m_research_progress;
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_tech_name;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_research_progress;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1064,8 +1064,8 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<std::string>* m_tech_name;
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<std::string>> m_tech_name;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1123,7 +1123,7 @@ public:
     { return m_message_parameters; }
 
     ValueRef::ValueRefBase<int>* RecipientID() const
-    { return m_recipient_empire_id; }
+    { return m_recipient_empire_id.get(); }
 
     Condition::ConditionBase* GetCondition() const
     { return m_condition.get(); }
@@ -1137,7 +1137,7 @@ private:
     std::string m_message_string;
     std::string m_icon;
     MessageParams m_message_parameters;
-    ValueRef::ValueRefBase<int>* m_recipient_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_recipient_empire_id;
     std::unique_ptr<Condition::ConditionBase> m_condition;
     EmpireAffiliationType m_affiliation;
     std::string m_label;
@@ -1168,7 +1168,7 @@ public:
 
 private:
     std::string m_texture;
-    ValueRef::ValueRefBase<double>* m_size;
+    std::unique_ptr<ValueRef::ValueRefBase<double>> m_size;
 
     friend class boost::serialization::access;
     template <class Archive>
@@ -1218,10 +1218,10 @@ public:
     void SetTopLevelContent(const std::string& content_name) override;
 
     ValueRef::ValueRefBase<Visibility>* GetVisibility() const
-    { return m_vis; }
+    { return m_vis.get(); }
 
     ValueRef::ValueRefBase<int>* EmpireID() const
-    { return m_empire_id; }
+    { return m_empire_id.get(); }
 
     EmpireAffiliationType Affiliation() const
     { return m_affiliation; }
@@ -1232,8 +1232,8 @@ public:
     unsigned int GetCheckSum() const override;
 
 private:
-    ValueRef::ValueRefBase<Visibility>* m_vis;
-    ValueRef::ValueRefBase<int>* m_empire_id;
+    std::unique_ptr<ValueRef::ValueRefBase<Visibility>> m_vis;
+    std::unique_ptr<ValueRef::ValueRefBase<int>> m_empire_id;
     EmpireAffiliationType m_affiliation;
     std::unique_ptr<Condition::ConditionBase> m_condition;
 
